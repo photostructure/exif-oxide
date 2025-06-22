@@ -1,0 +1,88 @@
+//! Core type definitions for EXIF parsing
+
+/// EXIF data formats as defined in TIFF specification
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u16)]
+pub enum ExifFormat {
+    /// 8-bit unsigned integer
+    U8 = 1,
+    /// ASCII string (null-terminated)
+    Ascii = 2,
+    /// 16-bit unsigned integer
+    U16 = 3,
+    /// 32-bit unsigned integer
+    U32 = 4,
+    /// Rational (2 x U32: numerator, denominator)
+    Rational = 5,
+    /// 8-bit signed integer
+    I8 = 6,
+    /// Undefined (raw bytes)
+    Undefined = 7,
+    /// 16-bit signed integer
+    I16 = 8,
+    /// 32-bit signed integer
+    I32 = 9,
+    /// Signed rational (2 x I32)
+    SignedRational = 10,
+    /// 32-bit float
+    F32 = 11,
+    /// 64-bit float
+    F64 = 12,
+}
+
+impl ExifFormat {
+    /// Get the size in bytes of one component of this format
+    pub fn size(&self) -> usize {
+        match self {
+            Self::U8 | Self::Ascii | Self::I8 | Self::Undefined => 1,
+            Self::U16 | Self::I16 => 2,
+            Self::U32 | Self::I32 | Self::F32 => 4,
+            Self::Rational | Self::SignedRational | Self::F64 => 8,
+        }
+    }
+    
+    /// Create format from u16 value
+    pub fn from_u16(value: u16) -> Option<Self> {
+        match value {
+            1 => Some(Self::U8),
+            2 => Some(Self::Ascii),
+            3 => Some(Self::U16),
+            4 => Some(Self::U32),
+            5 => Some(Self::Rational),
+            6 => Some(Self::I8),
+            7 => Some(Self::Undefined),
+            8 => Some(Self::I16),
+            9 => Some(Self::I32),
+            10 => Some(Self::SignedRational),
+            11 => Some(Self::F32),
+            12 => Some(Self::F64),
+            _ => None,
+        }
+    }
+}
+
+/// A single IFD (Image File Directory) entry
+#[derive(Debug, Clone)]
+pub struct IfdEntry {
+    pub tag: u16,
+    pub format: ExifFormat,
+    pub count: u32,
+    pub value_offset: u32,
+}
+
+/// Parsed EXIF value
+#[derive(Debug, Clone, PartialEq)]
+pub enum ExifValue {
+    /// ASCII string
+    Ascii(String),
+    /// Single unsigned 16-bit integer
+    U16(u16),
+    /// Multiple unsigned 16-bit integers
+    U16Array(Vec<u16>),
+    /// Single unsigned 32-bit integer
+    U32(u32),
+    /// Multiple unsigned 32-bit integers
+    U32Array(Vec<u32>),
+    /// Raw byte data
+    Undefined(Vec<u8>),
+}
