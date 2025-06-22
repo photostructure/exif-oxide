@@ -1,0 +1,24 @@
+[package]
+name = "exif-oxide"
+version = "0.1.0"
+edition = "2021"
+authors = ["exif-oxide@photostructure.com"]
+description = "High-performance Rust implementation of ExifTool"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/photostructure/exif-oxide"
+keywords = ["exif", "metadata", "image", "photo", "jpeg"]
+categories = ["multimedia::images", "parser-implementations"]
+
+[dependencies]
+# Core dependencies for Spike 1
+byteorder = "1.5"      # Efficient endian handling
+thiserror = "1.0"      # Error handling
+anyhow = "1.0"         # Error handling in examples/tests
+
+[dev-dependencies]
+criterion = "0.5"      # Benchmarking
+pretty_assertions = "1.4"  # Better test assertions
+
+[[bench]]
+name = "exif_parsing"
+harness = false
