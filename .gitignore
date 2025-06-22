@@ -1,2 +1,27 @@
+# Build artifacts
 /target
+
+# Vendored dependencies
 /exiftool
+/vendored
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test outputs
+*.out
+*.log
+
+# Benchmark results
+/criterion/
+
+# Debug files
+*.pdb

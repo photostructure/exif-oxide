@@ -1,7 +1,35 @@
 {
   "permissions": {
     "allow": [
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(cargo:*)",
+      "Bash(./exiftool/exiftool -Make -Model exiftool/t/images/ExifTool.jpg)",
+      "Bash(./exiftool/exiftool -s -Make -Model -Software exiftool/t/images/ExifTool.jpg)",
+      "Bash(./exiftool/exiftool -struct -json exiftool/t/images/ExifTool.jpg)",
+      "Bash(find:*)",
+      "Bash(CARGO_BUILD_SCRIPT_EMIT=rerun-if-changed cargo build --verbose 2 >& 1)",
+      "Bash(rustc:*)",
+      "Bash(./test_parser)",
+      "Bash(mkdir:*)",
+      "Bash(./exiftool/exiftool -Canon -s t/images/Canon1DmkIII.jpg)",
+      "Bash(./exiftool/exiftool -Canon -s exiftool/t/images/Canon1DmkIII.jpg)",
+      "Bash(./exiftool/exiftool -v2 exiftool/t/images/Canon1DmkIII.jpg)",
+      "Bash(./exiftool/exiftool -v:*)",
+      "Bash(exiftool:*)",
+      "Bash(touch:*)",
+      "Bash(sed:*)",
+      "Bash(RUST_BACKTRACE=1 cargo test test_extract_thumbnail_from_canon_jpg --test spike3 -- --nocapture)",
+      "Bash(./exiftool/exiftool -s -ThumbnailOffset -ThumbnailLength test-images/canon/Canon_T3i.JPG)",
+      "Bash(./exiftool/exiftool -s -n -ThumbnailOffset -ThumbnailLength test-images/canon/Canon_T3i.JPG)",
+      "Bash(dd:*)",
+      "Bash(../exiftool/exiftool -h)",
+      "Bash(../exiftool/exiftool --help)",
+      "Bash(../exiftool/exiftool -ver)",
+      "Bash(../exiftool/exiftool -b -ThumbnailImage test-images/canon/Canon_T3i.JPG)",
+      "Bash(../exiftool/exiftool -ThumbnailImage test-images/canon/Canon_T3i.JPG)",
+      "Bash(RUST_LOG=debug cargo run --bin exif-oxide -- exiftool/t/images/Canon1DmkIII.jpg 2 >& 1)",
+      "Bash(xxd:*)"
     ],
     "deny": []
   }

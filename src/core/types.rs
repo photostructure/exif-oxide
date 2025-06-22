@@ -1,5 +1,7 @@
 //! Core type definitions for EXIF parsing
 
+use serde::Serialize;
+
 /// EXIF data formats as defined in TIFF specification
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u16)]
@@ -40,7 +42,7 @@ impl ExifFormat {
             Self::Rational | Self::SignedRational | Self::F64 => 8,
         }
     }
-    
+
     /// Create format from u16 value
     pub fn from_u16(value: u16) -> Option<Self> {
         match value {
@@ -71,10 +73,14 @@ pub struct IfdEntry {
 }
 
 /// Parsed EXIF value
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum ExifValue {
     /// ASCII string
     Ascii(String),
+    /// Single unsigned 8-bit integer
+    U8(u8),
+    /// Multiple unsigned 8-bit integers
+    U8Array(Vec<u8>),
     /// Single unsigned 16-bit integer
     U16(u16),
     /// Multiple unsigned 16-bit integers
@@ -83,6 +89,32 @@ pub enum ExifValue {
     U32(u32),
     /// Multiple unsigned 32-bit integers
     U32Array(Vec<u32>),
+    /// Single signed 16-bit integer
+    I16(i16),
+    /// Multiple signed 16-bit integers
+    I16Array(Vec<i16>),
+    /// Single signed 32-bit integer
+    I32(i32),
+    /// Multiple signed 32-bit integers
+    I32Array(Vec<i32>),
+    /// Single unsigned rational (numerator, denominator)
+    Rational(u32, u32),
+    /// Multiple unsigned rationals
+    RationalArray(Vec<(u32, u32)>),
+    /// Single signed rational (numerator, denominator)
+    SignedRational(i32, i32),
+    /// Multiple signed rationals
+    SignedRationalArray(Vec<(i32, i32)>),
     /// Raw byte data
     Undefined(Vec<u8>),
+    /// Binary data with length information (instead of actual data)
+    BinaryData(usize),
+}
+
+/// Tag information from ExifTool tables
+#[derive(Debug, Clone)]
+pub struct TagInfo {
+    pub name: &'static str,
+    pub format: ExifFormat,
+    pub group: Option<&'static str>,
 }

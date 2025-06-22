@@ -14,11 +14,22 @@ categories = ["multimedia::images", "parser-implementations"]
 byteorder = "1.5"      # Efficient endian handling
 thiserror = "1.0"      # Error handling
 anyhow = "1.0"         # Error handling in examples/tests
+nom = "7.1"            # Parser combinators for binary data
+regex = "1.11"         # For parsing ExifTool tables (used in dev tools)
+serde = { version = "1.0", features = ["derive"] }  # Serialization
+serde_json = "1.0"     # JSON output
+
+# XMP support (Spike 4)
+quick-xml = "0.36"     # Fast XML parsing for XMP metadata
+
+[build-dependencies]
+regex = "1.11"         # For parsing ExifTool tables
 
 [dev-dependencies]
 criterion = "0.5"      # Benchmarking
 pretty_assertions = "1.4"  # Better test assertions
+tempfile = "3.8"       # Temporary files for testing
 
-[[bench]]
-name = "exif_parsing"
-harness = false
+# [[bench]]
+# name = "exif_parsing"
+# harness = false
