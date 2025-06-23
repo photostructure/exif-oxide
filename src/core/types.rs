@@ -1,6 +1,7 @@
 //! Core type definitions for EXIF parsing
 
 use serde::Serialize;
+use serde_json;
 
 /// EXIF data formats as defined in TIFF specification
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -109,6 +110,41 @@ pub enum ExifValue {
     Undefined(Vec<u8>),
     /// Binary data with length information (instead of actual data)
     BinaryData(usize),
+}
+
+impl ExifValue {
+    /// Convert ExifValue to JSON string representation for compatibility with main.rs output
+    pub fn to_json_string(&self) -> String {
+        match self {
+            ExifValue::Ascii(s) => serde_json::json!({"Ascii": s}).to_string(),
+            ExifValue::U8(n) => serde_json::json!({"U8": n}).to_string(),
+            ExifValue::U8Array(arr) => serde_json::json!({"U8Array": arr}).to_string(),
+            ExifValue::U16(n) => serde_json::json!({"U16": n}).to_string(),
+            ExifValue::U16Array(arr) => serde_json::json!({"U16Array": arr}).to_string(),
+            ExifValue::U32(n) => serde_json::json!({"U32": n}).to_string(),
+            ExifValue::U32Array(arr) => serde_json::json!({"U32Array": arr}).to_string(),
+            ExifValue::I16(n) => serde_json::json!({"I16": n}).to_string(),
+            ExifValue::I16Array(arr) => serde_json::json!({"I16Array": arr}).to_string(),
+            ExifValue::I32(n) => serde_json::json!({"I32": n}).to_string(),
+            ExifValue::I32Array(arr) => serde_json::json!({"I32Array": arr}).to_string(),
+            ExifValue::Rational(num, den) => {
+                serde_json::json!({"Rational": [num, den]}).to_string()
+            }
+            ExifValue::RationalArray(arr) => {
+                let tuples: Vec<[u32; 2]> = arr.iter().map(|(n, d)| [*n, *d]).collect();
+                serde_json::json!({"RationalArray": tuples}).to_string()
+            }
+            ExifValue::SignedRational(num, den) => {
+                serde_json::json!({"SignedRational": [num, den]}).to_string()
+            }
+            ExifValue::SignedRationalArray(arr) => {
+                let tuples: Vec<[i32; 2]> = arr.iter().map(|(n, d)| [*n, *d]).collect();
+                serde_json::json!({"SignedRationalArray": tuples}).to_string()
+            }
+            ExifValue::Undefined(data) => serde_json::json!({"Undefined": data}).to_string(),
+            ExifValue::BinaryData(len) => serde_json::json!({"BinaryData": len}).to_string(),
+        }
+    }
 }
 
 /// Tag information from ExifTool tables

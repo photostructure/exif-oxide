@@ -187,8 +187,68 @@ fn parse_canon_tags(content: &str) -> Vec<TagDef> {
         // Include PreviewImageInfo tags even though they're SubDirectory
         let is_preview_info = tag_content.contains("PreviewImageInfo");
 
-        // Skip extremely complex tags like SubDirectory for now, except preview info
+        // Include important Canon SubDirectory tags
+        let is_important_canon_tag = matches!(
+            tag_hex,
+            "0x1"
+                | "0x2"
+                | "0x4"
+                | "0x5"
+                | "0x6"
+                | "0x7"
+                | "0x9"
+                | "0xa"
+                | "0xc"
+                | "0xd"
+                | "0xe"
+                | "0xf"
+                | "0x10"
+                | "0x12"
+                | "0x13"
+                | "0x15"
+                | "0x18"
+                | "0x19"
+                | "0x1a"
+                | "0x1c"
+                | "0x1d"
+                | "0x1e"
+                | "0x81"
+                | "0x83"
+                | "0x90"
+                | "0x93"
+                | "0x94"
+                | "0x95"
+                | "0x96"
+                | "0x97"
+                | "0x98"
+                | "0x99"
+                | "0x9a"
+                | "0xa0"
+                | "0xaa"
+                | "0xe0"
+                | "0x4001"
+                | "0x4002"
+                | "0x4003"
+                | "0x4005"
+                | "0x4008"
+                | "0x4009"
+                | "0x4010"
+                | "0x4011"
+                | "0x4013"
+                | "0x4015"
+                | "0x4016"
+                | "0x4018"
+                | "0x4019"
+                | "0x4020"
+                | "0x4021"
+                | "0x4024"
+                | "0x4025"
+                | "0x4028"
+        );
+
+        // Skip extremely complex tags like SubDirectory for now, except preview info and important tags
         if !is_preview_info
+            && !is_important_canon_tag
             && (tag_content.contains("SubDirectory") || tag_content.contains("TagTable"))
         {
             continue;

@@ -23,7 +23,7 @@ fn test_extract_thumbnail_from_canon_jpg() {
                 "✓ Canon T3i JPG: Extracted thumbnail {} bytes",
                 thumbnail.len()
             );
-            assert!(thumbnail.len() > 0);
+            assert!(!thumbnail.is_empty());
 
             // Validate JPEG format
             assert_eq!(thumbnail[0], 0xFF);
@@ -57,7 +57,7 @@ fn test_extract_thumbnail_from_nikon_jpg() {
                 "✓ Nikon Z8 JPG: Extracted thumbnail {} bytes",
                 thumbnail.len()
             );
-            assert!(thumbnail.len() > 0);
+            assert!(!thumbnail.is_empty());
         }
         Ok(None) => {
             println!("ℹ Nikon Z8 JPG: No thumbnail found");
@@ -85,7 +85,7 @@ fn test_extract_canon_preview_from_jpg() {
                 "✓ Canon R5 Mark II JPG: Extracted preview {} bytes",
                 preview.len()
             );
-            assert!(preview.len() > 0);
+            assert!(!preview.is_empty());
 
             // Validate JPEG format
             assert_eq!(preview[0], 0xFF);
@@ -126,7 +126,7 @@ fn test_extract_largest_preview_from_various_images() {
                     Path::new(test_image).file_name().unwrap().to_str().unwrap(),
                     preview.len()
                 );
-                assert!(preview.len() > 0);
+                assert!(!preview.is_empty());
             }
             Ok(None) => {
                 println!(
