@@ -1,5 +1,7 @@
 //! Core type definitions for EXIF parsing
 
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm"]
+
 use serde::Serialize;
 use serde_json;
 

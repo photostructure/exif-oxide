@@ -1,5 +1,8 @@
 //! XMP reading from JPEG files
 
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/XMP.pm"]
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/JPEG.pm"]
+
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{Read, Seek};

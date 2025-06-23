@@ -3,6 +3,9 @@
 //! Canon maker notes use an IFD structure similar to standard EXIF,
 //! but with Canon-specific tags and sometimes special offset handling.
 
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Canon.pm"]
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/CanonRaw.pm"]
+
 use crate::core::ifd::{IfdParser, TiffHeader};
 use crate::core::{Endian, ExifValue};
 use crate::error::Result;

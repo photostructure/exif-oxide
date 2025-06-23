@@ -1,5 +1,8 @@
 //! IFD (Image File Directory) parsing
 
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm"]
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool.pm"]
+
 use crate::core::{Endian, ExifFormat, ExifValue};
 use crate::error::{Error, Result};
 use crate::maker;

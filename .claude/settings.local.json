@@ -39,7 +39,12 @@
       "Bash(make:*)",
       "Bash(npm install:*)",
       "Bash(npm run build:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(rg:*)",
+      "Bash(awk:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.ftyps.com)",
+      "Bash(RUST_BACKTRACE=1 cargo test datetime::parser::tests::test_loose_format_parsing -- --nocapture)"
     ],
     "deny": []
   }

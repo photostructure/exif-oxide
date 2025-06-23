@@ -1,5 +1,7 @@
 //! EXIF thumbnail extraction from IFD1
 
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm"]
+
 use crate::core::ifd::ParsedIfd;
 use crate::error::{Error, Result};
 

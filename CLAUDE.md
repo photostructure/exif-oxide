@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Context
 
-exif-oxide is a Rust reimplementation of Phil Harvey's ExifTool, focusing on:
+exif-oxide is a high-performance Rust implementation of Phil Harvey's [ExifTool](https://exiftool.org/), focusing on:
 
 - Performance (10-20x faster than Perl)
 - Memory safety for untrusted files
 - Embedded image extraction (thumbnails/previews)
-- DateTime parsing intelligence from exiftool-vendored
+- DateTime parsing intelligence from [exiftool-vendored](https://github.com/photostructure/exiftool-vendored.js)
 
 ## Development Philosophy
 
@@ -17,17 +17,25 @@ exif-oxide is a Rust reimplementation of Phil Harvey's ExifTool, focusing on:
 
 - Phil Harvey has been developing ExifTool for 25 years
 - The Perl codebase contains invaluable camera-specific quirks and edge cases
-- When in doubt, check how ExifTool handles it
+- We're not inventing anything here -- **how ExifTool handles it is the correct way**
 - Maintain tag name and structure compatibility
 
 ### 2. Incremental Development
 
-- Follow the spike plan in SPIKES.md
+- Follow the spike/phase plan in SPIKES-*.md or TODO-*.md
 - Each spike should be independently testable
 - Don't over-engineer early spikes - learn first, optimize later
 - Document surprises and gotchas as you discover them
 
-### 3. Testing Approach
+### 3. Current Development Status (December 2024)
+
+**✅ COMPLETED**: All core foundation spikes (1-6)  
+**🔄 CURRENT**: Phase 1 - Multi-format read support (beyond JPEG)  
+**⏳ NEXT**: Phase 2 - Maker note expansion for all manufacturers
+
+**Key Limitation**: main.rs is hardcoded to JPEG despite having detection for 43 formats
+
+### 4. Testing Approach
 
 - Use ExifTool's test images from t/images/ when possible
 - Always test both byte orders (II and MM)
@@ -198,7 +206,9 @@ cargo fuzz run parse_jpeg
 
 ## Recent Achievements
 
-### All Core Spikes COMPLETE (December 2024)
+### All Core Spikes COMPLETE
+
+**Status**: 6/6 core spikes complete, moving to multi-format development phases
 
 **Spike 1: Basic EXIF Tag Reading (COMPLETE)**
 - Core JPEG APP1 segment parsing 
@@ -233,6 +243,20 @@ cargo fuzz run parse_jpeg
 - Namespace registry with dynamic expansion
 - 39 comprehensive tests covering edge cases and error handling
 
+**Spike 5: File Type Detection System (COMPLETE)**
+- Universal format detection for 43 file formats with 100% ExifTool MIME compatibility
+- Auto-generated magic number patterns from ExifTool's Perl source
+- TIFF-based RAW format differentiation via Make/Model tag parsing
+- Container format support (QuickTime, RIFF, MP4) with brand detection
+- Sub-1ms performance using only first 1KB of data
+
+**Spike 6: DateTime Intelligence (90% COMPLETE)**
+- Multi-source datetime extraction from EXIF, XMP, GPS, and manufacturer tags
+- GPS coordinate-based timezone inference with confidence scoring
+- Manufacturer-specific quirk handling (Nikon DST, Canon formats, Apple variations)
+- UTC delta calculation and multi-source validation framework
+- Integration with public API (BasicExif struct extended with resolved_datetime field)
+
 ### Key Technical Breakthroughs
 
 1. **Table-Driven Architecture**: Automated generation from ExifTool Perl sources
@@ -243,6 +267,8 @@ cargo fuzz run parse_jpeg
 6. **Cross-Manufacturer Compatibility**: Tested with Canon, Nikon, Sony, Fujifilm
 7. **Memory Safety**: Bounds checking and zero-copy optimizations
 8. **ExifTool Compatibility**: Direct translation of 25 years of accumulated knowledge
+9. **Format Detection Excellence**: 43 formats detected with sub-1ms performance
+10. **DateTime Intelligence**: GPS timezone inference and manufacturer quirk handling
 
 ## Implementation Status
 
@@ -263,6 +289,13 @@ cargo fuzz run parse_jpeg
 - `xmp::types` - Complete XMP data structures with arrays and language support
 - `xmp::namespace` - Dynamic namespace registry
 - `error` - Comprehensive error handling for all components
+- `detection::mod` - File type detection system supporting 43 formats
+- `detection::magic_numbers` - Auto-generated magic number patterns from ExifTool  
+- `detection::tiff_raw` - TIFF-based RAW format detection via manufacturer tags
+- `datetime::mod` - DateTime intelligence framework with timezone inference
+- `datetime::intelligence` - Multi-source datetime analysis and validation
+- `datetime::gps_timezone` - GPS coordinate-based timezone lookup
+- `datetime::quirks` - Manufacturer-specific datetime corrections
 
 ### Key Implementation Decisions
 
@@ -295,3 +328,7 @@ This project stands on the shoulders of giants:
 - The Rust community's excellent parsing libraries
 
 Respect the complexity that cameras have introduced over decades. What seems like a bug might be a workaround for a specific camera model from 2003.
+
+### Design for future updates
+
+See doc/EXIFTOOL-SYNC.md

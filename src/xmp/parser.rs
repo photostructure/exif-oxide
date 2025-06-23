@@ -1,5 +1,7 @@
 //! Phase 2 XMP parser with proper empty tag handling
 
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/XMP.pm"]
+
 use quick_xml::events::Event;
 use quick_xml::reader::Reader;
 use std::collections::HashMap;
