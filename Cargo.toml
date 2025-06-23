@@ -30,6 +30,7 @@ criterion = "0.5"      # Benchmarking
 pretty_assertions = "1.4"  # Better test assertions
 tempfile = "3.8"       # Temporary files for testing
 
+
 # [[bench]]
 # name = "exif_parsing"
 # harness = false

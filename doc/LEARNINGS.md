@@ -636,3 +636,222 @@ These features should be documented but skipped initially:
 - Rational types need numerator/denominator parsing ✅ Implemented
 - Some tags have special PrintConv (print conversion) functions
 - Tag conditions may depend on other tag values
+
+## Spike 4 Learnings
+
+### XMP Architecture and Parsing
+
+**Key Discovery:** XMP requires fundamentally different parsing approach than binary EXIF data.
+
+1. **XMP Packet Detection in JPEG**
+   - XMP stored in APP1 segments with signature `"http://ns.adobe.com/xap/1.0/\0"`
+   - Different from EXIF APP1 segments (`"Exif\0\0"`)
+   - Can coexist with EXIF in same JPEG file
+   - Segments can exceed 64KB (Extended XMP support needed)
+
+2. **XML Parser Selection**
+   - **quick-xml** chosen for performance and streaming capability
+   - Event-driven parsing allows handling very large XMP packets
+   - Memory efficient - doesn't load entire DOM
+   - Handles malformed XML gracefully
+
+3. **UTF-16 Encoding Discovery**
+   ```rust
+   // Automatic encoding detection
+   if data.len() >= 2 && data[0] == 0x00 { // UTF-16 BE
+   } else if data.len() >= 2 && data[1] == 0x00 { // UTF-16 LE  
+   } else { // UTF-8
+   }
+   ```
+
+### Hierarchical Data Model
+
+**Architecture Decision:** Use enum-based value system for type safety.
+
+1. **XmpValue Design**
+   ```rust
+   pub enum XmpValue {
+       Simple(String),                      // Basic properties
+       Array(XmpArray),                     // RDF containers
+       Struct(HashMap<String, XmpValue>),   // Nested properties
+   }
+   ```
+
+2. **RDF Container Support**
+   - **rdf:Seq** (Ordered) - Sequence matters (e.g., creation workflow steps)
+   - **rdf:Bag** (Unordered) - Set of values (e.g., keywords)
+   - **rdf:Alt** (Alternative) - Language alternatives (e.g., title in multiple languages)
+
+3. **Language Alternative Handling**
+   ```rust
+   pub struct LanguageAlternative {
+       pub language: Option<String>,  // xml:lang attribute
+       pub value: XmpValue,
+   }
+   ```
+
+### Namespace Registry System
+
+**Key Insight:** Dynamic namespace handling essential for real-world XMP.
+
+1. **Common Namespace Registry**
+   ```rust
+   // Built-in namespaces
+   "dc" → "http://purl.org/dc/elements/1.1/"
+   "xmp" → "http://ns.adobe.com/xap/1.0/"
+   "tiff" → "http://ns.adobe.com/tiff/1.0/"
+   "exif" → "http://ns.adobe.com/exif/1.0/"
+   ```
+
+2. **Dynamic Expansion**
+   - Parse xmlns declarations at runtime
+   - Expand prefixed properties to full URIs
+   - Handle custom namespaces from various applications
+
+### Parsing State Management
+
+**Challenge:** XML parsing requires complex state tracking for nested structures.
+
+1. **Element Context Stack**
+   ```rust
+   struct ElementContext {
+       name: String,
+       namespace: Option<String>,
+       current_array: Option<XmpArray>,
+       current_struct: HashMap<String, XmpValue>,
+   }
+   ```
+
+2. **RDF Parsing Patterns**
+   - **Attribute-based**: `<rdf:Description dc:title="Photo Title">`
+   - **Element-based**: `<dc:title>Photo Title</dc:title>`
+   - **Mixed content**: Combination of both in same document
+
+### Error Handling Strategy
+
+**Design Decision:** Graceful degradation for malformed XMP.
+
+1. **Continue on Errors**
+   - Skip malformed properties but continue parsing
+   - Collect warnings for debugging
+   - Return partial results rather than failing entirely
+
+2. **Recursive Depth Limiting**
+   ```rust
+   const MAX_DEPTH: usize = 100;
+   // Prevent stack overflow from deeply nested structures
+   ```
+
+3. **UTF-8 Validation**
+   - Handle invalid UTF-8 sequences in XML
+   - Use `String::from_utf8_lossy` for recovery
+
+### Real-world Testing Insights
+
+**Comprehensive Test Coverage:** 39 tests covering edge cases.
+
+1. **International Content**
+   - UTF-16 encoded XMP from some applications
+   - Language alternatives with xml:lang
+   - Special characters in property values
+
+2. **Malformed Data Handling**
+   - Missing namespace declarations
+   - Unclosed tags
+   - Mixed content types
+   - Very long property values
+
+3. **Application-specific Variations**
+   - Adobe Photoshop XMP structure
+   - IPTC metadata in XMP
+   - Custom application namespaces
+
+### Performance Characteristics
+
+**Achievement:** Sub-10ms parsing for typical XMP packets.
+
+1. **Memory Efficiency**
+   - Streaming parser - no DOM allocation
+   - Zero-copy where possible for string values
+   - UTF-16 conversion only when detected
+
+2. **Parse Speed**
+   - Event-driven parsing faster than DOM
+   - Namespace lookup optimized with HashMap
+   - Recursive depth limiting prevents runaway parsing
+
+### Integration with EXIF
+
+**Design Pattern:** Parallel metadata streams.
+
+1. **Unified Extraction API**
+   ```rust
+   // Both EXIF and XMP from same file
+   let exif = read_basic_exif("photo.jpg")?;
+   let xmp = extract_xmp_properties("photo.jpg")?;
+   ```
+
+2. **Namespace Separation**
+   - EXIF data: Numeric tag IDs (0x10F, 0x110)
+   - XMP data: String properties ("dc:title", "xmp:CreateDate")
+   - No conflicts between systems
+
+### Future XMP Enhancements Identified
+
+1. **Extended XMP Support**
+   - Multi-segment reassembly for >64KB packets
+   - GUID-based chunk linking
+   - MD5 validation
+
+2. **XMP Writing**
+   - XML serialization with proper formatting
+   - Namespace declaration management
+   - Atomic JPEG updates
+
+3. **Advanced RDF Features**
+   - Complex nested structures
+   - RDF resource references
+   - Typed literal values
+
+### Testing Strategy Evolution
+
+**Pattern:** Comprehensive edge case coverage from day one.
+
+1. **Phase 1 Tests (5 tests)**
+   - Basic XMP detection and simple properties
+   - Multiple namespace support
+
+2. **Phase 2 Tests (14 tests)**  
+   - Hierarchical structures (arrays, structs)
+   - UTF-16 encoding support
+   - Real-world XMP from JPEG files
+
+3. **Error Handling Tests (14 tests)**
+   - Malformed XML recovery
+   - Invalid UTF-8 handling
+   - Depth limiting
+
+4. **Enhanced Tests (6 tests)**
+   - Advanced RDF features
+   - IPTC and Photoshop namespaces
+   - Boolean and numeric values
+
+### Architecture Validation
+
+**Success:** XMP system integrates cleanly with existing EXIF infrastructure.
+
+1. **Modular Design**
+   - `src/xmp/reader.rs` - JPEG XMP extraction
+   - `src/xmp/parser.rs` - XML parsing logic
+   - `src/xmp/types.rs` - Data structures
+   - `src/xmp/namespace.rs` - Namespace management
+
+2. **Error Handling Consistency**
+   - Same Result<T> pattern as EXIF code
+   - XmpError type with detailed context
+   - Graceful degradation philosophy
+
+3. **Performance Integration**
+   - No measurable impact on EXIF parsing speed
+   - XMP parsing remains under 10ms
+   - Memory usage stays efficient

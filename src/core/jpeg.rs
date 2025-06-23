@@ -114,7 +114,7 @@ pub fn find_metadata_segments<R: Read + Seek>(reader: &mut R) -> Result<JpegMeta
                     // Check for EXIF signature
                     if data.len() >= 6 && &data[0..6] == b"Exif\0\0" {
                         // Found EXIF data!
-                        let offset = reader.seek(SeekFrom::Current(0))? - data_len as u64;
+                        let offset = reader.stream_position()? - data_len as u64;
                         metadata.exif = Some(ExifSegment {
                             data: data[6..].to_vec(), // Skip "Exif\0\0" header
                             offset: offset + 6,       // Offset to actual EXIF data
@@ -125,7 +125,7 @@ pub fn find_metadata_segments<R: Read + Seek>(reader: &mut R) -> Result<JpegMeta
                         && &data[0..XMP_SIGNATURE.len()] == XMP_SIGNATURE
                     {
                         // Found standard XMP data!
-                        let offset = reader.seek(SeekFrom::Current(0))? - data_len as u64;
+                        let offset = reader.stream_position()? - data_len as u64;
                         metadata.xmp.push(XmpSegment {
                             data: data[XMP_SIGNATURE.len()..].to_vec(),
                             offset: offset + XMP_SIGNATURE.len() as u64,
@@ -137,7 +137,7 @@ pub fn find_metadata_segments<R: Read + Seek>(reader: &mut R) -> Result<JpegMeta
                         && &data[0..XMP_EXTENSION_SIGNATURE.len()] == XMP_EXTENSION_SIGNATURE
                     {
                         // Found extended XMP data!
-                        let offset = reader.seek(SeekFrom::Current(0))? - data_len as u64;
+                        let offset = reader.stream_position()? - data_len as u64;
                         metadata.xmp.push(XmpSegment {
                             data: data[XMP_EXTENSION_SIGNATURE.len()..].to_vec(),
                             offset: offset + XMP_EXTENSION_SIGNATURE.len() as u64,

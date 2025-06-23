@@ -29,7 +29,17 @@
       "Bash(../exiftool/exiftool -b -ThumbnailImage test-images/canon/Canon_T3i.JPG)",
       "Bash(../exiftool/exiftool -ThumbnailImage test-images/canon/Canon_T3i.JPG)",
       "Bash(RUST_LOG=debug cargo run --bin exif-oxide -- exiftool/t/images/Canon1DmkIII.jpg 2 >& 1)",
-      "Bash(xxd:*)"
+      "Bash(xxd:*)",
+      "Bash(mv:*)",
+      "WebFetch(domain:docs.rs)",
+      "Bash(time:*)",
+      "Bash(target/release/exif-oxide test:*)",
+      "Bash(target/debug/exif-oxide:*)",
+      "WebFetch(domain:exiftool.org)",
+      "Bash(make:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(node:*)"
     ],
     "deny": []
   }

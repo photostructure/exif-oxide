@@ -57,11 +57,6 @@ pub struct ParsedIfd {
 }
 
 impl ParsedIfd {
-    /// Create a new ParsedIfd (for internal use)
-    pub(crate) fn new(entries: HashMap<u16, ExifValue>) -> Self {
-        Self { entries }
-    }
-
     /// Expose the raw entries for advanced usage
     pub fn entries(&self) -> &HashMap<u16, ExifValue> {
         &self.entries
@@ -195,20 +190,18 @@ impl IfdParser {
         });
 
         // Check for ExifIFD (tag 0x8769) and parse it as well
-        if let Some(exif_offset_value) = ifd0.entries.get(&0x8769) {
-            if let ExifValue::U32(exif_ifd_offset) = exif_offset_value {
-                let exif_ifd_offset = *exif_ifd_offset as usize;
-                if exif_ifd_offset < data.len() {
-                    match Self::parse_ifd_with_context(&data, &header, exif_ifd_offset, make) {
-                        Ok(exif_ifd) => {
-                            // Merge ExifIFD entries into IFD0
-                            for (tag, value) in exif_ifd.entries {
-                                ifd0.entries.insert(tag, value);
-                            }
+        if let Some(ExifValue::U32(exif_ifd_offset)) = ifd0.entries.get(&0x8769) {
+            let exif_ifd_offset = *exif_ifd_offset as usize;
+            if exif_ifd_offset < data.len() {
+                match Self::parse_ifd_with_context(&data, &header, exif_ifd_offset, make) {
+                    Ok(exif_ifd) => {
+                        // Merge ExifIFD entries into IFD0
+                        for (tag, value) in exif_ifd.entries {
+                            ifd0.entries.insert(tag, value);
                         }
-                        Err(e) => {
-                            eprintln!("Warning: Failed to parse ExifIFD: {}", e);
-                        }
+                    }
+                    Err(e) => {
+                        eprintln!("Warning: Failed to parse ExifIFD: {}", e);
                     }
                 }
             }
@@ -406,7 +399,7 @@ impl IfdParser {
                         }
                     }
                     ExifFormat::U8 => {
-                        if count == 1 && value_data.len() >= 1 {
+                        if count == 1 && !value_data.is_empty() {
                             entries.insert(tag, ExifValue::U8(value_data[0]));
                         } else if !value_data.is_empty() {
                             entries.insert(tag, ExifValue::U8Array(value_data.clone()));

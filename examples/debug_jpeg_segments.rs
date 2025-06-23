@@ -26,7 +26,7 @@ fn main() {
     println!("------  ------  ------  -----------");
 
     loop {
-        let offset = file.seek(SeekFrom::Current(0)).unwrap();
+        let offset = file.stream_position().unwrap();
 
         // Read marker
         let mut marker_bytes = [0u8; 2];

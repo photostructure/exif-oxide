@@ -36,7 +36,7 @@ fn main() {
                     if let Some((ns, prop)) = key.split_once(':') {
                         by_namespace
                             .entry(ns.to_string())
-                            .or_insert_with(Vec::new)
+                            .or_default()
                             .push((prop.to_string(), value));
                     }
                 }
