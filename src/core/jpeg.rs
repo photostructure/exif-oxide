@@ -1,5 +1,7 @@
 //! JPEG parsing to extract EXIF data
 
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/JPEG.pm"]
+
 use crate::error::{Error, Result};
 use std::io::{Read, Seek, SeekFrom};
 

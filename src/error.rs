@@ -32,4 +32,13 @@ pub enum Error {
 
     #[error("XMP error: {0}")]
     XmpError(String),
+
+    #[error("Invalid datetime: {0}")]
+    InvalidDateTime(String),
+
+    #[error("Parse error: {0}")]
+    ParseError(#[from] std::num::ParseIntError),
+
+    #[error("Timezone error: Invalid timezone offset")]
+    TimezoneError,
 }

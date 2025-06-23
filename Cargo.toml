@@ -18,12 +18,19 @@ nom = "7.1"            # Parser combinators for binary data
 regex = "1.11"         # For parsing ExifTool tables (used in dev tools)
 serde = { version = "1.0", features = ["derive"] }  # Serialization
 serde_json = "1.0"     # JSON output
+lazy_static = "1.5"    # For static hash maps in detection module
 
 # XMP support (Spike 4)
 quick-xml = "0.36"     # Fast XML parsing for XMP metadata
 
+# DateTime intelligence (Spike 6)
+chrono = { version = "0.4", features = ["serde"] }  # DateTime handling and timezone support
+chrono-tz = "0.10"                                  # Timezone database and DST support
+tzf-rs = "0.4"                                      # Timezone database for GPS coordinate lookup
+
 [build-dependencies]
 regex = "1.11"         # For parsing ExifTool tables
+chrono = "0.4"         # For timestamp generation in attribution headers
 
 [dev-dependencies]
 criterion = "0.5"      # Benchmarking
@@ -31,6 +38,6 @@ pretty_assertions = "1.4"  # Better test assertions
 tempfile = "3.8"       # Temporary files for testing
 
 
-# [[bench]]
-# name = "exif_parsing"
-# harness = false
+[[bench]]
+name = "datetime_bench"
+harness = false

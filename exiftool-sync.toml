@@ -1,0 +1,10 @@
+# Simple version tracking for ExifTool synchronization
+
+[exiftool]
+version = "13.26"
+last_sync = "2025-01-23"
+source_path = "./exiftool"
+
+# Track which versions we've fully reviewed
+[sync_history]
+fully_synced = ["12.65"]  # Starting from when we began the project

@@ -1,10 +1,6 @@
 # exif-oxide
 
-A high-performance Rust implementation of ExifTool, providing fast metadata extraction and manipulation for images and media files.
-
-## Status
-
-**✅ Core Features Complete** - All major metadata extraction capabilities implemented. See [SPIKES.md](doc/SPIKES.md) for development details.
+A high-performance Rust implementation of portions of ExifTool, providing fast metadata extraction and manipulation for images and media files.
 
 ## Goals
 
@@ -25,23 +21,6 @@ While ExifTool is the gold standard for metadata extraction, its Perl implementa
 ## Design
 
 See [DESIGN.md](DESIGN.md) for architectural details and [ALTERNATIVES.md](ALTERNATIVES.md) for why we chose this approach.
-
-## Current Status
-
-✅ **Spike 1 Complete**: Basic EXIF reading (Make, Model, Orientation) from JPEG files
-✅ **Spike 1.5 Complete**: Table generation from ExifTool Perl modules (530 tags)
-✅ **Spike 2 Complete**: Maker notes parsing (Canon with 34 tags)
-✅ **Spike 3 Complete**: Binary tag extraction (thumbnails and previews)
-✅ **Spike 4 Complete**: XMP reading with hierarchical data structures
-
-### Available Features
-
-- **EXIF Metadata**: Complete IFD parsing with 496 standard tags
-- **Maker Notes**: Canon-specific tags (34 supported)
-- **Binary Extraction**: Thumbnails and preview images from all manufacturers
-- **XMP Support**: Full XML parsing with arrays, structs, and language alternatives
-- **Performance**: Sub-10ms parsing for typical JPEG files
-- **Cross-Platform**: Tested on Canon, Nikon, Sony, Fujifilm, Panasonic
 
 ## Quick Start
 
