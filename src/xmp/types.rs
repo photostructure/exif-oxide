@@ -1,5 +1,7 @@
 //! XMP data types and structures
 
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/XMP.pm"]
+
 use std::collections::HashMap;
 
 /// XMP packet containing standard and extended data

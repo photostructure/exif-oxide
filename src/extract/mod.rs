@@ -1,5 +1,8 @@
 //! Image extraction module for thumbnails and preview images
 
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm"]
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Canon.pm"]
+
 pub mod preview;
 pub mod thumbnail;
 

@@ -1,5 +1,7 @@
 //! XMP namespace registry and common namespace definitions
 
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/XMP.pm"]
+
 use std::collections::HashMap;
 
 /// Registry of XMP namespaces with common namespaces pre-registered

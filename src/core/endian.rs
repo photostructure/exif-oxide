@@ -1,5 +1,7 @@
 //! Byte order (endianness) handling
 
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool.pm"]
+
 use byteorder::{BigEndian, ByteOrder, LittleEndian};
 
 /// Byte order for binary data

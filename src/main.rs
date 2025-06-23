@@ -27,11 +27,11 @@ enum Command {
 }
 
 /// Parse command line arguments into a Command
-fn parse_args(args: Vec<String>) -> Result<(Command, String), String> {
+fn parse_args(args: Vec<String>) -> Result<(Command, Vec<String>), String> {
     let mut include_groups = false;
     let mut binary_mode = false;
     let mut tag_filters = Vec::new();
-    let mut image_path = None;
+    let mut image_paths = Vec::new();
 
     let mut i = 1;
     while i < args.len() {
@@ -51,22 +51,24 @@ fn parse_args(args: Vec<String>) -> Result<(Command, String), String> {
         } else if arg.starts_with('-') {
             return Err(format!("Unknown option: {}", arg));
         } else {
-            // This is the image file path
-            if image_path.is_some() {
-                return Err("Multiple image files specified".to_string());
-            }
-            image_path = Some(arg.clone());
+            // This is an image file path
+            image_paths.push(arg.clone());
             i += 1;
         }
     }
 
-    let image_path = image_path.ok_or_else(|| "No image file specified".to_string())?;
+    if image_paths.is_empty() {
+        return Err("No image file specified".to_string());
+    }
 
     // Determine the command based on parsed arguments
     let command = if binary_mode {
-        // Binary mode requires exactly one tag
+        // Binary mode requires exactly one tag and one file
         if tag_filters.len() != 1 {
             return Err("Binary mode (-b) requires exactly one tag specification".to_string());
+        }
+        if image_paths.len() != 1 {
+            return Err("Binary mode (-b) requires exactly one image file".to_string());
         }
         Command::ExtractBinary {
             tag: tag_filters.into_iter().next().unwrap(),
@@ -82,23 +84,27 @@ fn parse_args(args: Vec<String>) -> Result<(Command, String), String> {
         }
     };
 
-    Ok((command, image_path))
+    Ok((command, image_paths))
 }
 
 /// Display usage information
 fn show_usage(program: &str) {
-    eprintln!("Usage: {} [-G] [-b] [-TagName]... <image_file>", program);
+    eprintln!("Usage: {} [-G] [-b] [-TagName]... <image_file>...", program);
     eprintln!();
     eprintln!("Extracts EXIF data from image files.");
     eprintln!();
     eprintln!("Options:");
     eprintln!("  -G         Include group names in output");
-    eprintln!("  -b         Extract raw binary data (requires single -TagName)");
+    eprintln!("  -b         Extract raw binary data (requires single -TagName and single file)");
     eprintln!("  -TagName   Include only specified tag(s) in output");
     eprintln!();
     eprintln!("Examples:");
     eprintln!(
         "  {} photo.jpg                          # All tags as JSON",
+        program
+    );
+    eprintln!(
+        "  {} photo1.jpg photo2.jpg              # Multiple files",
         program
     );
     eprintln!(
@@ -380,59 +386,45 @@ fn build_tag_map(
     tags
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args: Vec<String> = env::args().collect();
-
-    // Parse command line arguments
-    let (command, image_path) = match parse_args(args.clone()) {
-        Ok(result) => result,
-        Err(err) => {
-            eprintln!("Error: {}", err);
-            eprintln!();
-            show_usage(&args[0]);
-            process::exit(1);
-        }
-    };
-
+/// Process a single image file and return its output
+fn process_image(
+    image_path: &str,
+    command: &Command,
+) -> Result<FileOutput, Box<dyn std::error::Error>> {
     // Open the image file
     let mut file =
-        File::open(&image_path).map_err(|e| format!("Failed to open '{}': {}", image_path, e))?;
+        File::open(image_path).map_err(|e| format!("Failed to open '{}': {}", image_path, e))?;
 
     // Extract EXIF segment
-    let exif_segment = jpeg::find_exif_segment(&mut file)?.ok_or("No EXIF data found in image")?;
+    let exif_segment = jpeg::find_exif_segment(&mut file)?
+        .ok_or_else(|| format!("No EXIF data found in '{}'", image_path))?;
 
     // Parse IFD to get all EXIF data
     let ifd = IfdParser::parse(exif_segment.data.clone())?;
 
-    // Execute the command
+    // Process based on command type
     match command {
-        Command::ExtractBinary { tag } => {
-            // Extract and output binary data
-            let binary_data = extract_binary(&ifd, &tag, &exif_segment.data)?;
-            io::stdout().write_all(&binary_data)?;
-            io::stdout().flush()?;
-        }
         Command::ListAll { include_groups } => {
             // Build complete tag map
-            let mut tags = build_tag_map(ifd.entries(), include_groups, None);
+            let mut tags = build_tag_map(ifd.entries(), *include_groups, None);
 
             // Add file metadata
-            let file_name = std::path::Path::new(&image_path)
+            let file_name = std::path::Path::new(image_path)
                 .file_name()
                 .and_then(|n| n.to_str())
-                .unwrap_or(&image_path);
-            let directory = std::path::Path::new(&image_path)
+                .unwrap_or(image_path);
+            let directory = std::path::Path::new(image_path)
                 .parent()
                 .and_then(|p| p.to_str())
                 .unwrap_or(".");
 
-            let filename_key = format_tag_key("FileName", Some("File"), include_groups);
-            let directory_key = format_tag_key("Directory", Some("File"), include_groups);
+            let filename_key = format_tag_key("FileName", Some("File"), *include_groups);
+            let directory_key = format_tag_key("Directory", Some("File"), *include_groups);
 
             tags.insert(
                 filename_key,
                 TagEntry {
-                    group: if include_groups {
+                    group: if *include_groups {
                         None
                     } else {
                         Some("File".to_string())
@@ -443,7 +435,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             tags.insert(
                 directory_key,
                 TagEntry {
-                    group: if include_groups {
+                    group: if *include_groups {
                         None
                     } else {
                         Some("File".to_string())
@@ -452,34 +444,30 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 },
             );
 
-            // Output as JSON array
-            let output = FileOutput {
-                source_file: image_path,
+            Ok(FileOutput {
+                source_file: image_path.to_string(),
                 tags,
-            };
-            let output_array = vec![output];
-            let json = serde_json::to_string_pretty(&output_array)?;
-            println!("{}", json);
+            })
         }
         Command::ListSpecific {
             tags: tag_filter,
             include_groups,
         } => {
             // Build filtered tag map
-            let mut tags = build_tag_map(ifd.entries(), include_groups, Some(&tag_filter));
+            let mut tags = build_tag_map(ifd.entries(), *include_groups, Some(tag_filter));
 
             // Check if file metadata was requested
-            for filter in &tag_filter {
+            for filter in tag_filter {
                 if filter.eq_ignore_ascii_case("FileName") {
-                    let file_name = std::path::Path::new(&image_path)
+                    let file_name = std::path::Path::new(image_path)
                         .file_name()
                         .and_then(|n| n.to_str())
-                        .unwrap_or(&image_path);
-                    let filename_key = format_tag_key("FileName", Some("File"), include_groups);
+                        .unwrap_or(image_path);
+                    let filename_key = format_tag_key("FileName", Some("File"), *include_groups);
                     tags.insert(
                         filename_key,
                         TagEntry {
-                            group: if include_groups {
+                            group: if *include_groups {
                                 None
                             } else {
                                 Some("File".to_string())
@@ -489,15 +477,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     );
                 }
                 if filter.eq_ignore_ascii_case("Directory") {
-                    let directory = std::path::Path::new(&image_path)
+                    let directory = std::path::Path::new(image_path)
                         .parent()
                         .and_then(|p| p.to_str())
                         .unwrap_or(".");
-                    let directory_key = format_tag_key("Directory", Some("File"), include_groups);
+                    let directory_key = format_tag_key("Directory", Some("File"), *include_groups);
                     tags.insert(
                         directory_key,
                         TagEntry {
-                            group: if include_groups {
+                            group: if *include_groups {
                                 None
                             } else {
                                 Some("File".to_string())
@@ -508,13 +496,75 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
 
-            // Output as JSON array
-            let output = FileOutput {
-                source_file: image_path,
+            Ok(FileOutput {
+                source_file: image_path.to_string(),
                 tags,
-            };
-            let output_array = vec![output];
-            let json = serde_json::to_string_pretty(&output_array)?;
+            })
+        }
+        Command::ExtractBinary { .. } => {
+            // Binary extraction is handled separately in main
+            unreachable!("ExtractBinary should be handled in main")
+        }
+    }
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let args: Vec<String> = env::args().collect();
+
+    // Parse command line arguments
+    let (command, image_paths) = match parse_args(args.clone()) {
+        Ok(result) => result,
+        Err(err) => {
+            eprintln!("Error: {}", err);
+            eprintln!();
+            show_usage(&args[0]);
+            process::exit(1);
+        }
+    };
+
+    // Handle different command types
+    match command {
+        Command::ExtractBinary { tag } => {
+            // Binary extraction only works with single file
+            if image_paths.len() != 1 {
+                eprintln!("Error: Binary mode requires exactly one image file");
+                process::exit(1);
+            }
+
+            let image_path = &image_paths[0];
+
+            // Open the image file
+            let mut file = File::open(image_path)
+                .map_err(|e| format!("Failed to open '{}': {}", image_path, e))?;
+
+            // Extract EXIF segment
+            let exif_segment = jpeg::find_exif_segment(&mut file)?
+                .ok_or_else(|| format!("No EXIF data found in '{}'", image_path))?;
+
+            // Parse IFD to get all EXIF data
+            let ifd = IfdParser::parse(exif_segment.data.clone())?;
+
+            // Extract and output binary data
+            let binary_data = extract_binary(&ifd, &tag, &exif_segment.data)?;
+            io::stdout().write_all(&binary_data)?;
+            io::stdout().flush()?;
+        }
+        _ => {
+            // Process all files and collect results
+            let mut all_outputs = Vec::new();
+
+            for image_path in &image_paths {
+                match process_image(image_path, &command) {
+                    Ok(output) => all_outputs.push(output),
+                    Err(e) => {
+                        eprintln!("Error processing '{}': {}", image_path, e);
+                        // Continue processing other files
+                    }
+                }
+            }
+
+            // Output all results as JSON array
+            let json = serde_json::to_string_pretty(&all_outputs)?;
             println!("{}", json);
         }
     }

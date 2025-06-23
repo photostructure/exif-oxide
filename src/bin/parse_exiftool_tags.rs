@@ -4,6 +4,8 @@
 //! tag definitions for code generation. It's useful for debugging the parsing
 //! logic and understanding what tags are available.
 
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm"]
+
 use regex::Regex;
 use std::collections::HashMap;
 use std::fs;

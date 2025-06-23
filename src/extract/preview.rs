@@ -1,5 +1,7 @@
 //! Canon maker note preview image extraction
 
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Canon.pm"]
+
 use crate::core::ifd::ParsedIfd;
 use crate::error::{Error, Result};
 
