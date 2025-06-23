@@ -59,7 +59,7 @@ fn test_canon_maker_note_parsing() {
     let canon_tag_count = ifd
         .entries()
         .keys()
-        .filter(|&&tag| tag >= 0xC000 && tag < 0xD000)
+        .filter(|&&tag| (0xC000..0xD000).contains(&tag))
         .count();
 
     println!("Found {} Canon maker note tags", canon_tag_count);
@@ -218,7 +218,7 @@ fn test_multiple_canon_models() {
                 let canon_tags = ifd
                     .entries()
                     .iter()
-                    .filter(|(&tag, _)| tag >= 0xC000 && tag < 0xD000)
+                    .filter(|(&tag, _)| (0xC000..0xD000).contains(&tag))
                     .count();
 
                 println!("{}: Found {} Canon maker note tags", image_path, canon_tags);
@@ -271,7 +271,7 @@ fn test_non_canon_no_canon_tags() {
     let canon_tag_count = ifd
         .entries()
         .keys()
-        .filter(|&&tag| tag >= 0xC000 && tag < 0xD000)
+        .filter(|&&tag| (0xC000..0xD000).contains(&tag))
         .count();
 
     assert_eq!(

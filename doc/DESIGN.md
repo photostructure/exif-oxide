@@ -265,30 +265,45 @@ Incorporating exiftool-vendored's heuristics:
 
 ## Implementation Status
 
-### Completed (Spike 1)
+### Completed (All Core Spikes)
 
+**Spike 1: Basic EXIF Tag Reading (COMPLETE)**
 - Basic JPEG segment parsing
 - IFD structure parsing with endian support
 - Core type system (ExifFormat, ExifValue)
 - Make, Model, Orientation tag extraction
 - Comprehensive test infrastructure
 
-### Completed (Spike 1.5)
-
+**Spike 1.5: Minimal Table Generation (COMPLETE)**
 - **Table-driven Architecture**: Auto-generates 496 EXIF tags from ExifTool's Perl source
 - **Complete Format Support**: Rational, SignedRational, all integer types, arrays
 - **Build-time Code Generation**: Zero runtime overhead for tag lookup
 - **Development Tooling**: `parse_exiftool_tags` binary for debugging
 - **Comprehensive Testing**: 29 tests covering all format types and real images
 
-### Completed (Spike 2)
-
+**Spike 2: Maker Note Parsing (COMPLETE)**
 - **Maker Note Architecture**: Manufacturer detection and dispatch system with trait-based parsers
 - **Canon Maker Note Support**: Successfully parses Canon-specific tags (28/36 tags = 78% coverage)
 - **ExifIFD Integration**: Extended IFD parser to handle sub-directories (critical for maker notes)
 - **Table Generation Extension**: Canon.pm parsing integrated into build.rs (34 Canon tags)
 - **Structural Tag Handling**: Special format overrides for tags like 0x8769 (ExifOffset)
 - **Real-world Validation**: Tested with Canon1DmkIII.jpg and other ExifTool test images
+
+**Spike 3: Binary Tag Extraction (COMPLETE)**
+- **Universal Thumbnail Extraction**: IFD1 parsing works across all manufacturers
+- **Canon Preview Extraction**: Large preview images from Canon maker notes
+- **JPEG Validation**: SOI/EOI marker detection and boundary trimming
+- **Performance Optimization**: Sub-8ms extraction for typical files
+- **Memory Efficiency**: Streaming extraction without loading entire file
+- **Cross-manufacturer Support**: Tested with Canon, Nikon, Sony, Panasonic
+
+**Spike 4: XMP Reading (COMPLETE)**
+- **Complete XMP Architecture**: Advanced XML parsing with hierarchical data structures
+- **RDF Container Support**: Arrays (Seq, Bag, Alt) with language alternatives
+- **UTF-16 Encoding**: International content support with automatic detection
+- **Dynamic Namespace Registry**: Common namespaces with custom expansion
+- **Comprehensive Error Handling**: Graceful degradation with malformed XMP
+- **Extensive Testing**: 39 test cases covering edge cases and real-world scenarios
 
 ### Implementation Insights
 
@@ -348,13 +363,52 @@ Incorporating exiftool-vendored's heuristics:
 
    **Critical Discovery**: Maker notes are typically stored in ExifIFD (tag 0x8769), not IFD0. This required extending the IFD parser to handle sub-directories and merge ExifIFD entries with the main IFD.
 
-6. **Testing Strategy**
+6. **Binary Extraction Architecture (Spike 3)**
+
+   ```rust
+   // Universal extraction API
+   pub fn extract_thumbnail(path: &Path) -> Result<Option<Vec<u8>>> // IFD1 thumbnails
+   pub fn extract_canon_preview(path: &Path) -> Result<Option<Vec<u8>>> // Maker note previews  
+   pub fn extract_largest_preview(path: &Path) -> Result<Option<Vec<u8>>> // Best available
+   ```
+
+   **Key Insights**:
+   - Same extraction logic works across Canon, Nikon, Sony, Panasonic
+   - Format flexibility: Tags stored as Undefined require numeric coercion
+   - JPEG validation: Proper SOI/EOI marker detection prevents corruption
+   - Performance: Memory-efficient streaming without loading entire files
+
+7. **XMP Architecture (Spike 4)**
+
+   ```rust
+   pub enum XmpValue {
+       Simple(String),
+       Array(XmpArray),                    // rdf:Seq, rdf:Bag, rdf:Alt
+       Struct(HashMap<String, XmpValue>),  // Nested properties
+   }
+   
+   pub enum XmpArray {
+       Ordered(Vec<XmpValue>),             // rdf:Seq
+       Unordered(Vec<XmpValue>),           // rdf:Bag  
+       Alternative(Vec<LanguageAlternative>), // rdf:Alt with xml:lang
+   }
+   ```
+
+   **Advanced Features**:
+   - UTF-16 encoding detection and conversion
+   - Namespace registry with dynamic expansion
+   - Language alternatives for internationalization
+   - Graceful error recovery for malformed XML
+   - 39 comprehensive tests including edge cases
+
+8. **Testing Strategy**
    - Unit tests with synthetic data for edge cases
    - Integration tests with ExifTool's test images
    - Table lookup validation for all generated tags
    - Real-world rational number parsing with Canon/Nikon images
    - Discovered discrepancies (e.g., ExifTool.jpg metadata)
    - Maker note validation with professional camera images (Canon1DmkIII.jpg)
+   - XMP parsing tests with UTF-16, arrays, structs, and malformed data
 
 ## Future Extensibility
 

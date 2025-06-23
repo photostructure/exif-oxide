@@ -288,7 +288,7 @@ fn build_tag_map(
                 let tag_key = format_tag_key(tag_name, Some("Canon"), include_groups);
                 (tag_key, Some("Canon".to_string()))
             } else {
-                let tag_name = format!("Unknown{:04X}", original_tag);
+                let tag_name = format!("Unknown0x{:04X}", original_tag);
                 let tag_key = format_tag_key(&tag_name, Some("Canon"), include_groups);
                 (tag_key, Some("Canon".to_string()))
             }

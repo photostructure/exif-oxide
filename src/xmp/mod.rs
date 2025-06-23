@@ -5,13 +5,14 @@
 
 use thiserror::Error;
 
+pub mod namespace;
 pub mod parser;
 pub mod reader;
 pub mod types;
 
 pub use parser::{extract_simple_properties, parse_xmp};
 pub use reader::{extract_xmp_properties, read_xmp_from_jpeg};
-pub use types::{ExtendedXmp, XmpArray, XmpMetadata, XmpPacket, XmpValue};
+pub use types::{ExtendedXmp, LanguageAlternative, XmpArray, XmpMetadata, XmpPacket, XmpValue};
 
 /// XMP-specific errors
 #[derive(Debug, Error)]

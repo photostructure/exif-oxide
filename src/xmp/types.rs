@@ -125,6 +125,12 @@ pub struct XmpMetadata {
     pub namespaces: HashMap<String, String>,
 }
 
+impl Default for XmpMetadata {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl XmpMetadata {
     /// Create empty XMP metadata
     pub fn new() -> Self {
