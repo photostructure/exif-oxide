@@ -3,7 +3,9 @@
 use exif_oxide::binary::{extract_binary_tag, extract_mpf_preview};
 use exif_oxide::core::ifd::IfdParser;
 use exif_oxide::core::mpf::ParsedMpf;
+use exif_oxide::core::print_conv::{apply_print_conv, PrintConvId};
 use exif_oxide::core::ExifValue;
+use exif_oxide::tables::{fujifilm_tags, nikon_tags, olympus_tags, pentax_tags, sony_tags};
 use exif_oxide::tables::{lookup_canon_tag, lookup_tag};
 use serde::Serialize;
 use std::collections::HashMap;
@@ -15,11 +17,15 @@ use std::process;
 #[derive(Debug)]
 enum Command {
     /// List all tags as JSON
-    ListAll { include_groups: bool },
+    ListAll {
+        include_groups: bool,
+        show_converted_values: bool,
+    },
     /// List specific tags as JSON
     ListSpecific {
         tags: Vec<String>,
         include_groups: bool,
+        show_converted_values: bool,
     },
     /// Extract binary data for a single tag
     ExtractBinary { tag: String },
@@ -29,6 +35,7 @@ enum Command {
 fn parse_args(args: Vec<String>) -> Result<(Command, Vec<String>), String> {
     let mut include_groups = false;
     let mut binary_mode = false;
+    let mut show_converted_values = true; // Default to showing converted values
     let mut tag_filters = Vec::new();
     let mut image_paths = Vec::new();
 
@@ -41,6 +48,9 @@ fn parse_args(args: Vec<String>) -> Result<(Command, Vec<String>), String> {
             i += 1;
         } else if arg == "-b" {
             binary_mode = true;
+            i += 1;
+        } else if arg == "-n" {
+            show_converted_values = false; // Show numeric/raw values only
             i += 1;
         } else if arg.starts_with('-') && !arg.starts_with("--") {
             // This is a tag specification (e.g., -ThumbnailImage)
@@ -74,12 +84,16 @@ fn parse_args(args: Vec<String>) -> Result<(Command, Vec<String>), String> {
         }
     } else if tag_filters.is_empty() {
         // No tags specified, list all
-        Command::ListAll { include_groups }
+        Command::ListAll {
+            include_groups,
+            show_converted_values,
+        }
     } else {
         // Specific tags requested
         Command::ListSpecific {
             tags: tag_filters,
             include_groups,
+            show_converted_values,
         }
     };
 
@@ -88,12 +102,16 @@ fn parse_args(args: Vec<String>) -> Result<(Command, Vec<String>), String> {
 
 /// Display usage information
 fn show_usage(program: &str) {
-    eprintln!("Usage: {} [-G] [-b] [-TagName]... <image_file>...", program);
+    eprintln!(
+        "Usage: {} [-G] [-n] [-b] [-TagName]... <image_file>...",
+        program
+    );
     eprintln!();
     eprintln!("Extracts EXIF data from image files.");
     eprintln!();
     eprintln!("Options:");
     eprintln!("  -G         Include group names in output");
+    eprintln!("  -n         Show numeric/raw values (no PrintConv)");
     eprintln!("  -b         Extract raw binary data (requires single -TagName and single file)");
     eprintln!("  -TagName   Include only specified tag(s) in output");
     eprintln!();
@@ -306,49 +324,149 @@ fn format_tag_key(tag_name: &str, group: Option<&str>, include_groups: bool) -> 
     }
 }
 
+/// Get PrintConv for standard EXIF tags
+fn get_standard_exif_printconv(tag_id: u16) -> PrintConvId {
+    match tag_id {
+        0x8827 => PrintConvId::IsoSpeed,     // ISO Speed
+        0x9207 => PrintConvId::MeteringMode, // MeteringMode
+        0xA403 => PrintConvId::WhiteBalance, // WhiteBalance
+        _ => PrintConvId::None,              // Only use existing variants for now
+    }
+}
+
+/// Get PrintConv for maker note tags
+fn get_maker_note_printconv(tag_id: u16, manufacturer_prefix: u16) -> PrintConvId {
+    match manufacturer_prefix {
+        0x534F => {
+            // Sony
+            if let Some(sony_tag) = sony_tags::get_sony_tag(tag_id) {
+                sony_tag.print_conv
+            } else {
+                PrintConvId::None
+            }
+        }
+        0x5045 => {
+            // Pentax
+            if let Some(pentax_tag) = pentax_tags::get_pentax_tag(tag_id) {
+                pentax_tag.print_conv
+            } else {
+                PrintConvId::None
+            }
+        }
+        0x4F4C => {
+            // Olympus
+            if let Some(olympus_tag) = olympus_tags::get_olympus_tag(tag_id) {
+                olympus_tag.print_conv
+            } else {
+                PrintConvId::None
+            }
+        }
+        0x4E00 => {
+            // Nikon
+            if let Some(nikon_tag) = nikon_tags::get_nikon_tag(tag_id) {
+                nikon_tag.print_conv
+            } else {
+                PrintConvId::None
+            }
+        }
+        0x4655 => {
+            // Fujifilm
+            if let Some(fujifilm_tag) = fujifilm_tags::get_fujifilm_tag(tag_id) {
+                fujifilm_tag.print_conv
+            } else {
+                PrintConvId::None
+            }
+        }
+        _ => PrintConvId::None,
+    }
+}
+
 /// Process entries and build the tag map
 fn build_tag_map(
     entries: &HashMap<u16, ExifValue>,
     include_groups: bool,
     tag_filter: Option<&[String]>,
+    show_converted_values: bool,
 ) -> HashMap<String, TagEntry> {
     let mut tags: HashMap<String, TagEntry> = HashMap::new();
 
     for (tag_id, value) in entries {
-        let (tag_key, group) = if *tag_id >= 0xC000 {
-            // This is a maker note tag (prefixed with 0xC000)
+        let (tag_key, group, print_conv_id) = if *tag_id >= 0xC000 {
+            // This is a maker note tag (prefixed with 0xC000 for Canon)
             let original_tag = tag_id - 0xC000;
             if let Some(tag_info) = lookup_canon_tag(original_tag) {
                 let tag_name = tag_info.name;
                 let tag_key = format_tag_key(tag_name, Some("Canon"), include_groups);
-                (tag_key, Some("Canon".to_string()))
+                // Canon tags use a different PrintConv system - for now use None
+                (tag_key, Some("Canon".to_string()), PrintConvId::None)
             } else {
                 let tag_name = format!("Unknown0x{:04X}", original_tag);
                 let tag_key = format_tag_key(&tag_name, Some("Canon"), include_groups);
-                (tag_key, Some("Canon".to_string()))
+                (tag_key, Some("Canon".to_string()), PrintConvId::None)
             }
+        } else if *tag_id >= 0x8000 {
+            // This is a converted maker note tag (high bit set)
+            // These are already converted by the maker note parser
+            continue; // Skip - already processed
+        } else if *tag_id >= 0x534F && *tag_id < 0x5350 {
+            // Sony maker note tags (0x534F prefix)
+            let original_tag = tag_id - 0x534F;
+            let tag_name = format!("Sony0x{:04X}", original_tag);
+            let tag_key = format_tag_key(&tag_name, Some("Sony"), include_groups);
+            let print_conv_id = get_maker_note_printconv(original_tag, 0x534F);
+            (tag_key, Some("Sony".to_string()), print_conv_id)
+        } else if *tag_id >= 0x5045 && *tag_id < 0x5046 {
+            // Pentax maker note tags (0x5045 prefix)
+            let original_tag = tag_id - 0x5045;
+            let tag_name = format!("Pentax0x{:04X}", original_tag);
+            let tag_key = format_tag_key(&tag_name, Some("Pentax"), include_groups);
+            let print_conv_id = get_maker_note_printconv(original_tag, 0x5045);
+            (tag_key, Some("Pentax".to_string()), print_conv_id)
+        } else if *tag_id >= 0x4F4C && *tag_id < 0x4F4D {
+            // Olympus maker note tags (0x4F4C prefix)
+            let original_tag = tag_id - 0x4F4C;
+            let tag_name = format!("Olympus0x{:04X}", original_tag);
+            let tag_key = format_tag_key(&tag_name, Some("Olympus"), include_groups);
+            let print_conv_id = get_maker_note_printconv(original_tag, 0x4F4C);
+            (tag_key, Some("Olympus".to_string()), print_conv_id)
+        } else if *tag_id >= 0x4E00 && *tag_id < 0x4E01 {
+            // Nikon maker note tags (0x4E00 prefix)
+            let original_tag = tag_id - 0x4E00;
+            let tag_name = format!("Nikon0x{:04X}", original_tag);
+            let tag_key = format_tag_key(&tag_name, Some("Nikon"), include_groups);
+            let print_conv_id = get_maker_note_printconv(original_tag, 0x4E00);
+            (tag_key, Some("Nikon".to_string()), print_conv_id)
+        } else if *tag_id >= 0x4655 && *tag_id < 0x4656 {
+            // Fujifilm maker note tags (0x4655 prefix)
+            let original_tag = tag_id - 0x4655;
+            let tag_name = format!("Fujifilm0x{:04X}", original_tag);
+            let tag_key = format_tag_key(&tag_name, Some("Fujifilm"), include_groups);
+            let print_conv_id = get_maker_note_printconv(original_tag, 0x4655);
+            (tag_key, Some("Fujifilm".to_string()), print_conv_id)
         } else if *tag_id >= 0x1000 {
             // This is an IFD1 tag (prefixed with 0x1000)
             let original_tag = tag_id - 0x1000;
             if let Some(tag_info) = lookup_tag(original_tag) {
                 let tag_name = tag_info.name;
                 let tag_key = format_tag_key(tag_name, Some("IFD1"), include_groups);
-                (tag_key, Some("IFD1".to_string()))
+                let print_conv_id = get_standard_exif_printconv(original_tag);
+                (tag_key, Some("IFD1".to_string()), print_conv_id)
             } else {
                 let tag_name = format!("0x{:04X}", original_tag);
                 let tag_key = format_tag_key(&tag_name, Some("IFD1"), include_groups);
-                (tag_key, Some("IFD1".to_string()))
+                (tag_key, Some("IFD1".to_string()), PrintConvId::None)
             }
         } else {
             // Standard EXIF tag
             if let Some(tag_info) = lookup_tag(*tag_id) {
                 let group = tag_info.group.unwrap_or("ExifIFD");
                 let tag_key = format_tag_key(tag_info.name, Some(group), include_groups);
-                (tag_key, Some(group.to_string()))
+                let print_conv_id = get_standard_exif_printconv(*tag_id);
+                (tag_key, Some(group.to_string()), print_conv_id)
             } else {
                 let tag_name = format!("0x{:04X}", tag_id);
                 let tag_key = format_tag_key(&tag_name, Some("Unknown"), include_groups);
-                (tag_key, Some("Unknown".to_string()))
+                (tag_key, Some("Unknown".to_string()), PrintConvId::None)
             }
         };
 
@@ -400,6 +518,10 @@ fn build_tag_map(
             // Check if value should be replaced with binary length indicator
             let processed_value = if should_replace_with_length(value, &tag_key) {
                 convert_to_binary_length(value)
+            } else if show_converted_values && print_conv_id != PrintConvId::None {
+                // Apply PrintConv to get human-readable value
+                let converted_string = apply_print_conv(value, print_conv_id);
+                ExifValue::Ascii(converted_string)
             } else {
                 value.clone()
             };
@@ -429,9 +551,13 @@ fn process_image(
 
     // Process based on command type
     match command {
-        Command::ListAll { include_groups } => {
+        Command::ListAll {
+            include_groups,
+            show_converted_values,
+        } => {
             // Build complete tag map
-            let mut tags = build_tag_map(ifd.entries(), *include_groups, None);
+            let mut tags =
+                build_tag_map(ifd.entries(), *include_groups, None, *show_converted_values);
 
             // Add file metadata
             let file_name = std::path::Path::new(image_path)
@@ -477,9 +603,15 @@ fn process_image(
         Command::ListSpecific {
             tags: tag_filter,
             include_groups,
+            show_converted_values,
         } => {
             // Build filtered tag map
-            let mut tags = build_tag_map(ifd.entries(), *include_groups, Some(tag_filter));
+            let mut tags = build_tag_map(
+                ifd.entries(),
+                *include_groups,
+                Some(tag_filter),
+                *show_converted_values,
+            );
 
             // Check if file metadata was requested
             for filter in tag_filter {

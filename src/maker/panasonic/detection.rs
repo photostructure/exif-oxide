@@ -14,12 +14,16 @@ pub struct PANASONICDetectionResult {
 }
 
 /// Detect panasonic maker note format and extract version information
-/// 
+///
 /// Returns Some(DetectionResult) if this appears to be a panasonic maker note,
 /// None otherwise.
 pub fn detect_panasonic_maker_note(data: &[u8]) -> Option<PANASONICDetectionResult> {
     // Pattern from source line 0: Panasonic maker note
-    if data.len() >= 12 && data.starts_with(&[0x50, 0x61, 0x6e, 0x61, 0x73, 0x6f, 0x6e, 0x69, 0x63, 0x00, 0x00, 0x00]) {
+    if data.len() >= 12
+        && data.starts_with(&[
+            0x50, 0x61, 0x6e, 0x61, 0x73, 0x6f, 0x6e, 0x69, 0x63, 0x00, 0x00, 0x00,
+        ])
+    {
         return Some(PANASONICDetectionResult {
             version: None,
             ifd_offset: 12,
@@ -36,12 +40,13 @@ mod tests {
 
     #[test]
     fn test_panasonic_detection_pattern_0() {
-        let test_data = &[0x50, 0x61, 0x6e, 0x61, 0x73, 0x6f, 0x6e, 0x69, 0x63, 0x00, 0x00, 0x00];
+        let test_data = &[
+            0x50, 0x61, 0x6e, 0x61, 0x73, 0x6f, 0x6e, 0x69, 0x63, 0x00, 0x00, 0x00,
+        ];
         let result = detect_panasonic_maker_note(test_data);
         assert!(result.is_some());
         let detection = result.unwrap();
         assert_eq!(detection.version, None);
         assert_eq!(detection.ifd_offset, 12);
     }
-
 }

@@ -14,7 +14,7 @@ pub struct SONYDetectionResult {
 }
 
 /// Detect sony maker note format and extract version information
-/// 
+///
 /// Returns Some(DetectionResult) if this appears to be a sony maker note,
 /// None otherwise.
 pub fn detect_sony_maker_note(data: &[u8]) -> Option<SONYDetectionResult> {
@@ -81,5 +81,4 @@ mod tests {
         assert_eq!(detection.version, None);
         assert_eq!(detection.ifd_offset, 0);
     }
-
 }

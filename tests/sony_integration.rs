@@ -53,11 +53,14 @@ fn test_sony_maker_note_with_tags() {
     assert!(result.is_ok());
 
     let tags = result.unwrap();
-    // Sony tags are prefixed with 0x534F
-    let expected_tag_id = 0x534F + 0x0102;
+
+    // Sony uses standard tag IDs without prefixing (based on ExifTool Sony.pm)
+    // Tag 0x0102 is Quality in ExifTool's Sony::Main table
+    let quality_tag_id = 0x0102;
     assert!(
-        tags.contains_key(&expected_tag_id),
-        "Should contain prefixed Quality tag"
+        tags.contains_key(&quality_tag_id),
+        "Should contain Quality tag 0x0102, found keys: {:?}",
+        tags.keys().collect::<Vec<_>>()
     );
 }
 

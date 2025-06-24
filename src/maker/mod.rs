@@ -15,6 +15,7 @@ pub mod hasselblad;
 pub mod leica;
 pub mod nikon;
 pub mod olympus;
+pub mod panasonic;
 pub mod pentax;
 pub mod samsung;
 pub mod sigma;
@@ -96,6 +97,7 @@ impl Manufacturer {
             Manufacturer::Leica => Some(Box::new(leica::LeicaMakerNoteParser)),
             Manufacturer::Nikon => Some(Box::new(nikon::NikonMakerNoteParser)),
             Manufacturer::Olympus => Some(Box::new(olympus::OlympusMakerNoteParser)),
+            Manufacturer::Panasonic => Some(Box::new(panasonic::PanasonicMakerNoteParser)),
             Manufacturer::Pentax => Some(Box::new(pentax::PentaxMakerNoteParser)),
             Manufacturer::Samsung => Some(Box::new(samsung::SamsungMakerNoteParser)),
             Manufacturer::Sigma => Some(Box::new(sigma::SigmaMakerNoteParser)),
