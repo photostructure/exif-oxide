@@ -379,7 +379,11 @@ impl PrintConvTablesExtractor {
         }
 
         // Default to manufacturer-specific lookup
-        format!("PrintConvId::{}{}", manufacturer, sanitize_rust_identifier(tag_name))
+        format!(
+            "PrintConvId::{}{}",
+            manufacturer,
+            sanitize_rust_identifier(tag_name)
+        )
     }
 
     fn generate_real_code(&self, tags: &[TagEntry]) -> Result<String, String> {

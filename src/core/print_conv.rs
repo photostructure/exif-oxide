@@ -139,7 +139,7 @@ pub enum PrintConvId {
     /// Nikon-specific conversions
     NikonLensType,
     NikonFlashMode,
-    
+
     // Auto-generated Nikon PrintConvId variants (from extract printconv-tables Nikon.pm)
     NikonMakerNoteVersion,
     NikonISO,
@@ -168,7 +168,7 @@ pub enum PrintConvId {
     NikonVRInfo,
     NikonFaceDetect,
     #[allow(non_camel_case_types)]
-    NikonActiveD_Lighting,  // Using underscore instead of hyphen for valid Rust identifier
+    NikonActiveD_Lighting, // Using underscore instead of hyphen for valid Rust identifier
     NikonWorldTime,
     NikonISOInfo,
     NikonVignetteControl,
