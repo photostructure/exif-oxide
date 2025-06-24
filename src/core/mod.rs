@@ -8,6 +8,7 @@ pub mod ifd;
 pub mod jpeg;
 pub mod mpf;
 pub mod png;
+pub mod print_conv;
 pub mod tiff;
 pub mod types;
 
@@ -18,6 +19,7 @@ use std::io::{Read, Seek};
 use std::path::Path;
 
 pub use endian::Endian;
+pub use print_conv::{apply_print_conv, PrintConvId};
 pub use types::*;
 
 /// Type of metadata found in a segment
