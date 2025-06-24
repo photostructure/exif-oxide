@@ -61,6 +61,13 @@ fn main() {
             }
         }
         "extract-all" => cmd_extract_all(),
+        "add-manufacturer" => {
+            if args.len() < 3 {
+                Err("Usage: exiftool_sync add-manufacturer <ManufacturerName>".to_string())
+            } else {
+                cmd_add_manufacturer(&args[2])
+            }
+        }
         "help" | "--help" | "-h" => {
             print_help();
             Ok(())
@@ -977,6 +984,7 @@ fn print_help() {
     );
     println!("    generate printconv-functions <pm> Generate PrintConv functions for manufacturer");
     println!("    diff-printconv <from> <to> <pm>  Compare PrintConv changes between versions");
+    println!("    add-manufacturer <name>          Add complete manufacturer support with automated workflow");
     println!("    help                             Show this help message");
     println!();
     println!("EXTRACT COMPONENTS:");
@@ -1000,4 +1008,509 @@ fn print_help() {
     println!("    cargo run --bin exiftool_sync generate printconv-functions Canon.pm");
     println!("    cargo run --bin exiftool_sync extract printconv-tables Canon.pm");
     println!("    cargo run --bin exiftool_sync diff-printconv 12.65 12.66 Canon.pm");
+    println!("    cargo run --bin exiftool_sync add-manufacturer Sony");
+}
+
+/// Add complete manufacturer support with automated workflow
+/// This eliminates all the manual hassles by automating:
+/// - Detection pattern extraction
+/// - PrintConv table generation with enum updates
+/// - Module structure creation with conflict resolution
+/// - Parser template generation
+/// - Integration with existing systems
+/// - Basic test generation
+fn cmd_add_manufacturer(manufacturer_name: &str) -> Result<(), String> {
+    println!("🚀 Adding manufacturer support: {}", manufacturer_name);
+    println!("====================================");
+    println!();
+
+    let manufacturer_lower = manufacturer_name.to_lowercase();
+    let manufacturer_title = format!(
+        "{}{}",
+        &manufacturer_name[0..1].to_uppercase(),
+        &manufacturer_name[1..].to_lowercase()
+    );
+
+    // Get ExifTool source directory
+    let exiftool_path = Path::new("third-party/exiftool");
+    if !exiftool_path.exists() {
+        return Err("ExifTool source not found at third-party/exiftool".to_string());
+    }
+
+    // Find the manufacturer's .pm file
+    let pm_file = format!("{}.pm", manufacturer_title);
+    let manufacturer_pm_path = exiftool_path.join("lib/Image/ExifTool").join(&pm_file);
+
+    if !manufacturer_pm_path.exists() {
+        return Err(format!(
+            "Manufacturer file not found: {}\nAvailable files: {}",
+            manufacturer_pm_path.display(),
+            list_available_manufacturer_files(exiftool_path)?
+        ));
+    }
+
+    // Progress tracker
+    let mut step = 1;
+    let total_steps = 7;
+
+    println!("📋 Automated Implementation Plan:");
+    println!("1. Extract detection patterns from ExifTool");
+    println!("2. Generate tag tables with PrintConv mappings");
+    println!("3. Update PrintConv enum with new variants");
+    println!("4. Resolve module structure conflicts");
+    println!("5. Generate parser from template");
+    println!("6. Integrate with maker note system");
+    println!("7. Generate basic tests");
+    println!();
+
+    // Step 1: Extract detection patterns
+    println!(
+        "🔄 Step {}/{}: Extracting detection patterns...",
+        step, total_steps
+    );
+    step += 1;
+
+    let detection_extractor = extractors::MakerDetectionExtractor::new();
+    detection_extractor.extract(exiftool_path)?;
+    println!("   ✅ Detection patterns generated");
+
+    // Step 2: Generate PrintConv tables
+    println!(
+        "🔄 Step {}/{}: Generating PrintConv tables...",
+        step, total_steps
+    );
+    step += 1;
+
+    let printconv_extractor = extractors::PrintConvTablesExtractor::new(&pm_file);
+    printconv_extractor.extract(exiftool_path)?;
+    println!("   ✅ Tag tables with PrintConv mappings generated");
+
+    // Step 3: Update PrintConv enum (automatically handled by PrintConvTablesExtractor)
+    println!(
+        "🔄 Step {}/{}: PrintConv enum updated automatically",
+        step, total_steps
+    );
+    step += 1;
+    println!("   ✅ PrintConvId enum variants added");
+
+    // Step 4: Resolve module conflicts
+    println!(
+        "🔄 Step {}/{}: Resolving module structure conflicts...",
+        step, total_steps
+    );
+    step += 1;
+
+    resolve_module_conflicts(&manufacturer_lower)?;
+    println!("   ✅ Module conflicts resolved");
+
+    // Step 5: Generate parser from template
+    println!(
+        "🔄 Step {}/{}: Generating parser from template...",
+        step, total_steps
+    );
+    step += 1;
+
+    generate_parser_from_template(&manufacturer_lower, &manufacturer_title)?;
+    println!("   ✅ Parser implementation generated");
+
+    // Step 6: Integrate with maker note system
+    println!(
+        "🔄 Step {}/{}: Integrating with maker note system...",
+        step, total_steps
+    );
+    step += 1;
+
+    integrate_with_maker_system(&manufacturer_lower, &manufacturer_title)?;
+    println!("   ✅ Integration complete");
+
+    // Step 7: Generate basic tests and validation
+    println!(
+        "🔄 Step {}/{}: Generating tests and running validation...",
+        step, total_steps
+    );
+
+    generate_basic_tests(&manufacturer_lower, &manufacturer_title)?;
+
+    // Run validation pipeline
+    run_validation_pipeline(&manufacturer_lower, &manufacturer_title)?;
+    println!("   ✅ Basic tests generated and validation passed");
+
+    println!();
+    println!(
+        "🎉 {} manufacturer support successfully added!",
+        manufacturer_title
+    );
+    println!();
+    println!("📝 Next steps:");
+    println!("1. Implementation is ready - compilation and basic tests passed");
+    println!(
+        "2. Run 'cargo test {}' for comprehensive testing",
+        manufacturer_lower
+    );
+    println!(
+        "3. Test with actual {} files if available",
+        manufacturer_title
+    );
+    println!(
+        "4. Review generated parser in src/maker/{}.rs",
+        manufacturer_lower
+    );
+
+    Ok(())
+}
+
+/// List available manufacturer .pm files for helpful error messages
+fn list_available_manufacturer_files(exiftool_path: &Path) -> Result<String, String> {
+    let lib_path = exiftool_path.join("lib/Image/ExifTool");
+    let entries = fs::read_dir(&lib_path)
+        .map_err(|e| format!("Failed to read ExifTool library directory: {}", e))?;
+
+    let mut pm_files = Vec::new();
+    for entry in entries {
+        let entry = entry.map_err(|e| format!("Failed to read entry: {}", e))?;
+        let path = entry.path();
+
+        if let Some(file_name) = path.file_name() {
+            if let Some(file_str) = file_name.to_str() {
+                if file_str.ends_with(".pm")
+                    && !file_str.starts_with("ExifTool")
+                    && file_str.chars().next().unwrap().is_uppercase()
+                {
+                    pm_files.push(file_str.replace(".pm", ""));
+                }
+            }
+        }
+    }
+
+    pm_files.sort();
+    Ok(pm_files.join(", "))
+}
+
+/// Resolve module structure conflicts (both file and directory)
+fn resolve_module_conflicts(manufacturer_lower: &str) -> Result<(), String> {
+    let src_maker_path = Path::new("src/maker");
+    let manufacturer_file = src_maker_path.join(format!("{}.rs", manufacturer_lower));
+    let manufacturer_dir = src_maker_path.join(manufacturer_lower);
+
+    // Check for conflicts and resolve them
+    if manufacturer_file.exists() && manufacturer_dir.exists() {
+        println!(
+            "   ⚠️  Conflict detected: Both {}.rs and {}/ directory exist",
+            manufacturer_lower, manufacturer_lower
+        );
+
+        // Remove the directory structure in favor of single file approach
+        fs::remove_dir_all(&manufacturer_dir)
+            .map_err(|e| format!("Failed to remove conflicting directory: {}", e))?;
+
+        println!("   🔧 Resolved: Removed directory, keeping single file approach");
+    }
+
+    Ok(())
+}
+
+/// Generate parser implementation from proven template pattern
+fn generate_parser_from_template(
+    manufacturer_lower: &str,
+    manufacturer_title: &str,
+) -> Result<(), String> {
+    let parser_path = Path::new("src/maker").join(format!("{}.rs", manufacturer_lower));
+
+    // Read the Fujifilm parser as our proven template
+    let template_path = Path::new("src/maker/fujifilm.rs");
+    let template_content = fs::read_to_string(template_path)
+        .map_err(|e| format!("Failed to read template parser: {}", e))?;
+
+    // Generate parser content by replacing Fujifilm-specific parts
+    let parser_content = template_content
+        .replace("Fujifilm", manufacturer_title)
+        .replace("fujifilm", manufacturer_lower)
+        .replace("FUJIFILM", &manufacturer_title.to_uppercase())
+        .replace("FujiFilm.pm", &format!("{}.pm", manufacturer_title))
+        .replace(
+            "FUJIFILM_",
+            &format!("{}_", manufacturer_title.to_uppercase()),
+        )
+        .replace(
+            "b\"FUJIFILM\"",
+            &format!("b\"{}\"", manufacturer_title.to_uppercase()),
+        );
+
+    fs::write(&parser_path, parser_content)
+        .map_err(|e| format!("Failed to write parser file: {}", e))?;
+
+    Ok(())
+}
+
+/// Integrate new manufacturer with the maker note system
+fn integrate_with_maker_system(
+    manufacturer_lower: &str,
+    manufacturer_title: &str,
+) -> Result<(), String> {
+    // Update src/maker/mod.rs
+    let mod_file_path = Path::new("src/maker/mod.rs");
+    let mod_content = fs::read_to_string(mod_file_path)
+        .map_err(|e| format!("Failed to read maker mod.rs: {}", e))?;
+
+    // Add module declaration if not already present
+    let module_line = format!("pub mod {};", manufacturer_lower);
+    let use_line = format!(
+        "use {}::{}MakerNoteParser;",
+        manufacturer_lower, manufacturer_title
+    );
+
+    let mut new_content = mod_content;
+
+    // Add module declaration
+    if !new_content.contains(&module_line) {
+        let insertion_point = new_content.find("pub mod").unwrap_or(0);
+        new_content.insert_str(insertion_point, &format!("{}\n", module_line));
+    }
+
+    // Add use statement
+    if !new_content.contains(&use_line) {
+        let use_insertion_point = new_content
+            .rfind("use")
+            .map(|pos| {
+                new_content[pos..]
+                    .find('\n')
+                    .map(|end| pos + end + 1)
+                    .unwrap_or(new_content.len())
+            })
+            .unwrap_or(new_content.len());
+        new_content.insert_str(use_insertion_point, &format!("{}\n", use_line));
+    }
+
+    // Add to get_parser function
+    let parser_case = format!(
+        "        \"{}\" => Some(Box::new({}MakerNoteParser)),",
+        manufacturer_title, manufacturer_title
+    );
+
+    if !new_content.contains(&parser_case) {
+        let get_parser_fn = new_content
+            .find("pub fn get_parser(manufacturer: &str)")
+            .ok_or("get_parser function not found")?;
+        let match_start = new_content[get_parser_fn..]
+            .find("match manufacturer {")
+            .ok_or("match statement not found")?;
+        let first_case = new_content[get_parser_fn + match_start..]
+            .find("        \"")
+            .ok_or("first case not found")?;
+        let insertion_point = get_parser_fn + match_start + first_case;
+
+        new_content.insert_str(insertion_point, &format!("{}\n", parser_case));
+    }
+
+    fs::write(mod_file_path, new_content)
+        .map_err(|e| format!("Failed to update maker mod.rs: {}", e))?;
+
+    // Update src/tables/mod.rs
+    let tables_mod_path = Path::new("src/tables/mod.rs");
+    let tables_content = fs::read_to_string(tables_mod_path)
+        .map_err(|e| format!("Failed to read tables mod.rs: {}", e))?;
+
+    let table_module_line = format!("pub mod {}_tags;", manufacturer_lower);
+
+    if !tables_content.contains(&table_module_line) {
+        let mut new_tables_content = tables_content;
+        let insertion_point = new_tables_content.find("pub mod").unwrap_or(0);
+        new_tables_content.insert_str(insertion_point, &format!("{}\n", table_module_line));
+
+        fs::write(tables_mod_path, new_tables_content)
+            .map_err(|e| format!("Failed to update tables mod.rs: {}", e))?;
+    }
+
+    Ok(())
+}
+
+/// Generate basic tests for the new manufacturer
+fn generate_basic_tests(_manufacturer_lower: &str, manufacturer_title: &str) -> Result<(), String> {
+    // Tests are included in the generated parser file from the template
+    // The Fujifilm template already contains the necessary test structure
+    // No additional test generation needed since template includes comprehensive tests
+
+    println!(
+        "   📝 Tests included in generated parser ({}MakerNoteParser tests)",
+        manufacturer_title
+    );
+
+    Ok(())
+}
+
+/// Run validation pipeline to ensure implementation works correctly
+fn run_validation_pipeline(
+    manufacturer_lower: &str,
+    manufacturer_title: &str,
+) -> Result<(), String> {
+    use std::process::Command;
+
+    println!("   🔍 Running validation pipeline...");
+
+    // Step 1: Check compilation
+    println!("   📦 Testing compilation...");
+    let build_result = Command::new("cargo")
+        .args(["check", "--quiet"])
+        .output()
+        .map_err(|e| format!("Failed to run cargo check: {}", e))?;
+
+    if !build_result.status.success() {
+        let error_output = String::from_utf8_lossy(&build_result.stderr);
+        return Err(format!("Compilation failed:\n{}", error_output));
+    }
+    println!("   ✅ Compilation successful");
+
+    // Step 2: Test basic functionality
+    println!("   🧪 Testing basic functionality...");
+    let test_result = Command::new("cargo")
+        .args(["test", &format!("{}::tests", manufacturer_lower), "--quiet"])
+        .output()
+        .map_err(|e| format!("Failed to run basic tests: {}", e))?;
+
+    if !test_result.status.success() {
+        let error_output = String::from_utf8_lossy(&test_result.stderr);
+        return Err(format!("Basic tests failed:\n{}", error_output));
+    }
+    println!("   ✅ Basic tests passed");
+
+    // Step 3: Verify integration
+    println!("   🔗 Verifying integration...");
+    verify_integration(manufacturer_lower, manufacturer_title)?;
+    println!("   ✅ Integration verified");
+
+    // Step 4: Check generated files
+    println!("   📄 Validating generated files...");
+    validate_generated_files(manufacturer_lower, manufacturer_title)?;
+    println!("   ✅ Generated files validated");
+
+    Ok(())
+}
+
+/// Verify that the manufacturer is properly integrated into the system
+fn verify_integration(manufacturer_lower: &str, manufacturer_title: &str) -> Result<(), String> {
+    // Check that parser file exists and compiles
+    let parser_path = Path::new("src/maker").join(format!("{}.rs", manufacturer_lower));
+    if !parser_path.exists() {
+        return Err(format!("Parser file not found: {}", parser_path.display()));
+    }
+
+    // Check that tables file exists
+    let tables_path = Path::new("src/tables").join(format!("{}_tags.rs", manufacturer_lower));
+    if !tables_path.exists() {
+        return Err(format!("Tables file not found: {}", tables_path.display()));
+    }
+
+    // Check that detection file exists
+    let detection_path = Path::new("src/maker")
+        .join(manufacturer_lower)
+        .join("detection.rs");
+    if !detection_path.exists() {
+        return Err(format!(
+            "Detection file not found: {}",
+            detection_path.display()
+        ));
+    }
+
+    // Verify module integration
+    let maker_mod_path = Path::new("src/maker/mod.rs");
+    let maker_mod_content = fs::read_to_string(maker_mod_path)
+        .map_err(|e| format!("Failed to read maker mod.rs: {}", e))?;
+
+    if !maker_mod_content.contains(&format!("pub mod {};", manufacturer_lower)) {
+        return Err("Module not properly declared in maker/mod.rs".to_string());
+    }
+
+    if !maker_mod_content.contains(&format!("{}MakerNoteParser", manufacturer_title)) {
+        return Err("Parser not properly registered in get_parser function".to_string());
+    }
+
+    // Verify tables integration
+    let tables_mod_path = Path::new("src/tables/mod.rs");
+    let tables_mod_content = fs::read_to_string(tables_mod_path)
+        .map_err(|e| format!("Failed to read tables mod.rs: {}", e))?;
+
+    if !tables_mod_content.contains(&format!("pub mod {}_tags;", manufacturer_lower)) {
+        return Err("Tables module not properly declared in tables/mod.rs".to_string());
+    }
+
+    Ok(())
+}
+
+/// Validate that all generated files contain expected content
+fn validate_generated_files(
+    manufacturer_lower: &str,
+    manufacturer_title: &str,
+) -> Result<(), String> {
+    // Validate parser file structure
+    let parser_path = Path::new("src/maker").join(format!("{}.rs", manufacturer_lower));
+    let parser_content = fs::read_to_string(&parser_path)
+        .map_err(|e| format!("Failed to read parser file: {}", e))?;
+
+    // Check for essential components
+    let required_components = [
+        &format!("pub struct {}MakerNoteParser", manufacturer_title),
+        "impl MakerNoteParser for",
+        "fn parse(",
+        "fn manufacturer(",
+        "#[cfg(test)]",
+        "mod tests",
+    ];
+
+    for component in &required_components {
+        if !parser_content.contains(component) {
+            return Err(format!(
+                "Parser file missing required component: {}",
+                component
+            ));
+        }
+    }
+
+    // Validate tables file structure
+    let tables_path = Path::new("src/tables").join(format!("{}_tags.rs", manufacturer_lower));
+    let tables_content = fs::read_to_string(&tables_path)
+        .map_err(|e| format!("Failed to read tables file: {}", e))?;
+
+    let required_table_components = [
+        &format!("pub struct {}Tag", manufacturer_title.to_uppercase()),
+        &format!("pub const {}_TAGS", manufacturer_title.to_uppercase()),
+        &format!("pub fn get_{}_tag", manufacturer_lower),
+        "use crate::core::print_conv::PrintConvId",
+    ];
+
+    for component in &required_table_components {
+        if !tables_content.contains(component) {
+            return Err(format!(
+                "Tables file missing required component: {}",
+                component
+            ));
+        }
+    }
+
+    // Validate detection file structure
+    let detection_path = Path::new("src/maker")
+        .join(manufacturer_lower)
+        .join("detection.rs");
+    let detection_content = fs::read_to_string(&detection_path)
+        .map_err(|e| format!("Failed to read detection file: {}", e))?;
+
+    let required_detection_components = [
+        "AUTO-GENERATED by exiftool_sync extract maker-detection",
+        &format!(
+            "pub struct {}DetectionResult",
+            manufacturer_title.to_uppercase()
+        ),
+        &format!("pub fn detect_{}_maker_note", manufacturer_lower),
+        "#[cfg(test)]",
+    ];
+
+    for component in &required_detection_components {
+        if !detection_content.contains(component) {
+            return Err(format!(
+                "Detection file missing required component: {}",
+                component
+            ));
+        }
+    }
+
+    Ok(())
 }
