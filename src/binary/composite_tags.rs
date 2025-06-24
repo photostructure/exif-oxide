@@ -35,13 +35,13 @@ pub static BINARY_COMPOSITE_TAGS: &[CompositeTagDefinition] = &[
             (0x0000, "PreviewImageStart (1)"),
             (0x0000, "PreviewImageLength (1)"),
         ],
-        groups: &[(0, "EXIF"), (1, "SubIFD"), (2, "Preview")],
+        groups: &[(1, "SubIFD"), (2, "Preview"), (0, "EXIF")],
     },
     CompositeTagDefinition {
         name: "JpgFromRaw",
         requires: &[(0x0111, "JpgFromRawStart"), (0x0117, "JpgFromRawLength")],
         desires: &[],
-        groups: &[(1, "SubIFD"), (0, "EXIF"), (2, "Preview")],
+        groups: &[(0, "EXIF"), (2, "Preview"), (1, "SubIFD")],
     },
 ];
 

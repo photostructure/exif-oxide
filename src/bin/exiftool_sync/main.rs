@@ -1252,54 +1252,71 @@ fn integrate_with_maker_system(
     let mod_content = fs::read_to_string(mod_file_path)
         .map_err(|e| format!("Failed to read maker mod.rs: {}", e))?;
 
-    // Add module declaration if not already present
-    let module_line = format!("pub mod {};", manufacturer_lower);
-    let use_line = format!(
-        "use {}::{}MakerNoteParser;",
-        manufacturer_lower, manufacturer_title
-    );
-
     let mut new_content = mod_content;
 
-    // Add module declaration
+    // Add module declaration if not already present
+    let module_line = format!("pub mod {};", manufacturer_lower);
     if !new_content.contains(&module_line) {
-        let insertion_point = new_content.find("pub mod").unwrap_or(0);
+        // Find a good insertion point after existing module declarations
+        let last_mod = new_content.rfind("pub mod").unwrap_or(0);
+        let insertion_point = new_content[last_mod..]
+            .find('\n')
+            .map(|pos| last_mod + pos + 1)
+            .unwrap_or(new_content.len());
         new_content.insert_str(insertion_point, &format!("{}\n", module_line));
     }
 
-    // Add use statement
-    if !new_content.contains(&use_line) {
-        let use_insertion_point = new_content
-            .rfind("use")
-            .map(|pos| {
-                new_content[pos..]
-                    .find('\n')
-                    .map(|end| pos + end + 1)
-                    .unwrap_or(new_content.len())
-            })
-            .unwrap_or(new_content.len());
-        new_content.insert_str(use_insertion_point, &format!("{}\n", use_line));
+    // Add to Manufacturer enum if not already present
+    let enum_variant = format!("    {},", manufacturer_title);
+    if !new_content.contains(&enum_variant) {
+        // Find the Manufacturer enum and add the variant
+        if let Some(enum_start) = new_content.find("pub enum Manufacturer {") {
+            let enum_body_start = new_content[enum_start..].find('{').unwrap() + enum_start + 1;
+            // Find a good spot to insert (before Unknown variant)
+            if let Some(unknown_pos) = new_content[enum_body_start..].find("    Unknown,") {
+                let insertion_point = enum_body_start + unknown_pos;
+                new_content.insert_str(insertion_point, &format!("{}\n", enum_variant));
+            }
+        }
     }
 
-    // Add to get_parser function
+    // Add to from_make method if not already present
+    let make_check = format!("make_lower.contains(\"{}\") {{", manufacturer_lower);
+    if !new_content.contains(&make_check) {
+        // Find the from_make method and add the manufacturer detection
+        if let Some(from_make_start) = new_content.find("pub fn from_make(make: &str) -> Self {") {
+            // Find before the "Unknown" case
+            if let Some(unknown_case) =
+                new_content[from_make_start..].find("} else {\n            Manufacturer::Unknown")
+            {
+                let insertion_point = from_make_start + unknown_case;
+                let detection_case = format!(
+                    " else if {} \n            Manufacturer::{}\n        }}",
+                    make_check, manufacturer_title
+                );
+                new_content.insert_str(insertion_point, &detection_case);
+            }
+        }
+    }
+
+    // Add to parser method if not already present
     let parser_case = format!(
-        "        \"{}\" => Some(Box::new({}MakerNoteParser)),",
-        manufacturer_title, manufacturer_title
+        "Manufacturer::{} => Some(Box::new({}::{}MakerNoteParser)),",
+        manufacturer_title, manufacturer_lower, manufacturer_title
     );
-
     if !new_content.contains(&parser_case) {
-        let get_parser_fn = new_content
-            .find("pub fn get_parser(manufacturer: &str)")
-            .ok_or("get_parser function not found")?;
-        let match_start = new_content[get_parser_fn..]
-            .find("match manufacturer {")
-            .ok_or("match statement not found")?;
-        let first_case = new_content[get_parser_fn + match_start..]
-            .find("        \"")
-            .ok_or("first case not found")?;
-        let insertion_point = get_parser_fn + match_start + first_case;
-
-        new_content.insert_str(insertion_point, &format!("{}\n", parser_case));
+        // Find the parser method and add the case
+        if let Some(parser_start) =
+            new_content.find("pub fn parser(&self) -> Option<Box<dyn MakerNoteParser>> {")
+        {
+            // Find before the "_ => None," case
+            if let Some(default_case) = new_content[parser_start..].find(
+                "            // Other manufacturers not implemented yet\n            _ => None,",
+            ) {
+                let insertion_point = parser_start + default_case;
+                new_content.insert_str(insertion_point, &format!("            {} \n", parser_case));
+            }
+        }
     }
 
     fs::write(mod_file_path, new_content)
@@ -1420,8 +1437,9 @@ fn verify_integration(manufacturer_lower: &str, manufacturer_title: &str) -> Res
         return Err("Module not properly declared in maker/mod.rs".to_string());
     }
 
-    if !maker_mod_content.contains(&format!("{}MakerNoteParser", manufacturer_title)) {
-        return Err("Parser not properly registered in get_parser function".to_string());
+    // Check for enum-based integration (current system)
+    if !maker_mod_content.contains(&format!("Manufacturer::{}", manufacturer_title)) {
+        return Err("Parser not properly registered in Manufacturer enum".to_string());
     }
 
     // Verify tables integration
