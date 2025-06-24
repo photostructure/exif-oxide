@@ -1,14 +1,13 @@
 //! Command-line tool for extracting EXIF data
 
+use exif_oxide::binary::{extract_binary_tag, extract_mpf_preview};
 use exif_oxide::core::ifd::IfdParser;
-use exif_oxide::core::jpeg;
+use exif_oxide::core::mpf::ParsedMpf;
 use exif_oxide::core::ExifValue;
-use exif_oxide::extract::thumbnail::extract_thumbnail;
 use exif_oxide::tables::{lookup_canon_tag, lookup_tag};
 use serde::Serialize;
 use std::collections::HashMap;
 use std::env;
-use std::fs::File;
 use std::io::{self, Write};
 use std::process;
 
@@ -143,11 +142,14 @@ fn resolve_tag_name(tag_name: &str) -> Option<(u16, Option<&'static str>)> {
         (None, tag_name)
     };
 
-    // Special handling for common thumbnail tags
+    // Special handling for common image tags
     match name.to_lowercase().as_str() {
         "thumbnailimage" => return Some((0x1201, Some("IFD1"))), // IFD1 tag with prefix
         "thumbnailoffset" => return Some((0x1201, Some("IFD1"))),
         "thumbnaillength" => return Some((0x1202, Some("IFD1"))),
+        "previewimage" => return Some((0xFFFF, Some("MPF"))), // Special marker for MPF preview
+        "previewimagestart" => return Some((0x111, Some("IFD0"))),
+        "previewimagelength" => return Some((0x117, Some("IFD0"))),
         _ => {}
     }
 
@@ -183,37 +185,64 @@ fn resolve_tag_name(tag_name: &str) -> Option<(u16, Option<&'static str>)> {
 }
 
 /// Extract binary data for a specific tag
-fn extract_binary(
-    ifd: &exif_oxide::core::ifd::ParsedIfd,
-    tag_name: &str,
-    exif_data: &[u8],
-) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+fn extract_binary(tag_name: &str, image_path: &str) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     // Resolve tag name to ID
-    let (tag_id, _group) =
+    let (tag_id, group) =
         resolve_tag_name(tag_name).ok_or_else(|| format!("Unknown tag: {}", tag_name))?;
 
-    // Special handling for ThumbnailImage
-    if tag_id == 0x1201 {
-        // Use the thumbnail extraction function
-        if let Some(thumbnail) = extract_thumbnail(ifd, exif_data)? {
-            return Ok(thumbnail);
-        } else {
-            return Err("No thumbnail found in image".into());
+    // Check if this is a special MPF preview request
+    if tag_id == 0xFFFF && group == Some("MPF") {
+        // This is a PreviewImage request - try MPF first
+        return extract_mpf_preview_from_file(image_path);
+    }
+
+    // Standard EXIF binary extraction
+    let metadata_segment = exif_oxide::core::find_metadata_segment(image_path)?
+        .ok_or_else(|| format!("No EXIF data found in '{}'", image_path))?;
+    let ifd = IfdParser::parse(metadata_segment.data)?;
+    let original_data = std::fs::read(image_path)?;
+
+    // Use the standard binary extraction function
+    if let Some(data) = extract_binary_tag(&ifd, tag_id, &original_data)? {
+        Ok(data)
+    } else {
+        Err(format!("Tag not found or contains no data: {}", tag_name).into())
+    }
+}
+
+/// Extract MPF preview from a file
+fn extract_mpf_preview_from_file(image_path: &str) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+    // Get all metadata segments
+    let metadata = exif_oxide::core::find_all_metadata_segments(image_path)?;
+
+    // Check if MPF segment exists
+    if let Some(mpf_segment) = metadata.mpf {
+        // Parse MPF data
+        let mpf = ParsedMpf::parse(mpf_segment.data)?;
+
+        // Read original file data
+        let original_data = std::fs::read(image_path)?;
+
+        // Extract MPF preview
+        if let Some(preview_data) =
+            extract_mpf_preview(&mpf, &original_data, mpf_segment.offset as usize)?
+        {
+            return Ok(preview_data);
         }
     }
 
-    // Get the tag value
-    let value = ifd
-        .entries()
-        .get(&tag_id)
-        .ok_or_else(|| format!("Tag not found: {}", tag_name))?;
+    // Fallback to standard EXIF preview extraction
+    let metadata_segment = exif_oxide::core::find_metadata_segment(image_path)?
+        .ok_or_else(|| format!("No EXIF data found in '{}'", image_path))?;
+    let ifd = IfdParser::parse(metadata_segment.data)?;
+    let original_data = std::fs::read(image_path)?;
 
-    // Extract binary data based on value type
-    match value {
-        ExifValue::Undefined(data) => Ok(data.clone()),
-        ExifValue::U8Array(data) => Ok(data.clone()),
-        _ => Err(format!("Tag {} does not contain binary data", tag_name).into()),
+    // Try IFD0 PreviewImage (StripOffsets)
+    if let Some(data) = extract_binary_tag(&ifd, 0x111, &original_data)? {
+        return Ok(data);
     }
+
+    Err("No preview image found in EXIF or MPF data".into())
 }
 
 /// Check if a value should be replaced with a binary length indicator
@@ -391,16 +420,12 @@ fn process_image(
     image_path: &str,
     command: &Command,
 ) -> Result<FileOutput, Box<dyn std::error::Error>> {
-    // Open the image file
-    let mut file =
-        File::open(image_path).map_err(|e| format!("Failed to open '{}': {}", image_path, e))?;
-
-    // Extract EXIF segment
-    let exif_segment = jpeg::find_exif_segment(&mut file)?
+    // Extract metadata segment using format dispatch
+    let metadata_segment = exif_oxide::core::find_metadata_segment(image_path)?
         .ok_or_else(|| format!("No EXIF data found in '{}'", image_path))?;
 
     // Parse IFD to get all EXIF data
-    let ifd = IfdParser::parse(exif_segment.data.clone())?;
+    let ifd = IfdParser::parse(metadata_segment.data.clone())?;
 
     // Process based on command type
     match command {
@@ -533,19 +558,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             let image_path = &image_paths[0];
 
-            // Open the image file
-            let mut file = File::open(image_path)
-                .map_err(|e| format!("Failed to open '{}': {}", image_path, e))?;
-
-            // Extract EXIF segment
-            let exif_segment = jpeg::find_exif_segment(&mut file)?
-                .ok_or_else(|| format!("No EXIF data found in '{}'", image_path))?;
-
-            // Parse IFD to get all EXIF data
-            let ifd = IfdParser::parse(exif_segment.data.clone())?;
-
             // Extract and output binary data
-            let binary_data = extract_binary(&ifd, &tag, &exif_segment.data)?;
+            let binary_data = extract_binary(&tag, image_path)?;
             io::stdout().write_all(&binary_data)?;
             io::stdout().flush()?;
         }

@@ -37,6 +37,6 @@ fn test_no_exif() {
 
     let result = read_basic_exif("exiftool/t/images/PNG.png");
 
-    // Should fail because PNG is not a JPEG
-    assert!(matches!(result, Err(Error::InvalidJpeg(_))));
+    // Should fail because this PNG has no EXIF data
+    assert!(matches!(result, Err(Error::NoExif)));
 }

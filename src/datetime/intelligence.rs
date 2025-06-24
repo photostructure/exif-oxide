@@ -330,23 +330,21 @@ mod tests {
 
     #[test]
     fn test_explicit_timezone_priority() {
-        let mut collection = DateTimeCollection::default();
-
-        // Add datetime with explicit timezone offset
-        collection.offset_time_original = Some("+05:00".to_string());
-        collection.datetime_original = Some(ExifDateTime::new(
-            chrono::Utc
-                .with_ymd_and_hms(2024, 3, 15, 14, 30, 0)
-                .unwrap(),
-            None,
-            "2024:03:15 14:30:00".to_string(),
-            InferenceSource::None,
-            0.8,
-        ));
-
-        // Also add GPS coordinates (lower priority)
-        collection.gps_latitude = Some(40.7128);
-        collection.gps_longitude = Some(-74.0060);
+        let collection = DateTimeCollection {
+            offset_time_original: Some("+05:00".to_string()),
+            datetime_original: Some(ExifDateTime::new(
+                chrono::Utc
+                    .with_ymd_and_hms(2024, 3, 15, 14, 30, 0)
+                    .unwrap(),
+                None,
+                "2024:03:15 14:30:00".to_string(),
+                InferenceSource::None,
+                0.8,
+            )),
+            gps_latitude: Some(40.7128),
+            gps_longitude: Some(-74.0060),
+            ..Default::default()
+        };
 
         let camera_info = CameraInfo::default();
         let intelligence = DateTimeIntelligence::new();
@@ -366,21 +364,20 @@ mod tests {
 
     #[test]
     fn test_gps_timezone_inference() {
-        let mut collection = DateTimeCollection::default();
-
-        collection.datetime_original = Some(ExifDateTime::new(
-            chrono::Utc
-                .with_ymd_and_hms(2024, 3, 15, 14, 30, 0)
-                .unwrap(),
-            None,
-            "2024:03:15 14:30:00".to_string(),
-            InferenceSource::None,
-            0.8,
-        ));
-
-        // Add valid GPS coordinates (New York)
-        collection.gps_latitude = Some(40.7128);
-        collection.gps_longitude = Some(-74.0060);
+        let collection = DateTimeCollection {
+            datetime_original: Some(ExifDateTime::new(
+                chrono::Utc
+                    .with_ymd_and_hms(2024, 3, 15, 14, 30, 0)
+                    .unwrap(),
+                None,
+                "2024:03:15 14:30:00".to_string(),
+                InferenceSource::None,
+                0.8,
+            )),
+            gps_latitude: Some(40.7128),
+            gps_longitude: Some(-74.0060),
+            ..Default::default()
+        };
 
         let camera_info = CameraInfo::default();
         let intelligence = DateTimeIntelligence::new();
@@ -401,29 +398,27 @@ mod tests {
 
     #[test]
     fn test_utc_delta_calculation() {
-        let mut collection = DateTimeCollection::default();
-
-        // Local datetime (DateTimeOriginal)
-        collection.datetime_original = Some(ExifDateTime::new(
-            chrono::Utc
-                .with_ymd_and_hms(2024, 3, 15, 14, 30, 0)
-                .unwrap(),
-            None,
-            "2024:03:15 14:30:00".to_string(),
-            InferenceSource::None,
-            0.8,
-        ));
-
-        // GPS datetime (UTC) - 8 hours ahead of local time
-        collection.gps_datetime = Some(ExifDateTime::new(
-            chrono::Utc
-                .with_ymd_and_hms(2024, 3, 15, 22, 30, 0)
-                .unwrap(),
-            None,
-            "2024:03:15 22:30:00".to_string(),
-            InferenceSource::None,
-            0.95,
-        ));
+        let collection = DateTimeCollection {
+            datetime_original: Some(ExifDateTime::new(
+                chrono::Utc
+                    .with_ymd_and_hms(2024, 3, 15, 14, 30, 0)
+                    .unwrap(),
+                None,
+                "2024:03:15 14:30:00".to_string(),
+                InferenceSource::None,
+                0.8,
+            )),
+            gps_datetime: Some(ExifDateTime::new(
+                chrono::Utc
+                    .with_ymd_and_hms(2024, 3, 15, 22, 30, 0)
+                    .unwrap(),
+                None,
+                "2024:03:15 22:30:00".to_string(),
+                InferenceSource::None,
+                0.95,
+            )),
+            ..Default::default()
+        };
 
         let camera_info = CameraInfo::default();
         let intelligence = DateTimeIntelligence::new();
@@ -442,19 +437,19 @@ mod tests {
 
     #[test]
     fn test_no_timezone_inference() {
-        let mut collection = DateTimeCollection::default();
-
-        collection.datetime_original = Some(ExifDateTime::new(
-            chrono::Utc
-                .with_ymd_and_hms(2024, 3, 15, 14, 30, 0)
-                .unwrap(),
-            None,
-            "2024:03:15 14:30:00".to_string(),
-            InferenceSource::None,
-            0.8,
-        ));
-
-        // No timezone information available
+        let collection = DateTimeCollection {
+            datetime_original: Some(ExifDateTime::new(
+                chrono::Utc
+                    .with_ymd_and_hms(2024, 3, 15, 14, 30, 0)
+                    .unwrap(),
+                None,
+                "2024:03:15 14:30:00".to_string(),
+                InferenceSource::None,
+                0.8,
+            )),
+            // No timezone information available
+            ..Default::default()
+        };
 
         let camera_info = CameraInfo::default();
         let intelligence = DateTimeIntelligence::new();
@@ -468,27 +463,25 @@ mod tests {
 
     #[test]
     fn test_cross_validation_warnings() {
-        let mut collection = DateTimeCollection::default();
-
-        // Primary datetime
-        collection.datetime_original = Some(ExifDateTime::new(
-            chrono::Utc
-                .with_ymd_and_hms(2024, 3, 15, 14, 30, 0)
-                .unwrap(),
-            None,
-            "2024:03:15 14:30:00".to_string(),
-            InferenceSource::None,
-            0.8,
-        ));
-
-        // Modify date that's very different (should generate warning)
-        collection.modify_date = Some(ExifDateTime::new(
-            chrono::Utc.with_ymd_and_hms(2024, 3, 17, 10, 0, 0).unwrap(),
-            None,
-            "2024:03:17 10:00:00".to_string(),
-            InferenceSource::None,
-            0.3,
-        ));
+        let collection = DateTimeCollection {
+            datetime_original: Some(ExifDateTime::new(
+                chrono::Utc
+                    .with_ymd_and_hms(2024, 3, 15, 14, 30, 0)
+                    .unwrap(),
+                None,
+                "2024:03:15 14:30:00".to_string(),
+                InferenceSource::None,
+                0.8,
+            )),
+            modify_date: Some(ExifDateTime::new(
+                chrono::Utc.with_ymd_and_hms(2024, 3, 17, 10, 0, 0).unwrap(),
+                None,
+                "2024:03:17 10:00:00".to_string(),
+                InferenceSource::None,
+                0.3,
+            )),
+            ..Default::default()
+        };
 
         let camera_info = CameraInfo::default();
         let intelligence = DateTimeIntelligence::new();

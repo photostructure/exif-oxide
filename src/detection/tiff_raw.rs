@@ -16,17 +16,42 @@ pub fn detect_raw_by_make(data: &[u8], tiff_header_offset: usize) -> Option<File
     if let Ok(make) = extract_make_field(data, tiff_header_offset) {
         match make.as_str() {
             // EXIFTOOL-QUIRK: Canon detection
+            // EXIFTOOL-PATTERN: From ExifTool.pm lines 8529-8544
+            // CR2 detection requires:
+            // 1. TIFF identifier 0x2a AND offset >= 16
+            // 2. "CR\x02\0" signature at offset 8 from TIFF header
             s if s.starts_with("Canon") => {
-                // Additional check for CR2 vs CRW via file structure
-                // CR2 has "CR" at offset 8 from TIFF header
-                if data.len() >= tiff_header_offset + 10 {
-                    let cr_marker = &data[tiff_header_offset + 8..tiff_header_offset + 10];
-                    if cr_marker == b"CR" {
-                        return Some(FileType::CR2);
+                // Check CR2 signature following ExifTool's exact logic
+                if data.len() >= tiff_header_offset + 12 {
+                    // ExifTool checks offset >= 16 for CR2 (from TIFF header field at offset 4)
+                    let offset_bytes = &data[tiff_header_offset + 4..tiff_header_offset + 8];
+                    let endian = Endian::from_tiff_header(&data[tiff_header_offset..])
+                        .unwrap_or(Endian::Little);
+                    let offset = match endian {
+                        Endian::Little => u32::from_le_bytes([
+                            offset_bytes[0],
+                            offset_bytes[1],
+                            offset_bytes[2],
+                            offset_bytes[3],
+                        ]),
+                        Endian::Big => u32::from_be_bytes([
+                            offset_bytes[0],
+                            offset_bytes[1],
+                            offset_bytes[2],
+                            offset_bytes[3],
+                        ]),
+                    };
+
+                    if offset >= 16 {
+                        // Check for CR2 signature "CR\x02\0" at offset 8
+                        let cr_sig = &data[tiff_header_offset + 8..tiff_header_offset + 12];
+                        if cr_sig.starts_with(b"CR\x02\0") {
+                            return Some(FileType::CR2);
+                        }
                     }
                 }
-                // Default to CR2 for Canon TIFF-based files
-                Some(FileType::CR2)
+                // ExifTool returns TIFF for Canon files without CR2 signature
+                None
             }
 
             // EXIFTOOL-QUIRK: Nikon detection

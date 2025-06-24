@@ -142,25 +142,23 @@ mod tests {
 
     #[test]
     fn test_prioritize_datetime_sources() {
-        let mut collection = DateTimeCollection::default();
-
-        // Add ModifyDate (lower priority)
-        collection.modify_date = Some(ExifDateTime::new(
-            chrono::Utc::now(),
-            None,
-            "2024:03:16 10:00:00".to_string(),
-            InferenceSource::None,
-            0.3,
-        ));
-
-        // Add DateTimeOriginal (higher priority)
-        collection.datetime_original = Some(ExifDateTime::new(
-            chrono::Utc::now(),
-            None,
-            "2024:03:15 14:30:00".to_string(),
-            InferenceSource::None,
-            0.8,
-        ));
+        let collection = DateTimeCollection {
+            modify_date: Some(ExifDateTime::new(
+                chrono::Utc::now(),
+                None,
+                "2024:03:16 10:00:00".to_string(),
+                InferenceSource::None,
+                0.3,
+            )),
+            datetime_original: Some(ExifDateTime::new(
+                chrono::Utc::now(),
+                None,
+                "2024:03:15 14:30:00".to_string(),
+                InferenceSource::None,
+                0.8,
+            )),
+            ..Default::default()
+        };
 
         let prioritized = DateTimeExtractor::prioritize_datetime_sources(&collection);
 

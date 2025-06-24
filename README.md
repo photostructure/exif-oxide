@@ -1,11 +1,12 @@
 # exif-oxide
 
-A high-performance Rust implementation of portions of ExifTool, providing fast metadata extraction and manipulation for images and media files.
+A high-performance Rust implementation of portions of ExifTool, providing fast metadata extraction from 26+ image and media file formats.
 
 ## Goals
 
 - **Performance**: 10-20x faster than Perl ExifTool for common operations
-- **Compatibility**: Maintain ExifTool tag naming and structure
+- **Multi-Format**: Support for JPEG, RAW (CR2, NEF, ARW, DNG), PNG, HEIF, WebP, MP4, and more
+- **Compatibility**: Maintain ExifTool tag naming and structure  
 - **Safety**: Memory-safe handling of untrusted files
 - **Features**: Embedded image extraction, datetime intelligence, XMP support
 
@@ -22,12 +23,20 @@ While ExifTool is the gold standard for metadata extraction, its Perl implementa
 
 See [DESIGN.md](DESIGN.md) for architectural details and [ALTERNATIVES.md](ALTERNATIVES.md) for why we chose this approach.
 
+## Supported Formats
+
+**Image Formats**: JPEG, TIFF, PNG, HEIF/HEIC, WebP  
+**RAW Formats**: CR2, NEF, ARW, DNG, PEF, ORF, RAF, RW2, SRW, 3FR, IIQ, MEF, MOS, MRW, CRW, SR2, NRW  
+**Video Formats**: MP4, M4V, MOV, 3GP, 3G2, AVI
+
+Total: 26 formats with metadata extraction support
+
 ## Quick Start
 
 ### Library Usage
 
 ```rust
-use exif_oxide::{read_basic_exif, extract_thumbnail, extract_xmp_properties};
+use exif_oxide::{read_basic_exif, extract_xmp_properties};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Extract basic EXIF metadata
@@ -40,18 +49,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     if let Some(orientation) = exif.orientation {
         println!("Orientation: {}", orientation);
-    }
-    
-    // Extract embedded thumbnail
-    if let Some(thumbnail) = extract_thumbnail("photo.jpg")? {
-        std::fs::write("thumbnail.jpg", thumbnail)?;
-        println!("Thumbnail extracted!");
-    }
-    
-    // Extract largest preview image (Canon preview or EXIF thumbnail)
-    if let Some(preview) = exif_oxide::extract_largest_preview("photo.jpg")? {
-        std::fs::write("preview.jpg", preview)?;
-        println!("Preview extracted!");
     }
     
     // Read XMP metadata (hierarchical properties)
@@ -70,14 +67,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 # Build the project
 cargo build --release
 
-# Extract basic EXIF data
+# Extract all EXIF data as JSON
 cargo run --bin exif-oxide -- photo.jpg
 
-# Example output:
-# EXIF Data for: photo.jpg
-#   Make: Canon
-#   Model: Canon EOS DIGITAL REBEL
-#   Orientation: 1 (Normal)
+# Extract specific tags
+cargo run --bin exif-oxide -- -Make -Model photo.jpg
+
+# Extract binary data (e.g., thumbnail)
+cargo run --bin exif-oxide -- -b -ThumbnailImage photo.jpg > thumb.jpg
+
+# Extract with group names
+cargo run --bin exif-oxide -- -G photo.jpg
 ```
 
 ### Testing
@@ -99,12 +99,17 @@ cargo run --example debug_xmp_extraction test-images/canon/Canon_T3i.JPG
 
 ## Development
 
-Core functionality complete! See [SPIKES.md](doc/SPIKES.md) for completed development phases.
+### Phase 1 Complete! ✅
 
-Future enhancements:
+Multi-format support is now implemented. See:
+- [PHASE1-COMPLETE.md](doc/PHASE1-COMPLETE.md) for Phase 1 summary
+- [SPIKES.md](doc/SPIKES.md) for all completed development phases
+
+### Next Steps (Phase 2-4):
 - Additional manufacturer maker notes (Nikon, Sony, Fujifilm)
-- XMP writing capabilities
-- RAW format support (CR2, NEF, ARW, DNG)
+- Metadata writing capabilities with safety guarantees
+- Performance optimizations (SIMD, parallel processing)
+- Async API and plugin system
 - Advanced datetime heuristics
 
 ## License

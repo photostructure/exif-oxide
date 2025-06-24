@@ -1,11 +1,15 @@
-.PHONY: check fmt lint test clippy doc build clean
+.PHONY: check fmt lint test clippy doc build clean fix bench
 
-# Run all checks before committing
-check: fmt lint test
+# Run all checks without modifying (for CI)
+check: fmt-check lint test
+
+# Check formatting without modifying
+fmt-check:
+	cargo fmt --all -- --check
 
 # Format code
 fmt:
-	cargo fmt --all -- --check
+	cargo fmt --all
 
 # Run clippy (Rust linter)
 lint:
@@ -15,13 +19,10 @@ lint:
 test:
 	cargo test --all
 
-# Fix formatting
-fix-fmt:
+# Fix formatting and auto-fixable clippy issues
+fix:
 	cargo fmt --all
-
-# Fix linting issues where possible
-fix-lint:
-	cargo clippy --all-targets --all-features --fix
+	cargo clippy --all-targets --all-features --fix --allow-dirty --allow-staged
 
 # Build in release mode
 build:
@@ -35,15 +36,20 @@ doc:
 clean:
 	cargo clean
 
+# Run benchmarks
+bench:
+	cargo bench
+
 # Help
 help:
 	@echo "Available targets:"
-	@echo "  check     - Run fmt, lint, and test (pre-commit checks)"
-	@echo "  fmt       - Check code formatting"
+	@echo "  check     - Run all checks without modifying (for CI)"
+	@echo "  fmt       - Format code"
+	@echo "  fmt-check - Check formatting without modifying"
 	@echo "  lint      - Run clippy linter"
 	@echo "  test      - Run tests"
-	@echo "  fix-fmt   - Fix code formatting"
-	@echo "  fix-lint  - Fix linting issues"
+	@echo "  fix       - Fix formatting and auto-fixable clippy issues"
 	@echo "  build     - Build in release mode"
 	@echo "  doc       - Generate and open documentation"
 	@echo "  clean     - Clean build artifacts"
+	@echo "  bench     - Run benchmarks"

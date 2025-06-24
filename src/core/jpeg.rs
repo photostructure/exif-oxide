@@ -7,12 +7,14 @@ use std::io::{Read, Seek, SeekFrom};
 
 /// JPEG segment markers
 const MARKER_SOI: u8 = 0xD8; // Start of Image
-const MARKER_APP1: u8 = 0xE1; // APP1 segment (contains EXIF)
+const MARKER_APP1: u8 = 0xE1; // APP1 segment (contains EXIF/XMP)
+const MARKER_APP2: u8 = 0xE2; // APP2 segment (contains MPF/FlashPix)
+const MARKER_APP13: u8 = 0xED; // APP13 segment (contains IPTC/Photoshop)
 const MARKER_SOS: u8 = 0xDA; // Start of Scan (image data follows)
 const MARKER_EOI: u8 = 0xD9; // End of Image
 
-/// Maximum size of APP1 segment (64KB minus 2 bytes for length)
-const MAX_APP1_SIZE: usize = 65533;
+/// Maximum size of APP segments (64KB minus 2 bytes for length)
+const MAX_APP_SIZE: usize = 65533;
 
 /// Result of finding EXIF data in a JPEG
 #[derive(Debug)]
@@ -30,6 +32,8 @@ pub struct JpegMetadata {
     pub exif: Option<ExifSegment>,
     /// XMP segments if found (can be multiple for extended XMP)
     pub xmp: Vec<XmpSegment>,
+    /// MPF segment if found (Multi-Picture Format)
+    pub mpf: Option<MpfSegment>,
 }
 
 /// XMP segment found in JPEG
@@ -43,17 +47,33 @@ pub struct XmpSegment {
     pub is_extended: bool,
 }
 
+/// MPF segment found in JPEG APP2
+#[derive(Debug)]
+pub struct MpfSegment {
+    /// The raw MPF data (without the APP2 header or "MPF\0" signature)
+    pub data: Vec<u8>,
+    /// Offset in the file where the MPF data starts
+    pub offset: u64,
+}
+
 /// Find and extract EXIF data from a JPEG file
 pub fn find_exif_segment<R: Read + Seek>(reader: &mut R) -> Result<Option<ExifSegment>> {
     let metadata = find_metadata_segments(reader)?;
     Ok(metadata.exif)
 }
 
-/// Find and extract all metadata segments (EXIF and XMP) from a JPEG file
+/// Find and extract MPF data from a JPEG file
+pub fn find_mpf_segment<R: Read + Seek>(reader: &mut R) -> Result<Option<MpfSegment>> {
+    let metadata = find_metadata_segments(reader)?;
+    Ok(metadata.mpf)
+}
+
+/// Find and extract all metadata segments (EXIF, XMP, and MPF) from a JPEG file
 pub fn find_metadata_segments<R: Read + Seek>(reader: &mut R) -> Result<JpegMetadata> {
     let mut metadata = JpegMetadata {
         exif: None,
         xmp: Vec::new(),
+        mpf: None,
     };
     // Check JPEG SOI marker
     let mut marker = [0u8; 2];
@@ -64,6 +84,7 @@ pub fn find_metadata_segments<R: Read + Seek>(reader: &mut R) -> Result<JpegMeta
 
     const XMP_SIGNATURE: &[u8] = b"http://ns.adobe.com/xap/1.0/\0";
     const XMP_EXTENSION_SIGNATURE: &[u8] = b"http://ns.adobe.com/xmp/extension/\0";
+    const MPF_SIGNATURE: &[u8] = b"MPF\0";
 
     // Scan through JPEG segments
     loop {
@@ -105,7 +126,7 @@ pub fn find_metadata_segments<R: Read + Seek>(reader: &mut R) -> Result<JpegMeta
 
                 if marker == MARKER_APP1 {
                     // This might be our EXIF segment
-                    if data_len > MAX_APP1_SIZE {
+                    if data_len > MAX_APP_SIZE {
                         return Err(Error::InvalidJpeg("APP1 segment too large".into()));
                     }
 
@@ -147,8 +168,30 @@ pub fn find_metadata_segments<R: Read + Seek>(reader: &mut R) -> Result<JpegMeta
                         });
                     }
                     // Continue searching for more segments
+                } else if marker == MARKER_APP2 {
+                    // This might be our MPF segment
+                    if data_len > MAX_APP_SIZE {
+                        return Err(Error::InvalidJpeg("APP2 segment too large".into()));
+                    }
+
+                    // Read the segment data
+                    let mut data = vec![0u8; data_len];
+                    reader.read_exact(&mut data)?;
+
+                    // Check for MPF signature
+                    if data.len() >= MPF_SIGNATURE.len()
+                        && &data[0..MPF_SIGNATURE.len()] == MPF_SIGNATURE
+                    {
+                        // Found MPF data!
+                        let offset = reader.stream_position()? - data_len as u64;
+                        metadata.mpf = Some(MpfSegment {
+                            data: data[MPF_SIGNATURE.len()..].to_vec(), // Skip "MPF\0" header
+                            offset: offset + MPF_SIGNATURE.len() as u64, // Offset to actual MPF data
+                        });
+                    }
+                    // Continue searching for more segments
                 } else {
-                    // Not APP1, skip this segment
+                    // Not APP1 or APP2, skip this segment
                     reader.seek(SeekFrom::Current(data_len as i64))?;
                 }
             }
