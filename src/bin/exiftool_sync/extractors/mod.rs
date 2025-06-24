@@ -22,6 +22,6 @@ pub use binary_tags::BinaryTagsExtractor;
 pub use datetime_patterns::DateTimePatternsExtractor;
 pub use magic_numbers::MagicNumbersExtractor;
 pub use maker_detection::MakerDetectionExtractor;
-pub use printconv_analyzer::PrintConvAnalyzer;
+pub use printconv_analyzer::{PrintConvAnalyzer, PrintConvPattern, PrintConvType};
 pub use printconv_generator::PrintConvGenerator;
 pub use printconv_tables::PrintConvTablesExtractor;

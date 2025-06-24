@@ -1,17 +1,27 @@
 //! PrintConv Tables Extractor
 //!
 //! Extracts complete tag tables with PrintConv mappings from ExifTool manufacturer files
+//! Features shared lookup table optimization to eliminate duplicate implementations
 
 use super::Extractor;
+use regex::Regex;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::Path;
-use regex::Regex;
 
 #[derive(Debug, Clone)]
 struct TagEntry {
     id: String,
     name: String,
     printconv_id: String,
+    shared_lookup_table: Option<String>,
+}
+
+#[derive(Debug, Clone)]
+struct SharedLookupTable {
+    name: String,
+    reference_count: usize,
+    tags: Vec<String>, // Tag names that reference this table
 }
 
 pub struct PrintConvTablesExtractor {
@@ -24,7 +34,7 @@ impl PrintConvTablesExtractor {
             manufacturer_file: manufacturer_file.to_string(),
         }
     }
-    
+
     fn generate_stub_code(&self) -> Result<String, String> {
         let manufacturer = self.manufacturer_file.trim_end_matches(".pm");
         let mut code = String::new();
@@ -37,7 +47,7 @@ impl PrintConvTablesExtractor {
              //! Regenerate with: cargo run --bin exiftool_sync extract printconv-tables {}\n\n\
              #![doc = \"EXIFTOOL-SOURCE: lib/Image/ExifTool/{}\"]\n\n\
              use crate::core::print_conv::PrintConvId;\n\n",
-            manufacturer.to_lowercase(), 
+            manufacturer.to_lowercase(),
             self.manufacturer_file,
             self.manufacturer_file,
             self.manufacturer_file
@@ -82,7 +92,7 @@ impl Extractor for PrintConvTablesExtractor {
         println!("Extracting PrintConv table for {}", self.manufacturer_file);
 
         let manufacturer_path = exiftool_path
-            .join("lib/Image/ExifTool") 
+            .join("lib/Image/ExifTool")
             .join(&self.manufacturer_file);
 
         let mut tags = Vec::new();
@@ -109,6 +119,11 @@ impl Extractor for PrintConvTablesExtractor {
         // Always write output
         self.write_output(&code)?;
 
+        // Generate missing PrintConvId enum variants
+        if !tags.is_empty() {
+            self.generate_printconv_enum_variants(&tags)?;
+        }
+
         // Clear completion message
         println!("PrintConv table extraction completed successfully");
         if tags.is_empty() {
@@ -130,15 +145,21 @@ impl PrintConvTablesExtractor {
         let content = fs::read_to_string(manufacturer_path)
             .map_err(|e| format!("Failed to read file: {}", e))?;
 
+        // First, detect shared lookup tables
+        let shared_tables = self.detect_shared_lookup_tables(&content)?;
+
         let manufacturer = self.manufacturer_file.trim_end_matches(".pm");
         let table_pattern = format!("%Image::ExifTool::{}::Main = (", manufacturer);
-        
-        let table_start = content.find(&table_pattern)
+
+        let table_start = content
+            .find(&table_pattern)
             .ok_or_else(|| format!("Could not find {} main table", manufacturer))?;
-        
+
         // Extract table content
         let table_content = &content[table_start..];
-        let search_end = table_content.find("\n%").unwrap_or(table_content.len().min(500000));
+        let search_end = table_content
+            .find("\n%")
+            .unwrap_or(table_content.len().min(500000));
         let search_content = &table_content[..search_end];
 
         let mut tags = Vec::new();
@@ -146,36 +167,165 @@ impl PrintConvTablesExtractor {
         // Parse tag definitions with names
         let tag_re = Regex::new(r"(?s)(0x[0-9a-fA-F]+)\s*=>\s*\{([^}]+)\}")
             .map_err(|e| format!("Regex error: {}", e))?;
-        
-        let name_re = Regex::new(r"Name\s*=>\s*'([^']+)'")
-            .map_err(|e| format!("Name regex error: {}", e))?;
+
+        let name_re =
+            Regex::new(r"Name\s*=>\s*'([^']+)'").map_err(|e| format!("Name regex error: {}", e))?;
+
+        let printconv_re = Regex::new(r"PrintConv\s*=>\s*\\%(\w+)")
+            .map_err(|e| format!("PrintConv regex error: {}", e))?;
 
         for cap in tag_re.captures_iter(search_content) {
             let tag_hex = &cap[1];
             let tag_content = &cap[2];
-            
+
             // Extract tag name
             if let Some(name_cap) = name_re.captures(tag_content) {
                 let tag_name = name_cap[1].to_string();
-                
-                // Map to PrintConvId (simplified heuristic)
-                let printconv_id = self.map_to_printconv_id(&tag_name, tag_content);
-                
+
+                // Check for shared lookup table reference
+                let shared_lookup_table = printconv_re
+                    .captures(tag_content)
+                    .map(|cap| cap[1].to_string());
+
+                // Map to PrintConvId with shared table optimization
+                let printconv_id = self.map_to_printconv_id_with_optimization(
+                    &tag_name,
+                    tag_content,
+                    &shared_lookup_table,
+                    &shared_tables,
+                );
+
                 tags.push(TagEntry {
                     id: tag_hex.to_string(),
                     name: tag_name,
                     printconv_id,
+                    shared_lookup_table,
                 });
             }
+        }
+
+        // Report shared table optimization results
+        if !shared_tables.is_empty() {
+            println!("  Shared lookup table optimization opportunities:");
+            for table in &shared_tables {
+                if table.reference_count > 1 {
+                    println!(
+                        "    - {} → {} tags can share single implementation",
+                        table.name, table.reference_count
+                    );
+                }
+            }
+
+            let total_savings = shared_tables
+                .iter()
+                .map(|t| {
+                    if t.reference_count > 1 {
+                        t.reference_count - 1
+                    } else {
+                        0
+                    }
+                })
+                .sum::<usize>();
+            println!(
+                "    Total duplicate implementations eliminated: {}",
+                total_savings
+            );
         }
 
         Ok(tags)
     }
 
+    fn detect_shared_lookup_tables(&self, content: &str) -> Result<Vec<SharedLookupTable>, String> {
+        let mut shared_tables = HashMap::new();
+
+        // Find all hash table references in PrintConv statements
+        let printconv_ref_re = Regex::new(r"PrintConv\s*=>\s*\\%(\w+)")
+            .map_err(|e| format!("PrintConv reference regex error: {}", e))?;
+
+        // Also extract tag names to track which tags use which tables
+        let tag_context_re = Regex::new(r"(?s)(0x[0-9a-fA-F]+)\s*=>\s*\{[^{}]*Name\s*=>\s*'([^']+)'[^{}]*PrintConv\s*=>\s*\\%(\w+)")
+            .map_err(|e| format!("Tag context regex error: {}", e))?;
+
+        // Count references to each table
+        for cap in printconv_ref_re.captures_iter(content) {
+            let table_name = cap[1].to_string();
+            *shared_tables.entry(table_name).or_insert(0) += 1;
+        }
+
+        // Build detailed shared table info with tag references
+        let mut result: Vec<SharedLookupTable> = Vec::new();
+        for cap in tag_context_re.captures_iter(content) {
+            let tag_name = cap[2].to_string();
+            let table_name = cap[3].to_string();
+
+            if let Some(&count) = shared_tables.get(&table_name) {
+                // Find existing entry or create new one
+                if let Some(existing) = result.iter_mut().find(|t| t.name == table_name) {
+                    existing.tags.push(tag_name);
+                } else {
+                    result.push(SharedLookupTable {
+                        name: table_name,
+                        reference_count: count,
+                        tags: vec![tag_name],
+                    });
+                }
+            }
+        }
+
+        // Sort by reference count (most shared first)
+        result.sort_by(|a, b| b.reference_count.cmp(&a.reference_count));
+
+        Ok(result)
+    }
+
+    fn map_to_printconv_id_with_optimization(
+        &self,
+        tag_name: &str,
+        tag_content: &str,
+        shared_lookup_table: &Option<String>,
+        shared_tables: &[SharedLookupTable],
+    ) -> String {
+        // If this tag uses a shared lookup table with multiple references, use optimized approach
+        if let Some(table_name) = shared_lookup_table {
+            if let Some(shared_table) = shared_tables.iter().find(|t| &t.name == table_name) {
+                if shared_table.reference_count > 1 {
+                    // Generate shared PrintConvId variant name
+                    let manufacturer = self.manufacturer_file.trim_end_matches(".pm");
+                    return self.generate_shared_printconv_id(manufacturer, table_name);
+                }
+            }
+        }
+
+        // Fall back to original heuristic mapping
+        self.map_to_printconv_id(tag_name, tag_content)
+    }
+
+    fn generate_shared_printconv_id(&self, manufacturer: &str, table_name: &str) -> String {
+        // Convert Perl table names to shared PrintConvId variants
+        match table_name {
+            "offOn" => "PrintConvId::OnOff".to_string(),
+            "canonLensTypes" => format!("PrintConvId::{}LensType", manufacturer),
+            "userDefStyles" => format!("PrintConvId::{}UserDefPictureStyle", manufacturer),
+            "canonImageSize" => "PrintConvId::ImageSize".to_string(),
+            "canonWhiteBalance" => "PrintConvId::WhiteBalance".to_string(),
+            "canonQuality" => "PrintConvId::Quality".to_string(),
+            "pictureStyles" => format!("PrintConvId::{}PictureStyle", manufacturer),
+            _ => {
+                // Convert table name to CamelCase PrintConv variant
+                let camel_case = table_name
+                    .chars()
+                    .enumerate()
+                    .map(|(i, c)| if i == 0 { c.to_ascii_uppercase() } else { c })
+                    .collect::<String>();
+                format!("PrintConvId::{}{}", manufacturer, camel_case)
+            }
+        }
+    }
+
     fn map_to_printconv_id(&self, tag_name: &str, tag_content: &str) -> String {
         // Simple heuristics to map tag names to PrintConvId variants
         let name_lower = tag_name.to_lowercase();
-        
+
         // Universal patterns
         if name_lower.contains("quality") {
             return "PrintConvId::Quality".to_string();
@@ -192,7 +342,7 @@ impl PrintConvTablesExtractor {
         if name_lower.contains("autobracket") || name_lower.contains("autobracketing") {
             return "PrintConvId::OnOff".to_string();
         }
-        
+
         // Check PrintConv content for simple On/Off patterns
         if tag_content.contains("PrintConv") {
             if tag_content.contains("0 => 'Off'") && tag_content.contains("1 => 'On'") {
@@ -202,7 +352,7 @@ impl PrintConvTablesExtractor {
                 return "PrintConvId::YesNo".to_string();
             }
         }
-        
+
         // Manufacturer-specific patterns
         let manufacturer = self.manufacturer_file.trim_end_matches(".pm");
         if name_lower.contains("model") {
@@ -217,7 +367,7 @@ impl PrintConvTablesExtractor {
         if name_lower.contains("scene") {
             return format!("PrintConvId::{}SceneMode", manufacturer);
         }
-        
+
         // Default to manufacturer-specific lookup
         format!("PrintConvId::{}{}", manufacturer, tag_name.replace(' ', ""))
     }
@@ -297,20 +447,50 @@ impl PrintConvTablesExtractor {
     }
 
     fn write_output(&self, code: &str) -> Result<(), String> {
-        let manufacturer = self.manufacturer_file.trim_end_matches(".pm").to_lowercase();
+        let manufacturer = self
+            .manufacturer_file
+            .trim_end_matches(".pm")
+            .to_lowercase();
         let output_path = format!("src/tables/{}_tags.rs", manufacturer);
-        
+
         // Create directory if needed
         if let Some(parent) = Path::new(&output_path).parent() {
-            fs::create_dir_all(parent)
-                .map_err(|e| format!("Failed to create directory: {}", e))?;
+            fs::create_dir_all(parent).map_err(|e| format!("Failed to create directory: {}", e))?;
         }
-        
+
         fs::write(&output_path, code)
             .map_err(|e| format!("Failed to write {}: {}", output_path, e))?;
-            
+
         println!("Generated: {}", output_path);
-        
+
+        Ok(())
+    }
+
+    fn generate_printconv_enum_variants(&self, tags: &[TagEntry]) -> Result<(), String> {
+        // Collect all unique PrintConvId variants that need to be added
+        let mut new_variants = HashSet::new();
+        for tag in tags {
+            if tag.printconv_id.starts_with("PrintConvId::Canon")
+                || tag.printconv_id.starts_with("PrintConvId::Pentax")
+                || tag.printconv_id.starts_with("PrintConvId::Nikon")
+                || tag.printconv_id.starts_with("PrintConvId::Sony")
+            {
+                // Extract just the variant name (remove PrintConvId:: prefix)
+                if let Some(variant_name) = tag.printconv_id.strip_prefix("PrintConvId::") {
+                    new_variants.insert(variant_name.to_string());
+                }
+            }
+        }
+
+        if !new_variants.is_empty() {
+            println!("  Missing PrintConvId variants detected:");
+            for variant in &new_variants {
+                println!("    - {}", variant);
+            }
+            println!("  Add these to src/core/print_conv.rs PrintConvId enum");
+            println!("  (This will be automated in a future update)");
+        }
+
         Ok(())
     }
 }

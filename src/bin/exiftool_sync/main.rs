@@ -45,7 +45,10 @@ fn main() {
         }
         "generate" => {
             if args.len() < 4 || args[2] != "printconv-functions" {
-                Err("Usage: exiftool_sync generate printconv-functions <Manufacturer.pm>".to_string())
+                Err(
+                    "Usage: exiftool_sync generate printconv-functions <Manufacturer.pm>"
+                        .to_string(),
+                )
             } else {
                 cmd_generate_printconv(&args[3])
             }
@@ -284,10 +287,12 @@ fn cmd_extract(component: &str, _options: &[String]) -> Result<(), String> {
         "maker-detection" => Box::new(extractors::MakerDetectionExtractor::new()),
         "printconv-tables" => {
             if _options.is_empty() {
-                return Err("Usage: exiftool_sync extract printconv-tables <Manufacturer.pm>".to_string());
+                return Err(
+                    "Usage: exiftool_sync extract printconv-tables <Manufacturer.pm>".to_string(),
+                );
             }
             Box::new(extractors::PrintConvTablesExtractor::new(&_options[0]))
-        },
+        }
         _ => return Err(format!("Unknown component: {}", component)),
     };
 
@@ -388,9 +393,14 @@ fn cmd_analyze_printconv(manufacturer_file: &str) -> Result<(), String> {
         return Err("ExifTool source not found at third-party/exiftool".to_string());
     }
 
-    let manufacturer_path = exiftool_path.join("lib/Image/ExifTool").join(manufacturer_file);
+    let manufacturer_path = exiftool_path
+        .join("lib/Image/ExifTool")
+        .join(manufacturer_file);
     if !manufacturer_path.exists() {
-        return Err(format!("Manufacturer file not found: {}", manufacturer_path.display()));
+        return Err(format!(
+            "Manufacturer file not found: {}",
+            manufacturer_path.display()
+        ));
     }
 
     // Use the PrintConv analyzer extractor
@@ -411,36 +421,543 @@ fn cmd_generate_printconv(manufacturer_file: &str) -> Result<(), String> {
         return Err("ExifTool source not found at third-party/exiftool".to_string());
     }
 
-    let manufacturer_path = exiftool_path.join("lib/Image/ExifTool").join(manufacturer_file);
+    let manufacturer_path = exiftool_path
+        .join("lib/Image/ExifTool")
+        .join(manufacturer_file);
     if !manufacturer_path.exists() {
-        return Err(format!("Manufacturer file not found: {}", manufacturer_path.display()));
+        return Err(format!(
+            "Manufacturer file not found: {}",
+            manufacturer_path.display()
+        ));
     }
 
-    // Use the PrintConv generator extractor  
+    // Use the PrintConv generator extractor
     let generator = extractors::PrintConvGenerator::new(manufacturer_file);
     generator.extract(&exiftool_path)?;
 
     Ok(())
 }
 
-fn cmd_diff_printconv(from_version: &str, to_version: &str, manufacturer_file: &str) -> Result<(), String> {
-    println!("PrintConv Diff: {} {} → {}", manufacturer_file, from_version, to_version);
+fn cmd_diff_printconv(
+    from_version: &str,
+    to_version: &str,
+    manufacturer_file: &str,
+) -> Result<(), String> {
+    println!(
+        "PrintConv Diff: {} {} → {}",
+        manufacturer_file, from_version, to_version
+    );
     println!("===============================================");
     println!();
 
-    // This would analyze differences in PrintConv patterns between versions
-    // For now, provide a placeholder implementation
-    println!("PrintConv diff analysis for {} between versions {} and {}", 
-             manufacturer_file, from_version, to_version);
-    println!("This feature will analyze:");
-    println!("- Modified PrintConv patterns");
-    println!("- New PrintConv patterns");
-    println!("- Removed PrintConv patterns");
-    println!("- Impact on existing PrintConvId enum variants");
-    println!();
-    println!("Implementation coming soon...");
+    // Get ExifTool source directory
+    let exiftool_path = Path::new("third-party/exiftool");
+    if !exiftool_path.exists() {
+        return Err("ExifTool source not found at third-party/exiftool".to_string());
+    }
+
+    // Check if this is a git repository
+    let git_dir = exiftool_path.join(".git");
+    if !git_dir.exists() {
+        println!("⚠️  ExifTool directory is not a git repository.");
+        println!("   Analyzing current version only...");
+        return analyze_current_version_only(exiftool_path, manufacturer_file);
+    }
+
+    // Try to extract patterns from both versions
+    println!("📥 Extracting patterns from version {}...", from_version);
+    let from_patterns =
+        extract_patterns_for_version(exiftool_path, from_version, manufacturer_file)?;
+
+    println!("📥 Extracting patterns from version {}...", to_version);
+    let to_patterns = extract_patterns_for_version(exiftool_path, to_version, manufacturer_file)?;
+
+    // Compare patterns
+    println!("🔍 Comparing PrintConv patterns...");
+    let changes = compare_printconv_patterns(&from_patterns, &to_patterns);
+
+    // Report findings
+    print_printconv_diff_report(&changes, from_version, to_version, manufacturer_file);
 
     Ok(())
+}
+
+fn analyze_current_version_only(
+    exiftool_path: &Path,
+    manufacturer_file: &str,
+) -> Result<(), String> {
+    let manufacturer_path = exiftool_path
+        .join("lib/Image/ExifTool")
+        .join(manufacturer_file);
+    if !manufacturer_path.exists() {
+        return Err(format!(
+            "Manufacturer file not found: {}",
+            manufacturer_path.display()
+        ));
+    }
+
+    // Extract current patterns
+    println!("📊 Analyzing current PrintConv patterns...");
+    let mut analyzer = extractors::PrintConvAnalyzer::new(manufacturer_file);
+    analyzer.analyze(&manufacturer_path)?;
+
+    let patterns = analyzer.get_patterns();
+    println!("Found {} PrintConv patterns", patterns.len());
+    println!();
+
+    // Show framework capabilities
+    print_change_detection_framework();
+
+    // Show optimization opportunities
+    print_optimization_analysis(patterns);
+
+    println!("\n💡 To enable version comparison:");
+    println!("1. Initialize ExifTool as git repository:");
+    println!("   cd third-party/exiftool && git init && git remote add origin https://github.com/exiftool/exiftool.git");
+    println!("2. Fetch tags: git fetch --tags");
+    println!("3. List available versions: git tag -l");
+
+    Ok(())
+}
+
+fn extract_patterns_for_version(
+    exiftool_path: &Path,
+    version: &str,
+    manufacturer_file: &str,
+) -> Result<Vec<PrintConvPatternSnapshot>, String> {
+    // Save current state
+    let current_branch = get_current_git_ref(exiftool_path)?;
+
+    // Checkout specific version
+    checkout_git_version(exiftool_path, version)?;
+
+    // Extract patterns
+    let manufacturer_path = exiftool_path
+        .join("lib/Image/ExifTool")
+        .join(manufacturer_file);
+    let result = if manufacturer_path.exists() {
+        let mut analyzer = extractors::PrintConvAnalyzer::new(manufacturer_file);
+        match analyzer.analyze(&manufacturer_path) {
+            Ok(()) => {
+                let patterns = analyzer
+                    .get_patterns()
+                    .iter()
+                    .map(|p| PrintConvPatternSnapshot {
+                        tag_id: p.tag_id.clone(),
+                        tag_name: p.tag_name.clone(),
+                        pattern_type: format!("{:?}", p.pattern_type),
+                        content_hash: calculate_pattern_hash(p),
+                        values: p.values.clone(),
+                    })
+                    .collect();
+                Ok(patterns)
+            }
+            Err(e) => Err(format!("Failed to analyze patterns for {}: {}", version, e)),
+        }
+    } else {
+        Err(format!(
+            "Manufacturer file {} not found in version {}",
+            manufacturer_file, version
+        ))
+    };
+
+    // Restore original state
+    checkout_git_version(exiftool_path, &current_branch)?;
+
+    result
+}
+
+fn get_current_git_ref(repo_path: &Path) -> Result<String, String> {
+    let output = Command::new("git")
+        .args(["rev-parse", "HEAD"])
+        .current_dir(repo_path)
+        .output()
+        .map_err(|e| format!("Failed to get current git ref: {}", e))?;
+
+    if output.status.success() {
+        Ok(String::from_utf8_lossy(&output.stdout).trim().to_string())
+    } else {
+        Err("Failed to get current git reference".to_string())
+    }
+}
+
+fn checkout_git_version(repo_path: &Path, version: &str) -> Result<(), String> {
+    let output = Command::new("git")
+        .args(["checkout", version])
+        .current_dir(repo_path)
+        .output()
+        .map_err(|e| format!("Failed to checkout version {}: {}", version, e))?;
+
+    if output.status.success() {
+        Ok(())
+    } else {
+        let error = String::from_utf8_lossy(&output.stderr);
+        Err(format!("Failed to checkout version {}: {}", version, error))
+    }
+}
+
+fn calculate_pattern_hash(pattern: &extractors::PrintConvPattern) -> String {
+    use std::collections::hash_map::DefaultHasher;
+    use std::hash::{Hash, Hasher};
+
+    let mut hasher = DefaultHasher::new();
+    pattern.tag_id.hash(&mut hasher);
+    pattern.values.hash(&mut hasher);
+    format!("{:x}", hasher.finish())
+}
+
+#[derive(Debug, Clone)]
+struct PrintConvPatternSnapshot {
+    tag_id: String,
+    tag_name: String,
+    pattern_type: String,
+    content_hash: String,
+    values: Vec<(String, String)>,
+}
+
+#[derive(Debug)]
+enum PrintConvChange {
+    Added {
+        pattern: PrintConvPatternSnapshot,
+    },
+    Removed {
+        pattern: PrintConvPatternSnapshot,
+    },
+    Modified {
+        from: PrintConvPatternSnapshot,
+        to: PrintConvPatternSnapshot,
+        change_type: ChangeType,
+    },
+}
+
+#[derive(Debug)]
+enum ChangeType {
+    LookupTableExtended, // New entries added
+    LookupTableModified, // Existing entries changed
+    AlgorithmChanged,    // Complete logic change
+    TypeChanged,         // Simple lookup became complex, etc.
+}
+
+fn compare_printconv_patterns(
+    from_patterns: &[PrintConvPatternSnapshot],
+    to_patterns: &[PrintConvPatternSnapshot],
+) -> Vec<PrintConvChange> {
+    let mut changes = Vec::new();
+
+    // Create lookup maps for efficient comparison
+    let from_map: HashMap<String, &PrintConvPatternSnapshot> = from_patterns
+        .iter()
+        .map(|p| (p.tag_id.clone(), p))
+        .collect();
+    let to_map: HashMap<String, &PrintConvPatternSnapshot> =
+        to_patterns.iter().map(|p| (p.tag_id.clone(), p)).collect();
+
+    // Find added patterns
+    for pattern in to_patterns {
+        if !from_map.contains_key(&pattern.tag_id) {
+            changes.push(PrintConvChange::Added {
+                pattern: pattern.clone(),
+            });
+        }
+    }
+
+    // Find removed patterns
+    for pattern in from_patterns {
+        if !to_map.contains_key(&pattern.tag_id) {
+            changes.push(PrintConvChange::Removed {
+                pattern: pattern.clone(),
+            });
+        }
+    }
+
+    // Find modified patterns
+    for (tag_id, from_pattern) in &from_map {
+        if let Some(to_pattern) = to_map.get(tag_id) {
+            if from_pattern.content_hash != to_pattern.content_hash {
+                let change_type = classify_change_type(from_pattern, to_pattern);
+                changes.push(PrintConvChange::Modified {
+                    from: (*from_pattern).clone(),
+                    to: (*to_pattern).clone(),
+                    change_type,
+                });
+            }
+        }
+    }
+
+    changes
+}
+
+fn classify_change_type(
+    from: &PrintConvPatternSnapshot,
+    to: &PrintConvPatternSnapshot,
+) -> ChangeType {
+    // Simple heuristics for change classification
+    if from.pattern_type != to.pattern_type {
+        ChangeType::TypeChanged
+    } else if from.values.len() < to.values.len() {
+        // Check if it's just new entries added
+        let from_keys: std::collections::HashSet<_> = from.values.iter().map(|(k, _)| k).collect();
+        let to_keys: std::collections::HashSet<_> = to.values.iter().map(|(k, _)| k).collect();
+
+        if from_keys.is_subset(&to_keys) {
+            ChangeType::LookupTableExtended
+        } else {
+            ChangeType::LookupTableModified
+        }
+    } else if from.values.len() == to.values.len() {
+        ChangeType::LookupTableModified
+    } else {
+        ChangeType::AlgorithmChanged
+    }
+}
+
+fn print_printconv_diff_report(
+    changes: &[PrintConvChange],
+    from_version: &str,
+    to_version: &str,
+    manufacturer_file: &str,
+) {
+    println!("📋 PrintConv Change Report");
+    println!("=========================");
+    println!("File: {}", manufacturer_file);
+    println!("Versions: {} → {}", from_version, to_version);
+    println!("Total changes: {}", changes.len());
+    println!();
+
+    let mut added_count = 0;
+    let mut removed_count = 0;
+    let mut modified_count = 0;
+
+    // Group changes by type
+    for change in changes {
+        match change {
+            PrintConvChange::Added { .. } => added_count += 1,
+            PrintConvChange::Removed { .. } => removed_count += 1,
+            PrintConvChange::Modified { .. } => modified_count += 1,
+        }
+    }
+
+    println!("📊 Change Summary:");
+    println!("- Added patterns: {}", added_count);
+    println!("- Removed patterns: {}", removed_count);
+    println!("- Modified patterns: {}", modified_count);
+    println!();
+
+    if added_count > 0 {
+        println!("➕ Added Patterns:");
+        for change in changes {
+            if let PrintConvChange::Added { pattern } = change {
+                println!(
+                    "- {} '{}' → NEW PrintConvId variant needed",
+                    pattern.tag_id, pattern.tag_name
+                );
+                if pattern.values.len() <= 3 {
+                    print!("  Values: {{ ");
+                    for (i, (k, v)) in pattern.values.iter().enumerate() {
+                        if i > 0 {
+                            print!(", ");
+                        }
+                        print!("{} => '{}'", k, v);
+                    }
+                    println!(" }}");
+                }
+            }
+        }
+        println!();
+    }
+
+    if removed_count > 0 {
+        println!("➖ Removed Patterns:");
+        for change in changes {
+            if let PrintConvChange::Removed { pattern } = change {
+                println!(
+                    "- {} '{}' → PrintConvId variant can be deprecated",
+                    pattern.tag_id, pattern.tag_name
+                );
+            }
+        }
+        println!();
+    }
+
+    if modified_count > 0 {
+        println!("🔄 Modified Patterns:");
+        for change in changes {
+            if let PrintConvChange::Modified {
+                from,
+                to,
+                change_type,
+            } = change
+            {
+                println!("- {} '{}' → {:?}", from.tag_id, from.tag_name, change_type);
+                match change_type {
+                    ChangeType::LookupTableExtended => {
+                        let new_entries = to.values.len() - from.values.len();
+                        println!(
+                            "  Action: Auto-regenerate lookup table ({} new entries)",
+                            new_entries
+                        );
+                        println!("  Risk: Low (backward compatible)");
+                    }
+                    ChangeType::LookupTableModified => {
+                        println!("  Action: Auto-regenerate + validate outputs");
+                        println!("  Risk: Medium (output values changed)");
+                    }
+                    ChangeType::AlgorithmChanged => {
+                        println!("  Action: Manual review required");
+                        println!("  Risk: High (may need new implementation)");
+                    }
+                    ChangeType::TypeChanged => {
+                        println!("  Action: Update PrintConvId assignment");
+                        println!("  Risk: Medium (conversion type changed)");
+                    }
+                }
+            }
+        }
+        println!();
+    }
+
+    if changes.is_empty() {
+        println!("✅ No PrintConv changes detected between versions.");
+    } else {
+        print_action_recommendations(changes);
+    }
+}
+
+fn print_action_recommendations(changes: &[PrintConvChange]) {
+    println!("🛠️  Recommended Actions:");
+    println!("========================");
+
+    let auto_actions = changes
+        .iter()
+        .filter(|c| {
+            matches!(
+                c,
+                PrintConvChange::Added { .. }
+                    | PrintConvChange::Modified {
+                        change_type: ChangeType::LookupTableExtended
+                            | ChangeType::LookupTableModified,
+                        ..
+                    }
+            )
+        })
+        .count();
+
+    let manual_actions = changes.len() - auto_actions;
+
+    if auto_actions > 0 {
+        println!(
+            "1. Auto-regenerate affected components ({} changes):",
+            auto_actions
+        );
+        println!("   cargo run --bin exiftool_sync extract printconv-tables <Manufacturer.pm>");
+        println!();
+    }
+
+    if manual_actions > 0 {
+        println!("2. Manual review required ({} changes):", manual_actions);
+        println!("   - Review algorithm changes for correctness");
+        println!("   - Update PrintConvId enum if needed");
+        println!("   - Test conversion outputs");
+        println!();
+    }
+
+    println!("3. Validation testing:");
+    println!("   cargo test printconv");
+    println!("   # Compare outputs with ExifTool for affected tags");
+}
+
+fn print_change_detection_framework() {
+    println!("Change Detection Categories:");
+    println!("1. LOOKUP_TABLE_EXTENDED");
+    println!("   - New entries added to existing lookup table");
+    println!("   - Action: Auto-regenerate lookup table");
+    println!("   - Risk: Low (backward compatible)");
+    println!();
+
+    println!("2. LOOKUP_TABLE_MODIFIED");
+    println!("   - Existing entries changed values");
+    println!("   - Action: Auto-regenerate + validation");
+    println!("   - Risk: Medium (output changes)");
+    println!();
+
+    println!("3. ALGORITHM_CHANGED");
+    println!("   - PrintConv logic completely different");
+    println!("   - Action: Manual review required");
+    println!("   - Risk: High (may need new PrintConvId)");
+    println!();
+
+    println!("4. PATTERN_ADDED");
+    println!("   - New tag with PrintConv added");
+    println!("   - Action: Generate new PrintConvId variant");
+    println!("   - Risk: Low (additive change)");
+    println!();
+
+    println!("5. PATTERN_REMOVED");
+    println!("   - Existing tag PrintConv removed");
+    println!("   - Action: Deprecate PrintConvId variant");
+    println!("   - Risk: Medium (breaking change)");
+}
+
+fn print_optimization_analysis(patterns: &[extractors::PrintConvPattern]) {
+    // Count patterns by type for optimization analysis
+    let mut universal_count = 0;
+    let mut lookup_count = 0;
+    let mut complex_count = 0;
+    let mut shared_lookup_groups: HashMap<String, Vec<String>> = HashMap::new();
+
+    // Analyze patterns for shared lookup opportunities
+    for pattern in patterns {
+        match &pattern.pattern_type {
+            extractors::PrintConvType::Universal(_) => universal_count += 1,
+            extractors::PrintConvType::Lookup(name) => {
+                lookup_count += 1;
+                if name.starts_with("Canon") && !name.contains("Lookup") {
+                    shared_lookup_groups
+                        .entry(name.clone())
+                        .or_default()
+                        .push(format!("{} '{}'", pattern.tag_id, pattern.tag_name));
+                }
+            }
+            extractors::PrintConvType::Complex(_) => complex_count += 1,
+        }
+    }
+
+    println!("🔍 Optimization Analysis:");
+    println!(
+        "- Universal patterns: {} (can reuse existing)",
+        universal_count
+    );
+    println!("- Lookup patterns: {}", lookup_count);
+    println!("- Complex patterns: {}", complex_count);
+
+    if !shared_lookup_groups.is_empty() {
+        println!("\n🔗 Shared lookup optimization opportunities:");
+        for (shared_name, tag_patterns) in &shared_lookup_groups {
+            if tag_patterns.len() > 1 {
+                println!(
+                    "- {}: {} tags could share implementation",
+                    shared_name,
+                    tag_patterns.len()
+                );
+                for tag_pattern in tag_patterns.iter().take(2) {
+                    println!("  • {}", tag_pattern);
+                }
+                if tag_patterns.len() > 2 {
+                    println!("  • ... {} more", tag_patterns.len() - 2);
+                }
+            }
+        }
+
+        let total_shared = shared_lookup_groups
+            .values()
+            .map(|v| v.len())
+            .sum::<usize>();
+        let duplicates_eliminated = total_shared - shared_lookup_groups.len();
+        println!(
+            "\n📊 Potential savings: {} duplicate implementations could be eliminated",
+            duplicates_eliminated
+        );
+    }
 }
 
 fn print_help() {
@@ -455,7 +972,9 @@ fn print_help() {
     println!("    scan                             List all ExifTool source dependencies");
     println!("    extract <component>              Extract algorithms from ExifTool source");
     println!("    extract-all                      Extract all components in one command");
-    println!("    analyze printconv-patterns <pm>  Analyze PrintConv patterns in manufacturer file");
+    println!(
+        "    analyze printconv-patterns <pm>  Analyze PrintConv patterns in manufacturer file"
+    );
     println!("    generate printconv-functions <pm> Generate PrintConv functions for manufacturer");
     println!("    diff-printconv <from> <to> <pm>  Compare PrintConv changes between versions");
     println!("    help                             Show this help message");
@@ -466,7 +985,9 @@ fn print_help() {
     println!("    datetime-patterns                Extract date parsing patterns");
     println!("    binary-tags                      Extract composite tag definitions");
     println!("    maker-detection                  Extract maker note detection patterns");
-    println!("    printconv-tables <pm>            Extract complete tag tables with PrintConv mappings");
+    println!(
+        "    printconv-tables <pm>            Extract complete tag tables with PrintConv mappings"
+    );
     println!();
     println!("EXAMPLES:");
     println!("    cargo run --bin exiftool_sync status");
