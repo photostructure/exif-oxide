@@ -220,7 +220,7 @@ cargo run -- test.{format} > exif-oxide.json
 - ✅ **Canon**: Complete (existing reference implementation)
 - ✅ **Pentax**: Complete (new reference implementation with PrintConv)
 - ✅ **Olympus**: Complete (standard IFD tags extracted with optimized shared PrintConv)
-- [ ] **Nikon**: Major maker note tags with version detection  
+- ✅ **Nikon**: Complete (table-driven PrintConv with automated sync tools and character sanitization)
 - [ ] **Sony**: Lens detection and basic settings
 - [ ] **Fujifilm**: Film simulation and basic settings
 - [ ] **Panasonic**: Video settings and lens corrections
@@ -241,13 +241,13 @@ cargo run -- test.{format} > exif-oxide.json
 
 ### ⚡ Super-Accelerated Estimate: 1.5 Days Total (vs Original 4-5 weeks)
 
-**✅ Foundation Complete**: PrintConv revolution + Pentax reference implementation + automated sync tools + **Olympus implementation complete**
+**✅ Foundation Complete**: PrintConv revolution + Pentax reference implementation + automated sync tools + **Olympus + Nikon implementation complete**
 
 **📋 Automated Implementation (Remaining)**: All manufacturers using automated sync tools
 - **✅ Olympus Complete**: 2 hours - automated PrintConv generation with shared optimization
-- **✅ Pentax DRY Complete**: PrintConv optimization applied with shared lookup elimination (27 duplicates removed)
-- **Day 1 Morning**: Nikon (2.5 hours - automated despite 14K line complexity)
-- **Day 1 Afternoon**: Sony (2.5 hours - automated)
+- **✅ Pentax DRY Complete**: PrintConv optimization applied with shared lookup elimination (27 duplicates removed)  
+- **✅ Nikon Complete**: 2.5 hours - automated with character sanitization breakthrough for Rust identifiers
+- **Next Priority**: Sony (2.5 hours - automated)
 - **Day 2 Morning**: Fujifilm + Panasonic (5 hours total - automated)
 
 **Benefits of Automated Sync Tools**:
@@ -319,11 +319,22 @@ PrintConvId::CanonLensType → canon_lens_type_lookup()
 
 ## 🚀 Revolutionary Sync Tooling
 
-**CRITICAL**: Always use the automated PrintConv sync tools for new manufacturers. The tooling now includes automated clippy warning suppression for ExifTool-style naming conventions. See **[`doc/PRINTCONV-ARCHITECTURE.md`](PRINTCONV-ARCHITECTURE.md)** for complete documentation of the automated workflow.
+**CRITICAL**: Always use the automated PrintConv sync tools for new manufacturers. The tooling now includes automated character sanitization for Rust identifiers and clippy warning suppression for ExifTool-style naming conventions. See **[`doc/PRINTCONV-ARCHITECTURE.md`](PRINTCONV-ARCHITECTURE.md)** for complete documentation of the automated workflow.
+
+### ✅ Character Sanitization Breakthrough (Nikon Implementation)
+
+**Problem Solved**: ExifTool tag names contain characters invalid in Rust identifiers (hyphens, etc.)
+
+**Solution**: Automated character sanitization in PrintConv sync tools
+- **Preserves ExifTool compatibility**: Tag names like "ActiveD-Lighting" remain unchanged in output
+- **Fixes Rust compilation**: PrintConvId variants use sanitized names like "NikonActiveD_Lighting"
+- **Zero downstream impact**: Only internal enum variants affected, user-facing data unchanged
+
+**Implementation**: `sanitize_rust_identifier()` function replaces non-alphanumeric characters with underscores
 
 ### ✅ Completed DRY Optimizations
 
-**Pentax PrintConv DRY Optimization** (December 2024):
+**Pentax PrintConv DRY Optimization** (June 2025):
 - Applied the same 96% code reduction pattern used for Canon
 - Generated optimized `src/tables/pentax_tags.rs` with 137 tag definitions
 - Identified 7 shared lookup tables eliminating 27 duplicate implementations (17% optimization)

@@ -7,9 +7,11 @@
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Nikon.pm"]
 
 use crate::core::ifd::{IfdParser, TiffHeader};
+use crate::core::print_conv::apply_print_conv;
 use crate::core::{Endian, ExifValue};
 use crate::error::Result;
 use crate::maker::MakerNoteParser;
+use crate::tables::nikon_tags::get_nikon_tag;
 use std::collections::HashMap;
 
 pub mod binary;
@@ -78,9 +80,24 @@ impl MakerNoteParser for NikonMakerNoteParser {
             Ok(parsed) => {
                 let entries = parsed.entries();
 
-                // First, copy all normal IFD entries
-                for (tag, value) in entries {
-                    results.insert(*tag, value.clone());
+                // First, apply table-driven PrintConv to all IFD entries (following Pentax pattern)
+                for (tag_id, raw_value) in entries {
+                    if let Some(nikon_tag) = get_nikon_tag(*tag_id) {
+                        // Apply print conversion to create human-readable value
+                        let converted_value = apply_print_conv(raw_value, nikon_tag.print_conv);
+
+                        // Store both raw and converted values
+                        // Raw value for programmatic access
+                        results.insert(*tag_id, raw_value.clone());
+
+                        // Converted value as string (following ExifTool pattern)
+                        // Use a high bit pattern to distinguish converted values
+                        let converted_tag_id = 0x8000 | tag_id;
+                        results.insert(converted_tag_id, ExifValue::Ascii(converted_value));
+                    } else {
+                        // Keep unknown tags as-is
+                        results.insert(*tag_id, raw_value.clone());
+                    }
                 }
 
                 // Process binary data tags that require ProcessBinaryData

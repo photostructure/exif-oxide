@@ -11,6 +11,7 @@ include!(concat!(env!("OUT_DIR"), "/generated_tags.rs"));
 
 // Table-driven maker note tag definitions with PrintConv
 pub mod canon_tags;
+pub mod nikon_tags;
 pub mod olympus_tags;
 pub mod pentax_tags;
 

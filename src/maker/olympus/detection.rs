@@ -14,14 +14,12 @@ pub struct OLYMPUSDetectionResult {
 }
 
 /// Detect olympus maker note format and extract version information
-///
+/// 
 /// Returns Some(DetectionResult) if this appears to be a olympus maker note,
 /// None otherwise.
 pub fn detect_olympus_maker_note(data: &[u8]) -> Option<OLYMPUSDetectionResult> {
     // Pattern from source line 0: Olympus Type 1 maker note
-    if data.len() >= 10
-        && data.starts_with(&[0x4f, 0x4c, 0x59, 0x4d, 0x50, 0x55, 0x53, 0x00, 0x01, 0x00])
-    {
+    if data.len() >= 10 && data.starts_with(&[0x4f, 0x4c, 0x59, 0x4d, 0x50, 0x55, 0x53, 0x00, 0x01, 0x00]) {
         return Some(OLYMPUSDetectionResult {
             version: Some(1),
             ifd_offset: 12,
@@ -30,9 +28,7 @@ pub fn detect_olympus_maker_note(data: &[u8]) -> Option<OLYMPUSDetectionResult> 
     }
 
     // Pattern from source line 0: Olympus Type 2 maker note
-    if data.len() >= 10
-        && data.starts_with(&[0x4f, 0x4c, 0x59, 0x4d, 0x50, 0x55, 0x53, 0x00, 0x02, 0x00])
-    {
+    if data.len() >= 10 && data.starts_with(&[0x4f, 0x4c, 0x59, 0x4d, 0x50, 0x55, 0x53, 0x00, 0x02, 0x00]) {
         return Some(OLYMPUSDetectionResult {
             version: Some(2),
             ifd_offset: 12,
@@ -104,4 +100,5 @@ mod tests {
         assert_eq!(detection.version, Some(2));
         assert_eq!(detection.ifd_offset, 10);
     }
+
 }
