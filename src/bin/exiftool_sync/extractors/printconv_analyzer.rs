@@ -32,6 +32,7 @@ impl PrintConvAnalyzer {
         &self.patterns
     }
 
+    #[allow(dead_code)]
     pub fn get_manufacturer(&self) -> &str {
         &self.manufacturer
     }
@@ -511,15 +512,12 @@ impl PrintConvAnalyzer {
 
         println!("Reusable patterns found:");
         for pattern in &self.patterns {
-            match &pattern.pattern_type {
-                PrintConvType::Universal(name) => {
-                    println!(
-                        "- {} '{}' → PrintConvId::{} (existing)",
-                        pattern.tag_id, pattern.tag_name, name
-                    );
-                    universal_count += 1;
-                }
-                _ => {}
+            if let PrintConvType::Universal(name) = &pattern.pattern_type {
+                println!(
+                    "- {} '{}' → PrintConvId::{} (existing)",
+                    pattern.tag_id, pattern.tag_name, name
+                );
+                universal_count += 1;
             }
         }
 

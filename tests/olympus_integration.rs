@@ -44,26 +44,29 @@ fn test_olympus_maker_note_parsing() {
 
 #[test]
 fn test_olympus_maker_note_with_signature() {
-    // Test with Olympus signature "OLYMPUS\x00II"
+    // Test with proper Olympus Type 1 signature that matches detection patterns
     let mut data = Vec::new();
-    data.extend_from_slice(b"OLYMPUS\x00"); // 8-byte signature
-    data.extend_from_slice(b"II"); // Little endian marker
-    data.extend_from_slice(&[0x00, 0x00]); // 0 entries
-    data.extend_from_slice(&[0xFF, 0xFF, 0xFF, 0xFF]); // No next IFD
+    data.extend_from_slice(b"OLYMPUS\x00\x01\x00"); // 10-byte Type 1 signature
+    data.extend_from_slice(&[0x00, 0x00]); // 2 bytes padding to reach offset 12
+    data.extend_from_slice(&[0x00, 0x00]); // IFD entry count (0 entries)
+    data.extend_from_slice(&[0x00, 0x00, 0x00, 0x00]); // No next IFD
 
     let result = parse_maker_notes(&data, "OLYMPUS", Endian::Little, 0);
+    if let Err(e) = &result {
+        eprintln!("Error parsing Olympus maker note: {:?}", e);
+    }
     assert!(result.is_ok());
     assert!(result.unwrap().is_empty()); // Empty because 0 entries
 }
 
 #[test]
 fn test_olympus_maker_note_with_big_endian() {
-    // Test with Olympus signature "OLYMPUS\x00MM"
+    // Test with proper Olympus Type 2 signature that matches detection patterns
     let mut data = Vec::new();
-    data.extend_from_slice(b"OLYMPUS\x00"); // 8-byte signature
-    data.extend_from_slice(b"MM"); // Big endian marker
-    data.extend_from_slice(&[0x00, 0x00]); // 0 entries
-    data.extend_from_slice(&[0xFF, 0xFF, 0xFF, 0xFF]); // No next IFD
+    data.extend_from_slice(b"OLYMPUS\x00\x02\x00"); // 10-byte Type 2 signature
+    data.extend_from_slice(&[0x00, 0x00]); // 2 bytes padding to reach offset 12
+    data.extend_from_slice(&[0x00, 0x00]); // IFD entry count (0 entries)
+    data.extend_from_slice(&[0x00, 0x00, 0x00, 0x00]); // No next IFD
 
     let result = parse_maker_notes(&data, "OLYMPUS", Endian::Big, 0);
     assert!(result.is_ok());

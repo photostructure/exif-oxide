@@ -433,7 +433,7 @@ fn cmd_generate_printconv(manufacturer_file: &str) -> Result<(), String> {
 
     // Use the PrintConv generator extractor
     let generator = extractors::PrintConvGenerator::new(manufacturer_file);
-    generator.extract(&exiftool_path)?;
+    generator.extract(exiftool_path)?;
 
     Ok(())
 }
@@ -498,7 +498,7 @@ fn analyze_current_version_only(
 
     // Extract current patterns
     println!("📊 Analyzing current PrintConv patterns...");
-    let mut analyzer = extractors::PrintConvAnalyzer::new(manufacturer_file);
+    let analyzer = extractors::PrintConvAnalyzer::new(manufacturer_file);
     analyzer.analyze(&manufacturer_path)?;
 
     let patterns = analyzer.get_patterns();
@@ -536,7 +536,7 @@ fn extract_patterns_for_version(
         .join("lib/Image/ExifTool")
         .join(manufacturer_file);
     let result = if manufacturer_path.exists() {
-        let mut analyzer = extractors::PrintConvAnalyzer::new(manufacturer_file);
+        let analyzer = extractors::PrintConvAnalyzer::new(manufacturer_file);
         match analyzer.analyze(&manufacturer_path) {
             Ok(()) => {
                 let patterns = analyzer
