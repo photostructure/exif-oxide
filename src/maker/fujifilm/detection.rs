@@ -14,7 +14,7 @@ pub struct FUJIFILMDetectionResult {
 }
 
 /// Detect fujifilm maker note format and extract version information
-/// 
+///
 /// Returns Some(DetectionResult) if this appears to be a fujifilm maker note,
 /// None otherwise.
 pub fn detect_fujifilm_maker_note(data: &[u8]) -> Option<FUJIFILMDetectionResult> {
@@ -43,5 +43,4 @@ mod tests {
         assert_eq!(detection.version, None);
         assert_eq!(detection.ifd_offset, 0);
     }
-
 }

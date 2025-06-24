@@ -2,6 +2,7 @@
 
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm"]
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Canon.pm"]
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/FujiFilm.pm"]
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Olympus.pm"]
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Nikon.pm"]
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Pentax.pm"]
@@ -11,6 +12,7 @@ include!(concat!(env!("OUT_DIR"), "/generated_tags.rs"));
 
 // Table-driven maker note tag definitions with PrintConv
 pub mod canon_tags;
+pub mod fujifilm_tags;
 pub mod nikon_tags;
 pub mod olympus_tags;
 pub mod pentax_tags;
