@@ -291,6 +291,7 @@ fn cmd_extract(component: &str, _options: &[String]) -> Result<(), String> {
         "magic-numbers" => Box::new(extractors::MagicNumbersExtractor::new()),
         "datetime-patterns" => Box::new(extractors::DateTimePatternsExtractor::new()),
         "binary-tags" => Box::new(extractors::BinaryTagsExtractor::new()),
+        "exif-tags" => Box::new(extractors::ExifTagsExtractor),
         "maker-detection" => Box::new(extractors::MakerDetectionExtractor::new()),
         "printconv-tables" => {
             if _options.is_empty() {
@@ -335,6 +336,7 @@ fn cmd_extract_all() -> Result<(), String> {
         ("magic-numbers", "File type detection patterns"),
         ("datetime-patterns", "Date parsing patterns"),
         ("binary-tags", "Composite tag definitions"),
+        ("exif-tags", "Standard EXIF tag definitions"),
         ("maker-detection", "Maker note detection patterns"),
     ];
 
@@ -349,6 +351,7 @@ fn cmd_extract_all() -> Result<(), String> {
             "magic-numbers" => Box::new(extractors::MagicNumbersExtractor::new()),
             "datetime-patterns" => Box::new(extractors::DateTimePatternsExtractor::new()),
             "binary-tags" => Box::new(extractors::BinaryTagsExtractor::new()),
+            "exif-tags" => Box::new(extractors::ExifTagsExtractor),
             "maker-detection" => Box::new(extractors::MakerDetectionExtractor::new()),
             _ => unreachable!(),
         };
@@ -992,6 +995,7 @@ fn print_help() {
     println!("    magic-numbers                    Extract file type detection patterns");
     println!("    datetime-patterns                Extract date parsing patterns");
     println!("    binary-tags                      Extract composite tag definitions");
+    println!("    exif-tags                        Extract standard EXIF tag definitions");
     println!("    maker-detection                  Extract maker note detection patterns");
     println!(
         "    printconv-tables <pm>            Extract complete tag tables with PrintConv mappings"

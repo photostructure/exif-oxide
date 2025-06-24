@@ -550,6 +550,16 @@ pub enum PrintConvId {
     AppleHDRImageType,
     AppleImageCaptureType,
     AppleCameraType,
+
+    /// EXIF-specific conversions
+    ExposureTime, // 0x829a - "1/125" formatting
+    FNumber,     // 0x829d - "f/4.0" formatting
+    FocalLength, // 0x920a - "23.0 mm" formatting
+    Orientation, // 0x0112 - orientation lookup
+    DateTime,    // Date/time formatting
+    Resolution,  // Resolution formatting
+    Compression, // Compression lookup
+    ColorSpace,  // Color space lookup
 }
 
 /// Apply print conversion to an EXIF value
@@ -685,6 +695,16 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
+        // EXIF-specific conversions
+        PrintConvId::ExposureTime => format_exposure_time(value),
+        PrintConvId::FNumber => format_f_number(value),
+        PrintConvId::FocalLength => format_focal_length(value),
+        PrintConvId::Orientation => format_orientation(value),
+        PrintConvId::DateTime => format_datetime(value),
+        PrintConvId::Resolution => format_resolution(value),
+        PrintConvId::Compression => format_compression(value),
+        PrintConvId::ColorSpace => format_color_space(value),
+
         _ => {
             // For now, return raw value for unimplemented conversions
             // TODO: Implement remaining conversion functions
@@ -701,6 +721,15 @@ fn as_u32(value: &ExifValue) -> Option<u32> {
         ExifValue::U8(n) => Some(*n as u32),
         ExifValue::I32(n) if *n >= 0 => Some(*n as u32),
         ExifValue::I16(n) if *n >= 0 => Some(*n as u32),
+        ExifValue::Undefined(data) => {
+            // Handle common case where Undefined data contains a numeric value
+            match data.len() {
+                1 => Some(data[0] as u32),
+                2 => Some(u16::from_le_bytes([data[0], data[1]]) as u32),
+                4 => Some(u32::from_le_bytes([data[0], data[1], data[2], data[3]])),
+                _ => None,
+            }
+        }
         _ => None,
     }
 }
@@ -771,7 +800,29 @@ fn exif_value_to_string(value: &ExifValue) -> String {
                 .collect();
             format!("[{}]", strs.join(", "))
         }
-        ExifValue::Undefined(data) => format!("Undefined({})", data.len()),
+        ExifValue::Undefined(data) => {
+            // Handle common case where Undefined data is actually a null-terminated string
+            if let Some(null_pos) = data.iter().position(|&b| b == 0) {
+                // Data contains null terminator - treat as string
+                match std::str::from_utf8(&data[..null_pos]) {
+                    Ok(s) => s.to_string(),
+                    Err(_) => format!("Undefined({})", data.len()),
+                }
+            } else {
+                // No null terminator - check if it's printable ASCII
+                if data
+                    .iter()
+                    .all(|&b| b.is_ascii() && (b.is_ascii_graphic() || b.is_ascii_whitespace()))
+                {
+                    match std::str::from_utf8(data) {
+                        Ok(s) => s.to_string(),
+                        Err(_) => format!("Undefined({})", data.len()),
+                    }
+                } else {
+                    format!("Undefined({})", data.len())
+                }
+            }
+        }
         ExifValue::BinaryData(len) => format!("BinaryData({})", len),
     }
 }
@@ -950,6 +1001,125 @@ fn pentax_sensitivity_adjust_format(value: &ExifValue) -> String {
         }
         Some(0) => "0".to_string(),
         _ => exif_value_to_string(value),
+    }
+}
+
+/// EXIF exposure time formatting - converts rational to "1/125" format
+fn format_exposure_time(value: &ExifValue) -> String {
+    match value {
+        ExifValue::Rational(num, den) => {
+            if *den == 1 {
+                format!("{}", num)
+            } else if *num == 1 {
+                format!("1/{}", den)
+            } else {
+                let exposure = *num as f64 / *den as f64;
+                if exposure >= 1.0 {
+                    format!("{:.1}", exposure)
+                } else {
+                    format!("1/{:.0}", 1.0 / exposure)
+                }
+            }
+        }
+        _ => exif_value_to_string(value),
+    }
+}
+
+/// EXIF F-number formatting - converts rational to "f/4.0" format
+fn format_f_number(value: &ExifValue) -> String {
+    match value {
+        ExifValue::Rational(num, den) => {
+            if *den == 0 {
+                "undef".to_string()
+            } else {
+                let f_val = *num as f64 / *den as f64;
+                format!("f/{:.1}", f_val)
+            }
+        }
+        _ => exif_value_to_string(value),
+    }
+}
+
+/// EXIF focal length formatting - converts rational to "23.0 mm" format
+fn format_focal_length(value: &ExifValue) -> String {
+    match value {
+        ExifValue::Rational(num, den) => {
+            if *den == 0 {
+                "undef".to_string()
+            } else {
+                let focal_length = *num as f64 / *den as f64;
+                format!("{:.1} mm", focal_length)
+            }
+        }
+        _ => exif_value_to_string(value),
+    }
+}
+
+/// EXIF orientation formatting - converts numeric value to orientation description
+fn format_orientation(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(1) => "Horizontal (normal)".to_string(),
+        Some(2) => "Mirror horizontal".to_string(),
+        Some(3) => "Rotate 180".to_string(),
+        Some(4) => "Mirror vertical".to_string(),
+        Some(5) => "Mirror horizontal and rotate 270 CW".to_string(),
+        Some(6) => "Rotate 90 CW".to_string(),
+        Some(7) => "Mirror horizontal and rotate 90 CW".to_string(),
+        Some(8) => "Rotate 270 CW".to_string(),
+        _ => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
+/// EXIF date/time formatting
+fn format_datetime(value: &ExifValue) -> String {
+    // For now, just return the string as-is
+    // In a full implementation, this would handle various date formats
+    exif_value_to_string(value)
+}
+
+/// EXIF resolution formatting - handles X and Y resolution values
+fn format_resolution(value: &ExifValue) -> String {
+    match value {
+        ExifValue::Rational(num, den) => {
+            if *den == 0 {
+                "undef".to_string()
+            } else {
+                let resolution = *num as f64 / *den as f64;
+                format!("{:.0}", resolution)
+            }
+        }
+        _ => exif_value_to_string(value),
+    }
+}
+
+/// EXIF compression formatting - converts numeric compression values to names
+fn format_compression(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(1) => "Uncompressed".to_string(),
+        Some(2) => "CCITT 1D".to_string(),
+        Some(3) => "T4/Group 3 Fax".to_string(),
+        Some(4) => "T6/Group 4 Fax".to_string(),
+        Some(5) => "LZW".to_string(),
+        Some(6) => "JPEG (old-style)".to_string(),
+        Some(7) => "JPEG".to_string(),
+        Some(8) => "Adobe Deflate".to_string(),
+        Some(9) => "JBIG B&W".to_string(),
+        Some(10) => "JBIG Color".to_string(),
+        Some(32766) => "Next".to_string(),
+        Some(32767) => "Sony ARW Compressed".to_string(),
+        Some(32773) => "PackBits".to_string(),
+        Some(34712) => "JPEG2000".to_string(),
+        _ => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
+/// EXIF color space formatting - converts numeric color space values to names
+fn format_color_space(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(1) => "sRGB".to_string(),
+        Some(2) => "Adobe RGB".to_string(),
+        Some(65535) => "Uncalibrated".to_string(),
+        _ => format!("Unknown ({})", exif_value_to_string(value)),
     }
 }
 

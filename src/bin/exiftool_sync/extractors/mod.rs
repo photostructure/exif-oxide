@@ -11,6 +11,7 @@ pub trait Extractor {
 mod binary_formats;
 mod binary_tags;
 mod datetime_patterns;
+mod exif_tags;
 mod magic_numbers;
 mod maker_detection;
 mod printconv_analyzer;
@@ -20,6 +21,7 @@ mod printconv_tables;
 pub use binary_formats::BinaryFormatsExtractor;
 pub use binary_tags::BinaryTagsExtractor;
 pub use datetime_patterns::DateTimePatternsExtractor;
+pub use exif_tags::ExifTagsExtractor;
 pub use magic_numbers::MagicNumbersExtractor;
 pub use maker_detection::MakerDetectionExtractor;
 pub use printconv_analyzer::{PrintConvAnalyzer, PrintConvPattern, PrintConvType};
