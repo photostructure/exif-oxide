@@ -8,6 +8,7 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/photostructure/exif-oxide"
 keywords = ["exif", "metadata", "image", "photo", "jpeg"]
 categories = ["multimedia::images", "parser-implementations"]
+default-run = "exif-oxide"
 
 [dependencies]
 # Core dependencies for Spike 1
