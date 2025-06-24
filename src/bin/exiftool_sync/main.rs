@@ -9,6 +9,7 @@ use std::path::Path;
 use std::process::Command;
 
 mod extractors;
+use extractors::Extractor;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -33,6 +34,27 @@ fn main() {
                 Err("Usage: exiftool_sync extract <component> [options]".to_string())
             } else {
                 cmd_extract(&args[2], &args[3..])
+            }
+        }
+        "analyze" => {
+            if args.len() < 4 || args[2] != "printconv-patterns" {
+                Err("Usage: exiftool_sync analyze printconv-patterns <Manufacturer.pm>".to_string())
+            } else {
+                cmd_analyze_printconv(&args[3])
+            }
+        }
+        "generate" => {
+            if args.len() < 4 || args[2] != "printconv-functions" {
+                Err("Usage: exiftool_sync generate printconv-functions <Manufacturer.pm>".to_string())
+            } else {
+                cmd_generate_printconv(&args[3])
+            }
+        }
+        "diff-printconv" => {
+            if args.len() != 5 {
+                Err("Usage: exiftool_sync diff-printconv <from_version> <to_version> <Manufacturer.pm>".to_string())
+            } else {
+                cmd_diff_printconv(&args[2], &args[3], &args[4])
             }
         }
         "extract-all" => cmd_extract_all(),
@@ -260,6 +282,12 @@ fn cmd_extract(component: &str, _options: &[String]) -> Result<(), String> {
         "datetime-patterns" => Box::new(extractors::DateTimePatternsExtractor::new()),
         "binary-tags" => Box::new(extractors::BinaryTagsExtractor::new()),
         "maker-detection" => Box::new(extractors::MakerDetectionExtractor::new()),
+        "printconv-tables" => {
+            if _options.is_empty() {
+                return Err("Usage: exiftool_sync extract printconv-tables <Manufacturer.pm>".to_string());
+            }
+            Box::new(extractors::PrintConvTablesExtractor::new(&_options[0]))
+        },
         _ => return Err(format!("Unknown component: {}", component)),
     };
 
@@ -349,6 +377,72 @@ fn cmd_extract_all() -> Result<(), String> {
     }
 }
 
+fn cmd_analyze_printconv(manufacturer_file: &str) -> Result<(), String> {
+    println!("Analyzing PrintConv patterns in {}", manufacturer_file);
+    println!("===============================================");
+    println!();
+
+    // Get ExifTool source directory
+    let exiftool_path = Path::new("third-party/exiftool");
+    if !exiftool_path.exists() {
+        return Err("ExifTool source not found at third-party/exiftool".to_string());
+    }
+
+    let manufacturer_path = exiftool_path.join("lib/Image/ExifTool").join(manufacturer_file);
+    if !manufacturer_path.exists() {
+        return Err(format!("Manufacturer file not found: {}", manufacturer_path.display()));
+    }
+
+    // Use the PrintConv analyzer extractor
+    let analyzer = extractors::PrintConvAnalyzer::new(manufacturer_file);
+    analyzer.analyze(&manufacturer_path)?;
+
+    Ok(())
+}
+
+fn cmd_generate_printconv(manufacturer_file: &str) -> Result<(), String> {
+    println!("Generating PrintConv functions for {}", manufacturer_file);
+    println!("==============================================");
+    println!();
+
+    // Get ExifTool source directory
+    let exiftool_path = Path::new("third-party/exiftool");
+    if !exiftool_path.exists() {
+        return Err("ExifTool source not found at third-party/exiftool".to_string());
+    }
+
+    let manufacturer_path = exiftool_path.join("lib/Image/ExifTool").join(manufacturer_file);
+    if !manufacturer_path.exists() {
+        return Err(format!("Manufacturer file not found: {}", manufacturer_path.display()));
+    }
+
+    // Use the PrintConv generator extractor  
+    let generator = extractors::PrintConvGenerator::new(manufacturer_file);
+    generator.extract(&exiftool_path)?;
+
+    Ok(())
+}
+
+fn cmd_diff_printconv(from_version: &str, to_version: &str, manufacturer_file: &str) -> Result<(), String> {
+    println!("PrintConv Diff: {} {} → {}", manufacturer_file, from_version, to_version);
+    println!("===============================================");
+    println!();
+
+    // This would analyze differences in PrintConv patterns between versions
+    // For now, provide a placeholder implementation
+    println!("PrintConv diff analysis for {} between versions {} and {}", 
+             manufacturer_file, from_version, to_version);
+    println!("This feature will analyze:");
+    println!("- Modified PrintConv patterns");
+    println!("- New PrintConv patterns");
+    println!("- Removed PrintConv patterns");
+    println!("- Impact on existing PrintConvId enum variants");
+    println!();
+    println!("Implementation coming soon...");
+
+    Ok(())
+}
+
 fn print_help() {
     println!("ExifTool Synchronization Tool");
     println!();
@@ -356,19 +450,23 @@ fn print_help() {
     println!("    cargo run --bin exiftool_sync <COMMAND>");
     println!();
     println!("COMMANDS:");
-    println!("    status                   Show current synchronization status");
-    println!("    diff <from> <to>         Show which Rust files are affected by ExifTool changes");
-    println!("    scan                     List all ExifTool source dependencies");
-    println!("    extract <component>      Extract algorithms from ExifTool source");
-    println!("    extract-all              Extract all components in one command");
-    println!("    help                     Show this help message");
+    println!("    status                           Show current synchronization status");
+    println!("    diff <from> <to>                 Show which Rust files are affected by ExifTool changes");
+    println!("    scan                             List all ExifTool source dependencies");
+    println!("    extract <component>              Extract algorithms from ExifTool source");
+    println!("    extract-all                      Extract all components in one command");
+    println!("    analyze printconv-patterns <pm>  Analyze PrintConv patterns in manufacturer file");
+    println!("    generate printconv-functions <pm> Generate PrintConv functions for manufacturer");
+    println!("    diff-printconv <from> <to> <pm>  Compare PrintConv changes between versions");
+    println!("    help                             Show this help message");
     println!();
     println!("EXTRACT COMPONENTS:");
-    println!("    binary-formats           Extract ProcessBinaryData table definitions");
-    println!("    magic-numbers            Extract file type detection patterns");
-    println!("    datetime-patterns        Extract date parsing patterns");
-    println!("    binary-tags              Extract composite tag definitions");
-    println!("    maker-detection          Extract maker note detection patterns");
+    println!("    binary-formats                   Extract ProcessBinaryData table definitions");
+    println!("    magic-numbers                    Extract file type detection patterns");
+    println!("    datetime-patterns                Extract date parsing patterns");
+    println!("    binary-tags                      Extract composite tag definitions");
+    println!("    maker-detection                  Extract maker note detection patterns");
+    println!("    printconv-tables <pm>            Extract complete tag tables with PrintConv mappings");
     println!();
     println!("EXAMPLES:");
     println!("    cargo run --bin exiftool_sync status");
@@ -377,4 +475,8 @@ fn print_help() {
     println!("    cargo run --bin exiftool_sync extract binary-formats");
     println!("    cargo run --bin exiftool_sync extract-all");
     println!("    cargo run --bin exiftool_sync extract maker-detection");
+    println!("    cargo run --bin exiftool_sync analyze printconv-patterns Canon.pm");
+    println!("    cargo run --bin exiftool_sync generate printconv-functions Canon.pm");
+    println!("    cargo run --bin exiftool_sync extract printconv-tables Canon.pm");
+    println!("    cargo run --bin exiftool_sync diff-printconv 12.65 12.66 Canon.pm");
 }
