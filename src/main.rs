@@ -5,7 +5,9 @@ use exif_oxide::core::ifd::IfdParser;
 use exif_oxide::core::mpf::ParsedMpf;
 use exif_oxide::core::print_conv::{apply_print_conv, PrintConvId};
 use exif_oxide::core::ExifValue;
-use exif_oxide::tables::{fujifilm_tags, nikon_tags, olympus_tags, pentax_tags, sony_tags};
+use exif_oxide::tables::{
+    exif_tags, fujifilm_tags, nikon_tags, olympus_tags, pentax_tags, sony_tags,
+};
 use exif_oxide::tables::{lookup_canon_tag, lookup_tag};
 use serde::Serialize;
 use std::collections::HashMap;
@@ -171,7 +173,14 @@ fn resolve_tag_name(tag_name: &str) -> Option<(u16, Option<&'static str>)> {
         _ => {}
     }
 
-    // Search standard EXIF tags
+    // Search standard EXIF tags (new table-driven approach)
+    for tag in exif_tags::EXIF_TAGS.iter() {
+        if tag.name.eq_ignore_ascii_case(name) {
+            return Some((tag.id, None)); // EXIF tags don't have groups
+        }
+    }
+
+    // Search standard EXIF tags (legacy lookup from build.rs)
     for tag_id in 0..=0xFFFF {
         if let Some(tag_info) = lookup_tag(tag_id) {
             if tag_info.name.eq_ignore_ascii_case(name) {
@@ -326,11 +335,17 @@ fn format_tag_key(tag_name: &str, group: Option<&str>, include_groups: bool) -> 
 
 /// Get PrintConv for standard EXIF tags
 fn get_standard_exif_printconv(tag_id: u16) -> PrintConvId {
+    // First try the new table-driven approach with full PrintConv support
+    if let Some(exif_tag) = exif_tags::get_exif_tag(tag_id) {
+        return exif_tag.print_conv;
+    }
+
+    // Fallback to legacy hardcoded mappings for compatibility
     match tag_id {
         0x8827 => PrintConvId::IsoSpeed,     // ISO Speed
         0x9207 => PrintConvId::MeteringMode, // MeteringMode
         0xA403 => PrintConvId::WhiteBalance, // WhiteBalance
-        _ => PrintConvId::None,              // Only use existing variants for now
+        _ => PrintConvId::None,
     }
 }
 
@@ -457,8 +472,12 @@ fn build_tag_map(
                 (tag_key, Some("IFD1".to_string()), PrintConvId::None)
             }
         } else {
-            // Standard EXIF tag
-            if let Some(tag_info) = lookup_tag(*tag_id) {
+            // Standard EXIF tag - first try new table-driven approach
+            if let Some(exif_tag) = exif_tags::get_exif_tag(*tag_id) {
+                let tag_key = format_tag_key(exif_tag.name, Some("ExifIFD"), include_groups);
+                (tag_key, Some("ExifIFD".to_string()), exif_tag.print_conv)
+            } else if let Some(tag_info) = lookup_tag(*tag_id) {
+                // Fallback to legacy lookup for compatibility
                 let group = tag_info.group.unwrap_or("ExifIFD");
                 let tag_key = format_tag_key(tag_info.name, Some(group), include_groups);
                 let print_conv_id = get_standard_exif_printconv(*tag_id);
@@ -522,6 +541,31 @@ fn build_tag_map(
                 // Apply PrintConv to get human-readable value
                 let converted_string = apply_print_conv(value, print_conv_id);
                 ExifValue::Ascii(converted_string)
+            } else if show_converted_values {
+                // Even with PrintConvId::None, convert common cases like Undefined strings
+                match value {
+                    ExifValue::Undefined(data) => {
+                        // Convert Undefined data to string if it contains text
+                        if let Some(null_pos) = data.iter().position(|&b| b == 0) {
+                            // Data contains null terminator - treat as string
+                            match std::str::from_utf8(&data[..null_pos]) {
+                                Ok(s) => ExifValue::Ascii(s.to_string()),
+                                Err(_) => value.clone(),
+                            }
+                        } else if data.iter().all(|&b| {
+                            b.is_ascii() && (b.is_ascii_graphic() || b.is_ascii_whitespace())
+                        }) {
+                            // No null terminator but all printable ASCII
+                            match std::str::from_utf8(data) {
+                                Ok(s) => ExifValue::Ascii(s.to_string()),
+                                Err(_) => value.clone(),
+                            }
+                        } else {
+                            value.clone()
+                        }
+                    }
+                    _ => value.clone(),
+                }
             } else {
                 value.clone()
             };

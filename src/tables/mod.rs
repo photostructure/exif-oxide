@@ -12,9 +12,10 @@
 // Include the generated tag definitions
 include!(concat!(env!("OUT_DIR"), "/generated_tags.rs"));
 
-// Table-driven maker note tag definitions with PrintConv
+// Table-driven tag definitions with PrintConv
 pub mod apple_tags;
 pub mod canon_tags;
+pub mod exif_tags; // Standard EXIF tags with PrintConv
 pub mod fujifilm_tags;
 pub mod nikon_tags;
 pub mod olympus_tags;

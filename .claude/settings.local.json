@@ -56,7 +56,8 @@
       "Bash(python3:*)",
       "Bash(echo:*)",
       "Bash(./third-party/exiftool/exiftool -Apple:all test-images/apple/IMG_3755.JPG)",
-      "Bash(./third-party/exiftool/exiftool -v3 -Apple:all test-images/apple/IMG_3755.JPG)"
+      "Bash(./third-party/exiftool/exiftool -v3 -Apple:all test-images/apple/IMG_3755.JPG)",
+      "Bash(RUST_BACKTRACE=1 cargo test core::ifd::tests::test_parse_u16_array --lib -- --nocapture)"
     ],
     "deny": []
   }
