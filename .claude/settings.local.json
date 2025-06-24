@@ -44,7 +44,12 @@
       "Bash(awk:*)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:www.ftyps.com)",
-      "Bash(RUST_BACKTRACE=1 cargo test datetime::parser::tests::test_loose_format_parsing -- --nocapture)"
+      "Bash(RUST_BACKTRACE=1 cargo test datetime::parser::tests::test_loose_format_parsing -- --nocapture)",
+      "Bash(./exiftool/exiftool -Make exiftool/t/images/ExifTool.tif)",
+      "Bash(./exiftool/exiftool -json -Orientation exiftool/t/images/Canon.jpg)",
+      "Bash(./exiftool/exiftool -json -n -Orientation exiftool/t/images/Canon.jpg)",
+      "Bash(./exiftool/exiftool -json -g exiftool/t/images/Canon.jpg)",
+      "Bash(./exiftool/exiftool -json -g -n exiftool/t/images/Canon.jpg)"
     ],
     "deny": []
   }

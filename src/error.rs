@@ -15,6 +15,9 @@ pub enum Error {
     #[error("Invalid EXIF data: {0}")]
     InvalidExif(String),
 
+    #[error("Invalid data: {0}")]
+    InvalidData(String),
+
     #[error("EXIF data not found")]
     NoExif,
 

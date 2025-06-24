@@ -249,16 +249,16 @@ mod tests {
 
     #[test]
     fn test_find_utc_references() {
-        let mut collection = DateTimeCollection::default();
-
-        // Add GPS datetime
-        collection.gps_datetime = Some(ExifDateTime::new(
-            Utc.with_ymd_and_hms(2024, 3, 15, 22, 30, 0).unwrap(),
-            None,
-            "2024:03:15 22:30:00".to_string(),
-            InferenceSource::None,
-            0.95,
-        ));
+        let collection = DateTimeCollection {
+            gps_datetime: Some(ExifDateTime::new(
+                Utc.with_ymd_and_hms(2024, 3, 15, 22, 30, 0).unwrap(),
+                None,
+                "2024:03:15 22:30:00".to_string(),
+                InferenceSource::None,
+                0.95,
+            )),
+            ..Default::default()
+        };
 
         let references = UtcDeltaCalculator::find_utc_references(&collection);
         assert_eq!(references.len(), 1);
