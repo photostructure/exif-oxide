@@ -2,8 +2,8 @@
 //!
 //! Generates Rust PrintConv functions and enum variants from ExifTool manufacturer files
 
-use super::Extractor;
 use super::printconv_analyzer::PrintConvAnalyzer;
+use super::Extractor;
 use std::path::Path;
 
 pub struct PrintConvGenerator {
@@ -20,28 +20,34 @@ impl PrintConvGenerator {
 
 impl Extractor for PrintConvGenerator {
     fn extract(&self, exiftool_path: &Path) -> Result<(), String> {
-        println!("Generating PrintConv functions for {}", self.manufacturer_file);
-        
+        println!(
+            "Generating PrintConv functions for {}",
+            self.manufacturer_file
+        );
+
         let manufacturer_path = exiftool_path
             .join("lib/Image/ExifTool")
             .join(&self.manufacturer_file);
-        
+
         if !manufacturer_path.exists() {
-            return Err(format!("Manufacturer file not found: {}", manufacturer_path.display()));
+            return Err(format!(
+                "Manufacturer file not found: {}",
+                manufacturer_path.display()
+            ));
         }
 
         // Use the analyzer to get patterns
         let analyzer = PrintConvAnalyzer::new(&self.manufacturer_file);
         analyzer.analyze(&manufacturer_path)?;
-        
+
         // For now, just show what would be generated
         self.print_generated_code(&analyzer)?;
-        
+
         println!("PrintConv function generation completed!");
         println!("  - Add the enum variants to src/core/print_conv.rs");
-        println!("  - Add the match arms to apply_print_conv()"); 
+        println!("  - Add the match arms to apply_print_conv()");
         println!("  - Add the lookup functions");
-        
+
         Ok(())
     }
 }
@@ -50,14 +56,14 @@ impl PrintConvGenerator {
     fn print_generated_code(&self, _analyzer: &PrintConvAnalyzer) -> Result<(), String> {
         println!("\n=== GENERATED RUST CODE ===");
         println!();
-        
+
         // Get the patterns (we need to re-parse since analyzer fields are private)
         let manufacturer = self.manufacturer_file.trim_end_matches(".pm");
-        
+
         println!("// AUTO-GENERATED PrintConv additions for {}", manufacturer);
         println!("pub enum PrintConvId {{");
         println!("    // ... existing variants");
-        
+
         // This is a simplified version - in a full implementation we'd need access to the patterns
         // For now, show example output based on typical manufacturer patterns
         match manufacturer {
@@ -84,14 +90,14 @@ impl PrintConvGenerator {
                 println!("    {}CustomPattern2,", manufacturer);
             }
         }
-        
+
         println!("}}");
         println!();
-        
+
         println!("pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {{");
         println!("    match conv_id {{");
         println!("        // ... existing conversions");
-        
+
         match manufacturer {
             "Canon" => {
                 println!("        PrintConvId::CanonColorSpace => match as_u32(value) {{");
@@ -112,14 +118,18 @@ impl PrintConvGenerator {
                 println!("        }},");
             }
             _ => {
-                println!("        PrintConvId::{}CustomPattern1 => {}_pattern1_lookup(value),", manufacturer, manufacturer.to_lowercase());
+                println!(
+                    "        PrintConvId::{}CustomPattern1 => {}_pattern1_lookup(value),",
+                    manufacturer,
+                    manufacturer.to_lowercase()
+                );
             }
         }
-        
+
         println!("    }}");
         println!("}}");
         println!();
-        
+
         // Generate lookup function example
         if manufacturer == "Canon" {
             println!("// Compile-time hash table for fast lookup");
@@ -139,7 +149,7 @@ impl PrintConvGenerator {
             println!("    }}");
             println!("}}");
         }
-        
+
         Ok(())
     }
 }

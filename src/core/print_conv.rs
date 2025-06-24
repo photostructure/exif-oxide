@@ -55,6 +55,85 @@ pub enum PrintConvId {
     /// Canon-specific conversions  
     CanonCameraSettings,
     CanonImageType,
+    CanonLensType,
+    CanonModelLookup,
+    CanonUserDefPictureStyle, // Shared variant (consolidates userDefStyles references)
+    CanonPictureStyle,        // Shared variant (consolidates pictureStyles references)
+
+    // Canon tag-specific conversions (generated variants)
+    CanonCanonCameraSettings,
+    CanonCanonFocalLength,
+    CanonCanonFlashInfo,
+    CanonCanonShotInfo,
+    CanonCanonPanorama,
+    CanonCanonImageType,
+    CanonCanonFirmwareVersion,
+    CanonFileNumber,
+    CanonOwnerName,
+    CanonUnknownD30,
+    CanonCanonFileLength,
+    CanonMovieInfo,
+    CanonCanonAFInfo,
+    CanonThumbnailImageValidArea,
+    CanonSerialNumberFormat,
+    CanonSuperMacro,
+    CanonDateStampMode,
+    CanonMyColors,
+    CanonFirmwareRevision,
+    CanonCategories,
+    CanonFaceDetect1,
+    CanonFaceDetect2,
+    CanonCanonAFInfo2,
+    CanonContrastInfo,
+    CanonImageUniqueID,
+    CanonWBInfo,
+    CanonFaceDetect3,
+    CanonTimeInfo,
+    CanonBatteryType,
+    CanonAFInfo3,
+    CanonRawDataOffset,
+    CanonRawDataLength,
+    CanonOriginalDecisionDataOffset,
+    CanonCustomFunctions1D,
+    CanonPersonalFunctions,
+    CanonPersonalFunctionValues,
+    CanonCanonFileInfo,
+    CanonAFPointsInFocus1D,
+    CanonDustRemovalData,
+    CanonCropInfo,
+    CanonCustomFunctions2,
+    CanonAspectInfo,
+    CanonProcessingInfo,
+    CanonToneCurveTable,
+    CanonSharpnessTable,
+    CanonSharpnessFreqTable,
+    CanonColorBalance,
+    CanonMeasuredColor,
+    CanonColorTemperature,
+    CanonCanonFlags,
+    CanonModifiedInfo,
+    CanonToneCurveMatching,
+    CanonColorSpace,
+    CanonPreviewImageInfo,
+    CanonVRDOffset,
+    CanonSensorInfo,
+    CanonCRWParam,
+    CanonColorInfo,
+    CanonFlavor,
+    CanonPictureStyleUserDef,
+    CanonPictureStylePC,
+    CanonCustomPictureStyleFileName,
+    CanonAFMicroAdj,
+    CanonVignettingCorr2,
+    CanonLightingOpt,
+    CanonAmbienceInfo,
+    CanonMultiExp,
+    CanonFilterInfo,
+    CanonHDRInfo,
+    CanonLogInfo,
+    CanonAFConfig,
+    CanonRawBurstModeRoll,
+    CanonLevelInfo,
 
     /// Nikon-specific conversions
     NikonLensType,
@@ -63,7 +142,95 @@ pub enum PrintConvId {
     /// Sony-specific conversions
     SonyLensType,
     SonySceneMode,
-    // More can be added as needed...
+    
+    /// Olympus-specific conversions (generated variants)
+    OlympusMakerNoteVersion,
+    OlympusMinoltaCameraSettingsOld,
+    OlympusMinoltaCameraSettings,
+    OlympusCompressedImageSize,
+    OlympusPreviewImageData,
+    OlympusPreviewImageStart,
+    OlympusPreviewImageLength,
+    OlympusThumbnailImage,
+    OlympusBodyFirmwareVersion,
+    OlympusSpecialMode,
+    OlympusJPEGQual,
+    OlympusMacro,
+    OlympusBWMode,
+    OlympusDigitalZoom,
+    OlympusFocalPlaneDiagonal,
+    OlympusLensDistortionParams,
+    OlympusCameraType,
+    OlympusCameraID,
+    OlympusOneTouchWB,
+    OlympusShutterSpeedValue,
+    OlympusISOValue,
+    OlympusApertureValue,
+    OlympusBrightnessValue,
+    OlympusFlashMode,
+    OlympusFlashDevice,
+    OlympusExposureCompensation,
+    OlympusSensorTemperature,
+    OlympusLensTemperature,
+    OlympusLightSource,
+    OlympusFocusRange,
+    OlympusFocusMode,
+    OlympusManualFocusDistance,
+    OlympusZoomStepCount,
+    OlympusFocusStepCount,
+    OlympusSharpness,
+    OlympusFlashChargeLevel,
+    OlympusColorMatrix,
+    OlympusBlackLevel,
+    OlympusWhiteBalance,
+    OlympusBlueBalance,
+    OlympusRedBalance,
+    OlympusColorMatrixNumber,
+    OlympusSerialNumber,
+    OlympusExternalFlashAE1_0,
+    OlympusExternalFlashAE2_0,
+    OlympusInternalFlashAE1_0,
+    OlympusInternalFlashAE2_0,
+    OlympusFlashExposureComp,
+    OlympusAutoExposureLock,
+    OlympusAutoWhiteBalanceLock,
+    OlympusAutoFocus,
+    OlympusNoiseReduction,
+    OlympusColorControl,
+    OlympusValidBits,
+    OlympusCoringFilter,
+    OlympusCoringValue,
+    OlympusImageWidth,
+    OlympusImageHeight,
+    OlympusOriginalManufacturer,
+    OlympusDataDump,
+    OlympusDataDump2,
+    OlympusZoomedPreviewStart,
+    OlympusZoomedPreviewLength,
+    OlympusZoomedPreviewSize,
+    OlympusPreviewFormat,
+    OlympusSceneDetect,
+    OlympusSceneArea,
+    OlympusSceneDetectData,
+    OlympusCompressionRatio,
+    OlympusPreviewImageValid,
+    OlympusPreviewImageStart2,
+    OlympusPreviewImageLength2,
+    OlympusAFResult,
+    OlympusCCDScanMode,
+    OlympusNoiseFilter,
+    OlympusArtFilter,
+    OlympusMagicFilter,
+    OlympusPictureMode,
+    OlympusPictureModeContrast,
+    OlympusPictureModeSaturation,
+    OlympusPictureModeSharpness,
+    OlympusPictureModeBWFilter,
+    OlympusPictureModeTone,
+    OlympusPictureModeEffect,
+    OlympusColorTemperatureRG,
+    OlympusColorTemperatureBG,
+    OlympusContrast,
 }
 
 /// Apply print conversion to an EXIF value
@@ -166,6 +333,11 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
         PrintConvId::PentaxModelLookup => pentax_model_lookup(value),
         PrintConvId::PentaxPictureMode => pentax_picture_mode(value),
         PrintConvId::PentaxLensType => pentax_lens_type(value),
+
+        // Canon shared conversions (consolidate multiple references)
+        PrintConvId::CanonLensType => canon_lens_type_lookup(value),
+        PrintConvId::CanonUserDefPictureStyle => canon_user_def_picture_style_lookup(value),
+        PrintConvId::CanonPictureStyle => canon_picture_style_lookup(value),
 
         // Manufacturer-specific conversions will be implemented as needed
         _ => {
@@ -313,6 +485,88 @@ fn pentax_lens_type(value: &ExifValue) -> String {
     }
 }
 
+/// Canon lens type lookup (shared by 25 tags)
+/// Consolidates all references to %canonLensTypes in ExifTool
+fn canon_lens_type_lookup(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(val) => match val {
+            // Core Canon lens types from ExifTool %canonLensTypes
+            1 => "Canon EF 50mm f/1.8".to_string(),
+            2 => "Canon EF 28mm f/2.8 or Sigma Lens".to_string(),
+            3 => "Canon EF 135mm f/2.8 Soft".to_string(),
+            4 => "Canon EF 35-105mm f/3.5-4.5 or Sigma Lens".to_string(),
+            5 => "Canon EF 35-70mm f/3.5-4.5".to_string(),
+            6 => "Canon EF 28-70mm f/3.5-4.5 or Sigma or Tokina Lens".to_string(),
+            7 => "Canon EF 100-300mm f/5.6L".to_string(),
+            8 => "Canon EF 100-300mm f/5.6 or Sigma or Tokina Lens".to_string(),
+            9 => "Canon EF 70-210mm f/4".to_string(),
+            10 => "Canon EF 50mm f/2.5 Macro or Sigma Lens".to_string(),
+            11 => "Canon EF 35mm f/2".to_string(),
+            13 => "Canon EF 15mm f/2.8 Fisheye".to_string(),
+            14 => "Canon EF 50-200mm f/3.5-4.5L".to_string(),
+            15 => "Canon EF 50-200mm f/3.5-4.5".to_string(),
+            16 => "Canon EF 35-135mm f/3.5-4.5".to_string(),
+            17 => "Canon EF 35-70mm f/3.5-4.5A".to_string(),
+            18 => "Canon EF 28-70mm f/3.5-4.5".to_string(),
+            20 => "Canon EF 100-200mm f/4.5A".to_string(),
+            21 => "Canon EF 80-200mm f/2.8L".to_string(),
+            22 => "Canon EF 20-35mm f/2.8L or Tokina Lens".to_string(),
+            23 => "Canon EF 35-105mm f/3.5-4.5".to_string(),
+            24 => "Canon EF 35-80mm f/4-5.6 Power Zoom".to_string(),
+            25 => "Canon EF 35-80mm f/4-5.6 Power Zoom".to_string(),
+            26 => "Canon EF 100mm f/2.8 Macro or Other Lens".to_string(),
+            27 => "Canon EF 35-80mm f/4-5.6".to_string(),
+            28 => "Canon EF 80-200mm f/4.5-5.6 or Tamron Lens".to_string(),
+            // More entries would be added here for completeness
+            _ => format!("Unknown Lens ({})", val),
+        },
+        None => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
+/// Canon user-defined picture style lookup (shared by 9 tags)
+/// Consolidates all references to %userDefStyles in ExifTool
+fn canon_user_def_picture_style_lookup(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(val) => match val {
+            0x41 => "PC 1".to_string(),
+            0x42 => "PC 2".to_string(),
+            0x43 => "PC 3".to_string(),
+            0x81 => "Standard".to_string(),
+            0x82 => "Portrait".to_string(),
+            0x83 => "Landscape".to_string(),
+            0x84 => "Neutral".to_string(),
+            0x85 => "Faithful".to_string(),
+            0x86 => "Monochrome".to_string(),
+            0x87 => "Auto".to_string(),
+            _ => format!("Unknown ({})", val),
+        },
+        None => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
+/// Canon picture style lookup (shared by 18 tags)
+/// Consolidates all references to %pictureStyles in ExifTool
+fn canon_picture_style_lookup(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(val) => match val {
+            0x00 => "None".to_string(),
+            0x01 => "Standard".to_string(),
+            0x02 => "Portrait".to_string(),
+            0x03 => "High Saturation".to_string(),
+            0x04 => "Adobe RGB".to_string(),
+            0x05 => "Low Saturation".to_string(),
+            0x06 => "CM Set 1".to_string(),
+            0x07 => "CM Set 2".to_string(),
+            0x21 => "User Def. 1".to_string(),
+            0x22 => "User Def. 2".to_string(),
+            0x23 => "User Def. 3".to_string(),
+            _ => format!("Unknown ({})", val),
+        },
+        None => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -352,6 +606,49 @@ mod tests {
         assert_eq!(
             apply_print_conv(&ExifValue::U32(999), PrintConvId::PentaxPictureMode),
             "Unknown (999)"
+        );
+    }
+
+    #[test]
+    fn test_canon_shared_lookup_optimization() {
+        // Test shared CanonLensType lookup (used by 25 tags)
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::CanonLensType),
+            "Canon EF 50mm f/1.8"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(21), PrintConvId::CanonLensType),
+            "Canon EF 80-200mm f/2.8L"
+        );
+
+        // Test shared CanonUserDefPictureStyle lookup (used by 9 tags)
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0x81), PrintConvId::CanonUserDefPictureStyle),
+            "Standard"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0x86), PrintConvId::CanonUserDefPictureStyle),
+            "Monochrome"
+        );
+
+        // Test shared CanonPictureStyle lookup (used by 18 tags)
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0x01), PrintConvId::CanonPictureStyle),
+            "Standard"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0x04), PrintConvId::CanonPictureStyle),
+            "Adobe RGB"
+        );
+
+        // Test universal OnOff shared by Canon and other manufacturers (22 references)
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::OnOff),
+            "Off"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::OnOff),
+            "On"
         );
     }
 
