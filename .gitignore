@@ -4,6 +4,7 @@
 # Vendored dependencies
 /exiftool
 /vendored
+/third-party
 
 # IDE files
 .vscode/

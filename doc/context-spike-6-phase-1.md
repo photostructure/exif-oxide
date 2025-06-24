@@ -6,7 +6,7 @@ This session is being continued from a previous conversation that ran out of
 
     1. **Initial Request**: User asked to work on Spike 6 in @doc/SPIKES-20250622.md
     with an emphasis on creating an "ultrathink" plan. They requested I read CLAUDE.md,
-    vendored/exiftool/CLAUDE.md, and @doc/EXIFTOOL-SYNC.md for context.
+    third-party/exiftool/CLAUDE.md, and @doc/EXIFTOOL-SYNC.md for context.
 
     2. **Research Phase**:
        - Read SPIKES document showing Spike 6 is about DateTime Intelligence with goals
@@ -44,7 +44,7 @@ This session is being continued from a previous conversation that ran out of
 
     6. **User Feedback**:
        - When I tried to web fetch, user interrupted and directed me to
-    vendored/exiftool-vendored.js instead
+    third-party/exiftool-vendored.js instead
        - User's final request was to update TODO.md with completion tasks including
     context and tribal knowledge
 
@@ -64,7 +64,7 @@ This session is being continued from a previous conversation that ran out of
     1. **Primary Request and Intent**:
        - Work on Spike 6 (DateTime Intelligence) from SPIKES-20250622.md
        - Create an "ultrathink" plan with multiple critique cycles (minimum 3)
-       - Read context files (CLAUDE.md, vendored/exiftool/CLAUDE.md, EXIFTOOL-SYNC.md)
+       - Read context files (CLAUDE.md, third-party/exiftool/CLAUDE.md, EXIFTOOL-SYNC.md)
        - Implement datetime intelligence to port exiftool-vendored's timezone heuristics
      including:
          - Multi-source timezone inference
@@ -104,7 +104,7 @@ This session is being continued from a previous conversation that ran out of
          - Module organization and public API
          - ExifTool source attributions
          ```rust
-         #![doc = "EXIFTOOL-SOURCE: vendored/exiftool-vendored.js/src/ExifDateTime.ts"]
+         #![doc = "EXIFTOOL-SOURCE: third-party/exiftool-vendored.js/src/ExifDateTime.ts"]
          pub fn extract_datetime_intelligence(
              exif_data: &std::collections::HashMap<u16, String>,
              xmp_data: Option<&crate::xmp::types::XmpMetadata>,
@@ -208,7 +208,7 @@ This session is being continued from a previous conversation that ran out of
 
        - **User redirect on web fetch**:
          - User interrupted WebFetch attempt and directed to local
-    vendored/exiftool-vendored.js
+    third-party/exiftool-vendored.js
 
     5. **Problem Solving**:
        - **Architecture Design**: Created hybrid approach balancing pragmatism with
@@ -224,10 +224,10 @@ This session is being continued from a previous conversation that ran out of
 
     6. **All User Messages**:
        - "Let's work on Spike 6 in @doc/SPIKES-20250622.md -- be sure to read @CLAUDE.md
-     and vendored/exiftool/CLAUDE.md and @doc/EXIFTOOL-SYNC.md . # Ultrathink a great
+     and third-party/exiftool/CLAUDE.md and @doc/EXIFTOOL-SYNC.md . # Ultrathink a great
     plan"
        - "[Request interrupted by user for tool use]the repo is in
-    vendored/exiftool-vendored.js"
+    third-party/exiftool-vendored.js"
        - "please update the TODO.md with what needs to be done to complete this work.
     Include relevant context and tribal knowledge to expedite completion."
 

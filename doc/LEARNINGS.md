@@ -7,7 +7,7 @@ This document captures critical discoveries, gotchas, and hard-won knowledge for
 ### Camera Standards Are Chaos
 
 - Camera manufacturers have played fast and loose with standards
-- ExifTool has figured it out -- always find the relevant code in `$REPO_ROOT/vendored/exiftool` and ensure we're following their algorithms
+- ExifTool has figured it out -- always find the relevant code in `$REPO_ROOT/third-party/exiftool` and ensure we're following their algorithms
 - If we invent any heuristics, they **most likely won't be correct**
 - What seems like a bug might be a workaround for a 2003 camera model
 - **Never invent parsing heuristics** - defer to ExifTool's algorithms as verbatim as possible

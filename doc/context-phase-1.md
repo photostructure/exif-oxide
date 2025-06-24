@@ -18,7 +18,7 @@ Looking through the conversation chronologically:
        - src/lib.rs - Found 5 hardcoded calls to jpeg::find_exif_segment
        - src/core/mod.rs - Core module structure
        - src/detection/mod.rs - File detection system supporting 43 formats
-       - vendored/exiftool files - To understand ExifTool's implementation patterns
+       - third-party/exiftool files - To understand ExifTool's implementation patterns
 
     3. I created a comprehensive plan that was approved by the user to:
        - Create format-specific parsers (TIFF, PNG, HEIF)
@@ -56,7 +56,7 @@ Looking through the conversation chronologically:
        - Work through Phase 1 Multi-Format Read Support as documented in
     TODO-PHASE1-MULTIFORMAT.md
        - Review CLAUDE.md and DESIGN.md for context
-       - Research ExifTool's implementation patterns in vendored/exiftool
+       - Research ExifTool's implementation patterns in third-party/exiftool
        - Replace hardcoded JPEG-only implementation with format dispatch supporting all
     43 detected formats
        - Update TODO.md and doc/TODO-PHASE1-MULTIFORMAT.md to reflect progress
@@ -199,7 +199,7 @@ Looking through the conversation chronologically:
 
     6. All user messages:
        - "let's work through @doc/TODO-PHASE1-MULTIFORMAT.md -- be sure to review
-    @CLAUDE.md and @doc/DESIGN.md , and know that vendored/exiftool/* always has the
+    @CLAUDE.md and @doc/DESIGN.md , and know that third-party/exiftool/* always has the
     right answer. Ultrathink and research throughly what to do for the first step! we
     have time to get it right!"
        - "continue"
