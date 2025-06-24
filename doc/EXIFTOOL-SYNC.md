@@ -71,6 +71,8 @@ magic_numbers = { source = "ExifTool.pm:912-1027", last_extracted = "12.65", has
 binary_formats = { source = "multiple", last_extracted = "12.64" }
 datetime_patterns = { source = "multiple", last_extracted = "12.63" }
 charset_mappings = { source = "ExifTool.pm:1056-1081", last_extracted = "12.65" }
+composite_tags = { source = "Exif.pm:4858-4877", last_extracted = "12.65" }
+binary_extraction = { source = "exiftool:3891-3920", last_extracted = "12.65" }
 
 [algorithm_tracking]
 "ProcessBinaryData" = { version = "12.65", hash = "sha256:...", modules = ["ExifTool.pm"] }
@@ -269,6 +271,27 @@ cargo run --bin exiftool_sync extract datetime-patterns
 # - Manufacturer quirks (Nikon DST, etc.)
 # - GPS timezone inference
 ```
+
+### Binary Tag Extraction
+
+Binary image tags (thumbnails, previews) require special tracking:
+
+```bash
+# Extract binary tag definitions and composite logic
+cargo run --bin exiftool_sync extract binary-tags
+
+# This extracts:
+# - Composite tag definitions from Exif.pm
+# - Maker-specific binary tags (JpgFromRaw, etc.)
+# - ConvertBinary logic from main script
+# - Validation routines (ValidateImage)
+```
+
+Key files to monitor for binary extraction:
+- `lib/Image/ExifTool/Exif.pm` - Composite tag definitions
+- `lib/Image/ExifTool/CanonRaw.pm` - Canon JpgFromRaw tags
+- `lib/Image/ExifTool/Nikon.pm` - Nikon preview tags
+- `exiftool` - ConvertBinary function (lines 3891-3920)
 
 ### Tracking Algorithm Changes
 
