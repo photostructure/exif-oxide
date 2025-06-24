@@ -118,7 +118,7 @@ cargo run --example debug_jpeg_segments test.jpg  # Debug segments
 
 ## ExifTool Reference Files
 
-When implementing, check these files in `./vendored/exiftool/`:
+When implementing, check these files in `./third-party/exiftool/`:
 
 - `lib/Image/ExifTool/Exif.pm` - Core EXIF handling
 - `lib/Image/ExifTool/JPEG.pm` - JPEG segment parsing
