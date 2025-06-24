@@ -14,7 +14,7 @@ pub struct PENTAXDetectionResult {
 }
 
 /// Detect pentax maker note format and extract version information
-///
+/// 
 /// Returns Some(DetectionResult) if this appears to be a pentax maker note,
 /// None otherwise.
 pub fn detect_pentax_maker_note(data: &[u8]) -> Option<PENTAXDetectionResult> {
@@ -28,8 +28,7 @@ pub fn detect_pentax_maker_note(data: &[u8]) -> Option<PENTAXDetectionResult> {
     }
 
     // Pattern from source line 0: Pentax Type 1 maker note
-    if data.len() >= 9 && data.starts_with(&[0x50, 0x45, 0x4e, 0x54, 0x41, 0x58, 0x20, 0x00, 0x01])
-    {
+    if data.len() >= 9 && data.starts_with(&[0x50, 0x45, 0x4e, 0x54, 0x41, 0x58, 0x20, 0x00, 0x01]) {
         return Some(PENTAXDetectionResult {
             version: Some(1),
             ifd_offset: 10,
@@ -82,4 +81,5 @@ mod tests {
         assert_eq!(detection.version, None);
         assert_eq!(detection.ifd_offset, 0);
     }
+
 }
