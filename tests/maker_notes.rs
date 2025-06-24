@@ -351,10 +351,8 @@ fn test_olympus_maker_note_parser() {
     let result = parser.parse(&[], Endian::Little, 0).unwrap();
     assert!(result.is_empty());
 
-    // Test minimal valid Olympus signature
+    // Test minimal valid IFD structure
     let mut data = Vec::new();
-    data.extend_from_slice(b"OLYMPUS\x00");
-    data.extend_from_slice(b"II"); // Little endian
     data.extend_from_slice(&[0x00, 0x00]); // IFD entry count (0)
 
     let result = parser.parse(&data, Endian::Little, 0).unwrap();

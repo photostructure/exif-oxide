@@ -6,13 +6,13 @@
 //!
 //! Key optimizations:
 //! - Uses shared OnOff conversion (11 tags consolidated)
-//! - Uses shared olympusCameraTypes lookup (7 tags consolidated) 
+//! - Uses shared olympusCameraTypes lookup (7 tags consolidated)
 //! - Auto-generated tag tables with PrintConv mappings
 //! - Zero-copy parsing with table-driven conversions
 
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Olympus.pm"]
 
-use crate::core::ifd::parse_ifd;
+use crate::core::ifd::{IfdParser, TiffHeader};
 use crate::core::print_conv::apply_print_conv;
 use crate::core::{Endian, ExifValue};
 use crate::error::Result;
@@ -64,27 +64,66 @@ fn parse_olympus_ifd_with_tables(
     data: &[u8],
     byte_order: Endian,
 ) -> Result<HashMap<u16, ExifValue>> {
-    let mut parser = IfdParser::new(data, byte_order);
-    let raw_entries = parser.parse_ifd(0)?;
-    
-    let mut result = HashMap::new();
-    
-    // Process each IFD entry using optimized table-driven conversion
-    for (tag_id, raw_value) in raw_entries {
-        // Store raw value
-        result.insert(tag_id, raw_value.clone());
-        
-        // Apply table-driven PrintConv if available
-        if let Some(tag_def) = get_olympus_tag(tag_id) {
-            // Generate human-readable value using shared PrintConv system
-            let converted = apply_print_conv(&raw_value, tag_def.print_conv);
-            
-            // Store converted value with high bit set to distinguish from raw
-            let converted_tag_id = 0x8000 | tag_id;
-            result.insert(converted_tag_id, ExifValue::Ascii(converted));
+    if data.is_empty() {
+        return Ok(HashMap::new());
+    }
+
+    // Create a fake TIFF header for IFD parsing
+    // (Olympus maker notes don't have a TIFF header, they start directly with IFD)
+    let mut tiff_data = Vec::with_capacity(8 + data.len());
+
+    // Add TIFF header
+    match byte_order {
+        Endian::Little => {
+            tiff_data.extend_from_slice(b"II");
+            tiff_data.extend_from_slice(&[0x2a, 0x00]); // 42 in little-endian
+            tiff_data.extend_from_slice(&[0x08, 0x00, 0x00, 0x00]); // offset 8
+        }
+        Endian::Big => {
+            tiff_data.extend_from_slice(b"MM");
+            tiff_data.extend_from_slice(&[0x00, 0x2a]); // 42 in big-endian
+            tiff_data.extend_from_slice(&[0x00, 0x00, 0x00, 0x08]); // offset 8
         }
     }
-    
+
+    // Add the actual IFD data
+    tiff_data.extend_from_slice(data);
+
+    // Parse the IFD
+    let header = TiffHeader {
+        byte_order,
+        ifd0_offset: 8,
+    };
+
+    let parsed_ifd = match IfdParser::parse_ifd(&tiff_data, &header, 8) {
+        Ok(parsed) => parsed,
+        Err(e) => {
+            return Err(e);
+        }
+    };
+
+    let mut result = HashMap::new();
+
+    // Process each IFD entry using optimized table-driven conversion
+    for (tag_id, raw_value) in parsed_ifd.entries() {
+        if let Some(olympus_tag) = get_olympus_tag(*tag_id) {
+            // Apply print conversion to create human-readable value
+            let converted_value = apply_print_conv(raw_value, olympus_tag.print_conv);
+
+            // Store both raw and converted values
+            // Raw value for programmatic access
+            result.insert(*tag_id, raw_value.clone());
+
+            // Converted value as string (following ExifTool pattern)
+            // Use a high bit pattern to distinguish converted values
+            let converted_tag_id = 0x8000 | tag_id;
+            result.insert(converted_tag_id, ExifValue::Ascii(converted_value));
+        } else {
+            // Keep unknown tags as-is
+            result.insert(*tag_id, raw_value.clone());
+        }
+    }
+
     Ok(result)
 }
 
@@ -95,10 +134,7 @@ pub fn get_olympus_tag_info(tag_id: u16) -> Option<&'static str> {
 
 /// List all supported Olympus tags
 pub fn list_olympus_tags() -> Vec<(u16, &'static str)> {
-    OLYMPUS_TAGS
-        .iter()
-        .map(|tag| (tag.id, tag.name))
-        .collect()
+    OLYMPUS_TAGS.iter().map(|tag| (tag.id, tag.name)).collect()
 }
 
 #[cfg(test)]
@@ -111,7 +147,7 @@ mod tests {
         // Test that we can find known Olympus tags
         assert!(get_olympus_tag(0x0202).is_some()); // Macro
         assert!(get_olympus_tag(0x0203).is_some()); // BWMode
-        assert_eq!(get_olympus_tag(0x9999), None);  // Non-existent tag
+        assert_eq!(get_olympus_tag(0x9999), None); // Non-existent tag
     }
 
     #[test]
@@ -119,7 +155,7 @@ mod tests {
         // Test that Olympus leverages shared PrintConv optimizations
         let tag_count = OLYMPUS_TAGS.len();
         assert!(tag_count >= 100, "Should have 100+ Olympus tags");
-        
+
         // Verify that OnOff tags use shared conversion
         let macro_tag = get_olympus_tag(0x0202).unwrap(); // Macro tag
         let converted = apply_print_conv(&ExifValue::U32(1), macro_tag.print_conv);
