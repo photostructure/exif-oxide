@@ -1,12 +1,14 @@
 //! ExifTool synchronization tool
 //!
-//! Simple tool to find which Rust files are impacted by ExifTool changes
+//! Tool to synchronize exif-oxide with ExifTool updates and extract algorithms
 
 use std::collections::HashMap;
 use std::env;
 use std::fs;
 use std::path::Path;
 use std::process::Command;
+
+mod extractors;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -26,6 +28,14 @@ fn main() {
             }
         }
         "scan" => cmd_scan(),
+        "extract" => {
+            if args.len() < 3 {
+                Err("Usage: exiftool_sync extract <component> [options]".to_string())
+            } else {
+                cmd_extract(&args[2], &args[3..])
+            }
+        }
+        "extract-all" => cmd_extract_all(),
         "help" | "--help" | "-h" => {
             print_help();
             Ok(())
@@ -238,6 +248,107 @@ fn extract_value(content: &str, key: &str) -> Option<String> {
     None
 }
 
+fn cmd_extract(component: &str, _options: &[String]) -> Result<(), String> {
+    use extractors::Extractor;
+
+    println!("Extracting component: {}", component);
+    println!();
+
+    let extractor: Box<dyn Extractor> = match component {
+        "binary-formats" => Box::new(extractors::BinaryFormatsExtractor::new()),
+        "magic-numbers" => Box::new(extractors::MagicNumbersExtractor::new()),
+        "datetime-patterns" => Box::new(extractors::DateTimePatternsExtractor::new()),
+        "binary-tags" => Box::new(extractors::BinaryTagsExtractor::new()),
+        "maker-detection" => Box::new(extractors::MakerDetectionExtractor::new()),
+        _ => return Err(format!("Unknown component: {}", component)),
+    };
+
+    // Get ExifTool source directory
+    let exiftool_path = Path::new("third-party/exiftool");
+    if !exiftool_path.exists() {
+        return Err("ExifTool source not found at third-party/exiftool".to_string());
+    }
+
+    // Run extraction
+    extractor.extract(exiftool_path)?;
+
+    println!("Extraction complete!");
+    Ok(())
+}
+
+fn cmd_extract_all() -> Result<(), String> {
+    use extractors::Extractor;
+
+    println!("Extracting all components from ExifTool...");
+    println!("==========================================");
+    println!();
+
+    // Get ExifTool source directory
+    let exiftool_path = Path::new("third-party/exiftool");
+    if !exiftool_path.exists() {
+        return Err("ExifTool source not found at third-party/exiftool".to_string());
+    }
+
+    // List of all extractors in order (dependency order doesn't matter since they're all independent)
+    let components = vec![
+        ("binary-formats", "ProcessBinaryData table definitions"),
+        ("magic-numbers", "File type detection patterns"),
+        ("datetime-patterns", "Date parsing patterns"),
+        ("binary-tags", "Composite tag definitions"),
+        ("maker-detection", "Maker note detection patterns"),
+    ];
+
+    let mut successes = 0;
+    let mut failures = Vec::new();
+
+    for (component, description) in &components {
+        println!("🔄 Extracting {} ({})", component, description);
+
+        let extractor: Box<dyn Extractor> = match *component {
+            "binary-formats" => Box::new(extractors::BinaryFormatsExtractor::new()),
+            "magic-numbers" => Box::new(extractors::MagicNumbersExtractor::new()),
+            "datetime-patterns" => Box::new(extractors::DateTimePatternsExtractor::new()),
+            "binary-tags" => Box::new(extractors::BinaryTagsExtractor::new()),
+            "maker-detection" => Box::new(extractors::MakerDetectionExtractor::new()),
+            _ => unreachable!(),
+        };
+
+        match extractor.extract(exiftool_path) {
+            Ok(()) => {
+                println!("   ✅ {} extraction complete", component);
+                successes += 1;
+            }
+            Err(e) => {
+                println!("   ❌ {} extraction failed: {}", component, e);
+                failures.push((component, e));
+            }
+        }
+        println!();
+    }
+
+    // Summary
+    println!("===============================================");
+    println!("Extraction Summary:");
+    println!("  ✅ Successful: {}/{}", successes, components.len());
+    if !failures.is_empty() {
+        println!("  ❌ Failed: {}", failures.len());
+        for (component, error) in &failures {
+            println!("     - {}: {}", component, error);
+        }
+    }
+
+    if failures.is_empty() {
+        println!();
+        println!("🎉 All ExifTool algorithms successfully extracted!");
+        println!("   Next steps:");
+        println!("   - Run 'cargo build' to compile with extracted data");
+        println!("   - Run 'cargo test' to validate integration");
+        Ok(())
+    } else {
+        Err(format!("{} component(s) failed extraction", failures.len()))
+    }
+}
+
 fn print_help() {
     println!("ExifTool Synchronization Tool");
     println!();
@@ -245,13 +356,25 @@ fn print_help() {
     println!("    cargo run --bin exiftool_sync <COMMAND>");
     println!();
     println!("COMMANDS:");
-    println!("    status              Show current synchronization status");
-    println!("    diff <from> <to>    Show which Rust files are affected by ExifTool changes");
-    println!("    scan                List all ExifTool source dependencies");
-    println!("    help                Show this help message");
+    println!("    status                   Show current synchronization status");
+    println!("    diff <from> <to>         Show which Rust files are affected by ExifTool changes");
+    println!("    scan                     List all ExifTool source dependencies");
+    println!("    extract <component>      Extract algorithms from ExifTool source");
+    println!("    extract-all              Extract all components in one command");
+    println!("    help                     Show this help message");
+    println!();
+    println!("EXTRACT COMPONENTS:");
+    println!("    binary-formats           Extract ProcessBinaryData table definitions");
+    println!("    magic-numbers            Extract file type detection patterns");
+    println!("    datetime-patterns        Extract date parsing patterns");
+    println!("    binary-tags              Extract composite tag definitions");
+    println!("    maker-detection          Extract maker note detection patterns");
     println!();
     println!("EXAMPLES:");
     println!("    cargo run --bin exiftool_sync status");
     println!("    cargo run --bin exiftool_sync diff 12.65 12.66");
     println!("    cargo run --bin exiftool_sync scan");
+    println!("    cargo run --bin exiftool_sync extract binary-formats");
+    println!("    cargo run --bin exiftool_sync extract-all");
+    println!("    cargo run --bin exiftool_sync extract maker-detection");
 }

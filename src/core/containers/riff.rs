@@ -70,9 +70,9 @@ pub fn find_metadata<R: Read + Seek>(reader: &mut R) -> Result<Option<RiffMetada
     let mut format = [0u8; 4];
     reader.read_exact(&mut format)?;
 
-    match &format {
-        &WEBP_FORMAT => find_webp_metadata(reader),
-        &AVI_FORMAT => find_avi_metadata(reader),
+    match format {
+        WEBP_FORMAT => find_webp_metadata(reader),
+        AVI_FORMAT => find_avi_metadata(reader),
         _ => Ok(None), // Unsupported RIFF format
     }
 }
@@ -90,8 +90,8 @@ fn find_webp_metadata<R: Read + Seek>(reader: &mut R) -> Result<Option<RiffMetad
             Err(_) => break, // End of file or read error
         };
 
-        match &header.fourcc {
-            &EXIF_CHUNK => {
+        match header.fourcc {
+            EXIF_CHUNK => {
                 // Found EXIF chunk
                 let data_offset = reader.stream_position()?;
 
@@ -120,7 +120,7 @@ fn find_webp_metadata<R: Read + Seek>(reader: &mut R) -> Result<Option<RiffMetad
                 }
             }
 
-            &XMP_CHUNK => {
+            XMP_CHUNK => {
                 // Found XMP chunk
                 let data_offset = reader.stream_position()?;
 

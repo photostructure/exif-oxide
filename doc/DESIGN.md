@@ -20,7 +20,6 @@ exif-oxide is a **high-performance Rust implementation** of Phil Harvey's ExifTo
 - **Target**: Sub-10ms processing for typical JPEG files (vs ExifTool's 100-200ms)
 - **Memory Safety**: Zero unsafe code in core parsing logic
 - **Embedded Image Extraction**: First-class support for thumbnails and previews
-- **DateTime Intelligence**: Proven timezone inference from exiftool-vendored
 
 ### 3. Incremental Development
 
@@ -73,12 +72,6 @@ exif-oxide is a **high-performance Rust implementation** of Phil Harvey's ExifTo
 - Sub-1ms performance using first 1KB only
 - 100% ExifTool MIME compatibility
 
-**Spike 6: DateTime Intelligence** ✅
-
-- Multi-source datetime extraction with GPS timezone inference
-- Manufacturer-specific quirk handling
-- UTC delta calculation with confidence scoring
-- 0.1ms performance (50x better than target)
 
 ### 🔄 CURRENT: Phase 1 - Multi-Format Support COMPLETE
 
@@ -141,16 +134,6 @@ exif-oxide/
 │   │   ├── types.rs        # XMP data structures
 │   │   └── namespace.rs    # Namespace registry
 │   │
-│   ├── datetime/           # DateTime intelligence
-│   │   ├── mod.rs          # Public datetime API
-│   │   ├── types.rs        # DateTime data structures
-│   │   ├── parser.rs       # String parsing (loose formats)
-│   │   ├── extractor.rs    # EXIF/XMP extraction
-│   │   ├── intelligence.rs # Coordination engine
-│   │   ├── gps_timezone.rs # GPS timezone inference
-│   │   ├── utc_delta.rs    # UTC delta calculation
-│   │   └── quirks.rs       # Manufacturer quirks
-│   │
 │   ├── binary.rs           # Binary data extraction
 │   ├── error.rs            # Error handling
 │   ├── lib.rs              # Public API
@@ -198,7 +181,6 @@ File Input → Format Detection → Format-Specific Parser → IFD Parser → Ta
 - **Type-safe conversions** via ExifValue enum
 - **Multi-value handling** (arrays, rational numbers)
 - **XMP hierarchical structures** (arrays, structs, language alternatives)
-- **DateTime intelligence** with timezone inference
 
 #### 5. Output Generation
 
@@ -360,12 +342,10 @@ let thumbnail = extract_binary_tag(&ifd, 0x1201, &file_data)?;
 
 - **TIFF metadata-only mode**: 90% reduction vs full file loading
 - **Static lookup tables**: ~40KB for 530 tags
-- **Timezone database**: ~2MB (loaded once)
 
 **Detection Speed**:
 
 - **Format detection**: <1ms using first 1KB only
-- **DateTime intelligence**: 0.1ms (50x better than 5ms target)
 
 ### Optimization Techniques
 
@@ -392,64 +372,6 @@ let thumbnail = extract_binary_tag(&ifd, 0x1201, &file_data)?;
    - Linear search over ~500 items (cache-friendly)
    - Minimal string allocations
 
-## DateTime Intelligence System
-
-### Multi-Source Inference Engine
-
-**Priority-Based System**:
-
-1. **Explicit timezone tags** (OffsetTime, OffsetTimeOriginal) - 95% confidence
-2. **GPS coordinates** → timezone database lookup - 80% confidence
-3. **UTC timestamp delta** calculation - 70% confidence
-4. **Manufacturer quirks** (Nikon DST, Canon formats) - 60% confidence
-
-**GPS Timezone Inference**:
-
-```rust
-// Uses tzf-rs for boundary-accurate timezone detection
-let timezone = FINDER.get_tz_name(longitude, latitude);
-let tz: Tz = timezone.parse()?;
-let offset = tz.offset_from_utc_datetime(&naive_datetime);
-```
-
-### Manufacturer Quirks
-
-**Nikon DST Bug**: Certain models (D3, D300, D700) incorrectly handle DST transitions
-
-```rust
-if is_nikon_dst_affected_model(model) && is_near_dst_transition(datetime) {
-    warnings.push(DateTimeWarning::NikonDstBug);
-    confidence -= 0.1;
-}
-```
-
-**Canon Format Variations**: Handle Canon's multiple datetime formats
-**Apple Accuracy**: GPS coordinate precision affects timezone confidence
-
-### Validation Framework
-
-**Cross-Validation**:
-
-- GPS timestamp vs local time consistency
-- Multiple datetime field comparison
-- File modification time sanity checks
-
-**Warning System**:
-
-```rust
-struct ResolvedDateTime {
-    datetime: ExifDateTime,
-    source: InferenceSource,
-    confidence: f32,
-    warnings: Vec<DateTimeWarning>,
-}
-```
-
-**Edge Case Handling**:
-
-- GPS (0,0) coordinates are invalid (per exiftool-vendored pattern)
-- ±14 hour timezone offset limits (RFC 3339 compliance)
-- "0000:00:00" invalid date handling
 
 ## Maintenance & Updates
 

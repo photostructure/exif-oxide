@@ -8,7 +8,17 @@ use crate::core::{Endian, ExifValue};
 use crate::error::Result;
 use std::collections::HashMap;
 
+pub mod apple;
 pub mod canon;
+pub mod fujifilm;
+pub mod hasselblad;
+pub mod leica;
+pub mod nikon;
+pub mod olympus;
+pub mod pentax;
+pub mod samsung;
+pub mod sigma;
+pub mod sony;
 
 /// Trait for manufacturer-specific maker note parsers
 pub trait MakerNoteParser: Send + Sync {
@@ -27,12 +37,18 @@ pub trait MakerNoteParser: Send + Sync {
 /// Detected manufacturer type
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Manufacturer {
+    Apple,
     Canon,
     Nikon,
     Sony,
     Fujifilm,
     Olympus,
     Panasonic,
+    Pentax,
+    Leica,
+    Samsung,
+    Sigma,
+    Hasselblad,
     Unknown,
 }
 
@@ -41,7 +57,9 @@ impl Manufacturer {
     pub fn from_make(make: &str) -> Self {
         let make_lower = make.to_lowercase();
 
-        if make_lower.contains("canon") {
+        if make_lower.contains("apple") {
+            Manufacturer::Apple
+        } else if make_lower.contains("canon") {
             Manufacturer::Canon
         } else if make_lower.contains("nikon") {
             Manufacturer::Nikon
@@ -53,6 +71,16 @@ impl Manufacturer {
             Manufacturer::Olympus
         } else if make_lower.contains("panasonic") {
             Manufacturer::Panasonic
+        } else if make_lower.contains("pentax") || make_lower.contains("ricoh") {
+            Manufacturer::Pentax
+        } else if make_lower.contains("leica") {
+            Manufacturer::Leica
+        } else if make_lower.contains("samsung") {
+            Manufacturer::Samsung
+        } else if make_lower.contains("sigma") {
+            Manufacturer::Sigma
+        } else if make_lower.contains("hasselblad") {
+            Manufacturer::Hasselblad
         } else {
             Manufacturer::Unknown
         }
@@ -61,7 +89,17 @@ impl Manufacturer {
     /// Get a parser for this manufacturer
     pub fn parser(&self) -> Option<Box<dyn MakerNoteParser>> {
         match self {
+            Manufacturer::Apple => Some(Box::new(apple::AppleMakerNoteParser)),
             Manufacturer::Canon => Some(Box::new(canon::CanonMakerNoteParser)),
+            Manufacturer::Fujifilm => Some(Box::new(fujifilm::FujifilmMakerNoteParser)),
+            Manufacturer::Hasselblad => Some(Box::new(hasselblad::HasselbladMakerNoteParser)),
+            Manufacturer::Leica => Some(Box::new(leica::LeicaMakerNoteParser)),
+            Manufacturer::Nikon => Some(Box::new(nikon::NikonMakerNoteParser)),
+            Manufacturer::Olympus => Some(Box::new(olympus::OlympusMakerNoteParser)),
+            Manufacturer::Pentax => Some(Box::new(pentax::PentaxMakerNoteParser)),
+            Manufacturer::Samsung => Some(Box::new(samsung::SamsungMakerNoteParser)),
+            Manufacturer::Sigma => Some(Box::new(sigma::SigmaMakerNoteParser)),
+            Manufacturer::Sony => Some(Box::new(sony::SonyMakerNoteParser)),
             // Other manufacturers not implemented yet
             _ => None,
         }
@@ -112,6 +150,32 @@ mod tests {
             Manufacturer::from_make("Panasonic"),
             Manufacturer::Panasonic
         );
-        assert_eq!(Manufacturer::from_make("Apple"), Manufacturer::Unknown);
+        assert_eq!(Manufacturer::from_make("PENTAX"), Manufacturer::Pentax);
+        assert_eq!(
+            Manufacturer::from_make("RICOH IMAGING"),
+            Manufacturer::Pentax
+        );
+        assert_eq!(Manufacturer::from_make("LEICA"), Manufacturer::Leica);
+        assert_eq!(
+            Manufacturer::from_make("Leica Camera AG"),
+            Manufacturer::Leica
+        );
+        assert_eq!(Manufacturer::from_make("SIGMA"), Manufacturer::Sigma);
+        assert_eq!(
+            Manufacturer::from_make("Sigma Corporation"),
+            Manufacturer::Sigma
+        );
+        assert_eq!(
+            Manufacturer::from_make("Hasselblad"),
+            Manufacturer::Hasselblad
+        );
+        assert_eq!(
+            Manufacturer::from_make("HASSELBLAD"),
+            Manufacturer::Hasselblad
+        );
+        assert_eq!(Manufacturer::from_make("Apple"), Manufacturer::Apple);
+        assert_eq!(Manufacturer::from_make("APPLE"), Manufacturer::Apple);
+        assert_eq!(Manufacturer::from_make("Samsung"), Manufacturer::Samsung);
+        assert_eq!(Manufacturer::from_make("SAMSUNG"), Manufacturer::Samsung);
     }
 }

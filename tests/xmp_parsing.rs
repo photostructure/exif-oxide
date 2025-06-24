@@ -1,5 +1,9 @@
 //! XMP metadata parsing tests
 
+#![allow(clippy::all)]
+#![allow(unused_variables)]
+#![allow(dead_code)]
+
 use exif_oxide::{extract_xmp_properties, xmp};
 use std::fs::File;
 use std::io::Write;
