@@ -14,7 +14,7 @@ pub struct APPLEDetectionResult {
 }
 
 /// Detect apple maker note format and extract version information
-/// 
+///
 /// Returns None - no detection patterns found for apple.
 pub fn detect_apple_maker_note(_data: &[u8]) -> Option<APPLEDetectionResult> {
     // No detection patterns found in ExifTool source
