@@ -13,6 +13,7 @@ use crate::core::ExifValue;
 /// manufacturer modules. By cataloging these patterns, we can reuse conversion
 /// logic across all manufacturers instead of duplicating it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[allow(non_camel_case_types)] // Allow ExifTool-style naming (e.g., WB_RGGBLevels)
 pub enum PrintConvId {
     /// No conversion - return raw value as string
     None,
@@ -142,7 +143,7 @@ pub enum PrintConvId {
     /// Sony-specific conversions
     SonyLensType,
     SonySceneMode,
-    
+
     /// Olympus-specific conversions (generated variants)
     OlympusMakerNoteVersion,
     OlympusMinoltaCameraSettingsOld,
@@ -231,6 +232,153 @@ pub enum PrintConvId {
     OlympusColorTemperatureRG,
     OlympusColorTemperatureBG,
     OlympusContrast,
+
+    // Additional Olympus variants (missing from generated list)
+    OlympusLensType,
+    OlympusTextInfo,
+    OlympusEpsonImageWidth,
+    OlympusEpsonImageHeight,
+    OlympusEpsonSoftware,
+    OlympusPreCaptureFrames,
+    OlympusWhiteBoard,
+    OlympusSensorArea,
+    OlympusFirmware,
+    OlympusPrintIM,
+    OlympusLightCondition,
+    OlympusWBMode,
+    OlympusExternalFlashAE1,
+    OlympusExternalFlashAE2,
+    OlympusInternalFlashAE1,
+    OlympusInternalFlashAE2,
+    OlympusInternalFlashTable,
+    OlympusExternalFlashGValue,
+    OlympusExternalFlashZoom,
+    OlympusSharpnessFactor,
+    OlympusOlympusImageWidth,
+    OlympusOlympusImageHeight,
+    OlympusSceneMode,
+    OlympusFocusStepInfinity,
+    OlympusFocusStepNear,
+    OlympusLightValueCenter,
+    OlympusLightValuePeriphery,
+    OlympusFieldCount,
+
+    /// Pentax-specific conversions (optimized with shared lookups)  
+    PentaxFNumber, // Shared aperture formatting (sprintf "%.1f")
+    PentaxExposureTime,      // Shared exposure time formatting
+    PentaxSensitivityAdjust, // Shared exposure compensation formatting (sprintf "%+.1f")
+
+    // Individual Pentax PrintConv variants (generated)
+    PentaxPentaxVersion,
+    PentaxPreviewImageSize,
+    PentaxPreviewImageLength,
+    PentaxPreviewImageStart,
+    PentaxDate,
+    PentaxTime,
+    PentaxPentaxImageSize,
+    PentaxFocusPosition,
+    PentaxISO,
+    PentaxLightReading,
+    PentaxBlueBalance,
+    PentaxRedBalance,
+    PentaxDigitalZoom,
+    PentaxSaturation,
+    PentaxContrast,
+    PentaxSharpness,
+    PentaxWorldTimeLocation,
+    PentaxHometownCity,
+    PentaxDestinationCity,
+    PentaxHometownDST,
+    PentaxDestinationDST,
+    PentaxDSPFirmwareVersion,
+    PentaxCPUFirmwareVersion,
+    PentaxFrameNumber,
+    PentaxImageEditing,
+    PentaxDriveMode,
+    PentaxSensorSize,
+    PentaxColorSpace,
+    PentaxImageAreaOffset,
+    PentaxRawImageSize,
+    PentaxAFPointsInFocus,
+    PentaxDataScaling,
+    PentaxPreviewImageBorders,
+    PentaxImageEditCount,
+    PentaxCameraTemperature,
+    PentaxImageTone,
+    PentaxColorTemperature,
+    PentaxColorTempDaylight,
+    PentaxColorTempShade,
+    PentaxColorTempCloudy,
+    PentaxColorTempTungsten,
+    PentaxColorTempFluorescentD,
+    PentaxColorTempFluorescentN,
+    PentaxColorTempFluorescentW,
+    PentaxColorTempFlash,
+    PentaxShutterCount,
+    PentaxFaceInfo,
+    PentaxRawDevelopmentProcess,
+    PentaxHue,
+    PentaxAWBInfo,
+    PentaxDynamicRangeExpansion,
+    PentaxTimeInfo,
+    PentaxHighLowKeyAdj,
+    PentaxContrastHighlight,
+    PentaxContrastShadow,
+    PentaxHighISONoiseReduction,
+    PentaxAFAdjustment,
+    PentaxMonochromeFilterEffect,
+    PentaxMonochromeToning,
+    PentaxFaceDetect,
+    PentaxFaceDetectFrameSize,
+    PentaxISOAutoMinSpeed,
+    PentaxCrossProcess,
+    PentaxWhiteLevel,
+    PentaxBleachBypassToning,
+    PentaxAspectRatio,
+    PentaxBlurControl,
+    PentaxHDR,
+    PentaxShutterType,
+    PentaxIntervalShooting,
+    PentaxClarityControl,
+    PentaxBlackPoint,
+    PentaxWhitePoint,
+    PentaxColorMatrixA,
+    PentaxColorMatrixB,
+    PentaxWB_RGGBLevelsDaylight,
+    PentaxWB_RGGBLevelsShade,
+    PentaxWB_RGGBLevelsCloudy,
+    PentaxWB_RGGBLevelsTungsten,
+    PentaxWB_RGGBLevelsFluorescentD,
+    PentaxWB_RGGBLevelsFluorescentN,
+    PentaxWB_RGGBLevelsFluorescentW,
+    PentaxWB_RGGBLevelsFlash,
+    PentaxCameraInfo,
+    PentaxBatteryInfo,
+    PentaxSaturationInfo,
+    PentaxColorMatrixA2,
+    PentaxColorMatrixB2,
+    PentaxAFInfo,
+    PentaxHuffmanTable,
+    PentaxKelvinWB,
+    PentaxColorInfo,
+    PentaxEVStepInfo,
+    PentaxShotInfo,
+    PentaxFacePos,
+    PentaxFaceSize,
+    PentaxSerialNumber,
+    PentaxWBLevels,
+    PentaxArtist,
+    PentaxCopyright,
+    PentaxFirmwareVersion,
+    PentaxContrastDetectAFArea,
+    PentaxCrossProcessParams,
+    PentaxPixelShiftInfo,
+    PentaxAFPointInfo,
+    PentaxDataDump,
+    PentaxToneCurve,
+    PentaxToneCurves,
+    PentaxUnknownBlock,
+    PentaxPrintIM,
 }
 
 /// Apply print conversion to an EXIF value
@@ -329,15 +477,18 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             }
         }
 
-        // Pentax-specific conversions
-        PrintConvId::PentaxModelLookup => pentax_model_lookup(value),
-        PrintConvId::PentaxPictureMode => pentax_picture_mode(value),
-        PrintConvId::PentaxLensType => pentax_lens_type(value),
-
         // Canon shared conversions (consolidate multiple references)
         PrintConvId::CanonLensType => canon_lens_type_lookup(value),
         PrintConvId::CanonUserDefPictureStyle => canon_user_def_picture_style_lookup(value),
         PrintConvId::CanonPictureStyle => canon_picture_style_lookup(value),
+
+        // Pentax shared conversions (optimized to eliminate duplicates)
+        PrintConvId::PentaxModelLookup => pentax_model_lookup(value),
+        PrintConvId::PentaxLensType => pentax_lens_type(value),
+        PrintConvId::PentaxPictureMode => pentax_picture_mode(value),
+        PrintConvId::PentaxFNumber => pentax_fnumber_format(value),
+        PrintConvId::PentaxExposureTime => pentax_exposure_time_format(value),
+        PrintConvId::PentaxSensitivityAdjust => pentax_sensitivity_adjust_format(value),
 
         // Manufacturer-specific conversions will be implemented as needed
         _ => {
@@ -567,6 +718,47 @@ fn canon_picture_style_lookup(value: &ExifValue) -> String {
     }
 }
 
+/// Pentax F-number formatting (shared by 15 tags)
+/// Consolidates all sprintf("%.1f") patterns in ExifTool Pentax.pm
+fn pentax_fnumber_format(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(n) => {
+            let f_num = n as f32 / 10.0;
+            format!("{:.1}", f_num)
+        }
+        _ => exif_value_to_string(value),
+    }
+}
+
+/// Pentax exposure time formatting (shared by multiple tags)
+/// Handles ExifTool's exposure time conversion patterns
+fn pentax_exposure_time_format(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(n) if n > 0 => {
+            let exposure = 24000000.0 / n as f32;
+            if exposure >= 1.0 {
+                format!("{:.1}", exposure)
+            } else {
+                format!("1/{:.0}", 1.0 / exposure)
+            }
+        }
+        _ => exif_value_to_string(value),
+    }
+}
+
+/// Pentax sensitivity adjustment formatting (shared by 4 tags)
+/// Consolidates sprintf("%+.1f") patterns for exposure compensation
+fn pentax_sensitivity_adjust_format(value: &ExifValue) -> String {
+    match as_i32(value) {
+        Some(n) if n != 0 => {
+            let adjustment = n as f32 / 10.0;
+            format!("{:+.1}", adjustment)
+        }
+        Some(0) => "0".to_string(),
+        _ => exif_value_to_string(value),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -649,6 +841,48 @@ mod tests {
         assert_eq!(
             apply_print_conv(&ExifValue::U32(1), PrintConvId::OnOff),
             "On"
+        );
+    }
+
+    #[test]
+    fn test_pentax_shared_optimizations() {
+        // Test shared PentaxFNumber formatting (used by 15 tags)
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(280), PrintConvId::PentaxFNumber),
+            "28.0"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(56), PrintConvId::PentaxFNumber),
+            "5.6"
+        );
+
+        // Test shared PentaxSensitivityAdjust formatting (used by 4 tags)
+        assert_eq!(
+            apply_print_conv(&ExifValue::I32(10), PrintConvId::PentaxSensitivityAdjust),
+            "+1.0"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::I32(-15), PrintConvId::PentaxSensitivityAdjust),
+            "-1.5"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::I32(0), PrintConvId::PentaxSensitivityAdjust),
+            "0"
+        );
+
+        // Test shared PentaxModelLookup (used by multiple model tags)
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0x12971), PrintConvId::PentaxModelLookup),
+            "*ist D"
+        );
+
+        // Test shared PentaxLensType (used by multiple lens tags)
+        assert_eq!(
+            apply_print_conv(
+                &ExifValue::Ascii("1 0".to_string()),
+                PrintConvId::PentaxLensType
+            ),
+            "K or M Lens"
         );
     }
 

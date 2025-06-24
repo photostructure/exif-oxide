@@ -14,6 +14,7 @@ struct TagEntry {
     id: String,
     name: String,
     printconv_id: String,
+    #[allow(dead_code)]
     shared_lookup_table: Option<String>,
 }
 
@@ -55,6 +56,7 @@ impl PrintConvTablesExtractor {
 
         code.push_str(&format!(
             "#[derive(Debug, Clone)]\n\
+             #[allow(non_camel_case_types)]  // Allow ExifTool-style naming\n\
              pub struct {}Tag {{\n\
              \x20\x20\x20\x20pub id: u16,\n\
              \x20\x20\x20\x20pub name: &'static str,\n\
@@ -395,6 +397,7 @@ impl PrintConvTablesExtractor {
         // Add tag structure
         code.push_str(&format!(
             "#[derive(Debug, Clone)]\n\
+             #[allow(non_camel_case_types)]  // Allow ExifTool-style naming\n\
              pub struct {}Tag {{\n\
              \x20\x20\x20\x20pub id: u16,\n\
              \x20\x20\x20\x20pub name: &'static str,\n\
