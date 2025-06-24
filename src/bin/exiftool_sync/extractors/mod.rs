@@ -13,9 +13,15 @@ mod binary_tags;
 mod datetime_patterns;
 mod magic_numbers;
 mod maker_detection;
+mod printconv_analyzer;
+mod printconv_generator;
+mod printconv_tables;
 
 pub use binary_formats::BinaryFormatsExtractor;
 pub use binary_tags::BinaryTagsExtractor;
 pub use datetime_patterns::DateTimePatternsExtractor;
 pub use magic_numbers::MagicNumbersExtractor;
 pub use maker_detection::MakerDetectionExtractor;
+pub use printconv_analyzer::PrintConvAnalyzer;
+pub use printconv_generator::PrintConvGenerator;
+pub use printconv_tables::PrintConvTablesExtractor;
