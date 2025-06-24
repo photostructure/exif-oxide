@@ -5,6 +5,7 @@
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/FujiFilm.pm"]
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Olympus.pm"]
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Nikon.pm"]
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Panasonic.pm"]
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Pentax.pm"]
 
 // Include the generated tag definitions
@@ -15,7 +16,9 @@ pub mod canon_tags;
 pub mod fujifilm_tags;
 pub mod nikon_tags;
 pub mod olympus_tags;
+pub mod panasonic_tags;
 pub mod pentax_tags;
+pub mod sony_tags;
 
 #[cfg(test)]
 mod tests;

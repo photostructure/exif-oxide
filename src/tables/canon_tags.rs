@@ -11,6 +11,7 @@
 use crate::core::print_conv::PrintConvId;
 
 #[derive(Debug, Clone)]
+#[allow(non_camel_case_types)] // Allow ExifTool-style naming
 pub struct CANONTag {
     pub id: u16,
     pub name: &'static str,
