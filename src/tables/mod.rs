@@ -1,6 +1,7 @@
 //! Tag table definitions (auto-generated from ExifTool)
 
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm"]
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Apple.pm"]
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Canon.pm"]
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/FujiFilm.pm"]
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Olympus.pm"]
@@ -12,6 +13,7 @@
 include!(concat!(env!("OUT_DIR"), "/generated_tags.rs"));
 
 // Table-driven maker note tag definitions with PrintConv
+pub mod apple_tags;
 pub mod canon_tags;
 pub mod fujifilm_tags;
 pub mod nikon_tags;

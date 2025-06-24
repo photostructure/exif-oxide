@@ -545,6 +545,11 @@ pub enum PrintConvId {
     SonySoftSkinEffect,
     SonyFullImageSize,
     SonyTag900b,
+
+    /// Apple-specific conversions
+    AppleHDRImageType,
+    AppleImageCaptureType,
+    AppleCameraType,
 }
 
 /// Apply print conversion to an EXIF value
@@ -657,6 +662,29 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
         PrintConvId::PentaxSensitivityAdjust => pentax_sensitivity_adjust_format(value),
 
         // Manufacturer-specific conversions will be implemented as needed
+        // Apple-specific conversions
+        PrintConvId::AppleHDRImageType => match as_u32(value) {
+            Some(3) => "HDR Image".to_string(),
+            Some(4) => "Original Image".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::AppleImageCaptureType => match as_u32(value) {
+            Some(1) => "ProRAW".to_string(),
+            Some(2) => "Portrait".to_string(),
+            Some(10) => "Photo".to_string(),
+            Some(11) => "Manual Focus".to_string(),
+            Some(12) => "Scene".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::AppleCameraType => match as_u32(value) {
+            Some(0) => "Back Wide Angle".to_string(),
+            Some(1) => "Back Normal".to_string(),
+            Some(6) => "Front".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
         _ => {
             // For now, return raw value for unimplemented conversions
             // TODO: Implement remaining conversion functions

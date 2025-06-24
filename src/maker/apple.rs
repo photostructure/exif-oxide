@@ -1,15 +1,23 @@
-//! Apple maker note parser
+//! Apple maker note parser using table-driven approach
 //!
 //! Apple maker notes use a standard IFD structure similar to standard EXIF,
 //! but with Apple-specific tags. Apple devices (iPhone, iPad) use relatively
 //! simple maker note structures compared to traditional camera manufacturers.
+//!
+//! This implementation uses auto-generated tag tables and print conversion
+//! functions, following the established table-driven pattern.
 
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Apple.pm"]
 
 use crate::core::ifd::{IfdParser, TiffHeader};
+use crate::core::print_conv::apply_print_conv;
 use crate::core::{Endian, ExifValue};
 use crate::error::Result;
+use crate::maker::apple::detection::{detect_apple_maker_note, APPLEDetectionResult};
+
+pub mod detection;
 use crate::maker::MakerNoteParser;
+use crate::tables::apple_tags::get_apple_tag;
 use std::collections::HashMap;
 
 /// Parser for Apple maker notes
@@ -22,52 +30,48 @@ impl MakerNoteParser for AppleMakerNoteParser {
         byte_order: Endian,
         _base_offset: usize,
     ) -> Result<HashMap<u16, ExifValue>> {
-        // Apple maker notes start directly with an IFD (no header)
-        // They use the same byte order as the main EXIF data
-
         if data.is_empty() {
             return Ok(HashMap::new());
         }
 
-        // Apple maker notes are similar to Pentax - straightforward IFD structure
-        // No special handling needed for footers or headers
-
-        // Create a fake TIFF header for IFD parsing
-        // (Apple maker notes don't have a TIFF header, they start directly with IFD)
-        let mut tiff_data = Vec::with_capacity(8 + data.len());
-
-        // Add TIFF header
-        match byte_order {
-            Endian::Little => {
-                tiff_data.extend_from_slice(b"II");
-                tiff_data.extend_from_slice(&[0x2a, 0x00]); // 42 in little-endian
-                tiff_data.extend_from_slice(&[0x08, 0x00, 0x00, 0x00]); // offset 8
+        // Use generated detection logic to identify Apple maker note format
+        let detection = match detect_apple_maker_note(data) {
+            Some(detection) => detection,
+            None => {
+                // Fallback: assume standard IFD at start of data
+                APPLEDetectionResult {
+                    version: None,
+                    ifd_offset: 0,
+                    description: "Fallback Apple parser".to_string(),
+                }
             }
-            Endian::Big => {
-                tiff_data.extend_from_slice(b"MM");
-                tiff_data.extend_from_slice(&[0x00, 0x2a]); // 42 in big-endian
-                tiff_data.extend_from_slice(&[0x00, 0x00, 0x00, 0x08]); // offset 8
-            }
-        }
-
-        // Add the actual IFD data
-        tiff_data.extend_from_slice(data);
-
-        // Parse the IFD
-        let header = TiffHeader {
-            byte_order,
-            ifd0_offset: 8,
         };
 
-        match IfdParser::parse_ifd(&tiff_data, &header, 8) {
-            Ok(parsed) => Ok(parsed.entries().clone()),
-            Err(e) => {
-                // Log the error but return empty results
-                // Many maker notes have quirks that might cause parsing errors
-                eprintln!("Warning: Apple maker note parsing failed: {}", e);
-                Ok(HashMap::new())
+        // Apple maker notes typically start directly with IFD (no special header)
+        let ifd_offset = detection.ifd_offset;
+
+        // Extract raw IFD data starting from detected offset
+        let ifd_data = &data[ifd_offset..];
+
+        // Parse raw IFD data first
+        let raw_entries = parse_apple_raw_ifd(ifd_data, byte_order)?;
+        let mut result = HashMap::new();
+
+        // Apply table-driven conversion using Apple tag table
+        for (tag_id, raw_value) in raw_entries {
+            // Store raw value
+            result.insert(tag_id, raw_value.clone());
+
+            // Apply PrintConv if tag is known
+            if let Some(tag_def) = get_apple_tag(tag_id) {
+                let converted = apply_print_conv(&raw_value, tag_def.print_conv);
+                // Store converted value with high bit set to distinguish from raw
+                let converted_tag_id = 0x8000 | tag_id;
+                result.insert(converted_tag_id, ExifValue::Ascii(converted));
             }
         }
+
+        Ok(result)
     }
 
     fn manufacturer(&self) -> &'static str {
@@ -75,53 +79,44 @@ impl MakerNoteParser for AppleMakerNoteParser {
     }
 }
 
-/// Apple-specific tag IDs (from Apple.pm)
-pub mod tags {
-    // Main Apple tags from ExifTool
-    pub const MAKER_NOTE_VERSION: u16 = 0x0001;
-    pub const AE_MATRIX: u16 = 0x0002;
-    pub const RUN_TIME: u16 = 0x0003;
-    pub const AE_STABLE: u16 = 0x0004;
-    pub const AE_TARGET: u16 = 0x0005;
-    pub const AE_AVERAGE: u16 = 0x0006;
-    pub const AF_STABLE: u16 = 0x0007;
-    pub const ACCELERATION_VECTOR: u16 = 0x0008;
-    pub const HDR_IMAGE_TYPE: u16 = 0x000a;
-    pub const BURST_UUID: u16 = 0x000b;
-    pub const FOCUS_DISTANCE_RANGE: u16 = 0x000c;
-    pub const OIS_MODE: u16 = 0x000f;
-    pub const CONTENT_IDENTIFIER: u16 = 0x0011;
-    pub const IMAGE_CAPTURE_TYPE: u16 = 0x0014;
-    pub const IMAGE_UNIQUE_ID: u16 = 0x0015;
-    pub const LIVE_PHOTO_VIDEO_INDEX: u16 = 0x0017;
-    pub const IMAGE_PROCESSING_FLAGS: u16 = 0x0019;
-    pub const QUALITY_HINT: u16 = 0x001a;
-    pub const LUMINANCE_NOISE_AMPLITUDE: u16 = 0x001d;
-    pub const PHOTOS_APP_FEATURE_FLAGS: u16 = 0x001f;
-    pub const IMAGE_CAPTURE_REQUEST_ID: u16 = 0x0020;
-    pub const HDR_HEADROOM: u16 = 0x0021;
-    pub const AF_PERFORMANCE: u16 = 0x0023;
-    pub const SCENE_FLAGS: u16 = 0x0025;
-    pub const SIGNAL_TO_NOISE_RATIO_TYPE: u16 = 0x0026;
-    pub const SIGNAL_TO_NOISE_RATIO: u16 = 0x0027;
-    pub const PHOTO_IDENTIFIER: u16 = 0x002b;
-    pub const COLOR_TEMPERATURE: u16 = 0x002d;
-    pub const CAMERA_TYPE: u16 = 0x002e;
-    pub const FOCUS_POSITION: u16 = 0x002f;
-    pub const HDR_GAIN: u16 = 0x0030;
-    pub const AF_MEASURED_DEPTH: u16 = 0x0038;
-    pub const AF_CONFIDENCE: u16 = 0x003d;
-    pub const COLOR_CORRECTION_MATRIX: u16 = 0x003e;
-    pub const GREEN_GHOST_MITIGATION_STATUS: u16 = 0x003f;
-    pub const SEMANTIC_STYLE: u16 = 0x0040;
-    pub const SEMANTIC_STYLE_RENDERING_VER: u16 = 0x0041;
-    pub const SEMANTIC_STYLE_PRESET: u16 = 0x0042;
+/// Parse Apple raw IFD data  
+fn parse_apple_raw_ifd(data: &[u8], byte_order: Endian) -> Result<HashMap<u16, ExifValue>> {
+    // Create a fake TIFF header for IFD parsing
+    // (Apple maker notes don't have a TIFF header, they start directly with IFD)
+    let mut tiff_data = Vec::with_capacity(8 + data.len());
 
-    // Unknown tags for research
-    pub const APPLE_0X004E: u16 = 0x004e;
-    pub const APPLE_0X004F: u16 = 0x004f;
-    pub const APPLE_0X0054: u16 = 0x0054;
-    pub const APPLE_0X005A: u16 = 0x005a;
+    // Add TIFF header
+    match byte_order {
+        Endian::Little => {
+            tiff_data.extend_from_slice(b"II");
+            tiff_data.extend_from_slice(&[0x2a, 0x00]); // 42 in little-endian
+            tiff_data.extend_from_slice(&[0x08, 0x00, 0x00, 0x00]); // offset 8
+        }
+        Endian::Big => {
+            tiff_data.extend_from_slice(b"MM");
+            tiff_data.extend_from_slice(&[0x00, 0x2a]); // 42 in big-endian
+            tiff_data.extend_from_slice(&[0x00, 0x00, 0x00, 0x08]); // offset 8
+        }
+    }
+
+    // Add the actual IFD data
+    tiff_data.extend_from_slice(data);
+
+    // Parse the IFD
+    let header = TiffHeader {
+        byte_order,
+        ifd0_offset: 8,
+    };
+
+    match IfdParser::parse_ifd(&tiff_data, &header, 8) {
+        Ok(parsed) => Ok(parsed.entries().clone()),
+        Err(e) => {
+            // Log the error but return empty results
+            // Many maker notes have quirks that might cause parsing errors
+            eprintln!("Warning: Apple maker note parsing failed: {}", e);
+            Ok(HashMap::new())
+        }
+    }
 }
 
 #[cfg(test)]
@@ -142,12 +137,64 @@ mod tests {
     }
 
     #[test]
-    fn test_apple_tag_constants() {
-        // Verify some key tag constants
-        assert_eq!(tags::MAKER_NOTE_VERSION, 0x0001);
-        assert_eq!(tags::ACCELERATION_VECTOR, 0x0008);
-        assert_eq!(tags::CONTENT_IDENTIFIER, 0x0011);
-        assert_eq!(tags::IMAGE_CAPTURE_TYPE, 0x0014);
-        assert_eq!(tags::CAMERA_TYPE, 0x002e);
+    fn test_apple_tag_lookup() {
+        use crate::tables::apple_tags::get_apple_tag;
+
+        // Verify some key tags from the generated table
+        assert!(get_apple_tag(0x0001).is_some()); // MakerNoteVersion
+        assert!(get_apple_tag(0x0004).is_some()); // AEStable
+        assert!(get_apple_tag(0x000a).is_some()); // HDRImageType
+        assert!(get_apple_tag(0x0014).is_some()); // ImageCaptureType
+        assert!(get_apple_tag(0x002e).is_some()); // CameraType
+
+        // Verify tag names
+        let ae_stable_tag = get_apple_tag(0x0004).unwrap();
+        assert_eq!(ae_stable_tag.name, "AEStable");
+
+        let camera_type_tag = get_apple_tag(0x002e).unwrap();
+        assert_eq!(camera_type_tag.name, "CameraType");
+    }
+
+    #[test]
+    fn test_apple_tag_count() {
+        use crate::tables::apple_tags::APPLE_TAGS;
+        // Verify we have the expected number of tags
+        assert_eq!(APPLE_TAGS.len(), 42);
+    }
+
+    #[test]
+    fn test_apple_printconv_functions() {
+        use crate::core::print_conv::apply_print_conv;
+        use crate::core::print_conv::PrintConvId;
+
+        // Test HDRImageType conversion
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::AppleHDRImageType),
+            "HDR Image"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(4), PrintConvId::AppleHDRImageType),
+            "Original Image"
+        );
+
+        // Test ImageCaptureType conversion
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::AppleImageCaptureType),
+            "ProRAW"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(10), PrintConvId::AppleImageCaptureType),
+            "Photo"
+        );
+
+        // Test CameraType conversion
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::AppleCameraType),
+            "Back Wide Angle"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(6), PrintConvId::AppleCameraType),
+            "Front"
+        );
     }
 }
