@@ -19,7 +19,6 @@ fn test_jpeg_detection() {
 
     assert_eq!(info.file_type, FileType::JPEG);
     assert_eq!(info.mime_type, "image/jpeg");
-    assert!(!info.weak_detection);
 }
 
 #[test]
@@ -146,7 +145,6 @@ fn test_canon_crm_detection() {
     let info = detect_file_type(&crm_data).unwrap();
     assert_eq!(info.file_type, FileType::CRM);
     assert_eq!(info.mime_type, "video/x-canon-crm");
-    assert!(!info.weak_detection);
 }
 
 #[test]
@@ -168,7 +166,6 @@ fn test_canon_cr3_detection() {
     let info = detect_file_type(&cr3_data).unwrap();
     assert_eq!(info.file_type, FileType::CR3);
     assert_eq!(info.mime_type, "image/x-canon-cr3");
-    assert!(!info.weak_detection);
 }
 
 #[test]
@@ -190,7 +187,6 @@ fn test_3gpp_detection() {
     let info = detect_file_type(&threegpp_data).unwrap();
     assert_eq!(info.file_type, FileType::ThreeGPP);
     assert_eq!(info.mime_type, "video/3gpp");
-    assert!(!info.weak_detection);
 }
 
 #[test]
@@ -212,7 +208,6 @@ fn test_3gpp2_detection() {
     let info = detect_file_type(&threegpp2_data).unwrap();
     assert_eq!(info.file_type, FileType::ThreeGPP2);
     assert_eq!(info.mime_type, "video/3gpp2");
-    assert!(!info.weak_detection);
 }
 
 #[test]
@@ -234,7 +229,6 @@ fn test_m4v_detection() {
     let info = detect_file_type(&m4v_data).unwrap();
     assert_eq!(info.file_type, FileType::M4V);
     assert_eq!(info.mime_type, "video/x-m4v");
-    assert!(!info.weak_detection);
 }
 
 #[test]
@@ -256,7 +250,6 @@ fn test_heif_sequence_detection() {
     let info = detect_file_type(&heifs_data).unwrap();
     assert_eq!(info.file_type, FileType::HEIFS);
     assert_eq!(info.mime_type, "image/heif-sequence");
-    assert!(!info.weak_detection);
 }
 
 #[test]
@@ -278,7 +271,6 @@ fn test_heic_sequence_detection() {
     let info = detect_file_type(&heics_data).unwrap();
     assert_eq!(info.file_type, FileType::HEICS);
     assert_eq!(info.mime_type, "image/heic-sequence");
-    assert!(!info.weak_detection);
 }
 
 #[test]
@@ -289,7 +281,6 @@ fn test_file_extension_detection() {
     let crm_info = detect_by_extension("crm").unwrap();
     assert_eq!(crm_info.file_type, FileType::CRM);
     assert_eq!(crm_info.mime_type, "video/x-canon-crm");
-    assert!(crm_info.weak_detection);
 
     let threegpp_info = detect_by_extension("3gp").unwrap();
     assert_eq!(threegpp_info.file_type, FileType::ThreeGPP);

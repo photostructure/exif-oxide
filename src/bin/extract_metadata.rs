@@ -48,8 +48,6 @@ fn output_json(
         "SourceFile": file_path,
         "File:MIMEType": file_info.file_mime_type(),
         "FileType": format!("{:?}", file_info.file_type),
-        "DetectionConfidence": file_info.confidence,
-        "WeakDetection": file_info.weak_detection,
     })];
 
     println!("{}", serde_json::to_string_pretty(&output)?);
@@ -63,10 +61,6 @@ fn output_human(
     println!("File: {}", file_path);
     println!("File Type: {:?}", file_info.file_type);
     println!("File:MIMEType: {}", file_info.file_mime_type());
-    println!("Detection Confidence: {:.1}%", file_info.confidence * 100.0);
-    if file_info.weak_detection {
-        println!("Warning: Weak detection (based on extension or heuristics)");
-    }
     Ok(())
 }
 
