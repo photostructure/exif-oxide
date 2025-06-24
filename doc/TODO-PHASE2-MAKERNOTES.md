@@ -1,12 +1,29 @@
 # Phase 2: Maker Note Parser Expansion
 
-**Goal**: Port all major manufacturer maker note parsers from ExifTool, following the Canon implementation pattern.
+**Goal**: Systematically implement all major manufacturer maker note parsers using automated synchronization with ExifTool.
 
-**Duration**: 3-4 weeks
+**Duration**: 4-5 weeks (including Phase 0 prerequisites)
 
-**Dependencies**: ✅ Phase 1 (multi-format support), ProcessBinaryData framework
+**Dependencies**: 
+- ✅ Phase 1 (multi-format support)
+- ⏳ **Phase 0 (ExifTool synchronization infrastructure)** - MUST COMPLETE FIRST
+- ⏳ ProcessBinaryData framework (part of Phase 0)
 
-**Prerequisites**: Understanding of EXIF IFD structure, binary data parsing, Rust trait systems
+**Prerequisites**: 
+- Complete Phase 0 synchronization tools
+- Understanding of EXIF IFD structure
+- Familiarity with ExifTool source structure
+
+## ⚠️ CRITICAL: Synchronization-First Approach
+
+**Before implementing ANY maker note features**, you MUST:
+
+1. **Complete Phase 0** - Build synchronization infrastructure
+2. **Read doc/EXIFTOOL-SYNC.md** - Understand the sync workflow
+3. **Use extraction tools** - Never manually port ExifTool code
+4. **Add source attribution** - Every file must reference ExifTool sources
+
+**Remember**: ExifTool has 25+ years of camera quirks. We must capture this knowledge systematically, not manually.
 
 ## What Are Maker Notes?
 
@@ -18,6 +35,32 @@ Maker notes are proprietary EXIF data sections where camera manufacturers store 
 - **Versioning** (different camera generations use different layouts)
 
 **Why they're complex**: No standards, reverse-engineered from camera behavior, model-specific variations, sometimes encrypted/obfuscated.
+
+## Phase 0 Prerequisites (MUST COMPLETE FIRST)
+
+Before expanding maker note support, complete the synchronization infrastructure:
+
+1. **ProcessBinaryData Extraction**
+   ```bash
+   cargo run --bin exiftool_sync extract binary-formats
+   ```
+
+2. **Maker Note Structure Extraction**
+   ```bash
+   cargo run --bin exiftool_sync extract maker-structures
+   ```
+
+3. **Composite Tag Extraction**
+   ```bash
+   cargo run --bin exiftool_sync extract composite-tags
+   ```
+
+4. **Test Baseline Generation**
+   ```bash
+   cargo run --bin exiftool_sync test-baseline v13.26
+   ```
+
+See `doc/TODO-PHASE0-SYNC.md` for detailed implementation plan.
 
 ## Phase 1 Learnings Applied to Phase 2
 
@@ -45,44 +88,96 @@ From our successful Phase 1 multi-format work, key patterns to apply:
 
 - Use the `tests/exiftool_compatibility.rs` pattern we established
 - Compare output with ExifTool for validation
-- Test with real-world files from `exiftool/t/images/`
+- Write integration tests with real-world files from `test-images`. The images in `third-party/exiftool/t/images/` have been stripped of image metadata, and aren't valid for benchmarking. If you are missing example images for a manufacturer or image type, ask the user!
+
+### 5. We need binary extraction support
+
+- Remember to support ProcessBinaryData: review how exiftool works!
+
+## Updated Implementation Approach
+
+### Step 1: Use Automated Extraction (NEW)
+
+Instead of manually implementing parsers, use the sync tools:
+
+```bash
+# Extract all components for a manufacturer
+cargo run --bin exiftool_sync extract --manufacturer nikon
+
+# This generates:
+# - src/tables/nikon.rs (tag definitions)
+# - src/binary/formats/nikon.rs (binary data tables)
+# - src/maker/nikon/detection.rs (version detection)
+# - tests/data/nikon_baseline.json (test expectations)
+```
+
+### Step 2: Implement Parser Using Generated Code
+
+```rust
+// src/maker/nikon/mod.rs
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Nikon.pm"]
+
+use crate::binary::formats::nikon::*;  // AUTO-GENERATED
+use crate::maker::nikon::detection::*; // AUTO-GENERATED
+
+impl MakerNoteParser for NikonParser {
+    fn parse(&self, data: &[u8]) -> Result<ParsedMakerNote> {
+        // Use generated detection logic
+        let (version, offset) = detect_nikon_version(data)?;
+        
+        // Parse using generated tables
+        match version {
+            1 => parse_with_tables(&NIKON_V1_TAGS, data, offset),
+            2 => parse_with_tables(&NIKON_V2_TAGS, data, offset),
+            3 => parse_with_tables(&NIKON_V3_TAGS, data, offset),
+            _ => Err("Unknown Nikon version")
+        }
+    }
+}
+```
+
+### Step 3: Validate Against ExifTool
+
+```bash
+# Run compatibility tests
+cargo test test_nikon_compatibility
+
+# Check coverage
+cargo run --bin exiftool_sync coverage nikon
+# Output: 95% tag coverage, 100% binary data coverage
+```
 
 ## Reference Implementation Study Guide
 
-**Essential files to understand** before starting any manufacturer:
+**Essential components to understand**:
 
-### `src/maker/canon.rs` - The Template
+### Generated Code Structure
 
-```rust
-// Key patterns to follow:
-1. MakerNoteParser trait implementation
-2. Manufacturer detection via Make tag
-3. Tag ID prefixing system (0xC000 + original_tag_id)
-4. Binary data extraction with bounds checking
-5. Error handling that allows fallback to standard EXIF
+```
+src/
+├── tables/
+│   └── nikon.rs          # AUTO-GENERATED tag definitions
+├── binary/
+│   └── formats/
+│       └── nikon.rs      # AUTO-GENERATED binary tables
+├── maker/
+│   └── nikon/
+│       ├── mod.rs        # Manual: trait implementation
+│       ├── detection.rs  # AUTO-GENERATED version detection
+│       └── parser.rs     # Manual: uses generated components
 ```
 
-### `src/maker/mod.rs` - The Dispatch System
+### Integration Pattern
 
 ```rust
-// Study how Canon is integrated:
-1. MakerNoteParser trait definition
-2. Manufacturer detection and routing
-3. Tag prefix management to avoid ID conflicts
-4. Integration with main EXIF parsing flow
+// All parsers follow this pattern:
+1. Use generated detection logic
+2. Parse with generated tag tables
+3. Process binary data with generated formats
+4. Validate using test baselines
 ```
 
-### `build.rs` - Table Generation
-
-```rust
-// Canon tag table generation pattern:
-1. Perl module parsing with regex
-2. Tag ID extraction and validation
-3. Static table generation for runtime lookup
-4. Format and group information preservation
-```
-
-**Critical Tribal Knowledge**: The Canon implementation works because it follows ExifTool's exact logic. **Don't try to "improve" the approach** - compatibility is more important than elegance.
+**Critical Rule**: Never deviate from generated code. If something seems wrong, the issue is likely in the extraction tool, not ExifTool.
 
 ### Key Insights from Canon Implementation
 
@@ -121,13 +216,28 @@ if let Err(e) = parse_maker_note(&data) {
 - Group information helps with tag organization
 - Conditional tags (model-specific) need special handling
 
-## IMMEDIATE (High-impact manufacturers - 2 weeks)
+## IMMEDIATE (High-impact manufacturers - 1 week after Phase 0)
 
-### 1. Nikon Maker Notes (1 week)
+### 1. Nikon Maker Notes (2-3 days with automation)
 
 **Context**: Nikon is #2 camera manufacturer globally. Their maker notes are ExifTool's most complex implementation (3000+ lines).
 
-**ExifTool source**: `lib/Image/ExifTool/Nikon.pm` (study the MAIN_NIKON, NIKON_V1, NIKON_V2 tables)
+**ExifTool source**: `lib/Image/ExifTool/Nikon.pm`
+
+**NEW Automated Approach**:
+
+```bash
+# Step 1: Extract all Nikon components
+cargo run --bin exiftool_sync extract --manufacturer nikon
+
+# Step 2: Review generated code
+# - src/tables/nikon.rs (500+ tags)
+# - src/binary/formats/nikon.rs (20+ binary tables)
+# - src/maker/nikon/detection.rs (version detection)
+
+# Step 3: Implement parser using generated code
+# Only ~200 lines of manual code needed!
+```
 
 **Why Nikon is challenging**:
 
@@ -136,61 +246,80 @@ if let Err(e) = parse_maker_note(&data) {
 - **Endianness**: Some sections switch endianness mid-stream
 - **Model dependencies**: Same tag ID means different things on different cameras
 
-**Recommended Implementation Strategy**:
+**Implementation Strategy (Automated)**:
 
-**Step 1: Version Detection (Days 1-2)**
+**Step 1: Run Extraction (30 minutes)**
+
+```bash
+cargo run --bin exiftool_sync extract --manufacturer nikon
+```
+
+This automatically generates:
+- Version detection logic from Nikon.pm
+- All tag tables (V1, V2, V3 variants)
+- Binary data format definitions
+- Test baselines from ExifTool output
+
+**Step 2: Implement Parser (2-3 hours)**
 
 ```rust
-// Nikon maker notes start with version signature
-// Follow this pattern from Nikon.pm lines 200-250
-fn detect_nikon_version(data: &[u8]) -> Result<NikonVersion> {
-    if data.starts_with(b"Nikon\x00\x01\x00") {
-        NikonVersion::V1
-    } else if data.starts_with(b"Nikon\x00\x02") {
-        NikonVersion::V2
-    } else if data.len() >= 10 && &data[0..5] == b"Nikon" {
-        NikonVersion::V3  // Most modern cameras
-    } else {
-        NikonVersion::Unknown
+// src/maker/nikon/mod.rs - Only ~200 lines needed!
+use crate::maker::nikon::detection::*;  // AUTO-GENERATED
+use crate::binary::formats::nikon::*;   // AUTO-GENERATED
+
+impl MakerNoteParser for NikonParser {
+    fn parse(&self, data: &[u8]) -> Result<ParsedMakerNote> {
+        let (version, offset) = detect_nikon_version(data)?;
+        
+        // The complex offset calculations are in generated code!
+        let tags = parse_nikon_ifd(data, offset, version)?;
+        
+        // Process binary data using generated tables
+        process_binary_tags(&tags, &NIKON_BINARY_TABLES)?;
+        
+        Ok(ParsedMakerNote { tags })
     }
 }
 ```
 
-**Step 2: Table Generation (Days 2-3)**
+**Step 3: Validate (1 hour)**
 
-- Start with V2/V3 tags only (V1 is legacy)
-- Focus on MAIN_NIKON table from lines 400-800 in Nikon.pm
-- Use tag prefix `0x4E00` (N in hex = 4E) + original tag ID
+```bash
+# Run generated tests
+cargo test test_nikon_baseline
 
-**Step 3: IFD Parsing with Nikon Quirks (Days 3-4)**
+# Check coverage
+cargo run --bin exiftool_sync coverage nikon
+```
 
-- Nikon V2+ stores IFD after "Nikon\x00\x02\x00\x00" header (10 bytes)
-- Some cameras have maker note offset bugs (study ExifTool's FixBase logic)
-- Handle encrypted sections gracefully - don't fail entire parsing
+**Generated vs Manual Files**:
 
-**Step 4: Testing & Validation (Days 5-7)**
+**AUTO-GENERATED** (by sync tools):
+- `src/tables/nikon.rs` - Tag definitions
+- `src/binary/formats/nikon.rs` - Binary data tables
+- `src/maker/nikon/detection.rs` - Version detection
+- `tests/data/nikon_baseline.json` - Test expectations
 
-- Test with D850, D780, Z6/Z7 files (modern V3 format)
-- Compare tag extraction with ExifTool output
-- Verify binary data sections are correctly identified
+**Manual** (using generated code):
+- `src/maker/nikon/mod.rs` - Trait implementation (~200 lines)
+- `src/maker/nikon/parser.rs` - Uses generated tables
 
-**Files to create**:
+**Tribal Knowledge** (captured in generated code):
 
-- `src/maker/nikon.rs` - Main parser (follow Canon's trait pattern exactly)
-- `build.rs` extension - Parse MAIN_NIKON table from Nikon.pm
-- `src/tables/nikon_tags.rs` (generated) - ~200 tags initially
+- ✅ Encryption markers automatically detected
+- ✅ Endianness switches encoded in binary tables
+- ✅ Offset calculations extracted from ExifTool
+- ✅ Model-specific variations in generated tables
 
-**Tribal Knowledge**:
+**Testing**:
 
-- **Don't implement encryption initially** - Mark as binary data, implement later if needed
-- **Focus on popular cameras** - D850, D780, Z6, Z7, Z9 represent 80% of users
-- **Endianness changes mid-stream** - Some Nikon sections switch from big-endian to little-endian
-- **Offset calculations are tricky** - Nikon has more offset bugs than other manufacturers
+```bash
+# Automated testing with baseline data
+cargo test test_nikon_baseline
 
-**Testing with**:
-
-- `exiftool/t/images/Nikon.nef` (if available)
-- Priority: Find D850, Z6 sample files for testing modern V3 format
+# Add new test images
+cargo run --bin exiftool_sync add-test Nikon_Z9.nef
+```
 
 ### 2. Sony Maker Notes (1 week)
 
@@ -367,18 +496,32 @@ fn detect_sony_format(make: &str, data: &[u8]) -> SonyFormat {
 
 **Focus areas**: Video settings, lens corrections, face detection.
 
-## MEDIUM-TERM (ProcessBinaryData framework - 1 week)
+## ProcessBinaryData Framework (Now Part of Phase 0)
 
-### 7. ProcessBinaryData Implementation
+**IMPORTANT**: ProcessBinaryData is now implemented as part of Phase 0 synchronization infrastructure. You should NOT implement this manually.
 
-**Context**: Critical infrastructure needed by Nikon, Sony, and others. This is ExifTool's secret weapon for handling proprietary binary formats.
+### Using the Generated Framework
 
-**Why ProcessBinaryData is essential**:
+After completing Phase 0, ProcessBinaryData will be available:
 
-- **Nikon**: Encrypted ShutterData, FocusDistance, FlashInfo
-- **Sony**: LensInfo, CameraSettings, entire maker note sections
-- **Canon**: Some advanced tags we haven't implemented yet
-- **Others**: Every manufacturer has some binary data
+```bash
+# Extract binary formats for all manufacturers
+cargo run --bin exiftool_sync extract binary-formats
+
+# Use in your parser
+use crate::binary::processor::ProcessBinaryData;
+use crate::binary::formats::nikon::NIKON_SHOT_INFO;
+
+let processor = ProcessBinaryData::new();
+let tags = processor.process(&binary_data, &NIKON_SHOT_INFO)?;
+```
+
+**What's AUTO-GENERATED**:
+
+- Binary format definitions for all manufacturers
+- Field offsets, types, and conditions
+- Model-specific variations
+- Validation routines
 
 **ExifTool source**: Study these carefully:
 
@@ -533,35 +676,59 @@ cargo run -- manufacturer_test.raw > ours.json
 
 ## Technical Architecture
 
-### Tag Prefixing System (Critical to Avoid Conflicts)
+### Automated Synchronization Architecture
 
-**Why prefixing is essential**: Manufacturers reuse tag IDs. Canon's tag 0x0001 means something completely different from Nikon's tag 0x0001. We solve this by adding manufacturer-specific prefixes.
+**Key Components**:
 
-**Established prefixes**:
-
-- **Canon**: `0xC000` + tag_id (C = Canon, established in current implementation)
-- **Nikon**: `0x4E00` + tag_id (4E = hex for 'N', fits in u16 range)
-- **Sony**: `0x534F` + tag_id (534F = hex for 'SO')
-- **Olympus**: `0x4F4C` + tag_id (4F4C = hex for 'OL')
-- **Pentax**: `0x5045` + tag_id (5045 = hex for 'PE')
-- **Fujifilm**: `0x4655` + tag_id (4655 = hex for 'FU')
-- **Panasonic**: `0x5041` + tag_id (5041 = hex for 'PA')
-
-**Implementation pattern**:
-
-```rust
-// In each manufacturer's parser
-const TAG_PREFIX: u16 = 0x4E00;  // Nikon example
-
-fn prefixed_tag_id(original_id: u16) -> u16 {
-    TAG_PREFIX + original_id
-}
-
-// Usage
-let nikon_iso_tag = prefixed_tag_id(0x0002);  // Results in 0x4E02
+```
+ExifTool Perl Sources → Extraction Tools → Generated Code → Parser Implementation
+                            ↓                    ↓              ↓
+                     Pattern Recognition    Rust Tables    Minimal Manual Code
 ```
 
-**Tag collision detection**: Build system should verify no conflicts between prefixed ranges.
+### Tag Prefixing System (AUTO-GENERATED)
+
+**Why prefixing is essential**: Manufacturers reuse tag IDs. The extraction tools automatically assign non-conflicting prefixes.
+
+**Generated prefix mapping** (in `src/tables/prefixes.rs`):
+
+```rust
+// AUTO-GENERATED from ExifTool manufacturer detection
+pub const MANUFACTURER_PREFIXES: &[(Manufacturer, u16)] = &[
+    (Manufacturer::Canon, 0xC000),
+    (Manufacturer::Nikon, 0x4E00),
+    (Manufacturer::Sony, 0x534F),
+    // ... all manufacturers
+];
+```
+
+**Usage in generated code**:
+
+```rust
+// AUTO-GENERATED tag definitions include prefixes
+pub const NIKON_ISO: u16 = 0x4E02;  // Automatically prefixed
+```
+
+### Build System Integration
+
+```toml
+# Cargo.toml
+[build-dependencies]
+exiftool-sync = { path = "tools/exiftool-sync" }
+
+[features]
+regenerate = []  # Force regeneration of all tables
+```
+
+```rust
+// build.rs
+fn main() {
+    // Only regenerate if ExifTool version changed
+    if exiftool_sync::needs_update() {
+        exiftool_sync::extract_all();
+    }
+}
+```
 
 ### Consistent Implementation Pattern
 
@@ -583,58 +750,56 @@ let nikon_iso_tag = prefixed_tag_id(0x0002);  // Results in 0x4E02
 
 ## Development Methodology & Best Practices
 
-### Implementation Order (Critical for Success)
+### Implementation Order (NEW - Automation First)
 
-1. **Start simple**: Olympus → Pentax → Fujifilm → Panasonic
-2. **Learn patterns**: Use simple manufacturers to refine your approach
-3. **Build infrastructure**: ProcessBinaryData framework
-4. **Tackle complex**: Nikon → Sony with infrastructure in place
+1. **Complete Phase 0**: Build all synchronization infrastructure
+2. **Extract everything**: Run extraction tools for all manufacturers
+3. **Implement parsers**: Use generated code to build parsers
+4. **Validate thoroughly**: Test against ExifTool baselines
 
-### Testing Strategy (Learned from Phase 1)
+### Testing Strategy (Automated)
 
 ```bash
-# For each manufacturer implementation:
+# For each manufacturer:
 
-# 1. Table generation test
-cargo build  # Should generate tables without errors
+# 1. Extract all components
+cargo run --bin exiftool_sync extract --manufacturer nikon
 
-# 2. Basic parsing test
-cargo test maker_tests::test_nikon_basic_parsing
+# 2. Run generated tests
+cargo test test_nikon_baseline
 
-# 3. ExifTool comparison test
-exiftool -json -g -n test_nikon.nef > expected.json
-cargo run -- test_nikon.nef --json > actual.json
-# Compare tag extraction coverage
+# 3. Check coverage
+cargo run --bin exiftool_sync coverage nikon
 
-# 4. Performance test
-cargo test --test performance_validation -- test_nikon_performance
+# 4. Add new test images
+cargo run --bin exiftool_sync add-test New_Camera.nef
 ```
 
-### Common Pitfalls to Avoid
+### Critical Success Factors
 
-**1. Don't optimize too early**
+**1. Never manually port ExifTool code**
 
-- Get tag extraction working first
-- Worry about performance only after basic functionality works
-- ProcessBinaryData framework can be optimized later
+- Always use extraction tools
+- If something can't be extracted, improve the tool
+- Manual porting leads to inevitable drift
 
-**2. Don't implement everything at once**
+**2. Trust the generated code**
 
-- Start with 20-30 most important tags per manufacturer
-- Focus on tags users actually care about (ISO, lens info, white balance)
-- Binary data can be marked as "binary" initially
+- ExifTool's quirks are there for a reason
+- Generated code captures 25 years of camera bugs
+- If generated code seems wrong, the camera is probably weird
 
-**3. Don't break existing functionality**
+**3. Maintain synchronization discipline**
 
-- Always test Canon parsing still works after changes
-- Run full Phase 1 test suite after major changes
-- Maker note parsing should never break standard EXIF parsing
+- Run sync checks before every PR
+- Update when ExifTool releases new versions
+- Keep attribution current
 
-**4. Don't ignore ExifTool's quirks**
+**4. Focus on compatibility, not elegance**
 
-- If ExifTool has weird offset calculations, copy them exactly
-- ExifTool's "bugs" are often workarounds for camera firmware bugs
-- Compatibility matters more than "correct" implementation
+- ExifTool compatibility is the #1 priority
+- Don't "improve" the logic
+- Camera quirks are features, not bugs
 
 ### Phase 1 Integration Points
 
@@ -679,17 +844,63 @@ cargo test --test performance_validation -- test_nikon_performance
 - [ ] **Testing**: Integration tests for all manufacturers
 - [ ] **Documentation**: Each manufacturer has clear documentation
 
+## Revised Timeline
+
+### With Synchronization Infrastructure (4-5 weeks total)
+
+**Week 1-2: Phase 0 - Synchronization Infrastructure**
+- ProcessBinaryData extraction tool
+- Maker note structure extraction
+- Composite tag extraction
+- Test baseline generation
+
+**Week 3: Automated Extraction**
+- Extract all manufacturer components
+- Generate binary data tables
+- Create test baselines
+- Validate extraction quality
+
+**Week 4: Parser Implementation**
+- Implement parsers using generated code
+- Each parser only ~200-300 lines
+- Validate against ExifTool output
+
+**Week 5: Testing & Polish**
+- Comprehensive compatibility testing
+- Performance optimization
+- Documentation updates
+
+### Comparison with Manual Approach
+
+**Manual (original plan)**: 3-4 weeks of error-prone manual porting
+**Automated (new plan)**: 2 weeks infrastructure + 2-3 weeks implementation
+
+**Benefits**:
+- 100% ExifTool compatibility guaranteed
+- Automatic updates when ExifTool changes
+- Dramatically reduced maintenance burden
+- No risk of implementation drift
+
 ## Next Steps After Phase 2
 
-**Immediate follow-up work**:
+**Immediate**:
+1. Monitor ExifTool updates monthly
+2. Run sync tools to incorporate changes
+3. Add new camera support as ExifTool does
 
-1. **Performance optimization**: SIMD, memory mapping for large binary sections
-2. **Advanced binary processing**: Encrypted section handling, compression
-3. **Remaining manufacturers**: Leica, Samsung, Sigma, Hasselblad, Phase One
-4. **Enhanced testing**: More real-world sample files, edge case handling
+**Future Phases**:
+- Phase 3: Write support (using preserved maker notes)
+- Phase 4: Advanced features (plugins, WASM, async)
 
-**Phase 3 preparation**:
+## Conclusion
 
-- Write support will need maker note preservation
-- ProcessBinaryData framework enables write-back of binary data
-- Tag modification needs to handle manufacturer-specific constraints
+The synchronization-first approach transforms Phase 2 from a manual porting effort to a systematic implementation that automatically tracks ExifTool's evolution. This ensures:
+
+1. **Accuracy**: Generated code matches ExifTool exactly
+2. **Maintainability**: Updates require running tools, not manual work
+3. **Completeness**: All manufacturer quirks captured automatically
+4. **Sustainability**: Future ExifTool updates easily incorporated
+
+**Remember**: ExifTool has 25+ years of camera knowledge. Our job is to systematically capture and maintain compatibility with this knowledge, not to reinvent it.
+
+**Before starting Phase 2**: Complete Phase 0 synchronization infrastructure. This investment will pay dividends throughout the project's lifetime.

@@ -8,7 +8,7 @@ A high-performance Rust implementation of portions of ExifTool, providing fast m
 - **Multi-Format**: Support for JPEG, RAW (CR2, NEF, ARW, DNG), PNG, HEIF, WebP, MP4, and more
 - **Compatibility**: Maintain ExifTool tag naming and structure  
 - **Safety**: Memory-safe handling of untrusted files
-- **Features**: Embedded image extraction, datetime intelligence, XMP support
+- **Features**: Embedded image extraction, XMP support
 
 ## Why exif-oxide?
 
@@ -16,8 +16,7 @@ While ExifTool is the gold standard for metadata extraction, its Perl implementa
 
 1. Sub-10ms metadata extraction for typical JPEG files
 2. Native embedded preview/thumbnail extraction
-3. Intelligent datetime parsing with timezone inference
-4. ExifTool-compatible output for easy migration
+3. ExifTool-compatible output for easy migration
 
 ## Design
 
@@ -110,7 +109,6 @@ Multi-format support is now implemented. See:
 - Metadata writing capabilities with safety guarantees
 - Performance optimizations (SIMD, parallel processing)
 - Async API and plugin system
-- Advanced datetime heuristics
 
 ## License
 
@@ -121,5 +119,4 @@ ExifTool is free and open-source software that allows personal, commercial, and 
 ## Acknowledgments
 
 - Phil Harvey for creating and maintaining ExifTool for 25 years
-- The exiftool-vendored project for datetime parsing heuristics
 - The Rust community for excellent binary parsing libraries

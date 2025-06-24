@@ -154,7 +154,7 @@ fn test_format_detection_overhead() {
     let mut buffer = vec![0u8; 1024];
 
     let (_, detect_time) = time_operation(|| {
-        file.read(&mut buffer).unwrap();
+        file.read_exact(&mut buffer).unwrap();
         exif_oxide::detection::detect_file_type(&buffer).unwrap()
     });
 

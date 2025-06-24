@@ -18,7 +18,7 @@ This document outlines the various approaches we evaluated before settling on th
 - **No write support** - read-only
 - **No embedded image extraction API** - only provides offsets
 - Limited to ~150 predefined tags
-- No timezone inference or datetime intelligence
+- No timezone inference
 - Would require significant forking to add our features
 
 **Verdict:** Good for basic reading, but missing critical features.
@@ -38,7 +38,6 @@ This document outlines the various approaches we evaluated before settling on th
 - Limited tag support (~92 tags)
 - Less mature, more bugs
 - No embedded image extraction
-- No datetime intelligence
 
 **Verdict:** Write support is nice, but memory usage and limited features are dealbreakers.
 
@@ -68,7 +67,6 @@ We considered forking nom-exif and adding:
 - Embedded image extraction
 - Write support
 - ExifTool tag compatibility
-- DateTime heuristics
 
 **Problems:**
 

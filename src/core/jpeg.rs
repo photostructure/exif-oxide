@@ -9,7 +9,7 @@ use std::io::{Read, Seek, SeekFrom};
 const MARKER_SOI: u8 = 0xD8; // Start of Image
 const MARKER_APP1: u8 = 0xE1; // APP1 segment (contains EXIF/XMP)
 const MARKER_APP2: u8 = 0xE2; // APP2 segment (contains MPF/FlashPix)
-const MARKER_APP13: u8 = 0xED; // APP13 segment (contains IPTC/Photoshop)
+                              // const MARKER_APP13: u8 = 0xED; // APP13 segment (contains IPTC/Photoshop) - Reserved for future use
 const MARKER_SOS: u8 = 0xDA; // Start of Scan (image data follows)
 const MARKER_EOI: u8 = 0xD9; // End of Image
 

@@ -1,5 +1,7 @@
 //! Common test utilities shared across integration tests
 
+#![allow(dead_code)]
+
 use std::path::{Path, PathBuf};
 
 /// Helper to validate JPEG data

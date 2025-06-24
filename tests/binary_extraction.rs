@@ -1,9 +1,14 @@
 //! Binary tag extraction tests (thumbnails, previews, etc.)
 
+use exif_oxide::binary::composite_tags::{
+    extract_jpgfromraw, extract_preview_image, extract_thumbnail_image,
+};
 use exif_oxide::binary::extract_binary_tag;
 use exif_oxide::core::find_metadata_segment;
 use exif_oxide::core::ifd::IfdParser;
+use exif_oxide::core::types::ExifValue;
 use exif_oxide::read_basic_exif;
+use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
@@ -374,4 +379,94 @@ fn test_extraction_performance() {
         "Extraction took too long: {}ms",
         duration.as_millis()
     );
+}
+
+/// Test our new composite tag extraction functionality
+#[test]
+fn test_composite_tag_extraction() {
+    let test_image = "test-images/canon/Canon_T3i.JPG";
+    if !Path::new(test_image).exists() {
+        eprintln!(
+            "Warning: Test image {} not found, skipping test",
+            test_image
+        );
+        return;
+    }
+
+    // Read metadata and file data
+    let metadata_segment = find_metadata_segment(test_image)
+        .unwrap()
+        .expect("No EXIF data found");
+    let ifd = IfdParser::parse(metadata_segment.data).unwrap();
+    let original_data = fs::read(test_image).unwrap();
+
+    // Convert IFD entries to our composite tag format
+    let mut tags: HashMap<u16, ExifValue> = HashMap::new();
+
+    // Look for ThumbnailOffset and ThumbnailLength
+    if let Some(offset_entry) = ifd.entries().get(&0x0201) {
+        if let Some(length_entry) = ifd.entries().get(&0x0202) {
+            // Extract offset and length from ExifValue
+            let offset = match offset_entry {
+                ExifValue::U32(val) => Some(*val),
+                ExifValue::U16(val) => Some(*val as u32),
+                _ => None,
+            };
+
+            let length = match length_entry {
+                ExifValue::U32(val) => Some(*val),
+                ExifValue::U16(val) => Some(*val as u32),
+                _ => None,
+            };
+
+            if let (Some(offset), Some(length)) = (offset, length) {
+                tags.insert(0x0201, ExifValue::U32(offset));
+                tags.insert(0x0202, ExifValue::U32(length));
+
+                println!(
+                    "Found ThumbnailOffset: 0x{:X}, ThumbnailLength: {}",
+                    offset, length
+                );
+            }
+        }
+    }
+
+    // Test our composite tag extractors
+    if let Some(thumbnail) = extract_thumbnail_image(&tags, &original_data) {
+        println!(
+            "✓ Composite ThumbnailImage: Extracted {} bytes",
+            thumbnail.len()
+        );
+        assert!(!thumbnail.is_empty());
+        assert!(
+            common::validate_jpeg(&thumbnail),
+            "Invalid JPEG data from composite extractor"
+        );
+    } else {
+        println!("ℹ No thumbnail found via composite extractor");
+    }
+
+    // Test PreviewImage extraction (may not be present in all images)
+    if let Some(preview) = extract_preview_image(&tags, &original_data) {
+        println!(
+            "✓ Composite PreviewImage: Extracted {} bytes",
+            preview.len()
+        );
+        assert!(!preview.is_empty());
+    } else {
+        println!("ℹ No preview found via composite extractor");
+    }
+
+    // Test JpgFromRaw extraction (unlikely to be present in JPEG)
+    if let Some(jpg_from_raw) = extract_jpgfromraw(&tags, &original_data) {
+        println!(
+            "✓ Composite JpgFromRaw: Extracted {} bytes",
+            jpg_from_raw.len()
+        );
+        assert!(!jpg_from_raw.is_empty());
+    } else {
+        println!("ℹ No JpgFromRaw found via composite extractor (expected for JPEG)");
+    }
+
+    println!("✓ Composite tag extraction test completed");
 }

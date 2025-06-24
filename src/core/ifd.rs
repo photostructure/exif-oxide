@@ -347,11 +347,23 @@ impl IfdParser {
                     match maker::parse_maker_notes(&value_data, make_str, header.byte_order, 0) {
                         Ok(maker_entries) => {
                             // Add maker note entries with a tag prefix to avoid conflicts
-                            // We'll use a high base value (0xC000) to avoid conflicts with standard EXIF tags
+                            // Use manufacturer-specific prefixes
+                            let manufacturer = maker::Manufacturer::from_make(make_str);
+                            let prefix = match manufacturer {
+                                maker::Manufacturer::Canon => 0xC000,
+                                maker::Manufacturer::Nikon => 0x4E00,
+                                maker::Manufacturer::Sony => 0x534F,
+                                maker::Manufacturer::Olympus => 0x4F4C,
+                                maker::Manufacturer::Pentax => 0x5045,
+                                maker::Manufacturer::Fujifilm => 0x4655,
+                                maker::Manufacturer::Panasonic => 0x5041,
+                                _ => 0xC000, // Default fallback
+                            };
+
                             for (maker_tag, maker_value) in maker_entries {
                                 // Add prefix to avoid conflicts, but prevent overflow
                                 if maker_tag < 0x4000 {
-                                    let prefixed_tag = 0xC000 + maker_tag;
+                                    let prefixed_tag = prefix + maker_tag;
                                     entries.insert(prefixed_tag, maker_value);
                                 } else {
                                     // Tag is already high, skip to avoid overflow

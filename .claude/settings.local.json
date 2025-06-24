@@ -49,7 +49,12 @@
       "Bash(./exiftool/exiftool -json -Orientation exiftool/t/images/Canon.jpg)",
       "Bash(./exiftool/exiftool -json -n -Orientation exiftool/t/images/Canon.jpg)",
       "Bash(./exiftool/exiftool -json -g exiftool/t/images/Canon.jpg)",
-      "Bash(./exiftool/exiftool -json -g -n exiftool/t/images/Canon.jpg)"
+      "Bash(./exiftool/exiftool -json -g -n exiftool/t/images/Canon.jpg)",
+      "Bash(./third-party/exiftool/exiftool -j test-images/nikon/nikon_z8_73.jpg)",
+      "Bash(third-party/exiftool/exiftool:*)",
+      "Bash(true)",
+      "Bash(python3:*)",
+      "Bash(echo:*)"
     ],
     "deny": []
   }

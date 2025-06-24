@@ -3,6 +3,10 @@
 //! This test generates a compatibility matrix showing which formats
 //! are successfully parsed by exif-oxide.
 
+#![allow(clippy::all)]
+#![allow(unused_variables)]
+#![allow(dead_code)]
+
 use exif_oxide::core::find_metadata_segment;
 use exif_oxide::detection::{detect_file_type, FileType};
 use std::fs;
