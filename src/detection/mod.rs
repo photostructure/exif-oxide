@@ -21,10 +21,6 @@ pub struct FileInfo {
     pub file_type: FileType,
     /// MIME type (includes File:MIMEType field)
     pub mime_type: String,
-    /// Whether detection required weak heuristics
-    pub weak_detection: bool,
-    /// Confidence level (0.0 to 1.0)
-    pub confidence: f32,
 }
 
 impl FileInfo {
@@ -43,8 +39,6 @@ pub fn detect_file_type(data: &[u8]) -> Result<FileInfo> {
         return Ok(FileInfo {
             file_type: FileType::Unknown,
             mime_type: "application/octet-stream".to_string(),
-            weak_detection: false,
-            confidence: 0.0,
         });
     }
 
@@ -73,8 +67,6 @@ pub fn detect_file_type(data: &[u8]) -> Result<FileInfo> {
     Ok(FileInfo {
         file_type: FileType::Unknown,
         mime_type: "application/octet-stream".to_string(),
-        weak_detection: false,
-        confidence: 0.0,
     })
 }
 
@@ -83,9 +75,9 @@ fn detect_by_magic(data: &[u8]) -> Option<FileInfo> {
     // Special handling for RIFF-based formats
     if data.len() >= 12 && &data[0..4] == b"RIFF" {
         let format_id = &data[8..12];
-        let (file_type, weak) = match format_id {
-            b"WEBP" => (FileType::WEBP, false),
-            b"AVI " => (FileType::AVI, false),
+        let file_type = match format_id {
+            b"WEBP" => FileType::WEBP,
+            b"AVI " => FileType::AVI,
             _ => return None, // Unknown RIFF format
         };
 
@@ -97,8 +89,6 @@ fn detect_by_magic(data: &[u8]) -> Option<FileInfo> {
         return Some(FileInfo {
             file_type,
             mime_type,
-            weak_detection: weak,
-            confidence: 1.0,
         });
     }
 
@@ -135,8 +125,6 @@ fn detect_by_magic(data: &[u8]) -> Option<FileInfo> {
         return Some(FileInfo {
             file_type,
             mime_type,
-            weak_detection: false,
-            confidence: 1.0,
         });
     }
 
@@ -152,8 +140,6 @@ fn detect_by_magic(data: &[u8]) -> Option<FileInfo> {
             return Some(FileInfo {
                 file_type: FileType::MOV,
                 mime_type,
-                weak_detection: false,
-                confidence: 1.0,
             });
         }
     }
@@ -191,8 +177,6 @@ fn detect_by_magic(data: &[u8]) -> Option<FileInfo> {
                 return Some(FileInfo {
                     file_type: *file_type,
                     mime_type,
-                    weak_detection: pattern.weak,
-                    confidence: if pattern.weak { 0.7 } else { 1.0 },
                 });
             }
         }
@@ -355,8 +339,6 @@ pub fn detect_by_extension(extension: &str) -> Option<FileInfo> {
         Some(FileInfo {
             file_type: *file_type,
             mime_type,
-            weak_detection: true,
-            confidence: 0.5, // Lower confidence for extension-only detection
         })
     } else {
         None
@@ -381,8 +363,6 @@ pub fn get_file_info(file_type: FileType, base_type: Option<FileType>) -> FileIn
     FileInfo {
         file_type,
         mime_type,
-        weak_detection: false,
-        confidence: 1.0,
     }
 }
 
@@ -397,8 +377,6 @@ mod tests {
 
         assert_eq!(info.file_type, FileType::JPEG);
         assert_eq!(info.mime_type, "image/jpeg");
-        assert!(!info.weak_detection);
-        assert_eq!(info.confidence, 1.0);
     }
 
     #[test]
@@ -417,7 +395,6 @@ mod tests {
 
         assert_eq!(info.file_type, FileType::Unknown);
         assert_eq!(info.mime_type, "application/octet-stream");
-        assert_eq!(info.confidence, 0.0);
     }
 
     #[test]
@@ -425,8 +402,6 @@ mod tests {
         let info = detect_by_extension("jpg").unwrap();
         assert_eq!(info.file_type, FileType::JPEG);
         assert_eq!(info.mime_type, "image/jpeg");
-        assert!(info.weak_detection);
-        assert_eq!(info.confidence, 0.5);
     }
 
     #[test]
@@ -437,7 +412,5 @@ mod tests {
 
         assert_eq!(info.file_type, FileType::AVIF);
         assert_eq!(info.mime_type, "image/avif");
-        assert!(!info.weak_detection);
-        assert_eq!(info.confidence, 1.0);
     }
 }
