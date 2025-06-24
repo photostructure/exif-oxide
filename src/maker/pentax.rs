@@ -1,17 +1,23 @@
-//! Pentax maker note parser
+//! Pentax maker note parser using table-driven approach
 //!
 //! Pentax maker notes use a standard IFD structure similar to standard EXIF,
 //! making them one of the simplest manufacturer formats to parse.
 //! The format is consistent across all Pentax and Ricoh cameras.
 //!
-//! Also includes ProcessBinaryData support for video metadata parsing.
+//! This implementation uses auto-generated tag tables and print conversion
+//! functions, eliminating the need to manually port ExifTool's Perl code.
 
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Pentax.pm"]
 
 use crate::core::ifd::{IfdParser, TiffHeader};
+use crate::core::print_conv::apply_print_conv;
 use crate::core::{Endian, ExifValue};
 use crate::error::Result;
+use crate::maker::pentax::detection::{detect_pentax_maker_note, PENTAXDetectionResult};
+
+pub mod detection;
 use crate::maker::MakerNoteParser;
+use crate::tables::pentax_tags::get_pentax_tag;
 use std::collections::HashMap;
 
 /// Parser for Pentax maker notes
@@ -24,57 +30,101 @@ impl MakerNoteParser for PentaxMakerNoteParser {
         byte_order: Endian,
         _base_offset: usize,
     ) -> Result<HashMap<u16, ExifValue>> {
-        // Pentax maker notes start directly with an IFD (no header)
-        // They use the same byte order as the main EXIF data
-
         if data.is_empty() {
             return Ok(HashMap::new());
         }
 
-        // Pentax maker notes are simpler than Canon - no footer handling needed
-        // Parse as a standard IFD directly
-
-        // Create a fake TIFF header for IFD parsing
-        // (Pentax maker notes don't have a TIFF header, they start directly with IFD)
-        let mut tiff_data = Vec::with_capacity(8 + data.len());
-
-        // Add TIFF header
-        match byte_order {
-            Endian::Little => {
-                tiff_data.extend_from_slice(b"II");
-                tiff_data.extend_from_slice(&[0x2a, 0x00]); // 42 in little-endian
-                tiff_data.extend_from_slice(&[0x08, 0x00, 0x00, 0x00]); // offset 8
+        // Use generated detection logic to identify Pentax maker note format
+        let detection = match detect_pentax_maker_note(data) {
+            Some(detection) => detection,
+            None => {
+                // Fallback: assume standard IFD at start of data
+                PENTAXDetectionResult {
+                    version: None,
+                    ifd_offset: 0,
+                    description: "Fallback Pentax parser".to_string(),
+                }
             }
-            Endian::Big => {
-                tiff_data.extend_from_slice(b"MM");
-                tiff_data.extend_from_slice(&[0x00, 0x2a]); // 42 in big-endian
-                tiff_data.extend_from_slice(&[0x00, 0x00, 0x00, 0x08]); // offset 8
-            }
-        }
-
-        // Add the actual IFD data
-        tiff_data.extend_from_slice(data);
-
-        // Parse the IFD
-        let header = TiffHeader {
-            byte_order,
-            ifd0_offset: 8,
         };
 
-        match IfdParser::parse_ifd(&tiff_data, &header, 8) {
-            Ok(parsed) => Ok(parsed.entries().clone()),
-            Err(e) => {
-                // Log the error but return empty results
-                // Many maker notes have quirks that might cause parsing errors
-                eprintln!("Warning: Pentax maker note parsing failed: {}", e);
-                Ok(HashMap::new())
-            }
+        // Extract raw IFD data starting from detected offset
+        let ifd_data = &data[detection.ifd_offset..];
+        if ifd_data.is_empty() {
+            return Ok(HashMap::new());
         }
+
+        // Parse using table-driven approach
+        parse_pentax_ifd_with_tables(ifd_data, byte_order)
     }
 
     fn manufacturer(&self) -> &'static str {
         "Pentax"
     }
+}
+
+/// Parse Pentax IFD using generated tag tables and print conversion
+fn parse_pentax_ifd_with_tables(
+    data: &[u8],
+    byte_order: Endian,
+) -> Result<HashMap<u16, ExifValue>> {
+    // Create a fake TIFF header for IFD parsing
+    // (Pentax maker notes don't have a TIFF header, they start directly with IFD)
+    let mut tiff_data = Vec::with_capacity(8 + data.len());
+
+    // Add TIFF header
+    match byte_order {
+        Endian::Little => {
+            tiff_data.extend_from_slice(b"II");
+            tiff_data.extend_from_slice(&[0x2a, 0x00]); // 42 in little-endian
+            tiff_data.extend_from_slice(&[0x08, 0x00, 0x00, 0x00]); // offset 8
+        }
+        Endian::Big => {
+            tiff_data.extend_from_slice(b"MM");
+            tiff_data.extend_from_slice(&[0x00, 0x2a]); // 42 in big-endian
+            tiff_data.extend_from_slice(&[0x00, 0x00, 0x00, 0x08]); // offset 8
+        }
+    }
+
+    // Add the actual IFD data
+    tiff_data.extend_from_slice(data);
+
+    // Parse the IFD
+    let header = TiffHeader {
+        byte_order,
+        ifd0_offset: 8,
+    };
+
+    let parsed_ifd = match IfdParser::parse_ifd(&tiff_data, &header, 8) {
+        Ok(parsed) => parsed,
+        Err(e) => {
+            eprintln!("Warning: Pentax IFD parsing failed: {}", e);
+            return Ok(HashMap::new());
+        }
+    };
+
+    // Convert raw IFD entries to Pentax tags with print conversion
+    let mut result = HashMap::new();
+
+    for (tag_id, raw_value) in parsed_ifd.entries() {
+        if let Some(pentax_tag) = get_pentax_tag(*tag_id) {
+            // Apply print conversion to create human-readable value
+            let converted_value = apply_print_conv(raw_value, pentax_tag.print_conv);
+
+            // Store both raw and converted values
+            // Raw value for programmatic access
+            result.insert(*tag_id, raw_value.clone());
+
+            // Converted value as string (following ExifTool pattern)
+            // Use a high bit pattern to distinguish converted values
+            let converted_tag_id = 0x8000 | tag_id;
+            result.insert(converted_tag_id, ExifValue::Ascii(converted_value));
+        } else {
+            // Keep unknown tags as-is
+            result.insert(*tag_id, raw_value.clone());
+        }
+    }
+
+    Ok(result)
 }
 
 /// Pentax-specific tag IDs
