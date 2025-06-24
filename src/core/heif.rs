@@ -64,7 +64,7 @@ fn find_atom<R: Read + Seek>(
             return Ok(Some(AtomInfo {
                 offset: atom_start,
                 size: header.size,
-                atom_type: header.atom_type,
+                _atom_type: header.atom_type,
             }));
         }
 
@@ -311,7 +311,7 @@ fn read_atom_header<R: Read>(reader: &mut R) -> Result<AtomHeader> {
 struct AtomInfo {
     offset: u64,
     size: u64,
-    atom_type: [u8; 4],
+    _atom_type: [u8; 4],
 }
 
 #[cfg(test)]

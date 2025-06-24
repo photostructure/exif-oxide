@@ -405,9 +405,9 @@ mod tests {
     #[test]
     fn test_ftyp_brand_validation() {
         // Test valid MP4 brand
-        assert!(VALID_FTYP_BRANDS.contains(&&[b'm', b'p', b'4', b'2']));
+        assert!(VALID_FTYP_BRANDS.contains(&b"mp42"));
 
         // Test valid QuickTime brand
-        assert!(VALID_FTYP_BRANDS.contains(&&[b'q', b't', b' ', b' ']));
+        assert!(VALID_FTYP_BRANDS.contains(&b"qt  "));
     }
 }

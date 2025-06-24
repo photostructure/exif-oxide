@@ -1,5 +1,6 @@
 //! Core parsing functionality
 
+pub mod binary_data;
 pub mod containers;
 pub mod endian;
 pub mod heif;

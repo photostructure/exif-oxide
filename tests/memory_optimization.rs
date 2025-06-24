@@ -205,7 +205,7 @@ fn test_container_sanity_limits() {
     qt_data.extend_from_slice(b"mdat");
     // Don't actually append the data - just test the header parsing
 
-    let data_len = qt_data.len();
+    let _data_len = qt_data.len();
     let mut cursor = std::io::Cursor::new(qt_data);
     let _ = find_metadata(&mut cursor);
 

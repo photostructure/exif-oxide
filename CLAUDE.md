@@ -8,7 +8,7 @@ exif-oxide is a high-performance Rust implementation of Phil Harvey's [ExifTool]
 
 - **Performance**: 10-50x faster than Perl
 - **Memory safety**: Safe for untrusted files
-- **Key features**: Binary extraction (thumbnails/previews), DateTime intelligence from [exiftool-vendored](https://github.com/photostructure/exiftool-vendored.js)
+- **Key features**: Binary extraction (thumbnails/previews)
 
 ## Critical Development Principles
 
@@ -20,40 +20,29 @@ exif-oxide is a high-performance Rust implementation of Phil Harvey's [ExifTool]
 - Do not invent any parsing heuristics. **ALWAYS** defer to ExifTool's algorithms, as verbatim as possible -- Chesterton's Fence applies here in a big way.
 
 **⚠️ CRITICAL**: Never attempt to "improve" or "simplify" ExifTool's logic:
+
 - If ExifTool checks for `0x41` before `0x42`, do it in that order
 - If ExifTool has a weird offset calculation, copy it exactly
 - If ExifTool special-cases "NIKON CORPORATION" vs "NIKON", there's a reason
-- That 2003 Coolpix bug? Yeah, ExifTool knows about it. Trust the code.
-
-Example violations to avoid:
-```rust
-// ❌ WRONG - "simplifying" ExifTool's logic
-if manufacturer.starts_with("NIKON") { ... }
-
-// ✅ CORRECT - matching ExifTool exactly
-if manufacturer == "NIKON" || manufacturer == "NIKON CORPORATION" { ... }
-```
-
-### 2. Current Status (December 2024)
-
-- **✅ COMPLETE**: Core spikes 1-6 (EXIF, maker notes, binary extraction, XMP, detection, datetime)
-- **🔄 CURRENT**: Phase 1 - Multi-format support
-- **⚠️ LIMITATION**: main.rs hardcoded to JPEG despite 43 format detection capability
+- No Camera Follows The Spec. Trust The ExifTool Code.
 
 ## ⚠️ MANDATORY READING
 
 Before implementing ANY feature or parsing logic:
 
 1. **READ `doc/EXIFTOOL-SYNC.md`** - This document explains:
+
    - How to track ExifTool source code references
    - The synchronization workflow with ExifTool updates
    - Algorithm extraction tools and processes
    - Required attribution patterns
+   - New tasks may require additional sync features to be invented and implemented!
 
 2. **CHECK ExifTool Implementation** - Never guess or invent:
+
    - Look in `third-party/exiftool/lib/Image/ExifTool/` for the canonical implementation
    - Use the exact same logic, quirks, and edge cases
-   - If ExifTool does something weird, there's a reason (usually a 2003 camera bug)
+   - If ExifTool does something weird, there's a reason (usually a camera quirk!)
 
 3. **USE Source Attribution** - Every file implementing ExifTool logic MUST have:
    ```rust
@@ -82,13 +71,6 @@ Before implementing ANY feature or parsing logic:
 - Segment length **includes** the length bytes
 - Must check for "Exif\0\0" signature
 
-### DateTime Pitfalls
-
-- **Never trust single sources** - cross-reference multiple fields
-- GPS 0,0 means "unset" not "off the coast of Africa"
-- Video dates can be UTC unless explicitly specified
-- Nikon DST bug - some models incorrectly handle daylight saving
-
 ### Maker Note Warnings
 
 - Often use relative offsets from maker note start
@@ -112,7 +94,6 @@ maker/              # Manufacturer-specific parsing
 binary.rs           # Direct tag-based extraction
 xmp/                # Full hierarchical XML parsing
 detection/          # 43 formats, sub-1ms performance
-datetime/           # Multi-source intelligence, GPS timezone
 ```
 
 ### Key Design Decisions
@@ -136,13 +117,15 @@ datetime/           # Multi-source intelligence, GPS timezone
    #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Canon.pm"]
    ```
 6. **Use sync tools** when needed:
+
    ```bash
    # Check what changed in ExifTool
    cargo run --bin exiftool_sync diff 12.65 12.66
-   
+
    # Extract algorithms
    cargo run --bin exiftool_sync extract magic-numbers
    ```
+
 7. **Benchmark and validate** - Must match ExifTool's behavior exactly
 
 ## Essential Commands
@@ -178,12 +161,23 @@ When implementing, check these files in `third-party/exiftool/`:
 - `t/images/` - Test images with edge cases
 
 Use the sync tools to extract algorithms:
+
 ```bash
-# Extract specific components
-cargo run --bin exiftool_sync extract magic-numbers
-cargo run --bin exiftool_sync extract binary-formats
-cargo run --bin exiftool_sync extract datetime-patterns
-cargo run --bin exiftool_sync extract binary-tags
+# Extract ALL components in one command (recommended)
+cargo run --bin exiftool_sync extract-all
+# Or use the Makefile shorthand
+make sync
+
+# Extract specific components (all work with single commands)
+cargo run --bin exiftool_sync extract binary-formats    # ProcessBinaryData tables
+cargo run --bin exiftool_sync extract maker-detection   # Maker note signatures  
+cargo run --bin exiftool_sync extract binary-tags       # Composite tag definitions
+cargo run --bin exiftool_sync extract magic-numbers     # File type detection
+cargo run --bin exiftool_sync extract datetime-patterns # Date parsing patterns
+
+# Check synchronization status
+cargo run --bin exiftool_sync status
+cargo run --bin exiftool_sync scan                      # List all source dependencies
 
 # Check for updates
 cargo run --bin exiftool_sync diff 12.65 12.66
@@ -212,21 +206,39 @@ Before implementing ANY new feature:
 - [ ] Read `doc/EXIFTOOL-SYNC.md` completely
 - [ ] Find the ExifTool implementation in `third-party/exiftool/`
 - [ ] Check for existing implementations: `grep -r "EXIFTOOL-SOURCE" src/`
-- [ ] If extracting algorithms, use the sync tools:
+- [ ] Use automated extraction tools when possible:
   ```bash
-  cargo run --bin exiftool_sync extract [component]
+  # For ProcessBinaryData tables
+  cargo run --bin exiftool_sync extract binary-formats
+  
+  # For maker note detection patterns  
+  cargo run --bin exiftool_sync extract maker-detection
+  
+  # For composite tags (thumbnails, previews)
+  cargo run --bin exiftool_sync extract binary-tags
   ```
-- [ ] Add `EXIFTOOL-SOURCE` attribution to your file
+- [ ] Add `EXIFTOOL-SOURCE` attribution to your file (or use auto-generated files)
 - [ ] Write tests that validate against ExifTool output
-- [ ] Never "improve" ExifTool's logic - copy it exactly
+- [ ] Never "improve" ExifTool's logic - copy it exactly  
 - [ ] Document any non-obvious quirks with comments
 - [ ] If you find yourself guessing, STOP and check ExifTool
 
-## Remember
+## Phase 0 Complete: Synchronization Infrastructure ✅
 
-- The user is new to Rust - write idiomatic code and explain patterns
-- What seems like a bug might be a workaround for a 2003 camera model
-- **Always read `doc/EXIFTOOL-SYNC.md` before implementing**
-- The sync tools exist to help - use them!
+**As of June 2025, Phase 0 synchronization infrastructure is complete**:
 
-**This project stands on giants' shoulders - respect 25 years of accumulated camera quirks.**
+- ✅ **Auto-generated maker note detection** for all 10 manufacturers
+- ✅ **ProcessBinaryData table extraction** with 530+ tags
+- ✅ **Composite tag definitions** for binary extraction
+- ✅ **Smooth regeneration system** - no manual steps required
+- ✅ **Build system integration** - always compiles, even with missing files
+- ✅ **Test synchronization** - automated ExifTool output comparison
+- ✅ **Extract-all command** - single command regenerates everything
+- ✅ **Makefile integration** - `make sync` for convenience
+
+**Key Benefit**: ExifTool updates can now be synchronized automatically with zero manual maintenance.
+
+**Usage**: Run `make sync` or `cargo run --bin exiftool_sync extract-all` to regenerate everything.
+
+**New Extractor Pattern**: See `src/bin/exiftool_sync/extractors/EXTRACTOR_PATTERN.md` for the required pattern that ensures all extractors work smoothly without manual intervention.
+

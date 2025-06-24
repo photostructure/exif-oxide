@@ -299,7 +299,7 @@ This tribal knowledge represents 25+ years of ExifTool's accumulated format dete
 
 ---
 
-## ✅ COMPLETED: Phase 1 Video Container Formats (December 2024)
+## ✅ COMPLETED: Phase 1 Video Container Formats (June 2025)
 
 ### Implementation Summary
 

@@ -130,7 +130,7 @@ Based on TODO-SUPPORTED.md requirements, the following file types need to be add
 
 ## Next Steps
 
-### ✅ COMPLETED: TIFF-based RAW Detection (December 2024)
+### ✅ COMPLETED: TIFF-based RAW Detection (June 2025)
 
 - ✅ Implemented IFD parsing with Make field detection (tag 0x010F)
 - ✅ Enhanced Nikon detection with Model field parsing (tag 0x0110)
@@ -138,7 +138,7 @@ Based on TODO-SUPPORTED.md requirements, the following file types need to be add
 - ✅ All 16 manufacturer RAW formats now properly detected
 - ✅ Validated against ExifTool output for compatibility
 
-### ✅ COMPLETED: Phase 1 Video Container Formats (December 2024)
+### ✅ COMPLETED: Phase 1 Video Container Formats (June 2025)
 
 - ✅ Canon CRM (video format) - QuickTime container with crx brand + video atom detection
 - ✅ 3GPP/3GPP2 (mobile video) - Brand detection in ftyp box (3gp4/3g2a brands)
