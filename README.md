@@ -6,7 +6,7 @@ A high-performance Rust implementation of portions of ExifTool, providing fast m
 
 - **Performance**: 10-20x faster than Perl ExifTool for common operations
 - **Multi-Format**: Support for JPEG, RAW (CR2, NEF, ARW, DNG), PNG, HEIF, WebP, MP4, and more
-- **Compatibility**: Maintain ExifTool tag naming and structure  
+- **Compatibility**: Maintain ExifTool tag naming and structure (with Rust identifier constraints)  
 - **Safety**: Memory-safe handling of untrusted files
 - **Features**: Embedded image extraction, XMP support
 
@@ -115,6 +115,15 @@ Multi-format support is now implemented. See:
 This project is licensed under the same terms as ExifTool: **GNU General Public License v3 (GPL-3.0)**
 
 ExifTool is free and open-source software that allows personal, commercial, and any other use without separate licensing fees.
+
+## Tag Naming Compatibility
+
+ExifTool tag names are preserved when possible, but tags with invalid Rust identifier characters are modified:
+
+- **ExifTool**: `"NikonActiveD-Lighting"`
+- **exif-oxide**: `"NikonActiveD_Lighting"`
+
+Hyphens are converted to underscores to maintain valid Rust identifiers while preserving semantic meaning.
 
 ## Acknowledgments
 
