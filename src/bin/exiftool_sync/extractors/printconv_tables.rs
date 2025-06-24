@@ -29,6 +29,14 @@ pub struct PrintConvTablesExtractor {
     manufacturer_file: String,
 }
 
+/// Sanitize tag names to be valid Rust identifiers
+/// Replaces any non-alphanumeric character with underscore
+fn sanitize_rust_identifier(name: &str) -> String {
+    name.chars()
+        .map(|c| if c.is_alphanumeric() { c } else { '_' })
+        .collect()
+}
+
 impl PrintConvTablesExtractor {
     pub fn new(manufacturer_file: &str) -> Self {
         Self {
@@ -371,7 +379,7 @@ impl PrintConvTablesExtractor {
         }
 
         // Default to manufacturer-specific lookup
-        format!("PrintConvId::{}{}", manufacturer, tag_name.replace(' ', ""))
+        format!("PrintConvId::{}{}", manufacturer, sanitize_rust_identifier(tag_name))
     }
 
     fn generate_real_code(&self, tags: &[TagEntry]) -> Result<String, String> {
