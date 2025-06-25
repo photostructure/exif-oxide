@@ -489,6 +489,9 @@ impl PrintConvTablesExtractor {
                 || tag.printconv_id.starts_with("PrintConvId::Pentax")
                 || tag.printconv_id.starts_with("PrintConvId::Nikon")
                 || tag.printconv_id.starts_with("PrintConvId::Sony")
+                || tag.printconv_id.starts_with("PrintConvId::Panasonic")
+                || tag.printconv_id.starts_with("PrintConvId::Olympus")
+                || tag.printconv_id.starts_with("PrintConvId::Fujifilm")
             {
                 // Extract just the variant name (remove PrintConvId:: prefix)
                 if let Some(variant_name) = tag.printconv_id.strip_prefix("PrintConvId::") {
@@ -502,9 +505,70 @@ impl PrintConvTablesExtractor {
             for variant in &new_variants {
                 println!("    - {}", variant);
             }
-            println!("  Add these to src/core/print_conv.rs PrintConvId enum");
-            println!("  (This will be automated in a future update)");
+
+            // Actually add the variants to the enum
+            self.update_printconv_enum(&new_variants)?;
+            println!(
+                "  ✅ Added {} new PrintConvId variants to src/core/print_conv.rs",
+                new_variants.len()
+            );
         }
+
+        Ok(())
+    }
+
+    fn update_printconv_enum(&self, new_variants: &HashSet<String>) -> Result<(), String> {
+        let print_conv_path = Path::new("src/core/print_conv.rs");
+        let content = fs::read_to_string(print_conv_path)
+            .map_err(|e| format!("Failed to read print_conv.rs: {}", e))?;
+
+        // Find the PrintConvId enum
+        let enum_start = content
+            .find("pub enum PrintConvId {")
+            .ok_or("Could not find PrintConvId enum")?;
+
+        // Find the end of the enum (closing brace)
+        let enum_body_start = content[enum_start..]
+            .find('{')
+            .ok_or("Could not find enum opening brace")?
+            + enum_start
+            + 1;
+
+        let enum_end = content[enum_body_start..]
+            .rfind('}')
+            .ok_or("Could not find enum closing brace")?
+            + enum_body_start;
+
+        // Check which variants already exist
+        let enum_body = &content[enum_body_start..enum_end];
+        let mut variants_to_add = Vec::new();
+
+        for variant in new_variants {
+            if !enum_body.contains(variant) {
+                variants_to_add.push(variant.clone());
+            }
+        }
+
+        if variants_to_add.is_empty() {
+            return Ok(()); // All variants already exist
+        }
+
+        // Find a good insertion point - before the closing brace
+        let insertion_point = enum_end;
+
+        // Generate the variant declarations
+        let mut new_variants_text = String::new();
+        for variant in &variants_to_add {
+            new_variants_text.push_str(&format!("    {},\n", variant));
+        }
+
+        // Insert the new variants
+        let mut new_content = content;
+        new_content.insert_str(insertion_point, &new_variants_text);
+
+        // Write the updated file
+        fs::write(print_conv_path, new_content)
+            .map_err(|e| format!("Failed to write updated print_conv.rs: {}", e))?;
 
         Ok(())
     }
