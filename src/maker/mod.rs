@@ -21,6 +21,18 @@ pub mod samsung;
 pub mod sigma;
 pub mod sony;
 
+pub mod casio;
+pub mod kodak;
+
+// Phase 3 manufacturers (commented until implemented)
+// pub mod minolta;
+// pub mod gopro;
+// pub mod dji;
+// pub mod ricoh;
+// pub mod phaseone;
+// pub mod qualcomm;
+// pub mod red;
+
 /// Trait for manufacturer-specific maker note parsers
 pub trait MakerNoteParser: Send + Sync {
     /// Parse maker note data into tag/value pairs
@@ -50,6 +62,16 @@ pub enum Manufacturer {
     Samsung,
     Sigma,
     Hasselblad,
+    // Phase 3 manufacturers (ready for implementation)
+    Casio,
+    Kodak,
+    Minolta,
+    GoPro,
+    DJI,
+    Ricoh,
+    PhaseOne,
+    Qualcomm,
+    Red,
     Unknown,
 }
 
@@ -72,8 +94,10 @@ impl Manufacturer {
             Manufacturer::Olympus
         } else if make_lower.contains("panasonic") {
             Manufacturer::Panasonic
-        } else if make_lower.contains("pentax") || make_lower.contains("ricoh") {
+        } else if make_lower.contains("pentax") {
             Manufacturer::Pentax
+        } else if make_lower.contains("ricoh") {
+            Manufacturer::Ricoh
         } else if make_lower.contains("leica") {
             Manufacturer::Leica
         } else if make_lower.contains("samsung") {
@@ -82,6 +106,22 @@ impl Manufacturer {
             Manufacturer::Sigma
         } else if make_lower.contains("hasselblad") {
             Manufacturer::Hasselblad
+        } else if make_lower.contains("casio") {
+            Manufacturer::Casio
+        } else if make_lower.contains("kodak") {
+            Manufacturer::Kodak
+        } else if make_lower.contains("minolta") {
+            Manufacturer::Minolta
+        } else if make_lower.contains("gopro") {
+            Manufacturer::GoPro
+        } else if make_lower.contains("dji") {
+            Manufacturer::DJI
+        } else if make_lower.contains("phase one") || make_lower.contains("phaseone") {
+            Manufacturer::PhaseOne
+        } else if make_lower.contains("qualcomm") {
+            Manufacturer::Qualcomm
+        } else if make_lower.contains("red") {
+            Manufacturer::Red
         } else {
             Manufacturer::Unknown
         }
@@ -102,6 +142,16 @@ impl Manufacturer {
             Manufacturer::Samsung => Some(Box::new(samsung::SamsungMakerNoteParser)),
             Manufacturer::Sigma => Some(Box::new(sigma::SigmaMakerNoteParser)),
             Manufacturer::Sony => Some(Box::new(sony::SonyMakerNoteParser)),
+            // Phase 3 manufacturers (commented until implemented)
+            Manufacturer::Casio => Some(Box::new(casio::CasioMakerNoteParser)),
+            Manufacturer::Kodak => Some(Box::new(kodak::KodakMakerNoteParser)),
+            // Manufacturer::Minolta => Some(Box::new(minolta::MinoltaMakerNoteParser)),
+            // Manufacturer::GoPro => Some(Box::new(gopro::GoProMakerNoteParser)),
+            // Manufacturer::DJI => Some(Box::new(dji::DJIMakerNoteParser)),
+            // Manufacturer::Ricoh => Some(Box::new(ricoh::RicohMakerNoteParser)),
+            // Manufacturer::PhaseOne => Some(Box::new(phaseone::PhaseOneMakerNoteParser)),
+            // Manufacturer::Qualcomm => Some(Box::new(qualcomm::QualcommMakerNoteParser)),
+            // Manufacturer::Red => Some(Box::new(red::RedMakerNoteParser)),
             // Other manufacturers not implemented yet
             _ => None,
         }
@@ -155,7 +205,7 @@ mod tests {
         assert_eq!(Manufacturer::from_make("PENTAX"), Manufacturer::Pentax);
         assert_eq!(
             Manufacturer::from_make("RICOH IMAGING"),
-            Manufacturer::Pentax
+            Manufacturer::Ricoh
         );
         assert_eq!(Manufacturer::from_make("LEICA"), Manufacturer::Leica);
         assert_eq!(
@@ -179,5 +229,33 @@ mod tests {
         assert_eq!(Manufacturer::from_make("APPLE"), Manufacturer::Apple);
         assert_eq!(Manufacturer::from_make("Samsung"), Manufacturer::Samsung);
         assert_eq!(Manufacturer::from_make("SAMSUNG"), Manufacturer::Samsung);
+
+        // Phase 3 manufacturers
+        assert_eq!(Manufacturer::from_make("CASIO"), Manufacturer::Casio);
+        assert_eq!(
+            Manufacturer::from_make("Casio Computer Co.,Ltd."),
+            Manufacturer::Casio
+        );
+        assert_eq!(
+            Manufacturer::from_make("EASTMAN KODAK COMPANY"),
+            Manufacturer::Kodak
+        );
+        assert_eq!(Manufacturer::from_make("Kodak"), Manufacturer::Kodak);
+        assert_eq!(Manufacturer::from_make("MINOLTA"), Manufacturer::Minolta);
+        assert_eq!(
+            Manufacturer::from_make("Minolta Co., Ltd."),
+            Manufacturer::Minolta
+        );
+        assert_eq!(Manufacturer::from_make("GoPro"), Manufacturer::GoPro);
+        assert_eq!(Manufacturer::from_make("GOPRO"), Manufacturer::GoPro);
+        assert_eq!(Manufacturer::from_make("DJI"), Manufacturer::DJI);
+        assert_eq!(Manufacturer::from_make("RICOH"), Manufacturer::Ricoh);
+        assert_eq!(
+            Manufacturer::from_make("RICOH IMAGING"),
+            Manufacturer::Ricoh
+        ); // Note: Ricoh cameras under Pentax
+        assert_eq!(Manufacturer::from_make("Phase One"), Manufacturer::PhaseOne);
+        assert_eq!(Manufacturer::from_make("QUALCOMM"), Manufacturer::Qualcomm);
+        assert_eq!(Manufacturer::from_make("RED"), Manufacturer::Red);
     }
 }
