@@ -80,7 +80,7 @@ fn test_olympus_real_image() {
     use std::path::Path;
 
     // Test with ExifTool's Olympus test image
-    let test_image = Path::new("third-party/exiftool/t/images/Olympus.jpg");
+    let test_image = Path::new("test-images/olympus/C2000Z.jpg");
     if test_image.exists() {
         let result = read_basic_exif(test_image);
         assert!(result.is_ok());
