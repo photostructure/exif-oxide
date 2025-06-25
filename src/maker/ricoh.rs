@@ -264,13 +264,13 @@ mod tests {
 
     #[test]
     fn test_ricoh_detection_pattern() {
-        // Test the detection function directly
+        // EXIFTOOL-SOURCE: MakerNotes.pm:918 - Ricoh detection is based on Make field, not signature
+        // Condition => '$$self{Make}=~/^RICOH/', NotIFD => 1
+        // The detection function should return None as Ricoh uses Make-based detection, not data patterns
         let test_data = b"RICOH_test_data";
         let detection = detect_ricoh_maker_note(test_data);
 
-        assert!(detection.is_some());
-        let detection = detection.unwrap();
-        assert_eq!(detection.ifd_offset, 0);
-        assert_eq!(detection.description, "ricoh maker note signature");
+        // ExifTool detects Ricoh by Make field ($$self{Make}=~/^RICOH/), not by maker note data signature
+        assert!(detection.is_none());
     }
 }
