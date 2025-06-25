@@ -1898,7 +1898,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0x9217,
         name: "SensingMethod",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalSensingMethod,
     },
     ExifTag {
         id: 0x923a,
@@ -2138,7 +2138,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa217,
         name: "SensingMethod",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalSensingMethod,
     },
     ExifTag {
         id: 0xa300,
@@ -2148,7 +2148,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa301,
         name: "SceneType",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalSceneType,
     },
     ExifTag {
         id: 0xa302,
@@ -2158,7 +2158,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa401,
         name: "CustomRendered",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalCustomRendered,
     },
     ExifTag {
         id: 0xa402,
@@ -2183,12 +2183,12 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa406,
         name: "SceneCaptureType",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalSceneCaptureType,
     },
     ExifTag {
         id: 0xa407,
         name: "GainControl",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalGainControl,
     },
     ExifTag {
         id: 0xa408,
@@ -2763,7 +2763,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xc6f7,
         name: "NoiseReductionApplied",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalNoiseReductionApplied,
     },
     ExifTag {
         id: 0xc6f8,

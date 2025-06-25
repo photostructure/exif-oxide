@@ -573,7 +573,7 @@ pub enum PrintConvId {
 
     /// Universal patterns used by 3+ manufacturers
     UniversalOnOffAuto, // 0=Off, 1=On, 2=Auto (6 manufacturers, 25+ tags)
-    UniversalNoiseReduction,       // 0=Off, 1=Low, 2=Normal, 3=High, 4=Auto
+    UniversalNoiseReduction,        // 0=Off, 1=Low, 2=Normal, 3=High, 4=Auto
     UniversalQualityBasic, // 1=Economy, 2=Normal, 3=Fine, 4=Super Fine (Canon, Casio, others)
     UniversalWhiteBalanceExtended, // Extended WB: Auto/Daylight/Shade/Cloudy/Tungsten/Fluorescent/Flash/Manual
     UniversalFocusMode,            // 0=Single, 1=Continuous, 2=Auto, 3=Manual (all manufacturers)
@@ -582,6 +582,10 @@ pub enum PrintConvId {
     UniversalCustomRendered,       // EXIF custom rendering
     UniversalSceneType,            // EXIF scene type
     UniversalGainControl,          // EXIF gain control
+    UniversalAutoManual,           // 0=Auto, 1=Manual (common across manufacturers)
+    UniversalOffWeakStrong,        // 0=Off, 32=Weak, 64=Strong (Fujifilm ColorChrome, others)
+    UniversalSignedNumber,         // Format signed numbers with + prefix for positive values
+    UniversalNoiseReductionApplied, // 0=Off, 1=On (Adobe DNG, others)
 
     /// GPMF (GoPro Metadata Format) specific conversions
     GpmfAccelerometer,
@@ -861,6 +865,16 @@ pub enum PrintConvId {
     MinoltaColorCompensationFilter,
     MinoltaPrintIM,
     MinoltaMinoltaCameraSettings2,
+    DJIYaw,
+    DJISpeedY,
+    DJISpeedZ,
+    DJISpeedX,
+    DJICameraRoll,
+    DJIPitch,
+    DJIRoll,
+    DJIMake,
+    DJICameraYaw,
+    DJICameraPitch,
 }
 
 /// Apply print conversion to an EXIF value
@@ -1053,6 +1067,78 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             Some(1) => "Continuous".to_string(),
             Some(2) => "Auto".to_string(),
             Some(3) => "Manual".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalSensingMethod => match as_u32(value) {
+            Some(1) => "Monochrome area".to_string(),
+            Some(2) => "One-chip color area".to_string(),
+            Some(3) => "Two-chip color area".to_string(),
+            Some(4) => "Three-chip color area".to_string(),
+            Some(5) => "Color sequential area".to_string(),
+            Some(6) => "Monochrome linear".to_string(),
+            Some(7) => "Trilinear".to_string(),
+            Some(8) => "Color sequential linear".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalSceneCaptureType => match as_u32(value) {
+            Some(0) => "Standard".to_string(),
+            Some(1) => "Landscape".to_string(),
+            Some(2) => "Portrait".to_string(),
+            Some(3) => "Night".to_string(),
+            Some(4) => "Other".to_string(), // Non-standard Samsung usage
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalCustomRendered => match as_u32(value) {
+            Some(0) => "Normal".to_string(),
+            Some(1) => "Custom".to_string(),
+            Some(2) => "HDR (no original saved)".to_string(), // Non-standard Apple iOS
+            Some(3) => "HDR (original saved)".to_string(),    // Non-standard Apple iOS
+            Some(4) => "Original (for HDR)".to_string(),      // Non-standard Apple iOS
+            Some(6) => "Panorama".to_string(),                // Non-standard Apple iOS
+            Some(7) => "Portrait HDR".to_string(),            // Non-standard Apple iOS
+            Some(8) => "Portrait".to_string(),                // Non-standard Apple iOS
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalSceneType => match as_u32(value) {
+            Some(1) => "Directly photographed".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalGainControl => match as_u32(value) {
+            Some(0) => "None".to_string(),
+            Some(1) => "Low gain up".to_string(),
+            Some(2) => "High gain up".to_string(),
+            Some(3) => "Low gain down".to_string(),
+            Some(4) => "High gain down".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalAutoManual => match as_u32(value) {
+            Some(0) => "Auto".to_string(),
+            Some(1) => "Manual".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalOffWeakStrong => match as_u32(value) {
+            Some(0) => "Off".to_string(),
+            Some(32) => "Weak".to_string(),
+            Some(64) => "Strong".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalSignedNumber => match as_i32(value) {
+            Some(num) if num > 0 => format!("+{}", num),
+            Some(num) => num.to_string(),
+            None => exif_value_to_string(value),
+        },
+
+        PrintConvId::UniversalNoiseReductionApplied => match as_u32(value) {
+            Some(0) => "Off".to_string(),
+            Some(1) => "On".to_string(),
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
@@ -1404,6 +1490,20 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
         PrintConvId::MinoltaColorCompensationFilter => exif_value_to_string(value),
         PrintConvId::MinoltaPrintIM => exif_value_to_string(value),
         PrintConvId::MinoltaMinoltaCameraSettings2 => exif_value_to_string(value),
+
+        // DJI conversions - EXIFTOOL-SOURCE: lib/Image/ExifTool/DJI.pm
+        PrintConvId::DJIMake => exif_value_to_string(value),
+
+        // DJI float conversions with sign and 2 decimal places (sprintf "%+.2f")
+        PrintConvId::DJISpeedX => format_dji_float2(value),
+        PrintConvId::DJISpeedY => format_dji_float2(value),
+        PrintConvId::DJISpeedZ => format_dji_float2(value),
+        PrintConvId::DJIPitch => format_dji_float2(value),
+        PrintConvId::DJIYaw => format_dji_float2(value),
+        PrintConvId::DJIRoll => format_dji_float2(value),
+        PrintConvId::DJICameraPitch => format_dji_float2(value),
+        PrintConvId::DJICameraYaw => format_dji_float2(value),
+        PrintConvId::DJICameraRoll => format_dji_float2(value),
 
         _ => {
             // For now, return raw value for unimplemented conversions
@@ -2485,6 +2585,202 @@ mod tests {
         assert_eq!(
             apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalFocusMode),
             "Unknown (99)"
+        );
+    }
+
+    #[test]
+    fn test_universal_sensing_method_conversion() {
+        // Test UniversalSensingMethod pattern - EXIF sensing method types
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalSensingMethod),
+            "Monochrome area"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalSensingMethod),
+            "One-chip color area"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(4), PrintConvId::UniversalSensingMethod),
+            "Three-chip color area"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(7), PrintConvId::UniversalSensingMethod),
+            "Trilinear"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(8), PrintConvId::UniversalSensingMethod),
+            "Color sequential linear"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalSensingMethod),
+            "Unknown (99)"
+        );
+    }
+
+    #[test]
+    fn test_universal_scene_capture_type_conversion() {
+        // Test UniversalSceneCaptureType pattern - EXIF scene capture type
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalSceneCaptureType),
+            "Standard"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalSceneCaptureType),
+            "Landscape"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalSceneCaptureType),
+            "Portrait"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::UniversalSceneCaptureType),
+            "Night"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(4), PrintConvId::UniversalSceneCaptureType),
+            "Other"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalSceneCaptureType),
+            "Unknown (99)"
+        );
+    }
+
+    #[test]
+    fn test_universal_custom_rendered_conversion() {
+        // Test UniversalCustomRendered pattern - EXIF custom rendering
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalCustomRendered),
+            "Normal"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalCustomRendered),
+            "Custom"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalCustomRendered),
+            "HDR (no original saved)"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(6), PrintConvId::UniversalCustomRendered),
+            "Panorama"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(8), PrintConvId::UniversalCustomRendered),
+            "Portrait"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalCustomRendered),
+            "Unknown (99)"
+        );
+    }
+
+    #[test]
+    fn test_universal_scene_type_conversion() {
+        // Test UniversalSceneType pattern - EXIF scene type
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalSceneType),
+            "Directly photographed"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalSceneType),
+            "Unknown (99)"
+        );
+    }
+
+    #[test]
+    fn test_universal_gain_control_conversion() {
+        // Test UniversalGainControl pattern - EXIF gain control
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalGainControl),
+            "None"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalGainControl),
+            "Low gain up"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalGainControl),
+            "High gain up"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::UniversalGainControl),
+            "Low gain down"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(4), PrintConvId::UniversalGainControl),
+            "High gain down"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalGainControl),
+            "Unknown (99)"
+        );
+    }
+}
+
+/// Format DJI float values with sign and 2 decimal places
+/// EXIFTOOL-SOURCE: lib/Image/ExifTool/DJI.pm %convFloat2 pattern
+fn format_dji_float2(value: &ExifValue) -> String {
+    match value {
+        ExifValue::Rational(num, den) if *den != 0 => {
+            let f = *num as f64 / *den as f64;
+            format!("{:+.2}", f)
+        }
+        ExifValue::SignedRational(num, den) if *den != 0 => {
+            let f = *num as f64 / *den as f64;
+            format!("{:+.2}", f)
+        }
+        ExifValue::U32(n) => format!("{:+.2}", *n as f64),
+        ExifValue::I32(n) => format!("{:+.2}", *n as f64),
+        ExifValue::U16(n) => format!("{:+.2}", *n as f64),
+        ExifValue::I16(n) => format!("{:+.2}", *n as f64),
+        ExifValue::U8(n) => format!("{:+.2}", *n as f64),
+        _ => exif_value_to_string(value),
+    }
+}
+
+#[cfg(test)]
+mod dji_print_conv_tests {
+    use super::*;
+
+    #[test]
+    fn test_dji_float2_conversion() {
+        // Test DJI float conversion with sign and 2 decimal places
+
+        // Test positive float
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(123), PrintConvId::DJISpeedX),
+            "+123.00"
+        );
+
+        // Test negative signed value
+        assert_eq!(
+            apply_print_conv(&ExifValue::I32(-456), PrintConvId::DJIPitch),
+            "-456.00"
+        );
+
+        // Test rational conversion
+        assert_eq!(
+            apply_print_conv(&ExifValue::Rational(314, 100), PrintConvId::DJIYaw),
+            "+3.14"
+        );
+
+        // Test signed rational
+        assert_eq!(
+            apply_print_conv(&ExifValue::SignedRational(-271, 100), PrintConvId::DJIRoll),
+            "-2.71"
+        );
+
+        // Test small integer values
+        assert_eq!(
+            apply_print_conv(&ExifValue::U16(5), PrintConvId::DJICameraPitch),
+            "+5.00"
+        );
+
+        // Test DJI Make tag (should be string passthrough)
+        assert_eq!(
+            apply_print_conv(&ExifValue::Ascii("DJI".to_string()), PrintConvId::DJIMake),
+            "DJI"
         );
     }
 }
