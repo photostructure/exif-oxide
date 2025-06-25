@@ -1,9 +1,9 @@
 //! Panasonic maker note parser using table-driven approach
 //!
-//! Panasonic maker notes use a proprietary format that starts with "Panasonic"
+//! Panasonic maker notes use a proprietary format that starts with "PANASONIC"
 //! signature followed by IFD-like structures. This format is consistent
 //! across Panasonic cameras and contains camera-specific settings including
-//! video recording parameters, lens corrections, and image processing settings.
+//! film simulation modes, X-Trans sensor parameters, and lens information.
 //!
 //! This implementation uses auto-generated tag tables and print conversion
 //! functions, eliminating the need to manually port ExifTool's Perl code.
@@ -48,12 +48,9 @@ impl MakerNoteParser for PanasonicMakerNoteParser {
             }
         };
 
-        // Panasonic maker notes start with "Panasonic\0\0\0" signature (12 bytes)
+        // Panasonic maker notes start with "Panasonic" signature (12 bytes including null padding)
         // The IFD starts immediately after the signature
-        let ifd_offset = if data.len() >= 12
-            && data.starts_with(&[
-                0x50, 0x61, 0x6e, 0x61, 0x73, 0x6f, 0x6e, 0x69, 0x63, 0x00, 0x00, 0x00,
-            ]) {
+        let ifd_offset = if data.len() >= 12 && data.starts_with(&[0x50, 0x61, 0x6e, 0x61, 0x73, 0x6f, 0x6e, 0x69, 0x63, 0x00, 0x00, 0x00]) {
             12 // Skip "Panasonic\0\0\0" signature
         } else {
             detection.ifd_offset
@@ -143,65 +140,95 @@ fn parse_panasonic_ifd_with_tables(
 pub mod tags {
     // Main Panasonic tags from ExifTool
     pub const PANASONIC_VERSION: u16 = 0x0000;
-    pub const QUALITY: u16 = 0x0001;
-    pub const FIRMWARE_VERSION: u16 = 0x0002;
-    pub const WHITE_BALANCE: u16 = 0x0003;
-    pub const FOCUS_MODE: u16 = 0x0007;
-    pub const AF_AREA_MODE: u16 = 0x000f;
-    pub const IMAGE_STABILIZATION: u16 = 0x001a;
-    pub const MACRO_MODE: u16 = 0x001c;
-    pub const RECORD_MODE: u16 = 0x001f;
-    pub const AUDIO: u16 = 0x0020;
-    pub const DATA_DUMP: u16 = 0x0021;
-    pub const WHITE_BALANCE_BIAS: u16 = 0x0023;
-    pub const FLASH_BIAS: u16 = 0x0024;
-    pub const INTERNAL_SERIAL_NUMBER: u16 = 0x0025;
-    pub const PANASONIC_EXIF_VERSION: u16 = 0x0026;
-    pub const COLOR_EFFECT: u16 = 0x0028;
-    pub const TIME_SINCE_POWER_ON: u16 = 0x0029;
-    pub const BURST_MODE: u16 = 0x002a;
-    pub const SEQUENCE_NUMBER: u16 = 0x002b;
-    pub const CONTRAST_MODE: u16 = 0x002c;
-    pub const NOISE_REDUCTION: u16 = 0x002d;
-    pub const SELF_TIMER: u16 = 0x002e;
-    pub const ROTATION: u16 = 0x0030;
-    pub const AF_ASSIST_LAMP: u16 = 0x0031;
-    pub const COLOR_MODE: u16 = 0x0032;
-    pub const BABY_AGE: u16 = 0x0033;
-    pub const OPTICAL_ZOOM_MODE: u16 = 0x0034;
-    pub const CONVERSION_LENS: u16 = 0x0035;
-    pub const TRAVEL_DAY: u16 = 0x0036;
-    pub const CONTRAST: u16 = 0x0039;
-    pub const WORLD_TIME_LOCATION: u16 = 0x003a;
-    pub const TEXT_STAMP: u16 = 0x003b;
-    pub const PROGRAM_ISO: u16 = 0x003c;
-    pub const ADVANCED_SCENE_TYPE: u16 = 0x003d;
-    pub const TEXT_STAMP_2: u16 = 0x003e;
-    pub const FACES_DETECTED: u16 = 0x003f;
-    pub const SATURATION: u16 = 0x0040;
-    pub const SHARPNESS: u16 = 0x0041;
-    pub const FILM_MODE: u16 = 0x0042;
-    pub const COLOR_TEMP_KELVIN: u16 = 0x0044;
-    pub const BRACKET_SETTINGS: u16 = 0x0045;
-    pub const WB_ADJUST_AB: u16 = 0x0046;
-    pub const WB_ADJUST_GM: u16 = 0x0047;
-    pub const FLASH_CURTAIN: u16 = 0x0048;
-    pub const LONG_EXPOSURE_NOISE_REDUCTION: u16 = 0x0049;
-    pub const PANASONIC_IMAGE_WIDTH: u16 = 0x004b;
-    pub const PANASONIC_IMAGE_HEIGHT: u16 = 0x004c;
-    pub const AF_POINT_POSITION: u16 = 0x004d;
-    pub const FACE_DETECTION_INFO: u16 = 0x004e;
-    pub const LENS_TYPE: u16 = 0x0051;
-    pub const LENS_SERIAL_NUMBER: u16 = 0x0052;
-    pub const ACCESSORY_TYPE: u16 = 0x0053;
-    pub const ACCESSORY_SERIAL_NUMBER: u16 = 0x0054;
-    pub const TRANSFORM: u16 = 0x0059;
-    pub const INTELLIGENT_EXPOSURE: u16 = 0x005d;
-    pub const LENS_FIRMWARE_VERSION: u16 = 0x0060;
-    pub const FACE_RECOGNITION_INFO: u16 = 0x0061;
-    pub const FLASH_WARNING: u16 = 0x0062;
-    pub const INTELLIGENT_RESOLUTION: u16 = 0x0070;
-    pub const TOUCH_AE: u16 = 0x0077;
+    pub const INTERNAL_SERIAL_NUMBER: u16 = 0x0010;
+    pub const QUALITY: u16 = 0x1000;
+    pub const SHARPNESS: u16 = 0x1001;
+    pub const WHITE_BALANCE: u16 = 0x1002;
+    pub const SATURATION: u16 = 0x1003;
+    pub const CONTRAST: u16 = 0x1004;
+    pub const COLOR_TEMPERATURE: u16 = 0x1005;
+    pub const WHITE_BALANCE_FINE_TUNE: u16 = 0x100a;
+    pub const NOISE_REDUCTION: u16 = 0x100b;
+    pub const CLARITY: u16 = 0x100f;
+    pub const FUJI_FLASH_MODE: u16 = 0x1010;
+    pub const FLASH_EXPOSURE_COMP: u16 = 0x1011;
+    pub const MACRO: u16 = 0x1020;
+    pub const FOCUS_MODE: u16 = 0x1021;
+    pub const AF_MODE: u16 = 0x1022;
+    pub const FOCUS_PIXEL: u16 = 0x1023;
+    pub const PRIORITY_SETTINGS: u16 = 0x102b;
+    pub const FOCUS_SETTINGS: u16 = 0x102d;
+    pub const AFC_SETTINGS: u16 = 0x102e;
+    pub const SLOW_SYNC: u16 = 0x1030;
+    pub const PICTURE_MODE: u16 = 0x1031;
+    pub const EXPOSURE_COUNT: u16 = 0x1032;
+    pub const EXR_AUTO: u16 = 0x1033;
+    pub const EXR_MODE: u16 = 0x1034;
+    pub const SHADOW_TONE: u16 = 0x1040;
+    pub const HIGHLIGHT_TONE: u16 = 0x1041;
+    pub const DIGITAL_ZOOM: u16 = 0x1044;
+    pub const LENS_MODULATION_OPTIMIZER: u16 = 0x1045;
+    pub const GRAIN_EFFECT_ROUGHNESS: u16 = 0x1047;
+    pub const COLOR_CHROME_EFFECT: u16 = 0x1048;
+    pub const BW_ADJUSTMENT: u16 = 0x1049;
+    pub const BW_MAGENTA_GREEN: u16 = 0x104b;
+    pub const CROP_MODE: u16 = 0x104d;
+    pub const COLOR_CHROME_FX_BLUE: u16 = 0x104e;
+    pub const SHUTTER_TYPE: u16 = 0x1050;
+    pub const CROP_FLAG: u16 = 0x1051;
+    pub const CROP_TOP_LEFT: u16 = 0x1052;
+    pub const CROP_SIZE: u16 = 0x1053;
+    pub const SEQUENCE_NUMBER: u16 = 0x1101;
+    pub const DRIVE_SETTINGS: u16 = 0x1103;
+    pub const PIXEL_SHIFT_SHOTS: u16 = 0x1105;
+    pub const PIXEL_SHIFT_OFFSET: u16 = 0x1106;
+    pub const PANORAMA_ANGLE: u16 = 0x1153;
+    pub const PANORAMA_DIRECTION: u16 = 0x1154;
+    pub const ADVANCED_FILTER: u16 = 0x1201;
+    pub const COLOR_MODE: u16 = 0x1210;
+    pub const BLUR_WARNING: u16 = 0x1300;
+    pub const FOCUS_WARNING: u16 = 0x1301;
+    pub const EXPOSURE_WARNING: u16 = 0x1302;
+    pub const GE_IMAGE_SIZE: u16 = 0x1304;
+    pub const DYNAMIC_RANGE: u16 = 0x1400;
+    pub const FILM_MODE: u16 = 0x1401;
+    pub const DYNAMIC_RANGE_SETTING: u16 = 0x1402;
+    pub const DEVELOPMENT_DYNAMIC_RANGE: u16 = 0x1403;
+    pub const MIN_FOCAL_LENGTH: u16 = 0x1404;
+    pub const MAX_FOCAL_LENGTH: u16 = 0x1405;
+    pub const MAX_APERTURE_AT_MIN_FOCAL: u16 = 0x1406;
+    pub const MAX_APERTURE_AT_MAX_FOCAL: u16 = 0x1407;
+    pub const AUTO_DYNAMIC_RANGE: u16 = 0x140b;
+    pub const IMAGE_STABILIZATION: u16 = 0x1422;
+    pub const SCENE_RECOGNITION: u16 = 0x1425;
+    pub const RATING: u16 = 0x1431;
+    pub const IMAGE_GENERATION: u16 = 0x1436;
+    pub const IMAGE_COUNT: u16 = 0x1438;
+    pub const DRANGE_PRIORITY: u16 = 0x1443;
+    pub const DRANGE_PRIORITY_AUTO: u16 = 0x1444;
+    pub const DRANGE_PRIORITY_FIXED: u16 = 0x1445;
+    pub const FLICKER_REDUCTION: u16 = 0x1446;
+    pub const FUJI_MODEL: u16 = 0x1447;
+    pub const FUJI_MODEL2: u16 = 0x1448;
+    pub const ROLL_ANGLE: u16 = 0x144d;
+    pub const VIDEO_RECORDING_MODE: u16 = 0x3803;
+    pub const PERIPHERAL_LIGHTING: u16 = 0x3804;
+    pub const VIDEO_COMPRESSION: u16 = 0x3806;
+    pub const FRAME_RATE: u16 = 0x3820;
+    pub const FRAME_WIDTH: u16 = 0x3821;
+    pub const FRAME_HEIGHT: u16 = 0x3822;
+    pub const FULL_HD_HIGH_SPEED_REC: u16 = 0x3824;
+    pub const FACE_ELEMENT_SELECTED: u16 = 0x4005;
+    pub const FACES_DETECTED: u16 = 0x4100;
+    pub const FACE_POSITIONS: u16 = 0x4103;
+    pub const NUM_FACE_ELEMENTS: u16 = 0x4200;
+    pub const FACE_ELEMENT_TYPES: u16 = 0x4201;
+    pub const FACE_ELEMENT_POSITIONS: u16 = 0x4203;
+    pub const FACE_REC_INFO: u16 = 0x4282;
+    pub const FILE_SOURCE: u16 = 0x8000;
+    pub const ORDER_NUMBER: u16 = 0x8002;
+    pub const FRAME_NUMBER: u16 = 0x8003;
+    pub const PARALLAX: u16 = 0xb211;
 }
 
 #[cfg(test)]
@@ -227,9 +254,9 @@ mod tests {
     fn test_panasonic_signature_detection() {
         let parser = PanasonicMakerNoteParser;
 
-        // Create test data with Panasonic signature
+        // Create test data with proper Panasonic signature (12 bytes with null padding)
         let mut test_data = vec![0u8; 20];
-        test_data[0..9].copy_from_slice(b"Panasonic");
+        test_data[0..12].copy_from_slice(&[0x50, 0x61, 0x6e, 0x61, 0x73, 0x6f, 0x6e, 0x69, 0x63, 0x00, 0x00, 0x00]);
 
         // Parser should handle this without error
         let _result = parser.parse(&test_data, Endian::Little, 0).unwrap();
@@ -240,17 +267,13 @@ mod tests {
 
     #[test]
     fn test_panasonic_detection_pattern() {
-        // Test the detection function directly using the correct Panasonic maker note format
-        // Format: "Panasonic\0\0\0" (12 bytes total) per ExifTool lib/Image/ExifTool/MakerNotes.pm line 725-729
-        let test_data = &[
-            0x50, 0x61, 0x6e, 0x61, 0x73, 0x6f, 0x6e, 0x69, 0x63, 0x00, 0x00, 0x00, 0x01, 0x02,
-            0x03,
-        ];
+        // Test the detection function directly using proper Panasonic signature
+        let test_data = &[0x50, 0x61, 0x6e, 0x61, 0x73, 0x6f, 0x6e, 0x69, 0x63, 0x00, 0x00, 0x00, 0x01, 0x02, 0x03];
         let detection = detect_panasonic_maker_note(test_data);
 
         assert!(detection.is_some());
         let detection = detection.unwrap();
-        assert_eq!(detection.ifd_offset, 12); // IFD starts at offset 12 per ExifTool
+        assert_eq!(detection.ifd_offset, 12);
         assert_eq!(detection.description, "Panasonic maker note");
     }
 }
