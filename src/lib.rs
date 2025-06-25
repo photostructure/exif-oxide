@@ -7,6 +7,7 @@ pub mod binary;
 pub mod core;
 pub mod detection;
 pub mod error;
+pub mod gpmf;
 pub mod maker;
 pub mod tables;
 pub mod xmp;
@@ -80,4 +81,39 @@ pub fn extract_xmp_properties<P: AsRef<Path>>(
     path: P,
 ) -> Result<std::collections::HashMap<String, String>> {
     xmp::extract_xmp_properties(path).map_err(|e| error::Error::XmpError(e.to_string()))
+}
+
+/// Extract GPMF metadata from a GoPro file (JPEG or MP4)
+///
+/// Returns a HashMap of GPMF tag values. GPMF (GoPro Metadata Format)
+/// contains telemetry data like GPS coordinates, accelerometer readings,
+/// gyroscope data, and camera settings from GoPro cameras.
+///
+/// # Example
+/// ```no_run
+/// use exif_oxide::extract_gpmf_metadata;
+///
+/// let gpmf_data = extract_gpmf_metadata("gopro_video.mp4").unwrap();
+/// if let Some(device_name) = gpmf_data.get("DVNM") {
+///     println!("Device: {:?}", device_name);
+/// }
+/// ```
+pub fn extract_gpmf_metadata<P: AsRef<Path>>(
+    path: P,
+) -> Result<std::collections::HashMap<String, core::ExifValue>> {
+    let collection = core::find_all_metadata_segments(path)?;
+
+    // Combine all GPMF segments (there can be multiple in a file)
+    let mut combined_gpmf_data = std::collections::HashMap::new();
+
+    for gpmf_segment in collection.gpmf {
+        let segment_data = gpmf::parse_gpmf(&gpmf_segment.data)?;
+        combined_gpmf_data.extend(segment_data);
+    }
+
+    if combined_gpmf_data.is_empty() {
+        return Err(error::Error::InvalidData("No GPMF data found".to_string()));
+    }
+
+    Ok(combined_gpmf_data)
 }

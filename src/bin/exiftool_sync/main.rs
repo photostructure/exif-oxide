@@ -292,6 +292,8 @@ fn cmd_extract(component: &str, _options: &[String]) -> Result<(), String> {
         "datetime-patterns" => Box::new(extractors::DateTimePatternsExtractor::new()),
         "binary-tags" => Box::new(extractors::BinaryTagsExtractor::new()),
         "exif-tags" => Box::new(extractors::ExifTagsExtractor),
+        "gpmf-tags" => Box::new(extractors::GpmfTagsExtractor::new()),
+        "gpmf-format" => Box::new(extractors::GpmfFormatExtractor::new()),
         "maker-detection" => Box::new(extractors::MakerDetectionExtractor::new()),
         "printconv-tables" => {
             if _options.is_empty() {
@@ -337,6 +339,8 @@ fn cmd_extract_all() -> Result<(), String> {
         ("datetime-patterns", "Date parsing patterns"),
         ("binary-tags", "Composite tag definitions"),
         ("exif-tags", "Standard EXIF tag definitions"),
+        ("gpmf-tags", "GoPro GPMF tag definitions"),
+        ("gpmf-format", "GoPro GPMF format definitions"),
         ("maker-detection", "Maker note detection patterns"),
     ];
 
@@ -352,6 +356,8 @@ fn cmd_extract_all() -> Result<(), String> {
             "datetime-patterns" => Box::new(extractors::DateTimePatternsExtractor::new()),
             "binary-tags" => Box::new(extractors::BinaryTagsExtractor::new()),
             "exif-tags" => Box::new(extractors::ExifTagsExtractor),
+            "gpmf-tags" => Box::new(extractors::GpmfTagsExtractor::new()),
+            "gpmf-format" => Box::new(extractors::GpmfFormatExtractor::new()),
             "maker-detection" => Box::new(extractors::MakerDetectionExtractor::new()),
             _ => unreachable!(),
         };
@@ -996,6 +1002,8 @@ fn print_help() {
     println!("    datetime-patterns                Extract date parsing patterns");
     println!("    binary-tags                      Extract composite tag definitions");
     println!("    exif-tags                        Extract standard EXIF tag definitions");
+    println!("    gpmf-tags                        Extract GoPro GPMF tag definitions");
+    println!("    gpmf-format                      Extract GoPro GPMF format definitions");
     println!("    maker-detection                  Extract maker note detection patterns");
     println!(
         "    printconv-tables <pm>            Extract complete tag tables with PrintConv mappings"

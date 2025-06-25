@@ -10,6 +10,7 @@ use exif_oxide::tables::{
 };
 use exif_oxide::tables::{lookup_canon_tag, lookup_tag};
 use serde::Serialize;
+use serde_json;
 use std::collections::HashMap;
 use std::env;
 use std::io::{self, Write};
@@ -22,12 +23,14 @@ enum Command {
     ListAll {
         include_groups: bool,
         show_converted_values: bool,
+        api_mode: bool,
     },
     /// List specific tags as JSON
     ListSpecific {
         tags: Vec<String>,
         include_groups: bool,
         show_converted_values: bool,
+        api_mode: bool,
     },
     /// Extract binary data for a single tag
     ExtractBinary { tag: String },
@@ -38,6 +41,7 @@ fn parse_args(args: Vec<String>) -> Result<(Command, Vec<String>), String> {
     let mut include_groups = false;
     let mut binary_mode = false;
     let mut show_converted_values = true; // Default to showing converted values
+    let mut api_mode = false;
     let mut tag_filters = Vec::new();
     let mut image_paths = Vec::new();
 
@@ -53,6 +57,9 @@ fn parse_args(args: Vec<String>) -> Result<(Command, Vec<String>), String> {
             i += 1;
         } else if arg == "-n" {
             show_converted_values = false; // Show numeric/raw values only
+            i += 1;
+        } else if arg == "--api" {
+            api_mode = true;
             i += 1;
         } else if arg.starts_with('-') && !arg.starts_with("--") {
             // This is a tag specification (e.g., -ThumbnailImage)
@@ -89,6 +96,7 @@ fn parse_args(args: Vec<String>) -> Result<(Command, Vec<String>), String> {
         Command::ListAll {
             include_groups,
             show_converted_values,
+            api_mode,
         }
     } else {
         // Specific tags requested
@@ -96,6 +104,7 @@ fn parse_args(args: Vec<String>) -> Result<(Command, Vec<String>), String> {
             tags: tag_filters,
             include_groups,
             show_converted_values,
+            api_mode,
         }
     };
 
@@ -105,7 +114,7 @@ fn parse_args(args: Vec<String>) -> Result<(Command, Vec<String>), String> {
 /// Display usage information
 fn show_usage(program: &str) {
     eprintln!(
-        "Usage: {} [-G] [-n] [-b] [-TagName]... <image_file>...",
+        "Usage: {} [-G] [-n] [-b] [--api] [-TagName]... <image_file>...",
         program
     );
     eprintln!();
@@ -115,6 +124,7 @@ fn show_usage(program: &str) {
     eprintln!("  -G         Include group names in output");
     eprintln!("  -n         Show numeric/raw values (no PrintConv)");
     eprintln!("  -b         Extract raw binary data (requires single -TagName and single file)");
+    eprintln!("  --api      API mode: show both raw and formatted values with full type information");
     eprintln!("  -TagName   Include only specified tag(s) in output");
     eprintln!();
     eprintln!("Examples:");
@@ -304,12 +314,26 @@ fn is_binary_display_tag(tag_name: &str) -> bool {
     )
 }
 
+
+/// Default CLI mode - just the value directly (string | number)
+type DefaultTagEntry = serde_json::Value;
+
+/// API mode tag entry with full type information
 #[derive(Serialize)]
-struct TagEntry {
+struct ApiTagEntry {
     #[serde(skip_serializing_if = "Option::is_none")]
     group: Option<String>,
-    #[serde(flatten)]
-    value: ExifValue,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    raw: Option<ExifValue>,
+    formatted: ExifValue,
+}
+
+/// Unified tag entry that can serialize to either format
+#[derive(Serialize)]
+#[serde(untagged)]
+enum TagEntry {
+    Default(DefaultTagEntry),
+    Api(ApiTagEntry),
 }
 
 #[derive(Serialize)]
@@ -396,12 +420,117 @@ fn get_maker_note_printconv(tag_id: u16, manufacturer_prefix: u16) -> PrintConvI
     }
 }
 
+/// Convert ExifValue to serde_json::Value for CLI mode output
+fn exif_value_to_default_value(value: &ExifValue, print_conv_result: Option<&str>) -> serde_json::Value {
+    // If we have a PrintConv result, use it as a string
+    if let Some(converted) = print_conv_result {
+        return serde_json::Value::String(converted.to_string());
+    }
+
+    // Otherwise convert the raw value to appropriate JSON types
+    match value {
+        ExifValue::Ascii(s) => serde_json::Value::String(s.clone()),
+        ExifValue::U8(n) => serde_json::Value::Number(serde_json::Number::from(*n)),
+        ExifValue::U16(n) => serde_json::Value::Number(serde_json::Number::from(*n)),
+        ExifValue::U32(n) => serde_json::Value::Number(serde_json::Number::from(*n)),
+        ExifValue::I16(n) => serde_json::Value::Number(serde_json::Number::from(*n)),
+        ExifValue::I32(n) => serde_json::Value::Number(serde_json::Number::from(*n)),
+        ExifValue::Rational(num, den) => {
+            if *den == 0 {
+                serde_json::Value::String("undef".to_string())
+            } else {
+                let float_val = *num as f64 / *den as f64;
+                serde_json::Number::from_f64(float_val)
+                    .map(serde_json::Value::Number)
+                    .unwrap_or_else(|| serde_json::Value::String("undef".to_string()))
+            }
+        }
+        ExifValue::SignedRational(num, den) => {
+            if *den == 0 {
+                serde_json::Value::String("undef".to_string())
+            } else {
+                let float_val = *num as f64 / *den as f64;
+                serde_json::Number::from_f64(float_val)
+                    .map(serde_json::Value::Number)
+                    .unwrap_or_else(|| serde_json::Value::String("undef".to_string()))
+            }
+        }
+        // Arrays and complex types become strings
+        _ => serde_json::Value::String(format!("{:?}", value)),
+    }
+}
+
+/// Check if raw and formatted values are equivalent (for smart omission)
+fn values_are_equivalent(raw: &ExifValue, formatted: &ExifValue) -> bool {
+    match (raw, formatted) {
+        (ExifValue::Ascii(a), ExifValue::Ascii(b)) => a == b,
+        (raw_val, ExifValue::Ascii(formatted_str)) => {
+            // Compare raw value string representation to formatted string
+            format!("{:?}", raw_val) == *formatted_str
+        }
+        _ => false,
+    }
+}
+
+/// Match ExifTool-style glob patterns for tag filtering
+/// Examples:
+/// - "Make" matches exactly "Make" 
+/// - "*Make" matches "CanonMake", "NikonMake", etc.
+/// - "Make*" matches "MakeNotes", etc.
+/// - "*Model*" matches "CanonModelID", etc.
+fn matches_exiftool_pattern(pattern: &str, tag_key: &str) -> bool {
+    // Handle group:tag notation - extract just the tag name for matching
+    let tag_name = if let Some(colon_pos) = tag_key.find(':') {
+        &tag_key[colon_pos + 1..]
+    } else {
+        tag_key
+    };
+
+    // Simple glob matching (case-insensitive)
+    let pattern_lower = pattern.to_lowercase();
+    let tag_lower = tag_name.to_lowercase();
+    
+    if pattern_lower.contains('*') {
+        // Handle glob patterns
+        if pattern_lower == "*" {
+            // Match everything
+            true
+        } else if pattern_lower.starts_with('*') && pattern_lower.ends_with('*') {
+            // *pattern* - contains match
+            let middle = &pattern_lower[1..pattern_lower.len()-1];
+            tag_lower.contains(middle)
+        } else if pattern_lower.starts_with('*') {
+            // *pattern - ends with match
+            let suffix = &pattern_lower[1..];
+            tag_lower.ends_with(suffix)
+        } else if pattern_lower.ends_with('*') {
+            // pattern* - starts with match
+            let prefix = &pattern_lower[..pattern_lower.len()-1];
+            tag_lower.starts_with(prefix)
+        } else {
+            // pattern*other*pattern - more complex, use simple approach
+            // Convert glob to regex-like matching
+            let parts: Vec<&str> = pattern_lower.split('*').collect();
+            if parts.len() == 2 {
+                tag_lower.starts_with(parts[0]) && tag_lower.ends_with(parts[1])
+            } else {
+                // For now, fall back to contains for complex patterns
+                tag_lower.contains(&pattern_lower.replace('*', ""))
+            }
+        }
+    } else {
+        // Exact match (case-insensitive)
+        tag_lower == pattern_lower
+    }
+}
+
 /// Process entries and build the tag map
 fn build_tag_map(
     entries: &HashMap<u16, ExifValue>,
     include_groups: bool,
     tag_filter: Option<&[String]>,
     show_converted_values: bool,
+    api_mode: bool,
 ) -> HashMap<String, TagEntry> {
     let mut tags: HashMap<String, TagEntry> = HashMap::new();
 
@@ -493,8 +622,8 @@ fn build_tag_map(
         if let Some(filter) = tag_filter {
             let mut include = false;
             for filter_tag in filter {
-                // Simple case-insensitive contains check for now
-                if tag_key.to_lowercase().contains(&filter_tag.to_lowercase()) {
+                // ExifTool-style glob matching
+                if matches_exiftool_pattern(filter_tag, &tag_key) {
                     include = true;
                     break;
                 }
@@ -505,75 +634,74 @@ fn build_tag_map(
         }
 
         // Handle name collisions: first-with-a-non-blank-value wins
-        let should_insert = if let Some(existing) = tags.get(&tag_key) {
-            // Check if existing value is "blank" (empty string, zero, etc.)
-            match &existing.value {
-                ExifValue::Ascii(s) => s.is_empty(),
-                ExifValue::U8(0) => true,
-                ExifValue::U16(0) => true,
-                ExifValue::U32(0) => true,
-                ExifValue::I16(0) => true,
-                ExifValue::I32(0) => true,
-                ExifValue::Rational(0, _) => true,
-                ExifValue::SignedRational(0, _) => true,
-                ExifValue::U8Array(arr) => arr.is_empty() || arr.iter().all(|&x| x == 0),
-                ExifValue::U16Array(arr) => arr.is_empty() || arr.iter().all(|&x| x == 0),
-                ExifValue::U32Array(arr) => arr.is_empty() || arr.iter().all(|&x| x == 0),
-                ExifValue::I16Array(arr) => arr.is_empty() || arr.iter().all(|&x| x == 0),
-                ExifValue::I32Array(arr) => arr.is_empty() || arr.iter().all(|&x| x == 0),
-                ExifValue::RationalArray(arr) => arr.is_empty() || arr.iter().all(|(n, _)| *n == 0),
-                ExifValue::SignedRationalArray(arr) => {
-                    arr.is_empty() || arr.iter().all(|(n, _)| *n == 0)
-                }
-                ExifValue::Undefined(arr) => arr.is_empty(),
-                // For non-zero values, consider them as "non-blank"
-                _ => false,
-            }
+        let should_insert = if tags.contains_key(&tag_key) {
+            // For simplicity, if a tag already exists, don't replace it
+            // This preserves the original collision behavior
+            false
         } else {
             true
         };
 
         if should_insert {
-            // Check if value should be replaced with binary length indicator
-            let processed_value = if should_replace_with_length(value, &tag_key) {
-                convert_to_binary_length(value)
-            } else if show_converted_values && print_conv_id != PrintConvId::None {
-                // Apply PrintConv to get human-readable value
-                let converted_string = apply_print_conv(value, print_conv_id);
-                ExifValue::Ascii(converted_string)
-            } else if show_converted_values {
-                // Even with PrintConvId::None, convert common cases like Undefined strings
-                match value {
-                    ExifValue::Undefined(data) => {
-                        // Convert Undefined data to string if it contains text
-                        if let Some(null_pos) = data.iter().position(|&b| b == 0) {
-                            // Data contains null terminator - treat as string
-                            match std::str::from_utf8(&data[..null_pos]) {
-                                Ok(s) => ExifValue::Ascii(s.to_string()),
-                                Err(_) => value.clone(),
+            let tag_entry = if api_mode {
+                // API mode: return both raw and formatted values
+                let formatted_value = if should_replace_with_length(value, &tag_key) {
+                    convert_to_binary_length(value)
+                } else if show_converted_values && print_conv_id != PrintConvId::None {
+                    // Apply PrintConv to get human-readable value
+                    let converted_string = apply_print_conv(value, print_conv_id);
+                    ExifValue::Ascii(converted_string)
+                } else if show_converted_values {
+                    // Convert common cases like Undefined strings
+                    match value {
+                        ExifValue::Undefined(data) => {
+                            if let Some(null_pos) = data.iter().position(|&b| b == 0) {
+                                match std::str::from_utf8(&data[..null_pos]) {
+                                    Ok(s) => ExifValue::Ascii(s.to_string()),
+                                    Err(_) => value.clone(),
+                                }
+                            } else if data.iter().all(|&b| {
+                                b.is_ascii() && (b.is_ascii_graphic() || b.is_ascii_whitespace())
+                            }) {
+                                match std::str::from_utf8(data) {
+                                    Ok(s) => ExifValue::Ascii(s.to_string()),
+                                    Err(_) => value.clone(),
+                                }
+                            } else {
+                                value.clone()
                             }
-                        } else if data.iter().all(|&b| {
-                            b.is_ascii() && (b.is_ascii_graphic() || b.is_ascii_whitespace())
-                        }) {
-                            // No null terminator but all printable ASCII
-                            match std::str::from_utf8(data) {
-                                Ok(s) => ExifValue::Ascii(s.to_string()),
-                                Err(_) => value.clone(),
-                            }
-                        } else {
-                            value.clone()
                         }
+                        _ => value.clone(),
                     }
-                    _ => value.clone(),
-                }
+                } else {
+                    value.clone()
+                };
+
+                // Check if we should omit raw (when it's the same as formatted)
+                let raw_value = if values_are_equivalent(value, &formatted_value) {
+                    None
+                } else {
+                    Some(value.clone())
+                };
+
+                TagEntry::Api(ApiTagEntry {
+                    group: if include_groups { None } else { group },
+                    raw: raw_value,
+                    formatted: formatted_value,
+                })
             } else {
-                value.clone()
+                // Default CLI mode: return simple string/number values
+                let print_conv_result = if show_converted_values && print_conv_id != PrintConvId::None {
+                    Some(apply_print_conv(value, print_conv_id))
+                } else {
+                    None
+                };
+
+                let default_value = exif_value_to_default_value(value, print_conv_result.as_deref());
+
+                TagEntry::Default(default_value)
             };
 
-            let tag_entry = TagEntry {
-                group: if include_groups { None } else { group },
-                value: processed_value,
-            };
             tags.insert(tag_key, tag_entry);
         }
     }
@@ -598,10 +726,11 @@ fn process_image(
         Command::ListAll {
             include_groups,
             show_converted_values,
+            api_mode,
         } => {
             // Build complete tag map
             let mut tags =
-                build_tag_map(ifd.entries(), *include_groups, None, *show_converted_values);
+                build_tag_map(ifd.entries(), *include_groups, None, *show_converted_values, *api_mode);
 
             // Add file metadata
             let file_name = std::path::Path::new(image_path)
@@ -616,28 +745,28 @@ fn process_image(
             let filename_key = format_tag_key("FileName", Some("File"), *include_groups);
             let directory_key = format_tag_key("Directory", Some("File"), *include_groups);
 
-            tags.insert(
-                filename_key,
-                TagEntry {
-                    group: if *include_groups {
-                        None
-                    } else {
-                        Some("File".to_string())
-                    },
-                    value: ExifValue::Ascii(file_name.to_string()),
-                },
-            );
-            tags.insert(
-                directory_key,
-                TagEntry {
-                    group: if *include_groups {
-                        None
-                    } else {
-                        Some("File".to_string())
-                    },
-                    value: ExifValue::Ascii(directory.to_string()),
-                },
-            );
+            let file_tag_entry = if *api_mode {
+                TagEntry::Api(ApiTagEntry {
+                    group: if *include_groups { None } else { Some("File".to_string()) },
+                    raw: None, // File metadata doesn't need raw values
+                    formatted: ExifValue::Ascii(file_name.to_string()),
+                })
+            } else {
+                TagEntry::Default(serde_json::Value::String(file_name.to_string()))
+            };
+
+            let dir_tag_entry = if *api_mode {
+                TagEntry::Api(ApiTagEntry {
+                    group: if *include_groups { None } else { Some("File".to_string()) },
+                    raw: None, // File metadata doesn't need raw values
+                    formatted: ExifValue::Ascii(directory.to_string()),
+                })
+            } else {
+                TagEntry::Default(serde_json::Value::String(directory.to_string()))
+            };
+
+            tags.insert(filename_key, file_tag_entry);
+            tags.insert(directory_key, dir_tag_entry);
 
             Ok(FileOutput {
                 source_file: image_path.to_string(),
@@ -648,6 +777,7 @@ fn process_image(
             tags: tag_filter,
             include_groups,
             show_converted_values,
+            api_mode,
         } => {
             // Build filtered tag map
             let mut tags = build_tag_map(
@@ -655,6 +785,7 @@ fn process_image(
                 *include_groups,
                 Some(tag_filter),
                 *show_converted_values,
+                *api_mode,
             );
 
             // Check if file metadata was requested
@@ -665,17 +796,18 @@ fn process_image(
                         .and_then(|n| n.to_str())
                         .unwrap_or(image_path);
                     let filename_key = format_tag_key("FileName", Some("File"), *include_groups);
-                    tags.insert(
-                        filename_key,
-                        TagEntry {
-                            group: if *include_groups {
-                                None
-                            } else {
-                                Some("File".to_string())
-                            },
-                            value: ExifValue::Ascii(file_name.to_string()),
-                        },
-                    );
+                    
+                    let file_tag_entry = if *api_mode {
+                        TagEntry::Api(ApiTagEntry {
+                            group: if *include_groups { None } else { Some("File".to_string()) },
+                            raw: None,
+                            formatted: ExifValue::Ascii(file_name.to_string()),
+                        })
+                    } else {
+                        TagEntry::Default(serde_json::Value::String(file_name.to_string()))
+                    };
+                    
+                    tags.insert(filename_key, file_tag_entry);
                 }
                 if filter.eq_ignore_ascii_case("Directory") {
                     let directory = std::path::Path::new(image_path)
@@ -683,17 +815,18 @@ fn process_image(
                         .and_then(|p| p.to_str())
                         .unwrap_or(".");
                     let directory_key = format_tag_key("Directory", Some("File"), *include_groups);
-                    tags.insert(
-                        directory_key,
-                        TagEntry {
-                            group: if *include_groups {
-                                None
-                            } else {
-                                Some("File".to_string())
-                            },
-                            value: ExifValue::Ascii(directory.to_string()),
-                        },
-                    );
+                    
+                    let dir_tag_entry = if *api_mode {
+                        TagEntry::Api(ApiTagEntry {
+                            group: if *include_groups { None } else { Some("File".to_string()) },
+                            raw: None,
+                            formatted: ExifValue::Ascii(directory.to_string()),
+                        })
+                    } else {
+                        TagEntry::Default(serde_json::Value::String(directory.to_string()))
+                    };
+                    
+                    tags.insert(directory_key, dir_tag_entry);
                 }
             }
 

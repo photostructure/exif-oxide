@@ -478,7 +478,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0x0128,
         name: "ResolutionUnit",
-        print_conv: PrintConvId::Resolution,
+        print_conv: PrintConvId::ResolutionUnit,
     },
     ExifTag {
         id: 0x0129,
@@ -1648,7 +1648,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0x8822,
         name: "ExposureProgram",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::ExposureProgram,
     },
     ExifTag {
         id: 0x8824,
@@ -1823,12 +1823,12 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0x9208,
         name: "LightSource",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::LightSource,
     },
     ExifTag {
         id: 0x9209,
         name: "Flash",
-        print_conv: PrintConvId::FlashMode,
+        print_conv: PrintConvId::Flash,
     },
     ExifTag {
         id: 0x920a,
@@ -2033,7 +2033,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa001,
         name: "ColorSpace",
-        print_conv: PrintConvId::ColorSpace,
+        print_conv: PrintConvId::ExifColorSpace,
     },
     ExifTag {
         id: 0xa002,
@@ -2163,12 +2163,12 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa402,
         name: "ExposureMode",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::ExposureMode,
     },
     ExifTag {
         id: 0xa403,
         name: "WhiteBalance",
-        print_conv: PrintConvId::WhiteBalance,
+        print_conv: PrintConvId::ExifWhiteBalance,
     },
     ExifTag {
         id: 0xa404,
@@ -2193,17 +2193,17 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa408,
         name: "Contrast",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalParameter,
     },
     ExifTag {
         id: 0xa409,
         name: "Saturation",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalParameter,
     },
     ExifTag {
         id: 0xa40a,
         name: "Sharpness",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalParameter,
     },
     ExifTag {
         id: 0xa40b,

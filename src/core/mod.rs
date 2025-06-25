@@ -29,6 +29,7 @@ pub enum MetadataType {
     Mpf,
     Xmp,
     Iptc,
+    Gpmf,
 }
 
 /// Unified metadata segment that can hold EXIF data from any format
@@ -55,6 +56,8 @@ pub struct MetadataCollection {
     pub xmp: Vec<MetadataSegment>,
     /// IPTC segment if found
     pub iptc: Option<MetadataSegment>,
+    /// GPMF segments (can be multiple for different streams)
+    pub gpmf: Vec<MetadataSegment>,
 }
 
 /// Find all metadata segments from any supported file format
@@ -100,6 +103,7 @@ pub fn find_all_metadata_segments_from_reader<R: Read + Seek>(
                 mpf: None,
                 xmp: Vec::new(),
                 iptc: None,
+                gpmf: Vec::new(),
             };
 
             // Convert JPEG segments to MetadataSegment
@@ -130,6 +134,15 @@ pub fn find_all_metadata_segments_from_reader<R: Read + Seek>(
                 });
             }
 
+            for gpmf in jpeg_metadata.gpmf {
+                collection.gpmf.push(MetadataSegment {
+                    data: gpmf.data,
+                    offset: gpmf.offset,
+                    source_format: format,
+                    metadata_type: MetadataType::Gpmf,
+                });
+            }
+
             Ok(collection)
         }
 
@@ -140,6 +153,7 @@ pub fn find_all_metadata_segments_from_reader<R: Read + Seek>(
                 mpf: None,
                 xmp: Vec::new(),
                 iptc: None,
+                gpmf: Vec::new(),
             };
 
             // Use existing single-segment logic for other formats

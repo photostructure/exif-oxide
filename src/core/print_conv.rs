@@ -555,11 +555,125 @@ pub enum PrintConvId {
     ExposureTime, // 0x829a - "1/125" formatting
     FNumber,     // 0x829d - "f/4.0" formatting
     FocalLength, // 0x920a - "23.0 mm" formatting
-    Orientation, // 0x0112 - orientation lookup
     DateTime,    // Date/time formatting
     Resolution,  // Resolution formatting
     Compression, // Compression lookup
     ColorSpace,  // Color space lookup
+
+    /// Universal EXIF conversions (used by all manufacturers)
+    Flash, // Flash mode (24 standard values from EXIF spec)
+    LightSource,        // Light source for white balance (Universal lookup)
+    Orientation,        // Image orientation (8 standard values)
+    ExposureProgram,    // Exposure program mode (Auto/Manual/Aperture/Shutter Priority)
+    ExifColorSpace,     // EXIF color space (sRGB/Adobe RGB/Uncalibrated)
+    UniversalParameter, // Normal/Low/High pattern (Contrast/Saturation/Sharpness)
+    ExifWhiteBalance,   // EXIF white balance (Auto/Manual)
+    ExposureMode,       // Exposure mode (Auto/Manual/Auto bracket)
+    ResolutionUnit,     // Resolution units (None/inches/cm)
+
+    /// GPMF (GoPro Metadata Format) specific conversions
+    GpmfAccelerometer,
+    GpmfAccelerometerMatrix,
+    GpmfAspectRatioUnwarped,
+    GpmfAspectRatioWarped,
+    GpmfAttitude,
+    GpmfAttitudeTarget,
+    GpmfAudioProtuneOption,
+    GpmfAudioSetting,
+    GpmfAutoBoostScore,
+    GpmfAutoISOMax,
+    GpmfAutoISOMin,
+    GpmfAutoLowLightDuration,
+    GpmfAutoRotation,
+    GpmfBatteryStatus,
+    GpmfBitrateSetting,
+    GpmfCameraSerialNumber,
+    GpmfCameraTemperature,
+    GpmfCaptureDelayTimer,
+    GpmfChapterNumber,
+    GpmfColorMode,
+    GpmfColorTemperatures,
+    GpmfComments,
+    GpmfController,
+    GpmfControlLevel,
+    GpmfCoyoteSense,
+    GpmfCoyoteStatus,
+    GpmfCreationDate,
+    GpmfDeviceContainer,
+    GpmfDeviceName,
+    GpmfDiagonalFieldOfView,
+    GpmfDigitalZoom,
+    GpmfDigitalZoomAmount,
+    GpmfDigitalZoomOn,
+    GpmfDurationSetting,
+    GpmfElectronicImageStabilization,
+    GpmfEscapeStatus,
+    GpmfExposureCompensation,
+    GpmfExposureTimes,
+    GpmfExposureType,
+    GpmfFaceDetected,
+    GpmfFaceNumbers,
+    GpmfFieldOfView,
+    GpmfFirmwareVersion,
+    GpmfGPSAltitudeSystem,
+    GpmfGPSDateTime,
+    GpmfGPSHPositioningError,
+    GpmfGPSInfo,
+    GpmfGPSInfo9,
+    GpmfGPSMeasureMode,
+    GpmfGPSPos,
+    GpmfGPSRaw,
+    GpmfGyroscope,
+    GpmfHDRSetting,
+    GpmfHindsightSettings,
+    GpmfHorizonControl,
+    GpmfImageSensorGain,
+    GpmfInputOrientation,
+    GpmfInputUniformity,
+    GpmfISOSpeeds,
+    GpmfLensProjection,
+    GpmfLocalPositionNED,
+    GpmfLumaAverage,
+    GpmfMagnetometer,
+    GpmfMappingXCoefficients,
+    GpmfMappingXMode,
+    GpmfMappingYCoefficients,
+    GpmfMappingYMode,
+    GpmfMediaMode,
+    GpmfMediaUniqueID,
+    GpmfMetadataVersion,
+    GpmfMicrophoneWet,
+    GpmfModel,
+    GpmfNestedSignalStream,
+    GpmfOtherFirmware,
+    GpmfOutputOrientation,
+    GpmfPhotoResolution,
+    GpmfPolynomialCoefficients,
+    GpmfPolynomialPower,
+    GpmfPowerProfile,
+    GpmfPrediminantHue,
+    GpmfProtune,
+    GpmfProtuneISOMode,
+    GpmfRate,
+    GpmfScaledIMU,
+    GpmfScaledPressure,
+    GpmfScaleFactor,
+    GpmfSceneClassification,
+    GpmfScheduleCaptureTime,
+    GpmfSensorReadoutTime,
+    GpmfSharpness,
+    GpmfSIUnits,
+    GpmfSpeedRampSetting,
+    GpmfStreamName,
+    GpmfSystemTime,
+    GpmfTimeStamp,
+    GpmfTimeZone,
+    GpmfUnits,
+    GpmfVisualFlightRulesHUD,
+    GpmfWhiteBalance,
+    GpmfWhiteBalanceRGB,
+    GpmfWindProcessing,
+    GpmfZoomScaleNormalization,
 }
 
 /// Apply print conversion to an EXIF value
@@ -628,13 +742,6 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             _ => exif_value_to_string(value),
         },
 
-        PrintConvId::MeteringMode => match as_u32(value) {
-            Some(0) => "Multi-segment".to_string(),
-            Some(1) => "Center-weighted".to_string(),
-            Some(2) => "Spot".to_string(),
-            _ => exif_value_to_string(value),
-        },
-
         PrintConvId::IsoSpeed => {
             // Handle various ISO representations
             match as_u32(value) {
@@ -699,11 +806,127 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
         PrintConvId::ExposureTime => format_exposure_time(value),
         PrintConvId::FNumber => format_f_number(value),
         PrintConvId::FocalLength => format_focal_length(value),
-        PrintConvId::Orientation => format_orientation(value),
         PrintConvId::DateTime => format_datetime(value),
         PrintConvId::Resolution => format_resolution(value),
         PrintConvId::Compression => format_compression(value),
         PrintConvId::ColorSpace => format_color_space(value),
+
+        // Universal EXIF conversions
+        PrintConvId::Flash => format_flash(value),
+        PrintConvId::LightSource => format_light_source(value),
+        PrintConvId::Orientation => format_orientation(value),
+        PrintConvId::ExposureProgram => format_exposure_program(value),
+        PrintConvId::MeteringMode => format_metering_mode(value),
+        PrintConvId::ExifColorSpace => format_exif_color_space(value),
+        PrintConvId::UniversalParameter => format_universal_parameter(value),
+        PrintConvId::ExifWhiteBalance => format_exif_white_balance(value),
+        PrintConvId::ExposureMode => format_exposure_mode(value),
+        PrintConvId::ResolutionUnit => format_resolution_unit(value),
+
+        // GPMF conversions - for now, return raw value
+        // TODO: Implement GPMF-specific conversion functions based on ExifTool's GoPro.pm
+        PrintConvId::GpmfAccelerometer => exif_value_to_string(value),
+        PrintConvId::GpmfAccelerometerMatrix => exif_value_to_string(value),
+        PrintConvId::GpmfAspectRatioUnwarped => exif_value_to_string(value),
+        PrintConvId::GpmfAspectRatioWarped => exif_value_to_string(value),
+        PrintConvId::GpmfAttitude => exif_value_to_string(value),
+        PrintConvId::GpmfAttitudeTarget => exif_value_to_string(value),
+        PrintConvId::GpmfAudioProtuneOption => exif_value_to_string(value),
+        PrintConvId::GpmfAudioSetting => exif_value_to_string(value),
+        PrintConvId::GpmfAutoBoostScore => exif_value_to_string(value),
+        PrintConvId::GpmfAutoISOMax => exif_value_to_string(value),
+        PrintConvId::GpmfAutoISOMin => exif_value_to_string(value),
+        PrintConvId::GpmfAutoLowLightDuration => exif_value_to_string(value),
+        PrintConvId::GpmfAutoRotation => exif_value_to_string(value),
+        PrintConvId::GpmfBatteryStatus => exif_value_to_string(value),
+        PrintConvId::GpmfBitrateSetting => exif_value_to_string(value),
+        PrintConvId::GpmfCameraSerialNumber => exif_value_to_string(value),
+        PrintConvId::GpmfCameraTemperature => exif_value_to_string(value),
+        PrintConvId::GpmfCaptureDelayTimer => exif_value_to_string(value),
+        PrintConvId::GpmfChapterNumber => exif_value_to_string(value),
+        PrintConvId::GpmfColorMode => exif_value_to_string(value),
+        PrintConvId::GpmfColorTemperatures => exif_value_to_string(value),
+        PrintConvId::GpmfComments => exif_value_to_string(value),
+        PrintConvId::GpmfController => exif_value_to_string(value),
+        PrintConvId::GpmfControlLevel => exif_value_to_string(value),
+        PrintConvId::GpmfCoyoteSense => exif_value_to_string(value),
+        PrintConvId::GpmfCoyoteStatus => exif_value_to_string(value),
+        PrintConvId::GpmfCreationDate => exif_value_to_string(value),
+        PrintConvId::GpmfDeviceContainer => exif_value_to_string(value),
+        PrintConvId::GpmfDeviceName => exif_value_to_string(value),
+        PrintConvId::GpmfDiagonalFieldOfView => exif_value_to_string(value),
+        PrintConvId::GpmfDigitalZoom => exif_value_to_string(value),
+        PrintConvId::GpmfDigitalZoomAmount => exif_value_to_string(value),
+        PrintConvId::GpmfDigitalZoomOn => exif_value_to_string(value),
+        PrintConvId::GpmfDurationSetting => exif_value_to_string(value),
+        PrintConvId::GpmfElectronicImageStabilization => exif_value_to_string(value),
+        PrintConvId::GpmfEscapeStatus => exif_value_to_string(value),
+        PrintConvId::GpmfExposureCompensation => exif_value_to_string(value),
+        PrintConvId::GpmfExposureTimes => exif_value_to_string(value),
+        PrintConvId::GpmfExposureType => exif_value_to_string(value),
+        PrintConvId::GpmfFaceDetected => exif_value_to_string(value),
+        PrintConvId::GpmfFaceNumbers => exif_value_to_string(value),
+        PrintConvId::GpmfFieldOfView => exif_value_to_string(value),
+        PrintConvId::GpmfFirmwareVersion => exif_value_to_string(value),
+        PrintConvId::GpmfGPSAltitudeSystem => exif_value_to_string(value),
+        PrintConvId::GpmfGPSDateTime => exif_value_to_string(value),
+        PrintConvId::GpmfGPSHPositioningError => exif_value_to_string(value),
+        PrintConvId::GpmfGPSInfo => exif_value_to_string(value),
+        PrintConvId::GpmfGPSInfo9 => exif_value_to_string(value),
+        PrintConvId::GpmfGPSMeasureMode => exif_value_to_string(value),
+        PrintConvId::GpmfGPSPos => exif_value_to_string(value),
+        PrintConvId::GpmfGPSRaw => exif_value_to_string(value),
+        PrintConvId::GpmfGyroscope => exif_value_to_string(value),
+        PrintConvId::GpmfHDRSetting => exif_value_to_string(value),
+        PrintConvId::GpmfHindsightSettings => exif_value_to_string(value),
+        PrintConvId::GpmfHorizonControl => exif_value_to_string(value),
+        PrintConvId::GpmfImageSensorGain => exif_value_to_string(value),
+        PrintConvId::GpmfInputOrientation => exif_value_to_string(value),
+        PrintConvId::GpmfInputUniformity => exif_value_to_string(value),
+        PrintConvId::GpmfISOSpeeds => exif_value_to_string(value),
+        PrintConvId::GpmfLensProjection => exif_value_to_string(value),
+        PrintConvId::GpmfLocalPositionNED => exif_value_to_string(value),
+        PrintConvId::GpmfLumaAverage => exif_value_to_string(value),
+        PrintConvId::GpmfMagnetometer => exif_value_to_string(value),
+        PrintConvId::GpmfMappingXCoefficients => exif_value_to_string(value),
+        PrintConvId::GpmfMappingXMode => exif_value_to_string(value),
+        PrintConvId::GpmfMappingYCoefficients => exif_value_to_string(value),
+        PrintConvId::GpmfMappingYMode => exif_value_to_string(value),
+        PrintConvId::GpmfMediaMode => exif_value_to_string(value),
+        PrintConvId::GpmfMediaUniqueID => exif_value_to_string(value),
+        PrintConvId::GpmfMetadataVersion => exif_value_to_string(value),
+        PrintConvId::GpmfMicrophoneWet => exif_value_to_string(value),
+        PrintConvId::GpmfModel => exif_value_to_string(value),
+        PrintConvId::GpmfNestedSignalStream => exif_value_to_string(value),
+        PrintConvId::GpmfOtherFirmware => exif_value_to_string(value),
+        PrintConvId::GpmfOutputOrientation => exif_value_to_string(value),
+        PrintConvId::GpmfPhotoResolution => exif_value_to_string(value),
+        PrintConvId::GpmfPolynomialCoefficients => exif_value_to_string(value),
+        PrintConvId::GpmfPolynomialPower => exif_value_to_string(value),
+        PrintConvId::GpmfPowerProfile => exif_value_to_string(value),
+        PrintConvId::GpmfPrediminantHue => exif_value_to_string(value),
+        PrintConvId::GpmfProtune => exif_value_to_string(value),
+        PrintConvId::GpmfProtuneISOMode => exif_value_to_string(value),
+        PrintConvId::GpmfRate => exif_value_to_string(value),
+        PrintConvId::GpmfScaledIMU => exif_value_to_string(value),
+        PrintConvId::GpmfScaledPressure => exif_value_to_string(value),
+        PrintConvId::GpmfScaleFactor => exif_value_to_string(value),
+        PrintConvId::GpmfSceneClassification => exif_value_to_string(value),
+        PrintConvId::GpmfScheduleCaptureTime => exif_value_to_string(value),
+        PrintConvId::GpmfSensorReadoutTime => exif_value_to_string(value),
+        PrintConvId::GpmfSharpness => exif_value_to_string(value),
+        PrintConvId::GpmfSIUnits => exif_value_to_string(value),
+        PrintConvId::GpmfSpeedRampSetting => exif_value_to_string(value),
+        PrintConvId::GpmfStreamName => exif_value_to_string(value),
+        PrintConvId::GpmfSystemTime => exif_value_to_string(value),
+        PrintConvId::GpmfTimeStamp => exif_value_to_string(value),
+        PrintConvId::GpmfTimeZone => exif_value_to_string(value),
+        PrintConvId::GpmfUnits => exif_value_to_string(value),
+        PrintConvId::GpmfVisualFlightRulesHUD => exif_value_to_string(value),
+        PrintConvId::GpmfWhiteBalance => exif_value_to_string(value),
+        PrintConvId::GpmfWhiteBalanceRGB => exif_value_to_string(value),
+        PrintConvId::GpmfWindProcessing => exif_value_to_string(value),
+        PrintConvId::GpmfZoomScaleNormalization => exif_value_to_string(value),
 
         _ => {
             // For now, return raw value for unimplemented conversions
@@ -1123,6 +1346,162 @@ fn format_color_space(value: &ExifValue) -> String {
     }
 }
 
+/// Flash mode conversion - 24 standard EXIF flash values
+/// EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm %flash hash
+fn format_flash(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(0x00) => "No Flash".to_string(),
+        Some(0x01) => "Fired".to_string(),
+        Some(0x05) => "Fired, Return not detected".to_string(),
+        Some(0x07) => "Fired, Return detected".to_string(),
+        Some(0x08) => "On, Did not fire".to_string(),
+        Some(0x09) => "On, Fired".to_string(),
+        Some(0x0d) => "On, Return not detected".to_string(),
+        Some(0x0f) => "On, Return detected".to_string(),
+        Some(0x10) => "Off, Did not fire".to_string(),
+        Some(0x14) => "Off, Did not fire, Return not detected".to_string(),
+        Some(0x18) => "Auto, Did not fire".to_string(),
+        Some(0x19) => "Auto, Fired".to_string(),
+        Some(0x1d) => "Auto, Fired, Return not detected".to_string(),
+        Some(0x1f) => "Auto, Fired, Return detected".to_string(),
+        Some(0x20) => "No flash function".to_string(),
+        Some(0x30) => "Off, No flash function".to_string(),
+        Some(0x41) => "Fired, Red-eye reduction".to_string(),
+        Some(0x45) => "Fired, Red-eye reduction, Return not detected".to_string(),
+        Some(0x47) => "Fired, Red-eye reduction, Return detected".to_string(),
+        Some(0x49) => "On, Red-eye reduction".to_string(),
+        Some(0x4d) => "On, Red-eye reduction, Return not detected".to_string(),
+        Some(0x4f) => "On, Red-eye reduction, Return detected".to_string(),
+        Some(0x50) => "Off, Red-eye reduction".to_string(),
+        Some(0x58) => "Auto, Did not fire, Red-eye reduction".to_string(),
+        Some(0x59) => "Auto, Fired, Red-eye reduction".to_string(),
+        Some(0x5d) => "Auto, Fired, Red-eye reduction, Return not detected".to_string(),
+        Some(0x5f) => "Auto, Fired, Red-eye reduction, Return detected".to_string(),
+        _ => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
+/// Light source conversion for white balance
+/// EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm %lightSource hash
+fn format_light_source(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(0) => "Unknown".to_string(),
+        Some(1) => "Daylight".to_string(),
+        Some(2) => "Fluorescent".to_string(),
+        Some(3) => "Tungsten (Incandescent)".to_string(),
+        Some(4) => "Flash".to_string(),
+        Some(9) => "Fine Weather".to_string(),
+        Some(10) => "Cloudy".to_string(),
+        Some(11) => "Shade".to_string(),
+        Some(12) => "Daylight Fluorescent".to_string(), // (D 5700 - 7100K)
+        Some(13) => "Day White Fluorescent".to_string(), // (N 4600 - 5500K)
+        Some(14) => "Cool White Fluorescent".to_string(), // (W 3800 - 4500K)
+        Some(15) => "White Fluorescent".to_string(),    // (WW 3250 - 3800K)
+        Some(16) => "Warm White Fluorescent".to_string(), // (L 2600 - 3250K)
+        Some(17) => "Standard Light A".to_string(),
+        Some(18) => "Standard Light B".to_string(),
+        Some(19) => "Standard Light C".to_string(),
+        Some(20) => "D55".to_string(),
+        Some(21) => "D65".to_string(),
+        Some(22) => "D75".to_string(),
+        Some(23) => "D50".to_string(),
+        Some(24) => "ISO Studio Tungsten".to_string(),
+        Some(255) => "Other".to_string(),
+        _ => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
+/// Exposure program conversion
+/// EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm tag 0x8822 PrintConv
+fn format_exposure_program(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(0) => "Not Defined".to_string(),
+        Some(1) => "Manual".to_string(),
+        Some(2) => "Program AE".to_string(),
+        Some(3) => "Aperture-priority AE".to_string(),
+        Some(4) => "Shutter speed priority AE".to_string(),
+        Some(5) => "Creative (Slow speed)".to_string(),
+        Some(6) => "Action (High speed)".to_string(),
+        Some(7) => "Portrait".to_string(),
+        Some(8) => "Landscape".to_string(),
+        Some(9) => "Bulb".to_string(),
+        _ => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
+/// Metering mode conversion
+/// EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm tag 0x9207 PrintConv
+fn format_metering_mode(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(0) => "Unknown".to_string(),
+        Some(1) => "Average".to_string(),
+        Some(2) => "Center-weighted average".to_string(),
+        Some(3) => "Spot".to_string(),
+        Some(4) => "Multi-spot".to_string(),
+        Some(5) => "Multi-segment".to_string(),
+        Some(6) => "Partial".to_string(),
+        Some(255) => "Other".to_string(),
+        _ => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
+/// EXIF color space conversion (different from generic ColorSpace)
+/// EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm tag 0xa001 PrintConv
+fn format_exif_color_space(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(1) => "sRGB".to_string(),
+        Some(2) => "Adobe RGB".to_string(),
+        Some(0xffff) => "Uncalibrated".to_string(),
+        Some(0xfffe) => "ICC Profile".to_string(), // Sony
+        Some(0xfffd) => "Wide Gamut RGB".to_string(), // Sony
+        _ => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
+/// Universal parameter conversion (Normal/Low/High pattern)
+/// Used by Contrast (0xa408), Saturation (0xa409), Sharpness (0xa40a)
+/// EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm multiple tags with same pattern
+fn format_universal_parameter(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(0) => "Normal".to_string(),
+        Some(1) => "Low".to_string(),  // or "Soft" for Sharpness
+        Some(2) => "High".to_string(), // or "Hard" for Sharpness
+        _ => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
+/// EXIF white balance conversion  
+/// EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm tag 0xa403 PrintConv
+fn format_exif_white_balance(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(0) => "Auto".to_string(),
+        Some(1) => "Manual".to_string(),
+        _ => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
+/// Exposure mode conversion
+/// EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm tag 0xa402 PrintConv
+fn format_exposure_mode(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(0) => "Auto".to_string(),
+        Some(1) => "Manual".to_string(),
+        Some(2) => "Auto bracket".to_string(),
+        _ => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
+/// Resolution unit conversion
+/// EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm tag 0x0128 PrintConv
+fn format_resolution_unit(value: &ExifValue) -> String {
+    match as_u32(value) {
+        Some(1) => "None".to_string(),
+        Some(2) => "inches".to_string(),
+        Some(3) => "cm".to_string(),
+        _ => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1259,6 +1638,199 @@ mod tests {
         assert_eq!(
             apply_print_conv(&ExifValue::Ascii("test".to_string()), PrintConvId::None),
             "test"
+        );
+    }
+
+    #[test]
+    fn test_flash_conversion() {
+        // Test comprehensive flash mode conversion (24 standard EXIF values)
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0x00), PrintConvId::Flash),
+            "No Flash"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0x01), PrintConvId::Flash),
+            "Fired"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0x19), PrintConvId::Flash),
+            "Auto, Fired"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0x59), PrintConvId::Flash),
+            "Auto, Fired, Red-eye reduction"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0x5f), PrintConvId::Flash),
+            "Auto, Fired, Red-eye reduction, Return detected"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0x99), PrintConvId::Flash),
+            "Unknown (153)"
+        );
+    }
+
+    #[test]
+    fn test_light_source_conversion() {
+        // Test light source for white balance
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::LightSource),
+            "Unknown"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::LightSource),
+            "Daylight"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::LightSource),
+            "Tungsten (Incandescent)"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(21), PrintConvId::LightSource),
+            "D65"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(255), PrintConvId::LightSource),
+            "Other"
+        );
+    }
+
+    #[test]
+    fn test_exposure_program_conversion() {
+        // Test exposure program modes
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::ExposureProgram),
+            "Not Defined"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::ExposureProgram),
+            "Manual"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::ExposureProgram),
+            "Program AE"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::ExposureProgram),
+            "Aperture-priority AE"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(9), PrintConvId::ExposureProgram),
+            "Bulb"
+        );
+    }
+
+    #[test]
+    fn test_metering_mode_conversion() {
+        // Test metering mode conversion
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::MeteringMode),
+            "Unknown"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::MeteringMode),
+            "Center-weighted average"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::MeteringMode),
+            "Spot"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(5), PrintConvId::MeteringMode),
+            "Multi-segment"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(255), PrintConvId::MeteringMode),
+            "Other"
+        );
+    }
+
+    #[test]
+    fn test_exif_color_space_conversion() {
+        // Test EXIF-specific color space (includes Sony non-standard values)
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::ExifColorSpace),
+            "sRGB"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::ExifColorSpace),
+            "Adobe RGB"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0xffff), PrintConvId::ExifColorSpace),
+            "Uncalibrated"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0xfffe), PrintConvId::ExifColorSpace),
+            "ICC Profile"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0xfffd), PrintConvId::ExifColorSpace),
+            "Wide Gamut RGB"
+        );
+    }
+
+    #[test]
+    fn test_universal_parameter_conversion() {
+        // Test shared Normal/Low/High pattern used by Contrast, Saturation, Sharpness
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalParameter),
+            "Normal"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalParameter),
+            "Low" // "Soft" for Sharpness
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalParameter),
+            "High" // "Hard" for Sharpness
+        );
+    }
+
+    #[test]
+    fn test_exif_white_balance_conversion() {
+        // Test EXIF white balance (different from generic WhiteBalance)
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::ExifWhiteBalance),
+            "Auto"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::ExifWhiteBalance),
+            "Manual"
+        );
+    }
+
+    #[test]
+    fn test_exposure_mode_conversion() {
+        // Test exposure mode
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::ExposureMode),
+            "Auto"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::ExposureMode),
+            "Manual"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::ExposureMode),
+            "Auto bracket"
+        );
+    }
+
+    #[test]
+    fn test_resolution_unit_conversion() {
+        // Test resolution units
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::ResolutionUnit),
+            "None"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::ResolutionUnit),
+            "inches"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::ResolutionUnit),
+            "cm"
         );
     }
 }
