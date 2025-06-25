@@ -19,6 +19,7 @@ pub mod canon_tags;
 pub mod casio_tags;
 pub mod exif_tags; // Standard EXIF tags with PrintConv
 pub mod fujifilm_tags;
+pub mod gopro_tags;
 pub mod hasselblad_tags;
 pub mod kodak_tags;
 pub mod minolta_tags;
