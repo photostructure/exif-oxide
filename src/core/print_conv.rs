@@ -571,6 +571,10 @@ pub enum PrintConvId {
     ExposureMode,       // Exposure mode (Auto/Manual/Auto bracket)
     ResolutionUnit,     // Resolution units (None/inches/cm)
 
+    /// Universal patterns used by 3+ manufacturers
+    UniversalOnOffAuto, // 0=Off, 1=On, 2=Auto (6 manufacturers, 25+ tags)
+    UniversalNoiseReduction, // 0=Off, 1=Low, 2=Normal, 3=High, 4=Auto
+
     /// GPMF (GoPro Metadata Format) specific conversions
     GpmfAccelerometer,
     GpmfAccelerometerMatrix,
@@ -783,6 +787,51 @@ pub enum PrintConvId {
     PanasonicDiffractionCorrection,
     PanasonicInternalNDFilter,
     PanasonicTimeStamp,
+
+    /// Casio-specific conversions
+    CasioRecordingMode,
+    CasioFocusMode,
+    CasioFlashIntensity,
+    CasioObjectDistance,
+    CasioDigitalZoom,
+    CasioSharpness,
+    CasioContrast,
+    CasioSaturation,
+    CasioISO,
+    CasioFirmwareDate,
+    CasioEnhancement,
+    CasioColorFilter,
+    CasioAFPoint,
+    CasioPrintIM,
+
+    /// Kodak-specific conversions
+    KodakModelLookup,
+    KodakKodakImageWidth,
+    KodakKodakImageHeight,
+    KodakYearCreated,
+    KodakMonthDayCreated,
+    KodakTimeCreated,
+    KodakBurstMode2,
+    KodakVariousModes,
+    KodakVariousModes2,
+    KodakShutterMode,
+    KodakPanoramaMode,
+    KodakExposureTime,
+    KodakFNumber,
+    KodakExposureCompensation,
+    KodakFocusMode,
+    KodakDistance1,
+    KodakDistance2,
+    KodakDistance3,
+    KodakDistance4,
+    KodakSubjectDistance,
+    KodakISOSetting,
+    KodakISO,
+    KodakTotalZoom,
+    KodakDateTimeStamp,
+    KodakColorMode,
+    KodakDigitalZoom,
+    KodakSharpness,
 }
 
 /// Apply print conversion to an EXIF value
@@ -932,6 +981,23 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
         PrintConvId::ExposureMode => format_exposure_mode(value),
         PrintConvId::ResolutionUnit => format_resolution_unit(value),
 
+        // Universal patterns used by 3+ manufacturers
+        PrintConvId::UniversalOnOffAuto => match as_u32(value) {
+            Some(0) => "Off".to_string(),
+            Some(1) => "On".to_string(),
+            Some(2) => "Auto".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalNoiseReduction => match as_u32(value) {
+            Some(0) => "Off".to_string(),
+            Some(1) => "Low".to_string(),
+            Some(2) => "Normal".to_string(),
+            Some(3) => "High".to_string(),
+            Some(4) => "Auto".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
         // GPMF conversions - for now, return raw value
         // TODO: Implement GPMF-specific conversion functions based on ExifTool's GoPro.pm
         PrintConvId::GpmfAccelerometer => exif_value_to_string(value),
@@ -1036,6 +1102,229 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
         PrintConvId::GpmfWhiteBalanceRGB => exif_value_to_string(value),
         PrintConvId::GpmfWindProcessing => exif_value_to_string(value),
         PrintConvId::GpmfZoomScaleNormalization => exif_value_to_string(value),
+
+        // Casio-specific conversions
+        PrintConvId::CasioRecordingMode => match as_u32(value) {
+            Some(1) => "Single Shutter".to_string(),
+            Some(2) => "Panorama".to_string(),
+            Some(3) => "Night Scene".to_string(),
+            Some(4) => "Portrait".to_string(),
+            Some(5) => "Landscape".to_string(),
+            Some(7) => "Sport".to_string(),
+            Some(10) => "Night".to_string(),
+            Some(15) => "Copy".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::CasioFocusMode => match as_u32(value) {
+            Some(2) => "Macro".to_string(),
+            Some(3) => "Auto".to_string(),
+            Some(4) => "Manual".to_string(),
+            Some(5) => "Infinity".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::CasioFlashIntensity => match as_u32(value) {
+            Some(11) => "Weak".to_string(),
+            Some(13) => "Normal".to_string(),
+            Some(15) => "Strong".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::CasioObjectDistance => match as_u32(value) {
+            Some(0) => "Infinity".to_string(),
+            Some(n) => format!("{} mm", n),
+            _ => exif_value_to_string(value),
+        },
+
+        PrintConvId::CasioDigitalZoom => match as_u32(value) {
+            Some(0x10000) => "Off".to_string(),
+            Some(0x10001) => "2x".to_string(),
+            Some(0x20000) => "2x".to_string(),
+            Some(0x40000) => "4x".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::CasioSharpness => match as_u32(value) {
+            Some(0) => "Normal".to_string(),
+            Some(1) => "Soft".to_string(),
+            Some(2) => "Hard".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::CasioContrast => match as_u32(value) {
+            Some(0) => "Normal".to_string(),
+            Some(1) => "Low".to_string(),
+            Some(2) => "High".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::CasioSaturation => match as_u32(value) {
+            Some(0) => "Normal".to_string(),
+            Some(1) => "Low".to_string(),
+            Some(2) => "High".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::CasioISO => match as_u32(value) {
+            Some(3) => "50".to_string(),
+            Some(4) => "64".to_string(),
+            Some(6) => "100".to_string(),
+            Some(9) => "200".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::CasioFirmwareDate => {
+            // Format as date string if possible
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::CasioEnhancement => match as_u32(value) {
+            Some(1) => "Off".to_string(),
+            Some(2) => "Red".to_string(),
+            Some(3) => "Green".to_string(),
+            Some(4) => "Blue".to_string(),
+            Some(5) => "Flesh Tones".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::CasioColorFilter => match as_u32(value) {
+            Some(1) => "Off".to_string(),
+            Some(2) => "Black & White".to_string(),
+            Some(3) => "Sepia".to_string(),
+            Some(4) => "Red".to_string(),
+            Some(5) => "Green".to_string(),
+            Some(6) => "Blue".to_string(),
+            Some(7) => "Yellow".to_string(),
+            Some(8) => "Pink".to_string(),
+            Some(9) => "Purple".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::CasioAFPoint => match as_u32(value) {
+            Some(1) => "Center".to_string(),
+            Some(2) => "Auto".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::CasioPrintIM => {
+            // PrintIM data is usually complex, return raw for now
+            exif_value_to_string(value)
+        }
+
+        // Kodak-specific conversions
+        PrintConvId::KodakModelLookup => {
+            // For now, return raw value - would need to implement Kodak model lookup table
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakKodakImageWidth | PrintConvId::KodakKodakImageHeight => {
+            // Image dimensions - just format as number
+            match as_u32(value) {
+                Some(dim) => dim.to_string(),
+                _ => exif_value_to_string(value),
+            }
+        }
+
+        PrintConvId::KodakYearCreated => match as_u32(value) {
+            Some(year) => year.to_string(),
+            _ => exif_value_to_string(value),
+        },
+
+        PrintConvId::KodakMonthDayCreated => {
+            // Format: MM:DD
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakTimeCreated => {
+            // Format: HH:MM:SS.ss
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakBurstMode2 => {
+            // Unknown tag - return raw for now
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakVariousModes | PrintConvId::KodakVariousModes2 => {
+            // Various mode settings - would need lookup table
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakShutterMode => {
+            // Shutter mode - would need lookup table
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakPanoramaMode => match as_u32(value) {
+            Some(0) => "Off".to_string(),
+            Some(1) => "On".to_string(),
+            _ => exif_value_to_string(value),
+        },
+
+        PrintConvId::KodakExposureTime => {
+            // Exposure time - return raw for now
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakFNumber => {
+            // F-number - return raw for now
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakExposureCompensation => {
+            // Exposure compensation - return raw for now
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakFocusMode => match as_u32(value) {
+            Some(0) => "Normal".to_string(),
+            Some(1) => "Macro".to_string(),
+            _ => exif_value_to_string(value),
+        },
+
+        PrintConvId::KodakDistance1
+        | PrintConvId::KodakDistance2
+        | PrintConvId::KodakDistance3
+        | PrintConvId::KodakDistance4 => {
+            // Distance measurements - return raw for now
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakSubjectDistance => {
+            // Subject distance - return raw for now
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakISOSetting | PrintConvId::KodakISO => {
+            // ISO values - return raw for now
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakTotalZoom => {
+            // Total zoom - return raw for now
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakDateTimeStamp => {
+            // Date/time stamp - return raw for now
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakColorMode => {
+            // Color mode - would need lookup table
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakDigitalZoom => {
+            // Digital zoom - return raw for now
+            exif_value_to_string(value)
+        }
+
+        PrintConvId::KodakSharpness => {
+            // Sharpness - return raw for now
+            exif_value_to_string(value)
+        }
 
         _ => {
             // For now, return raw value for unimplemented conversions
@@ -1940,6 +2229,76 @@ mod tests {
         assert_eq!(
             apply_print_conv(&ExifValue::U32(3), PrintConvId::ResolutionUnit),
             "cm"
+        );
+    }
+
+    #[test]
+    fn test_universal_on_off_auto_conversion() {
+        // Test UniversalOnOffAuto pattern (0=Off, 1=On, 2=Auto)
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalOnOffAuto),
+            "Off"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalOnOffAuto),
+            "On"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalOnOffAuto),
+            "Auto"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalOnOffAuto),
+            "Unknown (99)"
+        );
+
+        // Test with different value types
+        assert_eq!(
+            apply_print_conv(&ExifValue::U16(1), PrintConvId::UniversalOnOffAuto),
+            "On"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U8(2), PrintConvId::UniversalOnOffAuto),
+            "Auto"
+        );
+    }
+
+    #[test]
+    fn test_universal_noise_reduction_conversion() {
+        // Test UniversalNoiseReduction pattern (0=Off, 1=Low, 2=Normal, 3=High, 4=Auto)
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalNoiseReduction),
+            "Off"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalNoiseReduction),
+            "Low"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalNoiseReduction),
+            "Normal"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::UniversalNoiseReduction),
+            "High"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(4), PrintConvId::UniversalNoiseReduction),
+            "Auto"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalNoiseReduction),
+            "Unknown (99)"
+        );
+
+        // Test with different value types
+        assert_eq!(
+            apply_print_conv(&ExifValue::U16(3), PrintConvId::UniversalNoiseReduction),
+            "High"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U8(1), PrintConvId::UniversalNoiseReduction),
+            "Low"
         );
     }
 }

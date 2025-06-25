@@ -58,7 +58,16 @@
       "Bash(./third-party/exiftool/exiftool -Apple:all test-images/apple/IMG_3755.JPG)",
       "Bash(./third-party/exiftool/exiftool -v3 -Apple:all test-images/apple/IMG_3755.JPG)",
       "Bash(RUST_BACKTRACE=1 cargo test core::ifd::tests::test_parse_u16_array --lib -- --nocapture)",
-      "Bash(./third-party/exiftool/exiftool -v -G1 test-images/gopro/GoPro.jpg)"
+      "Bash(./third-party/exiftool/exiftool -v -G1 test-images/gopro/GoPro.jpg)",
+      "Bash(./target/debug/exiftool_sync:*)",
+      "Bash(for file in src/tables/*.rs)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(done)",
+      "Bash(./exiftool -Make -Model t/images/Ricoh.jpg t/images/Ricoh2.jpg)",
+      "Bash(./exiftool -Make -Model t/images/Pentax.jpg)",
+      "Bash(/home/mrm/src/exif-oxide/third-party/exiftool/exiftool -Make -Model /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Ricoh.jpg)",
+      "Bash(/home/mrm/src/exif-oxide/third-party/exiftool/exiftool -Make -Model /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Ricoh2.jpg)",
+      "Bash(/home/mrm/src/exif-oxide/third-party/exiftool/exiftool -Make -Model /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Pentax.jpg)"
     ],
     "deny": []
   }

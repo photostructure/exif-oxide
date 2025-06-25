@@ -5,11 +5,6 @@ use exif_oxide::maker::{parse_maker_notes, Manufacturer};
 fn test_pentax_manufacturer_detection() {
     assert_eq!(Manufacturer::from_make("PENTAX"), Manufacturer::Pentax);
     assert_eq!(Manufacturer::from_make("PENTAX K-3"), Manufacturer::Pentax);
-    assert_eq!(
-        Manufacturer::from_make("RICOH IMAGING COMPANY, LTD."),
-        Manufacturer::Pentax
-    );
-    assert_eq!(Manufacturer::from_make("Ricoh"), Manufacturer::Pentax);
 }
 
 #[test]

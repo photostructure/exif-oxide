@@ -1084,6 +1084,17 @@ fn cmd_add_manufacturer(manufacturer_name: &str) -> Result<(), String> {
 
     let detection_extractor = extractors::MakerDetectionExtractor::new();
     detection_extractor.extract(exiftool_path)?;
+
+    // Ensure the specific manufacturer's detection.rs file exists
+    let detection_dir = Path::new("src/maker").join(&manufacturer_lower);
+    let detection_file = detection_dir.join("detection.rs");
+    if !detection_file.exists() {
+        return Err(format!(
+            "Detection file not generated: {}. The MakerDetectionExtractor may not have found patterns for {}",
+            detection_file.display(),
+            manufacturer_title
+        ));
+    }
     println!("   ✅ Detection patterns generated");
 
     // Step 2: Generate PrintConv tables
@@ -1105,7 +1116,7 @@ fn cmd_add_manufacturer(manufacturer_name: &str) -> Result<(), String> {
     step += 1;
     println!("   ✅ PrintConvId enum variants added");
 
-    // Step 4: Resolve module conflicts
+    // Step 4: Resolve module conflicts and ensure detection directory
     println!(
         "🔄 Step {}/{}: Resolving module structure conflicts...",
         step, total_steps
@@ -1113,6 +1124,17 @@ fn cmd_add_manufacturer(manufacturer_name: &str) -> Result<(), String> {
     step += 1;
 
     resolve_module_conflicts(&manufacturer_lower)?;
+
+    // Double-check detection file exists after conflict resolution
+    let detection_dir = Path::new("src/maker").join(&manufacturer_lower);
+    let detection_file = detection_dir.join("detection.rs");
+    if !detection_file.exists() {
+        return Err(format!(
+            "Detection file missing after conflict resolution: {}. This indicates the MakerDetectionExtractor didn't generate patterns for {}",
+            detection_file.display(),
+            manufacturer_title
+        ));
+    }
     println!("   ✅ Module conflicts resolved");
 
     // Step 5: Generate parser from template
@@ -1198,7 +1220,7 @@ fn list_available_manufacturer_files(exiftool_path: &Path) -> Result<String, Str
     Ok(pm_files.join(", "))
 }
 
-/// Resolve module structure conflicts (both file and directory)
+/// Resolve module structure and ensure detection directory exists
 fn resolve_module_conflicts(manufacturer_lower: &str) -> Result<(), String> {
     let src_maker_path = Path::new("src/maker");
     let manufacturer_file = src_maker_path.join(format!("{}.rs", manufacturer_lower));
@@ -1211,11 +1233,16 @@ fn resolve_module_conflicts(manufacturer_lower: &str) -> Result<(), String> {
             manufacturer_lower, manufacturer_lower
         );
 
-        // Remove the directory structure in favor of single file approach
-        fs::remove_dir_all(&manufacturer_dir)
-            .map_err(|e| format!("Failed to remove conflicting directory: {}", e))?;
-
-        println!("   🔧 Resolved: Removed directory, keeping single file approach");
+        // For the new approach, we need both:
+        // - Single .rs file for the main parser
+        // - Directory for detection.rs module
+        // So this is actually fine - no conflict to resolve
+        println!("   ✅ Both structures needed: .rs file (parser) and directory (detection)");
+    } else if !manufacturer_dir.exists() {
+        // Create the manufacturer directory for detection.rs
+        fs::create_dir_all(&manufacturer_dir)
+            .map_err(|e| format!("Failed to create manufacturer directory: {}", e))?;
+        println!("   📁 Created directory: {}/", manufacturer_lower);
     }
 
     Ok(())
@@ -1254,98 +1281,74 @@ fn generate_parser_from_template(
     Ok(())
 }
 
-/// Integrate new manufacturer with the maker note system
+/// Integrate new manufacturer with the maker note system (simplified approach)
+/// This works with the pre-added manufacturers by uncommenting the required entries
 fn integrate_with_maker_system(
     manufacturer_lower: &str,
     manufacturer_title: &str,
 ) -> Result<(), String> {
-    // Update src/maker/mod.rs
+    // Update src/maker/mod.rs - uncomment the module declaration
     let mod_file_path = Path::new("src/maker/mod.rs");
     let mod_content = fs::read_to_string(mod_file_path)
         .map_err(|e| format!("Failed to read maker mod.rs: {}", e))?;
 
-    let mut new_content = mod_content;
+    let mut new_mod_content = mod_content.clone();
+    let mut changed = false;
 
-    // Add module declaration if not already present
-    let module_line = format!("pub mod {};", manufacturer_lower);
-    if !new_content.contains(&module_line) {
-        // Find a good insertion point after existing module declarations
-        let last_mod = new_content.rfind("pub mod").unwrap_or(0);
-        let insertion_point = new_content[last_mod..]
-            .find('\n')
-            .map(|pos| last_mod + pos + 1)
-            .unwrap_or(new_content.len());
-        new_content.insert_str(insertion_point, &format!("{}\n", module_line));
+    // Uncomment the module declaration
+    let commented_module = format!("// pub mod {};", manufacturer_lower);
+    let uncommented_module = format!("pub mod {};", manufacturer_lower);
+    if new_mod_content.contains(&commented_module) {
+        new_mod_content = new_mod_content.replace(&commented_module, &uncommented_module);
+        changed = true;
     }
 
-    // Add to Manufacturer enum if not already present
-    let enum_variant = format!("    {},", manufacturer_title);
-    if !new_content.contains(&enum_variant) {
-        // Find the Manufacturer enum and add the variant
-        if let Some(enum_start) = new_content.find("pub enum Manufacturer {") {
-            let enum_body_start = new_content[enum_start..].find('{').unwrap() + enum_start + 1;
-            // Find a good spot to insert (before Unknown variant)
-            if let Some(unknown_pos) = new_content[enum_body_start..].find("    Unknown,") {
-                let insertion_point = enum_body_start + unknown_pos;
-                new_content.insert_str(insertion_point, &format!("{}\n", enum_variant));
-            }
-        }
-    }
-
-    // Add to from_make method if not already present
-    let make_check = format!("make_lower.contains(\"{}\") {{", manufacturer_lower);
-    if !new_content.contains(&make_check) {
-        // Find the from_make method and add the manufacturer detection
-        if let Some(from_make_start) = new_content.find("pub fn from_make(make: &str) -> Self {") {
-            // Find before the "Unknown" case
-            if let Some(unknown_case) =
-                new_content[from_make_start..].find("} else {\n            Manufacturer::Unknown")
-            {
-                let insertion_point = from_make_start + unknown_case;
-                let detection_case = format!(
-                    " else if {} \n            Manufacturer::{}\n        }}",
-                    make_check, manufacturer_title
-                );
-                new_content.insert_str(insertion_point, &detection_case);
-            }
-        }
-    }
-
-    // Add to parser method if not already present
-    let parser_case = format!(
-        "Manufacturer::{} => Some(Box::new({}::{}MakerNoteParser)),",
+    // Uncomment the parser case
+    let commented_parser = format!(
+        "            // Manufacturer::{} => Some(Box::new({}::{}MakerNoteParser)),",
         manufacturer_title, manufacturer_lower, manufacturer_title
     );
-    if !new_content.contains(&parser_case) {
-        // Find the parser method and add the case
-        if let Some(parser_start) =
-            new_content.find("pub fn parser(&self) -> Option<Box<dyn MakerNoteParser>> {")
-        {
-            // Find before the "_ => None," case
-            if let Some(default_case) = new_content[parser_start..].find(
-                "            // Other manufacturers not implemented yet\n            _ => None,",
-            ) {
-                let insertion_point = parser_start + default_case;
-                new_content.insert_str(insertion_point, &format!("            {} \n", parser_case));
-            }
-        }
+    let uncommented_parser = format!(
+        "            Manufacturer::{} => Some(Box::new({}::{}MakerNoteParser)),",
+        manufacturer_title, manufacturer_lower, manufacturer_title
+    );
+    if new_mod_content.contains(&commented_parser) {
+        new_mod_content = new_mod_content.replace(&commented_parser, &uncommented_parser);
+        changed = true;
     }
 
-    fs::write(mod_file_path, new_content)
-        .map_err(|e| format!("Failed to update maker mod.rs: {}", e))?;
+    if changed {
+        fs::write(mod_file_path, new_mod_content)
+            .map_err(|e| format!("Failed to update maker mod.rs: {}", e))?;
+    }
 
-    // Update src/tables/mod.rs
+    // Update src/tables/mod.rs - uncomment the table module
     let tables_mod_path = Path::new("src/tables/mod.rs");
     let tables_content = fs::read_to_string(tables_mod_path)
         .map_err(|e| format!("Failed to read tables mod.rs: {}", e))?;
 
-    let table_module_line = format!("pub mod {}_tags;", manufacturer_lower);
+    let commented_table_module = format!("// pub mod {}_tags;", manufacturer_lower);
+    let uncommented_table_module = format!("pub mod {}_tags;", manufacturer_lower);
 
-    if !tables_content.contains(&table_module_line) {
-        let mut new_tables_content = tables_content;
-        let insertion_point = new_tables_content.find("pub mod").unwrap_or(0);
-        new_tables_content.insert_str(insertion_point, &format!("{}\n", table_module_line));
+    let new_tables_content = if tables_content.contains(&commented_table_module) {
+        // Uncomment existing line
+        tables_content.replace(&commented_table_module, &uncommented_table_module)
+    } else if !tables_content.contains(&uncommented_table_module) {
+        // Add new line after other table modules
+        let mut content = tables_content.clone();
+        if let Some(pos) = content.rfind("pub mod ") {
+            if let Some(end_pos) = content[pos..].find('\n') {
+                let insert_pos = pos + end_pos + 1;
+                content.insert_str(insert_pos, &format!("{}\n", uncommented_table_module));
+            }
+        }
+        content
+    } else {
+        // Already uncommented, no changes needed
+        tables_content.clone()
+    };
 
+    if new_tables_content != tables_content {
         fs::write(tables_mod_path, new_tables_content)
             .map_err(|e| format!("Failed to update tables mod.rs: {}", e))?;
     }
@@ -1385,7 +1388,22 @@ fn run_validation_pipeline(
 
     if !build_result.status.success() {
         let error_output = String::from_utf8_lossy(&build_result.stderr);
-        return Err(format!("Compilation failed:\n{}", error_output));
+        let stdout_output = String::from_utf8_lossy(&build_result.stdout);
+
+        // Provide specific guidance based on common errors
+        let guidance = if error_output.contains("file not found for module") {
+            "\n💡 This suggests missing detection.rs files. Run 'cargo run --bin exiftool_sync extract maker-detection' to regenerate detection patterns."
+        } else if error_output.contains("no variant or associated item named")
+            && error_output.contains("PrintConvId")
+        {
+            "\n💡 This suggests missing PrintConvId enum variants. Check that the PrintConv enum was updated properly."
+        } else if error_output.contains("unresolved import") {
+            "\n💡 This suggests module integration issues. Check that the modules are properly declared in mod.rs files."
+        } else {
+            ""
+        };
+
+        return Err(format!("Compilation failed:\n{}\n{}\n{}{}", stdout_output, error_output, "\n🔧 To debug: Check the generated files and ensure all modules are properly integrated.", guidance));
     }
     println!("   ✅ Compilation successful");
 
@@ -1449,9 +1467,18 @@ fn verify_integration(manufacturer_lower: &str, manufacturer_title: &str) -> Res
         return Err("Module not properly declared in maker/mod.rs".to_string());
     }
 
-    // Check for enum-based integration (current system)
+    // Check for enum-based integration (current system) - enum is pre-added
     if !maker_mod_content.contains(&format!("Manufacturer::{}", manufacturer_title)) {
-        return Err("Parser not properly registered in Manufacturer enum".to_string());
+        return Err("Manufacturer enum variant not found (should be pre-added)".to_string());
+    }
+
+    // Check that parser case is uncommented
+    let parser_case = format!(
+        "Manufacturer::{} => Some(Box::new({}::{}MakerNoteParser)),",
+        manufacturer_title, manufacturer_lower, manufacturer_title
+    );
+    if !maker_mod_content.contains(&parser_case) {
+        return Err("Parser case not properly uncommented in parser() method".to_string());
     }
 
     // Verify tables integration

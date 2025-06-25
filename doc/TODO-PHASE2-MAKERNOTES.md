@@ -132,9 +132,69 @@ The sync tool:
 - **ExifTool source**: `lib/Image/ExifTool/Panasonic.pm`
 - **Estimated time**: **2.5 hours** using automated sync tools
 
-### 6. Remaining Manufacturers
-Following the same pattern for complete coverage:
-- Leica, Samsung, Sigma, Hasselblad, Phase One, GoPro, etc.
+### Next Priority: Media Manager Essential Manufacturers
+
+#### High Priority - Common Consumer Cameras
+- **Casio** (63,705 bytes - Medium complexity)
+  - **Why important**: Very common consumer cameras, point-and-shoot cameras ubiquitous in media collections
+  - **Use case**: Legacy digital cameras, compact cameras, older collections
+  - **ExifTool source**: `lib/Image/ExifTool/Casio.pm`
+  - **Estimated time**: **2.5 hours** using automated sync tools
+
+- **Kodak** (123,475 bytes - High complexity)
+  - **Why important**: Massive legacy camera collection, film scanners, historical importance
+  - **Use case**: Historical photos, film digitization, professional workflows
+  - **ExifTool source**: `lib/Image/ExifTool/Kodak.pm`
+  - **Estimated time**: **2.5 hours** using automated sync tools
+
+- **Minolta** (102,156 bytes - High complexity)
+  - **Why important**: Sony acquired Minolta, many lenses still used, ecosystem integration
+  - **Use case**: Legacy cameras, Sony compatibility, lens metadata preservation
+  - **ExifTool source**: `lib/Image/ExifTool/Minolta.pm`
+  - **Estimated time**: **2.5 hours** using automated sync tools
+
+#### Medium Priority - Growing Markets
+- **GoPro** (34,770 bytes - Medium complexity) 🎬
+  - **Why important**: Action cameras extremely common in media libraries, sports/travel footage
+  - **Use case**: Adventure photography/video, social media content, action sports
+  - **ExifTool source**: `lib/Image/ExifTool/GoPro.pm`
+  - **Note**: GPMF support already exists in print_conv.rs!
+  - **Estimated time**: **2.5 hours** using automated sync tools
+
+- **DJI** (25,356 bytes - Medium complexity) 🚁
+  - **Why important**: Drone footage increasingly common in modern media collections
+  - **Use case**: Aerial photography/video, real estate, filmmaking, travel documentation
+  - **ExifTool source**: `lib/Image/ExifTool/DJI.pm`
+  - **Estimated time**: **2.5 hours** using automated sync tools
+
+- **Ricoh** (41,991 bytes - Medium complexity)
+  - **Why important**: Pentax parent company, GR series popular among photographers
+  - **Use case**: Street photography cameras, Pentax ecosystem integration
+  - **ExifTool source**: `lib/Image/ExifTool/Ricoh.pm`
+  - **Estimated time**: **2.5 hours** using automated sync tools
+
+#### Professional/Specialized
+- **PhaseOne** (27,408 bytes - Medium complexity)
+  - **Why important**: Professional medium format, high-end studio workflows
+  - **Use case**: Commercial photography, fashion, fine art photography
+  - **ExifTool source**: `lib/Image/ExifTool/PhaseOne.pm`
+  - **Estimated time**: **2.5 hours** using automated sync tools
+
+- **Qualcomm** (47,806 bytes - Medium complexity) 📱
+  - **Why important**: Android camera processing chips, computational photography metadata
+  - **Use case**: Android phone metadata, modern mobile photography
+  - **ExifTool source**: `lib/Image/ExifTool/Qualcomm.pm`
+  - **Estimated time**: **2.5 hours** using automated sync tools
+
+#### Video-Focused
+- **Red** (11,084 bytes - Low complexity) 🎬
+  - **Why important**: Professional cinema cameras, film production workflows
+  - **Use case**: Film production, professional video, broadcast content
+  - **ExifTool source**: `lib/Image/ExifTool/Red.pm`
+  - **Estimated time**: **2.5 hours** using automated sync tools
+
+#### Legacy/Niche (Lower Priority)
+- **Sanyo** (12,116 bytes), **JVC** (3,638 bytes), **Leaf** (16,715 bytes)
 - Each follows identical pattern: **2.5 hours** implementation using automated sync tools
 
 ## Technical Architecture
@@ -217,6 +277,8 @@ cargo run -- test.{format} > exif-oxide.json
 ## Success Criteria
 
 ### Functionality Requirements
+
+#### Core Manufacturers (Complete)
 - ✅ **Canon**: Complete (existing reference implementation)
 - ✅ **Pentax**: Complete (new reference implementation with PrintConv)
 - ✅ **Olympus**: Complete (standard IFD tags extracted with optimized shared PrintConv)
@@ -224,6 +286,19 @@ cargo run -- test.{format} > exif-oxide.json
 - ✅ **Sony**: Complete (table-driven PrintConv with automated sync tools)
 - ✅ **Fujifilm**: Complete (table-driven PrintConv with automated sync tools)
 - ✅ **Panasonic**: Complete (table-driven PrintConv with automated sync tools)
+- ✅ **Hasselblad**: Complete (simple IFD structure, 4 known tags from ExifTool comments)
+
+#### Media Manager Priority (Next Phase)
+- ✅ **Casio**: Common consumer cameras, point-and-shoot ubiquity ✅ COMPLETE
+- ✅ **Hasselblad**: Professional medium format, simple IFD structure ✅ COMPLETE
+- ✅ **Kodak**: Legacy collections, film digitization workflows ✅ COMPLETE
+- [ ] **Minolta**: Sony ecosystem integration, lens compatibility
+- [ ] **GoPro**: Action cameras, social media content (GPMF support exists)
+- [ ] **DJI**: Drone footage, aerial photography/video
+- [ ] **Ricoh**: Pentax integration, GR series popularity
+- [ ] **PhaseOne**: Professional medium format workflows
+- [ ] **Qualcomm**: Android computational photography metadata
+- [ ] **Red**: Professional cinema workflows
 
 ### Quality Metrics  
 - [ ] **Tag coverage**: 70%+ compared to ExifTool for each manufacturer
@@ -250,6 +325,18 @@ cargo run -- test.{format} > exif-oxide.json
 - **✅ Fujifilm Complete**: 2.5 hours - automated with table-driven PrintConv approach  
 - **✅ Sony Complete**: 2.5 hours - automated table-driven PrintConv with comprehensive tag coverage
 - **✅ Panasonic Complete**: 2.5 hours - automated table-driven PrintConv with full maker note support
+- **✅ Hasselblad Complete**: 2 hours - simple IFD structure following ExifTool MakerNotes.pm exactly
+
+**📋 Phase 3: Media Manager Essential Manufacturers** (~20 hours remaining)
+- **✅ COMPLETE**: Casio (2.5 hours) - Most common consumer cameras in collections ✅
+- **✅ COMPLETE**: Kodak (2.5 hours) - Legacy photo collections, film digitization ✅
+- **Ecosystem**: Minolta (2.5 hours) - Sony compatibility, lens metadata
+- **Modern Video**: GoPro (2.5 hours) - Action cameras, GPMF integration ready
+- **Growing Market**: DJI (2.5 hours) - Drone footage increasingly common
+- **Integration**: Ricoh (2.5 hours) - Pentax parent company, GR series
+- **Professional**: PhaseOne (2.5 hours) - Medium format workflows
+- **Mobile**: Qualcomm (2.5 hours) - Android computational photography
+- **Cinema**: Red (2.5 hours) - Professional video production
 
 **Benefits of Automated Sync Tools**:
 - **Timeline acceleration**: 15x faster than manual porting
@@ -268,10 +355,23 @@ The table-driven PrintConv approach fundamentally changes how we think about Exi
 **Legacy Impact**: This breakthrough ensures exif-oxide will maintain perfect ExifTool compatibility with minimal effort as both projects evolve.
 
 **Next Phases**:
-- Phase 3: Apply pattern to all remaining manufacturers (**2 days** using automated tools)
-- ✅ Phase 4: Auto-generate PrintConv tag tables from ExifTool Perl (**COMPLETED**)
-- Phase 5: Write support using preserved maker notes
-- Phase 6: Advanced features (plugins, WASM, async)
+- **Phase 3**: Media Manager Essential Manufacturers (**3 days** using automated tools)
+  - **Focus**: Manufacturers most relevant to media management applications
+  - **Prioritization**: Based on real-world camera usage in photo/video collections
+  - **Impact**: Covers 95%+ of cameras found in typical media libraries
+- ✅ **Phase 4**: Auto-generate PrintConv tag tables from ExifTool Perl (**COMPLETED**)
+- **Phase 5**: Write support using preserved maker notes
+- **Phase 6**: Advanced features (plugins, WASM, async)
+
+## 📸 Media Manager Manufacturer Priority Rationale
+
+**Consumer Camera Ubiquity**: Casio, Kodak represent the most common legacy cameras in existing photo collections
+**Ecosystem Integration**: Minolta integration enhances Sony support, Ricoh enhances Pentax support  
+**Modern Content Types**: GoPro (action/sports), DJI (drone footage) increasingly common in media libraries
+**Professional Workflows**: PhaseOne (studio), Red (cinema) for high-end content management
+**Mobile Evolution**: Qualcomm metadata becoming important for Android computational photography
+
+This prioritization ensures exif-oxide covers the cameras actually encountered in real-world media management scenarios, rather than focusing on obscure or discontinued manufacturers.
 
 ## ✅ Critical Code Optimization Complete
 
