@@ -287,6 +287,7 @@ fn cmd_extract(component: &str, _options: &[String]) -> Result<(), String> {
     println!();
 
     let extractor: Box<dyn Extractor> = match component {
+        "app-segment-tables" => Box::new(extractors::AppSegmentTablesExtractor::new()),
         "binary-formats" => Box::new(extractors::BinaryFormatsExtractor::new()),
         "magic-numbers" => Box::new(extractors::MagicNumbersExtractor::new()),
         "datetime-patterns" => Box::new(extractors::DateTimePatternsExtractor::new()),
@@ -334,6 +335,7 @@ fn cmd_extract_all() -> Result<(), String> {
 
     // List of all extractors in order (dependency order doesn't matter since they're all independent)
     let components = vec![
+        ("app-segment-tables", "APP segment definitions"),
         ("binary-formats", "ProcessBinaryData table definitions"),
         ("magic-numbers", "File type detection patterns"),
         ("datetime-patterns", "Date parsing patterns"),

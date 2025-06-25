@@ -3,14 +3,11 @@
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/JPEG.pm"]
 
 use crate::error::{Error, Result};
+use crate::tables::app_segments::{identify_app_segment, AppSegmentRule, FormatHandler};
 use std::io::{Read, Seek, SeekFrom};
 
 /// JPEG segment markers
 const MARKER_SOI: u8 = 0xD8; // Start of Image
-const MARKER_APP1: u8 = 0xE1; // APP1 segment (contains EXIF/XMP)
-const MARKER_APP2: u8 = 0xE2; // APP2 segment (contains MPF/FlashPix)
-const MARKER_APP6: u8 = 0xE6; // APP6 segment (contains GPMF for GoPro)
-                              // const MARKER_APP13: u8 = 0xED; // APP13 segment (contains IPTC/Photoshop) - Reserved for future use
 const MARKER_SOS: u8 = 0xDA; // Start of Scan (image data follows)
 const MARKER_EOI: u8 = 0xD9; // End of Image
 
@@ -29,14 +26,16 @@ pub struct ExifSegment {
 /// Result of finding metadata segments in a JPEG
 #[derive(Debug)]
 pub struct JpegMetadata {
-    /// EXIF segment if found
+    /// EXIF segment if found (backward compatibility)
     pub exif: Option<ExifSegment>,
-    /// XMP segments if found (can be multiple for extended XMP)
+    /// XMP segments if found (can be multiple for extended XMP) (backward compatibility)
     pub xmp: Vec<XmpSegment>,
-    /// MPF segment if found (Multi-Picture Format)
+    /// MPF segment if found (Multi-Picture Format) (backward compatibility)
     pub mpf: Option<MpfSegment>,
-    /// GPMF segments if found (GoPro metadata, can be multiple)
+    /// GPMF segments if found (GoPro metadata, can be multiple) (backward compatibility)
     pub gpmf: Vec<GpmfSegment>,
+    /// Comprehensive APP segments with table-driven identification
+    pub app_segments: Vec<AppSegment>,
 }
 
 /// XMP segment found in JPEG
@@ -68,6 +67,21 @@ pub struct GpmfSegment {
     pub offset: u64,
 }
 
+/// Comprehensive APP segment found in JPEG
+#[derive(Debug)]
+pub struct AppSegment {
+    /// APP segment number (0-15)
+    pub segment_number: u8,
+    /// The raw segment data (without the APP header and length)
+    pub data: Vec<u8>,
+    /// Offset in the file where the segment data starts
+    pub offset: u64,
+    /// Identified format rule if recognized
+    pub rule: Option<&'static AppSegmentRule>,
+    /// The data without signature/header (for recognized formats)
+    pub parsed_data: Option<Vec<u8>>,
+}
+
 /// Find and extract EXIF data from a JPEG file
 pub fn find_exif_segment<R: Read + Seek>(reader: &mut R) -> Result<Option<ExifSegment>> {
     let metadata = find_metadata_segments(reader)?;
@@ -87,6 +101,7 @@ pub fn find_metadata_segments<R: Read + Seek>(reader: &mut R) -> Result<JpegMeta
         xmp: Vec::new(),
         mpf: None,
         gpmf: Vec::new(),
+        app_segments: Vec::new(),
     };
     // Check JPEG SOI marker
     let mut marker = [0u8; 2];
@@ -94,11 +109,6 @@ pub fn find_metadata_segments<R: Read + Seek>(reader: &mut R) -> Result<JpegMeta
     if marker != [0xFF, MARKER_SOI] {
         return Err(Error::InvalidJpeg("Not a JPEG file".into()));
     }
-
-    const XMP_SIGNATURE: &[u8] = b"http://ns.adobe.com/xap/1.0/\0";
-    const XMP_EXTENSION_SIGNATURE: &[u8] = b"http://ns.adobe.com/xmp/extension/\0";
-    const MPF_SIGNATURE: &[u8] = b"MPF\0";
-    const GPMF_SIGNATURE: &[u8] = b"GoPro";
 
     // Scan through JPEG segments
     loop {
@@ -138,98 +148,160 @@ pub fn find_metadata_segments<R: Read + Seek>(reader: &mut R) -> Result<JpegMeta
                 // Length includes the 2 bytes we just read
                 let data_len = segment_len - 2;
 
-                if marker == MARKER_APP1 {
-                    // This might be our EXIF segment
-                    if data_len > MAX_APP_SIZE {
-                        return Err(Error::InvalidJpeg("APP1 segment too large".into()));
-                    }
+                // Check if this is an APP segment (0xE0-0xEF)
+                if (0xE0..=0xEF).contains(&marker) {
+                    // Calculate APP segment number (APP0 = 0xE0, APP1 = 0xE1, etc.)
+                    let app_number = marker - 0xE0;
 
-                    // Read the segment data
-                    let mut data = vec![0u8; data_len];
-                    reader.read_exact(&mut data)?;
-
-                    // Check for EXIF signature
-                    if data.len() >= 6 && &data[0..6] == b"Exif\0\0" {
-                        // Found EXIF data!
-                        let offset = reader.stream_position()? - data_len as u64;
-                        metadata.exif = Some(ExifSegment {
-                            data: data[6..].to_vec(), // Skip "Exif\0\0" header
-                            offset: offset + 6,       // Offset to actual EXIF data
-                        });
-                    }
-                    // Check for XMP signature
-                    else if data.len() >= XMP_SIGNATURE.len()
-                        && &data[0..XMP_SIGNATURE.len()] == XMP_SIGNATURE
+                    // Process APP segment with table-driven identification
+                    if let Err(_e) =
+                        process_app_segment(reader, &mut metadata, app_number, data_len)
                     {
-                        // Found standard XMP data!
-                        let offset = reader.stream_position()? - data_len as u64;
-                        metadata.xmp.push(XmpSegment {
-                            data: data[XMP_SIGNATURE.len()..].to_vec(),
-                            offset: offset + XMP_SIGNATURE.len() as u64,
-                            is_extended: false,
-                        });
+                        // If APP segment processing fails, skip it but continue
+                        reader.seek(SeekFrom::Current(data_len as i64))?;
                     }
-                    // Check for Extended XMP signature
-                    else if data.len() >= XMP_EXTENSION_SIGNATURE.len()
-                        && &data[0..XMP_EXTENSION_SIGNATURE.len()] == XMP_EXTENSION_SIGNATURE
-                    {
-                        // Found extended XMP data!
-                        let offset = reader.stream_position()? - data_len as u64;
-                        metadata.xmp.push(XmpSegment {
-                            data: data[XMP_EXTENSION_SIGNATURE.len()..].to_vec(),
-                            offset: offset + XMP_EXTENSION_SIGNATURE.len() as u64,
-                            is_extended: true,
-                        });
-                    }
-                    // Continue searching for more segments
-                } else if marker == MARKER_APP2 {
-                    // This might be our MPF segment
-                    if data_len > MAX_APP_SIZE {
-                        return Err(Error::InvalidJpeg("APP2 segment too large".into()));
-                    }
-
-                    // Read the segment data
-                    let mut data = vec![0u8; data_len];
-                    reader.read_exact(&mut data)?;
-
-                    // Check for MPF signature
-                    if data.len() >= MPF_SIGNATURE.len()
-                        && &data[0..MPF_SIGNATURE.len()] == MPF_SIGNATURE
-                    {
-                        // Found MPF data!
-                        let offset = reader.stream_position()? - data_len as u64;
-                        metadata.mpf = Some(MpfSegment {
-                            data: data[MPF_SIGNATURE.len()..].to_vec(), // Skip "MPF\0" header
-                            offset: offset + MPF_SIGNATURE.len() as u64, // Offset to actual MPF data
-                        });
-                    }
-                    // Continue searching for more segments
-                } else if marker == MARKER_APP6 {
-                    // This might be our GPMF segment (GoPro metadata)
-                    if data_len > MAX_APP_SIZE {
-                        return Err(Error::InvalidJpeg("APP6 segment too large".into()));
-                    }
-
-                    // Read the segment data
-                    let mut data = vec![0u8; data_len];
-                    reader.read_exact(&mut data)?;
-
-                    // Check for GoPro GPMF signature
-                    if data.len() >= GPMF_SIGNATURE.len()
-                        && &data[0..GPMF_SIGNATURE.len()] == GPMF_SIGNATURE
-                    {
-                        // Found GPMF data!
-                        let offset = reader.stream_position()? - data_len as u64;
-                        metadata.gpmf.push(GpmfSegment {
-                            data: data[GPMF_SIGNATURE.len()..].to_vec(), // Skip "GoPro" header
-                            offset: offset + GPMF_SIGNATURE.len() as u64, // Offset to actual GPMF data
-                        });
-                    }
-                    // Continue searching for more segments
                 } else {
-                    // Not APP1, APP2, or APP6, skip this segment
+                    // Not an APP segment, skip it
                     reader.seek(SeekFrom::Current(data_len as i64))?;
                 }
+            }
+        }
+    }
+}
+
+/// Process an APP segment using table-driven identification
+fn process_app_segment<R: Read + Seek>(
+    reader: &mut R,
+    metadata: &mut JpegMetadata,
+    app_number: u8,
+    data_len: usize,
+) -> Result<()> {
+    if data_len > MAX_APP_SIZE {
+        return Err(Error::InvalidJpeg(format!(
+            "APP{} segment too large",
+            app_number
+        )));
+    }
+
+    // Read the segment data
+    let mut data = vec![0u8; data_len];
+    reader.read_exact(&mut data)?;
+    let offset = reader.stream_position()? - data_len as u64;
+
+    // Try to identify the segment format using lookup tables
+    let rule = identify_app_segment(app_number, &data);
+
+    // Parse data based on identified format
+    let parsed_data = if let Some(rule) = rule {
+        parse_segment_data(rule, &data)
+    } else {
+        None
+    };
+
+    // Create comprehensive APP segment entry
+    let app_segment = AppSegment {
+        segment_number: app_number,
+        data: data.clone(),
+        offset,
+        rule,
+        parsed_data: parsed_data.clone(),
+    };
+    metadata.app_segments.push(app_segment);
+
+    // Maintain backward compatibility by populating legacy fields
+    if let Some(rule) = rule {
+        match rule.format_handler {
+            FormatHandler::EXIF => {
+                if let Some(parsed) = parsed_data {
+                    metadata.exif = Some(ExifSegment {
+                        data: parsed,
+                        offset: offset + 6, // EXIF signature is 6 bytes: "Exif\0\0"
+                    });
+                }
+            }
+            FormatHandler::XMP => {
+                if let Some(parsed) = parsed_data {
+                    metadata.xmp.push(XmpSegment {
+                        data: parsed,
+                        offset: offset + 29, // XMP signature is 29 bytes: "http://ns.adobe.com/xap/1.0/\0"
+                        is_extended: false,
+                    });
+                }
+            }
+            FormatHandler::ExtendedXMP => {
+                if let Some(parsed) = parsed_data {
+                    metadata.xmp.push(XmpSegment {
+                        data: parsed,
+                        offset: offset + 35, // Extended XMP signature is 35 bytes
+                        is_extended: true,
+                    });
+                }
+            }
+            FormatHandler::MPF => {
+                if let Some(parsed) = parsed_data {
+                    metadata.mpf = Some(MpfSegment {
+                        data: parsed,
+                        offset: offset + rule.signature.len() as u64,
+                    });
+                }
+            }
+            FormatHandler::GoPro => {
+                if let Some(parsed) = parsed_data {
+                    metadata.gpmf.push(GpmfSegment {
+                        data: parsed,
+                        offset: offset + rule.signature.len() as u64,
+                    });
+                }
+            }
+            _ => {
+                // Other formats don't have legacy equivalents
+            }
+        }
+    }
+
+    Ok(())
+}
+
+/// Parse segment data based on identified format rule
+fn parse_segment_data(rule: &AppSegmentRule, data: &[u8]) -> Option<Vec<u8>> {
+    match rule.format_handler {
+        FormatHandler::EXIF => {
+            // EXIF signature is "Exif\0\0" (6 bytes), but table only has "Exif\0" (5 bytes)
+            // We need to skip the full 6-byte signature
+            if data.len() >= 6 && &data[0..6] == b"Exif\0\0" {
+                Some(data[6..].to_vec())
+            } else {
+                None
+            }
+        }
+        FormatHandler::XMP => {
+            // XMP signature is "http://ns.adobe.com/xap/1.0/\0" (29 bytes), but table only has "http" (4 bytes)
+            // We need to skip the full 29-byte signature
+            const XMP_SIGNATURE: &[u8] = b"http://ns.adobe.com/xap/1.0/\0";
+            if data.len() >= XMP_SIGNATURE.len() && &data[0..XMP_SIGNATURE.len()] == XMP_SIGNATURE {
+                Some(data[XMP_SIGNATURE.len()..].to_vec())
+            } else {
+                None
+            }
+        }
+        FormatHandler::ExtendedXMP => {
+            // Extended XMP signature is "http://ns.adobe.com/xmp/extension/\0" (35 bytes)
+            const XMP_EXTENSION_SIGNATURE: &[u8] = b"http://ns.adobe.com/xmp/extension/\0";
+            if data.len() >= XMP_EXTENSION_SIGNATURE.len()
+                && &data[0..XMP_EXTENSION_SIGNATURE.len()] == XMP_EXTENSION_SIGNATURE
+            {
+                Some(data[XMP_EXTENSION_SIGNATURE.len()..].to_vec())
+            } else {
+                None
+            }
+        }
+        _ => {
+            if !rule.signature.is_empty() && data.len() >= rule.signature.len() {
+                // For most formats, remove the signature prefix
+                Some(data[rule.signature.len()..].to_vec())
+            } else {
+                // For custom conditions or empty signatures, return the full data
+                Some(data.to_vec())
             }
         }
     }

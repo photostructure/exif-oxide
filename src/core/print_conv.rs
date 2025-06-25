@@ -550,6 +550,8 @@ pub enum PrintConvId {
     AppleHDRImageType,
     AppleImageCaptureType,
     AppleCameraType,
+    AppleFocusDistanceRange,
+    AppleAFPerformance,
 
     /// EXIF-specific conversions
     ExposureTime, // 0x829a - "1/125" formatting
@@ -875,6 +877,40 @@ pub enum PrintConvId {
     DJIMake,
     DJICameraYaw,
     DJICameraPitch,
+    RicohAFAreaYPosition1,
+    RicohSharpness,
+    RicohAFStatus,
+    RicohDriveMode,
+    RicohWideAdapter,
+    RicohCropMode,
+    RicohWBBracketShotNumber,
+    RicohSaturation,
+    RicohHueAdjust,
+    RicohImageEffects,
+    RicohFlashExposureComp,
+    RicohNoiseReduction,
+    RicohColorTempKelvin,
+    RicohSensorWidth,
+    RicohSensorHeight,
+    RicohContrast,
+    RicohMakerNoteType,
+    RicohAFAreaYPosition,
+    RicohManualFlashOutput,
+    RicohCroppedImageWidth,
+    RicohCroppedImageHeight,
+    RicohAFAreaXPosition,
+    RicohThetaSubdir,
+    RicohRecordingFormat,
+    RicohPrintIM,
+    RicohDynamicRangeExpansion,
+    RicohColorTemperature,
+    RicohFocalLength,
+    RicohFocusMode,
+    RicohToningEffect,
+    RicohFirmwareVersion,
+    RicohAFAreaXPosition1,
+    RicohAFAreaMode,
+    RicohVignetting,
 }
 
 /// Apply print conversion to an EXIF value
@@ -1002,6 +1038,10 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             Some(6) => "Front".to_string(),
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
+
+        PrintConvId::AppleFocusDistanceRange => apple_focus_distance_range_format(value),
+
+        PrintConvId::AppleAFPerformance => apple_af_performance_format(value),
 
         // EXIF-specific conversions
         PrintConvId::ExposureTime => format_exposure_time(value),
@@ -2079,6 +2119,70 @@ fn format_resolution_unit(value: &ExifValue) -> String {
     }
 }
 
+/// Apple-specific FocusDistanceRange formatting
+/// EXIFTOOL-PERL-PATTERN: my @a = split ' ', $val; sprintf('%.2f - %.2f m', $a[0] <= $a[1] ? @a : reverse @a);
+/// USAGE: Apple.pm tag 0x000c FocusDistanceRange
+fn apple_focus_distance_range_format(value: &ExifValue) -> String {
+    match value {
+        ExifValue::SignedRationalArray(values) if values.len() >= 2 => {
+            let val1 = values[0].0 as f64 / values[0].1 as f64;
+            let val2 = values[1].0 as f64 / values[1].1 as f64;
+
+            // Order the values so smaller comes first (matching ExifTool logic)
+            let (min_val, max_val) = if val1 <= val2 {
+                (val1, val2)
+            } else {
+                (val2, val1)
+            };
+
+            format!("{:.2} - {:.2} m", min_val, max_val)
+        }
+        ExifValue::RationalArray(values) if values.len() >= 2 => {
+            let val1 = values[0].0 as f64 / values[0].1 as f64;
+            let val2 = values[1].0 as f64 / values[1].1 as f64;
+
+            // Order the values so smaller comes first (matching ExifTool logic)
+            let (min_val, max_val) = if val1 <= val2 {
+                (val1, val2)
+            } else {
+                (val2, val1)
+            };
+
+            format!("{:.2} - {:.2} m", min_val, max_val)
+        }
+        _ => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
+/// Apple-specific AFPerformance formatting with bit manipulation
+/// EXIFTOOL-PERL-PATTERN: my @a=split " ",$val; sprintf("%d %d %d",$a[0],$a[1]>>28,$a[1]&0xfffffff)
+/// USAGE: Apple.pm tag 0x0023 AFPerformance
+fn apple_af_performance_format(value: &ExifValue) -> String {
+    match value {
+        ExifValue::I32Array(values) if values.len() >= 2 => {
+            let val1 = values[0];
+            let val2 = values[1] as u32; // Cast to u32 for bit manipulation
+
+            // Bit manipulation: extract high 4 bits (>>28) and low 28 bits (&0xfffffff)
+            let high_bits = val2 >> 28;
+            let low_bits = val2 & 0xfffffff;
+
+            format!("{} {} {}", val1, high_bits, low_bits)
+        }
+        ExifValue::U32Array(values) if values.len() >= 2 => {
+            let val1 = values[0];
+            let val2 = values[1];
+
+            // Bit manipulation: extract high 4 bits (>>28) and low 28 bits (&0xfffffff)
+            let high_bits = val2 >> 28;
+            let low_bits = val2 & 0xfffffff;
+
+            format!("{} {} {}", val1, high_bits, low_bits)
+        }
+        _ => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -2781,6 +2885,190 @@ mod dji_print_conv_tests {
         assert_eq!(
             apply_print_conv(&ExifValue::Ascii("DJI".to_string()), PrintConvId::DJIMake),
             "DJI"
+        );
+    }
+
+    #[test]
+    fn test_universal_auto_manual_conversion() {
+        // Test UniversalAutoManual pattern - 0=Auto, 1=Manual
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalAutoManual),
+            "Auto"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalAutoManual),
+            "Manual"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalAutoManual),
+            "Unknown (99)"
+        );
+    }
+
+    #[test]
+    fn test_universal_off_weak_strong_conversion() {
+        // Test UniversalOffWeakStrong pattern - 0=Off, 32=Weak, 64=Strong
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalOffWeakStrong),
+            "Off"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(32), PrintConvId::UniversalOffWeakStrong),
+            "Weak"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(64), PrintConvId::UniversalOffWeakStrong),
+            "Strong"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalOffWeakStrong),
+            "Unknown (99)"
+        );
+    }
+
+    #[test]
+    fn test_universal_signed_number_conversion() {
+        // Test UniversalSignedNumber pattern - adds + prefix for positive values
+        assert_eq!(
+            apply_print_conv(&ExifValue::I32(-3), PrintConvId::UniversalSignedNumber),
+            "-3"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::I32(0), PrintConvId::UniversalSignedNumber),
+            "0"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::I32(5), PrintConvId::UniversalSignedNumber),
+            "+5"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::I32(15), PrintConvId::UniversalSignedNumber),
+            "+15"
+        );
+    }
+
+    #[test]
+    fn test_universal_noise_reduction_applied_conversion() {
+        // Test UniversalNoiseReductionApplied pattern - 0=Off, 1=On
+        assert_eq!(
+            apply_print_conv(
+                &ExifValue::U32(0),
+                PrintConvId::UniversalNoiseReductionApplied
+            ),
+            "Off"
+        );
+        assert_eq!(
+            apply_print_conv(
+                &ExifValue::U32(1),
+                PrintConvId::UniversalNoiseReductionApplied
+            ),
+            "On"
+        );
+        assert_eq!(
+            apply_print_conv(
+                &ExifValue::U32(99),
+                PrintConvId::UniversalNoiseReductionApplied
+            ),
+            "Unknown (99)"
+        );
+    }
+
+    #[test]
+    fn test_apple_focus_distance_range_conversion() {
+        // Test AppleFocusDistanceRange pattern - formats distance ranges with smaller value first
+        // EXIFTOOL-SOURCE: lib/Image/ExifTool/Apple.pm tag 0x000c FocusDistanceRange
+        // EXIFTOOL-PERL-PATTERN: my @a = split ' ', $val; sprintf('%.2f - %.2f m', $a[0] <= $a[1] ? @a : reverse @a);
+        // EXIFTOOL-COMMENT: "0.57 - 1.0m" example from forum13710 (Neal Krawetz)
+
+        // Test based on ExifTool forum example: 0.57 - 1.0m range
+        let distance_range = ExifValue::SignedRationalArray(vec![(570, 1000), (1000, 1000)]); // 0.57 - 1.0 m
+        assert_eq!(
+            apply_print_conv(&distance_range, PrintConvId::AppleFocusDistanceRange),
+            "0.57 - 1.00 m"
+        );
+
+        // Test with values in reverse order (ExifTool logic: $a[0] <= $a[1] ? @a : reverse @a)
+        let distance_range_reverse =
+            ExifValue::SignedRationalArray(vec![(2000, 1000), (500, 1000)]); // 2.0 - 0.5 m -> 0.5 - 2.0 m
+        assert_eq!(
+            apply_print_conv(
+                &distance_range_reverse,
+                PrintConvId::AppleFocusDistanceRange
+            ),
+            "0.50 - 2.00 m"
+        );
+
+        // Test with RationalArray (fallback for unsigned rational format)
+        let distance_range_unsigned = ExifValue::RationalArray(vec![(120, 100), (300, 100)]); // 1.2 - 3.0 m
+        assert_eq!(
+            apply_print_conv(
+                &distance_range_unsigned,
+                PrintConvId::AppleFocusDistanceRange
+            ),
+            "1.20 - 3.00 m"
+        );
+
+        // Test error cases - insufficient data (ExifTool expects Count => 2)
+        let insufficient_data = ExifValue::SignedRationalArray(vec![(100, 100)]); // Only one value
+        assert_eq!(
+            apply_print_conv(&insufficient_data, PrintConvId::AppleFocusDistanceRange),
+            "Unknown ([100/100])"
+        );
+
+        // Test with wrong type
+        let wrong_type = ExifValue::U32(123);
+        assert_eq!(
+            apply_print_conv(&wrong_type, PrintConvId::AppleFocusDistanceRange),
+            "Unknown (123)"
+        );
+    }
+
+    #[test]
+    fn test_apple_af_performance_conversion() {
+        // Test AppleAFPerformance pattern - bit manipulation formatting
+        // EXIFTOOL-SOURCE: lib/Image/ExifTool/Apple.pm tag 0x0023 AFPerformance
+        // EXIFTOOL-PERL-PATTERN: my @a=split " ",$val; sprintf("%d %d %d",$a[0],$a[1]>>28,$a[1]&0xfffffff)
+        // EXIFTOOL-COMMENT: "first number maybe related to focus distance, last number maybe related to focus accuracy"
+
+        // Test with known bit patterns (using test values that demonstrate the bit manipulation)
+        let af_performance = ExifValue::I32Array(vec![1000, 0x12345678]); // val1=1000, val2=0x12345678
+                                                                          // High 4 bits: 0x12345678 >> 28 = 0x1 = 1
+                                                                          // Low 28 bits: 0x12345678 & 0xfffffff = 0x2345678 = 36984440
+        assert_eq!(
+            apply_print_conv(&af_performance, PrintConvId::AppleAFPerformance),
+            "1000 1 36984440"
+        );
+
+        // Test with U32Array (alternative data type, same bit manipulation)
+        let af_performance_u32 = ExifValue::U32Array(vec![500, 0xF0000000]); // val1=500, val2=0xF0000000
+                                                                             // High 4 bits: 0xF0000000 >> 28 = 0xF = 15
+                                                                             // Low 28 bits: 0xF0000000 & 0xfffffff = 0x0000000 = 0
+        assert_eq!(
+            apply_print_conv(&af_performance_u32, PrintConvId::AppleAFPerformance),
+            "500 15 0"
+        );
+
+        // Test with more realistic values (demonstrating typical bit patterns)
+        let typical_values = ExifValue::I32Array(vec![42, 0x00100200]); // More realistic test values
+                                                                        // High 4 bits: 0x00100200 >> 28 = 0x0 = 0
+                                                                        // Low 28 bits: 0x00100200 & 0xfffffff = 0x0100200 = 1049088
+        assert_eq!(
+            apply_print_conv(&typical_values, PrintConvId::AppleAFPerformance),
+            "42 0 1049088"
+        );
+
+        // Test error cases - insufficient data (ExifTool expects Count => 2)
+        let insufficient_data = ExifValue::I32Array(vec![100]); // Only one value
+        assert_eq!(
+            apply_print_conv(&insufficient_data, PrintConvId::AppleAFPerformance),
+            "Unknown ([100])"
+        );
+
+        // Test with wrong type
+        let wrong_type = ExifValue::Ascii("test".to_string());
+        assert_eq!(
+            apply_print_conv(&wrong_type, PrintConvId::AppleAFPerformance),
+            "Unknown (test)"
         );
     }
 }
