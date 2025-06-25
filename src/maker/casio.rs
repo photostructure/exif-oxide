@@ -1,30 +1,32 @@
-//! Panasonic maker note parser using table-driven approach
+//! Casio maker note parser using table-driven approach
 //!
-//! Panasonic maker notes use a proprietary format that starts with "PANASONIC"
+//! Casio maker notes use a proprietary format that starts with "CASIO"
 //! signature followed by IFD-like structures. This format is consistent
-//! across Panasonic cameras and contains camera-specific settings including
+//! across Casio cameras and contains camera-specific settings including
 //! film simulation modes, X-Trans sensor parameters, and lens information.
 //!
 //! This implementation uses auto-generated tag tables and print conversion
 //! functions, eliminating the need to manually port ExifTool's Perl code.
 
-#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Panasonic.pm"]
+#![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/Casio.pm"]
 
 use crate::core::ifd::{IfdParser, TiffHeader};
 use crate::core::print_conv::apply_print_conv;
 use crate::core::{Endian, ExifValue};
 use crate::error::Result;
-use crate::maker::panasonic::detection::{detect_panasonic_maker_note, PANASONICDetectionResult};
+use crate::maker::casio::detection::{
+    detect_casio_maker_note, CASIODetectionResult, CasioMakerNoteType,
+};
 
 pub mod detection;
 use crate::maker::MakerNoteParser;
-use crate::tables::panasonic_tags::get_panasonic_tag;
+use crate::tables::casio_tags::get_casio_tag;
 use std::collections::HashMap;
 
-/// Parser for Panasonic maker notes
-pub struct PanasonicMakerNoteParser;
+/// Parser for Casio maker notes
+pub struct CasioMakerNoteParser;
 
-impl MakerNoteParser for PanasonicMakerNoteParser {
+impl MakerNoteParser for CasioMakerNoteParser {
     fn parse(
         &self,
         data: &[u8],
@@ -35,29 +37,21 @@ impl MakerNoteParser for PanasonicMakerNoteParser {
             return Ok(HashMap::new());
         }
 
-        // Use generated detection logic to identify Panasonic maker note format
-        let detection = match detect_panasonic_maker_note(data) {
+        // Use generated detection logic to identify Casio maker note format
+        let detection = match detect_casio_maker_note(data) {
             Some(detection) => detection,
             None => {
                 // Fallback: assume standard IFD at start of data
-                PANASONICDetectionResult {
-                    version: None,
+                CASIODetectionResult {
+                    maker_note_type: CasioMakerNoteType::Main,
                     ifd_offset: 0,
-                    description: "Fallback Panasonic parser".to_string(),
+                    byte_order: None,
                 }
             }
         };
 
-        // Panasonic maker notes start with "Panasonic" signature (12 bytes including null padding)
-        // The IFD starts immediately after the signature
-        let ifd_offset = if data.len() >= 12
-            && data.starts_with(&[
-                0x50, 0x61, 0x6e, 0x61, 0x73, 0x6f, 0x6e, 0x69, 0x63, 0x00, 0x00, 0x00,
-            ]) {
-            12 // Skip "Panasonic\0\0\0" signature
-        } else {
-            detection.ifd_offset
-        };
+        // Use detection results to determine IFD offset
+        let ifd_offset = detection.ifd_offset;
 
         // Extract raw IFD data starting from detected offset
         let ifd_data = &data[ifd_offset..];
@@ -66,21 +60,18 @@ impl MakerNoteParser for PanasonicMakerNoteParser {
         }
 
         // Parse using table-driven approach
-        parse_panasonic_ifd_with_tables(ifd_data, byte_order)
+        parse_casio_ifd_with_tables(ifd_data, byte_order)
     }
 
     fn manufacturer(&self) -> &'static str {
-        "Panasonic"
+        "Casio"
     }
 }
 
-/// Parse Panasonic IFD using generated tag tables and print conversion
-fn parse_panasonic_ifd_with_tables(
-    data: &[u8],
-    byte_order: Endian,
-) -> Result<HashMap<u16, ExifValue>> {
+/// Parse Casio IFD using generated tag tables and print conversion
+fn parse_casio_ifd_with_tables(data: &[u8], byte_order: Endian) -> Result<HashMap<u16, ExifValue>> {
     // Create a fake TIFF header for IFD parsing
-    // (Panasonic maker notes don't have a TIFF header, they start directly with IFD)
+    // (Casio maker notes don't have a TIFF header, they start directly with IFD)
     let mut tiff_data = Vec::with_capacity(8 + data.len());
 
     // Add TIFF header
@@ -109,18 +100,18 @@ fn parse_panasonic_ifd_with_tables(
     let parsed_ifd = match IfdParser::parse_ifd(&tiff_data, &header, 8) {
         Ok(parsed) => parsed,
         Err(e) => {
-            eprintln!("Warning: Panasonic IFD parsing failed: {}", e);
+            eprintln!("Warning: Casio IFD parsing failed: {}", e);
             return Ok(HashMap::new());
         }
     };
 
-    // Convert raw IFD entries to Panasonic tags with print conversion
+    // Convert raw IFD entries to Casio tags with print conversion
     let mut result = HashMap::new();
 
     for (tag_id, raw_value) in parsed_ifd.entries() {
-        if let Some(panasonic_tag) = get_panasonic_tag(*tag_id) {
+        if let Some(casio_tag) = get_casio_tag(*tag_id) {
             // Apply print conversion to create human-readable value
-            let converted_value = apply_print_conv(raw_value, panasonic_tag.print_conv);
+            let converted_value = apply_print_conv(raw_value, casio_tag.print_conv);
 
             // Store both raw and converted values
             // Raw value for programmatic access
@@ -139,10 +130,10 @@ fn parse_panasonic_ifd_with_tables(
     Ok(result)
 }
 
-/// Panasonic-specific tag IDs
+/// Casio-specific tag IDs
 pub mod tags {
-    // Main Panasonic tags from ExifTool
-    pub const PANASONIC_VERSION: u16 = 0x0000;
+    // Main Casio tags from ExifTool
+    pub const CASIO_VERSION: u16 = 0x0000;
     pub const INTERNAL_SERIAL_NUMBER: u16 = 0x0010;
     pub const QUALITY: u16 = 0x1000;
     pub const SHARPNESS: u16 = 0x1001;
@@ -241,27 +232,26 @@ mod tests {
     // use crate::core::types::ExifFormat;
 
     #[test]
-    fn test_panasonic_parser_creation() {
-        let parser = PanasonicMakerNoteParser;
-        assert_eq!(parser.manufacturer(), "Panasonic");
+    fn test_casio_parser_creation() {
+        let parser = CasioMakerNoteParser;
+        assert_eq!(parser.manufacturer(), "Casio");
     }
 
     #[test]
     fn test_empty_maker_note() {
-        let parser = PanasonicMakerNoteParser;
+        let parser = CasioMakerNoteParser;
         let result = parser.parse(&[], Endian::Little, 0).unwrap();
         assert!(result.is_empty());
     }
 
     #[test]
-    fn test_panasonic_signature_detection() {
-        let parser = PanasonicMakerNoteParser;
+    fn test_casio_signature_detection() {
+        let parser = CasioMakerNoteParser;
 
-        // Create test data with proper Panasonic signature (12 bytes with null padding)
+        // Create test data with some sample data
         let mut test_data = vec![0u8; 20];
-        test_data[0..12].copy_from_slice(&[
-            0x50, 0x61, 0x6e, 0x61, 0x73, 0x6f, 0x6e, 0x69, 0x63, 0x00, 0x00, 0x00,
-        ]);
+        // Add some dummy IFD header to simulate real maker note data
+        test_data[0..4].copy_from_slice(&[0x00, 0x02, 0x00, 0x01]);
 
         // Parser should handle this without error
         let _result = parser.parse(&test_data, Endian::Little, 0).unwrap();
@@ -271,17 +261,14 @@ mod tests {
     }
 
     #[test]
-    fn test_panasonic_detection_pattern() {
-        // Test the detection function directly using proper Panasonic signature
-        let test_data = &[
-            0x50, 0x61, 0x6e, 0x61, 0x73, 0x6f, 0x6e, 0x69, 0x63, 0x00, 0x00, 0x00, 0x01, 0x02,
-            0x03,
-        ];
-        let detection = detect_panasonic_maker_note(test_data);
+    fn test_casio_detection_pattern() {
+        // Test the detection function directly
+        let test_data = b"CASIO_test_data";
+        let detection = detect_casio_maker_note(test_data);
 
         assert!(detection.is_some());
         let detection = detection.unwrap();
-        assert_eq!(detection.ifd_offset, 12);
-        assert_eq!(detection.description, "Panasonic maker note");
+        assert_eq!(detection.ifd_offset, 0);
+        assert_eq!(detection.maker_note_type, CasioMakerNoteType::Main);
     }
 }

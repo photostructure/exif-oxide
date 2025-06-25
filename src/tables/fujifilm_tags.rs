@@ -38,7 +38,7 @@ pub const FUJIFILM_TAGS: &[FUJIFILMTag] = &[
     FUJIFILMTag {
         id: 0x1001,
         name: "Sharpness",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalParameter,
     },
     FUJIFILMTag {
         id: 0x1002,
@@ -48,12 +48,12 @@ pub const FUJIFILM_TAGS: &[FUJIFILMTag] = &[
     FUJIFILMTag {
         id: 0x1003,
         name: "Saturation",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalParameter,
     },
     FUJIFILMTag {
         id: 0x1004,
         name: "Contrast",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalParameter,
     },
     FUJIFILMTag {
         id: 0x1005,
@@ -73,12 +73,12 @@ pub const FUJIFILM_TAGS: &[FUJIFILMTag] = &[
     FUJIFILMTag {
         id: 0x100b,
         name: "NoiseReduction",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalNoiseReduction,
     },
     FUJIFILMTag {
         id: 0x100e,
         name: "NoiseReduction",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalNoiseReduction,
     },
     FUJIFILMTag {
         id: 0x100f,
