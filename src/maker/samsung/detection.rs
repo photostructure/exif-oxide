@@ -14,7 +14,7 @@ pub struct SAMSUNGDetectionResult {
 }
 
 /// Detect samsung maker note format and extract version information
-/// 
+///
 /// Returns Some(DetectionResult) if this appears to be a samsung maker note,
 /// None otherwise.
 pub fn detect_samsung_maker_note(data: &[u8]) -> Option<SAMSUNGDetectionResult> {
@@ -43,5 +43,4 @@ mod tests {
         assert_eq!(detection.version, None);
         assert_eq!(detection.ifd_offset, 0);
     }
-
 }

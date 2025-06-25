@@ -30,6 +30,7 @@ pub mod olympus_tags;
 pub mod panasonic_tags;
 pub mod pentax_tags;
 pub mod ricoh_tags;
+pub mod samsung_tags;
 pub mod sony_tags;
 
 #[cfg(test)]
