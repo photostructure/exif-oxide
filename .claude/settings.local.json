@@ -70,7 +70,9 @@
       "Bash(/home/mrm/src/exif-oxide/third-party/exiftool/exiftool -Make -Model /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Pentax.jpg)",
       "Bash(for:*)",
       "Bash(do echo \"=== $file Auto patterns ===\")",
-      "Bash(do echo \"=== $file Quality/Standard patterns ===\")"
+      "Bash(do echo \"=== $file Quality/Standard patterns ===\")",
+      "Bash(./test_gpmf_debug)",
+      "Bash(./third-party/exiftool/exiftool:*)"
     ],
     "deny": []
   }
