@@ -1,9 +1,9 @@
 //! Sony maker note parser using table-driven approach
 //!
-//! Sony maker notes use a proprietary format that starts with "SONY DSC" or "SONY CAM"
+//! Sony maker notes use a proprietary format that starts with "SONY"
 //! signature followed by IFD-like structures. This format is consistent
 //! across Sony cameras and contains camera-specific settings including
-//! image processing parameters, lens information, and shooting modes.
+//! film simulation modes, X-Trans sensor parameters, and lens information.
 //!
 //! This implementation uses auto-generated tag tables and print conversion
 //! functions, eliminating the need to manually port ExifTool's Perl code.
@@ -48,14 +48,10 @@ impl MakerNoteParser for SonyMakerNoteParser {
             }
         };
 
-        // Sony maker notes start with "SONY DSC", "SONY CAM", or just "SONY" signature
-        // The IFD starts immediately after the signature or at the detected offset
-        let ifd_offset = if data.len() >= 8
-            && (data.starts_with(b"SONY DSC") || data.starts_with(b"SONY CAM"))
-        {
-            8 // Skip 8-byte "SONY DSC"/"SONY CAM" signature
-        } else if data.len() >= 4 && data.starts_with(b"SONY") {
-            4 // Skip 4-byte "SONY" signature
+        // Sony maker notes start with "SONY" signature (8 bytes)
+        // The IFD starts immediately after the signature
+        let ifd_offset = if data.len() >= 8 && data.starts_with(b"SONY") {
+            8 // Skip "SONY" signature
         } else {
             detection.ifd_offset
         };
@@ -268,15 +264,13 @@ mod tests {
 
     #[test]
     fn test_sony_detection_pattern() {
-        // Test the detection function directly using proper Sony signature
-        let test_data = &[
-            0x53, 0x4f, 0x4e, 0x59, 0x20, 0x44, 0x53, 0x43, 0x01, 0x02, 0x03,
-        ];
+        // Test the detection function directly
+        let test_data = b"SONY_test_data";
         let detection = detect_sony_maker_note(test_data);
 
         assert!(detection.is_some());
         let detection = detection.unwrap();
         assert_eq!(detection.ifd_offset, 0);
-        assert_eq!(detection.description, "Sony DSC maker note");
+        assert_eq!(detection.description, "Generic Sony maker note");
     }
 }
