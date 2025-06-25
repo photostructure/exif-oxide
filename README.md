@@ -123,7 +123,7 @@ See:
 - [TODO-MIGRATE-EXIF-TO-SYNC.md](doc/TODO-MIGRATE-EXIF-TO-SYNC.md) for EXIF migration details
 
 ### Next Steps (Phase 2-4):
-- Additional manufacturer maker notes (Nikon, Sony, Fujifilm expansion)
+- Additional manufacturer maker notes (Ricoh, PhaseOne, Qualcomm, Red expansion)
 - Metadata writing capabilities with safety guarantees  
 - Performance optimizations (SIMD, parallel processing)
 - Async API and plugin system
