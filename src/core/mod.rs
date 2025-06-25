@@ -146,7 +146,29 @@ pub fn find_all_metadata_segments_from_reader<R: Read + Seek>(
             Ok(collection)
         }
 
-        // For non-JPEG formats, we only have EXIF data for now
+        // MP4/MOV formats may contain GPMF data
+        FileType::MP4 | FileType::MOV => {
+            let mut collection = MetadataCollection {
+                exif: None,
+                mpf: None,
+                xmp: Vec::new(),
+                iptc: None,
+                gpmf: Vec::new(),
+            };
+
+            // Try to get EXIF data
+            if let Some(segment) = find_metadata_segment_from_reader_internal(reader, format)? {
+                collection.exif = Some(segment);
+            }
+
+            // TODO: Implement proper MP4 GPMF extraction following ExifTool's approach
+            // ExifTool looks for "GP\x06\0" records in MP4 'mdat' atom and processes
+            // them with ProcessGoPro() function. This requires MP4 container parsing.
+
+            Ok(collection)
+        }
+
+        // For other non-JPEG formats, we only have EXIF data for now
         _ => {
             let mut collection = MetadataCollection {
                 exif: None,
