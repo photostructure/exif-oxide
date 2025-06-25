@@ -17,6 +17,7 @@ include!(concat!(env!("OUT_DIR"), "/generated_tags.rs"));
 pub mod apple_tags;
 pub mod canon_tags;
 pub mod casio_tags;
+pub mod dji_tags;
 pub mod exif_tags; // Standard EXIF tags with PrintConv
 pub mod fujifilm_tags;
 pub mod gopro_tags;
