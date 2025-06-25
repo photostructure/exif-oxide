@@ -93,7 +93,7 @@ impl Manufacturer {
             Manufacturer::Olympus
         } else if make_lower.contains("panasonic") {
             Manufacturer::Panasonic
-        } else if make_lower.contains("pentax") {
+        } else if make_lower.contains("pentax") || make_lower.contains("asahi") {
             Manufacturer::Pentax
         } else if make_lower.contains("ricoh") {
             Manufacturer::Ricoh
