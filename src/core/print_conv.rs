@@ -562,18 +562,19 @@ pub enum PrintConvId {
 
     /// Universal EXIF conversions (used by all manufacturers)
     Flash, // Flash mode (24 standard values from EXIF spec)
-    LightSource,        // Light source for white balance (Universal lookup)
-    Orientation,        // Image orientation (8 standard values)
-    ExposureProgram,    // Exposure program mode (Auto/Manual/Aperture/Shutter Priority)
-    ExifColorSpace,     // EXIF color space (sRGB/Adobe RGB/Uncalibrated)
-    UniversalParameter, // Normal/Low/High pattern (Contrast/Saturation/Sharpness)
-    ExifWhiteBalance,   // EXIF white balance (Auto/Manual)
-    ExposureMode,       // Exposure mode (Auto/Manual/Auto bracket)
-    ResolutionUnit,     // Resolution units (None/inches/cm)
+    LightSource,      // Light source for white balance (Universal lookup)
+    Orientation,      // Image orientation (8 standard values)
+    ExposureProgram,  // Exposure program mode (Auto/Manual/Aperture/Shutter Priority)
+    ExifColorSpace,   // EXIF color space (sRGB/Adobe RGB/Uncalibrated)
+    LowNormalHigh,    // Low/Normal/High pattern (Contrast/Saturation/Sharpness)
+    ExifWhiteBalance, // EXIF white balance (Auto/Manual)
+    ExposureMode,     // Exposure mode (Auto/Manual/Auto bracket)
+    ResolutionUnit,   // Resolution units (None/inches/cm)
 
     /// Universal patterns used by 3+ manufacturers
     UniversalOnOffAuto, // 0=Off, 1=On, 2=Auto (6 manufacturers, 25+ tags)
     UniversalNoiseReduction, // 0=Off, 1=Low, 2=Normal, 3=High, 4=Auto
+    UniversalQualityBasic,   // 1=Economy, 2=Normal, 3=Fine, 4=Super Fine (Canon, Casio, others)
 
     /// GPMF (GoPro Metadata Format) specific conversions
     GpmfAccelerometer,
@@ -997,7 +998,7 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
         PrintConvId::ExposureProgram => format_exposure_program(value),
         PrintConvId::MeteringMode => format_metering_mode(value),
         PrintConvId::ExifColorSpace => format_exif_color_space(value),
-        PrintConvId::UniversalParameter => format_universal_parameter(value),
+        PrintConvId::LowNormalHigh => format_low_normal_high(value),
         PrintConvId::ExifWhiteBalance => format_exif_white_balance(value),
         PrintConvId::ExposureMode => format_exposure_mode(value),
         PrintConvId::ResolutionUnit => format_resolution_unit(value),
@@ -1016,6 +1017,14 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             Some(2) => "Normal".to_string(),
             Some(3) => "High".to_string(),
             Some(4) => "Auto".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalQualityBasic => match as_u32(value) {
+            Some(1) => "Economy".to_string(),
+            Some(2) => "Normal".to_string(),
+            Some(3) => "Fine".to_string(),
+            Some(4) => "Super Fine".to_string(),
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
@@ -1901,7 +1910,7 @@ fn format_exif_color_space(value: &ExifValue) -> String {
 /// Universal parameter conversion (Normal/Low/High pattern)
 /// Used by Contrast (0xa408), Saturation (0xa409), Sharpness (0xa40a)
 /// EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm multiple tags with same pattern
-fn format_universal_parameter(value: &ExifValue) -> String {
+fn format_low_normal_high(value: &ExifValue) -> String {
     match as_u32(value) {
         Some(0) => "Normal".to_string(),
         Some(1) => "Low".to_string(),  // or "Soft" for Sharpness
@@ -2214,15 +2223,15 @@ mod tests {
     fn test_universal_parameter_conversion() {
         // Test shared Normal/Low/High pattern used by Contrast, Saturation, Sharpness
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalParameter),
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::LowNormalHigh),
             "Normal"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalParameter),
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::LowNormalHigh),
             "Low" // "Soft" for Sharpness
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalParameter),
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::LowNormalHigh),
             "High" // "Hard" for Sharpness
         );
     }
@@ -2341,6 +2350,41 @@ mod tests {
         assert_eq!(
             apply_print_conv(&ExifValue::U8(1), PrintConvId::UniversalNoiseReduction),
             "Low"
+        );
+    }
+
+    #[test]
+    fn test_universal_quality_basic_conversion() {
+        // Test UniversalQualityBasic pattern (1=Economy, 2=Normal, 3=Fine, 4=Super Fine)
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalQualityBasic),
+            "Economy"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalQualityBasic),
+            "Normal"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::UniversalQualityBasic),
+            "Fine"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(4), PrintConvId::UniversalQualityBasic),
+            "Super Fine"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalQualityBasic),
+            "Unknown (99)"
+        );
+
+        // Test with different value types
+        assert_eq!(
+            apply_print_conv(&ExifValue::U16(3), PrintConvId::UniversalQualityBasic),
+            "Fine"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U8(2), PrintConvId::UniversalQualityBasic),
+            "Normal"
         );
     }
 }

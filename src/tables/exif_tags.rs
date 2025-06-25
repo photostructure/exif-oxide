@@ -2193,17 +2193,17 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa408,
         name: "Contrast",
-        print_conv: PrintConvId::UniversalParameter,
+        print_conv: PrintConvId::LowNormalHigh,
     },
     ExifTag {
         id: 0xa409,
         name: "Saturation",
-        print_conv: PrintConvId::UniversalParameter,
+        print_conv: PrintConvId::LowNormalHigh,
     },
     ExifTag {
         id: 0xa40a,
         name: "Sharpness",
-        print_conv: PrintConvId::UniversalParameter,
+        print_conv: PrintConvId::LowNormalHigh,
     },
     ExifTag {
         id: 0xa40b,
