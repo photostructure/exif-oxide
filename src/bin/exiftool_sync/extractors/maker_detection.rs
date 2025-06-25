@@ -69,6 +69,7 @@ impl MakerDetectionExtractor {
             "Apple" => "apple",
             "Hasselblad" => "hasselblad",
             "Leica" => "leica",
+            "Ricoh" => "ricoh",
             _ => return Err(format!("Unknown manufacturer: {}", filename)),
         };
 
@@ -255,6 +256,20 @@ impl MakerDetectionExtractor {
             ],
             "leica" => vec![(b"LEICA\x00\x00\x00".to_vec(), None, 8, "Leica maker note")],
             "hasselblad" => vec![(b"Hasselblad".to_vec(), None, 0, "Hasselblad maker note")],
+            "ricoh" => vec![
+                (
+                    b"RICOH\x00II".to_vec(),
+                    None,
+                    8,
+                    "Ricoh maker note (little-endian)",
+                ),
+                (
+                    b"RICOH\x00MM".to_vec(),
+                    None,
+                    8,
+                    "Ricoh maker note (big-endian)",
+                ),
+            ],
             _ => vec![],
         };
 
@@ -312,6 +327,11 @@ impl MakerDetectionExtractor {
                     signature.extend_from_slice(b"PENTAX");
                 } else if sig_str.contains("AOC") {
                     signature.extend_from_slice(b"AOC");
+                }
+            }
+            "ricoh" => {
+                if sig_str.contains("RICOH") {
+                    signature.extend_from_slice(b"RICOH");
                 }
             }
             "fujifilm" => {
@@ -578,6 +598,7 @@ impl Extractor for MakerDetectionExtractor {
             "samsung",
             "sigma",
             "apple",
+            "ricoh",
         ];
 
         // Generate detection code for each manufacturer (with patterns or stub)

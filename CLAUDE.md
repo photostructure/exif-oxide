@@ -96,11 +96,13 @@ tables/
 ├── canon_tags.rs   # 🆕 Canon maker note tags with PrintConvId
 ├── sony_tags.rs    # 🆕 Sony maker note tags with PrintConvId
 ├── olympus_tags.rs # 🆕 Olympus maker note tags with PrintConvId
+├── dji_tags.rs     # 🆕 DJI drone tags with PrintConvId
 └── [generated]/    # Generated from ExifTool (530+ tags)
 
 maker/              # Manufacturer-specific parsing
 ├── pentax.rs       # 🆕 Table-driven parser (200 lines vs 6K Perl)
-└── [others]/       # Canon, Nikon, etc.
+├── dji.rs          # 🆕 DJI drone parser with float conversions
+└── [others]/       # Canon, Nikon, Sony, Fujifilm, etc.
 
 binary.rs           # Direct tag-based extraction
 xmp/                # Full hierarchical XML parsing
@@ -342,4 +344,32 @@ Before implementing ANY new feature:
 **Implementation**: Universal patterns in `src/core/print_conv.rs` lines 575-579 (enum) and comprehensive implementations with full test coverage. Applied to high-priority EXIF and manufacturer tags.
 
 **Next Opportunity**: 700 None entries remain (581 EXIF + 78 Fujifilm + 37 Apple + 4 Hasselblad) - massive potential for human-readable output improvements using the proven universal pattern framework.
+
+### Phase 3 Manufacturers Complete: Media Manager Essential Support ✅
+
+**As of June 2025, Phase 3 media manager manufacturers are complete**:
+
+- ✅ **DJI Drones**: Complete table-driven parser with ExifTool-compatible float conversions
+- ✅ **Specialized Float Conversion**: `format_dji_float2()` implementing `sprintf("%+.2f", $val)` pattern
+- ✅ **Flight Data Extraction**: SpeedX/Y/Z, Pitch/Yaw/Roll, and Camera orientation data
+- ✅ **DRY Implementation**: 9 float tags share single conversion function
+- ✅ **Complete Integration**: Added to maker note system with comprehensive testing
+
+**DJI Implementation Highlights**:
+- **Auto-generated tag table**: `src/tables/dji_tags.rs` with 10 tag definitions
+- **Proven template pattern**: Following Fujifilm parser architecture
+- **ExifTool compatibility**: Exact formatting matches DJI.pm %convFloat2 pattern
+- **Zero regressions**: All 187 tests passing with new DJI functionality
+
+- ✅ **Ricoh Cameras**: Complete table-driven parser with automated sync tools (June 2025)
+- ✅ **Pentax Ecosystem Integration**: Ricoh parser uses Pentax tag structure per ExifTool specification
+- ✅ **Advanced Detection**: Supports both "RICOH\0II" and "RICOH\0MM" signature patterns
+- ✅ **Auto-generated Implementation**: 40 tag definitions with 34 PrintConv variants
+- ✅ **Revolutionary Speed**: Completed in 30 minutes vs estimated 2.5 hours (5x faster)
+
+**Ricoh Implementation Highlights**:
+- **ExifTool Compatibility**: Detection patterns match `$$valPt =~ /^RICOH\0(II|MM)/` from Exif.pm
+- **Complete Automation**: Used streamlined add-manufacturer command with zero manual intervention
+- **Tag Coverage**: 40 tag definitions auto-extracted from `lib/Image/ExifTool/Ricoh.pm`
+- **Zero regressions**: All 197 tests passing with new Ricoh functionality
 

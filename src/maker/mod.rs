@@ -27,7 +27,7 @@ pub mod kodak;
 pub mod dji;
 pub mod gopro;
 pub mod minolta;
-// pub mod ricoh;
+pub mod ricoh;
 // pub mod phaseone;
 // pub mod qualcomm;
 // pub mod red;
@@ -148,7 +148,7 @@ impl Manufacturer {
             Manufacturer::Minolta => Some(Box::new(minolta::MinoltaMakerNoteParser)),
             Manufacturer::GoPro => Some(Box::new(gopro::GoProMakerNoteParser)),
             Manufacturer::DJI => Some(Box::new(dji::DJIMakerNoteParser)),
-            // Manufacturer::Ricoh => Some(Box::new(ricoh::RicohMakerNoteParser)),
+            Manufacturer::Ricoh => Some(Box::new(ricoh::RicohMakerNoteParser)),
             // Manufacturer::PhaseOne => Some(Box::new(phaseone::PhaseOneMakerNoteParser)),
             // Manufacturer::Qualcomm => Some(Box::new(qualcomm::QualcommMakerNoteParser)),
             // Manufacturer::Red => Some(Box::new(red::RedMakerNoteParser)),
