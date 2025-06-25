@@ -588,6 +588,10 @@ pub enum PrintConvId {
     UniversalOffWeakStrong,        // 0=Off, 32=Weak, 64=Strong (Fujifilm ColorChrome, others)
     UniversalSignedNumber,         // Format signed numbers with + prefix for positive values
     UniversalNoiseReductionApplied, // 0=Off, 1=On (Adobe DNG, others)
+    UniversalSubjectDistanceRange, // 0=Unknown, 1=Macro, 2=Close, 3=Distant (EXIF 0xa40c)
+    UniversalFileSource, // 1=Film Scanner, 2=Reflection Print Scanner, 3=Digital Camera (EXIF 0xa300)
+    UniversalRenderingIntent, // 0=Perceptual, 1=Relative Colorimetric, 2=Saturation, 3=Absolute colorimetric (EXIF 0x303)
+    UniversalSensitivityType, // 0=Unknown, 1=Standard Output Sensitivity, 2=Recommended Exposure Index, etc. (EXIF 0x8830)
 
     /// GPMF (GoPro Metadata Format) specific conversions
     GpmfAccelerometer,
@@ -1179,6 +1183,58 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
         PrintConvId::UniversalNoiseReductionApplied => match as_u32(value) {
             Some(0) => "Off".to_string(),
             Some(1) => "On".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalSubjectDistanceRange => match as_u32(value) {
+            Some(0) => "Unknown".to_string(),
+            Some(1) => "Macro".to_string(),
+            Some(2) => "Close".to_string(),
+            Some(3) => "Distant".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalFileSource => {
+            // Handle both numeric and string values like ExifTool
+            // Check for Sigma special case first (4-byte string "\3\0\0\0")
+            match value {
+                ExifValue::Undefined(bytes) if bytes.len() == 4 && bytes == &[3, 0, 0, 0] => {
+                    "Sigma Digital Camera".to_string()
+                }
+                ExifValue::Undefined(bytes) if !bytes.is_empty() => match bytes[0] {
+                    1 => "Film Scanner".to_string(),
+                    2 => "Reflection Print Scanner".to_string(),
+                    3 => "Digital Camera".to_string(),
+                    _ => format!("Unknown ({})", exif_value_to_string(value)),
+                },
+                _ => match as_u32(value) {
+                    Some(1) => "Film Scanner".to_string(),
+                    Some(2) => "Reflection Print Scanner".to_string(),
+                    Some(3) => "Digital Camera".to_string(),
+                    _ => format!("Unknown ({})", exif_value_to_string(value)),
+                },
+            }
+        }
+
+        PrintConvId::UniversalRenderingIntent => match as_u32(value) {
+            Some(0) => "Perceptual".to_string(),
+            Some(1) => "Relative Colorimetric".to_string(),
+            Some(2) => "Saturation".to_string(),
+            Some(3) => "Absolute Colorimetric".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalSensitivityType => match as_u32(value) {
+            Some(0) => "Unknown".to_string(),
+            Some(1) => "Standard Output Sensitivity".to_string(),
+            Some(2) => "Recommended Exposure Index".to_string(),
+            Some(3) => "ISO Speed".to_string(),
+            Some(4) => "Standard Output Sensitivity and Recommended Exposure Index".to_string(),
+            Some(5) => "Standard Output Sensitivity and ISO Speed".to_string(),
+            Some(6) => "Recommended Exposure Index and ISO Speed".to_string(),
+            Some(7) => {
+                "Standard Output Sensitivity, Recommended Exposure Index and ISO Speed".to_string()
+            }
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
