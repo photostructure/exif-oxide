@@ -8,6 +8,7 @@ pub trait Extractor {
     fn extract(&self, exiftool_path: &Path) -> Result<(), String>;
 }
 
+mod app_segment_tables;
 mod binary_formats;
 mod binary_tags;
 mod datetime_patterns;
@@ -20,6 +21,7 @@ mod printconv_analyzer;
 mod printconv_generator;
 mod printconv_tables;
 
+pub use app_segment_tables::AppSegmentTablesExtractor;
 pub use binary_formats::BinaryFormatsExtractor;
 pub use binary_tags::BinaryTagsExtractor;
 pub use datetime_patterns::DateTimePatternsExtractor;

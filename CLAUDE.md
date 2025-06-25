@@ -18,6 +18,7 @@ exif-oxide is a high-performance Rust implementation of Phil Harvey's [ExifTool]
 - **How ExifTool handles it is the correct way** - no exceptions
 - Maintain exact tag name and structure compatibility
 - Do not invent any parsing heuristics. **ALWAYS** defer to ExifTool's algorithms, as verbatim as possible -- Chesterton's Fence applies here in a big way.
+- Please always include a comment pointing back to the exiftool code for Engineers of Tomorrow to know where magic values came from.
 
 **⚠️ CRITICAL**: Never attempt to "improve" or "simplify" ExifTool's logic:
 

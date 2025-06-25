@@ -73,7 +73,7 @@ pub const APPLE_TAGS: &[AppleTag] = &[
     AppleTag {
         id: 0x000c,
         name: "FocusDistanceRange",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::AppleFocusDistanceRange,
     },
     AppleTag {
         id: 0x000f,
@@ -108,7 +108,7 @@ pub const APPLE_TAGS: &[AppleTag] = &[
     AppleTag {
         id: 0x001a,
         name: "QualityHint",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalQualityBasic,
     },
     AppleTag {
         id: 0x001d,
@@ -133,7 +133,7 @@ pub const APPLE_TAGS: &[AppleTag] = &[
     AppleTag {
         id: 0x0023,
         name: "AFPerformance",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::AppleAFPerformance,
     },
     AppleTag {
         id: 0x0025,
