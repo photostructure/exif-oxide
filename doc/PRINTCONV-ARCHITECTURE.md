@@ -45,6 +45,7 @@ pub enum PrintConvId {
     CanonCameraSettings,      // Canon settings decoding
     NikonLensType,            // Nikon lens identification
     SonySceneMode,            // Sony scene mode names
+    DJIFloat2,                // DJI drone float formatting
 
     // Total: ~50 conversion patterns handle ALL manufacturers
 }
