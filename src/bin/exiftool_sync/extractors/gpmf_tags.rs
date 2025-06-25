@@ -12,14 +12,14 @@ use std::path::Path;
 
 #[derive(Debug, Clone)]
 struct GpmfTagEntry {
-    tag_id: String,         // 4-byte tag like "ABSC", "ACCL"
-    name: String,           // Tag name like "AutoBoostScore"
+    tag_id: String, // 4-byte tag like "ABSC", "ACCL"
+    name: String,   // Tag name like "AutoBoostScore"
     #[allow(dead_code)]
-    description: String,    // Optional description
-    printconv_id: String,   // PrintConvId variant name
-    binary: bool,           // If tag has Binary => 1
-    subdirectory: bool,     // If tag has SubDirectory
-    unknown: bool,          // If tag has Unknown => 1
+    description: String, // Optional description
+    printconv_id: String, // PrintConvId variant name
+    binary: bool,   // If tag has Binary => 1
+    subdirectory: bool, // If tag has SubDirectory
+    unknown: bool,  // If tag has Unknown => 1
     #[allow(dead_code)]
     groups: Option<String>, // Group assignment
 }
