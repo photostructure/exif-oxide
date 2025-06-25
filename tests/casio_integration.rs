@@ -47,23 +47,23 @@ fn test_casio_qv_4000_real_camera_file() {
         eprintln!("Warning: Test image {} not found, skipping", test_image);
         return;
     }
-    
+
     let result = read_basic_exif(Path::new(test_image));
     assert!(result.is_ok());
-    
+
     let exif_data = result.unwrap();
-    
+
     // Verify that Casio make is detected
     if let Some(make) = &exif_data.make {
         let has_casio_make = make.contains("Casio") || make.contains("CASIO");
-        
+
         if has_casio_make {
             println!("Successfully extracted Casio metadata from {}", test_image);
             println!("Make: {:?}, Model: {:?}", exif_data.make, exif_data.model);
-            
+
             // Should have extracted make/model data
             assert!(exif_data.make.is_some());
-            
+
             // Verify model contains expected QV series identifier
             if let Some(model) = &exif_data.model {
                 // QV series cameras should be identifiable
@@ -84,23 +84,23 @@ fn test_casio_ex_z1200_real_camera_file() {
         eprintln!("Warning: Test image {} not found, skipping", test_image);
         return;
     }
-    
+
     let result = read_basic_exif(Path::new(test_image));
     assert!(result.is_ok());
-    
+
     let exif_data = result.unwrap();
-    
+
     // Verify that Casio make is detected
     if let Some(make) = &exif_data.make {
         let has_casio_make = make.contains("Casio") || make.contains("CASIO");
-        
+
         if has_casio_make {
             println!("Successfully extracted Casio metadata from {}", test_image);
             println!("Make: {:?}, Model: {:?}", exif_data.make, exif_data.model);
-            
+
             // Should have extracted make/model data
             assert!(exif_data.make.is_some());
-            
+
             // Verify model contains expected EX series identifier
             if let Some(model) = &exif_data.model {
                 // EX series cameras should be identifiable
@@ -121,23 +121,23 @@ fn test_casio_qvci_real_camera_file() {
         eprintln!("Warning: Test image {} not found, skipping", test_image);
         return;
     }
-    
+
     let result = read_basic_exif(Path::new(test_image));
-    
+
     // QVCI format may not have standard EXIF, handle gracefully
     match result {
         Ok(exif_data) => {
             // Verify that Casio make is detected
             if let Some(make) = &exif_data.make {
                 let has_casio_make = make.contains("Casio") || make.contains("CASIO");
-                
+
                 if has_casio_make {
                     println!("Successfully extracted Casio metadata from {}", test_image);
                     println!("Make: {:?}, Model: {:?}", exif_data.make, exif_data.model);
-                    
+
                     // Should have extracted make/model data
                     assert!(exif_data.make.is_some());
-                    
+
                     // QVCI format should be handled
                     if let Some(model) = &exif_data.model {
                         println!("QVCI Model detected: {}", model);
@@ -164,26 +164,26 @@ fn test_casio_detection_patterns_comprehensive() {
         ("test-images/casio/EX-Z3.jpg", "EX series (Type2/Main)"),
         ("test-images/casio/QVCI.jpg", "QVCI format"),
     ];
-    
+
     for (test_image, description) in &test_images {
         if !Path::new(test_image).exists() {
             eprintln!("Warning: Test image {} not found, skipping", test_image);
             continue;
         }
-        
+
         let result = read_basic_exif(Path::new(test_image));
-        
+
         match result {
             Ok(exif_data) => {
                 println!("Testing {}: {}", description, test_image);
-                
+
                 // All Casio images should extract basic EXIF successfully
                 if let Some(make) = &exif_data.make {
                     if make.contains("Casio") || make.contains("CASIO") {
                         println!("  ✓ Casio detection successful");
                         println!("  Make: {:?}", exif_data.make);
                         println!("  Model: {:?}", exif_data.model);
-                        
+
                         // Basic validation that data was extracted
                         assert!(exif_data.make.is_some());
                     }
@@ -204,39 +204,39 @@ fn test_casio_detection_patterns_comprehensive() {
 fn test_casio_model_specific_conditions_real_data() {
     // EXIFTOOL-SOURCE: lib/Image/ExifTool/Casio.pm:66
     // Tests model-specific flash mode handling for different Casio models
-    
+
     let test_images = [
         "test-images/casio/QV-3000EX.jpg",
         "test-images/casio/EX-Z3.jpg",
     ];
-    
+
     for test_image in &test_images {
         if !Path::new(test_image).exists() {
             eprintln!("Warning: Test image {} not found, skipping", test_image);
             continue;
         }
-        
+
         let result = read_basic_exif(Path::new(test_image));
-        
+
         if let Ok(exif_data) = result {
             if let Some(make) = &exif_data.make {
                 if make.contains("Casio") || make.contains("CASIO") {
                     println!("Testing model-specific conditions for: {}", test_image);
-                    
+
                     if let Some(model) = &exif_data.model {
                         println!("  Model: {}", model);
-                        
+
                         // Test that different model names are handled correctly
                         // This exercises the model-specific conditional logic in ExifTool
                         let is_qv_series = model.starts_with("QV");
                         let is_ex_series = model.starts_with("EX");
-                        
+
                         if is_qv_series {
                             println!("  ✓ QV series detected - should use Main table");
                         } else if is_ex_series {
                             println!("  ✓ EX series detected - may use Type2 table");
                         }
-                        
+
                         // Model should be detected for proper conditional handling
                         assert!(!model.is_empty());
                     }
@@ -253,25 +253,25 @@ fn test_casio_model_specific_conditions_real_data() {
 fn test_casio_firmware_date_parsing_real_data() {
     // EXIFTOOL-SOURCE: lib/Image/ExifTool/Casio.pm:178-189
     // Tests firmware date extraction with format: '/^(\d{2})(\d{2})\0\0(\d{2})(\d{2})\0\0(\d{2})(.{2})\0{2}$/'
-    
+
     let test_images = [
         "test-images/casio/QV-3000EX.jpg",
         "test-images/casio/EX-Z3.jpg",
     ];
-    
+
     for test_image in &test_images {
         if !Path::new(test_image).exists() {
             eprintln!("Warning: Test image {} not found, skipping", test_image);
             continue;
         }
-        
+
         let result = read_basic_exif(Path::new(test_image));
-        
+
         if let Ok(exif_data) = result {
             if let Some(make) = &exif_data.make {
                 if make.contains("Casio") || make.contains("CASIO") {
                     println!("Testing firmware date parsing for: {}", test_image);
-                    
+
                     // The test validates that the parsing doesn't crash on real data
                     // Firmware date tag (0x0015) may or may not be present
                     println!("  ✓ Firmware date parsing handled without error");
@@ -291,30 +291,33 @@ fn test_casio_endianness_real_data() {
         "test-images/casio/EX_Z1200.jpg",
         "test-images/casio/QVCI.jpg",
     ];
-    
+
     for test_image in &test_images {
         if !Path::new(test_image).exists() {
             eprintln!("Warning: Test image {} not found, skipping", test_image);
             continue;
         }
-        
+
         let result = read_basic_exif(Path::new(test_image));
-        
+
         match result {
             Ok(exif_data) => {
                 if let Some(make) = &exif_data.make {
                     if make.contains("Casio") || make.contains("CASIO") {
                         println!("Testing endianness handling for: {}", test_image);
-                        
+
                         // Should handle both little-endian and big-endian data correctly
                         // Orientation value, if present, tests endianness handling
                         if let Some(orientation) = exif_data.orientation {
-                            println!("  Orientation: {} (endianness handled correctly)", orientation);
-                            
+                            println!(
+                                "  Orientation: {} (endianness handled correctly)",
+                                orientation
+                            );
+
                             // Valid orientation values are 1-8
-                            assert!(orientation >= 1 && orientation <= 8);
+                            assert!((1..=8).contains(&orientation));
                         }
-                        
+
                         println!("  ✓ Endianness handling successful");
                     }
                 }
@@ -333,10 +336,10 @@ fn test_casio_error_handling() {
     // Test that empty maker notes are handled gracefully
     let result = parse_maker_notes(&[], "CASIO", Endian::Little, 0);
     assert!(result.is_ok());
-    
+
     let tags = result.unwrap();
     assert_eq!(tags.len(), 0); // Empty data should result in empty tags
-    
+
     println!("✓ Empty maker note data handled gracefully");
 }
 
@@ -351,12 +354,16 @@ fn test_casio_manufacturer_edge_cases() {
         "CASIO COMPUTER CO.,LTD",
         "CASIO COMPUTER CO.,LTD.",
     ];
-    
+
     for make_string in &test_cases {
         let manufacturer = Manufacturer::from_make(make_string);
-        assert_eq!(manufacturer, Manufacturer::Casio, 
-                   "Failed to detect '{}' as Casio", make_string);
-        
+        assert_eq!(
+            manufacturer,
+            Manufacturer::Casio,
+            "Failed to detect '{}' as Casio",
+            make_string
+        );
+
         println!("✓ '{}' correctly detected as Casio", make_string);
     }
 }
