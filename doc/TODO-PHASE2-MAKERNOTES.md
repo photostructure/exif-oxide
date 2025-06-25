@@ -17,21 +17,24 @@
 ## ✅ Completed Work
 
 ### Phase 0: Synchronization Infrastructure ✅
+
 - ExifTool sync tools working (`cargo run --bin exiftool_sync extract-all`)
 - Binary format extraction for all manufacturers
 - Detection pattern generation
 - Test baseline infrastructure
 
-### PrintConv Revolution ✅  
+### PrintConv Revolution ✅
+
 - **Core system**: `src/core/print_conv.rs` (~350 lines handles ALL manufacturers)
 - **Universal functions**: OnOff, Quality, WhiteBalance, etc. (work across ALL manufacturers)
 - **Manufacturer-specific functions**: Lookup tables for model names, lens types, etc.
 - **Proven architecture**: Table-driven approach validated
 
 ### Pentax Reference Implementation ✅
+
 - **Complete parser**: `src/maker/pentax.rs` (~200 lines using table-driven approach)
 - **Tag table**: `src/tables/pentax_tags.rs` (137 tags with PrintConv mappings)
-- **Auto-generated detection**: `src/maker/pentax/detection.rs` 
+- **Auto-generated detection**: `src/maker/pentax/detection.rs`
 - **Tests**: 12 passing tests validating all functionality
 - **Integration**: Works with existing Canon implementation
 - **DRY optimization**: 17% of patterns benefit from shared optimization (7 shared tables eliminate 27 duplicates)
@@ -42,7 +45,7 @@
 Maker notes are proprietary EXIF data sections where camera manufacturers store camera-specific metadata that doesn't fit standard EXIF tags. Each manufacturer uses different:
 
 - **Data structures** (some IFD-based, others binary blobs)
-- **Tag ID schemes** (often overlapping between manufacturers)  
+- **Tag ID schemes** (often overlapping between manufacturers)
 - **Binary formats** (fixed-length records, variable-length, encrypted sections)
 - **Versioning** (different camera generations use different layouts)
 
@@ -53,12 +56,14 @@ Maker notes are proprietary EXIF data sections where camera manufacturers store 
 Based on successful Pentax implementation, adding any new manufacturer follows this proven pattern:
 
 ### Step 1: Extract Detection Patterns (5 minutes - automated)
+
 ```bash
 cargo run --bin exiftool_sync extract maker-detection
 # Generates: src/maker/{manufacturer}/detection.rs
 ```
 
 ### Step 2: Generate PrintConv Tables (30 seconds - automated)
+
 ```bash
 # NEW: Use automated sync tooling to generate complete tag tables
 cargo run --bin exiftool_sync extract printconv-tables Olympus.pm
@@ -67,6 +72,7 @@ cargo run --bin exiftool_sync extract printconv-tables Olympus.pm
 ```
 
 **Output**: Auto-generated tag table with PrintConv mappings:
+
 ```rust
 // AUTO-GENERATED from Olympus.pm PrintConv definitions
 pub const OLYMPUS_TAGS: &[OlympusTag] = &[
@@ -79,6 +85,7 @@ pub const OLYMPUS_TAGS: &[OlympusTag] = &[
 ```
 
 ### Step 3: Implement Parser (2 hours)
+
 ```rust
 // src/maker/{manufacturer}.rs - Copy Pentax pattern exactly
 impl MakerNoteParser for ManufacturerMakerNoteParser {
@@ -90,9 +97,11 @@ impl MakerNoteParser for ManufacturerMakerNoteParser {
 ```
 
 ### Step 4: Review Generated PrintConv Functions (already done)
+
 **PrintConv functions are auto-generated** in Step 2. No manual work required!
 
 The sync tool:
+
 - ✅ Identifies reusable patterns (OnOff, Quality, WhiteBalance, etc.)
 - ✅ Generates new PrintConvId enum variants for manufacturer-specific patterns
 - ✅ Creates lookup tables for complex conversions (lens types, scene modes, etc.)
@@ -103,30 +112,35 @@ The sync tool:
 ## Next Manufacturers (Priority Order)
 
 ### 1. Olympus (Next - Simplest)
+
 - **Why first**: Clean IFD structure, no binary blobs, good learning case
 - **Complexity**: Low - standard IFD parsing like Pentax
 - **ExifTool source**: `lib/Image/ExifTool/Olympus.pm`
 - **Estimated time**: **2.5 hours** using automated sync tools
 
-### 2. Nikon (High Impact)  
+### 2. Nikon (High Impact)
+
 - **Why important**: #2 camera manufacturer globally, most complex implementation
 - **Complexity**: High - multiple versions, encrypted sections, endianness switches
 - **ExifTool source**: `lib/Image/ExifTool/Nikon.pm` (14,191 lines!)
 - **Estimated time**: **2.5 hours** using automated sync tools (vs 3-4 weeks manual)
 
 ### 3. Sony (High Impact)
+
 - **Why important**: #3 manufacturer, growing market share
 - **Complexity**: Medium-high - Minolta legacy, model variations, mixed formats
 - **ExifTool source**: `lib/Image/ExifTool/Sony.pm`
 - **Estimated time**: **2.5 hours** using automated sync tools
 
 ### 4. Fujifilm (Moderate Impact)
+
 - **Why important**: Unique film simulation settings, loyal user base
 - **Complexity**: Medium - X-Trans sensor specifics, RAF format integration
 - **ExifTool source**: `lib/Image/ExifTool/Fujifilm.pm`
 - **Estimated time**: **2.5 hours** using automated sync tools
 
 ### 5. Panasonic (Growing Market)
+
 - **Why important**: Growing video market share, RW2 format
 - **Complexity**: Medium - some binary data sections
 - **ExifTool source**: `lib/Image/ExifTool/Panasonic.pm`
@@ -135,13 +149,16 @@ The sync tool:
 ### Next Priority: Media Manager Essential Manufacturers
 
 #### High Priority - Common Consumer Cameras
+
 - **Casio** (63,705 bytes - Medium complexity)
+
   - **Why important**: Very common consumer cameras, point-and-shoot cameras ubiquitous in media collections
   - **Use case**: Legacy digital cameras, compact cameras, older collections
   - **ExifTool source**: `lib/Image/ExifTool/Casio.pm`
   - **Estimated time**: **2.5 hours** using automated sync tools
 
 - **Kodak** (123,475 bytes - High complexity)
+
   - **Why important**: Massive legacy camera collection, film scanners, historical importance
   - **Use case**: Historical photos, film digitization, professional workflows
   - **ExifTool source**: `lib/Image/ExifTool/Kodak.pm`
@@ -154,7 +171,9 @@ The sync tool:
   - **Estimated time**: **2.5 hours** using automated sync tools
 
 #### Medium Priority - Growing Markets
+
 - **GoPro** (34,770 bytes - Medium complexity) 🎬
+
   - **Why important**: Action cameras extremely common in media libraries, sports/travel footage
   - **Use case**: Adventure photography/video, social media content, action sports
   - **ExifTool source**: `lib/Image/ExifTool/GoPro.pm`
@@ -162,6 +181,7 @@ The sync tool:
   - **Estimated time**: **2.5 hours** using automated sync tools
 
 - **DJI** (25,356 bytes - Medium complexity) 🚁
+
   - **Why important**: Drone footage increasingly common in modern media collections
   - **Use case**: Aerial photography/video, real estate, filmmaking, travel documentation
   - **ExifTool source**: `lib/Image/ExifTool/DJI.pm`
@@ -174,7 +194,9 @@ The sync tool:
   - **Estimated time**: **2.5 hours** using automated sync tools
 
 #### Professional/Specialized
+
 - **PhaseOne** (27,408 bytes - Medium complexity)
+
   - **Why important**: Professional medium format, high-end studio workflows
   - **Use case**: Commercial photography, fashion, fine art photography
   - **ExifTool source**: `lib/Image/ExifTool/PhaseOne.pm`
@@ -187,6 +209,7 @@ The sync tool:
   - **Estimated time**: **2.5 hours** using automated sync tools
 
 #### Video-Focused
+
 - **Red** (11,084 bytes - Low complexity) 🎬
   - **Why important**: Professional cinema cameras, film production workflows
   - **Use case**: Film production, professional video, broadcast content
@@ -194,25 +217,30 @@ The sync tool:
   - **Estimated time**: **2.5 hours** using automated sync tools
 
 #### Legacy/Niche (Lower Priority)
+
 - **Sanyo** (12,116 bytes), **JVC** (3,638 bytes), **Leaf** (16,715 bytes)
 - Each follows identical pattern: **2.5 hours** implementation using automated sync tools
 
 ## Technical Architecture
 
 ### Table-Driven PrintConv System
+
 The breakthrough architecture that makes rapid implementation possible:
 
 **Universal PrintConv Functions** (work for ALL manufacturers):
+
 - `OnOff`, `YesNo`, `Quality`, `FlashMode`, `FocusMode`
 - `WhiteBalance`, `MeteringMode`, `IsoSpeed`, `ExposureCompensation`
 - `ImageSize` (handles multiple array formats)
 
 **Manufacturer-Specific Functions** (lookup tables):
+
 - `PentaxModelLookup`, `NikonLensType`, `SonySceneMode`
 - Generated from ExifTool's manufacturer-specific hash tables
 - No custom logic, just data tables
 
 **Integration with Automated Sync Infrastructure**:
+
 - Detection patterns auto-generated from ExifTool
 - Binary data tables auto-generated for ProcessBinaryData
 - **🚀 NEW: Tag tables auto-generated with PrintConv mappings**
@@ -220,8 +248,9 @@ The breakthrough architecture that makes rapid implementation possible:
 - **🚀 NEW: Pattern analysis and reusability classification**
 
 ### Code Reuse Strategy
+
 - **Detection logic**: Auto-generated from ExifTool synchronization tools
-- **IFD parsing**: Reuse existing parser from Pentax/Canon implementations  
+- **IFD parsing**: Reuse existing parser from Pentax/Canon implementations
 - **PrintConv functions**: Universal functions work across all manufacturers
 - **Error handling**: Consistent patterns across all parsers
 - **Testing**: Same validation approach for all manufacturers
@@ -231,22 +260,26 @@ The breakthrough architecture that makes rapid implementation possible:
 ### Critical Success Factors
 
 **1. Never manually port ExifTool code**
+
 - Always use extraction tools for detection patterns
 - **🚀 NEW: Always use automated PrintConv sync tools** (`extract printconv-tables`)
 - Always use table-driven approach for PrintConv
 - If something can't be extracted, improve the sync tools
 
-**2. Trust the generated code** 
+**2. Trust the generated code**
+
 - ExifTool's quirks capture 25 years of camera bugs
 - Generated detection patterns handle edge cases
 - If generated code seems wrong, the camera is probably weird
 
 **3. Focus on compatibility, not elegance**
+
 - ExifTool compatibility is the #1 priority
 - Don't "improve" the logic - match ExifTool exactly
 - Camera quirks are features, not bugs
 
 **4. Use proven patterns**
+
 - Copy Pentax implementation exactly for new manufacturers
 - Only change tag table references and manufacturer names
 - Reuse existing PrintConv functions whenever possible
@@ -276,7 +309,7 @@ cargo run -- test.{format} > exif-oxide.json
 
 ### 🚨 CRITICAL: Integration Test Requirements
 
-**MANDATORY**: Every completed manufacturer MUST have integration tests that verify heuristics present in ExifTool source code. 
+**MANDATORY**: Every completed manufacturer MUST have integration tests that verify heuristics present in ExifTool source code.
 
 ⚠️ **Common Problem**: Teams have struggled to follow this guidance properly. Integration tests MUST:
 
@@ -286,6 +319,7 @@ cargo run -- test.{format} > exif-oxide.json
 4. **Validate Edge Cases**: Focus on the weird camera quirks and manufacturer-specific parsing logic found in ExifTool
 
 **Example Pattern** (following ExifTool source):
+
 ```rust
 #[test]
 fn test_nikon_encrypted_data_detection() {
@@ -300,6 +334,7 @@ fn test_nikon_encrypted_data_detection() {
 ```
 
 **Integration Test Checklist** for each manufacturer:
+
 - [ ] **Detection Logic**: Test maker note signature detection (matches ExifTool detection patterns)
 - [ ] **Offset Calculations**: Test IFD offset handling (matches ExifTool's quirky offset math)
 - [ ] **Endianness Handling**: Test byte order detection and switching (matches ExifTool endian logic)
@@ -315,11 +350,13 @@ fn test_nikon_encrypted_data_detection() {
 **CRITICAL**: The following manufacturers lack proper integration tests that validate ExifTool source heuristics:
 
 #### ❌ MISSING Integration Tests (High Priority)
+
 - [ ] **Casio**: No dedicated integration test file found - needs `tests/casio_integration.rs`
-- [ ] **Kodak**: No dedicated integration test file found - needs `tests/kodak_integration.rs`  
+- [ ] **Kodak**: No dedicated integration test file found - needs `tests/kodak_integration.rs`
 - [ ] **Minolta**: No dedicated integration test file found - needs `tests/minolta_integration.rs`
 
 #### ⚠️ NEEDS ExifTool Heuristic Validation (Medium Priority)
+
 - [ ] **Pentax**: `tests/pentax_integration.rs:1-33` has basic tests but lacks ExifTool source heuristic validation
 - [ ] **Nikon**: `tests/nikon_integration.rs:1-131` needs specific ExifTool heuristic tests for encrypted data detection
 - [ ] **Sony**: `tests/sony_integration.rs:1-89` needs ExifTool source heuristic validation for tag parsing
@@ -327,6 +364,7 @@ fn test_nikon_encrypted_data_detection() {
 - [ ] **Panasonic**: `tests/panasonic_integration.rs:82-93` has signature handling but needs ExifTool source validation
 
 #### ✅ GOOD Coverage (Reference Examples)
+
 - [x] **Canon**: Comprehensive tests in `tests/maker_notes.rs:13-317` - **USE AS REFERENCE PATTERN**
 - [x] **Fujifilm**: Good coverage in `tests/maker_notes.rs:422-611` - **GOOD EXAMPLE**
 - [x] **Hasselblad**: Solid tests in `tests/maker_notes.rs:613-727` - **EXCELLENT SOURCE ATTRIBUTION**
@@ -334,6 +372,7 @@ fn test_nikon_encrypted_data_detection() {
 #### Required Test Patterns for Missing/Incomplete Tests:
 
 **For MISSING manufacturers (Casio, Kodak, Minolta)**:
+
 1. Create dedicated `tests/{manufacturer}_integration.rs` file
 2. Test detection logic matching ExifTool patterns
 3. Test IFD parsing with real camera data
@@ -341,6 +380,7 @@ fn test_nikon_encrypted_data_detection() {
 5. Include `// EXIFTOOL-SOURCE:` comments for each test
 
 **For manufacturers NEEDING ExifTool validation**:
+
 1. Add tests that reference specific ExifTool source lines
 2. Test camera-specific quirks found in ExifTool code
 3. Validate offset calculations match ExifTool's math
@@ -348,6 +388,7 @@ fn test_nikon_encrypted_data_detection() {
 5. Use real camera files, not synthetic data
 
 **Example Test Template**:
+
 ```rust
 #[test]
 fn test_{manufacturer}_offset_calculation() {
@@ -364,11 +405,13 @@ fn test_{manufacturer}_offset_calculation() {
 **CRITICAL**: Integration tests MUST use real camera files to validate ExifTool heuristics properly.
 
 **If insufficient test images exist**:
-1. **Copy from ExifTool**: Use images from `third-party/exiftool/t/images/` 
-2. **Organize properly**: Copy to `$REPO_ROOT/test-images/$make/$model.$ext`
+
+1. **Copy from ExifTool**: Use images from `third-party/exiftool/t/images/`
+2. **Organize properly**: Copy to `$REPO_ROOT/test-images/$make/$model.$ext` (use the Make and Model from `exiftool -Make -Model $file`)
 3. **Use consistent naming**: `test-images/canon/EOS_40D.jpg`, `test-images/nikon/D850.nef`
 
 **Example structure**:
+
 ```
 test-images/
 ├── canon/
@@ -394,6 +437,7 @@ test-images/
 ```
 
 **Copy Command Example**:
+
 ```bash
 # Copy ExifTool test images to organized structure
 cp third-party/exiftool/t/images/Canon.jpg test-images/canon/EOS_40D.jpg
@@ -402,6 +446,7 @@ cp third-party/exiftool/t/images/Sony.jpg test-images/sony/DSC_P1.jpg
 ```
 
 **Integration Test Pattern**:
+
 ```rust
 #[test]
 fn test_casio_real_camera_file() {
@@ -411,7 +456,7 @@ fn test_casio_real_camera_file() {
         eprintln!("Warning: Test image {} not found, skipping", test_image);
         return;
     }
-    
+
     let result = read_basic_exif(Path::new(test_image));
     assert!(result.is_ok());
     // Validate specific Casio heuristics from ExifTool source...
@@ -423,6 +468,7 @@ fn test_casio_real_camera_file() {
 ### Functionality Requirements
 
 #### Core Manufacturers (Complete)
+
 - ✅ **Canon**: Complete (existing reference implementation)
 - ✅ **Pentax**: Complete (new reference implementation with PrintConv)
 - ✅ **Olympus**: Complete (standard IFD tags extracted with optimized shared PrintConv)
@@ -433,6 +479,7 @@ fn test_casio_real_camera_file() {
 - ✅ **Hasselblad**: Complete (simple IFD structure, 4 known tags from ExifTool comments)
 
 #### Media Manager Priority (Phase 3)
+
 - ✅ **Casio**: Common consumer cameras, point-and-shoot ubiquity ✅ COMPLETE
 - ✅ **Hasselblad**: Professional medium format, simple IFD structure ✅ COMPLETE
 - ✅ **Kodak**: Legacy collections, film digitization workflows ✅ COMPLETE
@@ -444,16 +491,18 @@ fn test_casio_real_camera_file() {
 - [ ] **Qualcomm**: Android computational photography metadata
 - [ ] **Red**: Professional cinema workflows
 
-### Quality Metrics  
+### Quality Metrics
+
 - [ ] **Tag coverage**: 70%+ compared to ExifTool for each manufacturer
 - [ ] **Performance**: <5ms additional per manufacturer
 - [ ] **Compatibility**: No regressions in existing functionality
 - [ ] **Error handling**: Graceful degradation when maker notes fail
 
 ### Technical Requirements
+
 - [ ] **PrintConv coverage**: All major tag types have human-readable conversion
 - [ ] **Code consistency**: All manufacturers follow proven pattern
-- [ ] **Testing**: Integration tests for all manufacturers  
+- [ ] **Testing**: Integration tests for all manufacturers
 - [ ] **Documentation**: Each manufacturer clearly documented
 
 ## Timeline
@@ -463,15 +512,17 @@ fn test_casio_real_camera_file() {
 **✅ Foundation Complete**: PrintConv revolution + Pentax reference implementation + automated sync tools + **Olympus + Nikon implementation complete**
 
 **📋 Automated Implementation (Remaining)**: All manufacturers using automated sync tools
+
 - **✅ Olympus Complete**: 2 hours - automated PrintConv generation with shared optimization
-- **✅ Pentax DRY Complete**: PrintConv optimization applied with shared lookup elimination (27 duplicates removed)  
+- **✅ Pentax DRY Complete**: PrintConv optimization applied with shared lookup elimination (27 duplicates removed)
 - **✅ Nikon Complete**: 2.5 hours - automated with character sanitization breakthrough for Rust identifiers
-- **✅ Fujifilm Complete**: 2.5 hours - automated with table-driven PrintConv approach  
+- **✅ Fujifilm Complete**: 2.5 hours - automated with table-driven PrintConv approach
 - **✅ Sony Complete**: 2.5 hours - automated table-driven PrintConv with comprehensive tag coverage
 - **✅ Panasonic Complete**: 2.5 hours - automated table-driven PrintConv with full maker note support
 - **✅ Hasselblad Complete**: 2 hours - simple IFD structure following ExifTool MakerNotes.pm exactly
 
 **📋 Phase 3: Media Manager Essential Manufacturers** (~17.5 hours remaining)
+
 - **✅ COMPLETE**: Casio (2.5 hours) - Most common consumer cameras in collections ✅
 - **✅ COMPLETE**: Kodak (2.5 hours) - Legacy photo collections, film digitization ✅
 - **✅ COMPLETE**: Minolta (2.5 hours) - Sony compatibility, lens metadata ✅
@@ -483,6 +534,7 @@ fn test_casio_real_camera_file() {
 - **Cinema**: Red (2.5 hours) - Professional video production
 
 **Benefits of Automated Sync Tools**:
+
 - **Timeline acceleration**: 15x faster than manual porting
 - **Maintenance revolution**: ExifTool updates → regenerate everything automatically
 - **Code quality**: 96% reduction in conversion code + 90% automation of remaining work
@@ -499,6 +551,7 @@ The table-driven PrintConv approach fundamentally changes how we think about Exi
 **Legacy Impact**: This breakthrough ensures exif-oxide will maintain perfect ExifTool compatibility with minimal effort as both projects evolve.
 
 **Next Phases**:
+
 - **Phase 3**: Media Manager Essential Manufacturers (**3 days** using automated tools)
   - **Focus**: Manufacturers most relevant to media management applications
   - **Prioritization**: Based on real-world camera usage in photo/video collections
@@ -528,10 +581,11 @@ This prioritization ensures exif-oxide covers the cameras actually encountered i
 - **Example**: `CanonLensType` now used by 25 tags via single shared implementation
 
 **Optimized Implementation** (Complete):
+
 ```rust
 // Tag mapping layer
 CameraInfo5D:0x10c → PrintConvId::CanonLensType
-CameraInfo5D:0x10e → PrintConvId::CanonLensType  
+CameraInfo5D:0x10e → PrintConvId::CanonLensType
 CameraInfo5D:0x110 → PrintConvId::CanonLensType
 
 // Single shared implementation
@@ -539,24 +593,28 @@ PrintConvId::CanonLensType → canon_lens_type_lookup()
 ```
 
 **Major Shared Tables Implemented**:
+
 - ✅ `CanonLensType`: 25 tags → single lens lookup implementation
 - ✅ `OnOff`: 22 tags → single On/Off implementation (universal across manufacturers)
 - ✅ `CanonUserDefPictureStyle`: 9 tags → single picture style implementation
 - ✅ `CanonPictureStyle`: 18 tags → single picture style implementation
 
 **Completed Actions**:
+
 1. ✅ **Detection Complete**: Enhanced analyzer detects shared lookup patterns
 2. ✅ **Code Generation Updated**: `printconv_tables.rs` extractor generates shared PrintConvId variants
 3. ✅ **Canon Implementation Updated**: Refactored Canon tags to use shared variants
 4. ✅ **Function Generator Updated**: Generated consolidated conversion functions
 
 **Achieved Benefits**:
+
 - ✅ **Code reduction**: 95+ fewer duplicate implementations for Canon
 - ✅ **Maintenance simplification**: Single update point for shared lookup tables
 - ✅ **Performance improvement**: Smaller binary size, better cache efficiency
 - ✅ **Scalability**: Pattern validated with Olympus implementation (11 OnOff consolidations)
 
 **Multi-Manufacturer Validation**: The optimization has been validated across multiple implementations:
+
 - **Canon**: 95+ duplicate implementations eliminated (41% optimization)
 - **Pentax**: 27 duplicate implementations eliminated (17% optimization)
 - **Olympus**: 11 duplicate OnOff implementations consolidated
@@ -571,6 +629,7 @@ PrintConvId::CanonLensType → canon_lens_type_lookup()
 **Problem Solved**: ExifTool tag names contain characters invalid in Rust identifiers (hyphens, etc.)
 
 **Solution**: Automated character sanitization in PrintConv sync tools
+
 - **Preserves ExifTool compatibility**: Tag names like "ActiveD-Lighting" remain unchanged in output
 - **Fixes Rust compilation**: PrintConvId variants use sanitized names like "NikonActiveD_Lighting"
 - **Zero downstream impact**: Only internal enum variants affected, user-facing data unchanged
@@ -580,6 +639,7 @@ PrintConvId::CanonLensType → canon_lens_type_lookup()
 ### ✅ Completed DRY Optimizations
 
 **Pentax PrintConv DRY Optimization** (June 2025):
+
 - Applied the same 96% code reduction pattern used for Canon
 - Generated optimized `src/tables/pentax_tags.rs` with 137 tag definitions
 - Identified 7 shared lookup tables eliminating 27 duplicate implementations (17% optimization)

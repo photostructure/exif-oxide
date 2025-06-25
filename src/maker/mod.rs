@@ -94,6 +94,7 @@ impl Manufacturer {
         } else if make_lower.contains("panasonic") {
             Manufacturer::Panasonic
         } else if make_lower.contains("pentax") || make_lower.contains("asahi") {
+            // EXIFTOOL-SOURCE: lib/Image/ExifTool/MakerNotes.pm:776,788 ($$self{Make}=~/^Asahi/)
             Manufacturer::Pentax
         } else if make_lower.contains("ricoh") {
             Manufacturer::Ricoh
