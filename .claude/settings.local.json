@@ -67,7 +67,10 @@
       "Bash(./exiftool -Make -Model t/images/Pentax.jpg)",
       "Bash(/home/mrm/src/exif-oxide/third-party/exiftool/exiftool -Make -Model /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Ricoh.jpg)",
       "Bash(/home/mrm/src/exif-oxide/third-party/exiftool/exiftool -Make -Model /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Ricoh2.jpg)",
-      "Bash(/home/mrm/src/exif-oxide/third-party/exiftool/exiftool -Make -Model /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Pentax.jpg)"
+      "Bash(/home/mrm/src/exif-oxide/third-party/exiftool/exiftool -Make -Model /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Pentax.jpg)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== $file Auto patterns ===\")",
+      "Bash(do echo \"=== $file Quality/Standard patterns ===\")"
     ],
     "deny": []
   }

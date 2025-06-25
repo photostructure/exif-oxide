@@ -292,7 +292,7 @@ cargo run -- test.{format} > exif-oxide.json
 - ✅ **Casio**: Common consumer cameras, point-and-shoot ubiquity ✅ COMPLETE
 - ✅ **Hasselblad**: Professional medium format, simple IFD structure ✅ COMPLETE
 - ✅ **Kodak**: Legacy collections, film digitization workflows ✅ COMPLETE
-- [ ] **Minolta**: Sony ecosystem integration, lens compatibility
+- ✅ **Minolta**: Sony ecosystem integration, lens compatibility ✅ COMPLETE
 - [ ] **GoPro**: Action cameras, social media content (GPMF support exists)
 - [ ] **DJI**: Drone footage, aerial photography/video
 - [ ] **Ricoh**: Pentax integration, GR series popularity
@@ -327,10 +327,10 @@ cargo run -- test.{format} > exif-oxide.json
 - **✅ Panasonic Complete**: 2.5 hours - automated table-driven PrintConv with full maker note support
 - **✅ Hasselblad Complete**: 2 hours - simple IFD structure following ExifTool MakerNotes.pm exactly
 
-**📋 Phase 3: Media Manager Essential Manufacturers** (~20 hours remaining)
+**📋 Phase 3: Media Manager Essential Manufacturers** (~17.5 hours remaining)
 - **✅ COMPLETE**: Casio (2.5 hours) - Most common consumer cameras in collections ✅
 - **✅ COMPLETE**: Kodak (2.5 hours) - Legacy photo collections, film digitization ✅
-- **Ecosystem**: Minolta (2.5 hours) - Sony compatibility, lens metadata
+- **✅ COMPLETE**: Minolta (2.5 hours) - Sony compatibility, lens metadata ✅
 - **Modern Video**: GoPro (2.5 hours) - Action cameras, GPMF integration ready
 - **Growing Market**: DJI (2.5 hours) - Drone footage increasingly common
 - **Integration**: Ricoh (2.5 hours) - Pentax parent company, GR series

@@ -832,6 +832,27 @@ pub enum PrintConvId {
     KodakColorMode,
     KodakDigitalZoom,
     KodakSharpness,
+
+    /// Minolta-specific conversions
+    MinoltaMakerNoteVersion,
+    MinoltaMinoltaCameraSettingsOld,
+    MinoltaMinoltaCameraSettings,
+    MinoltaMinoltaCameraSettings7D,
+    MinoltaCameraInfoA100,
+    MinoltaWBInfoA100,
+    MinoltaCompressedImageSize,
+    MinoltaPreviewImageStart,
+    MinoltaPreviewImageLength,
+    MinoltaSceneMode,
+    MinoltaFlashExposureComp,
+    MinoltaTeleconverter,
+    MinoltaImageStabilization,
+    MinoltaZoneMatching,
+    MinoltaColorTemperature,
+    MinoltaMinoltaLensTypes,
+    MinoltaColorCompensationFilter,
+    MinoltaPrintIM,
+    MinoltaMinoltaCameraSettings2,
 }
 
 /// Apply print conversion to an EXIF value
@@ -1325,6 +1346,27 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             // Sharpness - return raw for now
             exif_value_to_string(value)
         }
+
+        // Minolta-specific conversions (stub implementations for now)
+        PrintConvId::MinoltaMakerNoteVersion => exif_value_to_string(value),
+        PrintConvId::MinoltaMinoltaCameraSettingsOld => exif_value_to_string(value),
+        PrintConvId::MinoltaMinoltaCameraSettings => exif_value_to_string(value),
+        PrintConvId::MinoltaMinoltaCameraSettings7D => exif_value_to_string(value),
+        PrintConvId::MinoltaCameraInfoA100 => exif_value_to_string(value),
+        PrintConvId::MinoltaWBInfoA100 => exif_value_to_string(value),
+        PrintConvId::MinoltaCompressedImageSize => exif_value_to_string(value),
+        PrintConvId::MinoltaPreviewImageStart => exif_value_to_string(value),
+        PrintConvId::MinoltaPreviewImageLength => exif_value_to_string(value),
+        PrintConvId::MinoltaSceneMode => exif_value_to_string(value),
+        PrintConvId::MinoltaFlashExposureComp => exif_value_to_string(value),
+        PrintConvId::MinoltaTeleconverter => exif_value_to_string(value),
+        PrintConvId::MinoltaImageStabilization => exif_value_to_string(value),
+        PrintConvId::MinoltaZoneMatching => exif_value_to_string(value),
+        PrintConvId::MinoltaColorTemperature => exif_value_to_string(value),
+        PrintConvId::MinoltaMinoltaLensTypes => exif_value_to_string(value),
+        PrintConvId::MinoltaColorCompensationFilter => exif_value_to_string(value),
+        PrintConvId::MinoltaPrintIM => exif_value_to_string(value),
+        PrintConvId::MinoltaMinoltaCameraSettings2 => exif_value_to_string(value),
 
         _ => {
             // For now, return raw value for unimplemented conversions

@@ -21,6 +21,7 @@ pub mod exif_tags; // Standard EXIF tags with PrintConv
 pub mod fujifilm_tags;
 pub mod hasselblad_tags;
 pub mod kodak_tags;
+pub mod minolta_tags;
 pub mod nikon_tags;
 pub mod olympus_tags;
 pub mod panasonic_tags;

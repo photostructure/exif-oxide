@@ -492,6 +492,20 @@ impl PrintConvTablesExtractor {
                 || tag.printconv_id.starts_with("PrintConvId::Panasonic")
                 || tag.printconv_id.starts_with("PrintConvId::Olympus")
                 || tag.printconv_id.starts_with("PrintConvId::Fujifilm")
+                || tag.printconv_id.starts_with("PrintConvId::Minolta")
+                || tag.printconv_id.starts_with("PrintConvId::Casio")
+                || tag.printconv_id.starts_with("PrintConvId::Kodak")
+                || tag.printconv_id.starts_with("PrintConvId::GoPro")
+                || tag.printconv_id.starts_with("PrintConvId::DJI")
+                || tag.printconv_id.starts_with("PrintConvId::Ricoh")
+                || tag.printconv_id.starts_with("PrintConvId::PhaseOne")
+                || tag.printconv_id.starts_with("PrintConvId::Qualcomm")
+                || tag.printconv_id.starts_with("PrintConvId::Red")
+                || tag.printconv_id.starts_with("PrintConvId::Apple")
+                || tag.printconv_id.starts_with("PrintConvId::Samsung")
+                || tag.printconv_id.starts_with("PrintConvId::Sigma")
+                || tag.printconv_id.starts_with("PrintConvId::Hasselblad")
+                || tag.printconv_id.starts_with("PrintConvId::Leica")
             {
                 // Extract just the variant name (remove PrintConvId:: prefix)
                 if let Some(variant_name) = tag.printconv_id.strip_prefix("PrintConvId::") {
@@ -534,10 +548,28 @@ impl PrintConvTablesExtractor {
             + enum_start
             + 1;
 
-        let enum_end = content[enum_body_start..]
-            .rfind('}')
-            .ok_or("Could not find enum closing brace")?
-            + enum_body_start;
+        // Find the matching closing brace by counting braces
+        let mut brace_count = 1; // We're already inside the first brace
+        let mut enum_end = enum_body_start;
+        let chars: Vec<char> = content[enum_body_start..].chars().collect();
+
+        for (i, ch) in chars.iter().enumerate() {
+            match ch {
+                '{' => brace_count += 1,
+                '}' => {
+                    brace_count -= 1;
+                    if brace_count == 0 {
+                        enum_end = enum_body_start + i;
+                        break;
+                    }
+                }
+                _ => {}
+            }
+        }
+
+        if brace_count != 0 {
+            return Err("Could not find matching closing brace for enum".to_string());
+        }
 
         // Check which variants already exist
         let enum_body = &content[enum_body_start..enum_end];
