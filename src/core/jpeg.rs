@@ -9,6 +9,7 @@ use std::io::{Read, Seek, SeekFrom};
 const MARKER_SOI: u8 = 0xD8; // Start of Image
 const MARKER_APP1: u8 = 0xE1; // APP1 segment (contains EXIF/XMP)
 const MARKER_APP2: u8 = 0xE2; // APP2 segment (contains MPF/FlashPix)
+const MARKER_APP6: u8 = 0xE6; // APP6 segment (contains GPMF for GoPro)
                               // const MARKER_APP13: u8 = 0xED; // APP13 segment (contains IPTC/Photoshop) - Reserved for future use
 const MARKER_SOS: u8 = 0xDA; // Start of Scan (image data follows)
 const MARKER_EOI: u8 = 0xD9; // End of Image
@@ -34,6 +35,8 @@ pub struct JpegMetadata {
     pub xmp: Vec<XmpSegment>,
     /// MPF segment if found (Multi-Picture Format)
     pub mpf: Option<MpfSegment>,
+    /// GPMF segments if found (GoPro metadata, can be multiple)
+    pub gpmf: Vec<GpmfSegment>,
 }
 
 /// XMP segment found in JPEG
@@ -56,6 +59,15 @@ pub struct MpfSegment {
     pub offset: u64,
 }
 
+/// GPMF segment found in JPEG APP6 (GoPro metadata)
+#[derive(Debug)]
+pub struct GpmfSegment {
+    /// The raw GPMF data (without the APP6 header or "GoPro" signature)
+    pub data: Vec<u8>,
+    /// Offset in the file where the GPMF data starts
+    pub offset: u64,
+}
+
 /// Find and extract EXIF data from a JPEG file
 pub fn find_exif_segment<R: Read + Seek>(reader: &mut R) -> Result<Option<ExifSegment>> {
     let metadata = find_metadata_segments(reader)?;
@@ -68,12 +80,13 @@ pub fn find_mpf_segment<R: Read + Seek>(reader: &mut R) -> Result<Option<MpfSegm
     Ok(metadata.mpf)
 }
 
-/// Find and extract all metadata segments (EXIF, XMP, and MPF) from a JPEG file
+/// Find and extract all metadata segments (EXIF, XMP, MPF, and GPMF) from a JPEG file
 pub fn find_metadata_segments<R: Read + Seek>(reader: &mut R) -> Result<JpegMetadata> {
     let mut metadata = JpegMetadata {
         exif: None,
         xmp: Vec::new(),
         mpf: None,
+        gpmf: Vec::new(),
     };
     // Check JPEG SOI marker
     let mut marker = [0u8; 2];
@@ -85,6 +98,7 @@ pub fn find_metadata_segments<R: Read + Seek>(reader: &mut R) -> Result<JpegMeta
     const XMP_SIGNATURE: &[u8] = b"http://ns.adobe.com/xap/1.0/\0";
     const XMP_EXTENSION_SIGNATURE: &[u8] = b"http://ns.adobe.com/xmp/extension/\0";
     const MPF_SIGNATURE: &[u8] = b"MPF\0";
+    const GPMF_SIGNATURE: &[u8] = b"GoPro";
 
     // Scan through JPEG segments
     loop {
@@ -190,8 +204,30 @@ pub fn find_metadata_segments<R: Read + Seek>(reader: &mut R) -> Result<JpegMeta
                         });
                     }
                     // Continue searching for more segments
+                } else if marker == MARKER_APP6 {
+                    // This might be our GPMF segment (GoPro metadata)
+                    if data_len > MAX_APP_SIZE {
+                        return Err(Error::InvalidJpeg("APP6 segment too large".into()));
+                    }
+
+                    // Read the segment data
+                    let mut data = vec![0u8; data_len];
+                    reader.read_exact(&mut data)?;
+
+                    // Check for GoPro GPMF signature
+                    if data.len() >= GPMF_SIGNATURE.len()
+                        && &data[0..GPMF_SIGNATURE.len()] == GPMF_SIGNATURE
+                    {
+                        // Found GPMF data!
+                        let offset = reader.stream_position()? - data_len as u64;
+                        metadata.gpmf.push(GpmfSegment {
+                            data: data[GPMF_SIGNATURE.len()..].to_vec(), // Skip "GoPro" header
+                            offset: offset + GPMF_SIGNATURE.len() as u64, // Offset to actual GPMF data
+                        });
+                    }
+                    // Continue searching for more segments
                 } else {
-                    // Not APP1 or APP2, skip this segment
+                    // Not APP1, APP2, or APP6, skip this segment
                     reader.seek(SeekFrom::Current(data_len as i64))?;
                 }
             }
