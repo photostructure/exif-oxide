@@ -1848,7 +1848,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0x920d,
         name: "Noise",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalNoiseReduction,
     },
     ExifTag {
         id: 0x920e,
@@ -2088,7 +2088,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa20d,
         name: "Noise",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::UniversalNoiseReduction,
     },
     ExifTag {
         id: 0xa20e,
@@ -3193,17 +3193,17 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xfe54,
         name: "Contrast",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::LowNormalHigh,
     },
     ExifTag {
         id: 0xfe55,
         name: "Saturation",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::LowNormalHigh,
     },
     ExifTag {
         id: 0xfe56,
         name: "Sharpness",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::LowNormalHigh,
     },
     ExifTag {
         id: 0xfe57,

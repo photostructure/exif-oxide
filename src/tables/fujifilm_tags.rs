@@ -43,7 +43,7 @@ pub const FUJIFILM_TAGS: &[FUJIFILMTag] = &[
     FUJIFILMTag {
         id: 0x1002,
         name: "WhiteBalance",
-        print_conv: PrintConvId::WhiteBalance,
+        print_conv: PrintConvId::UniversalWhiteBalanceExtended,
     },
     FUJIFILMTag {
         id: 0x1003,
@@ -83,7 +83,7 @@ pub const FUJIFILM_TAGS: &[FUJIFILMTag] = &[
     FUJIFILMTag {
         id: 0x100f,
         name: "Clarity",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::LowNormalHigh,
     },
     FUJIFILMTag {
         id: 0x1010,

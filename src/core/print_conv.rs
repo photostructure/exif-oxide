@@ -573,8 +573,15 @@ pub enum PrintConvId {
 
     /// Universal patterns used by 3+ manufacturers
     UniversalOnOffAuto, // 0=Off, 1=On, 2=Auto (6 manufacturers, 25+ tags)
-    UniversalNoiseReduction, // 0=Off, 1=Low, 2=Normal, 3=High, 4=Auto
-    UniversalQualityBasic,   // 1=Economy, 2=Normal, 3=Fine, 4=Super Fine (Canon, Casio, others)
+    UniversalNoiseReduction,       // 0=Off, 1=Low, 2=Normal, 3=High, 4=Auto
+    UniversalQualityBasic, // 1=Economy, 2=Normal, 3=Fine, 4=Super Fine (Canon, Casio, others)
+    UniversalWhiteBalanceExtended, // Extended WB: Auto/Daylight/Shade/Cloudy/Tungsten/Fluorescent/Flash/Manual
+    UniversalFocusMode,            // 0=Single, 1=Continuous, 2=Auto, 3=Manual (all manufacturers)
+    UniversalSensingMethod,        // EXIF sensing method types
+    UniversalSceneCaptureType,     // EXIF scene capture type
+    UniversalCustomRendered,       // EXIF custom rendering
+    UniversalSceneType,            // EXIF scene type
+    UniversalGainControl,          // EXIF gain control
 
     /// GPMF (GoPro Metadata Format) specific conversions
     GpmfAccelerometer,
@@ -1025,6 +1032,27 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             Some(2) => "Normal".to_string(),
             Some(3) => "Fine".to_string(),
             Some(4) => "Super Fine".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalWhiteBalanceExtended => match as_u32(value) {
+            Some(0) => "Auto".to_string(),
+            Some(1) => "Daylight".to_string(),
+            Some(2) => "Shade".to_string(),
+            Some(3) => "Cloudy".to_string(),
+            Some(4) => "Tungsten".to_string(),
+            Some(5) => "Fluorescent".to_string(),
+            Some(6) => "Flash".to_string(),
+            Some(7) => "Manual".to_string(),
+            Some(8) => "Kelvin".to_string(),
+            _ => format!("Unknown ({})", exif_value_to_string(value)),
+        },
+
+        PrintConvId::UniversalFocusMode => match as_u32(value) {
+            Some(0) => "Single".to_string(),
+            Some(1) => "Continuous".to_string(),
+            Some(2) => "Auto".to_string(),
+            Some(3) => "Manual".to_string(),
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
@@ -2385,6 +2413,78 @@ mod tests {
         assert_eq!(
             apply_print_conv(&ExifValue::U8(2), PrintConvId::UniversalQualityBasic),
             "Normal"
+        );
+    }
+
+    #[test]
+    fn test_universal_white_balance_extended_conversion() {
+        // Test UniversalWhiteBalanceExtended pattern (comprehensive WB settings)
+        assert_eq!(
+            apply_print_conv(
+                &ExifValue::U32(0),
+                PrintConvId::UniversalWhiteBalanceExtended
+            ),
+            "Auto"
+        );
+        assert_eq!(
+            apply_print_conv(
+                &ExifValue::U32(1),
+                PrintConvId::UniversalWhiteBalanceExtended
+            ),
+            "Daylight"
+        );
+        assert_eq!(
+            apply_print_conv(
+                &ExifValue::U32(3),
+                PrintConvId::UniversalWhiteBalanceExtended
+            ),
+            "Cloudy"
+        );
+        assert_eq!(
+            apply_print_conv(
+                &ExifValue::U32(6),
+                PrintConvId::UniversalWhiteBalanceExtended
+            ),
+            "Flash"
+        );
+        assert_eq!(
+            apply_print_conv(
+                &ExifValue::U32(8),
+                PrintConvId::UniversalWhiteBalanceExtended
+            ),
+            "Kelvin"
+        );
+        assert_eq!(
+            apply_print_conv(
+                &ExifValue::U32(99),
+                PrintConvId::UniversalWhiteBalanceExtended
+            ),
+            "Unknown (99)"
+        );
+    }
+
+    #[test]
+    fn test_universal_focus_mode_conversion() {
+        // Test UniversalFocusMode pattern (0=Single, 1=Continuous, 2=Auto, 3=Manual)
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalFocusMode),
+            "Single"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalFocusMode),
+            "Continuous"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalFocusMode),
+            "Auto"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::UniversalFocusMode),
+            "Manual"
+        );
+        assert_eq!(
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalFocusMode),
+            "Unknown (99)"
         );
     }
 }

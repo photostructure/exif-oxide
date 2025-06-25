@@ -73,7 +73,8 @@
       "Bash(do echo \"=== $file Quality/Standard patterns ===\")",
       "Bash(./test_gpmf_debug)",
       "Bash(./third-party/exiftool/exiftool:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(fgrep:*)"
     ],
     "deny": []
   }
