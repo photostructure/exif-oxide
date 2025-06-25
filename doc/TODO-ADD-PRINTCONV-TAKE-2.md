@@ -503,7 +503,7 @@ After Phase 2 completion, Phase 3 will focus on:
 This analysis provides **critical information** for future PrintConv development:
 
 1. **Perl Pattern Validation**: Confirms our universal patterns match ExifTool's actual implementations
-2. **Scope Assessment**: Identifies exactly where patterns are used across 30+ ExifTool .pm files  
+2. **Scope Assessment**: Identifies exactly where patterns are used across 30+ ExifTool .pm files
 3. **Priority Guidance**: Shows which patterns have the highest impact (OnOff: 23 files, YesNo: 31 files)
 4. **Implementation Confidence**: Proves universal patterns are genuinely universal in ExifTool
 5. **Extension Opportunities**: Documents exact perl syntax for expanding patterns
@@ -513,6 +513,7 @@ This analysis provides **critical information** for future PrintConv development
 #### **Tier 1: Most Universal Patterns (Used in 20+ ExifTool Files)**
 
 ##### **1. OnOff Pattern** ⭐⭐⭐⭐⭐
+
 - **Rust Implementation**: `PrintConvId::OnOff` at `src/core/print_conv.rs:881-885`
 - **Perl Pattern**: `0 => 'Off', 1 => 'On'`
 - **ExifTool Usage**: **23 files, 63+ occurrences**
@@ -520,7 +521,8 @@ This analysis provides **critical information** for future PrintConv development
 - **Common Contexts**: Stabilization, Flash, Macro mode, various binary camera settings
 - **Perl Hash References**: `%offOn` in multiple files (reusable hash)
 
-##### **2. YesNo Pattern** ⭐⭐⭐⭐⭐  
+##### **2. YesNo Pattern** ⭐⭐⭐⭐⭐
+
 - **Rust Implementation**: `PrintConvId::YesNo` at `src/core/print_conv.rs:887-891`
 - **Perl Pattern**: `0 => 'No', 1 => 'Yes'`
 - **ExifTool Usage**: **31 files, 50+ occurrences**
@@ -531,6 +533,7 @@ This analysis provides **critical information** for future PrintConv development
 #### **Tier 2: High-Impact Specialized Patterns (Used in 4-8 Files)**
 
 ##### **3. UniversalNoiseReduction Pattern** ⭐⭐⭐⭐
+
 - **Rust Implementation**: `PrintConvId::UniversalNoiseReduction` at `src/core/print_conv.rs:1031-1038`
 - **Perl Pattern**: `0 => 'Off', 1 => 'Low', 2 => 'Normal', 3 => 'High'` (often with `4 => 'Auto'`)
 - **ExifTool Usage**: **4 files confirmed**
@@ -539,6 +542,7 @@ This analysis provides **critical information** for future PrintConv development
 - **Extension**: Often extended with `4 => 'Auto'` (our implementation includes this)
 
 ##### **4. UniversalWhiteBalanceExtended Pattern** ⭐⭐⭐⭐
+
 - **Rust Implementation**: `PrintConvId::UniversalWhiteBalanceExtended` at `src/core/print_conv.rs:1048-1059`
 - **Perl Pattern**: `0 => 'Auto', 1 => 'Daylight', 2 => 'Shade'` (core pattern, extended to 9 values)
 - **ExifTool Usage**: **8 files**
@@ -549,6 +553,7 @@ This analysis provides **critical information** for future PrintConv development
 #### **Tier 3: Emerging/Specialized Patterns**
 
 ##### **5. UniversalQualityBasic Pattern** ⭐⭐⭐
+
 - **Rust Implementation**: `PrintConvId::UniversalQualityBasic` at `src/core/print_conv.rs:1040-1046`
 - **Perl Pattern**: `1 => 'Economy', 2 => 'Normal', 3 => 'Fine'` (extended with `4 => 'Super Fine'`)
 - **ExifTool Usage**: **1 file confirmed** (Casio.pm)
@@ -556,8 +561,9 @@ This analysis provides **critical information** for future PrintConv development
 - **Extension Potential**: May be applicable to other manufacturers with similar quality scales
 
 ##### **6. UniversalOnOffAuto Pattern** ⭐⭐⭐⭐
+
 - **Rust Implementation**: `PrintConvId::UniversalOnOffAuto` at `src/core/print_conv.rs:1024-1029`
-- **Perl Pattern**: **NOT FOUND as unified pattern** 
+- **Perl Pattern**: **NOT FOUND as unified pattern**
 - **ExifTool Reality**: Components exist separately, but exact three-value sequence not found
 - **Our Innovation**: This may be an exif-oxide innovation that consolidates related but separate patterns
 - **Validation Needed**: Future engineers should verify this pattern's utility in practice
@@ -567,24 +573,29 @@ This analysis provides **critical information** for future PrintConv development
 These patterns implement official EXIF specification values, making them truly universal:
 
 ##### **7. LowNormalHigh Pattern** (EXIF Contrast/Saturation/Sharpness)
+
 - **Rust Implementation**: `PrintConvId::LowNormalHigh` at `src/core/print_conv.rs:1018`
 - **EXIF Spec**: `0 => 'Normal', 1 => 'Low', 2 => 'High'` (EXIF tags 0xA408, 0xA409, 0xA40A)
 - **Universal Application**: All EXIF-compliant cameras use identical values
 
 ##### **8. UniversalSensingMethod Pattern** (EXIF 0xA217)
+
 - **Rust Implementation**: `PrintConvId::UniversalSensingMethod` at `src/core/print_conv.rs:1069-1079`
 - **EXIF Spec**: `1 => 'Monochrome area', 2 => 'One-chip color area', etc.`
 
-##### **9. UniversalSceneCaptureType Pattern** (EXIF 0xA406)  
+##### **9. UniversalSceneCaptureType Pattern** (EXIF 0xA406)
+
 - **Rust Implementation**: `PrintConvId::UniversalSceneCaptureType` at `src/core/print_conv.rs:1081-1088`
 - **EXIF Spec**: `0 => 'Standard', 1 => 'Landscape', 2 => 'Portrait', 3 => 'Night'`
 
 ##### **10. UniversalCustomRendered Pattern** (EXIF 0xA401)
+
 - **Rust Implementation**: `PrintConvId::UniversalCustomRendered` at `src/core/print_conv.rs:1090-1100`
 - **EXIF Spec**: `0 => 'Normal', 1 => 'Custom'` (extended with Apple iOS values)
 
 ##### **11. UniversalGainControl Pattern** (EXIF 0xA407)
-- **Rust Implementation**: `PrintConvId::UniversalGainControl` at `src/core/print_conv.rs:1107-1114`  
+
+- **Rust Implementation**: `PrintConvId::UniversalGainControl` at `src/core/print_conv.rs:1107-1114`
 - **EXIF Spec**: `0 => 'None', 1 => 'Low gain up', 2 => 'High gain up', etc.`
 
 ### **Implementation Recommendations for Future Engineers**
@@ -592,6 +603,7 @@ These patterns implement official EXIF specification values, making them truly u
 #### **Immediate High-Impact Opportunities**
 
 1. **OnOff Pattern Extension**: Currently implemented but could be applied to 63+ additional tags across manufacturer tables
+
    ```bash
    # Search for candidates
    grep -r "PrintConvId::" src/tables/ | grep -i "stabiliz\|flash\|macro"
@@ -599,7 +611,7 @@ These patterns implement official EXIF specification values, making them truly u
 
 2. **YesNo Pattern Extension**: Could be applied to 50+ additional tags across all manufacturer tables
    ```bash
-   # Search for candidates  
+   # Search for candidates
    grep -r "PrintConvId::" src/tables/ | grep -i "gps\|color\|enable"
    ```
 
@@ -608,11 +620,13 @@ These patterns implement official EXIF specification values, making them truly u
 For future engineers adding new patterns:
 
 1. **Verify Perl Pattern**: Search ExifTool source with exact syntax:
+
    ```bash
    grep -r "0 => 'Off', 1 => 'On'" third-party/exiftool/lib/Image/ExifTool/
    ```
 
 2. **Count Usage**: Assess impact across manufacturer files:
+
    ```bash
    find third-party/exiftool/lib/Image/ExifTool/ -name "*.pm" -exec grep -l "pattern" {} + | wc -l
    ```
@@ -639,35 +653,46 @@ grep "^    [A-Z]" src/core/print_conv.rs | grep -v "PrintConvId::" | head -10
 ```
 
 **Breakdown of Explicit None Entries**:
+
 - **688 tags total** across all manufacturer tables using `print_conv: PrintConvId::None`
 - **Additional raw conversions**: GPMF tags, manufacturer stubs that use `exif_value_to_string(value)`
 - **Opportunity Scope**: Each None entry represents a tag that returns raw values instead of human-readable strings
 
-**Tag Table Distribution**:
+**Tag Table Distribution** (Accurate Breakdown):
+
 ```bash
 # Per-manufacturer None entry counts
 grep -r "print_conv: PrintConvId::None" src/tables/ | cut -d: -f1 | sort | uniq -c
+    574 src/tables/exif_tags.rs      # Standard EXIF tags (largest opportunity)
+     74 src/tables/fujifilm_tags.rs  # Fujifilm manufacturer-specific
+     36 src/tables/apple_tags.rs     # Apple mobile photography
+      4 src/tables/hasselblad_tags.rs # Professional photography
+# Total: 688 explicit None entries
 ```
 
 **Implications for Future Work**:
-- 🎯 **Massive Verified Opportunity**: 688 confirmed tags that could benefit from universal pattern application  
+
+- 🎯 **Massive Verified Opportunity**: 688 confirmed tags that could benefit from universal pattern application
 - 🎯 **Universal Pattern Extension**: Apply existing OnOff/YesNo patterns to appropriate None entries
 - 🎯 **Manufacturer Pattern Analysis**: Identify which None entries could use universal vs manufacturer-specific patterns
 - 🎯 **ExifTool Validation**: Each converted tag improves human-readable output matching ExifTool behavior
 
 ### **Future Engineering Priorities**
 
-#### **Priority 1: Pattern Consolidation Opportunities** 
+#### **Priority 1: Pattern Consolidation Opportunities**
+
 - Identify tags using manufacturer-specific patterns that could use universal patterns
 - Search for duplicate pattern implementations across manufacturer tables
 - Consolidate similar patterns into universal ones (following the proven methodology)
 
 #### **Priority 2: ExifTool Synchronization Validation**
+
 - Compare exif-oxide output with ExifTool for tags using universal patterns
 - Validate all universal patterns match ExifTool behavior exactly
 - Update patterns if discrepancies found
 
 #### **Priority 3: Performance Optimization**
+
 - Profile PrintConv pattern matching performance
 - Consider pattern lookup table optimizations if needed
 - Maintain O(1) hash table lookup speed
@@ -738,6 +763,7 @@ grep -A5 "_ => exif_value_to_string(value)" src/core/print_conv.rs
 **Total Opportunity**: ~700+ tags could benefit from universal pattern application or proper conversions.
 
 **Systematic Approach**: The universal pattern methodology directly targets reducing stringification by:
+
 1. Converting explicit `PrintConvId::None` to proper patterns
 2. Implementing TODO-marked conversions (especially GPMF)
 3. Consolidating manufacturer-specific stubs into universal patterns
