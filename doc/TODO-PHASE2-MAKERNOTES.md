@@ -274,6 +274,150 @@ cargo run -- test.{format} > exif-oxide.json
 # Verify tag extraction and conversion values match
 ```
 
+### 🚨 CRITICAL: Integration Test Requirements
+
+**MANDATORY**: Every completed manufacturer MUST have integration tests that verify heuristics present in ExifTool source code. 
+
+⚠️ **Common Problem**: Teams have struggled to follow this guidance properly. Integration tests MUST:
+
+1. **Test ExifTool Source Heuristics**: Each test MUST validate parsing logic that can be traced directly to specific ExifTool source code lines
+2. **Source Attribution Required**: Every test MUST include comments referencing the exact ExifTool source file and line numbers being tested
+3. **Test Real Camera Behavior**: Tests MUST use actual camera files that exercise the heuristics, not synthetic data
+4. **Validate Edge Cases**: Focus on the weird camera quirks and manufacturer-specific parsing logic found in ExifTool
+
+**Example Pattern** (following ExifTool source):
+```rust
+#[test]
+fn test_nikon_encrypted_data_detection() {
+    // EXIFTOOL-SOURCE: lib/Image/ExifTool/Nikon.pm:1234-1250
+    // Tests the encrypted maker note detection heuristic:
+    // "if ($format eq 'undef' && $size > 4 && substr($val,0,4) eq pack('V',0x01000000))"
+    let data = include_bytes!("../test_data/nikon_d850_encrypted.nef");
+    let result = parse_nikon_maker_note(data);
+    assert!(result.contains_encrypted_data);
+    assert_eq!(result.encryption_version, 0x01000000);
+}
+```
+
+**Integration Test Checklist** for each manufacturer:
+- [ ] **Detection Logic**: Test maker note signature detection (matches ExifTool detection patterns)
+- [ ] **Offset Calculations**: Test IFD offset handling (matches ExifTool's quirky offset math)
+- [ ] **Endianness Handling**: Test byte order detection and switching (matches ExifTool endian logic)
+- [ ] **Tag Parsing**: Test specific tag extraction for known camera models (matches ExifTool tag tables)
+- [ ] **PrintConv Values**: Test value conversion for representative tags (matches ExifTool PrintConv output)
+- [ ] **Error Handling**: Test malformed data handling (matches ExifTool's graceful degradation)
+- [ ] **Model Variations**: Test different camera models from the manufacturer (covers ExifTool's model-specific code paths)
+
+**Reference Implementation**: See Pentax tests for the gold standard pattern - each test maps to specific ExifTool source locations.
+
+### 🚨 INTEGRATION TEST TODO ITEMS
+
+**CRITICAL**: The following manufacturers lack proper integration tests that validate ExifTool source heuristics:
+
+#### ❌ MISSING Integration Tests (High Priority)
+- [ ] **Casio**: No dedicated integration test file found - needs `tests/casio_integration.rs`
+- [ ] **Kodak**: No dedicated integration test file found - needs `tests/kodak_integration.rs`  
+- [ ] **Minolta**: No dedicated integration test file found - needs `tests/minolta_integration.rs`
+
+#### ⚠️ NEEDS ExifTool Heuristic Validation (Medium Priority)
+- [ ] **Pentax**: `tests/pentax_integration.rs:1-33` has basic tests but lacks ExifTool source heuristic validation
+- [ ] **Nikon**: `tests/nikon_integration.rs:1-131` needs specific ExifTool heuristic tests for encrypted data detection
+- [ ] **Sony**: `tests/sony_integration.rs:1-89` needs ExifTool source heuristic validation for tag parsing
+- [ ] **Olympus**: `tests/olympus_integration.rs:46-74` has some signature tests but needs more ExifTool heuristics
+- [ ] **Panasonic**: `tests/panasonic_integration.rs:82-93` has signature handling but needs ExifTool source validation
+
+#### ✅ GOOD Coverage (Reference Examples)
+- [x] **Canon**: Comprehensive tests in `tests/maker_notes.rs:13-317` - **USE AS REFERENCE PATTERN**
+- [x] **Fujifilm**: Good coverage in `tests/maker_notes.rs:422-611` - **GOOD EXAMPLE**
+- [x] **Hasselblad**: Solid tests in `tests/maker_notes.rs:613-727` - **EXCELLENT SOURCE ATTRIBUTION**
+
+#### Required Test Patterns for Missing/Incomplete Tests:
+
+**For MISSING manufacturers (Casio, Kodak, Minolta)**:
+1. Create dedicated `tests/{manufacturer}_integration.rs` file
+2. Test detection logic matching ExifTool patterns
+3. Test IFD parsing with real camera data
+4. Validate tag extraction against ExifTool output
+5. Include `// EXIFTOOL-SOURCE:` comments for each test
+
+**For manufacturers NEEDING ExifTool validation**:
+1. Add tests that reference specific ExifTool source lines
+2. Test camera-specific quirks found in ExifTool code
+3. Validate offset calculations match ExifTool's math
+4. Test error handling matches ExifTool behavior
+5. Use real camera files, not synthetic data
+
+**Example Test Template**:
+```rust
+#[test]
+fn test_{manufacturer}_offset_calculation() {
+    // EXIFTOOL-SOURCE: lib/Image/ExifTool/{Manufacturer}.pm:123-145
+    // Tests the weird offset calculation: "offset += 10 if signature_type == 2"
+    let data = include_bytes!("../test_data/{manufacturer}_model.jpg");
+    let result = parse_{manufacturer}_maker_note(data);
+    assert_eq!(result.calculated_offset, expected_offset_from_exiftool);
+}
+```
+
+#### 📁 Test Image Requirements
+
+**CRITICAL**: Integration tests MUST use real camera files to validate ExifTool heuristics properly.
+
+**If insufficient test images exist**:
+1. **Copy from ExifTool**: Use images from `third-party/exiftool/t/images/` 
+2. **Organize properly**: Copy to `$REPO_ROOT/test-images/$make/$model.$ext`
+3. **Use consistent naming**: `test-images/canon/EOS_40D.jpg`, `test-images/nikon/D850.nef`
+
+**Example structure**:
+```
+test-images/
+├── canon/
+│   ├── EOS_40D.jpg
+│   ├── EOS_1D_Mark_III.jpg
+│   └── PowerShot_G7.jpg
+├── nikon/
+│   ├── D850.nef
+│   ├── Z8.nef
+│   └── D780.jpg
+├── sony/
+│   ├── A7R_IV.arw
+│   └── FX30.mp4
+├── casio/
+│   ├── EX_Z1200.jpg
+│   └── QV_4000.jpg
+├── kodak/
+│   ├── DC4800.jpg
+│   └── DCS_Pro_14n.dcr
+└── minolta/
+    ├── DiMAGE_7.mrw
+    └── Dynax_7D.mrw
+```
+
+**Copy Command Example**:
+```bash
+# Copy ExifTool test images to organized structure
+cp third-party/exiftool/t/images/Canon.jpg test-images/canon/EOS_40D.jpg
+cp third-party/exiftool/t/images/Nikon.jpg test-images/nikon/D70.jpg
+cp third-party/exiftool/t/images/Sony.jpg test-images/sony/DSC_P1.jpg
+```
+
+**Integration Test Pattern**:
+```rust
+#[test]
+fn test_casio_real_camera_file() {
+    // EXIFTOOL-SOURCE: lib/Image/ExifTool/Casio.pm:89-105
+    let test_image = "test-images/casio/EX_Z1200.jpg";
+    if !Path::new(test_image).exists() {
+        eprintln!("Warning: Test image {} not found, skipping", test_image);
+        return;
+    }
+    
+    let result = read_basic_exif(Path::new(test_image));
+    assert!(result.is_ok());
+    // Validate specific Casio heuristics from ExifTool source...
+}
+```
+
 ## Success Criteria
 
 ### Functionality Requirements
@@ -288,12 +432,12 @@ cargo run -- test.{format} > exif-oxide.json
 - ✅ **Panasonic**: Complete (table-driven PrintConv with automated sync tools)
 - ✅ **Hasselblad**: Complete (simple IFD structure, 4 known tags from ExifTool comments)
 
-#### Media Manager Priority (Next Phase)
+#### Media Manager Priority (Phase 3)
 - ✅ **Casio**: Common consumer cameras, point-and-shoot ubiquity ✅ COMPLETE
 - ✅ **Hasselblad**: Professional medium format, simple IFD structure ✅ COMPLETE
 - ✅ **Kodak**: Legacy collections, film digitization workflows ✅ COMPLETE
 - ✅ **Minolta**: Sony ecosystem integration, lens compatibility ✅ COMPLETE
-- [ ] **GoPro**: Action cameras, social media content (GPMF support exists)
+- ✅ **GoPro**: Action cameras, social media content ✅ COMPLETE
 - [ ] **DJI**: Drone footage, aerial photography/video
 - [ ] **Ricoh**: Pentax integration, GR series popularity
 - [ ] **PhaseOne**: Professional medium format workflows
@@ -331,7 +475,7 @@ cargo run -- test.{format} > exif-oxide.json
 - **✅ COMPLETE**: Casio (2.5 hours) - Most common consumer cameras in collections ✅
 - **✅ COMPLETE**: Kodak (2.5 hours) - Legacy photo collections, film digitization ✅
 - **✅ COMPLETE**: Minolta (2.5 hours) - Sony compatibility, lens metadata ✅
-- **Modern Video**: GoPro (2.5 hours) - Action cameras, GPMF integration ready
+- **✅ COMPLETE**: GoPro (2 hours) - Action cameras, GPMF integration complete ✅
 - **Growing Market**: DJI (2.5 hours) - Drone footage increasingly common
 - **Integration**: Ricoh (2.5 hours) - Pentax parent company, GR series
 - **Professional**: PhaseOne (2.5 hours) - Medium format workflows
