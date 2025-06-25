@@ -10,7 +10,6 @@ use exif_oxide::tables::{
 };
 use exif_oxide::tables::{lookup_canon_tag, lookup_tag};
 use serde::Serialize;
-use serde_json;
 use std::collections::HashMap;
 use std::env;
 use std::io::{self, Write};
@@ -124,7 +123,9 @@ fn show_usage(program: &str) {
     eprintln!("  -G         Include group names in output");
     eprintln!("  -n         Show numeric/raw values (no PrintConv)");
     eprintln!("  -b         Extract raw binary data (requires single -TagName and single file)");
-    eprintln!("  --api      API mode: show both raw and formatted values with full type information");
+    eprintln!(
+        "  --api      API mode: show both raw and formatted values with full type information"
+    );
     eprintln!("  -TagName   Include only specified tag(s) in output");
     eprintln!();
     eprintln!("Examples:");
@@ -314,7 +315,6 @@ fn is_binary_display_tag(tag_name: &str) -> bool {
     )
 }
 
-
 /// Default CLI mode - just the value directly (string | number)
 type DefaultTagEntry = serde_json::Value;
 
@@ -421,7 +421,10 @@ fn get_maker_note_printconv(tag_id: u16, manufacturer_prefix: u16) -> PrintConvI
 }
 
 /// Convert ExifValue to serde_json::Value for CLI mode output
-fn exif_value_to_default_value(value: &ExifValue, print_conv_result: Option<&str>) -> serde_json::Value {
+fn exif_value_to_default_value(
+    value: &ExifValue,
+    print_conv_result: Option<&str>,
+) -> serde_json::Value {
     // If we have a PrintConv result, use it as a string
     if let Some(converted) = print_conv_result {
         return serde_json::Value::String(converted.to_string());
@@ -474,7 +477,7 @@ fn values_are_equivalent(raw: &ExifValue, formatted: &ExifValue) -> bool {
 
 /// Match ExifTool-style glob patterns for tag filtering
 /// Examples:
-/// - "Make" matches exactly "Make" 
+/// - "Make" matches exactly "Make"
 /// - "*Make" matches "CanonMake", "NikonMake", etc.
 /// - "Make*" matches "MakeNotes", etc.
 /// - "*Model*" matches "CanonModelID", etc.
@@ -489,23 +492,23 @@ fn matches_exiftool_pattern(pattern: &str, tag_key: &str) -> bool {
     // Simple glob matching (case-insensitive)
     let pattern_lower = pattern.to_lowercase();
     let tag_lower = tag_name.to_lowercase();
-    
+
     if pattern_lower.contains('*') {
         // Handle glob patterns
         if pattern_lower == "*" {
             // Match everything
             true
-        } else if pattern_lower.starts_with('*') && pattern_lower.ends_with('*') {
+        } else if let Some(stripped) = pattern_lower
+            .strip_prefix('*')
+            .and_then(|s| s.strip_suffix('*'))
+        {
             // *pattern* - contains match
-            let middle = &pattern_lower[1..pattern_lower.len()-1];
-            tag_lower.contains(middle)
-        } else if pattern_lower.starts_with('*') {
+            tag_lower.contains(stripped)
+        } else if let Some(suffix) = pattern_lower.strip_prefix('*') {
             // *pattern - ends with match
-            let suffix = &pattern_lower[1..];
             tag_lower.ends_with(suffix)
-        } else if pattern_lower.ends_with('*') {
+        } else if let Some(prefix) = pattern_lower.strip_suffix('*') {
             // pattern* - starts with match
-            let prefix = &pattern_lower[..pattern_lower.len()-1];
             tag_lower.starts_with(prefix)
         } else {
             // pattern*other*pattern - more complex, use simple approach
@@ -691,13 +694,15 @@ fn build_tag_map(
                 })
             } else {
                 // Default CLI mode: return simple string/number values
-                let print_conv_result = if show_converted_values && print_conv_id != PrintConvId::None {
-                    Some(apply_print_conv(value, print_conv_id))
-                } else {
-                    None
-                };
+                let print_conv_result =
+                    if show_converted_values && print_conv_id != PrintConvId::None {
+                        Some(apply_print_conv(value, print_conv_id))
+                    } else {
+                        None
+                    };
 
-                let default_value = exif_value_to_default_value(value, print_conv_result.as_deref());
+                let default_value =
+                    exif_value_to_default_value(value, print_conv_result.as_deref());
 
                 TagEntry::Default(default_value)
             };
@@ -714,12 +719,25 @@ fn process_image(
     image_path: &str,
     command: &Command,
 ) -> Result<FileOutput, Box<dyn std::error::Error>> {
-    // Extract metadata segment using format dispatch
-    let metadata_segment = exif_oxide::core::find_metadata_segment(image_path)?
-        .ok_or_else(|| format!("No EXIF data found in '{}'", image_path))?;
+    // Extract all metadata segments using format dispatch
+    let metadata_collection = exif_oxide::core::find_all_metadata_segments(image_path)?;
 
-    // Parse IFD to get all EXIF data
-    let ifd = IfdParser::parse(metadata_segment.data.clone())?;
+    // Start with EXIF entries if available
+    let mut entries = std::collections::HashMap::new();
+
+    if let Some(exif_segment) = metadata_collection.exif {
+        // Parse IFD to get all EXIF data
+        let ifd = IfdParser::parse(exif_segment.data.clone())?;
+        entries.extend(ifd.entries().clone());
+    }
+
+    // Check if we have any data at all (EXIF or GPMF)
+    let has_exif = !entries.is_empty();
+    let has_gpmf = !metadata_collection.gpmf.is_empty();
+
+    if !has_exif && !has_gpmf {
+        return Err(format!("No EXIF or GPMF data found in '{}'", image_path).into());
+    }
 
     // Process based on command type
     match command {
@@ -728,9 +746,51 @@ fn process_image(
             show_converted_values,
             api_mode,
         } => {
-            // Build complete tag map
-            let mut tags =
-                build_tag_map(ifd.entries(), *include_groups, None, *show_converted_values, *api_mode);
+            // Build complete tag map from EXIF data
+            let mut tags = if has_exif {
+                build_tag_map(
+                    &entries,
+                    *include_groups,
+                    None,
+                    *show_converted_values,
+                    *api_mode,
+                )
+            } else {
+                HashMap::new()
+            };
+
+            // Add GPMF data if available
+            if has_gpmf {
+                for gpmf_segment in &metadata_collection.gpmf {
+                    let gpmf_parser = exif_oxide::gpmf::GpmfParser::new();
+                    if let Ok(gpmf_data) = gpmf_parser.parse(&gpmf_segment.data) {
+                        for (tag_id, value) in gpmf_data {
+                            let tag_key = if *include_groups {
+                                tag_id.clone()
+                            } else {
+                                format!("GPMF:{}", tag_id)
+                            };
+
+                            let tag_entry = if *api_mode {
+                                TagEntry::Api(ApiTagEntry {
+                                    group: if *include_groups {
+                                        None
+                                    } else {
+                                        Some("GPMF".to_string())
+                                    },
+                                    raw: Some(value.clone()),
+                                    formatted: value,
+                                })
+                            } else {
+                                let json_value = exif_value_to_default_value(&value, None);
+                                TagEntry::Default(json_value)
+                            };
+
+                            tags.insert(tag_key, tag_entry);
+                        }
+                    }
+                }
+            }
 
             // Add file metadata
             let file_name = std::path::Path::new(image_path)
@@ -747,7 +807,11 @@ fn process_image(
 
             let file_tag_entry = if *api_mode {
                 TagEntry::Api(ApiTagEntry {
-                    group: if *include_groups { None } else { Some("File".to_string()) },
+                    group: if *include_groups {
+                        None
+                    } else {
+                        Some("File".to_string())
+                    },
                     raw: None, // File metadata doesn't need raw values
                     formatted: ExifValue::Ascii(file_name.to_string()),
                 })
@@ -757,7 +821,11 @@ fn process_image(
 
             let dir_tag_entry = if *api_mode {
                 TagEntry::Api(ApiTagEntry {
-                    group: if *include_groups { None } else { Some("File".to_string()) },
+                    group: if *include_groups {
+                        None
+                    } else {
+                        Some("File".to_string())
+                    },
                     raw: None, // File metadata doesn't need raw values
                     formatted: ExifValue::Ascii(directory.to_string()),
                 })
@@ -779,14 +847,64 @@ fn process_image(
             show_converted_values,
             api_mode,
         } => {
-            // Build filtered tag map
-            let mut tags = build_tag_map(
-                ifd.entries(),
-                *include_groups,
-                Some(tag_filter),
-                *show_converted_values,
-                *api_mode,
-            );
+            // Build filtered tag map from EXIF data
+            let mut tags = if has_exif {
+                build_tag_map(
+                    &entries,
+                    *include_groups,
+                    Some(tag_filter),
+                    *show_converted_values,
+                    *api_mode,
+                )
+            } else {
+                HashMap::new()
+            };
+
+            // Add GPMF data if available and requested
+            if has_gpmf {
+                for gpmf_segment in &metadata_collection.gpmf {
+                    let gpmf_parser = exif_oxide::gpmf::GpmfParser::new();
+                    if let Ok(gpmf_data) = gpmf_parser.parse(&gpmf_segment.data) {
+                        for (tag_id, value) in gpmf_data {
+                            let tag_key = if *include_groups {
+                                tag_id.clone()
+                            } else {
+                                format!("GPMF:{}", tag_id)
+                            };
+
+                            // Check if this GPMF tag matches the filter
+                            let mut include = false;
+                            for filter_tag in tag_filter {
+                                if matches_exiftool_pattern(filter_tag, &tag_key)
+                                    || matches_exiftool_pattern(filter_tag, &tag_id)
+                                {
+                                    include = true;
+                                    break;
+                                }
+                            }
+
+                            if include {
+                                let tag_entry = if *api_mode {
+                                    TagEntry::Api(ApiTagEntry {
+                                        group: if *include_groups {
+                                            None
+                                        } else {
+                                            Some("GPMF".to_string())
+                                        },
+                                        raw: Some(value.clone()),
+                                        formatted: value,
+                                    })
+                                } else {
+                                    let json_value = exif_value_to_default_value(&value, None);
+                                    TagEntry::Default(json_value)
+                                };
+
+                                tags.insert(tag_key, tag_entry);
+                            }
+                        }
+                    }
+                }
+            }
 
             // Check if file metadata was requested
             for filter in tag_filter {
@@ -796,17 +914,21 @@ fn process_image(
                         .and_then(|n| n.to_str())
                         .unwrap_or(image_path);
                     let filename_key = format_tag_key("FileName", Some("File"), *include_groups);
-                    
+
                     let file_tag_entry = if *api_mode {
                         TagEntry::Api(ApiTagEntry {
-                            group: if *include_groups { None } else { Some("File".to_string()) },
+                            group: if *include_groups {
+                                None
+                            } else {
+                                Some("File".to_string())
+                            },
                             raw: None,
                             formatted: ExifValue::Ascii(file_name.to_string()),
                         })
                     } else {
                         TagEntry::Default(serde_json::Value::String(file_name.to_string()))
                     };
-                    
+
                     tags.insert(filename_key, file_tag_entry);
                 }
                 if filter.eq_ignore_ascii_case("Directory") {
@@ -815,17 +937,21 @@ fn process_image(
                         .and_then(|p| p.to_str())
                         .unwrap_or(".");
                     let directory_key = format_tag_key("Directory", Some("File"), *include_groups);
-                    
+
                     let dir_tag_entry = if *api_mode {
                         TagEntry::Api(ApiTagEntry {
-                            group: if *include_groups { None } else { Some("File".to_string()) },
+                            group: if *include_groups {
+                                None
+                            } else {
+                                Some("File".to_string())
+                            },
                             raw: None,
                             formatted: ExifValue::Ascii(directory.to_string()),
                         })
                     } else {
                         TagEntry::Default(serde_json::Value::String(directory.to_string()))
                     };
-                    
+
                     tags.insert(directory_key, dir_tag_entry);
                 }
             }
