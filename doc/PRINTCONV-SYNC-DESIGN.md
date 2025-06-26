@@ -19,6 +19,7 @@ ExifTool PrintConv ("Print Conversion") transforms raw EXIF values into human-re
 Use Perl to introspect ExifTool modules and extract PrintConv data. The extraction script is implemented in [`scripts/extract_printconv.pl`](../scripts/extract_printconv.pl).
 
 Key features of the extraction script:
+
 - Uses Perl to directly load and introspect ExifTool modules
 - Handles all PrintConv types: hash references (`\%canonLensTypes`), direct hashes, code references, and strings
 - Extracts shared lookup tables (e.g., lens databases with 500+ entries)
@@ -44,7 +45,7 @@ The Perl script outputs JSON with complete PrintConv information:
         "0": "n/a",
         "1": "Canon EF 50mm f/1.8",
         "2": "Canon EF 28mm f/2.8",
-        "3": "Canon EF 135mm f/2.8 Soft",
+        "3": "Canon EF 135mm f/2.8 Soft"
         // ... 300+ lens entries
       }
     },
@@ -93,19 +94,19 @@ Map extracted PrintConv to reusable conversion functions:
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PrintConvId {
     None,
-    
+
     // Simple lookups
     OnOff,              // { 0 => 'Off', 1 => 'On' }
     YesNo,              // { 0 => 'No', 1 => 'Yes' }
-    
+
     // Shared data lookups
     CanonLensType,      // Uses CANON_LENS_TYPES table
     NikonLensType,      // Uses NIKON_LENS_TYPES table
-    
+
     // Function-based
     ExposureTime,       // PrintExposureTime function
     FNumber,            // PrintFNumber function
-    
+
     // Complex expressions
     GPSCoordinate,      // Complex DMS conversion
     Flash,              // Bitfield decoding
@@ -116,7 +117,7 @@ impl PrintConvId {
     pub fn from_extraction(data: &ExtractedPrintConv) -> Self {
         match &data.printconv_type {
             "none" => PrintConvId::None,
-            
+
             "hash" => {
                 // Analyze hash data to find known patterns
                 if let Some(map) = &data.printconv_data {
@@ -127,7 +128,7 @@ impl PrintConvId {
                 }
                 PrintConvId::None
             }
-            
+
             "hash_ref" => {
                 match data.printconv_ref.as_deref() {
                     Some("canonLensTypes") => PrintConvId::CanonLensType,
@@ -135,13 +136,13 @@ impl PrintConvId {
                     _ => PrintConvId::None,
                 }
             }
-            
+
             "code_ref" | "string" => {
                 if let Some(func) = &data.printconv_func {
                     match func.as_str() {
-                        "PrintExposureTime" | "Image::ExifTool::Exif::PrintExposureTime" 
+                        "PrintExposureTime" | "Image::ExifTool::Exif::PrintExposureTime"
                             => PrintConvId::ExposureTime,
-                        "PrintFNumber" | "Image::ExifTool::Exif::PrintFNumber" 
+                        "PrintFNumber" | "Image::ExifTool::Exif::PrintFNumber"
                             => PrintConvId::FNumber,
                         _ => PrintConvId::None,
                     }
@@ -149,7 +150,7 @@ impl PrintConvId {
                     PrintConvId::None
                 }
             }
-            
+
             _ => PrintConvId::None,
         }
     }
@@ -175,42 +176,42 @@ impl PrintConvSyncExtractor {
             .arg(&self.perl_script)
             .arg("--all-modules")
             .output()?;
-        
+
         // 2. Parse JSON output
         let extracted: ExtractedData = serde_json::from_slice(&output.stdout)?;
-        
+
         // 3. Group by shared data (e.g., all tags using canonLensTypes)
         let grouped = self.group_by_shared_data(&extracted);
-        
+
         // 4. Generate lookup tables for shared data
         for (name, data) in grouped.shared_lookups {
             self.generate_lookup_table(&name, &data)?;
         }
-        
+
         // 5. Generate tag definitions with PrintConvId
         self.generate_tag_tables(&extracted)?;
-        
+
         // 6. Report unmapped PrintConv for manual review
         self.report_unmapped(&extracted)?;
-        
+
         Ok(())
     }
-    
+
     fn generate_lookup_table(&self, name: &str, data: &HashMap<String, String>) -> Result<(), Box<dyn Error>> {
         // Generate Rust phf::Map for large lookup tables
         let mut file = File::create(self.output_dir.join(format!("{}.rs", name.to_lowercase())))?;
-        
+
         writeln!(file, "// Generated from ExifTool {}", name)?;
         writeln!(file, "use phf::phf_map;")?;
         writeln!(file, "")?;
         writeln!(file, "pub static {}: phf::Map<u16, &'static str> = phf_map! {{", name.to_uppercase())?;
-        
+
         for (key, value) in data {
             if let Ok(num) = key.parse::<u16>() {
                 writeln!(file, "    {}u16 => {:?},", num, value)?;
             }
         }
-        
+
         writeln!(file, "}};")?;
         Ok(())
     }
@@ -244,11 +245,12 @@ tags = ["OldSubfileType", "YCbCrCoefficients"]
 ### Initial Setup
 
 1. **Run extraction using the existing script**:
+
    ```bash
    scripts/extract_printconv.pl --all-modules > printconv_data.json
    ```
 
-3. **Generate Rust code**:
+2. **Generate Rust code**:
    ```bash
    cargo run --bin exiftool_sync extract-printconv
    ```
@@ -256,11 +258,13 @@ tags = ["OldSubfileType", "YCbCrCoefficients"]
 ### For Engineers Adding PrintConv
 
 1. **Check if pattern exists**:
+
    ```bash
    cargo run --bin exiftool_sync analyze-printconv --tag LensType
    ```
 
 2. **If new pattern needed**:
+
    - Add to PrintConvId enum
    - Implement conversion logic
    - Update `from_extraction` mapping
@@ -273,11 +277,13 @@ tags = ["OldSubfileType", "YCbCrCoefficients"]
 ### For ExifTool Updates
 
 1. **Extract new version**:
+
    ```bash
    scripts/extract_printconv.pl --all-modules > printconv_data_new.json
    ```
 
 2. **Diff changes**:
+
    ```bash
    cargo run --bin exiftool_sync diff-printconv printconv_data.json printconv_data_new.json
    ```
