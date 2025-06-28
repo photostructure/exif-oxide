@@ -27,7 +27,7 @@ pub fn detect_canon_maker_note(data: &[u8]) -> Option<CANONDetectionResult> {
         });
     }
 
-    // Pattern from source line 9395: canon maker note signature
+    // Pattern from source line 9400: canon maker note signature
     if data.len() >= 5 && data.starts_with(&[0x43, 0x61, 0x6e, 0x6f, 0x6e]) {
         return Some(CANONDetectionResult {
             version: None,

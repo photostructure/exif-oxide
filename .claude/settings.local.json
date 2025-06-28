@@ -74,7 +74,20 @@
       "Bash(./test_gpmf_debug)",
       "Bash(./third-party/exiftool/exiftool:*)",
       "Bash(cp:*)",
-      "Bash(fgrep:*)"
+      "Bash(fgrep:*)",
+      "Bash(./extract_exiftool_table.pl:*)",
+      "Bash(chmod:*)",
+      "Bash(grep -B2 -A2 \"canonLensTypes\" third-party/exiftool/lib/Image/ExifTool/Canon.pm)",
+      "Bash(./extract_printconv.pl:*)",
+      "Bash(perl:*)",
+      "Bash(/dev/null)",
+      "Bash(./test_tag_metadata)",
+      "Bash(cat:*)",
+      "Bash(./exiftool/exiftool -LensType -LensModel -RFLensType -json \"/home/mrm/src/exif-oxide/test-images/canon/Canon_T3i.JPG\")",
+      "Bash(./exiftool/exiftool -LensType -LensModel -RFLensType -json \"/home/mrm/src/exif-oxide/test-images/canon/canon_eos_r50v_01.jpg\")",
+      "Bash(./exiftool/exiftool -LensType -LensModel -RFLensType -json \"/home/mrm/src/exif-oxide/test-images/canon/canon_eos_r5_mark_ii_10.jpg\")",
+      "Bash(./target/debug/exif-oxide:*)",
+      "Bash(./test_or_pattern_extractor)"
     ],
     "deny": []
   }

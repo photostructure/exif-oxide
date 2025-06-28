@@ -34,7 +34,7 @@ enum ConditionType {
     Custom(String),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[allow(clippy::upper_case_acronyms)] // Industry standard format names should remain in caps
 enum FormatHandler {
     JFIF,
@@ -185,9 +185,8 @@ impl AppSegmentTablesExtractor {
                     if bracket_count == 0 && rule_start.is_some() {
                         let start = rule_start.unwrap();
                         let rule_content: String = chars[start..i].iter().collect();
-                        if let Some(rule) = self.parse_single_rule(app_num, &rule_content)? {
-                            rules.push(rule);
-                        }
+                        let parsed_rules = self.parse_single_rule(app_num, &rule_content)?;
+                        rules.extend(parsed_rules);
                         rule_start = None;
                     }
                 }
@@ -251,26 +250,24 @@ impl AppSegmentTablesExtractor {
 
         for rule_match in rule_regex.captures_iter(trailer_content) {
             let rule_content = &rule_match[1];
-            if let Some(rule) = self.parse_single_rule(255, rule_content)? {
-                // Use 255 to indicate trailer
-                rules.push(rule);
-            }
+            let parsed_rules = self.parse_single_rule(255, rule_content)?; // Use 255 to indicate trailer
+            rules.extend(parsed_rules);
         }
 
         Ok(Some(rules))
     }
 
-    /// Parse a single rule definition
+    /// Parse a single rule definition (may return multiple rules for OR patterns)
     fn parse_single_rule(
         &self,
         segment: u8,
         rule_content: &str,
-    ) -> Result<Option<AppSegmentRule>, String> {
+    ) -> Result<Vec<AppSegmentRule>, String> {
         // Extract Name field
         let name_regex = Regex::new(r#"Name\s*=>\s*['"]([^'"]+)['"]"#)
             .map_err(|e| format!("Invalid name regex: {}", e))?;
         let Some(name_caps) = name_regex.captures(rule_content) else {
-            return Ok(None); // Skip rules without names
+            return Ok(vec![]); // Skip rules without names
         };
         let name = name_caps[1].to_string();
 
@@ -282,8 +279,8 @@ impl AppSegmentTablesExtractor {
             .map(|caps| caps[1].to_string())
             .unwrap_or_default();
 
-        // Parse condition to extract signature and type
-        let (signature, condition_type) = self.parse_condition(&condition)?;
+        // Parse condition to extract signatures and types (may return multiple for OR patterns)
+        let conditions = self.parse_condition_with_or(&condition)?;
 
         // Determine format handler from name
         let format_handler = self.determine_format_handler(&name);
@@ -303,16 +300,117 @@ impl AppSegmentTablesExtractor {
             .captures(rule_content)
             .map(|caps| caps[1].to_string());
 
-        Ok(Some(AppSegmentRule {
-            segment,
-            name,
-            signature,
-            condition,
-            condition_type,
-            format_handler,
-            notes,
-            subdirectory,
-        }))
+        // Generate a rule for each condition (handles OR patterns)
+        let rules = conditions
+            .into_iter()
+            .map(|(signature, condition_type)| AppSegmentRule {
+                segment,
+                name: name.clone(),
+                signature,
+                condition: condition.clone(),
+                condition_type,
+                format_handler: format_handler.clone(),
+                notes: notes.clone(),
+                subdirectory: subdirectory.clone(),
+            })
+            .collect();
+
+        Ok(rules)
+    }
+
+    /// Parse Perl condition with OR pattern support
+    fn parse_condition_with_or(
+        &self,
+        condition: &str,
+    ) -> Result<Vec<(Vec<u8>, ConditionType)>, String> {
+        if condition.is_empty() {
+            return Ok(vec![(
+                Vec::new(),
+                ConditionType::Custom("always".to_string()),
+            )]);
+        }
+
+        // Check for OR patterns in StartsWith: $$valPt =~ /^(A|B|C)/
+        if let Some(caps) = Regex::new(r"\$\$valPt\s*=~\s*/\^\(([^)]+)\)/")
+            .unwrap()
+            .captures(condition)
+        {
+            let alternatives = &caps[1];
+            let parts = self.split_or_pattern(alternatives)?;
+            let mut results = Vec::new();
+            for part in parts {
+                let signature = self.convert_perl_pattern_to_bytes(&part)?;
+                results.push((signature, ConditionType::StartsWith));
+            }
+            return Ok(results);
+        }
+
+        // Check for OR patterns in Contains: $$valPt =~ /(A|B|C)$/
+        if let Some(caps) = Regex::new(r"\$\$valPt\s*=~\s*/\(([^)]+)\)\$/")
+            .unwrap()
+            .captures(condition)
+        {
+            let alternatives = &caps[1];
+            let parts = self.split_or_pattern(alternatives)?;
+            let mut results = Vec::new();
+            for part in parts {
+                let signature = self.convert_perl_pattern_to_bytes(&part)?;
+                results.push((signature, ConditionType::Contains));
+            }
+            return Ok(results);
+        }
+
+        // Fall back to single condition parsing
+        let (signature, condition_type) = self.parse_condition(condition)?;
+        Ok(vec![(signature, condition_type)])
+    }
+
+    /// Split OR pattern like "A|B|C" into vec!["A", "B", "C"]
+    fn split_or_pattern(&self, pattern: &str) -> Result<Vec<String>, String> {
+        let mut parts = Vec::new();
+        let mut current = String::new();
+        let mut escape = false;
+        let mut paren_depth = 0;
+
+        for ch in pattern.chars() {
+            if escape {
+                current.push(ch);
+                escape = false;
+                continue;
+            }
+
+            match ch {
+                '\\' => {
+                    current.push(ch);
+                    escape = true;
+                }
+                '(' => {
+                    current.push(ch);
+                    paren_depth += 1;
+                }
+                ')' => {
+                    current.push(ch);
+                    paren_depth -= 1;
+                }
+                '|' if paren_depth == 0 => {
+                    parts.push(current.trim().to_string());
+                    current = String::new();
+                }
+                _ => {
+                    current.push(ch);
+                }
+            }
+        }
+
+        if !current.is_empty() {
+            parts.push(current.trim().to_string());
+        }
+
+        if parts.is_empty() {
+            return Err("Empty OR pattern".to_string());
+        }
+
+        Ok(parts)
     }
 
     /// Parse Perl condition to extract signature and condition type
@@ -576,19 +674,19 @@ impl AppSegmentTablesExtractor {
             }
         }
 
-        // Generate trailer segments table
-        if let Some(trailer_rules) = segments.get(&255) {
-            output.push_str(
-                "/// JPEG trailer segment definitions\n\
-                 pub static TRAILER_SEGMENTS: &[AppSegmentRule] = &[\n",
-            );
+        // Generate trailer segments table (always generate, even if empty)
+        output.push_str(
+            "/// JPEG trailer segment definitions\n\
+             pub static TRAILER_SEGMENTS: &[AppSegmentRule] = &[\n",
+        );
 
+        if let Some(trailer_rules) = segments.get(&255) {
             for rule in trailer_rules {
                 self.generate_rule_entry(output, rule);
             }
-
-            output.push_str("];\n\n");
         }
+
+        output.push_str("];\n\n");
 
         // Generate main lookup table
         output.push_str(
@@ -618,8 +716,15 @@ impl AppSegmentTablesExtractor {
         let condition_type = match &rule.condition_type {
             ConditionType::StartsWith => "ConditionType::StartsWith".to_string(),
             ConditionType::Contains => "ConditionType::Contains".to_string(),
-            ConditionType::Regex(pattern) => format!("ConditionType::Regex(\"{}\")", pattern),
-            ConditionType::Custom(cond) => format!("ConditionType::Custom(\"{}\")", cond),
+            ConditionType::Regex(pattern) => {
+                // Escape the pattern properly for Rust raw string
+                let escaped_pattern = pattern.replace('\\', "\\\\").replace('"', "\\\"");
+                format!("ConditionType::Regex(r\"{}\")", escaped_pattern)
+            }
+            ConditionType::Custom(cond) => {
+                let escaped_cond = cond.replace('\\', "\\\\").replace('"', "\\\"");
+                format!("ConditionType::Custom(r\"{}\")", escaped_cond)
+            }
         };
 
         let format_handler = format!("FormatHandler::{:?}", rule.format_handler);

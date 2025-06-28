@@ -123,7 +123,7 @@ pub static APP1_SEGMENTS: &[AppSegmentRule] = &[
         name: "ExtendedXMP",
         signature: &[],
         condition_type: ConditionType::Custom(
-            "$$valPt =~ m{^http://ns.adobe.com/xmp/extension/\0}",
+            r"$$valPt =~ m{^http://ns.adobe.com/xmp/extension/\\0}",
         ),
         format_handler: FormatHandler::ExtendedXMP,
         notes: None,
@@ -241,14 +241,14 @@ pub static APP3_SEGMENTS: &[AppSegmentRule] = &[
     AppSegmentRule {
         name: "ThermalData",
         signature: &[],
-        condition_type: ConditionType::Custom("$$self{Make} eq "),
+        condition_type: ConditionType::Custom(r"$$self{Make} eq "),
         format_handler: FormatHandler::DJI,
         notes: Some("DJI raw thermal data"),
     },
     AppSegmentRule {
         name: "ImagingData",
         signature: &[],
-        condition_type: ConditionType::Custom("$$self{HasIJPEG}"),
+        condition_type: ConditionType::Custom(r"$$self{HasIJPEG}"),
         format_handler: FormatHandler::Unknown,
         notes: Some("InfiRay IR+thermal+visible data"),
     },
@@ -291,35 +291,35 @@ pub static APP4_SEGMENTS: &[AppSegmentRule] = &[
     AppSegmentRule {
         name: "InfiRayFactory",
         signature: &[],
-        condition_type: ConditionType::Custom("$$self{HasIJPEG}"),
+        condition_type: ConditionType::Custom(r"$$self{HasIJPEG}"),
         format_handler: FormatHandler::InfiRay,
         notes: None,
     },
     AppSegmentRule {
         name: "ThermalParams",
         signature: &[],
-        condition_type: ConditionType::Custom("$$self{Make} eq "),
+        condition_type: ConditionType::Custom(r"$$self{Make} eq "),
         format_handler: FormatHandler::DJI,
         notes: None,
     },
     AppSegmentRule {
         name: "ThermalParams2",
         signature: &[],
-        condition_type: ConditionType::Custom("$$self{Make} eq "),
+        condition_type: ConditionType::Custom(r"$$self{Make} eq "),
         format_handler: FormatHandler::DJI,
         notes: None,
     },
     AppSegmentRule {
         name: "ThermalParams3",
         signature: &[],
-        condition_type: ConditionType::Custom("$$self{Make} eq "),
+        condition_type: ConditionType::Custom(r"$$self{Make} eq "),
         format_handler: FormatHandler::DJI,
         notes: None,
     },
     AppSegmentRule {
         name: "PreviewImage",
         signature: &[],
-        condition_type: ConditionType::Custom("always"),
+        condition_type: ConditionType::Custom(r"always"),
         format_handler: FormatHandler::PreviewImage,
         notes: Some("continued from APP3"),
     },
@@ -339,28 +339,28 @@ pub static APP5_SEGMENTS: &[AppSegmentRule] = &[
         signature: &[
             0x73, 0x73, 0x75, 0x6e, 0x69, 0x71, 0x75, 0x65, 0x69, 0x64, 0x00,
         ],
-        condition_type: ConditionType::Regex("ssuniqueid\0"),
+        condition_type: ConditionType::Regex(r"ssuniqueid\\0"),
         format_handler: FormatHandler::Samsung,
         notes: None,
     },
     AppSegmentRule {
         name: "InfiRayPicture",
         signature: &[],
-        condition_type: ConditionType::Custom("$$self{HasIJPEG}"),
+        condition_type: ConditionType::Custom(r"$$self{HasIJPEG}"),
         format_handler: FormatHandler::InfiRay,
         notes: None,
     },
     AppSegmentRule {
         name: "ThermalCalibration",
         signature: &[],
-        condition_type: ConditionType::Custom("$$self{Make} eq "),
+        condition_type: ConditionType::Custom(r"$$self{Make} eq "),
         format_handler: FormatHandler::DJI,
         notes: Some("DJI thermal calibration data"),
     },
     AppSegmentRule {
         name: "PreviewImage",
         signature: &[],
-        condition_type: ConditionType::Custom("always"),
+        condition_type: ConditionType::Custom(r"always"),
         format_handler: FormatHandler::PreviewImage,
         notes: Some("continued from APP4"),
     },
@@ -399,7 +399,7 @@ pub static APP6_SEGMENTS: &[AppSegmentRule] = &[
     AppSegmentRule {
         name: "InfiRayMixMode",
         signature: &[],
-        condition_type: ConditionType::Custom("$$self{HasIJPEG}"),
+        condition_type: ConditionType::Custom(r"$$self{HasIJPEG}"),
         format_handler: FormatHandler::InfiRay,
         notes: None,
     },
@@ -434,7 +434,7 @@ pub static APP7_SEGMENTS: &[AppSegmentRule] = &[
     AppSegmentRule {
         name: "InfiRayOpMode",
         signature: &[],
-        condition_type: ConditionType::Custom("$$self{HasIJPEG}"),
+        condition_type: ConditionType::Custom(r"$$self{HasIJPEG}"),
         format_handler: FormatHandler::InfiRay,
         notes: None,
     },
@@ -459,7 +459,7 @@ pub static APP8_SEGMENTS: &[AppSegmentRule] = &[
     AppSegmentRule {
         name: "InfiRayIsothermal",
         signature: &[],
-        condition_type: ConditionType::Custom("$$self{HasIJPEG}"),
+        condition_type: ConditionType::Custom(r"$$self{HasIJPEG}"),
         format_handler: FormatHandler::InfiRay,
         notes: None,
     },
@@ -486,7 +486,7 @@ pub static APP9_SEGMENTS: &[AppSegmentRule] = &[
     AppSegmentRule {
         name: "InfiRaySensor",
         signature: &[],
-        condition_type: ConditionType::Custom("$$self{HasIJPEG}"),
+        condition_type: ConditionType::Custom(r"$$self{HasIJPEG}"),
         format_handler: FormatHandler::InfiRay,
         notes: None,
     },
@@ -509,10 +509,10 @@ pub static APP10_SEGMENTS: &[AppSegmentRule] = &[
         notes: Some("PhotoStudio Unicode comment"),
     },
     AppSegmentRule {
-        name: "HDRGainCurve",
+        name: "HDRGainInfo",
         signature: &[0x41, 0x52, 0x4f, 0x54, 0x00, 0x00, 0x2e, 0x7b, 0x34, 0x7d],
         condition_type: ConditionType::StartsWith,
-        format_handler: FormatHandler::HDRGainCurve,
+        format_handler: FormatHandler::Unknown,
         notes: None,
     },
 ];
@@ -543,7 +543,7 @@ pub static APP12_SEGMENTS: &[AppSegmentRule] = &[
             0x28, 0x5b, 0x70, 0x69, 0x63, 0x74, 0x75, 0x72, 0x65, 0x20, 0x69, 0x6e, 0x66, 0x6f,
             0x5d, 0x7c, 0x54, 0x79, 0x70, 0x65, 0x3d, 0x29,
         ],
-        condition_type: ConditionType::Regex(r"(\[picture info\]|Type=)"),
+        condition_type: ConditionType::Regex(r"(\\[picture info\\]|Type=)"),
         format_handler: FormatHandler::PictureInfo,
         notes: None,
     },
@@ -561,9 +561,17 @@ pub static APP13_SEGMENTS: &[AppSegmentRule] = &[
     AppSegmentRule {
         name: "Photoshop",
         signature: &[
-            0x28, 0x50, 0x68, 0x6f, 0x74, 0x6f, 0x73, 0x68, 0x6f, 0x70, 0x20, 0x33, 0x2e, 0x30,
-            0x00, 0x7c, 0x41, 0x64, 0x6f, 0x62, 0x65, 0x5f, 0x50, 0x68, 0x6f, 0x74, 0x6f, 0x73,
-            0x68, 0x6f, 0x70, 0x32, 0x2e, 0x35, 0x29,
+            0x50, 0x68, 0x6f, 0x74, 0x6f, 0x73, 0x68, 0x6f, 0x70, 0x20, 0x33, 0x2e, 0x30, 0x00,
+        ],
+        condition_type: ConditionType::StartsWith,
+        format_handler: FormatHandler::Photoshop,
+        notes: None,
+    },
+    AppSegmentRule {
+        name: "Photoshop",
+        signature: &[
+            0x41, 0x64, 0x6f, 0x62, 0x65, 0x5f, 0x50, 0x68, 0x6f, 0x74, 0x6f, 0x73, 0x68, 0x6f,
+            0x70, 0x32, 0x2e, 0x35,
         ],
         condition_type: ConditionType::StartsWith,
         format_handler: FormatHandler::Photoshop,
@@ -584,7 +592,7 @@ pub static APP14_SEGMENTS: &[AppSegmentRule] = &[];
 /// APP15 segment definitions (empty)
 pub static APP15_SEGMENTS: &[AppSegmentRule] = &[];
 
-/// JPEG trailer segment definitions (empty)
+/// JPEG trailer segment definitions
 pub static TRAILER_SEGMENTS: &[AppSegmentRule] = &[];
 
 /// Lookup table for all APP segments
@@ -623,15 +631,7 @@ pub fn identify_app_segment(segment: u8, data: &[u8]) -> Option<&'static AppSegm
     for rule in rules {
         match &rule.condition_type {
             ConditionType::StartsWith => {
-                // Special handling for APP13 Photoshop
-                if segment == 13 && rule.name == "Photoshop" {
-                    // Check for either "Photoshop 3.0\0" or "Adobe_Photoshop2.5"
-                    if data.starts_with(b"Photoshop 3.0\0")
-                        || data.starts_with(b"Adobe_Photoshop2.5")
-                    {
-                        return Some(rule);
-                    }
-                } else if data.starts_with(rule.signature) {
+                if data.starts_with(rule.signature) {
                     return Some(rule);
                 }
             }
@@ -643,20 +643,9 @@ pub fn identify_app_segment(segment: u8, data: &[u8]) -> Option<&'static AppSegm
                     return Some(rule);
                 }
             }
-            ConditionType::Regex(pattern) => {
-                // Handle specific known regex patterns
-                if pattern.contains(r"(\[picture info\]|Type=)") {
-                    // APP12 PictureInfo pattern
-                    if data
-                        .windows(b"[picture info]".len())
-                        .any(|w| w == b"[picture info]")
-                        || data.windows(b"Type=".len()).any(|w| w == b"Type=")
-                    {
-                        return Some(rule);
-                    }
-                }
-                // For other regex patterns, fall back to signature matching
-                if !rule.signature.is_empty() && data.starts_with(rule.signature) {
+            ConditionType::Regex(_) => {
+                // TODO: Implement regex matching for complex patterns
+                if data.starts_with(rule.signature) {
                     return Some(rule);
                 }
             }

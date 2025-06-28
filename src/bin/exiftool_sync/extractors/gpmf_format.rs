@@ -219,7 +219,13 @@ impl GpmfFormatExtractor {
 
             // Handle duplicate Undef variants by adding character suffix
             if variant_name == "Undef" && used_variants.contains(&variant_name) {
-                variant_name = format!("Undef{}", format.code_char.to_ascii_uppercase());
+                // Special case for '?' character - use "UndefQ" for question mark
+                let suffix = if format.code_char == '?' {
+                    "Q".to_string()
+                } else {
+                    format.code_char.to_ascii_uppercase().to_string()
+                };
+                variant_name = format!("Undef{}", suffix);
             }
 
             used_variants.insert(variant_name.clone());
@@ -255,7 +261,13 @@ impl GpmfFormatExtractor {
 
             // Handle duplicate Undef variants by adding character suffix
             if variant_name == "Undef" && used_variants.contains(&variant_name) {
-                variant_name = format!("Undef{}", format.code_char.to_ascii_uppercase());
+                // Special case for '?' character - use "UndefQ" for question mark
+                let suffix = if format.code_char == '?' {
+                    "Q".to_string()
+                } else {
+                    format.code_char.to_ascii_uppercase().to_string()
+                };
+                variant_name = format!("Undef{}", suffix);
             }
 
             used_variants.insert(variant_name.clone());
@@ -324,7 +336,13 @@ impl GpmfFormatExtractor {
 
             // Handle duplicate Undef variants by adding character suffix
             if variant_name == "Undef" && used_variants.contains(&variant_name) {
-                variant_name = format!("Undef{}", format.code_char.to_ascii_uppercase());
+                // Special case for '?' character - use "UndefQ" for question mark
+                let suffix = if format.code_char == '?' {
+                    "Q".to_string()
+                } else {
+                    format.code_char.to_ascii_uppercase().to_string()
+                };
+                variant_name = format!("Undef{}", suffix);
             }
 
             used_variants.insert(variant_name.clone());

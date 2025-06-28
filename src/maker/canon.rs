@@ -7,9 +7,11 @@
 #![doc = "EXIFTOOL-SOURCE: lib/Image/ExifTool/CanonRaw.pm"]
 
 use crate::core::ifd::{IfdParser, TiffHeader};
+use crate::core::print_conv::apply_print_conv;
 use crate::core::{Endian, ExifValue};
 use crate::error::Result;
 use crate::maker::MakerNoteParser;
+use crate::tables::canon_tags::get_canon_tag;
 use std::collections::HashMap;
 
 /// Parser for Canon maker notes
@@ -75,20 +77,51 @@ impl MakerNoteParser for CanonMakerNoteParser {
             ifd0_offset: 8,
         };
 
-        match IfdParser::parse_ifd(&tiff_data, &header, 8) {
-            Ok(parsed) => Ok(parsed.entries().clone()),
-            Err(e) => {
-                // Log the error but return empty results
-                // Many maker notes have quirks that might cause parsing errors
-                eprintln!("Warning: Canon maker note parsing failed: {}", e);
-                Ok(HashMap::new())
-            }
-        }
+        // Parse using table-driven approach with PrintConv
+        parse_canon_ifd_with_tables(&tiff_data, &header)
     }
 
     fn manufacturer(&self) -> &'static str {
         "Canon"
     }
+}
+
+/// Parse Canon IFD using generated tag tables and print conversion
+fn parse_canon_ifd_with_tables(
+    tiff_data: &[u8],
+    header: &TiffHeader,
+) -> Result<HashMap<u16, ExifValue>> {
+    let parsed_ifd = match IfdParser::parse_ifd(tiff_data, header, 8) {
+        Ok(parsed) => parsed,
+        Err(e) => {
+            eprintln!("Warning: Canon IFD parsing failed: {}", e);
+            return Ok(HashMap::new());
+        }
+    };
+
+    // Convert raw IFD entries to Canon tags with print conversion
+    let mut result = HashMap::new();
+
+    for (tag_id, raw_value) in parsed_ifd.entries() {
+        if let Some(canon_tag) = get_canon_tag(*tag_id) {
+            // Apply print conversion to create human-readable value
+            let converted_value = apply_print_conv(raw_value, canon_tag.print_conv);
+
+            // Store both raw and converted values
+            // Raw value for programmatic access
+            result.insert(*tag_id, raw_value.clone());
+
+            // Converted value as string (following ExifTool pattern)
+            // Use a high bit pattern to distinguish converted values
+            let converted_tag_id = 0x8000 | tag_id;
+            result.insert(converted_tag_id, ExifValue::Ascii(converted_value));
+        } else {
+            // Keep unknown tags as-is
+            result.insert(*tag_id, raw_value.clone());
+        }
+    }
+
+    Ok(result)
 }
 
 /// Canon-specific tag IDs

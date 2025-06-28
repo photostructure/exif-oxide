@@ -9,7 +9,7 @@ use crate::core::binary_data::{BinaryDataTable, BinaryDataTableBuilder};
 use crate::core::types::ExifFormat;
 
 /// Binary data table: SensorInfo
-/// Source lines: 7299-7554
+/// Source lines: 7304-7559
 /// Process function: ProcessBinaryData
 pub fn create_sensorinfo_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("SensorInfo", ExifFormat::I16)
@@ -125,7 +125,7 @@ pub fn create_sensorinfo_table() -> BinaryDataTable {
 }
 
 /// Binary data table: ColorDataUnknown
-/// Source lines: 8778-8784
+/// Source lines: 8783-8789
 /// Process function: ProcessBinaryData
 pub fn create_colordataunknown_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ColorDataUnknown", ExifFormat::I16)
@@ -134,7 +134,7 @@ pub fn create_colordataunknown_table() -> BinaryDataTable {
 }
 
 /// Binary data table: CMP1
-/// Source lines: 9492-9865
+/// Source lines: 9497-9870
 /// Process function: ProcessBinaryData
 pub fn create_cmp1_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("CMP1", ExifFormat::U16)

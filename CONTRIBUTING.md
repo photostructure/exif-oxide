@@ -115,7 +115,7 @@ To incorporate new ExifTool versions:
 
 ## Questions?
 
-- Check doc/EXIFTOOL-SYNC.md for the full synchronization guide
+- Check doc/SYNC-DESIGN.md for the full synchronization guide
 - Review existing code for examples
 - Open an issue for clarification
 - Discuss in PR comments
