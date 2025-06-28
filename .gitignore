@@ -1,10 +1,8 @@
 # Build artifacts
 /target
 
-# Vendored dependencies
-/exiftool
-/vendored
-/third-party
+# Generated code from ExifTool
+src/tables/generated/
 
 # IDE files
 .vscode/
@@ -20,6 +18,9 @@ Thumbs.db
 # Test outputs
 *.out
 *.log
+
+# Sync outputs
+.cache/
 
 # Benchmark results
 /criterion/
