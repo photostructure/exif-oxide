@@ -12,8 +12,32 @@ License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+================================================================================
+ExifTool Attribution
+================================================================================
+
+This software includes code derived from ExifTool by Phil Harvey.
+
+ExifTool is Copyright (c) 2003-2025, Phil Harvey
+All rights reserved.
+
+ExifTool is distributed under the same terms as Perl itself (either the
+Perl Artistic License or GPL). For more information about ExifTool, visit:
+https://exiftool.org/
+
+The following components are derived from or based on ExifTool's implementations:
+
+- Tag definitions and metadata structures
+- Manufacturer-specific parsing algorithms
+- Binary data extraction patterns
+- Date/time parsing patterns
+- File format detection signatures
+
+Generated code and data tables extracted from ExifTool remain the property
+of ExifTool as per the Perl Artistic License provisions.
