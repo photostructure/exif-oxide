@@ -55,6 +55,25 @@ use lib 'third-party/exiftool/lib';
 my $module_name = $ARGV[0] || 'Image::ExifTool::Canon';
 my $specific_tag = $ARGV[1];  # Optional: extract specific tag only
 
+# Handle --all-modules option
+if ($ARGV[0] && $ARGV[0] eq '--all-modules') {
+    # Load ExifTool to get the static module list
+    require Image::ExifTool;
+    
+    # Get the static list of modules from @Image::ExifTool::loadAllTables
+    no strict 'refs';
+    my @loadAllTables = @Image::ExifTool::loadAllTables;  # Avoid "used only once" warning
+    my @all_modules = map { "Image::ExifTool::$_" } @loadAllTables;
+    
+    # Process all modules
+    my $all_results = process_all_modules(\@all_modules);
+    
+    # Output combined results
+    my $json = JSON->new->pretty->canonical->allow_nonref;
+    print $json->encode($all_results);
+    exit 0;
+}
+
 # Load the module
 eval "require $module_name";
 if ($@) {
@@ -156,6 +175,168 @@ sub extract_printconv {
     return $result;
 }
 
+# Process all modules and combine results
+sub process_all_modules {
+    my ($modules_ref) = @_;
+    
+    my @all_tags;
+    my %combined_shared_lookups;
+    my %combined_stats = (
+        total_tags => 0,
+        tags_with_printconv => 0,
+        printconv_types => {},
+        processed_modules => 0,
+        failed_modules => 0,
+    );
+    my @failed_modules;
+    
+    # Process each module
+    foreach my $module_name (@$modules_ref) {
+        eval "require $module_name";
+        if ($@) {
+            warn "Failed to load module $module_name: $@\n";
+            $combined_stats{failed_modules}++;
+            push @failed_modules, $module_name;
+            next;
+        }
+        
+        $combined_stats{processed_modules}++;
+        
+        # Extract data from this module (reuse existing logic)
+        my ($tags, $shared_lookups, $stats) = extract_module_data($module_name);
+        
+        # Combine tags
+        push @all_tags, @$tags;
+        
+        # Combine shared lookups (avoiding duplicates)
+        foreach my $lookup_name (keys %$shared_lookups) {
+            if (!exists $combined_shared_lookups{$lookup_name}) {
+                $combined_shared_lookups{$lookup_name} = $shared_lookups->{$lookup_name};
+            }
+        }
+        
+        # Combine statistics
+        $combined_stats{total_tags} += $stats->{total_tags};
+        $combined_stats{tags_with_printconv} += $stats->{tags_with_printconv};
+        foreach my $type (keys %{$stats->{printconv_types}}) {
+            $combined_stats{printconv_types}{$type} += $stats->{printconv_types}{$type};
+        }
+    }
+    
+    # Sort all results for deterministic output
+    @all_tags = sort { 
+        $a->{module} cmp $b->{module} ||
+        $a->{table_name} cmp $b->{table_name} ||
+        $a->{tag_id} cmp $b->{tag_id}
+    } @all_tags;
+    
+    # Sort shared lookups by name
+    my %sorted_shared_lookups;
+    foreach my $name (sort keys %combined_shared_lookups) {
+        $sorted_shared_lookups{$name} = $combined_shared_lookups{$name};
+    }
+    
+    # Create combined output structure
+    my $combined_output = {
+        metadata => {
+            extraction_mode => 'all-modules',
+            module_count => $combined_stats{processed_modules},
+            failed_modules => \@failed_modules,
+            extraction_date => scalar(localtime),
+            exiftool_version => $Image::ExifTool::VERSION || 'unknown',
+        },
+        statistics => \%combined_stats,
+        tags => \@all_tags,
+        shared_lookups => \%sorted_shared_lookups,
+    };
+    
+    return $combined_output;
+}
+
+# Extract data from a single module (factored out from main logic)
+sub extract_module_data {
+    my ($module_name) = @_;
+    
+    # Reset global state for this module
+    %extracted_lookups = ();
+    
+    # Find all tag tables in this module
+    my @tables_to_process;
+    {
+        no strict 'refs';
+        my $symbol_table = \%{"${module_name}::"};
+        
+        foreach my $symbol (keys %$symbol_table) {
+            my $glob = $symbol_table->{$symbol};
+            if (*{$glob}{HASH}) {
+                my $hash_ref = \%{"${module_name}::${symbol}"};
+                # Check if this looks like a tag table
+                if (exists $hash_ref->{GROUPS} || exists $hash_ref->{NOTES} || 
+                    exists $hash_ref->{0} || exists $hash_ref->{0x01} ||
+                    $symbol =~ /Table$/ || $symbol eq 'Main') {
+                    push @tables_to_process, {
+                        name => $symbol,
+                        ref => $hash_ref,
+                    };
+                }
+            }
+        }
+    }
+    
+    # Extract PrintConv from all tables in this module
+    my @extracted_tags;
+    my %stats = (
+        total_tags => 0,
+        tags_with_printconv => 0,
+        printconv_types => {},
+    );
+    
+    foreach my $table_info (@tables_to_process) {
+        my $table = $table_info->{ref};
+        my $table_name = $table_info->{name};
+        
+        foreach my $key (keys %$table) {
+            # Skip special keys
+            next if $key =~ /^(GROUPS|NOTES|NAMESPACE|PRIORITY|WRITE_PROC|PROCESS_PROC|CHECK_PROC|VARS|TABLE_NAME|SHORT_NAME)$/;
+            
+            $stats{total_tags}++;
+            
+            my $printconv_info = extract_printconv($module_name, $key, $table->{$key});
+            if ($printconv_info) {
+                $printconv_info->{table_name} = $table_name;
+                push @extracted_tags, $printconv_info;
+                $stats{tags_with_printconv}++;
+                $stats{printconv_types}{$printconv_info->{printconv_type}}++;
+            }
+        }
+    }
+    
+    # Clean up shared lookups to remove CODE references
+    my %clean_lookups;
+    foreach my $name (keys %extracted_lookups) {
+        my $lookup = $extracted_lookups{$name};
+        my %clean_data;
+        
+        if (ref($lookup->{data}) eq 'HASH') {
+            foreach my $key (keys %{$lookup->{data}}) {
+                my $val = $lookup->{data}->{$key};
+                # Skip CODE references and other non-serializable values
+                if (!ref($val) || ref($val) eq 'ARRAY') {
+                    $clean_data{$key} = $val;
+                }
+            }
+        }
+        
+        $clean_lookups{$name} = {
+            %$lookup,
+            data => \%clean_data,
+            entry_count => scalar(keys %clean_data),
+        };
+    }
+    
+    return (\@extracted_tags, \%clean_lookups, \%stats);
+}
+
 # Find all tag tables in the module
 my @tables_to_process;
 {
@@ -238,17 +419,31 @@ foreach my $name (keys %extracted_lookups) {
     };
 }
 
+# Sort tags for deterministic output
+@extracted_tags = sort { 
+    $a->{table_name} cmp $b->{table_name} ||
+    $a->{tag_id} cmp $b->{tag_id}
+} @extracted_tags;
+
+# Sort shared lookups by name for deterministic output
+my %sorted_clean_lookups;
+foreach my $name (sort keys %clean_lookups) {
+    $sorted_clean_lookups{$name} = $clean_lookups{$name};
+}
+
 # Create output structure
 my $output = {
     metadata => {
+        extraction_mode => 'single-module',
         module => $module_name,
+        module_count => 1,
         extraction_date => scalar(localtime),
         exiftool_version => $Image::ExifTool::VERSION || 'unknown',
         specific_tag => $specific_tag,
     },
     statistics => \%stats,
     tags => \@extracted_tags,
-    shared_lookups => \%clean_lookups,
+    shared_lookups => \%sorted_clean_lookups,
 };
 
 # Output as JSON

@@ -108,7 +108,7 @@ pub const APPLE_TAGS: &[AppleTag] = &[
     AppleTag {
         id: 0x001a,
         name: "QualityHint",
-        print_conv: PrintConvId::UniversalQualityBasic,
+        print_conv: PrintConvId::QualityBasic,
     },
     AppleTag {
         id: 0x001d,

@@ -22,7 +22,7 @@ pub static BINARY_COMPOSITE_TAGS: &[CompositeTagDefinition] = &[
         name: "ThumbnailImage",
         requires: &[(0x0201, "ThumbnailOffset"), (0x0202, "ThumbnailLength")],
         desires: &[],
-        groups: &[(2, "Preview"), (0, "EXIF"), (1, "IFD1")],
+        groups: &[(0, "EXIF"), (2, "Preview"), (1, "IFD1")],
     },
     CompositeTagDefinition {
         name: "PreviewImage",
@@ -35,13 +35,13 @@ pub static BINARY_COMPOSITE_TAGS: &[CompositeTagDefinition] = &[
             (0x0000, "PreviewImageStart (1)"),
             (0x0000, "PreviewImageLength (1)"),
         ],
-        groups: &[(0, "EXIF"), (1, "SubIFD"), (2, "Preview")],
+        groups: &[(2, "Preview"), (1, "SubIFD"), (0, "EXIF")],
     },
     CompositeTagDefinition {
         name: "JpgFromRaw",
         requires: &[(0x0111, "JpgFromRawStart"), (0x0117, "JpgFromRawLength")],
         desires: &[],
-        groups: &[(2, "Preview"), (0, "EXIF"), (1, "SubIFD")],
+        groups: &[(0, "EXIF"), (1, "SubIFD"), (2, "Preview")],
     },
 ];
 

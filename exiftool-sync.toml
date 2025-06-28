@@ -27,6 +27,7 @@ binary_formats = { source = "multiple", last_extracted = "13.26", timestamp = "2
 magic_numbers = { source = "ExifTool.pm:912-1027", last_extracted = "13.26", timestamp = "2025-06-24" }
 datetime_patterns = { source = "multiple", last_extracted = "pending" }
 binary_tags = { source = "Exif.pm:4858-4877", last_extracted = "pending" }
+writable_tags = { source = "lib/Image/ExifTool/*.pm", last_extracted = "13.26", timestamp = "2025-06-25" }
 
 [algorithm_tracking]
 "ProcessBinaryData" = { version = "13.26", modules = ["Canon.pm", "Nikon.pm", "Sony.pm", "Fujifilm.pm", "Olympus.pm", "Pentax.pm", "Panasonic.pm", "Samsung.pm", "Sigma.pm"] }

@@ -9,7 +9,7 @@ use crate::core::binary_data::{BinaryDataTable, BinaryDataTableBuilder};
 use crate::core::types::ExifFormat;
 
 /// Binary data table: MOV
-/// Source lines: 5929-5976
+/// Source lines: 6031-6078
 /// Process function: ProcessBinaryData
 pub fn create_mov_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("MOV", ExifFormat::U8)
@@ -22,7 +22,7 @@ pub fn create_mov_table() -> BinaryDataTable {
 }
 
 /// Binary data table: PENT
-/// Source lines: 6044-6211
+/// Source lines: 6146-6313
 /// Process function: ProcessBinaryData
 pub fn create_pent_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("PENT", ExifFormat::U8)

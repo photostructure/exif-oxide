@@ -4,7 +4,7 @@ use exif_oxide::read_basic_exif;
 
 #[test]
 fn test_exiftool_sample_image() {
-    let exif = read_basic_exif("exiftool/t/images/ExifTool.jpg").unwrap();
+    let exif = read_basic_exif("third-party/exiftool/t/images/ExifTool.jpg").unwrap();
 
     // The actual EXIF data contains FUJIFILM, even though ExifTool reports Canon
     // (ExifTool may be using other metadata sources)
@@ -15,7 +15,7 @@ fn test_exiftool_sample_image() {
 
 #[test]
 fn test_canon_image() {
-    let exif = read_basic_exif("exiftool/t/images/Canon.jpg").unwrap();
+    let exif = read_basic_exif("third-party/exiftool/t/images/Canon.jpg").unwrap();
 
     // Test that we can read Canon images
     assert_eq!(exif.make, Some("Canon".to_string()));
@@ -24,7 +24,7 @@ fn test_canon_image() {
 
 #[test]
 fn test_nikon_image() {
-    let exif = read_basic_exif("exiftool/t/images/Nikon.jpg").unwrap();
+    let exif = read_basic_exif("third-party/exiftool/t/images/Nikon.jpg").unwrap();
 
     // Test that we can read Nikon images
     assert_eq!(exif.make, Some("NIKON".to_string()));
@@ -35,7 +35,7 @@ fn test_nikon_image() {
 fn test_no_exif() {
     use exif_oxide::error::Error;
 
-    let result = read_basic_exif("exiftool/t/images/PNG.png");
+    let result = read_basic_exif("third-party/exiftool/t/images/PNG.png");
 
     // Should fail because this PNG has no EXIF data
     assert!(matches!(result, Err(Error::NoExif)));

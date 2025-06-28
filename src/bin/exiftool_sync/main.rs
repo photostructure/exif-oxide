@@ -11,6 +11,41 @@ use std::process::Command;
 mod extractors;
 use extractors::Extractor;
 
+mod analyze_printconv_safety;
+mod tag_metadata;
+
+/// Parse and remove --force flag from command arguments
+/// Returns (remaining_args, force_flag_present)
+fn parse_force_flag(args: &[String]) -> (Vec<String>, bool) {
+    let mut filtered_args = Vec::new();
+    let mut force = false;
+
+    for arg in args {
+        if arg == "--force" {
+            force = true;
+        } else {
+            filtered_args.push(arg.clone());
+        }
+    }
+
+    (filtered_args, force)
+}
+
+/// Clear the .cache directory to force fresh extraction
+fn clear_cache() -> Result<(), String> {
+    let cache_dir = Path::new(".cache");
+
+    if cache_dir.exists() {
+        println!("🗑️  Clearing cache directory...");
+        fs::remove_dir_all(cache_dir).map_err(|e| format!("Failed to clear cache: {}", e))?;
+        println!("   ✅ Cache cleared");
+    } else {
+        println!("   ℹ️  No cache to clear");
+    }
+
+    Ok(())
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -33,14 +68,25 @@ fn main() {
             if args.len() < 3 {
                 Err("Usage: exiftool_sync extract <component> [options]".to_string())
             } else {
-                cmd_extract(&args[2], &args[3..])
+                let (remaining_options, force) = parse_force_flag(&args[3..]);
+                cmd_extract(&args[2], &remaining_options, force)
             }
         }
         "analyze" => {
-            if args.len() < 4 || args[2] != "printconv-patterns" {
-                Err("Usage: exiftool_sync analyze printconv-patterns <Manufacturer.pm>".to_string())
-            } else {
-                cmd_analyze_printconv(&args[3])
+            match args.get(2).map(|s| s.as_str()) {
+                Some("printconv-patterns") => {
+                    if args.len() < 4 {
+                        Err("Usage: exiftool_sync analyze printconv-patterns <Manufacturer.pm>".to_string())
+                    } else {
+                        cmd_analyze_printconv(&args[3])
+                    }
+                }
+                Some("printconv-safety") => {
+                    cmd_analyze_printconv_safety(&args[3..])
+                }
+                _ => {
+                    Err("Usage: exiftool_sync analyze [printconv-patterns <file> | printconv-safety [options]]".to_string())
+                }
             }
         }
         "generate" => {
@@ -60,7 +106,10 @@ fn main() {
                 cmd_diff_printconv(&args[2], &args[3], &args[4])
             }
         }
-        "extract-all" => cmd_extract_all(),
+        "extract-all" => {
+            let (_, force) = parse_force_flag(&args[2..]);
+            cmd_extract_all(force)
+        }
         "add-manufacturer" => {
             if args.len() < 3 {
                 Err("Usage: exiftool_sync add-manufacturer <ManufacturerName>".to_string())
@@ -280,11 +329,17 @@ fn extract_value(content: &str, key: &str) -> Option<String> {
     None
 }
 
-fn cmd_extract(component: &str, _options: &[String]) -> Result<(), String> {
+fn cmd_extract(component: &str, _options: &[String], force: bool) -> Result<(), String> {
     use extractors::Extractor;
 
     println!("Extracting component: {}", component);
     println!();
+
+    // Clear cache if --force flag is provided
+    if force {
+        clear_cache()?;
+        println!();
+    }
 
     let extractor: Box<dyn Extractor> = match component {
         "app-segment-tables" => Box::new(extractors::AppSegmentTablesExtractor::new()),
@@ -304,6 +359,9 @@ fn cmd_extract(component: &str, _options: &[String]) -> Result<(), String> {
             }
             Box::new(extractors::PrintConvTablesExtractor::new(&_options[0]))
         }
+        "printconv-sync" => Box::new(extractors::PrintConvSyncExtractor::new()),
+        "shared-tables" => Box::new(extractors::SharedTablesSyncExtractor::new()),
+        "writable-tags" => Box::new(extractors::WritableTagsExtractor::new()),
         _ => return Err(format!("Unknown component: {}", component)),
     };
 
@@ -320,12 +378,25 @@ fn cmd_extract(component: &str, _options: &[String]) -> Result<(), String> {
     Ok(())
 }
 
-fn cmd_extract_all() -> Result<(), String> {
+fn cmd_extract_all(force: bool) -> Result<(), String> {
     use extractors::Extractor;
 
     println!("Extracting all components from ExifTool...");
     println!("==========================================");
     println!();
+
+    // Clear cache if --force flag is provided
+    if force {
+        clear_cache()?;
+        println!();
+    }
+
+    // Clear any existing sync todos file
+    if let Err(e) = fs::remove_file("sync-todos.jsonl") {
+        if e.kind() != std::io::ErrorKind::NotFound {
+            eprintln!("Warning: Failed to clear sync-todos.jsonl: {}", e);
+        }
+    }
 
     // Get ExifTool source directory
     let exiftool_path = Path::new("third-party/exiftool");
@@ -344,6 +415,9 @@ fn cmd_extract_all() -> Result<(), String> {
         ("gpmf-tags", "GoPro GPMF tag definitions"),
         ("gpmf-format", "GoPro GPMF format definitions"),
         ("maker-detection", "Maker note detection patterns"),
+        ("printconv-sync", "PrintConv synchronization and generation"),
+        ("shared-tables", "Shared lookup tables extraction"),
+        ("writable-tags", "Writable tag registry with safety levels"),
     ];
 
     let mut successes = 0;
@@ -353,6 +427,7 @@ fn cmd_extract_all() -> Result<(), String> {
         println!("🔄 Extracting {} ({})", component, description);
 
         let extractor: Box<dyn Extractor> = match *component {
+            "app-segment-tables" => Box::new(extractors::AppSegmentTablesExtractor::new()),
             "binary-formats" => Box::new(extractors::BinaryFormatsExtractor::new()),
             "magic-numbers" => Box::new(extractors::MagicNumbersExtractor::new()),
             "datetime-patterns" => Box::new(extractors::DateTimePatternsExtractor::new()),
@@ -361,6 +436,9 @@ fn cmd_extract_all() -> Result<(), String> {
             "gpmf-tags" => Box::new(extractors::GpmfTagsExtractor::new()),
             "gpmf-format" => Box::new(extractors::GpmfFormatExtractor::new()),
             "maker-detection" => Box::new(extractors::MakerDetectionExtractor::new()),
+            "printconv-sync" => Box::new(extractors::PrintConvSyncExtractor::new()),
+            "shared-tables" => Box::new(extractors::SharedTablesSyncExtractor::new()),
+            "writable-tags" => Box::new(extractors::WritableTagsExtractor::new()),
             _ => unreachable!(),
         };
 
@@ -388,12 +466,66 @@ fn cmd_extract_all() -> Result<(), String> {
         }
     }
 
+    // Check if any sync issues were generated and count by priority
+    let sync_todos_path = Path::new("sync-todos.jsonl");
+    let (issue_count, priority_counts) = if sync_todos_path.exists() {
+        let mut total = 0;
+        let mut high = 0;
+        let mut medium = 0;
+        let mut low = 0;
+
+        if let Ok(content) = fs::read_to_string(sync_todos_path) {
+            for line in content.lines() {
+                if line.trim().is_empty() {
+                    continue;
+                }
+                total += 1;
+
+                // Try to parse the priority from the JSON
+                if let Ok(issue) = serde_json::from_str::<serde_json::Value>(line) {
+                    match issue.get("priority").and_then(|p| p.as_str()) {
+                        Some("high") => high += 1,
+                        Some("medium") => medium += 1,
+                        Some("low") => low += 1,
+                        _ => {} // Unknown priority
+                    }
+                }
+            }
+        }
+        (total, (high, medium, low))
+    } else {
+        (0, (0, 0, 0))
+    };
+
+    if issue_count > 0 {
+        println!();
+        println!(
+            "⚠️  Found {} issues requiring manual implementation:",
+            issue_count
+        );
+        let (high, medium, low) = priority_counts;
+        if high > 0 {
+            println!("   🔴 High priority: {}", high);
+        }
+        if medium > 0 {
+            println!("   🟡 Medium priority: {}", medium);
+        }
+        if low > 0 {
+            println!("   🟢 Low priority: {}", low);
+        }
+        println!();
+        println!("   See sync-todos.jsonl for details");
+    }
+
     if failures.is_empty() {
         println!();
         println!("🎉 All ExifTool algorithms successfully extracted!");
         println!("   Next steps:");
         println!("   - Run 'cargo build' to compile with extracted data");
         println!("   - Run 'cargo test' to validate integration");
+        if issue_count > 0 {
+            println!("   - Review sync-todos.jsonl for manual implementation tasks");
+        }
         Ok(())
     } else {
         Err(format!("{} component(s) failed extraction", failures.len()))
@@ -988,10 +1120,13 @@ fn print_help() {
     println!("    status                           Show current synchronization status");
     println!("    diff <from> <to>                 Show which Rust files are affected by ExifTool changes");
     println!("    scan                             List all ExifTool source dependencies");
-    println!("    extract <component>              Extract algorithms from ExifTool source");
-    println!("    extract-all                      Extract all components in one command");
+    println!("    extract <component> [--force]    Extract algorithms from ExifTool source");
+    println!("    extract-all [--force]            Extract all components in one command");
     println!(
         "    analyze printconv-patterns <pm>  Analyze PrintConv patterns in manufacturer file"
+    );
+    println!(
+        "    analyze printconv-safety         Analyze PrintConv safety across all ExifTool files"
     );
     println!("    generate printconv-functions <pm> Generate PrintConv functions for manufacturer");
     println!("    diff-printconv <from> <to> <pm>  Compare PrintConv changes between versions");
@@ -1007,8 +1142,18 @@ fn print_help() {
     println!("    gpmf-tags                        Extract GoPro GPMF tag definitions");
     println!("    gpmf-format                      Extract GoPro GPMF format definitions");
     println!("    maker-detection                  Extract maker note detection patterns");
+    println!("    printconv-sync                   PrintConv synchronization and generation");
+    println!("    shared-tables                    Extract shared lookup tables");
+    println!(
+        "    writable-tags                    Extract writable tag registry with safety levels"
+    );
     println!(
         "    printconv-tables <pm>            Extract complete tag tables with PrintConv mappings"
+    );
+    println!();
+    println!("FLAGS:");
+    println!(
+        "    --force                          Clear cache before extraction to force fresh run"
     );
     println!();
     println!("EXAMPLES:");
@@ -1017,7 +1162,12 @@ fn print_help() {
     println!("    cargo run --bin exiftool_sync scan");
     println!("    cargo run --bin exiftool_sync extract binary-formats");
     println!("    cargo run --bin exiftool_sync extract-all");
+    println!("    cargo run --bin exiftool_sync extract-all --force");
     println!("    cargo run --bin exiftool_sync extract maker-detection");
+    println!("    cargo run --bin exiftool_sync extract printconv-sync --force");
+    println!("    cargo run --bin exiftool_sync extract printconv-sync");
+    println!("    cargo run --bin exiftool_sync extract shared-tables");
+    println!("    cargo run --bin exiftool_sync extract writable-tags");
     println!("    cargo run --bin exiftool_sync analyze printconv-patterns Canon.pm");
     println!("    cargo run --bin exiftool_sync generate printconv-functions Canon.pm");
     println!("    cargo run --bin exiftool_sync extract printconv-tables Canon.pm");
@@ -1572,4 +1722,47 @@ fn validate_generated_files(
     }
 
     Ok(())
+}
+
+fn cmd_analyze_printconv_safety(args: &[String]) -> Result<(), String> {
+    // Parse command-line style arguments into the struct expected by the analyzer
+    let parsed_args = analyze_printconv_safety::parse_args(args)?;
+
+    // Run the analyzer directly
+    analyze_printconv_safety::run(parsed_args)
+}
+
+#[allow(dead_code)]
+fn print_printconv_safety_help() {
+    println!("exiftool_sync analyze printconv-safety [OPTIONS]");
+    println!();
+    println!("Analyzes ExifTool tag definitions to identify safe universal PrintConv patterns");
+    println!(
+        "and detect potential name collisions across different contexts (EXIF/MakerNote/XMP)."
+    );
+    println!();
+    println!("OPTIONS:");
+    println!("    --output <FILE>        Output CSV file [default: printconv_safety_analysis.csv]");
+    println!("    --exiftool-path <PATH> Path to ExifTool source [default: third-party/exiftool]");
+    println!("    --verbose              Enable verbose output");
+    println!("    --help                 Show this help message");
+    println!();
+    println!("EXAMPLES:");
+    println!("    # Basic analysis with default settings");
+    println!("    cargo run --bin exiftool_sync analyze printconv-safety");
+    println!();
+    println!("    # Custom output file and verbose logging");
+    println!("    cargo run --bin exiftool_sync analyze printconv-safety --output my_report.csv --verbose");
+    println!();
+    println!("    # Use different ExifTool source location");
+    println!("    cargo run --bin exiftool_sync analyze printconv-safety --exiftool-path /path/to/exiftool");
+    println!();
+    println!("OUTPUT:");
+    println!("    CSV report with columns:");
+    println!("    - tag_name: EXIF tag name");
+    println!("    - tag_id: Hexadecimal tag ID");
+    println!("    - context: EXIF/MakerNote/XMP/etc.");
+    println!("    - safety_level: Safe/CollisionRisk/ManualReview/etc.");
+    println!("    - recommended_printconv_id: Suggested PrintConvId enum name");
+    println!("    - collision_details: Information about name conflicts");
 }

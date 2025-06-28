@@ -18,7 +18,10 @@ pub mod tags;
 #[cfg(test)]
 mod test_integration;
 
-pub use format::*;
+pub use format::{
+    get_default_format_size, get_gpmf_format, get_gpmf_size, GpmfFormat, GPMF_FORMAT_COUNT,
+    GPMF_FORMAT_MAP, GPMF_SIZE_MAP,
+};
 pub use tags::*;
 
 /// GPMF parser for extracting GoPro metadata

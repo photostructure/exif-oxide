@@ -6,7 +6,7 @@ use exif_oxide::core::mpf::ParsedMpf;
 use exif_oxide::core::print_conv::{apply_print_conv, PrintConvId};
 use exif_oxide::core::ExifValue;
 use exif_oxide::tables::{
-    exif_tags, fujifilm_tags, nikon_tags, olympus_tags, pentax_tags, sony_tags,
+    canon_tags, exif_tags, fujifilm_tags, nikon_tags, olympus_tags, pentax_tags, sony_tags,
 };
 use exif_oxide::tables::{lookup_canon_tag, lookup_tag};
 use serde::Serialize;
@@ -541,11 +541,9 @@ fn build_tag_map(
         let (tag_key, group, print_conv_id) = if *tag_id >= 0xC000 {
             // This is a maker note tag (prefixed with 0xC000 for Canon)
             let original_tag = tag_id - 0xC000;
-            if let Some(tag_info) = lookup_canon_tag(original_tag) {
-                let tag_name = tag_info.name;
-                let tag_key = format_tag_key(tag_name, Some("Canon"), include_groups);
-                // Canon tags use a different PrintConv system - for now use None
-                (tag_key, Some("Canon".to_string()), PrintConvId::None)
+            if let Some(canon_tag) = canon_tags::get_canon_tag(original_tag) {
+                let tag_key = format_tag_key(canon_tag.name, Some("Canon"), include_groups);
+                (tag_key, Some("Canon".to_string()), canon_tag.print_conv)
             } else {
                 let tag_name = format!("Unknown0x{:04X}", original_tag);
                 let tag_key = format_tag_key(&tag_name, Some("Canon"), include_groups);
@@ -553,8 +551,20 @@ fn build_tag_map(
             }
         } else if *tag_id >= 0x8000 {
             // This is a converted maker note tag (high bit set)
-            // These are already converted by the maker note parser
-            continue; // Skip - already processed
+            // Extract the original tag ID by removing the 0x8000 bit
+            let original_tag = tag_id & 0x7FFF;
+
+            // Try to look up the original Canon tag to get the proper name
+            if let Some(canon_tag) = canon_tags::get_canon_tag(original_tag) {
+                let tag_key = format_tag_key(canon_tag.name, Some("Canon"), include_groups);
+                // This is the converted value, so no additional PrintConv needed
+                (tag_key, Some("Canon".to_string()), PrintConvId::None)
+            } else {
+                // Fallback for unknown converted tags
+                let tag_name = format!("Canon0x{:04X}", original_tag);
+                let tag_key = format_tag_key(&tag_name, Some("Canon"), include_groups);
+                (tag_key, Some("Canon".to_string()), PrintConvId::None)
+            }
         } else if *tag_id >= 0x534F && *tag_id < 0x5350 {
             // Sony maker note tags (0x534F prefix)
             let original_tag = tag_id - 0x534F;
@@ -590,6 +600,16 @@ fn build_tag_map(
             let tag_key = format_tag_key(&tag_name, Some("Fujifilm"), include_groups);
             let print_conv_id = get_maker_note_printconv(original_tag, 0x4655);
             (tag_key, Some("Fujifilm".to_string()), print_conv_id)
+        } else if *tag_id >= 0x4000 && *tag_id < 0x8000 {
+            // Canon tags in the 0x4xxx range (stored without prefix)
+            if let Some(canon_tag) = canon_tags::get_canon_tag(*tag_id) {
+                let tag_key = format_tag_key(canon_tag.name, Some("Canon"), include_groups);
+                (tag_key, Some("Canon".to_string()), canon_tag.print_conv)
+            } else {
+                let tag_name = format!("Canon0x{:04X}", tag_id);
+                let tag_key = format_tag_key(&tag_name, Some("Canon"), include_groups);
+                (tag_key, Some("Canon".to_string()), PrintConvId::None)
+            }
         } else if *tag_id >= 0x1000 {
             // This is an IFD1 tag (prefixed with 0x1000)
             let original_tag = tag_id - 0x1000;
@@ -636,11 +656,11 @@ fn build_tag_map(
             }
         }
 
-        // Handle name collisions: first-with-a-non-blank-value wins
+        // Handle name collisions: prefer converted values over raw values
         let should_insert = if tags.contains_key(&tag_key) {
-            // For simplicity, if a tag already exists, don't replace it
-            // This preserves the original collision behavior
-            false
+            // If a tag already exists, replace it only if this is a converted value
+            // Converted Canon tags have tag IDs >= 0x8000
+            *tag_id >= 0x8000
         } else {
             true
         };

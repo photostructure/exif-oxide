@@ -9,7 +9,7 @@ use crate::core::binary_data::{BinaryDataTable, BinaryDataTableBuilder};
 use crate::core::types::ExifFormat;
 
 /// Binary data table: Thumbnail
-/// Source lines: 3806-3815
+/// Source lines: 3810-3819
 /// Process function: ProcessBinaryData
 pub fn create_thumbnail_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("Thumbnail", ExifFormat::U32)
@@ -21,7 +21,7 @@ pub fn create_thumbnail_table() -> BinaryDataTable {
 }
 
 /// Binary data table: WAV
-/// Source lines: 3936-4006
+/// Source lines: 3940-4010
 /// Process function: ProcessBinaryData
 pub fn create_wav_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("WAV", ExifFormat::U8)

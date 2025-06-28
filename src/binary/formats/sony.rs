@@ -9,7 +9,7 @@ use crate::core::binary_data::{BinaryDataTable, BinaryDataTableBuilder};
 use crate::core::types::ExifFormat;
 
 /// Binary data table: PIC
-/// Source lines: 10443-10833
+/// Source lines: 10443-10838
 /// Process function: ProcessSonyPIC
 pub fn create_pic_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("PIC", ExifFormat::U8)

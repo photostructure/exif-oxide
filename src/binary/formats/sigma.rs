@@ -9,7 +9,7 @@ use crate::core::binary_data::{BinaryDataTable, BinaryDataTableBuilder};
 use crate::core::types::ExifFormat;
 
 /// Binary data table: WBSettings
-/// Source lines: 808-825
+/// Source lines: 834-851
 /// Process function: ProcessBinaryData
 pub fn create_wbsettings_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("WBSettings", ExifFormat::Float)
@@ -27,7 +27,7 @@ pub fn create_wbsettings_table() -> BinaryDataTable {
 }
 
 /// Binary data table: WBSettings2
-/// Source lines: 828-845
+/// Source lines: 854-871
 /// Process function: ProcessBinaryData
 pub fn create_wbsettings2_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("WBSettings2", ExifFormat::Float)

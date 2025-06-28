@@ -9,7 +9,7 @@ use crate::core::binary_data::{BinaryDataTable, BinaryDataTableBuilder};
 use crate::core::types::ExifFormat;
 
 /// Binary data table: ShotInfoD80
-/// Source lines: 6118-6194
+/// Source lines: 6119-6195
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod80_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD80", ExifFormat::U8)
@@ -36,7 +36,7 @@ pub fn create_shotinfod80_table() -> BinaryDataTable {
 }
 
 /// Binary data table: ShotInfoD3a
-/// Source lines: 6242-6302
+/// Source lines: 6243-6303
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod3a_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD3a", ExifFormat::U8)
@@ -56,7 +56,7 @@ pub fn create_shotinfod3a_table() -> BinaryDataTable {
 }
 
 /// Binary data table: ShotInfoD3b
-/// Source lines: 6305-6396
+/// Source lines: 6306-6397
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod3b_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD3b", ExifFormat::U8)
@@ -79,7 +79,7 @@ pub fn create_shotinfod3b_table() -> BinaryDataTable {
 }
 
 /// Binary data table: ShotInfoD3S
-/// Source lines: 6444-6513
+/// Source lines: 6445-6514
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod3s_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD3S", ExifFormat::U8)
@@ -94,7 +94,7 @@ pub fn create_shotinfod3s_table() -> BinaryDataTable {
 }
 
 /// Binary data table: ShotInfoD300a
-/// Source lines: 6516-6605
+/// Source lines: 6517-6606
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod300a_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD300a", ExifFormat::U8)
@@ -144,7 +144,7 @@ pub fn create_shotinfod300a_table() -> BinaryDataTable {
 }
 
 /// Binary data table: ShotInfoD300b
-/// Source lines: 6608-6755
+/// Source lines: 6609-6756
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod300b_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD300b", ExifFormat::U8)
@@ -235,7 +235,7 @@ pub fn create_shotinfod300b_table() -> BinaryDataTable {
 }
 
 /// Binary data table: ShotInfoD800
-/// Source lines: 7075-7641
+/// Source lines: 7076-7642
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod800_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD800", ExifFormat::U8)
@@ -436,7 +436,7 @@ pub fn create_shotinfod800_table() -> BinaryDataTable {
 }
 
 /// Binary data table: ShotInfoD810
-/// Source lines: 7892-13022
+/// Source lines: 7893-13029
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod810_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD810", ExifFormat::U32)
@@ -1372,7 +1372,7 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
 }
 
 /// Binary data table: MoreSettingsD850
-/// Source lines: 8268-8291
+/// Source lines: 8269-8292
 /// Process function: ProcessBinaryData
 pub fn create_moresettingsd850_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("MoreSettingsD850", ExifFormat::U8)
@@ -1386,7 +1386,7 @@ pub fn create_moresettingsd850_table() -> BinaryDataTable {
 }
 
 /// Binary data table: ShotInfoD4S
-/// Source lines: 8325-8613
+/// Source lines: 8326-8614
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod4s_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD4S", ExifFormat::U8)
@@ -1572,7 +1572,7 @@ pub fn create_shotinfod4s_table() -> BinaryDataTable {
 }
 
 /// Binary data table: MOV
-/// Source lines: 12157-12216
+/// Source lines: 12158-12217
 /// Process function: ProcessBinaryData
 pub fn create_mov_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("MOV", ExifFormat::U8)

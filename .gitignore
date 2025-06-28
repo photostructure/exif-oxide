@@ -27,3 +27,5 @@ Thumbs.db
 
 # Debug files
 *.pdb
+third-party/exif-oxide-node
+.gitignore

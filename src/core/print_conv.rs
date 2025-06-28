@@ -7,6 +7,76 @@
 
 use crate::core::ExifValue;
 
+// Import shared lookup tables (conditionally compiled based on feature)
+#[cfg(feature = "generated-tables")]
+use crate::tables::generated::{
+    canonlens_types::CANONLENS_TYPES, canonmodelid::CANONMODELID, nikonlens_ids::NIKONLENS_IDS,
+    pentaxlens_types::PENTAXLENS_TYPES, sigmalens_types::SIGMALENS_TYPES,
+    sonylens_types::SONYLENS_TYPES, sonylens_types2::SONYLENS_TYPES2,
+};
+
+// Stub imports when generated tables are not available
+#[cfg(not(feature = "generated-tables"))]
+mod stub_tables {
+    use phf::phf_map;
+
+    pub static CANONLENS_TYPES: phf::Map<&str, &'static str> = phf_map! {};
+    pub static CANONMODELID: phf::Map<&str, &'static str> = phf_map! {};
+    pub static NIKONLENS_IDS: phf::Map<&str, &'static str> = phf_map! {};
+    pub static PENTAXLENS_TYPES: phf::Map<&str, &'static str> = phf_map! {};
+    pub static SONYLENS_TYPES: phf::Map<&str, &'static str> = phf_map! {};
+    pub static SONYLENS_TYPES2: phf::Map<&str, &'static str> = phf_map! {};
+    pub static SIGMALENS_TYPES: phf::Map<&str, &'static str> = phf_map! {};
+}
+
+#[cfg(not(feature = "generated-tables"))]
+use stub_tables::*;
+
+/// Apply a shared lookup table to convert a value to a human-readable string
+fn apply_shared_lookup(value: &ExifValue, table: &phf::Map<&str, &'static str>) -> String {
+    // Try to convert value to string key for lookup
+    let key = match value {
+        ExifValue::U8(val) => val.to_string(),
+        ExifValue::U16(val) => val.to_string(),
+        ExifValue::U32(val) => val.to_string(),
+        ExifValue::I16(val) => val.to_string(),
+        ExifValue::I32(val) => val.to_string(),
+        ExifValue::Rational(num, den) => {
+            // Handle rational values - might need decimal representation
+            if *den == 1 {
+                num.to_string()
+            } else {
+                format!("{:.1}", *num as f64 / *den as f64)
+            }
+        }
+        ExifValue::SignedRational(num, den) => {
+            if *den == 1 {
+                num.to_string()
+            } else {
+                format!("{:.1}", *num as f64 / *den as f64)
+            }
+        }
+        ExifValue::Ascii(val) => val.clone(),
+        ExifValue::Undefined(data) => {
+            // Try to interpret as integer if it's the right size
+            match data.len() {
+                1 => data[0].to_string(),
+                2 => u16::from_le_bytes([data[0], data[1]]).to_string(),
+                4 => u32::from_le_bytes([data[0], data[1], data[2], data[3]]).to_string(),
+                _ => format!("Unknown ({})", data.len()),
+            }
+        }
+        _ => return format!("Unknown ({:?})", value),
+    };
+
+    // Look up the value in the table
+    if let Some(result) = table.get(&key) {
+        result.to_string()
+    } else {
+        format!("Unknown ({})", key)
+    }
+}
+
 /// Enumeration of all print conversion functions
 ///
 /// This enum captures all unique PrintConv patterns found across ExifTool's
@@ -24,11 +94,29 @@ pub enum PrintConvId {
     /// Yes/No conversion (0=No, 1=Yes)  
     YesNo,
 
+    /// True/False conversion (0=False, 1=True)
+    TrueFalse,
+
+    /// Enable/Disable conversion (0=Disable, 1=Enable)
+    EnableDisable,
+
     /// Image size conversion (width x height)
     ImageSize,
 
     /// Quality settings (1=Best, 2=Better, 3=Good, etc.)
     Quality,
+
+    /// Image quality levels (Normal, Fine, Extra Fine)
+    ImageQuality,
+
+    /// Target image type (Real-world Subject, Written Document)
+    TargetImageType,
+
+    /// Image format type (None, Bitmap, JPEG, GIF)
+    ImageFormat,
+
+    /// Camera drive mode (Single, Continuous)
+    DriveMode,
 
     /// Flash mode lookup
     FlashMode,
@@ -47,6 +135,21 @@ pub enum PrintConvId {
 
     /// Exposure compensation (+/- EV)
     ExposureCompensation,
+
+    /// Formatting conversions
+    Millimeters, // "$val mm"
+    Float1Decimal, // sprintf("%.1f", $val)
+    Float2Decimal, // sprintf("%.2f", $val)
+    RoundToInt,    // sprintf("%.0f", $val)
+    Integer,       // sprintf("%d", $val)
+    Hex,           // sprintf("0x%x", $val)
+
+    /// Function-based conversions
+    Fraction, // PrintFraction
+    Duration,      // ConvertDuration
+    ConvertBinary, // ConvertBinary
+    UnixTime,      // ConvertUnixTime
+    GPSCoordinate, // PrintGPSCoordinates
 
     /// Pentax-specific conversions
     PentaxModelLookup,
@@ -139,6 +242,10 @@ pub enum PrintConvId {
     /// Nikon-specific conversions
     NikonLensType,
     NikonFlashMode,
+    NikonModelLookup,
+
+    /// Canon additional flash modes
+    CanonFlashMode,
 
     // Auto-generated Nikon PrintConvId variants (from extract printconv-tables Nikon.pm)
     NikonMakerNoteVersion,
@@ -574,24 +681,23 @@ pub enum PrintConvId {
     ResolutionUnit,   // Resolution units (None/inches/cm)
 
     /// Universal patterns used by 3+ manufacturers
-    UniversalOnOffAuto, // 0=Off, 1=On, 2=Auto (6 manufacturers, 25+ tags)
-    UniversalNoiseReduction,        // 0=Off, 1=Low, 2=Normal, 3=High, 4=Auto
-    UniversalQualityBasic, // 1=Economy, 2=Normal, 3=Fine, 4=Super Fine (Canon, Casio, others)
-    UniversalWhiteBalanceExtended, // Extended WB: Auto/Daylight/Shade/Cloudy/Tungsten/Fluorescent/Flash/Manual
-    UniversalFocusMode,            // 0=Single, 1=Continuous, 2=Auto, 3=Manual (all manufacturers)
-    UniversalSensingMethod,        // EXIF sensing method types
-    UniversalSceneCaptureType,     // EXIF scene capture type
-    UniversalCustomRendered,       // EXIF custom rendering
-    UniversalSceneType,            // EXIF scene type
-    UniversalGainControl,          // EXIF gain control
-    UniversalAutoManual,           // 0=Auto, 1=Manual (common across manufacturers)
-    UniversalOffWeakStrong,        // 0=Off, 32=Weak, 64=Strong (Fujifilm ColorChrome, others)
-    UniversalSignedNumber,         // Format signed numbers with + prefix for positive values
-    UniversalNoiseReductionApplied, // 0=Off, 1=On (Adobe DNG, others)
-    UniversalSubjectDistanceRange, // 0=Unknown, 1=Macro, 2=Close, 3=Distant (EXIF 0xa40c)
-    UniversalFileSource, // 1=Film Scanner, 2=Reflection Print Scanner, 3=Digital Camera (EXIF 0xa300)
-    UniversalRenderingIntent, // 0=Perceptual, 1=Relative Colorimetric, 2=Saturation, 3=Absolute colorimetric (EXIF 0x303)
-    UniversalSensitivityType, // 0=Unknown, 1=Standard Output Sensitivity, 2=Recommended Exposure Index, etc. (EXIF 0x8830)
+    OnOffAuto, // 0=Off, 1=On, 2=Auto (6 manufacturers, 25+ tags)
+    NoiseReduction,        // 0=Off, 1=Low, 2=Normal, 3=High, 4=Auto
+    QualityBasic,          // 1=Economy, 2=Normal, 3=Fine, 4=Super Fine (Canon, Casio, others)
+    WhiteBalanceExtended, // Extended WB: Auto/Daylight/Shade/Cloudy/Tungsten/Fluorescent/Flash/Manual
+    SensingMethod,        // EXIF sensing method types
+    SceneCaptureType,     // EXIF scene capture type
+    CustomRendered,       // EXIF custom rendering
+    SceneType,            // EXIF scene type
+    GainControl,          // EXIF gain control
+    AutoManual,           // 0=Auto, 1=Manual (common across manufacturers)
+    OffWeakStrong,        // 0=Off, 32=Weak, 64=Strong (Fujifilm ColorChrome, others)
+    SignedNumber,         // Format signed numbers with + prefix for positive values
+    NoiseReductionApplied, // 0=Off, 1=On (Adobe DNG, others)
+    SubjectDistanceRange, // 0=Unknown, 1=Macro, 2=Close, 3=Distant (EXIF 0xa40c)
+    FileSource, // 1=Film Scanner, 2=Reflection Print Scanner, 3=Digital Camera (EXIF 0xa300)
+    RenderingIntent, // 0=Perceptual, 1=Relative Colorimetric, 2=Saturation, 3=Absolute colorimetric (EXIF 0x303)
+    SensitivityType, // 0=Unknown, 1=Standard Output Sensitivity, 2=Recommended Exposure Index, etc. (EXIF 0x8830)
 
     /// GPMF (GoPro Metadata Format) specific conversions
     GpmfAccelerometer,
@@ -915,6 +1021,29 @@ pub enum PrintConvId {
     RicohAFAreaXPosition1,
     RicohAFAreaMode,
     RicohVignetting,
+
+    // ========== Shared Lookup Tables ==========
+    // These reference module-level shared lookup tables from ExifTool
+    /// Canon lens types lookup (524 entries)
+    CanonLensTypes,
+
+    /// Canon model ID lookup (353 entries)
+    CanonModelID,
+
+    /// Nikon lens ID lookup (615 entries)
+    NikonLensIDs,
+
+    /// Pentax lens types lookup (308 entries)
+    PentaxLensTypes,
+
+    /// Sony lens types lookup (432 entries)
+    SonyLensTypes,
+
+    /// Sony lens types 2 lookup (276 entries)
+    SonyLensTypes2,
+
+    /// Sigma lens types lookup (218 entries)
+    SigmaLensTypes,
 }
 
 /// Apply print conversion to an EXIF value
@@ -961,15 +1090,6 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             Some(1) => "On".to_string(),
             Some(2) => "Off".to_string(),
             Some(3) => "Red-eye reduction".to_string(),
-            _ => exif_value_to_string(value),
-        },
-
-        PrintConvId::FocusMode => match as_u32(value) {
-            Some(0) => "Auto".to_string(),
-            Some(1) => "Manual".to_string(),
-            Some(2) => "Macro".to_string(),
-            Some(3) => "Single".to_string(),
-            Some(4) => "Continuous".to_string(),
             _ => exif_value_to_string(value),
         },
 
@@ -1069,14 +1189,16 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
         PrintConvId::ResolutionUnit => format_resolution_unit(value),
 
         // Universal patterns used by 3+ manufacturers
-        PrintConvId::UniversalOnOffAuto => match as_u32(value) {
+        // PERL-PATTERN: 0 => 'Off', 1 => 'On', 2 => 'Auto'
+        PrintConvId::OnOffAuto => match as_u32(value) {
             Some(0) => "Off".to_string(),
             Some(1) => "On".to_string(),
             Some(2) => "Auto".to_string(),
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalNoiseReduction => match as_u32(value) {
+        // PERL-PATTERN: 0 => 'Off', 1 => 'Low', 2 => 'Normal', 3 => 'High', 4 => 'Auto'
+        PrintConvId::NoiseReduction => match as_u32(value) {
             Some(0) => "Off".to_string(),
             Some(1) => "Low".to_string(),
             Some(2) => "Normal".to_string(),
@@ -1085,7 +1207,8 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalQualityBasic => match as_u32(value) {
+        // PERL-PATTERN: 1 => 'Economy', 2 => 'Normal', 3 => 'Fine', 4 => 'Super Fine'
+        PrintConvId::QualityBasic => match as_u32(value) {
             Some(1) => "Economy".to_string(),
             Some(2) => "Normal".to_string(),
             Some(3) => "Fine".to_string(),
@@ -1093,7 +1216,8 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalWhiteBalanceExtended => match as_u32(value) {
+        // PERL-PATTERN: 0 => 'Auto', 1 => 'Daylight', 2 => 'Shade', 3 => 'Cloudy', 4 => 'Tungsten', 5 => 'Fluorescent', 6 => 'Flash', 7 => 'Manual', 8 => 'Kelvin'
+        PrintConvId::WhiteBalanceExtended => match as_u32(value) {
             Some(0) => "Auto".to_string(),
             Some(1) => "Daylight".to_string(),
             Some(2) => "Shade".to_string(),
@@ -1106,7 +1230,7 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalFocusMode => match as_u32(value) {
+        PrintConvId::FocusMode => match as_u32(value) {
             Some(0) => "Single".to_string(),
             Some(1) => "Continuous".to_string(),
             Some(2) => "Auto".to_string(),
@@ -1114,7 +1238,7 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalSensingMethod => match as_u32(value) {
+        PrintConvId::SensingMethod => match as_u32(value) {
             Some(1) => "Monochrome area".to_string(),
             Some(2) => "One-chip color area".to_string(),
             Some(3) => "Two-chip color area".to_string(),
@@ -1126,7 +1250,7 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalSceneCaptureType => match as_u32(value) {
+        PrintConvId::SceneCaptureType => match as_u32(value) {
             Some(0) => "Standard".to_string(),
             Some(1) => "Landscape".to_string(),
             Some(2) => "Portrait".to_string(),
@@ -1135,7 +1259,7 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalCustomRendered => match as_u32(value) {
+        PrintConvId::CustomRendered => match as_u32(value) {
             Some(0) => "Normal".to_string(),
             Some(1) => "Custom".to_string(),
             Some(2) => "HDR (no original saved)".to_string(), // Non-standard Apple iOS
@@ -1147,12 +1271,12 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalSceneType => match as_u32(value) {
+        PrintConvId::SceneType => match as_u32(value) {
             Some(1) => "Directly photographed".to_string(),
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalGainControl => match as_u32(value) {
+        PrintConvId::GainControl => match as_u32(value) {
             Some(0) => "None".to_string(),
             Some(1) => "Low gain up".to_string(),
             Some(2) => "High gain up".to_string(),
@@ -1161,32 +1285,35 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalAutoManual => match as_u32(value) {
+        // PERL-PATTERN: 0 => 'Auto', 1 => 'Manual'
+        PrintConvId::AutoManual => match as_u32(value) {
             Some(0) => "Auto".to_string(),
             Some(1) => "Manual".to_string(),
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalOffWeakStrong => match as_u32(value) {
+        // PERL-PATTERN: 0 => 'Off', 32 => 'Weak', 64 => 'Strong' (Fujifilm ColorChrome pattern)
+        PrintConvId::OffWeakStrong => match as_u32(value) {
             Some(0) => "Off".to_string(),
             Some(32) => "Weak".to_string(),
             Some(64) => "Strong".to_string(),
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalSignedNumber => match as_i32(value) {
+        PrintConvId::SignedNumber => match as_i32(value) {
             Some(num) if num > 0 => format!("+{}", num),
             Some(num) => num.to_string(),
             None => exif_value_to_string(value),
         },
 
-        PrintConvId::UniversalNoiseReductionApplied => match as_u32(value) {
+        PrintConvId::NoiseReductionApplied => match as_u32(value) {
             Some(0) => "Off".to_string(),
             Some(1) => "On".to_string(),
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalSubjectDistanceRange => match as_u32(value) {
+        // PERL-PATTERN: 0 => 'Unknown', 1 => 'Macro', 2 => 'Close', 3 => 'Distant' (EXIF 0xa40c)
+        PrintConvId::SubjectDistanceRange => match as_u32(value) {
             Some(0) => "Unknown".to_string(),
             Some(1) => "Macro".to_string(),
             Some(2) => "Close".to_string(),
@@ -1194,7 +1321,9 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalFileSource => {
+        // PERL-PATTERN: 1 => 'Film Scanner', 2 => 'Reflection Print Scanner', 3 => 'Digital Camera' (EXIF 0xa300)
+        // SPECIAL: Sigma cameras use 4-byte pattern [3,0,0,0] => 'Sigma Digital Camera'
+        PrintConvId::FileSource => {
             // Handle both numeric and string values like ExifTool
             // Check for Sigma special case first (4-byte string "\3\0\0\0")
             match value {
@@ -1216,7 +1345,8 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             }
         }
 
-        PrintConvId::UniversalRenderingIntent => match as_u32(value) {
+        // PERL-PATTERN: 0 => 'Perceptual', 1 => 'Relative Colorimetric', 2 => 'Saturation', 3 => 'Absolute Colorimetric' (EXIF 0x303)
+        PrintConvId::RenderingIntent => match as_u32(value) {
             Some(0) => "Perceptual".to_string(),
             Some(1) => "Relative Colorimetric".to_string(),
             Some(2) => "Saturation".to_string(),
@@ -1224,7 +1354,7 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
             _ => format!("Unknown ({})", exif_value_to_string(value)),
         },
 
-        PrintConvId::UniversalSensitivityType => match as_u32(value) {
+        PrintConvId::SensitivityType => match as_u32(value) {
             Some(0) => "Unknown".to_string(),
             Some(1) => "Standard Output Sensitivity".to_string(),
             Some(2) => "Recommended Exposure Index".to_string(),
@@ -1601,6 +1731,23 @@ pub fn apply_print_conv(value: &ExifValue, conv_id: PrintConvId) -> String {
         PrintConvId::DJICameraYaw => format_dji_float2(value),
         PrintConvId::DJICameraRoll => format_dji_float2(value),
 
+        // ========== Shared Lookup Tables ==========
+        PrintConvId::CanonLensTypes => apply_shared_lookup(value, &CANONLENS_TYPES),
+
+        PrintConvId::CanonModelID => apply_shared_lookup(value, &CANONMODELID),
+
+        PrintConvId::NikonLensIDs => apply_shared_lookup(value, &NIKONLENS_IDS),
+
+        PrintConvId::PentaxLensTypes => apply_shared_lookup(value, &PENTAXLENS_TYPES),
+
+        PrintConvId::SonyLensTypes => apply_shared_lookup(value, &SONYLENS_TYPES),
+
+        PrintConvId::SonyLensTypes2 => apply_shared_lookup(value, &SONYLENS_TYPES2),
+
+        PrintConvId::SigmaLensTypes => apply_shared_lookup(value, &SIGMALENS_TYPES),
+
+        PrintConvId::CanonModelLookup => canon_model_lookup(value),
+
         _ => {
             // For now, return raw value for unimplemented conversions
             // TODO: Implement remaining conversion functions
@@ -1856,6 +2003,48 @@ fn canon_picture_style_lookup(value: &ExifValue) -> String {
             _ => format!("Unknown ({})", val),
         },
         None => format!("Unknown ({})", exif_value_to_string(value)),
+    }
+}
+
+/// Canon lens model lookup for LensModel tag (0x0095)
+/// Attempts to extract meaningful lens information from binary data
+fn canon_model_lookup(value: &ExifValue) -> String {
+    match value {
+        ExifValue::Undefined(data) => {
+            // Canon LensModel data is often stored as raw binary
+            // Try to extract a readable string
+            if data.is_empty() {
+                return "Unknown".to_string();
+            }
+
+            // Look for null-terminated string in the data
+            if let Some(null_pos) = data.iter().position(|&b| b == 0) {
+                if null_pos > 0 {
+                    match std::str::from_utf8(&data[..null_pos]) {
+                        Ok(s) if !s.trim().is_empty() => return s.trim().to_string(),
+                        _ => {}
+                    }
+                }
+            }
+
+            // Check if the entire buffer contains a string
+            if data
+                .iter()
+                .all(|&b| b.is_ascii() && (b.is_ascii_graphic() || b.is_ascii_whitespace()))
+            {
+                if let Ok(s) = std::str::from_utf8(data) {
+                    let trimmed = s.trim_end_matches('\0').trim();
+                    if !trimmed.is_empty() {
+                        return trimmed.to_string();
+                    }
+                }
+            }
+
+            // If no readable string found, return a generic message
+            format!("Binary data ({} bytes)", data.len())
+        }
+        ExifValue::Ascii(s) => s.clone(),
+        _ => exif_value_to_string(value),
     }
 }
 
@@ -2134,6 +2323,9 @@ fn format_exif_color_space(value: &ExifValue) -> String {
 /// Universal parameter conversion (Normal/Low/High pattern)
 /// Used by Contrast (0xa408), Saturation (0xa409), Sharpness (0xa40a)
 /// EXIFTOOL-SOURCE: lib/Image/ExifTool/Exif.pm multiple tags with same pattern
+/// Universal Low/Normal/High pattern conversion
+/// PERL-PATTERN: 0 => 'Normal', 1 => 'Low' (or 'Soft'), 2 => 'High' (or 'Hard')
+/// Used by Fujifilm Sharpness, Saturation, Contrast and other manufacturers
 fn format_low_normal_high(value: &ExifValue) -> String {
     match as_u32(value) {
         Some(0) => "Normal".to_string(),
@@ -2575,29 +2767,29 @@ mod tests {
     fn test_universal_on_off_auto_conversion() {
         // Test UniversalOnOffAuto pattern (0=Off, 1=On, 2=Auto)
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalOnOffAuto),
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::OnOffAuto),
             "Off"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalOnOffAuto),
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::OnOffAuto),
             "On"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalOnOffAuto),
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::OnOffAuto),
             "Auto"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalOnOffAuto),
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::OnOffAuto),
             "Unknown (99)"
         );
 
         // Test with different value types
         assert_eq!(
-            apply_print_conv(&ExifValue::U16(1), PrintConvId::UniversalOnOffAuto),
+            apply_print_conv(&ExifValue::U16(1), PrintConvId::OnOffAuto),
             "On"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U8(2), PrintConvId::UniversalOnOffAuto),
+            apply_print_conv(&ExifValue::U8(2), PrintConvId::OnOffAuto),
             "Auto"
         );
     }
@@ -2606,37 +2798,37 @@ mod tests {
     fn test_universal_noise_reduction_conversion() {
         // Test UniversalNoiseReduction pattern (0=Off, 1=Low, 2=Normal, 3=High, 4=Auto)
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalNoiseReduction),
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::NoiseReduction),
             "Off"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalNoiseReduction),
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::NoiseReduction),
             "Low"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalNoiseReduction),
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::NoiseReduction),
             "Normal"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(3), PrintConvId::UniversalNoiseReduction),
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::NoiseReduction),
             "High"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(4), PrintConvId::UniversalNoiseReduction),
+            apply_print_conv(&ExifValue::U32(4), PrintConvId::NoiseReduction),
             "Auto"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalNoiseReduction),
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::NoiseReduction),
             "Unknown (99)"
         );
 
         // Test with different value types
         assert_eq!(
-            apply_print_conv(&ExifValue::U16(3), PrintConvId::UniversalNoiseReduction),
+            apply_print_conv(&ExifValue::U16(3), PrintConvId::NoiseReduction),
             "High"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U8(1), PrintConvId::UniversalNoiseReduction),
+            apply_print_conv(&ExifValue::U8(1), PrintConvId::NoiseReduction),
             "Low"
         );
     }
@@ -2645,33 +2837,33 @@ mod tests {
     fn test_universal_quality_basic_conversion() {
         // Test UniversalQualityBasic pattern (1=Economy, 2=Normal, 3=Fine, 4=Super Fine)
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalQualityBasic),
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::QualityBasic),
             "Economy"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalQualityBasic),
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::QualityBasic),
             "Normal"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(3), PrintConvId::UniversalQualityBasic),
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::QualityBasic),
             "Fine"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(4), PrintConvId::UniversalQualityBasic),
+            apply_print_conv(&ExifValue::U32(4), PrintConvId::QualityBasic),
             "Super Fine"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalQualityBasic),
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::QualityBasic),
             "Unknown (99)"
         );
 
         // Test with different value types
         assert_eq!(
-            apply_print_conv(&ExifValue::U16(3), PrintConvId::UniversalQualityBasic),
+            apply_print_conv(&ExifValue::U16(3), PrintConvId::QualityBasic),
             "Fine"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U8(2), PrintConvId::UniversalQualityBasic),
+            apply_print_conv(&ExifValue::U8(2), PrintConvId::QualityBasic),
             "Normal"
         );
     }
@@ -2680,45 +2872,27 @@ mod tests {
     fn test_universal_white_balance_extended_conversion() {
         // Test UniversalWhiteBalanceExtended pattern (comprehensive WB settings)
         assert_eq!(
-            apply_print_conv(
-                &ExifValue::U32(0),
-                PrintConvId::UniversalWhiteBalanceExtended
-            ),
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::WhiteBalanceExtended),
             "Auto"
         );
         assert_eq!(
-            apply_print_conv(
-                &ExifValue::U32(1),
-                PrintConvId::UniversalWhiteBalanceExtended
-            ),
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::WhiteBalanceExtended),
             "Daylight"
         );
         assert_eq!(
-            apply_print_conv(
-                &ExifValue::U32(3),
-                PrintConvId::UniversalWhiteBalanceExtended
-            ),
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::WhiteBalanceExtended),
             "Cloudy"
         );
         assert_eq!(
-            apply_print_conv(
-                &ExifValue::U32(6),
-                PrintConvId::UniversalWhiteBalanceExtended
-            ),
+            apply_print_conv(&ExifValue::U32(6), PrintConvId::WhiteBalanceExtended),
             "Flash"
         );
         assert_eq!(
-            apply_print_conv(
-                &ExifValue::U32(8),
-                PrintConvId::UniversalWhiteBalanceExtended
-            ),
+            apply_print_conv(&ExifValue::U32(8), PrintConvId::WhiteBalanceExtended),
             "Kelvin"
         );
         assert_eq!(
-            apply_print_conv(
-                &ExifValue::U32(99),
-                PrintConvId::UniversalWhiteBalanceExtended
-            ),
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::WhiteBalanceExtended),
             "Unknown (99)"
         );
     }
@@ -2727,23 +2901,23 @@ mod tests {
     fn test_universal_focus_mode_conversion() {
         // Test UniversalFocusMode pattern (0=Single, 1=Continuous, 2=Auto, 3=Manual)
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalFocusMode),
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::FocusMode),
             "Single"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalFocusMode),
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::FocusMode),
             "Continuous"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalFocusMode),
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::FocusMode),
             "Auto"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(3), PrintConvId::UniversalFocusMode),
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::FocusMode),
             "Manual"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalFocusMode),
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::FocusMode),
             "Unknown (99)"
         );
     }
@@ -2752,27 +2926,27 @@ mod tests {
     fn test_universal_sensing_method_conversion() {
         // Test UniversalSensingMethod pattern - EXIF sensing method types
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalSensingMethod),
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::SensingMethod),
             "Monochrome area"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalSensingMethod),
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::SensingMethod),
             "One-chip color area"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(4), PrintConvId::UniversalSensingMethod),
+            apply_print_conv(&ExifValue::U32(4), PrintConvId::SensingMethod),
             "Three-chip color area"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(7), PrintConvId::UniversalSensingMethod),
+            apply_print_conv(&ExifValue::U32(7), PrintConvId::SensingMethod),
             "Trilinear"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(8), PrintConvId::UniversalSensingMethod),
+            apply_print_conv(&ExifValue::U32(8), PrintConvId::SensingMethod),
             "Color sequential linear"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalSensingMethod),
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::SensingMethod),
             "Unknown (99)"
         );
     }
@@ -2781,27 +2955,27 @@ mod tests {
     fn test_universal_scene_capture_type_conversion() {
         // Test UniversalSceneCaptureType pattern - EXIF scene capture type
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalSceneCaptureType),
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::SceneCaptureType),
             "Standard"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalSceneCaptureType),
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::SceneCaptureType),
             "Landscape"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalSceneCaptureType),
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::SceneCaptureType),
             "Portrait"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(3), PrintConvId::UniversalSceneCaptureType),
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::SceneCaptureType),
             "Night"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(4), PrintConvId::UniversalSceneCaptureType),
+            apply_print_conv(&ExifValue::U32(4), PrintConvId::SceneCaptureType),
             "Other"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalSceneCaptureType),
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::SceneCaptureType),
             "Unknown (99)"
         );
     }
@@ -2810,27 +2984,27 @@ mod tests {
     fn test_universal_custom_rendered_conversion() {
         // Test UniversalCustomRendered pattern - EXIF custom rendering
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalCustomRendered),
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::CustomRendered),
             "Normal"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalCustomRendered),
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::CustomRendered),
             "Custom"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalCustomRendered),
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::CustomRendered),
             "HDR (no original saved)"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(6), PrintConvId::UniversalCustomRendered),
+            apply_print_conv(&ExifValue::U32(6), PrintConvId::CustomRendered),
             "Panorama"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(8), PrintConvId::UniversalCustomRendered),
+            apply_print_conv(&ExifValue::U32(8), PrintConvId::CustomRendered),
             "Portrait"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalCustomRendered),
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::CustomRendered),
             "Unknown (99)"
         );
     }
@@ -2839,11 +3013,11 @@ mod tests {
     fn test_universal_scene_type_conversion() {
         // Test UniversalSceneType pattern - EXIF scene type
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalSceneType),
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::SceneType),
             "Directly photographed"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalSceneType),
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::SceneType),
             "Unknown (99)"
         );
     }
@@ -2852,27 +3026,27 @@ mod tests {
     fn test_universal_gain_control_conversion() {
         // Test UniversalGainControl pattern - EXIF gain control
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalGainControl),
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::GainControl),
             "None"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalGainControl),
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::GainControl),
             "Low gain up"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(2), PrintConvId::UniversalGainControl),
+            apply_print_conv(&ExifValue::U32(2), PrintConvId::GainControl),
             "High gain up"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(3), PrintConvId::UniversalGainControl),
+            apply_print_conv(&ExifValue::U32(3), PrintConvId::GainControl),
             "Low gain down"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(4), PrintConvId::UniversalGainControl),
+            apply_print_conv(&ExifValue::U32(4), PrintConvId::GainControl),
             "High gain down"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalGainControl),
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::GainControl),
             "Unknown (99)"
         );
     }
@@ -2948,15 +3122,15 @@ mod dji_print_conv_tests {
     fn test_universal_auto_manual_conversion() {
         // Test UniversalAutoManual pattern - 0=Auto, 1=Manual
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalAutoManual),
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::AutoManual),
             "Auto"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(1), PrintConvId::UniversalAutoManual),
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::AutoManual),
             "Manual"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalAutoManual),
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::AutoManual),
             "Unknown (99)"
         );
     }
@@ -2965,19 +3139,19 @@ mod dji_print_conv_tests {
     fn test_universal_off_weak_strong_conversion() {
         // Test UniversalOffWeakStrong pattern - 0=Off, 32=Weak, 64=Strong
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(0), PrintConvId::UniversalOffWeakStrong),
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::OffWeakStrong),
             "Off"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(32), PrintConvId::UniversalOffWeakStrong),
+            apply_print_conv(&ExifValue::U32(32), PrintConvId::OffWeakStrong),
             "Weak"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(64), PrintConvId::UniversalOffWeakStrong),
+            apply_print_conv(&ExifValue::U32(64), PrintConvId::OffWeakStrong),
             "Strong"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::U32(99), PrintConvId::UniversalOffWeakStrong),
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::OffWeakStrong),
             "Unknown (99)"
         );
     }
@@ -2986,19 +3160,19 @@ mod dji_print_conv_tests {
     fn test_universal_signed_number_conversion() {
         // Test UniversalSignedNumber pattern - adds + prefix for positive values
         assert_eq!(
-            apply_print_conv(&ExifValue::I32(-3), PrintConvId::UniversalSignedNumber),
+            apply_print_conv(&ExifValue::I32(-3), PrintConvId::SignedNumber),
             "-3"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::I32(0), PrintConvId::UniversalSignedNumber),
+            apply_print_conv(&ExifValue::I32(0), PrintConvId::SignedNumber),
             "0"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::I32(5), PrintConvId::UniversalSignedNumber),
+            apply_print_conv(&ExifValue::I32(5), PrintConvId::SignedNumber),
             "+5"
         );
         assert_eq!(
-            apply_print_conv(&ExifValue::I32(15), PrintConvId::UniversalSignedNumber),
+            apply_print_conv(&ExifValue::I32(15), PrintConvId::SignedNumber),
             "+15"
         );
     }
@@ -3007,24 +3181,15 @@ mod dji_print_conv_tests {
     fn test_universal_noise_reduction_applied_conversion() {
         // Test UniversalNoiseReductionApplied pattern - 0=Off, 1=On
         assert_eq!(
-            apply_print_conv(
-                &ExifValue::U32(0),
-                PrintConvId::UniversalNoiseReductionApplied
-            ),
+            apply_print_conv(&ExifValue::U32(0), PrintConvId::NoiseReductionApplied),
             "Off"
         );
         assert_eq!(
-            apply_print_conv(
-                &ExifValue::U32(1),
-                PrintConvId::UniversalNoiseReductionApplied
-            ),
+            apply_print_conv(&ExifValue::U32(1), PrintConvId::NoiseReductionApplied),
             "On"
         );
         assert_eq!(
-            apply_print_conv(
-                &ExifValue::U32(99),
-                PrintConvId::UniversalNoiseReductionApplied
-            ),
+            apply_print_conv(&ExifValue::U32(99), PrintConvId::NoiseReductionApplied),
             "Unknown (99)"
         );
     }
@@ -3125,6 +3290,60 @@ mod dji_print_conv_tests {
         assert_eq!(
             apply_print_conv(&wrong_type, PrintConvId::AppleAFPerformance),
             "Unknown (test)"
+        );
+    }
+
+    #[test]
+    fn test_canon_lens_types_shared_lookup() {
+        // Test Canon lens types shared lookup table
+        // This tests the new DRY shared lookup architecture
+
+        // Test known Canon lens IDs from the generated lookup table
+        let canon_50mm = ExifValue::U16(1); // Canon EF 50mm f/1.8
+        assert_eq!(
+            apply_print_conv(&canon_50mm, PrintConvId::CanonLensTypes),
+            "Canon EF 50mm f/1.8"
+        );
+
+        let canon_28mm = ExifValue::U16(2); // Canon EF 28mm f/2.8 or Sigma Lens
+        assert_eq!(
+            apply_print_conv(&canon_28mm, PrintConvId::CanonLensTypes),
+            "Canon EF 28mm f/2.8 or Sigma Lens"
+        );
+
+        // Test with signed integer (should work the same)
+        let canon_soft_135 = ExifValue::I16(3); // Canon EF 135mm f/2.8 Soft
+        assert_eq!(
+            apply_print_conv(&canon_soft_135, PrintConvId::CanonLensTypes),
+            "Canon EF 135mm f/2.8 Soft"
+        );
+
+        // Test with unknown lens ID
+        let unknown_lens = ExifValue::U16(9999);
+        assert_eq!(
+            apply_print_conv(&unknown_lens, PrintConvId::CanonLensTypes),
+            "Unknown (9999)"
+        );
+
+        // Test the special "n/a" case
+        let no_lens = ExifValue::I16(-1);
+        assert_eq!(
+            apply_print_conv(&no_lens, PrintConvId::CanonLensTypes),
+            "n/a"
+        );
+
+        // Test with undefined data (common for Canon lens types)
+        let undefined_lens = ExifValue::Undefined(vec![1, 0]); // Little-endian 1
+        assert_eq!(
+            apply_print_conv(&undefined_lens, PrintConvId::CanonLensTypes),
+            "Canon EF 50mm f/1.8"
+        );
+
+        // Test with 4-byte undefined data
+        let undefined_4byte = ExifValue::Undefined(vec![2, 0, 0, 0]); // Little-endian 2
+        assert_eq!(
+            apply_print_conv(&undefined_4byte, PrintConvId::CanonLensTypes),
+            "Canon EF 28mm f/2.8 or Sigma Lens"
         );
     }
 }

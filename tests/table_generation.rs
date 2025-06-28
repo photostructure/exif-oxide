@@ -6,7 +6,7 @@ use std::fs::File;
 #[test]
 fn test_resolution_parsing() {
     // Canon.jpg should have XResolution and YResolution tags (rational type)
-    let mut file = File::open("exiftool/t/images/Canon.jpg").unwrap();
+    let mut file = File::open("third-party/exiftool/t/images/Canon.jpg").unwrap();
     let exif_segment = jpeg::find_exif_segment(&mut file)
         .unwrap()
         .expect("Canon.jpg should have EXIF data");
@@ -38,7 +38,7 @@ fn test_resolution_parsing() {
 #[test]
 fn test_bits_per_sample_array() {
     // Many images have BitsPerSample as an array
-    let mut file = File::open("exiftool/t/images/Canon.jpg").unwrap();
+    let mut file = File::open("third-party/exiftool/t/images/Canon.jpg").unwrap();
     let exif_segment = jpeg::find_exif_segment(&mut file)
         .unwrap()
         .expect("Canon.jpg should have EXIF data");
@@ -66,7 +66,7 @@ fn test_bits_per_sample_array() {
 #[test]
 fn test_table_driven_parsing() {
     // Test that various tags are parsed with correct formats from the table
-    let mut file = File::open("exiftool/t/images/ExifTool.jpg").unwrap();
+    let mut file = File::open("third-party/exiftool/t/images/ExifTool.jpg").unwrap();
     let exif_segment = jpeg::find_exif_segment(&mut file)
         .unwrap()
         .expect("ExifTool.jpg should have EXIF data");
@@ -102,7 +102,7 @@ fn test_table_driven_parsing() {
 #[test]
 fn test_nikon_rational_tags() {
     // Nikon images often have more rational values
-    let mut file = File::open("exiftool/t/images/Nikon.jpg").unwrap();
+    let mut file = File::open("third-party/exiftool/t/images/Nikon.jpg").unwrap();
     let exif_segment = jpeg::find_exif_segment(&mut file)
         .unwrap()
         .expect("Nikon.jpg should have EXIF data");
@@ -154,7 +154,7 @@ fn test_nikon_rational_tags() {
 #[test]
 fn test_tag_format_override() {
     // Test that actual format in file is used when parsing
-    let mut file = File::open("exiftool/t/images/Canon.jpg").unwrap();
+    let mut file = File::open("third-party/exiftool/t/images/Canon.jpg").unwrap();
     let exif_segment = jpeg::find_exif_segment(&mut file).unwrap().unwrap();
     let ifd = ifd::IfdParser::parse(exif_segment.data).unwrap();
 

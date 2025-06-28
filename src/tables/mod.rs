@@ -16,6 +16,12 @@ include!(concat!(env!("OUT_DIR"), "/generated_tags.rs"));
 // Table-driven tag definitions with PrintConv
 pub mod app_segments; // APP segment identification tables (auto-generated)
 pub mod apple_tags;
+
+// Generated shared lookup tables
+#[cfg(feature = "generated-tables")]
+pub mod generated;
+
+// PrintConv pattern matching tables
 pub mod canon_tags;
 pub mod casio_tags;
 pub mod dji_tags;
@@ -29,6 +35,7 @@ pub mod nikon_tags;
 pub mod olympus_tags;
 pub mod panasonic_tags;
 pub mod pentax_tags;
+pub mod printconv_patterns;
 pub mod ricoh_tags;
 pub mod samsung_tags;
 pub mod sony_tags;
