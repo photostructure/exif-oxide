@@ -2,7 +2,7 @@
 
 This document outlines critical spikes for extracting and leveraging ExifTool's 25+ years of accumulated knowledge, focusing on file type detection and core algorithmic patterns. These spikes prioritize not reinventing the wheel while maintaining ExifTool compatibility.
 
-**Note:** For the current synchronization approach, see [doc/EXIFTOOL-SYNC.md](EXIFTOOL-SYNC.md). The simpler system described there (Spike 7) has been implemented.
+**Note:** For the current synchronization approach, see [doc/SYNC-DESIGN.md](SYNC-DESIGN.md). The simpler system described there (Spike 7) has been implemented.
 
 ## Context
 
