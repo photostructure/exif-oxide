@@ -727,7 +727,7 @@ exiftool "-FileName<CreateDate" -d "%Y%m%d_%H%M%S.%%e" *.jpg
 - Provide better error reporting and progress feedback
 - Maintain 100% compatibility with ExifTool-written files
 
-## 📋 EXIFTOOL-SYNC.md Integration
+## 📋 SYNC-DESIGN.md Integration
 
 **CRITICAL**: Update the sync documentation to include write support patterns.
 

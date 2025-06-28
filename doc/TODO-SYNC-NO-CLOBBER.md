@@ -115,7 +115,7 @@ pub enum PrintConvId {
 
 **🚨 MANDATORY**: Read these documents completely before coding:
 
-1. **[`doc/EXIFTOOL-SYNC.md`](EXIFTOOL-SYNC.md)** (539 lines)
+1. **[`doc/SYNC-DESIGN.md`](SYNC-DESIGN.md)** (539 lines)
 
    - **Why**: Explains the entire sync system architecture and attribution requirements
    - **Key sections**: Source tracking, version management, algorithm extraction
@@ -878,7 +878,7 @@ pub enum PrintConvId {
 
 ### Documentation References
 
-- **`doc/EXIFTOOL-SYNC.md`**: Complete sync system architecture
+- **`doc/SYNC-DESIGN.md`**: Complete sync system architecture
 - **`doc/PRINTCONV-ARCHITECTURE.md`**: PrintConv system technical details
 - **`exiftool-sync.toml`**: Version tracking and sync history
 
@@ -993,7 +993,7 @@ cargo test print_conv -- --nocapture  # See test output
 **Update These Files When Done**:
 
 1. **`exiftool-sync.toml`** - Add extraction tracking entry for this new capability
-2. **`doc/EXIFTOOL-SYNC.md`** - Document the new intelligent inference feature
+2. **`doc/SYNC-DESIGN.md`** - Document the new intelligent inference feature
 3. **`CLAUDE.md`** - Update with any new workflow or gotchas discovered
 4. **`src/core/print_conv.rs`** - Ensure all perl_patterns() annotations are complete
 
@@ -1141,7 +1141,7 @@ test(printconv): add comprehensive inference validation suite
 
 - **ExifTool Tag Documentation**: https://exiftool.org/TagNames/EXIF.html
 - **ExifTool Source (canonical)**: `third-party/exiftool/lib/Image/ExifTool/`
-- **Project Architecture**: [`doc/EXIFTOOL-SYNC.md`](EXIFTOOL-SYNC.md)
+- **Project Architecture**: [`doc/SYNC-DESIGN.md`](SYNC-DESIGN.md)
 - **PrintConv System Deep Dive**: [`doc/PRINTCONV-ARCHITECTURE.md`](PRINTCONV-ARCHITECTURE.md)
 - **Previous Sync Work**: `git log --oneline src/bin/exiftool_sync/`
 

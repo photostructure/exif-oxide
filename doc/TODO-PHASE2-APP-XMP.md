@@ -9,7 +9,7 @@
 
 ### **✅ Phase 1A: Research & Planning (COMPLETE)**
 
-- ✅ **Documentation Analysis**: Comprehensive study of EXIFTOOL-SYNC.md, DESIGN.md, PRINTCONV-ARCHITECTURE.md
+- ✅ **Documentation Analysis**: Comprehensive study of SYNC-DESIGN.md, DESIGN.md, PRINTCONV-ARCHITECTURE.md
 - ✅ **ExifTool Source Study**: Deep analysis of JPEG.pm Main table structure (50+ APP segment definitions)
 - ✅ **Pattern Recognition**: Identified proven extractor patterns in `src/bin/exiftool_sync/extractors/`
 - ✅ **Architecture Planning**: Table-driven approach following PrintConv success pattern
@@ -87,7 +87,7 @@ Before starting implementation, **MANDATORY** reading:
 
 ### **Core Documentation**
 
-1. **[`doc/EXIFTOOL-SYNC.md`](EXIFTOOL-SYNC.md)** - Synchronization workflow and attribution requirements
+1. **[`doc/SYNC-DESIGN.md`](SYNC-DESIGN.md)** - Synchronization workflow and attribution requirements
 2. **[`doc/DESIGN.md`](DESIGN.md)** - Architecture patterns and critical implementation insights
 3. **[`CLAUDE.md`](../CLAUDE.md)** - Development principles and completed milestones
 4. **[`doc/PRINTCONV-ARCHITECTURE.md`](PRINTCONV-ARCHITECTURE.md)** - Table-driven conversion system
@@ -1054,7 +1054,7 @@ criterion_main!(benches);
 
 #### **Step 5.3: Documentation Updates**
 
-**File**: `doc/EXIFTOOL-SYNC.md` (update)
+**File**: `doc/SYNC-DESIGN.md` (update)
 
 Add new extractor documentation:
 
@@ -1158,7 +1158,7 @@ cargo tarpaulin --out html
 
 ### **Documentation Requirements**
 
-- ✅ Updated `doc/EXIFTOOL-SYNC.md` with new extractor workflows
+- ✅ Updated `doc/SYNC-DESIGN.md` with new extractor workflows
 - ✅ API documentation for new data structures and functions
 - ✅ Performance characteristics documented
 - ✅ Troubleshooting guide for common issues

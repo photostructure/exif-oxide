@@ -46,7 +46,7 @@ File Input → Format Detection → Format-Specific Parser → IFD Parser → Ta
 
 **Why**: Ensures 100% compatibility and enables easy updates when ExifTool adds new camera support.
 
-See [`doc/EXIFTOOL-SYNC.md`](EXIFTOOL-SYNC.md) for details
+See [`doc/SYNC-DESIGN.md`](SYNC-DESIGN.md) for details
 
 ### 2. Multi-Format Support Strategy
 
