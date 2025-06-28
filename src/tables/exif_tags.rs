@@ -783,7 +783,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0x0303,
         name: "RenderingIntent",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::RenderingIntent,
     },
     ExifTag {
         id: 0x03e7,
@@ -1688,7 +1688,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0x8830,
         name: "SensitivityType",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::SensitivityType,
     },
     ExifTag {
         id: 0x8831,
@@ -1848,7 +1848,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0x920d,
         name: "Noise",
-        print_conv: PrintConvId::UniversalNoiseReduction,
+        print_conv: PrintConvId::None,
     },
     ExifTag {
         id: 0x920e,
@@ -1898,7 +1898,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0x9217,
         name: "SensingMethod",
-        print_conv: PrintConvId::UniversalSensingMethod,
+        print_conv: PrintConvId::SensingMethod,
     },
     ExifTag {
         id: 0x923a,
@@ -2033,7 +2033,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa001,
         name: "ColorSpace",
-        print_conv: PrintConvId::ExifColorSpace,
+        print_conv: PrintConvId::ColorSpace,
     },
     ExifTag {
         id: 0xa002,
@@ -2088,7 +2088,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa20d,
         name: "Noise",
-        print_conv: PrintConvId::UniversalNoiseReduction,
+        print_conv: PrintConvId::None,
     },
     ExifTag {
         id: 0xa20e,
@@ -2138,17 +2138,17 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa217,
         name: "SensingMethod",
-        print_conv: PrintConvId::UniversalSensingMethod,
+        print_conv: PrintConvId::SensingMethod,
     },
     ExifTag {
         id: 0xa300,
         name: "FileSource",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::FileSource,
     },
     ExifTag {
         id: 0xa301,
         name: "SceneType",
-        print_conv: PrintConvId::UniversalSceneType,
+        print_conv: PrintConvId::SceneType,
     },
     ExifTag {
         id: 0xa302,
@@ -2158,7 +2158,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa401,
         name: "CustomRendered",
-        print_conv: PrintConvId::UniversalCustomRendered,
+        print_conv: PrintConvId::CustomRendered,
     },
     ExifTag {
         id: 0xa402,
@@ -2168,7 +2168,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa403,
         name: "WhiteBalance",
-        print_conv: PrintConvId::ExifWhiteBalance,
+        print_conv: PrintConvId::WhiteBalance,
     },
     ExifTag {
         id: 0xa404,
@@ -2183,27 +2183,27 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa406,
         name: "SceneCaptureType",
-        print_conv: PrintConvId::UniversalSceneCaptureType,
+        print_conv: PrintConvId::SceneCaptureType,
     },
     ExifTag {
         id: 0xa407,
         name: "GainControl",
-        print_conv: PrintConvId::UniversalGainControl,
+        print_conv: PrintConvId::GainControl,
     },
     ExifTag {
         id: 0xa408,
         name: "Contrast",
-        print_conv: PrintConvId::LowNormalHigh,
+        print_conv: PrintConvId::None,
     },
     ExifTag {
         id: 0xa409,
         name: "Saturation",
-        print_conv: PrintConvId::LowNormalHigh,
+        print_conv: PrintConvId::None,
     },
     ExifTag {
         id: 0xa40a,
         name: "Sharpness",
-        print_conv: PrintConvId::LowNormalHigh,
+        print_conv: PrintConvId::None,
     },
     ExifTag {
         id: 0xa40b,
@@ -2213,7 +2213,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xa40c,
         name: "SubjectDistanceRange",
-        print_conv: PrintConvId::None,
+        print_conv: PrintConvId::SubjectDistanceRange,
     },
     ExifTag {
         id: 0xa420,
@@ -2363,7 +2363,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xbc03,
         name: "Uncompressed",
-        print_conv: PrintConvId::YesNo,
+        print_conv: PrintConvId::None,
     },
     ExifTag {
         id: 0xbc04,
@@ -2763,7 +2763,7 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xc6f7,
         name: "NoiseReductionApplied",
-        print_conv: PrintConvId::UniversalNoiseReductionApplied,
+        print_conv: PrintConvId::NoiseReductionApplied,
     },
     ExifTag {
         id: 0xc6f8,
@@ -3193,17 +3193,17 @@ pub const EXIF_TAGS: &[ExifTag] = &[
     ExifTag {
         id: 0xfe54,
         name: "Contrast",
-        print_conv: PrintConvId::LowNormalHigh,
+        print_conv: PrintConvId::None,
     },
     ExifTag {
         id: 0xfe55,
         name: "Saturation",
-        print_conv: PrintConvId::LowNormalHigh,
+        print_conv: PrintConvId::None,
     },
     ExifTag {
         id: 0xfe56,
         name: "Sharpness",
-        print_conv: PrintConvId::LowNormalHigh,
+        print_conv: PrintConvId::None,
     },
     ExifTag {
         id: 0xfe57,

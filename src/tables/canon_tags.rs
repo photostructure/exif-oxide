@@ -218,7 +218,7 @@ pub const CANON_TAGS: &[CANONTag] = &[
     CANONTag {
         id: 0x0095,
         name: "LensModel",
-        print_conv: PrintConvId::CanonModelLookup,
+        print_conv: PrintConvId::None,
     },
     CANONTag {
         id: 0x0097,
@@ -368,7 +368,7 @@ pub const CANON_TAGS: &[CANONTag] = &[
     CANONTag {
         id: 0x4019,
         name: "LensInfo",
-        print_conv: PrintConvId::CanonLensType,
+        print_conv: PrintConvId::CanonLensTypes,
     },
     CANONTag {
         id: 0x4020,

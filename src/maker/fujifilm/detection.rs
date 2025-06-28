@@ -18,7 +18,7 @@ pub struct FUJIFILMDetectionResult {
 /// Returns Some(DetectionResult) if this appears to be a fujifilm maker note,
 /// None otherwise.
 pub fn detect_fujifilm_maker_note(data: &[u8]) -> Option<FUJIFILMDetectionResult> {
-    // Pattern from source line 1680: fujifilm maker note signature
+    // Pattern from source line 1684: fujifilm maker note signature
     if data.len() >= 8 && data.starts_with(&[0x46, 0x55, 0x4a, 0x49, 0x46, 0x49, 0x4c, 0x4d]) {
         return Some(FUJIFILMDetectionResult {
             version: None,

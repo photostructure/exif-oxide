@@ -9,7 +9,7 @@ use crate::core::binary_data::{BinaryDataTable, BinaryDataTableBuilder};
 use crate::core::types::ExifFormat;
 
 /// Binary data table: Type2
-/// Source lines: 2221-2539
+/// Source lines: 2229-2547
 /// Process function: ProcessBinaryData
 pub fn create_type2_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("Type2", ExifFormat::U16)
@@ -18,7 +18,7 @@ pub fn create_type2_table() -> BinaryDataTable {
 }
 
 /// Binary data table: PANA
-/// Source lines: 2362-2948
+/// Source lines: 2370-2956
 /// Process function: ProcessBinaryData
 pub fn create_pana_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("PANA", ExifFormat::U8)

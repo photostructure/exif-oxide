@@ -27,11 +27,19 @@ exif-oxide is a high-performance Rust implementation of Phil Harvey's [ExifTool]
 - If ExifTool special-cases "NIKON CORPORATION" vs "NIKON", there's a reason
 - No Camera Follows The Spec. Trust The ExifTool Code.
 
+### 2. NEVER parse perl code in rust
+
+Perl requires perl to understand perl. Any sort of regex "parser" is going to be brittle and fail.
+
+If we need to import or sync code and tabular data from `third-party/exiftool`,
+**only use perl** to do that extraction and translate it into something that's
+easy for our rust sync code to ingest (like JSON)
+
 ## ⚠️ MANDATORY READING
 
 Before implementing ANY feature or parsing logic:
 
-1. **READ `doc/EXIFTOOL-SYNC.md`** - This document explains:
+1. **READ `doc/SYNC-DESIGN.md`** - This document explains:
 
    - How to track ExifTool source code references
    - The synchronization workflow with ExifTool updates
@@ -118,48 +126,23 @@ detection/          # 43 formats, sub-1ms performance
 4. **Auto-generated sync** - Generated from ExifTool Perl
 5. **Zero-copy binary** - Memory efficient extraction
 
-## 🚀 Revolutionary PrintConv Architecture
+## 🚀 PrintConv Architecture
 
 **Problem**: ExifTool has ~50,000 lines of PrintConv code across all manufacturers. Manual porting would be a maintenance nightmare.
 
-**Solution**: Table-driven PrintConv system with ~50 reusable conversion functions.
+**Solution**: Table-driven PrintConv system with ~50 reusable conversion functions achieving **96% code reduction**.
 
-### Quick Overview
-
-Instead of porting thousands of conversion functions individually, we identified that all ExifTool PrintConv patterns fall into ~50 reusable categories:
-
-```rust
-// Universal patterns work across ALL manufacturers
-PrintConvId::OnOff        // Canon, Nikon, Sony, Pentax all use 0=Off, 1=On
-PrintConvId::WhiteBalance // Universal white balance conversion
-PrintConvId::Quality      // Universal quality settings
-
-// Manufacturer-specific patterns are just lookup tables  
-PrintConvId::PentaxModelLookup   // Pentax camera model names
-PrintConvId::NikonLensType       // Nikon lens identification
-```
-
-### Massive Benefits
-
-**🎯 96% Code Reduction**:
-- **Before**: 6,492 lines of Pentax Perl → 6,492 lines of Rust
-- **After**: ~50 PrintConv functions + ~200 lines parser = **~250 lines total**
-
-**⚡ Rapid Implementation**: 
-- New manufacturer support: **1 day** vs **2-3 weeks** manual porting
-- ExifTool updates: Regenerate tag tables, PrintConv functions unchanged
-
-**📖 Complete Documentation**: 
-See **[`doc/PRINTCONV-ARCHITECTURE.md`](doc/PRINTCONV-ARCHITECTURE.md)** for the complete technical guide including:
-- Detailed architecture explanation with code examples
-- Implementation patterns and step-by-step guides  
-- Developer guide for adding new manufacturers
-- Performance characteristics and testing approaches
-- Integration with the ExifTool synchronization process
+**📖 Complete PrintConv Documentation**: 
+See **[`doc/PRINTCONV-SYNC-20250625.md`](doc/PRINTCONV-SYNC-20250625.md)** for the definitive guide including:
+- Table-driven architecture with 96% code reduction
+- Smart synchronization system that prevents work loss
+- Phase 0-3 completion status and achievements
+- Critical sync clobbering fix (blocks current development)
+- Implementation roadmap and universal pattern framework
 
 ## Development Workflow
 
-1. **FIRST: Read `doc/EXIFTOOL-SYNC.md`** - Understand the synchronization process and attribution requirements
+1. **FIRST: Read `doc/SYNC-DESIGN.md`** - Understand the synchronization process and attribution requirements
 2. **Check ExifTool's implementation** in `third-party/exiftool/lib/Image/ExifTool/`
 3. **Look for existing source attributions** - Check if the functionality is already tracked:
    ```bash
@@ -257,7 +240,7 @@ cargo run --bin exiftool_sync diff 12.65 12.66
 
 Before implementing ANY new feature:
 
-- [ ] Read `doc/EXIFTOOL-SYNC.md` completely
+- [ ] Read `doc/SYNC-DESIGN.md` completely
 - [ ] Find the ExifTool implementation in `third-party/exiftool/`
 - [ ] Check for existing implementations: `grep -r "EXIFTOOL-SOURCE" src/`
 - [ ] Use automated extraction tools when possible:
@@ -312,65 +295,4 @@ Before implementing ANY new feature:
 
 **New Extractor Pattern**: See `src/bin/exiftool_sync/extractors/EXTRACTOR_PATTERN.md` for the required pattern that ensures all extractors work smoothly without manual intervention.
 
-### Phase 2 Complete: Universal PrintConv Patterns ✅
-
-**As of June 2025, Phase 2 universal PrintConv patterns are complete**:
-
-- ✅ **Universal pattern architecture proven**: 2 new universal patterns successfully implemented
-- ✅ **UniversalOnOffAuto pattern**: 0=Off, 1=On, 2=Auto (for stabilization, noise settings across manufacturers)
-- ✅ **UniversalNoiseReduction pattern**: 0=Off, 1=Low, 2=Normal, 3=High, 4=Auto (comprehensive noise reduction)
-- ✅ **5 Fujifilm tags converted**: From raw values to human-readable strings (Sharpness, Saturation, Contrast, 2x NoiseReduction)
-- ✅ **Comprehensive testing**: 17/17 PrintConv tests passing including new universal patterns
-- ✅ **Multi-type support**: Works with U32, U16, U8, and Undefined ExifValue types
-- ✅ **ExifTool compatibility**: Exact value mappings matching ExifTool conventions
-- ✅ **Zero regressions**: All existing functionality maintained while adding new features
-
-### Phase 3 Complete: Universal Pattern Expansion ✅
-
-**As of June 2025, Phase 3 universal pattern expansion is complete**:
-
-- ✅ **4 new universal patterns implemented**: LowNormalHigh (renamed), UniversalQualityBasic, UniversalWhiteBalanceExtended, UniversalFocusMode
-- ✅ **Major naming improvement**: UniversalParameter → LowNormalHigh for dramatically improved code clarity
-- ✅ **6 high-priority tag conversions**: 3 EXIF image quality + 2 EXIF noise + 1 Fujifilm WB + 1 Fujifilm Clarity
-- ✅ **Architecture validation**: Table-driven approach proven to scale rapidly with 20/20 tests passing
-- ✅ **ExifTool compatibility**: All patterns follow exact ExifTool value mappings and conventions
-- ✅ **Zero performance impact**: O(1) lookup speed maintained with no algorithmic changes
-- ✅ **Impact measurement**: 706 → 700 None entries (systematic improvement tracking)
-
-**Key Benefits**: 
-- **Better Developer Experience**: Pattern names now clearly indicate their value mappings (LowNormalHigh vs UniversalParameter)
-- **Rapid Implementation**: New universal patterns can be added and tested in minutes
-- **Massive Scale Ready**: Framework proven ready for application to remaining 700 None entries
-
-**Implementation**: Universal patterns in `src/core/print_conv.rs` lines 575-579 (enum) and comprehensive implementations with full test coverage. Applied to high-priority EXIF and manufacturer tags.
-
-**Next Opportunity**: 700 None entries remain (581 EXIF + 78 Fujifilm + 37 Apple + 4 Hasselblad) - massive potential for human-readable output improvements using the proven universal pattern framework.
-
-### Phase 3 Manufacturers Complete: Media Manager Essential Support ✅
-
-**As of June 2025, Phase 3 media manager manufacturers are complete**:
-
-- ✅ **DJI Drones**: Complete table-driven parser with ExifTool-compatible float conversions
-- ✅ **Specialized Float Conversion**: `format_dji_float2()` implementing `sprintf("%+.2f", $val)` pattern
-- ✅ **Flight Data Extraction**: SpeedX/Y/Z, Pitch/Yaw/Roll, and Camera orientation data
-- ✅ **DRY Implementation**: 9 float tags share single conversion function
-- ✅ **Complete Integration**: Added to maker note system with comprehensive testing
-
-**DJI Implementation Highlights**:
-- **Auto-generated tag table**: `src/tables/dji_tags.rs` with 10 tag definitions
-- **Proven template pattern**: Following Fujifilm parser architecture
-- **ExifTool compatibility**: Exact formatting matches DJI.pm %convFloat2 pattern
-- **Zero regressions**: All 187 tests passing with new DJI functionality
-
-- ✅ **Ricoh Cameras**: Complete table-driven parser with automated sync tools (June 2025)
-- ✅ **Pentax Ecosystem Integration**: Ricoh parser uses Pentax tag structure per ExifTool specification
-- ✅ **Advanced Detection**: Supports both "RICOH\0II" and "RICOH\0MM" signature patterns
-- ✅ **Auto-generated Implementation**: 40 tag definitions with 34 PrintConv variants
-- ✅ **Revolutionary Speed**: Completed in 30 minutes vs estimated 2.5 hours (5x faster)
-
-**Ricoh Implementation Highlights**:
-- **ExifTool Compatibility**: Detection patterns match `$$valPt =~ /^RICOH\0(II|MM)/` from Exif.pm
-- **Complete Automation**: Used streamlined add-manufacturer command with zero manual intervention
-- **Tag Coverage**: 40 tag definitions auto-extracted from `lib/Image/ExifTool/Ricoh.pm`
-- **Zero regressions**: All 197 tests passing with new Ricoh functionality
 

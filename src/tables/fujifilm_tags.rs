@@ -43,7 +43,7 @@ pub const FUJIFILM_TAGS: &[FUJIFILMTag] = &[
     FUJIFILMTag {
         id: 0x1002,
         name: "WhiteBalance",
-        print_conv: PrintConvId::UniversalWhiteBalanceExtended,
+        print_conv: PrintConvId::WhiteBalanceExtended,
     },
     FUJIFILMTag {
         id: 0x1003,
@@ -73,12 +73,12 @@ pub const FUJIFILM_TAGS: &[FUJIFILMTag] = &[
     FUJIFILMTag {
         id: 0x100b,
         name: "NoiseReduction",
-        print_conv: PrintConvId::UniversalNoiseReduction,
+        print_conv: PrintConvId::NoiseReduction,
     },
     FUJIFILMTag {
         id: 0x100e,
         name: "NoiseReduction",
-        print_conv: PrintConvId::UniversalNoiseReduction,
+        print_conv: PrintConvId::NoiseReduction,
     },
     FUJIFILMTag {
         id: 0x100f,
@@ -148,7 +148,7 @@ pub const FUJIFILM_TAGS: &[FUJIFILMTag] = &[
     FUJIFILMTag {
         id: 0x1033,
         name: "EXRAuto",
-        print_conv: PrintConvId::UniversalAutoManual,
+        print_conv: PrintConvId::AutoManual,
     },
     FUJIFILMTag {
         id: 0x1034,
@@ -183,12 +183,12 @@ pub const FUJIFILM_TAGS: &[FUJIFILMTag] = &[
     FUJIFILMTag {
         id: 0x1048,
         name: "ColorChromeEffect",
-        print_conv: PrintConvId::UniversalOffWeakStrong,
+        print_conv: PrintConvId::OffWeakStrong,
     },
     FUJIFILMTag {
         id: 0x1049,
         name: "BWAdjustment",
-        print_conv: PrintConvId::UniversalSignedNumber,
+        print_conv: PrintConvId::SignedNumber,
     },
     FUJIFILMTag {
         id: 0x104b,
@@ -203,7 +203,7 @@ pub const FUJIFILM_TAGS: &[FUJIFILMTag] = &[
     FUJIFILMTag {
         id: 0x104e,
         name: "ColorChromeFXBlue",
-        print_conv: PrintConvId::UniversalOffWeakStrong,
+        print_conv: PrintConvId::OffWeakStrong,
     },
     FUJIFILMTag {
         id: 0x1050,

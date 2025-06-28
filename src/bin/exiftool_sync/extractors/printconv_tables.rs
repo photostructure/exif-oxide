@@ -314,7 +314,9 @@ impl PrintConvTablesExtractor {
         // Convert Perl table names to shared PrintConvId variants
         match table_name {
             "offOn" => "PrintConvId::OnOff".to_string(),
-            "canonLensTypes" => format!("PrintConvId::{}LensType", manufacturer),
+            "canonLensTypes" => "PrintConvId::CanonLensTypes".to_string(),
+            "olympusLensTypes" => "PrintConvId::OlympusLensTypes".to_string(),
+            "pentaxLensTypes" => "PrintConvId::PentaxLensTypes".to_string(),
             "userDefStyles" => format!("PrintConvId::{}UserDefPictureStyle", manufacturer),
             "canonImageSize" => "PrintConvId::ImageSize".to_string(),
             "canonWhiteBalance" => "PrintConvId::WhiteBalance".to_string(),

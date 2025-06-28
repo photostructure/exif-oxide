@@ -162,47 +162,74 @@ The Canon parser needs to:
 3. Store extracted values (like LensType) as proper tags
 4. Apply PrintConv using CanonLensTypes lookup
 
-## Research Needed
+## Research Completed ✅
 
-### 1. Full CameraSettings Structure
+### 1. CameraSettings Structure (COMPLETED)
 
-Need to extract the complete CameraSettings binary data table from ExifTool:
-- Check `third-party/exiftool/lib/Image/ExifTool/Canon.pm` for CameraSettings definition
-- Look for `ProcessBinaryData` tables
-- Extract all field offsets and types
+Found in `third-party/exiftool/lib/Image/ExifTool/Canon.pm` starting at line 2166:
+- Uses `%binaryDataAttrs` which includes `PROCESS_PROC => \&ProcessBinaryData`
+- LensType is at offset 22 (0x16 hex) as `int16u` format
+- Table has ~140 fields with various camera settings
 
-### 2. Other Binary Structures
+### 2. PrintConv Mapping Fix (COMPLETED)
 
-RFLensType (289) comes from a different binary structure. Need to identify:
-- Which Canon tag contains this structure
-- The offset within that structure
-- The complete structure definition
+Fixed the bug in `src/bin/exiftool_sync/extractors/printconv_tables.rs`:
+- Changed `canonLensTypes` mapping from `PrintConvId::{}LensType` to `PrintConvId::CanonLensTypes`
+- Also added mappings for `olympusLensTypes` and `pentaxLensTypes`
+- Regenerated all tables with `make sync`
 
-### 3. Comprehensive PrintConv Audit
+### 3. Binary Data Processing Gap (IDENTIFIED)
 
-The PrintConv system needs verification:
-- Are other shared lookup tables affected by the same bug?
-- Check mappings for: nikonLensTypes, pentaxLensTypes, sonyLensTypes
-- Verify the complete PrintConv extraction and mapping flow
+The core issue is that Canon CameraSettings (tag 0x0001) contains binary data that needs ProcessBinaryData extraction:
+- The Canon parser receives the raw binary blob for tag 0x0001
+- It needs to apply the CameraSettings binary data table to extract individual fields
+- LensType is field 22 within this binary structure
+- The binary data framework exists (`src/core/binary_data.rs`) but isn't wired up
+
+### 4. Other Binary Structures (PENDING)
+
+RFLensType (289) likely comes from another binary structure that needs investigation
 
 ## Implementation Roadmap
 
-### Phase 1: Quick Fixes (1-2 hours)
-1. Fix `generate_shared_printconv_id` to map canonLensTypes correctly
-2. Run `make sync` to regenerate tables
-3. Test with Canon R5 Mark II image
+### Phase 1: Quick Fixes ✅ COMPLETED
+1. ✅ Fixed `generate_shared_printconv_id` to map canonLensTypes correctly
+2. ✅ Ran `make sync` to regenerate tables
+3. ⏳ Test with Canon R5 Mark II image (PrintConv fixed but binary data extraction still needed)
 
-### Phase 2: ProcessBinaryData Implementation (4-8 hours)
-1. Research CameraSettings structure in ExifTool source
-2. Enhance sync extractor to generate binary data tables for Canon
-3. Implement binary data processing in Canon parser
-4. Wire up extracted values to use proper PrintConv
+### Phase 2: CameraSettings Binary Data Extraction (NEXT STEPS)
 
-### Phase 3: Comprehensive Solution (1-2 days)
-1. Audit all manufacturer PrintConv mappings
-2. Implement missing binary data structures
-3. Add integration tests for lens type extraction
-4. Document the complete ProcessBinaryData flow
+#### Option A: Enhance Binary Format Extractor
+The current extractor misses CameraSettings because it inherits ProcessBinaryData via `%binaryDataAttrs`:
+
+1. **Fix the extractor** (`src/bin/exiftool_sync/extractors/binary_formats.rs`):
+   - Detect tables that inherit from `%binaryDataAttrs`
+   - Extract CameraSettings table with all 140+ fields
+   - Generate `create_camerasettings_table()` function
+
+2. **Wire up in Canon parser**:
+   - When tag 0x0001 is encountered, apply CameraSettings binary table
+   - Extract LensType from offset 22
+   - Apply CanonLensTypes PrintConv
+
+#### Option B: Manual Implementation (Faster for MVP)
+1. **Create CameraSettings table manually**:
+   ```rust
+   // src/binary/formats/canon.rs
+   pub fn create_camerasettings_table() -> BinaryDataTable {
+       BinaryDataTableBuilder::new("CameraSettings", ExifFormat::I16)
+           .add_field(22, "LensType", ExifFormat::U16, 1)
+           // Add other critical fields as needed
+           .build()
+   }
+   ```
+
+2. **Update Canon parser** to process binary data for tag 0x0001
+
+### Phase 3: Complete Solution
+1. Find and implement RFLensType binary structure
+2. Add tests comparing output with ExifTool
+3. Document the binary data extraction pattern for other tags
 
 ## Test Cases
 
@@ -233,12 +260,41 @@ Key files to study in `third-party/exiftool/`:
 3. All Canon lens types from the 524-entry table work correctly
 4. ProcessBinaryData extraction is table-driven and maintainable
 
+## Technical Details Discovered
+
+### Binary Data Extraction Architecture
+
+1. **Framework exists**: `src/core/binary_data.rs` has complete ProcessBinaryData implementation
+2. **Tables are generated**: `src/binary/formats/canon.rs` has some tables but missing CameraSettings
+3. **Parser gap**: Canon parser doesn't apply binary data extraction to tag values
+
+### CameraSettings Binary Structure (from Canon.pm line 2166)
+```perl
+%Image::ExifTool::Canon::CameraSettings = (
+    %binaryDataAttrs,  # Inherits PROCESS_PROC => \&ProcessBinaryData
+    FORMAT => 'int16s',
+    FIRST_ENTRY => 1,
+    22 => {            # Offset 22 (0x16)
+        Name => 'LensType',
+        Format => 'int16u',
+        PrintConv => \%canonLensTypes,  # 524-entry lookup table
+    },
+    # ... 140+ other fields
+)
+```
+
+### Binary Format Extractor Issue
+The extractor at `src/bin/exiftool_sync/extractors/binary_formats.rs` line 88:
+- Only detects explicit `PROCESS_PROC` in table content
+- Misses tables that inherit via `%binaryDataAttrs`
+- This causes CameraSettings to be skipped during extraction
+
 ## Notes for Next Engineer
 
 1. The IFD parser fix for 0x4xxx tags is already done - don't revert it
-2. The PrintConv system is table-driven - study `doc/SYNC-PRINTCONV-DESIGN.md`
-3. Binary data extraction follows patterns in `src/core/binary_data.rs`
-4. Always check ExifTool source - it has 25 years of camera quirks encoded
+2. The PrintConv mapping fix is complete - canonLensTypes now maps correctly
+3. Binary data extraction framework exists but needs to be connected
+4. The sync extractor needs enhancement to detect inherited ProcessBinaryData
 5. Run `make sync` after any extractor changes to regenerate tables
 
 ## Priority
@@ -248,3 +304,4 @@ This is **HIGH PRIORITY** because:
 - It affects all Canon cameras
 - The fix will establish patterns for other manufacturers
 - ProcessBinaryData is critical for many other tags
+- The architecture is 90% complete - just needs the final connection

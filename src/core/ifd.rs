@@ -361,12 +361,24 @@ impl IfdParser {
                             };
 
                             for (maker_tag, maker_value) in maker_entries {
-                                // Add prefix to avoid conflicts, but prevent overflow
-                                if maker_tag < 0x4000 {
+                                // Check if this is a converted tag (0x8000 bit set)
+                                if maker_tag >= 0x8000 {
+                                    // This is a converted tag - store it directly without prefix
+                                    // Converted tags are already properly namespaced by the maker parser
+                                    entries.insert(maker_tag, maker_value);
+                                } else if manufacturer == maker::Manufacturer::Canon
+                                    && (0x4000..0x8000).contains(&maker_tag)
+                                {
+                                    // Canon tags in the 0x4xxx range are valid Canon-specific tags
+                                    // Store them directly without prefix since they won't overflow
+                                    // and are already in a Canon-specific range
+                                    entries.insert(maker_tag, maker_value);
+                                } else if maker_tag < 0x4000 {
+                                    // Normal maker tag - add manufacturer prefix to avoid conflicts
                                     let prefixed_tag = prefix + maker_tag;
                                     entries.insert(prefixed_tag, maker_value);
                                 } else {
-                                    // Tag is already high, skip to avoid overflow
+                                    // Tag is in the high range but not converted - skip to avoid overflow
                                     eprintln!(
                                         "Warning: Skipping maker tag 0x{:04X} to avoid overflow",
                                         maker_tag
