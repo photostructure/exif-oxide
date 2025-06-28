@@ -108,7 +108,7 @@ $ grep -E "0x829a|0x829d" target/debug/build/exif-oxide-*/out/generated_tags.rs
 
 Before starting implementation, new engineers MUST read these documents completely:
 
-1. **[`doc/EXIFTOOL-SYNC.md`](doc/EXIFTOOL-SYNC.md)** - Complete synchronization workflow
+1. **[`doc/SYNC-DESIGN.md`](doc/SYNC-DESIGN.md)** - Complete synchronization workflow
    - Source tracking and attribution requirements
    - Extractor patterns and best practices
    - How to create new extractors following proven pattern
@@ -383,7 +383,7 @@ cargo run -- test-images/canon/*.jpg
 
 #### 4.2 Update Documentation
 
-**Update**: `doc/EXIFTOOL-SYNC.md` to include `exif-tags` extractor:
+**Update**: `doc/SYNC-DESIGN.md` to include `exif-tags` extractor:
 ```bash
 # Extract EXIF tag definitions
 cargo run --bin exiftool_sync extract exif-tags
@@ -485,7 +485,7 @@ If extractor approach faces unexpected issues:
 - **ExifTool Documentation**: https://exiftool.org/TagNames/EXIF.html
 - **EXIF Specification**: https://www.cipa.jp/std/documents/e/DC-008-2012_E.pdf
 - **Project Architecture**: `doc/PRINTCONV-ARCHITECTURE.md`
-- **Sync Process**: `doc/EXIFTOOL-SYNC.md`
+- **Sync Process**: `doc/SYNC-DESIGN.md`
 
 ### Key Source Files
 - **EXIF Source**: `third-party/exiftool/lib/Image/ExifTool/Exif.pm`

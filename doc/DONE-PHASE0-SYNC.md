@@ -188,7 +188,7 @@ cargo run --bin exiftool_sync test-update v13.27
 - Add behavioral change detection
 
 **Day 10: Documentation and Validation**
-- Update EXIFTOOL-SYNC.md with new tools
+- Update SYNC-DESIGN.md with new tools
 - Create migration guide for existing code
 - Validate against real ExifTool updates
 
@@ -209,7 +209,7 @@ cargo run --bin exiftool_sync test-update v13.27
 - [x] ExifTool updates traceable to affected code
 
 ### Documentation
-- [x] Each extractor documented in EXIFTOOL-SYNC.md
+- [x] Each extractor documented in SYNC-DESIGN.md
 - [x] Migration guide for existing manual code **[COMPLETED]**
 - [x] Examples of using generated code
 - [ ] Troubleshooting guide for extraction issues
@@ -447,7 +447,7 @@ Phase 0 infrastructure is complete, but minor improvements could be made:
 
 ### 📚 **Documentation Created:**
 
-- **Core Implementation**: All extraction tools documented in EXIFTOOL-SYNC.md
+- **Core Implementation**: All extraction tools documented in SYNC-DESIGN.md
 - **Migration Guide**: `doc/smooth-regeneration-guide.md` for future extractor improvements
 - **Developer Guidance**: Updated CLAUDE.md with synchronization workflows
 
