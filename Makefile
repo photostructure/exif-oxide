@@ -45,6 +45,10 @@ sync:
 	cargo run --bin exiftool_sync extract-all
 	cargo build
 
+# Extract PrintConv synchronization only
+sync-printconv:
+	cargo run --bin exiftool_sync extract printconv-sync
+
 # Update dependencies
 update:
 	cargo update
