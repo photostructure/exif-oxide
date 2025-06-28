@@ -20,6 +20,7 @@ regex = "1.11"         # For parsing ExifTool tables (used in dev tools)
 serde = { version = "1.0", features = ["derive"] }  # Serialization
 serde_json = "1.0"     # JSON output
 lazy_static = "1.5"    # For static hash maps in detection module
+clap = { version = "4.0", features = ["derive"] }  # Command line parsing
 
 # XMP support (Spike 4)
 quick-xml = "0.36"     # Fast XML parsing for XMP metadata

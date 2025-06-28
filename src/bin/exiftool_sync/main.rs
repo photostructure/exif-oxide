@@ -2,6 +2,7 @@
 //!
 //! Tool to synchronize exif-oxide with ExifTool updates and extract algorithms
 
+use clap::{Parser, Subcommand};
 use std::collections::HashMap;
 use std::env;
 use std::fs;
@@ -11,68 +12,153 @@ use std::process::Command;
 mod extractors;
 use extractors::Extractor;
 
+/// ExifTool synchronization tool
+#[derive(Parser)]
+#[command(name = "exiftool-sync")]
+#[command(about = "Tool to synchronize exif-oxide with ExifTool updates and extract algorithms")]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Show current synchronization status
+    Status,
+
+    /// Show which Rust files are affected by ExifTool changes
+    Diff {
+        /// Starting version
+        from_version: String,
+        /// Ending version
+        to_version: String,
+    },
+
+    /// List all ExifTool source dependencies
+    Scan,
+
+    /// Extract algorithms from ExifTool source
+    Extract {
+        /// Component to extract
+        #[command(subcommand)]
+        component: ExtractComponent,
+    },
+
+    /// Extract all components in one command
+    ExtractAll,
+
+    /// Analyze PrintConv patterns in manufacturer file
+    Analyze {
+        #[command(subcommand)]
+        analysis: AnalysisType,
+    },
+
+    /// Generate PrintConv functions for manufacturer
+    Generate {
+        #[command(subcommand)]
+        generation: GenerationType,
+    },
+
+    /// Compare PrintConv changes between versions
+    DiffPrintconv {
+        /// Starting version
+        from_version: String,
+        /// Ending version
+        to_version: String,
+        /// Manufacturer file (e.g., Canon.pm)
+        manufacturer_pm: String,
+    },
+
+    /// Add complete manufacturer support with automated workflow
+    AddManufacturer {
+        /// Manufacturer name
+        name: String,
+    },
+}
+
+#[derive(Subcommand)]
+enum ExtractComponent {
+    /// Extract ProcessBinaryData table definitions
+    BinaryFormats,
+    /// Extract file type detection patterns
+    MagicNumbers,
+    /// Extract date parsing patterns
+    DatetimePatterns,
+    /// Extract composite tag definitions
+    BinaryTags,
+    /// Extract standard EXIF tag definitions
+    ExifTags,
+    /// Extract GoPro GPMF tag definitions
+    GpmfTags,
+    /// Extract GoPro GPMF format definitions
+    GpmfFormat,
+    /// Extract maker note detection patterns
+    MakerDetection,
+    /// Extract complete tag tables with PrintConv mappings
+    PrintconvTables {
+        /// Manufacturer file (e.g., Canon.pm)
+        manufacturer_pm: String,
+    },
+}
+
+#[derive(Subcommand)]
+enum AnalysisType {
+    /// Analyze PrintConv patterns
+    PrintconvPatterns {
+        /// Manufacturer file (e.g., Canon.pm)
+        manufacturer_pm: String,
+    },
+}
+
+#[derive(Subcommand)]
+enum GenerationType {
+    /// Generate PrintConv functions
+    PrintconvFunctions {
+        /// Manufacturer file (e.g., Canon.pm)
+        manufacturer_pm: String,
+    },
+}
+
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    let cli = Cli::parse();
 
-    if args.len() < 2 {
-        print_help();
-        std::process::exit(1);
-    }
-
-    let result = match args[1].as_str() {
-        "status" => cmd_status(),
-        "diff" => {
-            if args.len() != 4 {
-                Err("Usage: exiftool_sync diff <from_version> <to_version>".to_string())
-            } else {
-                cmd_diff(&args[2], &args[3])
+    let result = match cli.command {
+        Commands::Status => cmd_status(),
+        Commands::Diff {
+            from_version,
+            to_version,
+        } => cmd_diff(&from_version, &to_version),
+        Commands::Scan => cmd_scan(),
+        Commands::Extract { component } => match component {
+            ExtractComponent::BinaryFormats => cmd_extract("binary-formats", &[]),
+            ExtractComponent::MagicNumbers => cmd_extract("magic-numbers", &[]),
+            ExtractComponent::DatetimePatterns => cmd_extract("datetime-patterns", &[]),
+            ExtractComponent::BinaryTags => cmd_extract("binary-tags", &[]),
+            ExtractComponent::ExifTags => cmd_extract("exif-tags", &[]),
+            ExtractComponent::GpmfTags => cmd_extract("gpmf-tags", &[]),
+            ExtractComponent::GpmfFormat => cmd_extract("gpmf-format", &[]),
+            ExtractComponent::MakerDetection => cmd_extract("maker-detection", &[]),
+            ExtractComponent::PrintconvTables { manufacturer_pm } => {
+                cmd_extract("printconv-tables", &[manufacturer_pm])
             }
-        }
-        "scan" => cmd_scan(),
-        "extract" => {
-            if args.len() < 3 {
-                Err("Usage: exiftool_sync extract <component> [options]".to_string())
-            } else {
-                cmd_extract(&args[2], &args[3..])
+        },
+        Commands::ExtractAll => cmd_extract_all(),
+        Commands::Analyze { analysis } => match analysis {
+            AnalysisType::PrintconvPatterns { manufacturer_pm } => {
+                cmd_analyze_printconv(&manufacturer_pm)
             }
-        }
-        "analyze" => {
-            if args.len() < 4 || args[2] != "printconv-patterns" {
-                Err("Usage: exiftool_sync analyze printconv-patterns <Manufacturer.pm>".to_string())
-            } else {
-                cmd_analyze_printconv(&args[3])
+        },
+        Commands::Generate { generation } => match generation {
+            GenerationType::PrintconvFunctions { manufacturer_pm } => {
+                cmd_generate_printconv(&manufacturer_pm)
             }
-        }
-        "generate" => {
-            if args.len() < 4 || args[2] != "printconv-functions" {
-                Err(
-                    "Usage: exiftool_sync generate printconv-functions <Manufacturer.pm>"
-                        .to_string(),
-                )
-            } else {
-                cmd_generate_printconv(&args[3])
-            }
-        }
-        "diff-printconv" => {
-            if args.len() != 5 {
-                Err("Usage: exiftool_sync diff-printconv <from_version> <to_version> <Manufacturer.pm>".to_string())
-            } else {
-                cmd_diff_printconv(&args[2], &args[3], &args[4])
-            }
-        }
-        "extract-all" => cmd_extract_all(),
-        "add-manufacturer" => {
-            if args.len() < 3 {
-                Err("Usage: exiftool_sync add-manufacturer <ManufacturerName>".to_string())
-            } else {
-                cmd_add_manufacturer(&args[2])
-            }
-        }
-        "help" | "--help" | "-h" => {
-            print_help();
-            Ok(())
-        }
-        _ => Err(format!("Unknown command: {}", args[1])),
+        },
+        Commands::DiffPrintconv {
+            from_version,
+            to_version,
+            manufacturer_pm,
+        } => cmd_diff_printconv(&from_version, &to_version, &manufacturer_pm),
+        Commands::AddManufacturer { name } => cmd_add_manufacturer(&name),
     };
 
     if let Err(e) = result {
@@ -976,53 +1062,6 @@ fn print_optimization_analysis(patterns: &[extractors::PrintConvPattern]) {
             duplicates_eliminated
         );
     }
-}
-
-fn print_help() {
-    println!("ExifTool Synchronization Tool");
-    println!();
-    println!("USAGE:");
-    println!("    cargo run --bin exiftool_sync <COMMAND>");
-    println!();
-    println!("COMMANDS:");
-    println!("    status                           Show current synchronization status");
-    println!("    diff <from> <to>                 Show which Rust files are affected by ExifTool changes");
-    println!("    scan                             List all ExifTool source dependencies");
-    println!("    extract <component>              Extract algorithms from ExifTool source");
-    println!("    extract-all                      Extract all components in one command");
-    println!(
-        "    analyze printconv-patterns <pm>  Analyze PrintConv patterns in manufacturer file"
-    );
-    println!("    generate printconv-functions <pm> Generate PrintConv functions for manufacturer");
-    println!("    diff-printconv <from> <to> <pm>  Compare PrintConv changes between versions");
-    println!("    add-manufacturer <name>          Add complete manufacturer support with automated workflow");
-    println!("    help                             Show this help message");
-    println!();
-    println!("EXTRACT COMPONENTS:");
-    println!("    binary-formats                   Extract ProcessBinaryData table definitions");
-    println!("    magic-numbers                    Extract file type detection patterns");
-    println!("    datetime-patterns                Extract date parsing patterns");
-    println!("    binary-tags                      Extract composite tag definitions");
-    println!("    exif-tags                        Extract standard EXIF tag definitions");
-    println!("    gpmf-tags                        Extract GoPro GPMF tag definitions");
-    println!("    gpmf-format                      Extract GoPro GPMF format definitions");
-    println!("    maker-detection                  Extract maker note detection patterns");
-    println!(
-        "    printconv-tables <pm>            Extract complete tag tables with PrintConv mappings"
-    );
-    println!();
-    println!("EXAMPLES:");
-    println!("    cargo run --bin exiftool_sync status");
-    println!("    cargo run --bin exiftool_sync diff 12.65 12.66");
-    println!("    cargo run --bin exiftool_sync scan");
-    println!("    cargo run --bin exiftool_sync extract binary-formats");
-    println!("    cargo run --bin exiftool_sync extract-all");
-    println!("    cargo run --bin exiftool_sync extract maker-detection");
-    println!("    cargo run --bin exiftool_sync analyze printconv-patterns Canon.pm");
-    println!("    cargo run --bin exiftool_sync generate printconv-functions Canon.pm");
-    println!("    cargo run --bin exiftool_sync extract printconv-tables Canon.pm");
-    println!("    cargo run --bin exiftool_sync diff-printconv 12.65 12.66 Canon.pm");
-    println!("    cargo run --bin exiftool_sync add-manufacturer Sony");
 }
 
 /// Add complete manufacturer support with automated workflow
