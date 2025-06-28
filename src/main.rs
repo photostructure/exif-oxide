@@ -1,5 +1,6 @@
 //! Command-line tool for extracting EXIF data
 
+use clap::{error::ErrorKind, ArgAction, Parser};
 use exif_oxide::binary::{extract_binary_tag, extract_mpf_preview};
 use exif_oxide::core::ifd::IfdParser;
 use exif_oxide::core::mpf::ParsedMpf;
@@ -11,9 +12,46 @@ use exif_oxide::tables::{
 use exif_oxide::tables::{lookup_canon_tag, lookup_tag};
 use serde::Serialize;
 use std::collections::HashMap;
-use std::env;
 use std::io::{self, Write};
-use std::process;
+
+/// EXIF metadata extraction tool  
+#[derive(Parser)]
+#[command(name = "exif-oxide")]
+#[command(about = "Extracts EXIF data from image files")]
+#[command(after_help = "EXAMPLES:\n  \
+exif-oxide photo.jpg                          # All tags as JSON\n  \
+exif-oxide photo1.jpg photo2.jpg              # Multiple files\n  \
+exif-oxide -G photo.jpg                       # All tags with groups\n  \
+exif-oxide -Make -Model photo.jpg             # Only Make and Model\n  \
+exif-oxide -b -ThumbnailImage photo.jpg       # Extract thumbnail to stdout\n  \
+exif-oxide -b -ThumbnailImage photo.jpg > thumb.jpg  # Save thumbnail")]
+#[command(disable_help_flag = true)]
+#[command(arg_required_else_help = true)]
+struct Cli {
+    /// Include group names in output
+    #[arg(short = 'G', long)]
+    groups: bool,
+
+    /// Show numeric/raw values (no PrintConv)
+    #[arg(short = 'n', long)]
+    numeric: bool,
+
+    /// Extract raw binary data (requires single tag and single file)
+    #[arg(short = 'b', long)]
+    binary: bool,
+
+    /// API mode: show both raw and formatted values with full type information
+    #[arg(long)]
+    api: bool,
+
+    /// Show help information
+    #[arg(short = 'h', long = "help", action = ArgAction::Help)]
+    help: Option<bool>,
+
+    /// All remaining arguments (files and -TagName patterns)
+    #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+    args: Vec<String>,
+}
 
 /// Command represents the operation to perform
 #[derive(Debug)]
@@ -35,8 +73,69 @@ enum Command {
     ExtractBinary { tag: String },
 }
 
-/// Parse command line arguments into a Command
-fn parse_args(args: Vec<String>) -> Result<(Command, Vec<String>), String> {
+/// Parse CLI arguments into a Command and extract file list
+fn parse_cli_to_command(cli: &Cli) -> Result<(Command, Vec<String>), String> {
+    let show_converted_values = !cli.numeric; // -n flag inverts the default
+
+    // Parse remaining args to separate tags from files
+    let mut tag_filters = Vec::new();
+    let mut image_files = Vec::new();
+
+    for arg in &cli.args {
+        if arg.starts_with('-') && !arg.starts_with("--") && arg.len() > 1 {
+            // ExifTool-compatible -TagName syntax
+            let tag_name = &arg[1..]; // Remove the leading dash
+            tag_filters.push(tag_name.to_string());
+        } else {
+            // This is a file
+            image_files.push(arg.clone());
+        }
+    }
+
+    if image_files.is_empty() {
+        return Err("No image file specified".to_string());
+    }
+
+    if cli.binary {
+        // Binary mode requires exactly one tag and one file
+        if tag_filters.len() != 1 {
+            return Err("Binary mode (-b) requires exactly one tag specification".to_string());
+        }
+        if image_files.len() != 1 {
+            return Err("Binary mode (-b) requires exactly one image file".to_string());
+        }
+        Ok((
+            Command::ExtractBinary {
+                tag: tag_filters[0].clone(),
+            },
+            image_files,
+        ))
+    } else if tag_filters.is_empty() {
+        // No tags specified, list all
+        Ok((
+            Command::ListAll {
+                include_groups: cli.groups,
+                show_converted_values,
+                api_mode: cli.api,
+            },
+            image_files,
+        ))
+    } else {
+        // Specific tags requested
+        Ok((
+            Command::ListSpecific {
+                tags: tag_filters,
+                include_groups: cli.groups,
+                show_converted_values,
+                api_mode: cli.api,
+            },
+            image_files,
+        ))
+    }
+}
+
+/// Custom parser for ExifTool-style arguments (fallback when clap fails)
+fn parse_exiftool_style_args(args: &[String]) -> Result<(Command, Vec<String>), String> {
     let mut include_groups = false;
     let mut binary_mode = false;
     let mut show_converted_values = true; // Default to showing converted values
@@ -51,16 +150,20 @@ fn parse_args(args: Vec<String>) -> Result<(Command, Vec<String>), String> {
         if arg == "-G" {
             include_groups = true;
             i += 1;
-        } else if arg == "-b" {
+        } else if arg == "-b" || arg == "--binary" {
             binary_mode = true;
             i += 1;
-        } else if arg == "-n" {
+        } else if arg == "-n" || arg == "--numeric" {
             show_converted_values = false; // Show numeric/raw values only
             i += 1;
         } else if arg == "--api" {
             api_mode = true;
             i += 1;
-        } else if arg.starts_with('-') && !arg.starts_with("--") {
+        } else if arg == "-h" || arg == "--help" {
+            // Show help - use clap's help
+            let _cli = Cli::parse_from(["exif-oxide", "--help"]);
+            unreachable!(); // clap will exit with help
+        } else if arg.starts_with('-') && !arg.starts_with("--") && arg.len() > 1 {
             // This is a tag specification (e.g., -ThumbnailImage)
             let tag_name = &arg[1..]; // Remove the leading dash
             tag_filters.push(tag_name.to_string());
@@ -108,51 +211,6 @@ fn parse_args(args: Vec<String>) -> Result<(Command, Vec<String>), String> {
     };
 
     Ok((command, image_paths))
-}
-
-/// Display usage information
-fn show_usage(program: &str) {
-    eprintln!(
-        "Usage: {} [-G] [-n] [-b] [--api] [-TagName]... <image_file>...",
-        program
-    );
-    eprintln!();
-    eprintln!("Extracts EXIF data from image files.");
-    eprintln!();
-    eprintln!("Options:");
-    eprintln!("  -G         Include group names in output");
-    eprintln!("  -n         Show numeric/raw values (no PrintConv)");
-    eprintln!("  -b         Extract raw binary data (requires single -TagName and single file)");
-    eprintln!(
-        "  --api      API mode: show both raw and formatted values with full type information"
-    );
-    eprintln!("  -TagName   Include only specified tag(s) in output");
-    eprintln!();
-    eprintln!("Examples:");
-    eprintln!(
-        "  {} photo.jpg                          # All tags as JSON",
-        program
-    );
-    eprintln!(
-        "  {} photo1.jpg photo2.jpg              # Multiple files",
-        program
-    );
-    eprintln!(
-        "  {} -G photo.jpg                       # All tags with groups",
-        program
-    );
-    eprintln!(
-        "  {} -Make -Model photo.jpg             # Only Make and Model",
-        program
-    );
-    eprintln!(
-        "  {} -b -ThumbnailImage photo.jpg       # Extract thumbnail to stdout",
-        program
-    );
-    eprintln!(
-        "  {} -b -ThumbnailImage photo.jpg > thumb.jpg  # Save thumbnail",
-        program
-    );
 }
 
 /// Resolve a tag name to its ID, handling various formats
@@ -969,32 +1027,38 @@ fn process_image(
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args: Vec<String> = env::args().collect();
+    // Custom argument parsing to handle ExifTool-style -TagName syntax
+    let args: Vec<String> = std::env::args().collect();
 
-    // Parse command line arguments
-    let (command, image_paths) = match parse_args(args.clone()) {
-        Ok(result) => result,
-        Err(err) => {
-            eprintln!("Error: {}", err);
-            eprintln!();
-            show_usage(&args[0]);
-            process::exit(1);
+    // Try clap parsing first, but if it fails with unknown arguments, use custom parsing
+    let (command, image_files) = match Cli::try_parse() {
+        Ok(cli) => match parse_cli_to_command(&cli) {
+            Ok(result) => result,
+            Err(err) => {
+                eprintln!("Error: {}", err);
+                std::process::exit(1);
+            }
+        },
+        Err(clap_err) if clap_err.kind() == ErrorKind::UnknownArgument => {
+            // Fallback to custom parsing for ExifTool-style arguments
+            match parse_exiftool_style_args(&args) {
+                Ok(result) => result,
+                Err(err) => {
+                    eprintln!("Error: {}", err);
+                    std::process::exit(1);
+                }
+            }
+        }
+        Err(clap_err) => {
+            clap_err.exit();
         }
     };
 
     // Handle different command types
     match command {
         Command::ExtractBinary { tag } => {
-            // Binary extraction only works with single file
-            if image_paths.len() != 1 {
-                eprintln!("Error: Binary mode requires exactly one image file");
-                process::exit(1);
-            }
-
-            let image_path = &image_paths[0];
-
             // Extract and output binary data
-            let binary_data = extract_binary(&tag, image_path)?;
+            let binary_data = extract_binary(&tag, &image_files[0])?;
             io::stdout().write_all(&binary_data)?;
             io::stdout().flush()?;
         }
@@ -1002,7 +1066,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             // Process all files and collect results
             let mut all_outputs = Vec::new();
 
-            for image_path in &image_paths {
+            for image_path in &image_files {
                 match process_image(image_path, &command) {
                     Ok(output) => all_outputs.push(output),
                     Err(e) => {
