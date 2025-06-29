@@ -99,10 +99,11 @@ fn test_exiftool_sync_help() {
     assert!(output.status.success());
 
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(stdout.contains("ExifTool Synchronization Tool"));
+    // Check for clap-generated help content
+    assert!(stdout.contains("Tool to synchronize exif-oxide with ExifTool updates"));
     assert!(stdout.contains("extract"));
-    assert!(stdout.contains("binary-formats"));
-    assert!(stdout.contains("magic-numbers"));
+    assert!(stdout.contains("Extract algorithms from ExifTool source"));
+    assert!(stdout.contains("Commands:"));
 }
 
 #[test]
