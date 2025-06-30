@@ -1,6 +1,11 @@
 # exif-oxide Implementation Milestones - Take 5
 
-This document outlines the incremental development milestones for exif-oxide, incorporating the ARCHITECTURE-TAKE-5 design with runtime fallback TODO system, stateful reader architecture, hybrid processor dispatch, and layered offset management.
+This document outlines the incremental development milestones for exif-oxide.
+
+Be sure to study $REPO_ROOT/CLAUDE.md, $REPO_ROOT/docs/ARCHITECTURE.md,
+$REPO_ROOT/third-party/exiftool/CLAUDE.md, and all relevant related documentation before
+starting any work. With this project, **everything** is more complicated than
+you'd expect.
 
 ## Core Principles
 
@@ -12,135 +17,216 @@ This document outlines the incremental development milestones for exif-oxide, in
 
 ---
 
-## Milestone 0: Foundation & Tooling (2 weeks)
+## Milestone 0a: Minimal CLI & Registry (1 week)
 
-**Goal**: Establish the build pipeline with runtime fallback system
+**Goal**: Create testable foundation with basic CLI that outputs JSON
 
 **Deliverables**:
 
-- [ ] Minimal Perl extraction script (`extract_tables.pl`)
-  - Extract EXIF IFD0 tags from `lib/Image/ExifTool/Exif.pm`
-  - Include PrintConv/ValueConv as string references
-  - Output clean JSON with all tag metadata
-- [ ] Rust codegen tool with new TODO UX
-  - Generate tag tables with string references (no stubs!)
-  - Create runtime registry structure
-  - Generate ProcessorType enum (~50 variants)
+- [ ] Basic CLI binary (`exif-oxide`)
+  - Read file path from command line
+  - Output JSON format (matching `exiftool -j` structure)
+  - `--show-missing` flag for development
+  - Hardcoded mock data initially
 - [ ] Implementation registry skeleton
   - Runtime lookup for PrintConv/ValueConv
-  - Missing implementation tracking system
-  - `--show-missing` and `--generate-stubs` CLI support
-- [ ] Test harness with graceful fallback
-  - Compare output with ExifTool
-  - Track missing implementations per image
+  - Missing implementation tracking
+  - Graceful fallback to raw values
+- [ ] JSON output formatter
+  - Match ExifTool's JSON structure
+  - Include SourceFile, errors array
+  - Handle missing implementations gracefully
+- [ ] Integration test framework
+  - Compare with `exiftool -j -struct`
+  - Report differences
 
 **Success Criteria**:
 
-- Generated code compiles and runs on JPEG with missing implementations
-- `--show-missing` correctly identifies what needs implementation
-- Raw values displayed when PrintConv missing (no panics!)
+- `exif-oxide test.jpg` outputs valid JSON
+- `--show-missing` lists unimplemented features
+- Test framework can compare outputs
 
 ---
 
-## Milestone 1: Stateful Reader & Basic JPEG (2-3 weeks)
+## Milestone 0b: Code Generation Pipeline (1 week)
 
-**Goal**: Implement stateful ExifReader and JPEG segment parsing
+**Goal**: Extract ExifTool tables and generate Rust code
 
 **Deliverables**:
 
-- [ ] ExifReader state management (from STATE-MANAGEMENT.md)
-  - PROCESSED hash for recursion prevention
-  - VALUES hash for extracted tags
-  - Directory context (path, base, byte order)
-- [ ] JPEG segment parser
-  - Find APP1 (EXIF) segments
-  - Handle segment markers with streaming approach
-  - Basic error recovery for truncated files
+- [ ] Minimal Perl extraction script
+  - Extract EXIF IFD0 tags from `lib/Image/ExifTool/Exif.pm`
+  - Filter to mainstream tags only
+  - Include PrintConv/ValueConv as string references
+  - Output clean JSON
+- [ ] Rust codegen tool
+  - Generate tag tables with string references (no stubs!)
+  - Create registry initialization code
+  - Generate basic tag structures
+- [ ] Wire up to CLI
+  - Load generated tag definitions
+  - Still using mock data for actual values
+
+**Success Criteria**:
+
+- Generated code compiles
+- CLI shows real tag names from ExifTool
+- Can list which PrintConv implementations are needed
+
+---
+
+## Milestone 1: File I/O & JPEG Detection (1 week)
+
+**Goal**: Read real files and detect JPEG format
+
+**Deliverables**:
+
+- [ ] File reading with streaming support
+  - Open file with Read + Seek traits
+  - Basic error handling
 - [ ] File type detection
-  - Magic number patterns for JPEG, TIFF
-  - MIME type matching ExifTool
-- [ ] Integration test suite
-  - Test against t/images/ExifTool.jpg
-  - Show missing implementations
+  - Check magic bytes for JPEG (0xFFD8)
+  - Return "not supported" for non-JPEG
+- [ ] JPEG segment scanner
+  - Find APP1 (EXIF) segment
+  - Extract segment data
+  - Skip other segments
+- [ ] Wire to CLI
+  - Read actual file
+  - Report if EXIF found
+  - Output placeholder data
 
 **Success Criteria**:
 
-- Stateful reader maintains context through directory traversal
-- JPEG parser finds EXIF data in all test images
-- `--show-missing` reveals needed PrintConv implementations
+- `exif-oxide photo.jpg` detects JPEG files
+- Reports "EXIF data found" or "No EXIF data"
+- Non-JPEG files handled gracefully
 
-**Manual Implementations Needed**: None yet (using raw values)
+**Test Command**:
+```bash
+exif-oxide t/images/ExifTool.jpg | jq .ExifToolVersion
+# Should show something (even if placeholder)
+```
 
 ---
 
-## Milestone 2: ProcessExif & Basic IFD Structure (3-4 weeks)
+## Milestone 2: Minimal EXIF Parser (2 weeks)
 
-**Goal**: Implement ProcessExif with basic offset management
+**Goal**: Extract first real tags from EXIF data
 
 **Deliverables**:
 
-- [ ] ProcessExif implementation
-  - IFD entry parsing
-  - TIFF header and endianness handling
-  - Basic offset calculations (no quirks yet)
-- [ ] DirectoryContext (from OFFSET-BASE-MANAGEMENT.md)
-  - Core offset formula: `absolute = base + data_pos + relative`
-  - Standard TIFF offset scheme only
+- [ ] TIFF/EXIF header parser
+  - Read TIFF header (II/MM)
+  - Handle endianness
+  - Find IFD0 offset
+- [ ] Minimal IFD parser
+  - Read IFD entry count
+  - Parse IFD entries (12 bytes each)
+  - Extract tag ID, type, count, value/offset
 - [ ] Basic tag extraction
-  - String tags (Make, Model, DateTime)
-  - Numeric tags (raw values only)
-  - Format support: BYTE, ASCII, SHORT, LONG
-- [ ] Hybrid processor dispatch foundation
-  - ProcessorType::Exif variant
-  - Basic dispatch without conditions
+  - Support ASCII format only (easiest)
+  - Extract Make, Model, Software
+  - Raw numeric values for others
+- [ ] Stateful reader basics
+  - ExifReader struct
+  - Store extracted values
+  - Wire to JSON output
 
 **Success Criteria**:
 
-- Extract Make, Model, DateTime from test images
-- Correct offset calculations for all standard EXIF tags
-- Handle both endianness correctly
+- Extract real Make/Model from test images
+- JSON output shows actual camera info
+- Can compare with ExifTool output
 
-**Manual Implementations**:
+**Test Commands**:
+```bash
+# Should show matching Make/Model
+exiftool -j t/images/Canon.jpg | jq .Make
+exif-oxide t/images/Canon.jpg | jq .Make
+```
 
-- `process::exif::process_exif` - core IFD parser
+**Manual Implementation**:
+- `process::exif::parse_ifd_basic` - simplified IFD parser
 
 ---
 
-## Milestone 3: First PrintConv Implementations (2 weeks)
+## Milestone 3: More EXIF Formats (1 week)
 
-**Goal**: Implement high-frequency PrintConv based on real images
+**Goal**: Support common numeric formats
 
 **Deliverables**:
 
-- [ ] Run on 100 test images to find common missing PrintConv
-- [ ] Implement top 10 by frequency:
-  - EXIF:Orientation lookup (very common)
-  - EXIF:Flash BITMASK operation
-  - EXIF:ExposureProgram lookup
-  - DateTime formatting
-  - (Others based on actual usage)
-- [ ] PrintConv registry integration
-  - Register implementations
-  - Runtime lookup working
-- [ ] Metrics collection
-  - Track hit rate of implemented conversions
-  - Show coverage improvement
+- [ ] Additional format support
+  - SHORT (uint16)
+  - LONG (uint32) 
+  - BYTE (uint8)
+- [ ] Offset handling for long values
+  - When value doesn't fit in 4 bytes
+  - Read from data offset
+- [ ] More standard tags
+  - ImageWidth, ImageHeight
+  - Orientation (raw value)
+  - ResolutionUnit
+- [ ] Hex display for unknown tags
+  - Match ExifTool's unknown tag format
 
 **Success Criteria**:
 
-- 10 most common PrintConv implementations working
-- Coverage jumps from 0% to ~40% on test images
-- `--show-missing` shows reduced missing count
+- Extract numeric EXIF values correctly
+- Handle both inline and offset values
+- More tags matching ExifTool
 
-**Manual Implementations**:
-
-- `print_conv::orientation` - 8 value lookup
-- `print_conv::flash` - BITMASK with 7 bits
-- (8 more based on frequency analysis)
+**Test Commands**:
+```bash
+# Compare numeric values
+diff <(exiftool -j test.jpg | jq .ImageWidth) \
+     <(exif-oxide test.jpg | jq .ImageWidth)
+```
 
 ---
 
-## Milestone 4: SubDirectory & ExifIFD (3 weeks)
+## Milestone 4: First PrintConv - Orientation (1 week)
+
+**Goal**: Implement first human-readable conversion
+
+**Deliverables**:
+
+- [ ] PrintConv registry wiring
+  - Register implementation
+  - Runtime lookup
+  - Fallback to raw
+- [ ] Orientation PrintConv
+  - 8 value lookup table
+  - "Rotate 90 CW" etc.
+- [ ] Update JSON output
+  - Show converted value
+  - Include raw value too (like ExifTool -n)
+- [ ] Coverage metrics
+  - Track PrintConv hit rate
+  - Show in --show-missing
+
+**Success Criteria**:
+
+- Orientation shows "Horizontal (normal)" not "1"
+- Matches ExifTool exactly
+- Other tags still show raw values
+
+**Manual Implementation**:
+```rust
+// First PrintConv!
+fn orientation(val: &TagValue) -> String {
+    match val.as_u16() {
+        Some(1) => "Horizontal (normal)",
+        Some(6) => "Rotate 90 CW",
+        // ...
+    }.to_string()
+}
+```
+
+---
+
+## Milestone 5: SubDirectory & Stateful Reader (2 weeks)
 
 **Goal**: Handle nested IFDs with recursion prevention
 
@@ -172,73 +258,140 @@ This document outlines the incremental development milestones for exif-oxide, in
 
 ---
 
-## Milestone 5: RATIONAL & Basic ValueConv (2-3 weeks)
+## Milestone 6: RATIONAL Format & GPS (2 weeks)
 
 **Goal**: Implement RATIONAL types and high-frequency ValueConv
 
 **Deliverables**:
 
-- [ ] RATIONAL/SRATIONAL format support
-  - Parse correctly with zero handling
-  - Efficient fraction representation
-- [ ] Run analysis to find common ValueConv patterns
-- [ ] Implement top conversions:
-  - ShutterSpeedValue (2^-x formula)
-  - ApertureValue (2^(x/2) formula)
-  - Simple mathematical conversions
-- [ ] ValueConv registry integration
-  - Same pattern as PrintConv
-  - Graceful fallback to raw
+- [ ] RATIONAL/SRATIONAL format
+  - Parse 2x uint32 correctly
+  - Handle zero denominators
+  - Display as "num/den"
+- [ ] GPS IFD support
+  - Follow GPS IFD pointer
+  - Extract GPS tags
+  - GPSLatitude/Longitude as rationals
+- [ ] Stateful reader completion
+  - PROCESSED hash for recursion
+  - VALUES hash storage
+  - PATH tracking
+- [ ] Basic coordinate display
+  - Show raw rational arrays
+  - No conversion yet
 
 **Success Criteria**:
 
-- Shutter speed shows "1/250" not raw APEX
-- Aperture shows "f/2.8" not raw value
-- ~30% of ValueConv covered by frequency
+- GPS coordinates extracted
+- Rationals display correctly
+- No infinite loops on bad data
 
-**Manual Implementations**:
-
-- `value_conv::apex_shutter_speed`
-- `value_conv::apex_aperture`
-- (Others based on frequency)
+**Test Commands**:
+```bash
+# Files with GPS data
+exif-oxide t/images/GPS.jpg | jq .GPSLatitude
+# Should show [deg/1, min/1, sec/100] format
+```
 
 ---
 
-## Milestone 6: ProcessBinaryData Simple Patterns (4 weeks)
+## Milestone 7: More PrintConv Implementations (1 week)
+
+**Goal**: Implement common PrintConv patterns
+
+**Deliverables**:
+
+- [ ] Analyze test images for needed PrintConv
+- [ ] Implement top 5-10:
+  - Flash (BITMASK)
+  - ExposureProgram
+  - MeteringMode  
+  - WhiteBalance
+  - ColorSpace
+- [ ] BITMASK support
+  - Bit flag parsing
+  - Comma-separated output
+- [ ] Simple lookups
+  - Hash table conversions
+
+**Success Criteria**:
+
+- Common tags show readable values
+- BITMASK works for Flash
+- Coverage improves significantly
+
+---
+
+## Milestone 8: Basic ValueConv (2 weeks)
+
+**Goal**: Mathematical value conversions
+
+**Deliverables**:
+
+- [ ] ValueConv registry
+  - Same pattern as PrintConv
+  - Chain with PrintConv
+- [ ] APEX conversions
+  - ShutterSpeedValue (2^-x)
+  - ApertureValue (2^(x/2))
+  - ExposureCompensation
+- [ ] GPS coordinate conversion
+  - Degrees/minutes/seconds to decimal
+  - Handle hemisphere references
+- [ ] FNumber from APEX
+
+**Success Criteria**:
+
+- Shutter shows "1/250" not APEX value
+- Aperture shows "f/2.8" not APEX
+- GPS shows decimal degrees
+
+**Manual Implementations**:
+```rust
+fn apex_shutter_speed(val: f64) -> f64 {
+    (-val).exp2()  // 2^-val
+}
+```
+
+---
+
+## Milestone 9: ProcessBinaryData Introduction (3 weeks)
 
 **Goal**: Core ProcessBinaryData with fixed formats only
 
 **Deliverables**:
 
-- [ ] ProcessBinaryData for fixed formats
-  - int8u, int16u, int32u arrays
-  - Fixed string[N] formats
-  - Basic binary extraction
-- [ ] Canon CameraSettings as test case
-  - Fixed format binary data
-  - Many discrete values
-  - Good PrintConv coverage opportunity
-- [ ] Format pattern registry
-  - Parse "int16u[10]" patterns
-  - Generate extraction code
-- [ ] Bit-level extraction
-  - Mask support for packed bits
-  - BitShift operations
+- [ ] ProcessBinaryData framework
+  - Processor trait implementation
+  - Dispatch integration
+- [ ] Fixed format support
+  - int16u, int16s formats
+  - Fixed arrays like int16u[3]
+- [ ] MakerNote detection
+  - Detect Canon signature
+  - Route to ProcessBinaryData
+- [ ] Canon CameraSettings test
+  - MacroMode (index 1)
+  - FocusMode (index 7)
+  - Just a few tags initially
+- [ ] Index-based extraction
+  - FIRST_ENTRY = 1 support
 
 **Success Criteria**:
 
-- Canon CameraSettings fully decoded
-- All fixed-format patterns working
-- Discover variable-format needs
+- Extract Canon MacroMode correctly
+- ProcessBinaryData dispatch works
+- Can add more tags incrementally
 
-**Manual Implementations**:
-
-- `process::binary_data::process_binary_data` (fixed formats only)
-- `formats::fixed::parse_fixed_array`
+**Test with Canon files**:
+```bash
+exif-oxide t/images/Canon.jpg | jq .MacroMode
+# Should show "Macro" or "Normal"
+```
 
 ---
 
-## Milestone 7: First MakerNote - Canon (4-5 weeks)
+## Milestone 10: Canon MakerNote Expansion (3 weeks)
 
 **Goal**: Complete Canon support with offset fixing
 
@@ -273,7 +426,7 @@ This document outlines the incremental development milestones for exif-oxide, in
 
 ---
 
-## Milestone 8: Conditional Dispatch (3 weeks)
+## Milestone 11: Conditional Dispatch (2 weeks)
 
 **Goal**: Runtime condition evaluation for processor selection
 
@@ -304,7 +457,7 @@ This document outlines the incremental development milestones for exif-oxide, in
 
 ---
 
-## Milestone 9: Variable ProcessBinaryData (3-4 weeks)
+## Milestone 12: Variable ProcessBinaryData (3 weeks)
 
 **Goal**: Handle variable-length formats with DataMember
 
@@ -334,7 +487,7 @@ This document outlines the incremental development milestones for exif-oxide, in
 
 ---
 
-## Milestone 10: Error Classification System (2-3 weeks)
+## Milestone 13: Error Classification System (2 weeks)
 
 **Goal**: Port ExifTool's sophisticated error handling
 
@@ -367,7 +520,7 @@ This document outlines the incremental development milestones for exif-oxide, in
 
 ---
 
-## Milestone 11: Second Manufacturer - Nikon (4-5 weeks)
+## Milestone 14: Second Manufacturer - Nikon (4 weeks)
 
 **Goal**: Prove architecture with encrypted maker notes
 
@@ -400,7 +553,7 @@ This document outlines the incremental development milestones for exif-oxide, in
 
 ---
 
-## Milestone 12: Performance & Coverage Analysis (2 weeks)
+## Milestone 15: Performance & Coverage Analysis (2 weeks)
 
 **Goal**: Optimize and assess implementation coverage
 
@@ -439,7 +592,8 @@ This document outlines the incremental development milestones for exif-oxide, in
 17. **Video Metadata** - QuickTime/MP4 atoms
 18. **Advanced Write** - MakerNote preservation
 19. **RAW Formats** - CR2, NEF, ARW support
-20. **Complete Coverage** - Remaining conversions
+20. **Async Support** - AsyncRead/AsyncSeek wrappers
+21. **Complete Coverage** - Remaining mainstream conversions
 
 ## Development Strategy Updates
 
