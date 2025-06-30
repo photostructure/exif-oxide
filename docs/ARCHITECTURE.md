@@ -4,6 +4,8 @@
 
 This document represents the eighth iteration of the exif-oxide architecture, incorporating deep understanding of ExifTool's PROCESS_PROC system, ProcessBinaryData complexity, sophisticated error handling, and WRITE_PROC infrastructure. We embrace manual porting of complex logic while using code generation only for straightforward translations.
 
+**Scope**: This project targets mainstream metadata tags only (frequency > 80% in TagMetadata.json), reducing the implementation burden from 15,000+ tags to approximately 500-1000. We explicitly do not support ExifTool's custom tag definitions or user-defined tags.
+
 ## Core Philosophy
 
 1. **No Novel Parsing**: ExifTool has already solved every edge case - we port, not reinvent
@@ -11,6 +13,8 @@ This document represents the eighth iteration of the exif-oxide architecture, in
 3. **Simple Codegen**: Generator handles only straightforward, unambiguous translations
 4. **Always Working**: System produces compilable code at every stage
 5. **Transparent Progress**: Clear visibility into what's implemented vs TODO
+6. **Mainstream Focus**: Only implement tags with >80% frequency or marked mainstream in TagMetadata.json
+7. **Streaming First**: All binary data handled via streaming to minimize memory usage
 
 ## Key Insights from ExifTool Analysis
 
@@ -41,6 +45,29 @@ This document represents the eighth iteration of the exif-oxide architecture, in
 - DataMember dependencies between tags
 - VALUE hash for extracted data
 - Directory context (Base, DataPos, PATH)
+
+## Mainstream Tag Filtering
+
+To maintain a manageable scope, exif-oxide only implements tags that meet one of these criteria:
+
+1. **Frequency > 80%**: Tags appearing in more than 80% of images
+2. **Mainstream flag**: Tags marked as `mainstream: true` in TagMetadata.json
+3. **Critical dependencies**: Tags required by other mainstream tags (DataMember)
+
+This reduces scope from ~15,000 tags to ~500-1000, focusing on tags that matter for media management applications.
+
+### Filtering During Codegen
+
+```rust
+// In codegen/src/filter.rs
+fn should_generate_tag(tag: &Tag, metadata: &TagMetadata) -> bool {
+    if let Some(meta) = metadata.get(&tag.name) {
+        meta.mainstream || meta.frequency > 0.8
+    } else {
+        false // Unknown tags excluded by default
+    }
+}
+```
 
 ## System Architecture
 
@@ -114,7 +141,7 @@ pub struct ExifReader {
 }
 
 impl ExifReader {
-    /// Primary entry point - signature that codegen guarantees
+    /// Primary entry point for in-memory data
     pub fn read_metadata(
         &mut self,
         data: &[u8],
@@ -126,6 +153,16 @@ impl ExifReader {
         // 3. Traverse metadata structure
         // 4. Apply conversions
         // 5. Return structured results
+    }
+
+    /// Streaming entry point (preferred)
+    pub fn read_metadata_stream<R: Read + Seek>(
+        &mut self,
+        reader: R,
+        options: ReadOptions,
+    ) -> Result<Metadata, ExifError> {
+        // Streaming implementation that doesn't load entire file
+        // Binary tags return BinaryRef for separate streaming
     }
 
     /// Extract specific tags only
@@ -140,13 +177,36 @@ impl ExifReader {
         Ok(metadata.filtered_tags(tag_names))
     }
 
-    /// Extract binary data (thumbnails, previews)
-    pub fn read_binary_tag(
+    /// Get reference to binary data for streaming
+    pub fn get_binary_ref(
         &mut self,
         data: &[u8],
         tag_name: &str,
-    ) -> Result<Vec<u8>, ExifError> {
-        // Special handling for binary extraction
+    ) -> Result<BinaryRef, ExifError> {
+        // Returns reference for separate streaming
+        // Does NOT load binary data into memory
+    }
+
+    /// Stream binary data separately
+    pub fn stream_binary_tag<R: Read + Seek>(
+        &self,
+        reader: R,
+        binary_ref: &BinaryRef,
+    ) -> Result<impl Read, ExifError> {
+        Ok(BinaryTagReader::new(reader, binary_ref))
+    }
+}
+
+/// Streaming reader for binary data
+pub struct BinaryTagReader<R: Read + Seek> {
+    reader: R,
+    offset: u64,
+    remaining: usize,
+}
+
+impl<R: Read + Seek> Read for BinaryTagReader<R> {
+    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        // Efficient streaming implementation
     }
 }
 
@@ -163,8 +223,15 @@ pub enum TagValue {
     Integer(i64),
     Float(f64),
     Rational(i64, i64),
-    Binary(Vec<u8>),
+    Binary(BinaryRef),  // Changed: streaming reference, not data
     Array(Vec<TagValue>),
+}
+
+/// Reference to binary data for streaming
+pub struct BinaryRef {
+    offset: u64,
+    length: usize,
+    format: BinaryFormat,  // JPEG, TIFF, etc.
 }
 ```
 
@@ -502,7 +569,82 @@ pub struct ErrorContext {
     pub tag: Option<String>,
     pub offset: Option<usize>,
 }
+
+/// Idiomatic Rust error types using thiserror
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum ExifError {
+    #[error("Invalid JPEG marker {marker:#x} at offset {offset:#x}")]
+    InvalidMarker { marker: u8, offset: usize },
+    
+    #[error("Tag {tag} requires format {required} but found {found}")]
+    InvalidFormat { tag: String, required: String, found: String },
+    
+    #[error("Missing processor implementation: {0}")]
+    MissingProcessor(String),
+    
+    #[error("IO error: {0}")]
+    Io(#[from] std::io::Error),
+}
 ```
+
+## Async Support Strategy
+
+The initial implementation is synchronous for simplicity, but the architecture supports easy async adaptation:
+
+### Sync-First Design
+
+```rust
+// Initial synchronous API
+pub struct ExifReader { /* ... */ }
+
+impl ExifReader {
+    pub fn read_metadata<R: Read + Seek>(
+        &mut self,
+        reader: R,
+        options: ReadOptions,
+    ) -> Result<Metadata, ExifError> {
+        // Synchronous implementation
+    }
+}
+```
+
+### Future Async Wrapper
+
+```rust
+// Async wrapper (future milestone)
+use tokio::task;
+
+pub async fn read_metadata_async<R: AsyncRead + AsyncSeek>(
+    mut reader: R,
+    options: ReadOptions,
+) -> Result<Metadata, ExifError> {
+    // For CPU-intensive parsing, use spawn_blocking
+    task::spawn_blocking(move || {
+        let sync_reader = AsyncToSyncReader::new(reader);
+        let mut exif_reader = ExifReader::new();
+        exif_reader.read_metadata(sync_reader, options)
+    }).await?
+}
+
+// Async streaming for large binary data
+pub struct AsyncBinaryTagReader<R: AsyncRead + AsyncSeek> {
+    reader: R,
+    offset: u64,
+    remaining: usize,
+}
+
+impl<R: AsyncRead + AsyncSeek> AsyncRead for AsyncBinaryTagReader<R> {
+    // Efficient async streaming
+}
+```
+
+This approach allows:
+- Simple initial implementation
+- No async complexity in core parsing logic
+- Easy async adaptation when needed
+- Efficient handling of I/O-bound operations
 
 ## Write Support Architecture
 
@@ -530,6 +672,53 @@ pub struct ExifWriter {
 }
 ```
 
+## Update Workflow for ExifTool Releases
+
+When a new ExifTool version is released:
+
+1. **Update ExifTool Submodule**
+   ```bash
+   cd third-party/exiftool
+   git fetch origin
+   git checkout v12.77  # new version
+   cd ../..
+   ```
+
+2. **Regenerate and Build**
+   ```bash
+   # Extract updated tag definitions
+   perl codegen/extract_tables.pl > codegen/tag_tables.json
+   
+   # Run codegen - will show new missing implementations
+   cargo run -p codegen
+   ```
+
+3. **Review Changes**
+   ```
+   New in ExifTool 12.77:
+   - 3 new mainstream tags requiring implementation
+   - 1 new Canon processor variant
+   - 47 non-mainstream tags (ignored)
+   
+   Missing implementations (priority order):
+   1. canon_new_lens_type (PrintConv) - 15 test images
+   2. nikon_z9_af_mode (PrintConv) - 8 test images
+   3. ProcessCanonCR3 (Processor) - 5 test images
+   ```
+
+4. **Implement Missing Pieces**
+   - Add implementations to palette
+   - Reference ExifTool source
+   - Test against provided images
+
+5. **Ship Updated Version**
+   ```bash
+   cargo test
+   # All passing - ready to release!
+   ```
+
+For minor ExifTool updates that only add tags within existing processors, the process is often just regenerate and ship. New processors or complex conversions require manual implementation.
+
 ## Development Workflow
 
 1. **Extract Phase**
@@ -547,9 +736,9 @@ pub struct ExifWriter {
    Output:
 
    ```
-   Generated: 15,234 tag definitions
-   Simple conversions implemented: 2,341
-   Complex conversions referenced: 1,893 (no stubs generated)
+   Generated: 823 mainstream tag definitions (from 15,234 total)
+   Simple conversions implemented: 156
+   Complex conversions referenced: 234 (no stubs generated)
    Custom processors identified: 47
 
    Code is ready to compile and run!

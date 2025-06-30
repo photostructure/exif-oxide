@@ -14,7 +14,26 @@ keep up to date with releases will become sisyphean and untenable.
 
 The current hypothesis involves a balance of manually-written components that
 are stitched together by a code generator that reads and parses ExifTool's
-largely tabular codebase. This is discussed in docs/ARCHITECTURE.md
+largely tabular codebase. This is discussed in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Essential Documentation
+
+Before starting work on exif-oxide, familiarize yourself with:
+
+### Our Documentation
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md) - Overall system design and code generation strategy
+- [MILESTONES.md](docs/MILESTONES.md) - Development roadmap with 12+ incremental milestones
+- [ENGINEER-GUIDE.md](docs/ENGINEER-GUIDE.md) - Practical guide for new contributors
+- [STATE-MANAGEMENT.md](docs/STATE-MANAGEMENT.md) - How we handle stateful processing
+- [PROCESSOR-PROC-DISPATCH.md](docs/PROCESSOR-PROC-DISPATCH.md) - Processor dispatch strategy
+- [OFFSET-BASE-MANAGEMENT.md](docs/OFFSET-BASE-MANAGEMENT.md) - Critical offset calculation patterns
+
+### ExifTool Documentation
+- [MODULE_OVERVIEW.md](third-party/exiftool/doc/concepts/MODULE_OVERVIEW.md) - Overview of ExifTool's module structure
+- [PROCESS_PROC.md](third-party/exiftool/doc/concepts/PROCESS_PROC.md) - How ExifTool processes different data formats
+- [VALUE_CONV.md](third-party/exiftool/doc/concepts/VALUE_CONV.md) - Value conversion system
+- [PRINT_CONV.md](third-party/exiftool/doc/concepts/PRINT_CONV.md) - Human-readable output conversions
+- [PATTERNS.md](third-party/exiftool/doc/concepts/PATTERNS.md) - Common patterns across modules
 
 ## Critical Development Principles
 
@@ -49,7 +68,14 @@ WE CANNOT INTERPRET PERL CODE IN RUST. Only perl is competent at parsing perl.
 There are too many gotchas and surprising perlisms--any rust parser we make will
 be brittle and haunt us in the future.
 
-### 3. When a task is complete
+### 3. Scope: Mainstream Tags Only
+
+To maintain a manageable scope:
+- We only implement tags with >80% frequency or marked `mainstream: true` in TagMetadata.json
+- This reduces scope from ExifTool's 15,000+ tags to approximately 500-1000
+- See [TagMetadata.json](third-party/exiftool/doc/TagMetadata.json) for tag popularity data
+
+### 4. When a task is complete
 
 1. Verify and validate! No task is complete until both `make fix` and `make test`
    pass. Many tasks will require adding new integration tests.
