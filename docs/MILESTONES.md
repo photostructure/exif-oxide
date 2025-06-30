@@ -454,6 +454,7 @@ This document outlines the incremental development milestones for exif-oxide, in
 - Use `--show-missing` to guide development
 - Only implement what real images need
 - Track frequency to prioritize work
+- Focus on mainstream tags (>80% frequency)
 
 ### Manual Excellence
 
@@ -474,5 +475,6 @@ This document outlines the incremental development milestones for exif-oxide, in
 - **Incremental Complexity**: Each milestone adds one hard thing
 - **Real-World Focus**: Test images drive implementation priority
 - **Clear Scope**: ~50 processors enumerable, not infinite
+- **Mainstream Focus**: ~500-1000 tags instead of 15,000+
 
 This milestone plan embraces the reality that we're building a complex system incrementally. By using runtime fallbacks and demand-driven development, we can ship useful functionality immediately while building toward complete ExifTool compatibility over time.
