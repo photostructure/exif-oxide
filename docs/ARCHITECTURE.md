@@ -71,56 +71,52 @@ fn should_generate_tag(tag: &Tag, metadata: &TagMetadata) -> bool {
 
 ## System Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Build Pipeline                            │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  ExifTool Source → Perl Extractor → JSON → Rust Codegen        │
-│                                                ↓                 │
-│                                         Generated Code           │
-│                                                +                 │
-│                                      Implementation Palette      │
-│                                                ↓                 │
-│                                         exif-oxide Library       │
-└─────────────────────────────────────────────────────────────────┘
+### Build pipeline
 
-Implementation Palette Structure:
+1. **ExifTool Source**
+2. **Perl Extractor**
+3. **JSON**
+4. **Rust Codegen**
+5. **Generated Code**
+6. **Implementation Palette**
+7. **exif-oxide Library**
+
+### Implementation Palette Structure
+
 implementations/
-├── registry.rs              # Maps signatures/keys to implementations
+├── registry.rs # Maps signatures/keys to implementations
 ├── process/
-│   ├── mod.rs              # ProcessProc trait and dispatch
-│   ├── exif.rs             # ProcessExif implementation
-│   ├── binary_data.rs      # ProcessBinaryData with simple patterns
-│   ├── xmp.rs              # ProcessXMP implementation
-│   └── manufacturers/
-│       ├── canon/
-│       │   ├── mod.rs
-│       │   └── serial_data.rs  # ProcessSerialData
-│       ├── nikon/
-│       │   ├── mod.rs
-│       │   └── encrypted.rs    # ProcessNikonEncrypted
-│       └── sony/
-│           └── encrypted.rs    # Sony encryption
+│ ├── mod.rs # ProcessProc trait and dispatch
+│ ├── exif.rs # ProcessExif implementation
+│ ├── binary_data.rs # ProcessBinaryData with simple patterns
+│ ├── xmp.rs # ProcessXMP implementation
+│ └── manufacturers/
+│ ├── canon/
+│ │ ├── mod.rs
+│ │ └── serial_data.rs # ProcessSerialData
+│ ├── nikon/
+│ │ ├── mod.rs
+│ │ └── encrypted.rs # ProcessNikonEncrypted
+│ └── sony/
+│ └── encrypted.rs # Sony encryption
 ├── conversions/
-│   ├── print_conv/
-│   │   ├── lookups.rs      # Simple hash lookups
-│   │   ├── bitwise.rs      # BITMASK operations
-│   │   └── format.rs       # sprintf-style formatting
-│   ├── value_conv/
-│   │   ├── math.rs         # Mathematical conversions
-│   │   └── binary.rs       # Binary data handling
-│   └── conditions/
-│       └── model.rs        # Model/firmware conditions
+│ ├── print_conv/
+│ │ ├── lookups.rs # Simple hash lookups
+│ │ ├── bitwise.rs # BITMASK operations
+│ │ └── format.rs # sprintf-style formatting
+│ ├── value_conv/
+│ │ ├── math.rs # Mathematical conversions
+│ │ └── binary.rs # Binary data handling
+│ └── conditions/
+│ └── model.rs # Model/firmware conditions
 ├── formats/
-│   ├── simple.rs           # int16u[10], string[20]
-│   └── variable.rs         # string[$val{3}] ONLY
+│ ├── simple.rs # int16u[10], string[20]
+│ └── variable.rs # string[$val{3}] ONLY
 ├── crypto/
-│   ├── nikon.rs           # Nikon decryption algorithm
-│   └── sony.rs            # Sony decryption algorithm
+│ ├── nikon.rs # Nikon decryption algorithm
+│ └── sony.rs # Sony decryption algorithm
 └── error/
-    └── classification.rs   # MINOR_ERRORS system port
-```
+└── classification.rs # MINOR_ERRORS system port
 
 ## Public API Design
 
@@ -577,13 +573,13 @@ use thiserror::Error;
 pub enum ExifError {
     #[error("Invalid JPEG marker {marker:#x} at offset {offset:#x}")]
     InvalidMarker { marker: u8, offset: usize },
-    
+
     #[error("Tag {tag} requires format {required} but found {found}")]
     InvalidFormat { tag: String, required: String, found: String },
-    
+
     #[error("Missing processor implementation: {0}")]
     MissingProcessor(String),
-    
+
     #[error("IO error: {0}")]
     Io(#[from] std::io::Error),
 }
@@ -641,6 +637,7 @@ impl<R: AsyncRead + AsyncSeek> AsyncRead for AsyncBinaryTagReader<R> {
 ```
 
 This approach allows:
+
 - Simple initial implementation
 - No async complexity in core parsing logic
 - Easy async adaptation when needed
@@ -677,6 +674,7 @@ pub struct ExifWriter {
 When a new ExifTool version is released:
 
 1. **Update ExifTool Submodule**
+
    ```bash
    cd third-party/exiftool
    git fetch origin
@@ -685,21 +683,23 @@ When a new ExifTool version is released:
    ```
 
 2. **Regenerate and Build**
+
    ```bash
    # Extract updated tag definitions
    perl codegen/extract_tables.pl > codegen/tag_tables.json
-   
+
    # Run codegen - will show new missing implementations
    cargo run -p codegen
    ```
 
 3. **Review Changes**
+
    ```
    New in ExifTool 12.77:
    - 3 new mainstream tags requiring implementation
    - 1 new Canon processor variant
    - 47 non-mainstream tags (ignored)
-   
+
    Missing implementations (priority order):
    1. canon_new_lens_type (PrintConv) - 15 test images
    2. nikon_z9_af_mode (PrintConv) - 8 test images
@@ -707,6 +707,7 @@ When a new ExifTool version is released:
    ```
 
 4. **Implement Missing Pieces**
+
    - Add implementations to palette
    - Reference ExifTool source
    - Test against provided images
