@@ -93,3 +93,11 @@ To maintain a manageable scope:
 
 2. Concisely update any impacted and related docs, including reference
    documentation, todo lists, milestone planning, and architectural design.
+
+### 5. The user is a rust newbie...
+
+...so explaining things as we go would be wonderful. We want to make this
+project be as idiomatic rust as possible, so please web search and examine the
+rust language documentation to validate structures, setup, naming conventions,
+module interactions, and any other aspects that the rust community has adopted
+as a best practice, and explain those aspects to the user as we embrace them.
