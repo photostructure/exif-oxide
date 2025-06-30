@@ -1,5 +1,6 @@
 # Build artifacts
 /target
+/codegen/target
 
 # Generated code from ExifTool
 src/tables/generated/

@@ -1,4 +1,4 @@
-.PHONY: check fmt-check fmt lint test fix build doc clean sync update audit precommit
+.PHONY: check fmt-check fmt lint test fix build doc clean codegen sync update audit precommit help
 
 # Run all checks without modifying (for CI)
 check: fmt-check lint test
@@ -36,9 +36,16 @@ doc:
 clean:
 	cargo clean
 
+# Extract EXIF tags from ExifTool and regenerate Rust code
+codegen:
+	@echo "🔄 Extracting tags from ExifTool..."
+	perl codegen/extract_tables.pl > codegen/tag_tables.json
+	@echo "🦀 Generating Rust code..."
+	cd codegen && cargo run -- tag_tables.json --output-dir ../src/generated
+	@echo "✅ Code generation complete!"
+
 # Extract all ExifTool algorithms and regenerate code  
-sync:
-	cargo run --bin sync # TODO
+sync: codegen
 	cargo build
 
 # Update dependencies
@@ -53,3 +60,20 @@ audit:
 # Pre-commit checks: update deps, fix code, lint, test, audit, and build
 precommit: update fix lint test audit build
 	@echo "✅ All pre-commit checks passed!"
+
+# Show available targets
+help:
+	@echo "📋 Available targets:"
+	@echo "  check      - Run all checks (format, lint, test)"
+	@echo "  fmt        - Format code"
+	@echo "  lint       - Run clippy linter"
+	@echo "  test       - Run all tests"
+	@echo "  fix        - Fix formatting and auto-fixable issues"
+	@echo "  build      - Build in release mode"
+	@echo "  doc        - Generate and open documentation"
+	@echo "  clean      - Clean build artifacts"
+	@echo "  codegen    - Extract ExifTool tags and regenerate Rust code"
+	@echo "  sync       - Run codegen and build"
+	@echo "  update     - Update dependencies"
+	@echo "  audit      - Security audit of dependencies"
+	@echo "  precommit  - Run all pre-commit checks"

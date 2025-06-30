@@ -4,6 +4,7 @@
 //! for format-specific parsing. For Milestone 0a, this is mostly placeholder
 //! functionality that will be expanded in later milestones.
 
+use crate::generated::{EXIF_MAIN_TAGS, REQUIRED_PRINT_CONV, REQUIRED_VALUE_CONV};
 use crate::types::{ExifData, ExifError, Result, TagValue};
 use std::collections::HashMap;
 use std::path::Path;
@@ -167,20 +168,48 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
     }
 
     let missing_implementations = if show_missing {
-        Some(vec![
+        let mut missing = vec![
             "Real file I/O and size detection".to_string(),
             "Magic byte file type detection".to_string(),
             "JPEG segment parsing".to_string(),
             "EXIF header parsing".to_string(),
             "IFD (Image File Directory) parsing".to_string(),
             "Tag value extraction and type conversion".to_string(),
-            "PrintConv implementations (human-readable values)".to_string(),
-            "ValueConv implementations (logical value conversion)".to_string(),
             "MakerNote parsing".to_string(),
             "Subdirectory following".to_string(),
             "GPS coordinate conversion".to_string(),
             "Date/time parsing".to_string(),
-        ])
+        ];
+
+        // Add generated tag information
+        missing.push(format!(
+            "Generated {} mainstream EXIF tags from ExifTool",
+            EXIF_MAIN_TAGS.len()
+        ));
+        missing.push(format!(
+            "PrintConv implementations needed: {} functions",
+            REQUIRED_PRINT_CONV.len()
+        ));
+        missing.push(format!(
+            "ValueConv implementations needed: {} functions",
+            REQUIRED_VALUE_CONV.len()
+        ));
+
+        // Add some example missing conversions
+        if !REQUIRED_PRINT_CONV.is_empty() {
+            missing.push(format!(
+                "Example missing PrintConv: {}",
+                REQUIRED_PRINT_CONV[0]
+            ));
+        }
+        if !REQUIRED_VALUE_CONV.is_empty() {
+            missing.push(format!(
+                "Example missing ValueConv: {}",
+                REQUIRED_VALUE_CONV[0]
+            ));
+        }
+
+        Some(missing)
     } else {
         None
     };

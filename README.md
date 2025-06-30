@@ -23,7 +23,7 @@ as providing substantive performance gains over an approach that `fork`s
 
 ## Project Non-Goals
 
-- We will not provide 100% tag compatibility for reading nor writing. We focus on mainstream tags (frequency >80% in TagMetadata.json), translating approximately 500-1000 tags out of ExifTool's 15,000+.
+- We will not provide 100% tag compatibility for reading nor writing. We focus on mainstream tags (frequency >80% in TagMetadata.json or "mainstream: true"), translating approximately 500-1000 tags out of ExifTool's 15,000+.
 - We will not port over the `geolocation` functionality
 - We will not port over ExifTool's custom tag definitions and user-defined tags
 - No filesystem recursion: we will not support batch-update operations via the CLI
