@@ -80,7 +80,7 @@ But each manufacturer interprets this differently. Canon might use the TIFF head
 
 For deep understanding of offsets, see:
 
-- [OFFSET-BASE-MANAGEMENT.md](../OFFSET-BASE-MANAGEMENT.md) - Our offset management strategy
+- [OFFSET-BASE-MANAGEMENT.md](OFFSET-BASE-MANAGEMENT.md) - Our offset management strategy
 - [READING_AND_PARSING.md](../third-party/exiftool/doc/concepts/READING_AND_PARSING.md) - ExifTool's approach
 
 ## Reading ExifTool Source Code
@@ -146,7 +146,7 @@ RawConv => '$$self{CameraType} = $val',
 
 ## Getting Started on Milestone 0
 
-First read [MILESTONES.md](../MILESTONES.md) for the full roadmap, then [STATE-MANAGEMENT.md](../STATE-MANAGEMENT.md) for stateful processing details.
+First read [MILESTONES.md](MILESTONES.md) for the full roadmap, then [STATE-MANAGEMENT.md](STATE-MANAGEMENT.md) for stateful processing details.
 
 ### Step 1: Set Up the Perl Extractor
 
@@ -382,7 +382,7 @@ Key documentation files:
 
 - [FILE_TYPES.md](../third-party/exiftool/doc/concepts/FILE_TYPES.md) - File format detection
 - [WRITE_PROC.md](../third-party/exiftool/doc/concepts/WRITE_PROC.md) - Writing (future milestone)
-- [PROCESSOR-PROC-DISPATCH.md](../PROCESSOR-PROC-DISPATCH.md) - Our dispatch strategy
+- [PROCESSOR-PROC-DISPATCH.md](PROCESSOR-PROC-DISPATCH.md) - Our dispatch strategy
 
 ## Remember
 

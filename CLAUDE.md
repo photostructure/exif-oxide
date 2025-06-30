@@ -21,6 +21,7 @@ largely tabular codebase. This is discussed in [docs/ARCHITECTURE.md](docs/ARCHI
 Before starting work on exif-oxide, familiarize yourself with:
 
 ### Our Documentation
+
 - [ARCHITECTURE.md](docs/ARCHITECTURE.md) - Overall system design and code generation strategy
 - [MILESTONES.md](docs/MILESTONES.md) - Development roadmap with 12+ incremental milestones
 - [ENGINEER-GUIDE.md](docs/ENGINEER-GUIDE.md) - Practical guide for new contributors
@@ -29,6 +30,7 @@ Before starting work on exif-oxide, familiarize yourself with:
 - [OFFSET-BASE-MANAGEMENT.md](docs/OFFSET-BASE-MANAGEMENT.md) - Critical offset calculation patterns
 
 ### ExifTool Documentation
+
 - [MODULE_OVERVIEW.md](third-party/exiftool/doc/concepts/MODULE_OVERVIEW.md) - Overview of ExifTool's module structure
 - [PROCESS_PROC.md](third-party/exiftool/doc/concepts/PROCESS_PROC.md) - How ExifTool processes different data formats
 - [VALUE_CONV.md](third-party/exiftool/doc/concepts/VALUE_CONV.md) - Value conversion system
@@ -36,6 +38,14 @@ Before starting work on exif-oxide, familiarize yourself with:
 - [PATTERNS.md](third-party/exiftool/doc/concepts/PATTERNS.md) - Common patterns across modules
 
 ## Critical Development Principles
+
+### 0. Ask the user clarifying questions
+
+If you have any clarifying questions for any aspects that are odd, nebulous,
+confusing, inadequately specific, or otherwise unclear, **please ask the user**.
+
+The user assumes every task will need at least a couple clarifying questions
+before starting work!
 
 ### 1. ExifTool is Gospel
 
@@ -71,6 +81,7 @@ be brittle and haunt us in the future.
 ### 3. Scope: Mainstream Tags Only
 
 To maintain a manageable scope:
+
 - We only implement tags with >80% frequency or marked `mainstream: true` in TagMetadata.json
 - This reduces scope from ExifTool's 15,000+ tags to approximately 500-1000
 - See [TagMetadata.json](third-party/exiftool/doc/TagMetadata.json) for tag popularity data
