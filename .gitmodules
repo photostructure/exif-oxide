@@ -1,4 +1,4 @@
 [submodule "third-party/exiftool"]
 	path = third-party/exiftool
-	url = https://github.com/photostructure/exiftool.git
+	url = git@github.com:photostructure/exiftool.git
     branch = docs
