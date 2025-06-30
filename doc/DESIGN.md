@@ -11,9 +11,11 @@ exif-oxide is a **high-performance Rust implementation** of Phil Harvey's ExifTo
 ### 1. Respect ExifTool's Legacy
 
 - **Phil Harvey has been developing ExifTool for 25 years** - the Perl codebase contains invaluable camera-specific quirks and edge cases
-- **We're not inventing anything here** - how ExifTool handles it is the correct way
+- **DO NOT INVENT ANY PARSING OR METADATA HEURISTICS** - ExifTool has figured everything out already.
 - All implementations maintain tag name and structure compatibility
-- Comprehensive attribution to ExifTool sources throughout codebase
+- Ensure we continue to have comprehensive attribution to ExifTool sources
+  throughout codebase, especially valuable for re-validating heuristics, or to
+  analyze new version diff impacts.
 
 ### 2. Performance Without Compromise
 
