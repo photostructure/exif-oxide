@@ -5,8 +5,10 @@
 //! code generation bloat while maintaining flexible extensibility.
 
 pub mod formats;
+pub mod generated;
 pub mod registry;
 pub mod types;
 
+pub use generated::*;
 pub use registry::Registry;
 pub use types::{ExifData, ExifError, TagValue};
