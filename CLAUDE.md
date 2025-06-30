@@ -101,3 +101,14 @@ project be as idiomatic rust as possible, so please web search and examine the
 rust language documentation to validate structures, setup, naming conventions,
 module interactions, and any other aspects that the rust community has adopted
 as a best practice, and explain those aspects to the user as we embrace them.
+
+## Development guidance
+
+### Test images
+
+Unfortunately, the test images in `$REPO_ROOT/third-party/exiftool/t/images` are
+stripped of their data payload, so they test _many_ aspects of metadata parsing,
+but whenever possible, we'd _prefer_ to test against full-size out-of-camera
+example files. If you cannot find a full-sized example that your current task
+demands in `$REPO_ROOT/test-images`, **ask the user** and we'll add it to the
+repository.
