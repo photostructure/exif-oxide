@@ -1,14 +1,16 @@
 # Canon Lens Type Investigation & Implementation Plan
 
-## Prerequisite reading
+## MANDATORY PREREQUISITE READING
 
 - doc/DESIGN.md
 - doc/SYNC-DESIGN.md
 - doc/SYNC-PRINTCONV-DESIGN.md
 
+- **DO NOT INVENT ANY PARSING OR METADATA HEURISTICS** - ExifTool has figured everything out already!
+
 ## Executive Summary
 
-Most PrintConv are not functioning correctly:
+Before this doc was written, PrintConv were not functioning correctly:
 
 ```sh
 mrm@speedy:~/src/exif-oxide$ cargo run -- -LensType -LensModel -RFLensType -json 
@@ -57,11 +59,20 @@ mrm@speedy:~/src/exif-oxide$ cargo run -- -LensType -LensModel -RFLensType -json
 - Updated `canon_tags.rs` to use `PrintConvId::None` for LensModel (0x0095) which is a string
 - Identified that LensType (61182) comes from CameraSettings binary data at offset 0x0016
 - Identified that RFLensType (289) comes from binary data at offset 0x003d
+- Fixed format name mappings in binary extractor (AsciiString → Ascii, URational → Rational64U)
+- Generated binary format tables including CameraSettings with LensType at offset 22
+- Wired up basic binary data processing in Canon parser
+
+### 🚧 In Progress
+- Canon R5 Mark II test shows LensType extraction working but wrong tag/data being parsed
+  - Tag 0x000d contains large binary data but may not be CameraSettings
+  - Tag 0x0001 contains just "6" not the expected binary structure
+  - Need to identify correct tag containing CameraSettings data
 
 ### ❌ Still Broken
-- Canon ProcessBinaryData extraction not implemented for CameraSettings
-- PrintConv extractor generates wrong mapping (CanonLensType vs CanonLensTypes)
-- No actual lens type values being extracted from binary structures
+- Correct CameraSettings tag identification needed
+- Binary format tables have compilation errors (negative offsets, missing methods)
+- RFLensType extraction not implemented
 
 ## Root Cause Analysis
 
@@ -197,10 +208,71 @@ RFLensType (289) likely comes from another binary structure that needs investiga
 2. ✅ Ran `make sync` to regenerate tables
 3. ⏳ Test with Canon R5 Mark II image (PrintConv fixed but binary data extraction still needed)
 
-### Phase 2: CameraSettings Binary Data Extraction (NEXT STEPS)
+### Phase 2: CameraSettings Binary Data Extraction ✅ MAJOR PROGRESS
 
-#### Option A: Enhance Binary Format Extractor
-The current extractor misses CameraSettings because it inherits ProcessBinaryData via `%binaryDataAttrs`:
+#### Completed:
+1. ✅ **Fixed binary format extractor** to detect %binaryDataAttrs inheritance
+   - Modified `is_binary_data_table()` to detect inherited ProcessBinaryData
+   - Fixed multi-line entry parsing for complex hash structures
+   - Successfully extracts CameraSettings with LensType at offset 22
+
+2. ✅ **CameraSettings table extracted**:
+   ```
+   Found table CameraSettings with 12 entries
+   Entry 5: offset=22, name=LensType
+   ```
+
+3. ✅ **Generated binary data tables**:
+   - Created `src/binary/formats/canon.rs` with `create_camerasettings_table()`
+   - LensType correctly at offset 22 as U16 format
+
+#### In Progress:
+4. 🚧 **Wiring up Canon parser**:
+   - Added quick hack to process CameraSettings binary data
+   - Need to fix format enum names (AsciiString → Ascii, URational → Rational64U)
+   - Module structure created (`src/binary/formats/mod.rs`)
+
+### Phase 2.5: Fix Format Names ✅ COMPLETED
+
+1. ✅ Fixed format mappings in extractor:
+   - `AsciiString` → `Ascii`
+   - `URational` → `Rational64U`  → Actually `Rational`
+   - `IRational` → `Rational64S`   → Actually `SignedRational`
+   - `Float` → `F32`
+   - `Double` → `F64`
+
+2. ✅ Re-ran extraction - binary tables generated successfully
+
+### Phase 3: Debug Canon Tag Structure (CURRENT)
+
+Investigation shows:
+- Tag 0x0001 contains ASCII "6" not binary data
+- Tag 0x000d contains large binary data with value 193 at offset 44
+- ExifTool shows LensType = 61182 (0xEEFE) from CameraSettings
+- Need to identify which tag actually contains CameraSettings binary data
+
+Key findings from ExifTool:
+- LensType field in CameraSettings uses format int16u at offset 22
+- Value 61182 (0xEEFE) indicates "Canon RF lens" 
+- Specific RF lens model comes from separate RFLensType field
+- Raw bytes should be 0xFE 0xEE in little-endian
+
+Next steps:
+1. Identify correct tag containing CameraSettings data
+2. Verify binary data parsing offsets
+3. Handle RF lens special case (61182)
+
+### Key Code Locations:
+- **Extractor fix**: `src/bin/exiftool_sync/extractors/binary_formats.rs:536-542`
+- **Canon parser hack**: `src/maker/canon.rs:108-135`
+- **Binary tables**: `src/binary/formats/canon.rs`
+
+### Status Summary:
+- ✅ PrintConv mapping fixed (canonLensTypes → CanonLensTypes)
+- ✅ Binary format extractor enhanced to detect inherited tables
+- ✅ CameraSettings extracted with LensType at offset 22
+- 🚧 Canon parser integration (quick hack in place, needs format fixes)
+- ⏳ Test with actual Canon image
 
 1. **Fix the extractor** (`src/bin/exiftool_sync/extractors/binary_formats.rs`):
    - Detect tables that inherit from `%binaryDataAttrs`
