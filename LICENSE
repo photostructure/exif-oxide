@@ -22,7 +22,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 ExifTool Attribution
 ================================================================================
 
-This software includes code derived from ExifTool by Phil Harvey.
+This software relies on data and algorithms derived from ExifTool by Phil Harvey.
 
 ExifTool is Copyright (c) 2003-2025, Phil Harvey
 All rights reserved.
