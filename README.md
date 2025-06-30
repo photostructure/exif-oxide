@@ -57,6 +57,33 @@ reads from the ExifTool source directly.
 4. Run codegen: `cargo run -p codegen`
 5. Test with: `cargo test`
 
+### Expected CLI (coming soon)
+
+```sh
+$ exif-oxide --help
+
+Extracts EXIF data from image files
+
+Usage: exif-oxide [OPTIONS] [ARGS]...
+
+Arguments:
+  [ARGS]...  All remaining arguments (files and -TagName patterns)
+
+Options:
+  -G, --groups   Include group names in output
+  -n, --numeric  Show numeric/raw values (no PrintConv)
+  -b, --binary   Extract raw binary data (requires single tag and single file)
+      --api      API mode: show both raw and formatted values with full type information
+  -h, --help     Show help information
+
+EXAMPLES:
+  exif-oxide photo.jpg                          # All tags as JSON
+  exif-oxide photo1.jpg photo2.jpg              # Multiple files
+  exif-oxide -G photo.jpg                       # All tags with groups
+  exif-oxide -Make -Model photo.jpg             # Only return Make and Model tag values
+  exif-oxide -b -ThumbnailImage photo.jpg > thumb.jpg  # Save thumbnail
+```
+
 ### Expected Usage (Future API)
 
 ```rust
