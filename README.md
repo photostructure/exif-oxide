@@ -1,6 +1,7 @@
 # exif-oxide
 
-A high-performance Rust implementation of portions of ExifTool, providing fast metadata extraction from 26+ image and media file formats.
+A high-performance Rust implementation of portions of ExifTool, providing fast
+metadata extraction from 26+ image and media file formats.
 
 ## Goals
 
@@ -12,60 +13,44 @@ A high-performance Rust implementation of portions of ExifTool, providing fast m
 
 ## Why exif-oxide?
 
-While ExifTool is the gold standard for metadata extraction, its Perl implementation can be slow for high-volume applications. exif-oxide aims to provide:
+While ExifTool is the gold standard for metadata extraction, the Perl runtime
+that it relies on can grind against Windows and macOS security systems.
 
-1. Sub-10ms metadata extraction for typical JPEG files
-2. Native embedded preview/thumbnail extraction
-3. ExifTool-compatible output for easy migration
+By translating to rust, applications using exif-oxide can be a single, "normal"
+binary application that can "play nicely" with Defender and Gatekeeper, as well
+as providing substantive performance gains over an approach that `fork`s
+`exiftool` as a child process.
 
 ## Design
 
-See [DESIGN.md](DESIGN.md) for architectural details and [ALTERNATIVES.md](ALTERNATIVES.md) for why we chose this approach.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for architectural details
 
-## Quick Start
+## Licensing
 
-### Library Usage
-
-```rust
-use exif_oxide::{read_basic_exif, extract_xmp_properties};
-
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Extract basic EXIF metadata
-    let exif = read_basic_exif("photo.jpg")?;
-
-    println!("Camera: {} {}",
-        exif.make.as_deref().unwrap_or("Unknown"),
-        exif.model.as_deref().unwrap_or("Unknown")
-    );
-
-    if let Some(orientation) = exif.orientation {
-        println!("Orientation: {}", orientation);
-    }
-
-    // Read XMP metadata (hierarchical properties)
-    let xmp_props = extract_xmp_properties("photo.jpg")?;
-    for (key, value) in &xmp_props {
-        println!("XMP {}: {}", key, value);
-    }
-
-    Ok(())
-}
-```
+This program and code is offered under a commercial and under the GNU Affero
+General Public License. See [LICENSE](./LICENSE) for details.
 
 ## Development
 
-This project includes `exiftool` as a submodule: use `git clone --recursive`.
+This project includes a branch of `exiftool` as a submodule: use `git clone
+--recursive`. This branch has a number of documents to bolster comprehension of
+ExifTool, which has a **ton** of surprising bits going on.
+
+The production code paths are mostly produced via automatic code generation that
+reads from the ExifTool source directly. 
 
 ## Tag Naming Compatibility
 
-ExifTool tag names are preserved when possible, but tags with invalid Rust identifier characters are modified:
+ExifTool tag names are preserved when possible, but tags with invalid Rust
+identifier characters are modified:
 
 - **ExifTool**: `"NikonActiveD-Lighting"`
 - **exif-oxide**: `"NikonActiveD_Lighting"`
 
-Hyphens are converted to underscores to maintain valid Rust identifiers while preserving semantic meaning.
+Hyphens (and any other invalid characters) are converted to underscores to
+ensure that they are valid Rust identifiers, while mostly preserving semantic
+meaning.
 
 ## Acknowledgments
 
 - Phil Harvey for creating and maintaining ExifTool for 25 years
-- The Rust community for excellent binary parsing libraries

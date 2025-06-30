@@ -1,4 +1,4 @@
-.PHONY: check fmt lint test clippy doc build clean fix bench sync update precommit audit
+.PHONY: check fmt-check fmt lint test fix build doc clean sync update audit precommit
 
 # Run all checks without modifying (for CI)
 check: fmt-check lint test
@@ -36,18 +36,10 @@ doc:
 clean:
 	cargo clean
 
-# Run benchmarks
-bench:
-	cargo bench
-
 # Extract all ExifTool algorithms and regenerate code  
 sync:
-	cargo run --bin exiftool_sync extract-all
+	cargo run --bin sync # TODO
 	cargo build
-
-# Extract PrintConv synchronization only
-sync-printconv:
-	cargo run --bin exiftool_sync extract printconv-sync
 
 # Update dependencies
 update:
@@ -61,21 +53,3 @@ audit:
 # Pre-commit checks: update deps, fix code, lint, test, audit, and build
 precommit: update fix lint test audit build
 	@echo "✅ All pre-commit checks passed!"
-
-# Help
-help:
-	@echo "Available targets:"
-	@echo "  check     - Run all checks without modifying (for CI)"
-	@echo "  fmt       - Format code"
-	@echo "  fmt-check - Check formatting without modifying"
-	@echo "  lint      - Run clippy linter"
-	@echo "  test      - Run tests"
-	@echo "  fix       - Fix formatting and auto-fixable clippy issues"
-	@echo "  build     - Build in release mode"
-	@echo "  doc       - Generate and open documentation"
-	@echo "  clean     - Clean build artifacts"
-	@echo "  bench     - Run benchmarks"
-	@echo "  sync      - Extract all ExifTool algorithms and regenerate code"
-	@echo "  update    - Update dependencies"
-	@echo "  audit     - Security audit for vulnerabilities in dependencies"
-	@echo "  precommit - Run all pre-commit checks (update, fix, lint, test, audit, build)"
