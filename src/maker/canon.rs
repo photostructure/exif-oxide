@@ -12,6 +12,7 @@ use crate::core::{Endian, ExifValue};
 use crate::error::Result;
 use crate::maker::MakerNoteParser;
 use crate::tables::canon_tags::get_canon_tag;
+use crate::binary::formats::canon;
 use std::collections::HashMap;
 
 /// Parser for Canon maker notes
@@ -103,7 +104,57 @@ fn parse_canon_ifd_with_tables(
     let mut result = HashMap::new();
 
     for (tag_id, raw_value) in parsed_ifd.entries() {
-        if let Some(canon_tag) = get_canon_tag(*tag_id) {
+        // Check if this is a binary data tag that needs processing
+        // Check if this is a binary data tag that needs processing
+        // CameraSettings is tag 0x0001, but also check other tags
+        if *tag_id == 0x0001 || *tag_id == 0x000d {
+            eprintln!("DEBUG: Processing tag 0x{:04x}", tag_id);
+            // Process CameraSettings binary data
+            if let ExifValue::Undefined(data) = raw_value {
+                // Debug: print first 50 bytes to verify offset
+                if data.len() >= 50 {
+                    eprintln!("DEBUG: First 50 bytes of tag 0x000d:");
+                    for (i, chunk) in data[0..50].chunks(2).enumerate() {
+                        eprintln!("  Offset {:2}: [{:3}, {:3}] = 0x{:02x}{:02x} = {}",
+                            i*2, chunk[0], chunk.get(1).unwrap_or(&0),
+                            chunk[0], chunk.get(1).unwrap_or(&0),
+                            u16::from_le_bytes([chunk[0], *chunk.get(1).unwrap_or(&0)]));
+                    }
+                }
+                let camera_settings = canon::create_camerasettings_table();
+                if let Ok(parsed_fields) = camera_settings.parse(data, header.byte_order) {
+                    // Add each extracted field to results
+                    for (field_tag, field_value) in parsed_fields {
+                        // Check if this is the LensType field (offset 22)
+                        if field_tag == 0x8000 + 22 {
+                            // Apply PrintConv for LensType
+                            if let ExifValue::U16(lens_type_value) = &field_value {
+                                // LensType is a composite tag created from CameraSettings
+                                // Store the raw value with a special composite tag ID
+                                let lens_type_composite_tag = 0xEEFE; // Special ID for LensType composite
+                                eprintln!("DEBUG: Storing LensType composite tag {} with value {:?}", lens_type_composite_tag, field_value);
+                                result.insert(lens_type_composite_tag, field_value.clone());
+                                
+                                // Apply Canon lens type print conversion
+                                // We need to use the LensInfo tag's PrintConv which is CanonLensTypes
+                                if let Some(lens_info_tag) = get_canon_tag(0x4019) { // LensInfo tag has the CanonLensTypes PrintConv
+                                    eprintln!("DEBUG: Using LensInfo PrintConv for LensType");
+                                    let converted = apply_print_conv(&field_value, lens_info_tag.print_conv);
+                                    eprintln!("DEBUG: PrintConv result: {}", converted);
+                                    result.insert(lens_type_composite_tag | 0x8000, ExifValue::Ascii(converted));
+                                } else {
+                                    eprintln!("DEBUG: No LensInfo tag found for PrintConv");
+                                }
+                            }
+                        }
+                        // Store other fields as well (with binary data tag prefix)
+                        result.insert(field_tag, field_value);
+                    }
+                }
+            }
+            // Also store the raw binary data
+            result.insert(*tag_id, raw_value.clone());
+        } else if let Some(canon_tag) = get_canon_tag(*tag_id) {
             // Apply print conversion to create human-readable value
             let converted_value = apply_print_conv(raw_value, canon_tag.print_conv);
 

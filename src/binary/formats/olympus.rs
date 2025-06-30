@@ -8,6 +8,88 @@
 use crate::core::binary_data::{BinaryDataTable, BinaryDataTableBuilder};
 use crate::core::types::ExifFormat;
 
+/// Binary data table: FETags
+/// Source lines: 3515-3527
+/// Process function: ProcessBinaryData
+pub fn create_fetags_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("FETags", ExifFormat::U8)
+        .add_field(256, "BodyFirmwareVersion", ExifFormat::U8, 1)
+        .build()
+}
+
+/// Binary data table: MOV1
+/// Source lines: 3531-3575
+/// Process function: ProcessBinaryData
+pub fn create_mov1_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("MOV1", ExifFormat::U8)
+        .add_field(0, "Make", ExifFormat::Ascii, 24)
+        .add_field(24, "Model", ExifFormat::Ascii, 8)
+        .add_field(38, "ExposureUnknown", ExifFormat::U32, 1)
+        .add_field(42, "FNumber", ExifFormat::Rational, 1)
+        .add_field(50, "ExposureCompensation", ExifFormat::SignedRational, 1)
+        .add_field(72, "FocalLength", ExifFormat::Rational, 1)
+        .build()
+}
+
+/// Binary data table: MOV2
+/// Source lines: 3580-3624
+/// Process function: ProcessBinaryData
+pub fn create_mov2_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("MOV2", ExifFormat::U8)
+        .add_field(0, "Make", ExifFormat::Ascii, 24)
+        .add_field(24, "Model", ExifFormat::Ascii, 24)
+        .add_field(54, "ExposureTime", ExifFormat::U32, 1)
+        .add_field(58, "FNumber", ExifFormat::Rational, 1)
+        .add_field(66, "ExposureCompensation", ExifFormat::SignedRational, 1)
+        .add_field(88, "FocalLength", ExifFormat::Rational, 1)
+        .add_field(193, "ISO", ExifFormat::U16, 1)
+        .build()
+}
+
+/// Binary data table: MP4
+/// Source lines: 3627-3682
+/// Process function: ProcessBinaryData
+pub fn create_mp4_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("MP4", ExifFormat::U8)
+        .add_field(0, "Make", ExifFormat::Ascii, 24)
+        .add_field(40, "FNumber", ExifFormat::Rational, 1)
+        .add_field(48, "ExposureCompensation", ExifFormat::SignedRational, 1)
+        .build()
+}
+
+/// Binary data table: prms
+/// Source lines: 3712-3745
+/// Process function: ProcessBinaryData
+pub fn create_prms_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("prms", ExifFormat::U8)
+        .add_field(18, "Make", ExifFormat::Ascii, 24)
+        .add_field(44, "Model", ExifFormat::Ascii, 24)
+        .add_field(383, "LensModel", ExifFormat::Ascii, 32)
+        .build()
+}
+
+/// Binary data table: thmb2
+/// Source lines: 3748-3770
+/// Process function: ProcessBinaryData
+pub fn create_thmb2_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("thmb2", ExifFormat::U8)
+        .add_field(0, "ThumbnailWidth", ExifFormat::U16, 1)
+        .add_field(2, "ThumbnailHeight", ExifFormat::U16, 1)
+        .add_field(4, "ThumbnailLength", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: MovableInfo
+/// Source lines: 3784-3807
+/// Process function: ProcessBinaryData
+pub fn create_movableinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("MovableInfo", ExifFormat::U8)
+        .add_field(4, "ISO", ExifFormat::U32, 1)
+        .add_field(44, "EncoderVersion", ExifFormat::Ascii, 16)
+        .add_field(60, "DecoderVersion", ExifFormat::Ascii, 16)
+        .build()
+}
+
 /// Binary data table: Thumbnail
 /// Source lines: 3810-3819
 /// Process function: ProcessBinaryData
@@ -20,11 +102,57 @@ pub fn create_thumbnail_table() -> BinaryDataTable {
         .build()
 }
 
+/// Binary data table: thmb
+/// Source lines: 3822-3837
+/// Process function: ProcessBinaryData
+pub fn create_thmb_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("thmb", ExifFormat::U8)
+        .add_field(0, "ThumbnailLength", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: scrn
+/// Source lines: 3840-3855
+/// Process function: ProcessBinaryData
+pub fn create_scrn_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("scrn", ExifFormat::U8)
+        .add_field(0, "PreviewImageLength", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: OLYM
+/// Source lines: 3858-3898
+/// Process function: ProcessBinaryData
+pub fn create_olym_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("OLYM", ExifFormat::U8)
+        .add_field(14, "Make", ExifFormat::Ascii, 26)
+        .add_field(40, "Model", ExifFormat::Ascii, 24)
+        .add_field(90, "FNumber", ExifFormat::Rational, 1)
+        .add_field(265, "ThumbnailWidth", ExifFormat::U16, 1)
+        .add_field(267, "ThumbnailHeight", ExifFormat::U16, 1)
+        .build()
+}
+
+/// Binary data table: AVI
+/// Source lines: 3902-3937
+/// Process function: ProcessBinaryData
+pub fn create_avi_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("AVI", ExifFormat::U8)
+        .add_field(18, "Make", ExifFormat::Ascii, 24)
+        .add_field(44, "Model", ExifFormat::Ascii, 24)
+        .add_field(94, "FNumber", ExifFormat::Rational, 1)
+        .build()
+}
+
 /// Binary data table: WAV
 /// Source lines: 3940-4010
 /// Process function: ProcessBinaryData
 pub fn create_wav_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("WAV", ExifFormat::U8)
+        .add_field(12, "Model", ExifFormat::Ascii, 16)
+        .add_field(28, "FileNumber", ExifFormat::U32, 1)
+        .add_field(62, "RecordingTime", ExifFormat::Undefined, 6)
+        .add_field(512, "Duration", ExifFormat::U32, 1)
         .add_field(522, "Index01", ExifFormat::U8, 1)
         .add_field(532, "Index02", ExifFormat::U8, 1)
         .add_field(542, "Index03", ExifFormat::U8, 1)
@@ -41,6 +169,17 @@ pub fn create_wav_table() -> BinaryDataTable {
         .add_field(652, "Index14", ExifFormat::U8, 1)
         .add_field(662, "Index15", ExifFormat::U8, 1)
         .add_field(672, "Index16", ExifFormat::U8, 1)
+        .build()
+}
+
+/// Binary data table: DSS
+/// Source lines: 4013-4050
+/// Process function: ProcessBinaryData
+pub fn create_dss_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("DSS", ExifFormat::U8)
+        .add_field(12, "Model", ExifFormat::Ascii, 16)
+        .add_field(62, "Duration", ExifFormat::Ascii, 6)
+        .add_field(798, "Comment", ExifFormat::Ascii, 100)
         .build()
 }
 

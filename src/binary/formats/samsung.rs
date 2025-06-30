@@ -8,24 +8,51 @@
 use crate::core::binary_data::{BinaryDataTable, BinaryDataTableBuilder};
 use crate::core::types::ExifFormat;
 
+/// Binary data table: Main
+/// Source lines: 67-108
+/// Process function: ProcessBinaryData
+pub fn create_main_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("Main", ExifFormat::U32)
+        .add_field(0, "MakerNoteVersion", ExifFormat::Undefined, 8)
+        .add_field(2, "PreviewImageStart", ExifFormat::U32, 1)
+        .add_field(3, "PreviewImageLength", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: OrientationInfo
+/// Source lines: 700-722
+/// Process function: ProcessBinaryData
+pub fn create_orientationinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("OrientationInfo", ExifFormat::SignedRational)
+        .add_field(0, "YawAngle", ExifFormat::SignedRational, 1)
+        .add_field(1, "PitchAngle", ExifFormat::SignedRational, 1)
+        .add_field(2, "RollAngle", ExifFormat::SignedRational, 1)
+        .build()
+}
+
 /// Binary data table: PictureWizard
 /// Source lines: 725-768
 /// Process function: ProcessBinaryData
 pub fn create_picturewizard_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("PictureWizard", ExifFormat::U16)
-        .add_field(0, "Standard", ExifFormat::U16, 1)
-        .add_field(1, "Vivid", ExifFormat::U16, 1)
-        .add_field(2, "Portrait", ExifFormat::U16, 1)
-        .add_field(3, "Landscape", ExifFormat::U16, 1)
-        .add_field(4, "Forest", ExifFormat::U16, 1)
-        .add_field(5, "Retro", ExifFormat::U16, 1)
-        .add_field(6, "Cool", ExifFormat::U16, 1)
-        .add_field(7, "Calm", ExifFormat::U16, 1)
-        .add_field(8, "Classic", ExifFormat::U16, 1)
-        .add_field(9, "Custom1", ExifFormat::U16, 1)
-        .add_field(10, "Custom2", ExifFormat::U16, 1)
-        .add_field(11, "Custom3", ExifFormat::U16, 1)
         .add_field(1, "PictureWizardColor", ExifFormat::U16, 1)
+        .add_field(2, "PictureWizardSaturation", ExifFormat::U16, 1)
+        .add_field(3, "PictureWizardSharpness", ExifFormat::U16, 1)
+        .add_field(4, "PictureWizardContrast", ExifFormat::U16, 1)
+        .build()
+}
+
+/// Binary data table: MP4
+/// Source lines: 786-842
+/// Process function: ProcessBinaryData
+pub fn create_mp4_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("MP4", ExifFormat::U8)
+        .add_field(0, "Make", ExifFormat::Ascii, 24)
+        .add_field(24, "Model", ExifFormat::Ascii, 16)
+        .add_field(46, "ExposureTime", ExifFormat::U32, 1)
+        .add_field(50, "FNumber", ExifFormat::Rational, 1)
+        .add_field(58, "ExposureCompensation", ExifFormat::SignedRational, 1)
+        .add_field(106, "ISO", ExifFormat::U32, 1)
         .build()
 }
 
@@ -46,8 +73,11 @@ pub fn create_thumbnail_table() -> BinaryDataTable {
 /// Process function: ProcessBinaryData
 pub fn create_sec_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("sec", ExifFormat::U8)
+        .add_field(0, "Make", ExifFormat::Ascii, 32)
+        .add_field(32, "Model", ExifFormat::Ascii, 32)
         .add_field(512, "ThumbnailWidth", ExifFormat::U32, 1)
         .add_field(516, "ThumbnailHeight", ExifFormat::U32, 1)
+        .add_field(520, "ThumbnailLength", ExifFormat::U32, 1)
         .build()
 }
 
@@ -60,6 +90,18 @@ pub fn create_thumbnail2_table() -> BinaryDataTable {
         .add_field(2, "ThumbnailHeight", ExifFormat::U32, 1)
         .add_field(3, "ThumbnailLength", ExifFormat::U32, 1)
         .add_field(4, "ThumbnailOffset", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: DualShotExtra
+/// Source lines: 1312-1347
+/// Process function: ProcessBinaryData
+pub fn create_dualshotextra_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("DualShotExtra", ExifFormat::U32)
+        .add_field(16, "DepthMapWidth", ExifFormat::U32, 1)
+        // Condition: $$self{DepthMapTagPos}
+        .add_field(17, "DepthMapHeight", ExifFormat::U32, 1)
+        // Condition: $$self{DepthMapTagPos}
         .build()
 }
 

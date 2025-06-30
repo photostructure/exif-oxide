@@ -8,12 +8,132 @@
 use crate::core::binary_data::{BinaryDataTable, BinaryDataTableBuilder};
 use crate::core::types::ExifFormat;
 
+/// Binary data table: Leica3
+/// Source lines: 1676-1691
+/// Process function: ProcessBinaryData
+pub fn create_leica3_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("Leica3", ExifFormat::U8)
+        .add_field(13, "WB_RGBLevels", ExifFormat::U8, 1)
+        .build()
+}
+
+/// Binary data table: SerialInfo
+/// Source lines: 1694-1703
+/// Process function: ProcessBinaryData
+pub fn create_serialinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("SerialInfo", ExifFormat::U8)
+        .add_field(4, "SerialNumber", ExifFormat::Ascii, 8)
+        .build()
+}
+
+/// Binary data table: TimeInfo
+/// Source lines: 1909-1938
+/// Process function: ProcessBinaryData
+pub fn create_timeinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("TimeInfo", ExifFormat::U8)
+        .add_field(16, "TimeLapseShotNumber", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: Data1
+/// Source lines: 1940-1957
+/// Process function: ProcessBinaryData
+pub fn create_data1_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("Data1", ExifFormat::U8)
+        .add_field(22, "LensType", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: ShotInfo
+/// Source lines: 2039-2051
+/// Process function: ProcessBinaryData
+pub fn create_shotinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfo", ExifFormat::U8)
+        .add_field(0, "FileIndex", ExifFormat::U16, 1)
+        .build()
+}
+
+/// Binary data table: FocusInfo
+/// Source lines: 2054-2079
+/// Process function: ProcessBinaryData
+pub fn create_focusinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("FocusInfo", ExifFormat::U16)
+        .add_field(0, "FocusDistance", ExifFormat::U16, 1)
+        .add_field(1, "FocalLength", ExifFormat::U16, 1)
+        .build()
+}
+
 /// Binary data table: Type2
 /// Source lines: 2229-2547
 /// Process function: ProcessBinaryData
 pub fn create_type2_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("Type2", ExifFormat::U16)
+        .add_field(0, "MakerNoteType", ExifFormat::Ascii, 4)
         .add_field(3, "Gain", ExifFormat::U16, 1)
+        .add_field(5, "Face2Position", ExifFormat::U16, 4)
+        .add_field(9, "Face3Position", ExifFormat::U16, 4)
+        .add_field(13, "Face4Position", ExifFormat::U16, 4)
+        .add_field(17, "Face5Position", ExifFormat::U16, 4)
+        .add_field(0, "FacesRecognized", ExifFormat::U16, 1)
+        .add_field(4, "RecognizedFace1Name", ExifFormat::Ascii, 20)
+        .add_field(24, "RecognizedFace1Position", ExifFormat::U16, 4)
+        .add_field(32, "RecognizedFace1Age", ExifFormat::Ascii, 20)
+        .add_field(52, "RecognizedFace2Name", ExifFormat::Ascii, 20)
+        .add_field(72, "RecognizedFace2Position", ExifFormat::U16, 4)
+        .add_field(80, "RecognizedFace2Age", ExifFormat::Ascii, 20)
+        .add_field(100, "RecognizedFace3Name", ExifFormat::Ascii, 20)
+        .add_field(120, "RecognizedFace3Position", ExifFormat::U16, 4)
+        .add_field(128, "RecognizedFace3Age", ExifFormat::Ascii, 20)
+        .add_field(52, "Version1", ExifFormat::Ascii, 14)
+        // Condition: $$self{LeicaLEIC}
+        .add_field(62, "Version2", ExifFormat::Ascii, 14)
+        // Condition: $$self{LeicaLEIC}
+        .add_field(88, "ThumbnailWidth", ExifFormat::U16, 1)
+        // Condition: $$self{ThumbType} == 1
+        .add_field(90, "ThumbnailHeight", ExifFormat::U16, 1)
+        // Condition: $$self{ThumbType} == 1
+        .add_field(1334, "ThumbnailWidth", ExifFormat::U8, 1)
+        // Condition: $$self{ThumbType} == 2
+        .add_field(1338, "ThumbnailHeight", ExifFormat::U8, 1)
+        // Condition: $$self{ThumbType} == 2
+        .add_field(1342, "ThumbnailLength", ExifFormat::U8, 1)
+        // Condition: $$self{ThumbType} == 2
+        .add_field(1358, "ThumbnailWidth", ExifFormat::U8, 1)
+        // Condition: $$self{ThumbType} == 3
+        .add_field(1362, "ThumbnailHeight", ExifFormat::U8, 1)
+        // Condition: $$self{ThumbType} == 3
+        .add_field(1366, "ThumbnailLength", ExifFormat::U8, 1)
+        // Condition: $$self{ThumbType} == 3
+        .build()
+}
+
+/// Binary data table: FaceDetInfo
+/// Source lines: 2249-2299
+/// Process function: ProcessBinaryData
+pub fn create_facedetinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("FaceDetInfo", ExifFormat::U16)
+        .add_field(5, "Face2Position", ExifFormat::U16, 4)
+        .add_field(9, "Face3Position", ExifFormat::U16, 4)
+        .add_field(13, "Face4Position", ExifFormat::U16, 4)
+        .add_field(17, "Face5Position", ExifFormat::U16, 4)
+        .build()
+}
+
+/// Binary data table: FaceRecInfo
+/// Source lines: 2302-2367
+/// Process function: ProcessBinaryData
+pub fn create_facerecinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("FaceRecInfo", ExifFormat::U8)
+        .add_field(0, "FacesRecognized", ExifFormat::U16, 1)
+        .add_field(4, "RecognizedFace1Name", ExifFormat::Ascii, 20)
+        .add_field(24, "RecognizedFace1Position", ExifFormat::U16, 4)
+        .add_field(32, "RecognizedFace1Age", ExifFormat::Ascii, 20)
+        .add_field(52, "RecognizedFace2Name", ExifFormat::Ascii, 20)
+        .add_field(72, "RecognizedFace2Position", ExifFormat::U16, 4)
+        .add_field(80, "RecognizedFace2Age", ExifFormat::Ascii, 20)
+        .add_field(100, "RecognizedFace3Name", ExifFormat::Ascii, 20)
+        .add_field(120, "RecognizedFace3Position", ExifFormat::U16, 4)
+        .add_field(128, "RecognizedFace3Age", ExifFormat::Ascii, 20)
         .build()
 }
 
@@ -22,6 +142,26 @@ pub fn create_type2_table() -> BinaryDataTable {
 /// Process function: ProcessBinaryData
 pub fn create_pana_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("PANA", ExifFormat::U8)
+        .add_field(52, "Version1", ExifFormat::Ascii, 14)
+        // Condition: $$self{LeicaLEIC}
+        .add_field(62, "Version2", ExifFormat::Ascii, 14)
+        // Condition: $$self{LeicaLEIC}
+        .add_field(88, "ThumbnailWidth", ExifFormat::U16, 1)
+        // Condition: $$self{ThumbType} == 1
+        .add_field(90, "ThumbnailHeight", ExifFormat::U16, 1)
+        // Condition: $$self{ThumbType} == 1
+        .add_field(1334, "ThumbnailWidth", ExifFormat::U8, 1)
+        // Condition: $$self{ThumbType} == 2
+        .add_field(1338, "ThumbnailHeight", ExifFormat::U8, 1)
+        // Condition: $$self{ThumbType} == 2
+        .add_field(1342, "ThumbnailLength", ExifFormat::U8, 1)
+        // Condition: $$self{ThumbType} == 2
+        .add_field(1358, "ThumbnailWidth", ExifFormat::U8, 1)
+        // Condition: $$self{ThumbType} == 3
+        .add_field(1362, "ThumbnailHeight", ExifFormat::U8, 1)
+        // Condition: $$self{ThumbType} == 3
+        .add_field(1366, "ThumbnailLength", ExifFormat::U8, 1)
+        // Condition: $$self{ThumbType} == 3
         .add_field(0, "Model", ExifFormat::U8, 1)
         .add_field(1, "SceneMode", ExifFormat::U8, 1)
         .add_field(2, "AdvancedSceneType", ExifFormat::U8, 1)

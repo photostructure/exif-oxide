@@ -3,6 +3,7 @@
 //! Simple module for extracting binary data from EXIF tags.
 
 pub mod composite_tags;
+pub mod formats;
 
 use crate::core::ifd::ParsedIfd;
 use crate::core::mpf::{MpfImageType, ParsedMpf};

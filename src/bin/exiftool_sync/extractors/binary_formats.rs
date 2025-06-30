@@ -88,11 +88,27 @@ impl BinaryFormatsExtractor {
     fn is_binary_data_table(&self, content: &str, start_pos: usize) -> Result<bool, String> {
         // Look for PROCESS_PROC => \&ProcessBinaryData or similar
         let check_region = &content[start_pos..std::cmp::min(start_pos + 1000, content.len())];
-        Ok(check_region.contains("PROCESS_PROC")
+
+        // Direct PROCESS_PROC declaration
+        let has_direct_process = check_region.contains("PROCESS_PROC")
             && (check_region.contains("ProcessBinaryData")
                 || check_region.contains("ProcessNikonEncrypted")
                 || check_region.contains("ProcessCanon")
-                || check_region.contains("ProcessSony")))
+                || check_region.contains("ProcessSony"));
+
+        // Check for %binaryDataAttrs inheritance (common in Canon)
+        let has_binary_attrs = check_region.contains("%binaryDataAttrs");
+
+        // Check for FORMAT => 'int16s' or similar (indicates binary data)
+        let has_format = check_region.contains("FORMAT")
+            && (check_region.contains("'int16")
+                || check_region.contains("'int8")
+                || check_region.contains("'int32")
+                || check_region.contains("\"int16")
+                || check_region.contains("\"int8")
+                || check_region.contains("\"int32"));
+
+        Ok(has_direct_process || (has_binary_attrs && has_format))
     }
 
     /// Extract a single binary data table
@@ -195,90 +211,142 @@ impl BinaryFormatsExtractor {
     fn parse_table_entries(&self, table_content: &str) -> Result<Vec<BinaryEntry>, String> {
         let mut entries = Vec::new();
 
-        // Match both simple and complex entry patterns
-        // Simple: 1 => 'TagName',
-        // Complex: 1 => { Name => 'TagName', ... },
-        let entry_regex =
-            Regex::new(r"(?m)^\s*(-?\d+(?:\.\d+)?|0x[0-9a-fA-F]+)\s*=>\s*(.+?)(?:,\s*(?:\n|$))")
-                .unwrap();
+        // Parse entries manually to handle multi-line structures
+        let lines: Vec<&str> = table_content.lines().collect();
+        let mut i = 0;
 
-        for cap in entry_regex.captures_iter(table_content) {
-            let offset_str = &cap[1];
-            let value_part = cap[2].trim();
+        while i < lines.len() {
+            let line = lines[i].trim();
 
-            // Parse offset (decimal, hex, or fractional)
-            let offset = if let Some(stripped) = offset_str.strip_prefix("0x") {
-                i32::from_str_radix(stripped, 16)
-                    .map(|v| v as f64)
-                    .map_err(|_| format!("Invalid hex offset: {}", offset_str))?
-            } else {
-                offset_str
-                    .parse::<f64>()
-                    .map_err(|_| format!("Invalid offset: {}", offset_str))?
-            };
+            // Match entry pattern: offset => ...
+            let entry_regex = Regex::new(r"^(-?\d+(?:\.\d+)?|0x[0-9a-fA-F]+)\s*=>\s*(.*)").unwrap();
 
-            // Skip meta entries like PROCESS_PROC, FORMAT, etc.
-            if offset_str.chars().all(|c| c.is_alphabetic() || c == '_') {
-                continue;
-            }
+            if let Some(cap) = entry_regex.captures(line) {
+                let offset_str = &cap[1];
+                let mut value_part = cap[2].to_string();
 
-            let mut entry = BinaryEntry {
-                offset,
-                name: String::new(),
-                format: None,
-                mask: None,
-                shift: None,
-                condition: None,
-                value_conv: None,
-                print_conv: None,
-                notes: None,
-            };
-
-            if value_part.starts_with('{') {
-                // Complex format: parse hash
-                // Find the matching closing brace
-                let mut brace_count = 0;
-                let mut end_pos = 0;
-                for (i, ch) in value_part.char_indices() {
-                    match ch {
-                        '{' => brace_count += 1,
-                        '}' => {
-                            brace_count -= 1;
-                            if brace_count == 0 {
-                                end_pos = i;
-                                break;
-                            }
+                // If the value starts with { but doesn't end with }, collect more lines
+                if value_part.trim().starts_with('{') && !value_part.contains("},") {
+                    i += 1;
+                    while i < lines.len() {
+                        let next_line = lines[i];
+                        value_part.push('\n');
+                        value_part.push_str(next_line);
+                        if next_line.contains("},") {
+                            break;
                         }
-                        _ => {}
+                        i += 1;
                     }
                 }
 
-                let entry_content = &value_part[1..end_pos];
+                let value_part = value_part.trim();
 
-                // Extract fields from hash
-                entry.name = self
-                    .extract_entry_field(entry_content, "Name")
-                    .ok_or_else(|| format!("No Name found for offset {}", offset))?;
-                entry.format = self.extract_entry_field(entry_content, "Format");
-                entry.condition = self.extract_entry_field(entry_content, "Condition");
-                entry.value_conv = self.extract_entry_field(entry_content, "ValueConv");
-                entry.print_conv = self.extract_entry_field(entry_content, "PrintConv");
-                entry.notes = self.extract_entry_field(entry_content, "Notes");
-                entry.mask = self.extract_hex_field(entry_content, "Mask");
-            } else if value_part.starts_with('\'') {
-                // Simple format: the value is the tag name
-                let name_regex = Regex::new(r"^'([^']+)'").unwrap();
-                if let Some(cap) = name_regex.captures(value_part) {
-                    entry.name = cap[1].to_string();
+                // Parse offset (decimal, hex, or fractional)
+                let offset = if let Some(stripped) = offset_str.strip_prefix("0x") {
+                    i32::from_str_radix(stripped, 16)
+                        .map(|v| v as f64)
+                        .map_err(|_| format!("Invalid hex offset: {}", offset_str))?
                 } else {
-                    continue; // Skip entries we can't parse
+                    offset_str
+                        .parse::<f64>()
+                        .map_err(|_| format!("Invalid offset: {}", offset_str))?
+                };
+
+                // Skip meta entries like PROCESS_PROC, FORMAT, etc.
+                if offset_str.chars().all(|c| c.is_alphabetic() || c == '_') {
+                    i += 1;
+                    continue;
                 }
-            } else {
-                // Skip other types of values (like references to other tables)
-                continue;
+
+                let mut entry = BinaryEntry {
+                    offset,
+                    name: String::new(),
+                    format: None,
+                    mask: None,
+                    shift: None,
+                    condition: None,
+                    value_conv: None,
+                    print_conv: None,
+                    notes: None,
+                };
+
+                if value_part.starts_with('{') {
+                    // Complex format: parse hash
+                    // Find the matching closing brace
+                    let mut brace_count = 0;
+                    let mut end_pos = 0;
+                    for (i, ch) in value_part.char_indices() {
+                        match ch {
+                            '{' => brace_count += 1,
+                            '}' => {
+                                brace_count -= 1;
+                                if brace_count == 0 {
+                                    end_pos = i;
+                                    break;
+                                }
+                            }
+                            _ => {}
+                        }
+                    }
+
+                    // Check if we found the closing brace
+                    if end_pos == 0 {
+                        // Malformed entry, skip it
+                        i += 1;
+                        continue;
+                    }
+
+                    let entry_content = &value_part[1..end_pos];
+
+                    // Check if this is a hash inclusion like { %someHash }
+                    if entry_content.trim().starts_with('%') {
+                        // Skip hash inclusions - these reference other tables
+                        i += 1;
+                        continue;
+                    }
+
+                    // Extract fields from hash
+                    if let Some(name) = self.extract_entry_field(entry_content, "Name") {
+                        entry.name = name;
+                    } else {
+                        // Skip entries without a Name field
+                        i += 1;
+                        continue;
+                    }
+                    entry.format = self.extract_entry_field(entry_content, "Format");
+                    entry.condition = self.extract_entry_field(entry_content, "Condition");
+                    entry.value_conv = self.extract_entry_field(entry_content, "ValueConv");
+                    entry.print_conv = self.extract_entry_field(entry_content, "PrintConv");
+                    entry.notes = self.extract_entry_field(entry_content, "Notes");
+                    entry.mask = self.extract_hex_field(entry_content, "Mask");
+                } else if value_part.starts_with('\'') {
+                    // Simple format: the value is the tag name
+                    let name_regex = Regex::new(r"^'([^']+)'").unwrap();
+                    if let Some(cap) = name_regex.captures(value_part) {
+                        entry.name = cap[1].to_string();
+                    } else {
+                        i += 1;
+                        continue; // Skip entries we can't parse
+                    }
+                } else if value_part.starts_with('%') || value_part.starts_with('\\') {
+                    // Skip references to other tables or code refs
+                    i += 1;
+                    continue;
+                } else {
+                    // Try to parse as a simple name without quotes
+                    if value_part.chars().all(|c| c.is_alphanumeric() || c == '_') {
+                        entry.name = value_part.to_string();
+                    } else {
+                        // Skip other types of values
+                        i += 1;
+                        continue;
+                    }
+                }
+
+                entries.push(entry);
             }
 
-            entries.push(entry);
+            i += 1;
         }
 
         Ok(entries)
@@ -467,12 +535,12 @@ impl BinaryFormatsExtractor {
             "int32s" => "I32",
             "int64u" => "U64",
             "int64s" => "I64",
-            "string" => "AsciiString",
+            "string" => "Ascii",
             "undef" => "Undefined",
-            "rational64u" => "URational",
-            "rational64s" => "IRational",
-            "float" => "Float",
-            "double" => "Double",
+            "rational64u" => "Rational",
+            "rational64s" => "SignedRational",
+            "float" => "F32",
+            "double" => "F64",
             _ => "U8", // Default
         }
     }

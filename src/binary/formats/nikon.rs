@@ -8,30 +8,239 @@
 use crate::core::binary_data::{BinaryDataTable, BinaryDataTableBuilder};
 use crate::core::types::ExifFormat;
 
+/// Binary data table: ROC
+/// Source lines: 3334-3343
+/// Process function: ProcessBinaryData
+pub fn create_roc_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ROC", ExifFormat::U32)
+        .add_field(0, "DigitalROC", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: GEM
+/// Source lines: 3346-3355
+/// Process function: ProcessBinaryData
+pub fn create_gem_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("GEM", ExifFormat::U32)
+        .add_field(0, "DigitalGEM", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: FaceDetect
+/// Source lines: 3404-3482
+/// Process function: ProcessBinaryData
+pub fn create_facedetect_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("FaceDetect", ExifFormat::U16)
+        .add_field(1, "FaceDetectFrameSize", ExifFormat::U16, 2)
+        .add_field(3, "FacesDetected", ExifFormat::U16, 1)
+        .add_field(8, "Face2Position", ExifFormat::U16, 4)
+        .add_field(12, "Face3Position", ExifFormat::U16, 4)
+        .add_field(16, "Face4Position", ExifFormat::U16, 4)
+        .add_field(20, "Face5Position", ExifFormat::U16, 4)
+        .add_field(24, "Face6Position", ExifFormat::U16, 4)
+        .add_field(28, "Face7Position", ExifFormat::U16, 4)
+        .add_field(32, "Face8Position", ExifFormat::U16, 4)
+        .add_field(36, "Face9Position", ExifFormat::U16, 4)
+        .add_field(40, "Face10Position", ExifFormat::U16, 4)
+        .add_field(44, "Face11Position", ExifFormat::U16, 4)
+        .add_field(48, "Face12Position", ExifFormat::U16, 4)
+        .build()
+}
+
+/// Binary data table: DistortInfo
+/// Source lines: 4039-4057
+/// Process function: ProcessBinaryData
+pub fn create_distortinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("DistortInfo", ExifFormat::U8)
+        .add_field(0, "DistortionVersion", ExifFormat::Undefined, 4)
+        .build()
+}
+
+/// Binary data table: UnknownInfo
+/// Source lines: 4060-4072
+/// Process function: ProcessBinaryData
+pub fn create_unknowninfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("UnknownInfo", ExifFormat::U32)
+        .add_field(0, "UnknownInfoVersion", ExifFormat::Undefined, 4)
+        // Condition: $$valPt =~ /^\d{4}/
+        .build()
+}
+
+/// Binary data table: UnknownInfo2
+/// Source lines: 4075-4087
+/// Process function: ProcessBinaryData
+pub fn create_unknowninfo2_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("UnknownInfo2", ExifFormat::U32)
+        .add_field(0, "UnknownInfo2Version", ExifFormat::Undefined, 4)
+        // Condition: $$valPt =~ /^\d{4}/
+        .build()
+}
+
+/// Binary data table: RetouchInfo
+/// Source lines: 5101-5121
+/// Process function: ProcessBinaryData
+pub fn create_retouchinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("RetouchInfo", ExifFormat::U8)
+        .add_field(0, "RetouchInfoVersion", ExifFormat::Undefined, 4)
+        .build()
+}
+
+/// Binary data table: FileInfo
+/// Source lines: 5124-5144
+/// Process function: ProcessBinaryData
+pub fn create_fileinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("FileInfo", ExifFormat::U16)
+        .add_field(0, "FileInfoVersion", ExifFormat::Undefined, 4)
+        .add_field(2, "MemoryCardNumber", ExifFormat::U16, 1)
+        .add_field(3, "DirectoryNumber", ExifFormat::U16, 1)
+        .add_field(4, "FileNumber", ExifFormat::U16, 1)
+        .build()
+}
+
+/// Binary data table: BarometerInfo
+/// Source lines: 5147-5162
+/// Process function: ProcessBinaryData
+pub fn create_barometerinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("BarometerInfo", ExifFormat::U8)
+        .add_field(0, "BarometerInfoVersion", ExifFormat::Undefined, 4)
+        .add_field(6, "Altitude", ExifFormat::I32, 1)
+        .build()
+}
+
+/// Binary data table: CaptureOffsets
+/// Source lines: 5165-5173
+/// Process function: ProcessNikonCaptureOffsets
+pub fn create_captureoffsets_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("CaptureOffsets", ExifFormat::U8)
+        .add_field(1, "IFD0_Offset", ExifFormat::U8, 1)
+        .add_field(2, "PreviewIFD_Offset", ExifFormat::U8, 1)
+        .add_field(3, "SubIFD_Offset", ExifFormat::U8, 1)
+        .build()
+}
+
+/// Binary data table: CaptureOutput
+/// Source lines: 5176-5185
+/// Process function: ProcessBinaryData
+pub fn create_captureoutput_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("CaptureOutput", ExifFormat::U32)
+        .add_field(2, "OutputImageWidth", ExifFormat::U32, 1)
+        .add_field(3, "OutputImageHeight", ExifFormat::U32, 1)
+        .add_field(4, "OutputResolution", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: ColorBalanceA
+/// Source lines: 5188-5237
+/// Process function: ProcessBinaryData
+pub fn create_colorbalancea_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ColorBalanceA", ExifFormat::U16)
+        .add_field(624, "WB_RBLevels", ExifFormat::U16, 2)
+        .add_field(626, "WB_RBLevelsAuto", ExifFormat::U16, 2)
+        .add_field(628, "WB_RBLevelsDaylight", ExifFormat::U16, 14)
+        .add_field(642, "WB_RBLevelsIncandescent", ExifFormat::U16, 14)
+        .add_field(656, "WB_RBLevelsFluorescent", ExifFormat::U16, 6)
+        .add_field(662, "WB_RBLevelsCloudy", ExifFormat::U16, 14)
+        .add_field(676, "WB_RBLevelsFlash", ExifFormat::U16, 14)
+        .add_field(690, "WB_RBLevelsShade", ExifFormat::U16, 14)
+        // Condition: $$self{Model} ne "E8700"
+        .build()
+}
+
+/// Binary data table: ColorBalance1
+/// Source lines: 5296-5305
+/// Process function: ProcessBinaryData
+pub fn create_colorbalance1_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ColorBalance1", ExifFormat::U16)
+        .add_field(0, "WB_RBGGLevels", ExifFormat::U16, 4)
+        .build()
+}
+
+/// Binary data table: ColorBalance2
+/// Source lines: 5308-5318
+/// Process function: ProcessBinaryData
+pub fn create_colorbalance2_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ColorBalance2", ExifFormat::U16)
+        .add_field(0, "WB_RGGBLevels", ExifFormat::U16, 4)
+        .build()
+}
+
+/// Binary data table: ColorBalance3
+/// Source lines: 5321-5330
+/// Process function: ProcessBinaryData
+pub fn create_colorbalance3_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ColorBalance3", ExifFormat::U16)
+        .add_field(0, "WB_RGBGLevels", ExifFormat::U16, 4)
+        .build()
+}
+
+/// Binary data table: ColorBalance4
+/// Source lines: 5333-5342
+/// Process function: ProcessBinaryData
+pub fn create_colorbalance4_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ColorBalance4", ExifFormat::U16)
+        .add_field(0, "WB_GRBGLevels", ExifFormat::U16, 4)
+        .build()
+}
+
+/// Binary data table: ColorBalanceUnknown
+/// Source lines: 5344-5351
+/// Process function: ProcessBinaryData
+pub fn create_colorbalanceunknown_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ColorBalanceUnknown", ExifFormat::U8)
+        .add_field(0, "ColorBalanceVersion", ExifFormat::Undefined, 4)
+        .build()
+}
+
+/// Binary data table: ColorBalanceUnknown2
+/// Source lines: 5353-5361
+/// Process function: ProcessBinaryData
+pub fn create_colorbalanceunknown2_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ColorBalanceUnknown2", ExifFormat::U16)
+        .add_field(0, "ColorBalanceVersion", ExifFormat::Undefined, 4)
+        .build()
+}
+
+/// Binary data table: LensDataUnknown
+/// Source lines: 5956-5964
+/// Process function: ProcessBinaryData
+pub fn create_lensdataunknown_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("LensDataUnknown", ExifFormat::U8)
+        .add_field(0, "LensDataVersion", ExifFormat::Ascii, 4)
+        .build()
+}
+
+/// Binary data table: ShotInfoD40
+/// Source lines: 6084-6116
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod40_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD40", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(582, "ShutterCount", ExifFormat::U32, 1)
+        .build()
+}
+
 /// Binary data table: ShotInfoD80
 /// Source lines: 6119-6195
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod80_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD80", ExifFormat::U8)
-        .encrypted(true)
-        .add_field(0, "Horizontal", ExifFormat::U8, 1)
-        .add_field(1, "Rotate 270 CW", ExifFormat::U8, 1)
-        .add_field(2, "Rotate 90 CW", ExifFormat::U8, 1)
-        .add_field(3, "Rotate 180", ExifFormat::U8, 1)
-        .add_field(0, "Off", ExifFormat::U8, 1)
-        .add_field(3, "On", ExifFormat::U8, 1)
-        .add_field(1, "Internal", ExifFormat::U8, 1)
-        .add_field(2, "External", ExifFormat::U8, 1)
-        .add_field(0, "Large (10.0 M)", ExifFormat::U8, 1)
-        .add_field(1, "Medium (5.6 M)", ExifFormat::U8, 1)
-        .add_field(2, "Small (2.5 M)", ExifFormat::U8, 1)
-        .add_field(0, "NEF (RAW)", ExifFormat::U8, 1)
-        .add_field(1, "JPEG Fine", ExifFormat::U8, 1)
-        .add_field(2, "JPEG Normal", ExifFormat::U8, 1)
-        .add_field(3, "JPEG Basic", ExifFormat::U8, 1)
-        .add_field(4, "NEF (RAW) + JPEG Fine", ExifFormat::U8, 1)
-        .add_field(5, "NEF (RAW) + JPEG Normal", ExifFormat::U8, 1)
-        .add_field(6, "NEF (RAW) + JPEG Basic", ExifFormat::U8, 1)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(586, "ShutterCount", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: ShotInfoD90
+/// Source lines: 6198-6240
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod90_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD90", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(693, "ISO2", ExifFormat::U8, 1)
+        .add_field(725, "ShutterCount", ExifFormat::U32, 1)
         .build()
 }
 
@@ -40,18 +249,10 @@ pub fn create_shotinfod80_table() -> BinaryDataTable {
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod3a_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD3a", ExifFormat::U8)
-        .encrypted(true)
-        .add_field(0, "Large", ExifFormat::U8, 1)
-        .add_field(1, "Medium", ExifFormat::U8, 1)
-        .add_field(2, "Small", ExifFormat::U8, 1)
-        .add_field(0, "NEF (RAW) + JPEG Fine", ExifFormat::U8, 1)
-        .add_field(1, "NEF (RAW) + JPEG Norm", ExifFormat::U8, 1)
-        .add_field(2, "NEF (RAW) + JPEG Basic", ExifFormat::U8, 1)
-        .add_field(3, "NEF (RAW)", ExifFormat::U8, 1)
-        .add_field(4, "TIF (RGB)", ExifFormat::U8, 1)
-        .add_field(5, "JPEG Fine", ExifFormat::U8, 1)
-        .add_field(6, "JPEG Normal", ExifFormat::U8, 1)
-        .add_field(7, "JPEG Basic", ExifFormat::U8, 1)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(598, "ISO2", ExifFormat::U8, 1)
+        .add_field(630, "ShutterCount", ExifFormat::U32, 1)
         .build()
 }
 
@@ -60,21 +261,28 @@ pub fn create_shotinfod3a_table() -> BinaryDataTable {
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod3b_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD3b", ExifFormat::U8)
-        .encrypted(true)
-        .add_field(0, "FX (36x24)", ExifFormat::U8, 1)
-        .add_field(1, "DX (24x16)", ExifFormat::U8, 1)
-        .add_field(2, "5:4 (30x24)", ExifFormat::U8, 1)
-        .add_field(0, "Large", ExifFormat::U8, 1)
-        .add_field(1, "Medium", ExifFormat::U8, 1)
-        .add_field(2, "Small", ExifFormat::U8, 1)
-        .add_field(0, "NEF (RAW) + JPEG Fine", ExifFormat::U8, 1)
-        .add_field(1, "NEF (RAW) + JPEG Norm", ExifFormat::U8, 1)
-        .add_field(2, "NEF (RAW) + JPEG Basic", ExifFormat::U8, 1)
-        .add_field(3, "NEF (RAW)", ExifFormat::U8, 1)
-        .add_field(4, "TIF (RGB)", ExifFormat::U8, 1)
-        .add_field(5, "JPEG Fine", ExifFormat::U8, 1)
-        .add_field(6, "JPEG Normal", ExifFormat::U8, 1)
-        .add_field(7, "JPEG Basic", ExifFormat::U8, 1)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(605, "ISO2", ExifFormat::U8, 1)
+        .add_field(637, "ShutterCount", ExifFormat::U32, 1)
+        // Condition: $$self{FirmwareVersion} =~ /^1\.01/
+        .add_field(639, "ShutterCount", ExifFormat::U32, 1)
+        // Condition: $$self{FirmwareVersion} =~ /^2\.0/
+        .add_field(650, "PreFlashReturnStrength", ExifFormat::U8, 1)
+        .build()
+}
+
+/// Binary data table: ShotInfoD3X
+/// Source lines: 6400-6442
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod3x_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD3X", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(605, "ISO2", ExifFormat::U8, 1)
+        .add_field(640, "ShutterCount", ExifFormat::U32, 1)
         .build()
 }
 
@@ -83,13 +291,11 @@ pub fn create_shotinfod3b_table() -> BinaryDataTable {
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod3s_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD3S", ExifFormat::U8)
-        .encrypted(true)
-        .add_field(0, "FX (36x24)", ExifFormat::U8, 1)
-        .add_field(1, "DX (24x16)", ExifFormat::U8, 1)
-        .add_field(2, "5:4 (30x24)", ExifFormat::U8, 1)
-        .add_field(3, "1.2x (30x20)", ExifFormat::U8, 1)
-        .add_field(0, "Size Priority", ExifFormat::U8, 1)
-        .add_field(1, "Optimal Quality", ExifFormat::U8, 1)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(545, "ISO2", ExifFormat::U8, 1)
+        .add_field(578, "ShutterCount", ExifFormat::U32, 1)
         .build()
 }
 
@@ -98,48 +304,10 @@ pub fn create_shotinfod3s_table() -> BinaryDataTable {
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod300a_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD300a", ExifFormat::U8)
-        .encrypted(true)
-        .add_field(16446, "+20", ExifFormat::U8, 1)
-        .add_field(12350, "+19", ExifFormat::U8, 1)
-        .add_field(8254, "+18", ExifFormat::U8, 1)
-        .add_field(4158, "+17", ExifFormat::U8, 1)
-        .add_field(62, "+16", ExifFormat::U8, 1)
-        .add_field(57405, "+15", ExifFormat::U8, 1)
-        .add_field(49213, "+14", ExifFormat::U8, 1)
-        .add_field(41021, "+13", ExifFormat::U8, 1)
-        .add_field(32829, "+12", ExifFormat::U8, 1)
-        .add_field(24637, "+11", ExifFormat::U8, 1)
-        .add_field(16445, "+10", ExifFormat::U8, 1)
-        .add_field(8253, "+9", ExifFormat::U8, 1)
-        .add_field(61, "+8", ExifFormat::U8, 1)
-        .add_field(49212, "+7", ExifFormat::U8, 1)
-        .add_field(32828, "+6", ExifFormat::U8, 1)
-        .add_field(16444, "+5", ExifFormat::U8, 1)
-        .add_field(60, "+4", ExifFormat::U8, 1)
-        .add_field(32827, "+3", ExifFormat::U8, 1)
-        .add_field(59, "+2", ExifFormat::U8, 1)
-        .add_field(58, "+1", ExifFormat::U8, 1)
-        .add_field(0, "0", ExifFormat::U8, 1)
-        .add_field(198, "-1", ExifFormat::U8, 1)
-        .add_field(197, "-2", ExifFormat::U8, 1)
-        .add_field(32965, "-3", ExifFormat::U8, 1)
-        .add_field(196, "-4", ExifFormat::U8, 1)
-        .add_field(16580, "-5", ExifFormat::U8, 1)
-        .add_field(32964, "-6", ExifFormat::U8, 1)
-        .add_field(49348, "-7", ExifFormat::U8, 1)
-        .add_field(195, "-8", ExifFormat::U8, 1)
-        .add_field(8387, "-9", ExifFormat::U8, 1)
-        .add_field(16579, "-10", ExifFormat::U8, 1)
-        .add_field(24771, "-11", ExifFormat::U8, 1)
-        .add_field(32963, "-12", ExifFormat::U8, 1)
-        .add_field(41155, "-13", ExifFormat::U8, 1)
-        .add_field(49347, "-14", ExifFormat::U8, 1)
-        .add_field(57539, "-15", ExifFormat::U8, 1)
-        .add_field(194, "-16", ExifFormat::U8, 1)
-        .add_field(4290, "-17", ExifFormat::U8, 1)
-        .add_field(8386, "-18", ExifFormat::U8, 1)
-        .add_field(12482, "-19", ExifFormat::U8, 1)
-        .add_field(16578, "-20", ExifFormat::U8, 1)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(604, "ISO2", ExifFormat::U8, 1)
+        .add_field(633, "ShutterCount", ExifFormat::U32, 1)
         .build()
 }
 
@@ -148,7 +316,11 @@ pub fn create_shotinfod300a_table() -> BinaryDataTable {
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod300b_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD300b", ExifFormat::U8)
-        .encrypted(true)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(613, "ISO2", ExifFormat::U8, 1)
+        .add_field(644, "ShutterCount", ExifFormat::U32, 1)
         .add_field(57406, "+20", ExifFormat::U8, 1)
         .add_field(51262, "+19", ExifFormat::U8, 1)
         .add_field(45118, "+18", ExifFormat::U8, 1)
@@ -234,204 +406,174 @@ pub fn create_shotinfod300b_table() -> BinaryDataTable {
         .build()
 }
 
+/// Binary data table: ShotInfoD300S
+/// Source lines: 6759-6801
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod300s_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD300S", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(613, "ISO2", ExifFormat::U8, 1)
+        .add_field(646, "ShutterCount", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: ShotInfoD700
+/// Source lines: 6804-6846
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod700_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD700", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(613, "ISO2", ExifFormat::U8, 1)
+        .add_field(647, "ShutterCount", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: ShotInfoD780
+/// Source lines: 6849-6879
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod780_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD780", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .build()
+}
+
+/// Binary data table: ShotInfoD5000
+/// Source lines: 6882-6924
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod5000_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD5000", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(693, "ISO2", ExifFormat::U8, 1)
+        .add_field(726, "ShutterCount", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: ShotInfoD5100
+/// Source lines: 6927-6958
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod5100_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD5100", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(801, "ShutterCount", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: ShotInfoD5200
+/// Source lines: 6961-6995
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod5200_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD5200", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(3032, "ShutterCount", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: ShotInfoD7000
+/// Source lines: 6998-7040
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod7000_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD7000", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(800, "ShutterCount", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: ShotInfoD7500
+/// Source lines: 7043-7073
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod7500_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD7500", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .build()
+}
+
 /// Binary data table: ShotInfoD800
 /// Source lines: 7076-7642
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod800_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD800", ExifFormat::U8)
-        .encrypted(true)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(1216, "RepeatingFlashOutputExternal", ExifFormat::U8, 1)
+        .add_field(1218, "RepeatingFlashRateExternal", ExifFormat::U8, 1)
+        .add_field(1219, "RepeatingFlashCountExternal", ExifFormat::U8, 1)
+        .add_field(1234, "FlashExposureComp2", ExifFormat::U8, 1)
+        .add_field(1242, "RepeatingFlashRateBuilt-in", ExifFormat::U8, 1)
+        .add_field(1243, "RepeatingFlashCountBuilt-in", ExifFormat::U8, 1)
         .add_field(1308, "SequenceNumber", ExifFormat::U8, 1)
-        .add_field(0, "Horizontal", ExifFormat::U8, 1)
-        .add_field(1, "Rotate 270 CW", ExifFormat::U8, 1)
-        .add_field(2, "Rotate 90 CW", ExifFormat::U8, 1)
-        .add_field(3, "Rotate 180", ExifFormat::U8, 1)
-        .add_field(0, "Size Priority", ExifFormat::U8, 1)
-        .add_field(1, "Optimal Quality", ExifFormat::U8, 1)
-        .add_field(0, "AE Bracketing Disabled", ExifFormat::U8, 1)
-        .add_field(32, "AE Bracketing Disabled", ExifFormat::U8, 1)
-        .add_field(48, "AE Bracketing Disabled", ExifFormat::U8, 1)
-        .add_field(64, "AE Bracketing Disabled", ExifFormat::U8, 1)
-        .add_field(80, "AE Bracketing Disabled", ExifFormat::U8, 1)
-        .add_field(129, "+3F0.3", ExifFormat::U8, 1)
-        .add_field(130, "-3F0.3", ExifFormat::U8, 1)
-        .add_field(131, "+2F0.3", ExifFormat::U8, 1)
-        .add_field(132, "-2F0.3", ExifFormat::U8, 1)
-        .add_field(133, "3F0.3", ExifFormat::U8, 1)
-        .add_field(134, "5F0.3", ExifFormat::U8, 1)
-        .add_field(135, "7F0.3", ExifFormat::U8, 1)
-        .add_field(136, "9F0.3", ExifFormat::U8, 1)
-        .add_field(145, "+3F0.5", ExifFormat::U8, 1)
-        .add_field(146, "-3F0.5", ExifFormat::U8, 1)
-        .add_field(147, "+2F0.5", ExifFormat::U8, 1)
-        .add_field(148, "-2F0.5", ExifFormat::U8, 1)
-        .add_field(149, "3F0.5", ExifFormat::U8, 1)
-        .add_field(150, "5F0.5", ExifFormat::U8, 1)
-        .add_field(151, "7F0.5", ExifFormat::U8, 1)
-        .add_field(152, "9F0.5", ExifFormat::U8, 1)
-        .add_field(161, "+3F0.7", ExifFormat::U8, 1)
-        .add_field(162, "-3F0.7", ExifFormat::U8, 1)
-        .add_field(163, "+2F0.7", ExifFormat::U8, 1)
-        .add_field(164, "-2F0.7", ExifFormat::U8, 1)
-        .add_field(165, "3F0.7", ExifFormat::U8, 1)
-        .add_field(166, "5F0.7", ExifFormat::U8, 1)
-        .add_field(167, "7F0.7", ExifFormat::U8, 1)
-        .add_field(168, "9F0.7", ExifFormat::U8, 1)
-        .add_field(177, "+3F1", ExifFormat::U8, 1)
-        .add_field(178, "-3F1", ExifFormat::U8, 1)
-        .add_field(179, "+2F1", ExifFormat::U8, 1)
-        .add_field(180, "-2F1", ExifFormat::U8, 1)
-        .add_field(181, "3F1", ExifFormat::U8, 1)
-        .add_field(182, "5F1", ExifFormat::U8, 1)
-        .add_field(183, "7F1", ExifFormat::U8, 1)
-        .add_field(184, "9F1", ExifFormat::U8, 1)
-        .add_field(193, "+3F2", ExifFormat::U8, 1)
-        .add_field(194, "-3F2", ExifFormat::U8, 1)
-        .add_field(195, "+2F2", ExifFormat::U8, 1)
-        .add_field(196, "-2F2", ExifFormat::U8, 1)
-        .add_field(197, "3F2", ExifFormat::U8, 1)
-        .add_field(198, "5F2", ExifFormat::U8, 1)
-        .add_field(209, "+3F3", ExifFormat::U8, 1)
-        .add_field(210, "-3F3", ExifFormat::U8, 1)
-        .add_field(211, "+2F3", ExifFormat::U8, 1)
-        .add_field(212, "-2F3", ExifFormat::U8, 1)
-        .add_field(213, "3F3", ExifFormat::U8, 1)
-        .add_field(214, "5F3", ExifFormat::U8, 1)
-        .add_field(0, "WB Bracketing Disabled", ExifFormat::U8, 1)
-        .add_field(1, "b3F 1", ExifFormat::U8, 1)
-        .add_field(2, "A3F 1", ExifFormat::U8, 1)
-        .add_field(3, "b2F 1", ExifFormat::U8, 1)
-        .add_field(4, "A2F 1", ExifFormat::U8, 1)
-        .add_field(5, "3F 1", ExifFormat::U8, 1)
-        .add_field(6, "5F 1", ExifFormat::U8, 1)
-        .add_field(7, "7F 1", ExifFormat::U8, 1)
-        .add_field(8, "9F 1", ExifFormat::U8, 1)
-        .add_field(16, "0F 2", ExifFormat::U8, 1)
-        .add_field(17, "b3F 2", ExifFormat::U8, 1)
-        .add_field(18, "A3F 2", ExifFormat::U8, 1)
-        .add_field(19, "b2F 2", ExifFormat::U8, 1)
-        .add_field(20, "A2F 2", ExifFormat::U8, 1)
-        .add_field(21, "3F 2", ExifFormat::U8, 1)
-        .add_field(22, "5F 2", ExifFormat::U8, 1)
-        .add_field(23, "7F 2", ExifFormat::U8, 1)
-        .add_field(24, "9F 2", ExifFormat::U8, 1)
-        .add_field(32, "0F 3", ExifFormat::U8, 1)
-        .add_field(33, "b3F 3", ExifFormat::U8, 1)
-        .add_field(34, "A3F 3", ExifFormat::U8, 1)
-        .add_field(35, "b2F 3", ExifFormat::U8, 1)
-        .add_field(36, "A2F 3", ExifFormat::U8, 1)
-        .add_field(37, "3F 3", ExifFormat::U8, 1)
-        .add_field(38, "5F 3", ExifFormat::U8, 1)
-        .add_field(39, "7F 3", ExifFormat::U8, 1)
-        .add_field(40, "9F 3", ExifFormat::U8, 1)
-        .add_field(34, "A3F 3", ExifFormat::U8, 1)
-        .add_field(35, "b2F 3", ExifFormat::U8, 1)
-        .add_field(36, "A2F 3", ExifFormat::U8, 1)
-        .add_field(37, "3F 3", ExifFormat::U8, 1)
-        .add_field(38, "5F 3", ExifFormat::U8, 1)
-        .add_field(39, "7F 3", ExifFormat::U8, 1)
-        .add_field(40, "9F 3", ExifFormat::U8, 1)
-        .add_field(0, "Off", ExifFormat::U8, 1)
-        .add_field(1, "Low", ExifFormat::U8, 1)
-        .add_field(2, "Normal", ExifFormat::U8, 1)
-        .add_field(3, "High", ExifFormat::U8, 1)
-        .add_field(4, "Extra High", ExifFormat::U8, 1)
-        .add_field(8, "Auto", ExifFormat::U8, 1)
-        .add_field(0, "Off", ExifFormat::U8, 1)
-        .add_field(1, "2 Shots", ExifFormat::U8, 1)
-        .add_field(2, "3 Shots", ExifFormat::U8, 1)
-        .add_field(3, "4 Shots", ExifFormat::U8, 1)
-        .add_field(4, "5 Shots", ExifFormat::U8, 1)
-        .add_field(0, "A", ExifFormat::U8, 1)
-        .add_field(1, "B", ExifFormat::U8, 1)
-        .add_field(2, "C", ExifFormat::U8, 1)
-        .add_field(3, "D", ExifFormat::U8, 1)
-        .add_field(0, "XQD Card", ExifFormat::U8, 1)
-        .add_field(1, "SD Card", ExifFormat::U8, 1)
-        .add_field(0, "1/4000 s", ExifFormat::U8, 1)
-        .add_field(1, "1/3200 s", ExifFormat::U8, 1)
-        .add_field(2, "1/2500 s", ExifFormat::U8, 1)
-        .add_field(3, "1/2000 s", ExifFormat::U8, 1)
-        .add_field(4, "1/1600 s", ExifFormat::U8, 1)
-        .add_field(5, "1/1250 s", ExifFormat::U8, 1)
-        .add_field(6, "1/1000 s", ExifFormat::U8, 1)
-        .add_field(7, "1/800 s", ExifFormat::U8, 1)
-        .add_field(8, "1/640 s", ExifFormat::U8, 1)
-        .add_field(9, "1/500 s", ExifFormat::U8, 1)
-        .add_field(10, "1/400 s", ExifFormat::U8, 1)
-        .add_field(11, "1/320 s", ExifFormat::U8, 1)
-        .add_field(12, "1/250 s", ExifFormat::U8, 1)
-        .add_field(13, "1/200 s", ExifFormat::U8, 1)
-        .add_field(14, "1/160 s", ExifFormat::U8, 1)
-        .add_field(15, "1/125 s", ExifFormat::U8, 1)
-        .add_field(16, "1/100 s", ExifFormat::U8, 1)
-        .add_field(17, "1/80 s", ExifFormat::U8, 1)
-        .add_field(18, "1/60 s", ExifFormat::U8, 1)
-        .add_field(19, "1/50 s", ExifFormat::U8, 1)
-        .add_field(20, "1/40 s", ExifFormat::U8, 1)
-        .add_field(21, "1/30 s", ExifFormat::U8, 1)
-        .add_field(22, "1/15 s", ExifFormat::U8, 1)
-        .add_field(23, "1/8 s", ExifFormat::U8, 1)
-        .add_field(24, "1/4 s", ExifFormat::U8, 1)
-        .add_field(25, "1/2 s", ExifFormat::U8, 1)
-        .add_field(26, "1 s", ExifFormat::U8, 1)
-        .add_field(27, "2 s", ExifFormat::U8, 1)
-        .add_field(28, "4 s", ExifFormat::U8, 1)
-        .add_field(29, "8 s", ExifFormat::U8, 1)
-        .add_field(30, "15 s", ExifFormat::U8, 1)
-        .add_field(31, "30 s", ExifFormat::U8, 1)
-        .add_field(32, "Auto (Slowest)", ExifFormat::U8, 1)
-        .add_field(33, "Auto (Slower)", ExifFormat::U8, 1)
-        .add_field(34, "Auto", ExifFormat::U8, 1)
-        .add_field(35, "Auto (Faster)", ExifFormat::U8, 1)
-        .add_field(36, "Auto (Fastest)", ExifFormat::U8, 1)
-        .add_field(36, "ISO 200", ExifFormat::U8, 1)
-        .add_field(38, "ISO 250", ExifFormat::U8, 1)
-        .add_field(39, "ISO 280", ExifFormat::U8, 1)
-        .add_field(40, "ISO 320", ExifFormat::U8, 1)
-        .add_field(42, "ISO 400", ExifFormat::U8, 1)
-        .add_field(44, "ISO 500", ExifFormat::U8, 1)
-        .add_field(45, "ISO 560", ExifFormat::U8, 1)
-        .add_field(46, "ISO 640", ExifFormat::U8, 1)
-        .add_field(48, "ISO 800", ExifFormat::U8, 1)
-        .add_field(50, "ISO 1000", ExifFormat::U8, 1)
-        .add_field(51, "ISO 1100", ExifFormat::U8, 1)
-        .add_field(52, "ISO 1250", ExifFormat::U8, 1)
-        .add_field(54, "ISO 1600", ExifFormat::U8, 1)
-        .add_field(56, "ISO 2000", ExifFormat::U8, 1)
-        .add_field(57, "ISO 2200", ExifFormat::U8, 1)
-        .add_field(58, "ISO 2500", ExifFormat::U8, 1)
-        .add_field(60, "ISO 3200", ExifFormat::U8, 1)
-        .add_field(62, "ISO 4000", ExifFormat::U8, 1)
-        .add_field(63, "ISO 4500", ExifFormat::U8, 1)
-        .add_field(64, "ISO 5000", ExifFormat::U8, 1)
-        .add_field(66, "ISO 6400", ExifFormat::U8, 1)
-        .add_field(68, "ISO 8000", ExifFormat::U8, 1)
-        .add_field(69, "ISO 9000", ExifFormat::U8, 1)
-        .add_field(70, "ISO 10000", ExifFormat::U8, 1)
-        .add_field(72, "ISO 12800", ExifFormat::U8, 1)
-        .add_field(74, "ISO 16000", ExifFormat::U8, 1)
-        .add_field(75, "ISO 18000", ExifFormat::U8, 1)
-        .add_field(76, "ISO 20000", ExifFormat::U8, 1)
-        .add_field(78, "ISO 25600", ExifFormat::U8, 1)
-        .add_field(80, "ISO 32000", ExifFormat::U8, 1)
-        .add_field(81, "ISO 36000", ExifFormat::U8, 1)
-        .add_field(82, "ISO 40000", ExifFormat::U8, 1)
-        .add_field(84, "ISO 51200", ExifFormat::U8, 1)
-        .add_field(86, "ISO Hi 0.3", ExifFormat::U8, 1)
-        .add_field(87, "ISO Hi 0.5", ExifFormat::U8, 1)
-        .add_field(88, "ISO Hi 0.7", ExifFormat::U8, 1)
-        .add_field(90, "ISO Hi 1.0", ExifFormat::U8, 1)
-        .add_field(96, "ISO Hi 2.0", ExifFormat::U8, 1)
-        .add_field(102, "ISO Hi 3.0", ExifFormat::U8, 1)
-        .add_field(108, "ISO Hi 4.0", ExifFormat::U8, 1)
-        .add_field(114, "ISO Hi 5.0", ExifFormat::U8, 1)
-        .add_field(0, "Enable", ExifFormat::U8, 1)
-        .add_field(1, "Disable", ExifFormat::U8, 1)
-        .add_field(0, "FX (36x24)", ExifFormat::U8, 1)
-        .add_field(1, "DX (24x16)", ExifFormat::U8, 1)
-        .add_field(2, "5:4 (30x24)", ExifFormat::U8, 1)
-        .add_field(3, "1.2x (30x20)", ExifFormat::U8, 1)
-        .add_field(4, "1.3x (18x12)", ExifFormat::U8, 1)
+        .add_field(1531, "ShutterCount", ExifFormat::U32, 1)
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(16, "RotationInfoOffset", ExifFormat::U32, 1)
+        .add_field(20, "JPGInfoOffset", ExifFormat::U32, 1)
+        .add_field(44, "BracketingOffset", ExifFormat::U32, 1)
+        .add_field(80, "ShootingMenuOffset", ExifFormat::U32, 1)
+        .add_field(88, "CustomSettingsOffset", ExifFormat::U32, 1)
+        .add_field(160, "OrientationOffset", ExifFormat::U32, 1)
+        .add_field(168, "OtherOffset", ExifFormat::U32, 1)
+        .add_field(32, "Interval", ExifFormat::U8, 1)
+        // Condition: $$self{Model} eq "NIKON D5" and $$self{FirmwareVersion} ge "1.40"
+        .add_field(36, "IntervalFrame", ExifFormat::U8, 1)
+        // Condition: $$self{Model} eq "NIKON D5" and $$self{FirmwareVersion} ge "1.40"
+        .build()
+}
+
+/// Binary data table: ShotInfoD500
+/// Source lines: 7196-7274
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod500_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD500", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(16, "RotationInfoOffset", ExifFormat::U32, 1)
+        .add_field(20, "JPGInfoOffset", ExifFormat::U32, 1)
+        .add_field(44, "BracketingOffset", ExifFormat::U32, 1)
+        .add_field(80, "ShootingMenuOffset", ExifFormat::U32, 1)
+        .add_field(88, "CustomSettingsOffset", ExifFormat::U32, 1)
+        .add_field(160, "OrientationOffset", ExifFormat::U32, 1)
+        .add_field(168, "OtherOffset", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: ShotInfoD6
+/// Source lines: 7655-7704
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod6_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD6", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 8)
+        .add_field(36, "NumberOffsets", ExifFormat::U32, 1)
+        .add_field(164, "IntervalOffset", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: ShotInfoD610
+/// Source lines: 7863-7890
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod610_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD610", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
         .build()
 }
 
@@ -440,422 +582,134 @@ pub fn create_shotinfod800_table() -> BinaryDataTable {
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod810_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD810", ExifFormat::U32)
-        .encrypted(true)
-        .add_field(0, "Overflow", ExifFormat::U32, 1)
-        .add_field(2, "Backup", ExifFormat::U32, 1)
-        .add_field(3, "NEF Primary + JPG Secondary", ExifFormat::U32, 1)
-        .add_field(0, "AE Bracketing Disabled", ExifFormat::U32, 1)
-        .add_field(32, "AE Bracketing Disabled", ExifFormat::U32, 1)
-        .add_field(48, "AE Bracketing Disabled", ExifFormat::U32, 1)
-        .add_field(64, "AE Bracketing Disabled", ExifFormat::U32, 1)
-        .add_field(80, "AE Bracketing Disabled", ExifFormat::U32, 1)
-        .add_field(129, "+3F0.3", ExifFormat::U32, 1)
-        .add_field(130, "-3F0.3", ExifFormat::U32, 1)
-        .add_field(131, "+2F0.3", ExifFormat::U32, 1)
-        .add_field(132, "-2F0.3", ExifFormat::U32, 1)
-        .add_field(133, "3F0.3", ExifFormat::U32, 1)
-        .add_field(134, "5F0.3", ExifFormat::U32, 1)
-        .add_field(135, "7F0.3", ExifFormat::U32, 1)
-        .add_field(136, "9F0.3", ExifFormat::U32, 1)
-        .add_field(145, "+3F0.5", ExifFormat::U32, 1)
-        .add_field(146, "-3F0.5", ExifFormat::U32, 1)
-        .add_field(147, "+2F0.5", ExifFormat::U32, 1)
-        .add_field(148, "-2F0.5", ExifFormat::U32, 1)
-        .add_field(149, "3F0.5", ExifFormat::U32, 1)
-        .add_field(150, "5F0.5", ExifFormat::U32, 1)
-        .add_field(151, "7F0.5", ExifFormat::U32, 1)
-        .add_field(152, "9F0.5", ExifFormat::U32, 1)
-        .add_field(161, "+3F0.7", ExifFormat::U32, 1)
-        .add_field(162, "-3F0.7", ExifFormat::U32, 1)
-        .add_field(163, "+2F0.7", ExifFormat::U32, 1)
-        .add_field(164, "-2F0.7", ExifFormat::U32, 1)
-        .add_field(165, "3F0.7", ExifFormat::U32, 1)
-        .add_field(166, "5F0.7", ExifFormat::U32, 1)
-        .add_field(167, "7F0.7", ExifFormat::U32, 1)
-        .add_field(168, "9F0.7", ExifFormat::U32, 1)
-        .add_field(177, "+3F1", ExifFormat::U32, 1)
-        .add_field(178, "-3F1", ExifFormat::U32, 1)
-        .add_field(179, "+2F1", ExifFormat::U32, 1)
-        .add_field(180, "-2F1", ExifFormat::U32, 1)
-        .add_field(181, "3F1", ExifFormat::U32, 1)
-        .add_field(182, "5F1", ExifFormat::U32, 1)
-        .add_field(183, "7F1", ExifFormat::U32, 1)
-        .add_field(184, "9F1", ExifFormat::U32, 1)
-        .add_field(193, "+3F2", ExifFormat::U32, 1)
-        .add_field(194, "-3F2", ExifFormat::U32, 1)
-        .add_field(195, "+2F2", ExifFormat::U32, 1)
-        .add_field(196, "-2F2", ExifFormat::U32, 1)
-        .add_field(197, "3F2", ExifFormat::U32, 1)
-        .add_field(198, "5F2", ExifFormat::U32, 1)
-        .add_field(209, "+3F3", ExifFormat::U32, 1)
-        .add_field(210, "-3F3", ExifFormat::U32, 1)
-        .add_field(211, "+2F3", ExifFormat::U32, 1)
-        .add_field(212, "-2F3", ExifFormat::U32, 1)
-        .add_field(213, "3F3", ExifFormat::U32, 1)
-        .add_field(214, "5F3", ExifFormat::U32, 1)
-        .add_field(0, "WB Bracketing Disabled", ExifFormat::U32, 1)
-        .add_field(1, "b3F 1", ExifFormat::U32, 1)
-        .add_field(2, "A3F 1", ExifFormat::U32, 1)
-        .add_field(3, "b2F 1", ExifFormat::U32, 1)
-        .add_field(4, "A2F 1", ExifFormat::U32, 1)
-        .add_field(5, "3F 1", ExifFormat::U32, 1)
-        .add_field(6, "5F 1", ExifFormat::U32, 1)
-        .add_field(7, "7F 1", ExifFormat::U32, 1)
-        .add_field(8, "9F 1", ExifFormat::U32, 1)
-        .add_field(16, "0F 2", ExifFormat::U32, 1)
-        .add_field(17, "b3F 2", ExifFormat::U32, 1)
-        .add_field(18, "A3F 2", ExifFormat::U32, 1)
-        .add_field(19, "b2F 2", ExifFormat::U32, 1)
-        .add_field(20, "A2F 2", ExifFormat::U32, 1)
-        .add_field(21, "3F 2", ExifFormat::U32, 1)
-        .add_field(22, "5F 2", ExifFormat::U32, 1)
-        .add_field(23, "7F 2", ExifFormat::U32, 1)
-        .add_field(24, "9F 2", ExifFormat::U32, 1)
-        .add_field(32, "0F 3", ExifFormat::U32, 1)
-        .add_field(33, "b3F 3", ExifFormat::U32, 1)
-        .add_field(34, "A3F 3", ExifFormat::U32, 1)
-        .add_field(35, "b2F 3", ExifFormat::U32, 1)
-        .add_field(36, "A2F 3", ExifFormat::U32, 1)
-        .add_field(37, "3F 3", ExifFormat::U32, 1)
-        .add_field(38, "5F 3", ExifFormat::U32, 1)
-        .add_field(39, "7F 3", ExifFormat::U32, 1)
-        .add_field(40, "9F 3", ExifFormat::U32, 1)
-        .add_field(34, "A3F 3", ExifFormat::U32, 1)
-        .add_field(35, "b2F 3", ExifFormat::U32, 1)
-        .add_field(36, "A2F 3", ExifFormat::U32, 1)
-        .add_field(37, "3F 3", ExifFormat::U32, 1)
-        .add_field(38, "5F 3", ExifFormat::U32, 1)
-        .add_field(39, "7F 3", ExifFormat::U32, 1)
-        .add_field(40, "9F 3", ExifFormat::U32, 1)
-        .add_field(0, "Matrix", ExifFormat::U32, 1)
-        .add_field(1, "Center", ExifFormat::U32, 1)
-        .add_field(2, "Spot", ExifFormat::U32, 1)
-        .add_field(0, "1/4000 s", ExifFormat::U32, 1)
-        .add_field(1, "1/3200 s", ExifFormat::U32, 1)
-        .add_field(2, "1/2500 s", ExifFormat::U32, 1)
-        .add_field(3, "1/2000 s", ExifFormat::U32, 1)
-        .add_field(4, "1/1600 s", ExifFormat::U32, 1)
-        .add_field(5, "1/1250 s", ExifFormat::U32, 1)
-        .add_field(6, "1/1000 s", ExifFormat::U32, 1)
-        .add_field(7, "1/800 s", ExifFormat::U32, 1)
-        .add_field(8, "1/640 s", ExifFormat::U32, 1)
-        .add_field(9, "1/500 s", ExifFormat::U32, 1)
-        .add_field(10, "1/400 s", ExifFormat::U32, 1)
-        .add_field(11, "1/320 s", ExifFormat::U32, 1)
-        .add_field(12, "1/250 s", ExifFormat::U32, 1)
-        .add_field(13, "1/200 s", ExifFormat::U32, 1)
-        .add_field(14, "1/160 s", ExifFormat::U32, 1)
-        .add_field(15, "1/125 s", ExifFormat::U32, 1)
-        .add_field(16, "1/100 s", ExifFormat::U32, 1)
-        .add_field(17, "1/80 s", ExifFormat::U32, 1)
-        .add_field(18, "1/60 s", ExifFormat::U32, 1)
-        .add_field(19, "1/50 s", ExifFormat::U32, 1)
-        .add_field(20, "1/40 s", ExifFormat::U32, 1)
-        .add_field(21, "1/30 s", ExifFormat::U32, 1)
-        .add_field(22, "1/15 s", ExifFormat::U32, 1)
-        .add_field(23, "1/8 s", ExifFormat::U32, 1)
-        .add_field(24, "1/4 s", ExifFormat::U32, 1)
-        .add_field(25, "1/2 s", ExifFormat::U32, 1)
-        .add_field(26, "1 s", ExifFormat::U32, 1)
-        .add_field(27, "2 s", ExifFormat::U32, 1)
-        .add_field(28, "4 s", ExifFormat::U32, 1)
-        .add_field(29, "8 s", ExifFormat::U32, 1)
-        .add_field(30, "15 s", ExifFormat::U32, 1)
-        .add_field(31, "30 s", ExifFormat::U32, 1)
-        .add_field(32, "Auto (Slowest)", ExifFormat::U32, 1)
-        .add_field(33, "Auto (Slower)", ExifFormat::U32, 1)
-        .add_field(34, "Auto", ExifFormat::U32, 1)
-        .add_field(35, "Auto (Faster)", ExifFormat::U32, 1)
-        .add_field(36, "Auto (Fastest)", ExifFormat::U32, 1)
-        .add_field(36, "ISO 200", ExifFormat::U32, 1)
-        .add_field(38, "ISO 250", ExifFormat::U32, 1)
-        .add_field(39, "ISO 280", ExifFormat::U32, 1)
-        .add_field(40, "ISO 320", ExifFormat::U32, 1)
-        .add_field(42, "ISO 400", ExifFormat::U32, 1)
-        .add_field(44, "ISO 500", ExifFormat::U32, 1)
-        .add_field(45, "ISO 560", ExifFormat::U32, 1)
-        .add_field(46, "ISO 640", ExifFormat::U32, 1)
-        .add_field(48, "ISO 800", ExifFormat::U32, 1)
-        .add_field(50, "ISO 1000", ExifFormat::U32, 1)
-        .add_field(51, "ISO 1100", ExifFormat::U32, 1)
-        .add_field(52, "ISO 1250", ExifFormat::U32, 1)
-        .add_field(54, "ISO 1600", ExifFormat::U32, 1)
-        .add_field(56, "ISO 2000", ExifFormat::U32, 1)
-        .add_field(57, "ISO 2200", ExifFormat::U32, 1)
-        .add_field(58, "ISO 2500", ExifFormat::U32, 1)
-        .add_field(60, "ISO 3200", ExifFormat::U32, 1)
-        .add_field(62, "ISO 4000", ExifFormat::U32, 1)
-        .add_field(63, "ISO 4500", ExifFormat::U32, 1)
-        .add_field(64, "ISO 5000", ExifFormat::U32, 1)
-        .add_field(66, "ISO 6400", ExifFormat::U32, 1)
-        .add_field(68, "ISO 8000", ExifFormat::U32, 1)
-        .add_field(69, "ISO 9000", ExifFormat::U32, 1)
-        .add_field(70, "ISO 10000", ExifFormat::U32, 1)
-        .add_field(72, "ISO 12800", ExifFormat::U32, 1)
-        .add_field(74, "ISO 16000", ExifFormat::U32, 1)
-        .add_field(75, "ISO 18000", ExifFormat::U32, 1)
-        .add_field(76, "ISO 20000", ExifFormat::U32, 1)
-        .add_field(78, "ISO 25600", ExifFormat::U32, 1)
-        .add_field(80, "ISO 32000", ExifFormat::U32, 1)
-        .add_field(81, "ISO 36000", ExifFormat::U32, 1)
-        .add_field(82, "ISO 40000", ExifFormat::U32, 1)
-        .add_field(84, "ISO 51200", ExifFormat::U32, 1)
-        .add_field(86, "ISO Hi 0.3", ExifFormat::U32, 1)
-        .add_field(87, "ISO Hi 0.5", ExifFormat::U32, 1)
-        .add_field(88, "ISO Hi 0.7", ExifFormat::U32, 1)
-        .add_field(90, "ISO Hi 1.0", ExifFormat::U32, 1)
-        .add_field(96, "ISO Hi 2.0", ExifFormat::U32, 1)
-        .add_field(102, "ISO Hi 3.0", ExifFormat::U32, 1)
-        .add_field(108, "ISO Hi 4.0", ExifFormat::U32, 1)
-        .add_field(114, "ISO Hi 5.0", ExifFormat::U32, 1)
-        .add_field(0, "FX (36x24)", ExifFormat::U32, 1)
-        .add_field(1, "DX (24x16)", ExifFormat::U32, 1)
-        .add_field(2, "5:4 (30x24)", ExifFormat::U32, 1)
-        .add_field(3, "1.2x (30x20)", ExifFormat::U32, 1)
-        .add_field(4, "1:1 (24x24)", ExifFormat::U32, 1)
-        .add_field(0, "A", ExifFormat::U32, 1)
-        .add_field(1, "B", ExifFormat::U32, 1)
-        .add_field(2, "C", ExifFormat::U32, 1)
-        .add_field(3, "D", ExifFormat::U32, 1)
-        .add_field(0, "XQD Card", ExifFormat::U32, 1)
-        .add_field(1, "SD Card", ExifFormat::U32, 1)
-        .add_field(0, "Overflow", ExifFormat::U32, 1)
-        .add_field(2, "Backup", ExifFormat::U32, 1)
-        .add_field(3, "NEF Primary + JPG Secondary", ExifFormat::U32, 1)
-        .add_field(0, "AE Bracketing Disabled", ExifFormat::U32, 1)
-        .add_field(32, "AE Bracketing Disabled", ExifFormat::U32, 1)
-        .add_field(48, "AE Bracketing Disabled", ExifFormat::U32, 1)
-        .add_field(64, "AE Bracketing Disabled", ExifFormat::U32, 1)
-        .add_field(80, "AE Bracketing Disabled", ExifFormat::U32, 1)
-        .add_field(129, "+3F0.3", ExifFormat::U32, 1)
-        .add_field(130, "-3F0.3", ExifFormat::U32, 1)
-        .add_field(131, "+2F0.3", ExifFormat::U32, 1)
-        .add_field(132, "-2F0.3", ExifFormat::U32, 1)
-        .add_field(133, "3F0.3", ExifFormat::U32, 1)
-        .add_field(134, "5F0.3", ExifFormat::U32, 1)
-        .add_field(135, "7F0.3", ExifFormat::U32, 1)
-        .add_field(136, "9F0.3", ExifFormat::U32, 1)
-        .add_field(145, "+3F0.5", ExifFormat::U32, 1)
-        .add_field(146, "-3F0.5", ExifFormat::U32, 1)
-        .add_field(147, "+2F0.5", ExifFormat::U32, 1)
-        .add_field(148, "-2F0.5", ExifFormat::U32, 1)
-        .add_field(149, "3F0.5", ExifFormat::U32, 1)
-        .add_field(150, "5F0.5", ExifFormat::U32, 1)
-        .add_field(151, "7F0.5", ExifFormat::U32, 1)
-        .add_field(152, "9F0.5", ExifFormat::U32, 1)
-        .add_field(161, "+3F0.7", ExifFormat::U32, 1)
-        .add_field(162, "-3F0.7", ExifFormat::U32, 1)
-        .add_field(163, "+2F0.7", ExifFormat::U32, 1)
-        .add_field(164, "-2F0.7", ExifFormat::U32, 1)
-        .add_field(165, "3F0.7", ExifFormat::U32, 1)
-        .add_field(166, "5F0.7", ExifFormat::U32, 1)
-        .add_field(167, "7F0.7", ExifFormat::U32, 1)
-        .add_field(168, "9F0.7", ExifFormat::U32, 1)
-        .add_field(177, "+3F1", ExifFormat::U32, 1)
-        .add_field(178, "-3F1", ExifFormat::U32, 1)
-        .add_field(179, "+2F1", ExifFormat::U32, 1)
-        .add_field(180, "-2F1", ExifFormat::U32, 1)
-        .add_field(181, "3F1", ExifFormat::U32, 1)
-        .add_field(182, "5F1", ExifFormat::U32, 1)
-        .add_field(183, "7F1", ExifFormat::U32, 1)
-        .add_field(184, "9F1", ExifFormat::U32, 1)
-        .add_field(193, "+3F2", ExifFormat::U32, 1)
-        .add_field(194, "-3F2", ExifFormat::U32, 1)
-        .add_field(195, "+2F2", ExifFormat::U32, 1)
-        .add_field(196, "-2F2", ExifFormat::U32, 1)
-        .add_field(197, "3F2", ExifFormat::U32, 1)
-        .add_field(198, "5F2", ExifFormat::U32, 1)
-        .add_field(209, "+3F3", ExifFormat::U32, 1)
-        .add_field(210, "-3F3", ExifFormat::U32, 1)
-        .add_field(211, "+2F3", ExifFormat::U32, 1)
-        .add_field(212, "-2F3", ExifFormat::U32, 1)
-        .add_field(213, "3F3", ExifFormat::U32, 1)
-        .add_field(214, "5F3", ExifFormat::U32, 1)
-        .add_field(0, "WB Bracketing Disabled", ExifFormat::U32, 1)
-        .add_field(1, "b3F 1", ExifFormat::U32, 1)
-        .add_field(2, "A3F 1", ExifFormat::U32, 1)
-        .add_field(3, "b2F 1", ExifFormat::U32, 1)
-        .add_field(4, "A2F 1", ExifFormat::U32, 1)
-        .add_field(5, "3F 1", ExifFormat::U32, 1)
-        .add_field(6, "5F 1", ExifFormat::U32, 1)
-        .add_field(7, "7F 1", ExifFormat::U32, 1)
-        .add_field(8, "9F 1", ExifFormat::U32, 1)
-        .add_field(16, "0F 2", ExifFormat::U32, 1)
-        .add_field(17, "b3F 2", ExifFormat::U32, 1)
-        .add_field(18, "A3F 2", ExifFormat::U32, 1)
-        .add_field(19, "b2F 2", ExifFormat::U32, 1)
-        .add_field(20, "A2F 2", ExifFormat::U32, 1)
-        .add_field(21, "3F 2", ExifFormat::U32, 1)
-        .add_field(22, "5F 2", ExifFormat::U32, 1)
-        .add_field(23, "7F 2", ExifFormat::U32, 1)
-        .add_field(24, "9F 2", ExifFormat::U32, 1)
-        .add_field(32, "0F 3", ExifFormat::U32, 1)
-        .add_field(33, "b3F 3", ExifFormat::U32, 1)
-        .add_field(34, "A3F 3", ExifFormat::U32, 1)
-        .add_field(35, "b2F 3", ExifFormat::U32, 1)
-        .add_field(36, "A2F 3", ExifFormat::U32, 1)
-        .add_field(37, "3F 3", ExifFormat::U32, 1)
-        .add_field(38, "5F 3", ExifFormat::U32, 1)
-        .add_field(39, "7F 3", ExifFormat::U32, 1)
-        .add_field(40, "9F 3", ExifFormat::U32, 1)
-        .add_field(34, "A3F 3", ExifFormat::U32, 1)
-        .add_field(35, "b2F 3", ExifFormat::U32, 1)
-        .add_field(36, "A2F 3", ExifFormat::U32, 1)
-        .add_field(37, "3F 3", ExifFormat::U32, 1)
-        .add_field(38, "5F 3", ExifFormat::U32, 1)
-        .add_field(39, "7F 3", ExifFormat::U32, 1)
-        .add_field(40, "9F 3", ExifFormat::U32, 1)
-        .add_field(0, "Single Frame", ExifFormat::U32, 1)
-        .add_field(1, "Continuous High Speed", ExifFormat::U32, 1)
-        .add_field(3, "Continuous Low Speed", ExifFormat::U32, 1)
-        .add_field(4, "Timer", ExifFormat::U32, 1)
-        .add_field(32, "Mirror-Up", ExifFormat::U32, 1)
-        .add_field(64, "Quiet", ExifFormat::U32, 1)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(132, "OrientationOffset", ExifFormat::U32, 1)
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
         .add_field(0, "Reset", ExifFormat::U32, 1)
         .add_field(1, "Zoom", ExifFormat::U32, 1)
         .add_field(3, "None", ExifFormat::U32, 1)
-        .add_field(0, "1/4000 s", ExifFormat::U32, 1)
-        .add_field(1, "1/3200 s", ExifFormat::U32, 1)
-        .add_field(2, "1/2500 s", ExifFormat::U32, 1)
-        .add_field(3, "1/2000 s", ExifFormat::U32, 1)
-        .add_field(4, "1/1600 s", ExifFormat::U32, 1)
-        .add_field(5, "1/1250 s", ExifFormat::U32, 1)
-        .add_field(6, "1/1000 s", ExifFormat::U32, 1)
-        .add_field(7, "1/800 s", ExifFormat::U32, 1)
-        .add_field(8, "1/640 s", ExifFormat::U32, 1)
-        .add_field(9, "1/500 s", ExifFormat::U32, 1)
-        .add_field(10, "1/400 s", ExifFormat::U32, 1)
-        .add_field(11, "1/320 s", ExifFormat::U32, 1)
-        .add_field(12, "1/250 s", ExifFormat::U32, 1)
-        .add_field(13, "1/200 s", ExifFormat::U32, 1)
-        .add_field(14, "1/160 s", ExifFormat::U32, 1)
-        .add_field(15, "1/125 s", ExifFormat::U32, 1)
-        .add_field(16, "1/100 s", ExifFormat::U32, 1)
-        .add_field(17, "1/80 s", ExifFormat::U32, 1)
-        .add_field(18, "1/60 s", ExifFormat::U32, 1)
-        .add_field(19, "1/50 s", ExifFormat::U32, 1)
-        .add_field(20, "1/40 s", ExifFormat::U32, 1)
-        .add_field(21, "1/30 s", ExifFormat::U32, 1)
-        .add_field(22, "1/15 s", ExifFormat::U32, 1)
-        .add_field(23, "1/8 s", ExifFormat::U32, 1)
-        .add_field(24, "1/4 s", ExifFormat::U32, 1)
-        .add_field(25, "1/2 s", ExifFormat::U32, 1)
-        .add_field(26, "1 s", ExifFormat::U32, 1)
-        .add_field(27, "2 s", ExifFormat::U32, 1)
-        .add_field(28, "4 s", ExifFormat::U32, 1)
-        .add_field(29, "8 s", ExifFormat::U32, 1)
-        .add_field(30, "15 s", ExifFormat::U32, 1)
-        .add_field(31, "30 s", ExifFormat::U32, 1)
-        .add_field(32, "Auto (Slowest)", ExifFormat::U32, 1)
-        .add_field(33, "Auto (Slower)", ExifFormat::U32, 1)
-        .add_field(34, "Auto", ExifFormat::U32, 1)
-        .add_field(35, "Auto (Faster)", ExifFormat::U32, 1)
-        .add_field(36, "Auto (Fastest)", ExifFormat::U32, 1)
-        .add_field(36, "ISO 200", ExifFormat::U32, 1)
-        .add_field(38, "ISO 250", ExifFormat::U32, 1)
-        .add_field(39, "ISO 280", ExifFormat::U32, 1)
-        .add_field(40, "ISO 320", ExifFormat::U32, 1)
-        .add_field(42, "ISO 400", ExifFormat::U32, 1)
-        .add_field(44, "ISO 500", ExifFormat::U32, 1)
-        .add_field(45, "ISO 560", ExifFormat::U32, 1)
-        .add_field(46, "ISO 640", ExifFormat::U32, 1)
-        .add_field(48, "ISO 800", ExifFormat::U32, 1)
-        .add_field(50, "ISO 1000", ExifFormat::U32, 1)
-        .add_field(51, "ISO 1100", ExifFormat::U32, 1)
-        .add_field(52, "ISO 1250", ExifFormat::U32, 1)
-        .add_field(54, "ISO 1600", ExifFormat::U32, 1)
-        .add_field(56, "ISO 2000", ExifFormat::U32, 1)
-        .add_field(57, "ISO 2200", ExifFormat::U32, 1)
-        .add_field(58, "ISO 2500", ExifFormat::U32, 1)
-        .add_field(60, "ISO 3200", ExifFormat::U32, 1)
-        .add_field(62, "ISO 4000", ExifFormat::U32, 1)
-        .add_field(63, "ISO 4500", ExifFormat::U32, 1)
-        .add_field(64, "ISO 5000", ExifFormat::U32, 1)
-        .add_field(66, "ISO 6400", ExifFormat::U32, 1)
-        .add_field(68, "ISO 8000", ExifFormat::U32, 1)
-        .add_field(69, "ISO 9000", ExifFormat::U32, 1)
-        .add_field(70, "ISO 10000", ExifFormat::U32, 1)
-        .add_field(72, "ISO 12800", ExifFormat::U32, 1)
-        .add_field(74, "ISO 16000", ExifFormat::U32, 1)
-        .add_field(75, "ISO 18000", ExifFormat::U32, 1)
-        .add_field(76, "ISO 20000", ExifFormat::U32, 1)
-        .add_field(78, "ISO 25600", ExifFormat::U32, 1)
-        .add_field(80, "ISO 32000", ExifFormat::U32, 1)
-        .add_field(81, "ISO 36000", ExifFormat::U32, 1)
-        .add_field(82, "ISO 40000", ExifFormat::U32, 1)
-        .add_field(84, "ISO 51200", ExifFormat::U32, 1)
-        .add_field(86, "ISO Hi 0.3", ExifFormat::U32, 1)
-        .add_field(87, "ISO Hi 0.5", ExifFormat::U32, 1)
-        .add_field(88, "ISO Hi 0.7", ExifFormat::U32, 1)
-        .add_field(90, "ISO Hi 1.0", ExifFormat::U32, 1)
-        .add_field(96, "ISO Hi 2.0", ExifFormat::U32, 1)
-        .add_field(102, "ISO Hi 3.0", ExifFormat::U32, 1)
-        .add_field(108, "ISO Hi 4.0", ExifFormat::U32, 1)
-        .add_field(114, "ISO Hi 5.0", ExifFormat::U32, 1)
-        .add_field(0, "Horizontal", ExifFormat::U32, 1)
-        .add_field(1, "Rotate 270 CW", ExifFormat::U32, 1)
-        .add_field(2, "Rotate 90 CW", ExifFormat::U32, 1)
-        .add_field(3, "Rotate 180", ExifFormat::U32, 1)
-        .add_field(0, "No", ExifFormat::U32, 1)
-        .add_field(5, "Yes", ExifFormat::U32, 1)
-        .add_field(0, "Distance", ExifFormat::U32, 1)
-        .add_field(1, "Motion", ExifFormat::U32, 1)
-        .add_field(2, "Subject Detection", ExifFormat::U32, 1)
-        .add_field(0, "1 Sec", ExifFormat::U32, 1)
-        .add_field(1, "3 Sec", ExifFormat::U32, 1)
-        .add_field(2, "5 Sec", ExifFormat::U32, 1)
-        .add_field(4, "30 Sec", ExifFormat::U32, 1)
-        .add_field(5, "No Limit", ExifFormat::U32, 1)
-        .add_field(6, "2 Sec", ExifFormat::U32, 1)
-        .add_field(7, "10 Sec", ExifFormat::U32, 1)
-        .add_field(8, "20 Sec", ExifFormat::U32, 1)
-        .add_field(9, "1 Min", ExifFormat::U32, 1)
-        .add_field(10, "3 Min", ExifFormat::U32, 1)
-        .add_field(11, "5 Min", ExifFormat::U32, 1)
-        .add_field(12, "10 Min", ExifFormat::U32, 1)
-        .add_field(13, "30 Min", ExifFormat::U32, 1)
-        .add_field(0, "No Wait", ExifFormat::U32, 1)
-        .add_field(1, "10 Sec", ExifFormat::U32, 1)
-        .add_field(2, "30 Sec", ExifFormat::U32, 1)
-        .add_field(3, "1 Min", ExifFormat::U32, 1)
-        .add_field(4, "5 Min", ExifFormat::U32, 1)
-        .add_field(5, "10 Min", ExifFormat::U32, 1)
-        .add_field(6, "30 Min", ExifFormat::U32, 1)
-        .add_field(7, "1 Sec", ExifFormat::U32, 1)
-        .add_field(8, "2 Sec", ExifFormat::U32, 1)
-        .add_field(9, "3 Sec", ExifFormat::U32, 1)
-        .add_field(10, "5 Sec", ExifFormat::U32, 1)
-        .add_field(11, "20 Sec", ExifFormat::U32, 1)
-        .add_field(12, "3 Min", ExifFormat::U32, 1)
-        .add_field(0, "Top Left", ExifFormat::U32, 1)
-        .add_field(1, "Top Right", ExifFormat::U32, 1)
-        .add_field(2, "Bottom Left", ExifFormat::U32, 1)
-        .add_field(3, "Bottom Right", ExifFormat::U32, 1)
-        .add_field(4, "Left", ExifFormat::U32, 1)
-        .add_field(5, "Right", ExifFormat::U32, 1)
-        .add_field(6, "Top Center", ExifFormat::U32, 1)
-        .add_field(7, "Bottom Center", ExifFormat::U32, 1)
-        .add_field(0, "Auto (all)", ExifFormat::U32, 1)
-        .add_field(1, "People", ExifFormat::U32, 1)
-        .add_field(2, "Animals", ExifFormat::U32, 1)
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 8)
+        .add_field(14, "FirmwareVersion2", ExifFormat::Ascii, 8)
+        .add_field(24, "FirmwareVersion3", ExifFormat::Ascii, 8)
+        .add_field(36, "NumberOffsets", ExifFormat::U32, 1)
+        .add_field(136, "OrientationOffset", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 8)
+        .add_field(14, "FirmwareVersion2", ExifFormat::Ascii, 8)
+        .add_field(24, "FirmwareVersion3", ExifFormat::Ascii, 8)
+        .add_field(36, "NumberOffsets", ExifFormat::U32, 1)
+        .add_field(48, "IntervalOffset", ExifFormat::U32, 1)
+        .add_field(56, "PortraitOffset", ExifFormat::U32, 1)
+        .add_field(136, "OrientationOffset", ExifFormat::U32, 1)
+        // Condition: $$self{Model} =~ /^NIKON Z f\b/i
+        .add_field(152, "OrientationOffset", ExifFormat::U32, 1)
+        // Condition: $$self{Model} =~ /^NIKON Z (30|5|50|6|6_2|7|7_2|8|fc)\b/i
+        .add_field(40, "IntervalFrame", ExifFormat::U16, 1)
+        // Condition: $$self{IntervalShooting} > 0
+        .add_field(43, "ImageArea", ExifFormat::U32, 1)
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 8)
+        .add_field(14, "FirmwareVersion2", ExifFormat::Ascii, 8)
+        .add_field(24, "FirmwareVersion3", ExifFormat::Ascii, 8)
+        .add_field(36, "NumberOffsets", ExifFormat::U32, 1)
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 8)
+        .add_field(14, "FirmwareVersion2", ExifFormat::Ascii, 8)
+        .add_field(24, "FirmwareVersion3", ExifFormat::Ascii, 8)
+        .add_field(36, "NumberOffsets", ExifFormat::U32, 1)
+        .add_field(42, "IntervalFrame", ExifFormat::U16, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .add_field(3050, "AFAreaInitialWidth", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96
+        .add_field(3051, "AFAreaInitialHeight", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96
+        .add_field(1, "AutoCaptureCriteria", ExifFormat::U32, 1)
+        // Condition: $$self{AutoCapturedFrame} and $$self{AutoCapturedFrame} ne 0
+        .add_field(74, "AutoCaptureDistanceFar", ExifFormat::U32, 1)
+        // Condition: $$self{AutoCapturedFrame} and $$self{AutoCapturedFrame} ne 0
+        .add_field(78, "AutoCaptureDistanceNear", ExifFormat::U32, 1)
+        // Condition: $$self{AutoCapturedFrame} and $$self{AutoCapturedFrame} ne 0
+        .add_field(95, "AutoCaptureCriteriaMotionDirection", ExifFormat::U32, 1)
+        // Condition: $$self{AutoCapturedFrame} and $$self{AutoCapturedFrame} ne 0
+        .add_field(99, "AutoCaptureCriteriaMotionSpeed", ExifFormat::U32, 1)
+        // Condition: $$self{AutoCapturedFrame} and $$self{AutoCapturedFrame} ne 0
+        .add_field(100, "AutoCaptureCriteriaMotionSize", ExifFormat::U32, 1)
+        // Condition: $$self{AutoCapturedFrame} and $$self{AutoCapturedFrame} ne 0
+        .add_field(105, "AutoCaptureCriteriaSubjectSize", ExifFormat::U32, 1)
+        // Condition: $$self{AutoCapturedFrame} and $$self{AutoCapturedFrame} ne 0
+        .add_field(0, "RollAngle", ExifFormat::U8, 1)
+        .add_field(4, "PitchAngle", ExifFormat::U8, 1)
+        .add_field(8, "YawAngle", ExifFormat::U8, 1)
+        .add_field(360, "SingleFrame", ExifFormat::U32, 1)
+        .add_field(364, "HighFrameRate", ExifFormat::U32, 1)
+        .add_field(444, "MultipleExposureMode", ExifFormat::U32, 1)
+        .add_field(446, "MultiExposureShots", ExifFormat::U32, 1)
+        // Condition: $$self{MultipleExposureMode} != 0
+        .add_field(476, "IntervalDurationHours", ExifFormat::U32, 1)
+        .add_field(480, "IntervalDurationMinutes", ExifFormat::U32, 1)
+        .add_field(484, "IntervalDurationSeconds", ExifFormat::U32, 1)
+        .add_field(492, "Intervals", ExifFormat::U32, 1)
+        .add_field(496, "ShotsPerInterval", ExifFormat::U32, 1)
+        .add_field(500, "IntervalExposureSmoothing", ExifFormat::U8, 1)
+        .add_field(502, "IntervalPriority", ExifFormat::U8, 1)
+        .add_field(536, "FocusShiftNumberShots", ExifFormat::U32, 1)
+        .add_field(540, "FocusShiftStepWidth", ExifFormat::U32, 1)
+        .add_field(544, "FocusShiftInterval", ExifFormat::U32, 1)
+        .add_field(548, "FocusShiftExposureLock", ExifFormat::U32, 1)
         .add_field(648, "AutoISO", ExifFormat::U32, 1)
+        .add_field(650, "ISOAutoHiLimit", ExifFormat::U16, 1)
+        .add_field(718, "DiffractionCompensation", ExifFormat::U8, 1)
+        .add_field(719, "AutoDistortionControl", ExifFormat::U8, 1)
         .add_field(720, "FlickerReductionShooting", ExifFormat::U32, 1)
         .add_field(722, "NikonMeteringMode", ExifFormat::U32, 1)
+        .add_field(724, "FlashControlMode", ExifFormat::U32, 1)
+        .add_field(730, "FlashGNDistance", ExifFormat::U32, 1)
+        // Condition: $$self{FlashControlMode} == 2
+        .add_field(734, "FlashOutput", ExifFormat::U32, 1)
+        // Condition: $$self{FlashControlMode} >= 3
         .add_field(742, "FlashWirelessOption", ExifFormat::U32, 1)
         .add_field(744, "FlashRemoteControl", ExifFormat::U32, 1)
+        .add_field(748, "FlashMasterControlMode", ExifFormat::U32, 1)
+        .add_field(750, "FlashMasterCompensation", ExifFormat::U8, 1)
+        // Condition: $$self{FlashGroupOptionsMasterMode}  != 3
+        .add_field(754, "FlashMasterOutput", ExifFormat::U32, 1)
+        // Condition: $$self{FlashGroupOptionsMasterMode}  == 1
         .add_field(832, "AFAreaMode", ExifFormat::U32, 1)
         .add_field(834, "VRMode", ExifFormat::U32, 1)
+        .add_field(838, "BracketSet", ExifFormat::U32, 1)
+        .add_field(840, "BracketProgram", ExifFormat::U32, 1)
+        // Condition: $$self{BracketSet} < 3
+        .add_field(842, "BracketIncrement", ExifFormat::U32, 1)
+        // Condition: $$self{BracketSet} < 3
         .add_field(852, "HDR", ExifFormat::U32, 1)
         .add_field(858, "SecondarySlotFunction", ExifFormat::U32, 1)
         .add_field(864, "HDRLevel", ExifFormat::U32, 1)
         // Condition: $$self{HDR} ne 0
         .add_field(868, "Slot2JpgSize", ExifFormat::U32, 1)
         .add_field(878, "SubjectDetection", ExifFormat::U32, 1)
+        .add_field(880, "DynamicAFAreaSize", ExifFormat::U32, 1)
+        // Condition: $$self{AFAreaMode} == 2
         .add_field(884, "ToneMap", ExifFormat::U32, 1)
         .add_field(888, "PortraitImpressionBalance", ExifFormat::U32, 1)
         .add_field(902, "HighFrequencyFlickerReduction", ExifFormat::U32, 1)
+        .add_field(904, "PixelShiftShooting", ExifFormat::U32, 1)
         .add_field(906, "PixelShiftNumberShots", ExifFormat::U32, 1)
         // Condition: $$self{PixelShiftShooting} > 0
+        .add_field(908, "PixelShiftDelay", ExifFormat::U32, 1)
+        // Condition: $$self{PixelShiftShooting} > 0
+        .add_field(910, "PixelShiftInterval", ExifFormat::U32, 1)
+        // Condition: $$self{PixelShiftShooting} > 0
+        .add_field(1002, "SubjectDetectionAreaMF", ExifFormat::U32, 1)
+        .add_field(1004, "LinkVRToFocusPoint", ExifFormat::U32, 1)
         .add_field(1046, "MovieSlowMotion", ExifFormat::U32, 1)
         .add_field(1050, "MovieType", ExifFormat::U32, 1)
         .add_field(1162, "MovieFrameSize", ExifFormat::U32, 1)
@@ -863,36 +717,107 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         // Condition: $$self{MovieType}  != 1
         .add_field(2300, "Language", ExifFormat::U32, 1)
         .add_field(2302, "TimeZone", ExifFormat::U32, 1)
+        .add_field(2308, "MonitorBrightness", ExifFormat::U32, 1)
         .add_field(2444, "EmptySlotRelease", ExifFormat::U32, 1)
         .add_field(2450, "EnergySavingMode", ExifFormat::U32, 1)
         .add_field(2476, "USBPowerDelivery", ExifFormat::U32, 1)
         .add_field(2480, "SaveFocusPosition", ExifFormat::U32, 1)
         .add_field(2487, "SilentPhotography", ExifFormat::U32, 1)
         .add_field(2496, "AirplaneMode", ExifFormat::U32, 1)
+        .add_field(90, "SingleFrame", ExifFormat::U32, 1)
+        .add_field(92, "ReleaseMode", ExifFormat::U32, 1)
+        .add_field(160, "IntervalDurationHours", ExifFormat::U32, 1)
+        // Condition: $$self{IntervalShooting} > 0
+        .add_field(164, "IntervalDurationMinutes", ExifFormat::U32, 1)
+        // Condition: $$self{IntervalShooting} > 0
+        .add_field(168, "IntervalDurationSeconds", ExifFormat::U32, 1)
+        // Condition: $$self{IntervalShooting} > 0
+        .add_field(176, "Intervals", ExifFormat::U32, 1)
+        // Condition: $$self{IntervalShooting} > 0
+        .add_field(180, "ShotsPerInterval", ExifFormat::U32, 1)
+        // Condition: $$self{IntervalShooting} > 0
+        .add_field(184, "IntervalExposureSmoothing", ExifFormat::U8, 1)
+        // Condition: $$self{IntervalShooting} > 0
+        .add_field(186, "IntervalPriority", ExifFormat::U8, 1)
+        // Condition: $$self{IntervalShooting} > 0
+        .add_field(220, "FocusShiftNumberShots", ExifFormat::U32, 1)
+        .add_field(224, "FocusShiftStepWidth", ExifFormat::U32, 1)
+        .add_field(228, "FocusShiftInterval", ExifFormat::U32, 1)
+        .add_field(232, "FocusShiftExposureLock", ExifFormat::U32, 1)
+        .add_field(322, "DiffractionCompensation", ExifFormat::U8, 1)
+        .add_field(323, "AutoDistortionControl", ExifFormat::U8, 1)
         .add_field(326, "NikonMeteringMode", ExifFormat::U32, 1)
+        .add_field(328, "FlashControlMode", ExifFormat::U32, 1)
+        .add_field(334, "FlashGNDistance", ExifFormat::U32, 1)
+        // Condition: $$self{FlashControlMode} == 2
+        .add_field(338, "FlashOutput", ExifFormat::U32, 1)
+        // Condition: $$self{FlashControlMode} >= 3
         .add_field(346, "FlashWirelessOption", ExifFormat::U32, 1)
         .add_field(348, "FlashRemoteControl", ExifFormat::U32, 1)
+        .add_field(352, "FlashMasterControlMode", ExifFormat::U32, 1)
+        .add_field(354, "FlashMasterCompensation", ExifFormat::U8, 1)
+        // Condition: $$self{FlashGroupOptionsMasterMode}  != 3
+        .add_field(358, "FlashMasterOutput", ExifFormat::U32, 1)
+        // Condition: $$self{FlashGroupOptionsMasterMode}  == 1
         .add_field(502, "MovieFrameSize", ExifFormat::U32, 1)
         .add_field(504, "MovieFrameRate", ExifFormat::U32, 1)
         .add_field(506, "MovieSlowMotion", ExifFormat::U32, 1)
-        .add_field(0, "MOV", ExifFormat::U32, 1)
-        .add_field(1, "MP4", ExifFormat::U32, 1)
+        .add_field(516, "MovieISOAutoManualMode", ExifFormat::U32, 1)
+        // Condition: $$self{Model} =~ /^NIKON 7/
         .add_field(568, "MovieActiveD-Lighting", ExifFormat::U32, 1)
         .add_field(572, "MovieHighISONoiseReduction", ExifFormat::U32, 1)
         .add_field(574, "MovieVignetteControl", ExifFormat::U32, 1)
+        .add_field(576, "MovieVignetteControlSameAsPhoto", ExifFormat::U32, 1)
+        .add_field(577, "MovieDiffractionCompensation", ExifFormat::U32, 1)
+        .add_field(578, "MovieAutoDistortionControl", ExifFormat::U32, 1)
         .add_field(584, "MovieFocusMode", ExifFormat::U32, 1)
-        .add_field(0, "Off", ExifFormat::U32, 1)
-        .add_field(1, "On (Normal)", ExifFormat::U32, 1)
-        .add_field(2, "On (Sport)", ExifFormat::U32, 1)
+        .add_field(591, "MovieVibrationReductionSameAsPhoto", ExifFormat::U32, 1)
+        .add_field(858, "HDMIOutputN-Log", ExifFormat::U32, 1)
+        // Condition: $$self{HDMIBitDepth} and $$self{HDMIBitDepth} == 2
+        .add_field(72, "HighFrameRate", ExifFormat::U32, 1)
+        .add_field(152, "MultipleExposureMode", ExifFormat::U32, 1)
+        .add_field(154, "MultiExposureShots", ExifFormat::U32, 1)
+        // Condition: $$self{MultipleExposureMode} != 0
+        .add_field(184, "IntervalDurationHours", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .add_field(188, "IntervalDurationMinutes", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .add_field(192, "IntervalDurationSeconds", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .add_field(200, "Intervals", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .add_field(204, "ShotsPerInterval", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .add_field(208, "IntervalExposureSmoothing", ExifFormat::U8, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .add_field(210, "IntervalPriority", ExifFormat::U8, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .add_field(244, "FocusShiftNumberShots", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
+        .add_field(248, "FocusShiftStepWidth", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
+        .add_field(252, "FocusShiftInterval", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
+        .add_field(256, "FocusShiftExposureLock", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
         .add_field(286, "PhotoShootingMenuBank", ExifFormat::U32, 1)
+        .add_field(288, "ExtendedMenuBanks", ExifFormat::U32, 1)
         .add_field(324, "PhotoShootingMenuBankImageArea", ExifFormat::U32, 1)
         .add_field(338, "AutoISO", ExifFormat::U32, 1)
         .add_field(340, "ISOAutoHiLimit", ExifFormat::U32, 1)
         .add_field(342, "ISOAutoFlashLimit", ExifFormat::U32, 1)
+        .add_field(350, "ISOAutoShutterTime", ExifFormat::I16, 1)
         .add_field(432, "MovieVignetteControl", ExifFormat::U32, 1)
+        .add_field(434, "DiffractionCompensation", ExifFormat::U32, 1)
         .add_field(436, "FlickerReductionShooting", ExifFormat::U32, 1)
+        .add_field(440, "FlashControlMode", ExifFormat::U32, 1)
         .add_field(548, "AFAreaMode", ExifFormat::U32, 1)
         .add_field(550, "VRMode", ExifFormat::U32, 1)
+        .add_field(554, "BracketSet", ExifFormat::U32, 1)
+        .add_field(556, "BracketProgram", ExifFormat::U32, 1)
+        // Condition: $$self{BracketSet} < 3
+        .add_field(558, "BracketIncrement", ExifFormat::U32, 1)
+        // Condition: $$self{BracketSet} < 3
         .add_field(570, "HDR", ExifFormat::U32, 1)
         .add_field(576, "SecondarySlotFunction", ExifFormat::U32, 1)
         .add_field(582, "HDRLevel", ExifFormat::U32, 1)
@@ -900,8 +825,12 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(586, "Slot2JpgSize", ExifFormat::U32, 1)
         .add_field(592, "DXCropAlert", ExifFormat::U32, 1)
         .add_field(594, "SubjectDetection", ExifFormat::U32, 1)
+        .add_field(596, "DynamicAFAreaSize", ExifFormat::U32, 1)
+        // Condition: $$self{AFAreaMode} == 2
         .add_field(618, "ToneMap", ExifFormat::U32, 1)
         .add_field(622, "PortraitImpressionBalance", ExifFormat::U32, 1)
+        .add_field(636, "HighFrequencyFlickerReduction", ExifFormat::U32, 1)
+        .add_field(730, "MovieImageArea", ExifFormat::U32, 1)
         .add_field(740, "MovieType", ExifFormat::U32, 1)
         .add_field(742, "MovieISOAutoHiLimit", ExifFormat::U32, 1)
         .add_field(744, "MovieISOAutoControlManualMode", ExifFormat::U32, 1)
@@ -913,7 +842,10 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(832, "MovieFocusMode", ExifFormat::U32, 1)
         .add_field(834, "MovieAFAreaMode", ExifFormat::U32, 1)
         .add_field(836, "MovieVRMode", ExifFormat::U32, 1)
+        .add_field(840, "MovieElectronicVR", ExifFormat::U32, 1)
         .add_field(842, "MovieSoundRecording", ExifFormat::U32, 1)
+        .add_field(844, "MicrophoneSensitivity", ExifFormat::U32, 1)
+        .add_field(846, "MicrophoneAttenuator", ExifFormat::U32, 1)
         .add_field(848, "MicrophoneFrequencyResponse", ExifFormat::U32, 1)
         .add_field(850, "WindNoiseReduction", ExifFormat::U32, 1)
         .add_field(882, "MovieFrameSize", ExifFormat::U32, 1)
@@ -923,8 +855,10 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(888, "MovieSubjectDetection", ExifFormat::U32, 1)
         .add_field(896, "MovieHighResZoom", ExifFormat::U32, 1)
         .add_field(1684, "TimeZone", ExifFormat::U32, 1)
+        .add_field(1690, "MonitorBrightness", ExifFormat::U32, 1)
         .add_field(1698, "Language", ExifFormat::U32, 1)
         .add_field(1712, "AFFineTune", ExifFormat::U32, 1)
+        .add_field(1716, "NonCPULens1FocalLength", ExifFormat::U16, 1)
         .add_field(1718, "NonCPULens2FocalLength", ExifFormat::U16, 1)
         .add_field(1720, "NonCPULens3FocalLength", ExifFormat::U16, 1)
         .add_field(1722, "NonCPULens4FocalLength", ExifFormat::U16, 1)
@@ -972,7 +906,9 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(1899, "SensorShield", ExifFormat::U32, 1)
         .add_field(1698, "Language", ExifFormat::U32, 1)
         .add_field(1700, "TimeZone", ExifFormat::U32, 1)
+        .add_field(1706, "MonitorBrightness", ExifFormat::U32, 1)
         .add_field(1728, "AFFineTune", ExifFormat::U32, 1)
+        .add_field(1732, "NonCPULens1FocalLength", ExifFormat::U16, 1)
         .add_field(1734, "NonCPULens2FocalLength", ExifFormat::U16, 1)
         .add_field(1736, "NonCPULens3FocalLength", ExifFormat::U16, 1)
         .add_field(1738, "NonCPULens4FocalLength", ExifFormat::U16, 1)
@@ -1018,24 +954,64 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(1878, "EnergySavingMode", ExifFormat::U32, 1)
         .add_field(1906, "USBPowerDelivery", ExifFormat::U32, 1)
         .add_field(1915, "SensorShield", ExifFormat::U32, 1)
+        .add_field(2046, "PixelShiftShooting", ExifFormat::U32, 1)
         .add_field(2048, "PixelShiftNumberShots", ExifFormat::U32, 1)
         // Condition: $$self{PixelShiftShooting} > 0
         .add_field(2050, "PixelShiftDelay", ExifFormat::U32, 1)
         // Condition: $$self{PixelShiftShooting} > 0
+        .add_field(2052, "PlaybackButton", ExifFormat::U32, 1)
+        .add_field(2054, "WBButton", ExifFormat::U32, 1)
+        .add_field(2056, "BracketButton", ExifFormat::U32, 1)
+        .add_field(2058, "LensFunc1ButtonPlaybackMode", ExifFormat::U32, 1)
+        .add_field(2060, "LensFunc2ButtonPlaybackMode", ExifFormat::U32, 1)
+        .add_field(2062, "PlaybackButtonPlaybackMode", ExifFormat::U32, 1)
+        .add_field(2064, "BracketButtonPlaybackMode", ExifFormat::U32, 1)
+        .add_field(140, "MultipleExposureMode", ExifFormat::U32, 1)
+        .add_field(142, "MultiExposureShots", ExifFormat::U32, 1)
+        // Condition: $$self{MultipleExposureMode} != 0
+        .add_field(188, "Intervals", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .add_field(192, "ShotsPerInterval", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .add_field(232, "FocusShiftNumberShots", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
+        .add_field(236, "FocusShiftStepWidth", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
+        .add_field(240, "FocusShiftInterval", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
+        .add_field(244, "FocusShiftExposureLock", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
         .add_field(274, "PhotoShootingMenuBank", ExifFormat::U32, 1)
+        .add_field(276, "ExtendedMenuBanks", ExifFormat::U32, 1)
         .add_field(308, "PhotoShootingMenuBankImageArea", ExifFormat::U32, 1)
         .add_field(322, "AutoISO", ExifFormat::U32, 1)
         .add_field(324, "ISOAutoHiLimit", ExifFormat::U32, 1)
         .add_field(326, "ISOAutoFlashLimit", ExifFormat::U32, 1)
+        .add_field(334, "ISOAutoShutterTime", ExifFormat::I16, 1)
         .add_field(416, "MovieVignetteControl", ExifFormat::U32, 1)
+        .add_field(418, "DiffractionCompensation", ExifFormat::U32, 1)
         .add_field(420, "FlickerReductionShooting", ExifFormat::U32, 1)
+        .add_field(424, "FlashControlMode", ExifFormat::U32, 1)
+        .add_field(426, "FlashMasterCompensation", ExifFormat::U8, 1)
+        .add_field(430, "FlashGNDistance", ExifFormat::U32, 1)
+        // Condition: $$self{FlashControlMode} == 2
+        .add_field(434, "FlashOutput", ExifFormat::U32, 1)
+        // Condition: $$self{FlashControlMode} >= 3
         .add_field(444, "FlashRemoteControl", ExifFormat::U32, 1)
         .add_field(456, "FlashWirelessOption", ExifFormat::U32, 1)
         .add_field(528, "AFAreaMode", ExifFormat::U32, 1)
         .add_field(530, "VRMode", ExifFormat::U32, 1)
+        .add_field(534, "BracketSet", ExifFormat::U32, 1)
+        .add_field(536, "BracketProgram", ExifFormat::U32, 1)
+        // Condition: $$self{BracketSet} < 3
+        .add_field(538, "BracketIncrement", ExifFormat::U32, 1)
+        // Condition: $$self{BracketSet} < 3
         .add_field(556, "SecondarySlotFunction", ExifFormat::U32, 1)
         .add_field(572, "DXCropAlert", ExifFormat::U32, 1)
         .add_field(574, "SubjectDetection", ExifFormat::U32, 1)
+        .add_field(576, "DynamicAFAreaSize", ExifFormat::U32, 1)
+        // Condition: $$self{AFAreaMode} == 2
+        .add_field(604, "MovieImageArea", ExifFormat::U32, 1)
         .add_field(614, "MovieType", ExifFormat::U32, 1)
         .add_field(616, "MovieISOAutoHiLimit", ExifFormat::U32, 1)
         .add_field(618, "MovieISOAutoControlManualMode", ExifFormat::U32, 1)
@@ -1047,7 +1023,10 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(708, "MovieFocusMode", ExifFormat::U32, 1)
         .add_field(710, "MovieAFAreaMode", ExifFormat::U32, 1)
         .add_field(712, "MovieVRMode", ExifFormat::U32, 1)
+        .add_field(716, "MovieElectronicVR", ExifFormat::U32, 1)
         .add_field(718, "MovieSoundRecording", ExifFormat::U32, 1)
+        .add_field(720, "MicrophoneSensitivity", ExifFormat::U32, 1)
+        .add_field(722, "MicrophoneAttenuator", ExifFormat::U32, 1)
         .add_field(724, "MicrophoneFrequencyResponse", ExifFormat::U32, 1)
         .add_field(726, "WindNoiseReduction", ExifFormat::U32, 1)
         .add_field(748, "MovieToneMap", ExifFormat::U32, 1)
@@ -1058,6 +1037,7 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(764, "MovieSubjectDetection", ExifFormat::U32, 1)
         .add_field(1426, "Language", ExifFormat::U32, 1)
         .add_field(1428, "TimeZone", ExifFormat::U32, 1)
+        .add_field(1434, "MonitorBrightness", ExifFormat::U32, 1)
         .add_field(1456, "AFFineTune", ExifFormat::U32, 1)
         .add_field(1552, "HDMIOutputResolution", ExifFormat::U32, 1)
         .add_field(1565, "SetClockFromLocationData", ExifFormat::U32, 1)
@@ -1067,18 +1047,52 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(1632, "RecordLocationData", ExifFormat::U32, 1)
         .add_field(1636, "USBPowerDelivery", ExifFormat::U32, 1)
         .add_field(1645, "SensorShield", ExifFormat::U32, 1)
+        .add_field(72, "HighFrameRate", ExifFormat::U32, 1)
+        .add_field(154, "MultipleExposureMode", ExifFormat::U32, 1)
+        .add_field(156, "MultiExposureShots", ExifFormat::U32, 1)
+        // Condition: $$self{MultipleExposureMode} != 0
+        .add_field(204, "Intervals", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .add_field(208, "ShotsPerInterval", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .add_field(248, "FocusShiftNumberShots", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
+        .add_field(252, "FocusShiftStepWidth", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
+        .add_field(256, "FocusShiftInterval", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
+        .add_field(260, "FocusShiftExposureLock", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
         .add_field(290, "PhotoShootingMenuBank", ExifFormat::U32, 1)
+        .add_field(292, "ExtendedMenuBanks", ExifFormat::U32, 1)
         .add_field(328, "PhotoShootingMenuBankImageArea", ExifFormat::U32, 1)
         .add_field(342, "AutoISO", ExifFormat::U32, 1)
         .add_field(344, "ISOAutoHiLimit", ExifFormat::U32, 1)
         .add_field(346, "ISOAutoFlashLimit", ExifFormat::U32, 1)
+        .add_field(354, "ISOAutoShutterTime", ExifFormat::I16, 1)
         .add_field(436, "MovieVignetteControl", ExifFormat::U32, 1)
+        .add_field(438, "DiffractionCompensation", ExifFormat::U32, 1)
         .add_field(440, "FlickerReductionShooting", ExifFormat::U32, 1)
+        .add_field(444, "FlashControlMode", ExifFormat::U32, 1)
+        .add_field(446, "FlashMasterCompensation", ExifFormat::U8, 1)
+        .add_field(450, "FlashGNDistance", ExifFormat::U32, 1)
+        // Condition: $$self{FlashControlMode} == 2
+        .add_field(454, "FlashOutput", ExifFormat::U32, 1)
+        // Condition: $$self{FlashControlMode} >= 3
         .add_field(548, "AFAreaMode", ExifFormat::U32, 1)
         .add_field(550, "VRMode", ExifFormat::U32, 1)
+        .add_field(554, "BracketSet", ExifFormat::U32, 1)
+        .add_field(556, "BracketProgram", ExifFormat::U32, 1)
+        // Condition: $$self{BracketSet} < 3
+        .add_field(558, "BracketIncrement", ExifFormat::U32, 1)
+        // Condition: $$self{BracketSet} < 3
         .add_field(576, "SecondarySlotFunction", ExifFormat::U32, 1)
         .add_field(592, "DXCropAlert", ExifFormat::U32, 1)
         .add_field(594, "SubjectDetection", ExifFormat::U32, 1)
+        .add_field(596, "DynamicAFAreaSize", ExifFormat::U32, 1)
+        // Condition: $$self{AFAreaMode} == 2
+        .add_field(636, "HighFrequencyFlickerReduction", ExifFormat::U32, 1)
+        .add_field(646, "MovieImageArea", ExifFormat::U32, 1)
         .add_field(656, "MovieType", ExifFormat::U32, 1)
         .add_field(658, "MovieISOAutoHiLimit", ExifFormat::U32, 1)
         .add_field(660, "MovieISOAutoControlManualMode", ExifFormat::U32, 1)
@@ -1090,7 +1104,10 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(748, "MovieFocusMode", ExifFormat::U32, 1)
         .add_field(750, "MovieAFAreaMode", ExifFormat::U32, 1)
         .add_field(752, "MovieVRMode", ExifFormat::U32, 1)
+        .add_field(756, "MovieElectronicVR", ExifFormat::U32, 1)
         .add_field(758, "MovieSoundRecording", ExifFormat::U32, 1)
+        .add_field(760, "MicrophoneSensitivity", ExifFormat::U32, 1)
+        .add_field(762, "MicrophoneAttenuator", ExifFormat::U32, 1)
         .add_field(764, "MicrophoneFrequencyResponse", ExifFormat::U32, 1)
         .add_field(766, "WindNoiseReduction", ExifFormat::U32, 1)
         .add_field(788, "MovieToneMap", ExifFormat::U32, 1)
@@ -1102,6 +1119,7 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(812, "MovieHighResZoom", ExifFormat::U32, 1)
         .add_field(1474, "Language", ExifFormat::U32, 1)
         .add_field(1476, "TimeZone", ExifFormat::U32, 1)
+        .add_field(1482, "MonitorBrightness", ExifFormat::U32, 1)
         .add_field(1504, "AFFineTune", ExifFormat::U32, 1)
         .add_field(1600, "HDMIOutputResolution", ExifFormat::U32, 1)
         .add_field(1613, "SetClockFromLocationData", ExifFormat::U32, 1)
@@ -1111,23 +1129,47 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(1680, "RecordLocationData", ExifFormat::U32, 1)
         .add_field(1684, "USBPowerDelivery", ExifFormat::U32, 1)
         .add_field(1693, "SensorShield", ExifFormat::U32, 1)
-        .add_field(0, "None", ExifFormat::U32, 1)
-        .add_field(1, "0.3 Sec", ExifFormat::U32, 1)
-        .add_field(2, "0.5 Sec", ExifFormat::U32, 1)
-        .add_field(3, "1 Sec", ExifFormat::U32, 1)
-        .add_field(0, "1 Sec", ExifFormat::U32, 1)
-        .add_field(1, "2 Sec", ExifFormat::U32, 1)
-        .add_field(2, "3 Sec", ExifFormat::U32, 1)
-        .add_field(3, "Max", ExifFormat::U32, 1)
+        .add_field(1754, "FocusShiftAutoReset", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
+        .add_field(72, "HighFrameRate", ExifFormat::U32, 1)
+        .add_field(154, "MultipleExposureMode", ExifFormat::U32, 1)
+        .add_field(156, "MultiExposureShots", ExifFormat::U32, 1)
+        // Condition: $$self{MultipleExposureMode} != 0
+        .add_field(204, "Intervals", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .add_field(208, "ShotsPerInterval", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .add_field(248, "FocusShiftNumberShots", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
+        .add_field(252, "FocusShiftStepWidth", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
+        .add_field(256, "FocusShiftInterval", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
+        .add_field(260, "FocusShiftExposureLock", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
         .add_field(290, "PhotoShootingMenuBank", ExifFormat::U32, 1)
+        .add_field(292, "ExtendedMenuBanks", ExifFormat::U32, 1)
         .add_field(328, "PhotoShootingMenuBankImageArea", ExifFormat::U32, 1)
         .add_field(342, "AutoISO", ExifFormat::U32, 1)
         .add_field(344, "ISOAutoHiLimit", ExifFormat::U32, 1)
         .add_field(346, "ISOAutoFlashLimit", ExifFormat::U32, 1)
+        .add_field(354, "ISOAutoShutterTime", ExifFormat::I16, 1)
         .add_field(436, "MovieVignetteControl", ExifFormat::U32, 1)
+        .add_field(438, "DiffractionCompensation", ExifFormat::U32, 1)
         .add_field(440, "FlickerReductionShooting", ExifFormat::U32, 1)
+        .add_field(444, "FlashControlMode", ExifFormat::U32, 1)
+        .add_field(446, "FlashMasterCompensation", ExifFormat::U8, 1)
+        .add_field(450, "FlashGNDistance", ExifFormat::U32, 1)
+        // Condition: $$self{FlashControlMode} == 2
+        .add_field(454, "FlashOutput", ExifFormat::U32, 1)
+        // Condition: $$self{FlashControlMode} >= 3
         .add_field(548, "AFAreaMode", ExifFormat::U32, 1)
         .add_field(550, "VRMode", ExifFormat::U32, 1)
+        .add_field(554, "BracketSet", ExifFormat::U32, 1)
+        .add_field(556, "BracketProgram", ExifFormat::U32, 1)
+        // Condition: $$self{BracketSet} < 3
+        .add_field(558, "BracketIncrement", ExifFormat::U32, 1)
+        // Condition: $$self{BracketSet} < 3
         .add_field(570, "HDR", ExifFormat::U32, 1)
         .add_field(576, "SecondarySlotFunction", ExifFormat::U32, 1)
         .add_field(582, "HDRLevel", ExifFormat::U32, 1)
@@ -1135,6 +1177,10 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(586, "Slot2JpgSize", ExifFormat::U32, 1)
         .add_field(592, "DXCropAlert", ExifFormat::U32, 1)
         .add_field(594, "SubjectDetection", ExifFormat::U32, 1)
+        .add_field(596, "DynamicAFAreaSize", ExifFormat::U32, 1)
+        // Condition: $$self{AFAreaMode} == 2
+        .add_field(636, "HighFrequencyFlickerReduction", ExifFormat::U32, 1)
+        .add_field(646, "MovieImageArea", ExifFormat::U32, 1)
         .add_field(656, "MovieType", ExifFormat::U32, 1)
         .add_field(658, "MovieISOAutoHiLimit", ExifFormat::U32, 1)
         .add_field(660, "MovieISOAutoControlManualMode", ExifFormat::U32, 1)
@@ -1146,7 +1192,10 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(748, "MovieFocusMode", ExifFormat::U32, 1)
         .add_field(750, "MovieAFAreaMode", ExifFormat::U32, 1)
         .add_field(752, "MovieVRMode", ExifFormat::U32, 1)
+        .add_field(756, "MovieElectronicVR", ExifFormat::U32, 1)
         .add_field(758, "MovieSoundRecording", ExifFormat::U32, 1)
+        .add_field(760, "MicrophoneSensitivity", ExifFormat::U32, 1)
+        .add_field(762, "MicrophoneAttenuator", ExifFormat::U32, 1)
         .add_field(764, "MicrophoneFrequencyResponse", ExifFormat::U32, 1)
         .add_field(766, "WindNoiseReduction", ExifFormat::U32, 1)
         .add_field(788, "MovieToneMap", ExifFormat::U32, 1)
@@ -1158,7 +1207,9 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(812, "MovieHighResZoom", ExifFormat::U32, 1)
         .add_field(1498, "Language", ExifFormat::U32, 1)
         .add_field(1500, "TimeZone", ExifFormat::U32, 1)
+        .add_field(1506, "MonitorBrightness", ExifFormat::U32, 1)
         .add_field(1528, "AFFineTune", ExifFormat::U32, 1)
+        .add_field(1532, "NonCPULens1FocalLength", ExifFormat::I16, 1)
         .add_field(1536, "NonCPULens2FocalLength", ExifFormat::I16, 1)
         .add_field(1540, "NonCPULens3FocalLength", ExifFormat::I16, 1)
         .add_field(1544, "NonCPULens4FocalLength", ExifFormat::I16, 1)
@@ -1178,6 +1229,7 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(1600, "NonCPULens18FocalLength", ExifFormat::I16, 1)
         .add_field(1604, "NonCPULens19FocalLength", ExifFormat::I16, 1)
         .add_field(1608, "NonCPULens20FocalLength", ExifFormat::I16, 1)
+        .add_field(1612, "NonCPULens1MaxAperture", ExifFormat::I16, 1)
         .add_field(1616, "NonCPULens2MaxAperture", ExifFormat::I16, 1)
         .add_field(1620, "NonCPULens3MaxAperture", ExifFormat::I16, 1)
         .add_field(1624, "NonCPULens4MaxAperture", ExifFormat::I16, 1)
@@ -1205,183 +1257,214 @@ pub fn create_shotinfod810_table() -> BinaryDataTable {
         .add_field(1784, "RecordLocationData", ExifFormat::U32, 1)
         .add_field(1788, "USBPowerDelivery", ExifFormat::U32, 1)
         .add_field(1797, "SensorShield", ExifFormat::U32, 1)
-        .add_field(0, "1", ExifFormat::U32, 1)
-        .add_field(1, "2", ExifFormat::U32, 1)
-        .add_field(2, "3", ExifFormat::U32, 1)
-        .add_field(3, "4", ExifFormat::U32, 1)
-        .add_field(4, "5", ExifFormat::U32, 1)
-        .add_field(0, "None", ExifFormat::U32, 1)
-        .add_field(1, "0.3 Sec", ExifFormat::U32, 1)
-        .add_field(2, "0.5 Sec", ExifFormat::U32, 1)
-        .add_field(3, "1 Sec", ExifFormat::U32, 1)
-        .add_field(0, "1 Sec", ExifFormat::U32, 1)
-        .add_field(1, "2 Sec", ExifFormat::U32, 1)
-        .add_field(2, "3 Sec", ExifFormat::U32, 1)
-        .add_field(3, "Max", ExifFormat::U32, 1)
-        .add_field(0, "None", ExifFormat::U32, 1)
-        .add_field(1, "External", ExifFormat::U32, 1)
-        .add_field(2, "Internal", ExifFormat::U32, 1)
-        .add_field(4, "Wide Flash Adapter", ExifFormat::U32, 1)
-        .add_field(0, "None", ExifFormat::U32, 1)
-        .add_field(1, "External", ExifFormat::U32, 1)
-        .add_field(2, "Internal", ExifFormat::U32, 1)
-        .add_field(4, "Wide Flash Adapter", ExifFormat::U32, 1)
-        .add_field(0, "None", ExifFormat::U32, 1)
-        .add_field(1, "External", ExifFormat::U32, 1)
-        .add_field(2, "Internal", ExifFormat::U32, 1)
-        .add_field(4, "Wide Flash Adapter", ExifFormat::U32, 1)
-        .add_field(0, "None", ExifFormat::U32, 1)
-        .add_field(1, "External", ExifFormat::U32, 1)
-        .add_field(2, "Internal", ExifFormat::U32, 1)
-        .add_field(0, "Fired", ExifFormat::U32, 1)
-        .add_field(2, "Bounce Flash", ExifFormat::U32, 1)
-        .add_field(4, "Wide Flash Adapter", ExifFormat::U32, 1)
-        .add_field(0, "None", ExifFormat::U32, 1)
-        .add_field(1, "External", ExifFormat::U32, 1)
-        .add_field(2, "Internal", ExifFormat::U32, 1)
-        .add_field(0, "Flash Not Attached", ExifFormat::U32, 1)
-        .add_field(1, "Flash Attached", ExifFormat::U32, 1)
-        .add_field(0, "n/a", ExifFormat::U32, 1)
-        .add_field(1, "Ready", ExifFormat::U32, 1)
-        .add_field(6, "Not Ready", ExifFormat::U32, 1)
-        .add_field(0, "None", ExifFormat::U32, 1)
-        .add_field(1, "External", ExifFormat::U32, 1)
-        .add_field(2, "Internal", ExifFormat::U32, 1)
-        .add_field(2, "Bounce Flash", ExifFormat::U32, 1)
-        .add_field(4, "Wide Flash Adapter", ExifFormat::U32, 1)
-        .add_field(0, "Standard", ExifFormat::U32, 1)
-        .add_field(1, "Center-weighted", ExifFormat::U32, 1)
-        .add_field(2, "Even", ExifFormat::U32, 1)
-        .add_field(0, "Off", ExifFormat::U32, 1)
-        .add_field(1, "Multiple Exposure", ExifFormat::U32, 1)
-        .add_field(2, "Image Overlay", ExifFormat::U32, 1)
+        .add_field(1864, "FocusShiftAutoReset", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0
+        .add_field(1938, "VerticalISOButton", ExifFormat::U32, 1)
+        .add_field(1940, "ExposureCompensationButton", ExifFormat::U32, 1)
+        .add_field(1942, "ISOButton", ExifFormat::U32, 1)
+        .add_field(2002, "ViewModeShowEffectsOfSettings", ExifFormat::U32, 1)
+        .add_field(2004, "DispButton", ExifFormat::U32, 1)
+        .add_field(2048, "ExposureDelay", ExifFormat::U8, 1)
+        .add_field(2052, "CommandDialFrameAdvanceZoom", ExifFormat::U32, 1)
+        // Condition: $$self{FirmwareVersion} and $$self{FirmwareVersion} ge "05.00"
+        .add_field(2054, "SubCommandDialFrameAdvanceZoom", ExifFormat::U32, 1)
+        // Condition: $$self{FirmwareVersion} and $$self{FirmwareVersion} ge "05.00"
+        .add_field(2056, "PlaybackButton", ExifFormat::U32, 1)
+        .add_field(2058, "WBButton", ExifFormat::U32, 1)
+        .add_field(2060, "BracketButton", ExifFormat::U32, 1)
+        .add_field(2062, "FlashModeButton", ExifFormat::U32, 1)
+        .add_field(2064, "LensFunc1ButtonPlaybackMode", ExifFormat::U32, 1)
+        .add_field(2066, "LensFunc2ButtonPlaybackMode", ExifFormat::U32, 1)
+        .add_field(2068, "PlaybackButtonPlaybackMode", ExifFormat::U32, 1)
+        .add_field(2070, "BracketButtonPlaybackMode", ExifFormat::U32, 1)
+        .add_field(2072, "FlashModeButtonPlaybackMode", ExifFormat::U32, 1)
+        .add_field(0, "FlashInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(6, "ExternalFlashFirmware", ExifFormat::U8, 2)
+        // .add_bit_field(9, "FlashControlMode", 0x7f, 1) // TODO: Implement bit field support
+        .add_field(11, "FlashFocalLength", ExifFormat::U32, 1)
+        .add_field(12, "RepeatingFlashRate", ExifFormat::U32, 1)
+        .add_field(13, "RepeatingFlashCount", ExifFormat::U32, 1)
+        .add_field(14, "FlashGNDistance", ExifFormat::U32, 1)
+        .add_field(15, "FlashGroupAControlMode", ExifFormat::U32, 1)
+        .add_field(16, "FlashGroupBControlMode", ExifFormat::U32, 1)
+        .add_field(0, "FlashInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(6, "ExternalFlashFirmware", ExifFormat::U8, 2)
+        // .add_bit_field(9, "FlashControlMode", 0x7f, 1) // TODO: Implement bit field support
+        .add_field(12, "FlashFocalLength", ExifFormat::U32, 1)
+        .add_field(13, "RepeatingFlashRate", ExifFormat::U32, 1)
+        .add_field(14, "RepeatingFlashCount", ExifFormat::U32, 1)
+        .add_field(15, "FlashGNDistance", ExifFormat::U32, 1)
+        // .add_bit_field( // TODO: Implement bit field support
+        // // .add_field(16, "FlashGroupAControlMode", 0xXX, X) // TODO: bit field // TODO: bit field
+        // .add_bit_field( // TODO: Implement bit field support
+        // .add_field(17, "FlashGroupBControlMode", 0xXX, X) // TODO: bit field
+        // .add_bit_field( // TODO: Implement bit field support
+        // .add_field(17, "FlashGroupCControlMode", 0xXX, X) // TODO: bit field
+        .add_field(0, "FlashInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(6, "ExternalFlashFirmware", ExifFormat::U8, 2)
+        // .add_bit_field(9, "FlashControlMode", 0x7f, 1) // TODO: Implement bit field support
+        .add_field(12, "FlashFocalLength", ExifFormat::U32, 1)
+        .add_field(13, "RepeatingFlashRate", ExifFormat::U32, 1)
+        .add_field(14, "RepeatingFlashCount", ExifFormat::U32, 1)
+        .add_field(15, "FlashGNDistance", ExifFormat::U32, 1)
+        .add_field(16, "FlashColorFilter", ExifFormat::U32, 1)
+        // .add_bit_field( // TODO: Implement bit field support
+        // .add_field(17, "FlashGroupAControlMode", 0xXX, X) // TODO: bit field
+        // .add_bit_field( // TODO: Implement bit field support
+        // .add_field(18, "FlashGroupBControlMode", 0xXX, X) // TODO: bit field
+        // .add_bit_field( // TODO: Implement bit field support
+        // .add_field(18, "FlashGroupCControlMode", 0xXX, X) // TODO: bit field
+        .add_field(27, "ExternalFlashCompensation", ExifFormat::U8, 1)
+        .add_field(29, "FlashExposureComp3", ExifFormat::U8, 1)
+        .add_field(39, "FlashExposureComp4", ExifFormat::U8, 1)
+        .add_field(0, "FlashInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(6, "ExternalFlashFirmware", ExifFormat::U8, 2)
+        // .add_bit_field(9, "FlashControlMode", 0x7f, 1) // TODO: Implement bit field support
+        .add_field(12, "FlashFocalLength", ExifFormat::U32, 1)
+        .add_field(13, "RepeatingFlashRate", ExifFormat::U32, 1)
+        .add_field(14, "RepeatingFlashCount", ExifFormat::U32, 1)
+        .add_field(15, "FlashGNDistance", ExifFormat::U32, 1)
+        .add_field(16, "FlashColorFilter", ExifFormat::U32, 1)
+        // .add_bit_field( // TODO: Implement bit field support
+        // .add_field(17, "FlashGroupAControlMode", 0xXX, X) // TODO: bit field
+        // .add_bit_field( // TODO: Implement bit field support
+        // .add_field(18, "FlashGroupBControlMode", 0xXX, X) // TODO: bit field
+        // .add_bit_field( // TODO: Implement bit field support
+        // .add_field(18, "FlashGroupCControlMode", 0xXX, X) // TODO: bit field
+        .add_field(0, "FlashInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(6, "ExternalFlashFirmware", ExifFormat::U8, 2)
+        .add_field(10, "FlashCompensation", ExifFormat::U8, 1)
+        .add_field(12, "FlashFocalLength", ExifFormat::U32, 1)
+        .add_field(13, "RepeatingFlashRate", ExifFormat::U32, 1)
+        .add_field(14, "RepeatingFlashCount", ExifFormat::U32, 1)
+        .add_field(15, "FlashGNDistance", ExifFormat::U32, 1)
+        // .add_bit_field( // TODO: Implement bit field support
+        // .add_field(17, "FlashGroupAControlMode", 0xXX, X) // TODO: bit field
+        // .add_bit_field( // TODO: Implement bit field support
+        // .add_field(18, "FlashGroupBControlMode", 0xXX, X) // TODO: bit field
+        // .add_bit_field( // TODO: Implement bit field support
+        // .add_field(18, "FlashGroupCControlMode", 0xXX, X) // TODO: bit field
+        .add_field(0, "FlashInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(6, "ExternalFlashFirmware", ExifFormat::U8, 2)
+        // .add_bit_field(9, "FlashControlMode", 0x7f, 1) // TODO: Implement bit field support
+        .add_field(10, "FlashCompensation", ExifFormat::U8, 1)
+        // Condition: $$self{FlashControlMode} == 0x01 or $$self{FlashControlMode} == 0x02
+        .add_field(13, "RepeatingFlashRate", ExifFormat::U32, 1)
+        .add_field(14, "RepeatingFlashCount", ExifFormat::U32, 1)
+        .add_field(15, "FlashGNDistance", ExifFormat::U32, 1)
+        .add_field(16, "FlashColorFilter", ExifFormat::U32, 1)
+        // .add_bit_field( // TODO: Implement bit field support
+        // .add_field(17, "FlashGroupAControlMode", 0xXX, X) // TODO: bit field
+        // .add_bit_field( // TODO: Implement bit field support
+        // .add_field(18, "FlashGroupBControlMode", 0xXX, X) // TODO: bit field
+        // .add_bit_field( // TODO: Implement bit field support
+        // .add_field(18, "FlashGroupCControlMode", 0xXX, X) // TODO: bit field
+        .add_field(33, "FlashOutput", ExifFormat::U32, 1)
+        // Condition: $$self{FlashControlMode} >= 0x06
+        .add_field(38, "FlashFocalLength", ExifFormat::U32, 1)
+        .add_field(0, "FlashInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(0, "MultiExposureVersion", ExifFormat::Ascii, 4)
         .add_field(2, "MultiExposureShots", ExifFormat::U32, 1)
-        .add_field(0, "Off", ExifFormat::U32, 1)
-        .add_field(1, "Multiple Exposure", ExifFormat::U32, 1)
-        .add_field(3, "HDR", ExifFormat::U32, 1)
+        .add_field(3, "MultiExposureAutoGain", ExifFormat::U32, 1)
+        .add_field(0, "MultiExposureVersion", ExifFormat::Ascii, 4)
         .add_field(2, "MultiExposureShots", ExifFormat::U32, 1)
-        .add_field(0, "Add", ExifFormat::U32, 1)
-        .add_field(1, "Average", ExifFormat::U32, 1)
-        .add_field(2, "Light", ExifFormat::U32, 1)
-        .add_field(3, "Dark", ExifFormat::U32, 1)
-        .add_field(0, "Off", ExifFormat::U32, 1)
-        .add_field(1, "On (normal)", ExifFormat::U32, 1)
-        .add_field(0, "Auto", ExifFormat::U32, 1)
-        .add_field(1, "1 EV", ExifFormat::U32, 1)
-        .add_field(2, "2 EV", ExifFormat::U32, 1)
-        .add_field(3, "3 EV", ExifFormat::U32, 1)
-        .add_field(0, "Off", ExifFormat::U32, 1)
-        .add_field(1, "Normal", ExifFormat::U32, 1)
-        .add_field(2, "Low", ExifFormat::U32, 1)
-        .add_field(3, "High", ExifFormat::U32, 1)
-        .add_field(0, "Auto", ExifFormat::U32, 1)
-        .add_field(1, "1 EV", ExifFormat::U32, 1)
-        .add_field(2, "2 EV", ExifFormat::U32, 1)
-        .add_field(3, "3 EV", ExifFormat::U32, 1)
-        .add_field(255, "n/a", ExifFormat::U32, 1)
-        .add_field(0, "Off", ExifFormat::U32, 1)
-        .add_field(1, "On (normal)", ExifFormat::U32, 1)
-        .add_field(0, "n/a", ExifFormat::U32, 1)
-        .add_field(1, "Normal", ExifFormat::U32, 1)
-        .add_field(2, "Low", ExifFormat::U32, 1)
-        .add_field(3, "High", ExifFormat::U32, 1)
-        .add_field(4, "High+", ExifFormat::U32, 1)
-        .add_field(5, "Auto", ExifFormat::U32, 1)
-        .add_field(1, "On (Optional)", ExifFormat::U32, 1)
-        .add_field(2, "Off", ExifFormat::U32, 1)
-        .add_field(3, "On (Required)", ExifFormat::U32, 1)
-        .add_field(0, "Auto", ExifFormat::U32, 1)
-        .add_field(1, "Daylight", ExifFormat::U32, 1)
-        .add_field(2, "Shade", ExifFormat::U32, 1)
-        .add_field(4, "Tungsten", ExifFormat::U32, 1)
-        .add_field(5, "Manual", ExifFormat::U32, 1)
+        .add_field(0, "HDRInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(0, "HDRInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(0, "LocationInfoVersion", ExifFormat::Undefined, 4)
+        .add_field(5, "CountryCode", ExifFormat::Undefined, 3)
+        .add_field(8, "POILevel", ExifFormat::U32, 1)
+        .add_field(0, "FirmwareVersion51", ExifFormat::Ascii, 8)
+        .add_field(10, "NEFCompression", ExifFormat::U16, 1)
+        .add_field(0, "FirmwareVersion56", ExifFormat::Ascii, 4)
+        .add_field(4, "BurstGroupID", ExifFormat::U16, 1)
+        .add_field(0, "DistortionCorrectionVersion", ExifFormat::Ascii, 4)
+        .add_field(20, "RadialDistortionCoefficient1", ExifFormat::SignedRational, 1)
+        .add_field(28, "RadialDistortionCoefficient2", ExifFormat::SignedRational, 1)
+        .add_field(36, "RadialDistortionCoefficient3", ExifFormat::SignedRational, 1)
+        .add_field(0, "VignetteCorrectionVersion", ExifFormat::Ascii, 4)
+        .add_field(36, "VignetteCoefficient1", ExifFormat::SignedRational, 1)
+        .add_field(52, "VignetteCoefficient2", ExifFormat::SignedRational, 1)
+        .add_field(68, "VignetteCoefficient3", ExifFormat::SignedRational, 1)
+        .add_field(0, "Make", ExifFormat::Ascii, 24)
+        .add_field(24, "Model", ExifFormat::Ascii, 8)
+        .add_field(38, "ExposureTime", ExifFormat::U32, 1)
+        .add_field(42, "FNumber", ExifFormat::Rational, 1)
+        .add_field(50, "ExposureCompensation", ExifFormat::SignedRational, 1)
+        .add_field(72, "FocalLength", ExifFormat::Rational, 1)
+        .add_field(175, "Software", ExifFormat::Ascii, 16)
+        .add_field(223, "ISO", ExifFormat::U16, 1)
         .add_field(1, "MakerNoteType", ExifFormat::U32, 1)
+        .add_field(2, "MakerNoteVersion", ExifFormat::U8, 1)
         .add_field(3, "Make", ExifFormat::U32, 1)
         .add_field(4, "Model", ExifFormat::U32, 1)
-        .add_field(0, "Unknown", ExifFormat::U32, 1)
-        .add_field(1, "Average", ExifFormat::U32, 1)
-        .add_field(2, "Center-weighted average", ExifFormat::U32, 1)
-        .add_field(3, "Spot", ExifFormat::U32, 1)
-        .add_field(4, "Multi-spot", ExifFormat::U32, 1)
-        .add_field(5, "Multi-segment", ExifFormat::U32, 1)
-        .add_field(6, "Partial", ExifFormat::U32, 1)
-        .add_field(255, "Other", ExifFormat::U32, 1)
+        .add_field(5, "Software", ExifFormat::Undefined, 1)
+        .add_field(6, "Equipment", ExifFormat::U32, 1)
+        .add_field(11, "MaxApertureValue", ExifFormat::Rational, 1)
+        .add_field(13, "Nikon_AVITags_0x000d", ExifFormat::U16, 1)
+        .add_field(14, "Nikon_AVITags_0x000e", ExifFormat::U16, 1)
+        .add_field(15, "FocalLength", ExifFormat::Rational, 1)
         .add_field(1, "None", ExifFormat::U32, 1)
         .add_field(2, "inches", ExifFormat::U32, 1)
         .add_field(3, "cm", ExifFormat::U32, 1)
+        .add_field(21, "Nikon_AVITags_0x0015", ExifFormat::U16, 1)
+        .add_field(22, "Duration", ExifFormat::Rational, 1)
+        .add_field(23, "Nikon_AVITags_0x0017", ExifFormat::U16, 1)
         .add_field(24, "FocusMode", ExifFormat::U32, 1)
+        .add_field(25, "Nikon_AVITags_0x0019", ExifFormat::I32, 1)
+        .add_field(27, "DigitalZoom", ExifFormat::Rational, 1)
+        .add_field(28, "Nikon_AVITags_0x001c", ExifFormat::Rational, 1)
         .add_field(29, "ColorMode", ExifFormat::U32, 1)
+        .add_field(30, "Sharpness", ExifFormat::U32, 1)
+        .add_field(31, "WhiteBalance", ExifFormat::U32, 1)
+        .add_field(32, "NoiseReduction", ExifFormat::U32, 1)
+        .add_field(32794, "Nikon_AVITags_0x801a", ExifFormat::I32, 1)
         .add_field(1, "Make", ExifFormat::U32, 1)
         .add_field(2, "Model", ExifFormat::U32, 1)
         .add_field(3, "Software", ExifFormat::U32, 1)
-        .add_field(0, "Not Defined", ExifFormat::U32, 1)
-        .add_field(1, "Manual", ExifFormat::U32, 1)
-        .add_field(2, "Program AE", ExifFormat::U32, 1)
-        .add_field(3, "Aperture-priority AE", ExifFormat::U32, 1)
-        .add_field(4, "Shutter speed priority AE", ExifFormat::U32, 1)
-        .add_field(5, "Creative (Slow speed)", ExifFormat::U32, 1)
-        .add_field(6, "Action (High speed)", ExifFormat::U32, 1)
-        .add_field(7, "Portrait", ExifFormat::U32, 1)
-        .add_field(8, "Landscape", ExifFormat::U32, 1)
-        .add_field(0, "Unknown", ExifFormat::U32, 1)
-        .add_field(1, "Average", ExifFormat::U32, 1)
-        .add_field(2, "Center-weighted average", ExifFormat::U32, 1)
-        .add_field(3, "Spot", ExifFormat::U32, 1)
-        .add_field(4, "Multi-spot", ExifFormat::U32, 1)
-        .add_field(5, "Multi-segment", ExifFormat::U32, 1)
-        .add_field(6, "Partial", ExifFormat::U32, 1)
-        .add_field(255, "Other", ExifFormat::U32, 1)
+        .add_field(19, "FrameCount", ExifFormat::U32, 1)
+        .add_field(4115, "ElectronicVR", ExifFormat::U32, 1)
+        .add_field(17859226, "ExposureTime", ExifFormat::U32, 1)
+        .add_field(17859229, "FNumber", ExifFormat::U32, 1)
+        .add_field(17863172, "ExposureCompensation", ExifFormat::U32, 1)
+        .add_field(17863178, "FocalLength", ExifFormat::U32, 1)
         .add_field(17867825, "SerialNumber", ExifFormat::U32, 1)
+        .add_field(17867826, "LensInfo", ExifFormat::U32, 1)
         .add_field(17867827, "LensMake", ExifFormat::U32, 1)
         .add_field(17867828, "LensModel", ExifFormat::U32, 1)
         .add_field(17867829, "LensSerialNumber", ExifFormat::U32, 1)
         .add_field(0, "Above Sea Level", ExifFormat::U32, 1)
         .add_field(1, "Below Sea Level", ExifFormat::U32, 1)
+        .add_field(33554433, "MakerNoteVersion", ExifFormat::U32, 1)
         .add_field(33554437, "WhiteBalance", ExifFormat::U32, 1)
+        .add_field(33554439, "FocusMode", ExifFormat::U32, 1)
         .add_field(33554443, "WhiteBalanceFineTune", ExifFormat::U32, 1)
-        .add_field(1, "sRGB", ExifFormat::U32, 1)
-        .add_field(2, "Adobe RGB", ExifFormat::U32, 1)
-        .add_field(0, "Off", ExifFormat::U32, 1)
-        .add_field(1, "Low", ExifFormat::U32, 1)
-        .add_field(3, "Normal", ExifFormat::U32, 1)
-        .add_field(5, "High", ExifFormat::U32, 1)
-        .add_field(7, "Extra High", ExifFormat::U32, 1)
-        .add_field(8, "Extra High 1", ExifFormat::U32, 1)
-        .add_field(9, "Extra High 2", ExifFormat::U32, 1)
-        .add_field(10, "Extra High 3", ExifFormat::U32, 1)
-        .add_field(11, "Extra High 4", ExifFormat::U32, 1)
-        .add_field(65535, "Auto", ExifFormat::U32, 1)
-        .add_field(0, "Off", ExifFormat::U32, 1)
-        .add_field(1, "Low", ExifFormat::U32, 1)
-        .add_field(3, "Normal", ExifFormat::U32, 1)
-        .add_field(5, "High", ExifFormat::U32, 1)
+        .add_field(33554459, "CropHiSpeed", ExifFormat::U32, 1)
         .add_field(33554495, "WhiteBalanceFineTune", ExifFormat::U32, 1)
-        .add_field(0, "MF", ExifFormat::U32, 1)
-        .add_field(1, "D", ExifFormat::U32, 1)
-        .add_field(2, "G", ExifFormat::U32, 1)
-        .add_field(3, "VR", ExifFormat::U32, 1)
-        .add_field(0, "Did Not Fire", ExifFormat::U32, 1)
-        .add_field(8, "Fired, Commander Mode", ExifFormat::U32, 1)
-        .add_field(9, "Fired, TTL Mode", ExifFormat::U32, 1)
-        .add_field(0, "Off", ExifFormat::U32, 1)
-        .add_field(3, "Medium Low", ExifFormat::U32, 1)
-        .add_field(4, "Normal", ExifFormat::U32, 1)
-        .add_field(5, "Medium High", ExifFormat::U32, 1)
-        .add_field(6, "High", ExifFormat::U32, 1)
+        .add_field(33554563, "LensType", ExifFormat::U32, 1)
+        .add_field(33554599, "ShutterCount", ExifFormat::U32, 1)
+        .add_field(33554603, "VariProgram", ExifFormat::U32, 1)
         .build()
 }
 
-/// Binary data table: MoreSettingsD850
-/// Source lines: 8269-8292
-/// Process function: ProcessBinaryData
-pub fn create_moresettingsd850_table() -> BinaryDataTable {
-    BinaryDataTableBuilder::new("MoreSettingsD850", ExifFormat::U8)
-        .add_field(0, "A", ExifFormat::U8, 1)
-        .add_field(1, "B", ExifFormat::U8, 1)
-        .add_field(2, "C", ExifFormat::U8, 1)
-        .add_field(3, "D", ExifFormat::U8, 1)
-        .add_field(0, "XQD Card", ExifFormat::U8, 1)
-        .add_field(1, "SD Card", ExifFormat::U8, 1)
+/// Binary data table: ShotInfoD850
+/// Source lines: 8197-8251
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod850_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD850", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
+        .build()
+}
+
+/// Binary data table: ShotInfoD4
+/// Source lines: 8295-8323
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfod4_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoD4", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
         .build()
 }
 
@@ -1390,184 +1473,108 @@ pub fn create_moresettingsd850_table() -> BinaryDataTable {
 /// Process function: ProcessNikonEncrypted
 pub fn create_shotinfod4s_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("ShotInfoD4S", ExifFormat::U8)
-        .encrypted(true)
-        .add_field(0, "Overflow", ExifFormat::U8, 1)
-        .add_field(2, "Backup", ExifFormat::U8, 1)
-        .add_field(3, "NEF Primary + JPG Secondary", ExifFormat::U8, 1)
-        .add_field(0, "AE Bracketing Disabled", ExifFormat::U8, 1)
-        .add_field(32, "AE Bracketing Disabled", ExifFormat::U8, 1)
-        .add_field(48, "AE Bracketing Disabled", ExifFormat::U8, 1)
-        .add_field(64, "AE Bracketing Disabled", ExifFormat::U8, 1)
-        .add_field(80, "AE Bracketing Disabled", ExifFormat::U8, 1)
-        .add_field(129, "+3F0.3", ExifFormat::U8, 1)
-        .add_field(130, "-3F0.3", ExifFormat::U8, 1)
-        .add_field(131, "+2F0.3", ExifFormat::U8, 1)
-        .add_field(132, "-2F0.3", ExifFormat::U8, 1)
-        .add_field(133, "3F0.3", ExifFormat::U8, 1)
-        .add_field(134, "5F0.3", ExifFormat::U8, 1)
-        .add_field(135, "7F0.3", ExifFormat::U8, 1)
-        .add_field(136, "9F0.3", ExifFormat::U8, 1)
-        .add_field(145, "+3F0.5", ExifFormat::U8, 1)
-        .add_field(146, "-3F0.5", ExifFormat::U8, 1)
-        .add_field(147, "+2F0.5", ExifFormat::U8, 1)
-        .add_field(148, "-2F0.5", ExifFormat::U8, 1)
-        .add_field(149, "3F0.5", ExifFormat::U8, 1)
-        .add_field(150, "5F0.5", ExifFormat::U8, 1)
-        .add_field(151, "7F0.5", ExifFormat::U8, 1)
-        .add_field(152, "9F0.5", ExifFormat::U8, 1)
-        .add_field(161, "+3F0.7", ExifFormat::U8, 1)
-        .add_field(162, "-3F0.7", ExifFormat::U8, 1)
-        .add_field(163, "+2F0.7", ExifFormat::U8, 1)
-        .add_field(164, "-2F0.7", ExifFormat::U8, 1)
-        .add_field(165, "3F0.7", ExifFormat::U8, 1)
-        .add_field(166, "5F0.7", ExifFormat::U8, 1)
-        .add_field(167, "7F0.7", ExifFormat::U8, 1)
-        .add_field(168, "9F0.7", ExifFormat::U8, 1)
-        .add_field(177, "+3F1", ExifFormat::U8, 1)
-        .add_field(178, "-3F1", ExifFormat::U8, 1)
-        .add_field(179, "+2F1", ExifFormat::U8, 1)
-        .add_field(180, "-2F1", ExifFormat::U8, 1)
-        .add_field(181, "3F1", ExifFormat::U8, 1)
-        .add_field(182, "5F1", ExifFormat::U8, 1)
-        .add_field(183, "7F1", ExifFormat::U8, 1)
-        .add_field(184, "9F1", ExifFormat::U8, 1)
-        .add_field(193, "+3F2", ExifFormat::U8, 1)
-        .add_field(194, "-3F2", ExifFormat::U8, 1)
-        .add_field(195, "+2F2", ExifFormat::U8, 1)
-        .add_field(196, "-2F2", ExifFormat::U8, 1)
-        .add_field(197, "3F2", ExifFormat::U8, 1)
-        .add_field(198, "5F2", ExifFormat::U8, 1)
-        .add_field(209, "+3F3", ExifFormat::U8, 1)
-        .add_field(210, "-3F3", ExifFormat::U8, 1)
-        .add_field(211, "+2F3", ExifFormat::U8, 1)
-        .add_field(212, "-2F3", ExifFormat::U8, 1)
-        .add_field(213, "3F3", ExifFormat::U8, 1)
-        .add_field(214, "5F3", ExifFormat::U8, 1)
-        .add_field(0, "WB Bracketing Disabled", ExifFormat::U8, 1)
-        .add_field(1, "b3F 1", ExifFormat::U8, 1)
-        .add_field(2, "A3F 1", ExifFormat::U8, 1)
-        .add_field(3, "b2F 1", ExifFormat::U8, 1)
-        .add_field(4, "A2F 1", ExifFormat::U8, 1)
-        .add_field(5, "3F 1", ExifFormat::U8, 1)
-        .add_field(6, "5F 1", ExifFormat::U8, 1)
-        .add_field(7, "7F 1", ExifFormat::U8, 1)
-        .add_field(8, "9F 1", ExifFormat::U8, 1)
-        .add_field(16, "0F 2", ExifFormat::U8, 1)
-        .add_field(17, "b3F 2", ExifFormat::U8, 1)
-        .add_field(18, "A3F 2", ExifFormat::U8, 1)
-        .add_field(19, "b2F 2", ExifFormat::U8, 1)
-        .add_field(20, "A2F 2", ExifFormat::U8, 1)
-        .add_field(21, "3F 2", ExifFormat::U8, 1)
-        .add_field(22, "5F 2", ExifFormat::U8, 1)
-        .add_field(23, "7F 2", ExifFormat::U8, 1)
-        .add_field(24, "9F 2", ExifFormat::U8, 1)
-        .add_field(32, "0F 3", ExifFormat::U8, 1)
-        .add_field(33, "b3F 3", ExifFormat::U8, 1)
-        .add_field(34, "A3F 3", ExifFormat::U8, 1)
-        .add_field(35, "b2F 3", ExifFormat::U8, 1)
-        .add_field(36, "A2F 3", ExifFormat::U8, 1)
-        .add_field(37, "3F 3", ExifFormat::U8, 1)
-        .add_field(38, "5F 3", ExifFormat::U8, 1)
-        .add_field(39, "7F 3", ExifFormat::U8, 1)
-        .add_field(40, "9F 3", ExifFormat::U8, 1)
-        .add_field(34, "A3F 3", ExifFormat::U8, 1)
-        .add_field(35, "b2F 3", ExifFormat::U8, 1)
-        .add_field(36, "A2F 3", ExifFormat::U8, 1)
-        .add_field(37, "3F 3", ExifFormat::U8, 1)
-        .add_field(38, "5F 3", ExifFormat::U8, 1)
-        .add_field(39, "7F 3", ExifFormat::U8, 1)
-        .add_field(40, "9F 3", ExifFormat::U8, 1)
-        .add_field(0, "Single Frame", ExifFormat::U8, 1)
-        .add_field(1, "Continuous High Speed", ExifFormat::U8, 1)
-        .add_field(3, "Continuous Low Speed", ExifFormat::U8, 1)
-        .add_field(4, "Timer", ExifFormat::U8, 1)
-        .add_field(32, "Mirror-Up", ExifFormat::U8, 1)
-        .add_field(64, "Quiet", ExifFormat::U8, 1)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 5)
         .add_field(0, "Reset", ExifFormat::U8, 1)
         .add_field(1, "Zoom", ExifFormat::U8, 1)
         .add_field(3, "None", ExifFormat::U8, 1)
-        .add_field(0, "1/4000 s", ExifFormat::U8, 1)
-        .add_field(1, "1/3200 s", ExifFormat::U8, 1)
-        .add_field(2, "1/2500 s", ExifFormat::U8, 1)
-        .add_field(3, "1/2000 s", ExifFormat::U8, 1)
-        .add_field(4, "1/1600 s", ExifFormat::U8, 1)
-        .add_field(5, "1/1250 s", ExifFormat::U8, 1)
-        .add_field(6, "1/1000 s", ExifFormat::U8, 1)
-        .add_field(7, "1/800 s", ExifFormat::U8, 1)
-        .add_field(8, "1/640 s", ExifFormat::U8, 1)
-        .add_field(9, "1/500 s", ExifFormat::U8, 1)
-        .add_field(10, "1/400 s", ExifFormat::U8, 1)
-        .add_field(11, "1/320 s", ExifFormat::U8, 1)
-        .add_field(12, "1/250 s", ExifFormat::U8, 1)
-        .add_field(13, "1/200 s", ExifFormat::U8, 1)
-        .add_field(14, "1/160 s", ExifFormat::U8, 1)
-        .add_field(15, "1/125 s", ExifFormat::U8, 1)
-        .add_field(16, "1/100 s", ExifFormat::U8, 1)
-        .add_field(17, "1/80 s", ExifFormat::U8, 1)
-        .add_field(18, "1/60 s", ExifFormat::U8, 1)
-        .add_field(19, "1/50 s", ExifFormat::U8, 1)
-        .add_field(20, "1/40 s", ExifFormat::U8, 1)
-        .add_field(21, "1/30 s", ExifFormat::U8, 1)
-        .add_field(22, "1/15 s", ExifFormat::U8, 1)
-        .add_field(23, "1/8 s", ExifFormat::U8, 1)
-        .add_field(24, "1/4 s", ExifFormat::U8, 1)
-        .add_field(25, "1/2 s", ExifFormat::U8, 1)
-        .add_field(26, "1 s", ExifFormat::U8, 1)
-        .add_field(27, "2 s", ExifFormat::U8, 1)
-        .add_field(28, "4 s", ExifFormat::U8, 1)
-        .add_field(29, "8 s", ExifFormat::U8, 1)
-        .add_field(30, "15 s", ExifFormat::U8, 1)
-        .add_field(31, "30 s", ExifFormat::U8, 1)
-        .add_field(32, "Auto (Slowest)", ExifFormat::U8, 1)
-        .add_field(33, "Auto (Slower)", ExifFormat::U8, 1)
-        .add_field(34, "Auto", ExifFormat::U8, 1)
-        .add_field(35, "Auto (Faster)", ExifFormat::U8, 1)
-        .add_field(36, "Auto (Fastest)", ExifFormat::U8, 1)
-        .add_field(36, "ISO 200", ExifFormat::U8, 1)
-        .add_field(38, "ISO 250", ExifFormat::U8, 1)
-        .add_field(39, "ISO 280", ExifFormat::U8, 1)
-        .add_field(40, "ISO 320", ExifFormat::U8, 1)
-        .add_field(42, "ISO 400", ExifFormat::U8, 1)
-        .add_field(44, "ISO 500", ExifFormat::U8, 1)
-        .add_field(45, "ISO 560", ExifFormat::U8, 1)
-        .add_field(46, "ISO 640", ExifFormat::U8, 1)
-        .add_field(48, "ISO 800", ExifFormat::U8, 1)
-        .add_field(50, "ISO 1000", ExifFormat::U8, 1)
-        .add_field(51, "ISO 1100", ExifFormat::U8, 1)
-        .add_field(52, "ISO 1250", ExifFormat::U8, 1)
-        .add_field(54, "ISO 1600", ExifFormat::U8, 1)
-        .add_field(56, "ISO 2000", ExifFormat::U8, 1)
-        .add_field(57, "ISO 2200", ExifFormat::U8, 1)
-        .add_field(58, "ISO 2500", ExifFormat::U8, 1)
-        .add_field(60, "ISO 3200", ExifFormat::U8, 1)
-        .add_field(62, "ISO 4000", ExifFormat::U8, 1)
-        .add_field(63, "ISO 4500", ExifFormat::U8, 1)
-        .add_field(64, "ISO 5000", ExifFormat::U8, 1)
-        .add_field(66, "ISO 6400", ExifFormat::U8, 1)
-        .add_field(68, "ISO 8000", ExifFormat::U8, 1)
-        .add_field(69, "ISO 9000", ExifFormat::U8, 1)
-        .add_field(70, "ISO 10000", ExifFormat::U8, 1)
-        .add_field(72, "ISO 12800", ExifFormat::U8, 1)
-        .add_field(74, "ISO 16000", ExifFormat::U8, 1)
-        .add_field(75, "ISO 18000", ExifFormat::U8, 1)
-        .add_field(76, "ISO 20000", ExifFormat::U8, 1)
-        .add_field(78, "ISO 25600", ExifFormat::U8, 1)
-        .add_field(80, "ISO 32000", ExifFormat::U8, 1)
-        .add_field(81, "ISO 36000", ExifFormat::U8, 1)
-        .add_field(82, "ISO 40000", ExifFormat::U8, 1)
-        .add_field(84, "ISO 51200", ExifFormat::U8, 1)
-        .add_field(86, "ISO Hi 0.3", ExifFormat::U8, 1)
-        .add_field(87, "ISO Hi 0.5", ExifFormat::U8, 1)
-        .add_field(88, "ISO Hi 0.7", ExifFormat::U8, 1)
-        .add_field(90, "ISO Hi 1.0", ExifFormat::U8, 1)
-        .add_field(96, "ISO Hi 2.0", ExifFormat::U8, 1)
-        .add_field(102, "ISO Hi 3.0", ExifFormat::U8, 1)
-        .add_field(108, "ISO Hi 4.0", ExifFormat::U8, 1)
-        .add_field(114, "ISO Hi 5.0", ExifFormat::U8, 1)
-        .add_field(0, "Horizontal", ExifFormat::U8, 1)
-        .add_field(1, "Rotate 270 CW", ExifFormat::U8, 1)
-        .add_field(2, "Rotate 90 CW", ExifFormat::U8, 1)
-        .add_field(3, "Rotate 180", ExifFormat::U8, 1)
+        .build()
+}
+
+/// Binary data table: ShotInfoZ6III
+/// Source lines: 8617-8677
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfoz6iii_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoZ6III", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 8)
+        .add_field(14, "FirmwareVersion2", ExifFormat::Ascii, 8)
+        .add_field(24, "FirmwareVersion3", ExifFormat::Ascii, 8)
+        .add_field(36, "NumberOffsets", ExifFormat::U32, 1)
+        .add_field(136, "OrientationOffset", ExifFormat::U32, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96
+        .build()
+}
+
+/// Binary data table: ShotInfoZ7II
+/// Source lines: 8680-8762
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfoz7ii_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoZ7II", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 8)
+        .add_field(14, "FirmwareVersion2", ExifFormat::Ascii, 8)
+        .add_field(24, "FirmwareVersion3", ExifFormat::Ascii, 8)
+        .add_field(36, "NumberOffsets", ExifFormat::U32, 1)
+        .add_field(48, "IntervalOffset", ExifFormat::U32, 1)
+        .add_field(56, "PortraitOffset", ExifFormat::U32, 1)
+        .add_field(136, "OrientationOffset", ExifFormat::U32, 1)
+        // Condition: $$self{Model} =~ /^NIKON Z f\b/i
+        .add_field(152, "OrientationOffset", ExifFormat::U32, 1)
+        // Condition: $$self{Model} =~ /^NIKON Z (30|5|50|6|6_2|7|7_2|8|fc)\b/i
+        .build()
+}
+
+/// Binary data table: ShotInfoZ8
+/// Source lines: 8829-8905
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfoz8_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoZ8", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 8)
+        .add_field(14, "FirmwareVersion2", ExifFormat::Ascii, 8)
+        .add_field(24, "FirmwareVersion3", ExifFormat::Ascii, 8)
+        .add_field(36, "NumberOffsets", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: ShotInfoZ9
+/// Source lines: 8908-9033
+/// Process function: ProcessNikonEncrypted
+pub fn create_shotinfoz9_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ShotInfoZ9", ExifFormat::U8)
+        // .encrypted(true) // TODO: Implement encryption support
+        .add_field(0, "ShotInfoVersion", ExifFormat::Ascii, 4)
+        .add_field(4, "FirmwareVersion", ExifFormat::Ascii, 8)
+        .add_field(14, "FirmwareVersion2", ExifFormat::Ascii, 8)
+        .add_field(24, "FirmwareVersion3", ExifFormat::Ascii, 8)
+        .add_field(36, "NumberOffsets", ExifFormat::U32, 1)
+        .add_field(42, "IntervalFrame", ExifFormat::U16, 1)
+        // Condition: $$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0
+        .build()
+}
+
+/// Binary data table: FlashInfoUnknown
+/// Source lines: 11856-11864
+/// Process function: ProcessBinaryData
+pub fn create_flashinfounknown_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("FlashInfoUnknown", ExifFormat::U8)
+        .add_field(0, "FlashInfoVersion", ExifFormat::Ascii, 4)
+        .build()
+}
+
+/// Binary data table: MultiExposure
+/// Source lines: 11867-11890
+/// Process function: ProcessBinaryData
+pub fn create_multiexposure_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("MultiExposure", ExifFormat::U32)
+        .add_field(0, "MultiExposureVersion", ExifFormat::Ascii, 4)
+        .add_field(2, "MultiExposureShots", ExifFormat::U32, 1)
+        .add_field(3, "MultiExposureAutoGain", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: MultiExposure2
+/// Source lines: 11893-11920
+/// Process function: ProcessBinaryData
+pub fn create_multiexposure2_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("MultiExposure2", ExifFormat::U32)
+        .add_field(0, "MultiExposureVersion", ExifFormat::Ascii, 4)
+        .add_field(2, "MultiExposureShots", ExifFormat::U32, 1)
         .build()
 }
 
@@ -1576,11 +1583,14 @@ pub fn create_shotinfod4s_table() -> BinaryDataTable {
 /// Process function: ProcessBinaryData
 pub fn create_mov_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("MOV", ExifFormat::U8)
-        .add_field(0, "Auto", ExifFormat::U8, 1)
-        .add_field(1, "Daylight", ExifFormat::U8, 1)
-        .add_field(2, "Shade", ExifFormat::U8, 1)
-        .add_field(4, "Tungsten", ExifFormat::U8, 1)
-        .add_field(5, "Manual", ExifFormat::U8, 1)
+        .add_field(0, "Make", ExifFormat::Ascii, 24)
+        .add_field(24, "Model", ExifFormat::Ascii, 8)
+        .add_field(38, "ExposureTime", ExifFormat::U32, 1)
+        .add_field(42, "FNumber", ExifFormat::Rational, 1)
+        .add_field(50, "ExposureCompensation", ExifFormat::SignedRational, 1)
+        .add_field(72, "FocalLength", ExifFormat::Rational, 1)
+        .add_field(175, "Software", ExifFormat::Ascii, 16)
+        .add_field(223, "ISO", ExifFormat::U16, 1)
         .build()
 }
 

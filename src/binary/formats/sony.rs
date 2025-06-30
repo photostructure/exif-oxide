@@ -8,6 +8,712 @@
 use crate::core::binary_data::{BinaryDataTable, BinaryDataTableBuilder};
 use crate::core::types::ExifFormat;
 
+/// Binary data table: FaceInfo
+/// Source lines: 3975-4035
+/// Process function: ProcessBinaryData
+pub fn create_faceinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("FaceInfo", ExifFormat::U16)
+        // .add_field(-1, "n/a", ExifFormat::U16, 1) // TODO: Handle negative offsets
+        .add_field(6, "Face2Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 2
+        .add_field(11, "Face3Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 3
+        .add_field(16, "Face4Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 4
+        .add_field(21, "Face5Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 5
+        .add_field(26, "Face6Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 6
+        .add_field(31, "Face7Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 7
+        .add_field(36, "Face8Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 8
+        .build()
+}
+
+/// Binary data table: FaceInfoA
+/// Source lines: 4037-4131
+/// Process function: ProcessBinaryData
+pub fn create_faceinfoa_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("FaceInfoA", ExifFormat::U16)
+        .add_field(2, "FaceTest2", ExifFormat::U16, 1)
+        .add_field(3, "FacesDetected", ExifFormat::U16, 1)
+        .add_field(8, "FaceTest8", ExifFormat::U16, 1)
+        .add_field(21, "PotentialFace2Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 2 or ($$self{FacesDetected} == 1 and $$self{FaceTest8} > 0)
+        .add_field(31, "PotentialFace3Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 3 or ($$self{FacesDetected} == 2 and $$self{FaceTest8} > 0)
+        .add_field(41, "PotentialFace4Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 4 or ($$self{FacesDetected} == 3 and $$self{FaceTest8} > 0)
+        .add_field(51, "PotentialFace5Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 5 or ($$self{FacesDetected} == 4 and $$self{FaceTest8} > 0)
+        .add_field(61, "PotentialFace6Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 6 or ($$self{FacesDetected} == 5 and $$self{FaceTest8} > 0)
+        .add_field(71, "PotentialFace7Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 7 or ($$self{FacesDetected} == 6 and $$self{FaceTest8} > 0)
+        .add_field(81, "PotentialFace8Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 8 or ($$self{FacesDetected} == 7 and $$self{FaceTest8} > 0)
+        .add_field(91, "Face1Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 1
+        .add_field(101, "Face2Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 2
+        .add_field(111, "Face3Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 3
+        .add_field(121, "Face4Position", ExifFormat::U16, 1)
+        // Condition: $$self{FacesDetected} >= 4
+        .build()
+}
+
+/// Binary data table: CameraSettings
+/// Source lines: 4134-4626
+/// Process function: ProcessBinaryData
+pub fn create_camerasettings_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("CameraSettings", ExifFormat::U16)
+        .add_field(0, "ExposureTime", ExifFormat::U16, 1)
+        .add_field(1, "FNumber", ExifFormat::U16, 1)
+        .add_field(3, "ExposureCompensationSet", ExifFormat::U16, 1)
+        .add_field(6, "WhiteBalanceFineTune", ExifFormat::U16, 1)
+        .add_field(7, "ColorTemperatureSet", ExifFormat::U16, 1)
+        .add_field(8, "ColorCompensationFilterSet", ExifFormat::U16, 1)
+        .add_field(12, "ColorTemperatureCustom", ExifFormat::U16, 1)
+        .add_field(13, "ColorCompensationFilterCustom", ExifFormat::U16, 1)
+        .add_field(20, "FlashExposureCompSet", ExifFormat::U16, 1)
+        .add_field(22, "ISOSetting", ExifFormat::U16, 1)
+        .add_field(25, "DynamicRangeOptimizerLevel", ExifFormat::U16, 1)
+        .add_field(28, "Sharpness", ExifFormat::U16, 1)
+        .add_field(29, "Contrast", ExifFormat::U16, 1)
+        .add_field(30, "Saturation", ExifFormat::U16, 1)
+        .add_field(31, "ZoneMatchingValue", ExifFormat::U16, 1)
+        .add_field(34, "Brightness", ExifFormat::U16, 1)
+        .add_field(47, "ShutterSpeedSetting", ExifFormat::U16, 1)
+        .add_field(48, "ApertureSetting", ExifFormat::U16, 1)
+        .add_field(60, "ExposureProgram", ExifFormat::U16, 1)
+        .add_field(81, "BatteryLevel", ExifFormat::U16, 1)
+        .add_field(154, "FolderNumber", ExifFormat::U16, 1)
+        .add_field(155, "ImageNumber", ExifFormat::U16, 1)
+        .build()
+}
+
+/// Binary data table: CameraSettings2
+/// Source lines: 4629-5716
+/// Process function: ProcessBinaryData
+pub fn create_camerasettings2_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("CameraSettings2", ExifFormat::U16)
+        .add_field(0, "ExposureTime", ExifFormat::U16, 1)
+        .add_field(1, "FNumber", ExifFormat::U16, 1)
+        .add_field(3, "ExposureCompensationSet", ExifFormat::U16, 1)
+        .add_field(5, "WhiteBalanceFineTune", ExifFormat::U16, 1)
+        .add_field(6, "ColorTemperatureSet", ExifFormat::U16, 1)
+        .add_field(7, "ColorCompensationFilterSet", ExifFormat::U16, 1)
+        .add_field(8, "CustomWB_RGBLevels", ExifFormat::U16, 3)
+        .add_field(11, "ColorTemperatureCustom", ExifFormat::U16, 1)
+        .add_field(12, "ColorCompensationFilterCustom", ExifFormat::U16, 1)
+        .add_field(18, "FlashExposureCompSet", ExifFormat::U16, 1)
+        .add_field(20, "ISOSetting", ExifFormat::U16, 1)
+        .add_field(23, "DynamicRangeOptimizerLevel", ExifFormat::U16, 1)
+        .add_field(25, "Sharpness", ExifFormat::U16, 1)
+        .add_field(26, "Contrast", ExifFormat::U16, 1)
+        .add_field(27, "Saturation", ExifFormat::U16, 1)
+        .add_field(40, "ShutterSpeedSetting", ExifFormat::U16, 1)
+        .add_field(41, "ApertureSetting", ExifFormat::U16, 1)
+        .add_field(60, "ExposureProgram", ExifFormat::U16, 1)
+        .add_field(0, "ShutterSpeedSetting", ExifFormat::U16, 1)
+        .add_field(1, "ApertureSetting", ExifFormat::U16, 1)
+        .add_field(0, "Auto", ExifFormat::U16, 1)
+        .add_field(254, "n/a", ExifFormat::U16, 1)
+        .add_field(3, "ExposureCompensationSet", ExifFormat::U16, 1)
+        .add_field(5, "ExposureProgram", ExifFormat::U16, 1)
+        .add_field(13, "DynamicRangeOptimizerLevel", ExifFormat::U16, 1)
+        .add_field(16, "ContrastSetting", ExifFormat::U8, 1)
+        .add_field(17, "SaturationSetting", ExifFormat::U8, 1)
+        .add_field(18, "SharpnessSetting", ExifFormat::U8, 1)
+        .add_field(22, "WhiteBalanceSetting", ExifFormat::U16, 1)
+        .add_field(23, "ColorTemperatureSetting", ExifFormat::U16, 1)
+        .add_field(24, "ColorCompensationFilterSet", ExifFormat::U8, 1)
+        .add_field(25, "CustomWB_RGBLevels", ExifFormat::U8, 3)
+        .add_field(35, "FlashExposureCompSet", ExifFormat::U16, 1)
+        .add_field(276, "FolderNumber", ExifFormat::U32, 1)
+        // Condition: $$self{Model} !~ /^DSLR-(A450|A500|A550)$/
+        // .add_bit_field(276, "ImageNumber", 0x3fff, 0) // TODO: Implement bit field support
+        // Condition: $$self{Model} !~ /^DSLR-(A450|A500|A550)$/
+        .add_field(788, "ImageNumber", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^DSLR-(A450|A500|A550)$/
+        .add_field(790, "FolderNumber", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^DSLR-(A450|A500|A550)$/
+        .add_field(1008, "LensE-mountVersion", ExifFormat::U16, 1)
+        // Condition: ($$self{Model} =~ /^NEX-/)
+        .add_field(1011, "LensFirmwareVersion", ExifFormat::U16, 1)
+        // Condition: ($$self{Model} =~ /^NEX-/)
+        .add_field(1015, "LensType2", ExifFormat::U16, 1)
+        // Condition: ($$self{Model} =~ /^NEX-/) and ($$self{LensMount} != 1)
+        .add_field(1024, "ImageNumber", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^DSLR-(A450|A500|A550)$/
+        .add_field(1026, "FolderNumber", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^DSLR-(A450|A500|A550)$/
+        .build()
+}
+
+/// Binary data table: CameraSettings3
+/// Source lines: 5047-8698
+/// Process function: ProcessEnciphered
+pub fn create_camerasettings3_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("CameraSettings3", ExifFormat::U8)
+        .add_field(0, "ShutterSpeedSetting", ExifFormat::U8, 1)
+        .add_field(1, "ApertureSetting", ExifFormat::U8, 1)
+        .add_field(0, "Auto", ExifFormat::U8, 1)
+        .add_field(254, "n/a", ExifFormat::U8, 1)
+        .add_field(3, "ExposureCompensationSet", ExifFormat::U8, 1)
+        .add_field(5, "ExposureProgram", ExifFormat::U8, 1)
+        .add_field(13, "DynamicRangeOptimizerLevel", ExifFormat::U8, 1)
+        .add_field(16, "ContrastSetting", ExifFormat::U8, 1)
+        .add_field(17, "SaturationSetting", ExifFormat::U8, 1)
+        .add_field(18, "SharpnessSetting", ExifFormat::U8, 1)
+        .add_field(22, "WhiteBalanceSetting", ExifFormat::U8, 1)
+        .add_field(23, "ColorTemperatureSetting", ExifFormat::U8, 1)
+        .add_field(24, "ColorCompensationFilterSet", ExifFormat::U8, 1)
+        .add_field(25, "CustomWB_RGBLevels", ExifFormat::U8, 3)
+        .add_field(35, "FlashExposureCompSet", ExifFormat::U8, 1)
+        .add_field(276, "FolderNumber", ExifFormat::U32, 1)
+        // Condition: $$self{Model} !~ /^DSLR-(A450|A500|A550)$/
+        // .add_bit_field(276, "ImageNumber", 0x3fff, 0) // TODO: Implement bit field support
+        // Condition: $$self{Model} !~ /^DSLR-(A450|A500|A550)$/
+        .add_field(788, "ImageNumber", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^DSLR-(A450|A500|A550)$/
+        .add_field(790, "FolderNumber", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^DSLR-(A450|A500|A550)$/
+        .add_field(1008, "LensE-mountVersion", ExifFormat::U16, 1)
+        // Condition: ($$self{Model} =~ /^NEX-/)
+        .add_field(1011, "LensFirmwareVersion", ExifFormat::U16, 1)
+        // Condition: ($$self{Model} =~ /^NEX-/)
+        .add_field(1015, "LensType2", ExifFormat::U16, 1)
+        // Condition: ($$self{Model} =~ /^NEX-/) and ($$self{LensMount} != 1)
+        .add_field(1024, "ImageNumber", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^DSLR-(A450|A500|A550)$/
+        .add_field(1026, "FolderNumber", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^DSLR-(A450|A500|A550)$/
+        .add_field(1, "BatteryTemperature", ExifFormat::U8, 1)
+        .add_field(12, "BatteryLevel", ExifFormat::U8, 1)
+        .add_field(26, "ExtraInfoVersion", ExifFormat::U8, 4)
+        .add_field(4, "BatteryLevel", ExifFormat::U8, 1)
+        .add_field(0, "BatteryUnknown", ExifFormat::U16, 1)
+        .add_field(2, "BatteryTemperature", ExifFormat::U8, 1)
+        .add_field(4, "BatteryLevel", ExifFormat::U8, 1)
+        .add_field(6, "BatteryVoltage1", ExifFormat::U16, 1)
+        // Condition: $$self{Model} !~ /^(NEX-(3|5|5C|C3|VG10|VG10E))\b/
+        .add_field(8, "BatteryVoltage2", ExifFormat::U16, 1)
+        // Condition: $$self{Model} !~ /^(NEX-(3|5|5C|C3|VG10|VG10E))\b/
+        .add_field(1, "Empty", ExifFormat::U8, 1)
+        .add_field(2, "Low", ExifFormat::U8, 1)
+        .add_field(3, "Half full", ExifFormat::U8, 1)
+        .add_field(4, "Almost full", ExifFormat::U8, 1)
+        .add_field(5, "Full", ExifFormat::U8, 1)
+        .add_field(241, "Landscape", ExifFormat::U8, 1)
+        .add_field(243, "Aperture-priority AE", ExifFormat::U8, 1)
+        .add_field(245, "Portrait", ExifFormat::U8, 1)
+        .add_field(246, "Auto", ExifFormat::U8, 1)
+        .add_field(247, "Program AE", ExifFormat::U8, 1)
+        .add_field(249, "Macro", ExifFormat::U8, 1)
+        .add_field(252, "Sunset", ExifFormat::U8, 1)
+        .add_field(253, "Sports", ExifFormat::U8, 1)
+        .add_field(255, "Manual", ExifFormat::U8, 1)
+        .add_field(248, "No Flash", ExifFormat::U8, 1)
+        .add_field(249, "Aperture-priority AE", ExifFormat::U8, 1)
+        .add_field(250, "SCN", ExifFormat::U8, 1)
+        .add_field(251, "Shutter speed priority AE", ExifFormat::U8, 1)
+        .add_field(252, "Auto", ExifFormat::U8, 1)
+        .add_field(253, "Program AE", ExifFormat::U8, 1)
+        .add_field(254, "Panorama", ExifFormat::U8, 1)
+        .add_field(255, "Manual", ExifFormat::U8, 1)
+        .add_field(244, "MemoryStick in use, SD card present", ExifFormat::U8, 1)
+        .add_field(245, "MemoryStick in use, SD slot empty", ExifFormat::U8, 1)
+        .add_field(252, "SD card in use, MemoryStick present", ExifFormat::U8, 1)
+        .add_field(254, "SD card in use, MemoryStick slot empty", ExifFormat::U8, 1)
+        .add_field(0, "Horizontal (normal)", ExifFormat::U8, 1)
+        .add_field(1, "Rotate 90 CW", ExifFormat::U8, 1)
+        .add_field(2, "Rotate 270 CW", ExifFormat::U8, 1)
+        .add_field(3, "Rotate 180", ExifFormat::U8, 1)
+        .add_field(0, "HiddenDataOffset", ExifFormat::U8, 1)
+        .add_field(1, "HiddenDataLength", ExifFormat::U8, 1)
+        .add_field(2, "FaceInfoOffset", ExifFormat::U16, 1)
+        .add_field(26, "SonyImageHeight", ExifFormat::U16, 1)
+        .add_field(28, "SonyImageWidth", ExifFormat::U16, 1)
+        .add_field(48, "FacesDetected", ExifFormat::U16, 1)
+        .add_field(50, "FaceInfoLength", ExifFormat::U16, 1)
+        .add_field(52, "MetaVersion", ExifFormat::Ascii, 16)
+        .add_field(0, "Normal", ExifFormat::U8, 1)
+        .add_field(1, "Continuous", ExifFormat::U8, 1)
+        .add_field(2, "Continuous - Exposure Bracketing", ExifFormat::U8, 1)
+        .add_field(3, "DRO or White Balance Bracketing", ExifFormat::U8, 1)
+        .add_field(5, "Continuous - Burst", ExifFormat::U8, 1)
+        .add_field(6, "Single Frame - Capture During Movie", ExifFormat::U8, 1)
+        .add_field(7, "Continuous - Sweep Panorama", ExifFormat::U8, 1)
+        .add_field(8, "Continuous - Anti-Motion Blur, Hand-held Twilight", ExifFormat::U8, 1)
+        .add_field(9, "Continuous - HDR", ExifFormat::U8, 1)
+        .add_field(10, "Continuous - Background defocus", ExifFormat::U8, 1)
+        .add_field(13, "Continuous - 3D Sweep Panorama", ExifFormat::U8, 1)
+        .add_field(15, "Continuous - High Resolution Sweep Panorama", ExifFormat::U8, 1)
+        .add_field(16, "Continuous - 3D Image", ExifFormat::U8, 1)
+        .add_field(17, "Continuous - Burst 2", ExifFormat::U8, 1)
+        .add_field(18, "Normal - iAuto+", ExifFormat::U8, 1)
+        .add_field(19, "Continuous - Speed/Advance Priority", ExifFormat::U8, 1)
+        .add_field(20, "Continuous - Multi Frame NR", ExifFormat::U8, 1)
+        .add_field(23, "Single-frame - Exposure Bracketing", ExifFormat::U8, 1)
+        .add_field(26, "Continuous Low", ExifFormat::U8, 1)
+        .add_field(27, "Continuous - High Sensitivity", ExifFormat::U8, 1)
+        .add_field(28, "Smile Shutter", ExifFormat::U8, 1)
+        .add_field(29, "Continuous - Tele-zoom Advance Priority", ExifFormat::U8, 1)
+        .add_field(146, "Single Frame - Movie Capture", ExifFormat::U8, 1)
+        .add_field(0, "Normal", ExifFormat::U8, 1)
+        .add_field(1, "Continuous", ExifFormat::U8, 1)
+        .add_field(2, "Bracketing", ExifFormat::U8, 1)
+        .add_field(4, "Continuous - Burst", ExifFormat::U8, 1)
+        .add_field(5, "Continuous - Speed/Advance Priority", ExifFormat::U8, 1)
+        .add_field(6, "Normal - Self-timer", ExifFormat::U8, 1)
+        .add_field(9, "Single Burst Shooting", ExifFormat::U8, 1)
+        .add_field(0, "Off", ExifFormat::U8, 1)
+        .add_field(1, "Self-timer 10 s", ExifFormat::U8, 1)
+        .add_field(2, "Self-timer 2 s", ExifFormat::U8, 1)
+        .add_field(0, "Off", ExifFormat::U8, 1)
+        .add_field(1, "Self-timer 5 or 10 s", ExifFormat::U8, 1)
+        .add_field(2, "Self-timer 2 s", ExifFormat::U8, 1)
+        .add_field(0, "Off", ExifFormat::U8, 1)
+        .add_field(1, "Auto", ExifFormat::U8, 1)
+        .add_field(3, "Lv1", ExifFormat::U8, 1)
+        .add_field(4, "Lv2", ExifFormat::U8, 1)
+        .add_field(5, "Lv3", ExifFormat::U8, 1)
+        .add_field(6, "Lv4", ExifFormat::U8, 1)
+        .add_field(7, "Lv5", ExifFormat::U8, 1)
+        .add_field(8, "n/a", ExifFormat::U8, 1)
+        .add_field(0, "Off", ExifFormat::U8, 1)
+        .add_field(1, "HDR Auto", ExifFormat::U8, 1)
+        .add_field(3, "HDR 1 EV", ExifFormat::U8, 1)
+        .add_field(5, "HDR 2 EV", ExifFormat::U8, 1)
+        .add_field(7, "HDR 3 EV", ExifFormat::U8, 1)
+        .add_field(9, "HDR 4 EV", ExifFormat::U8, 1)
+        .add_field(11, "HDR 5 EV", ExifFormat::U8, 1)
+        .add_field(13, "HDR 6 EV", ExifFormat::U8, 1)
+        .add_field(0, "Off", ExifFormat::U8, 1)
+        .add_field(1, "Toy Camera", ExifFormat::U8, 1)
+        .add_field(2, "Pop Color", ExifFormat::U8, 1)
+        .add_field(3, "Posterization", ExifFormat::U8, 1)
+        .add_field(4, "Retro Photo", ExifFormat::U8, 1)
+        .add_field(5, "Soft High Key", ExifFormat::U8, 1)
+        .add_field(6, "Partial Color", ExifFormat::U8, 1)
+        .add_field(7, "High Contrast Monochrome", ExifFormat::U8, 1)
+        .add_field(8, "Soft Focus", ExifFormat::U8, 1)
+        .add_field(9, "HDR Painting", ExifFormat::U8, 1)
+        .add_field(10, "Rich-tone Monochrome", ExifFormat::U8, 1)
+        .add_field(11, "Miniature", ExifFormat::U8, 1)
+        .add_field(12, "Water Color", ExifFormat::U8, 1)
+        .add_field(13, "Illustration", ExifFormat::U8, 1)
+        .add_field(0, "JPEG", ExifFormat::U8, 1)
+        .add_field(1, "RAW", ExifFormat::U8, 1)
+        .add_field(2, "RAW + JPEG", ExifFormat::U8, 1)
+        .add_field(0, "Multi-segment", ExifFormat::U8, 1)
+        .add_field(2, "Center-weighted average", ExifFormat::U8, 1)
+        .add_field(3, "Spot", ExifFormat::U8, 1)
+        .add_field(4, "Average", ExifFormat::U8, 1)
+        .add_field(5, "Highlight", ExifFormat::U8, 1)
+        .add_field(0, "Autoflash", ExifFormat::U8, 1)
+        .add_field(1, "Fill-flash", ExifFormat::U8, 1)
+        .add_field(2, "Flash Off", ExifFormat::U8, 1)
+        .add_field(3, "Slow Sync", ExifFormat::U8, 1)
+        .add_field(4, "Rear Sync", ExifFormat::U8, 1)
+        .add_field(6, "Wireless", ExifFormat::U8, 1)
+        .add_field(0, "Gamma Still - Standard/Neutral (PP2)", ExifFormat::U8, 1)
+        .add_field(1, "Gamma Still - Portrait", ExifFormat::U8, 1)
+        .add_field(3, "Gamma Still - Night View/Portrait", ExifFormat::U8, 1)
+        .add_field(4, "Gamma Still - B&W/Sepia", ExifFormat::U8, 1)
+        .add_field(5, "Gamma Still - Clear", ExifFormat::U8, 1)
+        .add_field(6, "Gamma Still - Deep", ExifFormat::U8, 1)
+        .add_field(7, "Gamma Still - Light", ExifFormat::U8, 1)
+        .add_field(8, "Gamma Still - Vivid", ExifFormat::U8, 1)
+        .add_field(9, "Gamma Still - Real", ExifFormat::U8, 1)
+        .add_field(10, "Gamma Movie (PP1)", ExifFormat::U8, 1)
+        .add_field(22, "Gamma ITU709 (PP3 or PP4)", ExifFormat::U8, 1)
+        .add_field(24, "Gamma Cine1 (PP5)", ExifFormat::U8, 1)
+        .add_field(25, "Gamma Cine2 (PP6)", ExifFormat::U8, 1)
+        .add_field(26, "Gamma Cine3", ExifFormat::U8, 1)
+        .add_field(27, "Gamma Cine4", ExifFormat::U8, 1)
+        .add_field(28, "Gamma S-Log2 (PP7)", ExifFormat::U8, 1)
+        .add_field(29, "Gamma ITU709 (800%)", ExifFormat::U8, 1)
+        .add_field(31, "Gamma S-Log3 (PP8 or PP9)", ExifFormat::U8, 1)
+        .add_field(33, "Gamma HLG2 (PP10)", ExifFormat::U8, 1)
+        .add_field(34, "Gamma HLG3", ExifFormat::U8, 1)
+        .add_field(36, "Off", ExifFormat::U8, 1)
+        .add_field(37, "FL", ExifFormat::U8, 1)
+        .add_field(38, "VV2", ExifFormat::U8, 1)
+        .add_field(39, "IN", ExifFormat::U8, 1)
+        .add_field(40, "SH", ExifFormat::U8, 1)
+        .add_field(0, "Auto", ExifFormat::U8, 1)
+        .add_field(4476, "WB_RGBLevels", ExifFormat::U16, 3)
+        .add_field(4480, "WB_RGBLevels", ExifFormat::U16, 3)
+        .add_field(4632, "SonyISO", ExifFormat::U16, 1)
+        .add_field(6691, "DistortionCorrParams", ExifFormat::I16, 16)
+        .add_field(512, "DigitalZoomRatio", ExifFormat::U8, 1)
+        .add_field(4444, "WB_RGBLevels", ExifFormat::U16, 3)
+        .add_field(4596, "SonyISO", ExifFormat::U16, 1)
+        .add_field(4568, "WB_RGBLevels", ExifFormat::U16, 3)
+        .add_field(4720, "SonyISO", ExifFormat::U16, 1)
+        .add_field(540, "DigitalZoomRatio", ExifFormat::U8, 1)
+        .add_field(4532, "WB_RGBLevels", ExifFormat::U16, 3)
+        .add_field(4692, "SonyISO", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^(SLT-(A99|A99V)|NEX-(5R|5T|6|VG900|VG30E)|DSC-RX100|Stellar|HV)\b/
+        .add_field(4696, "SonyISO", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^(DSC-(RX1|RX1R))\b/
+        .add_field(4728, "FocalLength", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^(SLT-A58|ILCE-(3000|3500)|NEX-3N|DSC-(HX300|HX50V|WX60|WX80|WX200|WX300|TX30))\b/
+        .add_field(4730, "MinFocalLength", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^(SLT-A58|ILCE-(3000|3500)|NEX-3N|DSC-(HX300|HX50V|WX60|WX80|WX200|WX300|TX30))\b/
+        .add_field(4732, "MaxFocalLength", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^(SLT-A58|ILCE-(3000|3500)|NEX-3N|DSC-(HX300|HX50V|WX60|WX80|WX200|WX300|TX30))\b/
+        .add_field(4736, "SonyISO", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^(SLT-A58|ILCE-(3000|3500)|NEX-3N|DSC-(HX300|HX50V|WX60|WX80|WX200|WX300|TX30))\b/
+        .add_field(6256, "DistortionCorrParams", ExifFormat::I16, 16)
+        // Condition: $$self{Model} !~ /^(DSC-|Stellar)/
+        .add_field(6291, "LensType2", ExifFormat::U16, 1)
+        // Condition: $$self{LensMount} == 2
+        .add_field(6294, "LensType", ExifFormat::U16, 1)
+        // Condition: $$self{LensMount} == 1
+        .add_field(4204, "WB_RGBLevels", ExifFormat::U16, 3)
+        .add_field(4404, "FocalLength", ExifFormat::U16, 1)
+        .add_field(4406, "MinFocalLength", ExifFormat::U16, 1)
+        .add_field(4408, "MaxFocalLength", ExifFormat::U16, 1)
+        .add_field(4412, "SonyISO", ExifFormat::U16, 1)
+        .add_field(612, "WB_RGBLevels", ExifFormat::U16, 3)
+        .add_field(812, "FocalLength", ExifFormat::U16, 1)
+        .add_field(814, "MinFocalLength", ExifFormat::U16, 1)
+        .add_field(816, "MaxFocalLength", ExifFormat::U16, 1)
+        .add_field(836, "SonyISO", ExifFormat::U16, 1)
+        .add_field(6300, "DistortionCorrParams", ExifFormat::I16, 16)
+        // Condition: $$self{Model} !~ /^DSC-/
+        .add_field(6335, "LensType2", ExifFormat::U16, 1)
+        // Condition: $$self{LensMount} == 2
+        .add_field(6338, "LensType", ExifFormat::U16, 1)
+        // Condition: $$self{LensMount} == 1
+        .add_field(612, "WB_RGBLevels", ExifFormat::U16, 3)
+        .add_field(812, "FocalLength", ExifFormat::U16, 1)
+        .add_field(814, "MinFocalLength", ExifFormat::U16, 1)
+        .add_field(816, "MaxFocalLength", ExifFormat::U16, 1)
+        .add_field(838, "SonyISO", ExifFormat::U16, 1)
+        .add_field(6348, "DistortionCorrParams", ExifFormat::I16, 16)
+        // Condition: $$self{Model} !~ /^DSC-/
+        .add_field(6383, "LensType2", ExifFormat::U16, 1)
+        // Condition: $$self{LensMount} == 2
+        .add_field(6386, "LensType", ExifFormat::U16, 1)
+        // Condition: $$self{LensMount} == 1
+        .add_field(594, "WB_RGBLevels", ExifFormat::U16, 3)
+        .add_field(778, "FocalLength", ExifFormat::U16, 1)
+        .add_field(780, "MinFocalLength", ExifFormat::U16, 1)
+        .add_field(782, "MaxFocalLength", ExifFormat::U16, 1)
+        .add_field(800, "SonyISO", ExifFormat::U16, 1)
+        .add_field(6096, "DistortionCorrParams", ExifFormat::I16, 16)
+        // Condition: $$self{Model} !~ /^DSC-/
+        .add_field(6131, "LensType2", ExifFormat::U16, 1)
+        // Condition: $$self{LensMount} == 2
+        .add_field(6134, "LensType", ExifFormat::U16, 1)
+        // Condition: $$self{LensMount} == 1
+        .add_field(1, "FocalPlaneAFPointsUsed", ExifFormat::U8, 1)
+        .add_field(2, "FocalPlaneAFPointArea", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 1
+        .add_field(6, "FocalPlaneAFPointLocation1", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 1
+        .add_field(10, "FocalPlaneAFPointLocation2", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 2
+        .add_field(14, "FocalPlaneAFPointLocation3", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 3
+        .add_field(18, "FocalPlaneAFPointLocation4", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 4
+        .add_field(22, "FocalPlaneAFPointLocation5", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 5
+        .add_field(26, "FocalPlaneAFPointLocation6", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 6
+        .add_field(30, "FocalPlaneAFPointLocation7", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 7
+        .add_field(34, "FocalPlaneAFPointLocation8", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 8
+        .add_field(38, "FocalPlaneAFPointLocation9", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 9
+        .add_field(42, "FocalPlaneAFPointLocation10", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 10
+        .add_field(46, "FocalPlaneAFPointLocation11", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 11
+        .add_field(50, "FocalPlaneAFPointLocation12", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 12
+        .add_field(54, "FocalPlaneAFPointLocation13", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 13
+        .add_field(58, "FocalPlaneAFPointLocation14", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 14
+        .add_field(62, "FocalPlaneAFPointLocation15", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 15
+        .add_field(0, "MeterInfo1Row1", ExifFormat::U8, 1)
+        .add_field(108, "MeterInfo1Row2", ExifFormat::U8, 1)
+        .add_field(216, "MeterInfo1Row3", ExifFormat::U8, 1)
+        .add_field(324, "MeterInfo1Row4", ExifFormat::U8, 1)
+        .add_field(432, "MeterInfo1Row5", ExifFormat::U8, 1)
+        .add_field(540, "MeterInfo1Row6", ExifFormat::U8, 1)
+        .add_field(648, "MeterInfo1Row7", ExifFormat::U8, 1)
+        .add_field(756, "MeterInfo2Row1", ExifFormat::U8, 1)
+        .add_field(888, "MeterInfo2Row2", ExifFormat::U8, 1)
+        .add_field(1020, "MeterInfo2Row3", ExifFormat::U8, 1)
+        .add_field(1152, "MeterInfo2Row4", ExifFormat::U8, 1)
+        .add_field(1284, "MeterInfo2Row5", ExifFormat::U8, 1)
+        .add_field(1416, "MeterInfo2Row6", ExifFormat::U8, 1)
+        .add_field(1548, "MeterInfo2Row7", ExifFormat::U8, 1)
+        .add_field(1680, "MeterInfo2Row8", ExifFormat::U8, 1)
+        .add_field(1812, "MeterInfo2Row9", ExifFormat::U8, 1)
+        .add_field(0, "MeterInfo1Row1", ExifFormat::U8, 1)
+        .add_field(90, "MeterInfo1Row2", ExifFormat::U8, 1)
+        .add_field(180, "MeterInfo1Row3", ExifFormat::U8, 1)
+        .add_field(270, "MeterInfo1Row4", ExifFormat::U8, 1)
+        .add_field(360, "MeterInfo1Row5", ExifFormat::U8, 1)
+        .add_field(450, "MeterInfo1Row6", ExifFormat::U8, 1)
+        .add_field(540, "MeterInfo1Row7", ExifFormat::U8, 1)
+        .add_field(630, "MeterInfo2Row1", ExifFormat::U8, 1)
+        .add_field(740, "MeterInfo2Row2", ExifFormat::U8, 1)
+        .add_field(850, "MeterInfo2Row3", ExifFormat::U8, 1)
+        .add_field(960, "MeterInfo2Row4", ExifFormat::U8, 1)
+        .add_field(1070, "MeterInfo2Row5", ExifFormat::U8, 1)
+        .add_field(1180, "MeterInfo2Row6", ExifFormat::U8, 1)
+        .add_field(1290, "MeterInfo2Row7", ExifFormat::U8, 1)
+        .add_field(1400, "MeterInfo2Row8", ExifFormat::U8, 1)
+        .add_field(1510, "MeterInfo2Row9", ExifFormat::U8, 1)
+        .add_field(0, "SonyMaxAperture", ExifFormat::U8, 1)
+        // Condition: $$self{Model} !~ /^(NEX-|Lunar|ILCE-)/
+        .add_field(1, "SonyMinAperture", ExifFormat::U8, 1)
+        // Condition: $$self{Model} !~ /^(NEX-|Lunar|ILCE-)/
+        .add_field(58, "SonyExposureTime", ExifFormat::U16, 1)
+        .add_field(60, "SonyFNumber", ExifFormat::U16, 1)
+        .add_field(63, "ReleaseMode2", ExifFormat::U8, 1)
+        .add_field(76, "ShutterCount2", ExifFormat::U32, 1)
+        // Condition: ($$self{Model} =~ /^(ILCE-(7(R|S|M2)?|[56]000|5100|QX1))\b/) and (($$self{FlashFired} & 0x01) != 1)
+        .add_field(103, "ReleaseMode2", ExifFormat::U8, 1)
+        // Condition: $$self{Model} !~ /^(SLT-A(65|77)V?|Lunar|NEX-(5N|7|VG20E))/
+        .add_field(124, "InternalSerialNumber", ExifFormat::U8, 4)
+        // Condition: $$self{Model} !~ /^(Lunar|NEX-(5N|7|VG20E)|SLT-|HV|ILCA-)/
+        .add_field(240, "InternalSerialNumber", ExifFormat::U8, 5)
+        // Condition: $$self{Model} =~ /^(SLT-|HV|ILCA-)/
+        .add_field(263, "LensType2", ExifFormat::U16, 1)
+        // Condition: $$self{LensMount} == 2
+        .add_field(265, "LensType", ExifFormat::U16, 1)
+        // Condition: $$self{LensMount} == 1
+        .add_field(416, "ShutterCount3", ExifFormat::U32, 1)
+        // Condition: $$self{Model} =~ /^(ILCE-(5100|QX1)|ILCA-(68|77M2))/
+        .add_field(426, "ShutterCount3", ExifFormat::U32, 1)
+        // Condition: $$self{Model} =~ /^(SLT-A(58|99V?)|HV|NEX-(3N|5R|5T|6|VG900|VG30E)|ILCE-([35]000|3500))\b/
+        .add_field(445, "ShutterCount3", ExifFormat::U32, 1)
+        // Condition: $$self{Model} =~ /^(SLT-A(37|57|65|77)V?|Lunar|NEX-(F3|5N|7|VG20E))/
+        .add_field(0, "SonyMaxAperture", ExifFormat::U8, 1)
+        // Condition: $$self{Model} =~ /^(ILCA-)/
+        .add_field(1, "SonyMinAperture", ExifFormat::U8, 1)
+        // Condition: $$self{Model} =~ /^(ILCA-)/
+        .add_field(58, "ShutterCount", ExifFormat::U32, 1)
+        .add_field(70, "SonyExposureTime", ExifFormat::U16, 1)
+        .add_field(72, "SonyFNumber", ExifFormat::U16, 1)
+        .add_field(75, "ReleaseMode2", ExifFormat::U8, 1)
+        .add_field(80, "ShutterCount2", ExifFormat::U32, 1)
+        // Condition: (($$self{FlashFired} & 0x01) != 1) and ($$self{Model} =~ /^(ILCE-(6100|6400|6600|7C|7RM4A?|9M2)|ZV-E10)/ or $$self{Software} =~ /^ILCE-9 (v5.0|v6.0)/)
+        .add_field(82, "ShutterCount2", ExifFormat::U32, 1)
+        // Condition: (($$self{FlashFired} & 0x01) != 1) and ($$self{Model} =~ /^(ILCE-(7M3|7RM3A?))/)
+        .add_field(88, "ShutterCount2", ExifFormat::U32, 1)
+        // Condition: (($$self{FlashFired} & 0x01) != 1) and ($$self{Model} !~ /^(ILCA-99M2|ILCE-(6100|6400|6600|7C|7M3|7RM3A?|7RM4A?|9M2)|ZV-E10)/) and $$self{Software} !~ /^ILCE-9 (v5.0|v6.0)/
+        .add_field(107, "ReleaseMode2", ExifFormat::U8, 1)
+        // Condition: $$self{Model} =~ /^(ILCE-(6100|6400|6600|7C|7RM4A?|9M2)|ZV-E10)/ or $$self{Software} =~ /^ILCE-9 (v5.0|v6.0)/
+        .add_field(109, "ReleaseMode2", ExifFormat::U8, 1)
+        // Condition: $$self{Model} =~ /^(ILCE-(7M3|7RM3A?))/
+        .add_field(115, "ReleaseMode2", ExifFormat::U8, 1)
+        // Condition: $$self{Model} !~ /^(ILCE-(6100|6400|6600|7C|7M3|7RM3A?|7RM4A?|9M2)|ZV-E10)/ and $$self{Software} !~ /^ILCE-9 (v5.0|v6.0)/
+        .add_field(136, "InternalSerialNumber", ExifFormat::U8, 6)
+        .add_field(263, "LensType2", ExifFormat::U16, 1)
+        // Condition: $$self{LensMount} == 2
+        .add_field(265, "LensType", ExifFormat::U16, 1)
+        // Condition: $$self{LensMount} == 1
+        .add_field(415, "ShutterCount3", ExifFormat::U32, 1)
+        // Condition: $$self{Model} =~ /^(ILCE-(6100|6400|6600|7C|7M3|7RM3A?|7RM4A?|9|9M2)|ZV-E10)\b/
+        .add_field(459, "ShutterCount3", ExifFormat::U32, 1)
+        // Condition: $$self{Model} =~ /^(ILCE-(7RM2|7SM2))/
+        .add_field(461, "ShutterCount3", ExifFormat::U32, 1)
+        // Condition: $$self{Model} =~ /^(ILCE-(6300|6500)|ILCA-99M2)/
+        .add_field(0, "Off", ExifFormat::U8, 1)
+        .add_field(1, "On", ExifFormat::U8, 1)
+        .add_field(58, "ShutterCount", ExifFormat::U32, 1)
+        .add_field(70, "SonyExposureTime", ExifFormat::U16, 1)
+        .add_field(72, "SonyFNumber", ExifFormat::U16, 1)
+        .add_field(75, "ReleaseMode2", ExifFormat::U8, 1)
+        .add_field(80, "ShutterCount2", ExifFormat::U32, 1)
+        // Condition: ($$self{FlashFired} & 0x01) != 1
+        .add_field(102, "SonyExposureTime", ExifFormat::U16, 1)
+        .add_field(104, "SonyFNumber", ExifFormat::U16, 1)
+        .add_field(107, "ReleaseMode2", ExifFormat::U8, 1)
+        .add_field(136, "InternalSerialNumber", ExifFormat::U8, 6)
+        // Condition: $$self{Model} =~ /^(ILCE-(7M4|7RM5|7SM3)|ILME-FX3)/
+        .add_field(138, "InternalSerialNumber", ExifFormat::U8, 6)
+        // Condition: $$self{Model} =~ /^(ILCE-1)/
+        .add_field(10, "ShutterCount", ExifFormat::U32, 1)
+        // Condition: $$self{Model} =~ /^(ILCE-(1M2|6700|7CM2|7CR))/
+        .add_field(26, "SonyExposureTime", ExifFormat::U16, 1)
+        .add_field(28, "SonyFNumber", ExifFormat::U16, 1)
+        .add_field(31, "ReleaseMode2", ExifFormat::U8, 1)
+        .add_field(56, "InternalSerialNumber", ExifFormat::U8, 6)
+        // Condition: $$self{Model} !~ /^(ZV-E10M2)/
+        .add_field(26, "ShotNumberSincePowerUp", ExifFormat::U32, 1)
+        .add_field(68, "SonyImageHeight", ExifFormat::U16, 1)
+        // Condition: $$self{Model} =~ /^(SLT-|HV|NEX-|Lunar|DSC-RX|Stellar)/
+        .add_field(82, "ModelReleaseYear", ExifFormat::U8, 1)
+        // Condition: $$self{Model} =~ /^(SLT-|HV|NEX-|Lunar|DSC-RX|Stellar)/
+        .add_field(22, "ShotNumberSincePowerUp", ExifFormat::U32, 1)
+        .add_field(63, "SonyImageHeight", ExifFormat::U16, 1)
+        .add_field(70, "ModelReleaseYear", ExifFormat::U8, 1)
+        .add_field(10, "ShotNumberSincePowerUp", ExifFormat::U32, 1)
+        // Condition: $$self{Model} =~ /^(ILCA-(68|77M2|99M2)|ILCE-(5000|5100|6000|6300|6500|7|7M2|7R|7RM2|7S|7SM2|QX1)|DSC-(HX350|HX400V|HX60V|HX80|HX90|HX90V|QX30|RX0|RX1RM2|RX10|RX10M2|RX10M3|RX100M3|RX100M4|RX100M5|WX220|WX350|WX500))\b/
+        .add_field(0, "JPEG", ExifFormat::U8, 1)
+        .add_field(1, "RAW", ExifFormat::U8, 1)
+        .add_field(2, "RAW + JPEG", ExifFormat::U8, 1)
+        .add_field(3, "JPEG + MPO", ExifFormat::U8, 1)
+        .add_field(1, "JPEG", ExifFormat::U8, 1)
+        .add_field(2, "RAW", ExifFormat::U8, 1)
+        .add_field(3, "RAW + JPEG", ExifFormat::U8, 1)
+        .add_field(4, "HEIF", ExifFormat::U8, 1)
+        .add_field(6, "RAW + HEIF", ExifFormat::U8, 1)
+        .add_field(83, "ModelReleaseYear", ExifFormat::U8, 1)
+        // Condition: $$self{Model} !~ /^(ILCE-(1|6700|7CM2|7CR|7M4|7RM5|7SM3|9M3)|ILME-(FX3|FX30)|ZV-(E1|E10M2))\b/
+        .add_field(0, "Ver9401", ExifFormat::U8, 1)
+        .add_field(994, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} == 181
+        .add_field(1012, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} =~ /^(185|186)/
+        .add_field(1102, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} == 178
+        .add_field(1176, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} == 148
+        .add_field(1181, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} == 167 and $$self{Software} !~ /^ILCE-7M4 (v2|v3)/
+        .add_field(1182, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} == 167 and $$self{Software} =~ /^ILCE-7M4 (v2|v3)/
+        .add_field(1185, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} =~ /^(160|164)/ and $$self{Software} !~ /^ILCE-1 v2/
+        .add_field(1186, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: ($$self{Ver9401} =~ /^(152|154|155)/ and $$self{Model} !~ /^ZV-1M2/) or ($$self{Ver9401} == 164 and $$self{Software} =~ /^ILCE-1 v2/)
+        .add_field(1210, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} == 155 and $$self{Model} =~ /^ZV-1M2/
+        .add_field(1437, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} =~ /^(144|146)/
+        .add_field(1588, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} == 68
+        .add_field(1590, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} =~ /^(73|74)/
+        .add_field(1612, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} == 78
+        .add_field(1619, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} == 90
+        .add_field(1656, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} =~ /^(93|94)/
+        .add_field(1720, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} =~ /^(100|103)/
+        .add_field(1758, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} =~ /^(124|125)/
+        .add_field(1767, "ISOInfo", ExifFormat::U8, 5)
+        // Condition: $$self{Ver9401} =~ /^(127|128|130)/
+        .add_field(0, "ISOSetting", ExifFormat::U8, 1)
+        .add_field(2, "ISOAutoMin", ExifFormat::U8, 1)
+        .add_field(4, "ISOAutoMax", ExifFormat::U8, 1)
+        .add_field(2, "TempTest1", ExifFormat::U8, 1)
+        .add_field(4, "AmbientTemperature", ExifFormat::U8, 1)
+        // Condition: $$self{TempTest1} == 255
+        .add_field(45, "FocusPosition2", ExifFormat::U8, 1)
+        // Condition: $$self{Model} !~ /^(DSC-|Stellar)/
+        .build()
+}
+
+/// Binary data table: HiddenInfo
+/// Source lines: 6003-6023
+/// Process function: ProcessBinaryData
+pub fn create_hiddeninfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("HiddenInfo", ExifFormat::U32)
+        .add_field(0, "HiddenDataOffset", ExifFormat::U32, 1)
+        .add_field(1, "HiddenDataLength", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: Tag202a
+/// Source lines: 7318-7361
+/// Process function: ProcessBinaryData
+pub fn create_tag202a_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("Tag202a", ExifFormat::U8)
+        .add_field(1, "FocalPlaneAFPointsUsed", ExifFormat::U8, 1)
+        .add_field(2, "FocalPlaneAFPointArea", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 1
+        .add_field(6, "FocalPlaneAFPointLocation1", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 1
+        .add_field(10, "FocalPlaneAFPointLocation2", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 2
+        .add_field(14, "FocalPlaneAFPointLocation3", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 3
+        .add_field(18, "FocalPlaneAFPointLocation4", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 4
+        .add_field(22, "FocalPlaneAFPointLocation5", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 5
+        .add_field(26, "FocalPlaneAFPointLocation6", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 6
+        .add_field(30, "FocalPlaneAFPointLocation7", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 7
+        .add_field(34, "FocalPlaneAFPointLocation8", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 8
+        .add_field(38, "FocalPlaneAFPointLocation9", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 9
+        .add_field(42, "FocalPlaneAFPointLocation10", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 10
+        .add_field(46, "FocalPlaneAFPointLocation11", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 11
+        .add_field(50, "FocalPlaneAFPointLocation12", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 12
+        .add_field(54, "FocalPlaneAFPointLocation13", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 13
+        .add_field(58, "FocalPlaneAFPointLocation14", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 14
+        .add_field(62, "FocalPlaneAFPointLocation15", ExifFormat::U16, 2)
+        // Condition: $$self{Locations} >= 15
+        .build()
+}
+
+/// Binary data table: ISOInfo
+/// Source lines: 8584-8591
+/// Process function: ProcessBinaryData
+pub fn create_isoinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ISOInfo", ExifFormat::U8)
+        .add_field(0, "ISOSetting", ExifFormat::U8, 1)
+        .add_field(2, "ISOAutoMin", ExifFormat::U8, 1)
+        .add_field(4, "ISOAutoMax", ExifFormat::U8, 1)
+        .build()
+}
+
+/// Binary data table: Panorama
+/// Source lines: 10199-10232
+/// Process function: ProcessBinaryData
+pub fn create_panorama_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("Panorama", ExifFormat::U32)
+        .add_field(1, "PanoramaFullWidth", ExifFormat::U32, 1)
+        .add_field(2, "PanoramaFullHeight", ExifFormat::U32, 1)
+        .add_field(4, "PanoramaCropLeft", ExifFormat::U32, 1)
+        .add_field(5, "PanoramaCropTop", ExifFormat::U32, 1)
+        .add_field(6, "PanoramaCropRight", ExifFormat::U32, 1)
+        .add_field(7, "PanoramaCropBottom", ExifFormat::U32, 1)
+        .add_field(8, "PanoramaFrameWidth", ExifFormat::U32, 1)
+        .add_field(9, "PanoramaFrameHeight", ExifFormat::U32, 1)
+        .add_field(10, "PanoramaSourceWidth", ExifFormat::U32, 1)
+        .add_field(11, "PanoramaSourceHeight", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: SR2DataIFD
+/// Source lines: 10430-10481
+/// Process function: ProcessSonyPIC
+pub fn create_sr2dataifd_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("SR2DataIFD", ExifFormat::U8)
+        .add_field(30576, "ColorMode", ExifFormat::U8, 1)
+        .build()
+}
+
 /// Binary data table: PIC
 /// Source lines: 10443-10838
 /// Process function: ProcessSonyPIC
@@ -16,24 +722,42 @@ pub fn create_pic_table() -> BinaryDataTable {
         .add_field(12, "JpgFromRawLength", ExifFormat::U32, 1)
         .add_field(22, "SonyImageWidth", ExifFormat::U16, 1)
         .add_field(24, "SonyImageHeight", ExifFormat::U16, 1)
-        .add_field(0, "Horizontal (normal)", ExifFormat::U8, 1)
-        .add_field(2, "Rotate 180", ExifFormat::U8, 1)
-        .add_field(8, "Snap Shot", ExifFormat::U8, 1)
-        .add_field(23, "Standard", ExifFormat::U8, 1)
-        .add_field(51, "Fine", ExifFormat::U8, 1)
-        .add_field(52, "Comment", ExifFormat::AsciiString, 19)
+        .add_field(52, "Comment", ExifFormat::Ascii, 19)
+        .add_field(102, "ExposureTime", ExifFormat::I16, 1)
+        .add_field(106, "FNumber", ExifFormat::I16, 1)
+        .add_field(108, "ExposureCompensation", ExifFormat::I16, 1)
         .add_field(1550, "Sony_rtmd_0x060e", ExifFormat::U8, 1)
         .add_field(12816, "Sony_rtmd_0x3210", ExifFormat::U8, 1)
         .add_field(12825, "Sony_rtmd_0x3219", ExifFormat::U8, 1)
         .add_field(12826, "Sony_rtmd_0x321a", ExifFormat::U8, 1)
+        .add_field(32768, "FNumber", ExifFormat::U16, 1)
+        .add_field(32769, "Sony_rtmd_0x8001", ExifFormat::U16, 1)
+        .add_field(32772, "Sony_rtmd_0x8004", ExifFormat::U16, 1)
+        .add_field(32773, "Sony_rtmd_0x8005", ExifFormat::U16, 1)
+        .add_field(32778, "Sony_rtmd_0x800a", ExifFormat::U16, 1)
+        .add_field(32779, "Sony_rtmd_0x800b", ExifFormat::U16, 1)
         .add_field(33024, "Sony_rtmd_0x8100", ExifFormat::U8, 1)
+        .add_field(33025, "Sony_rtmd_0x8101", ExifFormat::U8, 1)
+        .add_field(33028, "Sony_rtmd_0x8104", ExifFormat::U16, 1)
+        .add_field(33029, "Sony_rtmd_0x8105", ExifFormat::U16, 1)
+        .add_field(33030, "Sony_rtmd_0x8106", ExifFormat::U32, 1)
+        .add_field(33033, "ExposureTime", ExifFormat::Rational, 1)
+        .add_field(33034, "MasterGainAdjustment", ExifFormat::U16, 1)
+        .add_field(33035, "ISO", ExifFormat::U16, 1)
+        .add_field(33036, "ElectricalExtenderMagnification", ExifFormat::U16, 1)
+        .add_field(33037, "Sony_rtmd_0x810d", ExifFormat::U8, 1)
+        .add_field(33045, "Sony_rtmd_0x8115", ExifFormat::U16, 1)
         .add_field(2, "2-Dimensional Measurement", ExifFormat::U8, 1)
         .add_field(3, "3-Dimensional Measurement", ExifFormat::U8, 1)
-        .add_field(1, "Incandescent", ExifFormat::U8, 1)
-        .add_field(2, "Fluorescent", ExifFormat::U8, 1)
-        .add_field(4, "Daylight", ExifFormat::U8, 1)
-        .add_field(5, "Cloudy", ExifFormat::U8, 1)
-        .add_field(255, "Preset", ExifFormat::U8, 1)
+        .add_field(57344, "Sony_rtmd_0xe000", ExifFormat::U8, 1)
+        .add_field(58112, "Sony_rtmd_0xe300", ExifFormat::U8, 1)
+        .add_field(58113, "Sony_rtmd_0xe301", ExifFormat::U32, 1)
+        .add_field(58114, "Sony_rtmd_0xe302", ExifFormat::U8, 1)
+        .add_field(58421, "Sony_rtmd_0xe435", ExifFormat::U32, 1)
+        .add_field(58423, "Sony_rtmd_0xe437", ExifFormat::I32, 1)
+        .add_field(58427, "PitchRollYaw", ExifFormat::I16, 1)
+        .add_field(58437, "Sony_rtmd_0xe445", ExifFormat::U32, 1)
+        .add_field(58443, "Accelerometer", ExifFormat::I16, 1)
         .add_field(0, "Sony:FocusPosition", ExifFormat::U8, 1)
         .add_field(1, "FocalLength", ExifFormat::U8, 1)
         .add_field(0, "Sony:FocusPosition2", ExifFormat::U8, 1)
@@ -57,12 +781,10 @@ pub fn create_pmp_table() -> BinaryDataTable {
         .add_field(12, "JpgFromRawLength", ExifFormat::U32, 1)
         .add_field(22, "SonyImageWidth", ExifFormat::U16, 1)
         .add_field(24, "SonyImageHeight", ExifFormat::U16, 1)
-        .add_field(0, "Horizontal (normal)", ExifFormat::U8, 1)
-        .add_field(2, "Rotate 180", ExifFormat::U8, 1)
-        .add_field(8, "Snap Shot", ExifFormat::U8, 1)
-        .add_field(23, "Standard", ExifFormat::U8, 1)
-        .add_field(51, "Fine", ExifFormat::U8, 1)
-        .add_field(52, "Comment", ExifFormat::AsciiString, 19)
+        .add_field(52, "Comment", ExifFormat::Ascii, 19)
+        .add_field(102, "ExposureTime", ExifFormat::I16, 1)
+        .add_field(106, "FNumber", ExifFormat::I16, 1)
+        .add_field(108, "ExposureCompensation", ExifFormat::I16, 1)
         .build()
 }
 

@@ -12,17 +12,17 @@ use crate::core::types::ExifFormat;
 /// Source lines: 834-851
 /// Process function: ProcessBinaryData
 pub fn create_wbsettings_table() -> BinaryDataTable {
-    BinaryDataTableBuilder::new("WBSettings", ExifFormat::Float)
-        .add_field(0, "WB_RGBLevelsAuto", ExifFormat::Float, 3)
-        .add_field(3, "WB_RGBLevelsDaylight", ExifFormat::Float, 3)
-        .add_field(6, "WB_RGBLevelsShade", ExifFormat::Float, 3)
-        .add_field(9, "WB_RGBLevelsOvercast", ExifFormat::Float, 3)
-        .add_field(12, "WB_RGBLevelsIncandescent", ExifFormat::Float, 3)
-        .add_field(15, "WB_RGBLevelsFluorescent", ExifFormat::Float, 3)
-        .add_field(18, "WB_RGBLevelsFlash", ExifFormat::Float, 3)
-        .add_field(21, "WB_RGBLevelsCustom1", ExifFormat::Float, 3)
-        .add_field(24, "WB_RGBLevelsCustom2", ExifFormat::Float, 3)
-        .add_field(27, "WB_RGBLevelsCustom3", ExifFormat::Float, 3)
+    BinaryDataTableBuilder::new("WBSettings", ExifFormat::F32)
+        .add_field(0, "WB_RGBLevelsAuto", ExifFormat::F32, 3)
+        .add_field(3, "WB_RGBLevelsDaylight", ExifFormat::F32, 3)
+        .add_field(6, "WB_RGBLevelsShade", ExifFormat::F32, 3)
+        .add_field(9, "WB_RGBLevelsOvercast", ExifFormat::F32, 3)
+        .add_field(12, "WB_RGBLevelsIncandescent", ExifFormat::F32, 3)
+        .add_field(15, "WB_RGBLevelsFluorescent", ExifFormat::F32, 3)
+        .add_field(18, "WB_RGBLevelsFlash", ExifFormat::F32, 3)
+        .add_field(21, "WB_RGBLevelsCustom1", ExifFormat::F32, 3)
+        .add_field(24, "WB_RGBLevelsCustom2", ExifFormat::F32, 3)
+        .add_field(27, "WB_RGBLevelsCustom3", ExifFormat::F32, 3)
         .build()
 }
 
@@ -30,17 +30,17 @@ pub fn create_wbsettings_table() -> BinaryDataTable {
 /// Source lines: 854-871
 /// Process function: ProcessBinaryData
 pub fn create_wbsettings2_table() -> BinaryDataTable {
-    BinaryDataTableBuilder::new("WBSettings2", ExifFormat::Float)
-        .add_field(0, "WB_RGBLevelsUnknown0", ExifFormat::Float, 3)
-        .add_field(3, "WB_RGBLevelsUnknown1", ExifFormat::Float, 3)
-        .add_field(6, "WB_RGBLevelsUnknown2", ExifFormat::Float, 3)
-        .add_field(9, "WB_RGBLevelsUnknown3", ExifFormat::Float, 3)
-        .add_field(12, "WB_RGBLevelsUnknown4", ExifFormat::Float, 3)
-        .add_field(15, "WB_RGBLevelsUnknown5", ExifFormat::Float, 3)
-        .add_field(18, "WB_RGBLevelsUnknown6", ExifFormat::Float, 3)
-        .add_field(21, "WB_RGBLevelsUnknown7", ExifFormat::Float, 3)
-        .add_field(24, "WB_RGBLevelsUnknown8", ExifFormat::Float, 3)
-        .add_field(27, "WB_RGBLevelsUnknown9", ExifFormat::Float, 3)
+    BinaryDataTableBuilder::new("WBSettings2", ExifFormat::F32)
+        .add_field(0, "WB_RGBLevelsUnknown0", ExifFormat::F32, 3)
+        .add_field(3, "WB_RGBLevelsUnknown1", ExifFormat::F32, 3)
+        .add_field(6, "WB_RGBLevelsUnknown2", ExifFormat::F32, 3)
+        .add_field(9, "WB_RGBLevelsUnknown3", ExifFormat::F32, 3)
+        .add_field(12, "WB_RGBLevelsUnknown4", ExifFormat::F32, 3)
+        .add_field(15, "WB_RGBLevelsUnknown5", ExifFormat::F32, 3)
+        .add_field(18, "WB_RGBLevelsUnknown6", ExifFormat::F32, 3)
+        .add_field(21, "WB_RGBLevelsUnknown7", ExifFormat::F32, 3)
+        .add_field(24, "WB_RGBLevelsUnknown8", ExifFormat::F32, 3)
+        .add_field(27, "WB_RGBLevelsUnknown9", ExifFormat::F32, 3)
         .build()
 }
 

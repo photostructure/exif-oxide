@@ -8,16 +8,223 @@
 use crate::core::binary_data::{BinaryDataTable, BinaryDataTableBuilder};
 use crate::core::types::ExifFormat;
 
+/// Binary data table: CameraInfo
+/// Source lines: 4656-4693
+/// Process function: ProcessBinaryData
+pub fn create_camerainfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("CameraInfo", ExifFormat::U32)
+        .add_field(0, "PentaxModelID", ExifFormat::U32, 1)
+        .add_field(2, "ProductionCode", ExifFormat::U32, 2)
+        .add_field(4, "InternalSerialNumber", ExifFormat::U32, 1)
+        .build()
+}
+
+/// Binary data table: KelvinWB
+/// Source lines: 5121-5143
+/// Process function: ProcessBinaryData
+pub fn create_kelvinwb_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("KelvinWB", ExifFormat::U16)
+        .add_field(1, "KelvinWB_Daylight", ExifFormat::U16, 1)
+        .add_field(5, "KelvinWB_01", ExifFormat::U16, 1)
+        .add_field(9, "KelvinWB_02", ExifFormat::U16, 1)
+        .add_field(13, "KelvinWB_03", ExifFormat::U16, 1)
+        .add_field(17, "KelvinWB_04", ExifFormat::U16, 1)
+        .add_field(21, "KelvinWB_05", ExifFormat::U16, 1)
+        .add_field(25, "KelvinWB_06", ExifFormat::U16, 1)
+        .add_field(29, "KelvinWB_07", ExifFormat::U16, 1)
+        .add_field(33, "KelvinWB_08", ExifFormat::U16, 1)
+        .add_field(37, "KelvinWB_09", ExifFormat::U16, 1)
+        .add_field(41, "KelvinWB_10", ExifFormat::U16, 1)
+        .add_field(45, "KelvinWB_11", ExifFormat::U16, 1)
+        .add_field(49, "KelvinWB_12", ExifFormat::U16, 1)
+        .add_field(53, "KelvinWB_13", ExifFormat::U16, 1)
+        .add_field(57, "KelvinWB_14", ExifFormat::U16, 1)
+        .add_field(61, "KelvinWB_15", ExifFormat::U16, 1)
+        .add_field(65, "KelvinWB_16", ExifFormat::U16, 1)
+        .build()
+}
+
+/// Binary data table: ColorInfo
+/// Source lines: 5146-5158
+/// Process function: ProcessBinaryData
+pub fn create_colorinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("ColorInfo", ExifFormat::U8)
+        .add_field(16, "WBShiftAB", ExifFormat::U8, 1)
+        .add_field(17, "WBShiftGM", ExifFormat::U8, 1)
+        .build()
+}
+
+/// Binary data table: FacePos
+/// Source lines: 5213-5378
+/// Process function: ProcessBinaryData
+pub fn create_facepos_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("FacePos", ExifFormat::U16)
+        .add_field(0, "Face1Position", ExifFormat::U16, 2)
+        .add_field(2, "Face2Position", ExifFormat::U16, 2)
+        .add_field(4, "Face3Position", ExifFormat::U16, 2)
+        .add_field(6, "Face4Position", ExifFormat::U16, 2)
+        .add_field(8, "Face5Position", ExifFormat::U16, 2)
+        .add_field(10, "Face6Position", ExifFormat::U16, 2)
+        .add_field(12, "Face7Position", ExifFormat::U16, 2)
+        .add_field(14, "Face8Position", ExifFormat::U16, 2)
+        .add_field(16, "Face9Position", ExifFormat::U16, 2)
+        .add_field(18, "Face10Position", ExifFormat::U16, 2)
+        .add_field(20, "Face11Position", ExifFormat::U16, 2)
+        .add_field(22, "Face12Position", ExifFormat::U16, 2)
+        .add_field(24, "Face13Position", ExifFormat::U16, 2)
+        .add_field(26, "Face14Position", ExifFormat::U16, 2)
+        .add_field(28, "Face15Position", ExifFormat::U16, 2)
+        .add_field(30, "Face16Position", ExifFormat::U16, 2)
+        .add_field(32, "Face17Position", ExifFormat::U16, 2)
+        .add_field(34, "Face18Position", ExifFormat::U16, 2)
+        .add_field(36, "Face19Position", ExifFormat::U16, 2)
+        .add_field(38, "Face20Position", ExifFormat::U16, 2)
+        .add_field(40, "Face21Position", ExifFormat::U16, 2)
+        .add_field(42, "Face22Position", ExifFormat::U16, 2)
+        .add_field(44, "Face23Position", ExifFormat::U16, 2)
+        .add_field(46, "Face24Position", ExifFormat::U16, 2)
+        .add_field(48, "Face25Position", ExifFormat::U16, 2)
+        .add_field(50, "Face26Position", ExifFormat::U16, 2)
+        .add_field(52, "Face27Position", ExifFormat::U16, 2)
+        .add_field(54, "Face28Position", ExifFormat::U16, 2)
+        .add_field(56, "Face29Position", ExifFormat::U16, 2)
+        .add_field(58, "Face30Position", ExifFormat::U16, 2)
+        .add_field(60, "Face31Position", ExifFormat::U16, 2)
+        .add_field(62, "Face32Position", ExifFormat::U16, 2)
+        .build()
+}
+
+/// Binary data table: FaceSize
+/// Source lines: 5381-5545
+/// Process function: ProcessBinaryData
+pub fn create_facesize_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("FaceSize", ExifFormat::U16)
+        .add_field(0, "Face1Size", ExifFormat::U16, 2)
+        .add_field(2, "Face2Size", ExifFormat::U16, 2)
+        .add_field(4, "Face3Size", ExifFormat::U16, 2)
+        .add_field(6, "Face4Size", ExifFormat::U16, 2)
+        .add_field(8, "Face5Size", ExifFormat::U16, 2)
+        .add_field(10, "Face6Size", ExifFormat::U16, 2)
+        .add_field(12, "Face7Size", ExifFormat::U16, 2)
+        .add_field(14, "Face8Size", ExifFormat::U16, 2)
+        .add_field(16, "Face9Size", ExifFormat::U16, 2)
+        .add_field(18, "Face10Size", ExifFormat::U16, 2)
+        .add_field(20, "Face11Size", ExifFormat::U16, 2)
+        .add_field(22, "Face12Size", ExifFormat::U16, 2)
+        .add_field(24, "Face13Size", ExifFormat::U16, 2)
+        .add_field(26, "Face14Size", ExifFormat::U16, 2)
+        .add_field(28, "Face15Size", ExifFormat::U16, 2)
+        .add_field(30, "Face16Size", ExifFormat::U16, 2)
+        .add_field(32, "Face17Size", ExifFormat::U16, 2)
+        .add_field(34, "Face18Size", ExifFormat::U16, 2)
+        .add_field(36, "Face19Size", ExifFormat::U16, 2)
+        .add_field(38, "Face20Size", ExifFormat::U16, 2)
+        .add_field(40, "Face21Size", ExifFormat::U16, 2)
+        .add_field(42, "Face22Size", ExifFormat::U16, 2)
+        .add_field(44, "Face23Size", ExifFormat::U16, 2)
+        .add_field(46, "Face24Size", ExifFormat::U16, 2)
+        .add_field(48, "Face25Size", ExifFormat::U16, 2)
+        .add_field(50, "Face26Size", ExifFormat::U16, 2)
+        .add_field(52, "Face27Size", ExifFormat::U16, 2)
+        .add_field(54, "Face28Size", ExifFormat::U16, 2)
+        .add_field(56, "Face29Size", ExifFormat::U16, 2)
+        .add_field(58, "Face30Size", ExifFormat::U16, 2)
+        .add_field(60, "Face31Size", ExifFormat::U16, 2)
+        .add_field(62, "Face32Size", ExifFormat::U16, 2)
+        .build()
+}
+
+/// Binary data table: FilterInfo
+/// Source lines: 5548-5586
+/// Process function: ProcessBinaryData
+pub fn create_filterinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("FilterInfo", ExifFormat::U8)
+        .add_field(0, "SourceDirectoryIndex", ExifFormat::U16, 1)
+        .add_field(2, "SourceFileIndex", ExifFormat::U16, 1)
+        .add_field(5, "DigitalFilter01", ExifFormat::U8, 1)
+        .add_field(22, "DigitalFilter02", ExifFormat::U8, 1)
+        .add_field(39, "DigitalFilter03", ExifFormat::U8, 1)
+        .add_field(56, "DigitalFilter04", ExifFormat::U8, 1)
+        .add_field(73, "DigitalFilter05", ExifFormat::U8, 1)
+        .add_field(90, "DigitalFilter06", ExifFormat::U8, 1)
+        .add_field(107, "DigitalFilter07", ExifFormat::U8, 1)
+        .add_field(124, "DigitalFilter08", ExifFormat::U8, 1)
+        .add_field(141, "DigitalFilter09", ExifFormat::U8, 1)
+        .add_field(158, "DigitalFilter10", ExifFormat::U8, 1)
+        .add_field(175, "DigitalFilter11", ExifFormat::U8, 1)
+        .add_field(192, "DigitalFilter12", ExifFormat::U8, 1)
+        .add_field(209, "DigitalFilter13", ExifFormat::U8, 1)
+        .add_field(226, "DigitalFilter14", ExifFormat::U8, 1)
+        .add_field(243, "DigitalFilter15", ExifFormat::U8, 1)
+        .add_field(260, "DigitalFilter16", ExifFormat::U8, 1)
+        .add_field(277, "DigitalFilter17", ExifFormat::U8, 1)
+        .add_field(294, "DigitalFilter18", ExifFormat::U8, 1)
+        .add_field(311, "DigitalFilter19", ExifFormat::U8, 1)
+        .add_field(328, "DigitalFilter20", ExifFormat::U8, 1)
+        .build()
+}
+
+/// Binary data table: LevelInfo
+/// Source lines: 5589-5657
+/// Process function: ProcessBinaryData
+pub fn create_levelinfo_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("LevelInfo", ExifFormat::U8)
+        .add_field(1, "RollAngle", ExifFormat::U8, 1)
+        .add_field(2, "PitchAngle", ExifFormat::U8, 1)
+        .add_field(5, "CompositionAdjustX", ExifFormat::U8, 1)
+        .add_field(6, "CompositionAdjustY", ExifFormat::U8, 1)
+        .add_field(7, "CompositionAdjustRotation", ExifFormat::U8, 1)
+        .build()
+}
+
+/// Binary data table: LevelInfoK3III
+/// Source lines: 5659-5689
+/// Process function: ProcessBinaryData
+pub fn create_levelinfok3iii_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("LevelInfoK3III", ExifFormat::U8)
+        .add_field(3, "RollAngle", ExifFormat::I16, 1)
+        .add_field(5, "PitchAngle", ExifFormat::I16, 1)
+        .build()
+}
+
 /// Binary data table: MOV
 /// Source lines: 6031-6078
 /// Process function: ProcessBinaryData
 pub fn create_mov_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("MOV", ExifFormat::U8)
-        .add_field(0, "Auto", ExifFormat::U8, 1)
-        .add_field(1, "Daylight", ExifFormat::U8, 1)
-        .add_field(2, "Shade", ExifFormat::U8, 1)
-        .add_field(4, "Tungsten", ExifFormat::U8, 1)
-        .add_field(5, "Manual", ExifFormat::U8, 1)
+        .add_field(0, "Make", ExifFormat::Ascii, 24)
+        .add_field(38, "ExposureTime", ExifFormat::U32, 1)
+        .add_field(42, "FNumber", ExifFormat::Rational, 1)
+        .add_field(50, "ExposureCompensation", ExifFormat::SignedRational, 1)
+        .add_field(72, "FocalLength", ExifFormat::Rational, 1)
+        .add_field(175, "ISO", ExifFormat::U16, 1)
+        .build()
+}
+
+/// Binary data table: S1
+/// Source lines: 6105-6113
+/// Process function: ProcessBinaryData
+pub fn create_s1_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("S1", ExifFormat::U8)
+        .add_field(0, "MakerNoteVersion", ExifFormat::U8, 1)
+        .build()
+}
+
+/// Binary data table: Junk
+/// Source lines: 6116-6125
+/// Process function: ProcessBinaryData
+pub fn create_junk_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("Junk", ExifFormat::U8)
+        .add_field(12, "Model", ExifFormat::Ascii, 32)
+        .build()
+}
+
+/// Binary data table: PXTH
+/// Source lines: 6128-6143
+/// Process function: ProcessBinaryData
+pub fn create_pxth_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("PXTH", ExifFormat::U8)
+        .add_field(0, "PreviewImageLength", ExifFormat::U32, 1)
         .build()
 }
 
@@ -26,10 +233,32 @@ pub fn create_mov_table() -> BinaryDataTable {
 /// Process function: ProcessBinaryData
 pub fn create_pent_table() -> BinaryDataTable {
     BinaryDataTableBuilder::new("PENT", ExifFormat::U8)
+        .add_field(0, "Make", ExifFormat::Ascii, 24)
+        .add_field(26, "Model", ExifFormat::Ascii, 24)
+        .add_field(56, "ExposureTime", ExifFormat::U32, 1)
+        .add_field(60, "FNumber", ExifFormat::Rational, 1)
+        .add_field(68, "ExposureCompensation", ExifFormat::SignedRational, 1)
+        .add_field(84, "FocalLength", ExifFormat::U32, 1)
+        .add_field(167, "ISO", ExifFormat::U32, 1)
         .add_field(0, "Above Sea Level", ExifFormat::U8, 1)
         .add_field(1, "Below Sea Level", ExifFormat::U8, 1)
         .add_field(2, "2-Dimensional Measurement", ExifFormat::U8, 1)
         .add_field(3, "3-Dimensional Measurement", ExifFormat::U8, 1)
+        .add_field(371, "AudioCodecID", ExifFormat::Ascii, 4)
+        .build()
+}
+
+/// Binary data table: Junk2
+/// Source lines: 6317-6365
+/// Process function: ProcessBinaryData
+pub fn create_junk2_table() -> BinaryDataTable {
+    BinaryDataTableBuilder::new("Junk2", ExifFormat::U8)
+        .add_field(18, "Make", ExifFormat::Ascii, 24)
+        .add_field(44, "Model", ExifFormat::Ascii, 24)
+        .add_field(94, "FNumber", ExifFormat::Rational, 1)
+        .add_field(299, "ThumbnailWidth", ExifFormat::U16, 1)
+        .add_field(301, "ThumbnailHeight", ExifFormat::U16, 1)
+        .add_field(303, "ThumbnailLength", ExifFormat::U32, 1)
         .build()
 }
 
