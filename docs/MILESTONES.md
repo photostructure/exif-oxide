@@ -2,16 +2,23 @@
 
 This document outlines the incremental development milestones for exif-oxide.
 
-## Important
+## Important Preequisite Steps
 
-1. Be sure to study $REPO_ROOT/CLAUDE.md, $REPO_ROOT/docs/ARCHITECTURE.md,
-$REPO_ROOT/third-party/exiftool/CLAUDE.md, and all relevant related documentation before
-   starting any work. With this project, **everything** is more complicated than
-   you'd expect.
+1. Be sure to study $REPO_ROOT/CLAUDE.md, $REPO_ROOT/docs/ARCHITECTURE.md, $REPO_ROOT/third-party/exiftool/CLAUDE.md, and all relevant related documentation before starting any work. With this project, **everything** is more complicated than you'd expect.
 
-2. Reread CLAUDE.md's `ExifTool is Gospel` section.
+2. Reread ../CLAUDE.md's `ExifTool is Gospel` section.
 
-3. After completing a milestone, edit this document and replace the milestone
+## Important Milestone Validation Steps
+
+After you think you're done implementing a milestone:
+
+1. Read $REPO_ROOT/tests/exiftool_compatibility_tests.rs and $REPO_ROOT/tools/generate_exiftool_json.sh
+
+2. Your task should allow more tags to be include-listed in exiftool_compatibility_tests.rs, more file types to be included by generate_exiftool_json.sh, or remove excluded files from exiftool_compatibility_tests.rs. Edit the above test files accordingly.
+
+3. Re-run `make compat` and iterate until all tests pass.
+
+4. After completing a milestone, edit this document and replace the milestone
    section that you completed with a summary of the task.
 
 ## Core Principles
@@ -89,6 +96,23 @@ $REPO_ROOT/third-party/exiftool/CLAUDE.md, and all relevant related documentatio
 - Translation of ExifTool's ProcessExif function (Exif.pm:6172-7128)
 
 **Key Files**: `src/exif.rs` (ExifReader, TiffHeader, IfdEntry parsing)
+
+---
+
+## ✅ ExifTool Compatibility Testing (COMPLETED)
+
+**Goal**: Systematic compatibility testing against ExifTool reference output
+
+**Implementation Summary**:
+
+- ExifTool reference JSON generation (`tools/generate_exiftool_json.sh`)
+- Compatibility test suite comparing exif-oxide vs ExifTool output (`tests/exiftool_compatibility_tests.rs`)
+- JSON object comparison with field-order independence using `similar` crate
+- Problematic file exclusion system for graceful handling
+- Makefile integration: `make compat-gen`, `make compat-test`, `make compat`
+- 58 reference files testing 53 successfully with proper exclusions
+
+**Key Files**: `tools/generate_exiftool_json.sh`, `tests/exiftool_compatibility_tests.rs`, `generated/exiftool-json/`
 
 ---
 
