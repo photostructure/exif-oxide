@@ -108,7 +108,9 @@
       "Bash(./exif-oxide:*)",
       "Bash(RUST_LOG=debug cargo run -- test-images/gopro/GoPro.jpg)",
       "Bash(RUST_LOG=debug ./target/release/exif-oxide test-images/canon/Canon_T3i.JPG)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(grep -n \"get_all_tags\" /home/mrm/src/exif-oxide/src/exif.rs)",
+      "Bash(RUST_BACKTRACE=1 cargo test test_find_canon_camera_settings_tag -- --nocapture)"
     ],
     "deny": []
   }

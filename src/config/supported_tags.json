@@ -13,5 +13,8 @@
   "YCbCrPositioning",
   "Flash",
   "ColorSpace",
-  "ExposureProgram"
+  "ExposureProgram",
+  "ImageSize",
+  "GPSAltitude",
+  "ShutterSpeed"
 ]

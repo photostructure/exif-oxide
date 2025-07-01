@@ -24,4 +24,7 @@ pub static SUPPORTED_TAGS: &[&str] = &[
     "Flash",
     "ColorSpace",
     "ExposureProgram",
+    "ImageSize",
+    "GPSAltitude",
+    "ShutterSpeed",
 ];
