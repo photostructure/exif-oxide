@@ -48,6 +48,39 @@ pub fn ycbcrpositioning_print_conv(val: &TagValue) -> String {
     .to_string()
 }
 
+/// GPS AltitudeRef PrintConv
+/// ExifTool: lib/Image/ExifTool/GPS.pm GPSAltitudeRef tag definition
+pub fn gpsaltituderef_print_conv(val: &TagValue) -> String {
+    match val.as_u8() {
+        Some(0) => "Above Sea Level",
+        Some(1) => "Below Sea Level",
+        _ => return format!("Unknown ({val})"),
+    }
+    .to_string()
+}
+
+/// GPS LatitudeRef PrintConv
+/// ExifTool: lib/Image/ExifTool/GPS.pm GPSLatitudeRef tag definition
+pub fn gpslatituderef_print_conv(val: &TagValue) -> String {
+    match val.as_string() {
+        Some("N") => "North",
+        Some("S") => "South",
+        _ => return format!("Unknown ({val})"),
+    }
+    .to_string()
+}
+
+/// GPS LongitudeRef PrintConv  
+/// ExifTool: lib/Image/ExifTool/GPS.pm GPSLongitudeRef tag definition
+pub fn gpslongituderef_print_conv(val: &TagValue) -> String {
+    match val.as_string() {
+        Some("E") => "East",
+        Some("W") => "West",
+        _ => return format!("Unknown ({val})"),
+    }
+    .to_string()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

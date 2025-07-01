@@ -36,6 +36,17 @@ pub enum TagValue {
     U32Array(Vec<u32>),
     /// Array of floating point numbers (for rational arrays)
     F64Array(Vec<f64>),
+    /// Rational number as numerator/denominator pair (RATIONAL format)
+    /// ExifTool: Format type 5 (rational64u) - 2x uint32
+    Rational(u32, u32),
+    /// Signed rational number as numerator/denominator pair (SRATIONAL format)  
+    /// ExifTool: Format type 10 (rational64s) - 2x int32
+    SRational(i32, i32),
+    /// Array of rational numbers for multi-value tags like GPS coordinates
+    /// ExifTool: GPSLatitude/GPSLongitude arrays [degrees/1, minutes/1, seconds/100]
+    RationalArray(Vec<(u32, u32)>),
+    /// Array of signed rational numbers
+    SRationalArray(Vec<(i32, i32)>),
     /// Raw binary data when type is unknown
     Binary(Vec<u8>),
 }
@@ -83,7 +94,76 @@ impl TagValue {
             TagValue::U32(v) => Some(*v as f64),
             TagValue::U16(v) => Some(*v as f64),
             TagValue::U8(v) => Some(*v as f64),
+            TagValue::Rational(num, denom) => {
+                if *denom != 0 {
+                    Some(*num as f64 / *denom as f64)
+                } else {
+                    None // Division by zero
+                }
+            }
+            TagValue::SRational(num, denom) => {
+                if *denom != 0 {
+                    Some(*num as f64 / *denom as f64)
+                } else {
+                    None // Division by zero
+                }
+            }
             _ => None,
+        }
+    }
+
+    /// Convert to rational tuple if possible
+    pub fn as_rational(&self) -> Option<(u32, u32)> {
+        match self {
+            TagValue::Rational(num, denom) => Some((*num, *denom)),
+            _ => None,
+        }
+    }
+
+    /// Convert to signed rational tuple if possible
+    pub fn as_srational(&self) -> Option<(i32, i32)> {
+        match self {
+            TagValue::SRational(num, denom) => Some((*num, *denom)),
+            _ => None,
+        }
+    }
+
+    /// Convert rational to decimal degrees (for GPS coordinates)
+    /// GPS coordinates use degrees/1, minutes/1, seconds/100 format
+    /// ExifTool: GPS.pm ToDegrees function for coordinate conversion
+    pub fn rational_to_decimal(&self) -> Option<f64> {
+        match self {
+            TagValue::RationalArray(rationals) if rationals.len() >= 3 => {
+                let degrees = if rationals[0].1 != 0 {
+                    rationals[0].0 as f64 / rationals[0].1 as f64
+                } else {
+                    0.0
+                };
+                let minutes = if rationals[1].1 != 0 {
+                    rationals[1].0 as f64 / rationals[1].1 as f64 / 60.0
+                } else {
+                    0.0
+                };
+                let seconds = if rationals[2].1 != 0 {
+                    rationals[2].0 as f64 / rationals[2].1 as f64 / 3600.0
+                } else {
+                    0.0
+                };
+                Some(degrees + minutes + seconds)
+            }
+            _ => None,
+        }
+    }
+
+    /// Convert GPS coordinate array to signed decimal with hemisphere
+    /// ExifTool: Composite GPSLatitude/GPSLongitude with reference direction
+    pub fn gps_to_decimal_with_ref(coord: &TagValue, reference: &TagValue) -> Option<f64> {
+        let decimal = coord.rational_to_decimal()?;
+
+        match reference.as_string() {
+            Some("S") | Some("W") => Some(-decimal), // South/West are negative
+            Some("N") | Some("E") => Some(decimal),  // North/East are positive
+            _ => Some(decimal),                      // Default to positive if no valid reference
         }
     }
 }
@@ -102,6 +182,56 @@ impl std::fmt::Display for TagValue {
             TagValue::U16Array(arr) => write!(f, "{arr:?}"),
             TagValue::U32Array(arr) => write!(f, "{arr:?}"),
             TagValue::F64Array(arr) => write!(f, "{arr:?}"),
+            TagValue::Rational(num, denom) => {
+                if *denom == 0 {
+                    write!(f, "{num}/0 (inf)")
+                } else if *denom == 1 {
+                    write!(f, "{num}")
+                } else {
+                    write!(f, "{num}/{denom}")
+                }
+            }
+            TagValue::SRational(num, denom) => {
+                if *denom == 0 {
+                    write!(f, "{num}/0 (inf)")
+                } else if *denom == 1 {
+                    write!(f, "{num}")
+                } else {
+                    write!(f, "{num}/{denom}")
+                }
+            }
+            TagValue::RationalArray(arr) => {
+                write!(f, "[")?;
+                for (i, (num, denom)) in arr.iter().enumerate() {
+                    if i > 0 {
+                        write!(f, ", ")?;
+                    }
+                    if *denom == 0 {
+                        write!(f, "{num}/0")?;
+                    } else if *denom == 1 {
+                        write!(f, "{num}")?;
+                    } else {
+                        write!(f, "{num}/{denom}")?;
+                    }
+                }
+                write!(f, "]")
+            }
+            TagValue::SRationalArray(arr) => {
+                write!(f, "[")?;
+                for (i, (num, denom)) in arr.iter().enumerate() {
+                    if i > 0 {
+                        write!(f, ", ")?;
+                    }
+                    if *denom == 0 {
+                        write!(f, "{num}/0")?;
+                    } else if *denom == 1 {
+                        write!(f, "{num}")?;
+                    } else {
+                        write!(f, "{num}/{denom}")?;
+                    }
+                }
+                write!(f, "]")
+            }
             TagValue::Binary(data) => write!(f, "[{} bytes of binary data]", data.len()),
         }
     }
