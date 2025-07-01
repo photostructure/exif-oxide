@@ -128,44 +128,11 @@ impl TagValue {
         }
     }
 
-    /// Convert rational to decimal degrees (for GPS coordinates)
-    /// GPS coordinates use degrees/1, minutes/1, seconds/100 format
-    /// ExifTool: GPS.pm ToDegrees function for coordinate conversion
-    pub fn rational_to_decimal(&self) -> Option<f64> {
-        match self {
-            TagValue::RationalArray(rationals) if rationals.len() >= 3 => {
-                let degrees = if rationals[0].1 != 0 {
-                    rationals[0].0 as f64 / rationals[0].1 as f64
-                } else {
-                    0.0
-                };
-                let minutes = if rationals[1].1 != 0 {
-                    rationals[1].0 as f64 / rationals[1].1 as f64 / 60.0
-                } else {
-                    0.0
-                };
-                let seconds = if rationals[2].1 != 0 {
-                    rationals[2].0 as f64 / rationals[2].1 as f64 / 3600.0
-                } else {
-                    0.0
-                };
-                Some(degrees + minutes + seconds)
-            }
-            _ => None,
-        }
-    }
+    // rational_to_decimal REMOVED in Milestone 8e
+    // GPS coordinate conversion moved to Composite tag system
 
-    /// Convert GPS coordinate array to signed decimal with hemisphere
-    /// ExifTool: Composite GPSLatitude/GPSLongitude with reference direction
-    pub fn gps_to_decimal_with_ref(coord: &TagValue, reference: &TagValue) -> Option<f64> {
-        let decimal = coord.rational_to_decimal()?;
-
-        match reference.as_string() {
-            Some("S") | Some("W") => Some(-decimal), // South/West are negative
-            Some("N") | Some("E") => Some(decimal),  // North/East are positive
-            _ => Some(decimal),                      // Default to positive if no valid reference
-        }
-    }
+    // gps_to_decimal_with_ref REMOVED in Milestone 8e
+    // GPS coordinate conversion moved to Composite tag system
 }
 
 impl std::fmt::Display for TagValue {

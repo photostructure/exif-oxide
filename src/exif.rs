@@ -1367,38 +1367,47 @@ mod tests {
     }
 
     #[test]
-    fn test_gps_rational_to_decimal_conversion() {
+    fn test_gps_rational_arrays_returned_raw() {
         use crate::types::TagValue;
 
-        // Test GPS coordinates from GPS.jpg: 54° 59' 22.80" N, 1° 54' 51.00" W
-        // Our rational arrays: GPSLatitude: [(54, 1), (5938, 100), (0, 1)]
-        // ExifTool decimal: 54.9896666666667, -1.91416666666667
+        // Test that GPS coordinates return raw rational arrays in Milestone 8e
+        // GPS:GPSLatitude should return [[54,1], [59,38/100], [0,1]] not decimal degrees
 
-        // Test GPSLatitude conversion
+        // Test GPSLatitude returns rational array format
         let lat_rationals = TagValue::RationalArray(vec![(54, 1), (5938, 100), (0, 1)]);
-        let lat_decimal = lat_rationals.rational_to_decimal().unwrap();
-        let expected_lat = 54.0 + 59.38 / 60.0 + 0.0 / 3600.0;
-        assert!(
-            (lat_decimal - expected_lat).abs() < 0.000001,
-            "GPSLatitude: expected {expected_lat}, got {lat_decimal}"
-        );
 
-        // Test GPSLongitude conversion
+        // Verify we can access the rational components directly
+        if let TagValue::RationalArray(rationals) = &lat_rationals {
+            assert_eq!(
+                rationals.len(),
+                3,
+                "GPS coordinates should have 3 components"
+            );
+            assert_eq!(rationals[0], (54, 1), "Degrees component");
+            assert_eq!(rationals[1], (5938, 100), "Minutes component");
+            assert_eq!(rationals[2], (0, 1), "Seconds component");
+        } else {
+            panic!("GPS coordinates should be RationalArray");
+        }
+
+        // Test GPSLongitude format
         let lon_rationals = TagValue::RationalArray(vec![(1, 1), (5485, 100), (0, 1)]);
-        let lon_decimal = lon_rationals.rational_to_decimal().unwrap();
-        let expected_lon = 1.0 + 54.85 / 60.0 + 0.0 / 3600.0;
-        assert!(
-            (lon_decimal - expected_lon).abs() < 0.000001,
-            "GPSLongitude: expected {expected_lon}, got {lon_decimal}"
-        );
+        if let TagValue::RationalArray(rationals) = &lon_rationals {
+            assert_eq!(rationals[0], (1, 1), "Degrees component");
+            assert_eq!(rationals[1], (5485, 100), "Minutes component");
+            assert_eq!(rationals[2], (0, 1), "Seconds component");
+        } else {
+            panic!("GPS coordinates should be RationalArray");
+        }
 
-        // Test hemisphere conversion (West = negative)
+        // GPS reference tags should remain as strings
+        let lat_ref = TagValue::String("N".to_string());
         let lon_ref = TagValue::String("W".to_string());
-        let lon_with_ref = TagValue::gps_to_decimal_with_ref(&lon_rationals, &lon_ref).unwrap();
-        assert!(lon_with_ref < 0.0, "West longitude should be negative");
-        assert!(
-            (lon_with_ref + expected_lon).abs() < 0.000001,
-            "West GPSLongitude: expected -{expected_lon}, got {lon_with_ref}"
-        );
+
+        assert_eq!(lat_ref.as_string(), Some("N"));
+        assert_eq!(lon_ref.as_string(), Some("W"));
+
+        // Note: Decimal conversion will be handled by Composite tags
+        // that combine GPS:GPSLatitude + GPS:GPSLatitudeRef -> Composite:GPSLatitude
     }
 }

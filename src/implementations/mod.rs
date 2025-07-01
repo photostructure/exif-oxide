@@ -60,20 +60,8 @@ pub fn register_all_conversions() {
     );
     registry::register_print_conv("focallength_print_conv", print_conv::focallength_print_conv);
 
-    // Register Milestone 8b ValueConv implementations
-    registry::register_value_conv("gpslatitude_value_conv", value_conv::gpslatitude_value_conv);
-    registry::register_value_conv(
-        "gpslongitude_value_conv",
-        value_conv::gpslongitude_value_conv,
-    );
-    registry::register_value_conv(
-        "gpsdestlatitude_value_conv",
-        value_conv::gpsdestlatitude_value_conv,
-    );
-    registry::register_value_conv(
-        "gpsdestlongitude_value_conv",
-        value_conv::gpsdestlongitude_value_conv,
-    );
+    // GPS coordinate ValueConv registrations REMOVED in Milestone 8e
+    // GPS coordinates now return raw rational arrays, not decimal degrees
     registry::register_value_conv(
         "gpstimestamp_value_conv",
         value_conv::gpstimestamp_value_conv,

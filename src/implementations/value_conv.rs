@@ -8,68 +8,10 @@
 
 use crate::types::{ExifError, Result, TagValue};
 
-/// GPS coordinate conversion from degrees/minutes/seconds to decimal degrees
-///
-/// ExifTool: lib/Image/ExifTool/GPS.pm ToDegrees function
-/// GPS coordinates are stored as [degrees/1, minutes/1, seconds/100] arrays
-pub fn gps_coordinate_value_conv(value: &TagValue) -> Result<TagValue> {
-    match value {
-        TagValue::RationalArray(rationals) if rationals.len() >= 3 => {
-            let degrees = if rationals[0].1 != 0 {
-                rationals[0].0 as f64 / rationals[0].1 as f64
-            } else {
-                0.0
-            };
-
-            let minutes = if rationals[1].1 != 0 {
-                (rationals[1].0 as f64 / rationals[1].1 as f64) / 60.0
-            } else {
-                0.0
-            };
-
-            let seconds = if rationals[2].1 != 0 {
-                (rationals[2].0 as f64 / rationals[2].1 as f64) / 3600.0
-            } else {
-                0.0
-            };
-
-            let decimal_degrees = degrees + minutes + seconds;
-            Ok(TagValue::F64(decimal_degrees))
-        }
-        _ => Err(ExifError::ParseError(
-            "GPS coordinate conversion requires rational array with at least 3 elements"
-                .to_string(),
-        )),
-    }
-}
-
-/// GPS latitude ValueConv - uses common GPS coordinate conversion
-/// ExifTool: lib/Image/ExifTool/GPS.pm GPSLatitude
-/// Note: This produces the raw EXIF coordinate (always positive)
-/// Composite tags will apply hemisphere reference for signed coordinates
-pub fn gpslatitude_value_conv(value: &TagValue) -> Result<TagValue> {
-    gps_coordinate_value_conv(value)
-}
-
-/// GPS longitude ValueConv - uses common GPS coordinate conversion  
-/// ExifTool: lib/Image/ExifTool/GPS.pm GPSLongitude
-/// Note: This produces the raw EXIF coordinate (always positive)
-/// Composite tags will apply hemisphere reference for signed coordinates
-pub fn gpslongitude_value_conv(value: &TagValue) -> Result<TagValue> {
-    gps_coordinate_value_conv(value)
-}
-
-/// GPS destination latitude ValueConv
-/// ExifTool: lib/Image/ExifTool/GPS.pm GPSDestLatitude
-pub fn gpsdestlatitude_value_conv(value: &TagValue) -> Result<TagValue> {
-    gps_coordinate_value_conv(value)
-}
-
-/// GPS destination longitude ValueConv
-/// ExifTool: lib/Image/ExifTool/GPS.pm GPSDestLongitude  
-pub fn gpsdestlongitude_value_conv(value: &TagValue) -> Result<TagValue> {
-    gps_coordinate_value_conv(value)
-}
+// GPS coordinate ValueConv functions REMOVED in Milestone 8e
+// GPS coordinates should return raw rational arrays, not decimal degrees.
+// Decimal conversion will be handled by Composite tags that combine
+// GPS:GPSLatitude + GPS:GPSLatitudeRef -> Composite:GPSLatitude
 
 /// APEX shutter speed conversion: 2^-val to actual shutter speed
 ///
@@ -232,24 +174,8 @@ pub fn focallength_value_conv(value: &TagValue) -> Result<TagValue> {
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_gps_coordinate_conversion() {
-        // Test GPS coordinate: 54 degrees, 59.38 minutes, 0 seconds
-        // Should convert to: 54 + 59.38/60 + 0/3600 = 54 + 0.98966... = 54.98966...
-        let rationals = vec![(54, 1), (5938, 100), (0, 1)]; // 54 degrees, 59.38 minutes, 0 seconds
-        let gps_value = TagValue::RationalArray(rationals);
-
-        let result = gps_coordinate_value_conv(&gps_value).unwrap();
-        if let TagValue::F64(decimal) = result {
-            let expected = 54.0 + (59.38 / 60.0) + (0.0 / 3600.0);
-            assert!(
-                (decimal - expected).abs() < 0.001,
-                "Expected {expected}, got {decimal}"
-            );
-        } else {
-            panic!("Expected F64 result");
-        }
-    }
+    // GPS coordinate conversion test removed in Milestone 8e
+    // GPS coordinates now return raw rational arrays
 
     #[test]
     fn test_apex_shutter_speed() {
