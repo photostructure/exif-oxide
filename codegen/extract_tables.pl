@@ -42,6 +42,10 @@ push @all_extracted_tags, @exif_main_tags;
 my @gps_tags = extract_gps_tags($metadata, \%all_print_conv_refs, \%all_value_conv_refs);
 push @all_extracted_tags, @gps_tags;
 
+# Extract composite tags (Milestone 8f requirement)
+my @composite_tags = extract_composite_tags($metadata, \%all_print_conv_refs, \%all_value_conv_refs);
+print STDERR "Extracted " . scalar(@composite_tags) . " composite tags\n";
+
 # Convert hash keys to sorted arrays for consistent output
 my @print_conv_refs = sort keys %all_print_conv_refs;
 my @value_conv_refs = sort keys %all_value_conv_refs;
@@ -50,9 +54,11 @@ my @value_conv_refs = sort keys %all_value_conv_refs;
 print encode_json({
     extracted_at => scalar(gmtime()),
     exiftool_version => $Image::ExifTool::VERSION,
-    filter_criteria => "frequency > 0.95 OR mainstream = true",
+    filter_criteria => "frequency > 0.8 OR mainstream = true",
     total_tags => scalar(@all_extracted_tags),
     tags => \@all_extracted_tags,
+    # New: Composite tags (Milestone 8f)
+    composite_tags => \@composite_tags,
     # New: Conversion reference lists for codegen
     conversion_refs => {
         print_conv => \@print_conv_refs,
@@ -311,6 +317,218 @@ sub extract_gps_tags {
     }
     
     return @tags;
+}
+
+#------------------------------------------------------------------------------
+# Extract composite tags from multiple ExifTool composite tables
+#------------------------------------------------------------------------------
+sub extract_composite_tags {
+    my ($metadata, $print_conv_refs, $value_conv_refs) = @_;
+    my @all_composite_tags;
+    
+    # Load ExifTool modules with composite tables
+    require Image::ExifTool;
+    require Image::ExifTool::Exif;
+    require Image::ExifTool::GPS;
+    
+    # Extract from main composite table
+    my @main_composites = extract_composite_from_table(
+        \%Image::ExifTool::Composite, 
+        "Main", 
+        $metadata, 
+        $print_conv_refs, 
+        $value_conv_refs
+    );
+    push @all_composite_tags, @main_composites;
+    
+    # Extract from EXIF composite table
+    my @exif_composites = extract_composite_from_table(
+        \%Image::ExifTool::Exif::Composite,
+        "EXIF", 
+        $metadata, 
+        $print_conv_refs, 
+        $value_conv_refs
+    );
+    push @all_composite_tags, @exif_composites;
+    
+    # Extract from GPS composite table  
+    my @gps_composites = extract_composite_from_table(
+        \%Image::ExifTool::GPS::Composite,
+        "GPS", 
+        $metadata, 
+        $print_conv_refs, 
+        $value_conv_refs
+    );
+    push @all_composite_tags, @gps_composites;
+    
+    return @all_composite_tags;
+}
+
+#------------------------------------------------------------------------------
+# Extract composite tags from a specific table
+#------------------------------------------------------------------------------
+sub extract_composite_from_table {
+    my ($table_ref, $table_name, $metadata, $print_conv_refs, $value_conv_refs) = @_;
+    my @composite_tags;
+    
+    # Process each composite tag in the table
+    foreach my $tag_name (sort keys %$table_ref) {
+        # Skip special table keys (all-caps names like GROUPS, TABLE_NAME, etc.)
+        next if $tag_name =~ /^[A-Z_]+$/;
+        next if $tag_name eq 'GROUPS';
+        
+        my $tag_info = $table_ref->{$tag_name};
+        next unless ref $tag_info eq 'HASH';
+        
+        # Extract the actual tag name (remove module prefix)
+        my $clean_tag_name = $tag_name;
+        $clean_tag_name =~ s/^.*-//;  # Remove "Exif-", "GPS-", etc.
+        
+        # Apply mainstream filtering for composite tags  
+        # Use more lenient criteria since there are fewer composite tags
+        next unless is_mainstream_composite_tag($clean_tag_name, $metadata);
+        
+        # Extract composite tag information
+        my $composite_data = {
+            name => $clean_tag_name,  # Use clean name without prefix
+            table => $table_name,
+            full_name => $tag_name,   # Keep original for reference
+        };
+        
+        # Extract core dependency fields
+        if ($tag_info->{Require}) {
+            $composite_data->{require} = extract_dependency_hash($tag_info->{Require});
+        }
+        
+        if ($tag_info->{Desire}) {
+            $composite_data->{desire} = extract_dependency_hash($tag_info->{Desire});
+        }
+        
+        if ($tag_info->{Inhibit}) {
+            $composite_data->{inhibit} = extract_dependency_hash($tag_info->{Inhibit});
+        }
+        
+        # Extract conversion code (as string for Rust implementation)
+        if ($tag_info->{ValueConv}) {
+            $composite_data->{value_conv} = ref($tag_info->{ValueConv}) ? 
+                "[complex_code]" : $tag_info->{ValueConv};
+        }
+        
+        if ($tag_info->{PrintConv}) {
+            my $print_conv_ref = generate_composite_conv_ref($tag_name, 'print_conv');
+            $composite_data->{print_conv_ref} = $print_conv_ref;
+            $print_conv_refs->{$print_conv_ref} = 1;
+        }
+        
+        if ($tag_info->{RawConv}) {
+            $composite_data->{raw_conv} = ref($tag_info->{RawConv}) ? 
+                "[complex_code]" : $tag_info->{RawConv};
+        }
+        
+        # Extract metadata fields
+        if ($tag_info->{Description}) {
+            $composite_data->{description} = $tag_info->{Description};
+        }
+        
+        if ($tag_info->{Groups}) {
+            $composite_data->{groups} = $tag_info->{Groups};
+        }
+        
+        if ($tag_info->{Notes}) {
+            $composite_data->{notes} = $tag_info->{Notes};
+        }
+        
+        # Extract behavior control fields
+        $composite_data->{writable} = $tag_info->{Writable} ? 1 : 0;
+        $composite_data->{avoid} = $tag_info->{Avoid} ? 1 : 0;
+        
+        if (defined $tag_info->{Priority}) {
+            $composite_data->{priority} = $tag_info->{Priority};
+        }
+        
+        if ($tag_info->{SubDoc}) {
+            $composite_data->{sub_doc} = $tag_info->{SubDoc};
+        }
+        
+        # Add frequency metadata if available
+        if (exists $metadata->{$tag_name}) {
+            my $meta = $metadata->{$tag_name};
+            $composite_data->{frequency} = $meta->{frequency};
+            $composite_data->{mainstream} = $meta->{mainstream} ? 1 : 0;
+        }
+        
+        push @composite_tags, $composite_data;
+    }
+    
+    return @composite_tags;
+}
+
+#------------------------------------------------------------------------------
+# Check if composite tag should be included based on frequency/mainstream criteria
+#------------------------------------------------------------------------------
+sub is_mainstream_composite_tag {
+    my ($tag_name, $metadata) = @_;
+    
+    return 0 unless defined $tag_name;
+    
+    # Check metadata for frequency
+    if (exists $metadata->{$tag_name}) {
+        my $meta = $metadata->{$tag_name};
+        
+        # Use lower threshold for composite tags (0.08 vs 0.95 for regular tags)
+        return 1 if ($meta->{frequency} && $meta->{frequency} > 0.08);
+        return 1 if ($meta->{mainstream});
+    }
+    
+    # Always include essential composite tags even without metadata
+    my @always_include = qw(
+        ImageSize Megapixels
+        GPSLatitude GPSLongitude GPSPosition GPSAltitude
+        Aperture ShutterSpeed FocalLength35efl
+        DOF Hyperfocal LightValue
+        ScaleFactor35efl
+    );
+    
+    return 1 if grep { $_ eq $tag_name } @always_include;
+    
+    return 0;
+}
+
+#------------------------------------------------------------------------------
+# Extract dependency hash, handling both scalar and hash formats
+#------------------------------------------------------------------------------
+sub extract_dependency_hash {
+    my $dep = shift;
+    
+    if (ref $dep eq 'HASH') {
+        return $dep;  # Already a hash
+    } elsif (ref $dep eq 'ARRAY') {
+        # Convert array to numbered hash
+        my %hash;
+        for my $i (0 .. $#$dep) {
+            $hash{$i} = $dep->[$i];
+        }
+        return \%hash;
+    } elsif (defined $dep) {
+        # Scalar - convert to hash with single entry
+        return { 0 => $dep };
+    }
+    
+    return {};
+}
+
+#------------------------------------------------------------------------------
+# Generate conversion reference string for composite PrintConv
+#------------------------------------------------------------------------------
+sub generate_composite_conv_ref {
+    my ($tag_name, $conv_type) = @_;
+    
+    # Generate a reference string based on tag name and conversion type
+    my $ref = "composite_" . lc($tag_name);
+    $ref =~ s/[^a-z0-9]/_/g;  # Replace non-alphanumeric with underscore
+    $ref .= "_${conv_type}";
+    
+    return $ref;
 }
 
 __END__

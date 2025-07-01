@@ -6,6 +6,7 @@
 use anyhow::{Context, Result};
 use clap::{Arg, Command};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
@@ -17,6 +18,8 @@ struct ExtractedData {
     filter_criteria: String,
     total_tags: usize,
     tags: Vec<ExtractedTag>,
+    #[serde(default)]
+    composite_tags: Vec<ExtractedCompositeTag>,
     conversion_refs: ConversionRefs,
 }
 
@@ -49,6 +52,44 @@ struct ExtractedTag {
     notes: Option<String>,
 }
 
+/// Individual composite tag extracted from ExifTool
+#[derive(Debug, Deserialize)]
+struct ExtractedCompositeTag {
+    name: String,
+    table: String,
+    full_name: String,
+    #[serde(default)]
+    description: Option<String>,
+    #[serde(default)]
+    require: Option<HashMap<String, String>>,
+    #[serde(default)]
+    desire: Option<HashMap<String, String>>,
+    #[serde(default)]
+    inhibit: Option<HashMap<String, String>>,
+    #[serde(default)]
+    value_conv: Option<String>,
+    #[serde(default)]
+    raw_conv: Option<String>,
+    #[serde(default)]
+    print_conv_ref: Option<String>,
+    #[serde(default)]
+    groups: Option<HashMap<String, String>>,
+    #[serde(default)]
+    writable: Option<u8>,
+    #[serde(default)]
+    avoid: Option<u8>,
+    #[serde(default)]
+    priority: Option<i32>,
+    #[serde(default)]
+    sub_doc: Option<serde_json::Value>, // Can be bool or array
+    #[serde(default)]
+    frequency: Option<f64>,
+    #[serde(default)]
+    mainstream: Option<u8>,
+    #[serde(default)]
+    notes: Option<String>,
+}
+
 /// Generated Rust tag structure
 #[derive(Debug, Serialize)]
 struct GeneratedTag {
@@ -60,6 +101,23 @@ struct GeneratedTag {
     description: Option<String>,
     print_conv_ref: Option<String>,
     value_conv_ref: Option<String>,
+    notes: Option<String>,
+}
+
+/// Generated Rust composite tag structure
+#[derive(Debug, Serialize)]
+struct GeneratedCompositeTag {
+    name: String,
+    table: String,
+    description: Option<String>,
+    require: HashMap<u8, String>,
+    desire: HashMap<u8, String>,
+    value_conv: Option<String>,
+    print_conv_ref: Option<String>,
+    groups: HashMap<u8, String>,
+    writable: bool,
+    avoid: bool,
+    priority: i32,
     notes: Option<String>,
 }
 
@@ -95,8 +153,8 @@ fn main() -> Result<()> {
     let extracted_data: ExtractedData = serde_json::from_str(&json_content)
         .with_context(|| "Failed to parse JSON input")?;
 
-    println!("Loaded {} tags from ExifTool {}", 
-             extracted_data.total_tags, extracted_data.exiftool_version);
+    println!("Loaded {} tags and {} composite tags from ExifTool {}", 
+             extracted_data.total_tags, extracted_data.composite_tags.len(), extracted_data.exiftool_version);
 
     // Convert extracted tags to generated format
     let mut tags = Vec::new();
@@ -120,6 +178,28 @@ fn main() -> Result<()> {
         tags.push(generated_tag);
     }
 
+    // Convert extracted composite tags to generated format
+    let mut composite_tags = Vec::new();
+    
+    for comp_tag in extracted_data.composite_tags {
+        let generated_comp_tag = GeneratedCompositeTag {
+            name: comp_tag.name,
+            table: comp_tag.table,
+            description: comp_tag.description,
+            require: parse_dependency_map(comp_tag.require.unwrap_or_default()),
+            desire: parse_dependency_map(comp_tag.desire.unwrap_or_default()),
+            value_conv: comp_tag.value_conv,
+            print_conv_ref: comp_tag.print_conv_ref,
+            groups: parse_group_map(comp_tag.groups.unwrap_or_default()),
+            writable: comp_tag.writable.unwrap_or(0) != 0,
+            avoid: comp_tag.avoid.unwrap_or(0) != 0,
+            priority: comp_tag.priority.unwrap_or(0),
+            notes: comp_tag.notes,
+        };
+        
+        composite_tags.push(generated_comp_tag);
+    }
+
     println!("Extracted conversion references:");
     println!("  PrintConv: {} functions", extracted_data.conversion_refs.print_conv.len());
     println!("  ValueConv: {} functions", extracted_data.conversion_refs.value_conv.len());
@@ -130,6 +210,9 @@ fn main() -> Result<()> {
 
     // Generate tag table
     generate_tag_table(&tags, output_dir)?;
+    
+    // Generate composite tag table
+    generate_composite_tag_table(&composite_tags, output_dir)?;
 
     // Generate conversion registry from extracted references
     generate_conversion_refs(&extracted_data.conversion_refs, output_dir)?;
@@ -142,13 +225,13 @@ fn main() -> Result<()> {
 
     let total_conv_refs = extracted_data.conversion_refs.print_conv.len() + 
                          extracted_data.conversion_refs.value_conv.len();
-    println!("Generated {} tags with {} conversion references", 
-             tags.len(), total_conv_refs);
+    println!("Generated {} tags and {} composite tags with {} conversion references", 
+             tags.len(), composite_tags.len(), total_conv_refs);
     println!("Code generated in: {}", output_dir);
     println!("\nNext steps:");
     println!("1. Add 'mod generated;' to src/lib.rs");
     println!("2. Use --show-missing on real images to see what implementations are needed");
-    println!("3. Implement missing PrintConv/ValueConv functions in implementations/");
+    println!("3. Implement missing PrintConv/ValueConv and composite functions in implementations/");
 
     Ok(())
 }
@@ -381,6 +464,11 @@ fn generate_supported_tags(_tags: &[GeneratedTag], output_dir: &str) -> Result<(
             "ColorSpace",        // colorspace_print_conv ✅
             "ExposureProgram",   // exposureprogram_print_conv ✅
         ]),
+        ("Milestone 8f", &[
+            "ImageSize",         // Composite tag ✅
+            "GPSAltitude",       // Composite tag ✅  
+            "ShutterSpeed",      // Composite tag ✅
+        ]),
         // When Milestone 8b completes: 
         // ("Milestone 8b", &["GPSLatitude", "GPSLongitude"]),
         // When Milestone 9+ manufacturer PrintConv completes:
@@ -441,10 +529,12 @@ fn generate_mod_file(output_dir: &str) -> Result<()> {
 //! This module contains all code generated from ExifTool tables.
 
 pub mod tags;
+pub mod composite_tags;
 pub mod conversion_refs;
 pub mod supported_tags;
 
 pub use tags::*;
+pub use composite_tags::*;
 pub use conversion_refs::*;
 pub use supported_tags::*;
 ";
@@ -458,8 +548,136 @@ pub use supported_tags::*;
 }
 
 fn escape_string(s: &str) -> String {
-    s.replace('\"', "\\\"")
+    s.replace('\\', "\\\\")   // Must be first to avoid double-escaping
+     .replace('\"', "\\\"")
      .replace('\n', "\\n")
      .replace('\r', "\\r")
      .replace('\t', "\\t")
+}
+
+fn parse_dependency_map(input: HashMap<String, String>) -> HashMap<u8, String> {
+    input.into_iter()
+        .filter_map(|(k, v)| k.parse::<u8>().ok().map(|key| (key, v)))
+        .collect()
+}
+
+fn parse_group_map(input: HashMap<String, String>) -> HashMap<u8, String> {
+    input.into_iter()
+        .filter_map(|(k, v)| k.parse::<u8>().ok().map(|key| (key, v)))
+        .collect()
+}
+
+fn generate_composite_tag_table(composite_tags: &[GeneratedCompositeTag], output_dir: &str) -> Result<()> {
+    let mut code = String::new();
+    
+    // File header
+    code.push_str("//! Generated composite tag definitions\n");
+    code.push_str("//!\n");
+    code.push_str("//! This file is automatically generated by codegen/generate_rust.\n");
+    code.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten.\n\n");
+    
+    code.push_str("use lazy_static::lazy_static;\n");
+    code.push_str("use std::collections::HashMap;\n\n");
+
+    // Composite tag structure
+    code.push_str("#[derive(Debug, Clone)]\n");
+    code.push_str("pub struct CompositeTagDef {\n");
+    code.push_str("    pub name: &'static str,\n");
+    code.push_str("    pub table: &'static str,\n");
+    code.push_str("    pub description: Option<&'static str>,\n");
+    code.push_str("    pub require: &'static [(u8, &'static str)],\n");
+    code.push_str("    pub desire: &'static [(u8, &'static str)],\n");
+    code.push_str("    pub value_conv: Option<&'static str>,\n");
+    code.push_str("    pub print_conv_ref: Option<&'static str>,\n");
+    code.push_str("    pub groups: &'static [(u8, &'static str)],\n");
+    code.push_str("    pub writable: bool,\n");
+    code.push_str("    pub avoid: bool,\n");
+    code.push_str("    pub priority: i32,\n");
+    code.push_str("    pub notes: Option<&'static str>,\n");
+    code.push_str("}\n\n");
+
+    // Static composite tag array
+    code.push_str("pub static COMPOSITE_TAGS: &[CompositeTagDef] = &[\n");
+    
+    for comp_tag in composite_tags {
+        code.push_str("    CompositeTagDef {\n");
+        code.push_str(&format!("        name: \"{}\",\n", comp_tag.name));
+        code.push_str(&format!("        table: \"{}\",\n", comp_tag.table));
+        
+        // Optional description
+        if let Some(desc) = &comp_tag.description {
+            code.push_str(&format!("        description: Some(\"{}\"),\n", escape_string(desc)));
+        } else {
+            code.push_str("        description: None,\n");
+        }
+        
+        // Require dependencies
+        code.push_str("        require: &[");
+        for (index, tag_name) in comp_tag.require.iter() {
+            code.push_str(&format!("({}, \"{}\"), ", index, tag_name));
+        }
+        code.push_str("],\n");
+        
+        // Desire dependencies
+        code.push_str("        desire: &[");
+        for (index, tag_name) in comp_tag.desire.iter() {
+            code.push_str(&format!("({}, \"{}\"), ", index, tag_name));
+        }
+        code.push_str("],\n");
+        
+        // Value conversion
+        if let Some(value_conv) = &comp_tag.value_conv {
+            code.push_str(&format!("        value_conv: Some(\"{}\"),\n", escape_string(value_conv)));
+        } else {
+            code.push_str("        value_conv: None,\n");
+        }
+        
+        // PrintConv reference
+        if let Some(print_ref) = &comp_tag.print_conv_ref {
+            code.push_str(&format!("        print_conv_ref: Some(\"{}\"),\n", print_ref));
+        } else {
+            code.push_str("        print_conv_ref: None,\n");
+        }
+        
+        // Groups
+        code.push_str("        groups: &[");
+        for (index, group_name) in comp_tag.groups.iter() {
+            code.push_str(&format!("({}, \"{}\"), ", index, group_name));
+        }
+        code.push_str("],\n");
+        
+        code.push_str(&format!("        writable: {},\n", comp_tag.writable));
+        code.push_str(&format!("        avoid: {},\n", comp_tag.avoid));
+        code.push_str(&format!("        priority: {},\n", comp_tag.priority));
+        
+        // Optional notes
+        if let Some(notes) = &comp_tag.notes {
+            code.push_str(&format!("        notes: Some(\"{}\"),\n", escape_string(notes)));
+        } else {
+            code.push_str("        notes: None,\n");
+        }
+        
+        code.push_str("    },\n");
+    }
+    
+    code.push_str("];\n\n");
+
+    // Lookup by name
+    code.push_str("lazy_static! {\n");
+    code.push_str("    pub static ref COMPOSITE_TAG_BY_NAME: HashMap<&'static str, &'static CompositeTagDef> = {\n");
+    code.push_str("        let mut map = HashMap::new();\n");
+    code.push_str("        for tag in COMPOSITE_TAGS {\n");
+    code.push_str("            map.insert(tag.name, tag);\n");
+    code.push_str("        }\n");
+    code.push_str("        map\n");
+    code.push_str("    };\n");
+    code.push_str("}\n");
+
+    // Write file
+    let output_path = Path::new(output_dir).join("composite_tags.rs");
+    fs::write(&output_path, code)
+        .with_context(|| format!("Failed to write composite_tags.rs to {:?}", output_path))?;
+
+    println!("Generated: composite_tags.rs");
+    Ok(())
 }
