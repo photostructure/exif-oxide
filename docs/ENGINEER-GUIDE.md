@@ -85,6 +85,8 @@ For deep understanding of offsets, see:
 
 ## Reading ExifTool Source Code
 
+ExifTool source files can be extraordinarily long, and chew up all your context -- read the relevant (short!) exiftool/doc markdown summaries first.
+
 ### Essential Files to Understand
 
 1. **lib/Image/ExifTool.pm** - Core API and state management
@@ -92,11 +94,41 @@ For deep understanding of offsets, see:
 3. **lib/Image/ExifTool/Canon.pm** - Good example of manufacturer complexity - see [Canon.md](../third-party/exiftool/doc/modules/Canon.md)
 4. **lib/Image/ExifTool/README** - Documents all special table keys
 
+Study the concepts documentation:
+
+- [PROCESS_PROC.md](../third-party/exiftool/doc/concepts/PROCESS_PROC.md) - Processing procedures explained
+- [VALUE_CONV.md](../third-party/exiftool/doc/concepts/VALUE_CONV.md) - Value conversion system
+- [PRINT_CONV.md](../third-party/exiftool/doc/concepts/PRINT_CONV.md) - Human-readable conversions
+- [BINARY_TAGS.md](../third-party/exiftool/doc/concepts/BINARY_TAGS.md) - Binary data extraction
+- [MAKERNOTE.md](../third-party/exiftool/doc/concepts/MAKERNOTE.md) - Manufacturer-specific data
+- [MODULE_OVERVIEW.md](../third-party/exiftool/doc/concepts/MODULE_OVERVIEW.md) - ExifTool module architecture
+- [READING_AND_PARSING.md](../third-party/exiftool/doc/concepts/READING_AND_PARSING.md) - File reading and parsing strategies
+- [FILE_TYPES.md](../third-party/exiftool/doc/concepts/FILE_TYPES.md) - File format detection
+- [COMPOSITE_TAGS.md](../third-party/exiftool/doc/concepts/COMPOSITE_TAGS.md) - Derived tag values
+- [CHARSETS.md](../third-party/exiftool/doc/concepts/CHARSETS.md) - Character encoding handling
+- [PATTERNS.md](../third-party/exiftool/doc/concepts/PATTERNS.md) - Common code patterns
+- [WRITE_PROC.md](../third-party/exiftool/doc/concepts/WRITE_PROC.md) - Writing procedures
+- [_HOWTO.md](../third-party/exiftool/doc/concepts/_HOWTO.md) - Development how-to guide
+
 Also study the module documentation:
 
 - [Nikon.md](../third-party/exiftool/doc/modules/Nikon.md) - Complex encryption and versions
 - [Sony.md](../third-party/exiftool/doc/modules/Sony.md) - Another encryption approach
 - [MakerNotes.md](../third-party/exiftool/doc/modules/MakerNotes.md) - Central dispatcher
+- [Apple.md](../third-party/exiftool/doc/modules/Apple.md) - Apple device formats and metadata
+- [Casio.md](../third-party/exiftool/doc/modules/Casio.md) - Casio camera formats
+- [FujiFilm.md](../third-party/exiftool/doc/modules/FujiFilm.md) - Fujifilm camera specifics
+- [GPS.md](../third-party/exiftool/doc/modules/GPS.md) - GPS metadata handling
+- [GoPro.md](../third-party/exiftool/doc/modules/GoPro.md) - GoPro action camera formats
+- [JPEG.md](../third-party/exiftool/doc/modules/JPEG.md) - JPEG file structure and metadata
+- [Kodak.md](../third-party/exiftool/doc/modules/Kodak.md) - Kodak camera formats
+- [Minolta.md](../third-party/exiftool/doc/modules/Minolta.md) - Minolta camera specifics
+- [Olympus.md](../third-party/exiftool/doc/modules/Olympus.md) - Olympus camera formats
+- [Panasonic.md](../third-party/exiftool/doc/modules/Panasonic.md) - Panasonic camera specifics
+- [Pentax.md](../third-party/exiftool/doc/modules/Pentax.md) - Pentax camera formats
+- [TIFF.md](../third-party/exiftool/doc/modules/TIFF.md) - TIFF file format details
+- [XMP.md](../third-party/exiftool/doc/modules/XMP.md) - Adobe XMP metadata standard
+
 
 ### How to Read Tag Tables
 
@@ -144,41 +176,6 @@ DataMember => 'CameraType',
 RawConv => '$$self{CameraType} = $val',
 ```
 
-## Getting Started on Milestone 0
-
-First read [MILESTONES.md](MILESTONES.md) for the full roadmap, then [STATE-MANAGEMENT.md](STATE-MANAGEMENT.md) for stateful processing details.
-
-### Step 1: Set Up the Perl Extractor
-
-The Perl extractor is minimal - it just dumps ExifTool's tables to JSON:
-
-```perl
-# codegen/extract_tables.pl
-use Image::ExifTool;
-use JSON;
-
-# Load tables
-require Image::ExifTool::Exif;
-
-# Extract and filter mainstream tags
-my $metadata = load_json('TagMetadata.json');
-my @tags;
-
-foreach my $id (keys %Image::ExifTool::Exif::Main) {
-    my $tag = $Image::ExifTool::Exif::Main{$id};
-    next unless is_mainstream($tag, $metadata);
-
-    push @tags, {
-        id => $id,
-        name => $$tag{Name},
-        format => $$tag{Format},
-        print_conv => ref($$tag{PrintConv}) ? undef : $$tag{PrintConv},
-        # ... other fields
-    };
-}
-
-print encode_json(\@tags);
-```
 
 ### Step 2: Understand the Registry Pattern
 
