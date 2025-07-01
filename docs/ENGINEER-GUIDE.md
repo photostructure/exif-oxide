@@ -369,6 +369,52 @@ if looks_like_double_utf8(&string) {
 
 The ExifTool test suite (t/images/) contains problematic files from real cameras. When implementing a manufacturer's support, always test against their files in t/images/.
 
+## Git Commit Messages
+
+Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Common types:**
+
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation changes
+- `refactor:` - Code restructuring without behavior change
+- `test:` - Adding/updating tests
+- `chore:` - Maintenance tasks
+
+**Examples:**
+
+```
+feat(parser): add Canon MakerNote support
+fix(exif): handle invalid orientation values
+docs: update MILESTONES.md for v0.2
+```
+
+Use the most impacted filename as scope. Be concise - summarize the change's purpose, not every diff line.
+
+## Generated Code Policy
+
+**Generated Rust code is committed to git** while intermediate files are ignored:
+
+- **Commit**: Final Rust code in `src/generated/` (tags.rs, conversion_refs.rs, etc.)
+- **Ignore**: Intermediate files in `codegen/generated/` (tag_tables.json, etc.)
+
+**Rationale**: This ensures developers can build without requiring Perl + ExifTool while keeping the repository manageable. Generated code is relatively stable and benefits from code review visibility.
+
+**When to regenerate**:
+- After modifying extraction scripts (`codegen/extract_tables.pl`)
+- After updating ExifTool version  
+- When adding new tag implementations to MILESTONE_COMPLETIONS
+- Run: `make codegen` then commit the updated `src/generated/` files
+
 ## Getting Help
 
 1. **Read the ExifTool source** - The answer is usually there

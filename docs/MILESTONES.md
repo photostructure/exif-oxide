@@ -16,11 +16,11 @@ This document outlines the incremental development milestones for exif-oxide.
 
 After you think you're done implementing a milestone:
 
-1. Read $REPO_ROOT/tests/exiftool_compatibility_tests.rs and $REPO_ROOT/tools/generate_exiftool_json.sh -- your task should allow more tags to be include-listed in exiftool_compatibility_tests.rs, more file types to be included by generate_exiftool_json.sh, and/or remove excluded files from exiftool_compatibility_tests.rs. Edit the above test files accordingly.
+1. **Update Supported Tags Configuration**: If your milestone adds working PrintConv implementations, update the `MILESTONE_COMPLETIONS` configuration in `codegen/src/main.rs` to include your new supported tags, then run `cargo run -p codegen` to regenerate the supported tags JSON.
 
-2. Re-run `make compat` and iterate until all tests pass.
+2. **Compatibility Testing**: Re-run `make compat` and iterate until all tests pass. The regenerated supported tags list will automatically be used by the compatibility tests.
 
-3. Run `make precommit` and fix linting, compilation, and test errors
+3. **Code Quality**: Run `make precommit` and fix linting, compilation, and test errors.
 
 ## Important Steps After Completing a Milestone
 
@@ -265,11 +265,50 @@ After you think you're done implementing a milestone:
 
 ---
 
-## Milestone 8a: Cleanup
+## Milestone 8a: Enhanced Code Generation & DRY Cleanup
 
-1. Look at the prior and future milestones. Is there a better way we should handle `REQUIRED_PRINT_CONV`? Come up with a couple of options, for each option list pros and cons, and discuss with the user.
+**Goal**: Eliminate manual maintenance of conversion references and supported tag lists through enhanced code generation
 
-2. Can we DRY up the list of supported tags used by tools/generate_exiftool_json.sh and tests/exiftool_compatibility_tests.rs? Come up with a couple of options, for each option list pros and cons, and discuss with the user.
+**Architectural Decision**: Based on analysis of implementation options, we've chosen the "Codegen-Generated Requirements" approach (documented in docs/ARCHITECTURE.md Code Generation Strategy section 4). This aligns with the project's "Simple Codegen" principle and future-proofs for manufacturer-specific tables in Milestones 9+.
+
+**Deliverables**:
+
+1. **Enhanced Conversion Reference Generation**
+
+   - ✅ Modified `codegen/extract_tables.pl` to extract PrintConv/ValueConv references from EXIF and GPS tables
+   - ✅ Updated `codegen/src/main.rs` to generate both `tags.rs` AND `conversion_refs.rs` from same JSON source
+   - ✅ Eliminated manual maintenance - now auto-generates 33 PrintConv + 7 ValueConv references
+   - ✅ Single source of truth established for all conversion requirements
+
+2. **Configuration-Driven Supported Tags System**
+   - ✅ Implemented milestone-based configuration in `codegen/src/main.rs` with `MILESTONE_COMPLETIONS` array
+   - ✅ Auto-generates `config/supported_tags.json` for shell script and `supported_tags.rs` for Rust tests
+   - ✅ Quality-controlled approach: only tags with working implementations and passing tests are included
+   - ✅ Future-proof: simply uncomment milestone lines as new PrintConv implementations complete
+
+**Success Criteria**:
+
+- ✅ Zero manual maintenance of conversion reference lists - auto-generated from tag definitions
+- ✅ Single source of truth for supported tags across test and generation scripts
+- ✅ All existing functionality preserved with 51/51 compatibility tests passing
+- ✅ Future manufacturer-specific tables automatically include their conversion references
+
+**Configuration-Driven Approach**:
+The supported tags system uses a milestone-based configuration in the codegen that ensures quality control while eliminating maintenance burden. To add new supported tags as milestones complete:
+
+```rust
+// In codegen/src/main.rs, uncomment when ready:
+("Milestone 8b", &["GPSLatitude", "GPSLongitude"]),
+("Milestone 9", &["MeteringMode", "WhiteBalance"]),
+```
+
+This generates both the JSON config for shell tools and Rust constants for tests, maintaining DRY principles while providing explicit quality gates.
+
+**Benefits for Future Milestones**:
+
+- **Milestone 8b**: ValueConv references automatically included in generated requirements
+- **Milestone 9+**: Manufacturer-specific PrintConv (Canon, Nikon) automatically tracked
+- **Architecture Alignment**: Follows "Simple Codegen" principle for straightforward table translations
 
 ---
 

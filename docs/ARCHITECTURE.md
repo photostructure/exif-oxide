@@ -284,6 +284,24 @@ pub struct BinaryRef {
    }
    ```
 
+4. **Conversion Reference Lists** (Milestone 8a)
+   ```rust
+   // Generated from same source as tag definitions
+   // Ensures single source of truth for conversion requirements
+   pub static REQUIRED_PRINT_CONV: &[&str] = &[
+       "orientation_print_conv",
+       "flash_print_conv", 
+       "colorspace_print_conv",
+       // ... automatically extracted from all tag tables
+   ];
+   
+   pub static REQUIRED_VALUE_CONV: &[&str] = &[
+       "gps_coordinate_value_conv",
+       "apex_shutter_value_conv",
+       // ... extracted from ExifTool value conversion references
+   ];
+   ```
+
 ### What Codegen Does NOT Handle
 
 1. **Complex Perl Logic**: Multi-line conditions, evals, complex math
@@ -324,6 +342,8 @@ fn apply_print_conv(tag: &Tag, value: &TagValue) -> String {
     }
 }
 ```
+
+The auto-generated `REQUIRED_PRINT_CONV`/`REQUIRED_VALUE_CONV` arrays (Milestone 8a) provide development visibility into the complete scope of conversion implementations needed, while maintaining DRY principles by extracting these references during the same codegen pass that creates the tag definitions.
 
 #### For PROCESS_PROC - Required Implementations
 
