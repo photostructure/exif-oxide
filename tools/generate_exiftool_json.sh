@@ -14,11 +14,8 @@ SNAPSHOTS_DIR="$PROJECT_ROOT/generated/exiftool-json"
 
 # Tags currently supported by exif-oxide (Milestone 7)  
 # Conservative list - only tags that work perfectly with existing implementations
-# TODO: DRY up - this list is duplicated in tests/exiftool_compatibility_tests.rs (Milestone 8a)
-SUPPORTED_TAGS='[
-    "Make", "Model", "MIMEType", "SourceFile", "FileName", "Directory", "FileSize", "FileModifyDate", "ExifToolVersion",
-    "Orientation", "ResolutionUnit", "YCbCrPositioning", "Flash", "ColorSpace", "ExposureProgram"
-]'
+# Single source of truth now maintained in config/supported_tags.json (Milestone 8a)
+SUPPORTED_TAGS=$(cat "$PROJECT_ROOT/config/supported_tags.json")
 
 echo "Generating ExifTool reference snapshots for exif-oxide compatibility testing"
 echo "Project root: $PROJECT_ROOT"
