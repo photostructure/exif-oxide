@@ -117,3 +117,8 @@ repository.
 
 Whenever possible, use integration tests that load actual files from
 `$REPO_ROOT/test-images`. Avoid mocks and stubs where possible.
+
+### Safety rules
+
+- **NEVER use `rm -rf` in scripts** - it's too dangerous and can accidentally delete important files. Use specific file patterns with `rm -f` instead (e.g., `rm -f "$DIR/*.json"`)
+- Always prefer targeted cleanup over recursive deletion
