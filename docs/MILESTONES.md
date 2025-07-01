@@ -111,6 +111,8 @@ exif-oxide t/images/Canon.jpg | jq .MacroMode
 
 ## Milestone 10: Canon MakerNote Expansion (3 weeks)
 
+**Prompt**: Let's do Milestone 10 in @docs/MILESTONES.md ! Be sure to read @CLAUDE.md @docs/ARCHITECTURE.md @third-party/exiftool/doc/modules/Canon.md @third-party/exiftool/doc/concepts/MAKERNOTE.md @docs/ENGINEER-GUIDE.md -- study the involved code and ExifTool source. Ultrathink your implementation before starting.
+
 **Goal**: Complete Canon support with offset fixing
 
 **Deliverables**:
