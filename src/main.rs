@@ -1,6 +1,6 @@
 use clap::{Arg, Command};
 use std::path::PathBuf;
-use tracing::{info, error, debug};
+use tracing::{debug, error, info};
 
 // Import our library modules
 use exif_oxide::formats::extract_metadata;
@@ -14,8 +14,10 @@ use exif_oxide::formats::extract_metadata;
 fn main() {
     // Initialize tracing subscriber for structured logging
     // Use environment variable RUST_LOG to control logging level (e.g., RUST_LOG=debug)
+    // Ensure all log output goes to stderr, not stdout, so JSON output is clean
     tracing_subscriber::fmt()
         .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+        .with_writer(std::io::stderr)
         .init();
 
     info!("Starting exif-oxide");
@@ -47,7 +49,7 @@ fn main() {
 
     // Convert strings to PathBufs for proper file handling
     let paths: Vec<PathBuf> = file_paths.iter().map(PathBuf::from).collect();
-    
+
     debug!("Processing {} files", paths.len());
     debug!("Show missing implementations: {}", show_missing);
 

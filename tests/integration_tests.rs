@@ -151,11 +151,11 @@ fn test_json_structure_compatibility() {
     assert_eq!(obj["Make"], "Canon");
     assert_eq!(obj["Model"], "Canon EOS REBEL T3i");
 
-    // Should extract numeric tags like Orientation
+    // Milestone 4: Should extract PrintConv converted values like Orientation
     if let Some(orientation) = obj.get("Orientation") {
-        assert!(orientation.is_number());
-        // Should match ExifTool's value for this Canon image (Rotate 270 CW = 8)
-        assert_eq!(orientation, 8);
+        assert!(orientation.is_string());
+        // Should match ExifTool's PrintConv value for this Canon image
+        assert_eq!(orientation, "Rotate 270 CW");
     }
 }
 
