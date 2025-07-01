@@ -12,9 +12,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 SNAPSHOTS_DIR="$PROJECT_ROOT/generated/exiftool-json"
 
-# Tags currently supported by exif-oxide (Milestone 2)
+# Tags currently supported by exif-oxide (Milestone 3)
 # Update this list as more milestones are completed
-SUPPORTED_TAGS='["Make", "Model", "Orientation", "MIMEType", "SourceFile", "FileName", "Directory", "FileSize", "FileModifyDate", "ExifToolVersion"]'
+SUPPORTED_TAGS='["Make", "Model", "Orientation", "ResolutionUnit", "YCbCrPositioning", "MIMEType", "SourceFile", "FileName", "Directory", "FileSize", "FileModifyDate", "ExifToolVersion"]'
 
 echo "Generating ExifTool reference snapshots for exif-oxide compatibility testing"
 echo "Project root: $PROJECT_ROOT"
