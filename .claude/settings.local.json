@@ -94,7 +94,8 @@
       "WebFetch(domain:insta.rs)",
       "WebFetch(domain:rust-cli.github.io)",
       "WebFetch(domain:doc.rust-lang.org)",
-      "Bash(printf:*)"
+      "Bash(printf:*)",
+      "Bash(RUST_LOG=debug cargo run -- third-party/exiftool/t/images/GPS.jpg)"
     ],
     "deny": []
   }
