@@ -613,6 +613,71 @@ exif-oxide t/images/Canon.jpg | jq .MacroMode
 
 ---
 
+## Milestone 11.5: Multi-Pass Composite Building (1 week)
+
+**Goal**: Enhance composite tag infrastructure to support composite-on-composite dependencies
+
+**Context**: Milestone 8f implements single-pass composite building which works for simple composites. This milestone adds multi-pass support for advanced composites that depend on other composites (e.g., FocalLength35efl depending on ScaleFactor35efl).
+
+**Deliverables**:
+
+1. **Multi-Pass Algorithm**
+   - Track deferred composites that couldn't be built due to missing dependencies
+   - Implement iterative passes until no new composites can be built
+   - Add circular dependency detection with proper error reporting
+
+2. **Dependency Tracking**
+   - Maintain `notBuilt` set of composite tags not yet computed
+   - Track which composites depend on other composites
+   - Implement dependency graph for debugging
+
+3. **Advanced Composite Examples**
+   - FocalLength35efl: Depends on FocalLength and ScaleFactor35efl (itself composite)
+   - DOF (Depth of Field): Complex calculation with multiple dependencies
+   - LensID: May depend on other derived lens information
+
+4. **Performance Optimizations**
+   - Only process deferred tags in subsequent passes
+   - Short-circuit when no progress made
+   - Cache dependency lookups
+
+**Success Criteria**:
+- Composite tags with composite dependencies work correctly
+- Circular dependencies detected and reported
+- No performance regression for simple composites
+- All existing composite tags continue working
+
+**Algorithm** (based on ExifTool's BuildCompositeTags):
+```rust
+loop {
+    let mut progress_made = false;
+    let mut deferred = Vec::new();
+    
+    for composite in pending_composites {
+        if all_dependencies_available(composite) {
+            build_composite(composite);
+            progress_made = true;
+        } else {
+            deferred.push(composite);
+        }
+    }
+    
+    if !progress_made {
+        if deferred.is_empty() {
+            break; // All done
+        } else {
+            // Circular dependency detected
+            warn!("Circular dependency in {} composite tags", deferred.len());
+            break;
+        }
+    }
+    
+    pending_composites = deferred;
+}
+```
+
+---
+
 ## Milestone 12: Variable ProcessBinaryData (3 weeks)
 
 **Goal**: Handle variable-length formats with DataMember
