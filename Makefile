@@ -54,8 +54,8 @@ audit:
 	@command -v cargo-audit >/dev/null 2>&1 || { echo "cargo-audit not found. Install with: cargo install cargo-audit --locked"; exit 1; }
 	cargo audit
 
-# Pre-commit checks: update deps, fix code, lint, test, audit, and build
-precommit: update fix lint compat-gen test audit build 
+# Pre-commit checks: do everything: update deps, codegen, fix code, lint, test, audit, and build
+precommit: update codegen fix lint compat-gen test audit build 
 
 # Generate ExifTool JSON reference data for compatibility testing
 compat-gen:
