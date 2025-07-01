@@ -4,6 +4,7 @@
 //! The architecture uses runtime registries for PrintConv/ValueConv implementations to avoid
 //! code generation bloat while maintaining flexible extensibility.
 
+pub mod exif;
 pub mod formats;
 pub mod generated;
 pub mod registry;
