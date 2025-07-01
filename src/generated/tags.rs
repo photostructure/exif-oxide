@@ -179,6 +179,18 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         value_conv_ref: None,
         notes: None,
     },
+    // TODO: This tag was manually added instead of proper codegen - fix in enhanced codegen
+    TagDef {
+        id: 0x8822,
+        name: "ExposureProgram",
+        format: TagFormat::U16,
+        groups: &["Camera", "EXIF"],
+        writable: true,
+        description: None,
+        print_conv_ref: Some("exposureprogram_print_conv"),
+        value_conv_ref: None,
+        notes: Some("the value of 9 is not standard EXIF, but is used by some Canon models"),
+    },
     TagDef {
         id: 0x9003,
         name: "DateTimeOriginal",
@@ -209,6 +221,18 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         writable: true,
         description: None,
         print_conv_ref: Some("meteringmode_print_conv"),
+        value_conv_ref: None,
+        notes: None,
+    },
+    // TODO: This tag was manually added instead of proper codegen - fix in enhanced codegen
+    TagDef {
+        id: 0x9209,
+        name: "Flash",
+        format: TagFormat::U16,
+        groups: &["Camera", "EXIF"],
+        writable: true,
+        description: None,
+        print_conv_ref: Some("flash_print_conv"),
         value_conv_ref: None,
         notes: None,
     },
@@ -329,6 +353,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
 // GPS tag table - manually added for Milestone 6
 // ExifTool: lib/Image/ExifTool/GPS.pm %Image::ExifTool::GPS::Main
 // Note: These format types match the actual EXIF data, not TagFormat enum values
+// TODO: Generate GPS table from ExifTool instead of manual static definitions (future codegen enhancement)
 pub static GPS_TAGS: &[TagDef] = &[
     TagDef {
         id: 0x0000,

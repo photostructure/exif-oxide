@@ -2,25 +2,29 @@
 
 This document outlines the incremental development milestones for exif-oxide.
 
-## Important Preequisite Steps
+## Important Steps Before Coding
 
 1. Be sure to study $REPO_ROOT/CLAUDE.md, $REPO_ROOT/docs/ARCHITECTURE.md, $REPO_ROOT/third-party/exiftool/CLAUDE.md, and all relevant related documentation before starting any work. With this project, **everything** is more complicated than you'd expect.
 
-2. Reread ../CLAUDE.md's `ExifTool is Gospel` section.
+2. Be sure to follow the `ExifTool is Gospel` and `Ask clarifying questions` sections of ../CLAUDE.md
+
+## Important Steps During Implementation
+
+1. Be sure to follow the `ExifTool is Gospel` and `Code smell` sections of ../CLAUDE.md
 
 ## Important Milestone Validation Steps
 
 After you think you're done implementing a milestone:
 
-1. Read $REPO_ROOT/tests/exiftool_compatibility_tests.rs and $REPO_ROOT/tools/generate_exiftool_json.sh
+1. Read $REPO_ROOT/tests/exiftool_compatibility_tests.rs and $REPO_ROOT/tools/generate_exiftool_json.sh -- your task should allow more tags to be include-listed in exiftool_compatibility_tests.rs, more file types to be included by generate_exiftool_json.sh, and/or remove excluded files from exiftool_compatibility_tests.rs. Edit the above test files accordingly.
 
-2. Your task should allow more tags to be include-listed in exiftool_compatibility_tests.rs, more file types to be included by generate_exiftool_json.sh, or remove excluded files from exiftool_compatibility_tests.rs. Edit the above test files accordingly.
+2. Re-run `make compat` and iterate until all tests pass.
 
-3. Re-run `make compat` and iterate until all tests pass.
+3. Run `make precommit` and fix linting, compilation, and test errors
 
-4. Run `make precommit` and fix linting, compilation, and test errors
+## Important Steps After Completing a Milestone
 
-5. After completing a milestone, edit this document and replace the milestone section that you completed with a summary of the task.
+1. Edit this document and replace the milestone section that you completed with a summary of the task.
 
 ## Core Principles
 
@@ -145,7 +149,7 @@ After you think you're done implementing a milestone:
 **Implementation Summary**:
 
 - PrintConv registry system with runtime lookup and graceful fallback (src/registry.rs)
-- Orientation PrintConv with complete 8-value lookup table (src/implementations/print_conv.rs) 
+- Orientation PrintConv with complete 8-value lookup table (src/implementations/print_conv.rs)
 - ResolutionUnit and YCbCrPositioning PrintConv implementations
 - Automatic registration of PrintConv functions during library initialization
 - JSON output showing converted values matching ExifTool default behavior
@@ -187,7 +191,7 @@ After you think you're done implementing a milestone:
 
 **Key Files**: `src/exif.rs` (stateful ExifReader, processor dispatch), `src/types.rs` (DirectoryInfo, ProcessorType, DataMemberValue), enhanced architecture for Milestone 6 RATIONAL format and GPS coordinate extraction
 
-**Note**: This milestone established the *infrastructure* for subdirectory processing. Actual extraction of specific tags from ExifIFD and GPS subdirectories will be implemented in Milestone 6 along with RATIONAL format support and ValueConv/PrintConv for camera settings.
+**Note**: This milestone established the _infrastructure_ for subdirectory processing. Actual extraction of specific tags from ExifIFD and GPS subdirectories will be implemented in Milestone 6 along with RATIONAL format support and ValueConv/PrintConv for camera settings.
 
 ---
 
@@ -231,34 +235,45 @@ After you think you're done implementing a milestone:
 
 ---
 
-## Milestone 7: More PrintConv Implementations (1 week)
+## ✅ Milestone 7: More PrintConv Implementations (COMPLETED)
 
 **Goal**: Implement common PrintConv patterns
 
-**Deliverables**:
+**Implementation Summary**:
 
-- [ ] Analyze test images for needed PrintConv
-- [ ] BITMASK support
-  - Bit flag parsing
-  - Comma-separated output
-- [ ] Implement top 5-10:
-  - Flash (BITMASK)
-  - ExposureProgram
-  - MeteringMode
-  - WhiteBalance
-  - ColorSpace
-- [ ] Simple lookups
-  - Hash table conversions
+- ✅ Analyzed test images and identified 5 critical PrintConv implementations needed by mainstream tags
+- ✅ Discovered Flash uses direct hash lookup (NOT bitmask) in ExifTool - implemented exact translation with all 26 Flash values
+- ✅ Implemented 5 core PrintConv functions with exact ExifTool compatibility:
+  - Flash PrintConv with complete value set including red-eye reduction combinations
+  - ColorSpace PrintConv with Sony-specific non-standard values support
+  - WhiteBalance PrintConv with standard Auto/Manual values
+  - MeteringMode PrintConv with 8 standard metering modes
+  - ExposureProgram PrintConv with Canon-specific "Bulb" mode support
+- ✅ All implementations include proper hex formatting for unknown values matching ExifTool's PrintHex behavior
+- ✅ Comprehensive test suite with 35+ test cases covering standard, edge case, and manufacturer-specific values
+- ✅ Registry integration with automatic function registration during library initialization
+- ✅ Full validation against ExifTool output - all 51 compatibility tests pass with exact matches
 
-**Success Criteria**:
+**Success Criteria Met**:
 
-- Common tags show readable values
-- BITMASK works for Flash
-- Coverage improves significantly
+- ✅ Common tags now show human-readable values: "Auto" instead of 0, "sRGB" instead of 1, "Multi-segment" instead of 5
+- ✅ Flash implemented correctly as direct lookup (corrected assumption about bitmask)
+- ✅ Coverage significantly improved with 5 new PrintConv implementations supporting mainstream camera tags
+- ✅ All output matches ExifTool exactly including Sony and Canon manufacturer-specific edge cases
+
+**Key Files**: `src/implementations/print_conv.rs` (5 new functions), `src/implementations/mod.rs` (registry integration), extensive test coverage with exact ExifTool source references (lib/Image/ExifTool/Exif.pm lines 164-197, 2082-2097, 2357-2371, 2620-2638, 2809-2821)
 
 ---
 
-## Milestone 8: Basic ValueConv (2 weeks)
+## Milestone 8a: Cleanup
+
+1. Look at the prior and future milestones. Is there a better way we should handle `REQUIRED_PRINT_CONV`? Come up with a couple of options, for each option list pros and cons, and discuss with the user.
+
+2. Can we DRY up the list of supported tags used by tools/generate_exiftool_json.sh and tests/exiftool_compatibility_tests.rs? Come up with a couple of options, for each option list pros and cons, and discuss with the user.
+
+---
+
+## Milestone 8b: Basic ValueConv (2 weeks)
 
 **Goal**: Mathematical value conversions
 

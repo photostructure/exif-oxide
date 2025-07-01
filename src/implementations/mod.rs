@@ -34,4 +34,20 @@ pub fn register_all_conversions() {
         "gpslongituderef_print_conv",
         print_conv::gpslongituderef_print_conv,
     );
+
+    // Register new Milestone 7 PrintConv implementations
+    registry::register_print_conv("flash_print_conv", print_conv::flash_print_conv);
+    registry::register_print_conv("colorspace_print_conv", print_conv::colorspace_print_conv);
+    registry::register_print_conv(
+        "whitebalance_print_conv",
+        print_conv::whitebalance_print_conv,
+    );
+    registry::register_print_conv(
+        "meteringmode_print_conv",
+        print_conv::meteringmode_print_conv,
+    );
+    registry::register_print_conv(
+        "exposureprogram_print_conv",
+        print_conv::exposureprogram_print_conv,
+    );
 }

@@ -858,6 +858,7 @@ impl ExifReader {
 
     /// Check if a tag ID represents a SubDirectory pointer
     /// ExifTool: SubDirectory tags like ExifIFD (0x8769), GPS (0x8825)
+    // TODO: Replace magic numbers with named constants (e.g. EXIF_IFD_TAG = 0x8769) for better readability
     fn is_subdirectory_tag(&self, tag_id: u16) -> bool {
         match tag_id {
             0x8769 => true, // ExifIFD - Camera settings subdirectory
@@ -955,6 +956,7 @@ impl ExifReader {
 
     /// Process a SubDirectory tag by following the pointer to nested IFD
     /// ExifTool: SubDirectory processing with Start => '$val'
+    // TODO: Replace magic numbers with named constants (matches above is_subdirectory_tag function)
     fn process_subdirectory_tag(&mut self, tag_id: u16, offset: u32, tag_name: &str) -> Result<()> {
         let subdir_name = match tag_id {
             0x8769 => "ExifIFD",
@@ -1010,6 +1012,7 @@ impl ExifReader {
 
     /// Get SubDirectory processor override if available
     /// ExifTool: SubDirectory ProcessProc parameter
+    // TODO: Replace magic numbers with named constants (matches other subdirectory functions)
     fn get_subdirectory_processor_override(&self, tag_id: u16) -> Option<ProcessorType> {
         // Check for known SubDirectory processor overrides
         // ExifTool: These are defined in tag tables as SubDirectory => { ProcessProc => ... }
