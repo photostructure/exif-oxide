@@ -22,4 +22,16 @@ pub fn register_all_conversions() {
         "ycbcrpositioning_print_conv",
         print_conv::ycbcrpositioning_print_conv,
     );
+    registry::register_print_conv(
+        "gpsaltituderef_print_conv",
+        print_conv::gpsaltituderef_print_conv,
+    );
+    registry::register_print_conv(
+        "gpslatituderef_print_conv",
+        print_conv::gpslatituderef_print_conv,
+    );
+    registry::register_print_conv(
+        "gpslongituderef_print_conv",
+        print_conv::gpslongituderef_print_conv,
+    );
 }

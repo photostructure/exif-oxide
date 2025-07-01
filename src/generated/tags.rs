@@ -300,12 +300,151 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         value_conv_ref: Some("whitebalance_value_conv"),
         notes: None,
     },
+    // SubDirectory pointer tags - manually added for Milestone 6
+    // ExifTool: These exist in main EXIF table and point to subdirectories
+    TagDef {
+        id: 0x8769,
+        name: "ExifOffset",
+        format: TagFormat::U32,
+        groups: &["EXIF"],
+        writable: true,
+        description: None,
+        print_conv_ref: None,
+        value_conv_ref: None,
+        notes: None,
+    },
+    TagDef {
+        id: 0x8825,
+        name: "GPSInfo",
+        format: TagFormat::U32,
+        groups: &["EXIF"],
+        writable: true,
+        description: None,
+        print_conv_ref: None,
+        value_conv_ref: None,
+        notes: None,
+    },
+];
+
+// GPS tag table - manually added for Milestone 6
+// ExifTool: lib/Image/ExifTool/GPS.pm %Image::ExifTool::GPS::Main
+// Note: These format types match the actual EXIF data, not TagFormat enum values
+pub static GPS_TAGS: &[TagDef] = &[
+    TagDef {
+        id: 0x0000,
+        name: "GPSVersionID",
+        format: TagFormat::U8, // BYTE array in EXIF: 4 bytes
+        groups: &["GPS"],
+        writable: true,
+        description: None,
+        print_conv_ref: None,
+        value_conv_ref: None,
+        notes: None,
+    },
+    TagDef {
+        id: 0x0001,
+        name: "GPSLatitudeRef",
+        format: TagFormat::String, // ASCII string: "N" or "S"
+        groups: &["GPS"],
+        writable: true,
+        description: None,
+        print_conv_ref: Some("gpslatituderef_print_conv"),
+        value_conv_ref: None,
+        notes: None,
+    },
+    TagDef {
+        id: 0x0002,
+        name: "GPSLatitude",
+        format: TagFormat::RationalU, // 3 RATIONAL values: degrees/1, minutes/1, seconds/100
+        groups: &["GPS"],
+        writable: true,
+        description: None,
+        print_conv_ref: None,
+        value_conv_ref: None,
+        notes: None,
+    },
+    TagDef {
+        id: 0x0003,
+        name: "GPSLongitudeRef",
+        format: TagFormat::String, // ASCII string: "E" or "W"
+        groups: &["GPS"],
+        writable: true,
+        description: None,
+        print_conv_ref: Some("gpslongituderef_print_conv"),
+        value_conv_ref: None,
+        notes: None,
+    },
+    TagDef {
+        id: 0x0004,
+        name: "GPSLongitude",
+        format: TagFormat::RationalU, // 3 RATIONAL values: degrees/1, minutes/1, seconds/100
+        groups: &["GPS"],
+        writable: true,
+        description: None,
+        print_conv_ref: None,
+        value_conv_ref: None,
+        notes: None,
+    },
+    TagDef {
+        id: 0x0005,
+        name: "GPSAltitudeRef",
+        format: TagFormat::U8, // BYTE: 0 = above sea level, 1 = below sea level
+        groups: &["GPS"],
+        writable: true,
+        description: None,
+        print_conv_ref: Some("gpsaltituderef_print_conv"),
+        value_conv_ref: None,
+        notes: None,
+    },
+    TagDef {
+        id: 0x0006,
+        name: "GPSAltitude",
+        format: TagFormat::RationalU, // Single RATIONAL value in meters
+        groups: &["GPS"],
+        writable: true,
+        description: None,
+        print_conv_ref: None,
+        value_conv_ref: None,
+        notes: None,
+    },
+    TagDef {
+        id: 0x0007,
+        name: "GPSTimeStamp",
+        format: TagFormat::RationalU, // 3 RATIONAL values: hours/1, minutes/1, seconds/1
+        groups: &["GPS"],
+        writable: true,
+        description: None,
+        print_conv_ref: None,
+        value_conv_ref: None,
+        notes: None,
+    },
+    TagDef {
+        id: 0x0012,
+        name: "GPSMapDatum",
+        format: TagFormat::String, // ASCII string: "WGS84"
+        groups: &["GPS"],
+        writable: true,
+        description: None,
+        print_conv_ref: None,
+        value_conv_ref: None,
+        notes: None,
+    },
 ];
 
 lazy_static! {
     pub static ref TAG_BY_ID: HashMap<u32, &'static TagDef> = {
         let mut map = HashMap::new();
         for tag in EXIF_MAIN_TAGS {
+            map.insert(tag.id, tag);
+        }
+        map
+    };
+}
+
+lazy_static! {
+    pub static ref GPS_TAG_BY_ID: HashMap<u32, &'static TagDef> = {
+        let mut map = HashMap::new();
+        for tag in GPS_TAGS {
             map.insert(tag.id, tag);
         }
         map

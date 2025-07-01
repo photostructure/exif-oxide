@@ -11,7 +11,7 @@
 //!
 //! Reference: lib/Image/ExifTool/Exif.pm ProcessExif function
 
-use crate::generated::TAG_BY_ID;
+use crate::generated::{GPS_TAG_BY_ID, TAG_BY_ID};
 use crate::types::{
     DataMemberValue, DirectoryInfo, ExifError, ProcessorDispatch, ProcessorType, Result, TagValue,
 };
@@ -210,6 +210,9 @@ impl IfdEntry {
 pub struct ExifReader {
     /// Extracted tag values by tag ID
     extracted_tags: HashMap<u16, TagValue>,
+    /// Track which IFD each tag came from for proper name lookup
+    /// Maps tag_id -> ifd_name  
+    tag_sources: HashMap<u16, String>,
     /// TIFF header information
     header: Option<TiffHeader>,
     /// Raw EXIF data buffer
@@ -240,6 +243,7 @@ impl ExifReader {
     pub fn new() -> Self {
         Self {
             extracted_tags: HashMap::new(),
+            tag_sources: HashMap::new(),
             header: None,
             data: Vec::new(),
             warnings: Vec::new(),
@@ -279,6 +283,9 @@ impl ExifReader {
             allow_reprocess: false,
         };
         self.process_subdirectory(&dir_info)?;
+
+        // NOTE: GPS coordinate decimal conversion is deferred to Milestone 8 (ValueConv)
+        // Milestone 6 outputs raw rational arrays matching ExifTool default behavior
 
         Ok(())
     }
@@ -387,14 +394,18 @@ impl ExifReader {
         &mut self,
         entry_offset: usize,
         byte_order: ByteOrder,
-        _ifd_name: &str,
+        ifd_name: &str,
         _index: usize,
     ) -> Result<()> {
         // Parse 12-byte IFD entry structure
         let entry = IfdEntry::parse(&self.data, entry_offset, byte_order)?;
 
-        // Look up tag definition in generated tables
-        let tag_def = TAG_BY_ID.get(&(entry.tag_id as u32));
+        // Look up tag definition in appropriate table based on IFD type
+        // ExifTool: Different IFDs use different tag tables
+        let tag_def = match ifd_name {
+            "GPS" => GPS_TAG_BY_ID.get(&(entry.tag_id as u32)),
+            _ => TAG_BY_ID.get(&(entry.tag_id as u32)),
+        };
 
         // Milestone 3: Support for common numeric formats with PrintConv
         // ExifTool: lib/Image/ExifTool/Exif.pm:6390-6570 value extraction
@@ -404,20 +415,41 @@ impl ExifReader {
                 if !value.is_empty() {
                     let tag_value = TagValue::String(value);
                     let final_value = self.apply_conversions(&tag_value, tag_def.copied());
+                    trace!(
+                        "Extracted ASCII tag {:#x} from {}: {:?}",
+                        entry.tag_id,
+                        ifd_name,
+                        final_value
+                    );
                     self.extracted_tags.insert(entry.tag_id, final_value);
+                    self.tag_sources.insert(entry.tag_id, ifd_name.to_string());
                 }
             }
             TiffFormat::Byte => {
                 let value = self.extract_byte_value(&entry)?;
                 let tag_value = TagValue::U8(value);
                 let final_value = self.apply_conversions(&tag_value, tag_def.copied());
+                trace!(
+                    "Extracted BYTE tag {:#x} from {}: {:?}",
+                    entry.tag_id,
+                    ifd_name,
+                    final_value
+                );
                 self.extracted_tags.insert(entry.tag_id, final_value);
+                self.tag_sources.insert(entry.tag_id, ifd_name.to_string());
             }
             TiffFormat::Short => {
                 let value = self.extract_short_value(&entry, byte_order)?;
                 let tag_value = TagValue::U16(value);
                 let final_value = self.apply_conversions(&tag_value, tag_def.copied());
+                trace!(
+                    "Extracted SHORT tag {:#x} from {}: {:?}",
+                    entry.tag_id,
+                    ifd_name,
+                    final_value
+                );
                 self.extracted_tags.insert(entry.tag_id, final_value);
+                self.tag_sources.insert(entry.tag_id, ifd_name.to_string());
             }
             TiffFormat::Long => {
                 let value = self.extract_long_value(&entry, byte_order)?;
@@ -432,7 +464,42 @@ impl ExifReader {
                 }
 
                 let final_value = self.apply_conversions(&tag_value, tag_def.copied());
+                trace!(
+                    "Extracted LONG tag {:#x} from {}: {:?}",
+                    entry.tag_id,
+                    ifd_name,
+                    final_value
+                );
                 self.extracted_tags.insert(entry.tag_id, final_value);
+                self.tag_sources.insert(entry.tag_id, ifd_name.to_string());
+            }
+            TiffFormat::Rational => {
+                // Milestone 6: RATIONAL format support (format 5)
+                // ExifTool: 2x uint32 values representing numerator/denominator
+                let value = self.extract_rational_value(&entry, byte_order)?;
+                let final_value = self.apply_conversions(&value, tag_def.copied());
+                trace!(
+                    "Extracted RATIONAL tag {:#x} from {}: {:?}",
+                    entry.tag_id,
+                    ifd_name,
+                    final_value
+                );
+                self.extracted_tags.insert(entry.tag_id, final_value);
+                self.tag_sources.insert(entry.tag_id, ifd_name.to_string());
+            }
+            TiffFormat::SRational => {
+                // Milestone 6: SRATIONAL format support (format 10)
+                // ExifTool: 2x int32 values representing numerator/denominator
+                let value = self.extract_srational_value(&entry, byte_order)?;
+                let final_value = self.apply_conversions(&value, tag_def.copied());
+                trace!(
+                    "Extracted SRATIONAL tag {:#x} from {}: {:?}",
+                    entry.tag_id,
+                    ifd_name,
+                    final_value
+                );
+                self.extracted_tags.insert(entry.tag_id, final_value);
+                self.tag_sources.insert(entry.tag_id, ifd_name.to_string());
             }
             _ => {
                 // For other formats, store raw value for now
@@ -563,6 +630,109 @@ impl ExifReader {
         }
     }
 
+    /// Extract RATIONAL (2x u32) value - numerator and denominator
+    /// ExifTool: lib/Image/ExifTool/Exif.pm format 5 (rational64u)
+    fn extract_rational_value(&self, entry: &IfdEntry, byte_order: ByteOrder) -> Result<TagValue> {
+        if entry.count == 1 {
+            // Single rational value
+            if entry.is_inline() {
+                // 8-byte rational cannot fit inline (4-byte field), so this should never happen
+                return Err(ExifError::ParseError(
+                    "RATIONAL value cannot be stored inline".to_string(),
+                ));
+            }
+
+            // Value stored at offset - read 2x uint32
+            let offset = entry.value_or_offset as usize;
+            if offset + 8 > self.data.len() {
+                return Err(ExifError::ParseError(format!(
+                    "RATIONAL value offset {offset:#x} + 8 bytes beyond data bounds"
+                )));
+            }
+
+            let numerator = byte_order.read_u32(&self.data, offset)?;
+            let denominator = byte_order.read_u32(&self.data, offset + 4)?;
+            Ok(TagValue::Rational(numerator, denominator))
+        } else {
+            // Multiple rational values - GPS coordinates use 3 rationals
+            if entry.is_inline() {
+                return Err(ExifError::ParseError(
+                    "RATIONAL array cannot be stored inline".to_string(),
+                ));
+            }
+
+            let offset = entry.value_or_offset as usize;
+            let total_size = entry.count as usize * 8; // 8 bytes per rational
+            if offset + total_size > self.data.len() {
+                return Err(ExifError::ParseError(format!(
+                    "RATIONAL array offset {offset:#x} + {total_size} bytes beyond data bounds"
+                )));
+            }
+
+            let mut rationals = Vec::new();
+            for i in 0..entry.count {
+                let rat_offset = offset + (i as usize * 8);
+                let numerator = byte_order.read_u32(&self.data, rat_offset)?;
+                let denominator = byte_order.read_u32(&self.data, rat_offset + 4)?;
+                rationals.push((numerator, denominator));
+            }
+            Ok(TagValue::RationalArray(rationals))
+        }
+    }
+
+    /// Extract SRATIONAL (2x i32) value - signed numerator and denominator  
+    /// ExifTool: lib/Image/ExifTool/Exif.pm format 10 (rational64s)
+    fn extract_srational_value(&self, entry: &IfdEntry, byte_order: ByteOrder) -> Result<TagValue> {
+        if entry.count == 1 {
+            // Single signed rational value
+            if entry.is_inline() {
+                return Err(ExifError::ParseError(
+                    "SRATIONAL value cannot be stored inline".to_string(),
+                ));
+            }
+
+            let offset = entry.value_or_offset as usize;
+            if offset + 8 > self.data.len() {
+                return Err(ExifError::ParseError(format!(
+                    "SRATIONAL value offset {offset:#x} + 8 bytes beyond data bounds"
+                )));
+            }
+
+            // Read as u32 first, then convert to i32 to handle signed values correctly
+            let numerator_u32 = byte_order.read_u32(&self.data, offset)?;
+            let denominator_u32 = byte_order.read_u32(&self.data, offset + 4)?;
+            let numerator = numerator_u32 as i32;
+            let denominator = denominator_u32 as i32;
+            Ok(TagValue::SRational(numerator, denominator))
+        } else {
+            // Multiple signed rational values
+            if entry.is_inline() {
+                return Err(ExifError::ParseError(
+                    "SRATIONAL array cannot be stored inline".to_string(),
+                ));
+            }
+
+            let offset = entry.value_or_offset as usize;
+            let total_size = entry.count as usize * 8;
+            if offset + total_size > self.data.len() {
+                return Err(ExifError::ParseError(format!(
+                    "SRATIONAL array offset {offset:#x} + {total_size} bytes beyond data bounds"
+                )));
+            }
+
+            let mut rationals = Vec::new();
+            for i in 0..entry.count {
+                let rat_offset = offset + (i as usize * 8);
+                let numerator_u32 = byte_order.read_u32(&self.data, rat_offset)?;
+                let denominator_u32 = byte_order.read_u32(&self.data, rat_offset + 4)?;
+                let numerator = numerator_u32 as i32;
+                let denominator = denominator_u32 as i32;
+                rationals.push((numerator, denominator));
+            }
+            Ok(TagValue::SRationalArray(rationals))
+        }
+    }
+
     /// Get extracted tag by ID
     pub fn get_tag_by_id(&self, tag_id: u16) -> Option<&TagValue> {
         self.extracted_tags.get(&tag_id)
@@ -573,14 +743,41 @@ impl ExifReader {
         let mut result = HashMap::new();
 
         for (&tag_id, value) in &self.extracted_tags {
-            if let Some(tag_def) = TAG_BY_ID.get(&(tag_id as u32)) {
-                // Values are already converted during extraction in process_entry()
-                result.insert(tag_def.name.to_string(), value.clone());
+            // Look up tag name based on which IFD it came from
+            // ExifTool: Different IFDs have different tag tables
+            let tag_name = if let Some(ifd_name) = self.tag_sources.get(&tag_id) {
+                match ifd_name.as_str() {
+                    "GPS" => {
+                        // Look up in GPS tag table
+                        GPS_TAG_BY_ID
+                            .get(&(tag_id as u32))
+                            .map(|tag_def| tag_def.name.to_string())
+                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                    }
+                    _ => {
+                        // Look up in main EXIF tag table
+                        TAG_BY_ID
+                            .get(&(tag_id as u32))
+                            .map(|tag_def| tag_def.name.to_string())
+                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                    }
+                }
             } else {
-                // Include unknown tags with hex ID matching ExifTool format
-                // ExifTool: lib/Image/ExifTool.pm unknown tag formatting
-                result.insert(format!("Tag_{tag_id:04X}"), value.clone());
-            }
+                // Fallback for tags without source tracking
+                TAG_BY_ID
+                    .get(&(tag_id as u32))
+                    .map(|tag_def| tag_def.name.to_string())
+                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+            };
+
+            trace!(
+                "Tag {:#x} from {:?} -> {}: {:?}",
+                tag_id,
+                self.tag_sources.get(&tag_id),
+                tag_name,
+                value
+            );
+            result.insert(tag_name, value.clone());
         }
 
         result
@@ -887,6 +1084,9 @@ impl ExifReader {
         debug!("Nikon processing not yet implemented for {}", dir_info.name);
         self.process_exif_ifd(dir_info.dir_start, &dir_info.name)
     }
+
+    // NOTE: GPS decimal conversion is deferred to Milestone 8 (ValueConv registry)
+    // This conversion will be implemented as ValueConv functions that chain with PrintConv
 }
 
 impl Default for ExifReader {
@@ -1156,5 +1356,41 @@ mod tests {
 
         // Unknown tag should have no override
         assert_eq!(reader.get_subdirectory_processor_override(0x1234), None);
+    }
+
+    #[test]
+    fn test_gps_rational_to_decimal_conversion() {
+        use crate::types::TagValue;
+
+        // Test GPS coordinates from GPS.jpg: 54° 59' 22.80" N, 1° 54' 51.00" W
+        // Our rational arrays: GPSLatitude: [(54, 1), (5938, 100), (0, 1)]
+        // ExifTool decimal: 54.9896666666667, -1.91416666666667
+
+        // Test GPSLatitude conversion
+        let lat_rationals = TagValue::RationalArray(vec![(54, 1), (5938, 100), (0, 1)]);
+        let lat_decimal = lat_rationals.rational_to_decimal().unwrap();
+        let expected_lat = 54.0 + 59.38 / 60.0 + 0.0 / 3600.0;
+        assert!(
+            (lat_decimal - expected_lat).abs() < 0.000001,
+            "GPSLatitude: expected {expected_lat}, got {lat_decimal}"
+        );
+
+        // Test GPSLongitude conversion
+        let lon_rationals = TagValue::RationalArray(vec![(1, 1), (5485, 100), (0, 1)]);
+        let lon_decimal = lon_rationals.rational_to_decimal().unwrap();
+        let expected_lon = 1.0 + 54.85 / 60.0 + 0.0 / 3600.0;
+        assert!(
+            (lon_decimal - expected_lon).abs() < 0.000001,
+            "GPSLongitude: expected {expected_lon}, got {lon_decimal}"
+        );
+
+        // Test hemisphere conversion (West = negative)
+        let lon_ref = TagValue::String("W".to_string());
+        let lon_with_ref = TagValue::gps_to_decimal_with_ref(&lon_rationals, &lon_ref).unwrap();
+        assert!(lon_with_ref < 0.0, "West longitude should be negative");
+        assert!(
+            (lon_with_ref + expected_lon).abs() < 0.000001,
+            "West GPSLongitude: expected -{expected_lon}, got {lon_with_ref}"
+        );
     }
 }

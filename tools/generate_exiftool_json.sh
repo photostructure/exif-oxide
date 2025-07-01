@@ -14,6 +14,7 @@ SNAPSHOTS_DIR="$PROJECT_ROOT/generated/exiftool-json"
 
 # Tags currently supported by exif-oxide (Milestone 3)
 # Update this list as more milestones are completed
+# GPS tags excluded until Milestone 8 (ValueConv registry implementation)
 SUPPORTED_TAGS='["Make", "Model", "Orientation", "ResolutionUnit", "YCbCrPositioning", "MIMEType", "SourceFile", "FileName", "Directory", "FileSize", "FileModifyDate", "ExifToolVersion"]'
 
 echo "Generating ExifTool reference snapshots for exif-oxide compatibility testing"
@@ -40,7 +41,10 @@ trap "rm -f '$TEMP_JSON'" EXIT
 echo "Scanning for JPEG files..."
 
 # Get all JPEG files from both test directories
-if ! exiftool -r -json -if '$MIMEType eq "image/jpeg"' \
+# Note: Using default ExifTool behavior (rational arrays) for Milestone 6
+# Decimal GPS conversion will be implemented in Milestone 8 (ValueConv), by using `exiftool -r -json -GPSLatitude\# -GPSLongitude\# -GPSAltitude\# ... -all ...`
+
+if ! exiftool -r -json -all -if '$MIMEType eq "image/jpeg"' \
     "$PROJECT_ROOT/test-images" \
     "$PROJECT_ROOT/third-party/exiftool/t/images" \
     > "$TEMP_JSON" 2>/dev/null; then
