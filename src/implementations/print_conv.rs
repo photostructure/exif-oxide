@@ -198,6 +198,77 @@ pub fn exposureprogram_print_conv(val: &TagValue) -> String {
     .to_string()
 }
 
+/// FNumber PrintConv - formats f-stop values
+/// ExifTool: lib/Image/ExifTool/Exif.pm FNumber PrintConv
+/// Works with ValueConv result to display as "f/4.0" format
+pub fn fnumber_print_conv(val: &TagValue) -> String {
+    match val.as_f64() {
+        Some(f_number) => format!("f/{f_number}"),
+        None => {
+            // Handle rational format directly if ValueConv wasn't applied
+            if let TagValue::Rational(num, denom) = val {
+                if *denom != 0 {
+                    let f_number = *num as f64 / *denom as f64;
+                    return format!("f/{f_number}");
+                }
+            }
+            format!("Unknown ({val})")
+        }
+    }
+}
+
+/// ExposureTime PrintConv - formats shutter speed
+/// ExifTool: lib/Image/ExifTool/Exif.pm ExposureTime PrintConv  
+/// Converts decimal seconds to fractional notation (e.g., 0.0005 -> "1/2000")
+pub fn exposuretime_print_conv(val: &TagValue) -> String {
+    match val.as_f64() {
+        Some(exposure_time) => {
+            if exposure_time >= 1.0 {
+                // For exposures >= 1 second, show as decimal
+                format!("{exposure_time}")
+            } else if exposure_time > 0.0 {
+                // For fractional exposures, show as 1/x
+                let denominator = (1.0 / exposure_time).round() as u32;
+                format!("1/{denominator}")
+            } else {
+                "0".to_string()
+            }
+        }
+        None => {
+            // Handle rational format directly if ValueConv wasn't applied
+            if let TagValue::Rational(num, denom) = val {
+                if *denom != 0 && *num != 0 {
+                    if *num >= *denom {
+                        let exposure_time = *num as f64 / *denom as f64;
+                        return format!("{exposure_time}");
+                    } else {
+                        return format!("{num}/{denom}");
+                    }
+                }
+            }
+            format!("Unknown ({val})")
+        }
+    }
+}
+
+/// FocalLength PrintConv - formats focal length with "mm" unit
+/// ExifTool: lib/Image/ExifTool/Exif.pm FocalLength PrintConv
+pub fn focallength_print_conv(val: &TagValue) -> String {
+    match val.as_f64() {
+        Some(focal_length) => format!("{focal_length} mm"),
+        None => {
+            // Handle rational format directly if ValueConv wasn't applied
+            if let TagValue::Rational(num, denom) = val {
+                if *denom != 0 {
+                    let focal_length = *num as f64 / *denom as f64;
+                    return format!("{focal_length} mm");
+                }
+            }
+            format!("Unknown ({val})")
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -314,5 +385,31 @@ mod tests {
             exposureprogram_print_conv(&TagValue::U16(99)),
             "Unknown (99)"
         );
+    }
+
+    #[test]
+    fn test_fnumber_print_conv() {
+        assert_eq!(fnumber_print_conv(&TagValue::F64(4.0)), "f/4");
+        assert_eq!(fnumber_print_conv(&TagValue::F64(2.8)), "f/2.8");
+        assert_eq!(fnumber_print_conv(&TagValue::F64(1.4)), "f/1.4");
+        assert_eq!(fnumber_print_conv(&TagValue::Rational(4, 1)), "f/4");
+    }
+
+    #[test]
+    fn test_exposuretime_print_conv() {
+        assert_eq!(exposuretime_print_conv(&TagValue::F64(0.0005)), "1/2000");
+        assert_eq!(exposuretime_print_conv(&TagValue::F64(0.5)), "1/2");
+        assert_eq!(exposuretime_print_conv(&TagValue::F64(2.0)), "2");
+        assert_eq!(
+            exposuretime_print_conv(&TagValue::Rational(1, 2000)),
+            "1/2000"
+        );
+    }
+
+    #[test]
+    fn test_focallength_print_conv() {
+        assert_eq!(focallength_print_conv(&TagValue::F64(24.0)), "24 mm");
+        assert_eq!(focallength_print_conv(&TagValue::F64(105.5)), "105.5 mm");
+        assert_eq!(focallength_print_conv(&TagValue::Rational(24, 1)), "24 mm");
     }
 }
