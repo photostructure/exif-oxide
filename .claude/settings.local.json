@@ -98,7 +98,13 @@
       "Bash(RUST_LOG=debug cargo run -- third-party/exiftool/t/images/GPS.jpg)",
       "Bash(RUST_LOG=debug ./target/debug/exif-oxide third-party/exiftool/t/images/GPS.jpg)",
       "Bash(RUST_LOG=trace ./target/debug/exif-oxide third-party/exiftool/t/images/GPS.jpg)",
-      "Bash(RUST_LOG=trace cargo run -- third-party/exiftool/t/images/GPS.jpg)"
+      "Bash(RUST_LOG=trace cargo run -- third-party/exiftool/t/images/GPS.jpg)",
+      "Bash(jq:*)",
+      "Bash(RUST_LOG=trace cargo run -- test-images/canon/Canon_T3i.JPG)",
+      "Bash(RUST_LOG=trace cargo run -- test-images/Canon_T3i.jpg)",
+      "Bash(RUST_LOG=debug cargo run --release -- test-images/Canon_T3i.jpg)",
+      "Bash(RUST_LOG=debug cargo run --release -- test-images/canon/Canon_T3i.JPG)",
+      "WebFetch(domain:www.conventionalcommits.org)"
     ],
     "deny": []
   }
