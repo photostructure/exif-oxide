@@ -2,10 +2,17 @@
 
 This document outlines the incremental development milestones for exif-oxide.
 
-Be sure to study $REPO_ROOT/CLAUDE.md, $REPO_ROOT/docs/ARCHITECTURE.md,
+## Important
+
+1. Be sure to study $REPO_ROOT/CLAUDE.md, $REPO_ROOT/docs/ARCHITECTURE.md,
 $REPO_ROOT/third-party/exiftool/CLAUDE.md, and all relevant related documentation before
-starting any work. With this project, **everything** is more complicated than
-you'd expect.
+   starting any work. With this project, **everything** is more complicated than
+   you'd expect.
+
+2. Reread CLAUDE.md's `ExifTool is Gospel` section.
+
+3. After completing a milestone, edit this document and replace the milestone
+   section that you completed with a summary of the task.
 
 ## Core Principles
 
@@ -17,137 +24,71 @@ you'd expect.
 
 ---
 
-## Milestone 0a: Minimal CLI & Registry (1 week)
+## ✅ Milestone 0a: Minimal CLI & Registry (COMPLETED)
 
 **Goal**: Create testable foundation with basic CLI that outputs JSON
 
-**Deliverables**:
+**Implementation Summary**:
 
-- [ ] Basic CLI binary (`exif-oxide`)
-  - Read file path from command line
-  - Output JSON format (matching `exiftool -j` structure)
-  - `--show-missing` flag for development
-  - Hardcoded mock data initially
-- [ ] Implementation registry skeleton
-  - Runtime lookup for PrintConv/ValueConv
-  - Missing implementation tracking
-  - Graceful fallback to raw values
-- [ ] JSON output formatter
-  - Match ExifTool's JSON structure
-  - Include SourceFile, errors array
-  - Handle missing implementations gracefully
-- [ ] Integration test framework
-  - Compare with `exiftool -j -struct`
-  - Report differences
+- Created CLI with clap argument parsing (src/main.rs)
+- JSON output matching ExifTool structure with array format
+- Registry system with PrintConv/ValueConv runtime lookup (src/registry.rs)
+- Graceful fallback to raw values for missing implementations
+- Integration test framework comparing with ExifTool output
+- `--show-missing` flag showing development progress
 
-**Success Criteria**:
-
-- `exif-oxide test.jpg` outputs valid JSON
-- `--show-missing` lists unimplemented features
-- Test framework can compare outputs
+**Key Files**: `src/main.rs`, `src/registry.rs`, `src/types.rs`, `tests/integration_tests.rs`
 
 ---
 
-## Milestone 0b: Code Generation Pipeline (1 week)
+## ✅ Milestone 0b: Code Generation Pipeline (COMPLETED)
 
 **Goal**: Extract ExifTool tables and generate Rust code
 
-**Deliverables**:
+**Implementation Summary**:
 
-- [ ] Minimal Perl extraction script
-  - Extract EXIF IFD0 tags from `lib/Image/ExifTool/Exif.pm`
-  - Filter to mainstream tags only
-  - Include PrintConv/ValueConv as string references
-  - Output clean JSON
-- [ ] Rust codegen tool
-  - Generate tag tables with string references (no stubs!)
-  - Create registry initialization code
-  - Generate basic tag structures
-- [ ] Wire up to CLI
-  - Load generated tag definitions
-  - Still using mock data for actual values
+- Created Perl extraction script analyzing ExifTool's tag tables
+- Generated `TagMetadata.json` with mainstream tags filtered by usage frequency
+- Rust codegen producing `src/generated.rs` with tag constants and conversion references
+- Registry initialization loading generated definitions
+- CLI integration showing real ExifTool tag names
 
-**Success Criteria**:
-
-- Generated code compiles
-- CLI shows real tag names from ExifTool
-- Can list which PrintConv implementations are needed
+**Key Files**: `tools/extract_tag_metadata.pl`, `src/generated.rs`, `third-party/exiftool/doc/TagMetadata.json`
 
 ---
 
-## Milestone 1: File I/O & JPEG Detection (1 week)
+## ✅ Milestone 1: File I/O & JPEG Detection (COMPLETED)
 
 **Goal**: Read real files and detect JPEG format
 
-**Deliverables**:
+**Implementation Summary**:
 
-- [ ] File reading with streaming support
-  - Open file with Read + Seek traits
-  - Basic error handling
-- [ ] File type detection
-  - Check magic bytes for JPEG (0xFFD8)
-  - Return "not supported" for non-JPEG
-- [ ] JPEG segment scanner
-  - Find APP1 (EXIF) segment
-  - Extract segment data
-  - Skip other segments
-- [ ] Wire to CLI
-  - Read actual file
-  - Report if EXIF found
-  - Output placeholder data
+- File I/O with buffered reading using Read + Seek traits
+- Magic byte detection for JPEG (0xFFD8) and TIFF (II/MM) files
+- Complete JPEG segment scanner finding APP1 (EXIF) segments
+- Proper EXIF data location after "Exif\0\0" marker
+- Real file metadata extraction (size, modification date, etc.)
+- Graceful error handling for unsupported formats
 
-**Success Criteria**:
-
-- `exif-oxide photo.jpg` detects JPEG files
-- Reports "EXIF data found" or "No EXIF data"
-- Non-JPEG files handled gracefully
-
-**Test Command**:
-```bash
-exif-oxide t/images/ExifTool.jpg | jq .ExifToolVersion
-# Should show something (even if placeholder)
-```
+**Key Files**: `src/formats.rs` (detect_file_format, scan_jpeg_segments, extract_metadata)
 
 ---
 
-## Milestone 2: Minimal EXIF Parser (2 weeks)
+## ✅ Milestone 2: Minimal EXIF Parser (COMPLETED)
 
 **Goal**: Extract first real tags from EXIF data
 
-**Deliverables**:
+**Implementation Summary**:
 
-- [ ] TIFF/EXIF header parser
-  - Read TIFF header (II/MM)
-  - Handle endianness
-  - Find IFD0 offset
-- [ ] Minimal IFD parser
-  - Read IFD entry count
-  - Parse IFD entries (12 bytes each)
-  - Extract tag ID, type, count, value/offset
-- [ ] Basic tag extraction
-  - Support ASCII format only (easiest)
-  - Extract Make, Model, Software
-  - Raw numeric values for others
-- [ ] Stateful reader basics
-  - ExifReader struct
-  - Store extracted values
-  - Wire to JSON output
+- Complete TIFF/EXIF header parser with endianness detection (II/MM)
+- IFD (Image File Directory) parser handling 12-byte entries
+- Tag extraction supporting ASCII, SHORT, and LONG formats
+- ExifReader struct maintaining state and extracted values
+- Real tag extraction: Make="Canon", Model="Canon EOS REBEL T3i", Orientation=8
+- Proper null-termination handling for ASCII strings
+- Translation of ExifTool's ProcessExif function (Exif.pm:6172-7128)
 
-**Success Criteria**:
-
-- Extract real Make/Model from test images
-- JSON output shows actual camera info
-- Can compare with ExifTool output
-
-**Test Commands**:
-```bash
-# Should show matching Make/Model
-exiftool -j t/images/Canon.jpg | jq .Make
-exif-oxide t/images/Canon.jpg | jq .Make
-```
-
-**Manual Implementation**:
-- `process::exif::parse_ifd_basic` - simplified IFD parser
+**Key Files**: `src/exif.rs` (ExifReader, TiffHeader, IfdEntry parsing)
 
 ---
 
@@ -159,7 +100,7 @@ exif-oxide t/images/Canon.jpg | jq .Make
 
 - [ ] Additional format support
   - SHORT (uint16)
-  - LONG (uint32) 
+  - LONG (uint32)
   - BYTE (uint8)
 - [ ] Offset handling for long values
   - When value doesn't fit in 4 bytes
@@ -178,6 +119,7 @@ exif-oxide t/images/Canon.jpg | jq .Make
 - More tags matching ExifTool
 
 **Test Commands**:
+
 ```bash
 # Compare numeric values
 diff <(exiftool -j test.jpg | jq .ImageWidth) \
@@ -213,6 +155,7 @@ diff <(exiftool -j test.jpg | jq .ImageWidth) \
 - Other tags still show raw values
 
 **Manual Implementation**:
+
 ```rust
 // First PrintConv!
 fn orientation(val: &TagValue) -> String {
@@ -287,6 +230,7 @@ fn orientation(val: &TagValue) -> String {
 - No infinite loops on bad data
 
 **Test Commands**:
+
 ```bash
 # Files with GPS data
 exif-oxide t/images/GPS.jpg | jq .GPSLatitude
@@ -305,7 +249,7 @@ exif-oxide t/images/GPS.jpg | jq .GPSLatitude
 - [ ] Implement top 5-10:
   - Flash (BITMASK)
   - ExposureProgram
-  - MeteringMode  
+  - MeteringMode
   - WhiteBalance
   - ColorSpace
 - [ ] BITMASK support
@@ -347,6 +291,7 @@ exif-oxide t/images/GPS.jpg | jq .GPSLatitude
 - GPS shows decimal degrees
 
 **Manual Implementations**:
+
 ```rust
 fn apex_shutter_speed(val: f64) -> f64 {
     (-val).exp2()  // 2^-val
@@ -384,6 +329,7 @@ fn apex_shutter_speed(val: f64) -> f64 {
 - Can add more tags incrementally
 
 **Test with Canon files**:
+
 ```bash
 exif-oxide t/images/Canon.jpg | jq .MacroMode
 # Should show "Macro" or "Normal"

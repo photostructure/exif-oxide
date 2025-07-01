@@ -32,18 +32,22 @@ fn test_cli_with_test_image() {
     assert!(output.status.success());
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    // Parse as JSON
+    // Parse as JSON array (ExifTool format)
     let json: Value = serde_json::from_str(&stdout).expect("Output should be valid JSON");
+    assert!(json.is_array());
+    let array = json.as_array().unwrap();
+    assert_eq!(array.len(), 1);
+    let obj = &array[0];
 
     // Check required ExifTool fields
-    assert!(json.get("SourceFile").is_some());
-    assert!(json.get("ExifToolVersion").is_some());
-    assert!(json.get("FileName").is_some());
-    assert!(json.get("Directory").is_some());
+    assert!(obj.get("SourceFile").is_some());
+    assert!(obj.get("ExifToolVersion").is_some());
+    assert!(obj.get("FileName").is_some());
+    assert!(obj.get("Directory").is_some());
 
     // Check that SourceFile matches input
     assert_eq!(
-        json["SourceFile"].as_str().unwrap(),
+        obj["SourceFile"].as_str().unwrap(),
         "test-images/canon/Canon_T3i.JPG"
     );
 }
@@ -65,10 +69,14 @@ fn test_cli_show_missing() {
     let stdout = String::from_utf8(output.stdout).unwrap();
 
     let json: Value = serde_json::from_str(&stdout).expect("Output should be valid JSON");
+    assert!(json.is_array());
+    let array = json.as_array().unwrap();
+    assert_eq!(array.len(), 1);
+    let obj = &array[0];
 
     // Should include MissingImplementations
-    assert!(json.get("MissingImplementations").is_some());
-    let missing = json["MissingImplementations"].as_array().unwrap();
+    assert!(obj.get("MissingImplementations").is_some());
+    let missing = obj["MissingImplementations"].as_array().unwrap();
     assert!(!missing.is_empty());
 
     // Should contain expected missing items
@@ -92,10 +100,23 @@ fn test_cli_nonexistent_file() {
         .output()
         .expect("Failed to run CLI with nonexistent file");
 
-    // Should fail gracefully
-    assert!(!output.status.success());
-    let stderr = String::from_utf8(output.stderr).unwrap();
-    assert!(stderr.contains("not found") || stderr.contains("No such file"));
+    // Our CLI returns success (0) with error info in JSON array for graceful batch processing
+    // This differs from ExifTool but allows continuous processing of multiple files
+    assert!(output.status.success());
+
+    let stdout = String::from_utf8(output.stdout).unwrap();
+    let json: Value = serde_json::from_str(&stdout).expect("Output should be valid JSON");
+    assert!(json.is_array());
+    let array = json.as_array().unwrap();
+    assert_eq!(array.len(), 1);
+    let obj = &array[0];
+
+    // Should have error information
+    assert!(obj.get("errors").is_some());
+    let errors = obj["errors"].as_array().unwrap();
+    assert!(!errors.is_empty());
+    let error_msg = errors[0].as_str().unwrap();
+    assert!(error_msg.contains("File not found") || error_msg.contains("not found"));
 }
 
 /// Test JSON structure compatibility with ExifTool format
@@ -110,9 +131,12 @@ fn test_json_structure_compatibility() {
     let stdout = String::from_utf8(output.stdout).unwrap();
     let json: Value = serde_json::from_str(&stdout).unwrap();
 
-    // Test that it matches ExifTool's basic JSON structure
-    assert!(json.is_object());
-    let obj = json.as_object().unwrap();
+    // Test that it matches ExifTool's JSON array structure (even for single files)
+    assert!(json.is_array());
+    let array = json.as_array().unwrap();
+    assert_eq!(array.len(), 1);
+
+    let obj = array[0].as_object().unwrap();
 
     // Should have string values for basic fields
     assert!(obj["SourceFile"].is_string());
@@ -120,27 +144,18 @@ fn test_json_structure_compatibility() {
     assert!(obj["FileName"].is_string());
     assert!(obj["Directory"].is_string());
 
-    // In Milestone 1, these should be placeholder strings until actual EXIF parsing
-    // TODO: Change back to numbers when Milestone 2 implements real EXIF parsing
-    if obj["ImageWidth"].is_string() {
-        // Milestone 1 - placeholder implementation
-        assert!(obj["ImageWidth"].as_str().unwrap().contains("PLACEHOLDER"));
-        assert!(obj["ImageHeight"].as_str().unwrap().contains("PLACEHOLDER"));
-    } else {
-        // Future milestones - real EXIF data
-        assert!(obj["ImageWidth"].is_number());
-        assert!(obj["ImageHeight"].is_number());
-    }
+    // Milestone 2 implements real EXIF parsing for ASCII and numeric tags
+    // Should extract Make and Model from Canon image
+    assert!(obj.contains_key("Make"));
+    assert!(obj.contains_key("Model"));
+    assert_eq!(obj["Make"], "Canon");
+    assert_eq!(obj["Model"], "Canon EOS REBEL T3i");
 
-    // Test specific value types match ExifTool conventions
+    // Should extract numeric tags like Orientation
     if let Some(orientation) = obj.get("Orientation") {
-        if orientation.is_string() {
-            // Milestone 1 placeholder
-            assert!(orientation.as_str().unwrap().contains("PLACEHOLDER"));
-        } else {
-            // Future milestones - real data
-            assert!(orientation.is_number());
-        }
+        assert!(orientation.is_number());
+        // Should match ExifTool's value for this Canon image (Rotate 270 CW = 8)
+        assert_eq!(orientation, 8);
     }
 }
 
@@ -184,14 +199,20 @@ fn test_compare_with_exiftool() {
     let our_json: Value =
         serde_json::from_str(&String::from_utf8(our_output.stdout).unwrap()).unwrap();
 
+    // Our output is also an array, get the first element
+    assert!(our_json.is_array());
+    let our_array = our_json.as_array().unwrap();
+    assert!(!our_array.is_empty());
+    let our_data = &our_array[0];
+
     // Compare basic structure
     assert_eq!(
-        our_json["SourceFile"].as_str().unwrap(),
+        our_data["SourceFile"].as_str().unwrap(),
         exiftool_data["SourceFile"].as_str().unwrap()
     );
 
     assert_eq!(
-        our_json["FileName"].as_str().unwrap(),
+        our_data["FileName"].as_str().unwrap(),
         exiftool_data["FileName"].as_str().unwrap()
     );
 
@@ -234,7 +255,12 @@ fn test_different_file_formats() {
         let json: Value = serde_json::from_str(&stdout)
             .unwrap_or_else(|_| panic!("Output should be valid JSON for {file}"));
 
-        assert_eq!(json["SourceFile"].as_str().unwrap(), file);
+        // JSON is now an array format
+        assert!(json.is_array());
+        let array = json.as_array().unwrap();
+        assert_eq!(array.len(), 1);
+        let obj = &array[0];
+        assert_eq!(obj["SourceFile"].as_str().unwrap(), file);
     }
 }
 

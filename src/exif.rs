@@ -1,0 +1,571 @@
+//! EXIF/TIFF parsing module
+//!
+//! This module implements EXIF parsing for JPEG-embedded EXIF data, translating
+//! ExifTool's ProcessExif function (Exif.pm:6172-7128) to handle:
+//! - TIFF header validation and endianness detection
+//! - IFD (Image File Directory) parsing
+//! - Basic tag value extraction (ASCII, SHORT, LONG formats)
+//! - Make/Model/Software extraction with null-termination
+//!
+//! Reference: lib/Image/ExifTool/Exif.pm ProcessExif function
+
+use crate::generated::TAG_BY_ID;
+use crate::types::{ExifError, Result, TagValue};
+use std::collections::HashMap;
+
+/// TIFF format types mapping to ExifTool's format system
+/// ExifTool: lib/Image/ExifTool/Exif.pm @formatName array
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum TiffFormat {
+    Byte = 1,       // int8u
+    Ascii = 2,      // string
+    Short = 3,      // int16u
+    Long = 4,       // int32u
+    Rational = 5,   // rational64u
+    SByte = 6,      // int8s
+    Undefined = 7,  // undef
+    SShort = 8,     // int16s
+    SLong = 9,      // int32s
+    SRational = 10, // rational64s
+    Float = 11,     // float
+    Double = 12,    // double
+    Ifd = 13,       // ifd
+}
+
+impl TiffFormat {
+    /// Get byte size for this format type
+    /// ExifTool: lib/Image/ExifTool/Exif.pm @formatSize array
+    pub fn byte_size(self) -> usize {
+        match self {
+            TiffFormat::Byte | TiffFormat::Ascii | TiffFormat::SByte | TiffFormat::Undefined => 1,
+            TiffFormat::Short | TiffFormat::SShort => 2,
+            TiffFormat::Long | TiffFormat::SLong | TiffFormat::Float | TiffFormat::Ifd => 4,
+            TiffFormat::Rational | TiffFormat::SRational | TiffFormat::Double => 8,
+        }
+    }
+
+    /// Create from format number, following ExifTool's validation
+    /// ExifTool: lib/Image/ExifTool/Exif.pm:6352 format validation
+    pub fn from_u16(format: u16) -> Result<Self> {
+        match format {
+            1 => Ok(TiffFormat::Byte),
+            2 => Ok(TiffFormat::Ascii),
+            3 => Ok(TiffFormat::Short),
+            4 => Ok(TiffFormat::Long),
+            5 => Ok(TiffFormat::Rational),
+            6 => Ok(TiffFormat::SByte),
+            7 => Ok(TiffFormat::Undefined),
+            8 => Ok(TiffFormat::SShort),
+            9 => Ok(TiffFormat::SLong),
+            10 => Ok(TiffFormat::SRational),
+            11 => Ok(TiffFormat::Float),
+            12 => Ok(TiffFormat::Double),
+            13 => Ok(TiffFormat::Ifd),
+            _ => Err(ExifError::ParseError(format!(
+                "Invalid TIFF format type: {format}"
+            ))),
+        }
+    }
+}
+
+/// Byte order for TIFF data
+/// ExifTool: lib/Image/ExifTool/Exif.pm TIFF header validation
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ByteOrder {
+    LittleEndian, // "II" - Intel format
+    BigEndian,    // "MM" - Motorola format
+}
+
+impl ByteOrder {
+    /// Read u16 value respecting byte order
+    pub fn read_u16(self, data: &[u8], offset: usize) -> Result<u16> {
+        if offset + 2 > data.len() {
+            return Err(ExifError::ParseError("Not enough data for u16".to_string()));
+        }
+        let bytes = &data[offset..offset + 2];
+        Ok(match self {
+            ByteOrder::LittleEndian => u16::from_le_bytes([bytes[0], bytes[1]]),
+            ByteOrder::BigEndian => u16::from_be_bytes([bytes[0], bytes[1]]),
+        })
+    }
+
+    /// Read u32 value respecting byte order  
+    pub fn read_u32(self, data: &[u8], offset: usize) -> Result<u32> {
+        if offset + 4 > data.len() {
+            return Err(ExifError::ParseError("Not enough data for u32".to_string()));
+        }
+        let bytes = &data[offset..offset + 4];
+        Ok(match self {
+            ByteOrder::LittleEndian => u32::from_le_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]),
+            ByteOrder::BigEndian => u32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]),
+        })
+    }
+}
+
+/// TIFF header structure
+/// ExifTool: lib/Image/ExifTool/Exif.pm TIFF header validation
+#[derive(Debug, Clone)]
+pub struct TiffHeader {
+    pub byte_order: ByteOrder,
+    pub magic: u16,       // Should be 42 (0x002A)
+    pub ifd0_offset: u32, // Offset to first IFD
+}
+
+impl TiffHeader {
+    /// Parse TIFF header from data
+    /// ExifTool: lib/Image/ExifTool/Exif.pm:6174-6248 header processing
+    pub fn parse(data: &[u8]) -> Result<Self> {
+        if data.len() < 8 {
+            return Err(ExifError::ParseError(
+                "TIFF header too short (need 8 bytes)".to_string(),
+            ));
+        }
+
+        // Detect byte order from first 2 bytes
+        let byte_order = match &data[0..2] {
+            [0x49, 0x49] => ByteOrder::LittleEndian, // "II"
+            [0x4D, 0x4D] => ByteOrder::BigEndian,    // "MM"
+            _ => {
+                return Err(ExifError::ParseError(
+                    "Invalid TIFF byte order marker".to_string(),
+                ))
+            }
+        };
+
+        // Read magic number (should be 42)
+        let magic = byte_order.read_u16(data, 2)?;
+        if magic != 42 {
+            return Err(ExifError::ParseError(format!(
+                "Invalid TIFF magic number: {magic} (expected 42)"
+            )));
+        }
+
+        // Read IFD0 offset
+        let ifd0_offset = byte_order.read_u32(data, 4)?;
+
+        Ok(TiffHeader {
+            byte_order,
+            magic,
+            ifd0_offset,
+        })
+    }
+}
+
+/// IFD entry structure (12 bytes each)
+/// ExifTool: lib/Image/ExifTool/Exif.pm:6347-6351 entry reading
+#[derive(Debug, Clone)]
+pub struct IfdEntry {
+    pub tag_id: u16,
+    pub format: TiffFormat,
+    pub count: u32,
+    pub value_or_offset: u32,
+}
+
+impl IfdEntry {
+    /// Parse IFD entry from 12-byte data block
+    /// ExifTool: lib/Image/ExifTool/Exif.pm:6348-6350 entry structure
+    pub fn parse(data: &[u8], offset: usize, byte_order: ByteOrder) -> Result<Self> {
+        if offset + 12 > data.len() {
+            return Err(ExifError::ParseError(
+                "Not enough data for IFD entry".to_string(),
+            ));
+        }
+
+        let tag_id = byte_order.read_u16(data, offset)?;
+        let format_num = byte_order.read_u16(data, offset + 2)?;
+        let format = TiffFormat::from_u16(format_num)?;
+        let count = byte_order.read_u32(data, offset + 4)?;
+        let value_or_offset = byte_order.read_u32(data, offset + 8)?;
+
+        Ok(IfdEntry {
+            tag_id,
+            format,
+            count,
+            value_or_offset,
+        })
+    }
+
+    /// Calculate total size of this entry's data
+    /// ExifTool: lib/Image/ExifTool/Exif.pm:6390 size calculation
+    pub fn data_size(&self) -> u32 {
+        self.count * self.format.byte_size() as u32
+    }
+
+    /// Check if value is stored inline (≤4 bytes) or as offset
+    /// ExifTool: lib/Image/ExifTool/Exif.pm:6392 inline vs offset logic
+    pub fn is_inline(&self) -> bool {
+        self.data_size() <= 4
+    }
+}
+
+/// Stateful EXIF reader for processing JPEG-embedded EXIF data
+/// ExifTool: lib/Image/ExifTool/Exif.pm ProcessExif function architecture
+#[derive(Debug)]
+pub struct ExifReader {
+    /// Extracted tag values by tag ID
+    extracted_tags: HashMap<u16, TagValue>,
+    /// TIFF header information
+    header: Option<TiffHeader>,
+    /// Raw EXIF data buffer
+    data: Vec<u8>,
+    /// Parse errors (non-fatal, for graceful degradation)
+    warnings: Vec<String>,
+}
+
+impl ExifReader {
+    /// Create new EXIF reader
+    pub fn new() -> Self {
+        Self {
+            extracted_tags: HashMap::new(),
+            header: None,
+            data: Vec::new(),
+            warnings: Vec::new(),
+        }
+    }
+
+    /// Parse EXIF data from JPEG APP1 segment after "Exif\0\0"
+    /// ExifTool: lib/Image/ExifTool/Exif.pm:6172 ProcessExif entry point
+    pub fn parse_exif_data(&mut self, exif_data: &[u8]) -> Result<()> {
+        if exif_data.len() < 8 {
+            return Err(ExifError::ParseError(
+                "EXIF data too short for TIFF header".to_string(),
+            ));
+        }
+
+        // Store data for offset-based value reading
+        self.data = exif_data.to_vec();
+
+        // Parse TIFF header
+        self.header = Some(TiffHeader::parse(exif_data)?);
+        let header = self.header.as_ref().unwrap();
+
+        // Parse IFD0 starting at the offset specified in header
+        self.parse_ifd(header.ifd0_offset as usize, "IFD0")?;
+
+        Ok(())
+    }
+
+    /// Parse a single IFD (Image File Directory)
+    /// ExifTool: lib/Image/ExifTool/Exif.pm:6232-6342 IFD processing
+    fn parse_ifd(&mut self, ifd_offset: usize, ifd_name: &str) -> Result<()> {
+        if ifd_offset + 2 > self.data.len() {
+            return Err(ExifError::ParseError(format!(
+                "IFD offset {ifd_offset:#x} beyond data bounds"
+            )));
+        }
+
+        let byte_order = self.header.as_ref().unwrap().byte_order;
+
+        // Read number of entries (first 2 bytes of IFD)
+        // ExifTool: lib/Image/ExifTool/Exif.pm:6235 numEntries
+        let num_entries = byte_order.read_u16(&self.data, ifd_offset)? as usize;
+
+        // Calculate directory size: 2 bytes (count) + 12 bytes per entry + 4 bytes (next IFD)
+        // ExifTool: lib/Image/ExifTool/Exif.pm:6236-6237 dirSize calculation
+        let dir_size = 2 + 12 * num_entries + 4;
+        let dir_end = ifd_offset + dir_size;
+
+        if dir_end > self.data.len() {
+            // Graceful degradation - ExifTool continues parsing what it can
+            // ExifTool: lib/Image/ExifTool/Exif.pm:6238-6247 short directory handling
+            self.warnings.push(format!(
+                "Short directory size for {ifd_name} (missing {} bytes)",
+                dir_end - self.data.len()
+            ));
+        }
+
+        // Process each IFD entry
+        // ExifTool: lib/Image/ExifTool/Exif.pm:6342-6349 entry loop
+        for index in 0..num_entries {
+            let entry_offset = ifd_offset + 2 + 12 * index;
+
+            if entry_offset + 12 > self.data.len() {
+                self.warnings
+                    .push(format!("IFD entry {index} beyond data bounds"));
+                break; // Graceful degradation
+            }
+
+            match self.parse_ifd_entry(entry_offset, byte_order, ifd_name, index) {
+                Ok(()) => {} // Successfully parsed
+                Err(e) => {
+                    // Graceful degradation - log warning but continue
+                    // ExifTool: lib/Image/ExifTool/Exif.pm:6360-6365 error handling
+                    self.warnings
+                        .push(format!("Error parsing {ifd_name} entry {index}: {e}"));
+                }
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Parse a single IFD entry and extract tag value
+    /// ExifTool: lib/Image/ExifTool/Exif.pm:6347-6570 entry processing
+    fn parse_ifd_entry(
+        &mut self,
+        entry_offset: usize,
+        byte_order: ByteOrder,
+        _ifd_name: &str,
+        _index: usize,
+    ) -> Result<()> {
+        // Parse 12-byte IFD entry structure
+        let entry = IfdEntry::parse(&self.data, entry_offset, byte_order)?;
+
+        // Look up tag definition in generated tables
+        let tag_def = TAG_BY_ID.get(&(entry.tag_id as u32));
+
+        // For Milestone 2, focus on ASCII tags (Make, Model, Software)
+        // ExifTool: lib/Image/ExifTool/Exif.pm:6390-6570 value extraction
+        match entry.format {
+            TiffFormat::Ascii => {
+                let value = self.extract_ascii_value(&entry, byte_order)?;
+                if !value.is_empty() {
+                    self.extracted_tags
+                        .insert(entry.tag_id, TagValue::String(value));
+                }
+            }
+            TiffFormat::Short => {
+                let value = self.extract_short_value(&entry, byte_order)?;
+                self.extracted_tags
+                    .insert(entry.tag_id, TagValue::U16(value));
+            }
+            TiffFormat::Long => {
+                let value = self.extract_long_value(&entry, byte_order)?;
+                self.extracted_tags
+                    .insert(entry.tag_id, TagValue::U32(value));
+            }
+            _ => {
+                // For other formats, store raw value for now
+                // Future milestones will implement additional formats
+                if let Some(tag_def) = tag_def {
+                    self.warnings.push(format!(
+                        "Unimplemented format {:?} for tag {} ({})",
+                        entry.format, entry.tag_id, tag_def.name
+                    ));
+                }
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Extract ASCII string value with null-termination handling
+    /// ExifTool: lib/Image/ExifTool/Exif.pm ConvertExifText for ASCII processing
+    fn extract_ascii_value(&self, entry: &IfdEntry, _byte_order: ByteOrder) -> Result<String> {
+        let data = if entry.is_inline() {
+            // Value stored inline in the 4-byte value field
+            // ExifTool: lib/Image/ExifTool/Exif.pm:6372 inline value handling
+            let bytes = entry.value_or_offset.to_le_bytes(); // Always stored in entry byte order
+            bytes[..entry.count.min(4) as usize].to_vec()
+        } else {
+            // Value stored at offset
+            // ExifTool: lib/Image/ExifTool/Exif.pm:6398 offset value handling
+            let offset = entry.value_or_offset as usize;
+            let size = entry.count as usize;
+
+            if offset + size > self.data.len() {
+                return Err(ExifError::ParseError(format!(
+                    "ASCII value offset {offset:#x} + size {size} beyond data bounds"
+                )));
+            }
+
+            self.data[offset..offset + size].to_vec()
+        };
+
+        // Convert bytes to string with null-termination handling
+        // ExifTool handles null-terminated strings gracefully
+        let null_pos = data.iter().position(|&b| b == 0).unwrap_or(data.len());
+        let trimmed = &data[..null_pos];
+
+        // Convert to UTF-8, handling invalid sequences gracefully
+        match String::from_utf8(trimmed.to_vec()) {
+            Ok(s) => Ok(s.trim().to_string()), // Trim whitespace
+            Err(_) => {
+                // Fallback for invalid UTF-8 - convert lossy
+                Ok(String::from_utf8_lossy(trimmed).trim().to_string())
+            }
+        }
+    }
+
+    /// Extract SHORT (u16) value
+    /// ExifTool: lib/Image/ExifTool/Exif.pm:6372-6398 value extraction
+    fn extract_short_value(&self, entry: &IfdEntry, byte_order: ByteOrder) -> Result<u16> {
+        if entry.count != 1 {
+            return Err(ExifError::ParseError(format!(
+                "SHORT value with count {} not supported yet",
+                entry.count
+            )));
+        }
+
+        if entry.is_inline() {
+            // Value stored inline - use lower 2 bytes of value_or_offset
+            let bytes = match byte_order {
+                ByteOrder::LittleEndian => entry.value_or_offset.to_le_bytes(),
+                ByteOrder::BigEndian => entry.value_or_offset.to_be_bytes(),
+            };
+            Ok(u16::from_le_bytes([bytes[0], bytes[1]]))
+        } else {
+            // Value stored at offset
+            let offset = entry.value_or_offset as usize;
+            byte_order.read_u16(&self.data, offset)
+        }
+    }
+
+    /// Extract LONG (u32) value
+    /// ExifTool: lib/Image/ExifTool/Exif.pm:6372-6398 value extraction
+    fn extract_long_value(&self, entry: &IfdEntry, byte_order: ByteOrder) -> Result<u32> {
+        if entry.count != 1 {
+            return Err(ExifError::ParseError(format!(
+                "LONG value with count {} not supported yet",
+                entry.count
+            )));
+        }
+
+        if entry.is_inline() {
+            // Value stored inline
+            Ok(entry.value_or_offset)
+        } else {
+            // Value stored at offset
+            let offset = entry.value_or_offset as usize;
+            byte_order.read_u32(&self.data, offset)
+        }
+    }
+
+    /// Get extracted tag by ID
+    pub fn get_tag_by_id(&self, tag_id: u16) -> Option<&TagValue> {
+        self.extracted_tags.get(&tag_id)
+    }
+
+    /// Get all extracted tags with their names
+    pub fn get_all_tags(&self) -> HashMap<String, TagValue> {
+        let mut result = HashMap::new();
+
+        for (&tag_id, value) in &self.extracted_tags {
+            if let Some(tag_def) = TAG_BY_ID.get(&(tag_id as u32)) {
+                result.insert(tag_def.name.to_string(), value.clone());
+            } else {
+                // Include unknown tags with hex ID
+                result.insert(format!("Tag_{tag_id:04X}"), value.clone());
+            }
+        }
+
+        result
+    }
+
+    /// Get parsing warnings
+    pub fn get_warnings(&self) -> &[String] {
+        &self.warnings
+    }
+
+    /// Get TIFF header information
+    pub fn get_header(&self) -> Option<&TiffHeader> {
+        self.header.as_ref()
+    }
+}
+
+impl Default for ExifReader {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_tiff_format_byte_size() {
+        assert_eq!(TiffFormat::Byte.byte_size(), 1);
+        assert_eq!(TiffFormat::Short.byte_size(), 2);
+        assert_eq!(TiffFormat::Long.byte_size(), 4);
+        assert_eq!(TiffFormat::Rational.byte_size(), 8);
+    }
+
+    #[test]
+    fn test_tiff_format_from_u16() {
+        assert_eq!(TiffFormat::from_u16(1).unwrap(), TiffFormat::Byte);
+        assert_eq!(TiffFormat::from_u16(2).unwrap(), TiffFormat::Ascii);
+        assert_eq!(TiffFormat::from_u16(3).unwrap(), TiffFormat::Short);
+        assert!(TiffFormat::from_u16(99).is_err());
+    }
+
+    #[test]
+    fn test_byte_order_read() {
+        let data = [0x12, 0x34, 0x56, 0x78];
+
+        // Little-endian
+        let le = ByteOrder::LittleEndian;
+        assert_eq!(le.read_u16(&data, 0).unwrap(), 0x3412);
+        assert_eq!(le.read_u32(&data, 0).unwrap(), 0x78563412);
+
+        // Big-endian
+        let be = ByteOrder::BigEndian;
+        assert_eq!(be.read_u16(&data, 0).unwrap(), 0x1234);
+        assert_eq!(be.read_u32(&data, 0).unwrap(), 0x12345678);
+    }
+
+    #[test]
+    fn test_tiff_header_parse() {
+        // Little-endian TIFF header
+        let le_data = [
+            0x49, 0x49, // "II" - little-endian
+            0x2A, 0x00, // Magic: 42 (LE)
+            0x08, 0x00, 0x00, 0x00, // IFD0 offset: 8 (LE)
+        ];
+
+        let header = TiffHeader::parse(&le_data).unwrap();
+        assert_eq!(header.byte_order, ByteOrder::LittleEndian);
+        assert_eq!(header.magic, 42);
+        assert_eq!(header.ifd0_offset, 8);
+
+        // Big-endian TIFF header
+        let be_data = [
+            0x4D, 0x4D, // "MM" - big-endian
+            0x00, 0x2A, // Magic: 42 (BE)
+            0x00, 0x00, 0x00, 0x08, // IFD0 offset: 8 (BE)
+        ];
+
+        let header = TiffHeader::parse(&be_data).unwrap();
+        assert_eq!(header.byte_order, ByteOrder::BigEndian);
+        assert_eq!(header.magic, 42);
+        assert_eq!(header.ifd0_offset, 8);
+    }
+
+    #[test]
+    fn test_ifd_entry_parse() {
+        let data = [
+            0x0F, 0x01, // Tag ID: 0x010F (Make) in LE
+            0x02, 0x00, // Format: 2 (ASCII) in LE
+            0x06, 0x00, 0x00, 0x00, // Count: 6 in LE
+            0x43, 0x61, 0x6E, 0x6F, // Value: "Cano" inline
+        ];
+
+        let entry = IfdEntry::parse(&data, 0, ByteOrder::LittleEndian).unwrap();
+        assert_eq!(entry.tag_id, 0x010F); // Make tag
+        assert_eq!(entry.format, TiffFormat::Ascii);
+        assert_eq!(entry.count, 6);
+        assert_eq!(entry.value_or_offset, 0x6F6E6143); // "Cano" as u32
+        assert!(!entry.is_inline()); // 6 bytes > 4, so not inline
+    }
+
+    #[test]
+    fn test_exif_reader_basic() {
+        let mut reader = ExifReader::new();
+
+        // Create minimal EXIF data with TIFF header and empty IFD
+        let exif_data = [
+            0x49, 0x49, // "II" - little-endian
+            0x2A, 0x00, // Magic: 42 (LE)
+            0x08, 0x00, 0x00, 0x00, // IFD0 offset: 8 (LE)
+            0x00, 0x00, // Number of entries: 0
+            0x00, 0x00, 0x00, 0x00, // Next IFD: none
+        ];
+
+        reader.parse_exif_data(&exif_data).unwrap();
+
+        let header = reader.get_header().unwrap();
+        assert_eq!(header.byte_order, ByteOrder::LittleEndian);
+        assert_eq!(header.ifd0_offset, 8);
+    }
+}

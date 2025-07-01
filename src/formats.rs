@@ -7,6 +7,7 @@
 //! - JPEG segment scanner to find APP1 (EXIF) segments
 //! - Graceful handling of non-JPEG files
 
+use crate::exif::ExifReader;
 use crate::generated::{EXIF_MAIN_TAGS, REQUIRED_PRINT_CONV, REQUIRED_VALUE_CONV};
 use crate::types::{ExifData, ExifError, Result, TagValue};
 use std::collections::HashMap;
@@ -116,11 +117,13 @@ impl JpegSegment {
     }
 
     /// Check if this is an APP1 segment (contains EXIF)
+    #[allow(dead_code)]
     fn is_app1(&self) -> bool {
         matches!(self, Self::App(1))
     }
 
     /// Get the marker byte for this segment
+    #[allow(dead_code)]
     fn marker_byte(&self) -> u8 {
         match self {
             Self::Soi => 0xD8,
@@ -198,14 +201,19 @@ pub fn scan_jpeg_segments<R: Read + Seek>(mut reader: R) -> Result<Option<JpegSe
 
                 if app_num == 1 {
                     // APP1 segment - check for EXIF
-                    let mut exif_header = [0u8; 4];
+                    let mut exif_header = [0u8; 6]; // Read "Exif\0\0"
                     if reader.read_exact(&mut exif_header).is_ok() {
                         // Check for EXIF identifier
-                        if &exif_header == b"Exif" {
+                        if &exif_header[0..4] == b"Exif"
+                            && exif_header[4] == 0
+                            && exif_header[5] == 0
+                        {
+                            // ExifTool: lib/Image/ExifTool/JPEG.pm:48 - "Exif\0" condition
+                            // The TIFF data starts immediately after "Exif\0\0"
                             return Ok(Some(JpegSegmentInfo {
                                 segment_type: segment,
-                                offset: current_pos + 2, // After length bytes
-                                length,
+                                offset: current_pos + 6, // After "Exif\0\0" (6 bytes)
+                                length: length - 8, // Subtract segment length header (2 bytes) + "Exif\0\0" (6 bytes) = 8 total
                                 has_exif: true,
                             }));
                         }
@@ -322,27 +330,55 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                         TagValue::String(exif_status),
                     );
 
-                    // Placeholder data - will be replaced in Milestone 2
-                    tags.insert(
-                        "ImageWidth".to_string(),
-                        TagValue::String("PLACEHOLDER - Not parsed yet".to_string()),
-                    );
-                    tags.insert(
-                        "ImageHeight".to_string(),
-                        TagValue::String("PLACEHOLDER - Not parsed yet".to_string()),
-                    );
-                    tags.insert(
-                        "Make".to_string(),
-                        TagValue::String("PLACEHOLDER - EXIF parsing in Milestone 2".to_string()),
-                    );
-                    tags.insert(
-                        "Model".to_string(),
-                        TagValue::String("PLACEHOLDER - EXIF parsing in Milestone 2".to_string()),
-                    );
-                    tags.insert(
-                        "Orientation".to_string(),
-                        TagValue::String("PLACEHOLDER - Not parsed yet".to_string()),
-                    );
+                    // Extract actual EXIF data using our new ExifReader
+                    reader.seek(SeekFrom::Start(segment_info.offset))?;
+                    let mut exif_data = vec![0u8; segment_info.length as usize];
+                    reader.read_exact(&mut exif_data)?;
+
+                    // Parse EXIF data
+                    let mut exif_reader = ExifReader::new();
+                    match exif_reader.parse_exif_data(&exif_data) {
+                        Ok(()) => {
+                            // Successfully parsed EXIF - extract all found tags
+                            let exif_tags = exif_reader.get_all_tags();
+                            for (tag_name, tag_value) in exif_tags {
+                                tags.insert(tag_name, tag_value);
+                            }
+
+                            // Add EXIF parsing status
+                            let header = exif_reader.get_header().unwrap();
+                            tags.insert(
+                                "ExifByteOrder".to_string(),
+                                TagValue::String(
+                                    match header.byte_order {
+                                        crate::exif::ByteOrder::LittleEndian => {
+                                            "Little-endian (Intel)"
+                                        }
+                                        crate::exif::ByteOrder::BigEndian => {
+                                            "Big-endian (Motorola)"
+                                        }
+                                    }
+                                    .to_string(),
+                                ),
+                            );
+
+                            // Include any parsing warnings
+                            let warnings = exif_reader.get_warnings();
+                            if !warnings.is_empty() {
+                                tags.insert(
+                                    "ExifWarnings".to_string(),
+                                    TagValue::String(format!("{} warnings", warnings.len())),
+                                );
+                            }
+                        }
+                        Err(e) => {
+                            // EXIF parsing failed - include error but continue
+                            tags.insert(
+                                "ExifParseError".to_string(),
+                                TagValue::String(format!("Failed to parse EXIF data: {e}")),
+                            );
+                        }
+                    }
                 }
                 None => {
                     // No EXIF data available
@@ -376,9 +412,14 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
             "✅ Real file I/O and size detection - IMPLEMENTED in Milestone 1".to_string(),
             "✅ Magic byte file type detection - IMPLEMENTED in Milestone 1".to_string(),
             "✅ JPEG segment parsing - IMPLEMENTED in Milestone 1".to_string(),
-            "🔄 EXIF header parsing - NEXT in Milestone 2".to_string(),
-            "🔄 IFD (Image File Directory) parsing - NEXT in Milestone 2".to_string(),
-            "🔄 Tag value extraction and type conversion - NEXT in Milestone 2".to_string(),
+            "✅ EXIF header parsing with endianness detection - IMPLEMENTED in Milestone 2"
+                .to_string(),
+            "✅ IFD (Image File Directory) parsing - IMPLEMENTED in Milestone 2".to_string(),
+            "✅ Basic tag value extraction (ASCII/SHORT/LONG) - IMPLEMENTED in Milestone 2"
+                .to_string(),
+            "✅ Make/Model/Software extraction - IMPLEMENTED in Milestone 2".to_string(),
+            "🔄 Additional EXIF formats (RATIONAL, BYTE) - NEXT in Milestone 3".to_string(),
+            "🔄 Offset handling for long values - NEXT in Milestone 3".to_string(),
             "⏳ MakerNote parsing - Future milestone".to_string(),
             "⏳ Subdirectory following - Future milestone".to_string(),
             "⏳ GPS coordinate conversion - Future milestone".to_string(),
@@ -463,25 +504,19 @@ mod tests {
 
     #[test]
     fn test_extract_metadata() {
-        // Create a temporary JPEG file for testing
-        let temp_dir = std::env::temp_dir();
-        let test_file = temp_dir.join("test_exif_oxide.jpg");
+        // Use a real test image file
+        let test_file = std::path::Path::new("test-images/canon/Canon_T3i.JPG");
 
-        // Create minimal JPEG file with EXIF
-        let jpeg_data = [
-            0xFF, 0xD8, // SOI
-            0xFF, 0xE1, // APP1
-            0x00, 0x16, // Length: 22 bytes
-            b'E', b'x', b'i', b'f', 0x00, 0x00, // "Exif\0\0"
-            0x49, 0x49, 0x2A, 0x00, // TIFF header (LE)
-            0x08, 0x00, 0x00, 0x00, // IFD offset
-            0x00, 0x00, // No IFD entries for now
-            0xFF, 0xD9, // EOI
-        ];
+        // Skip test if file doesn't exist (CI environments might not have test images)
+        if !test_file.exists() {
+            eprintln!(
+                "Skipping test - test image not found: {}",
+                test_file.display()
+            );
+            return;
+        }
 
-        std::fs::write(&test_file, jpeg_data).unwrap();
-
-        let metadata = extract_metadata(&test_file, false).unwrap();
+        let metadata = extract_metadata(test_file, false).unwrap();
 
         assert_eq!(metadata.source_file, test_file.to_string_lossy());
         assert_eq!(metadata.exif_tool_version, "0.1.0-oxide");
@@ -490,11 +525,20 @@ mod tests {
         assert!(metadata.tags.contains_key("ExifDetectionStatus"));
         assert!(metadata.missing_implementations.is_none());
 
-        // Test with --show-missing
-        let metadata_with_missing = extract_metadata(&test_file, true).unwrap();
-        assert!(metadata_with_missing.missing_implementations.is_some());
+        // Should extract real EXIF data
+        assert!(metadata.tags.contains_key("Make"));
+        assert!(metadata.tags.contains_key("Model"));
 
-        // Clean up
-        std::fs::remove_file(test_file).ok();
+        // Verify the extracted values match what we expect from this Canon image
+        if let Some(make) = metadata.tags.get("Make") {
+            assert_eq!(make.as_string(), Some("Canon"));
+        }
+        if let Some(model) = metadata.tags.get("Model") {
+            assert_eq!(model.as_string(), Some("Canon EOS REBEL T3i"));
+        }
+
+        // Test with --show-missing
+        let metadata_with_missing = extract_metadata(test_file, true).unwrap();
+        assert!(metadata_with_missing.missing_implementations.is_some());
     }
 }

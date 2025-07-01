@@ -88,7 +88,11 @@
       "Bash(./exiftool/exiftool -LensType -LensModel -RFLensType -json \"/home/mrm/src/exif-oxide/test-images/canon/canon_eos_r5_mark_ii_10.jpg\")",
       "Bash(./target/debug/exif-oxide:*)",
       "Bash(./test_or_pattern_extractor)",
-      "Bash(./target/release/exif-oxide:*)"
+      "Bash(./target/release/exif-oxide:*)",
+      "Bash(RUST_BACKTRACE=1 cargo test formats::tests::test_extract_metadata)",
+      "Bash(RUST_BACKTRACE=1 cargo test test_cli_with_test_image)",
+      "WebFetch(domain:insta.rs)",
+      "WebFetch(domain:rust-cli.github.io)"
     ],
     "deny": []
   }

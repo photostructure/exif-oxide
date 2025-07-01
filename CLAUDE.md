@@ -112,3 +112,8 @@ but whenever possible, we'd _prefer_ to test against full-size out-of-camera
 example files. If you cannot find a full-sized example that your current task
 demands in `$REPO_ROOT/test-images`, **ask the user** and we'll add it to the
 repository.
+
+### Avoid mocks and byte array snippets
+
+Whenever possible, use integration tests that load actual files from
+`$REPO_ROOT/test-images`. Avoid mocks and stubs where possible.
