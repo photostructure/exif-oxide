@@ -10,19 +10,27 @@ use lazy_static::lazy_static;
 use std::collections::HashSet;
 
 /// All PrintConv references that need implementation
+/// These match the print_conv_ref values used in generated/tags.rs
+/// TODO: Auto-generate this from tag definitions instead of manual maintenance (Milestone 8a)
+/// TODO: Missing RATIONAL formatting implementations (exposuretime_print_conv: "1/2000", fnumber_print_conv: "4.0", focallength_print_conv: "24.0 mm")
 pub static REQUIRED_PRINT_CONV: &[&str] = &[
-    "exposuretime_print_conv",
-    "whitebalance_print_conv",
     "orientation_print_conv",
-    "datetimeoriginal_print_conv",
-    "ycbcrpositioning_print_conv",
-    "ycbcrsubsampling_print_conv",
-    "colorspace_print_conv",
     "resolutionunit_print_conv",
-    "meteringmode_print_conv",
-    "createdate_print_conv",
-    "focallength_print_conv",
+    "exposuretime_print_conv",
     "fnumber_print_conv",
+    "exposureprogram_print_conv",
+    "datetimeoriginal_print_conv",
+    "createdate_print_conv",
+    "meteringmode_print_conv",
+    "flash_print_conv",
+    "focallength_print_conv",
+    "colorspace_print_conv",
+    "whitebalance_print_conv",
+    "ycbcrsubsampling_print_conv",
+    "ycbcrpositioning_print_conv",
+    "gpslatituderef_print_conv",
+    "gpslongituderef_print_conv",
+    "gpsaltituderef_print_conv",
 ];
 
 /// All ValueConv references that need implementation

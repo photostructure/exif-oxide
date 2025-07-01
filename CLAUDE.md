@@ -104,6 +104,14 @@ as a best practice, and explain those aspects to the user as we embrace them.
 
 ## Development guidance
 
+### Mark where the code smells
+
+While reviewing or editing code, if there are components that feel like a
+temporary hack or otherwise have a bad "code smell", ask the user to add a TODO
+comment into the code that tersely describes why it smells, along with either a
+link to a MILESTONES.md stage when it will be fixed, or a terse description of
+how it should be fixed in the future.
+
 ### Test images
 
 Unfortunately, the test images in `$REPO_ROOT/third-party/exiftool/t/images` are

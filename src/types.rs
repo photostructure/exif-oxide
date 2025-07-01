@@ -267,6 +267,7 @@ pub struct ExifData {
 }
 
 /// Error types for exif-oxide
+// TODO: Enhance error types to match ExifTool's sophisticated error classification system (warnings, errors, fatal)
 #[derive(Error, Debug)]
 pub enum ExifError {
     #[error("IO error: {0}")]

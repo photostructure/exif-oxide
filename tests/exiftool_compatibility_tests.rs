@@ -8,22 +8,49 @@ use similar::{ChangeTag, TextDiff};
 use std::collections::HashMap;
 use std::path::Path;
 
-/// Tags currently supported by exif-oxide (Milestone 6)
-/// GPS tags excluded until Milestone 8 (ValueConv registry implementation)
+/// Tags currently supported by exif-oxide (Milestone 7)
+/// Conservative list - only tags that work perfectly with existing implementations
+/// TODO: DRY up - this list is duplicated in tools/generate_exiftool_json.sh (Milestone 8a)
 const SUPPORTED_TAGS: &[&str] = &[
+    // File/basic metadata
     "Make",
     "Model",
-    "Orientation",
-    "ResolutionUnit",
-    "YCbCrPositioning",
     "MIMEType",
     "SourceFile",
     "FileName",
+    "Directory",
     "FileSize",
     "FileModifyDate",
     "ExifToolVersion",
-    // GPS tags will be re-enabled in Milestone 8:
-    // "GPSLatitude", "GPSLongitude", "GPSLatitudeRef", "GPSLongitudeRef", "GPSAltitude", "GPSAltitudeRef",
+    // EXIF tags with working PrintConv implementations
+    "Orientation",      // orientation_print_conv ✅
+    "ResolutionUnit",   // resolutionunit_print_conv ✅
+    "YCbCrPositioning", // ycbcrpositioning_print_conv ✅
+    "Flash",            // flash_print_conv ✅
+    "ColorSpace",       // colorspace_print_conv ✅
+    "ExposureProgram",  // exposureprogram_print_conv ✅
+
+                        // GPS tags temporarily excluded due to extraction issues (separate from PrintConv work)
+                        // "GPSLatitudeRef",        // gpslatituderef_print_conv ✅ - extraction issues in some files
+                        // "GPSLongitudeRef",       // gpslongituderef_print_conv ✅ - extraction issues in some files
+                        // "GPSAltitudeRef",        // gpsaltituderef_print_conv ✅ - value mismatch in GoPro files
+
+                        // TODO: Add these back when PrintConv implemented:
+                        // "MeteringMode",          // Needs Canon-specific "Evaluative" vs "Multi-segment" handling
+                        // "ExifImageWidth",        // Works but no PrintConv needed
+                        // "ExifImageHeight",       // Works but no PrintConv needed
+                        // "XResolution",           // Needs PrintConv to format as integer
+                        // "YResolution",           // Needs PrintConv to format as integer
+                        // "FocalLength",           // Needs PrintConv to format as "24.0 mm"
+                        // "FNumber",               // Needs PrintConv to format as "4.0"
+                        // "ExposureTime",          // Needs PrintConv to format as "1/2000"
+                        // "DateTimeOriginal",      // Needs PrintConv date formatting
+                        // "CreateDate",            // Needs PrintConv date formatting
+                        // "GPSLatitude",           // Needs ValueConv for decimal degrees (Milestone 8)
+                        // "GPSLongitude",          // Needs ValueConv for decimal degrees (Milestone 8)
+                        // "GPSAltitude",           // Works as raw rational
+                        // "GPSTimeStamp",          // Works as raw rational array
+                        // "GPSMapDatum",           // Works as string
 ];
 
 /// Files to exclude from testing (problematic files to deal with later)
