@@ -743,15 +743,17 @@ exif-oxide t/images/Canon.jpg | jq .MacroMode
 
 ## Future Milestones (Priority Order Based on Analysis)
 
-13. **XMP/XML Support** - Major format addition
-14. **Advanced Nikon Encryption** - Complete crypto port/implementation
-15. **Sony & Olympus** - Additional manufacturers
-16. **Write Support Foundation** - Basic tag updates
-17. **Video Metadata** - QuickTime/MP4 atoms
-18. **Advanced Write** - MakerNote preservation
-19. **RAW Formats** - CR2, NEF, ARW support
-20. **Async Support** - AsyncRead/AsyncSeek wrappers
-21. **Complete Coverage** - Remaining mainstream conversions
+1. **XMP/XML Support** - Major format addition
+1. **RAW Formats** - CR2, CR3, NEF, ARW, RAF, RW2, MRW, ... support
+1. **Sony & Olympus** - Additional manufacturers
+1. **Write Support Foundation** - Basic tag updates
+1. **Video Metadata** - QuickTime/MP4 atoms
+1. **Advanced Write** - MakerNote preservation
+1. **ImageDataHash** - See <https://exiftool.org/ExifTool.html#ImageHashType>
+1. **MIE Support** - Major format addition
+1. **Async Support** - AsyncRead/AsyncSeek wrappers
+1. **Advanced Nikon Encryption** - Complete crypto port/implementation
+1. **Complete Coverage** - Remaining mainstream conversions
 
 ## Development Strategy Updates
 
