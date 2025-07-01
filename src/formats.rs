@@ -251,6 +251,9 @@ pub fn scan_jpeg_segments<R: Read + Seek>(mut reader: R) -> Result<Option<JpegSe
 /// This function now implements real file reading and JPEG segment scanning.
 /// It detects JPEG files by magic bytes and locates EXIF data in APP1 segments.
 pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
+    // Ensure conversions are registered
+    crate::init();
+    
     // Open file with buffered reading for performance
     let file = File::open(path)?;
     let mut reader = BufReader::new(file);

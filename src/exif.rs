@@ -315,25 +315,34 @@ impl ExifReader {
         // Look up tag definition in generated tables
         let tag_def = TAG_BY_ID.get(&(entry.tag_id as u32));
 
-        // For Milestone 2, focus on ASCII tags (Make, Model, Software)
+        // Milestone 3: Support for common numeric formats with PrintConv
         // ExifTool: lib/Image/ExifTool/Exif.pm:6390-6570 value extraction
         match entry.format {
             TiffFormat::Ascii => {
                 let value = self.extract_ascii_value(&entry, byte_order)?;
                 if !value.is_empty() {
-                    self.extracted_tags
-                        .insert(entry.tag_id, TagValue::String(value));
+                    let tag_value = TagValue::String(value);
+                    let final_value = self.apply_conversions(&tag_value, tag_def.copied());
+                    self.extracted_tags.insert(entry.tag_id, final_value);
                 }
+            }
+            TiffFormat::Byte => {
+                let value = self.extract_byte_value(&entry)?;
+                let tag_value = TagValue::U8(value);
+                let final_value = self.apply_conversions(&tag_value, tag_def.copied());
+                self.extracted_tags.insert(entry.tag_id, final_value);
             }
             TiffFormat::Short => {
                 let value = self.extract_short_value(&entry, byte_order)?;
-                self.extracted_tags
-                    .insert(entry.tag_id, TagValue::U16(value));
+                let tag_value = TagValue::U16(value);
+                let final_value = self.apply_conversions(&tag_value, tag_def.copied());
+                self.extracted_tags.insert(entry.tag_id, final_value);
             }
             TiffFormat::Long => {
                 let value = self.extract_long_value(&entry, byte_order)?;
-                self.extracted_tags
-                    .insert(entry.tag_id, TagValue::U32(value));
+                let tag_value = TagValue::U32(value);
+                let final_value = self.apply_conversions(&tag_value, tag_def.copied());
+                self.extracted_tags.insert(entry.tag_id, final_value);
             }
             _ => {
                 // For other formats, store raw value for now
@@ -400,15 +409,47 @@ impl ExifReader {
 
         if entry.is_inline() {
             // Value stored inline - use lower 2 bytes of value_or_offset
+            // ExifTool: lib/Image/ExifTool/Exif.pm:6372 inline value handling
+            // The value_or_offset field is always stored in the file's byte order
             let bytes = match byte_order {
                 ByteOrder::LittleEndian => entry.value_or_offset.to_le_bytes(),
                 ByteOrder::BigEndian => entry.value_or_offset.to_be_bytes(),
             };
-            Ok(u16::from_le_bytes([bytes[0], bytes[1]]))
+            // For inline SHORT values, use the first 2 bytes in the correct order
+            Ok(match byte_order {
+                ByteOrder::LittleEndian => u16::from_le_bytes([bytes[0], bytes[1]]),
+                ByteOrder::BigEndian => u16::from_be_bytes([bytes[0], bytes[1]]),
+            })
         } else {
             // Value stored at offset
             let offset = entry.value_or_offset as usize;
             byte_order.read_u16(&self.data, offset)
+        }
+    }
+
+    /// Extract BYTE (u8) value
+    /// ExifTool: lib/Image/ExifTool/Exif.pm:6372-6398 value extraction
+    fn extract_byte_value(&self, entry: &IfdEntry) -> Result<u8> {
+        if entry.count != 1 {
+            return Err(ExifError::ParseError(format!(
+                "BYTE value with count {} not supported yet",
+                entry.count
+            )));
+        }
+
+        if entry.is_inline() {
+            // Value stored inline - use lowest byte of value_or_offset
+            // ExifTool: lib/Image/ExifTool/Exif.pm:6372 inline value handling
+            Ok(entry.value_or_offset as u8)
+        } else {
+            // Value stored at offset
+            let offset = entry.value_or_offset as usize;
+            if offset >= self.data.len() {
+                return Err(ExifError::ParseError(format!(
+                    "BYTE value offset {offset:#x} beyond data bounds"
+                )));
+            }
+            Ok(self.data[offset])
         }
     }
 
@@ -445,7 +486,8 @@ impl ExifReader {
             if let Some(tag_def) = TAG_BY_ID.get(&(tag_id as u32)) {
                 result.insert(tag_def.name.to_string(), value.clone());
             } else {
-                // Include unknown tags with hex ID
+                // Include unknown tags with hex ID matching ExifTool format
+                // ExifTool: lib/Image/ExifTool.pm unknown tag formatting
                 result.insert(format!("Tag_{tag_id:04X}"), value.clone());
             }
         }
@@ -461,6 +503,34 @@ impl ExifReader {
     /// Get TIFF header information
     pub fn get_header(&self) -> Option<&TiffHeader> {
         self.header.as_ref()
+    }
+
+    /// Apply ValueConv and PrintConv conversions to a raw tag value
+    /// ExifTool: lib/Image/ExifTool.pm conversion pipeline
+    fn apply_conversions(&self, raw_value: &TagValue, tag_def: Option<&'static crate::generated::tags::TagDef>) -> TagValue {
+        use crate::registry;
+
+        let mut value = raw_value.clone();
+
+        // Apply ValueConv first (if present)
+        if let Some(tag_def) = tag_def {
+            if let Some(value_conv_ref) = tag_def.value_conv_ref {
+                value = registry::apply_value_conv(value_conv_ref, &value);
+            }
+
+            // Apply PrintConv second (if present) to convert to human-readable string
+            if let Some(print_conv_ref) = tag_def.print_conv_ref {
+                let converted_string = registry::apply_print_conv(print_conv_ref, &value);
+                
+                // Only use the converted string if it's different from the raw value
+                // This prevents "Unknown (8)" type fallbacks from being used
+                if converted_string != value.to_string() {
+                    return TagValue::String(converted_string);
+                }
+            }
+        }
+
+        value
     }
 }
 

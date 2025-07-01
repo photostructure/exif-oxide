@@ -93,7 +93,8 @@
       "Bash(RUST_BACKTRACE=1 cargo test test_cli_with_test_image)",
       "WebFetch(domain:insta.rs)",
       "WebFetch(domain:rust-cli.github.io)",
-      "WebFetch(domain:doc.rust-lang.org)"
+      "WebFetch(domain:doc.rust-lang.org)",
+      "Bash(printf:*)"
     ],
     "deny": []
   }

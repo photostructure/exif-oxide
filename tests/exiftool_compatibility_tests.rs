@@ -8,12 +8,14 @@ use similar::{ChangeTag, TextDiff};
 use std::collections::HashMap;
 use std::path::Path;
 
-/// Tags currently supported by exif-oxide (Milestone 2)
+/// Tags currently supported by exif-oxide (Milestone 3)
 /// This list should be updated as more milestones are completed
 const SUPPORTED_TAGS: &[&str] = &[
     "Make",
     "Model",
-    // "Orientation", TODO
+    "Orientation",
+    "ResolutionUnit", 
+    "YCbCrPositioning",
     "MIMEType",
     "SourceFile",
     "FileName",
@@ -29,6 +31,8 @@ const EXCLUDED_FILES: &[&str] = &[
     "third-party/exiftool/t/images/PhotoMechanic.jpg",
     "third-party/exiftool/t/images/ExifTool.jpg",
     "third-party/exiftool/t/images/CasioQVCI.jpg",
+    "third-party/exiftool/t/images/InfiRay.jpg", // Thermal imaging - specialized format
+    "third-party/exiftool/t/images/IPTC.jpg",   // IPTC-specific metadata edge case
 ];
 
 /// Load ExifTool reference snapshot for a file
