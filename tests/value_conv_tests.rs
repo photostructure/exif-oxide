@@ -7,139 +7,9 @@
 use exif_oxide::implementations::value_conv::*;
 use exif_oxide::types::{ExifError, TagValue};
 
-#[test]
-fn test_gps_coordinate_valid_inputs() {
-    // Test standard GPS coordinate: 54°59'38"
-    let rationals = vec![(54, 1), (59, 1), (38, 1)];
-    let gps_value = TagValue::RationalArray(rationals);
-
-    let result = gps_coordinate_value_conv(&gps_value).unwrap();
-    if let TagValue::F64(decimal) = result {
-        let expected = 54.0 + 59.0 / 60.0 + 38.0 / 3600.0;
-        assert!((decimal - expected).abs() < 0.001);
-    } else {
-        panic!("Expected F64 result");
-    }
-
-    // Test with fractional seconds: 54°59'38.5"
-    let rationals = vec![(54, 1), (59, 1), (385, 10)];
-    let gps_value = TagValue::RationalArray(rationals);
-
-    let result = gps_coordinate_value_conv(&gps_value).unwrap();
-    if let TagValue::F64(decimal) = result {
-        let expected = 54.0 + 59.0 / 60.0 + 38.5 / 3600.0;
-        assert!((decimal - expected).abs() < 0.001);
-    } else {
-        panic!("Expected F64 result");
-    }
-}
-
-#[test]
-fn test_gps_coordinate_zero_values() {
-    // All zeros
-    let rationals = vec![(0, 1), (0, 1), (0, 1)];
-    let gps_value = TagValue::RationalArray(rationals);
-
-    let result = gps_coordinate_value_conv(&gps_value).unwrap();
-    if let TagValue::F64(decimal) = result {
-        assert_eq!(decimal, 0.0);
-    } else {
-        panic!("Expected F64 result");
-    }
-
-    // Zero numerators with various denominators
-    let rationals = vec![(0, 10), (0, 100), (0, 1000)];
-    let gps_value = TagValue::RationalArray(rationals);
-
-    let result = gps_coordinate_value_conv(&gps_value).unwrap();
-    if let TagValue::F64(decimal) = result {
-        assert_eq!(decimal, 0.0);
-    } else {
-        panic!("Expected F64 result");
-    }
-}
-
-#[test]
-fn test_gps_coordinate_zero_denominators() {
-    // Zero denominators should be handled gracefully
-    let rationals = vec![(54, 0), (59, 1), (38, 1)];
-    let gps_value = TagValue::RationalArray(rationals);
-
-    let result = gps_coordinate_value_conv(&gps_value).unwrap();
-    if let TagValue::F64(decimal) = result {
-        // With zero denominator in degrees, should treat as 0
-        let expected = 0.0 + 59.0 / 60.0 + 38.0 / 3600.0;
-        assert!((decimal - expected).abs() < 0.001);
-    } else {
-        panic!("Expected F64 result");
-    }
-
-    // All zero denominators
-    let rationals = vec![(54, 0), (59, 0), (38, 0)];
-    let gps_value = TagValue::RationalArray(rationals);
-
-    let result = gps_coordinate_value_conv(&gps_value).unwrap();
-    if let TagValue::F64(decimal) = result {
-        assert_eq!(decimal, 0.0);
-    } else {
-        panic!("Expected F64 result");
-    }
-}
-
-#[test]
-fn test_gps_coordinate_large_values() {
-    // Very large degrees (shouldn't happen in real GPS, but test handling)
-    let rationals = vec![(360, 1), (0, 1), (0, 1)];
-    let gps_value = TagValue::RationalArray(rationals);
-
-    let result = gps_coordinate_value_conv(&gps_value).unwrap();
-    if let TagValue::F64(decimal) = result {
-        assert_eq!(decimal, 360.0);
-    } else {
-        panic!("Expected F64 result");
-    }
-
-    // Large numerators and denominators
-    let rationals = vec![
-        (54000000, 1000000),
-        (59000000, 1000000),
-        (38000000, 1000000),
-    ];
-    let gps_value = TagValue::RationalArray(rationals);
-
-    let result = gps_coordinate_value_conv(&gps_value).unwrap();
-    if let TagValue::F64(decimal) = result {
-        let expected = 54.0 + 59.0 / 60.0 + 38.0 / 3600.0;
-        assert!((decimal - expected).abs() < 0.001);
-    } else {
-        panic!("Expected F64 result");
-    }
-}
-
-#[test]
-fn test_gps_coordinate_invalid_inputs() {
-    // Wrong type - not an array
-    let value = TagValue::String("54,59,38".to_string());
-    let result = gps_coordinate_value_conv(&value);
-    assert!(matches!(result, Err(ExifError::ParseError(_))));
-
-    // Too few elements
-    let rationals = vec![(54, 1), (59, 1)];
-    let gps_value = TagValue::RationalArray(rationals);
-    let result = gps_coordinate_value_conv(&gps_value);
-    assert!(matches!(result, Err(ExifError::ParseError(_))));
-
-    // Empty array
-    let rationals = vec![];
-    let gps_value = TagValue::RationalArray(rationals);
-    let result = gps_coordinate_value_conv(&gps_value);
-    assert!(matches!(result, Err(ExifError::ParseError(_))));
-
-    // Wrong value type
-    let value = TagValue::U16(42);
-    let result = gps_coordinate_value_conv(&value);
-    assert!(matches!(result, Err(ExifError::ParseError(_))));
-}
+// GPS coordinate ValueConv tests REMOVED in Milestone 8e
+// GPS coordinates now return raw rational arrays, not decimal degrees.
+// Decimal conversion will be handled by Composite tags.
 
 #[test]
 fn test_apex_shutter_speed_valid() {
@@ -590,31 +460,6 @@ fn test_placeholder_functions() {
     }
 }
 
-#[test]
-fn test_gps_wrapper_functions() {
-    // Test that all GPS wrapper functions work identically
-    let rationals = vec![(45, 1), (30, 1), (15, 1)];
-    let gps_value = TagValue::RationalArray(rationals);
-
-    let lat_result = gpslatitude_value_conv(&gps_value).unwrap();
-    let lon_result = gpslongitude_value_conv(&gps_value).unwrap();
-    let dest_lat_result = gpsdestlatitude_value_conv(&gps_value).unwrap();
-    let dest_lon_result = gpsdestlongitude_value_conv(&gps_value).unwrap();
-
-    // All should produce the same result
-    if let (TagValue::F64(lat), TagValue::F64(lon), TagValue::F64(dlat), TagValue::F64(dlon)) =
-        (lat_result, lon_result, dest_lat_result, dest_lon_result)
-    {
-        assert_eq!(lat, lon);
-        assert_eq!(lat, dlat);
-        assert_eq!(lat, dlon);
-        let expected = 45.0 + 30.0 / 60.0 + 15.0 / 3600.0;
-        assert!((lat - expected).abs() < 0.001);
-    } else {
-        panic!("Expected all F64 results");
-    }
-}
-
 /// Test that no conversion function panics on any input type
 #[test]
 fn test_no_panics_on_any_input() {
@@ -641,12 +486,7 @@ fn test_no_panics_on_any_input() {
     // Test each conversion function with each value type
     // None should panic - they should either succeed or return an error
     for value in &test_values {
-        // GPS conversions
-        let _ = gps_coordinate_value_conv(value);
-        let _ = gpslatitude_value_conv(value);
-        let _ = gpslongitude_value_conv(value);
-        let _ = gpsdestlatitude_value_conv(value);
-        let _ = gpsdestlongitude_value_conv(value);
+        // GPS conversions (GPS coordinate conversions removed in Milestone 8e)
         let _ = gpstimestamp_value_conv(value);
         let _ = gpsdatestamp_value_conv(value);
 
@@ -666,20 +506,8 @@ fn test_no_panics_on_any_input() {
 /// Integration test: Verify conversion chaining works properly
 #[test]
 fn test_value_conv_to_print_conv_chaining() {
-    // Test GPS coordinate -> decimal degrees -> formatted string
-    let rationals = vec![(51, 1), (28, 1), (38, 1)];
-    let gps_value = TagValue::RationalArray(rationals);
-
-    // First apply ValueConv
-    let decimal_result = gps_coordinate_value_conv(&gps_value).unwrap();
-
-    // Then apply PrintConv (if it existed for coordinates)
-    // For now just verify we got a valid decimal
-    if let TagValue::F64(decimal) = decimal_result {
-        assert!(decimal > 51.0 && decimal < 52.0);
-    } else {
-        panic!("Expected F64 from ValueConv");
-    }
+    // GPS coordinate conversion removed in Milestone 8e
+    // GPS coordinates now return raw rational arrays
 
     // Test APEX aperture -> f-number -> formatted string
     let apex_value = TagValue::F64(5.0);
@@ -696,24 +524,8 @@ fn test_value_conv_to_print_conv_chaining() {
 /// Stress test with extreme values
 #[test]
 fn test_extreme_values() {
-    // Test with u32::MAX values
-    let huge_rationals = vec![(u32::MAX, 1), (u32::MAX, 1), (u32::MAX, 1)];
-    let gps_value = TagValue::RationalArray(huge_rationals);
-
-    // Should not panic, even with huge values
-    let result = gps_coordinate_value_conv(&gps_value);
-    assert!(result.is_ok());
-
-    // Test with very small denominators
-    let tiny_rationals = vec![(1, u32::MAX), (1, u32::MAX), (1, u32::MAX)];
-    let gps_value = TagValue::RationalArray(tiny_rationals);
-
-    let result = gps_coordinate_value_conv(&gps_value);
-    assert!(result.is_ok());
-    if let Ok(TagValue::F64(val)) = result {
-        // Should be very close to zero
-        assert!(val < 0.0001);
-    }
+    // GPS coordinate extreme value tests removed in Milestone 8e
+    // GPS coordinates now return raw rational arrays
 
     // Test APEX with extreme values
     let extreme_apex = TagValue::F64(50.0);
