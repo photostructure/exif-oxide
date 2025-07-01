@@ -1,5 +1,6 @@
 use clap::{Arg, Command};
 use std::path::PathBuf;
+use tracing::{info, error, debug};
 
 // Import our library modules
 use exif_oxide::formats::extract_metadata;
@@ -11,6 +12,14 @@ use exif_oxide::formats::extract_metadata;
 /// exif-oxide image1.jpg image2.jpg image3.jpg
 /// exif-oxide --show-missing *.jpg
 fn main() {
+    // Initialize tracing subscriber for structured logging
+    // Use environment variable RUST_LOG to control logging level (e.g., RUST_LOG=debug)
+    tracing_subscriber::fmt()
+        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+        .init();
+
+    info!("Starting exif-oxide");
+
     // Build CLI interface using clap
     // Clap is Rust's most popular CLI argument parsing library
     let matches = Command::new("exif-oxide")
@@ -38,6 +47,9 @@ fn main() {
 
     // Convert strings to PathBufs for proper file handling
     let paths: Vec<PathBuf> = file_paths.iter().map(PathBuf::from).collect();
+    
+    debug!("Processing {} files", paths.len());
+    debug!("Show missing implementations: {}", show_missing);
 
     // Process all files - this will output a JSON array like ExifTool
     match process_files(&paths, show_missing) {
@@ -46,6 +58,7 @@ fn main() {
         }
         Err(e) => {
             // Rust error handling - print to stderr and exit with error code
+            error!("Fatal error: {}", e);
             eprintln!("Error: {e}");
             std::process::exit(1);
         }
@@ -64,13 +77,16 @@ fn process_files(paths: &[PathBuf], show_missing: bool) -> Result<(), Box<dyn st
 
     // Process each file
     for path in paths {
+        debug!("Processing file: {}", path.display());
         match process_single_file(path, show_missing) {
             Ok(metadata) => {
+                info!("Successfully processed: {}", path.display());
                 results.push(metadata);
             }
             Err(e) => {
                 // ExifTool continues processing other files on error
                 // Create error entry similar to ExifTool's behavior
+                error!("Failed to process {}: {}", path.display(), e);
                 let error_metadata = ExifData {
                     source_file: path.to_string_lossy().to_string(),
                     exif_tool_version: "0.1.0-oxide".to_string(),
