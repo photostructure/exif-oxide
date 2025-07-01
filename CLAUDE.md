@@ -135,3 +135,15 @@ Whenever possible, use integration tests that load actual files from
 
 Check the debug logging -- and if a component is missing debug logging, feel free to add it.
 We use `tracing`, and there's lots of examples in `src/main.rs`.
+
+### Git commit messages
+
+All commit messages must follow the Conventional Commits specification
+(https://www.conventionalcommits.org/en/v1.0.0/). Use the format:
+`<type>[optional scope]: <description>` where type is `feat` (new features,
+MINOR version), `fix` (bug patches, PATCH version), or other types like `docs`,
+`style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`. Breaking changes
+are indicated with `!` after type/scope or with a `BREAKING CHANGE:` footer. The
+scope should reference the most significant file/module changed. Keep
+descriptions concise and avoid enumerating every change unless crucial for
+understanding.
