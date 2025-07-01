@@ -14,7 +14,7 @@ const SUPPORTED_TAGS: &[&str] = &[
     "Make",
     "Model",
     "Orientation",
-    "ResolutionUnit", 
+    "ResolutionUnit",
     "YCbCrPositioning",
     "MIMEType",
     "SourceFile",
@@ -32,7 +32,7 @@ const EXCLUDED_FILES: &[&str] = &[
     "third-party/exiftool/t/images/ExifTool.jpg",
     "third-party/exiftool/t/images/CasioQVCI.jpg",
     "third-party/exiftool/t/images/InfiRay.jpg", // Thermal imaging - specialized format
-    "third-party/exiftool/t/images/IPTC.jpg",   // IPTC-specific metadata edge case
+    "third-party/exiftool/t/images/IPTC.jpg",    // IPTC-specific metadata edge case
 ];
 
 /// Load ExifTool reference snapshot for a file
