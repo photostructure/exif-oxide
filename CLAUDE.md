@@ -122,3 +122,8 @@ Whenever possible, use integration tests that load actual files from
 
 - **NEVER use `rm -rf` in scripts** - it's too dangerous and can accidentally delete important files. Use specific file patterns with `rm -f` instead (e.g., `rm -f "$DIR/*.json"`)
 - Always prefer targeted cleanup over recursive deletion
+
+### Wondering what's going on?
+
+Check the debug logging -- and if a component is missing debug logging, feel free to add it.
+We use `tracing`, and there's lots of examples in `src/main.rs`.

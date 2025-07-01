@@ -21,6 +21,8 @@ lazy_static = "1.5"    # For static hash maps in detection module
 phf = { version = "0.11", features = ["macros"] }  # Perfect hash functions for pattern matching
 clap = { version = "4.0", features = ["derive"] }  # CLI argument parsing
 quick-xml = "0.36"     # Fast XML parsing for XMP metadata
+tracing = "0.1"        # Structured logging and instrumentation
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }  # Tracing subscriber implementation
 
 [dev-dependencies]
 criterion = "0.5"      # Benchmarking
@@ -28,6 +30,7 @@ pretty_assertions = "1.4"  # Better test assertions
 tempfile = "3.8"       # Temporary files for testing
 clap = { version = "4.0", features = ["derive"] }  # CLI argument parsing for analysis tools
 similar = { version = "2.7", features = ["text"] }  # Text diffing for ExifTool comparison
+tracing-test = "0.2"   # Testing utilities for tracing
 
 [[bin]]
 name = "exif-oxide"
