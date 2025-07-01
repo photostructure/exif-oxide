@@ -738,41 +738,43 @@ impl ExifReader {
     }
 
     /// Get all extracted tags with their names (conversions already applied during extraction)
+    /// Returns tags with group prefixes (e.g., "EXIF:Make", "GPS:GPSLatitude")
+    /// matching ExifTool's -G mode behavior
     pub fn get_all_tags(&self) -> HashMap<String, TagValue> {
         let mut result = HashMap::new();
 
         for (&tag_id, value) in &self.extracted_tags {
-            // Look up tag name based on which IFD it came from
-            // ExifTool: Different IFDs have different tag tables
-            let tag_name = if let Some(ifd_name) = self.tag_sources.get(&tag_id) {
-                match ifd_name.as_str() {
-                    "GPS" => {
-                        // Look up in unified tag table
-                        TAG_BY_ID
-                            .get(&(tag_id as u32))
-                            .map(|tag_def| tag_def.name.to_string())
-                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
-                    }
-                    _ => {
-                        // Look up in main EXIF tag table
-                        TAG_BY_ID
-                            .get(&(tag_id as u32))
-                            .map(|tag_def| tag_def.name.to_string())
-                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
-                    }
-                }
-            } else {
-                // Fallback for tags without source tracking
-                TAG_BY_ID
-                    .get(&(tag_id as u32))
-                    .map(|tag_def| tag_def.name.to_string())
-                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+            // Get the IFD source for this tag
+            let ifd_name = self
+                .tag_sources
+                .get(&tag_id)
+                .map(|s| s.as_str())
+                .unwrap_or("Root");
+
+            // Map IFD names to ExifTool group names
+            // ExifTool: lib/Image/ExifTool/Exif.pm group mappings
+            let group_name = match ifd_name {
+                "Root" | "IFD0" | "IFD1" => "EXIF",
+                "GPS" => "GPS",
+                "ExifIFD" => "EXIF",
+                "InteropIFD" => "EXIF",
+                "MakerNotes" => "MakerNotes",
+                _ => "EXIF", // Default to EXIF for unknown IFDs
             };
 
+            // Look up tag name in unified table
+            let base_tag_name = TAG_BY_ID
+                .get(&(tag_id as u32))
+                .map(|tag_def| tag_def.name.to_string())
+                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+
+            // Format with group prefix
+            let tag_name = format!("{group_name}:{base_tag_name}");
+
             trace!(
-                "Tag {:#x} from {:?} -> {}: {:?}",
+                "Tag {:#x} from {} -> {}: {:?}",
                 tag_id,
-                self.tag_sources.get(&tag_id),
+                ifd_name,
                 tag_name,
                 value
             );

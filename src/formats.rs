@@ -269,7 +269,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
 
     // Basic file information (now real data)
     tags.insert(
-        "FileName".to_string(),
+        "File:FileName".to_string(),
         TagValue::String(
             path.file_name()
                 .unwrap_or_default()
@@ -279,7 +279,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
     );
 
     tags.insert(
-        "Directory".to_string(),
+        "File:Directory".to_string(),
         TagValue::String(
             path.parent()
                 .unwrap_or_else(|| Path::new("."))
@@ -289,7 +289,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
     );
 
     tags.insert(
-        "FileSize".to_string(),
+        "File:FileSize".to_string(),
         TagValue::String(format!("{file_size} bytes")),
     );
 
@@ -297,22 +297,22 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
     if let Ok(modified) = file_metadata.modified() {
         if let Ok(duration) = modified.duration_since(std::time::UNIX_EPOCH) {
             tags.insert(
-                "FileModifyDate".to_string(),
+                "File:FileModifyDate".to_string(),
                 TagValue::String(format!("{} seconds since epoch", duration.as_secs())),
             );
         }
     }
 
     tags.insert(
-        "FileType".to_string(),
+        "File:FileType".to_string(),
         TagValue::String(format!("{format:?}")),
     );
     tags.insert(
-        "FileTypeExtension".to_string(),
+        "File:FileTypeExtension".to_string(),
         TagValue::String(format.extension().to_string()),
     );
     tags.insert(
-        "MIMEType".to_string(),
+        "File:MIMEType".to_string(),
         TagValue::String(format.mime_type().to_string()),
     );
 
@@ -329,7 +329,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
 
                     // Add EXIF detection status
                     tags.insert(
-                        "ExifDetectionStatus".to_string(),
+                        "System:ExifDetectionStatus".to_string(),
                         TagValue::String(exif_status),
                     );
 
@@ -351,7 +351,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                             // Add EXIF parsing status
                             let header = exif_reader.get_header().unwrap();
                             tags.insert(
-                                "ExifByteOrder".to_string(),
+                                "System:ExifByteOrder".to_string(),
                                 TagValue::String(
                                     match header.byte_order {
                                         crate::exif::ByteOrder::LittleEndian => {
@@ -369,7 +369,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                             let warnings = exif_reader.get_warnings();
                             if !warnings.is_empty() {
                                 tags.insert(
-                                    "ExifWarnings".to_string(),
+                                    "System:ExifWarnings".to_string(),
                                     TagValue::String(format!("{} warnings", warnings.len())),
                                 );
                             }
@@ -377,7 +377,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                         Err(e) => {
                             // EXIF parsing failed - include error but continue
                             tags.insert(
-                                "ExifParseError".to_string(),
+                                "System:ExifParseError".to_string(),
                                 TagValue::String(format!("Failed to parse EXIF data: {e}")),
                             );
                         }
@@ -386,7 +386,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                 None => {
                     // No EXIF data available
                     tags.insert(
-                        "ExifDetectionStatus".to_string(),
+                        "System:ExifDetectionStatus".to_string(),
                         TagValue::String("No EXIF data found in JPEG file".to_string()),
                     );
                 }
@@ -394,7 +394,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         }
         FileFormat::Tiff => {
             tags.insert(
-                "ExifDetectionStatus".to_string(),
+                "System:ExifDetectionStatus".to_string(),
                 TagValue::String(
                     "TIFF format detected but parsing not implemented yet".to_string(),
                 ),
@@ -402,7 +402,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         }
         _ => {
             tags.insert(
-                "ExifDetectionStatus".to_string(),
+                "System:ExifDetectionStatus".to_string(),
                 TagValue::String(format!(
                     "{format:?} format detected but parsing not implemented yet"
                 )),
@@ -523,20 +523,20 @@ mod tests {
 
         assert_eq!(metadata.source_file, test_file.to_string_lossy());
         assert_eq!(metadata.exif_tool_version, "0.1.0-oxide");
-        assert!(metadata.tags.contains_key("FileName"));
-        assert!(metadata.tags.contains_key("FileType"));
-        assert!(metadata.tags.contains_key("ExifDetectionStatus"));
+        assert!(metadata.tags.contains_key("File:FileName"));
+        assert!(metadata.tags.contains_key("File:FileType"));
+        assert!(metadata.tags.contains_key("System:ExifDetectionStatus"));
         assert!(metadata.missing_implementations.is_none());
 
-        // Should extract real EXIF data
-        assert!(metadata.tags.contains_key("Make"));
-        assert!(metadata.tags.contains_key("Model"));
+        // Should extract real EXIF data with group prefixes
+        assert!(metadata.tags.contains_key("EXIF:Make"));
+        assert!(metadata.tags.contains_key("EXIF:Model"));
 
         // Verify the extracted values match what we expect from this Canon image
-        if let Some(make) = metadata.tags.get("Make") {
+        if let Some(make) = metadata.tags.get("EXIF:Make") {
             assert_eq!(make.as_string(), Some("Canon"));
         }
-        if let Some(model) = metadata.tags.get("Model") {
+        if let Some(model) = metadata.tags.get("EXIF:Model") {
             assert_eq!(model.as_string(), Some("Canon EOS REBEL T3i"));
         }
 

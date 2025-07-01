@@ -107,7 +107,8 @@
       "WebFetch(domain:www.conventionalcommits.org)",
       "Bash(./exif-oxide:*)",
       "Bash(RUST_LOG=debug cargo run -- test-images/gopro/GoPro.jpg)",
-      "Bash(RUST_LOG=debug ./target/release/exif-oxide test-images/canon/Canon_T3i.JPG)"
+      "Bash(RUST_LOG=debug ./target/release/exif-oxide test-images/canon/Canon_T3i.JPG)",
+      "Bash(bash:*)"
     ],
     "deny": []
   }

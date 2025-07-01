@@ -42,8 +42,8 @@ fn test_cli_with_test_image() {
     // Check required ExifTool fields
     assert!(obj.get("SourceFile").is_some());
     assert!(obj.get("ExifToolVersion").is_some());
-    assert!(obj.get("FileName").is_some());
-    assert!(obj.get("Directory").is_some());
+    assert!(obj.get("File:FileName").is_some());
+    assert!(obj.get("File:Directory").is_some());
 
     // Check that SourceFile matches input
     assert_eq!(
@@ -141,18 +141,18 @@ fn test_json_structure_compatibility() {
     // Should have string values for basic fields
     assert!(obj["SourceFile"].is_string());
     assert!(obj["ExifToolVersion"].is_string());
-    assert!(obj["FileName"].is_string());
-    assert!(obj["Directory"].is_string());
+    assert!(obj["File:FileName"].is_string());
+    assert!(obj["File:Directory"].is_string());
 
     // Milestone 2 implements real EXIF parsing for ASCII and numeric tags
     // Should extract Make and Model from Canon image
-    assert!(obj.contains_key("Make"));
-    assert!(obj.contains_key("Model"));
-    assert_eq!(obj["Make"], "Canon");
-    assert_eq!(obj["Model"], "Canon EOS REBEL T3i");
+    assert!(obj.contains_key("EXIF:Make"));
+    assert!(obj.contains_key("EXIF:Model"));
+    assert_eq!(obj["EXIF:Make"], "Canon");
+    assert_eq!(obj["EXIF:Model"], "Canon EOS REBEL T3i");
 
     // Milestone 4: Should extract PrintConv converted values like Orientation
-    if let Some(orientation) = obj.get("Orientation") {
+    if let Some(orientation) = obj.get("EXIF:Orientation") {
         assert!(orientation.is_string());
         // Should match ExifTool's PrintConv value for this Canon image
         assert_eq!(orientation, "Rotate 270 CW");
@@ -211,8 +211,9 @@ fn test_compare_with_exiftool() {
         exiftool_data["SourceFile"].as_str().unwrap()
     );
 
+    // Check for group-prefixed filename in our output
     assert_eq!(
-        our_data["FileName"].as_str().unwrap(),
+        our_data["File:FileName"].as_str().unwrap(),
         exiftool_data["FileName"].as_str().unwrap()
     );
 
