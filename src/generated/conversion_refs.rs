@@ -11,30 +11,54 @@ use std::collections::HashSet;
 
 /// All PrintConv references that need implementation
 /// These match the print_conv_ref values used in generated/tags.rs
-/// TODO: Auto-generate this from tag definitions instead of manual maintenance (Milestone 8a)
-/// TODO: Missing RATIONAL formatting implementations (exposuretime_print_conv: "1/2000", fnumber_print_conv: "4.0", focallength_print_conv: "24.0 mm")
 pub static REQUIRED_PRINT_CONV: &[&str] = &[
+    "colorspace_print_conv",
+    "createdate_print_conv",
+    "datetimeoriginal_print_conv",
+    "exposureprogram_print_conv",
+    "exposuretime_print_conv",
+    "flash_print_conv",
+    "fnumber_print_conv",
+    "focallength_print_conv",
+    "gpsaltitude_print_conv",
+    "gpsaltituderef_print_conv",
+    "gpsdestbearingref_print_conv",
+    "gpsdestdistanceref_print_conv",
+    "gpsdestlatitude_print_conv",
+    "gpsdestlatituderef_print_conv",
+    "gpsdestlongitude_print_conv",
+    "gpsdestlongituderef_print_conv",
+    "gpsdifferential_print_conv",
+    "gpshpositioningerror_print_conv",
+    "gpsimgdirectionref_print_conv",
+    "gpslatitude_print_conv",
+    "gpslatituderef_print_conv",
+    "gpslongitude_print_conv",
+    "gpslongituderef_print_conv",
+    "gpsmeasuremode_print_conv",
+    "gpsspeedref_print_conv",
+    "gpsstatus_print_conv",
+    "gpstimestamp_print_conv",
+    "gpstrackref_print_conv",
+    "gpsversionid_print_conv",
+    "meteringmode_print_conv",
     "orientation_print_conv",
     "resolutionunit_print_conv",
-    "exposuretime_print_conv",
-    "fnumber_print_conv",
-    "exposureprogram_print_conv",
-    "datetimeoriginal_print_conv",
-    "createdate_print_conv",
-    "meteringmode_print_conv",
-    "flash_print_conv",
-    "focallength_print_conv",
-    "colorspace_print_conv",
     "whitebalance_print_conv",
-    "ycbcrsubsampling_print_conv",
     "ycbcrpositioning_print_conv",
-    "gpslatituderef_print_conv",
-    "gpslongituderef_print_conv",
-    "gpsaltituderef_print_conv",
+    "ycbcrsubsampling_print_conv",
 ];
 
 /// All ValueConv references that need implementation
-pub static REQUIRED_VALUE_CONV: &[&str] = &["whitebalance_value_conv"];
+pub static REQUIRED_VALUE_CONV: &[&str] = &[
+    "gpsdatestamp_value_conv",
+    "gpsdestlatitude_value_conv",
+    "gpsdestlongitude_value_conv",
+    "gpslatitude_value_conv",
+    "gpslongitude_value_conv",
+    "gpstimestamp_value_conv",
+    "whitebalance_value_conv",
+];
 
 lazy_static! {
     static ref REQUIRED_PRINT_CONV_SET: HashSet<&'static str> =
