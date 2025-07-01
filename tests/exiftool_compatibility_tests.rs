@@ -69,6 +69,7 @@ fn run_exif_oxide(file_path: &str) -> Result<Value, Box<dyn std::error::Error>> 
 }
 
 /// Filter JSON object to only include supported tags
+/// Now handles group-prefixed tag names (e.g., "EXIF:Make" -> "Make")
 fn filter_to_supported_tags(data: &Value) -> Value {
     if let Some(obj) = data.as_object() {
         let supported_tags = load_supported_tags();
@@ -76,7 +77,15 @@ fn filter_to_supported_tags(data: &Value) -> Value {
 
         let filtered: HashMap<String, Value> = obj
             .iter()
-            .filter(|(key, _)| supported_tag_refs.contains(&key.as_str()))
+            .filter(|(key, _)| {
+                // Extract tag name from group-prefixed format
+                let tag_name = if let Some(colon_pos) = key.find(':') {
+                    &key[colon_pos + 1..]
+                } else {
+                    key.as_str()
+                };
+                supported_tag_refs.contains(&tag_name)
+            })
             .map(|(k, v)| (k.clone(), v.clone()))
             .collect();
         serde_json::to_value(filtered).unwrap()
@@ -103,8 +112,8 @@ fn normalize_for_comparison(mut data: Value, _is_exiftool: bool) -> Value {
             }
         }
 
-        // Normalize Directory to relative path
-        if let Some(directory) = obj.get_mut("Directory") {
+        // Normalize Directory to relative path (now with File: prefix)
+        if let Some(directory) = obj.get_mut("File:Directory") {
             if let Some(dir_str) = directory.as_str() {
                 if dir_str.starts_with('/') {
                     if let Ok(cwd) = std::env::current_dir() {
@@ -119,13 +128,16 @@ fn normalize_for_comparison(mut data: Value, _is_exiftool: bool) -> Value {
 
         // Don't compare version fields - they'll always be different
         obj.remove("ExifToolVersion");
+        obj.remove("ExifTool:ExifToolVersion");
 
         // Don't compare file modification times - they may vary
         obj.remove("FileModifyDate");
+        obj.remove("File:FileModifyDate");
 
         // Normalize file size format (ExifTool: "5.5 MB", exif-oxide: "5469898 bytes")
         // For now, just remove it since formats differ significantly
         obj.remove("FileSize");
+        obj.remove("File:FileSize");
     }
 
     data
