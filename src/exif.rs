@@ -11,7 +11,7 @@
 //!
 //! Reference: lib/Image/ExifTool/Exif.pm ProcessExif function
 
-use crate::generated::{GPS_TAG_BY_ID, TAG_BY_ID};
+use crate::generated::TAG_BY_ID;
 use crate::types::{
     DataMemberValue, DirectoryInfo, ExifError, ProcessorDispatch, ProcessorType, Result, TagValue,
 };
@@ -402,10 +402,7 @@ impl ExifReader {
 
         // Look up tag definition in appropriate table based on IFD type
         // ExifTool: Different IFDs use different tag tables
-        let tag_def = match ifd_name {
-            "GPS" => GPS_TAG_BY_ID.get(&(entry.tag_id as u32)),
-            _ => TAG_BY_ID.get(&(entry.tag_id as u32)),
-        };
+        let tag_def = TAG_BY_ID.get(&(entry.tag_id as u32));
 
         // Milestone 3: Support for common numeric formats with PrintConv
         // ExifTool: lib/Image/ExifTool/Exif.pm:6390-6570 value extraction
@@ -442,12 +439,14 @@ impl ExifReader {
                 let value = self.extract_short_value(&entry, byte_order)?;
                 let tag_value = TagValue::U16(value);
                 let final_value = self.apply_conversions(&tag_value, tag_def.copied());
+
                 trace!(
                     "Extracted SHORT tag {:#x} from {}: {:?}",
                     entry.tag_id,
                     ifd_name,
                     final_value
                 );
+
                 self.extracted_tags.insert(entry.tag_id, final_value);
                 self.tag_sources.insert(entry.tag_id, ifd_name.to_string());
             }
@@ -748,8 +747,8 @@ impl ExifReader {
             let tag_name = if let Some(ifd_name) = self.tag_sources.get(&tag_id) {
                 match ifd_name.as_str() {
                     "GPS" => {
-                        // Look up in GPS tag table
-                        GPS_TAG_BY_ID
+                        // Look up in unified tag table
+                        TAG_BY_ID
                             .get(&(tag_id as u32))
                             .map(|tag_def| tag_def.name.to_string())
                             .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
@@ -1007,6 +1006,10 @@ impl ExifReader {
         );
 
         // Process the subdirectory
+        debug!(
+            "About to process subdirectory {} at offset {:#x}",
+            subdir_name, offset
+        );
         self.process_subdirectory(&dir_info)
     }
 
