@@ -157,3 +157,129 @@ pub enum ExifError {
 
 /// Result type alias for convenience
 pub type Result<T> = std::result::Result<T, ExifError>;
+
+/// Directory processing context for nested IFD processing
+/// Matches ExifTool's $dirInfo hash structure
+#[derive(Debug, Clone)]
+pub struct DirectoryInfo {
+    /// Directory name for debugging and PATH tracking
+    pub name: String,
+    /// Start offset of directory within data
+    pub dir_start: usize,
+    /// Length of directory data
+    pub dir_len: usize,
+    /// Base offset for pointer calculations (ExifTool's Base)
+    pub base: u64,
+    /// File position of data block (ExifTool's DataPos)
+    pub data_pos: u64,
+    /// Whether this directory allows reprocessing (ALLOW_REPROCESS)
+    pub allow_reprocess: bool,
+}
+
+/// Data member value for tag dependencies
+/// ExifTool: DataMember mechanism for inter-tag dependencies
+#[derive(Debug, Clone, PartialEq)]
+pub enum DataMemberValue {
+    U8(u8),
+    U16(u16),
+    U32(u32),
+    String(String),
+}
+
+impl DataMemberValue {
+    pub fn as_u16(&self) -> Option<u16> {
+        match self {
+            DataMemberValue::U16(v) => Some(*v),
+            DataMemberValue::U8(v) => Some(*v as u16),
+            _ => None,
+        }
+    }
+
+    pub fn as_u32(&self) -> Option<u32> {
+        match self {
+            DataMemberValue::U32(v) => Some(*v),
+            DataMemberValue::U16(v) => Some(*v as u32),
+            DataMemberValue::U8(v) => Some(*v as u32),
+            _ => None,
+        }
+    }
+
+    pub fn as_usize(&self) -> Option<usize> {
+        match self {
+            DataMemberValue::U32(v) => Some(*v as usize),
+            DataMemberValue::U16(v) => Some(*v as usize),
+            DataMemberValue::U8(v) => Some(*v as usize),
+            _ => None,
+        }
+    }
+}
+
+/// Processor types for PROCESS_PROC dispatch system
+/// ExifTool: Different processing procedures for different data formats
+#[derive(Debug, Clone, PartialEq)]
+pub enum ProcessorType {
+    /// Standard EXIF IFD processing (default)
+    /// ExifTool: ProcessExif function
+    Exif,
+    /// Binary data processing with format tables
+    /// ExifTool: ProcessBinaryData function
+    BinaryData,
+    /// GPS IFD processing
+    /// ExifTool: Uses ProcessExif but with GPS-specific context
+    Gps,
+    /// Canon manufacturer-specific processing
+    Canon(CanonProcessor),
+    /// Nikon manufacturer-specific processing  
+    Nikon(NikonProcessor),
+    /// Generic manufacturer processing
+    Generic(String),
+}
+
+/// Canon-specific processor variants
+/// ExifTool: Canon.pm has multiple processing procedures
+#[derive(Debug, Clone, PartialEq)]
+pub enum CanonProcessor {
+    /// Standard Canon EXIF processing
+    Main,
+    /// Canon serial data processing
+    /// ExifTool: ProcessSerialData
+    SerialData,
+    /// Canon binary data processing
+    BinaryData,
+}
+
+/// Nikon-specific processor variants
+/// ExifTool: Nikon.pm has multiple processing procedures
+#[derive(Debug, Clone, PartialEq)]
+pub enum NikonProcessor {
+    /// Standard Nikon EXIF processing
+    Main,
+    /// Nikon encrypted data processing
+    /// ExifTool: ProcessNikonEncrypted
+    Encrypted,
+}
+
+/// Processor dispatch configuration
+/// ExifTool: Combination of table PROCESS_PROC and SubDirectory ProcessProc
+#[derive(Debug, Clone)]
+pub struct ProcessorDispatch {
+    /// Table-level default processor
+    /// ExifTool: $$tagTablePtr{PROCESS_PROC}
+    pub table_processor: Option<ProcessorType>,
+    /// SubDirectory-specific processor overrides
+    /// ExifTool: $$subdir{ProcessProc}
+    pub subdirectory_overrides: std::collections::HashMap<u16, ProcessorType>,
+    /// Parameters passed to processor
+    /// ExifTool: Additional SubDirectory parameters
+    pub parameters: std::collections::HashMap<String, String>,
+}
+
+impl Default for ProcessorDispatch {
+    fn default() -> Self {
+        Self {
+            table_processor: Some(ProcessorType::Exif), // Default fallback
+            subdirectory_overrides: std::collections::HashMap::new(),
+            parameters: std::collections::HashMap::new(),
+        }
+    }
+}
