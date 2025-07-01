@@ -38,8 +38,8 @@ clean:
 
 # Extract EXIF tags from ExifTool and regenerate Rust code
 codegen:
-	perl codegen/extract_tables.pl > codegen/tag_tables.json
-	cd codegen && cargo run -- tag_tables.json --output-dir ../src/generated
+	perl codegen/extract_tables.pl > codegen/generated/tag_tables.json
+	cd codegen && cargo run -- generated/tag_tables.json --output-dir ../src/generated
 
 # Extract all ExifTool algorithms and regenerate code  
 sync: codegen
