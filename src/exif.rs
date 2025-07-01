@@ -11,7 +11,7 @@
 //!
 //! Reference: lib/Image/ExifTool/Exif.pm ProcessExif function
 
-use crate::generated::TAG_BY_ID;
+use crate::generated::{COMPOSITE_TAGS, TAG_BY_ID};
 use crate::types::{
     DataMemberValue, DirectoryInfo, ExifError, ProcessorDispatch, ProcessorType, Result, TagValue,
 };
@@ -236,6 +236,9 @@ pub struct ExifReader {
     /// Processor dispatch configuration
     /// ExifTool: PROCESS_PROC system for different directory types
     processor_dispatch: ProcessorDispatch,
+    /// Computed composite tag values
+    /// Milestone 8f: Infrastructure for composite tag computation
+    composite_tags: HashMap<String, TagValue>,
 }
 
 impl ExifReader {
@@ -253,6 +256,7 @@ impl ExifReader {
             data_members: HashMap::new(),
             base: 0,
             processor_dispatch: ProcessorDispatch::default(),
+            composite_tags: HashMap::new(),
         }
     }
 
@@ -283,6 +287,10 @@ impl ExifReader {
             allow_reprocess: false,
         };
         self.process_subdirectory(&dir_info)?;
+
+        // Build composite tags after all extraction is complete
+        // Milestone 8f: Composite tag infrastructure
+        self.build_composite_tags();
 
         // NOTE: GPS coordinate decimal conversion is deferred to Milestone 8 (ValueConv)
         // Milestone 6 outputs raw rational arrays matching ExifTool default behavior
@@ -737,12 +745,244 @@ impl ExifReader {
         self.extracted_tags.get(&tag_id)
     }
 
+    /// Build composite tags from extracted tags
+    /// Milestone 8f: Single-pass dependency resolution for composite tags
+    /// ExifTool: lib/Image/ExifTool.pm BuildCompositeTags function
+    pub fn build_composite_tags(&mut self) {
+        // Clear any previous composite tags
+        self.composite_tags.clear();
+
+        // Build available tags lookup for dependency resolution
+        let mut available_tags = HashMap::new();
+
+        // Add extracted tags with group prefixes
+        for (&tag_id, value) in &self.extracted_tags {
+            let ifd_name = self
+                .tag_sources
+                .get(&tag_id)
+                .map(|s| s.as_str())
+                .unwrap_or("Root");
+
+            let group_name = match ifd_name {
+                "Root" | "IFD0" | "IFD1" => "EXIF",
+                "GPS" => "GPS",
+                "ExifIFD" => "EXIF",
+                "InteropIFD" => "EXIF",
+                "MakerNotes" => "MakerNotes",
+                _ => "EXIF",
+            };
+
+            let base_tag_name = TAG_BY_ID
+                .get(&(tag_id as u32))
+                .map(|tag_def| tag_def.name.to_string())
+                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+
+            let tag_name = format!("{group_name}:{base_tag_name}");
+            available_tags.insert(tag_name.clone(), value.clone());
+            // Also add without group prefix for dependency matching
+            available_tags.insert(base_tag_name, value.clone());
+        }
+
+        // Single pass through composite tags (user specified simple approach)
+        for composite_def in COMPOSITE_TAGS {
+            if let Some(computed_value) = self.compute_composite_tag(composite_def, &available_tags)
+            {
+                // Apply PrintConv to the computed value (chain compute → PrintConv)
+                let final_value = self.apply_composite_conversions(&computed_value, composite_def);
+                let composite_tag_name = format!("Composite:{}", composite_def.name);
+                trace!(
+                    "Computed composite tag: {} -> {:?}",
+                    composite_tag_name,
+                    final_value
+                );
+                self.composite_tags.insert(composite_tag_name, final_value);
+            }
+        }
+    }
+
+    /// Compute a single composite tag value based on its dependencies
+    /// ExifTool: lib/Image/ExifTool.pm composite tag evaluation
+    fn compute_composite_tag(
+        &self,
+        composite_def: &crate::generated::CompositeTagDef,
+        available_tags: &HashMap<String, TagValue>,
+    ) -> Option<TagValue> {
+        // Check if all required dependencies are available
+        for (_index, tag_name) in composite_def.require {
+            if !available_tags.contains_key(*tag_name) {
+                trace!(
+                    "Missing required dependency for {}: {}",
+                    composite_def.name,
+                    tag_name
+                );
+                return None;
+            }
+        }
+
+        // For now, implement basic composite examples based on the milestone
+        // TODO: This will be expanded with actual Perl-to-Rust conversion logic
+        match composite_def.name {
+            "ImageSize" => self.compute_image_size(available_tags),
+            "GPSAltitude" => self.compute_gps_altitude(available_tags),
+            "PreviewImageSize" => self.compute_preview_image_size(available_tags),
+            "ShutterSpeed" => self.compute_shutter_speed(available_tags),
+            _ => {
+                // For other composite tags, return None for now
+                // This follows the milestone's infrastructure-first approach
+                trace!("Composite tag {} not yet implemented", composite_def.name);
+                None
+            }
+        }
+    }
+
+    /// Compute ImageSize composite (ImageWidth + ImageHeight)
+    /// ExifTool: lib/Image/ExifTool/Composite.pm ImageSize definition
+    fn compute_image_size(&self, available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+        // First try ImageWidth/ImageHeight from EXIF
+        if let (Some(width), Some(height)) = (
+            available_tags.get("ImageWidth"),
+            available_tags.get("ImageHeight"),
+        ) {
+            if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
+                return Some(TagValue::String(format!("{w}x{h}")));
+            }
+        }
+
+        // Try EXIF variants
+        if let (Some(width), Some(height)) = (
+            available_tags.get("ExifImageWidth"),
+            available_tags.get("ExifImageHeight"),
+        ) {
+            if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
+                return Some(TagValue::String(format!("{w}x{h}")));
+            }
+        }
+
+        None
+    }
+
+    /// Compute GPSAltitude composite (GPSAltitude + GPSAltitudeRef)
+    /// ExifTool: lib/Image/ExifTool/GPS.pm GPSAltitude composite
+    fn compute_gps_altitude(&self, available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+        if let Some(altitude) = available_tags.get("GPSAltitude") {
+            let alt_ref = available_tags.get("GPSAltitudeRef");
+
+            // Convert rational to decimal
+            if let Some(alt_value) = altitude.as_rational() {
+                let decimal_alt = alt_value.0 as f64 / alt_value.1 as f64;
+
+                // Check if below sea level (ref = 1)
+                let sign = if let Some(ref_val) = alt_ref {
+                    if let Some(ref_str) = ref_val.as_string() {
+                        if ref_str == "1" {
+                            "-"
+                        } else {
+                            ""
+                        }
+                    } else {
+                        ""
+                    }
+                } else {
+                    ""
+                };
+
+                return Some(TagValue::String(format!("{sign}{decimal_alt:.1} m")));
+            }
+        }
+        None
+    }
+
+    /// Compute PreviewImageSize composite
+    fn compute_preview_image_size(
+        &self,
+        available_tags: &HashMap<String, TagValue>,
+    ) -> Option<TagValue> {
+        if let (Some(width), Some(height)) = (
+            available_tags.get("PreviewImageWidth"),
+            available_tags.get("PreviewImageHeight"),
+        ) {
+            if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
+                return Some(TagValue::String(format!("{w}x{h}")));
+            }
+        }
+        None
+    }
+
+    /// Compute ShutterSpeed composite (ExposureTime formatted as '1/x' or 'x''')  
+    /// ExifTool: lib/Image/ExifTool/Composite.pm ShutterSpeed definition
+    /// ValueConv: ($val[2] and $val[2]>0) ? $val[2] : (defined($val[0]) ? $val[0] : $val[1])
+    /// Dependencies: ExposureTime(0), ShutterSpeedValue(1), BulbDuration(2)
+    fn compute_shutter_speed(
+        &self,
+        available_tags: &HashMap<String, TagValue>,
+    ) -> Option<TagValue> {
+        // Check BulbDuration first (index 2) - if > 0, use it
+        if let Some(bulb_duration) = available_tags.get("BulbDuration") {
+            if let Some(duration) = bulb_duration.as_f64() {
+                if duration > 0.0 {
+                    return Some(self.format_shutter_speed(duration));
+                }
+            }
+        }
+
+        // Try ExposureTime (index 0)
+        if let Some(exposure_time) = available_tags.get("ExposureTime") {
+            if let Some(time) = exposure_time.as_f64() {
+                return Some(self.format_shutter_speed(time));
+            }
+            // Handle rational ExposureTime
+            if let Some((num, den)) = exposure_time.as_rational() {
+                if den != 0 {
+                    let time = num as f64 / den as f64;
+                    return Some(self.format_shutter_speed(time));
+                }
+            }
+        }
+
+        // Finally try ShutterSpeedValue (index 1)
+        if let Some(shutter_speed_val) = available_tags.get("ShutterSpeedValue") {
+            if let Some(speed_val) = shutter_speed_val.as_f64() {
+                // ShutterSpeedValue is typically in APEX units: speed = 2^value
+                let time = 2.0_f64.powf(-speed_val);
+                return Some(self.format_shutter_speed(time));
+            }
+            // Handle rational ShutterSpeedValue
+            if let Some((num, den)) = shutter_speed_val.as_rational() {
+                if den != 0 {
+                    let speed_val = num as f64 / den as f64;
+                    let time = 2.0_f64.powf(-speed_val);
+                    return Some(self.format_shutter_speed(time));
+                }
+            }
+        }
+
+        None
+    }
+
+    /// Format shutter speed as '1/x' for fast speeds or 'x' for slow speeds
+    /// ExifTool: lib/Image/ExifTool/Exif.pm PrintConv for shutter speeds
+    fn format_shutter_speed(&self, time_seconds: f64) -> TagValue {
+        if time_seconds >= 1.0 {
+            // Slow shutter speeds: format as decimal seconds
+            TagValue::String(format!("{time_seconds:.1}"))
+        } else if time_seconds > 0.0 {
+            // Fast shutter speeds: format as 1/x
+            let reciprocal = 1.0 / time_seconds;
+            TagValue::String(format!("1/{:.0}", reciprocal.round()))
+        } else {
+            // Invalid time value
+            TagValue::String("0".to_string())
+        }
+    }
+
     /// Get all extracted tags with their names (conversions already applied during extraction)
-    /// Returns tags with group prefixes (e.g., "EXIF:Make", "GPS:GPSLatitude")
+    /// Returns tags with group prefixes (e.g., "EXIF:Make", "GPS:GPSLatitude", "Composite:ImageSize")
     /// matching ExifTool's -G mode behavior
+    /// Milestone 8f: Now includes composite tags with "Composite:" prefix
     pub fn get_all_tags(&self) -> HashMap<String, TagValue> {
         let mut result = HashMap::new();
 
+        // Add extracted tags
         for (&tag_id, value) in &self.extracted_tags {
             // Get the IFD source for this tag
             let ifd_name = self
@@ -779,6 +1019,12 @@ impl ExifReader {
                 value
             );
             result.insert(tag_name, value.clone());
+        }
+
+        // Add composite tags (already have "Composite:" prefix)
+        for (tag_name, value) in &self.composite_tags {
+            trace!("Composite tag: {} -> {:?}", tag_name, value);
+            result.insert(tag_name.clone(), value.clone());
         }
 
         result
@@ -825,6 +1071,31 @@ impl ExifReader {
         &self.processor_dispatch
     }
 
+    /// Test helper: Set test data (public for integration tests)
+    pub fn set_test_data(&mut self, data: Vec<u8>) {
+        self.data = data;
+    }
+
+    /// Test helper: Set TIFF header (public for integration tests)
+    pub fn set_test_header(&mut self, header: TiffHeader) {
+        self.header = Some(header);
+    }
+
+    /// Test helper: Get extracted tags (public for integration tests)
+    pub fn get_extracted_tags(&self) -> &HashMap<u16, TagValue> {
+        &self.extracted_tags
+    }
+
+    /// Test helper: Get tag sources (public for integration tests)
+    pub fn get_tag_sources(&self) -> &HashMap<u16, String> {
+        &self.tag_sources
+    }
+
+    /// Test helper: Get data length (public for integration tests)
+    pub fn get_data_len(&self) -> usize {
+        self.data.len()
+    }
+
     /// Apply ValueConv and PrintConv conversions to a raw tag value
     /// ExifTool: lib/Image/ExifTool.pm conversion pipeline
     fn apply_conversions(
@@ -851,6 +1122,31 @@ impl ExifReader {
                 if converted_string != value.to_string() {
                     return TagValue::String(converted_string);
                 }
+            }
+        }
+
+        value
+    }
+
+    /// Apply PrintConv conversions to a computed composite tag value
+    /// ExifTool: Composite tag PrintConv pipeline (compute → PrintConv)
+    fn apply_composite_conversions(
+        &self,
+        computed_value: &TagValue,
+        composite_def: &crate::generated::CompositeTagDef,
+    ) -> TagValue {
+        use crate::registry;
+
+        let value = computed_value.clone();
+
+        // Apply PrintConv if present to convert to human-readable string
+        if let Some(print_conv_ref) = composite_def.print_conv_ref {
+            let converted_string = registry::apply_print_conv(print_conv_ref, &value);
+
+            // Only use the converted string if it's different from the raw value
+            // This prevents "Unknown" type fallbacks from being used
+            if converted_string != value.to_string() {
+                return TagValue::String(converted_string);
             }
         }
 
@@ -1055,16 +1351,384 @@ impl ExifReader {
         self.parse_ifd(ifd_offset, ifd_name)
     }
 
-    /// Process binary data with format tables
-    /// ExifTool: ProcessBinaryData function
-    fn process_binary_data(&mut self, _dir_info: &DirectoryInfo) -> Result<()> {
-        // Placeholder for ProcessBinaryData implementation
-        // This will be implemented in future milestones
+    /// Process binary data using ProcessBinaryData processor
+    /// ExifTool: ProcessBinaryData function (lib/Image/ExifTool.pm:9750)
+    fn process_binary_data(&mut self, dir_info: &DirectoryInfo) -> Result<()> {
+        debug!("Processing binary data for directory: {}", dir_info.name);
+
+        // Validate directory bounds
+        if dir_info.dir_start >= self.data.len() {
+            self.warnings.push(format!(
+                "Binary data directory {} start offset {:#x} beyond data bounds ({})",
+                dir_info.name,
+                dir_info.dir_start,
+                self.data.len()
+            ));
+            return Ok(());
+        }
+
+        let max_len = self.data.len() - dir_info.dir_start;
+        let size = if dir_info.dir_len > 0 && dir_info.dir_len <= max_len {
+            dir_info.dir_len
+        } else {
+            max_len
+        };
+
         debug!(
-            "ProcessBinaryData not yet implemented for {}",
-            _dir_info.name
+            "Binary data processing: start={:#x}, len={}, max_len={}",
+            dir_info.dir_start, size, max_len
         );
+
+        // For Milestone 9, we'll implement basic Canon CameraSettings processing
+        // This is a simplified version focusing on the core mechanism
+        if dir_info.name == "MakerNotes" {
+            self.process_canon_makernotes(dir_info.dir_start, size)?;
+        } else {
+            debug!(
+                "Binary data processing for {} not yet implemented",
+                dir_info.name
+            );
+        }
+
         Ok(())
+    }
+
+    /// Process Canon MakerNotes data
+    /// ExifTool: Canon.pm CameraSettings table processing
+    pub fn process_canon_makernotes(&mut self, start_offset: usize, size: usize) -> Result<()> {
+        // Check minimum size for Canon MakerNotes
+        if size < 12 {
+            debug!("MakerNotes too small for Canon processing (need at least 12 bytes)");
+            return Ok(());
+        }
+
+        debug!(
+            "Processing Canon MakerNotes at offset {:#x}, size {}",
+            start_offset, size
+        );
+
+        // Parse the MakerNotes as a standard IFD to find Canon CameraSettings tag (0x0001)
+        // ExifTool: Canon MakerNotes use standard IFD format
+        if let Ok(camera_settings_offset) = self.find_canon_camera_settings_tag(start_offset, size)
+        {
+            debug!(
+                "Found Canon CameraSettings tag at offset {:#x}",
+                camera_settings_offset
+            );
+
+            // Extract CameraSettings binary data
+            self.extract_binary_data_tags(
+                camera_settings_offset,
+                size.saturating_sub(camera_settings_offset - start_offset),
+                &self.create_canon_camera_settings_table(),
+            )
+        } else {
+            debug!("Canon CameraSettings tag (0x0001) not found in MakerNotes");
+            Ok(())
+        }
+    }
+
+    /// Find Canon CameraSettings tag (0x0001) in MakerNotes IFD
+    /// ExifTool: Canon.pm Main table tag 0x1
+    pub fn find_canon_camera_settings_tag(
+        &self,
+        start_offset: usize,
+        _size: usize,
+    ) -> Result<usize> {
+        if start_offset + 14 > self.data.len() {
+            return Err(ExifError::ParseError(
+                "Not enough data for Canon MakerNotes IFD".to_string(),
+            ));
+        }
+
+        let byte_order = self
+            .header
+            .as_ref()
+            .map(|h| h.byte_order)
+            .unwrap_or(ByteOrder::LittleEndian);
+
+        // Read number of IFD entries
+        let num_entries = byte_order.read_u16(&self.data, start_offset)? as usize;
+        debug!("Canon MakerNotes IFD has {} entries", num_entries);
+
+        if num_entries == 0 || num_entries > 100 {
+            return Err(ExifError::ParseError(format!(
+                "Invalid Canon MakerNotes entry count: {num_entries}"
+            )));
+        }
+
+        // Search for tag 0x0001 (CanonCameraSettings)
+        for i in 0..num_entries {
+            let entry_offset = start_offset + 2 + (i * 12);
+            if entry_offset + 12 > self.data.len() {
+                break;
+            }
+
+            let tag_id = byte_order.read_u16(&self.data, entry_offset)?;
+            if tag_id == 0x0001 {
+                // Found Canon CameraSettings tag
+                let format = byte_order.read_u16(&self.data, entry_offset + 2)?;
+                let count = byte_order.read_u32(&self.data, entry_offset + 4)?;
+                let value_offset = byte_order.read_u32(&self.data, entry_offset + 8)?;
+
+                debug!(
+                    "Canon CameraSettings: format={}, count={}, offset={:#x}",
+                    format, count, value_offset
+                );
+
+                // Calculate absolute offset for CameraSettings data
+                // For Canon, the value_offset is relative to the start of the MakerNotes
+                let camera_settings_offset = if count * 2 <= 4 {
+                    // Data is inline in the offset field
+                    entry_offset + 8
+                } else {
+                    // Data is at offset
+                    start_offset + value_offset as usize
+                };
+
+                if camera_settings_offset < self.data.len() {
+                    return Ok(camera_settings_offset);
+                }
+            }
+        }
+
+        Err(ExifError::ParseError(
+            "Canon CameraSettings tag (0x0001) not found".to_string(),
+        ))
+    }
+
+    /// Create Canon CameraSettings binary data table
+    /// ExifTool: Canon.pm %Canon::CameraSettings table
+    pub fn create_canon_camera_settings_table(&self) -> crate::types::BinaryDataTable {
+        use crate::types::{BinaryDataFormat, BinaryDataTable, BinaryDataTag};
+        use std::collections::HashMap;
+
+        let mut table = BinaryDataTable {
+            default_format: BinaryDataFormat::Int16s,
+            first_entry: Some(1),
+            groups: {
+                let mut groups = HashMap::new();
+                groups.insert(0, "MakerNotes".to_string());
+                groups.insert(2, "Camera".to_string());
+                groups
+            },
+            tags: HashMap::new(),
+        };
+
+        // Add MacroMode tag at index 1
+        table.tags.insert(
+            1,
+            BinaryDataTag {
+                name: "MacroMode".to_string(),
+                format: None, // Uses table default (int16s)
+                mask: None,
+                print_conv: {
+                    let mut conv = HashMap::new();
+                    conv.insert(1, "Macro".to_string());
+                    conv.insert(2, "Normal".to_string());
+                    Some(conv)
+                },
+            },
+        );
+
+        // Add FocusMode tag at index 7
+        table.tags.insert(
+            7,
+            BinaryDataTag {
+                name: "FocusMode".to_string(),
+                format: None, // Uses table default (int16s)
+                mask: None,
+                print_conv: {
+                    let mut conv = HashMap::new();
+                    conv.insert(0, "One-shot AF".to_string());
+                    conv.insert(1, "AI Servo AF".to_string());
+                    conv.insert(2, "AI Focus AF".to_string());
+                    conv.insert(3, "Manual Focus (3)".to_string());
+                    conv.insert(4, "Single".to_string());
+                    conv.insert(5, "Continuous".to_string());
+                    conv.insert(6, "Manual Focus (6)".to_string());
+                    Some(conv)
+                },
+            },
+        );
+
+        table
+    }
+
+    /// Extract binary data tags using table definition
+    /// ExifTool: ProcessBinaryData main processing loop
+    pub fn extract_binary_data_tags(
+        &mut self,
+        start_offset: usize,
+        size: usize,
+        table: &crate::types::BinaryDataTable,
+    ) -> Result<()> {
+        let increment = table.default_format.byte_size();
+
+        debug!(
+            "Extracting binary data tags: start={:#x}, size={}, increment={}, format={:?}",
+            start_offset, size, increment, table.default_format
+        );
+
+        // Process defined tags
+        for (&index, tag_def) in &table.tags {
+            let entry_offset = (index as usize) * increment;
+            if entry_offset + increment > size {
+                debug!("Tag {} at index {} beyond data bounds", tag_def.name, index);
+                continue;
+            }
+
+            let data_offset = start_offset + entry_offset;
+            let format = tag_def.format.unwrap_or(table.default_format);
+
+            // Extract value based on format
+            if let Ok(value) = self.extract_binary_value(data_offset, format, 1) {
+                debug!(
+                    "Extracted {} = {:?} at index {}",
+                    tag_def.name, value, index
+                );
+
+                // Apply PrintConv if available
+                let final_value = if let Some(print_conv) = &tag_def.print_conv {
+                    // Try to get the value as u32 for lookup
+                    let lookup_val = match value {
+                        TagValue::U8(v) => Some(v as u32),
+                        TagValue::U16(v) => Some(v as u32),
+                        TagValue::U32(v) => Some(v),
+                        TagValue::I16(v) => Some(v as u32),
+                        TagValue::I32(v) => Some(v as u32),
+                        _ => None,
+                    };
+
+                    if let Some(int_val) = lookup_val {
+                        if let Some(converted) = print_conv.get(&int_val) {
+                            TagValue::String(converted.clone())
+                        } else {
+                            value
+                        }
+                    } else {
+                        value
+                    }
+                } else {
+                    value
+                };
+
+                // Store with group prefix
+                let unknown_default = "Unknown".to_string();
+                let group_prefix = table.groups.get(&0).unwrap_or(&unknown_default);
+                let tag_name = format!("{}:{}", group_prefix, tag_def.name);
+                self.extracted_tags.insert(index as u16, final_value);
+                self.tag_sources.insert(index as u16, tag_name);
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Extract a single binary value from data
+    /// ExifTool: Value extraction with format-specific handling
+    pub fn extract_binary_value(
+        &self,
+        offset: usize,
+        format: crate::types::BinaryDataFormat,
+        count: usize,
+    ) -> Result<TagValue> {
+        use crate::types::BinaryDataFormat;
+
+        if offset >= self.data.len() {
+            return Err(ExifError::ParseError(
+                "Offset beyond data bounds".to_string(),
+            ));
+        }
+
+        let byte_order = self
+            .header
+            .as_ref()
+            .map(|h| h.byte_order)
+            .unwrap_or(ByteOrder::LittleEndian);
+
+        match format {
+            BinaryDataFormat::Int8u => Ok(TagValue::U8(self.data[offset])),
+            BinaryDataFormat::Int8s => Ok(TagValue::I16(self.data[offset] as i8 as i16)),
+            BinaryDataFormat::Int16u => {
+                if offset + 2 > self.data.len() {
+                    return Err(ExifError::ParseError(
+                        "Not enough data for int16u".to_string(),
+                    ));
+                }
+                let value = byte_order.read_u16(&self.data, offset)?;
+                Ok(TagValue::U16(value))
+            }
+            BinaryDataFormat::Int16s => {
+                if offset + 2 > self.data.len() {
+                    return Err(ExifError::ParseError(
+                        "Not enough data for int16s".to_string(),
+                    ));
+                }
+                let value = byte_order.read_u16(&self.data, offset)? as i16;
+                Ok(TagValue::I16(value))
+            }
+            BinaryDataFormat::Int32u => {
+                if offset + 4 > self.data.len() {
+                    return Err(ExifError::ParseError(
+                        "Not enough data for int32u".to_string(),
+                    ));
+                }
+                let value = byte_order.read_u32(&self.data, offset)?;
+                Ok(TagValue::U32(value))
+            }
+            BinaryDataFormat::Int32s => {
+                if offset + 4 > self.data.len() {
+                    return Err(ExifError::ParseError(
+                        "Not enough data for int32s".to_string(),
+                    ));
+                }
+                let value = byte_order.read_u32(&self.data, offset)? as i32;
+                Ok(TagValue::I32(value))
+            }
+            BinaryDataFormat::String => {
+                let remaining = self.data.len() - offset;
+                let max_len = if count > 0 {
+                    count.min(remaining)
+                } else {
+                    remaining
+                };
+
+                // Find null terminator or use max length
+                let end = self.data[offset..offset + max_len]
+                    .iter()
+                    .position(|&b| b == 0)
+                    .unwrap_or(max_len);
+
+                let bytes = &self.data[offset..offset + end];
+                match std::str::from_utf8(bytes) {
+                    Ok(s) => Ok(TagValue::String(s.to_string())),
+                    Err(_) => Ok(TagValue::Binary(bytes.to_vec())),
+                }
+            }
+            BinaryDataFormat::PString => {
+                if offset >= self.data.len() {
+                    return Err(ExifError::ParseError(
+                        "Not enough data for pstring length".to_string(),
+                    ));
+                }
+                let len = self.data[offset] as usize;
+                if offset + 1 + len > self.data.len() {
+                    return Err(ExifError::ParseError(
+                        "Not enough data for pstring content".to_string(),
+                    ));
+                }
+                let bytes = &self.data[offset + 1..offset + 1 + len];
+                match std::str::from_utf8(bytes) {
+                    Ok(s) => Ok(TagValue::String(s.to_string())),
+                    Err(_) => Ok(TagValue::Binary(bytes.to_vec())),
+                }
+            }
+            _ => {
+                debug!("Unsupported binary format: {:?}", format);
+                Ok(TagValue::Binary(vec![0]))
+            }
+        }
     }
 
     /// Process Canon manufacturer-specific data
