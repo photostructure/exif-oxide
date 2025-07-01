@@ -37,9 +37,6 @@ After you think you're done implementing a milestone:
 
 ---
 
-
----
-
 ## Milestone 8b: Basic ValueConv (2 weeks)
 
 **Before starting -- review the current code and future pending milestones -- is this still relevant work?**
@@ -74,7 +71,6 @@ fn apex_shutter_speed(val: f64) -> f64 {
 }
 
 ```
-
 
 ## Milestone 9: ProcessBinaryData Introduction (3 weeks)
 

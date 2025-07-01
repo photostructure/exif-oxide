@@ -108,7 +108,7 @@ Study the concepts documentation:
 - [CHARSETS.md](../third-party/exiftool/doc/concepts/CHARSETS.md) - Character encoding handling
 - [PATTERNS.md](../third-party/exiftool/doc/concepts/PATTERNS.md) - Common code patterns
 - [WRITE_PROC.md](../third-party/exiftool/doc/concepts/WRITE_PROC.md) - Writing procedures
-- [_HOWTO.md](../third-party/exiftool/doc/concepts/_HOWTO.md) - Development how-to guide
+- [\_HOWTO.md](../third-party/exiftool/doc/concepts/_HOWTO.md) - Development how-to guide
 
 Also study the module documentation:
 
@@ -128,7 +128,6 @@ Also study the module documentation:
 - [Pentax.md](../third-party/exiftool/doc/modules/Pentax.md) - Pentax camera formats
 - [TIFF.md](../third-party/exiftool/doc/modules/TIFF.md) - TIFF file format details
 - [XMP.md](../third-party/exiftool/doc/modules/XMP.md) - Adobe XMP metadata standard
-
 
 ### How to Read Tag Tables
 
@@ -174,55 +173,6 @@ Format => 'string[$val{3}]',  # Length from tag 3
 # DataMember - tag needed by other tags
 DataMember => 'CameraType',
 RawConv => '$$self{CameraType} = $val',
-```
-
-
-### Step 2: Understand the Registry Pattern
-
-Instead of generating thousands of stub functions, we use runtime lookup. This approach is explained in [ARCHITECTURE.md](../ARCHITECTURE.md#todo-tracking-system):
-
-```rust
-// implementations/registry.rs
-lazy_static! {
-    static ref PRINT_CONV: HashMap<&'static str, PrintConvFn> = HashMap::new();
-}
-
-pub fn register_print_conv(name: &'static str, func: PrintConvFn) {
-    PRINT_CONV.insert(name, func);
-}
-
-pub fn get_print_conv(name: &str) -> Option<PrintConvFn> {
-    PRINT_CONV.get(name).copied()
-}
-```
-
-### Step 3: Implement Your First PrintConv
-
-Start with Orientation - it's simple and very common:
-
-```rust
-// implementations/print_conv/orientation.rs
-
-/// EXIF Orientation
-/// ExifTool: lib/Image/ExifTool/Exif.pm:2719
-pub fn orientation(val: &TagValue) -> String {
-    match val.as_u16() {
-        Some(1) => "Horizontal (normal)",
-        Some(2) => "Mirror horizontal",
-        Some(3) => "Rotate 180",
-        Some(4) => "Mirror vertical",
-        Some(5) => "Mirror horizontal and rotate 270 CW",
-        Some(6) => "Rotate 90 CW",
-        Some(7) => "Mirror horizontal and rotate 90 CW",
-        Some(8) => "Rotate 270 CW",
-        _ => return format!("Unknown ({})", val),
-    }.to_string()
-}
-
-// Register it
-pub fn register() {
-    register_print_conv("exif_orientation", orientation);
-}
 ```
 
 ## Common Pitfalls and Solutions
@@ -366,37 +316,6 @@ if looks_like_double_utf8(&string) {
 
 The ExifTool test suite (t/images/) contains problematic files from real cameras. When implementing a manufacturer's support, always test against their files in t/images/.
 
-## Git Commit Messages
-
-Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format:
-
-```
-<type>[optional scope]: <description>
-
-[optional body]
-
-[optional footer(s)]
-```
-
-**Common types:**
-
-- `feat:` - New feature
-- `fix:` - Bug fix
-- `docs:` - Documentation changes
-- `refactor:` - Code restructuring without behavior change
-- `test:` - Adding/updating tests
-- `chore:` - Maintenance tasks
-
-**Examples:**
-
-```
-feat(parser): add Canon MakerNote support
-fix(exif): handle invalid orientation values
-docs: update MILESTONES.md for v0.2
-```
-
-Use the most impacted filename as scope. Be concise - summarize the change's purpose, not every diff line.
-
 ## Generated Code Policy
 
 **Generated Rust code is committed to git** while intermediate files are ignored:
@@ -407,8 +326,9 @@ Use the most impacted filename as scope. Be concise - summarize the change's pur
 **Rationale**: This ensures developers can build without requiring Perl + ExifTool while keeping the repository manageable. Generated code is relatively stable and benefits from code review visibility.
 
 **When to regenerate**:
+
 - After modifying extraction scripts (`codegen/extract_tables.pl`)
-- After updating ExifTool version  
+- After updating ExifTool version
 - When adding new tag implementations to MILESTONE_COMPLETIONS
 - Run: `make codegen` then commit the updated `src/generated/` files
 
