@@ -20,7 +20,7 @@ pub fn orientation_print_conv(val: &TagValue) -> String {
         Some(6) => "Rotate 90 CW",
         Some(7) => "Mirror horizontal and rotate 90 CW",
         Some(8) => "Rotate 270 CW",
-        _ => return format!("Unknown ({})", val),
+        _ => return format!("Unknown ({val})"),
     }
     .to_string()
 }
@@ -32,7 +32,7 @@ pub fn resolutionunit_print_conv(val: &TagValue) -> String {
         Some(1) => "None",
         Some(2) => "inches",
         Some(3) => "cm",
-        _ => return format!("Unknown ({})", val),
+        _ => return format!("Unknown ({val})"),
     }
     .to_string()
 }
@@ -43,7 +43,7 @@ pub fn ycbcrpositioning_print_conv(val: &TagValue) -> String {
     match val.as_u16() {
         Some(1) => "Centered",
         Some(2) => "Co-sited",
-        _ => return format!("Unknown ({})", val),
+        _ => return format!("Unknown ({val})"),
     }
     .to_string()
 }

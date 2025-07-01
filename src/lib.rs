@@ -37,7 +37,7 @@ use std::path::Path;
 pub fn extract_metadata_json(file_path: &str) -> Result<Value, ExifError> {
     // Ensure conversions are registered
     init();
-    
+
     // Use the existing extract_metadata function from formats module
     let path = Path::new(file_path);
     let exif_data = formats::extract_metadata(path, false)?;

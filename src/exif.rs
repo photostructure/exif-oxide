@@ -478,12 +478,13 @@ impl ExifReader {
         self.extracted_tags.get(&tag_id)
     }
 
-    /// Get all extracted tags with their names
+    /// Get all extracted tags with their names (conversions already applied during extraction)
     pub fn get_all_tags(&self) -> HashMap<String, TagValue> {
         let mut result = HashMap::new();
 
         for (&tag_id, value) in &self.extracted_tags {
             if let Some(tag_def) = TAG_BY_ID.get(&(tag_id as u32)) {
+                // Values are already converted during extraction in process_entry()
                 result.insert(tag_def.name.to_string(), value.clone());
             } else {
                 // Include unknown tags with hex ID matching ExifTool format
@@ -507,7 +508,11 @@ impl ExifReader {
 
     /// Apply ValueConv and PrintConv conversions to a raw tag value
     /// ExifTool: lib/Image/ExifTool.pm conversion pipeline
-    fn apply_conversions(&self, raw_value: &TagValue, tag_def: Option<&'static crate::generated::tags::TagDef>) -> TagValue {
+    fn apply_conversions(
+        &self,
+        raw_value: &TagValue,
+        tag_def: Option<&'static crate::generated::tags::TagDef>,
+    ) -> TagValue {
         use crate::registry;
 
         let mut value = raw_value.clone();
@@ -521,7 +526,7 @@ impl ExifReader {
             // Apply PrintConv second (if present) to convert to human-readable string
             if let Some(print_conv_ref) = tag_def.print_conv_ref {
                 let converted_string = registry::apply_print_conv(print_conv_ref, &value);
-                
+
                 // Only use the converted string if it's different from the raw value
                 // This prevents "Unknown (8)" type fallbacks from being used
                 if converted_string != value.to_string() {
