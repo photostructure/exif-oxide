@@ -15,7 +15,9 @@ SNAPSHOTS_DIR="$PROJECT_ROOT/generated/exiftool-json"
 # Tags currently supported by exif-oxide (Milestone 7)  
 # Conservative list - only tags that work perfectly with existing implementations
 # Single source of truth now maintained in config/supported_tags.json (Milestone 8a)
+# Milestone 8c: Now using group prefixes, need to specify allowed groups
 SUPPORTED_TAGS=$(cat "$PROJECT_ROOT/config/supported_tags.json")
+ALLOWED_GROUPS='["EXIF", "File", "System", "GPS"]'
 
 echo "Generating ExifTool reference snapshots for exif-oxide compatibility testing"
 echo "Project root: $PROJECT_ROOT"
@@ -43,8 +45,9 @@ echo "Scanning for JPEG files..."
 # Get all JPEG files from both test directories
 # Note: Using default ExifTool behavior (rational arrays) for Milestone 6
 # Decimal GPS conversion will be implemented in Milestone 8 (ValueConv), by using `exiftool -r -json -GPSLatitude\# -GPSLongitude\# -GPSAltitude\# ... -all ...`
+# Milestone 8c: Using -G flag to get group-prefixed tag names (e.g., "EXIF:Make", "GPS:GPSLatitude")
 
-if ! exiftool -r -json -all -if '$MIMEType eq "image/jpeg"' \
+if ! exiftool -r -json -G -all -if '$MIMEType eq "image/jpeg"' \
     "$PROJECT_ROOT/test-images" \
     "$PROJECT_ROOT/third-party/exiftool/t/images" \
     > "$TEMP_JSON" 2>/dev/null; then
@@ -93,8 +96,19 @@ jq -c '.[]' "$TEMP_JSON" | while IFS= read -r file_data; do
     SNAPSHOT_FILE="$SNAPSHOTS_DIR/${SNAPSHOT_NAME}.json"
     
     # Filter to only supported tags and save as snapshot
-    echo "$file_data" | jq --argjson tags "$SUPPORTED_TAGS" \
-        'with_entries(select(.key as $k | $tags | index($k)))' \
+    # Handle group-prefixed tag names (e.g., "EXIF:Make" -> check if "Make" is supported)
+    # Milestone 8c: Also check that the group is allowed (EXIF, File, System, GPS)
+    echo "$file_data" | jq --argjson tags "$SUPPORTED_TAGS" --argjson groups "$ALLOWED_GROUPS" \
+        'with_entries(select(
+            .key as $k | 
+            if $k == "SourceFile" then true
+            elif ($k | contains(":")) then
+                (($k | split(":")) as $parts |
+                ($parts[0] as $group | $parts[1] as $tag_name |
+                ($groups | index($group)) and ($tags | index($tag_name))))
+            else false
+            end
+        ))' \
         > "$SNAPSHOT_FILE"
     
     # echo "Created: $SNAPSHOT_FILE (for $SOURCE_FILE)"

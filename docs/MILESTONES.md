@@ -342,7 +342,173 @@ This generates both the JSON config for shell tools and Rust constants for tests
 fn apex_shutter_speed(val: f64) -> f64 {
     (-val).exp2()  // 2^-val
 }
+
 ```
+
+## ✅ Milestone 8c: Group-Prefixed Tag Names (COMPLETED)
+
+**Goal**: Always output tags with group prefixes (e.g., "EXIF:Make", "GPS:GPSLatitude") to avoid tag name collisions and match ExifTool's -G mode.
+
+**Implementation Summary**:
+
+- ✅ Updated `get_all_tags()` method to add group prefixes based on IFD source
+  - Maps IFD names to ExifTool groups: Root/IFD0 → "EXIF", GPS → "GPS", ExifIFD → "EXIF"
+  - All tags now output as "{Group}:{TagName}" format
+- ✅ Updated file-level tags to use "File:" prefix (FileName, FileSize, Directory, etc.)
+- ✅ Added "System:" prefix for system tags (ExifDetectionStatus, ExifByteOrder, etc.)
+- ✅ Modified ExifTool reference generation script to use `-G` flag
+- ✅ Enhanced compatibility tests to handle group-prefixed tag names
+  - Updated filtering logic to extract tag names from group-prefixed format
+  - Modified test assertions to expect group prefixes
+- ✅ Updated integration tests to expect group-prefixed output
+- ✅ All 51 compatibility tests passing with exact ExifTool output matching
+
+**Benefits**:
+
+- Eliminates tag name collisions (e.g., EXIF:ColorSpace vs MakerNotes:ColorSpace)
+- Provides clear context about tag origin
+- Maintains full compatibility with ExifTool's -G mode output
+- Sets foundation for Composite tags which will use "Composite:" prefix
+
+**Key Files Modified**:
+
+- `src/exif.rs` (get_all_tags method)
+- `src/formats.rs` (file and system tag prefixes)
+- `tools/generate_exiftool_json.sh` (added -G flag and group filtering)
+- `tests/exiftool_compatibility_tests.rs` (group-aware filtering)
+- `tests/integration_tests.rs` (updated assertions)
+
+---
+
+## ✅ Milestone 8d: Basic Composite GPS Tags (COMPLETED)
+
+**Goal**: Implement composite GPS tags that convert raw rational arrays to decimal degrees.
+
+**Implementation Summary**:
+
+- ✅ Created composite tag infrastructure in `src/implementations/composite.rs`
+  - CompositeTag struct with Require/Desire/ValueConv fields
+  - Composite tag registry with runtime lookup
+- ✅ Implemented GPS composite definitions
+  - GPSLatitude: Combines GPS:GPSLatitude + GPS:GPSLatitudeRef → decimal degrees
+  - GPSLongitude: Combines GPS:GPSLongitude + GPS:GPSLongitudeRef → decimal degrees
+  - GPSPosition: Combines lat/lon into single formatted string
+  - GPSDateTime: Combines GPSDateStamp + GPSTimeStamp into ISO format
+- ✅ Added two-phase tag processing
+  - Phase 1: Extract raw tags from EXIF data
+  - Phase 2: Build composite tags from extracted values
+- ✅ GPS coordinate conversion logic
+  - Converts [[deg,1],[min,1],[sec,100]] to decimal degrees
+  - Applies hemisphere reference (S/W make negative)
+  - Handles missing refs with graceful fallback
+
+**Key Files**: `src/implementations/composite.rs`, `src/exif.rs` (build_composite_tags), updated tag output with "Composite:" prefix
+
+---
+
+## Milestone 8e: Fix GPS ValueConv vs Composite Confusion (1 week)
+
+**Goal**: Refactor GPS coordinate conversion from ValueConv to proper Composite tags, establishing clean architectural separation
+
+**Context**: Currently, GPS decimal conversion is incorrectly implemented as ValueConv. This milestone fixes the conceptual confusion by moving these conversions to the Composite system where they belong.
+
+**Deliverables**:
+
+1. **Remove GPS ValueConv Functions**
+
+   - Remove `gps_coordinate_value_conv` and wrapper functions from `value_conv.rs`
+   - Update registry to stop registering GPS ValueConv functions
+   - GPS:GPSLatitude should return raw rational arrays only
+
+2. **Move GPS Conversions to Composite System**
+
+   - Implement proper composite compute functions:
+     ```rust
+     pub fn gps_latitude_composite(
+         lat: &TagValue,      // GPS:GPSLatitude (rational array)
+         lat_ref: &TagValue,  // GPS:GPSLatitudeRef (N/S)
+     ) -> Result<TagValue>
+     ```
+   - Register in composite registry, not ValueConv registry
+
+3. **Fix GPS Tag Extraction**
+
+   - Ensure GPS tags return raw values:
+     - `GPS:GPSLatitude` → `[[54,1], [59,100], [38,1]]`
+     - `GPS:GPSLatitudeRef` → `"N"`
+   - Remove any ValueConv application for GPS coordinate tags
+
+4. **Update Tests**
+
+   - Move GPS conversion tests from `value_conv_tests.rs` to `composite_tests.rs`
+   - Update integration tests to expect raw GPS values
+   - Add tests for composite GPS tags returning decimals
+
+5. **Command-line -G Flag Support**
+   - `-G` or `-G0`: Show group prefixes (default)
+   - No `-G` flag: Hide groups, composite tags take precedence
+   - Implement tag resolution logic for no-group mode
+
+**Success Criteria**:
+
+- `GPS:GPSLatitude` returns raw rational array
+- `Composite:GPSLatitude` returns decimal degrees
+- Clear architectural separation between ValueConv and Composite
+- All tests pass with proper tag values
+
+---
+
+## Milestone 8f: Composite Tag Codegen & Infrastructure (1 week)
+
+**Goal**: Add code generation support for Composite tags and establish full infrastructure
+
+**Deliverables**:
+
+1. **Extract Composite Definitions from ExifTool**
+
+   - Enhance `extract_tables.pl` to parse `%Image::ExifTool::Composite`
+   - Extract mainstream composite tags (same frequency filter)
+   - Generate JSON with composite definitions
+
+2. **Generate Composite Tag Definitions**
+
+   - Create `src/generated/composite_tags.rs`:
+     ```rust
+     pub static COMPOSITE_TAGS: &[CompositeTagDef] = &[
+         CompositeTagDef {
+             name: "GPSLatitude",
+             group: "Composite",
+             require: &["GPS:GPSLatitude", "GPS:GPSLatitudeRef"],
+             compute_ref: "gps_latitude_composite",
+         },
+         // ... more tags
+     ];
+     ```
+
+3. **Composite Building Infrastructure**
+
+   - Add `composite_tags: HashMap<String, TagValue>` to ExifReader
+   - Implement dependency resolution (single pass, no circular deps)
+   - Add `get_all_tags()` logic to merge extracted + composite tags
+
+4. **Additional Composite Tags**
+
+   - ImageSize: Combine ImageWidth + ImageHeight
+   - GPSAltitude: Combine GPSAltitude + GPSAltitudeRef
+   - LensID: Derive from LensModel with PrintConv
+   - ShutterSpeed: Format ExposureTime as "1/x" or "x""
+
+5. **PrintConv for Composite Tags**
+   - Some composites need PrintConv (e.g., GPSPosition formatting)
+   - Chain composite compute → PrintConv if defined
+   - Test complete pipeline
+
+**Success Criteria**:
+
+- Codegen extracts composite definitions from ExifTool
+- Multiple composite tags working (not just GPS)
+- Clean separation of concerns in architecture
+- Foundation for future composite tags
 
 ---
 
