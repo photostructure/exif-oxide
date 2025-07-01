@@ -37,6 +37,11 @@ See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for architectural details.
 
 For engineers starting on the project, see [ENGINEER-GUIDE.md](docs/ENGINEER-GUIDE.md) for practical guidance on understanding ExifTool and implementing features.
 
+## Differences from default `exiftool` behavior
+
+- `-j` (JSON output) is default behavior by the tool. There is no non-JSON output.
+- GPS coordinate decimal conversion will be implemented in Milestone 8 (ValueConv registry)
+
 ## Licensing
 
 This program and code is offered under a commercial and under the GNU Affero

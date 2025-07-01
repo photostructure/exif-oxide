@@ -8,8 +8,8 @@ use similar::{ChangeTag, TextDiff};
 use std::collections::HashMap;
 use std::path::Path;
 
-/// Tags currently supported by exif-oxide (Milestone 3)
-/// This list should be updated as more milestones are completed
+/// Tags currently supported by exif-oxide (Milestone 6)
+/// GPS tags excluded until Milestone 8 (ValueConv registry implementation)
 const SUPPORTED_TAGS: &[&str] = &[
     "Make",
     "Model",
@@ -22,6 +22,8 @@ const SUPPORTED_TAGS: &[&str] = &[
     "FileSize",
     "FileModifyDate",
     "ExifToolVersion",
+    // GPS tags will be re-enabled in Milestone 8:
+    // "GPSLatitude", "GPSLongitude", "GPSLatitudeRef", "GPSLongitudeRef", "GPSAltitude", "GPSAltitudeRef",
 ];
 
 /// Files to exclude from testing (problematic files to deal with later)

@@ -63,6 +63,8 @@ After you think you're done implementing a milestone:
 
 **Key Files**: `tools/extract_tag_metadata.pl`, `src/generated.rs`, `third-party/exiftool/doc/TagMetadata.json`
 
+**Future Enhancement Needed**: The static GPS tag table added in Milestone 6 (`src/generated/tags.rs`) demonstrates the need for enhanced code generation to extract GPS and other subdirectory tables from ExifTool automatically, rather than manual static definitions.
+
 ---
 
 ## ✅ Milestone 1: File I/O & JPEG Detection (COMPLETED)
@@ -189,41 +191,43 @@ After you think you're done implementing a milestone:
 
 ---
 
-## Milestone 6: RATIONAL Format & GPS (2 weeks)
+## ✅ Milestone 6: RATIONAL Format & GPS (COMPLETED)
 
-**Goal**: Implement RATIONAL types and high-frequency ValueConv
+**Goal**: Implement RATIONAL types and GPS coordinate extraction
 
-**Deliverables**:
+**Implementation Summary**:
 
-- [ ] RATIONAL/SRATIONAL format
-  - Parse 2x uint32 correctly
-  - Handle zero denominators
-  - Display as "num/den"
-- [ ] GPS IFD support
-  - Follow GPS IFD pointer
-  - Extract GPS tags
-  - GPSLatitude/Longitude as rationals
-- [ ] Stateful reader completion
-  - PROCESSED hash for recursion
-  - VALUES hash storage
-  - PATH tracking
-- [ ] Basic coordinate display
-  - Show raw rational arrays
-  - No conversion yet
+- ✅ RATIONAL/SRATIONAL format support (formats 5 & 10)
+  - Parse 2x uint32/int32 correctly with proper endianness
+  - Handle zero denominators gracefully
+  - Display as "num/den" with special cases for /1 and /0
+  - Support both single rational and rational arrays
+- ✅ GPS IFD subdirectory processing
+  - Follow GPS IFD pointer (tag 0x8825) to GPS directory
+  - Extract GPS tags with proper table lookup (GPS_TAG_BY_ID)
+  - Tag source tracking for correct name resolution
+  - GPSLatitude/GPSLongitude as rational arrays by default
+- ✅ Enhanced stateful reader architecture
+  - PROCESSED hash for recursion prevention working
+  - Tag source tracking (tag_sources HashMap)
+  - PATH tracking operational from Milestone 5
+  - Processor dispatch system handles GPS vs EXIF tables
+- ✅ GPS coordinate extraction
+  - Raw rational arrays: [[54,1], [5938,100], [0,1]] format
+  - GPSLatitudeRef/GPSLongitudeRef as ASCII strings
+  - GPSTimeStamp as 3-element rational array
+  - GPSMapDatum string extraction
 
-**Success Criteria**:
+**Success Criteria Met**:
 
-- GPS coordinates extracted
-- Rationals display correctly
-- No infinite loops on bad data
+- ✅ GPS coordinates extracted correctly from test file
+- ✅ Rationals display as proper arrays with zero-denominator handling
+- ✅ No infinite loops - recursion prevention working
+- ✅ Raw rational arrays extracted correctly from EXIF data
 
-**Test Commands**:
+**Key Files**: `src/exif.rs` (RATIONAL extraction), `src/types.rs` (TagValue variants), `src/generated/tags.rs` (GPS table), enhanced architecture supporting GPS-specific processing
 
-```bash
-# Files with GPS data
-exif-oxide t/images/GPS.jpg | jq .GPSLatitude
-# Should show [deg/1, min/1, sec/100] format
-```
+**Note**: This milestone provides the foundation for decimal GPS coordinate conversion, which requires PrintConv/ValueConv support or CLI flags (future milestone). The static GPS tag table added here demonstrates the pattern needed for future code generation improvements.
 
 ---
 
@@ -234,15 +238,15 @@ exif-oxide t/images/GPS.jpg | jq .GPSLatitude
 **Deliverables**:
 
 - [ ] Analyze test images for needed PrintConv
+- [ ] BITMASK support
+  - Bit flag parsing
+  - Comma-separated output
 - [ ] Implement top 5-10:
   - Flash (BITMASK)
   - ExposureProgram
   - MeteringMode
   - WhiteBalance
   - ColorSpace
-- [ ] BITMASK support
-  - Bit flag parsing
-  - Comma-separated output
 - [ ] Simple lookups
   - Hash table conversions
 

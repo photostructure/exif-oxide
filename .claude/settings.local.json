@@ -95,7 +95,10 @@
       "WebFetch(domain:rust-cli.github.io)",
       "WebFetch(domain:doc.rust-lang.org)",
       "Bash(printf:*)",
-      "Bash(RUST_LOG=debug cargo run -- third-party/exiftool/t/images/GPS.jpg)"
+      "Bash(RUST_LOG=debug cargo run -- third-party/exiftool/t/images/GPS.jpg)",
+      "Bash(RUST_LOG=debug ./target/debug/exif-oxide third-party/exiftool/t/images/GPS.jpg)",
+      "Bash(RUST_LOG=trace ./target/debug/exif-oxide third-party/exiftool/t/images/GPS.jpg)",
+      "Bash(RUST_LOG=trace cargo run -- third-party/exiftool/t/images/GPS.jpg)"
     ],
     "deny": []
   }
