@@ -8,50 +8,23 @@ use similar::{ChangeTag, TextDiff};
 use std::collections::HashMap;
 use std::path::Path;
 
-/// Tags currently supported by exif-oxide (Milestone 7)
-/// Conservative list - only tags that work perfectly with existing implementations
-/// TODO: DRY up - this list is duplicated in tools/generate_exiftool_json.sh (Milestone 8a)
-const SUPPORTED_TAGS: &[&str] = &[
-    // File/basic metadata
-    "Make",
-    "Model",
-    "MIMEType",
-    "SourceFile",
-    "FileName",
-    "Directory",
-    "FileSize",
-    "FileModifyDate",
-    "ExifToolVersion",
-    // EXIF tags with working PrintConv implementations
-    "Orientation",      // orientation_print_conv ✅
-    "ResolutionUnit",   // resolutionunit_print_conv ✅
-    "YCbCrPositioning", // ycbcrpositioning_print_conv ✅
-    "Flash",            // flash_print_conv ✅
-    "ColorSpace",       // colorspace_print_conv ✅
-    "ExposureProgram",  // exposureprogram_print_conv ✅
-
-                        // GPS tags temporarily excluded due to extraction issues (separate from PrintConv work)
-                        // "GPSLatitudeRef",        // gpslatituderef_print_conv ✅ - extraction issues in some files
-                        // "GPSLongitudeRef",       // gpslongituderef_print_conv ✅ - extraction issues in some files
-                        // "GPSAltitudeRef",        // gpsaltituderef_print_conv ✅ - value mismatch in GoPro files
-
-                        // TODO: Add these back when PrintConv implemented:
-                        // "MeteringMode",          // Needs Canon-specific "Evaluative" vs "Multi-segment" handling
-                        // "ExifImageWidth",        // Works but no PrintConv needed
-                        // "ExifImageHeight",       // Works but no PrintConv needed
-                        // "XResolution",           // Needs PrintConv to format as integer
-                        // "YResolution",           // Needs PrintConv to format as integer
-                        // "FocalLength",           // Needs PrintConv to format as "24.0 mm"
-                        // "FNumber",               // Needs PrintConv to format as "4.0"
-                        // "ExposureTime",          // Needs PrintConv to format as "1/2000"
-                        // "DateTimeOriginal",      // Needs PrintConv date formatting
-                        // "CreateDate",            // Needs PrintConv date formatting
-                        // "GPSLatitude",           // Needs ValueConv for decimal degrees (Milestone 8)
-                        // "GPSLongitude",          // Needs ValueConv for decimal degrees (Milestone 8)
-                        // "GPSAltitude",           // Works as raw rational
-                        // "GPSTimeStamp",          // Works as raw rational array
-                        // "GPSMapDatum",           // Works as string
-];
+/// Load supported tags from shared config file (Milestone 8a)
+/// Single source of truth now maintained in config/supported_tags.json
+///
+/// Note: Future tags requiring PrintConv implementations:
+/// - MeteringMode: Needs Canon-specific "Evaluative" vs "Multi-segment" handling
+/// - ExifImageWidth/ExifImageHeight: Work but no PrintConv needed
+/// - XResolution/YResolution: Need PrintConv to format as integer
+/// - FocalLength: Needs PrintConv to format as "24.0 mm"
+/// - FNumber: Needs PrintConv to format as "4.0"
+/// - ExposureTime: Needs PrintConv to format as "1/2000"
+/// - DateTimeOriginal/CreateDate: Need PrintConv date formatting
+/// - GPSLatitude/GPSLongitude: Need ValueConv for decimal degrees (Milestone 8)
+/// - GPS tags temporarily excluded due to extraction issues in some files
+fn load_supported_tags() -> Vec<String> {
+    const CONFIG_JSON: &str = include_str!("../config/supported_tags.json");
+    serde_json::from_str(CONFIG_JSON).expect("Failed to parse supported_tags.json")
+}
 
 /// Files to exclude from testing (problematic files to deal with later)
 const EXCLUDED_FILES: &[&str] = &[
@@ -98,9 +71,12 @@ fn run_exif_oxide(file_path: &str) -> Result<Value, Box<dyn std::error::Error>> 
 /// Filter JSON object to only include supported tags
 fn filter_to_supported_tags(data: &Value) -> Value {
     if let Some(obj) = data.as_object() {
+        let supported_tags = load_supported_tags();
+        let supported_tag_refs: Vec<&str> = supported_tags.iter().map(|s| s.as_str()).collect();
+
         let filtered: HashMap<String, Value> = obj
             .iter()
-            .filter(|(key, _)| SUPPORTED_TAGS.contains(&key.as_str()))
+            .filter(|(key, _)| supported_tag_refs.contains(&key.as_str()))
             .map(|(k, v)| (k.clone(), v.clone()))
             .collect();
         serde_json::to_value(filtered).unwrap()
