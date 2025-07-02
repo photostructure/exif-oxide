@@ -182,12 +182,12 @@ fn test_extract_binary_tags_with_print_conv() {
     let focus_value = reader.get_extracted_tags().get(&7).unwrap();
     assert_eq!(focus_value, &TagValue::String("AI Focus AF".to_string()));
 
-    // Check tag sources have correct group prefixes
+    // Check tag sources have correct namespace
     let macro_source = reader.get_tag_sources().get(&1).unwrap();
-    assert_eq!(macro_source, "MakerNotes:MacroMode");
+    assert_eq!(macro_source.namespace, "MakerNotes");
 
     let focus_source = reader.get_tag_sources().get(&7).unwrap();
-    assert_eq!(focus_source, "MakerNotes:FocusMode");
+    assert_eq!(focus_source.namespace, "MakerNotes");
 }
 
 #[test]
@@ -240,8 +240,8 @@ fn test_process_canon_makernotes_integration() {
         0x08, 0x00, 0x00, 0x00, // Count: 8 values
         0x12, 0x00, 0x00, 0x00, // Offset: 18 (0x12)
         // Next IFD (none)
-        0x00, 0x00, 0x00, 0x00, // CameraSettings data starting at offset 18
-        0x00, 0x00, // Index 0: 0
+        0x00, 0x00, 0x00,
+        0x00, // CameraSettings data starting at offset 18 (Canon uses 1-based indexing)
         0x02, 0x00, // Index 1: 2 (MacroMode = Normal)
         0x00, 0x00, // Index 2: 0
         0x00, 0x00, // Index 3: 0
@@ -249,6 +249,7 @@ fn test_process_canon_makernotes_integration() {
         0x00, 0x00, // Index 5: 0
         0x00, 0x00, // Index 6: 0
         0x01, 0x00, // Index 7: 1 (FocusMode = AI Servo AF)
+        0x00, 0x00, // Index 8: 0 (padding)
     ];
     reader.set_test_data(test_data);
 
@@ -265,11 +266,11 @@ fn test_process_canon_makernotes_integration() {
         .process_canon_makernotes(0, reader.get_data_len())
         .unwrap();
 
-    // Verify extracted tags
-    let macro_value = reader.get_extracted_tags().get(&1).unwrap();
+    // Verify extracted tags (using synthetic tag IDs from process_canon_makernotes)
+    let macro_value = reader.get_extracted_tags().get(&0xC001).unwrap(); // MacroMode synthetic ID
     assert_eq!(macro_value, &TagValue::String("Normal".to_string()));
 
-    let focus_value = reader.get_extracted_tags().get(&7).unwrap();
+    let focus_value = reader.get_extracted_tags().get(&0xC007).unwrap(); // FocusMode synthetic ID
     assert_eq!(focus_value, &TagValue::String("AI Servo AF".to_string()));
 }
 

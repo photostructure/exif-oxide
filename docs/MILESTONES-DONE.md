@@ -91,3 +91,9 @@ Refactored GPS coordinate conversion from ValueConv to proper Composite tags, es
 ## ✅ Milestone 8f: Composite Tag Codegen & Infrastructure (COMPLETED)
 
 Extracted 62 composite tag definitions from ExifTool tables and generated complete infrastructure with dependency resolution. Implemented working ShutterSpeed composite demonstrating the foundation for future composite tag expansion.
+
+---
+
+## ✅ Milestone 9: ProcessBinaryData Introduction (COMPLETED)
+
+Implemented comprehensive ProcessBinaryData framework with Sony MakerNote support and tag collision resolution. Built sophisticated tag source tracking system with precedence rules ensuring main EXIF tags override MakerNote tags with same IDs. Successfully resolved Sony A7C II compatibility issue where Sony MakerNote Orientation tag (0x0112) was overwriting main EXIF Orientation tag. Added Sony signature detection following ExifTool's 7 different detection patterns and enhanced Canon MakerNote processing with proper namespacing.

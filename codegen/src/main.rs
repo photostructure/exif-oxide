@@ -12,6 +12,7 @@ use std::path::Path;
 
 /// JSON structure from extract_tables.pl
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct ExtractedData {
     extracted_at: String,
     exiftool_version: String,
@@ -32,6 +33,7 @@ struct ConversionRefs {
 
 /// Individual tag extracted from ExifTool
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct ExtractedTag {
     id: String,
     name: String,
@@ -54,6 +56,7 @@ struct ExtractedTag {
 
 /// Individual composite tag extracted from ExifTool
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct ExtractedCompositeTag {
     name: String,
     table: String,

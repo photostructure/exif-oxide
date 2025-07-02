@@ -74,42 +74,6 @@ fn apex_shutter_speed(val: f64) -> f64 {
 
 ```
 
-## Milestone 9: ProcessBinaryData Introduction (3 weeks)
-
-**Goal**: Core ProcessBinaryData with fixed formats only
-
-**Deliverables**:
-
-- [ ] ProcessBinaryData framework
-  - Processor trait implementation
-  - Dispatch integration
-- [ ] Fixed format support
-  - int16u, int16s formats
-  - Fixed arrays like int16u[3]
-- [ ] MakerNote detection
-  - Detect Canon signature
-  - Route to ProcessBinaryData
-- [ ] Canon CameraSettings test
-  - MacroMode (index 1)
-  - FocusMode (index 7)
-  - Just a few tags initially
-- [ ] Index-based extraction
-  - FIRST_ENTRY = 1 support
-
-**Success Criteria**:
-
-- Extract Canon MacroMode correctly
-- ProcessBinaryData dispatch works
-- Can add more tags incrementally
-
-**Test with Canon files**:
-
-```bash
-exif-oxide t/images/Canon.jpg | jq .MacroMode
-# Should show "Macro" or "Normal"
-```
-
----
 
 ## Milestone 10: Canon MakerNote Expansion (3 weeks)
 
