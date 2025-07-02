@@ -329,6 +329,8 @@ pub enum ProcessorType {
     Canon(CanonProcessor),
     /// Nikon manufacturer-specific processing  
     Nikon(NikonProcessor),
+    /// Sony manufacturer-specific processing
+    Sony(SonyProcessor),
     /// Generic manufacturer processing
     Generic(String),
 }
@@ -355,6 +357,24 @@ pub enum NikonProcessor {
     /// Nikon encrypted data processing
     /// ExifTool: ProcessNikonEncrypted
     Encrypted,
+}
+
+/// Sony-specific processor variants
+/// ExifTool: Sony.pm has multiple processing procedures and signature detection
+#[derive(Debug, Clone, PartialEq)]
+pub enum SonyProcessor {
+    /// Standard Sony EXIF processing with MakerNotes namespace
+    /// ExifTool: Image::ExifTool::Sony::Main
+    Main,
+    /// Sony PIC format processing
+    /// ExifTool: Image::ExifTool::Sony::PIC (DSC-H200/J20/W370/W510, MHS-TS20)
+    Pic,
+    /// Sony SRF format processing  
+    /// ExifTool: Image::ExifTool::Sony::SRF
+    Srf,
+    /// Sony Ericsson mobile phone format
+    /// ExifTool: Image::ExifTool::Sony::Ericsson
+    Ericsson,
 }
 
 /// Processor dispatch configuration
@@ -492,5 +512,71 @@ impl Default for BinaryDataTable {
             groups: HashMap::new(),
             tags: HashMap::new(),
         }
+    }
+}
+
+/// Source priority for tag conflict resolution
+/// Higher numbers take precedence over lower numbers
+/// ExifTool behavior: Main EXIF tags override MakerNote tags with same ID
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum SourcePriority {
+    /// Unknown or unrecognized source (lowest priority)
+    Unknown = 10,
+    /// MakerNote tags (manufacturer-specific data)
+    MakerNotes = 50,
+    /// GPS IFD tags
+    Gps = 80,
+    /// Main EXIF tags (highest priority)
+    /// ExifTool: IFD0, IFD1, ExifIFD, etc.
+    Exif = 100,
+}
+
+impl SourcePriority {
+    /// Get priority for a namespace string
+    /// Matches ExifTool's group hierarchy behavior
+    pub fn from_namespace(namespace: &str) -> Self {
+        match namespace {
+            "EXIF" | "IFD0" | "IFD1" | "ExifIFD" | "SubIFD" => SourcePriority::Exif,
+            "GPS" => SourcePriority::Gps,
+            "MakerNotes" => SourcePriority::MakerNotes,
+            _ => SourcePriority::Unknown,
+        }
+    }
+}
+
+/// Enhanced tag source information for conflict resolution
+/// Tracks where each tag came from and its processing context
+#[derive(Debug, Clone)]
+pub struct TagSourceInfo {
+    /// Namespace/group for the tag (e.g., "EXIF", "MakerNotes", "GPS")
+    /// ExifTool: Group 0 in tag name "Group:TagName"
+    pub namespace: String,
+    /// Specific IFD or table name (e.g., "IFD0", "ExifIFD", "Canon::Main")
+    /// ExifTool: Directory path for debugging and processing context
+    pub ifd_name: String,
+    /// Source priority for conflict resolution
+    /// ExifTool: Main EXIF tags take precedence over MakerNote tags
+    pub priority: SourcePriority,
+    /// Processor type that handled this tag
+    /// ExifTool: PROCESS_PROC information
+    pub processor_type: ProcessorType,
+}
+
+impl TagSourceInfo {
+    /// Create new tag source info
+    pub fn new(namespace: String, ifd_name: String, processor_type: ProcessorType) -> Self {
+        let priority = SourcePriority::from_namespace(&namespace);
+        Self {
+            namespace,
+            ifd_name,
+            priority,
+            processor_type,
+        }
+    }
+
+    /// Get the full tag name with namespace prefix
+    /// ExifTool format: "Group:TagName"
+    pub fn format_tag_name(&self, tag_name: &str) -> String {
+        format!("{}:{}", self.namespace, tag_name)
     }
 }

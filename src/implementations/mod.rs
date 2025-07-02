@@ -3,7 +3,9 @@
 //! This module contains manual implementations of ExifTool's conversion functions.
 //! All implementations are direct translations from ExifTool source code.
 
+pub mod canon;
 pub mod print_conv;
+pub mod sony;
 pub mod value_conv;
 
 use crate::registry;
