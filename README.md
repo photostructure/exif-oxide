@@ -29,7 +29,8 @@ as providing substantive performance gains over an approach that `fork`s
 - No filesystem recursion: we will not support batch-update operations via the CLI
 - We will not support tag value updates that are not static values (no pattern-match replacements)
 - We will not provide verbatim exiftool logging results
-- We will not seek to reproduce exiftool warnings or error verbiage verbatim.
+- We will not seek to reproduce exiftool warnings or error verbiage verbatim
+- We aren't doing any date or time parsing.
 
 ## Design
 

@@ -3,11 +3,8 @@
 /codegen/target
 
 # Generated code from ExifTool
-src/tables/generated/
-
-# Generated files
-generated/
-codegen/generated/
+/codegen/generated
+/generated
 
 # IDE files
 .vscode/

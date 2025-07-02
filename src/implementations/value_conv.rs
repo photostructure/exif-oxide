@@ -8,10 +8,54 @@
 
 use crate::types::{ExifError, Result, TagValue};
 
-// GPS coordinate ValueConv functions REMOVED in Milestone 8e
-// GPS coordinates should return raw rational arrays, not decimal degrees.
-// Decimal conversion will be handled by Composite tags that combine
-// GPS:GPSLatitude + GPS:GPSLatitudeRef -> Composite:GPSLatitude
+/// GPS coordinate conversion to decimal degrees (unsigned)
+///
+/// ExifTool: lib/Image/ExifTool/GPS.pm lines 12-14 (%coordConv)
+/// ExifTool: lib/Image/ExifTool/GPS.pm lines 364-374 (sub ToDegrees)
+/// Formula: $deg = $d + (($m || 0) + ($s || 0)/60) / 60; (GPS.pm:380)
+///
+/// Converts rational array [degrees, minutes, seconds] to decimal degrees
+/// NOTE: This produces UNSIGNED decimal degrees - hemisphere sign is applied
+/// in Composite tags that combine coordinate + ref (e.g., Composite:GPSLatitude)
+pub fn gps_coordinate_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value {
+        TagValue::RationalArray(coords) if coords.len() >= 3 => {
+            // ExifTool's ToDegrees extracts 3 numeric values using regex:
+            // my ($d, $m, $s) = ($val =~ /((?:[+-]?)(?=\d|\.\d)\d*(?:\.\d*)?(?:[Ee][+-]\d+)?)/g);
+            // For rational arrays, we can extract directly as decimals
+
+            // Extract degrees (first rational)
+            let degrees = if coords[0].1 != 0 {
+                coords[0].0 as f64 / coords[0].1 as f64
+            } else {
+                0.0 // ExifTool uses 0 for undefined values
+            };
+
+            // Extract minutes (second rational)
+            let minutes = if coords.len() > 1 && coords[1].1 != 0 {
+                coords[1].0 as f64 / coords[1].1 as f64
+            } else {
+                0.0 // ExifTool: ($m || 0)
+            };
+
+            // Extract seconds (third rational)
+            let seconds = if coords.len() > 2 && coords[2].1 != 0 {
+                coords[2].0 as f64 / coords[2].1 as f64
+            } else {
+                0.0 // ExifTool: ($s || 0)/60
+            };
+
+            // ExifTool formula: $deg = $d + (($m || 0) + ($s || 0)/60) / 60;
+            let decimal_degrees = degrees + ((minutes + seconds / 60.0) / 60.0);
+
+            Ok(TagValue::F64(decimal_degrees))
+        }
+        _ => Err(ExifError::ParseError(
+            "GPS coordinate conversion requires rational array with at least 3 elements"
+                .to_string(),
+        )),
+    }
+}
 
 /// APEX shutter speed conversion: 2^-val to actual shutter speed
 ///
@@ -174,8 +218,99 @@ pub fn focallength_value_conv(value: &TagValue) -> Result<TagValue> {
 mod tests {
     use super::*;
 
-    // GPS coordinate conversion test removed in Milestone 8e
-    // GPS coordinates now return raw rational arrays
+    #[test]
+    fn test_gps_coordinate_conversion() {
+        // Test typical GPS coordinate: 40° 26' 46.8" = 40.446333...
+        let coords = vec![(40, 1), (26, 1), (468, 10)]; // 46.8 seconds as 468/10
+        let coord_value = TagValue::RationalArray(coords);
+
+        let result = gps_coordinate_value_conv(&coord_value).unwrap();
+        if let TagValue::F64(decimal) = result {
+            // 40 + 26/60 + 46.8/3600 = 40.446333...
+            assert!((decimal - 40.446333333).abs() < 0.000001);
+        } else {
+            panic!("Expected F64 result");
+        }
+    }
+
+    #[test]
+    fn test_gps_coordinate_precision() {
+        // Test high precision: 12° 34' 56.789"
+        let coords = vec![(12, 1), (34, 1), (56789, 1000)]; // 56.789 seconds
+        let coord_value = TagValue::RationalArray(coords);
+
+        let result = gps_coordinate_value_conv(&coord_value).unwrap();
+        if let TagValue::F64(decimal) = result {
+            // 12 + 34/60 + 56.789/3600 = 12.582441388...
+            let expected = 12.0 + 34.0 / 60.0 + 56.789 / 3600.0;
+            assert!((decimal - expected).abs() < 0.0000001);
+        } else {
+            panic!("Expected F64 result");
+        }
+    }
+
+    #[test]
+    fn test_gps_coordinate_zero_values() {
+        // Test coordinates at exactly 0° 0' 0"
+        let coords = vec![(0, 1), (0, 1), (0, 1)];
+        let coord_value = TagValue::RationalArray(coords);
+
+        let result = gps_coordinate_value_conv(&coord_value).unwrap();
+        if let TagValue::F64(decimal) = result {
+            assert_eq!(decimal, 0.0);
+        } else {
+            panic!("Expected F64 result");
+        }
+    }
+
+    #[test]
+    fn test_gps_coordinate_only_degrees() {
+        // Test coordinate with only degrees: 45° 0' 0"
+        let coords = vec![(45, 1), (0, 1), (0, 1)];
+        let coord_value = TagValue::RationalArray(coords);
+
+        let result = gps_coordinate_value_conv(&coord_value).unwrap();
+        if let TagValue::F64(decimal) = result {
+            assert_eq!(decimal, 45.0);
+        } else {
+            panic!("Expected F64 result");
+        }
+    }
+
+    #[test]
+    fn test_gps_coordinate_zero_denominators() {
+        // Test handling of zero denominators (should be treated as 0)
+        let coords = vec![(40, 1), (30, 0), (45, 1)]; // minutes has zero denominator
+        let coord_value = TagValue::RationalArray(coords);
+
+        let result = gps_coordinate_value_conv(&coord_value).unwrap();
+        if let TagValue::F64(decimal) = result {
+            // 40 + 0/60 + 45/3600 = 40.0125
+            assert!((decimal - 40.0125).abs() < 0.0001);
+        } else {
+            panic!("Expected F64 result");
+        }
+    }
+
+    #[test]
+    fn test_gps_coordinate_invalid_input() {
+        // Test with wrong type
+        let value = TagValue::String("40.446333".to_string());
+        let result = gps_coordinate_value_conv(&value);
+        assert!(matches!(result, Err(ExifError::ParseError(_))));
+
+        // Test with too few elements
+        let coords = vec![(40, 1), (26, 1)]; // Only 2 elements instead of 3
+        let coord_value = TagValue::RationalArray(coords);
+        let result = gps_coordinate_value_conv(&coord_value);
+        assert!(matches!(result, Err(ExifError::ParseError(_))));
+
+        // Test with empty array
+        let coords = vec![];
+        let coord_value = TagValue::RationalArray(coords);
+        let result = gps_coordinate_value_conv(&coord_value);
+        assert!(matches!(result, Err(ExifError::ParseError(_))));
+    }
 
     #[test]
     fn test_apex_shutter_speed() {

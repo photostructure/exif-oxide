@@ -44,10 +44,9 @@ echo "Scanning for JPEG files..."
 
 # Get all JPEG files from both test directories
 # Note: Using default ExifTool behavior (rational arrays) for Milestone 6
-# Decimal GPS conversion will be implemented in Milestone 8 (ValueConv), by using `exiftool -r -json -GPSLatitude\# -GPSLongitude\# -GPSAltitude\# ... -all ...`
 # Milestone 8c: Using -G flag to get group-prefixed tag names (e.g., "EXIF:Make", "GPS:GPSLatitude")
 
-if ! exiftool -r -json -G -all -if '$MIMEType eq "image/jpeg"' \
+if ! exiftool -r -json -struct -G -GPSLatitude\# -GPSLongitude\# -GPSAltitude\# -all -if '$MIMEType eq "image/jpeg"' \
     "$PROJECT_ROOT/test-images" \
     "$PROJECT_ROOT/third-party/exiftool/t/images" \
     > "$TEMP_JSON" 2>/dev/null; then

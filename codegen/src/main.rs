@@ -177,12 +177,21 @@ fn main() -> Result<()> {
         // Parse hex ID
         let id = parse_hex_id(&tag.id)?;
 
-        // Manual ValueConv mapping for Milestone 8b until extraction script is fixed
-        // TODO: Remove this when extract_tables.pl properly extracts ValueConv references
+        // Custom ValueConv implementations for exif-oxide TagEntry API (Milestone 8b+)
+        // 
+        // Note: FNumber, ExposureTime, and FocalLength don't have ValueConv in ExifTool
+        // because they're already stored as rationals. We add custom ValueConv to convert
+        // to float for easier API usage while preserving the original rational data.
+        // GPS coordinate ValueConv matches ExifTool GPS.pm %coordConv with ToDegrees.
         let value_conv_ref = match tag.name.as_str() {
             "FNumber" => Some("fnumber_value_conv".to_string()),
             "ExposureTime" => Some("exposuretime_value_conv".to_string()),
             "FocalLength" => Some("focallength_value_conv".to_string()),
+            // GPS coordinate ValueConv - ExifTool GPS.pm uses %coordConv with ToDegrees
+            "GPSLatitude" => Some("gpslatitude_value_conv".to_string()),
+            "GPSLongitude" => Some("gpslongitude_value_conv".to_string()),
+            "GPSDestLatitude" => Some("gpsdestlatitude_value_conv".to_string()),
+            "GPSDestLongitude" => Some("gpsdestlongitude_value_conv".to_string()),
             _ => tag.value_conv_ref.clone(),
         };
 
@@ -238,7 +247,7 @@ fn main() -> Result<()> {
     generate_composite_tag_table(&composite_tags, output_dir)?;
 
     // Generate conversion registry from extracted references
-    generate_conversion_refs(&extracted_data.conversion_refs, output_dir)?;
+    generate_conversion_refs(&extracted_data.conversion_refs, &tags, output_dir)?;
 
     // Generate supported tags list for DRY compliance
     generate_supported_tags(&tags, output_dir)?;
@@ -407,7 +416,7 @@ fn generate_tag_table(tags: &[GeneratedTag], output_dir: &str) -> Result<()> {
     Ok(())
 }
 
-fn generate_conversion_refs(conversion_refs: &ConversionRefs, output_dir: &str) -> Result<()> {
+fn generate_conversion_refs(conversion_refs: &ConversionRefs, tags: &[GeneratedTag], output_dir: &str) -> Result<()> {
     let mut code = String::new();
     
     // File header
@@ -422,6 +431,18 @@ fn generate_conversion_refs(conversion_refs: &ConversionRefs, output_dir: &str) 
     code.push_str("use lazy_static::lazy_static;\n");
     code.push_str("use std::collections::HashSet;\n\n");
 
+    // Collect all ValueConv references actually used in generated tags (including manual ones)
+    let mut all_value_conv_refs = std::collections::HashSet::new();
+    for tag in tags {
+        if let Some(value_ref) = &tag.value_conv_ref {
+            all_value_conv_refs.insert(value_ref.clone());
+        }
+    }
+    
+    // Convert to sorted vector for consistent output
+    let mut sorted_value_refs: Vec<_> = all_value_conv_refs.into_iter().collect();
+    sorted_value_refs.sort();
+
     // List all required PrintConv references
     code.push_str("/// All PrintConv references that need implementation\n");
     code.push_str("/// These match the print_conv_ref values used in generated/tags.rs\n");
@@ -433,8 +454,9 @@ fn generate_conversion_refs(conversion_refs: &ConversionRefs, output_dir: &str) 
 
     // List all required ValueConv references  
     code.push_str("/// All ValueConv references that need implementation\n");
+    code.push_str("/// Includes both ExifTool-extracted and custom implementations\n");
     code.push_str("pub static REQUIRED_VALUE_CONV: &[&str] = &[\n");
-    for conv_ref in &conversion_refs.value_conv {
+    for conv_ref in &sorted_value_refs {
         code.push_str(&format!("    \"{}\",\n", conv_ref));
     }
     code.push_str("];\n\n");
@@ -503,9 +525,12 @@ fn generate_supported_tags(_tags: &[GeneratedTag], output_dir: &str) -> Result<(
             "ImageSize",         // Composite tag
             "ShutterSpeed",      // Composite tag
         ]),
-
-        // When GPS ValueConv/Composite system is fully working:
-        // ("GPS Support", &["GPSLatitude", "GPSLongitude"]),
+        ("Milestone 8c", &[
+            "GPSLatitude",       // GPS ValueConv to decimal degrees ✅
+            "GPSLongitude",      // GPS ValueConv to decimal degrees ✅
+            "GPSDestLatitude",   // GPS ValueConv to decimal degrees ✅
+            "GPSDestLongitude",  // GPS ValueConv to decimal degrees ✅
+        ]),
     ];
 
     // Flatten all completed milestone tags
