@@ -17,7 +17,7 @@ lint:
 
 # Run tests
 test:
-	cargo test --all
+	cargo test --all --features test-helpers
 
 # Fix formatting and auto-fixable clippy issues
 fix:
