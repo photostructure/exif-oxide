@@ -198,18 +198,18 @@ pub fn exposureprogram_print_conv(val: &TagValue) -> String {
     .to_string()
 }
 
-/// FNumber PrintConv - formats f-stop values
+/// FNumber PrintConv - formats f-stop values (passthrough for numeric output)
 /// ExifTool: lib/Image/ExifTool/Exif.pm FNumber PrintConv
-/// Works with ValueConv result to display as "f/4.0" format
+/// ExifTool returns numeric values (4.0), not formatted strings ("f/4")
 pub fn fnumber_print_conv(val: &TagValue) -> String {
     match val.as_f64() {
-        Some(f_number) => format!("f/{f_number}"),
+        Some(f_number) => f_number.to_string(),
         None => {
             // Handle rational format directly if ValueConv wasn't applied
             if let TagValue::Rational(num, denom) = val {
                 if *denom != 0 {
                     let f_number = *num as f64 / *denom as f64;
-                    return format!("f/{f_number}");
+                    return f_number.to_string();
                 }
             }
             format!("Unknown ({val})")
@@ -253,15 +253,27 @@ pub fn exposuretime_print_conv(val: &TagValue) -> String {
 
 /// FocalLength PrintConv - formats focal length with "mm" unit
 /// ExifTool: lib/Image/ExifTool/Exif.pm FocalLength PrintConv
+/// Always shows at least one decimal place (24.0 mm, not 24 mm)
 pub fn focallength_print_conv(val: &TagValue) -> String {
     match val.as_f64() {
-        Some(focal_length) => format!("{focal_length} mm"),
+        Some(focal_length) => {
+            // Format with at least one decimal place to match ExifTool
+            if focal_length.fract() == 0.0 {
+                format!("{focal_length:.1} mm")
+            } else {
+                format!("{focal_length} mm")
+            }
+        }
         None => {
             // Handle rational format directly if ValueConv wasn't applied
             if let TagValue::Rational(num, denom) = val {
                 if *denom != 0 {
                     let focal_length = *num as f64 / *denom as f64;
-                    return format!("{focal_length} mm");
+                    if focal_length.fract() == 0.0 {
+                        return format!("{focal_length:.1} mm");
+                    } else {
+                        return format!("{focal_length} mm");
+                    }
                 }
             }
             format!("Unknown ({val})")
@@ -389,10 +401,10 @@ mod tests {
 
     #[test]
     fn test_fnumber_print_conv() {
-        assert_eq!(fnumber_print_conv(&TagValue::F64(4.0)), "f/4");
-        assert_eq!(fnumber_print_conv(&TagValue::F64(2.8)), "f/2.8");
-        assert_eq!(fnumber_print_conv(&TagValue::F64(1.4)), "f/1.4");
-        assert_eq!(fnumber_print_conv(&TagValue::Rational(4, 1)), "f/4");
+        assert_eq!(fnumber_print_conv(&TagValue::F64(4.0)), "4");
+        assert_eq!(fnumber_print_conv(&TagValue::F64(2.8)), "2.8");
+        assert_eq!(fnumber_print_conv(&TagValue::F64(1.4)), "1.4");
+        assert_eq!(fnumber_print_conv(&TagValue::Rational(4, 1)), "4");
     }
 
     #[test]
@@ -408,8 +420,11 @@ mod tests {
 
     #[test]
     fn test_focallength_print_conv() {
-        assert_eq!(focallength_print_conv(&TagValue::F64(24.0)), "24 mm");
+        assert_eq!(focallength_print_conv(&TagValue::F64(24.0)), "24.0 mm");
         assert_eq!(focallength_print_conv(&TagValue::F64(105.5)), "105.5 mm");
-        assert_eq!(focallength_print_conv(&TagValue::Rational(24, 1)), "24 mm");
+        assert_eq!(
+            focallength_print_conv(&TagValue::Rational(24, 1)),
+            "24.0 mm"
+        );
     }
 }
