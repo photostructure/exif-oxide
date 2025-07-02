@@ -517,6 +517,47 @@ pub enum SonyProcessor {
     Ericsson,
 }
 
+/// Conditional processor configuration for runtime dispatch
+/// ExifTool: SubDirectory with Condition expressions
+#[derive(Debug, Clone)]
+pub struct ConditionalProcessor {
+    /// Runtime condition to evaluate (None = unconditional)
+    /// ExifTool: Condition => '$$valPt =~ /pattern/' expressions
+    pub condition: Option<crate::conditions::Condition>,
+    /// Processor to use when condition matches
+    /// ExifTool: SubDirectory ProcessProc selection
+    pub processor: ProcessorType,
+    /// Parameters passed to processor
+    /// ExifTool: SubDirectory parameters (DecryptStart, ByteOrder, etc.)
+    pub parameters: HashMap<String, String>,
+}
+
+impl ConditionalProcessor {
+    /// Create unconditional processor (always matches)
+    /// ExifTool: SubDirectory without Condition
+    pub fn unconditional(processor: ProcessorType) -> Self {
+        Self {
+            condition: None,
+            processor,
+            parameters: HashMap::new(),
+        }
+    }
+
+    /// Create conditional processor with parameters
+    /// ExifTool: SubDirectory with Condition and parameters
+    pub fn conditional(
+        condition: crate::conditions::Condition,
+        processor: ProcessorType,
+        parameters: HashMap<String, String>,
+    ) -> Self {
+        Self {
+            condition: Some(condition),
+            processor,
+            parameters,
+        }
+    }
+}
+
 /// Processor dispatch configuration
 /// ExifTool: Combination of table PROCESS_PROC and SubDirectory ProcessProc
 #[derive(Debug, Clone)]
@@ -524,21 +565,57 @@ pub struct ProcessorDispatch {
     /// Table-level default processor
     /// ExifTool: $$tagTablePtr{PROCESS_PROC}
     pub table_processor: Option<ProcessorType>,
-    /// SubDirectory-specific processor overrides
-    /// ExifTool: $$subdir{ProcessProc}
-    pub subdirectory_overrides: std::collections::HashMap<u16, ProcessorType>,
-    /// Parameters passed to processor
-    /// ExifTool: Additional SubDirectory parameters
-    pub parameters: std::collections::HashMap<String, String>,
+    /// Conditional processor selection by tag ID
+    /// ExifTool: Multiple SubDirectory entries with Condition expressions
+    pub conditional_processors: HashMap<u16, Vec<ConditionalProcessor>>,
+    /// Legacy subdirectory overrides (backwards compatibility)
+    /// ExifTool: $$subdir{ProcessProc} without conditions
+    pub subdirectory_overrides: HashMap<u16, ProcessorType>,
+    /// Global parameters passed to processor
+    /// ExifTool: Table-level parameters
+    pub parameters: HashMap<String, String>,
 }
 
 impl Default for ProcessorDispatch {
     fn default() -> Self {
         Self {
             table_processor: Some(ProcessorType::Exif), // Default fallback
-            subdirectory_overrides: std::collections::HashMap::new(),
-            parameters: std::collections::HashMap::new(),
+            conditional_processors: HashMap::new(),
+            subdirectory_overrides: HashMap::new(),
+            parameters: HashMap::new(),
         }
+    }
+}
+
+impl ProcessorDispatch {
+    /// Create new dispatch configuration with table processor
+    /// ExifTool: Table PROCESS_PROC setting
+    pub fn with_table_processor(processor: ProcessorType) -> Self {
+        Self {
+            table_processor: Some(processor),
+            ..Default::default()
+        }
+    }
+
+    /// Add conditional processor for specific tag
+    /// ExifTool: SubDirectory with Condition support
+    pub fn add_conditional_processor(&mut self, tag_id: u16, conditional: ConditionalProcessor) {
+        self.conditional_processors
+            .entry(tag_id)
+            .or_default()
+            .push(conditional);
+    }
+
+    /// Add legacy subdirectory override (backwards compatibility)
+    /// ExifTool: Simple SubDirectory ProcessProc override
+    pub fn add_subdirectory_override(&mut self, tag_id: u16, processor: ProcessorType) {
+        self.subdirectory_overrides.insert(tag_id, processor);
+    }
+
+    /// Set global parameter
+    /// ExifTool: Table-level parameters
+    pub fn set_parameter(&mut self, key: String, value: String) {
+        self.parameters.insert(key, value);
     }
 }
 
