@@ -22,6 +22,8 @@ After you think you're done implementing a milestone:
 
 3. **Code Quality**: Run `make precommit` and fix linting, compilation, and test errors.
 
+4. **DON'T DELETE YOUR STUBS**: if clippy is complaining about unused code, don't delete your stub! Instead add a TODO with the milestone that will replace the stub with a real implementation.
+
 ## Important Steps After Completing a Milestone
 
 1. Remove the completed milestone section from this document.
