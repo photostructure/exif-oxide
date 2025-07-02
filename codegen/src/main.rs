@@ -177,6 +177,15 @@ fn main() -> Result<()> {
         // Parse hex ID
         let id = parse_hex_id(&tag.id)?;
 
+        // Manual ValueConv mapping for Milestone 8b until extraction script is fixed
+        // TODO: Remove this when extract_tables.pl properly extracts ValueConv references
+        let value_conv_ref = match tag.name.as_str() {
+            "FNumber" => Some("fnumber_value_conv".to_string()),
+            "ExposureTime" => Some("exposuretime_value_conv".to_string()),
+            "FocalLength" => Some("focallength_value_conv".to_string()),
+            _ => tag.value_conv_ref.clone(),
+        };
+
         let generated_tag = GeneratedTag {
             id,
             name: tag.name.clone(),
@@ -185,7 +194,7 @@ fn main() -> Result<()> {
             writable: tag.writable != 0,
             description: tag.description,
             print_conv_ref: tag.print_conv_ref.clone(),
-            value_conv_ref: tag.value_conv_ref.clone(),
+            value_conv_ref,
             notes: tag.notes,
         };
 
@@ -480,11 +489,6 @@ fn generate_supported_tags(_tags: &[GeneratedTag], output_dir: &str) -> Result<(
             "WhiteBalance",      // whitebalance_print_conv ✅
             "MeteringMode",      // meteringmode_print_conv ✅
         ]),
-        ("Milestone 8f", &[
-            "ImageSize",         // Composite tag ✅
-            "GPSAltitude",       // Composite tag ✅  
-            "ShutterSpeed",      // Composite tag ✅
-        ]),
         ("Milestone 10", &[
             "FocusMode",         // Canon CameraSettings PrintConv ✅
             "CanonFlashMode",    // Canon CameraSettings PrintConv ✅
@@ -495,6 +499,11 @@ fn generate_supported_tags(_tags: &[GeneratedTag], output_dir: &str) -> Result<(
             "ExposureTime",      // exposuretime_print_conv ✅
             "FocalLength",       // focallength_print_conv ✅
         ]),
+        ("Milestone 8f", &[
+            "ImageSize",         // Composite tag
+            "ShutterSpeed",      // Composite tag
+        ]),
+
         // When GPS ValueConv/Composite system is fully working:
         // ("GPS Support", &["GPSLatitude", "GPSLongitude"]),
     ];

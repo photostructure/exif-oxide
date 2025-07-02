@@ -165,7 +165,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         writable: true,
         description: None,
         print_conv_ref: Some("exposuretime_print_conv"),
-        value_conv_ref: None,
+        value_conv_ref: Some("exposuretime_value_conv"),
         notes: None,
     },
     TagDef {
@@ -176,7 +176,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         writable: true,
         description: None,
         print_conv_ref: Some("fnumber_print_conv"),
-        value_conv_ref: None,
+        value_conv_ref: Some("fnumber_value_conv"),
         notes: None,
     },
     TagDef {
@@ -264,7 +264,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         writable: true,
         description: None,
         print_conv_ref: Some("focallength_print_conv"),
-        value_conv_ref: None,
+        value_conv_ref: Some("focallength_value_conv"),
         notes: None,
     },
     TagDef {

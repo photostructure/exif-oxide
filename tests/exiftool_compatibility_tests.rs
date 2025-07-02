@@ -75,22 +75,203 @@ fn filter_to_supported_tags(data: &Value) -> Value {
         let supported_tags = load_supported_tags();
         let supported_tag_refs: Vec<&str> = supported_tags.iter().map(|s| s.as_str()).collect();
 
+        // Allowed groups matching generate_exiftool_json.sh
+        let allowed_groups = ["EXIF", "File", "System", "GPS"];
+
         let filtered: HashMap<String, Value> = obj
             .iter()
             .filter(|(key, _)| {
-                // Extract tag name from group-prefixed format
-                let tag_name = if let Some(colon_pos) = key.find(':') {
-                    &key[colon_pos + 1..]
+                // Always include SourceFile
+                if key.as_str() == "SourceFile" {
+                    return true;
+                }
+
+                // Handle group-prefixed tag names
+                if let Some(colon_pos) = key.find(':') {
+                    let group = &key[..colon_pos];
+                    let tag_name = &key[colon_pos + 1..];
+
+                    // Check both group and tag are allowed
+                    allowed_groups.contains(&group) && supported_tag_refs.contains(&tag_name)
                 } else {
-                    key.as_str()
-                };
-                supported_tag_refs.contains(&tag_name)
+                    // Tags without groups are not included (except SourceFile handled above)
+                    false
+                }
             })
             .map(|(k, v)| (k.clone(), v.clone()))
             .collect();
         serde_json::to_value(filtered).unwrap()
     } else {
         data.clone()
+    }
+}
+
+/// Normalization rules for standardizing ExifTool's inconsistent output formats
+#[derive(Debug)]
+enum NormalizationRule {
+    /// Unit-based tags: extract number, standardize unit format
+    /// Example: "24.0 mm", "14 mm", 24 -> "24 mm" or "24.0 mm"
+    UnitFormat {
+        unit: &'static str,
+        decimal_places: Option<u8>,
+    },
+    /// Ratio formats: "1/2000", "0.5" -> standardize representation
+    RatioFormat,
+    /// Clean decimal precision but preserve JSON number type: 14.0 -> 14
+    CleanNumericPrecision { max_places: u8 },
+}
+
+/// Tag normalization configuration
+/// Maps tag names to their normalization rules
+fn get_normalization_rules() -> HashMap<&'static str, NormalizationRule> {
+    let mut rules = HashMap::new();
+
+    // Distance/length tags
+    rules.insert(
+        "FocalLength",
+        NormalizationRule::UnitFormat {
+            unit: "mm",
+            decimal_places: Some(1),
+        },
+    );
+    rules.insert(
+        "EXIF:FocalLength",
+        NormalizationRule::UnitFormat {
+            unit: "mm",
+            decimal_places: Some(1),
+        },
+    );
+
+    // Aperture/f-stop tags - clean unnecessary precision but preserve number type: 14.0 -> 14
+    rules.insert(
+        "FNumber",
+        NormalizationRule::CleanNumericPrecision { max_places: 1 },
+    );
+    rules.insert(
+        "EXIF:FNumber",
+        NormalizationRule::CleanNumericPrecision { max_places: 1 },
+    );
+
+    // Time-based tags - standardize ExposureTime format
+    // ExifTool inconsistencies: "1/400" (string), 4 (number), 0.4 (number)
+    // Our standard: fractions stay strings, whole seconds as integers, decimals as numbers
+    rules.insert("ExposureTime", NormalizationRule::RatioFormat);
+    rules.insert("EXIF:ExposureTime", NormalizationRule::RatioFormat);
+
+    rules
+}
+
+/// Apply normalization rule to a value
+fn apply_normalization_rule(value: &Value, rule: &NormalizationRule) -> Value {
+    match rule {
+        NormalizationRule::UnitFormat {
+            unit,
+            decimal_places,
+        } => normalize_unit_format(value, unit, *decimal_places),
+        NormalizationRule::RatioFormat => normalize_ratio_format(value),
+        NormalizationRule::CleanNumericPrecision { max_places } => {
+            normalize_clean_numeric_precision(value, *max_places)
+        }
+    }
+}
+
+/// Normalize unit-based values: 24 -> "24 mm", 1.8 -> "1.8 mm", 400.00 -> "400 mm", "24.0 mm" -> "24 mm"
+fn normalize_unit_format(value: &Value, unit: &str, _decimal_places: Option<u8>) -> Value {
+    let unit_pattern = format!(" {unit}");
+
+    let number = match value {
+        Value::String(s) => {
+            if let Some(unit_pos) = s.find(&unit_pattern) {
+                // Already has unit, extract number part
+                s[..unit_pos].parse::<f64>().ok()
+            } else {
+                // String that's just a number
+                s.parse::<f64>().ok()
+            }
+        }
+        Value::Number(n) => n.as_f64(),
+        _ => return value.clone(),
+    };
+
+    if let Some(num) = number {
+        // Always format as string with unit, removing unnecessary trailing zeros
+        if (num.fract()).abs() < 0.001 {
+            // Integer value: 24.0 -> "24 mm", 400.00 -> "400 mm"
+            Value::String(format!("{} {}", num as i32, unit))
+        } else {
+            // Has meaningful decimal: 1.8 -> "1.8 mm", 5.7 -> "5.7 mm"
+            // Remove trailing zeros: format as minimal decimal representation
+            let formatted = format!("{num:.10}"); // Start with high precision
+            let trimmed = formatted.trim_end_matches('0').trim_end_matches('.');
+            Value::String(format!("{trimmed} {unit}"))
+        }
+    } else {
+        value.clone()
+    }
+}
+
+/// Normalize ExposureTime formats consistently
+/// ExifTool inconsistencies: "1/400" (string), 4 (number), 0.4 (number)  
+/// Our standard: fractions stay strings, whole seconds as integers, decimals as numbers
+fn normalize_ratio_format(value: &Value) -> Value {
+    match value {
+        Value::String(s) => {
+            // If it's already a fraction string like "1/400", keep it
+            if s.contains('/') {
+                value.clone()
+            } else if let Ok(num) = s.parse::<f64>() {
+                // String that's a number - convert to appropriate JSON type
+                if (num.fract()).abs() < 0.001 {
+                    Value::Number(serde_json::Number::from(num as i64))
+                } else if let Some(json_num) = serde_json::Number::from_f64(num) {
+                    Value::Number(json_num)
+                } else {
+                    value.clone()
+                }
+            } else {
+                value.clone()
+            }
+        }
+        Value::Number(n) => {
+            // Numbers should stay as numbers, but clean up precision
+            if let Some(num) = n.as_f64() {
+                if (num.fract()).abs() < 0.001 {
+                    // Whole number - keep as integer
+                    Value::Number(serde_json::Number::from(num as i64))
+                } else {
+                    // Decimal - keep as-is
+                    value.clone()
+                }
+            } else {
+                value.clone()
+            }
+        }
+        _ => value.clone(),
+    }
+}
+
+/// Clean numeric precision while preserving JSON number type: 14.0 -> 14, 2.8 -> 2.8
+fn normalize_clean_numeric_precision(value: &Value, _max_places: u8) -> Value {
+    let number = match value {
+        Value::String(s) => s.parse::<f64>().ok(),
+        Value::Number(n) => n.as_f64(),
+        _ => return value.clone(),
+    };
+
+    if let Some(num) = number {
+        if (num.fract()).abs() < 0.001 {
+            // Integer value - return as JSON number
+            Value::Number(serde_json::Number::from(num as i64))
+        } else {
+            // Decimal value - preserve as number with original precision
+            if let Some(json_num) = serde_json::Number::from_f64(num) {
+                Value::Number(json_num)
+            } else {
+                value.clone()
+            }
+        }
+    } else {
+        value.clone()
     }
 }
 
@@ -138,6 +319,16 @@ fn normalize_for_comparison(mut data: Value, _is_exiftool: bool) -> Value {
         // For now, just remove it since formats differ significantly
         obj.remove("FileSize");
         obj.remove("File:FileSize");
+
+        // Apply rule-based normalization for format consistency
+        // Handles ExifTool's inconsistent output across different manufacturer modules
+        let normalization_rules = get_normalization_rules();
+        for (key, value) in obj.iter_mut() {
+            if let Some(rule) = normalization_rules.get(key.as_str()) {
+                let normalized = apply_normalization_rule(value, rule);
+                *value = normalized;
+            }
+        }
     }
 
     data

@@ -115,7 +115,14 @@
       "Bash(RUST_BACKTRACE=1 cargo test test_exiftool_compatibility)",
       "Bash(RUST_BACKTRACE=1 cargo test test_process_canon_makernotes_integration)",
       "Bash(RUST_BACKTRACE=1 cargo run -p exif-oxide -- test-images/canon/Canon_T3i.JPG)",
-      "Bash(RUST_LOG=debug cargo run -p exif-oxide -- test-images/canon/Canon_T3i.JPG)"
+      "Bash(RUST_LOG=debug cargo run -p exif-oxide -- test-images/canon/Canon_T3i.JPG)",
+      "Bash(RUST_LOG=trace cargo test composite_tag_tests --lib -- --nocapture)",
+      "Bash(RUST_LOG=trace cargo test composite_tag -- --nocapture)",
+      "Bash(RUST_LOG=trace cargo run --bin exif-oxide test-images/canon/Canon_T3i.JPG)",
+      "Bash(./test_focal_length)",
+      "Bash(rm:*)",
+      "Bash(./exiftool -json t/images/Canon.jpg)",
+      "Bash(./exiftool t/images/Canon.jpg)"
     ],
     "deny": []
   }
