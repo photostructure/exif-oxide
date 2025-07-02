@@ -1592,18 +1592,82 @@ impl ExifReader {
     /// Select appropriate processor for a directory
     /// ExifTool: $$subdir{ProcessProc} || $$tagTablePtr{PROCESS_PROC} || \&ProcessExif
     fn select_processor(&self, dir_name: &str, tag_id: Option<u16>) -> ProcessorType {
-        // 1. Check for subdirectory-specific processor override
+        let (processor, _params) = self.select_processor_with_conditions(
+            dir_name,
+            tag_id,
+            &[],  // No data for simple calls
+            0,    // No count
+            None, // No format
+        );
+        processor
+    }
+
+    /// Select processor with conditional evaluation support
+    /// ExifTool: Full conditional dispatch with runtime evaluation
+    fn select_processor_with_conditions(
+        &self,
+        dir_name: &str,
+        tag_id: Option<u16>,
+        data: &[u8],
+        count: u32,
+        format: Option<&str>,
+    ) -> (ProcessorType, std::collections::HashMap<String, String>) {
+        use crate::conditions::EvalContext;
+
+        // 1. Check for conditional processors with runtime evaluation
         if let Some(tag_id) = tag_id {
+            if let Some(conditionals) = self.processor_dispatch.conditional_processors.get(&tag_id)
+            {
+                // Build evaluation context
+                let make = self
+                    .extracted_tags
+                    .get(&0x010F) // Make tag
+                    .and_then(|v| v.as_string());
+                let model = self
+                    .extracted_tags
+                    .get(&0x0110) // Model tag
+                    .and_then(|v| v.as_string());
+
+                let context = EvalContext {
+                    data,
+                    count,
+                    format,
+                    make,
+                    model,
+                };
+
+                // Evaluate conditions in order until one matches
+                for conditional in conditionals {
+                    let matches = conditional
+                        .condition
+                        .as_ref()
+                        .map(|c| c.evaluate(&context))
+                        .unwrap_or(true); // Unconditional processors always match
+
+                    if matches {
+                        debug!(
+                            "Using conditional processor for tag {:#x}: {:?} (condition: {:?})",
+                            tag_id, conditional.processor, conditional.condition
+                        );
+                        return (
+                            conditional.processor.clone(),
+                            conditional.parameters.clone(),
+                        );
+                    }
+                }
+            }
+
+            // 2. Check for legacy subdirectory-specific processor override
             if let Some(processor) = self.processor_dispatch.subdirectory_overrides.get(&tag_id) {
                 debug!(
-                    "Using SubDirectory ProcessProc override for tag {:#x}: {:?}",
+                    "Using legacy SubDirectory ProcessProc override for tag {:#x}: {:?}",
                     tag_id, processor
                 );
-                return processor.clone();
+                return (processor.clone(), std::collections::HashMap::new());
             }
         }
 
-        // 2. Directory-specific defaults (before table-level processor)
+        // 3. Directory-specific defaults (before table-level processor)
         // ExifTool: Some directories have implicit processors
         let dir_specific = match dir_name {
             "GPS" => Some(ProcessorType::Gps),
@@ -1621,18 +1685,21 @@ impl ExifReader {
                 "Using directory-specific processor for {}: {:?}",
                 dir_name, processor
             );
-            return processor;
+            return (processor, std::collections::HashMap::new());
         }
 
-        // 3. Check for table-level processor
+        // 4. Check for table-level processor
         if let Some(processor) = &self.processor_dispatch.table_processor {
             debug!("Using table PROCESS_PROC for {}: {:?}", dir_name, processor);
-            return processor.clone();
+            return (
+                processor.clone(),
+                self.processor_dispatch.parameters.clone(),
+            );
         }
 
-        // 4. Final fallback to EXIF
+        // 5. Final fallback to EXIF
         debug!("Using default EXIF processor for {}", dir_name);
-        ProcessorType::Exif
+        (ProcessorType::Exif, std::collections::HashMap::new())
     }
 
     /// Dispatch to the appropriate processor function
@@ -1642,10 +1709,22 @@ impl ExifReader {
         processor: ProcessorType,
         dir_info: &DirectoryInfo,
     ) -> Result<()> {
+        self.dispatch_processor_with_params(processor, dir_info, &std::collections::HashMap::new())
+    }
+
+    /// Dispatch processor with parameters support
+    /// ExifTool: Processor dispatch with SubDirectory parameters
+    fn dispatch_processor_with_params(
+        &mut self,
+        processor: ProcessorType,
+        dir_info: &DirectoryInfo,
+        parameters: &std::collections::HashMap<String, String>,
+    ) -> Result<()> {
         trace!(
-            "Dispatching to processor {:?} for directory {}",
+            "Dispatching to processor {:?} for directory {} with params: {:?}",
             processor,
-            dir_info.name
+            dir_info.name,
+            parameters
         );
 
         match processor {
