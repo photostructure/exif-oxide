@@ -2,15 +2,19 @@
 
 This document tracks the incremental development milestones for exif-oxide.
 
-## Important Steps Before Coding
+## Important Steps Before Starting
 
-1. Be sure to study $REPO_ROOT/CLAUDE.md, $REPO_ROOT/docs/ARCHITECTURE.md, $REPO_ROOT/third-party/exiftool/CLAUDE.md, and all relevant related documentation before starting any work. With this project, **everything** is more complicated than you'd expect.
+1. YOU MUST READ [TRUST-EXIFTOOL](./TRUST-EXIFTOOL.md) BEFORE CONTINUING
 
-2. Be sure to follow the `Trust ExifTool` and `Ask clarifying questions` sections of ../CLAUDE.md
+2. READ [CLAUDE.md](../CLAUDE.md), [ARCHITECTURE.md](./ARCHITECTURE.md), and [ExifTool's CLAUDE.md](../third-party/exiftool/CLAUDE.md)
+
+3. Read all relevant related documentation before starting any work. With this project, **everything** is more complicated than you'd expect.
+
+4. Ask clarifying questions, like ../CLAUDE.md told you to do.
 
 ## Important Steps During Implementation
 
-1. Be sure to follow the `Trust ExifTool` and `Code smell` sections of ../CLAUDE.md
+1. Be sure to follow the `Trust ExifTool` and `Code smell` sections of ./TRUST-EXIFTOOL.md
 
 ## Important Milestone Validation Steps
 
@@ -27,7 +31,8 @@ After you think you're done implementing a milestone:
 ## Important Steps After Completing a Milestone
 
 1. Remove the completed milestone section from this document.
-2. Concisely summarize the completed work in docs/archived/DONE-MILESTONES.md
+2. Concisely summarize the completed work and add it to $REPO_ROOT/docs/archived/DONE-MILESTONES.md.
+3. If you worked from a separate MILESTONES-$desc.md file, move it to $REPO_ROOT/docs/archive and edit with completion status and any surprising gotchas or tribal knowledge that tripped you up in the implementation.
 
 ## Core Principles
 
@@ -93,24 +98,6 @@ This milestone plan embraces the reality that we're building a complex system in
 - Complex mathematical conversions
 
 **Success Criteria**: All ValueConv tests from ExifTool pass, GPS coordinates show decimal degrees with -#, APEX values converted correctly.
-
----
-
-### Milestone 11: Conditional Dispatch (2 weeks)
-
-**Goal**: Runtime condition evaluation for processor selection
-
-**Summary**: Implement ExifTool's conditional processor selection based on data patterns, camera models, and other runtime conditions.
-
-**Detailed Design**: [milestones/MILESTONE-11-Conditional-Dispatch.md](milestones/MILESTONE-11-Conditional-Dispatch.md)
-
-**Key Deliverables**:
-
-- Condition expression types (DataPattern, ModelMatch)
-- Runtime condition evaluation
-- Integration with existing processors
-
-**Success Criteria**: Canon FileNumber works per model, correct processor selected by conditions, no performance regression.
 
 ---
 

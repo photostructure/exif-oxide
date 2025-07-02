@@ -280,6 +280,7 @@ dependencies = [
  "clap",
  "criterion",
  "lazy_static",
+ "once_cell",
  "phf",
  "pretty_assertions",
  "quick-xml",

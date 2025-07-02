@@ -109,3 +109,9 @@ Implemented complete Canon MakerNote support with comprehensive offset fixing an
 ## ✅ Milestone 8b: TagEntry API & Basic ValueConv (COMPLETED)
 
 Implemented TagEntry API with separate value/print fields to support ExifTool's -# flag functionality. Built ValueConv registry with rational-to-float conversions for FNumber, ExposureTime, and FocalLength. Fixed CLI argument parsing to handle mixed positional arguments allowing files and -TagName# flags in any order. Updated JSON serialization to correctly switch between value and print representations based on -# flags while preserving ExifTool's type quirks. Ensured composite tags are included in JSON output and added comprehensive unit tests for argument parsing patterns.
+
+---
+
+## ✅ Milestone 11: Conditional Dispatch (COMPLETED)
+
+Implemented comprehensive conditional processor dispatch system for runtime processor selection based on data patterns, camera models, and other conditions. Built complete Condition enum supporting DataPattern, ModelMatch, MakeMatch, CountEquals, CountRange, FormatEquals, and boolean logic (And, Or, Not). Added EvalContext for runtime evaluation with access to binary data, count, format, make, and model. Enhanced ProcessorDispatch with ConditionalProcessor support maintaining backwards compatibility with existing dispatch. Implemented regex caching for performance optimization and graceful error handling for invalid patterns. Created comprehensive examples for Canon model-specific CameraInfo table selection, Nikon data pattern-based LensData version selection, and Sony count-based processor dispatch. Added 9 integration tests covering all conditional scenarios including complex boolean logic and precedence handling. Successfully validated with 51/51 compatibility tests passing and all precommit checks clean.
