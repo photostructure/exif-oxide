@@ -11,6 +11,7 @@ pub mod formats;
 pub mod generated;
 pub mod implementations;
 pub mod registry;
+pub mod tiff_types;
 pub mod types;
 pub mod value_extraction;
 
