@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with ex
 
 As much as possible, exif-oxide is a _translation_ of [ExifTool](https://exiftool.org/) from perl to Rust.
 
-The biggest "complexifier" for this project is that ExifTool has monthly
+The biggest complexifier for this project is that ExifTool has monthly
 releases. New parsers, file types, and bugfixes accompany every new release.
 
 If our codebase is manually ported over, examining thousands of lines of diff to
@@ -16,18 +16,48 @@ The current hypothesis involves a balance of manually-written components that
 are stitched together by a code generator that reads and parses ExifTool's
 largely tabular codebase. This is discussed in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
+## ⚠️ CRITICAL: Trust ExifTool
+
+**This is the #1 rule for all work on exif-oxide.**
+
+See [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md) for the complete guidelines.
+
+The key principle: **wholly and completely trust the ExifTool implementation.**
+
+Any time we stray from ExifTool's logic and heuristics will introduce defects in real-world tasks.
+
+Almost every task will involve studying some part of the ExifTool codebase and validating that we are doing something exactly equivalent.
+
 ## Essential Documentation
 
 Before starting work on exif-oxide, familiarize yourself with:
 
 ### Our Documentation
 
-- [ARCHITECTURE.md](docs/ARCHITECTURE.md) - Overall system design and code generation strategy
-- [MILESTONES.md](docs/MILESTONES.md) - Development roadmap with 12+ incremental milestones
-- [ENGINEER-GUIDE.md](docs/ENGINEER-GUIDE.md) - Practical guide for new contributors
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md) - High-level system overview and philosophy
+- [MILESTONES.md](docs/MILESTONES.md) - Active development milestones
+- [ENGINEER-GUIDE.md](docs/ENGINEER-GUIDE.md) - Starting point for new contributors
+
+#### Design Documents
+
+- [API-DESIGN.md](docs/design/API-DESIGN.md) - Public API structure and TagEntry design
+- [CODEGEN-STRATEGY.md](docs/design/CODEGEN-STRATEGY.md) - Code generation approach
+- [IMPLEMENTATION-PALETTE.md](docs/design/IMPLEMENTATION-PALETTE.md) - Manual implementation patterns
+
+#### Technical Deep Dives
+
 - [STATE-MANAGEMENT.md](docs/STATE-MANAGEMENT.md) - How we handle stateful processing
 - [PROCESSOR-PROC-DISPATCH.md](docs/PROCESSOR-PROC-DISPATCH.md) - Processor dispatch strategy
 - [OFFSET-BASE-MANAGEMENT.md](docs/OFFSET-BASE-MANAGEMENT.md) - Critical offset calculation patterns
+
+#### Guides
+
+- [EXIFTOOL-CONCEPTS.md](docs/guides/EXIFTOOL-CONCEPTS.md) - Critical ExifTool concepts
+- [READING-EXIFTOOL-SOURCE.md](docs/guides/READING-EXIFTOOL-SOURCE.md) - Navigating ExifTool's Perl code
+- [DEVELOPMENT-WORKFLOW.md](docs/guides/DEVELOPMENT-WORKFLOW.md) - Day-to-day development process
+- [COMMON-PITFALLS.md](docs/guides/COMMON-PITFALLS.md) - Common mistakes and debugging
+- [TRIBAL-KNOWLEDGE.md](docs/guides/TRIBAL-KNOWLEDGE.md) - Undocumented quirks
+- [EXIFTOOL-UPDATE-WORKFLOW.md](docs/guides/EXIFTOOL-UPDATE-WORKFLOW.md) - Updating to new ExifTool versions
 
 ### ExifTool Documentation
 
@@ -47,30 +77,9 @@ confusing, inadequately specific, or otherwise unclear, **please ask the user**.
 The user assumes every task will need at least a couple clarifying questions
 before starting work!
 
-### 1. ExifTool is Gospel
+### 1. Trust ExifTool
 
-- ExifTool is the accumulation of 25 years of camera-specific quirks and edge
-  cases, and tens of thousands of bugfixes.
-
-- We must maintain exact tag name and structure compatibility
-
-- **Do not invent any heuristics**. This project is a translation effort. Always
-  defer to ExifTool's algorithms, and translate **verbatim**. Chesterton's Fence
-  applies here in a big way -- assume that odd, confusing, or obscure `ExifTool`
-  code **is that way for a reason**, and **we do not want to nor do we care why
-  it is like that**--our only job is to **perfectly translate**.
-
-- Always include a comment pointing back to the ExifTool code (using the
-  filename, function or structure, and line numbers) so that Engineers of
-  Tomorrow can trace back to where magic values and confusing heuristics
-  originated.
-
-**⚠️ CRITICAL**: Never attempt to "improve" or "simplify" ExifTool's logic:
-
-- If ExifTool checks for `0x41` before `0x42`, do it in that order
-- If ExifTool has a weird offset calculation, copy it exactly
-- If ExifTool special-cases "NIKON CORPORATION" vs "NIKON", there's a reason
-- No Camera Follows The Spec. Trust The ExifTool Code.
+See [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md). This is the #1 most important principle - trust ExifTool, not the spec. We translate ExifTool **verbatim**, including all its quirks and apparent inefficiencies.
 
 ### 2. Only `perl` can parse `perl`
 
@@ -111,20 +120,6 @@ temporary hack or otherwise have a bad "code smell", ask the user to add a TODO
 comment into the code that tersely describes why it smells, along with either a
 link to a MILESTONES.md stage when it will be fixed, or a terse description of
 how it should be fixed in the future.
-
-### Test images
-
-Unfortunately, the test images in `$REPO_ROOT/third-party/exiftool/t/images` are
-stripped of their data payload, so they test _many_ aspects of metadata parsing,
-but whenever possible, we'd _prefer_ to test against full-size out-of-camera
-example files. If you cannot find a full-sized example that your current task
-demands in `$REPO_ROOT/test-images`, **ask the user** and we'll add it to the
-repository.
-
-### Avoid mocks and byte array snippets
-
-Whenever possible, use integration tests that load actual files from
-`$REPO_ROOT/test-images`. Avoid mocks and stubs where possible.
 
 ### Safety rules
 

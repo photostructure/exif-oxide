@@ -103,3 +103,9 @@ Implemented comprehensive ProcessBinaryData framework with Sony MakerNote suppor
 ## ✅ Milestone 10: Canon MakerNote Expansion (COMPLETED)
 
 Implemented complete Canon MakerNote support with comprehensive offset fixing and manufacturer-specific processing. Built Canon signature detection system identifying cameras via Make field. Implemented Canon offset scheme detection with model-specific logic for 4/6/16/28 byte variants following ExifTool's exact algorithms. Added Canon TIFF footer validation and offset base adjustment with fallback mechanisms. Created ProcessSerialData infrastructure for Canon AF data with variable-length arrays and dynamic sizing expressions. Successfully implemented Canon CameraSettings (ProcessBinaryData) extracting MacroMode, FocusMode, CanonFlashMode with PrintConv lookup tables. Built Canon AFInfo2 processor extracting NumAFPoints, AFAreaWidths arrays, and AF geometry data. Integrated Canon processor dispatch into main EXIF flow with proper precedence handling. Verified with Canon T3i test image showing correct extraction of 6 CameraSettings tags and 9 AFInfo2 tags with proper offset calculations.
+
+---
+
+## ✅ Milestone 8b: TagEntry API & Basic ValueConv (COMPLETED)
+
+Implemented TagEntry API with separate value/print fields to support ExifTool's -# flag functionality. Built ValueConv registry with rational-to-float conversions for FNumber, ExposureTime, and FocalLength. Fixed CLI argument parsing to handle mixed positional arguments allowing files and -TagName# flags in any order. Updated JSON serialization to correctly switch between value and print representations based on -# flags while preserving ExifTool's type quirks. Ensured composite tags are included in JSON output and added comprehensive unit tests for argument parsing patterns.
