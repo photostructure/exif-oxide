@@ -208,9 +208,26 @@ impl<R: Read + Seek> Read for BinaryTagReader<R> {
 
 /// Results structure
 pub struct Metadata {
-    pub tags: HashMap<String, TagValue>,
+    pub tags: Vec<TagEntry>,
     pub errors: Vec<ExifError>,
     pub warnings: Vec<String>,
+}
+
+/// A single extracted tag with both converted value and display string
+pub struct TagEntry {
+    /// Tag group (e.g., "EXIF", "GPS", "Canon")
+    pub group: String,
+    
+    /// Tag name (e.g., "FNumber", "ExposureTime")
+    pub name: String,
+    
+    /// Value after ValueConv (logical value)
+    /// This is what ExifTool shows with -# flag
+    pub value: TagValue,
+    
+    /// Value after PrintConv (display string)
+    /// This is what ExifTool shows normally
+    pub print: String,
 }
 
 /// Tag value representation
@@ -231,7 +248,76 @@ pub struct BinaryRef {
 }
 ```
 
+## Value and Print Conversion Strategy
+
+### Overview
+
+ExifTool has a two-stage conversion system that we faithfully reproduce:
+
+1. **ValueConv**: Converts raw extracted data to logical values (e.g., rational → float, APEX → stops)
+2. **PrintConv**: Converts logical values to human-readable strings (e.g., 4.0 → "f/4.0")
+
+Our API exposes both conversions, allowing consumers to choose:
+- `value` field: Post-ValueConv logical value (matches ExifTool -# output)
+- `print` field: Post-PrintConv display string (matches normal ExifTool output)
+
+### Conversion Pipeline
+
+```
+Raw Data → Format Extraction → ValueConv → value field
+                                        ↓
+                                   PrintConv → print field
+```
+
+### ExifTool Compatibility Notes
+
+**PrintConv Quirks**:
+- Some PrintConv functions return numeric strings that become JSON numbers (e.g., FNumber: "4.0" → 4.0)
+- Others return formatted strings (e.g., FocalLength: 24 → "24.0 mm")
+- We match these quirks exactly for compatibility
+
+**-# Flag Behavior**:
+- ExifTool's `-TagName#` syntax disables PrintConv for that tag
+- Shows the ValueConv result (or raw value if no ValueConv)
+- Our CLI emulates this behavior precisely
+
+### Implementation Example
+
+```rust
+// In tag extraction
+let (value, print) = self.apply_conversions(&raw_value, tag_def);
+
+let entry = TagEntry {
+    group: "EXIF".to_string(),
+    name: tag_def.name.to_string(),
+    value,  // Post-ValueConv (e.g., 4.0 as f64)
+    print,  // Post-PrintConv (e.g., "4.0" or "f/4.0")
+};
+```
+
 ## Code Generation Strategy
+
+### CLI Output Behavior
+
+The CLI chooses between value and print based on user flags:
+
+```bash
+# Normal output (uses print field)
+exif-oxide image.jpg
+{
+  "EXIF:FNumber": 4.0,           # PrintConv returns "4.0", JSON encodes as number
+  "EXIF:ExposureTime": "1/2000", # PrintConv returns string
+  "EXIF:FocalLength": "24.0 mm"  # PrintConv returns string with units
+}
+
+# With -# flag (uses value field)
+exif-oxide -FNumber# image.jpg
+{
+  "EXIF:FNumber": 4,             # ValueConv result (or raw if no ValueConv)
+  "EXIF:ExposureTime": "1/2000", # Not requested with #, uses print
+  "EXIF:FocalLength": "24.0 mm"  # Not requested with #, uses print
+}
+```
 
 ### What Codegen Handles
 

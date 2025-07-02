@@ -39,17 +39,204 @@ After you think you're done implementing a milestone:
 
 ---
 
-## Milestone 8b: Basic ValueConv (2 weeks)
+## Milestone 8b: TagEntry API & Basic ValueConv (1 week)
 
-**Before starting -- review the current code and future pending milestones -- is this still relevant work?**
+**Goal**: Restructure API to return both value and print fields, implement basic ValueConv
 
-**Goal**: Mathematical value conversions
+**Context**: Our current architecture forces PrintConv to return strings, breaking ExifTool compatibility for numeric values like FNumber. This milestone fixes the architecture and implements minimal ValueConv support.
 
 **Deliverables**:
 
-- [ ] ValueConv registry
-  - Same pattern as PrintConv
-  - Chain with PrintConv
+1. **New TagEntry API Structure**
+   - [ ] Create TagEntry struct with {group, name, value, print} fields
+   - [ ] Update ExifReader to build TagEntry objects
+   - [ ] Modify apply_conversions to return (value, print) tuple
+   - [ ] Update all tag extraction to use new structure
+
+   ```rust
+   /// A single extracted metadata tag with both its converted value and display string.
+   /// 
+   /// This structure provides access to both the logical value (after ValueConv)
+   /// and the human-readable display string (after PrintConv), allowing consumers
+   /// to choose the most appropriate representation.
+   /// 
+   /// # Examples
+   /// 
+   /// ```
+   /// // A typical EXIF tag entry
+   /// TagEntry {
+   ///     group: "EXIF".to_string(),
+   ///     name: "FNumber".to_string(),
+   ///     value: TagValue::F64(4.0),      // Post-ValueConv: 4/1 → 4.0
+   ///     print: "4.0".to_string(),       // Post-PrintConv: formatted for display
+   /// }
+   /// 
+   /// // A tag with units in the display string
+   /// TagEntry {
+   ///     group: "EXIF".to_string(),
+   ///     name: "FocalLength".to_string(),
+   ///     value: TagValue::F64(24.0),     // Numeric value
+   ///     print: "24.0 mm".to_string(),   // Human-readable with units
+   /// }
+   /// ```
+   #[derive(Debug, Clone, Serialize, Deserialize)]
+   pub struct TagEntry {
+       /// Tag group name (e.g., "EXIF", "GPS", "Canon", "MakerNotes")
+       /// 
+       /// Groups follow ExifTool's naming conventions:
+       /// - Main IFDs: "EXIF", "GPS", "IFD0", "IFD1"
+       /// - Manufacturer: "Canon", "Nikon", "Sony", etc.
+       /// - Sub-groups: "Canon::CameraSettings", etc.
+       pub group: String,
+       
+       /// Tag name without group prefix (e.g., "FNumber", "ExposureTime")
+       /// 
+       /// Names match ExifTool's tag naming exactly for compatibility.
+       pub name: String,
+       
+       /// The logical value after ValueConv processing.
+       /// 
+       /// This is the value you get with ExifTool's -# flag:
+       /// - Rational values converted to floats (4/1 → 4.0)
+       /// - APEX values converted to real units
+       /// - Raw value if no ValueConv exists
+       /// 
+       /// # Examples
+       /// 
+       /// - FNumber: `TagValue::F64(4.0)` (from rational 4/1)
+       /// - ExposureTime: `TagValue::F64(0.0005)` (from rational 1/2000)
+       /// - Make: `TagValue::String("Canon")` (no ValueConv needed)
+       pub value: TagValue,
+       
+       /// The display string after PrintConv processing.
+       /// 
+       /// This is the human-readable representation:
+       /// - Numbers may be formatted ("4.0" not "4")
+       /// - Units may be added ("24.0 mm")
+       /// - Coded values decoded ("Rotate 90 CW" not "6")
+       /// 
+       /// If no PrintConv exists, this equals `value.to_string()`.
+       /// 
+       /// # ExifTool JSON Compatibility
+       /// 
+       /// When serializing to JSON, some numeric PrintConv results
+       /// (like FNumber's "4.0") are encoded as JSON numbers, not strings.
+       /// The CLI handles this compatibility layer.
+       pub print: String,
+   }
+   ```
+
+2. **Basic ValueConv Implementation**
+   - [ ] ValueConv registry (same pattern as PrintConv)
+   - [ ] Rational to float conversion (for FNumber, ExposureTime, FocalLength)
+   - [ ] Update codegen to extract ValueConv references
+   - [ ] Wire ValueConv into conversion pipeline
+
+3. **CLI -# Flag Support**
+   - [ ] Parse -TagName# syntax
+   - [ ] Track which tags should use value vs print
+   - [ ] Update JSON output to match ExifTool behavior
+   - [ ] Update extract_metadata_json to handle -# flag mode
+   - [ ] Add compatibility tests for -# flag behavior
+
+   **Testing Infrastructure Updates**:
+   - [ ] Modify `tests/compatibility.rs` to test both normal and -# modes
+   - [ ] Update `extract_metadata_json` to accept flag configuration
+   - [ ] Create test cases comparing:
+     - Normal output: `exiftool -j image.jpg`
+     - Numeric output: `exiftool -j -FNumber# -ExposureTime# image.jpg`
+   - [ ] Ensure our JSON matches ExifTool's exactly (numeric vs string types)
+
+4. **Fix PrintConv Implementations**
+   - [ ] Update fnumber_print_conv to match ExifTool exactly
+   - [ ] Fix exposuretime_print_conv comparison logic
+   - [ ] Ensure all PrintConv outputs match ExifTool
+
+**Success Criteria**:
+
+- ExifTool compatibility tests pass for FNumber, ExposureTime, FocalLength
+- API returns both value and print for all tags
+- CLI -# flag works like ExifTool
+- JSON output types match ExifTool exactly
+- Compatibility tests pass for both normal and -# flag modes
+- extract_metadata_json correctly switches between value/print based on -# flags
+
+**Implementation Notes**:
+
+1. **Edge Cases**:
+   - Tags with no PrintConv: `print` field equals `format_tag_value(&value)`
+   - Tags with no ValueConv: `value` field contains raw extracted data
+   - Array values: Both fields handle arrays appropriately
+   - Binary data: `value` contains `TagValue::Binary(BinaryRef)`, `print` shows size/format info
+
+2. **Group Name Mapping**:
+   ```rust
+   // IFD name to group mapping
+   match ifd_name {
+       "IFD0" => "IFD0",
+       "ExifIFD" => "EXIF",
+       "GPS" => "GPS",
+       "InteropIFD" => "Interop",
+       "MakerNotes::Canon" => "Canon",
+       "MakerNotes::Canon::CameraSettings" => "Canon",
+       // etc.
+   }
+   ```
+
+3. **CLI JSON Serialization**:
+   ```rust
+   // When outputting JSON, preserve ExifTool's type quirks
+   match (tag_name, &entry.print) {
+       ("FNumber", s) if s.parse::<f64>().is_ok() => {
+           // Output as JSON number, not string
+           json!(s.parse::<f64>().unwrap())
+       }
+       _ => json!(entry.print)  // Normal string output
+   }
+   ```
+
+4. **extract_metadata_json Updates**:
+   ```rust
+   pub fn extract_metadata_json(
+       path: &Path,
+       numeric_tags: Option<HashSet<String>>, // NEW: tags to show as numeric
+   ) -> Result<serde_json::Value> {
+       let metadata = extract_metadata(path)?;
+       
+       // Build JSON based on numeric_tags configuration
+       let mut output = json!({});
+       for entry in metadata.tags {
+           let key = format!("{}: {}", entry.group, entry.name);
+           let value = if numeric_tags.as_ref().map_or(false, |set| set.contains(&entry.name)) {
+               // Use value field for -# tags
+               to_json_value(&entry.value)
+           } else {
+               // Use print field normally, with type preservation
+               match entry.name.as_str() {
+                   "FNumber" if entry.print.parse::<f64>().is_ok() => {
+                       json!(entry.print.parse::<f64>().unwrap())
+                   }
+                   _ => json!(entry.print)
+               }
+           };
+           output[key] = value;
+       }
+       Ok(output)
+   }
+   ```
+
+**Future ValueConv Work** (separate milestone):
+- APEX conversions (ShutterSpeedValue, ApertureValue)
+- GPS coordinate conversion
+- Complex mathematical conversions
+
+
+## Milestone 8c: Full ValueConv Implementation (2 weeks)
+
+**Goal**: Complete ValueConv system with all mathematical conversions
+
+**Deliverables**:
+
 - [ ] APEX conversions
   - ShutterSpeedValue (2^-x)
   - ApertureValue (2^(x/2))
@@ -57,23 +244,16 @@ After you think you're done implementing a milestone:
 - [ ] GPS coordinate conversion
   - Degrees/minutes/seconds to decimal
   - Handle hemisphere references
-- [ ] FNumber from APEX
+- [ ] Date/time conversions
+- [ ] Complex mathematical conversions from ExifTool
 
 **Success Criteria**:
 
-- Shutter shows "1/250" not APEX value
-- Aperture shows "f/2.8" not APEX
-- GPS shows decimal degrees
+- All ValueConv tests from ExifTool pass
+- GPS coordinates show decimal degrees with -#
+- APEX values converted correctly
 
-**Manual Implementations**:
-
-```rust
-fn apex_shutter_speed(val: f64) -> f64 {
-    (-val).exp2()  // 2^-val
-}
-
-```
-
+---
 
 ## Milestone 11: Conditional Dispatch (2 weeks)
 
