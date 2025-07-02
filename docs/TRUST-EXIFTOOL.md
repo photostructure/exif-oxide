@@ -17,7 +17,7 @@ ExifTool is the accumulation of 25 years of camera-specific quirks, edge cases, 
 - "Optimize" seemingly inefficient code
 - Apply "best practices" that change behavior
 - Make assumptions about what cameras "should" do
-- Invent any heuristics
+- Invent any parsing heuristics
 
 **DO**:
 
@@ -28,11 +28,12 @@ ExifTool is the accumulation of 25 years of camera-specific quirks, edge cases, 
 - Trust that Phil Harvey had a reason
 - Use the same group names as ExifTool, **verbatim**
 - Only stray from tag names when they include invalid Rust variable characters
-- Raise errors or warnings whenever ExifTool does
+- Only stray from PrintConv implementations when ExifTool itself is not consistent (like `FocalLength`)
+- Raise errors or warnings whenever ExifTool does -- but our errors and warnings only need to be semantically similar -- they don't have to match ExifTool errors verbatim.
 
 ### 2. Critical Examples
 
-**Never attempt to "improve" or "simplify" ExifTool's logic:**
+**Never attempt to "improve" or "simplify" ExifTool's parsing logic:**
 
 - If ExifTool checks for `0x41` before `0x42`, do it in that order
 - If ExifTool has a weird offset calculation, copy it exactly  

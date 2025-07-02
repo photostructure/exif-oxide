@@ -437,7 +437,8 @@ impl ExifReader {
                 let value = self.extract_ascii_value(&entry, byte_order)?;
                 if !value.is_empty() {
                     let tag_value = TagValue::String(value);
-                    let final_value = self.apply_conversions(&tag_value, tag_def.copied());
+                    let (final_value, _print) =
+                        self.apply_conversions(&tag_value, tag_def.copied());
                     trace!(
                         "Extracted ASCII tag {:#x} from {}: {:?}",
                         entry.tag_id,
@@ -451,7 +452,7 @@ impl ExifReader {
             TiffFormat::Byte => {
                 let value = self.extract_byte_value(&entry)?;
                 let tag_value = TagValue::U8(value);
-                let final_value = self.apply_conversions(&tag_value, tag_def.copied());
+                let (final_value, _print) = self.apply_conversions(&tag_value, tag_def.copied());
                 trace!(
                     "Extracted BYTE tag {:#x} from {}: {:?}",
                     entry.tag_id,
@@ -464,7 +465,7 @@ impl ExifReader {
             TiffFormat::Short => {
                 let value = self.extract_short_value(&entry, byte_order)?;
                 let tag_value = TagValue::U16(value);
-                let final_value = self.apply_conversions(&tag_value, tag_def.copied());
+                let (final_value, _print) = self.apply_conversions(&tag_value, tag_def.copied());
 
                 trace!(
                     "Extracted SHORT tag {:#x} from {}: {:?}",
@@ -488,7 +489,7 @@ impl ExifReader {
                     }
                 }
 
-                let final_value = self.apply_conversions(&tag_value, tag_def.copied());
+                let (final_value, _print) = self.apply_conversions(&tag_value, tag_def.copied());
                 trace!(
                     "Extracted LONG tag {:#x} from {}: {:?}",
                     entry.tag_id,
@@ -502,7 +503,7 @@ impl ExifReader {
                 // Milestone 6: RATIONAL format support (format 5)
                 // ExifTool: 2x uint32 values representing numerator/denominator
                 let value = self.extract_rational_value(&entry, byte_order)?;
-                let final_value = self.apply_conversions(&value, tag_def.copied());
+                let (final_value, _print) = self.apply_conversions(&value, tag_def.copied());
                 trace!(
                     "Extracted RATIONAL tag {:#x} from {}: {:?}",
                     entry.tag_id,
@@ -516,7 +517,7 @@ impl ExifReader {
                 // Milestone 6: SRATIONAL format support (format 10)
                 // ExifTool: 2x int32 values representing numerator/denominator
                 let value = self.extract_srational_value(&entry, byte_order)?;
-                let final_value = self.apply_conversions(&value, tag_def.copied());
+                let (final_value, _print) = self.apply_conversions(&value, tag_def.copied());
                 trace!(
                     "Extracted SRATIONAL tag {:#x} from {}: {:?}",
                     entry.tag_id,
@@ -867,7 +868,8 @@ impl ExifReader {
             if let Some(computed_value) = self.compute_composite_tag(composite_def, &available_tags)
             {
                 // Apply PrintConv to the computed value (chain compute → PrintConv)
-                let final_value = self.apply_composite_conversions(&computed_value, composite_def);
+                let (final_value, _print) =
+                    self.apply_composite_conversions(&computed_value, composite_def);
                 let composite_tag_name = format!("Composite:{}", composite_def.name);
                 trace!(
                     "Computed composite tag: {} -> {:?}",
@@ -898,17 +900,44 @@ impl ExifReader {
             }
         }
 
-        // For now, implement basic composite examples based on the milestone
-        // TODO: This will be expanded with actual Perl-to-Rust conversion logic
+        // Dispatch to specific composite tag implementations
+        // Each implementation translates ExifTool's Perl ValueConv expression
         match composite_def.name {
+            // Existing implementations
             "ImageSize" => self.compute_image_size(available_tags),
             "GPSAltitude" => self.compute_gps_altitude(available_tags),
             "PreviewImageSize" => self.compute_preview_image_size(available_tags),
             "ShutterSpeed" => self.compute_shutter_speed(available_tags),
+
+            // New implementations for common composite tags
+            "Aperture" => self.compute_aperture(available_tags),
+            "DateTimeOriginal" => self.compute_datetime_original(available_tags),
+            "FocalLength35efl" => self.compute_focal_length_35efl(available_tags),
+            "ScaleFactor35efl" => self.compute_scale_factor_35efl(available_tags),
+            "SubSecDateTimeOriginal" => self.compute_subsec_datetime_original(available_tags),
+            "CircleOfConfusion" => self.compute_circle_of_confusion(available_tags),
+
             _ => {
-                // For other composite tags, return None for now
-                // This follows the milestone's infrastructure-first approach
-                trace!("Composite tag {} not yet implemented", composite_def.name);
+                // For other composite tags, log what dependencies are available vs missing
+                let mut available_deps = Vec::new();
+                let mut missing_deps = Vec::new();
+
+                for (_index, tag_name) in composite_def
+                    .require
+                    .iter()
+                    .chain(composite_def.desire.iter())
+                {
+                    if available_tags.contains_key(*tag_name) {
+                        available_deps.push(*tag_name);
+                    } else {
+                        missing_deps.push(*tag_name);
+                    }
+                }
+
+                trace!(
+                    "Composite tag {} not yet implemented. Available deps: {:?}, Missing deps: {:?}",
+                    composite_def.name, available_deps, missing_deps
+                );
                 None
             }
         }
@@ -1054,6 +1083,151 @@ impl ExifReader {
         }
     }
 
+    /// Compute Aperture composite tag
+    /// ExifTool: lib/Image/ExifTool/Composite.pm - "$val[0] || $val[1]"
+    /// Tries FNumber first, falls back to ApertureValue
+    fn compute_aperture(&self, available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+        // Try FNumber first (index 0 in desire list)
+        if let Some(fnumber) = available_tags.get("FNumber") {
+            return Some(fnumber.clone());
+        }
+
+        // Fall back to ApertureValue (index 1 in desire list)
+        if let Some(aperture_value) = available_tags.get("ApertureValue") {
+            return Some(aperture_value.clone());
+        }
+
+        None
+    }
+
+    /// Compute DateTimeOriginal composite tag
+    /// ExifTool: lib/Image/ExifTool/Composite.pm
+    /// Returns DateTimeCreated if it contains a space, otherwise combines DateCreated + TimeCreated
+    fn compute_datetime_original(
+        &self,
+        available_tags: &HashMap<String, TagValue>,
+    ) -> Option<TagValue> {
+        // Check DateTimeCreated first (index 0)
+        if let Some(datetime_created) = available_tags.get("DateTimeCreated") {
+            if let Some(dt_str) = datetime_created.as_string() {
+                if dt_str.contains(' ') {
+                    return Some(datetime_created.clone());
+                }
+            }
+        }
+
+        // Combine DateCreated and TimeCreated
+        if let (Some(date), Some(time)) = (
+            available_tags.get("DateCreated"),
+            available_tags.get("TimeCreated"),
+        ) {
+            if let (Some(date_str), Some(time_str)) = (date.as_string(), time.as_string()) {
+                return Some(TagValue::String(format!("{date_str} {time_str}")));
+            }
+        }
+
+        None
+    }
+
+    /// Compute FocalLength35efl composite tag
+    /// ExifTool: lib/Image/ExifTool/Composite.pm
+    /// ValueConv: "ToFloat(@val); ($val[0] || 0) * ($val[1] || 1)"
+    fn compute_focal_length_35efl(
+        &self,
+        available_tags: &HashMap<String, TagValue>,
+    ) -> Option<TagValue> {
+        if let Some(focal_length) = available_tags.get("FocalLength") {
+            let fl = focal_length.as_f64().unwrap_or(0.0);
+
+            // Get ScaleFactor35efl if available (index 1 in desire list)
+            let scale_factor = available_tags
+                .get("ScaleFactor35efl")
+                .and_then(|v| v.as_f64())
+                .unwrap_or(1.0);
+
+            let result = fl * scale_factor;
+            return Some(TagValue::F64(result));
+        }
+
+        None
+    }
+
+    /// Compute ScaleFactor35efl composite tag
+    /// ExifTool: lib/Image/ExifTool/Composite.pm
+    /// ValueConv: "Image::ExifTool::Exif::CalcScaleFactor35efl($self, @val)"
+    /// This is a complex calculation that depends on many factors
+    fn compute_scale_factor_35efl(
+        &self,
+        available_tags: &HashMap<String, TagValue>,
+    ) -> Option<TagValue> {
+        // This is a placeholder for the complex ScaleFactor35efl calculation
+        // The full implementation requires porting CalcScaleFactor35efl from ExifTool
+
+        // At minimum, we need FocalLength to compute scale factor
+        available_tags.get("FocalLength")?;
+
+        // For now, return a default scale factor of 1.0 when we have focal length
+        // TODO: Implement full CalcScaleFactor35efl logic (Milestone 11.5 or later)
+        trace!("ScaleFactor35efl computation not fully implemented - returning 1.0");
+        Some(TagValue::F64(1.0))
+    }
+
+    /// Compute SubSecDateTimeOriginal composite tag
+    /// ExifTool: lib/Image/ExifTool/Composite.pm
+    /// Combines DateTimeOriginal with SubSecTimeOriginal and OffsetTimeOriginal
+    fn compute_subsec_datetime_original(
+        &self,
+        available_tags: &HashMap<String, TagValue>,
+    ) -> Option<TagValue> {
+        // Require DateTimeOriginal
+        let datetime_original = available_tags.get("DateTimeOriginal")?;
+        let dt_str = datetime_original.as_string()?;
+
+        let mut result = dt_str.to_string();
+
+        // Add subseconds if available
+        if let Some(subsec) = available_tags.get("SubSecTimeOriginal") {
+            if let Some(subsec_str) = subsec.as_string() {
+                result.push('.');
+                result.push_str(subsec_str);
+            }
+        }
+
+        // Add timezone offset if available
+        if let Some(offset) = available_tags.get("OffsetTimeOriginal") {
+            if let Some(offset_str) = offset.as_string() {
+                result.push(' ');
+                result.push_str(offset_str);
+            }
+        }
+
+        Some(TagValue::String(result))
+    }
+
+    /// Compute CircleOfConfusion composite tag
+    /// ExifTool: lib/Image/ExifTool/Composite.pm
+    /// ValueConv: "sqrt(24*24+36*36) / ($val * 1440)"
+    fn compute_circle_of_confusion(
+        &self,
+        available_tags: &HashMap<String, TagValue>,
+    ) -> Option<TagValue> {
+        // Require ScaleFactor35efl
+        let scale_factor = available_tags.get("ScaleFactor35efl")?;
+        let scale = scale_factor.as_f64()?;
+
+        if scale == 0.0 {
+            return None;
+        }
+
+        // Calculate diagonal of 35mm frame: sqrt(24^2 + 36^2) = 43.267...
+        let diagonal_35mm = (24.0_f64 * 24.0 + 36.0 * 36.0).sqrt();
+
+        // CoC = diagonal / (scale * 1440)
+        let coc = diagonal_35mm / (scale * 1440.0);
+
+        Some(TagValue::F64(coc))
+    }
+
     /// Get all extracted tags with their names (conversions already applied during extraction)
     /// Returns tags with group prefixes (e.g., "EXIF:Make", "GPS:GPSLatitude", "Composite:ImageSize")
     /// matching ExifTool's -G mode behavior
@@ -1105,6 +1279,90 @@ impl ExifReader {
         }
 
         result
+    }
+
+    /// Get all tags as TagEntry objects with both value and print representations
+    /// This is the new API that returns both ValueConv and PrintConv results
+    /// Milestone 8b: TagEntry API implementation
+    pub fn get_all_tag_entries(&mut self) -> Vec<crate::types::TagEntry> {
+        use crate::generated::{COMPOSITE_TAGS, TAG_BY_ID};
+        use crate::types::TagEntry;
+
+        let mut entries = Vec::new();
+
+        // Process extracted tags
+        for (&tag_id, raw_value) in &self.extracted_tags {
+            // Get the enhanced source info for this tag
+            let source_info = self.tag_sources.get(&tag_id);
+
+            // Use namespace from TagSourceInfo or default to EXIF
+            let group_name = if let Some(source_info) = source_info {
+                &source_info.namespace
+            } else {
+                "EXIF" // Default fallback
+            };
+
+            // Look up tag name and definition
+            let (base_tag_name, tag_def) =
+                if let Some(canon_tag_name) = self.get_canon_tag_name(tag_id) {
+                    // Canon-specific tag without definition in main table
+                    (canon_tag_name, None)
+                } else {
+                    // Look up in unified table
+                    let tag_def = TAG_BY_ID.get(&(tag_id as u32)).copied();
+                    let name = tag_def
+                        .map(|def| def.name.to_string())
+                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                    (name, tag_def)
+                };
+
+            // Apply conversions to get both value and print
+            let (value, print) = self.apply_conversions(raw_value, tag_def);
+
+            let entry = TagEntry {
+                group: group_name.to_string(),
+                name: base_tag_name,
+                value,
+                print,
+            };
+
+            entries.push(entry);
+        }
+
+        // Process composite tags
+        for (tag_name, raw_value) in &self.composite_tags {
+            // Composite tags already have "Composite:" prefix in the name
+            // Extract just the tag name part
+            let name = tag_name.strip_prefix("Composite:").unwrap_or(tag_name);
+
+            // Find the composite definition
+            let composite_def = COMPOSITE_TAGS.iter().find(|def| def.name == name);
+
+            if let Some(def) = composite_def {
+                let (value, print) = self.apply_composite_conversions(raw_value, def);
+
+                let entry = TagEntry {
+                    group: "Composite".to_string(),
+                    name: name.to_string(),
+                    value,
+                    print,
+                };
+
+                entries.push(entry);
+            } else {
+                // Fallback if definition not found
+                let entry = TagEntry {
+                    group: "Composite".to_string(),
+                    name: name.to_string(),
+                    value: raw_value.clone(),
+                    print: raw_value.to_string(),
+                };
+
+                entries.push(entry);
+            }
+        }
+
+        entries
     }
 
     /// Get Canon-specific tag name for synthetic tag IDs
@@ -1261,11 +1519,14 @@ impl ExifReader {
 
     /// Apply ValueConv and PrintConv conversions to a raw tag value
     /// ExifTool: lib/Image/ExifTool.pm conversion pipeline
+    /// Returns tuple of (value, print) where:
+    /// - value: The result after ValueConv (or raw if no ValueConv)
+    /// - print: The result after PrintConv (or value.to_string() if no PrintConv)
     fn apply_conversions(
         &self,
         raw_value: &TagValue,
         tag_def: Option<&'static crate::generated::tags::TagDef>,
-    ) -> TagValue {
+    ) -> (TagValue, String) {
         use crate::registry;
 
         let mut value = raw_value.clone();
@@ -1275,45 +1536,44 @@ impl ExifReader {
             if let Some(value_conv_ref) = tag_def.value_conv_ref {
                 value = registry::apply_value_conv(value_conv_ref, &value);
             }
-
-            // Apply PrintConv second (if present) to convert to human-readable string
-            if let Some(print_conv_ref) = tag_def.print_conv_ref {
-                let converted_string = registry::apply_print_conv(print_conv_ref, &value);
-
-                // Only use the converted string if it's different from the raw value
-                // This prevents "Unknown (8)" type fallbacks from being used
-                if converted_string != value.to_string() {
-                    return TagValue::String(converted_string);
-                }
-            }
         }
 
-        value
+        // Apply PrintConv second (if present) to get human-readable string
+        let print = if let Some(tag_def) = tag_def {
+            if let Some(print_conv_ref) = tag_def.print_conv_ref {
+                registry::apply_print_conv(print_conv_ref, &value)
+            } else {
+                value.to_string()
+            }
+        } else {
+            value.to_string()
+        };
+
+        (value, print)
     }
 
     /// Apply PrintConv conversions to a computed composite tag value
     /// ExifTool: Composite tag PrintConv pipeline (compute → PrintConv)
+    /// Returns tuple of (value, print) where:
+    /// - value: The computed value (composite tags don't have ValueConv)
+    /// - print: The result after PrintConv (or value.to_string() if no PrintConv)
     fn apply_composite_conversions(
         &self,
         computed_value: &TagValue,
         composite_def: &crate::generated::CompositeTagDef,
-    ) -> TagValue {
+    ) -> (TagValue, String) {
         use crate::registry;
 
         let value = computed_value.clone();
 
-        // Apply PrintConv if present to convert to human-readable string
-        if let Some(print_conv_ref) = composite_def.print_conv_ref {
-            let converted_string = registry::apply_print_conv(print_conv_ref, &value);
+        // Apply PrintConv if present to get human-readable string
+        let print = if let Some(print_conv_ref) = composite_def.print_conv_ref {
+            registry::apply_print_conv(print_conv_ref, &value)
+        } else {
+            value.to_string()
+        };
 
-            // Only use the converted string if it's different from the raw value
-            // This prevents "Unknown" type fallbacks from being used
-            if converted_string != value.to_string() {
-                return TagValue::String(converted_string);
-            }
-        }
-
-        value
+        (value, print)
     }
 
     /// Check if a tag ID represents a SubDirectory pointer
