@@ -348,41 +348,16 @@ impl ExifData {
                 // Use value field for -# tags
                 self.legacy_tags.insert(key, entry.value.clone());
             } else {
-                // Use print field, but handle numeric PrintConv values
-                match entry.name.as_str() {
-                    // FNumber should output as numeric JSON, not string
-                    "FNumber" => {
-                        if let Ok(num) = entry.print.parse::<f64>() {
-                            self.legacy_tags.insert(key, TagValue::F64(num));
-                        } else {
-                            self.legacy_tags
-                                .insert(key, TagValue::String(entry.print.clone()));
-                        }
-                    }
-                    // ExposureTime should output as numeric JSON, not string (matches ExifTool)
-                    "ExposureTime" => {
-                        if let Ok(num) = entry.print.parse::<f64>() {
-                            // Check if it's a whole number and use integer if so (matches ExifTool)
-                            if num.fract() == 0.0 {
-                                self.legacy_tags.insert(key, TagValue::I32(num as i32));
-                            } else {
-                                self.legacy_tags.insert(key, TagValue::F64(num));
-                            }
-                        } else {
-                            self.legacy_tags
-                                .insert(key, TagValue::String(entry.print.clone()));
-                        }
-                    }
-                    // GPS coordinates should use numeric ValueConv (decimal degrees)
-                    // User specified: only decimal values (like ExifTool -GPSLatitude# mode)
-                    "GPSLatitude" | "GPSLongitude" | "GPSAltitude" => {
-                        self.legacy_tags.insert(key, entry.value.clone());
-                    }
-                    // Most tags use string representation
-                    _ => {
-                        self.legacy_tags
-                            .insert(key, TagValue::String(entry.print.clone()));
-                    }
+                // Use PrintConv (human-readable string) unless PrintConv is missing/invalid
+                // If PrintConv provides meaningful conversion, use it; otherwise use ValueConv
+                let value_as_string = format!("{}", entry.value);
+                if entry.print != value_as_string && !entry.print.is_empty() {
+                    // PrintConv provides meaningful conversion (like "Rotate 270 CW" instead of "6")
+                    self.legacy_tags
+                        .insert(key, TagValue::String(entry.print.clone()));
+                } else {
+                    // No meaningful PrintConv available, use ValueConv to preserve data types
+                    self.legacy_tags.insert(key, entry.value.clone());
                 }
             }
         }
