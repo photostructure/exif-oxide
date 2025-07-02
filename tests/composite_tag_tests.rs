@@ -225,11 +225,8 @@ fn test_multi_pass_composite_dependencies() {
 #[test]
 fn test_dependency_resolution_logic() {
     // Test the dependency resolution logic with mock data
-    use exif_oxide::exif::ExifReader;
     use exif_oxide::types::TagValue;
     use std::collections::{HashMap, HashSet};
-
-    let reader = ExifReader::new();
 
     // Test is_dependency_available with various scenarios
     let mut available_tags = HashMap::new();
@@ -248,22 +245,42 @@ fn test_dependency_resolution_logic() {
     built_composites.insert("CircleOfConfusion");
 
     // Test direct tag lookup
-    assert!(reader.is_dependency_available("ImageWidth", &available_tags, &built_composites));
+    assert!(exif_oxide::composite_tags::is_dependency_available(
+        "ImageWidth",
+        &available_tags,
+        &built_composites
+    ));
 
     // Test group-prefixed lookup
-    assert!(reader.is_dependency_available("FocalLength", &available_tags, &built_composites));
-    assert!(reader.is_dependency_available("GPSLatitude", &available_tags, &built_composites));
+    assert!(exif_oxide::composite_tags::is_dependency_available(
+        "FocalLength",
+        &available_tags,
+        &built_composites
+    ));
+    assert!(exif_oxide::composite_tags::is_dependency_available(
+        "GPSLatitude",
+        &available_tags,
+        &built_composites
+    ));
 
     // Test composite dependency lookup
-    assert!(reader.is_dependency_available("ScaleFactor35efl", &available_tags, &built_composites));
-    assert!(reader.is_dependency_available(
+    assert!(exif_oxide::composite_tags::is_dependency_available(
+        "ScaleFactor35efl",
+        &available_tags,
+        &built_composites
+    ));
+    assert!(exif_oxide::composite_tags::is_dependency_available(
         "CircleOfConfusion",
         &available_tags,
         &built_composites
     ));
 
     // Test missing dependency
-    assert!(!reader.is_dependency_available("NonExistentTag", &available_tags, &built_composites));
+    assert!(!exif_oxide::composite_tags::is_dependency_available(
+        "NonExistentTag",
+        &available_tags,
+        &built_composites
+    ));
 }
 
 #[test]
@@ -273,7 +290,7 @@ fn test_multi_pass_simulation() {
     use exif_oxide::types::TagValue;
     use std::collections::{HashMap, HashSet};
 
-    let reader = ExifReader::new();
+    let _reader = ExifReader::new();
 
     // Simulate extracted tags that would enable composite building
     let mut available_tags = HashMap::new();
@@ -302,8 +319,11 @@ fn test_multi_pass_simulation() {
         exif_oxide::generated::COMPOSITE_TAG_BY_NAME.get("ScaleFactor35efl")
     {
         // ScaleFactor35efl should be buildable in pass 1 (has base tags)
-        let can_build =
-            reader.can_build_composite(scale_factor_def, &available_tags, &built_composites);
+        let can_build = exif_oxide::composite_tags::can_build_composite(
+            scale_factor_def,
+            &available_tags,
+            &built_composites,
+        );
         // Note: Actual result depends on ScaleFactor35efl implementation details
         println!("ScaleFactor35efl can be built in pass 1: {can_build}");
     }
@@ -322,8 +342,11 @@ fn test_multi_pass_simulation() {
 
     if let Some(circle_def) = exif_oxide::generated::COMPOSITE_TAG_BY_NAME.get("CircleOfConfusion")
     {
-        let can_build =
-            reader.can_build_composite(circle_def, &available_tags, &built_composites_pass2);
+        let can_build = exif_oxide::composite_tags::can_build_composite(
+            circle_def,
+            &available_tags,
+            &built_composites_pass2,
+        );
         assert!(
             can_build,
             "CircleOfConfusion should be buildable after ScaleFactor35efl is available"
@@ -334,9 +357,6 @@ fn test_multi_pass_simulation() {
 #[test]
 fn test_circular_dependency_detection() {
     // Test the circular dependency detection mechanism
-    use exif_oxide::exif::ExifReader;
-
-    let reader = ExifReader::new();
 
     // Create a mock scenario with circular dependencies
     // In practice, this would be detected when no progress is made in a pass
@@ -347,7 +367,7 @@ fn test_circular_dependency_detection() {
     let mock_unresolved = vec![]; // Empty for now, but structure is in place
 
     // Test that handle_unresolved_composites doesn't panic and provides useful output
-    reader.handle_unresolved_composites(&mock_unresolved);
+    exif_oxide::composite_tags::handle_unresolved_composites(&mock_unresolved);
 
     // This test primarily ensures the function exists and runs without panicking
     // More detailed circular dependency testing would require real circular definitions
@@ -390,17 +410,27 @@ fn test_multipass_performance_characteristics() {
 
 #[test]
 fn test_build_available_tags_map() {
-    // Test the available tags map building functionality
+    // Test the available tags map building functionality through the public API
     use exif_oxide::exif::ExifReader;
+    use std::collections::HashMap;
 
-    // Test with empty reader (should not crash)
-    let reader = ExifReader::new();
-    let available_tags = reader.build_available_tags_map();
+    // Since build_available_tags_map is now an internal implementation detail,
+    // we test it indirectly through build_composite_tags() which uses it internally
+    let mut test_reader = ExifReader::new();
+    test_reader.build_composite_tags(); // Should not crash
 
-    // Should return empty map for reader with no extracted tags
+    // Test with empty inputs directly
+    let empty_extracted_tags = HashMap::new();
+    let empty_tag_sources = HashMap::new();
+    let available_tags = exif_oxide::composite_tags::build_available_tags_map(
+        &empty_extracted_tags,
+        &empty_tag_sources,
+    );
+
+    // Should return empty map for empty inputs
     assert!(
         available_tags.is_empty(),
-        "Empty reader should produce empty available tags map"
+        "Empty inputs should produce empty available tags map"
     );
 }
 
