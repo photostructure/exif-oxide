@@ -97,3 +97,9 @@ Extracted 62 composite tag definitions from ExifTool tables and generated comple
 ## ✅ Milestone 9: ProcessBinaryData Introduction (COMPLETED)
 
 Implemented comprehensive ProcessBinaryData framework with Sony MakerNote support and tag collision resolution. Built sophisticated tag source tracking system with precedence rules ensuring main EXIF tags override MakerNote tags with same IDs. Successfully resolved Sony A7C II compatibility issue where Sony MakerNote Orientation tag (0x0112) was overwriting main EXIF Orientation tag. Added Sony signature detection following ExifTool's 7 different detection patterns and enhanced Canon MakerNote processing with proper namespacing.
+
+---
+
+## ✅ Milestone 10: Canon MakerNote Expansion (COMPLETED)
+
+Implemented complete Canon MakerNote support with comprehensive offset fixing and manufacturer-specific processing. Built Canon signature detection system identifying cameras via Make field. Implemented Canon offset scheme detection with model-specific logic for 4/6/16/28 byte variants following ExifTool's exact algorithms. Added Canon TIFF footer validation and offset base adjustment with fallback mechanisms. Created ProcessSerialData infrastructure for Canon AF data with variable-length arrays and dynamic sizing expressions. Successfully implemented Canon CameraSettings (ProcessBinaryData) extracting MacroMode, FocusMode, CanonFlashMode with PrintConv lookup tables. Built Canon AFInfo2 processor extracting NumAFPoints, AFAreaWidths arrays, and AF geometry data. Integrated Canon processor dispatch into main EXIF flow with proper precedence handling. Verified with Canon T3i test image showing correct extraction of 6 CameraSettings tags and 9 AFInfo2 tags with proper offset calculations.
