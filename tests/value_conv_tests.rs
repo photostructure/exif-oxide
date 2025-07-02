@@ -7,9 +7,36 @@
 use exif_oxide::implementations::value_conv::*;
 use exif_oxide::types::{ExifError, TagValue};
 
-// GPS coordinate ValueConv tests REMOVED in Milestone 8e
-// GPS coordinates now return raw rational arrays, not decimal degrees.
-// Decimal conversion will be handled by Composite tags.
+/// GPS coordinate conversion tests - matches ExifTool behavior
+#[test]
+fn test_gps_coordinate_decimal_conversion() {
+    // Test coordinate conversion: 40° 26' 46.8" = 40.446333...
+    let coords = vec![(40, 1), (26, 1), (468, 10)];
+    let coord_value = TagValue::RationalArray(coords);
+
+    let result = gps_coordinate_value_conv(&coord_value).unwrap();
+    if let TagValue::F64(decimal) = result {
+        assert!((decimal - 40.446333333).abs() < 0.000001);
+    } else {
+        panic!("Expected F64 result");
+    }
+}
+
+#[test]
+fn test_gps_coordinate_unsigned_values() {
+    // GPS coordinate ValueConv produces UNSIGNED values only
+    // Sign is applied later in Composite tags using Ref values
+    let coords = vec![(45, 1), (30, 1), (0, 1)]; // 45° 30' 0"
+    let coord_value = TagValue::RationalArray(coords);
+
+    let result = gps_coordinate_value_conv(&coord_value).unwrap();
+    if let TagValue::F64(decimal) = result {
+        assert!(decimal > 0.0); // Always positive from ValueConv
+        assert!((decimal - 45.5).abs() < 0.001);
+    } else {
+        panic!("Expected F64 result");
+    }
+}
 
 #[test]
 fn test_apex_shutter_speed_valid() {
@@ -486,7 +513,8 @@ fn test_no_panics_on_any_input() {
     // Test each conversion function with each value type
     // None should panic - they should either succeed or return an error
     for value in &test_values {
-        // GPS conversions (GPS coordinate conversions removed in Milestone 8e)
+        // GPS conversions
+        let _ = gps_coordinate_value_conv(value);
         let _ = gpstimestamp_value_conv(value);
         let _ = gpsdatestamp_value_conv(value);
 

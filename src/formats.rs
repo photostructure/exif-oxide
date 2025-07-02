@@ -365,6 +365,11 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                                             );
                                         }
                                     }
+                                    // GPS coordinates should use numeric ValueConv (decimal degrees)
+                                    // User specified: only decimal values (like ExifTool -GPSLatitude# mode)
+                                    "GPSLatitude" | "GPSLongitude" | "GPSAltitude" => {
+                                        tags.insert(tag_name, entry.value.clone());
+                                    }
                                     // All other tags use string representation of print
                                     _ => {
                                         tags.insert(

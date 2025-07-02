@@ -29,6 +29,7 @@ ExifTool is the accumulation of 25 years of camera-specific quirks, edge cases, 
 - Use the same group names as ExifTool, **verbatim**
 - Only stray from tag names when they include invalid Rust variable characters
 - Only stray from PrintConv implementations when ExifTool itself is not consistent (like `FocalLength`)
+- Some values, notably GPS, we only render decimal values (so we're always in `-GPSLatitude#` and ``-GPSLongitude#` and `-GPSAltitude#` "mode")
 - Raise errors or warnings whenever ExifTool does -- but our errors and warnings only need to be semantically similar -- they don't have to match ExifTool errors verbatim.
 
 ### 2. Critical Examples

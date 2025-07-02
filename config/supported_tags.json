@@ -23,5 +23,9 @@
   "ExposureTime",
   "FocalLength",
   "ImageSize",
-  "ShutterSpeed"
+  "ShutterSpeed",
+  "GPSLatitude",
+  "GPSLongitude",
+  "GPSDestLatitude",
+  "GPSDestLongitude"
 ]
