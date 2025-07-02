@@ -135,6 +135,83 @@ impl TagValue {
     // GPS coordinate conversion moved to Composite tag system
 }
 
+/// A single extracted metadata tag with both its converted value and display string.
+///
+/// This structure provides access to both the logical value (after ValueConv)
+/// and the human-readable display string (after PrintConv), allowing consumers
+/// to choose the most appropriate representation.
+///
+/// # Examples
+///
+/// ```
+/// use exif_oxide::types::{TagEntry, TagValue};
+///
+/// // A typical EXIF tag entry
+/// let entry = TagEntry {
+///     group: "EXIF".to_string(),
+///     name: "FNumber".to_string(),
+///     value: TagValue::F64(4.0),      // Post-ValueConv: 4/1 → 4.0
+///     print: "4.0".to_string(),       // Post-PrintConv: formatted for display
+/// };
+///
+/// assert_eq!(entry.name, "FNumber");
+///
+/// // A tag with units in the display string
+/// let focal_entry = TagEntry {
+///     group: "EXIF".to_string(),
+///     name: "FocalLength".to_string(),
+///     value: TagValue::F64(24.0),     // Numeric value
+///     print: "24 mm".to_string(),     // Human-readable with units
+/// };
+///
+/// assert_eq!(focal_entry.print, "24 mm");
+/// ```
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TagEntry {
+    /// Tag group name (e.g., "EXIF", "GPS", "Canon", "MakerNotes")
+    ///
+    /// Groups follow ExifTool's naming conventions:
+    /// - Main IFDs: "EXIF", "GPS", "IFD0", "IFD1"
+    /// - Manufacturer: "Canon", "Nikon", "Sony", etc.
+    /// - Sub-groups: "Canon::CameraSettings", etc.
+    pub group: String,
+
+    /// Tag name without group prefix (e.g., "FNumber", "ExposureTime")
+    ///
+    /// Names match ExifTool's tag naming exactly for compatibility.
+    pub name: String,
+
+    /// The logical value after ValueConv processing.
+    ///
+    /// This is the value you get with ExifTool's -# flag:
+    /// - Rational values converted to floats (4/1 → 4.0)
+    /// - APEX values converted to real units
+    /// - Raw value if no ValueConv exists
+    ///
+    /// # Examples
+    ///
+    /// - FNumber: `TagValue::F64(4.0)` (from rational 4/1)
+    /// - ExposureTime: `TagValue::F64(0.0005)` (from rational 1/2000)
+    /// - Make: `TagValue::String("Canon")` (no ValueConv needed)
+    pub value: TagValue,
+
+    /// The display string after PrintConv processing.
+    ///
+    /// This is the human-readable representation:
+    /// - Numbers may be formatted ("4.0" not "4")
+    /// - Units may be added ("24.0 mm")
+    /// - Coded values decoded ("Rotate 90 CW" not "6")
+    ///
+    /// If no PrintConv exists, this equals `value.to_string()`.
+    ///
+    /// # ExifTool JSON Compatibility
+    ///
+    /// When serializing to JSON, some numeric PrintConv results
+    /// (like FNumber's "4.0") are encoded as JSON numbers, not strings.
+    /// The CLI handles this compatibility layer.
+    pub print: String,
+}
+
 impl std::fmt::Display for TagValue {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -217,9 +294,14 @@ pub struct ExifData {
     #[serde(rename = "ExifToolVersion")]
     pub exif_tool_version: String,
 
-    /// All extracted tags as key-value pairs
+    /// All extracted tags with both value and print representations
+    #[serde(skip)]
+    pub tags: Vec<TagEntry>,
+
+    /// Legacy field for backward compatibility - will be populated during serialization
+    /// TODO: Remove this once all consumers are updated to use TagEntry
     #[serde(flatten)]
-    pub tags: HashMap<String, TagValue>,
+    pub legacy_tags: HashMap<String, TagValue>,
 
     /// Any errors encountered during processing
     #[serde(skip_serializing_if = "Vec::is_empty")]
@@ -231,6 +313,75 @@ pub struct ExifData {
         skip_serializing_if = "Option::is_none"
     )]
     pub missing_implementations: Option<Vec<String>>,
+}
+
+impl ExifData {
+    /// Create a new ExifData with empty tags
+    pub fn new(source_file: String, exif_tool_version: String) -> Self {
+        Self {
+            source_file,
+            exif_tool_version,
+            tags: Vec::new(),
+            legacy_tags: HashMap::new(),
+            errors: Vec::new(),
+            missing_implementations: None,
+        }
+    }
+
+    /// Convert tags to legacy format for JSON serialization
+    /// This populates legacy_tags from the TagEntry vector
+    pub fn prepare_for_serialization(
+        &mut self,
+        numeric_tags: Option<&std::collections::HashSet<String>>,
+    ) {
+        self.legacy_tags.clear();
+
+        for entry in &self.tags {
+            let key = format!("{}:{}", entry.group, entry.name);
+
+            // Determine whether to use value or print field
+            let should_use_value = numeric_tags
+                .map(|set| set.contains(&entry.name))
+                .unwrap_or(false);
+
+            if should_use_value {
+                // Use value field for -# tags
+                self.legacy_tags.insert(key, entry.value.clone());
+            } else {
+                // Use print field, but handle numeric PrintConv values
+                match entry.name.as_str() {
+                    // FNumber should output as numeric JSON, not string
+                    "FNumber" => {
+                        if let Ok(num) = entry.print.parse::<f64>() {
+                            self.legacy_tags.insert(key, TagValue::F64(num));
+                        } else {
+                            self.legacy_tags
+                                .insert(key, TagValue::String(entry.print.clone()));
+                        }
+                    }
+                    // ExposureTime should output as numeric JSON, not string (matches ExifTool)
+                    "ExposureTime" => {
+                        if let Ok(num) = entry.print.parse::<f64>() {
+                            // Check if it's a whole number and use integer if so (matches ExifTool)
+                            if num.fract() == 0.0 {
+                                self.legacy_tags.insert(key, TagValue::I32(num as i32));
+                            } else {
+                                self.legacy_tags.insert(key, TagValue::F64(num));
+                            }
+                        } else {
+                            self.legacy_tags
+                                .insert(key, TagValue::String(entry.print.clone()));
+                        }
+                    }
+                    // Most tags use string representation
+                    _ => {
+                        self.legacy_tags
+                            .insert(key, TagValue::String(entry.print.clone()));
+                    }
+                }
+            }
+        }
+    }
 }
 
 /// Error types for exif-oxide

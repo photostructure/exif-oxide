@@ -198,18 +198,35 @@ pub fn exposureprogram_print_conv(val: &TagValue) -> String {
     .to_string()
 }
 
-/// FNumber PrintConv - formats f-stop values (passthrough for numeric output)
-/// ExifTool: lib/Image/ExifTool/Exif.pm FNumber PrintConv
-/// ExifTool returns numeric values (4.0), not formatted strings ("f/4")
+/// FNumber PrintConv - formats f-stop values
+/// ExifTool: lib/Image/ExifTool/Exif.pm PrintFNumber function (lines 5607-5615)
+/// Uses 2 decimal places for values < 1.0, 1 decimal place for values >= 1.0
 pub fn fnumber_print_conv(val: &TagValue) -> String {
     match val.as_f64() {
-        Some(f_number) => f_number.to_string(),
+        Some(f_number) => {
+            if f_number > 0.0 {
+                // ExifTool logic: 2 decimal places for < 1.0, 1 decimal place for >= 1.0
+                if f_number < 1.0 {
+                    format!("{f_number:.2}")
+                } else {
+                    format!("{f_number:.1}")
+                }
+            } else {
+                format!("Unknown ({val})")
+            }
+        }
         None => {
             // Handle rational format directly if ValueConv wasn't applied
             if let TagValue::Rational(num, denom) = val {
                 if *denom != 0 {
                     let f_number = *num as f64 / *denom as f64;
-                    return f_number.to_string();
+                    if f_number > 0.0 {
+                        if f_number < 1.0 {
+                            return format!("{f_number:.2}");
+                        } else {
+                            return format!("{f_number:.1}");
+                        }
+                    }
                 }
             }
             format!("Unknown ({val})")
@@ -252,16 +269,17 @@ pub fn exposuretime_print_conv(val: &TagValue) -> String {
 }
 
 /// FocalLength PrintConv - formats focal length with "mm" unit
-/// ExifTool: lib/Image/ExifTool/Exif.pm FocalLength PrintConv
-/// Always shows at least one decimal place (24.0 mm, not 24 mm)
+/// ExifTool: lib/Image/ExifTool/Exif.pm lines 2387-2393
+/// Note: We normalize ExifTool's inconsistent formatting to show integers without decimals
 pub fn focallength_print_conv(val: &TagValue) -> String {
     match val.as_f64() {
         Some(focal_length) => {
-            // Format with at least one decimal place to match ExifTool
-            if focal_length.fract() == 0.0 {
-                format!("{focal_length:.1} mm")
+            // Round to 1 decimal place like ExifTool, but remove .0 for integers
+            let rounded = (focal_length * 10.0).round() / 10.0;
+            if (rounded.fract()).abs() < 0.001 {
+                format!("{} mm", rounded as i32)
             } else {
-                format!("{focal_length} mm")
+                format!("{rounded:.1} mm")
             }
         }
         None => {
@@ -269,15 +287,29 @@ pub fn focallength_print_conv(val: &TagValue) -> String {
             if let TagValue::Rational(num, denom) = val {
                 if *denom != 0 {
                     let focal_length = *num as f64 / *denom as f64;
-                    if focal_length.fract() == 0.0 {
-                        return format!("{focal_length:.1} mm");
+                    let rounded = (focal_length * 10.0).round() / 10.0;
+                    if (rounded.fract()).abs() < 0.001 {
+                        return format!("{} mm", rounded as i32);
                     } else {
-                        return format!("{focal_length} mm");
+                        return format!("{rounded:.1} mm");
                     }
                 }
             }
             format!("Unknown ({val})")
         }
+    }
+}
+
+/// FocalLengthIn35mmFormat PrintConv - formats 35mm equivalent focal length
+/// ExifTool: lib/Image/ExifTool/Exif.pm lines 2827-2834
+/// PrintConv => '"$val mm"',
+pub fn focallength_in_35mm_format_print_conv(val: &TagValue) -> String {
+    match val.as_u16() {
+        Some(focal_length) => {
+            // Format as integer with no decimal places to match ExifTool
+            format!("{focal_length} mm")
+        }
+        None => format!("Unknown ({val})"),
     }
 }
 
@@ -401,10 +433,19 @@ mod tests {
 
     #[test]
     fn test_fnumber_print_conv() {
-        assert_eq!(fnumber_print_conv(&TagValue::F64(4.0)), "4");
+        // Values >= 1.0 get 1 decimal place
+        assert_eq!(fnumber_print_conv(&TagValue::F64(4.0)), "4.0");
         assert_eq!(fnumber_print_conv(&TagValue::F64(2.8)), "2.8");
         assert_eq!(fnumber_print_conv(&TagValue::F64(1.4)), "1.4");
-        assert_eq!(fnumber_print_conv(&TagValue::Rational(4, 1)), "4");
+        assert_eq!(fnumber_print_conv(&TagValue::F64(11.0)), "11.0");
+        assert_eq!(fnumber_print_conv(&TagValue::F64(0.640234375)), "0.64");
+
+        // Values < 1.0 get 2 decimal places
+        assert_eq!(fnumber_print_conv(&TagValue::F64(0.95)), "0.95");
+        assert_eq!(fnumber_print_conv(&TagValue::F64(0.7)), "0.70");
+
+        // Test with rational input
+        assert_eq!(fnumber_print_conv(&TagValue::Rational(4, 1)), "4.0");
     }
 
     #[test]
@@ -420,11 +461,53 @@ mod tests {
 
     #[test]
     fn test_focallength_print_conv() {
-        assert_eq!(focallength_print_conv(&TagValue::F64(24.0)), "24.0 mm");
+        // Integers should not show decimal places
+        assert_eq!(focallength_print_conv(&TagValue::F64(24.0)), "24 mm");
+        assert_eq!(focallength_print_conv(&TagValue::F64(50.0)), "50 mm");
+        assert_eq!(focallength_print_conv(&TagValue::F64(200.0)), "200 mm");
+        assert_eq!(focallength_print_conv(&TagValue::F64(0.0)), "0 mm");
+
+        // Decimals should be rounded to 1 decimal place like ExifTool
+        assert_eq!(focallength_print_conv(&TagValue::F64(4.67)), "4.7 mm"); // 4.67 -> 4.7
+        assert_eq!(focallength_print_conv(&TagValue::F64(42.3)), "42.3 mm");
         assert_eq!(focallength_print_conv(&TagValue::F64(105.5)), "105.5 mm");
+        assert_eq!(focallength_print_conv(&TagValue::F64(5.7)), "5.7 mm");
+        assert_eq!(focallength_print_conv(&TagValue::F64(1.56)), "1.6 mm"); // 1.56 -> 1.6 (round up)
+        assert_eq!(focallength_print_conv(&TagValue::F64(1.54)), "1.5 mm"); // 1.54 -> 1.5 (round down)
+        assert_eq!(focallength_print_conv(&TagValue::F64(1.57)), "1.6 mm"); // iPhone case: 1.57 -> 1.6
+
+        // Test with rational input
+        assert_eq!(focallength_print_conv(&TagValue::Rational(24, 1)), "24 mm");
         assert_eq!(
-            focallength_print_conv(&TagValue::Rational(24, 1)),
-            "24.0 mm"
+            focallength_print_conv(&TagValue::Rational(57, 10)),
+            "5.7 mm"
+        );
+    }
+
+    #[test]
+    fn test_focallength_in_35mm_format_print_conv() {
+        // Values should be formatted as integers with no decimal places
+        assert_eq!(
+            focallength_in_35mm_format_print_conv(&TagValue::U16(28)),
+            "28 mm"
+        );
+        assert_eq!(
+            focallength_in_35mm_format_print_conv(&TagValue::U16(50)),
+            "50 mm"
+        );
+        assert_eq!(
+            focallength_in_35mm_format_print_conv(&TagValue::U16(167)),
+            "167 mm"
+        );
+        assert_eq!(
+            focallength_in_35mm_format_print_conv(&TagValue::U16(400)),
+            "400 mm"
+        );
+
+        // Test with non-U16 value
+        assert_eq!(
+            focallength_in_35mm_format_print_conv(&TagValue::String("invalid".to_string())),
+            "Unknown (invalid)"
         );
     }
 }

@@ -266,6 +266,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
     let file_size = file_metadata.len();
 
     let mut tags = HashMap::new();
+    let mut tag_entries = Vec::new();
 
     // Basic file information (now real data)
     tags.insert(
@@ -342,11 +343,39 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                     let mut exif_reader = ExifReader::new();
                     match exif_reader.parse_exif_data(&exif_data) {
                         Ok(()) => {
-                            // Successfully parsed EXIF - extract all found tags
-                            let exif_tags = exif_reader.get_all_tags();
-                            for (tag_name, tag_value) in exif_tags {
-                                tags.insert(tag_name, tag_value);
+                            // Successfully parsed EXIF - extract all found tags using new TagEntry API
+                            let mut exif_tag_entries = exif_reader.get_all_tag_entries();
+
+                            // Populate the legacy tags HashMap with converted values for backward compatibility
+                            // This ensures PrintConv is applied when we're not using -# flag
+                            for entry in &exif_tag_entries {
+                                let tag_name = format!("{}:{}", entry.group, entry.name);
+
+                                // For now, use the print representation for backward compatibility
+                                // The main.rs will handle numeric vs print based on -# flags
+                                match entry.name.as_str() {
+                                    // FNumber should be numeric in JSON
+                                    "FNumber" => {
+                                        if let Ok(num) = entry.print.parse::<f64>() {
+                                            tags.insert(tag_name, TagValue::F64(num));
+                                        } else {
+                                            tags.insert(
+                                                tag_name,
+                                                TagValue::String(entry.print.clone()),
+                                            );
+                                        }
+                                    }
+                                    // All other tags use string representation of print
+                                    _ => {
+                                        tags.insert(
+                                            tag_name,
+                                            TagValue::String(entry.print.clone()),
+                                        );
+                                    }
+                                }
                             }
+
+                            tag_entries.append(&mut exif_tag_entries);
 
                             // Add EXIF parsing status
                             let header = exif_reader.get_header().unwrap();
@@ -462,13 +491,52 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         None
     };
 
-    Ok(ExifData {
+    // Create ExifData with the new TagEntry structure
+    let mut exif_data = ExifData {
         source_file: path.to_string_lossy().to_string(),
         exif_tool_version: "0.1.0-oxide".to_string(),
-        tags,
-        errors: vec![], // No errors in mock implementation
+        tags: tag_entries,           // Use the collected TagEntry objects
+        legacy_tags: HashMap::new(), // Will be populated by prepare_for_serialization
+        errors: vec![],              // TODO: Collect actual parsing errors
         missing_implementations,
-    })
+    };
+
+    // Populate legacy_tags for backward compatibility
+    // Start with the tags we already collected (basic tags + EXIF tags)
+    exif_data.legacy_tags = tags;
+
+    // Add all other tags from tag_entries (including composite tags) to legacy_tags
+    // This ensures composite tags are included in the JSON output
+    for entry in &exif_data.tags {
+        let tag_name = format!("{}:{}", entry.group, entry.name);
+
+        // Skip if already added (EXIF tags were already processed above)
+        if exif_data.legacy_tags.contains_key(&tag_name) {
+            continue;
+        }
+
+        // For composite tags and any other tags not yet in legacy_tags
+        match entry.name.as_str() {
+            // FNumber should be numeric in JSON
+            "FNumber" => {
+                if let Ok(num) = entry.print.parse::<f64>() {
+                    exif_data.legacy_tags.insert(tag_name, TagValue::F64(num));
+                } else {
+                    exif_data
+                        .legacy_tags
+                        .insert(tag_name, TagValue::String(entry.print.clone()));
+                }
+            }
+            // All other tags use string representation of print
+            _ => {
+                exif_data
+                    .legacy_tags
+                    .insert(tag_name, TagValue::String(entry.print.clone()));
+            }
+        }
+    }
+
+    Ok(exif_data)
 }
 
 #[cfg(test)]
@@ -523,20 +591,22 @@ mod tests {
 
         assert_eq!(metadata.source_file, test_file.to_string_lossy());
         assert_eq!(metadata.exif_tool_version, "0.1.0-oxide");
-        assert!(metadata.tags.contains_key("File:FileName"));
-        assert!(metadata.tags.contains_key("File:FileType"));
-        assert!(metadata.tags.contains_key("System:ExifDetectionStatus"));
+        assert!(metadata.legacy_tags.contains_key("File:FileName"));
+        assert!(metadata.legacy_tags.contains_key("File:FileType"));
+        assert!(metadata
+            .legacy_tags
+            .contains_key("System:ExifDetectionStatus"));
         assert!(metadata.missing_implementations.is_none());
 
         // Should extract real EXIF data with group prefixes
-        assert!(metadata.tags.contains_key("EXIF:Make"));
-        assert!(metadata.tags.contains_key("EXIF:Model"));
+        assert!(metadata.legacy_tags.contains_key("EXIF:Make"));
+        assert!(metadata.legacy_tags.contains_key("EXIF:Model"));
 
         // Verify the extracted values match what we expect from this Canon image
-        if let Some(make) = metadata.tags.get("EXIF:Make") {
+        if let Some(make) = metadata.legacy_tags.get("EXIF:Make") {
             assert_eq!(make.as_string(), Some("Canon"));
         }
-        if let Some(model) = metadata.tags.get("EXIF:Model") {
+        if let Some(model) = metadata.legacy_tags.get("EXIF:Model") {
             assert_eq!(model.as_string(), Some("Canon EOS REBEL T3i"));
         }
 
