@@ -8,7 +8,18 @@ use clap::{Arg, Command};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+
+/// Find the repository root by walking up from the given path until we find Cargo.toml
+fn find_repo_root(start_path: &Path) -> Result<PathBuf> {
+    let mut current_path = start_path.canonicalize()?;
+    while !current_path.join("Cargo.toml").exists() {
+        current_path = current_path.parent()
+            .ok_or_else(|| anyhow::anyhow!("Could not find repository root (Cargo.toml)"))?
+            .to_path_buf();
+    }
+    Ok(current_path)
+}
 
 /// JSON structure from extract_tables.pl
 #[derive(Debug, Deserialize)]
@@ -499,7 +510,8 @@ fn generate_supported_tags(_tags: &[GeneratedTag], output_dir: &str) -> Result<(
 
     // Generate JSON file for shell script consumption
     let json_content = serde_json::to_string_pretty(&supported_tag_names)?;
-    let json_path = Path::new(output_dir).join("../config/supported_tags.json");
+    let repo_root = find_repo_root(Path::new(output_dir))?;
+    let json_path = repo_root.join("config/supported_tags.json");
     
     // Create config directory if it doesn't exist
     if let Some(parent) = json_path.parent() {
