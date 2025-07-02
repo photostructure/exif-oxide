@@ -11,7 +11,7 @@
 //! - lib/Image/ExifTool/Canon.pm - Canon tag tables and processing
 //! - lib/Image/ExifTool/MakerNotes.pm - Canon MakerNote detection and offset fixing
 
-use crate::exif::ByteOrder;
+use crate::tiff_types::ByteOrder;
 use crate::types::{ExifError, Result, TagValue};
 use std::collections::HashMap;
 use tracing::{debug, warn};

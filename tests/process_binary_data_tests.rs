@@ -213,7 +213,7 @@ fn test_find_canon_camera_settings_tag() {
     reader.set_test_data(test_data);
 
     // Set up basic TIFF header for byte order
-    use exif_oxide::exif::{ByteOrder, TiffHeader};
+    use exif_oxide::tiff_types::{ByteOrder, TiffHeader};
     reader.set_test_header(TiffHeader {
         byte_order: ByteOrder::LittleEndian,
         magic: 42,
@@ -254,7 +254,7 @@ fn test_process_canon_makernotes_integration() {
     reader.set_test_data(test_data);
 
     // Set up TIFF header
-    use exif_oxide::exif::{ByteOrder, TiffHeader};
+    use exif_oxide::tiff_types::{ByteOrder, TiffHeader};
     reader.set_test_header(TiffHeader {
         byte_order: ByteOrder::LittleEndian,
         magic: 42,
@@ -299,7 +299,7 @@ fn test_canon_makernotes_error_handling() {
 
     // Test with invalid IFD entry count
     reader.set_test_data(vec![0xFF, 0xFF, 0x00, 0x00]); // Invalid entry count
-    use exif_oxide::exif::{ByteOrder, TiffHeader};
+    use exif_oxide::tiff_types::{ByteOrder, TiffHeader};
     reader.set_test_header(TiffHeader {
         byte_order: ByteOrder::LittleEndian,
         magic: 42,
