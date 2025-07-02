@@ -12,6 +12,7 @@ pub mod generated;
 pub mod implementations;
 pub mod registry;
 pub mod types;
+pub mod value_extraction;
 
 pub use generated::*;
 pub use registry::Registry;

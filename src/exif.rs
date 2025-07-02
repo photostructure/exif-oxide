@@ -17,6 +17,7 @@ use crate::types::{
     DataMemberValue, DirectoryInfo, ExifError, ProcessorDispatch, ProcessorType, Result,
     SonyProcessor, TagSourceInfo, TagValue,
 };
+use crate::value_extraction;
 use std::collections::{HashMap, HashSet};
 use tracing::{debug, trace, warn};
 
@@ -434,7 +435,7 @@ impl ExifReader {
         // ExifTool: lib/Image/ExifTool/Exif.pm:6390-6570 value extraction
         match entry.format {
             TiffFormat::Ascii => {
-                let value = self.extract_ascii_value(&entry, byte_order)?;
+                let value = value_extraction::extract_ascii_value(&self.data, &entry, byte_order)?;
                 if !value.is_empty() {
                     let tag_value = TagValue::String(value);
                     let (final_value, _print) =
@@ -450,7 +451,7 @@ impl ExifReader {
                 }
             }
             TiffFormat::Byte => {
-                let value = self.extract_byte_value(&entry)?;
+                let value = value_extraction::extract_byte_value(&self.data, &entry)?;
                 let tag_value = TagValue::U8(value);
                 let (final_value, _print) = self.apply_conversions(&tag_value, tag_def.copied());
                 trace!(
@@ -463,7 +464,7 @@ impl ExifReader {
                 self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
             }
             TiffFormat::Short => {
-                let value = self.extract_short_value(&entry, byte_order)?;
+                let value = value_extraction::extract_short_value(&self.data, &entry, byte_order)?;
                 let tag_value = TagValue::U16(value);
                 let (final_value, _print) = self.apply_conversions(&tag_value, tag_def.copied());
 
@@ -478,7 +479,7 @@ impl ExifReader {
                 self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
             }
             TiffFormat::Long => {
-                let value = self.extract_long_value(&entry, byte_order)?;
+                let value = value_extraction::extract_long_value(&self.data, &entry, byte_order)?;
                 let tag_value = TagValue::U32(value);
 
                 // Milestone 5: Check for SubDirectory tags (ExifIFD, GPS, etc.)
@@ -502,7 +503,8 @@ impl ExifReader {
             TiffFormat::Rational => {
                 // Milestone 6: RATIONAL format support (format 5)
                 // ExifTool: 2x uint32 values representing numerator/denominator
-                let value = self.extract_rational_value(&entry, byte_order)?;
+                let value =
+                    value_extraction::extract_rational_value(&self.data, &entry, byte_order)?;
                 let (final_value, _print) = self.apply_conversions(&value, tag_def.copied());
                 trace!(
                     "Extracted RATIONAL tag {:#x} from {}: {:?}",
@@ -516,7 +518,8 @@ impl ExifReader {
             TiffFormat::SRational => {
                 // Milestone 6: SRATIONAL format support (format 10)
                 // ExifTool: 2x int32 values representing numerator/denominator
-                let value = self.extract_srational_value(&entry, byte_order)?;
+                let value =
+                    value_extraction::extract_srational_value(&self.data, &entry, byte_order)?;
                 let (final_value, _print) = self.apply_conversions(&value, tag_def.copied());
                 trace!(
                     "Extracted SRATIONAL tag {:#x} from {}: {:?}",
@@ -601,223 +604,6 @@ impl ExifReader {
         }
 
         Ok(())
-    }
-
-    /// Extract ASCII string value with null-termination handling
-    /// ExifTool: lib/Image/ExifTool/Exif.pm ConvertExifText for ASCII processing
-    fn extract_ascii_value(&self, entry: &IfdEntry, _byte_order: ByteOrder) -> Result<String> {
-        let data = if entry.is_inline() {
-            // Value stored inline in the 4-byte value field
-            // ExifTool: lib/Image/ExifTool/Exif.pm:6372 inline value handling
-            let bytes = entry.value_or_offset.to_le_bytes(); // Always stored in entry byte order
-            bytes[..entry.count.min(4) as usize].to_vec()
-        } else {
-            // Value stored at offset
-            // ExifTool: lib/Image/ExifTool/Exif.pm:6398 offset value handling
-            let offset = entry.value_or_offset as usize;
-            let size = entry.count as usize;
-
-            if offset + size > self.data.len() {
-                return Err(ExifError::ParseError(format!(
-                    "ASCII value offset {offset:#x} + size {size} beyond data bounds"
-                )));
-            }
-
-            self.data[offset..offset + size].to_vec()
-        };
-
-        // Convert bytes to string with null-termination handling
-        // ExifTool handles null-terminated strings gracefully
-        let null_pos = data.iter().position(|&b| b == 0).unwrap_or(data.len());
-        let trimmed = &data[..null_pos];
-
-        // Convert to UTF-8, handling invalid sequences gracefully
-        match String::from_utf8(trimmed.to_vec()) {
-            Ok(s) => Ok(s.trim().to_string()), // Trim whitespace
-            Err(_) => {
-                // Fallback for invalid UTF-8 - convert lossy
-                Ok(String::from_utf8_lossy(trimmed).trim().to_string())
-            }
-        }
-    }
-
-    /// Extract SHORT (u16) value
-    /// ExifTool: lib/Image/ExifTool/Exif.pm:6372-6398 value extraction
-    fn extract_short_value(&self, entry: &IfdEntry, byte_order: ByteOrder) -> Result<u16> {
-        if entry.count != 1 {
-            return Err(ExifError::ParseError(format!(
-                "SHORT value with count {} not supported yet",
-                entry.count
-            )));
-        }
-
-        if entry.is_inline() {
-            // Value stored inline - use lower 2 bytes of value_or_offset
-            // ExifTool: lib/Image/ExifTool/Exif.pm:6372 inline value handling
-            // The value_or_offset field is always stored in the file's byte order
-            let bytes = match byte_order {
-                ByteOrder::LittleEndian => entry.value_or_offset.to_le_bytes(),
-                ByteOrder::BigEndian => entry.value_or_offset.to_be_bytes(),
-            };
-            // For inline SHORT values, use the first 2 bytes in the correct order
-            Ok(match byte_order {
-                ByteOrder::LittleEndian => u16::from_le_bytes([bytes[0], bytes[1]]),
-                ByteOrder::BigEndian => u16::from_be_bytes([bytes[0], bytes[1]]),
-            })
-        } else {
-            // Value stored at offset
-            let offset = entry.value_or_offset as usize;
-            byte_order.read_u16(&self.data, offset)
-        }
-    }
-
-    /// Extract BYTE (u8) value
-    /// ExifTool: lib/Image/ExifTool/Exif.pm:6372-6398 value extraction
-    fn extract_byte_value(&self, entry: &IfdEntry) -> Result<u8> {
-        if entry.count != 1 {
-            return Err(ExifError::ParseError(format!(
-                "BYTE value with count {} not supported yet",
-                entry.count
-            )));
-        }
-
-        if entry.is_inline() {
-            // Value stored inline - use lowest byte of value_or_offset
-            // ExifTool: lib/Image/ExifTool/Exif.pm:6372 inline value handling
-            Ok(entry.value_or_offset as u8)
-        } else {
-            // Value stored at offset
-            let offset = entry.value_or_offset as usize;
-            if offset >= self.data.len() {
-                return Err(ExifError::ParseError(format!(
-                    "BYTE value offset {offset:#x} beyond data bounds"
-                )));
-            }
-            Ok(self.data[offset])
-        }
-    }
-
-    /// Extract LONG (u32) value
-    /// ExifTool: lib/Image/ExifTool/Exif.pm:6372-6398 value extraction
-    fn extract_long_value(&self, entry: &IfdEntry, byte_order: ByteOrder) -> Result<u32> {
-        if entry.count != 1 {
-            return Err(ExifError::ParseError(format!(
-                "LONG value with count {} not supported yet",
-                entry.count
-            )));
-        }
-
-        if entry.is_inline() {
-            // Value stored inline
-            Ok(entry.value_or_offset)
-        } else {
-            // Value stored at offset
-            let offset = entry.value_or_offset as usize;
-            byte_order.read_u32(&self.data, offset)
-        }
-    }
-
-    /// Extract RATIONAL (2x u32) value - numerator and denominator
-    /// ExifTool: lib/Image/ExifTool/Exif.pm format 5 (rational64u)
-    fn extract_rational_value(&self, entry: &IfdEntry, byte_order: ByteOrder) -> Result<TagValue> {
-        if entry.count == 1 {
-            // Single rational value
-            if entry.is_inline() {
-                // 8-byte rational cannot fit inline (4-byte field), so this should never happen
-                return Err(ExifError::ParseError(
-                    "RATIONAL value cannot be stored inline".to_string(),
-                ));
-            }
-
-            // Value stored at offset - read 2x uint32
-            let offset = entry.value_or_offset as usize;
-            if offset + 8 > self.data.len() {
-                return Err(ExifError::ParseError(format!(
-                    "RATIONAL value offset {offset:#x} + 8 bytes beyond data bounds"
-                )));
-            }
-
-            let numerator = byte_order.read_u32(&self.data, offset)?;
-            let denominator = byte_order.read_u32(&self.data, offset + 4)?;
-            Ok(TagValue::Rational(numerator, denominator))
-        } else {
-            // Multiple rational values - GPS coordinates use 3 rationals
-            if entry.is_inline() {
-                return Err(ExifError::ParseError(
-                    "RATIONAL array cannot be stored inline".to_string(),
-                ));
-            }
-
-            let offset = entry.value_or_offset as usize;
-            let total_size = entry.count as usize * 8; // 8 bytes per rational
-            if offset + total_size > self.data.len() {
-                return Err(ExifError::ParseError(format!(
-                    "RATIONAL array offset {offset:#x} + {total_size} bytes beyond data bounds"
-                )));
-            }
-
-            let mut rationals = Vec::new();
-            for i in 0..entry.count {
-                let rat_offset = offset + (i as usize * 8);
-                let numerator = byte_order.read_u32(&self.data, rat_offset)?;
-                let denominator = byte_order.read_u32(&self.data, rat_offset + 4)?;
-                rationals.push((numerator, denominator));
-            }
-            Ok(TagValue::RationalArray(rationals))
-        }
-    }
-
-    /// Extract SRATIONAL (2x i32) value - signed numerator and denominator  
-    /// ExifTool: lib/Image/ExifTool/Exif.pm format 10 (rational64s)
-    fn extract_srational_value(&self, entry: &IfdEntry, byte_order: ByteOrder) -> Result<TagValue> {
-        if entry.count == 1 {
-            // Single signed rational value
-            if entry.is_inline() {
-                return Err(ExifError::ParseError(
-                    "SRATIONAL value cannot be stored inline".to_string(),
-                ));
-            }
-
-            let offset = entry.value_or_offset as usize;
-            if offset + 8 > self.data.len() {
-                return Err(ExifError::ParseError(format!(
-                    "SRATIONAL value offset {offset:#x} + 8 bytes beyond data bounds"
-                )));
-            }
-
-            // Read as u32 first, then convert to i32 to handle signed values correctly
-            let numerator_u32 = byte_order.read_u32(&self.data, offset)?;
-            let denominator_u32 = byte_order.read_u32(&self.data, offset + 4)?;
-            let numerator = numerator_u32 as i32;
-            let denominator = denominator_u32 as i32;
-            Ok(TagValue::SRational(numerator, denominator))
-        } else {
-            // Multiple signed rational values
-            if entry.is_inline() {
-                return Err(ExifError::ParseError(
-                    "SRATIONAL array cannot be stored inline".to_string(),
-                ));
-            }
-
-            let offset = entry.value_or_offset as usize;
-            let total_size = entry.count as usize * 8;
-            if offset + total_size > self.data.len() {
-                return Err(ExifError::ParseError(format!(
-                    "SRATIONAL array offset {offset:#x} + {total_size} bytes beyond data bounds"
-                )));
-            }
-
-            let mut rationals = Vec::new();
-            for i in 0..entry.count {
-                let rat_offset = offset + (i as usize * 8);
-                let numerator_u32 = byte_order.read_u32(&self.data, rat_offset)?;
-                let denominator_u32 = byte_order.read_u32(&self.data, rat_offset + 4)?;
-                let numerator = numerator_u32 as i32;
-                let denominator = denominator_u32 as i32;
-                rationals.push((numerator, denominator));
-            }
-            Ok(TagValue::SRationalArray(rationals))
-        }
     }
 
     /// Get extracted tag by ID
@@ -2987,20 +2773,31 @@ impl ExifReader {
     /// Extract tag value from IFD entry (helper method)
     fn extract_tag_value(&self, entry: &IfdEntry, byte_order: ByteOrder) -> Result<TagValue> {
         match entry.format {
-            TiffFormat::Ascii => Ok(TagValue::String(
-                self.extract_ascii_value(entry, byte_order)?,
-            )),
-            TiffFormat::Short => Ok(TagValue::U16(self.extract_short_value(entry, byte_order)?)),
-            TiffFormat::Long => Ok(TagValue::U32(self.extract_long_value(entry, byte_order)?)),
-            TiffFormat::Byte => Ok(TagValue::U8(self.extract_byte_value(entry)?)),
-            TiffFormat::Rational => self.extract_rational_value(entry, byte_order),
-            TiffFormat::SRational => self.extract_srational_value(entry, byte_order),
+            TiffFormat::Ascii => Ok(TagValue::String(value_extraction::extract_ascii_value(
+                &self.data, entry, byte_order,
+            )?)),
+            TiffFormat::Short => Ok(TagValue::U16(value_extraction::extract_short_value(
+                &self.data, entry, byte_order,
+            )?)),
+            TiffFormat::Long => Ok(TagValue::U32(value_extraction::extract_long_value(
+                &self.data, entry, byte_order,
+            )?)),
+            TiffFormat::Byte => Ok(TagValue::U8(value_extraction::extract_byte_value(
+                &self.data, entry,
+            )?)),
+            TiffFormat::Rational => {
+                value_extraction::extract_rational_value(&self.data, entry, byte_order)
+            }
+            TiffFormat::SRational => {
+                value_extraction::extract_srational_value(&self.data, entry, byte_order)
+            }
             TiffFormat::SShort => {
-                let unsigned = self.extract_short_value(entry, byte_order)?;
+                let unsigned =
+                    value_extraction::extract_short_value(&self.data, entry, byte_order)?;
                 Ok(TagValue::I16(unsigned as i16))
             }
             TiffFormat::SLong => {
-                let unsigned = self.extract_long_value(entry, byte_order)?;
+                let unsigned = value_extraction::extract_long_value(&self.data, entry, byte_order)?;
                 Ok(TagValue::I32(unsigned as i32))
             }
             _ => {
