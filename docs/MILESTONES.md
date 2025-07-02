@@ -84,23 +84,6 @@ This milestone plan embraces the reality that we're building a complex system in
 
 ## Active Milestones
 
-### Milestone 8c: Full ValueConv Implementation (2 weeks)
-
-**Goal**: Complete ValueConv system with all mathematical conversions
-
-**Summary**: Implement APEX conversions, GPS coordinate conversion, date/time conversions, and complex mathematical conversions from ExifTool.
-
-**Key Deliverables**:
-
-- APEX conversions (ShutterSpeedValue, ApertureValue, ExposureCompensation)
-- GPS coordinate conversion to decimal degrees
-- Date/time string parsing and conversion
-- Complex mathematical conversions
-
-**Success Criteria**: All ValueConv tests from ExifTool pass, GPS coordinates show decimal degrees with -#, APEX values converted correctly.
-
----
-
 ### Milestone 11.5: Multi-Pass Composite Building (1 week)
 
 **Goal**: Enhance composite tag infrastructure to support composite-on-composite dependencies
