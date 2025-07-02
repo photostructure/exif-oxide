@@ -110,7 +110,10 @@
       "Bash(RUST_LOG=debug ./target/release/exif-oxide test-images/canon/Canon_T3i.JPG)",
       "Bash(bash:*)",
       "Bash(grep -n \"get_all_tags\" /home/mrm/src/exif-oxide/src/exif.rs)",
-      "Bash(RUST_BACKTRACE=1 cargo test test_find_canon_camera_settings_tag -- --nocapture)"
+      "Bash(RUST_BACKTRACE=1 cargo test test_find_canon_camera_settings_tag -- --nocapture)",
+      "Bash(RUST_LOG=debug cargo run -- test-images/canon/Canon_T3i.JPG)",
+      "Bash(RUST_BACKTRACE=1 cargo test test_exiftool_compatibility)",
+      "Bash(RUST_BACKTRACE=1 cargo test test_process_canon_makernotes_integration)"
     ],
     "deny": []
   }

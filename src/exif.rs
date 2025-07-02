@@ -12,8 +12,10 @@
 //! Reference: lib/Image/ExifTool/Exif.pm ProcessExif function
 
 use crate::generated::{COMPOSITE_TAGS, TAG_BY_ID};
+use crate::implementations::{canon, sony};
 use crate::types::{
-    DataMemberValue, DirectoryInfo, ExifError, ProcessorDispatch, ProcessorType, Result, TagValue,
+    DataMemberValue, DirectoryInfo, ExifError, ProcessorDispatch, ProcessorType, Result,
+    SonyProcessor, TagSourceInfo, TagValue,
 };
 use std::collections::HashMap;
 use tracing::{debug, trace, warn};
@@ -194,7 +196,8 @@ impl IfdEntry {
     /// Calculate total size of this entry's data
     /// ExifTool: lib/Image/ExifTool/Exif.pm:6390 size calculation
     pub fn data_size(&self) -> u32 {
-        self.count * self.format.byte_size() as u32
+        // Protect against overflow with large count values
+        self.count.saturating_mul(self.format.byte_size() as u32)
     }
 
     /// Check if value is stored inline (≤4 bytes) or as offset
@@ -210,9 +213,9 @@ impl IfdEntry {
 pub struct ExifReader {
     /// Extracted tag values by tag ID
     extracted_tags: HashMap<u16, TagValue>,
-    /// Track which IFD each tag came from for proper name lookup
-    /// Maps tag_id -> ifd_name  
-    tag_sources: HashMap<u16, String>,
+    /// Enhanced tag source tracking for conflict resolution
+    /// Maps tag_id -> TagSourceInfo with namespace, priority, and processor context
+    tag_sources: HashMap<u16, TagSourceInfo>,
     /// TIFF header information
     header: Option<TiffHeader>,
     /// Raw EXIF data buffer
@@ -357,6 +360,11 @@ impl ExifReader {
         // ExifTool: lib/Image/ExifTool/Exif.pm:6235 numEntries
         let num_entries = byte_order.read_u16(&self.data, ifd_offset)? as usize;
 
+        debug!(
+            "IFD {} at offset {:#x} has {} entries",
+            ifd_name, ifd_offset, num_entries
+        );
+
         // Calculate directory size: 2 bytes (count) + 12 bytes per entry + 4 bytes (next IFD)
         // ExifTool: lib/Image/ExifTool/Exif.pm:6236-6237 dirSize calculation
         let dir_size = 2 + 12 * num_entries + 4;
@@ -377,16 +385,26 @@ impl ExifReader {
             let entry_offset = ifd_offset + 2 + 12 * index;
 
             if entry_offset + 12 > self.data.len() {
+                debug!(
+                    "IFD {} entry {} at offset {:#x} beyond data bounds (data len: {})",
+                    ifd_name,
+                    index,
+                    entry_offset,
+                    self.data.len()
+                );
                 self.warnings
                     .push(format!("IFD entry {index} beyond data bounds"));
                 break; // Graceful degradation
             }
 
             match self.parse_ifd_entry(entry_offset, byte_order, ifd_name, index) {
-                Ok(()) => {} // Successfully parsed
+                Ok(()) => {
+                    debug!("Successfully processed {} entry {}", ifd_name, index);
+                } // Successfully parsed
                 Err(e) => {
                     // Graceful degradation - log warning but continue
                     // ExifTool: lib/Image/ExifTool/Exif.pm:6360-6365 error handling
+                    debug!("Error parsing {} entry {}: {}", ifd_name, index, e);
                     self.warnings
                         .push(format!("Error parsing {ifd_name} entry {index}: {e}"));
                 }
@@ -426,8 +444,8 @@ impl ExifReader {
                         ifd_name,
                         final_value
                     );
-                    self.extracted_tags.insert(entry.tag_id, final_value);
-                    self.tag_sources.insert(entry.tag_id, ifd_name.to_string());
+                    let source_info = self.create_tag_source_info(ifd_name);
+                    self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
                 }
             }
             TiffFormat::Byte => {
@@ -440,8 +458,8 @@ impl ExifReader {
                     ifd_name,
                     final_value
                 );
-                self.extracted_tags.insert(entry.tag_id, final_value);
-                self.tag_sources.insert(entry.tag_id, ifd_name.to_string());
+                let source_info = self.create_tag_source_info(ifd_name);
+                self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
             }
             TiffFormat::Short => {
                 let value = self.extract_short_value(&entry, byte_order)?;
@@ -455,8 +473,8 @@ impl ExifReader {
                     final_value
                 );
 
-                self.extracted_tags.insert(entry.tag_id, final_value);
-                self.tag_sources.insert(entry.tag_id, ifd_name.to_string());
+                let source_info = self.create_tag_source_info(ifd_name);
+                self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
             }
             TiffFormat::Long => {
                 let value = self.extract_long_value(&entry, byte_order)?;
@@ -466,7 +484,7 @@ impl ExifReader {
                 // ExifTool: SubDirectory processing for nested IFDs
                 if let Some(tag_def) = tag_def {
                     if self.is_subdirectory_tag(entry.tag_id) {
-                        self.process_subdirectory_tag(entry.tag_id, value, tag_def.name)?;
+                        self.process_subdirectory_tag(entry.tag_id, value, tag_def.name, None)?;
                     }
                 }
 
@@ -477,8 +495,8 @@ impl ExifReader {
                     ifd_name,
                     final_value
                 );
-                self.extracted_tags.insert(entry.tag_id, final_value);
-                self.tag_sources.insert(entry.tag_id, ifd_name.to_string());
+                let source_info = self.create_tag_source_info(ifd_name);
+                self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
             }
             TiffFormat::Rational => {
                 // Milestone 6: RATIONAL format support (format 5)
@@ -491,8 +509,8 @@ impl ExifReader {
                     ifd_name,
                     final_value
                 );
-                self.extracted_tags.insert(entry.tag_id, final_value);
-                self.tag_sources.insert(entry.tag_id, ifd_name.to_string());
+                let source_info = self.create_tag_source_info(ifd_name);
+                self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
             }
             TiffFormat::SRational => {
                 // Milestone 6: SRATIONAL format support (format 10)
@@ -505,8 +523,69 @@ impl ExifReader {
                     ifd_name,
                     final_value
                 );
-                self.extracted_tags.insert(entry.tag_id, final_value);
-                self.tag_sources.insert(entry.tag_id, ifd_name.to_string());
+                let source_info = self.create_tag_source_info(ifd_name);
+                self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
+            }
+            TiffFormat::Undefined => {
+                // UNDEFINED format - can contain various data types including subdirectories
+                // ExifTool: lib/Image/ExifTool/Exif.pm undefined data handling
+                debug!(
+                    "Processing UNDEFINED tag {:#x} from {}",
+                    entry.tag_id, ifd_name
+                );
+
+                // Check if this is a subdirectory tag (like MakerNotes)
+                debug!(
+                    "Checking if UNDEFINED tag {:#x} is a subdirectory tag",
+                    entry.tag_id
+                );
+                if self.is_subdirectory_tag(entry.tag_id) {
+                    debug!("UNDEFINED tag {:#x} is a subdirectory tag", entry.tag_id);
+                    // For subdirectory UNDEFINED tags, the data starts at the offset
+                    // ExifTool: MakerNotes and other subdirectories stored as UNDEFINED
+                    let offset = entry.value_or_offset as usize;
+                    let size = entry.count as usize;
+
+                    // Get tag name from definition or use fallback for known subdirectory tags
+                    let tag_name = if let Some(tag_def) = tag_def {
+                        Some(tag_def.name)
+                    } else {
+                        // Fallback names for known subdirectory tags without definitions
+                        match entry.tag_id {
+                            0x927C => Some("MakerNotes"),
+                            _ => {
+                                debug!("UNDEFINED subdirectory tag {:#x} has no tag definition and no fallback", entry.tag_id);
+                                None // Skip unknown subdirectory tags
+                            }
+                        }
+                    };
+
+                    if let Some(name) = tag_name {
+                        debug!(
+                            "Processing UNDEFINED subdirectory tag {:#x} ({}) from {}: offset={:#x}, size={}",
+                            entry.tag_id,
+                            name,
+                            ifd_name,
+                            offset,
+                            size
+                        );
+                        self.process_subdirectory_tag(
+                            entry.tag_id,
+                            offset as u32,
+                            name,
+                            Some(size),
+                        )?;
+                    }
+                } else {
+                    // Regular UNDEFINED data - store as raw bytes for now
+                    // TODO: Implement specific UNDEFINED tag processing as needed
+                    if let Some(tag_def) = tag_def {
+                        debug!(
+                            "UNDEFINED tag {:#x} ({}) not yet implemented (format 7, {} bytes)",
+                            entry.tag_id, tag_def.name, entry.count
+                        );
+                    }
+                }
             }
             _ => {
                 // For other formats, store raw value for now
@@ -760,7 +839,7 @@ impl ExifReader {
             let ifd_name = self
                 .tag_sources
                 .get(&tag_id)
-                .map(|s| s.as_str())
+                .map(|s| s.ifd_name.as_str())
                 .unwrap_or("Root");
 
             let group_name = match ifd_name {
@@ -984,29 +1063,25 @@ impl ExifReader {
 
         // Add extracted tags
         for (&tag_id, value) in &self.extracted_tags {
-            // Get the IFD source for this tag
-            let ifd_name = self
-                .tag_sources
-                .get(&tag_id)
-                .map(|s| s.as_str())
-                .unwrap_or("Root");
+            // Get the enhanced source info for this tag
+            let source_info = self.tag_sources.get(&tag_id);
 
-            // Map IFD names to ExifTool group names
-            // ExifTool: lib/Image/ExifTool/Exif.pm group mappings
-            let group_name = match ifd_name {
-                "Root" | "IFD0" | "IFD1" => "EXIF",
-                "GPS" => "GPS",
-                "ExifIFD" => "EXIF",
-                "InteropIFD" => "EXIF",
-                "MakerNotes" => "MakerNotes",
-                _ => "EXIF", // Default to EXIF for unknown IFDs
+            // Use namespace from TagSourceInfo or default to EXIF
+            let group_name = if let Some(source_info) = source_info {
+                &source_info.namespace
+            } else {
+                "EXIF" // Default fallback
             };
 
-            // Look up tag name in unified table
-            let base_tag_name = TAG_BY_ID
-                .get(&(tag_id as u32))
-                .map(|tag_def| tag_def.name.to_string())
-                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+            // Look up tag name in unified table or use Canon-specific names
+            let base_tag_name = if let Some(canon_tag_name) = self.get_canon_tag_name(tag_id) {
+                canon_tag_name
+            } else {
+                TAG_BY_ID
+                    .get(&(tag_id as u32))
+                    .map(|tag_def| tag_def.name.to_string())
+                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+            };
 
             // Format with group prefix
             let tag_name = format!("{group_name}:{base_tag_name}");
@@ -1014,7 +1089,9 @@ impl ExifReader {
             trace!(
                 "Tag {:#x} from {} -> {}: {:?}",
                 tag_id,
-                ifd_name,
+                source_info
+                    .map(|s| s.ifd_name.as_str())
+                    .unwrap_or("Unknown"),
                 tag_name,
                 value
             );
@@ -1028,6 +1105,20 @@ impl ExifReader {
         }
 
         result
+    }
+
+    /// Get Canon-specific tag name for synthetic tag IDs
+    /// Maps synthetic Canon tag IDs back to their proper names
+    fn get_canon_tag_name(&self, tag_id: u16) -> Option<String> {
+        match tag_id {
+            0xC001 => Some("MacroMode".to_string()),
+            0xC002 => Some("SelfTimer".to_string()),
+            0xC003 => Some("Quality".to_string()),
+            0xC004 => Some("CanonFlashMode".to_string()),
+            0xC005 => Some("ContinuousDrive".to_string()),
+            0xC007 => Some("FocusMode".to_string()),
+            _ => None,
+        }
     }
 
     /// Get parsing warnings
@@ -1086,14 +1177,86 @@ impl ExifReader {
         &self.extracted_tags
     }
 
-    /// Test helper: Get tag sources (public for integration tests)
-    pub fn get_tag_sources(&self) -> &HashMap<u16, String> {
+    /// Test helper: Get tag sources (public for integration tests)  
+    pub fn get_tag_sources(&self) -> &HashMap<u16, TagSourceInfo> {
         &self.tag_sources
+    }
+
+    /// Store tag with conflict resolution and proper namespace handling
+    /// ExifTool behavior: Main EXIF tags take precedence over MakerNote tags with same ID
+    fn store_tag_with_precedence(
+        &mut self,
+        tag_id: u16,
+        value: TagValue,
+        source_info: TagSourceInfo,
+    ) {
+        use tracing::debug;
+
+        // Check if tag already exists
+        if let Some(existing_source) = self.tag_sources.get(&tag_id) {
+            // Compare priorities - higher priority wins
+            if source_info.priority > existing_source.priority {
+                debug!(
+                    "Tag 0x{:04x}: Replacing lower priority {} with higher priority {}",
+                    tag_id, existing_source.namespace, source_info.namespace
+                );
+                self.extracted_tags.insert(tag_id, value);
+                self.tag_sources.insert(tag_id, source_info);
+            } else if source_info.priority == existing_source.priority {
+                // Same priority - keep first encountered (ExifTool behavior)
+                debug!(
+                    "Tag 0x{:04x}: Keeping first encountered {} over {}",
+                    tag_id, existing_source.namespace, source_info.namespace
+                );
+                // Do not overwrite - keep existing
+            } else {
+                // Lower priority - ignore
+                debug!(
+                    "Tag 0x{:04x}: Ignoring lower priority {} (existing: {})",
+                    tag_id, source_info.namespace, existing_source.namespace
+                );
+            }
+        } else {
+            // New tag - store it
+            debug!(
+                "Tag 0x{:04x}: Storing new {} tag",
+                tag_id, source_info.namespace
+            );
+            self.extracted_tags.insert(tag_id, value);
+            self.tag_sources.insert(tag_id, source_info);
+        }
     }
 
     /// Test helper: Get data length (public for integration tests)
     pub fn get_data_len(&self) -> usize {
         self.data.len()
+    }
+
+    /// Create TagSourceInfo from IFD name with proper namespace mapping
+    /// Maps legacy IFD names to proper ExifTool group names
+    fn create_tag_source_info(&self, ifd_name: &str) -> TagSourceInfo {
+        // Map IFD names to ExifTool group names
+        // ExifTool: lib/Image/ExifTool/Exif.pm group mappings
+        let namespace = match ifd_name {
+            "Root" | "IFD0" | "IFD1" => "EXIF",
+            "GPS" => "GPS",
+            "ExifIFD" => "EXIF",
+            "InteropIFD" => "EXIF",
+            "MakerNotes" => "MakerNotes",
+            _ => "EXIF", // Default to EXIF for unknown IFDs
+        };
+
+        let processor_type = if namespace == "MakerNotes" {
+            // For MakerNotes, try to determine the specific processor
+            self.processor_dispatch
+                .table_processor
+                .clone()
+                .unwrap_or(ProcessorType::Exif)
+        } else {
+            ProcessorType::Exif
+        };
+
+        TagSourceInfo::new(namespace.to_string(), ifd_name.to_string(), processor_type)
     }
 
     /// Apply ValueConv and PrintConv conversions to a raw tag value
@@ -1185,7 +1348,11 @@ impl ExifReader {
         let dir_specific = match dir_name {
             "GPS" => Some(ProcessorType::Gps),
             "ExifIFD" | "InteropIFD" => Some(ProcessorType::Exif),
-            "MakerNotes" => Some(ProcessorType::Generic("MakerNotes".to_string())),
+            "MakerNotes" => {
+                // Detect manufacturer-specific MakerNote processing
+                // ExifTool: lib/Image/ExifTool/MakerNotes.pm conditional dispatch
+                self.detect_makernote_processor()
+            }
             _ => None,
         };
 
@@ -1234,11 +1401,31 @@ impl ExifReader {
             }
             ProcessorType::Canon(canon_proc) => {
                 // Canon-specific processing
-                self.process_canon(canon_proc, dir_info)
+                match canon_proc {
+                    crate::types::CanonProcessor::Main => {
+                        // Process Canon Main MakerNote table
+                        // For Canon, this means processing as IFD to find CameraSettings
+                        if dir_info.name == "MakerNotes" {
+                            self.process_canon_makernotes(dir_info.dir_start, dir_info.dir_len)
+                        } else {
+                            // Fall back to standard EXIF processing for other Canon directories
+                            self.process_exif_ifd(dir_info.dir_start, &dir_info.name)
+                        }
+                    }
+                    _ => {
+                        // Other Canon processors not yet implemented
+                        debug!("Canon processor {:?} not yet implemented", canon_proc);
+                        self.process_exif_ifd(dir_info.dir_start, &dir_info.name)
+                    }
+                }
             }
             ProcessorType::Nikon(nikon_proc) => {
                 // Nikon-specific processing
                 self.process_nikon(nikon_proc, dir_info)
+            }
+            ProcessorType::Sony(sony_proc) => {
+                // Sony-specific processing
+                self.process_sony(sony_proc, dir_info)
             }
             ProcessorType::Generic(proc_name) => {
                 // Generic/unknown processor - fall back to EXIF
@@ -1254,7 +1441,13 @@ impl ExifReader {
     /// Process a SubDirectory tag by following the pointer to nested IFD
     /// ExifTool: SubDirectory processing with Start => '$val'
     // TODO: Replace magic numbers with named constants (matches above is_subdirectory_tag function)
-    fn process_subdirectory_tag(&mut self, tag_id: u16, offset: u32, tag_name: &str) -> Result<()> {
+    fn process_subdirectory_tag(
+        &mut self,
+        tag_id: u16,
+        offset: u32,
+        tag_name: &str,
+        size: Option<usize>,
+    ) -> Result<()> {
         let subdir_name = match tag_id {
             0x8769 => "ExifIFD",
             0x8825 => "GPS",
@@ -1280,7 +1473,7 @@ impl ExifReader {
         let dir_info = DirectoryInfo {
             name: subdir_name.to_string(),
             dir_start: offset,
-            dir_len: 0, // Will be calculated during processing
+            dir_len: size.unwrap_or(0), // Use provided size for UNDEFINED subdirectories, otherwise calculate during processing
             base: self.base,
             data_pos: 0,
             allow_reprocess: false,
@@ -1322,9 +1515,9 @@ impl ExifReader {
             0x8825 => None, // GPS - uses GPS variant of EXIF processing
             0xA005 => None, // InteropIFD - uses standard EXIF processing
             0x927C => {
-                // MakerNotes - could have manufacturer-specific processors
-                // For now, use generic processing
-                Some(ProcessorType::Generic("MakerNotes".to_string()))
+                // MakerNotes - use manufacturer-specific processor detection
+                // Return None to allow directory-specific detection in select_processor
+                None
             }
             _ => None,
         }
@@ -1393,8 +1586,47 @@ impl ExifReader {
         Ok(())
     }
 
-    /// Process Canon MakerNotes data
-    /// ExifTool: Canon.pm CameraSettings table processing
+    /// Detect manufacturer-specific MakerNote processor
+    /// ExifTool: lib/Image/ExifTool/MakerNotes.pm conditional dispatch system
+    fn detect_makernote_processor(&self) -> Option<ProcessorType> {
+        // Extract Make and Model from current tags for detection
+        let make = self
+            .extracted_tags
+            .get(&0x010F) // Make tag
+            .and_then(|v| v.as_string())
+            .unwrap_or("");
+
+        let model = self
+            .extracted_tags
+            .get(&0x0110) // Model tag
+            .and_then(|v| v.as_string())
+            .unwrap_or("");
+
+        debug!(
+            "Detecting MakerNote processor for Make: '{}', Model: '{}'",
+            make, model
+        );
+
+        // ExifTool: lib/Image/ExifTool/MakerNotes.pm:60-68 Canon detection
+        if canon::detect_canon_signature(make) {
+            debug!("Detected Canon MakerNote signature");
+            return Some(ProcessorType::Canon(crate::types::CanonProcessor::Main));
+        }
+
+        // ExifTool: lib/Image/ExifTool/MakerNotes.pm:1007-1075 Sony detection
+        if sony::is_sony_makernote(make, model) {
+            debug!("Detected Sony MakerNote (Make field: {})", make);
+            return Some(ProcessorType::Sony(SonyProcessor::Main));
+        }
+
+        // TODO: Add other manufacturer detection (Nikon, etc.)
+        // Return None to fall back to EXIF processor when no manufacturer detected
+        debug!("No specific MakerNote processor detected, falling back to EXIF");
+        None
+    }
+
+    /// Process Canon MakerNotes data with offset fixing and CameraSettings extraction
+    /// ExifTool: Canon.pm CameraSettings table processing + MakerNotes.pm offset fixing
     pub fn process_canon_makernotes(&mut self, start_offset: usize, size: usize) -> Result<()> {
         // Check minimum size for Canon MakerNotes
         if size < 12 {
@@ -1407,6 +1639,60 @@ impl ExifReader {
             start_offset, size
         );
 
+        // Get Make and Model for offset scheme detection
+        let make = self
+            .extracted_tags
+            .get(&0x010F)
+            .and_then(|v| v.as_string())
+            .unwrap_or("");
+
+        let model = self
+            .extracted_tags
+            .get(&0x0110)
+            .and_then(|v| v.as_string())
+            .unwrap_or("");
+
+        let byte_order = self.header.as_ref().unwrap().byte_order;
+
+        // Canon offset fixing with footer validation
+        // ExifTool: lib/Image/ExifTool/MakerNotes.pm:1281-1307 FixBase Canon section
+        let data_pos = 0; // MakerNotes data position in file
+        let dir_start = 0; // Directory starts at beginning of MakerNotes data
+        let dir_len = size; // Directory length is the MakerNotes size
+
+        // For simplified implementation, we'll skip full val_ptrs/val_block analysis
+        // and use empty collections. This allows basic footer detection and validation.
+        let val_ptrs: Vec<usize> = Vec::new();
+        let val_block: std::collections::HashMap<usize, usize> = std::collections::HashMap::new();
+
+        // Attempt Canon offset fixing with footer validation
+        match canon::fix_maker_note_base(
+            make,
+            model,
+            &self.data[start_offset..start_offset + size],
+            dir_start,
+            dir_len,
+            data_pos,
+            byte_order,
+            &val_ptrs,
+            &val_block,
+        ) {
+            Ok(Some(offset_fix)) => {
+                debug!("Canon offset base adjustment calculated: {}", offset_fix);
+                // TODO: Apply offset_fix to all subsequent offset calculations
+                // For now, this validates that Canon footer parsing works
+            }
+            Ok(None) => {
+                debug!("Canon offset fixing: no adjustment needed");
+            }
+            Err(e) => {
+                debug!(
+                    "Canon offset fixing failed: {}, proceeding without adjustment",
+                    e
+                );
+            }
+        }
+
         // Parse the MakerNotes as a standard IFD to find Canon CameraSettings tag (0x0001)
         // ExifTool: Canon MakerNotes use standard IFD format
         if let Ok(camera_settings_offset) = self.find_canon_camera_settings_tag(start_offset, size)
@@ -1416,12 +1702,52 @@ impl ExifReader {
                 camera_settings_offset
             );
 
-            // Extract CameraSettings binary data
-            self.extract_binary_data_tags(
+            // Calculate the size available for CameraSettings data
+            let camera_settings_size = size.saturating_sub(camera_settings_offset - start_offset);
+
+            // Use new Canon module to extract CameraSettings
+            match canon::extract_camera_settings(
+                &self.data,
                 camera_settings_offset,
-                size.saturating_sub(camera_settings_offset - start_offset),
-                &self.create_canon_camera_settings_table(),
-            )
+                camera_settings_size,
+                byte_order,
+            ) {
+                Ok(canon_tags) => {
+                    debug!(
+                        "Successfully extracted {} Canon CameraSettings tags",
+                        canon_tags.len()
+                    );
+
+                    // Add Canon tags to extracted_tags with tag IDs
+                    // We need to map the tag names back to tag IDs for consistency
+                    for (tag_name, tag_value) in canon_tags {
+                        // For Canon CameraSettings, we'll use synthetic tag IDs starting from 0xC000
+                        // to avoid conflicts with standard EXIF tags
+                        let synthetic_tag_id = match tag_name.as_str() {
+                            "MakerNotes:MacroMode" => 0xC001,
+                            "MakerNotes:SelfTimer" => 0xC002,
+                            "MakerNotes:Quality" => 0xC003,
+                            "MakerNotes:CanonFlashMode" => 0xC004,
+                            "MakerNotes:ContinuousDrive" => 0xC005,
+                            "MakerNotes:FocusMode" => 0xC007,
+                            _ => continue, // Skip unknown tags
+                        };
+
+                        let source_info = TagSourceInfo::new(
+                            "MakerNotes".to_string(),
+                            "Canon::Main".to_string(),
+                            ProcessorType::Canon(crate::types::CanonProcessor::Main),
+                        );
+                        self.store_tag_with_precedence(synthetic_tag_id, tag_value, source_info);
+                    }
+
+                    Ok(())
+                }
+                Err(e) => {
+                    warn!("Failed to extract Canon CameraSettings: {}", e);
+                    Ok(()) // Non-fatal error
+                }
+            }
         } else {
             debug!("Canon CameraSettings tag (0x0001) not found in MakerNotes");
             Ok(())
@@ -1616,9 +1942,12 @@ impl ExifReader {
                 // Store with group prefix
                 let unknown_default = "Unknown".to_string();
                 let group_prefix = table.groups.get(&0).unwrap_or(&unknown_default);
-                let tag_name = format!("{}:{}", group_prefix, tag_def.name);
-                self.extracted_tags.insert(index as u16, final_value);
-                self.tag_sources.insert(index as u16, tag_name);
+                let source_info = TagSourceInfo::new(
+                    group_prefix.clone(),
+                    format!("BinaryData/{group_prefix}"),
+                    ProcessorType::BinaryData,
+                );
+                self.store_tag_with_precedence(index as u16, final_value, source_info);
             }
         }
 
@@ -1733,13 +2062,14 @@ impl ExifReader {
 
     /// Process Canon manufacturer-specific data
     /// ExifTool: Canon.pm processing procedures
+    #[allow(dead_code)]
     fn process_canon(
         &mut self,
         _canon_proc: crate::types::CanonProcessor,
         dir_info: &DirectoryInfo,
     ) -> Result<()> {
-        // Placeholder for Canon-specific processing
-        // This will be implemented in future milestones
+        // TODO: Implement Canon-specific processing for different CanonProcessor types
+        // This will be expanded in future milestones for ProcessSerialData, etc.
         debug!("Canon processing not yet implemented for {}", dir_info.name);
         self.process_exif_ifd(dir_info.dir_start, &dir_info.name)
     }
@@ -1755,6 +2085,126 @@ impl ExifReader {
         // This will be implemented in future milestones
         debug!("Nikon processing not yet implemented for {}", dir_info.name);
         self.process_exif_ifd(dir_info.dir_start, &dir_info.name)
+    }
+
+    /// Process Sony MakerNotes with proper namespace handling
+    /// ExifTool: Sony-specific processing to prevent tag collisions
+    fn process_sony(&mut self, _sony_proc: SonyProcessor, dir_info: &DirectoryInfo) -> Result<()> {
+        debug!(
+            "Processing Sony MakerNote directory: {} (processor: {:?})",
+            dir_info.name, _sony_proc
+        );
+
+        // For Sony MakerNotes, we want to ensure proper namespacing
+        // This stub processes as EXIF IFD but with MakerNotes namespace
+        if dir_info.name == "MakerNotes" {
+            // Extract Make for logging (before mutable borrow)
+            let make = self
+                .extracted_tags
+                .get(&0x010F) // Make tag
+                .and_then(|v| v.as_string())
+                .unwrap_or("")
+                .to_string();
+
+            // Temporarily process with MakerNotes context for proper tag source tracking
+            self.process_exif_ifd_with_namespace(
+                dir_info.dir_start,
+                "MakerNotes",
+                ProcessorType::Sony(_sony_proc),
+            )?;
+
+            debug!("Sony MakerNote processing completed for Make: {}", make);
+        } else {
+            // Fall back to standard EXIF processing for other Sony directories
+            self.process_exif_ifd(dir_info.dir_start, &dir_info.name)?;
+        }
+
+        Ok(())
+    }
+
+    /// Process EXIF IFD with explicit namespace and processor context
+    /// Used for MakerNotes to ensure proper tag source tracking and conflict resolution
+    fn process_exif_ifd_with_namespace(
+        &mut self,
+        ifd_offset: usize,
+        namespace: &str,
+        processor_type: ProcessorType,
+    ) -> Result<()> {
+        debug!(
+            "Processing IFD with namespace '{}' at offset {:#x}",
+            namespace, ifd_offset
+        );
+
+        if ifd_offset + 2 > self.data.len() {
+            return Err(ExifError::ParseError(format!(
+                "IFD offset {ifd_offset:#x} beyond data bounds"
+            )));
+        }
+
+        let byte_order = self.header.as_ref().unwrap().byte_order;
+        let num_entries = byte_order.read_u16(&self.data, ifd_offset)? as usize;
+
+        debug!("Processing {} entries in {} IFD", num_entries, namespace);
+
+        // Process each IFD entry
+        for i in 0..num_entries {
+            let entry_offset = ifd_offset + 2 + (i * 12);
+            if let Ok(entry) = IfdEntry::parse(&self.data, entry_offset, byte_order) {
+                let tag_id = entry.tag_id;
+
+                // Create TagSourceInfo for this tag
+                let source_info = TagSourceInfo::new(
+                    namespace.to_string(),
+                    format!("{}/{}", self.path.join("/"), namespace),
+                    processor_type.clone(),
+                );
+
+                // Extract tag value
+                if let Ok(value) = self.extract_tag_value(&entry, byte_order) {
+                    // Store with conflict resolution
+                    self.store_tag_with_precedence(tag_id, value, source_info);
+                } else {
+                    debug!(
+                        "Failed to extract value for tag {:#x} in {}",
+                        tag_id, namespace
+                    );
+                }
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Extract tag value from IFD entry (helper method)
+    fn extract_tag_value(&self, entry: &IfdEntry, byte_order: ByteOrder) -> Result<TagValue> {
+        match entry.format {
+            TiffFormat::Ascii => Ok(TagValue::String(
+                self.extract_ascii_value(entry, byte_order)?,
+            )),
+            TiffFormat::Short => Ok(TagValue::U16(self.extract_short_value(entry, byte_order)?)),
+            TiffFormat::Long => Ok(TagValue::U32(self.extract_long_value(entry, byte_order)?)),
+            TiffFormat::Byte => Ok(TagValue::U8(self.extract_byte_value(entry)?)),
+            TiffFormat::Rational => self.extract_rational_value(entry, byte_order),
+            TiffFormat::SRational => self.extract_srational_value(entry, byte_order),
+            TiffFormat::SShort => {
+                let unsigned = self.extract_short_value(entry, byte_order)?;
+                Ok(TagValue::I16(unsigned as i16))
+            }
+            TiffFormat::SLong => {
+                let unsigned = self.extract_long_value(entry, byte_order)?;
+                Ok(TagValue::I32(unsigned as i32))
+            }
+            _ => {
+                debug!(
+                    "Unsupported format {:?} for tag {:#x}",
+                    entry.format, entry.tag_id
+                );
+                Err(ExifError::Unsupported(format!(
+                    "Format {:?} not yet supported",
+                    entry.format
+                )))
+            }
+        }
     }
 
     // NOTE: GPS decimal conversion is deferred to Milestone 8 (ValueConv registry)
@@ -1981,11 +2431,16 @@ mod tests {
             ProcessorType::Exif
         );
 
-        // Test MakerNotes gets generic processor
-        if let ProcessorType::Generic(name) = reader.select_processor("MakerNotes", None) {
-            assert_eq!(name, "MakerNotes");
-        } else {
-            panic!("Expected Generic processor for MakerNotes");
+        // Test MakerNotes gets manufacturer-specific detection (defaults to EXIF when no Make/Model)
+        let processor = reader.select_processor("MakerNotes", None);
+        match processor {
+            ProcessorType::Exif => {
+                // Expected when no Make/Model tags are available for detection
+            }
+            ProcessorType::Canon(_) => {
+                // Expected when Canon Make is detected
+            }
+            _ => panic!("Expected EXIF or Canon processor for MakerNotes, got {processor:?}"),
         }
     }
 
@@ -2017,14 +2472,8 @@ mod tests {
         assert_eq!(reader.get_subdirectory_processor_override(0x8825), None); // GPS
         assert_eq!(reader.get_subdirectory_processor_override(0xA005), None); // InteropIFD
 
-        // MakerNotes should have generic processor
-        if let Some(ProcessorType::Generic(name)) =
-            reader.get_subdirectory_processor_override(0x927C)
-        {
-            assert_eq!(name, "MakerNotes");
-        } else {
-            panic!("Expected Generic processor for MakerNotes");
-        }
+        // MakerNotes should have no override (to allow manufacturer-specific detection)
+        assert_eq!(reader.get_subdirectory_processor_override(0x927C), None);
 
         // Unknown tag should have no override
         assert_eq!(reader.get_subdirectory_processor_override(0x1234), None);
