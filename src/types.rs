@@ -373,6 +373,11 @@ impl ExifData {
                                 .insert(key, TagValue::String(entry.print.clone()));
                         }
                     }
+                    // GPS coordinates should use numeric ValueConv (decimal degrees)
+                    // User specified: only decimal values (like ExifTool -GPSLatitude# mode)
+                    "GPSLatitude" | "GPSLongitude" | "GPSAltitude" => {
+                        self.legacy_tags.insert(key, entry.value.clone());
+                    }
                     // Most tags use string representation
                     _ => {
                         self.legacy_tags

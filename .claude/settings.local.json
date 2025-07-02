@@ -122,7 +122,10 @@
       "Bash(./test_focal_length)",
       "Bash(rm:*)",
       "Bash(./exiftool -json t/images/Canon.jpg)",
-      "Bash(./exiftool t/images/Canon.jpg)"
+      "Bash(./exiftool t/images/Canon.jpg)",
+      "Bash(RUST_LOG=debug cargo run -- test-images/apple/IMG_3755.JPG)",
+      "Bash(RUST_LOG=trace cargo run -- test-images/apple/IMG_3755.JPG)",
+      "Bash(/tmp/test_tagvalue:*)"
     ],
     "deny": []
   }

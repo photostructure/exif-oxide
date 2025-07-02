@@ -34,4 +34,8 @@ pub static SUPPORTED_TAGS: &[&str] = &[
     "FocalLength",
     "ImageSize",
     "ShutterSpeed",
+    "GPSLatitude",
+    "GPSLongitude",
+    "GPSDestLatitude",
+    "GPSDestLongitude",
 ];

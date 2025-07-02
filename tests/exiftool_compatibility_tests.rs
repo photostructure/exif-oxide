@@ -320,6 +320,24 @@ fn normalize_for_comparison(mut data: Value, _is_exiftool: bool) -> Value {
         obj.remove("FileSize");
         obj.remove("File:FileSize");
 
+        // Normalize GPS coordinates to handle floating-point precision differences
+        // GPS coordinates should be close within 7-10 decimal places as specified by user
+        for (key, value) in obj.iter_mut() {
+            if matches!(
+                key.as_str(),
+                "EXIF:GPSLatitude" | "EXIF:GPSLongitude" | "EXIF:GPSAltitude"
+            ) {
+                if let Some(num) = value.as_f64() {
+                    // Round to 10 decimal places to handle precision differences
+                    let rounded = (num * 1e10).round() / 1e10;
+                    *value = serde_json::Value::Number(
+                        serde_json::Number::from_f64(rounded)
+                            .unwrap_or_else(|| serde_json::Number::from_f64(num).unwrap()),
+                    );
+                }
+            }
+        }
+
         // Apply rule-based normalization for format consistency
         // Handles ExifTool's inconsistent output across different manufacturer modules
         let normalization_rules = get_normalization_rules();

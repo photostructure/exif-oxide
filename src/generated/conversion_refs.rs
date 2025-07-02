@@ -100,7 +100,11 @@ pub static REQUIRED_PRINT_CONV: &[&str] = &[
 ];
 
 /// All ValueConv references that need implementation
+/// Includes both ExifTool-extracted and custom implementations
 pub static REQUIRED_VALUE_CONV: &[&str] = &[
+    "exposuretime_value_conv",
+    "fnumber_value_conv",
+    "focallength_value_conv",
     "gpsdatestamp_value_conv",
     "gpsdestlatitude_value_conv",
     "gpsdestlongitude_value_conv",
