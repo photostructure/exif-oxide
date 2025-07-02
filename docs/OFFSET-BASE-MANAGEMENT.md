@@ -341,7 +341,7 @@ impl BaseCalculation {
 4. **State Isolation**: Clear separation between global and directory-specific state
 5. **Error Classification**: Mirror ExifTool's minor vs. fatal error handling
 
-### Integration with ARCHITECTURE-TAKE-5
+### Integration with ARCHITECTURE.md
 
 This offset management system integrates with the planned architecture:
 

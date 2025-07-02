@@ -40,7 +40,6 @@ For engineers starting on the project, see [ENGINEER-GUIDE.md](docs/ENGINEER-GUI
 ## Differences from default `exiftool` behavior
 
 - `-j` (JSON output) is default behavior by the tool. There is no non-JSON output.
-- GPS coordinate decimal conversion will be implemented in Milestone 8 (ValueConv registry)
 
 ## Licensing
 
@@ -60,9 +59,6 @@ reads from the ExifTool source directly.
 
 1. Clone with submodules: `git clone --recursive https://github.com/yourusername/exif-oxide`
 2. Read [ENGINEER-GUIDE.md](docs/ENGINEER-GUIDE.md) to understand ExifTool concepts
-3. Check [MILESTONES.md](docs/MILESTONES.md) for the development roadmap
-4. Run codegen: `cargo run -p codegen`
-5. Test with: `cargo test`
 
 ### Expected CLI (coming soon)
 
