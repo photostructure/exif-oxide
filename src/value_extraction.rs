@@ -4,7 +4,7 @@
 //! translating ExifTool's value extraction logic from lib/Image/ExifTool/Exif.pm.
 //! These functions handle inline vs offset storage, byte order conversion, and array processing.
 
-use crate::exif::{ByteOrder, IfdEntry};
+use crate::tiff_types::{ByteOrder, IfdEntry};
 use crate::types::{ExifError, Result, TagValue};
 
 /// Extract ASCII string value from IFD entry
@@ -242,12 +242,13 @@ pub fn extract_srational_value(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::tiff_types::TiffFormat;
 
     #[test]
     fn test_extract_ascii_inline() {
         let entry = IfdEntry {
             tag_id: 0x010f,
-            format: crate::exif::TiffFormat::Ascii,
+            format: TiffFormat::Ascii,
             count: 3,
             value_or_offset: u32::from_le_bytes([b'A', b'B', b'C', 0]), // "ABC" + null byte in little-endian
         };
@@ -260,7 +261,7 @@ mod tests {
     fn test_extract_short_inline() {
         let entry = IfdEntry {
             tag_id: 0x0100,
-            format: crate::exif::TiffFormat::Short,
+            format: TiffFormat::Short,
             count: 1,
             value_or_offset: 0x12340000, // 0x1234 in big-endian format, stored in first 2 bytes
         };
@@ -273,7 +274,7 @@ mod tests {
     fn test_extract_byte_inline() {
         let entry = IfdEntry {
             tag_id: 0x0101,
-            format: crate::exif::TiffFormat::Byte,
+            format: TiffFormat::Byte,
             count: 1,
             value_or_offset: 0x42,
         };
@@ -286,7 +287,7 @@ mod tests {
     fn test_extract_long_inline() {
         let entry = IfdEntry {
             tag_id: 0x0102,
-            format: crate::exif::TiffFormat::Long,
+            format: TiffFormat::Long,
             count: 1,
             value_or_offset: 0x12345678,
         };
@@ -300,7 +301,7 @@ mod tests {
         let data = [0x00, 0x00, 0x01, 0x2c, 0x00, 0x00, 0x00, 0x01]; // 300/1 in big-endian
         let entry = IfdEntry {
             tag_id: 0x011a,
-            format: crate::exif::TiffFormat::Rational,
+            format: TiffFormat::Rational,
             count: 1,
             value_or_offset: 0, // Data starts at offset 0
         };
@@ -318,7 +319,7 @@ mod tests {
         let data = [0xff, 0xff, 0xff, 0x9c, 0x00, 0x00, 0x00, 0x01]; // -100/1 in big-endian
         let entry = IfdEntry {
             tag_id: 0x9201,
-            format: crate::exif::TiffFormat::SRational,
+            format: TiffFormat::SRational,
             count: 1,
             value_or_offset: 0,
         };

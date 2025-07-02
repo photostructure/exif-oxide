@@ -388,10 +388,10 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                                 "System:ExifByteOrder".to_string(),
                                 TagValue::String(
                                     match header.byte_order {
-                                        crate::exif::ByteOrder::LittleEndian => {
+                                        crate::tiff_types::ByteOrder::LittleEndian => {
                                             "Little-endian (Intel)"
                                         }
-                                        crate::exif::ByteOrder::BigEndian => {
+                                        crate::tiff_types::ByteOrder::BigEndian => {
                                             "Big-endian (Motorola)"
                                         }
                                     }
