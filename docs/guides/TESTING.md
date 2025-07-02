@@ -76,6 +76,76 @@ make compat-gen
 make compat-test
 ```
 
+## Integration Test Patterns
+
+### Test Helper Organization
+
+Following Rust's testing best practices, exif-oxide uses a structured approach for integration tests that need to access internal functionality:
+
+#### Feature-Gated Test Helpers
+
+For integration tests that need to simulate internal state (like setting up EXIF data without parsing files), we use feature-gated helper methods:
+
+```rust
+// In src/lib.rs - enabled only during testing
+#[cfg(any(test, feature = "test-helpers"))]
+pub fn add_test_tag(&mut self, tag_id: u16, value: TagValue, namespace: &str, ifd_name: &str) {
+    // Implementation that accesses private fields
+}
+```
+
+#### Shared Test Helper Module
+
+Integration tests share common functionality through `tests/common/mod.rs`:
+
+```rust
+// tests/common/mod.rs
+pub fn create_camera_test_reader() -> ExifReader {
+    create_test_reader_with_tags(vec![
+        (0x829a, TagValue::String("50".to_string()), "EXIF", "ExifIFD"), // FocalLength
+        (0x829d, TagValue::String("2.8".to_string()), "EXIF", "ExifIFD"), // FNumber
+        // ... more test data
+    ])
+}
+
+// tests/integration_test.rs
+mod common;
+
+#[test]
+fn test_composite_building() {
+    let mut reader = common::create_camera_test_reader();
+    reader.build_composite_tags();
+    // ... test logic
+}
+```
+
+#### Running Tests with Helper Features
+
+The project's `Makefile` automatically includes the `test-helpers` feature:
+
+```bash
+# Automatically runs with test-helpers feature
+make test
+
+# Manual execution with feature flag
+cargo test --features test-helpers
+```
+
+### Benefits of This Approach
+
+1. **Security**: Test helpers are only available when explicitly enabled via feature flag
+2. **Clean API**: No pollution of production API with test-only methods  
+3. **Reusable**: Shared helpers eliminate code duplication across integration tests
+4. **Standard**: Follows [Rust Book Chapter 11.3](https://doc.rust-lang.org/book/ch11-03-test-organization.html) recommendations
+
+### When to Use Each Pattern
+
+- **Unit tests**: Test private methods directly using `use super::*;` pattern
+- **Integration tests**: Use shared helper modules and feature-gated public methods
+- **Compatibility tests**: Use real files from `test-images/` directory
+
+See the [Rust Book's Test Organization](https://doc.rust-lang.org/book/ch11-03-test-organization.html) for more details on idiomatic Rust testing patterns.
+
 ## Avoid mocks and byte array snippets
 
 - Avoid mocks and stubs where possible.

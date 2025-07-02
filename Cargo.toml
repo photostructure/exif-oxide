@@ -33,6 +33,10 @@ clap = { version = "4.0", features = ["derive"] }  # CLI argument parsing for an
 similar = { version = "2.7", features = ["text"] }  # Text diffing for ExifTool comparison
 tracing-test = "0.2"   # Testing utilities for tracing
 
+[features]
+# Test helpers feature - enables test-only public methods for integration tests
+test-helpers = []
+
 [[bin]]
 name = "exif-oxide"
 path = "src/main.rs"

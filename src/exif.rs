@@ -17,7 +17,7 @@ use crate::types::{
     DataMemberValue, DirectoryInfo, ExifError, ProcessorDispatch, ProcessorType, Result,
     SonyProcessor, TagSourceInfo, TagValue,
 };
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use tracing::{debug, trace, warn};
 
 /// TIFF format types mapping to ExifTool's format system
@@ -826,13 +826,104 @@ impl ExifReader {
     }
 
     /// Build composite tags from extracted tags
-    /// Milestone 8f: Single-pass dependency resolution for composite tags
+    /// Milestone 11.5: Multi-pass dependency resolution for composite-on-composite dependencies
     /// ExifTool: lib/Image/ExifTool.pm BuildCompositeTags function
     pub fn build_composite_tags(&mut self) {
+        const MAX_PASSES: usize = 10; // Reasonable limit to prevent infinite loops
+
         // Clear any previous composite tags
         self.composite_tags.clear();
 
-        // Build available tags lookup for dependency resolution
+        // Build initial available tags lookup from extracted tags
+        let mut available_tags = self.build_available_tags_map();
+        let mut built_composites = HashSet::new();
+        let mut pending_composites: Vec<&crate::generated::CompositeTagDef> =
+            COMPOSITE_TAGS.iter().collect();
+
+        debug!(
+            "Starting multi-pass composite building with {} pending composites",
+            pending_composites.len()
+        );
+
+        // Multi-pass loop to handle composite-on-composite dependencies
+        for pass in 1..=MAX_PASSES {
+            let mut progress_made = false;
+            let mut deferred_composites = Vec::new();
+            let initial_pending_count = pending_composites.len();
+
+            trace!(
+                "Pass {}: Processing {} pending composites",
+                pass,
+                initial_pending_count
+            );
+
+            for composite_def in pending_composites {
+                if self.can_build_composite(composite_def, &available_tags, &built_composites) {
+                    // All dependencies available - build the composite
+                    if let Some(computed_value) =
+                        self.compute_composite_tag(composite_def, &available_tags)
+                    {
+                        // Apply PrintConv to the computed value
+                        let (final_value, _print) =
+                            self.apply_composite_conversions(&computed_value, composite_def);
+
+                        let composite_name = format!("Composite:{}", composite_def.name);
+
+                        // Add to available_tags for future composite dependencies
+                        available_tags.insert(composite_name.clone(), final_value.clone());
+                        available_tags.insert(composite_def.name.to_string(), final_value.clone());
+
+                        // Store in composite_tags collection
+                        self.composite_tags
+                            .insert(composite_name.clone(), final_value);
+                        built_composites.insert(composite_def.name);
+
+                        debug!("Built composite tag: {} (pass {})", composite_name, pass);
+                        progress_made = true;
+                    }
+                } else {
+                    // Dependencies not available - defer for next pass
+                    deferred_composites.push(composite_def);
+                }
+            }
+
+            let built_this_pass = initial_pending_count - deferred_composites.len();
+            trace!(
+                "Pass {} complete: built {} composites, {} deferred",
+                pass,
+                built_this_pass,
+                deferred_composites.len()
+            );
+
+            // Exit conditions
+            if deferred_composites.is_empty() {
+                debug!("All composite tags built successfully in {} passes", pass);
+                break; // All composites built
+            }
+
+            if !progress_made {
+                // No progress made - either circular dependency or unresolvable dependencies
+                warn!(
+                    "No progress made in pass {} - {} composites remain unbuilt",
+                    pass,
+                    deferred_composites.len()
+                );
+                self.handle_unresolved_composites(&deferred_composites);
+                break;
+            }
+
+            pending_composites = deferred_composites;
+        }
+
+        debug!(
+            "Composite building complete: {} total composites built",
+            built_composites.len()
+        );
+    }
+
+    /// Build the initial available tags map from extracted tags with group prefixes
+    /// This replaces the inline logic from the original single-pass implementation
+    pub fn build_available_tags_map(&self) -> HashMap<String, TagValue> {
         let mut available_tags = HashMap::new();
 
         // Add extracted tags with group prefixes
@@ -857,28 +948,93 @@ impl ExifReader {
                 .map(|tag_def| tag_def.name.to_string())
                 .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
 
-            let tag_name = format!("{group_name}:{base_tag_name}");
-            available_tags.insert(tag_name.clone(), value.clone());
-            // Also add without group prefix for dependency matching
+            // Add with group prefix (e.g., "GPS:GPSLatitude")
+            let prefixed_name = format!("{group_name}:{base_tag_name}");
+            available_tags.insert(prefixed_name, value.clone());
+
+            // Also add without group prefix for broader matching (e.g., "GPSLatitude")
             available_tags.insert(base_tag_name, value.clone());
         }
 
-        // Single pass through composite tags (user specified simple approach)
-        for composite_def in COMPOSITE_TAGS {
-            if let Some(computed_value) = self.compute_composite_tag(composite_def, &available_tags)
-            {
-                // Apply PrintConv to the computed value (chain compute → PrintConv)
-                let (final_value, _print) =
-                    self.apply_composite_conversions(&computed_value, composite_def);
-                let composite_tag_name = format!("Composite:{}", composite_def.name);
+        available_tags
+    }
+
+    /// Check if a composite tag can be built (all required dependencies available)
+    /// This is the core dependency resolution logic for multi-pass building
+    pub fn can_build_composite(
+        &self,
+        composite_def: &crate::generated::CompositeTagDef,
+        available_tags: &HashMap<String, TagValue>,
+        built_composites: &HashSet<&str>,
+    ) -> bool {
+        // Check all required dependencies
+        for (_index, tag_name) in composite_def.require {
+            if !self.is_dependency_available(tag_name, available_tags, built_composites) {
                 trace!(
-                    "Computed composite tag: {} -> {:?}",
-                    composite_tag_name,
-                    final_value
+                    "Missing required dependency for {}: {}",
+                    composite_def.name,
+                    tag_name
                 );
-                self.composite_tags.insert(composite_tag_name, final_value);
+                return false;
             }
         }
+
+        // All required dependencies are available
+        true
+    }
+
+    /// Check if a specific dependency (tag name) is available
+    /// Handles group prefixes and composite tag references
+    pub fn is_dependency_available(
+        &self,
+        tag_name: &str,
+        available_tags: &HashMap<String, TagValue>,
+        built_composites: &HashSet<&str>,
+    ) -> bool {
+        // Direct lookup in available tags
+        if available_tags.contains_key(tag_name) {
+            return true;
+        }
+
+        // Check with various group prefixes
+        for prefix in &["EXIF", "GPS", "MakerNotes", "Composite"] {
+            let prefixed_name = format!("{prefix}:{tag_name}");
+            if available_tags.contains_key(&prefixed_name) {
+                return true;
+            }
+        }
+
+        // Special handling for composite dependencies
+        // Check if the tag is a composite that has already been built
+        if built_composites.contains(tag_name) {
+            return true;
+        }
+
+        false
+    }
+
+    /// Handle unresolved composite tags (circular dependencies or missing base tags)
+    /// This provides diagnostic information and graceful degradation
+    pub fn handle_unresolved_composites(
+        &self,
+        unresolved_composites: &[&crate::generated::CompositeTagDef],
+    ) {
+        warn!("Unable to resolve {} composite tags - possible circular dependencies or missing base tags:",
+              unresolved_composites.len());
+
+        for composite_def in unresolved_composites {
+            let mut missing_deps = Vec::new();
+            for (_index, tag_name) in composite_def.require {
+                // Note: We could make this more detailed by checking available_tags/built_composites
+                // but for now, just log the unresolved composite and its requirements
+                missing_deps.push(*tag_name);
+            }
+
+            warn!("  - {} requires: {:?}", composite_def.name, missing_deps);
+        }
+
+        // Future enhancement: Could implement ExifTool's "final pass ignoring inhibits"
+        // strategy here for additional fallback resolution
     }
 
     /// Compute a single composite tag value based on its dependencies
@@ -1387,6 +1543,23 @@ impl ExifReader {
     /// Get TIFF header information
     pub fn get_header(&self) -> Option<&TiffHeader> {
         self.header.as_ref()
+    }
+
+    /// Test helper: Add extracted tag with source info for testing
+    /// Only available when the 'test-helpers' feature is enabled
+    /// DO NOT USE in production code - only for tests
+    #[cfg(any(test, feature = "test-helpers"))]
+    pub fn add_test_tag(&mut self, tag_id: u16, value: TagValue, namespace: &str, ifd_name: &str) {
+        use crate::types::{ProcessorType, TagSourceInfo};
+        self.extracted_tags.insert(tag_id, value);
+        self.tag_sources.insert(
+            tag_id,
+            TagSourceInfo::new(
+                namespace.to_string(),
+                ifd_name.to_string(),
+                ProcessorType::Exif,
+            ),
+        );
     }
 
     /// Apply ValueConv and PrintConv conversions to a raw tag value
