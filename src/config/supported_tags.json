@@ -14,7 +14,15 @@
   "Flash",
   "ColorSpace",
   "ExposureProgram",
+  "WhiteBalance",
+  "MeteringMode",
   "ImageSize",
   "GPSAltitude",
-  "ShutterSpeed"
+  "ShutterSpeed",
+  "FocusMode",
+  "CanonFlashMode",
+  "ContinuousDrive",
+  "FNumber",
+  "ExposureTime",
+  "FocalLength"
 ]

@@ -466,16 +466,26 @@ fn generate_supported_tags(_tags: &[GeneratedTag], output_dir: &str) -> Result<(
             "Flash",             // flash_print_conv ✅
             "ColorSpace",        // colorspace_print_conv ✅
             "ExposureProgram",   // exposureprogram_print_conv ✅
+            "WhiteBalance",      // whitebalance_print_conv ✅
+            "MeteringMode",      // meteringmode_print_conv ✅
         ]),
         ("Milestone 8f", &[
             "ImageSize",         // Composite tag ✅
             "GPSAltitude",       // Composite tag ✅  
             "ShutterSpeed",      // Composite tag ✅
         ]),
-        // When Milestone 8b completes: 
-        // ("Milestone 8b", &["GPSLatitude", "GPSLongitude"]),
-        // When Milestone 9+ manufacturer PrintConv completes:
-        // ("Milestone 9", &["MeteringMode", "WhiteBalance"]),
+        ("Milestone 10", &[
+            "FocusMode",         // Canon CameraSettings PrintConv ✅
+            "CanonFlashMode",    // Canon CameraSettings PrintConv ✅
+            "ContinuousDrive",   // Canon CameraSettings PrintConv ✅
+        ]),
+        ("Milestone 8b", &[
+            "FNumber",           // fnumber_print_conv ✅
+            "ExposureTime",      // exposuretime_print_conv ✅
+            "FocalLength",       // focallength_print_conv ✅
+        ]),
+        // When GPS ValueConv/Composite system is fully working:
+        // ("GPS Support", &["GPSLatitude", "GPSLongitude"]),
     ];
 
     // Flatten all completed milestone tags

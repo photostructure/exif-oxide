@@ -1625,8 +1625,8 @@ impl ExifReader {
         None
     }
 
-    /// Process Canon MakerNotes data with offset fixing and CameraSettings extraction
-    /// ExifTool: Canon.pm CameraSettings table processing + MakerNotes.pm offset fixing
+    /// Process Canon MakerNotes data with comprehensive offset fixing and tag extraction
+    /// ExifTool: Canon.pm processing + MakerNotes.pm offset fixing + ProcessSerialData
     pub fn process_canon_makernotes(&mut self, start_offset: usize, size: usize) -> Result<()> {
         // Check minimum size for Canon MakerNotes
         if size < 12 {
@@ -1644,15 +1644,26 @@ impl ExifReader {
             .extracted_tags
             .get(&0x010F)
             .and_then(|v| v.as_string())
-            .unwrap_or("");
+            .unwrap_or("")
+            .to_string();
 
         let model = self
             .extracted_tags
             .get(&0x0110)
             .and_then(|v| v.as_string())
-            .unwrap_or("");
+            .unwrap_or("")
+            .to_string();
 
         let byte_order = self.header.as_ref().unwrap().byte_order;
+
+        debug!(
+            "Canon MakerNote processing for Make: '{}', Model: '{}'",
+            make, model
+        );
+
+        // Detect Canon offset scheme based on model
+        let offset_scheme = canon::detect_offset_scheme(&model);
+        debug!("Detected Canon offset scheme: {:?}", offset_scheme);
 
         // Canon offset fixing with footer validation
         // ExifTool: lib/Image/ExifTool/MakerNotes.pm:1281-1307 FixBase Canon section
@@ -1666,9 +1677,9 @@ impl ExifReader {
         let val_block: std::collections::HashMap<usize, usize> = std::collections::HashMap::new();
 
         // Attempt Canon offset fixing with footer validation
-        match canon::fix_maker_note_base(
-            make,
-            model,
+        let offset_adjustment = match canon::fix_maker_note_base(
+            &make,
+            &model,
             &self.data[start_offset..start_offset + size],
             dir_start,
             dir_len,
@@ -1679,78 +1690,364 @@ impl ExifReader {
         ) {
             Ok(Some(offset_fix)) => {
                 debug!("Canon offset base adjustment calculated: {}", offset_fix);
-                // TODO: Apply offset_fix to all subsequent offset calculations
-                // For now, this validates that Canon footer parsing works
+                offset_fix
             }
             Ok(None) => {
                 debug!("Canon offset fixing: no adjustment needed");
+                0
             }
             Err(e) => {
                 debug!(
-                    "Canon offset fixing failed: {}, proceeding without adjustment",
+                    "Canon offset fixing failed: {}, using offset scheme default",
                     e
                 );
+                // Fall back to offset scheme
+                offset_scheme.as_bytes() as i64
             }
+        };
+
+        // Parse Canon MakerNotes IFD with offset adjustment
+        self.parse_canon_makernote_ifd(start_offset, size, offset_adjustment, byte_order, &model)?;
+
+        Ok(())
+    }
+
+    /// Parse Canon MakerNote IFD and extract all supported Canon tags
+    /// ExifTool: Canon.pm Main table processing
+    fn parse_canon_makernote_ifd(
+        &mut self,
+        start_offset: usize,
+        _size: usize,
+        offset_adjustment: i64,
+        byte_order: ByteOrder,
+        model: &str,
+    ) -> Result<()> {
+        if start_offset + 2 > self.data.len() {
+            return Err(ExifError::ParseError(
+                "Not enough data for Canon MakerNotes IFD".to_string(),
+            ));
         }
 
-        // Parse the MakerNotes as a standard IFD to find Canon CameraSettings tag (0x0001)
-        // ExifTool: Canon MakerNotes use standard IFD format
-        if let Ok(camera_settings_offset) = self.find_canon_camera_settings_tag(start_offset, size)
-        {
+        // Read number of IFD entries
+        let num_entries = byte_order.read_u16(&self.data, start_offset)? as usize;
+        debug!("Canon MakerNotes IFD has {} entries", num_entries);
+
+        if num_entries > 256 {
+            return Err(ExifError::ParseError(format!(
+                "Invalid Canon MakerNotes entry count: {num_entries}"
+            )));
+        }
+
+        // Process each IFD entry to find Canon-specific tags
+        for i in 0..num_entries {
+            let entry_offset = start_offset + 2 + (i * 12);
+            if entry_offset + 12 > self.data.len() {
+                debug!("Canon MakerNote entry {} beyond data bounds", i);
+                break;
+            }
+
+            let tag_id = byte_order.read_u16(&self.data, entry_offset)?;
+            let format = byte_order.read_u16(&self.data, entry_offset + 2)?;
+            let count = byte_order.read_u32(&self.data, entry_offset + 4)?;
+            let value_offset = byte_order.read_u32(&self.data, entry_offset + 8)?;
+
             debug!(
-                "Found Canon CameraSettings tag at offset {:#x}",
-                camera_settings_offset
+                "Canon tag {:#04x}: format={}, count={}, value_offset={:#x}",
+                tag_id, format, count, value_offset
             );
 
-            // Calculate the size available for CameraSettings data
-            let camera_settings_size = size.saturating_sub(camera_settings_offset - start_offset);
+            // Calculate adjusted offset for Canon values
+            let format_size = Self::format_size(format)? as u32;
+            let adjusted_offset = if count * format_size <= 4 {
+                // Inline value (4 bytes or less)
+                entry_offset + 8
+            } else {
+                // External value - apply offset adjustment
+                (value_offset as i64 + offset_adjustment) as usize + start_offset
+            };
 
-            // Use new Canon module to extract CameraSettings
-            match canon::extract_camera_settings(
-                &self.data,
-                camera_settings_offset,
-                camera_settings_size,
-                byte_order,
-            ) {
-                Ok(canon_tags) => {
-                    debug!(
-                        "Successfully extracted {} Canon CameraSettings tags",
-                        canon_tags.len()
-                    );
-
-                    // Add Canon tags to extracted_tags with tag IDs
-                    // We need to map the tag names back to tag IDs for consistency
-                    for (tag_name, tag_value) in canon_tags {
-                        // For Canon CameraSettings, we'll use synthetic tag IDs starting from 0xC000
-                        // to avoid conflicts with standard EXIF tags
-                        let synthetic_tag_id = match tag_name.as_str() {
-                            "MakerNotes:MacroMode" => 0xC001,
-                            "MakerNotes:SelfTimer" => 0xC002,
-                            "MakerNotes:Quality" => 0xC003,
-                            "MakerNotes:CanonFlashMode" => 0xC004,
-                            "MakerNotes:ContinuousDrive" => 0xC005,
-                            "MakerNotes:FocusMode" => 0xC007,
-                            _ => continue, // Skip unknown tags
-                        };
-
+            // Process Canon-specific tags
+            match tag_id {
+                0x0001 => {
+                    // Canon CameraSettings (ProcessBinaryData)
+                    debug!("Processing Canon CameraSettings tag");
+                    self.process_canon_camera_settings(
+                        adjusted_offset,
+                        count as usize,
+                        byte_order,
+                    )?;
+                }
+                0x0012 => {
+                    // Canon AFInfo (ProcessSerialData)
+                    debug!("Processing Canon AFInfo tag");
+                    self.process_canon_af_info(adjusted_offset, count as usize, byte_order, model)?;
+                }
+                0x0026 => {
+                    // Canon AFInfo2 (ProcessSerialData)
+                    debug!("Processing Canon AFInfo2 tag");
+                    self.process_canon_af_info2(
+                        adjusted_offset,
+                        count as usize,
+                        byte_order,
+                        model,
+                    )?;
+                }
+                _ => {
+                    // Other Canon tags - basic extraction for now
+                    if let Ok(tag_value) = self.extract_basic_canon_tag(
+                        tag_id,
+                        format,
+                        count,
+                        adjusted_offset,
+                        byte_order,
+                    ) {
                         let source_info = TagSourceInfo::new(
                             "MakerNotes".to_string(),
                             "Canon::Main".to_string(),
                             ProcessorType::Canon(crate::types::CanonProcessor::Main),
                         );
+                        // Use wrapping_add to prevent overflow for large Canon tag IDs
+                        let synthetic_tag_id = 0xC000u16.wrapping_add(tag_id);
                         self.store_tag_with_precedence(synthetic_tag_id, tag_value, source_info);
                     }
-
-                    Ok(())
-                }
-                Err(e) => {
-                    warn!("Failed to extract Canon CameraSettings: {}", e);
-                    Ok(()) // Non-fatal error
                 }
             }
-        } else {
-            debug!("Canon CameraSettings tag (0x0001) not found in MakerNotes");
-            Ok(())
+        }
+
+        Ok(())
+    }
+
+    /// Process Canon CameraSettings using ProcessBinaryData
+    /// ExifTool: Canon.pm CameraSettings table
+    fn process_canon_camera_settings(
+        &mut self,
+        offset: usize,
+        count: usize,
+        byte_order: ByteOrder,
+    ) -> Result<()> {
+        let size = count * 2; // int16s format = 2 bytes each
+        if offset + size > self.data.len() {
+            debug!("Canon CameraSettings data beyond buffer bounds");
+            return Ok(());
+        }
+
+        match canon::extract_camera_settings(&self.data, offset, size, byte_order) {
+            Ok(canon_tags) => {
+                debug!(
+                    "Successfully extracted {} Canon CameraSettings tags",
+                    canon_tags.len()
+                );
+
+                // Add Canon tags with synthetic tag IDs
+                for (tag_name, tag_value) in canon_tags {
+                    let synthetic_tag_id = match tag_name.as_str() {
+                        "MakerNotes:MacroMode" => 0xC001,
+                        "MakerNotes:SelfTimer" => 0xC002,
+                        "MakerNotes:Quality" => 0xC003,
+                        "MakerNotes:CanonFlashMode" => 0xC004,
+                        "MakerNotes:ContinuousDrive" => 0xC005,
+                        "MakerNotes:FocusMode" => 0xC007,
+                        _ => continue,
+                    };
+
+                    let source_info = TagSourceInfo::new(
+                        "MakerNotes".to_string(),
+                        "Canon::CameraSettings".to_string(),
+                        ProcessorType::Canon(crate::types::CanonProcessor::CameraSettings),
+                    );
+                    self.store_tag_with_precedence(synthetic_tag_id, tag_value, source_info);
+                }
+                Ok(())
+            }
+            Err(e) => {
+                warn!("Failed to extract Canon CameraSettings: {}", e);
+                Ok(())
+            }
+        }
+    }
+
+    /// Process Canon AFInfo using ProcessSerialData
+    /// ExifTool: Canon.pm AFInfo table
+    fn process_canon_af_info(
+        &mut self,
+        offset: usize,
+        count: usize,
+        byte_order: ByteOrder,
+        model: &str,
+    ) -> Result<()> {
+        if offset + count > self.data.len() {
+            debug!("Canon AFInfo data beyond buffer bounds");
+            return Ok(());
+        }
+
+        let af_info_table = canon::create_af_info_table();
+        match canon::process_serial_data(
+            &self.data,
+            offset,
+            count,
+            byte_order,
+            &af_info_table,
+            model,
+        ) {
+            Ok(af_tags) => {
+                debug!("Successfully extracted {} Canon AFInfo tags", af_tags.len());
+
+                // Add AF tags with synthetic tag IDs
+                for (tag_name, tag_value) in af_tags {
+                    let synthetic_tag_id = match tag_name.as_str() {
+                        "MakerNotes:NumAFPoints" => 0xC020,
+                        "MakerNotes:ValidAFPoints" => 0xC021,
+                        "MakerNotes:CanonImageWidth" => 0xC022,
+                        "MakerNotes:CanonImageHeight" => 0xC023,
+                        "MakerNotes:AFImageWidth" => 0xC024,
+                        "MakerNotes:AFImageHeight" => 0xC025,
+                        "MakerNotes:AFAreaWidth" => 0xC026,
+                        "MakerNotes:AFAreaHeight" => 0xC027,
+                        "MakerNotes:AFAreaXPositions" => 0xC028,
+                        "MakerNotes:AFAreaYPositions" => 0xC029,
+                        "MakerNotes:AFPointsInFocus" => 0xC02A,
+                        "MakerNotes:PrimaryAFPoint" => 0xC02B,
+                        _ => continue,
+                    };
+
+                    let source_info = TagSourceInfo::new(
+                        "MakerNotes".to_string(),
+                        "Canon::AFInfo".to_string(),
+                        ProcessorType::Canon(crate::types::CanonProcessor::AfInfo),
+                    );
+                    self.store_tag_with_precedence(synthetic_tag_id, tag_value, source_info);
+                }
+                Ok(())
+            }
+            Err(e) => {
+                warn!("Failed to extract Canon AFInfo: {}", e);
+                Ok(())
+            }
+        }
+    }
+
+    /// Process Canon AFInfo2 using ProcessSerialData
+    /// ExifTool: Canon.pm AFInfo2 table
+    fn process_canon_af_info2(
+        &mut self,
+        offset: usize,
+        count: usize,
+        byte_order: ByteOrder,
+        model: &str,
+    ) -> Result<()> {
+        if offset + count > self.data.len() {
+            debug!("Canon AFInfo2 data beyond buffer bounds");
+            return Ok(());
+        }
+
+        let af_info2_table = canon::create_af_info2_table();
+        match canon::process_serial_data(
+            &self.data,
+            offset,
+            count,
+            byte_order,
+            &af_info2_table,
+            model,
+        ) {
+            Ok(af_tags) => {
+                debug!(
+                    "Successfully extracted {} Canon AFInfo2 tags",
+                    af_tags.len()
+                );
+
+                // Add AF2 tags with synthetic tag IDs
+                for (tag_name, tag_value) in af_tags {
+                    let synthetic_tag_id = match tag_name.as_str() {
+                        "MakerNotes:AFInfoSize" => 0xC030,
+                        "MakerNotes:AFAreaMode" => 0xC031,
+                        "MakerNotes:NumAFPoints" => 0xC032,
+                        "MakerNotes:ValidAFPoints" => 0xC033,
+                        "MakerNotes:CanonImageWidth" => 0xC034,
+                        "MakerNotes:CanonImageHeight" => 0xC035,
+                        "MakerNotes:AFImageWidth" => 0xC036,
+                        "MakerNotes:AFImageHeight" => 0xC037,
+                        "MakerNotes:AFAreaWidths" => 0xC038,
+                        "MakerNotes:AFAreaHeights" => 0xC039,
+                        "MakerNotes:AFAreaXPositions" => 0xC03A,
+                        "MakerNotes:AFAreaYPositions" => 0xC03B,
+                        "MakerNotes:AFPointsInFocus" => 0xC03C,
+                        "MakerNotes:AFPointsSelected" => 0xC03D,
+                        _ => continue,
+                    };
+
+                    let source_info = TagSourceInfo::new(
+                        "MakerNotes".to_string(),
+                        "Canon::AFInfo2".to_string(),
+                        ProcessorType::Canon(crate::types::CanonProcessor::AfInfo2),
+                    );
+                    self.store_tag_with_precedence(synthetic_tag_id, tag_value, source_info);
+                }
+                Ok(())
+            }
+            Err(e) => {
+                warn!("Failed to extract Canon AFInfo2: {}", e);
+                Ok(())
+            }
+        }
+    }
+
+    /// Extract basic Canon tag value (for tags not yet fully implemented)
+    fn extract_basic_canon_tag(
+        &self,
+        tag_id: u16,
+        format: u16,
+        count: u32,
+        offset: usize,
+        byte_order: ByteOrder,
+    ) -> Result<TagValue> {
+        let format_size = Self::format_size(format)?;
+        let total_size = count as usize * format_size;
+
+        if offset + total_size > self.data.len() {
+            return Err(ExifError::ParseError(format!(
+                "Canon tag {tag_id:#04x} data beyond bounds"
+            )));
+        }
+
+        // Extract basic value based on format
+        match format {
+            2 => {
+                // ASCII string
+                let string_data = &self.data[offset..offset + total_size];
+                let string = String::from_utf8_lossy(string_data)
+                    .trim_end_matches('\0')
+                    .to_string();
+                Ok(TagValue::String(string))
+            }
+            3 => {
+                // int16u
+                let value = byte_order.read_u16(&self.data, offset)?;
+                Ok(TagValue::U16(value))
+            }
+            4 => {
+                // int32u
+                let value = byte_order.read_u32(&self.data, offset)?;
+                Ok(TagValue::U32(value))
+            }
+            _ => {
+                // Other formats - return as raw bytes for now
+                let raw_data = self.data[offset..offset + total_size].to_vec();
+                Ok(TagValue::String(format!(
+                    "(Binary data {} bytes)",
+                    raw_data.len()
+                )))
+            }
+        }
+    }
+
+    /// Get format size in bytes
+    fn format_size(format: u16) -> Result<usize> {
+        match format {
+            1 | 2 | 6 | 7 => Ok(1), // int8u, string, int8s, undef
+            3 | 8 => Ok(2),         // int16u, int16s
+            4 | 9 | 11 => Ok(4),    // int32u, int32s, float
+            5 | 10 | 12 => Ok(8),   // rational64u, rational64s, double
+            _ => Err(ExifError::ParseError(format!("Invalid format: {format}"))),
         }
     }
 

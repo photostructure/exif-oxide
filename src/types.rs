@@ -341,10 +341,19 @@ pub enum ProcessorType {
 pub enum CanonProcessor {
     /// Standard Canon EXIF processing
     Main,
-    /// Canon serial data processing
+    /// Canon CameraSettings processing
+    /// ExifTool: ProcessBinaryData for CameraSettings table
+    CameraSettings,
+    /// Canon AFInfo processing
+    /// ExifTool: ProcessSerialData for AFInfo table
+    AfInfo,
+    /// Canon AFInfo2 processing  
+    /// ExifTool: ProcessSerialData for AFInfo2 table
+    AfInfo2,
+    /// Canon serial data processing (generic)
     /// ExifTool: ProcessSerialData
     SerialData,
-    /// Canon binary data processing
+    /// Canon binary data processing (generic)
     BinaryData,
 }
 
