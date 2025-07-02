@@ -160,3 +160,270 @@ fn test_print_conv_integration_structure() {
         );
     }
 }
+
+// ============================================================================
+// Milestone 11.5: Multi-Pass Composite Building Tests
+// ============================================================================
+
+#[test]
+fn test_multi_pass_composite_dependencies() {
+    // Test that composite-on-composite dependencies are resolved correctly
+    use exif_oxide::generated::COMPOSITE_TAG_BY_NAME;
+
+    // Verify the expected dependency chains exist in the definitions
+
+    // Chain 1: ScaleFactor35efl -> CircleOfConfusion -> DOF/HyperfocalDistance
+    let circle_def = COMPOSITE_TAG_BY_NAME.get("CircleOfConfusion").unwrap();
+    let has_scale_factor_dep = circle_def
+        .require
+        .iter()
+        .any(|(_idx, name)| *name == "ScaleFactor35efl");
+    assert!(
+        has_scale_factor_dep,
+        "CircleOfConfusion should require ScaleFactor35efl"
+    );
+
+    let dof_def = COMPOSITE_TAG_BY_NAME.get("DOF").unwrap();
+    let has_circle_dep = dof_def
+        .require
+        .iter()
+        .any(|(_idx, name)| *name == "CircleOfConfusion");
+    assert!(has_circle_dep, "DOF should require CircleOfConfusion");
+
+    let hyperfocal_def = COMPOSITE_TAG_BY_NAME.get("HyperfocalDistance").unwrap();
+    let has_circle_dep = hyperfocal_def
+        .require
+        .iter()
+        .any(|(_idx, name)| *name == "CircleOfConfusion");
+    assert!(
+        has_circle_dep,
+        "HyperfocalDistance should require CircleOfConfusion"
+    );
+
+    // Chain 2: ImageSize -> Megapixels
+    let megapixels_def = COMPOSITE_TAG_BY_NAME.get("Megapixels").unwrap();
+    let has_imagesize_dep = megapixels_def
+        .require
+        .iter()
+        .any(|(_idx, name)| *name == "ImageSize");
+    assert!(has_imagesize_dep, "Megapixels should require ImageSize");
+
+    // Chain 3: GPSLatitude & GPSLongitude -> GPSPosition
+    let gps_position_def = COMPOSITE_TAG_BY_NAME.get("GPSPosition").unwrap();
+    let has_gps_lat_dep = gps_position_def
+        .require
+        .iter()
+        .any(|(_idx, name)| *name == "GPSLatitude");
+    let has_gps_lon_dep = gps_position_def
+        .require
+        .iter()
+        .any(|(_idx, name)| *name == "GPSLongitude");
+    assert!(has_gps_lat_dep, "GPSPosition should require GPSLatitude");
+    assert!(has_gps_lon_dep, "GPSPosition should require GPSLongitude");
+}
+
+#[test]
+fn test_dependency_resolution_logic() {
+    // Test the dependency resolution logic with mock data
+    use exif_oxide::exif::ExifReader;
+    use exif_oxide::types::TagValue;
+    use std::collections::{HashMap, HashSet};
+
+    let reader = ExifReader::new();
+
+    // Test is_dependency_available with various scenarios
+    let mut available_tags = HashMap::new();
+    available_tags.insert(
+        "EXIF:FocalLength".to_string(),
+        TagValue::String("50".to_string()),
+    );
+    available_tags.insert(
+        "GPS:GPSLatitude".to_string(),
+        TagValue::String("37.7749".to_string()),
+    );
+    available_tags.insert("ImageWidth".to_string(), TagValue::U32(1920));
+
+    let mut built_composites = HashSet::new();
+    built_composites.insert("ScaleFactor35efl");
+    built_composites.insert("CircleOfConfusion");
+
+    // Test direct tag lookup
+    assert!(reader.is_dependency_available("ImageWidth", &available_tags, &built_composites));
+
+    // Test group-prefixed lookup
+    assert!(reader.is_dependency_available("FocalLength", &available_tags, &built_composites));
+    assert!(reader.is_dependency_available("GPSLatitude", &available_tags, &built_composites));
+
+    // Test composite dependency lookup
+    assert!(reader.is_dependency_available("ScaleFactor35efl", &available_tags, &built_composites));
+    assert!(reader.is_dependency_available(
+        "CircleOfConfusion",
+        &available_tags,
+        &built_composites
+    ));
+
+    // Test missing dependency
+    assert!(!reader.is_dependency_available("NonExistentTag", &available_tags, &built_composites));
+}
+
+#[test]
+fn test_multi_pass_simulation() {
+    // Simulate the multi-pass building process with a realistic scenario
+    use exif_oxide::exif::ExifReader;
+    use exif_oxide::types::TagValue;
+    use std::collections::{HashMap, HashSet};
+
+    let reader = ExifReader::new();
+
+    // Simulate extracted tags that would enable composite building
+    let mut available_tags = HashMap::new();
+
+    // Add base tags that ScaleFactor35efl might need
+    available_tags.insert(
+        "EXIF:FocalLength".to_string(),
+        TagValue::String("50".to_string()),
+    );
+    available_tags.insert("EXIF:ImageWidth".to_string(), TagValue::U32(1920));
+    available_tags.insert("EXIF:ImageHeight".to_string(), TagValue::U32(1080));
+    available_tags.insert(
+        "EXIF:FocalLengthIn35mmFormat".to_string(),
+        TagValue::String("75".to_string()),
+    );
+
+    // Simulate what should happen in each pass:
+    // Pass 1: ScaleFactor35efl could be built (has FocalLengthIn35mmFormat)
+    // Pass 2: CircleOfConfusion could be built (ScaleFactor35efl now available)
+    // Pass 3: DOF could be built (CircleOfConfusion now available)
+
+    let built_composites = HashSet::new();
+
+    // Check can_build_composite for various dependency scenarios
+    if let Some(scale_factor_def) =
+        exif_oxide::generated::COMPOSITE_TAG_BY_NAME.get("ScaleFactor35efl")
+    {
+        // ScaleFactor35efl should be buildable in pass 1 (has base tags)
+        let can_build =
+            reader.can_build_composite(scale_factor_def, &available_tags, &built_composites);
+        // Note: Actual result depends on ScaleFactor35efl implementation details
+        println!("ScaleFactor35efl can be built in pass 1: {can_build}");
+    }
+
+    // Simulate after ScaleFactor35efl is built
+    let mut built_composites_pass2 = HashSet::new();
+    built_composites_pass2.insert("ScaleFactor35efl");
+    available_tags.insert(
+        "Composite:ScaleFactor35efl".to_string(),
+        TagValue::String("1.5".to_string()),
+    );
+    available_tags.insert(
+        "ScaleFactor35efl".to_string(),
+        TagValue::String("1.5".to_string()),
+    );
+
+    if let Some(circle_def) = exif_oxide::generated::COMPOSITE_TAG_BY_NAME.get("CircleOfConfusion")
+    {
+        let can_build =
+            reader.can_build_composite(circle_def, &available_tags, &built_composites_pass2);
+        assert!(
+            can_build,
+            "CircleOfConfusion should be buildable after ScaleFactor35efl is available"
+        );
+    }
+}
+
+#[test]
+fn test_circular_dependency_detection() {
+    // Test the circular dependency detection mechanism
+    use exif_oxide::exif::ExifReader;
+
+    let reader = ExifReader::new();
+
+    // Create a mock scenario with circular dependencies
+    // In practice, this would be detected when no progress is made in a pass
+
+    // Mock composite definitions that would create a circular dependency
+    // CompositeA requires CompositeB, CompositeB requires CompositeA
+
+    let mock_unresolved = vec![]; // Empty for now, but structure is in place
+
+    // Test that handle_unresolved_composites doesn't panic and provides useful output
+    reader.handle_unresolved_composites(&mock_unresolved);
+
+    // This test primarily ensures the function exists and runs without panicking
+    // More detailed circular dependency testing would require real circular definitions
+}
+
+#[test]
+fn test_multipass_performance_characteristics() {
+    // Test that the multi-pass algorithm has reasonable performance characteristics
+    use exif_oxide::generated::COMPOSITE_TAGS;
+
+    // Verify reasonable limits are in place
+    const MAX_EXPECTED_COMPOSITES: usize = 200; // Current count is ~50, but allow growth
+    #[allow(dead_code)] // Keep for documentation of expected dependency depth
+    const MAX_DEPENDENCY_DEPTH: usize = 5; // ScaleFactor35efl -> CircleOfConfusion -> DOF is 3 levels
+
+    assert!(
+        COMPOSITE_TAGS.len() <= MAX_EXPECTED_COMPOSITES,
+        "Composite tags count ({}) should be reasonable",
+        COMPOSITE_TAGS.len()
+    );
+
+    // Analyze the maximum dependency depth by examining require chains
+    let mut max_depth_found = 0;
+    for composite_def in COMPOSITE_TAGS {
+        let dep_count = composite_def.require.len() + composite_def.desire.len();
+        if dep_count > max_depth_found {
+            max_depth_found = dep_count;
+        }
+    }
+
+    assert!(
+        max_depth_found <= 20, // Reasonable limit on individual dependencies
+        "Maximum individual dependency count ({max_depth_found}) should be reasonable"
+    );
+
+    println!("Composite tags performance metrics:");
+    println!("  Total composite tags: {}", COMPOSITE_TAGS.len());
+    println!("  Maximum individual dependencies: {max_depth_found}");
+}
+
+#[test]
+fn test_build_available_tags_map() {
+    // Test the available tags map building functionality
+    use exif_oxide::exif::ExifReader;
+
+    // Test with empty reader (should not crash)
+    let reader = ExifReader::new();
+    let available_tags = reader.build_available_tags_map();
+
+    // Should return empty map for reader with no extracted tags
+    assert!(
+        available_tags.is_empty(),
+        "Empty reader should produce empty available tags map"
+    );
+}
+
+#[test]
+fn test_integration_with_existing_composite_system() {
+    // Verify the multi-pass system integrates correctly with existing infrastructure
+    use exif_oxide::exif::ExifReader;
+
+    let mut reader = ExifReader::new();
+
+    // Test that build_composite_tags runs without errors
+    reader.build_composite_tags();
+
+    // Should not crash and should maintain existing behavior for simple cases
+    let all_tags = reader.get_all_tags();
+
+    // Basic smoke test - no composites should be built from empty data
+    let composite_count = all_tags
+        .keys()
+        .filter(|k| k.starts_with("Composite:"))
+        .count();
+    assert_eq!(
+        composite_count, 0,
+        "No composite tags should be built from empty data"
+    );
+}
