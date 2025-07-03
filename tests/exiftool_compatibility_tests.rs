@@ -69,15 +69,11 @@ fn run_exif_oxide(file_path: &str) -> Result<Value, Box<dyn std::error::Error>> 
 }
 
 /// Filter JSON object to only include supported tags
-/// Now handles group-prefixed tag names (e.g., "EXIF:Make" -> "Make")
+/// Now handles group-prefixed tag names - supported_tags.json contains full group:tag format
 fn filter_to_supported_tags(data: &Value) -> Value {
     if let Some(obj) = data.as_object() {
         let supported_tags = load_supported_tags();
         let supported_tag_refs: Vec<&str> = supported_tags.iter().map(|s| s.as_str()).collect();
-
-        // Allowed groups matching generate_exiftool_json.sh
-        // TODO: Add "File" back when Milestone File-Meta is completed (File:Directory, File:FileName, File:MIMEType)
-        let allowed_groups = ["EXIF", "System", "GPS"];
 
         let filtered: HashMap<String, Value> = obj
             .iter()
@@ -87,17 +83,8 @@ fn filter_to_supported_tags(data: &Value) -> Value {
                     return true;
                 }
 
-                // Handle group-prefixed tag names
-                if let Some(colon_pos) = key.find(':') {
-                    let group = &key[..colon_pos];
-                    let tag_name = &key[colon_pos + 1..];
-
-                    // Check both group and tag are allowed
-                    allowed_groups.contains(&group) && supported_tag_refs.contains(&tag_name)
-                } else {
-                    // Tags without groups are not included (except SourceFile handled above)
-                    false
-                }
+                // Check if the full group:tag key is in the supported list
+                supported_tag_refs.contains(&key.as_str())
             })
             .map(|(k, v)| (k.clone(), v.clone()))
             .collect();

@@ -14,7 +14,8 @@ use std::path::{Path, PathBuf};
 fn find_repo_root(start_path: &Path) -> Result<PathBuf> {
     let mut current_path = start_path.canonicalize()?;
     while !current_path.join("Cargo.toml").exists() {
-        current_path = current_path.parent()
+        current_path = current_path
+            .parent()
             .ok_or_else(|| anyhow::anyhow!("Could not find repository root (Cargo.toml)"))?
             .to_path_buf();
     }
@@ -164,11 +165,15 @@ fn main() -> Result<()> {
     let json_content = fs::read_to_string(input_file)
         .with_context(|| format!("Failed to read input file: {}", input_file))?;
 
-    let extracted_data: ExtractedData = serde_json::from_str(&json_content)
-        .with_context(|| "Failed to parse JSON input")?;
+    let extracted_data: ExtractedData =
+        serde_json::from_str(&json_content).with_context(|| "Failed to parse JSON input")?;
 
-    println!("Loaded {} tags and {} composite tags from ExifTool {}", 
-             extracted_data.total_tags, extracted_data.composite_tags.len(), extracted_data.exiftool_version);
+    println!(
+        "Loaded {} tags and {} composite tags from ExifTool {}",
+        extracted_data.total_tags,
+        extracted_data.composite_tags.len(),
+        extracted_data.exiftool_version
+    );
 
     // Convert extracted tags to generated format
     let mut tags = Vec::new();
@@ -178,7 +183,7 @@ fn main() -> Result<()> {
         let id = parse_hex_id(&tag.id)?;
 
         // Custom ValueConv implementations for exif-oxide TagEntry API (Milestone 8b+)
-        // 
+        //
         // Note: FNumber, ExposureTime, and FocalLength don't have ValueConv in ExifTool
         // because they're already stored as rationals. We add custom ValueConv to convert
         // to float for easier API usage while preserving the original rational data.
@@ -212,7 +217,7 @@ fn main() -> Result<()> {
 
     // Convert extracted composite tags to generated format
     let mut composite_tags = Vec::new();
-    
+
     for comp_tag in extracted_data.composite_tags {
         let generated_comp_tag = GeneratedCompositeTag {
             name: comp_tag.name,
@@ -228,13 +233,19 @@ fn main() -> Result<()> {
             priority: comp_tag.priority.unwrap_or(0),
             notes: comp_tag.notes,
         };
-        
+
         composite_tags.push(generated_comp_tag);
     }
 
     println!("Extracted conversion references:");
-    println!("  PrintConv: {} functions", extracted_data.conversion_refs.print_conv.len());
-    println!("  ValueConv: {} functions", extracted_data.conversion_refs.value_conv.len());
+    println!(
+        "  PrintConv: {} functions",
+        extracted_data.conversion_refs.print_conv.len()
+    );
+    println!(
+        "  ValueConv: {} functions",
+        extracted_data.conversion_refs.value_conv.len()
+    );
 
     // Create output directory
     fs::create_dir_all(output_dir)
@@ -242,7 +253,7 @@ fn main() -> Result<()> {
 
     // Generate tag table
     generate_tag_table(&tags, output_dir)?;
-    
+
     // Generate composite tag table
     generate_composite_tag_table(&composite_tags, output_dir)?;
 
@@ -255,30 +266,35 @@ fn main() -> Result<()> {
     // Generate module file
     generate_mod_file(output_dir)?;
 
-    let total_conv_refs = extracted_data.conversion_refs.print_conv.len() + 
-                         extracted_data.conversion_refs.value_conv.len();
-    println!("Generated {} tags and {} composite tags with {} conversion references", 
-             tags.len(), composite_tags.len(), total_conv_refs);
+    let total_conv_refs = extracted_data.conversion_refs.print_conv.len()
+        + extracted_data.conversion_refs.value_conv.len();
+    println!(
+        "Generated {} tags and {} composite tags with {} conversion references",
+        tags.len(),
+        composite_tags.len(),
+        total_conv_refs
+    );
     println!("Code generated in: {}", output_dir);
     println!("\nNext steps:");
     println!("1. Add 'mod generated;' to src/lib.rs");
     println!("2. Use --show-missing on real images to see what implementations are needed");
-    println!("3. Implement missing PrintConv/ValueConv and composite functions in implementations/");
+    println!(
+        "3. Implement missing PrintConv/ValueConv and composite functions in implementations/"
+    );
 
     Ok(())
 }
 
 fn parse_hex_id(hex_str: &str) -> Result<u32> {
     let cleaned = hex_str.trim_start_matches("0x");
-    u32::from_str_radix(cleaned, 16)
-        .with_context(|| format!("Failed to parse hex ID: {}", hex_str))
+    u32::from_str_radix(cleaned, 16).with_context(|| format!("Failed to parse hex ID: {}", hex_str))
 }
 
 fn normalize_format(format: &str) -> String {
     // Convert ExifTool formats to our format enum names
     match format {
         "int8u" => "U8",
-        "int16u" => "U16", 
+        "int16u" => "U16",
         "int32u" => "U32",
         "int8s" => "I8",
         "int16s" => "I16",
@@ -290,18 +306,19 @@ fn normalize_format(format: &str) -> String {
         "float" => "Float",
         "double" => "Double",
         _ => "Undef", // Unknown formats default to undefined
-    }.to_string()
+    }
+    .to_string()
 }
 
 fn generate_tag_table(tags: &[GeneratedTag], output_dir: &str) -> Result<()> {
     let mut code = String::new();
-    
+
     // File header
     code.push_str("//! Generated EXIF tag definitions\n");
     code.push_str("//!\n");
     code.push_str("//! This file is automatically generated by codegen/generate_rust.\n");
     code.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten.\n\n");
-    
+
     code.push_str("use lazy_static::lazy_static;\n");
     code.push_str("use std::collections::HashMap;\n\n");
 
@@ -338,51 +355,65 @@ fn generate_tag_table(tags: &[GeneratedTag], output_dir: &str) -> Result<()> {
 
     // Static tag array
     code.push_str("pub static EXIF_MAIN_TAGS: &[TagDef] = &[\n");
-    
+
     for tag in tags {
         code.push_str("    TagDef {\n");
         code.push_str(&format!("        id: 0x{:x},\n", tag.id));
         code.push_str(&format!("        name: \"{}\",\n", tag.name));
         code.push_str(&format!("        format: TagFormat::{},\n", tag.format));
-        
+
         // Groups array
         code.push_str("        groups: &[");
         for (i, group) in tag.groups.iter().enumerate() {
-            if i > 0 { code.push_str(", "); }
+            if i > 0 {
+                code.push_str(", ");
+            }
             code.push_str(&format!("\"{}\"", group));
         }
         code.push_str("],\n");
-        
+
         code.push_str(&format!("        writable: {},\n", tag.writable));
-        
+
         // Optional fields
         if let Some(desc) = &tag.description {
-            code.push_str(&format!("        description: Some(\"{}\"),\n", escape_string(desc)));
+            code.push_str(&format!(
+                "        description: Some(\"{}\"),\n",
+                escape_string(desc)
+            ));
         } else {
             code.push_str("        description: None,\n");
         }
-        
+
         if let Some(print_ref) = &tag.print_conv_ref {
-            code.push_str(&format!("        print_conv_ref: Some(\"{}\"),\n", print_ref));
+            code.push_str(&format!(
+                "        print_conv_ref: Some(\"{}\"),\n",
+                print_ref
+            ));
         } else {
             code.push_str("        print_conv_ref: None,\n");
         }
-        
+
         if let Some(value_ref) = &tag.value_conv_ref {
-            code.push_str(&format!("        value_conv_ref: Some(\"{}\"),\n", value_ref));
+            code.push_str(&format!(
+                "        value_conv_ref: Some(\"{}\"),\n",
+                value_ref
+            ));
         } else {
             code.push_str("        value_conv_ref: None,\n");
         }
-        
+
         if let Some(notes) = &tag.notes {
-            code.push_str(&format!("        notes: Some(\"{}\"),\n", escape_string(notes)));
+            code.push_str(&format!(
+                "        notes: Some(\"{}\"),\n",
+                escape_string(notes)
+            ));
         } else {
             code.push_str("        notes: None,\n");
         }
-        
+
         code.push_str("    },\n");
     }
-    
+
     code.push_str("];\n\n");
 
     // Lookup by ID
@@ -416,9 +447,13 @@ fn generate_tag_table(tags: &[GeneratedTag], output_dir: &str) -> Result<()> {
     Ok(())
 }
 
-fn generate_conversion_refs(conversion_refs: &ConversionRefs, tags: &[GeneratedTag], output_dir: &str) -> Result<()> {
+fn generate_conversion_refs(
+    conversion_refs: &ConversionRefs,
+    tags: &[GeneratedTag],
+    output_dir: &str,
+) -> Result<()> {
     let mut code = String::new();
-    
+
     // File header
     code.push_str("//! Generated conversion registry stubs\n");
     code.push_str("//!\n");
@@ -427,7 +462,7 @@ fn generate_conversion_refs(conversion_refs: &ConversionRefs, tags: &[GeneratedT
     code.push_str("//!\n");
     code.push_str("//! These are just the registry keys - actual implementations\n");
     code.push_str("//! must be provided in the implementations/ directory.\n\n");
-    
+
     code.push_str("use lazy_static::lazy_static;\n");
     code.push_str("use std::collections::HashSet;\n\n");
 
@@ -438,7 +473,7 @@ fn generate_conversion_refs(conversion_refs: &ConversionRefs, tags: &[GeneratedT
             all_value_conv_refs.insert(value_ref.clone());
         }
     }
-    
+
     // Convert to sorted vector for consistent output
     let mut sorted_value_refs: Vec<_> = all_value_conv_refs.into_iter().collect();
     sorted_value_refs.sort();
@@ -452,7 +487,7 @@ fn generate_conversion_refs(conversion_refs: &ConversionRefs, tags: &[GeneratedT
     }
     code.push_str("];\n\n");
 
-    // List all required ValueConv references  
+    // List all required ValueConv references
     code.push_str("/// All ValueConv references that need implementation\n");
     code.push_str("/// Includes both ExifTool-extracted and custom implementations\n");
     code.push_str("pub static REQUIRED_VALUE_CONV: &[&str] = &[\n");
@@ -490,47 +525,77 @@ fn generate_conversion_refs(conversion_refs: &ConversionRefs, tags: &[GeneratedT
 
 fn generate_supported_tags(_tags: &[GeneratedTag], output_dir: &str) -> Result<()> {
     // Configuration-driven supported tags generation (Milestone 8a)
-    // 
+    //
     // IMPORTANT: Update this configuration as milestones complete!
     // Only add tags that have fully working PrintConv implementations and pass compatibility tests.
     // This ensures the supported tags list represents a quality statement, not just existence.
+    // Group-prefixed format for compatibility test filtering
     const MILESTONE_COMPLETIONS: &[(&str, &[&str])] = &[
-        ("basic", &[
-            "Make", "Model", "MIMEType", "SourceFile", "FileName", "Directory", 
-            "FileSize", "FileModifyDate", "ExifToolVersion"
-        ]),
-        ("Milestone 4", &[
-            "Orientation",       // orientation_print_conv ✅
-            "ResolutionUnit",    // resolutionunit_print_conv ✅  
-            "YCbCrPositioning",  // ycbcrpositioning_print_conv ✅
-        ]),
-        ("Milestone 7", &[
-            "Flash",             // flash_print_conv ✅
-            "ColorSpace",        // colorspace_print_conv ✅
-            "ExposureProgram",   // exposureprogram_print_conv ✅
-            "WhiteBalance",      // whitebalance_print_conv ✅
-            "MeteringMode",      // meteringmode_print_conv ✅
-        ]),
-        ("Milestone 10", &[
-            "FocusMode",         // Canon CameraSettings PrintConv ✅
-            "CanonFlashMode",    // Canon CameraSettings PrintConv ✅
-            "ContinuousDrive",   // Canon CameraSettings PrintConv ✅
-        ]),
-        ("Milestone 8b", &[
-            "FNumber",           // fnumber_print_conv ✅
-            "ExposureTime",      // exposuretime_print_conv ✅
-            "FocalLength",       // focallength_print_conv ✅
-        ]),
-        ("Milestone 8f", &[
-            "ImageSize",         // Composite tag
-            "ShutterSpeed",      // Composite tag
-        ]),
-        ("Milestone 8c", &[
-            "GPSLatitude",       // GPS ValueConv to decimal degrees ✅
-            "GPSLongitude",      // GPS ValueConv to decimal degrees ✅
-            "GPSDestLatitude",   // GPS ValueConv to decimal degrees ✅
-            "GPSDestLongitude",  // GPS ValueConv to decimal degrees ✅
-        ]),
+        (
+            "basic",
+            &[
+                "EXIF:Make",
+                "EXIF:Model",
+                "File:MIMEType",
+                "SourceFile",
+                "File:FileName",
+                "File:Directory",
+                "File:FileSize",
+                "File:FileModifyDate",
+            ],
+        ),
+        (
+            "Milestone 4",
+            &[
+                "EXIF:Orientation",      // orientation_print_conv ✅
+                "EXIF:ResolutionUnit",   // resolutionunit_print_conv ✅
+                "EXIF:YCbCrPositioning", // ycbcrpositioning_print_conv ✅
+            ],
+        ),
+        (
+            "Milestone 7",
+            &[
+                "EXIF:Flash",           // flash_print_conv ✅
+                "EXIF:ColorSpace",      // colorspace_print_conv ✅
+                "EXIF:ExposureProgram", // exposureprogram_print_conv ✅
+                "EXIF:WhiteBalance",    // whitebalance_print_conv ✅
+                "EXIF:MeteringMode",    // meteringmode_print_conv ✅
+            ],
+        ),
+        (
+            "Milestone 8b",
+            &[
+                "EXIF:FNumber",      // fnumber_print_conv ✅
+                "EXIF:ExposureTime", // exposuretime_print_conv ✅
+                "EXIF:FocalLength",  // focallength_print_conv ✅
+            ],
+        ),
+        (
+            "Milestone 8c",
+            &[
+                "EXIF:GPSLatitude", // GPS ValueConv to decimal degrees ✅
+                "EXIF:GPSLongitude", // GPS ValueConv to decimal degrees ✅
+                                    // "EXIF:GPSAltitude",       // TODO: THIS FAILS:
+                                    // ❌ MISMATCH for /home/mrm/src/exif-oxide/test-images/apple/IMG_3755.JPG
+                                    // ExifTool snapshot (reference) vs exif-oxide (test):
+
+                                    //  {
+                                    //    "EXIF:ColorSpace": "Uncalibrated",
+                                    //    "EXIF:ExposureProgram": "Program AE",
+                                    //    "EXIF:ExposureTime": "1/28",
+                                    //    "EXIF:FNumber": 1.8,
+                                    //    "EXIF:Flash": "Off, Did not fire",
+                                    //    "EXIF:FocalLength": "1.6 mm",
+                                    // -  "EXIF:GPSAltitude": 25.24672793,
+                                    // +  "EXIF:GPSAltitude": [
+                                    // +    90661,
+                                    // +    3591
+                                    // +  ],
+
+                                    //     "EXIF:GPSDestLatitude",   // GPS ValueConv to decimal degrees ✅
+                                    //     "EXIF:GPSDestLongitude",  // GPS ValueConv to decimal degrees ✅
+            ],
+        ),
     ];
 
     // Flatten all completed milestone tags
@@ -546,13 +611,13 @@ fn generate_supported_tags(_tags: &[GeneratedTag], output_dir: &str) -> Result<(
     let json_content = serde_json::to_string_pretty(&supported_tag_names)?;
     let repo_root = find_repo_root(Path::new(output_dir))?;
     let json_path = repo_root.join("config/supported_tags.json");
-    
+
     // Create config directory if it doesn't exist
     if let Some(parent) = json_path.parent() {
         fs::create_dir_all(parent)
             .with_context(|| format!("Failed to create config directory: {:?}", parent))?;
     }
-    
+
     fs::write(&json_path, json_content)
         .with_context(|| format!("Failed to write supported_tags.json to {:?}", json_path))?;
 
@@ -563,11 +628,16 @@ fn generate_supported_tags(_tags: &[GeneratedTag], output_dir: &str) -> Result<(
     rust_code.push_str("//! This file is automatically generated by codegen/generate_rust.\n");
     rust_code.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten.\n");
     rust_code.push_str("//!\n");
-    rust_code.push_str("//! Configuration-driven approach: Update MILESTONE_COMPLETIONS in codegen/src/main.rs\n");
-    rust_code.push_str("//! as new milestones with working PrintConv implementations are completed.\n\n");
-    
+    rust_code.push_str(
+        "//! Configuration-driven approach: Update MILESTONE_COMPLETIONS in codegen/src/main.rs\n",
+    );
+    rust_code.push_str(
+        "//! as new milestones with working PrintConv implementations are completed.\n\n",
+    );
+
     rust_code.push_str("/// Tags currently supported by exif-oxide with working implementations\n");
-    rust_code.push_str("/// Generated from milestone-based configuration to ensure quality control\n");
+    rust_code
+        .push_str("/// Generated from milestone-based configuration to ensure quality control\n");
     rust_code.push_str("pub static SUPPORTED_TAGS: &[&str] = &[\n");
     for tag_name in &supported_tag_names {
         rust_code.push_str(&format!("    \"{}\",\n", tag_name));
@@ -578,7 +648,10 @@ fn generate_supported_tags(_tags: &[GeneratedTag], output_dir: &str) -> Result<(
     fs::write(&rust_path, rust_code)
         .with_context(|| format!("Failed to write supported_tags.rs to {:?}", rust_path))?;
 
-    println!("Generated: supported_tags.rs and config/supported_tags.json ({} tags total)", supported_tag_names.len());
+    println!(
+        "Generated: supported_tags.rs and config/supported_tags.json ({} tags total)",
+        supported_tag_names.len()
+    );
     Ok(())
 }
 
@@ -607,34 +680,39 @@ pub use supported_tags::*;
 }
 
 fn escape_string(s: &str) -> String {
-    s.replace('\\', "\\\\")   // Must be first to avoid double-escaping
-     .replace('\"', "\\\"")
-     .replace('\n', "\\n")
-     .replace('\r', "\\r")
-     .replace('\t', "\\t")
+    s.replace('\\', "\\\\") // Must be first to avoid double-escaping
+        .replace('\"', "\\\"")
+        .replace('\n', "\\n")
+        .replace('\r', "\\r")
+        .replace('\t', "\\t")
 }
 
 fn parse_dependency_map(input: HashMap<String, String>) -> HashMap<u8, String> {
-    input.into_iter()
+    input
+        .into_iter()
         .filter_map(|(k, v)| k.parse::<u8>().ok().map(|key| (key, v)))
         .collect()
 }
 
 fn parse_group_map(input: HashMap<String, String>) -> HashMap<u8, String> {
-    input.into_iter()
+    input
+        .into_iter()
         .filter_map(|(k, v)| k.parse::<u8>().ok().map(|key| (key, v)))
         .collect()
 }
 
-fn generate_composite_tag_table(composite_tags: &[GeneratedCompositeTag], output_dir: &str) -> Result<()> {
+fn generate_composite_tag_table(
+    composite_tags: &[GeneratedCompositeTag],
+    output_dir: &str,
+) -> Result<()> {
     let mut code = String::new();
-    
+
     // File header
     code.push_str("//! Generated composite tag definitions\n");
     code.push_str("//!\n");
     code.push_str("//! This file is automatically generated by codegen/generate_rust.\n");
     code.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten.\n\n");
-    
+
     code.push_str("use lazy_static::lazy_static;\n");
     code.push_str("use std::collections::HashMap;\n\n");
 
@@ -657,19 +735,22 @@ fn generate_composite_tag_table(composite_tags: &[GeneratedCompositeTag], output
 
     // Static composite tag array
     code.push_str("pub static COMPOSITE_TAGS: &[CompositeTagDef] = &[\n");
-    
+
     for comp_tag in composite_tags {
         code.push_str("    CompositeTagDef {\n");
         code.push_str(&format!("        name: \"{}\",\n", comp_tag.name));
         code.push_str(&format!("        table: \"{}\",\n", comp_tag.table));
-        
+
         // Optional description
         if let Some(desc) = &comp_tag.description {
-            code.push_str(&format!("        description: Some(\"{}\"),\n", escape_string(desc)));
+            code.push_str(&format!(
+                "        description: Some(\"{}\"),\n",
+                escape_string(desc)
+            ));
         } else {
             code.push_str("        description: None,\n");
         }
-        
+
         // Require dependencies
         code.push_str("        require: &[");
         let mut sorted_require: Vec<_> = comp_tag.require.iter().collect();
@@ -678,7 +759,7 @@ fn generate_composite_tag_table(composite_tags: &[GeneratedCompositeTag], output
             code.push_str(&format!("({}, \"{}\"), ", index, tag_name));
         }
         code.push_str("],\n");
-        
+
         // Desire dependencies
         code.push_str("        desire: &[");
         let mut sorted_desire: Vec<_> = comp_tag.desire.iter().collect();
@@ -687,21 +768,27 @@ fn generate_composite_tag_table(composite_tags: &[GeneratedCompositeTag], output
             code.push_str(&format!("({}, \"{}\"), ", index, tag_name));
         }
         code.push_str("],\n");
-        
+
         // Value conversion
         if let Some(value_conv) = &comp_tag.value_conv {
-            code.push_str(&format!("        value_conv: Some(\"{}\"),\n", escape_string(value_conv)));
+            code.push_str(&format!(
+                "        value_conv: Some(\"{}\"),\n",
+                escape_string(value_conv)
+            ));
         } else {
             code.push_str("        value_conv: None,\n");
         }
-        
+
         // PrintConv reference
         if let Some(print_ref) = &comp_tag.print_conv_ref {
-            code.push_str(&format!("        print_conv_ref: Some(\"{}\"),\n", print_ref));
+            code.push_str(&format!(
+                "        print_conv_ref: Some(\"{}\"),\n",
+                print_ref
+            ));
         } else {
             code.push_str("        print_conv_ref: None,\n");
         }
-        
+
         // Groups
         code.push_str("        groups: &[");
         let mut sorted_groups: Vec<_> = comp_tag.groups.iter().collect();
@@ -710,21 +797,24 @@ fn generate_composite_tag_table(composite_tags: &[GeneratedCompositeTag], output
             code.push_str(&format!("({}, \"{}\"), ", index, group_name));
         }
         code.push_str("],\n");
-        
+
         code.push_str(&format!("        writable: {},\n", comp_tag.writable));
         code.push_str(&format!("        avoid: {},\n", comp_tag.avoid));
         code.push_str(&format!("        priority: {},\n", comp_tag.priority));
-        
+
         // Optional notes
         if let Some(notes) = &comp_tag.notes {
-            code.push_str(&format!("        notes: Some(\"{}\"),\n", escape_string(notes)));
+            code.push_str(&format!(
+                "        notes: Some(\"{}\"),\n",
+                escape_string(notes)
+            ));
         } else {
             code.push_str("        notes: None,\n");
         }
-        
+
         code.push_str("    },\n");
     }
-    
+
     code.push_str("];\n\n");
 
     // Lookup by name
