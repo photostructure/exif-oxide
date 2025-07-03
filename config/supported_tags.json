@@ -19,5 +19,8 @@
   "EXIF:ExposureTime",
   "EXIF:FocalLength",
   "EXIF:GPSLatitude",
-  "EXIF:GPSLongitude"
+  "EXIF:GPSLongitude",
+  "EXIF:GPSAltitude",
+  "EXIF:GPSDestLatitude",
+  "EXIF:GPSDestLongitude"
 ]

@@ -573,27 +573,11 @@ fn generate_supported_tags(_tags: &[GeneratedTag], output_dir: &str) -> Result<(
         (
             "Milestone 8c",
             &[
-                "EXIF:GPSLatitude", // GPS ValueConv to decimal degrees ✅
+                "EXIF:GPSLatitude",  // GPS ValueConv to decimal degrees ✅
                 "EXIF:GPSLongitude", // GPS ValueConv to decimal degrees ✅
-                                    // "EXIF:GPSAltitude",       // TODO: THIS FAILS:
-                                    // ❌ MISMATCH for /home/mrm/src/exif-oxide/test-images/apple/IMG_3755.JPG
-                                    // ExifTool snapshot (reference) vs exif-oxide (test):
-
-                                    //  {
-                                    //    "EXIF:ColorSpace": "Uncalibrated",
-                                    //    "EXIF:ExposureProgram": "Program AE",
-                                    //    "EXIF:ExposureTime": "1/28",
-                                    //    "EXIF:FNumber": 1.8,
-                                    //    "EXIF:Flash": "Off, Did not fire",
-                                    //    "EXIF:FocalLength": "1.6 mm",
-                                    // -  "EXIF:GPSAltitude": 25.24672793,
-                                    // +  "EXIF:GPSAltitude": [
-                                    // +    90661,
-                                    // +    3591
-                                    // +  ],
-
-                                    //     "EXIF:GPSDestLatitude",   // GPS ValueConv to decimal degrees ✅
-                                    //     "EXIF:GPSDestLongitude",  // GPS ValueConv to decimal degrees ✅
+                "EXIF:GPSAltitude",
+                "EXIF:GPSDestLatitude",  // GPS ValueConv to decimal degrees ✅
+                "EXIF:GPSDestLongitude", // GPS ValueConv to decimal degrees ✅
             ],
         ),
     ];
