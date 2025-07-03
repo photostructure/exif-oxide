@@ -77,17 +77,21 @@ fn test_cli_show_missing() {
     let missing = obj["MissingImplementations"].as_array().unwrap();
     assert!(!missing.is_empty());
 
-    // Should contain expected missing items
+    // Should contain expected missing items (tag IDs and conversion functions)
     let missing_str = missing
         .iter()
         .map(|v| v.as_str().unwrap())
         .collect::<Vec<_>>();
-    assert!(missing_str
-        .iter()
-        .any(|s| s.contains("JPEG segment parsing")));
-    assert!(missing_str
-        .iter()
-        .any(|s| s.contains("EXIF header parsing")));
+
+    // Current implementation tracks specific missing tag IDs and conversion functions
+    assert!(
+        missing_str.iter().any(|s| s.starts_with("Tag_")),
+        "Should contain missing tag IDs"
+    );
+    assert!(
+        missing_str.iter().any(|s| s.starts_with("PrintConv_")),
+        "Should contain missing PrintConv functions"
+    );
 }
 
 /// Test CLI error handling for non-existent file

@@ -57,8 +57,8 @@ fn test_binary_data_table_creation() {
 
 #[test]
 fn test_canon_camera_settings_table_creation() {
-    let reader = ExifReader::new();
-    let table = reader.create_canon_camera_settings_table();
+    let _reader = ExifReader::new();
+    let table = exif_oxide::implementations::canon::create_canon_camera_settings_table();
 
     // Check table configuration
     assert_eq!(table.default_format, BinaryDataFormat::Int16s);
@@ -95,15 +95,23 @@ fn test_extract_binary_value_int16s() {
     reader.set_test_data(test_data);
 
     // Extract positive value
-    let value1 = reader
-        .extract_binary_value(0, BinaryDataFormat::Int16s, 1)
-        .unwrap();
+    let value1 = exif_oxide::implementations::canon::extract_binary_value(
+        &reader,
+        0,
+        BinaryDataFormat::Int16s,
+        1,
+    )
+    .unwrap();
     assert_eq!(value1, TagValue::I16(1));
 
     // Extract negative value
-    let value2 = reader
-        .extract_binary_value(2, BinaryDataFormat::Int16s, 1)
-        .unwrap();
+    let value2 = exif_oxide::implementations::canon::extract_binary_value(
+        &reader,
+        2,
+        BinaryDataFormat::Int16s,
+        1,
+    )
+    .unwrap();
     assert_eq!(value2, TagValue::I16(-1));
 }
 
@@ -118,15 +126,23 @@ fn test_extract_binary_value_string() {
     reader.set_test_data(test_data);
 
     // Extract null-terminated string
-    let value = reader
-        .extract_binary_value(0, BinaryDataFormat::String, 0)
-        .unwrap();
+    let value = exif_oxide::implementations::canon::extract_binary_value(
+        &reader,
+        0,
+        BinaryDataFormat::String,
+        0,
+    )
+    .unwrap();
     assert_eq!(value, TagValue::String("Hello".to_string()));
 
     // Extract second string
-    let value2 = reader
-        .extract_binary_value(6, BinaryDataFormat::String, 0)
-        .unwrap();
+    let value2 = exif_oxide::implementations::canon::extract_binary_value(
+        &reader,
+        6,
+        BinaryDataFormat::String,
+        0,
+    )
+    .unwrap();
     assert_eq!(value2, TagValue::String("World".to_string()));
 }
 
@@ -139,15 +155,23 @@ fn test_extract_binary_value_pstring() {
     reader.set_test_data(test_data);
 
     // Extract Pascal string
-    let value = reader
-        .extract_binary_value(0, BinaryDataFormat::PString, 1)
-        .unwrap();
+    let value = exif_oxide::implementations::canon::extract_binary_value(
+        &reader,
+        0,
+        BinaryDataFormat::PString,
+        1,
+    )
+    .unwrap();
     assert_eq!(value, TagValue::String("Hello".to_string()));
 
     // Extract second Pascal string
-    let value2 = reader
-        .extract_binary_value(6, BinaryDataFormat::PString, 1)
-        .unwrap();
+    let value2 = exif_oxide::implementations::canon::extract_binary_value(
+        &reader,
+        6,
+        BinaryDataFormat::PString,
+        1,
+    )
+    .unwrap();
     assert_eq!(value2, TagValue::String("Foo".to_string()));
 }
 
@@ -169,9 +193,9 @@ fn test_extract_binary_tags_with_print_conv() {
     ];
     reader.set_test_data(test_data);
 
-    let table = reader.create_canon_camera_settings_table();
-    reader
-        .extract_binary_data_tags(0, reader.get_data_len(), &table)
+    let table = exif_oxide::implementations::canon::create_canon_camera_settings_table();
+    let data_len = reader.get_data_len();
+    exif_oxide::implementations::canon::extract_binary_data_tags(&mut reader, 0, data_len, &table)
         .unwrap();
 
     // Check extracted MacroMode tag (index 1)
@@ -221,8 +245,12 @@ fn test_find_canon_camera_settings_tag() {
     });
 
     // Find Canon CameraSettings tag
-    let camera_settings_offset = reader
-        .find_canon_camera_settings_tag(0, reader.get_data_len())
+    let camera_settings_offset =
+        exif_oxide::implementations::canon::find_canon_camera_settings_tag(
+            &reader,
+            0,
+            reader.get_data_len(),
+        )
         .unwrap();
     assert_eq!(camera_settings_offset, 18); // Should point to offset 18 (0x12)
 }
@@ -262,9 +290,8 @@ fn test_process_canon_makernotes_integration() {
     });
 
     // Process Canon MakerNotes
-    reader
-        .process_canon_makernotes(0, reader.get_data_len())
-        .unwrap();
+    let data_len = reader.get_data_len();
+    exif_oxide::implementations::canon::process_canon_makernotes(&mut reader, 0, data_len).unwrap();
 
     // Verify extracted tags (using synthetic tag IDs from process_canon_makernotes)
     let macro_value = reader.get_extracted_tags().get(&0xC001).unwrap(); // MacroMode synthetic ID
@@ -280,11 +307,21 @@ fn test_binary_data_bounds_checking() {
     reader.set_test_data(vec![0x01, 0x00]); // Only 2 bytes
 
     // Try to extract int32u beyond bounds
-    let result = reader.extract_binary_value(0, BinaryDataFormat::Int32u, 1);
+    let result = exif_oxide::implementations::canon::extract_binary_value(
+        &reader,
+        0,
+        BinaryDataFormat::Int32u,
+        1,
+    );
     assert!(result.is_err());
 
     // Try to extract at offset beyond bounds
-    let result = reader.extract_binary_value(10, BinaryDataFormat::Int8u, 1);
+    let result = exif_oxide::implementations::canon::extract_binary_value(
+        &reader,
+        10,
+        BinaryDataFormat::Int8u,
+        1,
+    );
     assert!(result.is_err());
 }
 
@@ -294,7 +331,7 @@ fn test_canon_makernotes_error_handling() {
 
     // Test with insufficient data
     reader.set_test_data(vec![0x01]); // Only 1 byte
-    let result = reader.process_canon_makernotes(0, 1);
+    let result = exif_oxide::implementations::canon::process_canon_makernotes(&mut reader, 0, 1);
     assert!(result.is_ok()); // Should handle gracefully, not crash
 
     // Test with invalid IFD entry count
@@ -306,6 +343,6 @@ fn test_canon_makernotes_error_handling() {
         ifd0_offset: 0,
     });
 
-    let result = reader.find_canon_camera_settings_tag(0, 4);
+    let result = exif_oxide::implementations::canon::find_canon_camera_settings_tag(&reader, 0, 4);
     assert!(result.is_err()); // Should return error for invalid data
 }
