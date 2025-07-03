@@ -11,23 +11,25 @@
 
 ### What's Missing vs. Future Requirements
 
-| Current Implementation | This Milestone Plans | Required By |
-|----------------------|---------------------|-------------|
-| Basic enum dispatch | `BinaryDataProcessor` trait system | MILESTONE-17, 22 |
+| Current Implementation  | This Milestone Plans                          | Required By      |
+| ----------------------- | --------------------------------------------- | ---------------- |
+| Basic enum dispatch     | `BinaryDataProcessor` trait system            | MILESTONE-17, 22 |
 | Simple capability check | `ProcessorCapability` (Perfect/Good/Fallback) | MILESTONE-17, 22 |
-| ~10 enum variants | 50+ trait implementations with metadata | MILESTONE-17, 22 |
-| Basic HashMap params | Rich `ProcessorContext` system | MILESTONE-17, 22 |
-| No metadata system | `ProcessorMetadata` with capabilities | MILESTONE-17, 22 |
+| ~10 enum variants       | 50+ trait implementations with metadata       | MILESTONE-17, 22 |
+| Basic HashMap params    | Rich `ProcessorContext` system                | MILESTONE-17, 22 |
+| No metadata system      | `ProcessorMetadata` with capabilities         | MILESTONE-17, 22 |
 
 ### Future Milestone Dependencies
 
 **MILESTONE-17 (RAW Support) requires:**
+
 - `RawFormatHandler` trait system with capability assessment
-- `AdvancedOffsetManager` with pluggable strategies  
+- `AdvancedOffsetManager` with pluggable strategies
 - `CorruptionRecoveryEngine` with trait-based detectors
 - Complex parameter passing through processor context
 
 **MILESTONE-22 (Advanced Write) requires:**
+
 - `MakerNotePreserver` trait with sophisticated capability assessment
 - `OffsetFixupStrategy` trait for pointer adjustment
 - Complex preservation method selection based on processor capabilities
@@ -575,13 +577,13 @@ impl EnumToTraitBridge {
         if let Some((key, processor)) = self.trait_registry.find_best_processor(context) {
             return ProcessorSelection::Trait(key, processor);
         }
-        
+
         // Fall back to existing enum system
         let (enum_type, params) = self.enum_dispatcher.select_processor_with_conditions(
             &context.table_name,
             context.tag_id,
             &[], // data
-            0,   // count  
+            0,   // count
             None // format
         );
         ProcessorSelection::Enum(enum_type, params)
@@ -618,6 +620,7 @@ Since this is an unpublished crate, we can maintain clean code by removing depre
 ```
 
 **Validation Steps**:
+
 1. **Comprehensive testing**: Ensure all functionality works with trait-based system
 2. **Performance validation**: Verify no regression in processing speed
 3. **Code coverage**: Confirm all processors converted and tested
@@ -625,12 +628,14 @@ Since this is an unpublished crate, we can maintain clean code by removing depre
 5. **API consistency**: Ensure clean public interface with no legacy remnants
 
 **Benefits of Cleanup**:
+
 - **Reduced complexity**: Single dispatch mechanism instead of dual system
 - **Smaller binary size**: No dead code or compatibility layers
 - **Cleaner docs**: No confusing legacy APIs for future contributors
 - **Maintenance burden**: Single system to maintain and debug
 
 **Cleanup Success Criteria**:
+
 - [ ] All enum-based processor code removed
 - [ ] Bridge compatibility layer removed
 - [ ] No references to old `ProcessorType` enum in codebase
@@ -840,13 +845,15 @@ lazy_static! {
 The codebase already provides several components that this milestone will enhance:
 
 **Already Implemented:**
+
 - Basic `ProcessorDispatch` enum system (`types/processors.rs`)
-- Runtime condition evaluation (`conditions.rs`)  
+- Runtime condition evaluation (`conditions.rs`)
 - Basic `select_processor_with_conditions()` (`exif/processors.rs`)
 - Manufacturer detection (Canon, Nikon, Sony)
 - 3-level fallback hierarchy (conditional → table → default)
 
 **This Milestone Adds:**
+
 - **`BinaryDataProcessor` trait** replacing enum-based dispatch
 - **`ProcessorRegistry`** with capability-based selection
 - **`ProcessorCapability`** assessment (Perfect/Good/Fallback/Incompatible)
@@ -856,7 +863,7 @@ The codebase already provides several components that this milestone will enhanc
 ### Migration Strategy
 
 1. **Phase 1**: Implement trait system alongside existing enum system
-2. **Phase 2**: Create compatibility bridge between enum and trait dispatch  
+2. **Phase 2**: Create compatibility bridge between enum and trait dispatch
 3. **Phase 3**: Convert existing processors to trait implementations
 4. **Phase 4**: Complete migration to trait-based dispatch
 5. **Phase 5**: Remove old enum system and bridge code (cleanup)
@@ -866,14 +873,16 @@ The codebase already provides several components that this milestone will enhanc
 This milestone creates the foundation that future milestones will build upon:
 
 **Milestone 15 (XMP)**: Will use enhanced dispatch for XMP processor variants
-**Milestone 17 (RAW)**: 
-- **CRITICAL DEPENDENCY**: Requires `RawFormatHandler` trait system  
+**Milestone 17 (RAW)**:
+
+- **CRITICAL DEPENDENCY**: Requires `RawFormatHandler` trait system
 - Needs `AdvancedOffsetManager` with pluggable `OffsetFixupStrategy` traits
 - Requires `CorruptionRecoveryEngine` with trait-based `CorruptionDetector`s
 
 **Milestone 19 (Binary Data)**: Will use the ProcessBinaryData processor framework  
 **Milestone 20 (Error Handling)**: Will integrate with processor error classification
 **Milestone 22 (Advanced Write)**:
+
 - **CRITICAL DEPENDENCY**: Requires `MakerNotePreserver` trait system
 - Needs `OffsetFixupStrategy` trait for complex pointer adjustment
 - Requires sophisticated capability assessment for preservation method selection
