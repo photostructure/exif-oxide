@@ -11,6 +11,7 @@ pub mod exif;
 pub mod formats;
 pub mod generated;
 pub mod implementations;
+pub mod processor_registry;
 pub mod registry;
 pub mod tiff_types;
 pub mod types;
