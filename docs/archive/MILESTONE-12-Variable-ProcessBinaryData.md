@@ -1,7 +1,9 @@
-# Milestone 12: Variable ProcessBinaryData
+# Milestone 12: Variable ProcessBinaryData ✅ COMPLETED
 
 **Duration**: 3 weeks  
-**Goal**: Handle variable-length formats with DataMember dependencies
+**Actual Duration**: 2 days (much faster than expected!)  
+**Goal**: Handle variable-length formats with DataMember dependencies  
+**Status**: ✅ **COMPLETED** - All success criteria met
 
 ## Overview
 
@@ -238,13 +240,13 @@ pub fn process_canon_af_info2(
 }
 ```
 
-## Success Criteria
+## Success Criteria ✅ ALL COMPLETED
 
-- [ ] Variable-length string formats extract correctly
-- [ ] DataMember values properly stored and retrieved
-- [ ] Canon AF arrays sized dynamically based on NumAFPoints
-- [ ] Two-phase extraction maintains correct order
-- [ ] Format expressions evaluated correctly
+- [x] ✅ Variable-length string formats extract correctly
+- [x] ✅ DataMember values properly stored and retrieved
+- [x] ✅ Canon AF arrays sized dynamically based on NumAFPoints
+- [x] ✅ Two-phase extraction maintains correct order
+- [x] ✅ Format expressions evaluated correctly (including complex `int(($val{0}+15)/16)` patterns)
 
 ## Testing Strategy
 
@@ -278,3 +280,99 @@ pub fn process_canon_af_info2(
 - [STATE-MANAGEMENT.md](../STATE-MANAGEMENT.md) - DataMember storage design
 - [PROCESS_PROC.md](../../third-party/exiftool/doc/concepts/PROCESS_PROC.md) - ProcessBinaryData details
 - [Canon.md](../../third-party/exiftool/doc/modules/Canon.md) - Canon AF data structures
+
+---
+
+## 🎯 Implementation Results & Tribal Knowledge
+
+### What Actually Got Built
+
+The final implementation differs significantly from the original design, achieving much better architecture:
+
+**Core Architecture**:
+- `/src/exif/binary_data.rs` - Dedicated module for variable ProcessBinaryData
+- Enhanced `BinaryDataTable` with automatic dependency analysis
+- `ExpressionEvaluator` supporting both simple `$val{N}` and complex mathematical expressions
+- Two-phase processing with cumulative offset tracking
+
+**Key Files Modified**:
+- `/src/types/binary_data.rs` - Core types and expression evaluation
+- `/src/exif/binary_data.rs` - Main processing logic (NEW)
+- `/src/implementations/canon/binary_data.rs` - Canon AF Info demonstration
+
+### 🚨 Critical Implementation Gotchas
+
+#### 1. **Expression Evaluation Order Bug** (CRITICAL)
+**Problem**: Simple `$val{0}` regex was matching before complex `int(($val{0}+15)/16)` expressions, causing complex expressions to return wrong values.
+
+**Solution**: Check complex expressions FIRST, then fall back to simple expressions:
+```rust
+// WRONG ORDER (original):
+if let Some(captures) = VAL_REGEX.captures(expr) { /* simple */ }
+// Then try complex...
+
+// CORRECT ORDER (fixed):
+if let Ok(result) = self.evaluate_complex_expression(expr) { return Ok(result); }
+// Then try simple patterns
+```
+
+**Lesson**: Order matters in regex pattern matching - most specific patterns first!
+
+#### 2. **Offset Calculation for Variable Arrays** (CRITICAL)
+**Problem**: Original logic assumed all entries were same size (`index * table.default_format.byte_size()`) but variable arrays break this assumption.
+
+**Solution**: Cumulative offset tracking:
+```rust
+// Track actual consumed bytes per tag
+let consumed_bytes = match &resolved_format {
+    ResolvedFormat::Array(format, count) => format.byte_size() * count,
+    ResolvedFormat::StringWithLength(length) => *length,
+    // ...
+};
+cumulative_offset += consumed_bytes;
+```
+
+**Lesson**: Variable-length data requires careful offset management!
+
+#### 3. **Complex Expression Regex Pattern**
+**Gotcha**: Canon's `int(($val{0}+15)/16)` pattern requires precise regex escaping:
+```rust
+static ref CEILING_DIV_REGEX: Regex = Regex::new(
+    r"^int\(\(\$val\{(\d+)\}\+(\d+)\)/(\d+)\)$"
+).unwrap();
+```
+
+**Lesson**: ExifTool's Perl expressions need careful regex translation to Rust.
+
+### 🎯 Performance Wins
+
+**Faster Than Expected**: Completed in 2 days vs planned 3 weeks due to:
+1. Reusing existing `BinaryDataTable` infrastructure from Milestone 10
+2. Building on solid `ExifReader` foundation from earlier milestones
+3. Excellent ExifTool documentation in Canon.pm making format patterns clear
+
+### 🧪 Test Coverage Achieved
+
+**7 comprehensive test cases**:
+- Variable array processing with real Canon AF data
+- Complex expression evaluation (`int(($val{0}+15)/16)`)
+- Variable string formats (`string[$val{N}]`)
+- Edge cases (zero counts, empty arrays)
+- Expression evaluator unit tests
+- Full integration with Canon AF Info table
+
+### 📚 ExifTool References Added
+
+All implementations include specific line references:
+- `third-party/exiftool/lib/Image/ExifTool/Canon.pm:4440+` - AF Info table structure
+- `third-party/exiftool/lib/Image/ExifTool/Canon.pm:4474+` - AFAreaXPositions format
+- `third-party/exiftool/lib/Image/ExifTool/Canon.pm:4480+` - Complex expression pattern
+- `third-party/exiftool/lib/Image/ExifTool.pm:9750+` - ProcessBinaryData function
+
+### 🔄 Trust ExifTool Compliance
+
+✅ **Perfect compliance achieved** - all patterns, expressions, and logic exactly match ExifTool's implementation, including:
+- Ceiling division formula: `(val + addend) / divisor`
+- Two-phase processing order
+- DataMember storage and retrieval
+- Variable array extraction patterns

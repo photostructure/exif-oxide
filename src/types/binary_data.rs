@@ -221,7 +221,13 @@ impl<'a> ExpressionEvaluator<'a> {
     /// Evaluate a format expression to get a count value
     /// ExifTool: lib/Image/ExifTool.pm:9853-9856 eval $count mechanism
     pub fn evaluate_count_expression(&self, expr: &str) -> std::result::Result<usize, ExifError> {
-        // Handle simple $val{N} references
+        // Handle complex expressions first (before simple $val patterns)
+        // ExifTool: Canon.pm:4480 'Format => int16s[int(($val{0}+15)/16)]'
+        if let Ok(result) = self.evaluate_complex_expression(expr) {
+            return Ok(result);
+        }
+
+        // Handle simple $val{N} references (only if complex expression failed)
         if let Some(captures) = VAL_REGEX.captures(expr) {
             let val_ref = captures.get(1).unwrap().as_str();
 
@@ -250,10 +256,9 @@ impl<'a> ExpressionEvaluator<'a> {
             )));
         }
 
-        // Handle complex expressions like "int(($val{2}+15)/16)"
-        // For now, just support simple cases. Complex math can be added later.
+        // If no patterns match, return error
         Err(ExifError::ParseError(format!(
-            "Complex expression evaluation not yet supported: {expr}"
+            "Cannot evaluate expression: {expr}"
         )))
     }
 
@@ -276,6 +281,58 @@ impl<'a> ExpressionEvaluator<'a> {
                 Ok(ResolvedFormat::StringWithLength(length))
             }
         }
+    }
+
+    /// Evaluate complex mathematical expressions
+    /// ExifTool: Complex expression evaluation like "int(($val{0}+15)/16)"
+    /// Reference: third-party/exiftool/lib/Image/ExifTool/Canon.pm:4480
+    pub fn evaluate_complex_expression(&self, expr: &str) -> std::result::Result<usize, ExifError> {
+        // Pattern for int(($val{N}+CONST)/DIVISOR) - ceiling division for bit arrays
+        // ExifTool: Canon.pm uses this pattern for AFPointsInFocus bit array sizing
+        lazy_static::lazy_static! {
+            static ref CEILING_DIV_REGEX: Regex = Regex::new(
+                r"^int\(\(\$val\{(\d+)\}\+(\d+)\)/(\d+)\)$"
+            ).unwrap();
+        }
+
+        if let Some(captures) = CEILING_DIV_REGEX.captures(expr) {
+            let val_index: u32 = captures.get(1).unwrap().as_str().parse().map_err(|_| {
+                ExifError::ParseError("Invalid value index in ceiling division".to_string())
+            })?;
+            let addend: usize = captures.get(2).unwrap().as_str().parse().map_err(|_| {
+                ExifError::ParseError("Invalid addend in ceiling division".to_string())
+            })?;
+            let divisor: usize = captures.get(3).unwrap().as_str().parse().map_err(|_| {
+                ExifError::ParseError("Invalid divisor in ceiling division".to_string())
+            })?;
+
+            if divisor == 0 {
+                return Err(ExifError::ParseError(
+                    "Division by zero in expression".to_string(),
+                ));
+            }
+
+            // Get the value from $val hash
+            let val = self.val_hash.get(&val_index).ok_or_else(|| {
+                ExifError::ParseError(format!("Value at index {val_index} not found"))
+            })?;
+
+            let val_usize = val.as_usize().ok_or_else(|| {
+                ExifError::ParseError(format!(
+                    "Value at index {val_index} cannot be converted to number"
+                ))
+            })?;
+
+            // Calculate ceiling division: int((val + addend) / divisor)
+            // This is equivalent to: (val + addend + divisor - 1) / divisor
+            let result = (val_usize + addend) / divisor;
+            return Ok(result);
+        }
+
+        // If no patterns match, return error
+        Err(ExifError::ParseError(format!(
+            "Unsupported complex expression: {expr}"
+        )))
     }
 
     /// Update the $val hash with a new value

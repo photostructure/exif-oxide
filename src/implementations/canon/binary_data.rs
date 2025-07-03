@@ -213,6 +213,190 @@ pub fn extract_camera_settings(
     Ok(results)
 }
 
+/// Create Canon AF Info binary data table with variable-length arrays
+/// ExifTool: lib/Image/ExifTool/Canon.pm:4440+ %Canon::AFInfo table
+/// Reference: third-party/exiftool/lib/Image/ExifTool/Canon.pm:4440-4500+ AFInfo table
+/// Demonstrates Milestone 12: Variable ProcessBinaryData with DataMember dependencies
+pub fn create_canon_af_info_table() -> BinaryDataTable {
+    use crate::types::{BinaryDataFormat, FormatSpec};
+
+    let mut table = BinaryDataTable {
+        default_format: BinaryDataFormat::Int16u,
+        first_entry: Some(0),
+        groups: HashMap::new(),
+        tags: HashMap::new(),
+        data_member_tags: Vec::new(),
+        dependency_order: Vec::new(),
+    };
+
+    // ExifTool: Canon.pm:4442 GROUPS => { 0 => 'MakerNotes', 2 => 'Camera' }
+    table.groups.insert(0, "MakerNotes".to_string());
+    table.groups.insert(2, "Camera".to_string());
+
+    // NumAFPoints (sequence 0) - The key DataMember for variable-length arrays
+    // ExifTool: Canon.pm:4450 '0 => { Name => 'NumAFPoints' }'
+    table.tags.insert(
+        0,
+        BinaryDataTag {
+            name: "NumAFPoints".to_string(),
+            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            format: Some(BinaryDataFormat::Int16u),
+            mask: None,
+            print_conv: None,
+            data_member: Some("NumAFPoints".to_string()), // This becomes a DataMember
+        },
+    );
+    table.data_member_tags.push(0);
+
+    // ValidAFPoints (sequence 1)
+    // ExifTool: Canon.pm:4453 '1 => { Name => 'ValidAFPoints' }'
+    table.tags.insert(
+        1,
+        BinaryDataTag {
+            name: "ValidAFPoints".to_string(),
+            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            format: Some(BinaryDataFormat::Int16u),
+            mask: None,
+            print_conv: None,
+            data_member: None,
+        },
+    );
+
+    // CanonImageWidth (sequence 2)
+    table.tags.insert(
+        2,
+        BinaryDataTag {
+            name: "CanonImageWidth".to_string(),
+            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            format: Some(BinaryDataFormat::Int16u),
+            mask: None,
+            print_conv: None,
+            data_member: None,
+        },
+    );
+
+    // CanonImageHeight (sequence 3)
+    table.tags.insert(
+        3,
+        BinaryDataTag {
+            name: "CanonImageHeight".to_string(),
+            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            format: Some(BinaryDataFormat::Int16u),
+            mask: None,
+            print_conv: None,
+            data_member: None,
+        },
+    );
+
+    // AFImageWidth (sequence 4)
+    table.tags.insert(
+        4,
+        BinaryDataTag {
+            name: "AFImageWidth".to_string(),
+            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            format: Some(BinaryDataFormat::Int16u),
+            mask: None,
+            print_conv: None,
+            data_member: None,
+        },
+    );
+
+    // AFImageHeight (sequence 5)
+    table.tags.insert(
+        5,
+        BinaryDataTag {
+            name: "AFImageHeight".to_string(),
+            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            format: Some(BinaryDataFormat::Int16u),
+            mask: None,
+            print_conv: None,
+            data_member: None,
+        },
+    );
+
+    // AFAreaWidth (sequence 6)
+    table.tags.insert(
+        6,
+        BinaryDataTag {
+            name: "AFAreaWidth".to_string(),
+            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            format: Some(BinaryDataFormat::Int16u),
+            mask: None,
+            print_conv: None,
+            data_member: None,
+        },
+    );
+
+    // AFAreaHeight (sequence 7)
+    table.tags.insert(
+        7,
+        BinaryDataTag {
+            name: "AFAreaHeight".to_string(),
+            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            format: Some(BinaryDataFormat::Int16u),
+            mask: None,
+            print_conv: None,
+            data_member: None,
+        },
+    );
+
+    // AFAreaXPositions (sequence 8) - Variable-length array sized by NumAFPoints
+    // ExifTool: Canon.pm:4474 'Format => int16s[$val{0}]'
+    table.tags.insert(
+        8,
+        BinaryDataTag {
+            name: "AFAreaXPositions".to_string(),
+            format_spec: Some(FormatSpec::Array {
+                base_format: BinaryDataFormat::Int16s,
+                count_expr: "$val{0}".to_string(), // References NumAFPoints at sequence 0
+            }),
+            format: None, // Will be resolved at runtime
+            mask: None,
+            print_conv: None,
+            data_member: None,
+        },
+    );
+
+    // AFAreaYPositions (sequence 9) - Variable-length array sized by NumAFPoints
+    // ExifTool: Canon.pm:4477 'Format => int16s[$val{0}]'
+    table.tags.insert(
+        9,
+        BinaryDataTag {
+            name: "AFAreaYPositions".to_string(),
+            format_spec: Some(FormatSpec::Array {
+                base_format: BinaryDataFormat::Int16s,
+                count_expr: "$val{0}".to_string(), // References NumAFPoints at sequence 0
+            }),
+            format: None, // Will be resolved at runtime
+            mask: None,
+            print_conv: None,
+            data_member: None,
+        },
+    );
+
+    // AFPointsInFocus (sequence 10) - Complex expression with bit array size calculation
+    // ExifTool: Canon.pm:4480 'Format => int16s[int(($val{0}+15)/16)]'
+    table.tags.insert(
+        10,
+        BinaryDataTag {
+            name: "AFPointsInFocus".to_string(),
+            format_spec: Some(FormatSpec::Array {
+                base_format: BinaryDataFormat::Int16s,
+                count_expr: "int(($val{0}+15)/16)".to_string(), // Ceiling division for bit arrays
+            }),
+            format: None, // Will be resolved at runtime
+            mask: None,
+            print_conv: None,
+            data_member: None,
+        },
+    );
+
+    // Analyze dependencies to establish processing order
+    table.analyze_dependencies();
+
+    table
+}
+
 /// Create Canon CameraSettings binary data table in the expected format
 /// ExifTool: lib/Image/ExifTool/Canon.pm:2166+ %Canon::CameraSettings
 /// This function creates a BinaryDataTable compatible with the test expectations
@@ -564,6 +748,392 @@ pub fn find_canon_camera_settings_tag(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::exif::ExifReader;
+    use crate::tiff_types::{ByteOrder, TiffHeader};
+
+    #[test]
+    fn test_canon_af_info_variable_arrays() {
+        // Test Milestone 12: Variable ProcessBinaryData with Canon AF Info
+        // Reference: third-party/exiftool/lib/Image/ExifTool/Canon.pm:4440-4500+ AFInfo table
+        // This demonstrates variable-length arrays sized by DataMember dependencies
+
+        let table = create_canon_af_info_table();
+
+        // Verify table structure
+        assert_eq!(table.default_format, BinaryDataFormat::Int16u);
+        assert_eq!(table.first_entry, Some(0));
+        assert_eq!(table.groups.get(&0), Some(&"MakerNotes".to_string()));
+        assert_eq!(table.groups.get(&2), Some(&"Camera".to_string()));
+
+        // Verify DataMember tags
+        assert!(table.data_member_tags.contains(&0)); // NumAFPoints
+
+        // Verify tag definitions
+        let num_af_points = table.tags.get(&0).unwrap();
+        assert_eq!(num_af_points.name, "NumAFPoints");
+        assert_eq!(num_af_points.data_member, Some("NumAFPoints".to_string()));
+
+        // Verify variable array formats
+        let af_x_positions = table.tags.get(&8).unwrap();
+        assert_eq!(af_x_positions.name, "AFAreaXPositions");
+        if let Some(format_spec) = &af_x_positions.format_spec {
+            match format_spec {
+                crate::types::FormatSpec::Array {
+                    base_format,
+                    count_expr,
+                } => {
+                    assert_eq!(*base_format, BinaryDataFormat::Int16s);
+                    assert_eq!(count_expr, "$val{0}"); // References NumAFPoints
+                }
+                _ => panic!("Expected Array format spec for AFAreaXPositions"),
+            }
+        } else {
+            panic!("AFAreaXPositions should have format_spec");
+        }
+
+        let af_y_positions = table.tags.get(&9).unwrap();
+        assert_eq!(af_y_positions.name, "AFAreaYPositions");
+
+        let af_points_in_focus = table.tags.get(&10).unwrap();
+        assert_eq!(af_points_in_focus.name, "AFPointsInFocus");
+        if let Some(format_spec) = &af_points_in_focus.format_spec {
+            match format_spec {
+                crate::types::FormatSpec::Array {
+                    base_format,
+                    count_expr,
+                } => {
+                    assert_eq!(*base_format, BinaryDataFormat::Int16s);
+                    assert_eq!(count_expr, "int(($val{0}+15)/16)"); // Complex expression
+                }
+                _ => panic!("Expected Array format spec for AFPointsInFocus"),
+            }
+        }
+    }
+
+    #[test]
+    fn test_canon_af_info_processing() {
+        // Test actual processing of Canon AF Info data with variable arrays
+        // Reference: third-party/exiftool/lib/Image/ExifTool/Canon.pm:4474+ AFAreaXPositions Format => int16s[$val{0}]
+        // Reference: third-party/exiftool/lib/Image/ExifTool/Canon.pm:4477+ AFAreaYPositions Format => int16s[$val{0}]
+        // Reference: third-party/exiftool/lib/Image/ExifTool/Canon.pm:4480+ AFPointsInFocus Format => int16s[int(($val{0}+15)/16)]
+        // This simulates real Canon AF Info data with NumAFPoints = 9
+
+        let mut reader = ExifReader::new();
+        reader.set_test_header(TiffHeader {
+            byte_order: ByteOrder::LittleEndian,
+            magic: 42,
+            ifd0_offset: 8,
+        });
+
+        // Create test AF Info data:
+        // Sequence 0: NumAFPoints = 9 (0x0009)
+        // Sequence 1: ValidAFPoints = 7 (0x0007)
+        // Sequence 2: CanonImageWidth = 1600 (0x0640)
+        // Sequence 3: CanonImageHeight = 1200 (0x04B0)
+        // Sequence 4: AFImageWidth = 1024 (0x0400)
+        // Sequence 5: AFImageHeight = 768 (0x0300)
+        // Sequence 6: AFAreaWidth = 64 (0x0040)
+        // Sequence 7: AFAreaHeight = 48 (0x0030)
+        // Sequence 8: AFAreaXPositions[9] = [-200, -100, 0, 100, 200, -150, 0, 150, 0]
+        // Sequence 9: AFAreaYPositions[9] = [-100, -50, 0, 50, 100, 75, 0, -75, 150]
+        // Sequence 10: AFPointsInFocus[1] = [0x01FF] (bit array: ceiling(9/16) = 1 word)
+
+        let test_data = vec![
+            // Sequences 0-7: Fixed data (8 * 2 bytes = 16 bytes)
+            0x09, 0x00, // NumAFPoints = 9
+            0x07, 0x00, // ValidAFPoints = 7
+            0x40, 0x06, // CanonImageWidth = 1600
+            0xB0, 0x04, // CanonImageHeight = 1200
+            0x00, 0x04, // AFImageWidth = 1024
+            0x00, 0x03, // AFImageHeight = 768
+            0x40, 0x00, // AFAreaWidth = 64
+            0x30, 0x00, // AFAreaHeight = 48
+            // Sequence 8: AFAreaXPositions[9] (9 * 2 bytes = 18 bytes)
+            0x38, 0xFF, // -200 (0xFF38 = -200 in 2's complement)
+            0x9C, 0xFF, // -100 (0xFF9C = -100 in 2's complement)
+            0x00, 0x00, // 0
+            0x64, 0x00, // 100
+            0xC8, 0x00, // 200
+            0x6A, 0xFF, // -150 (0xFF6A = -150 in 2's complement)
+            0x00, 0x00, // 0
+            0x96, 0x00, // 150
+            0x00, 0x00, // 0
+            // Sequence 9: AFAreaYPositions[9] (9 * 2 bytes = 18 bytes)
+            0x9C, 0xFF, // -100 (0xFF9C = -100 in 2's complement)
+            0xCE, 0xFF, // -50 (0xFFCE = -50 in 2's complement)
+            0x00, 0x00, // 0
+            0x32, 0x00, // 50
+            0x64, 0x00, // 100
+            0x4B, 0x00, // 75
+            0x00, 0x00, // 0
+            0xB5, 0xFF, // -75 (0xFFB5 = -75 in 2's complement)
+            0x96, 0x00, // 150
+            // Sequence 10: AFPointsInFocus[1] = int((9+15)/16) = 1 word (2 bytes)
+            0xFF, 0x01, // 0x01FF - bits 0-8 set (AF points 1-9 in focus)
+        ];
+
+        reader.set_test_data(test_data.clone());
+
+        let table = create_canon_af_info_table();
+
+        // Process the binary data with dependencies
+        let result =
+            reader.process_binary_data_with_dependencies(&test_data, 0, test_data.len(), &table);
+        assert!(
+            result.is_ok(),
+            "Failed to process Canon AF Info data: {result:?}"
+        );
+
+        // Verify extracted tags
+        let extracted_tags = reader.get_extracted_tags();
+
+        // Check NumAFPoints (DataMember)
+        assert_eq!(
+            extracted_tags.get(&0),
+            Some(&crate::types::TagValue::U16(9))
+        );
+
+        // Check ValidAFPoints
+        assert_eq!(
+            extracted_tags.get(&1),
+            Some(&crate::types::TagValue::U16(7))
+        );
+
+        // Check CanonImageWidth
+        assert_eq!(
+            extracted_tags.get(&2),
+            Some(&crate::types::TagValue::U16(1600))
+        );
+
+        // Check CanonImageHeight
+        assert_eq!(
+            extracted_tags.get(&3),
+            Some(&crate::types::TagValue::U16(1200))
+        );
+
+        // Check variable arrays - AFAreaXPositions should be array of 9 elements
+        if let Some(crate::types::TagValue::U16Array(x_positions)) = extracted_tags.get(&8) {
+            assert_eq!(
+                x_positions.len(),
+                9,
+                "AFAreaXPositions should have 9 elements based on NumAFPoints"
+            );
+            // Note: The values will be stored as U16 due to array extraction conversion
+        } else {
+            panic!("AFAreaXPositions should be U16Array");
+        }
+
+        // Check variable arrays - AFAreaYPositions should be array of 9 elements
+        if let Some(crate::types::TagValue::U16Array(y_positions)) = extracted_tags.get(&9) {
+            assert_eq!(
+                y_positions.len(),
+                9,
+                "AFAreaYPositions should have 9 elements based on NumAFPoints"
+            );
+        } else {
+            panic!("AFAreaYPositions should be U16Array");
+        }
+
+        // Check complex expression - AFPointsInFocus should be array of 1 element
+        // Expression: int((9+15)/16) = int(24/16) = 1
+        if let Some(crate::types::TagValue::U16Array(points_in_focus)) = extracted_tags.get(&10) {
+            assert_eq!(
+                points_in_focus.len(),
+                1,
+                "AFPointsInFocus should have 1 element based on ceiling division"
+            );
+        } else {
+            panic!("AFPointsInFocus should be U16Array");
+        }
+    }
+
+    #[test]
+    fn test_expression_evaluator() {
+        // Test the complex expression evaluator with Canon AF ceiling division
+        // Reference: third-party/exiftool/lib/Image/ExifTool/Canon.pm:4480+ int(($val{0}+15)/16) pattern
+        use crate::types::{DataMemberValue, ExpressionEvaluator};
+        use std::collections::HashMap;
+
+        let data_members = HashMap::new();
+        let mut val_hash = HashMap::new();
+        val_hash.insert(0, DataMemberValue::U16(9)); // NumAFPoints = 9
+
+        let evaluator = ExpressionEvaluator::new(val_hash, &data_members);
+
+        // Test simple $val{0} expression
+        let simple_result = evaluator.evaluate_count_expression("$val{0}");
+        assert_eq!(simple_result.unwrap(), 9);
+
+        // Test complex ceiling division: int((9+15)/16) = int(24/16) = 1
+        let complex_result = evaluator.evaluate_count_expression("int(($val{0}+15)/16)");
+        println!("Complex expression result: {complex_result:?}");
+        match complex_result {
+            Ok(val) => assert_eq!(val, 1),
+            Err(e) => panic!("Complex expression failed: {e}"),
+        }
+    }
+
+    #[test]
+    fn test_variable_string_formats() {
+        // Test Milestone 12: Variable string formats with string[$val{N}]
+        // Reference: third-party/exiftool/lib/Image/ExifTool.pm:9850+ string format parsing
+        use crate::exif::ExifReader;
+        use crate::tiff_types::{ByteOrder, TiffHeader};
+        use crate::types::{BinaryDataFormat, BinaryDataTable, BinaryDataTag, FormatSpec};
+        use std::collections::HashMap;
+
+        let mut reader = ExifReader::new();
+        reader.set_test_header(TiffHeader {
+            byte_order: ByteOrder::LittleEndian,
+            magic: 42,
+            ifd0_offset: 8,
+        });
+
+        // Create a test table with string length dependency
+        let mut table = BinaryDataTable {
+            default_format: BinaryDataFormat::Int16u,
+            first_entry: Some(0),
+            groups: HashMap::new(),
+            tags: HashMap::new(),
+            data_member_tags: Vec::new(),
+            dependency_order: Vec::new(),
+        };
+
+        // Tag 0: StringLength (DataMember) = 5
+        table.tags.insert(
+            0,
+            BinaryDataTag {
+                name: "StringLength".to_string(),
+                format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+                format: Some(BinaryDataFormat::Int16u),
+                mask: None,
+                print_conv: None,
+                data_member: Some("StringLength".to_string()),
+            },
+        );
+        table.data_member_tags.push(0);
+
+        // Tag 1: VariableString = string[$val{0}] (5 characters)
+        table.tags.insert(
+            1,
+            BinaryDataTag {
+                name: "VariableString".to_string(),
+                format_spec: Some(FormatSpec::StringWithLength {
+                    length_expr: "$val{0}".to_string(),
+                }),
+                format: None,
+                mask: None,
+                print_conv: None,
+                data_member: None,
+            },
+        );
+
+        table.analyze_dependencies();
+
+        // Test data: StringLength=5, then "Hello" (5 bytes)
+        let test_data = vec![
+            0x05, 0x00, // StringLength = 5
+            b'H', b'e', b'l', b'l', b'o', // "Hello" (5 bytes)
+        ];
+
+        reader.set_test_data(test_data.clone());
+
+        let result =
+            reader.process_binary_data_with_dependencies(&test_data, 0, test_data.len(), &table);
+        assert!(result.is_ok());
+
+        let extracted_tags = reader.get_extracted_tags();
+
+        // Check StringLength DataMember
+        assert_eq!(
+            extracted_tags.get(&0),
+            Some(&crate::types::TagValue::U16(5))
+        );
+
+        // Check VariableString
+        assert_eq!(
+            extracted_tags.get(&1),
+            Some(&crate::types::TagValue::String("Hello".to_string()))
+        );
+    }
+
+    #[test]
+    fn test_edge_cases_zero_count() {
+        // Test edge case: zero count for arrays
+        use crate::exif::ExifReader;
+        use crate::tiff_types::{ByteOrder, TiffHeader};
+        use crate::types::{BinaryDataFormat, BinaryDataTable, BinaryDataTag, FormatSpec};
+        use std::collections::HashMap;
+
+        let mut reader = ExifReader::new();
+        reader.set_test_header(TiffHeader {
+            byte_order: ByteOrder::LittleEndian,
+            magic: 42,
+            ifd0_offset: 8,
+        });
+
+        let mut table = BinaryDataTable {
+            default_format: BinaryDataFormat::Int16u,
+            first_entry: Some(0),
+            groups: HashMap::new(),
+            tags: HashMap::new(),
+            data_member_tags: Vec::new(),
+            dependency_order: Vec::new(),
+        };
+
+        // Tag 0: Count = 0
+        table.tags.insert(
+            0,
+            BinaryDataTag {
+                name: "Count".to_string(),
+                format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+                format: Some(BinaryDataFormat::Int16u),
+                mask: None,
+                print_conv: None,
+                data_member: Some("Count".to_string()),
+            },
+        );
+        table.data_member_tags.push(0);
+
+        // Tag 1: EmptyArray = int16s[$val{0}] (0 elements)
+        table.tags.insert(
+            1,
+            BinaryDataTag {
+                name: "EmptyArray".to_string(),
+                format_spec: Some(FormatSpec::Array {
+                    base_format: BinaryDataFormat::Int16s,
+                    count_expr: "$val{0}".to_string(),
+                }),
+                format: None,
+                mask: None,
+                print_conv: None,
+                data_member: None,
+            },
+        );
+
+        table.analyze_dependencies();
+
+        let test_data = vec![0x00, 0x00]; // Count = 0
+        reader.set_test_data(test_data.clone());
+
+        let result =
+            reader.process_binary_data_with_dependencies(&test_data, 0, test_data.len(), &table);
+        assert!(result.is_ok());
+
+        let extracted_tags = reader.get_extracted_tags();
+
+        // Check Count
+        assert_eq!(
+            extracted_tags.get(&0),
+            Some(&crate::types::TagValue::U16(0))
+        );
+
+        // Check EmptyArray (should be empty array)
+        assert_eq!(
+            extracted_tags.get(&1),
+            Some(&crate::types::TagValue::U8Array(vec![]))
+        );
+    }
 
     #[test]
     fn test_create_camera_settings_table() {

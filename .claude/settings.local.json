@@ -137,7 +137,8 @@
       "Bash(RUST_LOG=trace cargo run -- test-images/canon/Canon-5D.jpg)",
       "Bash(./exiftool -j -struct -G -GPSAltitude# /home/mrm/src/exif-oxide/test-images/apple/IMG_3755.JPG)",
       "Bash(RUST_LOG=debug cargo run -- test-images/canon/Canon-5D.jpg)",
-      "Bash(RUST_LOG=debug cargo run --bin exif-oxide test-images/canon/Canon_T3i.JPG)"
+      "Bash(RUST_LOG=debug cargo run --bin exif-oxide test-images/canon/Canon_T3i.JPG)",
+      "Bash(RUST_LOG=debug cargo test test_canon_af_info_processing -p exif-oxide -- --nocapture)"
     ],
     "deny": []
   }
