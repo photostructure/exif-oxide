@@ -672,14 +672,18 @@ fn generate_composite_tag_table(composite_tags: &[GeneratedCompositeTag], output
         
         // Require dependencies
         code.push_str("        require: &[");
-        for (index, tag_name) in comp_tag.require.iter() {
+        let mut sorted_require: Vec<_> = comp_tag.require.iter().collect();
+        sorted_require.sort_by_key(|(index, _)| *index);
+        for (index, tag_name) in sorted_require {
             code.push_str(&format!("({}, \"{}\"), ", index, tag_name));
         }
         code.push_str("],\n");
         
         // Desire dependencies
         code.push_str("        desire: &[");
-        for (index, tag_name) in comp_tag.desire.iter() {
+        let mut sorted_desire: Vec<_> = comp_tag.desire.iter().collect();
+        sorted_desire.sort_by_key(|(index, _)| *index);
+        for (index, tag_name) in sorted_desire {
             code.push_str(&format!("({}, \"{}\"), ", index, tag_name));
         }
         code.push_str("],\n");
@@ -700,7 +704,9 @@ fn generate_composite_tag_table(composite_tags: &[GeneratedCompositeTag], output
         
         // Groups
         code.push_str("        groups: &[");
-        for (index, group_name) in comp_tag.groups.iter() {
+        let mut sorted_groups: Vec<_> = comp_tag.groups.iter().collect();
+        sorted_groups.sort_by_key(|(index, _)| *index);
+        for (index, group_name) in sorted_groups {
             code.push_str(&format!("({}, \"{}\"), ", index, group_name));
         }
         code.push_str("],\n");
