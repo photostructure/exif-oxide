@@ -3,7 +3,7 @@
 //! This module implements Sony MakerNote detection following ExifTool's Sony processing
 //! from MakerNotes.pm, focusing on proper namespace handling and tag conflict resolution.
 //!
-//! **ExifTool is Gospel**: This code translates ExifTool's Sony detection patterns verbatim
+//! **Trust ExifTool**: This code translates ExifTool's Sony detection patterns verbatim
 //! without any improvements or simplifications. Every detection pattern and signature
 //! is copied exactly as documented in the ExifTool source.
 //!
