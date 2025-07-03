@@ -26,6 +26,7 @@
 //! - `lens_database.rs` - 618-entry lens ID lookup system
 //! - `tests.rs` - Comprehensive unit tests for all components
 
+pub mod af_processing;
 pub mod detection;
 pub mod encryption;
 pub mod ifd;
@@ -34,6 +35,7 @@ pub mod offset_schemes;
 pub mod tags;
 
 // Re-export commonly used functions for easier access
+pub use af_processing::{process_nikon_af_info, NikonAfSystem};
 pub use detection::{detect_nikon_format, detect_nikon_signature};
 pub use encryption::{process_encrypted_sections, NikonEncryptionKeys};
 pub use ifd::{prescan_for_encryption_keys, process_standard_nikon_tags};
