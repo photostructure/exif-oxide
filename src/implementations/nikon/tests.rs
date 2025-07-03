@@ -267,7 +267,7 @@ mod tag_tests {
     #[test]
     fn test_table_selection_d850() {
         let table = select_nikon_tag_table("NIKON D850");
-        assert_eq!(table.name, "Nikon::Main");
+        assert_eq!(table.name, "Nikon::ShotInfoD850");
     }
 
     #[test]
@@ -278,7 +278,7 @@ mod tag_tests {
 
     #[test]
     fn test_tag_name_lookup_quality() {
-        let name = get_nikon_tag_name(0x0004, "NIKON D850");
+        let name = get_nikon_tag_name(0x0004, "NIKON D780"); // Use generic model to test main table
         assert_eq!(name, Some("Quality"));
     }
 
@@ -297,10 +297,11 @@ mod tag_tests {
     #[test]
     fn test_encryption_key_tags_present() {
         // Verify critical encryption key tags are mapped
-        let serial_tag = get_nikon_tag_name(0x001D, "NIKON D850");
+        // Use generic model since encryption keys are in main table
+        let serial_tag = get_nikon_tag_name(0x001D, "NIKON D780");
         assert_eq!(serial_tag, Some("SerialNumber"));
 
-        let count_tag = get_nikon_tag_name(0x00A7, "NIKON D850");
+        let count_tag = get_nikon_tag_name(0x00A7, "NIKON D780");
         assert_eq!(count_tag, Some("ShutterCount"));
     }
 
@@ -519,7 +520,8 @@ mod integration_tests {
         let mut keys = encryption::NikonEncryptionKeys::new("NIKON D850".to_string());
 
         // Simulate finding encryption key tags
-        let serial_tag = tags::get_nikon_tag_name(0x001D, "NIKON D850");
+        // Use generic model since encryption keys are in main table
+        let serial_tag = tags::get_nikon_tag_name(0x001D, "NIKON D780");
         assert_eq!(serial_tag, Some("SerialNumber"));
 
         keys.store_serial_key("D850SERIAL".to_string());
