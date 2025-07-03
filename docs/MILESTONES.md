@@ -31,7 +31,7 @@ After you think you're done implementing a milestone:
 ## Important Steps After Completing a Milestone
 
 1. Remove the completed milestone section from this document, $REPO_ROOT/docs/MILESTONES.md
-2. Concisely summarize the completed work and add it to $REPO_ROOT/docs/archived/DONE-MILESTONES.md.
+2. Concisely summarize the completed work and add it to $REPO_ROOT/docs/archive/DONE-MILESTONES.md.
 3. If you worked from a separate MILESTONES-$desc.md file, move it to $REPO_ROOT/docs/archive and edit with completion status and any surprising gotchas or tribal knowledge that tripped you up in the implementation.
 
 ## Core Principles
