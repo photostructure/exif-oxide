@@ -67,6 +67,8 @@ fn test_offset_scheme_detection() {
 
 #[test]
 fn test_canon_tiff_footer_parse() {
+    use crate::implementations::canon::tiff_footer::CanonTiffFooter;
+
     // Test little-endian footer
     let le_footer = [0x49, 0x49, 0x2a, 0x00, 0x10, 0x00, 0x00, 0x00];
     let footer = CanonTiffFooter::parse(&le_footer, ByteOrder::LittleEndian).unwrap();

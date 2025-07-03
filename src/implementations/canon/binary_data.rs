@@ -3,7 +3,7 @@
 //! This module handles Canon's binary data table format, particularly the CameraSettings
 //! table that uses the 'int16s' format with 1-based indexing.
 //!
-//! **ExifTool is Gospel**: This code translates ExifTool's Canon.pm binary data processing
+//! **Trust ExifTool**: This code translates ExifTool's Canon.pm binary data processing
 //! verbatim, including all PrintConv tables and processing logic.
 //!
 //! Primary ExifTool References:
