@@ -9,6 +9,7 @@
 //! `ExifReader::build_composite_tags()` which calls into this module's
 //! functions.
 
+use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use tracing::{debug, trace, warn};
 
@@ -63,6 +64,47 @@ pub fn can_build_composite(
     available_tags: &HashMap<String, TagValue>,
     built_composites: &HashSet<&str>,
 ) -> bool {
+    // Special case for ImageSize: ExifTool can build it with just desired dependencies
+    // because the ValueConv has fallback logic
+    if composite_def.name == "ImageSize" {
+        debug!("Checking ImageSize special case dependencies");
+        // Can build if we have any of: RawImageCroppedSize, ExifImageWidth+Height, or ImageWidth+Height
+        if is_dependency_available("RawImageCroppedSize", available_tags, built_composites) {
+            debug!("ImageSize: Found RawImageCroppedSize");
+            return true;
+        }
+        if is_dependency_available("ExifImageWidth", available_tags, built_composites)
+            && is_dependency_available("ExifImageHeight", available_tags, built_composites)
+        {
+            debug!("ImageSize: Found ExifImageWidth + ExifImageHeight");
+            return true;
+        }
+        if is_dependency_available("ImageWidth", available_tags, built_composites)
+            && is_dependency_available("ImageHeight", available_tags, built_composites)
+        {
+            debug!("ImageSize: Found ImageWidth + ImageHeight");
+            return true;
+        }
+        debug!("ImageSize: No suitable dependencies found");
+        return false;
+    }
+
+    // Special case: if there are no required dependencies, check if we have any desired ones
+    if composite_def.require.is_empty() && !composite_def.desire.is_empty() {
+        // Need at least one desired dependency
+        for (_index, tag_name) in composite_def.desire {
+            if is_dependency_available(tag_name, available_tags, built_composites) {
+                return true; // At least one desired dependency available
+            }
+        }
+        trace!(
+            "No desired dependencies available for {}: {:?}",
+            composite_def.name,
+            composite_def.desire
+        );
+        return false;
+    }
+
     // Check all required dependencies
     for (_index, tag_name) in composite_def.require {
         if !is_dependency_available(tag_name, available_tags, built_composites) {
@@ -137,15 +179,21 @@ pub fn compute_composite_tag(
     composite_def: &CompositeTagDef,
     available_tags: &HashMap<String, TagValue>,
 ) -> Option<TagValue> {
-    // Check if all required dependencies are available
-    for (_index, tag_name) in composite_def.require {
-        if !available_tags.contains_key(*tag_name) {
-            trace!(
-                "Missing required dependency for {}: {}",
-                composite_def.name,
-                tag_name
-            );
-            return None;
+    // Special handling for flexible composite tags like ImageSize
+    // Most composite implementations have their own dependency logic in the compute functions
+    if composite_def.name == "ImageSize" {
+        // ImageSize handles its own dependency logic internally
+    } else {
+        // Check if all required dependencies are available for other composites
+        for (_index, tag_name) in composite_def.require {
+            if !available_tags.contains_key(*tag_name) {
+                trace!(
+                    "Missing required dependency for {}: {}",
+                    composite_def.name,
+                    tag_name
+                );
+                return None;
+            }
         }
     }
 
@@ -165,6 +213,11 @@ pub fn compute_composite_tag(
         "ScaleFactor35efl" => compute_scale_factor_35efl(available_tags),
         "SubSecDateTimeOriginal" => compute_subsec_datetime_original(available_tags),
         "CircleOfConfusion" => compute_circle_of_confusion(available_tags),
+        "Megapixels" => compute_megapixels(available_tags),
+        "GPSPosition" => compute_gps_position(available_tags),
+        "HyperfocalDistance" => compute_hyperfocal_distance(available_tags),
+        "FOV" => compute_fov(available_tags),
+        "DOF" => compute_dof(available_tags),
 
         _ => {
             // For other composite tags, log what dependencies are available vs missing
@@ -314,24 +367,31 @@ pub fn resolve_and_compute_composites(
 
 /// Compute ImageSize composite (ImageWidth + ImageHeight)
 /// ExifTool: lib/Image/ExifTool/Composite.pm ImageSize definition
+/// ValueConv: return $val[4] if $val[4]; return "$val[2] $val[3]" if $val[2] and $val[3] and $$self{TIFF_TYPE} =~ /^(CR2|Canon 1D RAW|IIQ|EIP)$/; return "$val[0] $val[1]" if IsFloat($val[0]) and IsFloat($val[1]); return undef;
 fn compute_image_size(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
-    // First try ImageWidth/ImageHeight from EXIF
-    if let (Some(width), Some(height)) = (
-        available_tags.get("ImageWidth"),
-        available_tags.get("ImageHeight"),
-    ) {
-        if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
-            return Some(TagValue::String(format!("{w}x{h}")));
-        }
+    // Check RawImageCroppedSize first (index 4 in desire list)
+    if let Some(raw_size) = available_tags.get("RawImageCroppedSize") {
+        return Some(raw_size.clone());
     }
 
-    // Try EXIF variants
+    // Try ExifImageWidth/ExifImageHeight (indexes 2,3 in desire list)
+    // Note: ExifTool checks TIFF_TYPE here, but we'll use these for all files for now
     if let (Some(width), Some(height)) = (
         available_tags.get("ExifImageWidth"),
         available_tags.get("ExifImageHeight"),
     ) {
         if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
-            return Some(TagValue::String(format!("{w}x{h}")));
+            return Some(TagValue::String(format!("{w} {h}"))); // ExifTool uses space separator
+        }
+    }
+
+    // Finally try ImageWidth/ImageHeight (indexes 0,1 in require list)
+    if let (Some(width), Some(height)) = (
+        available_tags.get("ImageWidth"),
+        available_tags.get("ImageHeight"),
+    ) {
+        if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
+            return Some(TagValue::String(format!("{w} {h}"))); // ExifTool uses space separator
         }
     }
 
@@ -579,4 +639,212 @@ fn compute_circle_of_confusion(available_tags: &HashMap<String, TagValue>) -> Op
     let coc = diagonal_35mm / (scale * 1440.0);
 
     Some(TagValue::F64(coc))
+}
+
+/// Compute Megapixels composite tag from ImageSize
+/// ExifTool: lib/Image/ExifTool/Composite.pm Megapixels definition
+/// ValueConv: my @d = ($val =~ /\d+/g); $d[0] * $d[1] / 1000000
+fn compute_megapixels(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Require ImageSize
+    let image_size = available_tags.get("ImageSize")?;
+    let image_size_str = image_size.as_string()?;
+
+    // Trust ExifTool: extract all digit sequences from the string
+    // The Perl regex /\d+/g finds all sequences of digits
+    let digit_regex = Regex::new(r"\d+").ok()?;
+    let digits: Vec<u32> = digit_regex
+        .find_iter(image_size_str)
+        .filter_map(|m| m.as_str().parse::<u32>().ok())
+        .collect();
+
+    // Need at least 2 numbers (width and height)
+    if digits.len() < 2 {
+        return None;
+    }
+
+    // ExifTool: $d[0] * $d[1] / 1000000
+    let width = digits[0] as f64;
+    let height = digits[1] as f64;
+    let megapixels = (width * height) / 1_000_000.0;
+
+    Some(TagValue::F64(megapixels))
+}
+
+/// Compute GPSPosition composite tag from GPSLatitude and GPSLongitude
+/// ExifTool: lib/Image/ExifTool/Composite.pm GPSPosition definition
+/// ValueConv: (length($val[0]) or length($val[1])) ? "$val[0] $val[1]" : undef
+fn compute_gps_position(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    let gps_latitude = available_tags.get("GPSLatitude");
+    let gps_longitude = available_tags.get("GPSLongitude");
+
+    // Trust ExifTool: if either latitude or longitude has content (length > 0), combine them
+    let lat_str = gps_latitude.and_then(|v| v.as_string()).unwrap_or_default();
+    let lon_str = gps_longitude
+        .and_then(|v| v.as_string())
+        .unwrap_or_default();
+
+    // ExifTool: (length($val[0]) or length($val[1])) ? "$val[0] $val[1]" : undef
+    if !lat_str.is_empty() || !lon_str.is_empty() {
+        Some(TagValue::String(format!("{lat_str} {lon_str}")))
+    } else {
+        None
+    }
+}
+
+/// Compute HyperfocalDistance composite tag
+/// ExifTool: lib/Image/ExifTool/Composite.pm HyperfocalDistance definition  
+/// ValueConv: ToFloat(@val); return 'inf' unless $val[1] and $val[2]; return $val[0] * $val[0] / ($val[1] * $val[2] * 1000);
+fn compute_hyperfocal_distance(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Require FocalLength (index 0)
+    let focal_length = available_tags.get("FocalLength")?.as_f64()?;
+
+    // Require Aperture (index 1)
+    let aperture = available_tags.get("Aperture")?.as_f64()?;
+
+    // Require CircleOfConfusion (index 2)
+    let circle_of_confusion = available_tags.get("CircleOfConfusion")?.as_f64()?;
+
+    // ExifTool: return 'inf' unless $val[1] and $val[2]
+    if aperture == 0.0 || circle_of_confusion == 0.0 {
+        return Some(TagValue::String("inf".to_string()));
+    }
+
+    // ExifTool: $val[0] * $val[0] / ($val[1] * $val[2] * 1000)
+    let hyperfocal_distance =
+        (focal_length * focal_length) / (aperture * circle_of_confusion * 1000.0);
+
+    Some(TagValue::F64(hyperfocal_distance))
+}
+
+/// Compute FOV (Field of View) composite tag
+/// ExifTool: lib/Image/ExifTool/Composite.pm FOV definition
+/// Complex trigonometric calculation with focus distance correction
+fn compute_fov(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Require FocalLength (index 0) and ScaleFactor35efl (index 1)
+    let focal_length = available_tags.get("FocalLength")?.as_f64()?;
+    let scale_factor = available_tags.get("ScaleFactor35efl")?.as_f64()?;
+
+    // ExifTool: return undef unless $val[0] and $val[1]
+    if focal_length == 0.0 || scale_factor == 0.0 {
+        return None;
+    }
+
+    // Focus distance correction (optional index 2)
+    let focus_distance = available_tags.get("FocusDistance").and_then(|v| v.as_f64());
+
+    // ExifTool: my $corr = 1;
+    let mut corr = 1.0;
+
+    // ExifTool focus distance correction logic
+    if let Some(focus_dist) = focus_distance {
+        if focus_dist > 0.0 {
+            // ExifTool: my $d = 1000 * $val[2] - $val[0]; $corr += $val[0]/$d if $d > 0;
+            let d = 1000.0 * focus_dist - focal_length;
+            if d > 0.0 {
+                corr += focal_length / d;
+            }
+        }
+    }
+
+    // ExifTool: my $fd2 = atan2(36, 2*$val[0]*$val[1]*$corr);
+    let fd2 = (36.0 / (2.0 * focal_length * scale_factor * corr)).atan();
+
+    // ExifTool: my @fov = ( $fd2 * 360 / 3.14159 );
+    let fov_angle = fd2 * 360.0 / std::f64::consts::PI;
+    let mut fov_values = vec![fov_angle];
+
+    // ExifTool: if ($val[2] and $val[2] > 0 and $val[2] < 10000) { push @fov, 2 * $val[2] * sin($fd2) / cos($fd2); }
+    if let Some(focus_dist) = focus_distance {
+        if focus_dist > 0.0 && focus_dist < 10000.0 {
+            let field_width = 2.0 * focus_dist * fd2.sin() / fd2.cos();
+            fov_values.push(field_width);
+        }
+    }
+
+    // ExifTool: return join(' ', @fov);
+    let fov_str = fov_values
+        .iter()
+        .map(|v| format!("{v:.1}"))
+        .collect::<Vec<_>>()
+        .join(" ");
+
+    Some(TagValue::String(fov_str))
+}
+
+/// Compute DOF (Depth of Field) composite tag
+/// ExifTool: lib/Image/ExifTool/Composite.pm DOF definition
+/// Complex photography calculation with multiple distance fallbacks
+fn compute_dof(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Required: FocalLength (index 0), Aperture (index 1), CircleOfConfusion (index 2)
+    let focal_length = available_tags.get("FocalLength")?.as_f64()?;
+    let aperture = available_tags.get("Aperture")?.as_f64()?;
+    let circle_of_confusion = available_tags.get("CircleOfConfusion")?.as_f64()?;
+
+    // ExifTool: return 0 unless $f and $val[2];
+    if focal_length == 0.0 || circle_of_confusion == 0.0 {
+        return Some(TagValue::String("0".to_string()));
+    }
+
+    // ExifTool distance fallback logic: try multiple distance sources
+    let mut distance = None;
+
+    // First try FocusDistance (index 3)
+    if let Some(focus_dist) = available_tags.get("FocusDistance").and_then(|v| v.as_f64()) {
+        if focus_dist > 0.0 {
+            distance = Some(focus_dist);
+        } else {
+            // ExifTool: $d or $d = 1e10;    # (use large number for infinity)
+            distance = Some(1e10);
+        }
+    }
+
+    // Fall back to other distance sources
+    if distance.is_none() {
+        for tag_name in &[
+            "SubjectDistance",
+            "ObjectDistance",
+            "ApproximateFocusDistance",
+        ] {
+            if let Some(dist) = available_tags.get(*tag_name).and_then(|v| v.as_f64()) {
+                if dist > 0.0 {
+                    distance = Some(dist);
+                    break;
+                }
+            }
+        }
+    }
+
+    // ExifTool: unless (defined $d) { return undef unless defined $val[7] and defined $val[8]; $d = ($val[7] + $val[8]) / 2; }
+    if distance.is_none() {
+        let lower = available_tags
+            .get("FocusDistanceLower")
+            .and_then(|v| v.as_f64());
+        let upper = available_tags
+            .get("FocusDistanceUpper")
+            .and_then(|v| v.as_f64());
+
+        if let (Some(lower_val), Some(upper_val)) = (lower, upper) {
+            distance = Some((lower_val + upper_val) / 2.0);
+        } else {
+            return None;
+        }
+    }
+
+    let d = distance?;
+
+    // ExifTool DOF calculation: my $t = $val[1] * $val[2] * ($d * 1000 - $f) / ($f * $f);
+    let t = aperture * circle_of_confusion * (d * 1000.0 - focal_length)
+        / (focal_length * focal_length);
+
+    // ExifTool: my @v = ($d / (1 + $t), $d / (1 - $t));
+    let near = d / (1.0 + t);
+    let mut far = d / (1.0 - t);
+
+    // ExifTool: $v[1] < 0 and $v[1] = 0; # 0 means 'inf'
+    if far < 0.0 {
+        far = 0.0; // 0 means infinity in ExifTool
+    }
+
+    // ExifTool: return join(' ',@v);
+    Some(TagValue::String(format!("{near:.3} {far:.3}")))
 }

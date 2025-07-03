@@ -132,7 +132,12 @@
       "Bash(RUST_BACKTRACE=1 cargo test test_extract_binary_tags_with_print_conv)",
       "Bash(diff:*)",
       "Bash(RUST_BACKTRACE=1 cargo test --test process_binary_data_tests test_extract_binary_tags_with_print_conv -- --nocapture)",
-      "Bash(RUST_LOG=debug cargo run -- test-images/canon/canon_eos_r50v_01.jpg)"
+      "Bash(RUST_LOG=debug cargo run -- test-images/canon/canon_eos_r50v_01.jpg)",
+      "Bash(./exiftool ../../test-images/apple/IMG_3755.JPG)",
+      "Bash(RUST_LOG=trace cargo run -- test-images/canon/Canon-5D.jpg)",
+      "Bash(./exiftool -j -struct -G -GPSAltitude# /home/mrm/src/exif-oxide/test-images/apple/IMG_3755.JPG)",
+      "Bash(RUST_LOG=debug cargo run -- test-images/canon/Canon-5D.jpg)",
+      "Bash(RUST_LOG=debug cargo run --bin exif-oxide test-images/canon/Canon_T3i.JPG)"
     ],
     "deny": []
   }
