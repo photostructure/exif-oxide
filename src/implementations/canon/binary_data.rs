@@ -222,6 +222,8 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
         first_entry: Some(1),
         groups: HashMap::new(),
         tags: HashMap::new(),
+        data_member_tags: Vec::new(),
+        dependency_order: Vec::new(),
     };
 
     // ExifTool: Canon.pm:2171 GROUPS => { 0 => 'MakerNotes', 2 => 'Camera' }
@@ -233,7 +235,8 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
         1,
         BinaryDataTag {
             name: "MacroMode".to_string(),
-            format: None, // Uses table default
+            format_spec: None, // Uses table default
+            format: None,      // Uses table default
             mask: None,
             print_conv: {
                 let mut conv = HashMap::new();
@@ -241,6 +244,7 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
                 conv.insert(2u32, "Normal".to_string());
                 Some(conv)
             },
+            data_member: None,
         },
     );
 
@@ -249,6 +253,7 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
         2,
         BinaryDataTag {
             name: "SelfTimer".to_string(),
+            format_spec: None,
             format: None,
             mask: None,
             print_conv: {
@@ -256,6 +261,7 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
                 conv.insert(0u32, "Off".to_string());
                 Some(conv)
             },
+            data_member: None,
         },
     );
 
@@ -264,6 +270,7 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
         4,
         BinaryDataTag {
             name: "CanonFlashMode".to_string(),
+            format_spec: None,
             format: None,
             mask: None,
             print_conv: {
@@ -273,6 +280,7 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
                 conv.insert(2u32, "On".to_string());
                 Some(conv)
             },
+            data_member: None,
         },
     );
 
@@ -281,6 +289,7 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
         7,
         BinaryDataTag {
             name: "FocusMode".to_string(),
+            format_spec: None,
             format: None,
             mask: None,
             print_conv: {
@@ -291,6 +300,7 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
                 conv.insert(3u32, "Manual Focus (3)".to_string());
                 Some(conv)
             },
+            data_member: None,
         },
     );
 

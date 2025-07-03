@@ -11,6 +11,7 @@
 //!
 //! Reference: lib/Image/ExifTool/Exif.pm ProcessExif function
 
+mod binary_data;
 mod ifd;
 mod processors;
 mod tags;
