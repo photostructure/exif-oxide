@@ -128,48 +128,164 @@ impl RawFormatHandler for CanonRawHandler {
 #### 2.3 Sony Handler (High complexity - 11.8K lines)
 
 ```rust
-pub struct SonyRawHandler;
+pub struct SonyRawHandler {
+    // Sony needs sophisticated offset management for multi-generation formats
+    offset_manager: AdvancedOffsetManager,
+    generation_detector: SonyGenerationDetector,
+}
+
 impl RawFormatHandler for SonyRawHandler {
     fn process_maker_notes(&self, data: &[u8], reader: &mut ExifReader) -> Result<()> {
         // Sony.pm: 139 ProcessBinaryData entries
         // Multiple generations: ARW, ARQ, SR2, SRF
         // Handle Sony IDC utility corruption issues
+        // Uses advanced offset management for complex format variations
 
         let sony_format = detect_sony_format(reader)?;
+        let offset_scheme = self.offset_manager.get_sony_scheme(sony_format)?;
+        
         match sony_format {
-            SonyFormat::ARW => self.process_arw_maker_notes(data, reader),
-            SonyFormat::SR2 => self.process_sr2_maker_notes(data, reader),
-            SonyFormat::SRF => self.process_srf_maker_notes(data, reader),
+            SonyFormat::ARW => self.process_arw_maker_notes(data, reader, &offset_scheme),
+            SonyFormat::SR2 => self.process_sr2_maker_notes(data, reader, &offset_scheme),
+            SonyFormat::SRF => self.process_srf_maker_notes(data, reader, &offset_scheme),
         }
     }
 }
 ```
 
+### Phase 3: Complex Format Support & Sophisticated Offset Management (Week 3-4)
+
+#### 3.0 Advanced Offset Management System
+
+**Context**: While simple manufacturers like Nikon work perfectly with basic offset schemes, complex manufacturers (Leica, Panasonic, some Sony) require sophisticated offset management as identified in the gap analysis.
+
+**Advanced Offset Management Foundation**:
+
+```rust
+/// ExifTool's sophisticated offset management for complex manufacturers
+pub struct AdvancedOffsetManager {
+    manufacturer_schemes: HashMap<RawFormat, ManufacturerOffsetScheme>,
+    entry_based_processors: HashMap<String, EntryBasedOffsetProcessor>,
+    corruption_recovery: CorruptionRecoveryEngine,
+    validation_engine: OffsetValidationEngine,
+}
+
+/// Manufacturer-specific offset complexity (Leica has 9 formats!)
+#[derive(Debug, Clone)]
+pub struct ManufacturerOffsetScheme {
+    pub base_calculation_rules: Vec<BaseCalculationRule>,
+    pub format_specific_adjustments: HashMap<String, FormatAdjustment>,
+    pub model_specific_overrides: HashMap<String, ModelOverride>,
+    pub offset_dependency_chains: Vec<OffsetDependencyChain>,
+}
+
+/// Handle entry-based offsets (Panasonic maker notes)
+pub struct EntryBasedOffsetProcessor {
+    entry_detection_patterns: Vec<EntryPattern>,
+    offset_extraction_rules: HashMap<u16, OffsetExtractionRule>,
+    validation_constraints: Vec<EntryValidationConstraint>,
+}
+
+#[derive(Debug, Clone)]
+pub struct OffsetExtractionRule {
+    pub tag_id: u16,
+    pub offset_location: OffsetLocation,      // Where in the entry the offset is
+    pub calculation_method: CalculationMethod, // How to interpret the offset
+    pub base_reference: OffsetBaseReference,  // What the offset is relative to
+    pub validation_requirements: Vec<ValidationRequirement>,
+}
+
+/// ExifTool's complex base reference system
+#[derive(Debug, Clone)]
+pub enum OffsetBaseReference {
+    MakerNoteStart,                           // Simple case (like Nikon)
+    TiffHeaderStart,                          // TIFF-relative
+    IfdStart(String),                         // Relative to specific IFD
+    EntryValueOffset,                         // Relative to entry's value offset
+    DynamicCalculation(String),               // Complex expression evaluation
+    ManufacturerSpecific(String),             // Manufacturer-defined scheme
+}
+
+/// Corruption detection and recovery for offset issues
+pub struct CorruptionRecoveryEngine {
+    corruption_detectors: Vec<Box<dyn CorruptionDetector>>,
+    recovery_strategies: HashMap<CorruptionType, RecoveryStrategy>,
+    heuristic_validators: Vec<HeuristicValidator>,
+}
+
+pub trait CorruptionDetector {
+    fn detect_corruption(&self, offsets: &[CalculatedOffset], data: &[u8]) -> Option<CorruptionAnalysis>;
+    fn assess_severity(&self, corruption: &CorruptionAnalysis) -> CorruptionSeverity;
+    fn suggest_recovery(&self, corruption: &CorruptionAnalysis) -> Vec<RecoveryOption>;
+}
+
+#[derive(Debug)]
+pub struct CorruptionAnalysis {
+    pub corruption_type: CorruptionType,
+    pub affected_offsets: Vec<usize>,
+    pub confidence_score: f64,               // 0.0 to 1.0
+    pub recovery_feasibility: f64,           // 0.0 to 1.0
+    pub alternative_interpretations: Vec<AlternativeInterpretation>,
+}
+
+#[derive(Debug)]
+pub enum CorruptionType {
+    PointerMisalignment,                     // Pointers don't point to valid data
+    CircularDependency,                      // Offset chains that loop
+    OutOfBoundsReference,                    // Offsets beyond valid data
+    InconsistentBaseCalculation,             // Conflicting base calculations
+    ManufacturerSpecificViolation(String),   // Format-specific rule violations
+}
+```
+
+**Complex Manufacturer Implementations**:
+
+```rust
+/// Leica's 9 maker note formats with complex expressions
+pub struct LeicaOffsetProcessor {
+    format_detection: LeicaFormatDetector,
+    expression_evaluator: OffsetExpressionEvaluator,
+    format_specific_handlers: HashMap<LeicaFormat, Box<dyn LeicaFormatHandler>>,
+}
+
+/// Handle complex offset expressions like "(entry_count * 12 + base_offset)"
+pub struct OffsetExpressionEvaluator {
+    expression_parser: ExpressionParser,
+    variable_resolver: VariableResolver,
+    calculation_cache: HashMap<String, CalculatedValue>,
+}
+
+/// Panasonic entry-based offset processing
+pub struct PanasonicEntryProcessor {
+    entry_based_manager: EntryBasedOffsetProcessor,
+    panasonic_specific_rules: Vec<PanasonicOffsetRule>,
+    rw2_format_handler: RW2FormatHandler,
+}
+
+/// Sony multi-generation offset handling
+pub struct SonyOffsetProcessor {
+    generation_detector: SonyGenerationDetector,
+    arw_processor: ARWOffsetProcessor,
+    sr2_processor: SR2OffsetProcessor,
+    format_migration_handler: FormatMigrationHandler,
+}
+```
+
 ### Phase 3: Complex Format Support (Week 3-4)
 
-#### 3.1 Nikon Handler (Highest complexity - 14.2K lines)
+#### 3.1 Nikon Handler (Leverages Milestone 14)
 
 ```rust
 pub struct NikonRawHandler {
-    encryption_keys: Option<NikonEncryptionKeys>,
+    // Simple delegation to proven Milestone 14 implementation
+    nikon_processor: NikonProcessor,
 }
 
 impl RawFormatHandler for NikonRawHandler {
     fn process_maker_notes(&self, data: &[u8], reader: &mut ExifReader) -> Result<()> {
-        // Nikon.pm: 293 ProcessBinaryData entries (most complex)
-        // Multiple format versions, encryption, complex offset schemes
-        // Leverages existing Nikon implementation from Milestone 14
-
-        let nikon_format = detect_nikon_format(data)?;
-        match nikon_format {
-            NikonFormat::NEF => self.process_nef_maker_notes(data, reader),
-            NikonFormat::NRW => self.process_nrw_maker_notes(data, reader),
-        }
-
-        // Handle encryption if keys available
-        if let Some(keys) = &self.encryption_keys {
-            self.process_encrypted_sections(data, reader, keys)?;
-        }
+        // Leverage complete Nikon implementation from Milestone 14
+        // No complex offset management needed - simple schemes work perfectly
+        self.nikon_processor.process_nikon_makernotes(reader, offset)
     }
 }
 ```
@@ -227,6 +343,9 @@ impl RawProcessor {
 
 - [ ] **TIFF Foundation**: Robust TIFF container parsing for all TIFF-based RAW formats
 - [ ] **Maker Note Routing**: Automatic detection and routing to format-specific handlers
+- [ ] **Advanced Offset Management**: Sophisticated offset handling for complex manufacturers (Leica, Panasonic, Sony)
+- [ ] **Simple Offset Integration**: Seamless integration with simple manufacturers (Nikon via Milestone 14)
+- [ ] **Corruption Recovery**: Graceful handling of offset corruption with heuristic recovery
 - [ ] **Basic Metadata**: Camera make/model, exposure settings, lens information
 - [ ] **Preview Extraction**: Embedded JPEG preview images for all formats
 - [ ] **Error Handling**: Graceful handling of corrupted or unsupported RAW variants
