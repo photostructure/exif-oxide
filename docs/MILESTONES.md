@@ -84,6 +84,24 @@ This milestone plan embraces the reality that we're building a complex system in
 
 ## Active Milestones
 
+### Milestone File-Meta: File Group Metadata (1 week)
+
+**Goal**: Add File: group metadata tags to match ExifTool output
+
+**Summary**: ExifTool includes File: group tags (Directory, FileName, MIMEType) in JSON output. These are currently missing from exif-oxide, causing compatibility test failures.
+
+**Key Deliverables**:
+
+- `File:Directory` - relative directory path  
+- `File:FileName` - base filename
+- `File:MIMEType` - MIME type detection (image/jpeg, image/tiff, etc.)
+- Integration with existing tag extraction pipeline
+
+**Current Status**: All EXIF PrintConv conversions are working correctly. Only File: group metadata missing.
+
+**Success Criteria**: Compatibility tests pass, File: group tags included in JSON output, maintains ExifTool format consistency.
+
+---
 
 ### Milestone 12: Variable ProcessBinaryData (3 weeks)
 
