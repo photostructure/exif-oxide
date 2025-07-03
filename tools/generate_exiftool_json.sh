@@ -46,7 +46,7 @@ echo "Scanning for JPEG files..."
 # Note: Using default ExifTool behavior (rational arrays) for Milestone 6
 # Milestone 8c: Using -G flag to get group-prefixed tag names (e.g., "EXIF:Make", "GPS:GPSLatitude")
 
-if ! exiftool -r -json -struct -G -GPSLatitude\# -GPSLongitude\# -GPSAltitude\# -all -if '$MIMEType eq "image/jpeg"' \
+if ! exiftool -r -json -struct -G -GPSLatitude\# -GPSLongitude\# -GPSAltitude\# -FileSize\# -all -if '$MIMEType eq "image/jpeg"' \
     "$PROJECT_ROOT/test-images" \
     "$PROJECT_ROOT/third-party/exiftool/t/images" \
     > "$TEMP_JSON" 2>/dev/null; then
