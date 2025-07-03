@@ -99,91 +99,60 @@ This milestone plan embraces the reality that we're building a complex system in
 
 ---
 
-## Milestones that need research and planning
+## Planned Milestones
+
+**Note**: Detailed planning documents exist in `docs/milestones/` for milestones with research completed.
 
 ### Milestone 15: XMP/XML Support
+- Comprehensive RDF/XML metadata extraction  
+- 72 namespace support (Adobe, IPTC, PLUS)
+- Structure flattening and namespace management
+- **Planning**: See [MILESTONE-15-XMP-XML.md](milestones/MILESTONE-15-XMP-XML.md)
 
-This is a major format addition
+### Milestone 16: MIME Type Detection  
+- File type detection for all MIMETYPES.md formats
+- Magic number validation and extension handling
+- Foundation for format-specific processing
+- **Planning**: See [MILESTONE-16-MIME-Type-Detection.md](milestones/MILESTONE-16-MIME-Type-Detection.md)
 
-### Milestone 16: Mimetypes
+### Milestone 17: RAW Image Format Support (Consolidated)
+- Unified RAW processing foundation for all manufacturers
+- Canon, Nikon, Sony, Olympus, Fujifilm, Panasonic support  
+- TIFF-based formats with manufacturer-specific handlers
+- **Planning**: See [MILESTONE-17-RAW-Format-Support.md](milestones/MILESTONE-17-RAW-Format-Support.md)
 
-- validate the contents of MIMETYPES.md and add formats and reprioritize as research indicates
-- Add MIMEType detection for file types listed in MIMETYPES.md
-- Note: the CLI and API for non-JPEG file types should only reliably extract the mimetype tag -- parsing support comes in future milestones.
+### Milestone 18: Video Format Support
+- QuickTime/MP4 atom parsing infrastructure
+- Smartphone and prosumer video metadata extraction
+- HEIF/HEIC, MOV, AVI, MP4, MPEG-TS support
+- **Planning**: See [MILESTONE-18-Video-Format-Support.md](milestones/MILESTONE-18-Video-Format-Support.md)
 
-### Milestone 17a: Canon raw support
+### Milestone 19: Binary Data Extraction (`-b` support)
+- Extract embedded images, thumbnails, and binary data
+- CLI support for `exiftool -b` equivalent functionality  
+- Streaming API for large binary data extraction
+- **Planning**: See [MILESTONE-19-Binary-Data-Extraction.md](milestones/MILESTONE-19-Binary-Data-Extraction.md)
 
-- ensure the CLI can now read tags from raw images
-- ensure the CLI can now extract binary embedded images from raw image types
+### Milestone 20: Error Classification System
+- MINOR_ERRORS classification and graceful degradation
+- Manufacturer quirk handling and corruption recovery
+- Comprehensive validation and error context tracking
+- **Planning**: Research in progress
 
-### Milestone 17b: Nikon raw support
+### Milestone 21: Basic Write Support
+- Core tag writing: title, caption, orientation, rating, dates
+- Pre-validation and safety checks
+- Foundation for metadata modification workflows
+- **Planning**: Research needed
 
-- ensure the CLI can now read tags from raw images
-- ensure the CLI can now extract binary embedded images from raw image types
-
-### Milestone 18a: Sony
-
-- include raw image support
-- ensure the CLI can now read tags from raw images
-- ensure the CLI can now extract binary embedded images from raw image types
-
-### Milestone 18b: Olympus
-
-- include raw image support
-- ensure the CLI can now read tags from raw images
-- ensure the CLI can now extract binary embedded images from raw image types
-
-### Milestone 18c: Fujifilm
-
-- include raw image support
-- ensure the CLI can now read tags from raw images
-- ensure the CLI can now extract binary embedded images from raw image types
-
-### Milestone 18d: Panasonic
-
-- include raw image support
-- ensure the CLI can now read tags from raw images
-- ensure the CLI can now extract binary embedded images from raw image types
-
-### Milestone 19: Video file types
-
-- QuickTime atoms (track as milestone 19a?)
-- MP4 atoms (track as milestone 19b?)
-
-(what other common formats? research and add sub-milestones)
-
-### Milestone 20: Error Classification System (2 weeks)
-
-**Goal**: Port ExifTool's sophisticated error handling. We don't need verbatim error message replication -- only _sematically similar_ messaging (as the perl and rust I/O errors, for example, will use quite different verbiage, and there's little value to replicating the entire perl error system)
-
-**Summary**: Implement MINOR_ERRORS classification, manufacturer quirk handling, and comprehensive validation.
-
-**Key Deliverables**:
-
-- Error classification (Fatal/Minor/Warning)
-- Manufacturer quirk handling (Samsung entry count fix)
-- Comprehensive validation (offset bounds, entry count, format)
-- Error context tracking with full path
-
-**Success Criteria**: Process 1000 files without crashing, known problematic files handled gracefully, error messages semantically match ExifTool's.
-
----
-
-### Milestone 21: Basic write support
-
-(milestone research should split this into sub-milestones, include a port of the ExifTool pre-validation-before-writing algorithm )
-
-basic tag updates: title, caption, orientation, rating, dateTimeOriginal, subSecDateTimeOriginal, and all other `-allDates` tags
-
-(what other common tags do we need to support writes to? research and add sub-milestones)
-
-### Milestone 22: Advanced write support
-
-- MakerNote preservation
+### Milestone 22: Advanced Write Support  
+- MakerNote preservation and complex metadata writing
+- Advanced validation and backup strategies
+- **Planning**: Research needed
 
 ### Milestone 23: ImageDataHash
-
-See <https://exiftool.org/ExifTool.html#ImageHashType>
+- ExifTool ImageHashType functionality implementation
+- **Planning**: Research needed
 
 ---
 
