@@ -99,25 +99,62 @@ This milestone plan embraces the reality that we're building a complex system in
 
 ---
 
-## Future Milestones (Priority Order Based on Analysis)
+## Milestones that need research and planning
 
-1. **XMP/XML Support** - Major format addition
-2. **RAW Formats** - DNG, CR2, CR3, NEF, ARW, RAF, RW2, MRW support
-3. **Sony & Olympus** - Additional manufacturers
-4. **Write Support Foundation** - Basic tag updates
-5. **Video Metadata** - QuickTime/MP4 atoms
-6. **Advanced Write** - MakerNote preservation
-7. **ImageDataHash** - See <https://exiftool.org/ExifTool.html#ImageHashType>
-8. **MIE Support** - Major format addition
-9. **Async Support** - AsyncRead/AsyncSeek wrappers
-10. **Advanced Nikon Encryption** - Complete crypto port
-11. **Complete Coverage** - Remaining mainstream conversions
+### Milestone 15: XMP/XML Support
 
----
+This is a major format addition
 
-### Milestone: Error Classification System (2 weeks)
+### Milestone 16: Mimetypes
 
-**Goal**: Port ExifTool's sophisticated error handling
+- validate the contents of MIMETYPES.md and add formats and reprioritize as research indicates
+- Add MIMEType detection for file types listed in MIMETYPES.md
+- Note: the CLI and API for non-JPEG file types should only reliably extract the mimetype tag -- parsing support comes in future milestones.
+
+### Milestone 17a: Canon raw support
+
+- ensure the CLI can now read tags from raw images
+- ensure the CLI can now extract binary embedded images from raw image types
+
+### Milestone 17b: Nikon raw support
+
+- ensure the CLI can now read tags from raw images
+- ensure the CLI can now extract binary embedded images from raw image types
+
+### Milestone 18a: Sony
+
+- include raw image support
+- ensure the CLI can now read tags from raw images
+- ensure the CLI can now extract binary embedded images from raw image types
+
+### Milestone 18b: Olympus
+
+- include raw image support
+- ensure the CLI can now read tags from raw images
+- ensure the CLI can now extract binary embedded images from raw image types
+
+### Milestone 18c: Fujifilm
+
+- include raw image support
+- ensure the CLI can now read tags from raw images
+- ensure the CLI can now extract binary embedded images from raw image types
+
+### Milestone 18d: Panasonic
+
+- include raw image support
+- ensure the CLI can now read tags from raw images
+- ensure the CLI can now extract binary embedded images from raw image types
+
+### Milestone 19: Video file types
+
+- QuickTime atoms (track as milestone 19a?)
+- MP4 atoms (track as milestone 19b?)
+
+(what other common formats? research and add sub-milestones)
+
+### Milestone 20: Error Classification System (2 weeks)
+
+**Goal**: Port ExifTool's sophisticated error handling. We don't need verbatim error message replication -- only _sematically similar_ messaging (as the perl and rust I/O errors, for example, will use quite different verbiage, and there's little value to replicating the entire perl error system)
 
 **Summary**: Implement MINOR_ERRORS classification, manufacturer quirk handling, and comprehensive validation.
 
@@ -128,7 +165,34 @@ This milestone plan embraces the reality that we're building a complex system in
 - Comprehensive validation (offset bounds, entry count, format)
 - Error context tracking with full path
 
-**Success Criteria**: Process 1000 files without crashing, known problematic files handled gracefully, error messages match ExifTool's.
+**Success Criteria**: Process 1000 files without crashing, known problematic files handled gracefully, error messages semantically match ExifTool's.
+
+---
+
+### Milestone 21: Basic write support
+
+(milestone research should split this into sub-milestones, include a port of the ExifTool pre-validation-before-writing algorithm )
+
+basic tag updates: title, caption, orientation, rating, dateTimeOriginal, subSecDateTimeOriginal, and all other `-allDates` tags
+
+(what other common tags do we need to support writes to? research and add sub-milestones)
+
+### Milestone 22: Advanced write support
+
+- MakerNote preservation
+
+### Milestone 23: ImageDataHash
+
+See <https://exiftool.org/ExifTool.html#ImageHashType>
+
+---
+
+## Future milestones
+
+1. **MIE Support** - Major format addition
+1. **Async Support** - AsyncRead/AsyncSeek wrappers
+1. **Advanced Nikon Encryption** - Complete crypto port
+1. **Complete Coverage** - Remaining mainstream conversions
 
 ---
 
