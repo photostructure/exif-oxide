@@ -134,7 +134,7 @@ cargo test --features test-helpers
 ### Benefits of This Approach
 
 1. **Security**: Test helpers are only available when explicitly enabled via feature flag
-2. **Clean API**: No pollution of production API with test-only methods  
+2. **Clean API**: No pollution of production API with test-only methods
 3. **Reusable**: Shared helpers eliminate code duplication across integration tests
 4. **Standard**: Follows [Rust Book Chapter 11.3](https://doc.rust-lang.org/book/ch11-03-test-organization.html) recommendations
 
@@ -145,6 +145,118 @@ cargo test --features test-helpers
 - **Compatibility tests**: Use real files from `test-images/` directory
 
 See the [Rust Book's Test Organization](https://doc.rust-lang.org/book/ch11-03-test-organization.html) for more details on idiomatic Rust testing patterns.
+
+## Module Structure and Test Organization
+
+### Unit Test Module Structure
+
+For unit tests within library modules, follow these patterns to avoid clippy issues with `cargo clippy --fix`:
+
+#### ✅ Correct Pattern - `#[cfg(test)]` Imports
+
+```rust
+// src/my_module.rs
+use std::collections::HashMap;
+
+// Put test imports at module level with cfg(test)
+#[cfg(test)]
+use crate::types::{TagValue, ProcessorType};
+#[cfg(test)]
+use crate::tiff_types::ByteOrder;
+
+pub struct MyStruct {
+    // implementation
+}
+
+#[test]
+fn test_my_function() {
+    // test using the imports above
+    let value = TagValue::String("test".to_string());
+}
+```
+
+#### ❌ Problematic Pattern - Nested Test Module
+
+```rust
+// This causes clippy --fix to incorrectly remove imports (!!)
+#[cfg(test)]
+mod tests {
+    use super::*;  // clippy can't always resolve this correctly
+    use crate::types::TagValue;  // clippy may mark as unused
+
+    #[test]
+    fn test_something() {
+        // tests here
+    }
+}
+```
+
+### The Clippy Import Analysis Issue
+
+When structuring test modules in Rust, you may encounter a situation where `cargo clippy --fix` incorrectly removes imports that are actually used in tests. This happens due to inconsistencies in how clippy analyzes imports across different compilation targets.
+
+#### Root Cause
+
+The issue occurs because:
+
+1. **Different Analysis Contexts**: `cargo clippy` (regular linting) uses different target analysis than `cargo clippy --fix` (which includes `--all-targets` by default)
+2. **Test Module Resolution**: When tests are in separate modules or files, clippy may not properly connect import usage across module boundaries
+3. **Compilation Target Mismatch**: Test code is only compiled with `#[cfg(test)]`, but clippy's fix mode may analyze imports outside this context
+
+#### Symptoms
+
+- Clippy reports imports as "unused" but removing them causes compilation errors
+- `cargo clippy --fix` removes imports that are clearly used in test functions
+- Tests pass individually but fail after running clippy fix
+
+#### Resolution Strategy
+
+1. **Use Module-Level `#[cfg(test)]` Imports**:
+
+   ```rust
+   // Instead of nested test modules, use cfg-gated imports
+   #[cfg(test)]
+   use crate::types::TagValue;
+
+   #[test]
+   fn my_test() {
+       let value = TagValue::String("test".to_string());
+   }
+   ```
+
+2. **Avoid Nested Test Modules in Separate Files**:
+
+   ```rust
+   // In tests.rs - avoid this pattern:
+   #[cfg(test)]
+   mod tests {  // <- This can confuse clippy
+       use super::*;
+       // tests
+   }
+
+   // Use this instead:
+   #[cfg(test)]
+   use crate::my_module::MyStruct;
+
+   #[test]
+   fn my_test() {
+       // tests
+   }
+   ```
+
+3. **Verify Import Usage Context**:
+   - Ensure imports are actually used in the same compilation context where they're declared
+   - Check that `#[cfg(test)]` is applied consistently
+   - Avoid mixing test and non-test imports in the same use statement
+
+#### Prevention
+
+- Follow Rust's standard testing patterns from [The Rust Book Chapter 11.3](https://doc.rust-lang.org/book/ch11-03-test-organization.html)
+- Use `#[cfg(test)]` on imports rather than wrapping entire test modules
+- Test your build process with `make fix` after restructuring test code
+- When in doubt, use `cargo clippy --all-targets` for consistent analysis
+
+This issue highlights the importance of understanding how Rust's compilation targets work with testing and how tools like clippy analyze code across different contexts.
 
 ## Avoid mocks and byte array snippets
 
