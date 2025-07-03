@@ -76,7 +76,8 @@ fn filter_to_supported_tags(data: &Value) -> Value {
         let supported_tag_refs: Vec<&str> = supported_tags.iter().map(|s| s.as_str()).collect();
 
         // Allowed groups matching generate_exiftool_json.sh
-        let allowed_groups = ["EXIF", "File", "System", "GPS"];
+        // TODO: Add "File" back when Milestone File-Meta is completed (File:Directory, File:FileName, File:MIMEType)
+        let allowed_groups = ["EXIF", "System", "GPS"];
 
         let filtered: HashMap<String, Value> = obj
             .iter()
