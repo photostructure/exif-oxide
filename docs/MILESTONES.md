@@ -84,6 +84,25 @@ This milestone plan embraces the reality that we're building a complex system in
 
 ## Active Milestones
 
+### Milestone 8f: Composite Tag Implementation (4 weeks)
+
+**Goal**: Complete ExifTool-compatible composite tag system for mainstream metadata tags
+
+**Summary**: Implement remaining composite tag computations after infrastructure completion. Infrastructure (multi-pass dependency resolution, code generation) is complete with 10/63 mainstream composite tags working.
+
+**Detailed Design**: [milestones/MILESTONE-8f-composite.md](milestones/MILESTONE-8f-composite.md)
+
+**Key Deliverables**:
+
+- High-priority mainstream composite tags (RedBalance, Megapixels, GPSPosition, LightValue)
+- Complex mathematical function ports (CalcScaleFactor35efl, RedBlueBalance)
+- Photography calculations (FOV, DOF, HyperfocalDistance)
+- Compatibility test fixes for "Composite:" prefix
+
+**Success Criteria**: 6+ high-priority composite tags implemented, complex function dependencies ported, `make compat` tests pass, output matches ExifTool for all implemented composites.
+
+---
+
 ### Milestone 12: Variable ProcessBinaryData (3 weeks)
 
 **Goal**: Handle variable-length formats with DataMember dependencies
