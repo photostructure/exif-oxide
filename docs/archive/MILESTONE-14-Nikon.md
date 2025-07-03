@@ -1036,3 +1036,17 @@ Phase 3 successfully demonstrates the architecture can handle:
 **Next Steps**: Milestone 14 is now complete. The Nikon implementation establishes patterns for complex manufacturer support and proves the architecture scales beyond Canon's simpler design.
 
 This milestone establishes Nikon as the second major manufacturer while proving our architecture can handle significantly more complex implementations than Canon. All phases are now complete with comprehensive testing validation.
+
+## Offset Management Complexity Analysis
+
+**Decision: Rejected complex offset management for Nikon implementation**
+
+**Analysis**: OFFSET-BASE-MANAGEMENT.md describes sophisticated offset systems for ExifTool's multi-manufacturer complexity (entry-based offsets, corruption recovery, automatic fixing). However, Nikon-specific analysis shows:
+
+**Current simple implementation is optimal**:
+- ✅ All 122 tests passing with basic format-specific offsets
+- ✅ ExifTool's Nikon.pm uses identical simple offset calculations  
+- ✅ No entry-based offsets, complex expressions, or automatic fixing in Nikon
+- ✅ Performance and maintainability advantages of current approach
+
+**Conclusion**: Complex offset management violates YAGNI principle for Nikon. Simple format-specific calculations (`data_pos + 0x0a/0x08/0x06`) perfectly match ExifTool's Nikon behavior. Implement advanced offset management when encountering manufacturers that actually need it (Leica, Panasonic entry-based offsets), not preemptively.

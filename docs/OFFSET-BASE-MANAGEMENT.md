@@ -4,6 +4,10 @@
 
 ExifTool has a sophisticated offset calculation system that handles various base offset schemes used by different manufacturers. We need a design that can handle this complexity without introducing novel parsing logic.
 
+## Update from Milestone 14
+
+We haven't adopted this yet, but Milestone 22 and 24 will, incrementally. See Offset Management Complexity Analysis in $REPO_ROOT/docs/archive/MILESTONE-14-Nikon.md
+
 ## Research Summary: ExifTool's Offset Management Architecture
 
 Based on comprehensive analysis of ExifTool source code, documentation, and architectural patterns, here's what we discovered:
