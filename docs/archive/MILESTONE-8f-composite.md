@@ -67,20 +67,25 @@ This milestone implements ExifTool's sophisticated multi-pass composite building
 - **ScaleFactor35efl** - Placeholder returning 1.0 (needs full CalcScaleFactor35efl port)
 - **CircleOfConfusion** - Basic calculation (needs sensor size refinements)
 
-### ❌ Remaining Work (84% - 53/63 tags)
+### ❌ Remaining Work (Active Implementation - 7 high-value tags)
 
 **High Priority Mainstream Tags** (need implementation):
+1. **Megapixels** - `$val =~ /(\d+\.?\d*) x (\d+\.?\d*)/ ? $1 * $2 / 1000000` from ImageSize
+2. **GPSPosition** - `"$val[0] $val[1]"` coordinate combination
+3. **HyperfocalDistance** - `$val[0] * $val[0] / ($val[1] * $val[2] * 1000)` depth of field math
+4. **FOV** (Field of View) - Complex trigonometric calculation with focus distance
+5. **DOF** (Depth of Field) - Multi-parameter photography calculations
+6. **LensID** - Complex lens identification from multiple fallback sources
+
+### 🔄 Deferred Implementation (Complex Functions - Not Currently Needed)
+
+**Complex Function Dependencies** (deferred until proven necessary):
 1. **RedBalance/BlueBalance** - `Image::ExifTool::Exif::RedBlueBalance(1,@val)` white balance calculations
 2. **LightValue** - `Image::ExifTool::Exif::CalculateLV($val[0],$val[1],$val[2])` complex photography math
-3. **Megapixels** - `$val =~ /(\d+\.?\d*) x (\d+\.?\d*)/ ? $1 * $2 / 1000000` from ImageSize
-4. **GPSPosition** - `"$val[0] $val[1]"` coordinate combination
-5. **FOV** (Field of View) - Complex trigonometric calculation with focus distance
-6. **HyperfocalDistance** - `$val[0] * $val[0] / ($val[1] * $val[2] * 1000)` depth of field math
+3. **CalcScaleFactor35efl** - 150-line ExifTool function handling sensor size calculations
+4. **CFAPattern** - Color Filter Array validation and formatting
 
-**Complex Function Dependencies** (require manual porting):
-1. **CalcScaleFactor35efl** - 150-line ExifTool function handling sensor size calculations
-2. **RedBlueBalance** - White balance array processing with fallback logic  
-3. **CalculateLV** - Light value calculation: `log(aperture² × 100 / (shutter × ISO)) / log(2)`
+**Rationale**: These tags involve complex ExifTool functions that would require substantial porting effort for limited practical benefit in most image processing workflows.
 
 **Medium Priority Tags**:
 - **CFAPattern** - Color Filter Array validation and formatting
@@ -284,9 +289,9 @@ This milestone implements ExifTool's sophisticated multi-pass composite building
 ## Completion Criteria
 
 1. ✅ **Infrastructure** - Multi-pass dependency resolution working
-2. ⏳ **High Priority Tags** - RedBalance, Megapixels, GPSPosition, LightValue, HyperfocalDistance  
-3. ⏳ **Complex Functions** - CalcScaleFactor35efl, RedBlueBalance ported
-4. ⏳ **Test Compatibility** - All `make compat` tests pass with composite tags
+2. ⏳ **High Priority Tags** - Megapixels, GPSPosition, HyperfocalDistance, FOV, DOF, LensID
+3. ⏳ **Test Compatibility** - All `make compat` tests pass with composite tags
+4. ⏳ **Quality Assurance** - ExifTool source references for all implementations
 5. ⏳ **Quality Assurance** - ExifTool source references for all implementations
 
 **Next Steps**: Begin with Megapixels implementation (simplest regex parsing) to establish pattern, then tackle RedBalance (most complex function dependency).
