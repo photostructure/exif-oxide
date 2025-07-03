@@ -25,6 +25,7 @@ pub fn register_all_conversions() {
         "ycbcrpositioning_print_conv",
         print_conv::ycbcrpositioning_print_conv,
     );
+    registry::register_print_conv("gpsaltitude_print_conv", print_conv::gpsaltitude_print_conv);
     registry::register_print_conv(
         "gpsaltituderef_print_conv",
         print_conv::gpsaltituderef_print_conv,
@@ -61,6 +62,12 @@ pub fn register_all_conversions() {
         print_conv::exposuretime_print_conv,
     );
     registry::register_print_conv("focallength_print_conv", print_conv::focallength_print_conv);
+
+    // Composite tag PrintConv functions
+    registry::register_print_conv(
+        "composite_gps_gpsaltitude_print_conv",
+        print_conv::composite_gps_gpsaltitude_print_conv,
+    );
 
     // GPS coordinate ValueConv functions - convert to unsigned decimal degrees
     // Sign handling happens in Composite tags that combine coordinate + ref

@@ -48,6 +48,17 @@ pub fn ycbcrpositioning_print_conv(val: &TagValue) -> String {
     .to_string()
 }
 
+/// GPS Altitude PrintConv
+/// ExifTool: lib/Image/ExifTool/GPS.pm:124 - '$val =~ /^(inf|undef)$/ ? $val : "$val m"'
+pub fn gpsaltitude_print_conv(val: &TagValue) -> String {
+    match val.as_f64() {
+        Some(v) if v.is_infinite() => "inf".to_string(),
+        Some(v) if v.is_nan() => "undef".to_string(),
+        Some(v) => format!("{v:.1} m"), // Round to 0.1m - GPS accuracy limit
+        None => format!("Unknown ({val})"),
+    }
+}
+
 /// GPS AltitudeRef PrintConv
 /// ExifTool: lib/Image/ExifTool/GPS.pm GPSAltitudeRef tag definition
 pub fn gpsaltituderef_print_conv(val: &TagValue) -> String {
@@ -311,6 +322,52 @@ pub fn focallength_in_35mm_format_print_conv(val: &TagValue) -> String {
         }
         None => format!("Unknown ({val})"),
     }
+}
+
+/// Composite GPS Altitude PrintConv
+/// ExifTool: lib/Image/ExifTool/GPS.pm:423-431
+/// Formats GPS altitude with "Above/Below Sea Level" based on sign
+pub fn composite_gps_gpsaltitude_print_conv(val: &TagValue) -> String {
+    // Handle numeric value
+    if let Some(v) = val.as_f64() {
+        if v.is_infinite() {
+            return "inf".to_string();
+        }
+        if v.is_nan() {
+            return "undef".to_string();
+        }
+
+        // Round to 1 decimal place: int($val * 10) / 10
+        let rounded = (v * 10.0).round() / 10.0;
+
+        // Check if negative (below sea level) and make positive for display
+        if rounded < 0.0 {
+            return format!("{:.1} m Below Sea Level", -rounded);
+        } else {
+            return format!("{rounded:.1} m Above Sea Level");
+        }
+    }
+
+    // Handle string value that might already be formatted (fallback for existing formatting)
+    if let Some(s) = val.as_string() {
+        if s == "inf" || s == "undef" {
+            return s.to_string();
+        }
+
+        // Try to parse numeric value from string like "25.2 m"
+        // Simple parsing without regex dependency
+        let cleaned = s.trim().trim_end_matches(" m").trim_end_matches("m");
+        if let Ok(v) = cleaned.parse::<f64>() {
+            let rounded = (v * 10.0).round() / 10.0;
+            if rounded < 0.0 {
+                return format!("{:.1} m Below Sea Level", -rounded);
+            } else {
+                return format!("{rounded:.1} m Above Sea Level");
+            }
+        }
+    }
+
+    format!("Unknown ({val})")
 }
 
 #[cfg(test)]

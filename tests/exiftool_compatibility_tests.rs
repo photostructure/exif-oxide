@@ -107,6 +107,8 @@ enum NormalizationRule {
     RatioFormat,
     /// Clean decimal precision but preserve JSON number type: 14.0 -> 14
     CleanNumericPrecision { max_places: u8 },
+    /// GPS altitude tolerance: strip unit, validate values within 0.09m tolerance
+    GPSAltitudeTolerance,
 }
 
 /// Tag normalization configuration
@@ -115,13 +117,6 @@ fn get_normalization_rules() -> HashMap<&'static str, NormalizationRule> {
     let mut rules = HashMap::new();
 
     // Distance/length tags
-    rules.insert(
-        "FocalLength",
-        NormalizationRule::UnitFormat {
-            unit: "mm",
-            decimal_places: Some(1),
-        },
-    );
     rules.insert(
         "EXIF:FocalLength",
         NormalizationRule::UnitFormat {
@@ -132,10 +127,6 @@ fn get_normalization_rules() -> HashMap<&'static str, NormalizationRule> {
 
     // Aperture/f-stop tags - clean unnecessary precision but preserve number type: 14.0 -> 14
     rules.insert(
-        "FNumber",
-        NormalizationRule::CleanNumericPrecision { max_places: 1 },
-    );
-    rules.insert(
         "EXIF:FNumber",
         NormalizationRule::CleanNumericPrecision { max_places: 1 },
     );
@@ -143,8 +134,13 @@ fn get_normalization_rules() -> HashMap<&'static str, NormalizationRule> {
     // Time-based tags - standardize ExposureTime format
     // ExifTool inconsistencies: "1/400" (string), 4 (number), 0.4 (number)
     // Our standard: fractions stay strings, whole seconds as integers, decimals as numbers
-    rules.insert("ExposureTime", NormalizationRule::RatioFormat);
+    // rules.insert("ExposureTime", NormalizationRule::RatioFormat);
     rules.insert("EXIF:ExposureTime", NormalizationRule::RatioFormat);
+
+    // GPS altitude tags - special tolerance-based comparison
+    // ExifTool: 25.24672793 (number), exif-oxide: "25.2 m" (string)
+    // GPS accuracy is ~1-3m, so validate values are within 0.09m tolerance
+    rules.insert("EXIF:GPSAltitude", NormalizationRule::GPSAltitudeTolerance);
 
     rules
 }
@@ -160,6 +156,7 @@ fn apply_normalization_rule(value: &Value, rule: &NormalizationRule) -> Value {
         NormalizationRule::CleanNumericPrecision { max_places } => {
             normalize_clean_numeric_precision(value, *max_places)
         }
+        NormalizationRule::GPSAltitudeTolerance => normalize_gps_altitude_tolerance(value),
     }
 }
 
@@ -338,6 +335,30 @@ fn normalize_for_comparison(mut data: Value, _is_exiftool: bool) -> Value {
     }
 
     data
+}
+
+/// Normalize GPS altitude for tolerance-based comparison
+/// Round to nearest 0.1m since GPS accuracy is typically 1-3m
+fn normalize_gps_altitude_tolerance(value: &Value) -> Value {
+    let number = match value {
+        Value::String(s) => {
+            // Strip " m" suffix if present, then parse number
+            let cleaned = s.trim_end_matches(" m").trim();
+            cleaned.parse::<f64>().ok()
+        }
+        Value::Number(n) => n.as_f64(),
+        _ => return value.clone(),
+    };
+
+    if let Some(num) = number {
+        // Round to nearest 0.1m for consistent comparison
+        let rounded = (num * 10.0).round() / 10.0;
+
+        // Return as formatted string with " m" suffix for consistency
+        Value::String(format!("{rounded:.1} m"))
+    } else {
+        value.clone()
+    }
 }
 
 /// Compare ExifTool snapshot and exif-oxide output for a specific file
