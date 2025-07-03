@@ -2,11 +2,11 @@
 
 This document tracks the incremental development milestones for exif-oxide.
 
-## Important Steps Before Starting
+## MANDATORY Steps Before Starting
 
 1. YOU MUST READ [TRUST-EXIFTOOL](./TRUST-EXIFTOOL.md) BEFORE CONTINUING
 
-2. READ [CLAUDE.md](../CLAUDE.md), [ARCHITECTURE.md](./ARCHITECTURE.md), and [ExifTool's CLAUDE.md](../third-party/exiftool/CLAUDE.md)
+2. [CLAUDE.md](../CLAUDE.md), [ARCHITECTURE.md](./ARCHITECTURE.md), [EXCLUDED-TAGS.md](./EXCLUDED-TAGS.md), and [ExifTool's CLAUDE.md](../third-party/exiftool/CLAUDE.md)
 
 3. Read all relevant related documentation before starting any work. With this project, **everything** is more complicated than you'd expect.
 
