@@ -17,7 +17,7 @@ SNAPSHOTS_DIR="$PROJECT_ROOT/generated/exiftool-json"
 # Single source of truth now maintained in config/supported_tags.json (Milestone 8a)
 # Milestone 8c: Now using group prefixes, need to specify allowed groups
 SUPPORTED_TAGS=$(cat "$PROJECT_ROOT/config/supported_tags.json")
-ALLOWED_GROUPS='["EXIF", "File", "System", "GPS"]'
+ALLOWED_GROUPS='["EXIF", "File", "System"]'
 
 echo "Generating ExifTool reference snapshots for exif-oxide compatibility testing"
 echo "Project root: $PROJECT_ROOT"
@@ -95,17 +95,13 @@ jq -c '.[]' "$TEMP_JSON" | while IFS= read -r file_data; do
     SNAPSHOT_FILE="$SNAPSHOTS_DIR/${SNAPSHOT_NAME}.json"
     
     # Filter to only supported tags and save as snapshot
-    # Handle group-prefixed tag names (e.g., "EXIF:Make" -> check if "Make" is supported)
-    # Milestone 8c: Also check that the group is allowed (EXIF, File, System, GPS)
-    echo "$file_data" | jq --argjson tags "$SUPPORTED_TAGS" --argjson groups "$ALLOWED_GROUPS" \
+    # supported_tags.json now contains full group:tag format (e.g., "EXIF:Make")
+    # Match the full key directly against the supported list
+    echo "$file_data" | jq --argjson tags "$SUPPORTED_TAGS" \
         'with_entries(select(
             .key as $k | 
             if $k == "SourceFile" then true
-            elif ($k | contains(":")) then
-                (($k | split(":")) as $parts |
-                ($parts[0] as $group | $parts[1] as $tag_name |
-                ($groups | index($group)) and ($tags | index($tag_name))))
-            else false
+            else ($tags | index($k))
             end
         ))' \
         > "$SNAPSHOT_FILE"
