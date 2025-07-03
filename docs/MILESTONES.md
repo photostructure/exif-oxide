@@ -82,47 +82,40 @@ This milestone plan embraces the reality that we're building a complex system in
 
 ---
 
-## Active Milestones
+### Milestone 14: Second Manufacturer - Nikon (4 weeks)
 
-### Milestone 8f: Composite Tag Implementation (4 weeks)
+**Goal**: Prove architecture with encrypted maker notes
 
-**Goal**: Complete ExifTool-compatible composite tag system for mainstream metadata tags
-
-**Summary**: Implement remaining composite tag computations after infrastructure completion. Infrastructure (multi-pass dependency resolution, code generation) is complete with 10/63 mainstream composite tags working.
-
-**Detailed Design**: [milestones/MILESTONE-8f-composite.md](milestones/MILESTONE-8f-composite.md)
+**Summary**: Add support for Nikon cameras including format detection, offset schemes, embedded binary image extraction, and basic encryption handling.
 
 **Key Deliverables**:
 
-- High-priority mainstream composite tags (RedBalance, Megapixels, GPSPosition, LightValue)
-- Complex mathematical function ports (CalcScaleFactor35efl, RedBlueBalance)
-- Photography calculations (FOV, DOF, HyperfocalDistance)
-- Compatibility test fixes for "Composite:" prefix
+- Nikon MakerNote detection (multiple format versions)
+- Nikon offset schemes (TIFF header at 0x0a)
+- ProcessNikonEncrypted skeleton
+- Nikon-specific PrintConv/ValueConv
 
-**Success Criteria**: 6+ high-priority composite tags implemented, complex function dependencies ported, `make compat` tests pass, output matches ExifTool for all implemented composites.
-
----
-
-### Milestone 12: Variable ProcessBinaryData (3 weeks)
-
-**Goal**: Handle variable-length formats with DataMember dependencies
-
-**Summary**: Implement ExifTool's DataMember system for tags where size/format depends on previously extracted values.
-
-**Detailed Design**: [milestones/MILESTONE-12-Variable-ProcessBinaryData.md](milestones/MILESTONE-12-Variable-ProcessBinaryData.md)
-
-**Key Deliverables**:
-
-- DataMember dependency system
-- Two-phase extraction
-- Variable format support (`string[$val{3}]`)
-- Canon AF data with NumAFPoints dependency
-
-**Success Criteria**: Variable-length formats extract correctly, DataMember dependencies resolved, Canon AF arrays sized dynamically.
+**Success Criteria**: Basic Nikon data extraction, correct format version detection, encryption detected (if not decrypted).
 
 ---
 
-### Milestone 13: Error Classification System (2 weeks)
+## Future Milestones (Priority Order Based on Analysis)
+
+1. **XMP/XML Support** - Major format addition
+2. **RAW Formats** - DNG, CR2, CR3, NEF, ARW, RAF, RW2, MRW support
+3. **Sony & Olympus** - Additional manufacturers
+4. **Write Support Foundation** - Basic tag updates
+5. **Video Metadata** - QuickTime/MP4 atoms
+6. **Advanced Write** - MakerNote preservation
+7. **ImageDataHash** - See <https://exiftool.org/ExifTool.html#ImageHashType>
+8. **MIE Support** - Major format addition
+9. **Async Support** - AsyncRead/AsyncSeek wrappers
+10. **Advanced Nikon Encryption** - Complete crypto port
+11. **Complete Coverage** - Remaining mainstream conversions
+
+---
+
+### Milestone: Error Classification System (2 weeks)
 
 **Goal**: Port ExifTool's sophisticated error handling
 
@@ -139,24 +132,7 @@ This milestone plan embraces the reality that we're building a complex system in
 
 ---
 
-### Milestone 14: Second Manufacturer - Nikon (4 weeks)
-
-**Goal**: Prove architecture with encrypted maker notes
-
-**Summary**: Add support for Nikon cameras including format detection, offset schemes, and basic encryption handling.
-
-**Key Deliverables**:
-
-- Nikon MakerNote detection (multiple format versions)
-- Nikon offset schemes (TIFF header at 0x0a)
-- ProcessNikonEncrypted skeleton
-- Nikon-specific PrintConv/ValueConv
-
-**Success Criteria**: Basic Nikon data extraction, correct format version detection, encryption detected (if not decrypted).
-
----
-
-### Milestone 15: Performance & Coverage Analysis (2 weeks)
+### Milestone: Performance & Coverage Analysis (2 weeks)
 
 **Goal**: Optimize and assess implementation coverage
 
@@ -171,19 +147,3 @@ This milestone plan embraces the reality that we're building a complex system in
 - Priority report for next phase
 
 **Success Criteria**: Performance within 10x of ExifTool, clear roadmap for continued development, 60%+ coverage of common tags.
-
----
-
-## Future Milestones (Priority Order Based on Analysis)
-
-1. **XMP/XML Support** - Major format addition
-2. **RAW Formats** - CR2, CR3, NEF, ARW, RAF, RW2, MRW support
-3. **Sony & Olympus** - Additional manufacturers
-4. **Write Support Foundation** - Basic tag updates
-5. **Video Metadata** - QuickTime/MP4 atoms
-6. **Advanced Write** - MakerNote preservation
-7. **ImageDataHash** - See <https://exiftool.org/ExifTool.html#ImageHashType>
-8. **MIE Support** - Major format addition
-9. **Async Support** - AsyncRead/AsyncSeek wrappers
-10. **Advanced Nikon Encryption** - Complete crypto port
-11. **Complete Coverage** - Remaining mainstream conversions

@@ -46,23 +46,25 @@ impl ExifReader {
         let val_hash = std::collections::HashMap::new();
         let mut evaluator = ExpressionEvaluator::new(val_hash, &self.data_members);
 
+        // Track cumulative offset for variable-length entries
+        // ExifTool: ProcessBinaryData processes entries sequentially, accounting for variable sizes
+        let mut cumulative_offset = 0;
+        let first_entry = table.first_entry.unwrap_or(0);
+
         // Process tags in dependency order
         for &index in &table.dependency_order {
             if let Some(tag_def) = table.tags.get(&index) {
-                // Calculate position based on FIRST_ENTRY
-                let first_entry = table.first_entry.unwrap_or(0);
                 if index < first_entry {
                     continue;
                 }
 
-                let entry_offset =
-                    (index - first_entry) as usize * table.default_format.byte_size();
-                if entry_offset + table.default_format.byte_size() > size {
-                    debug!("Tag {} at index {} beyond data bounds", tag_def.name, index);
-                    continue;
-                }
+                // Calculate current data position
+                let data_offset = offset + cumulative_offset;
 
-                let data_offset = offset + entry_offset;
+                debug!(
+                    "Processing tag {} at index {}: offset={:#x}, cumulative_offset={}",
+                    tag_def.name, index, data_offset, cumulative_offset
+                );
 
                 // Get format specification and resolve expressions if needed
                 let format_spec = table
@@ -135,6 +137,44 @@ impl ExifReader {
 
                 // Store in $val hash for current block references
                 evaluator.set_val(index, data_member_value);
+
+                // Update cumulative offset based on actual data size consumed
+                let consumed_bytes = match &resolved_format {
+                    crate::types::ResolvedFormat::Single(format) => format.byte_size(),
+                    crate::types::ResolvedFormat::Array(format, count) => {
+                        format.byte_size() * count
+                    }
+                    crate::types::ResolvedFormat::StringWithLength(length) => *length,
+                    crate::types::ResolvedFormat::VarString => {
+                        // Find actual string length in data
+                        let mut string_len = 0;
+                        let start_pos = data_offset;
+                        while start_pos + string_len < data.len()
+                            && data[start_pos + string_len] != 0
+                        {
+                            string_len += 1;
+                        }
+                        string_len + 1 // Include null terminator
+                    }
+                };
+
+                debug!(
+                    "Tag {} consumed {} bytes, new cumulative_offset={}",
+                    tag_def.name,
+                    consumed_bytes,
+                    cumulative_offset + consumed_bytes
+                );
+
+                cumulative_offset += consumed_bytes;
+
+                // Bounds check for next iteration
+                if cumulative_offset > size {
+                    debug!(
+                        "Cumulative offset {} exceeds data bounds {}",
+                        cumulative_offset, size
+                    );
+                    break;
+                }
 
                 // Apply PrintConv if available
                 let final_value = if let Some(print_conv) = &tag_def.print_conv {
