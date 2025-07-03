@@ -170,7 +170,7 @@ Binary data uses streaming references:
 
 ### Milestones
 - [Current Milestones](MILESTONES.md) - Active development work
-- [Completed Milestones](archived/DONE-MILESTONES.md) - Historical progress
+- [Completed Milestones](archive/DONE-MILESTONES.md) - Historical progress
 
 ### Technical Deep Dives
 - [State Management](STATE-MANAGEMENT.md) - How state is managed during processing
