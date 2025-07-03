@@ -15,7 +15,7 @@ pub use tiff::{extract_tiff_exif, get_tiff_endianness, validate_tiff_format};
 
 use crate::exif::ExifReader;
 use crate::generated::{EXIF_MAIN_TAGS, REQUIRED_PRINT_CONV, REQUIRED_VALUE_CONV};
-use crate::types::{ExifData, Result, TagValue};
+use crate::types::{ExifData, Result, TagEntry, TagValue};
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufReader, Read, Seek, SeekFrom};
@@ -43,54 +43,83 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
     let mut tags = HashMap::new();
     let mut tag_entries = Vec::new();
 
-    // Basic file information (now real data)
-    tags.insert(
-        "File:FileName".to_string(),
-        TagValue::String(
-            path.file_name()
-                .unwrap_or_default()
-                .to_string_lossy()
-                .to_string(),
-        ),
-    );
+    // Basic file information (now real data) - create as TagEntry objects
+    let filename = path
+        .file_name()
+        .unwrap_or_default()
+        .to_string_lossy()
+        .to_string();
+    tag_entries.push(TagEntry {
+        group: "File".to_string(),
+        name: "FileName".to_string(),
+        value: TagValue::String(filename.clone()),
+        print: filename,
+    });
 
-    tags.insert(
-        "File:Directory".to_string(),
-        TagValue::String(
-            path.parent()
-                .unwrap_or_else(|| Path::new("."))
-                .to_string_lossy()
-                .to_string(),
-        ),
-    );
+    let directory = path
+        .parent()
+        .unwrap_or_else(|| Path::new("."))
+        .to_string_lossy()
+        .to_string();
+    tag_entries.push(TagEntry {
+        group: "File".to_string(),
+        name: "Directory".to_string(),
+        value: TagValue::String(directory.clone()),
+        print: directory,
+    });
 
-    tags.insert(
-        "File:FileSize".to_string(),
-        TagValue::String(format!("{file_size} bytes")),
-    );
+    // Handle file size - use U32 if it fits, otherwise F64 for large files
+    let file_size_value = if file_size <= u32::MAX as u64 {
+        TagValue::U32(file_size as u32)
+    } else {
+        TagValue::F64(file_size as f64)
+    };
+    tag_entries.push(TagEntry {
+        group: "File".to_string(),
+        name: "FileSize".to_string(),
+        value: file_size_value,
+        print: file_size.to_string(),
+    });
 
-    // Format file modification time
+    // Format file modification time to match ExifTool format: "YYYY:MM:DD HH:MM:SS±TZ:TZ"
+    // ExifTool.pm formats this as local time with timezone offset
     if let Ok(modified) = file_metadata.modified() {
-        if let Ok(duration) = modified.duration_since(std::time::UNIX_EPOCH) {
-            tags.insert(
-                "File:FileModifyDate".to_string(),
-                TagValue::String(format!("{} seconds since epoch", duration.as_secs())),
-            );
-        }
+        use chrono::{DateTime, Local};
+        let datetime: DateTime<Local> = modified.into();
+        // Format to match ExifTool exactly: "2025:06:30 10:16:40-07:00"
+        let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
+        tag_entries.push(TagEntry {
+            group: "File".to_string(),
+            name: "FileModifyDate".to_string(),
+            value: TagValue::String(formatted.clone()),
+            print: formatted,
+        });
     }
 
-    tags.insert(
-        "File:FileType".to_string(),
-        TagValue::String(format!("{format:?}")),
-    );
-    tags.insert(
-        "File:FileTypeExtension".to_string(),
-        TagValue::String(format.extension().to_string()),
-    );
-    tags.insert(
-        "File:MIMEType".to_string(),
-        TagValue::String(format.mime_type().to_string()),
-    );
+    // Add FileType and FileTypeExtension using ExifTool-compatible values
+    let file_type = format.file_type().to_string();
+    tag_entries.push(TagEntry {
+        group: "File".to_string(),
+        name: "FileType".to_string(),
+        value: TagValue::String(file_type.clone()),
+        print: file_type,
+    });
+
+    let file_type_ext = format.file_type_extension().to_string();
+    tag_entries.push(TagEntry {
+        group: "File".to_string(),
+        name: "FileTypeExtension".to_string(),
+        value: TagValue::String(file_type_ext.clone()),
+        print: file_type_ext,
+    });
+
+    let mime_type = format.mime_type().to_string();
+    tag_entries.push(TagEntry {
+        group: "File".to_string(),
+        name: "MIMEType".to_string(),
+        value: TagValue::String(mime_type.clone()),
+        print: mime_type,
+    });
 
     // Format-specific processing
     match format {

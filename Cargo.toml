@@ -24,6 +24,7 @@ clap = { version = "4.0", features = ["derive"] }  # CLI argument parsing
 quick-xml = "0.36"     # Fast XML parsing for XMP metadata
 tracing = "0.1"        # Structured logging and instrumentation
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }  # Tracing subscriber implementation
+chrono = { version = "0.4", features = ["serde"] }  # Date and time handling for File:FileModifyDate
 
 [dev-dependencies]
 criterion = "0.5"      # Benchmarking

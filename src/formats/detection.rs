@@ -76,6 +76,38 @@ impl FileFormat {
             FileFormat::Dng => "dng",
         }
     }
+
+    /// Get ExifTool-compatible FileType name
+    /// ExifTool.pm %fileTypeLookup hash maps extensions to these type names
+    /// See: https://github.com/exiftool/exiftool/blob/master/lib/Image/ExifTool.pm#L229-L580
+    pub fn file_type(&self) -> &'static str {
+        match self {
+            FileFormat::Jpeg => "JPEG",
+            FileFormat::Tiff => "TIFF",
+            FileFormat::CanonRaw => "CR2",
+            FileFormat::NikonRaw => "NEF",
+            FileFormat::SonyRaw => "ARW",
+            FileFormat::Dng => "DNG",
+        }
+    }
+
+    /// Get ExifTool-compatible FileTypeExtension
+    /// Based on ExifTool.pm %fileTypeExt hash overrides
+    /// ExifTool.pm:582-592 - Special cases where extension differs from FileType
+    /// See: https://github.com/exiftool/exiftool/blob/master/lib/Image/ExifTool.pm#L582-L592
+    /// Note: ExifTool does NOT uppercase the extension despite the uc() call in FoundTag
+    pub fn file_type_extension(&self) -> &'static str {
+        match self {
+            // ExifTool %fileTypeExt overrides: 'JPEG' => 'jpg', 'TIFF' => 'tif'
+            FileFormat::Jpeg => "jpg", // ExifTool: FileType "JPEG" → Extension "jpg"
+            FileFormat::Tiff => "tif", // ExifTool: FileType "TIFF" → Extension "tif"
+            // For other formats, FileTypeExtension = lowercase(FileType)
+            FileFormat::CanonRaw => "cr2",
+            FileFormat::NikonRaw => "nef",
+            FileFormat::SonyRaw => "arw",
+            FileFormat::Dng => "dng",
+        }
+    }
 }
 
 /// Get format properties for validation and processing
