@@ -5,7 +5,7 @@
 //!
 //! ExifTool Reference: PROCESS_PROC system and ProcessDirectory dispatch
 
-use crate::implementations::{canon, sony};
+use crate::implementations::{canon, nikon, sony};
 use crate::tiff_types::IfdEntry;
 use crate::types::{DirectoryInfo, ExifError, ProcessorType, Result, SonyProcessor, TagSourceInfo};
 use std::collections::HashMap;
@@ -374,13 +374,18 @@ impl ExifReader {
             return Some(ProcessorType::Canon(crate::types::CanonProcessor::Main));
         }
 
+        // ExifTool: lib/Image/ExifTool/MakerNotes.pm:152-163 Nikon detection
+        if nikon::detect_nikon_signature(make) {
+            debug!("Detected Nikon MakerNote signature: '{}'", make);
+            return Some(ProcessorType::Nikon(crate::types::NikonProcessor::Main));
+        }
+
         // ExifTool: lib/Image/ExifTool/MakerNotes.pm:1007-1075 Sony detection
         if sony::is_sony_makernote(make, model) {
             debug!("Detected Sony MakerNote (Make field: {})", make);
             return Some(ProcessorType::Sony(SonyProcessor::Main));
         }
 
-        // TODO: Add other manufacturer detection (Nikon, etc.)
         // Return None to fall back to EXIF processor when no manufacturer detected
         debug!("No specific MakerNote processor detected, falling back to EXIF");
         None
@@ -390,13 +395,30 @@ impl ExifReader {
     /// ExifTool: Nikon.pm processing procedures
     fn process_nikon(
         &mut self,
-        _nikon_proc: crate::types::NikonProcessor,
+        nikon_proc: crate::types::NikonProcessor,
         dir_info: &DirectoryInfo,
     ) -> Result<()> {
-        // Placeholder for Nikon-specific processing
-        // This will be implemented in future milestones
-        debug!("Nikon processing not yet implemented for {}", dir_info.name);
-        self.process_exif_ifd(dir_info.dir_start, &dir_info.name)
+        debug!(
+            "Processing Nikon data with processor {:?} for directory {}",
+            nikon_proc, dir_info.name
+        );
+
+        match nikon_proc {
+            crate::types::NikonProcessor::Main => {
+                // Process Nikon Main MakerNote table
+                if dir_info.name == "MakerNotes" {
+                    nikon::process_nikon_makernotes(self, dir_info.dir_start)
+                } else {
+                    // Fall back to standard EXIF processing for other Nikon directories
+                    self.process_exif_ifd(dir_info.dir_start, &dir_info.name)
+                }
+            }
+            crate::types::NikonProcessor::Encrypted => {
+                // Process encrypted Nikon data (Phase 2 implementation)
+                debug!("Nikon encrypted processor not yet fully implemented");
+                self.process_exif_ifd(dir_info.dir_start, &dir_info.name)
+            }
+        }
     }
 
     /// Process Sony MakerNotes with proper namespace handling
