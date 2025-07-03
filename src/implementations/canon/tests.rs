@@ -110,6 +110,8 @@ fn test_camera_settings_table() {
 
 #[test]
 fn test_af_size_expr_calculation() {
+    use crate::implementations::canon::af_info::CanonAfSizeExpr;
+
     let mut extracted_values = HashMap::new();
     extracted_values.insert(0, 9); // NumAFPoints = 9
     extracted_values.insert(2, 9); // NumAFPoints for AFInfo2 = 9
@@ -133,6 +135,10 @@ fn test_af_size_expr_calculation() {
 
 #[test]
 fn test_af_info_table_structure() {
+    use crate::implementations::canon::af_info::{
+        create_af_info_table, CanonAfFormat, CanonAfSizeExpr,
+    };
+
     let table = create_af_info_table();
 
     // Verify table has expected number of tags
@@ -170,6 +176,10 @@ fn test_af_info_table_structure() {
 
 #[test]
 fn test_af_info2_table_structure() {
+    use crate::implementations::canon::af_info::{
+        create_af_info2_table, CanonAfCondition, CanonAfSizeExpr,
+    };
+
     let table = create_af_info2_table();
 
     // Verify table has expected number of tags
@@ -206,6 +216,8 @@ fn test_af_info2_table_structure() {
 
 #[test]
 fn test_process_serial_data_basic() {
+    use crate::implementations::canon::af_info::{create_af_info_table, process_serial_data};
+
     // Simulate minimal AFInfo data: NumAFPoints=2, ValidAFPoints=2, sizes...
     let test_data = vec![
         // NumAFPoints = 2 (little-endian)
