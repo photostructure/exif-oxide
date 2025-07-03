@@ -234,12 +234,33 @@ impl ExifReader {
                     .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
                 (canon_tag_name, None)
             } else {
-                // Regular EXIF tags - look up in unified table
-                let tag_def = TAG_BY_ID.get(&(tag_id as u32)).copied();
-                let name = tag_def
-                    .map(|def| def.name.to_string())
-                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
-                (name, tag_def)
+                // Check if this tag should be looked up in the global table based on source context
+                // ExifTool: lib/Image/ExifTool/Exif.pm:6375 uses context-specific tag tables
+                // to prevent maker note tags from being interpreted as GPS/EXIF tags
+                let should_lookup_global = source_info.is_none_or(|info| {
+                    // Only lookup in global table if the source IFD matches the tag's expected context
+                    // ExifTool: Different IFDs use different tag tables (GPS.pm:119-126 vs Canon.pm:1216-1220)
+                    // This prevents tag ID conflicts like 0x6 = GPSAltitude vs CanonImageType
+                    match info.ifd_name.as_str() {
+                        name if name.starts_with("Canon") => false, // Canon maker notes - don't lookup GPS/EXIF tags
+                        name if name.starts_with("Nikon") => false, // Nikon maker notes - don't lookup GPS/EXIF tags
+                        _ => true, // Standard IFDs (IFD0, ExifIFD, GPS, etc.) - lookup in global table
+                    }
+                });
+
+                if should_lookup_global {
+                    // Regular EXIF tags - look up in unified table
+                    // ExifTool: lib/Image/ExifTool/ExifTool.pm:9026 $$tagTablePtr{$tagID}
+                    let tag_def = TAG_BY_ID.get(&(tag_id as u32)).copied();
+                    let name = tag_def
+                        .map(|def| def.name.to_string())
+                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                    (name, tag_def)
+                } else {
+                    // Maker note tags - don't lookup in global table to avoid conflicts
+                    // ExifTool: lib/Image/ExifTool/Exif.pm:6190-6191 inMakerNotes context detection
+                    (format!("Tag_{tag_id:04X}"), None)
+                }
             };
 
             // Apply conversions to get both value and print

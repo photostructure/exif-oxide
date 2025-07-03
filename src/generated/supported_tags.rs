@@ -30,4 +30,7 @@ pub static SUPPORTED_TAGS: &[&str] = &[
     "EXIF:FocalLength",
     "EXIF:GPSLatitude",
     "EXIF:GPSLongitude",
+    "EXIF:GPSAltitude",
+    "EXIF:GPSDestLatitude",
+    "EXIF:GPSDestLongitude",
 ];
