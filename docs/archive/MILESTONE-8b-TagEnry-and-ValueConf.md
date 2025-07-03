@@ -23,7 +23,7 @@ After you think you're done implementing a milestone:
 ## Important Steps After Completing a Milestone
 
 1. Remove the completed milestone section from this document.
-2. Concisely summarize the completed work in docs/archived/DONE-MILESTONES.md
+2. Concisely summarize the completed work in docs/archive/DONE-MILESTONES.md
 
 ## Core Principles
 
