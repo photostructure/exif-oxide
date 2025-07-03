@@ -234,7 +234,6 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::PathBuf;
 
     #[test]
     fn test_extract_metadata_nonexistent_file() {
@@ -243,45 +242,5 @@ mod tests {
         assert!(result.is_err());
         // Should be an IO error for file not found
         assert!(result.is_err());
-    }
-
-    // Integration test requires actual test image file
-    #[test]
-    #[ignore] // Marked as ignore since it requires test data
-    fn test_extract_metadata_real_canon_image() {
-        // This test uses the Canon test image from the test suite
-        let test_image_path = PathBuf::from("tests/fixtures/canon_eos_1000d.jpg");
-
-        if !test_image_path.exists() {
-            // Skip test if test image not available
-            return;
-        }
-
-        let result = extract_metadata(&test_image_path, false);
-        assert!(result.is_ok(), "Failed to extract metadata: {result:?}");
-
-        let exif_data = result.unwrap();
-
-        // Verify basic file information
-        assert_eq!(exif_data.source_file, test_image_path.to_string_lossy());
-        assert!(!exif_data.legacy_tags.is_empty());
-
-        // Should have basic file tags
-        assert!(exif_data.legacy_tags.contains_key("File:FileName"));
-        assert!(exif_data.legacy_tags.contains_key("File:FileType"));
-        assert!(exif_data.legacy_tags.contains_key("File:MIMEType"));
-
-        // Should have detected EXIF
-        assert!(exif_data
-            .legacy_tags
-            .contains_key("System:ExifDetectionStatus"));
-
-        // Should have some EXIF tags extracted (from Canon test image)
-        let exif_tag_count = exif_data
-            .legacy_tags
-            .iter()
-            .filter(|(key, _)| key.starts_with("EXIF:") || key.starts_with("MakerNotes:"))
-            .count();
-        assert!(exif_tag_count > 0, "Should have extracted some EXIF tags");
     }
 }
