@@ -125,7 +125,13 @@
       "Bash(./exiftool t/images/Canon.jpg)",
       "Bash(RUST_LOG=debug cargo run -- test-images/apple/IMG_3755.JPG)",
       "Bash(RUST_LOG=trace cargo run -- test-images/apple/IMG_3755.JPG)",
-      "Bash(/tmp/test_tagvalue:*)"
+      "Bash(/tmp/test_tagvalue:*)",
+      "Bash(RUST_BACKTRACE=1 cargo test test_canon_t3i_compatibility -- --nocapture)",
+      "Bash(./debug_extract)",
+      "Bash(./debug_conversions)",
+      "Bash(RUST_BACKTRACE=1 cargo test test_extract_binary_tags_with_print_conv)",
+      "Bash(diff:*)",
+      "Bash(RUST_BACKTRACE=1 cargo test --test process_binary_data_tests test_extract_binary_tags_with_print_conv -- --nocapture)"
     ],
     "deny": []
   }
