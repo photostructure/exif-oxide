@@ -11,7 +11,7 @@
 //! - Model-specific tag table selection
 
 use crate::exif::ExifReader;
-use crate::implementations::nikon::{encryption, tags};
+use crate::implementations::nikon::{af_processing, encryption, tags};
 use crate::tiff_types::{ByteOrder, IfdEntry, TiffFormat};
 use crate::types::{ExifError, Result, TagValue};
 use crate::value_extraction;
@@ -266,6 +266,28 @@ pub fn apply_nikon_print_conv(
     tag_value
 }
 
+/// Extract raw binary data from IFD entry
+/// For special processing of binary tags like AFInfo
+fn extract_raw_data(data: &[u8], entry: &IfdEntry) -> Result<Vec<u8>> {
+    if entry.is_inline() {
+        // Value stored inline in the 4-byte value field
+        let bytes = entry.value_or_offset.to_le_bytes();
+        Ok(bytes[..entry.count.min(4) as usize].to_vec())
+    } else {
+        // Value stored at offset
+        let offset = entry.value_or_offset as usize;
+        let size = entry.count as usize;
+
+        if offset + size > data.len() {
+            return Err(ExifError::ParseError(format!(
+                "Binary data offset {offset:#x} + size {size} beyond data bounds"
+            )));
+        }
+
+        Ok(data[offset..offset + size].to_vec())
+    }
+}
+
 /// Process standard (non-encrypted) Nikon tags
 /// ExifTool: Nikon.pm standard tag processing
 pub fn process_standard_nikon_tags(
@@ -355,25 +377,54 @@ pub fn process_standard_nikon_tags(
         if let Some(tag_name) = tags::get_nikon_tag_name(entry.tag_id, &model) {
             trace!("Processing Nikon tag {:#x}: {}", entry.tag_id, tag_name);
 
-            // Extract the tag value
-            match extract_tag_value(&data, &entry, byte_order) {
-                Ok(tag_value) => {
-                    // Apply Nikon-specific PrintConv if available
-                    let final_value = apply_nikon_print_conv(entry.tag_id, tag_value, tag_table);
+            // Special processing for AF Info tag
+            if entry.tag_id == 0x0088 && tag_name == "AFInfo" {
+                // Extract AF Info binary data and process it specially
+                match extract_raw_data(&data, &entry) {
+                    Ok(af_data) => {
+                        debug!("Processing AF Info data ({} bytes)", af_data.len());
 
-                    // Store the tag with proper namespace
-                    let tag_source = reader.create_tag_source_info("Nikon");
-                    reader.store_tag_with_precedence(entry.tag_id, final_value, tag_source);
+                        // Process AF Info using dedicated AF processing module
+                        if let Err(e) =
+                            af_processing::process_nikon_af_info(reader, &af_data, &model)
+                        {
+                            debug!("AF Info processing failed: {:?}", e);
+                        }
 
-                    debug!("Stored Nikon tag {:#x}: {}", entry.tag_id, tag_name);
+                        // Also store the raw AF Info tag for compatibility
+                        let tag_source = reader.create_tag_source_info("Nikon");
+                        reader.store_tag_with_precedence(
+                            entry.tag_id,
+                            TagValue::Binary(af_data),
+                            tag_source,
+                        );
+                    }
+                    Err(e) => {
+                        debug!("Failed to extract AF Info binary data: {:?}", e);
+                    }
                 }
-                Err(e) => {
-                    trace!(
-                        "Failed to extract tag {:#x} ({}): {:?}",
-                        entry.tag_id,
-                        tag_name,
-                        e
-                    );
+            } else {
+                // Standard tag processing
+                match extract_tag_value(&data, &entry, byte_order) {
+                    Ok(tag_value) => {
+                        // Apply Nikon-specific PrintConv if available
+                        let final_value =
+                            apply_nikon_print_conv(entry.tag_id, tag_value, tag_table);
+
+                        // Store the tag with proper namespace
+                        let tag_source = reader.create_tag_source_info("Nikon");
+                        reader.store_tag_with_precedence(entry.tag_id, final_value, tag_source);
+
+                        debug!("Stored Nikon tag {:#x}: {}", entry.tag_id, tag_name);
+                    }
+                    Err(e) => {
+                        trace!(
+                            "Failed to extract tag {:#x} ({}): {:?}",
+                            entry.tag_id,
+                            tag_name,
+                            e
+                        );
+                    }
                 }
             }
         } else {
