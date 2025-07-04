@@ -237,6 +237,14 @@ impl ProcessorRegistry {
         self.stats = RegistryStats::new();
     }
 
+    /// Get the number of registered processors
+    ///
+    /// This method returns the total count of registered processors,
+    /// useful for debugging and initialization verification.
+    pub fn processor_count(&self) -> usize {
+        self.processors.len()
+    }
+
     /// Setup standard processors that are always available
     ///
     /// This method registers the core processors that handle basic
