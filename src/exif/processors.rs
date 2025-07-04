@@ -6,6 +6,7 @@
 //! ExifTool Reference: PROCESS_PROC system and ProcessDirectory dispatch
 
 use crate::implementations::{canon, nikon, sony};
+use crate::processor_registry::{ProcessorContext, ProcessorSelection, PROCESSOR_BRIDGE};
 use crate::tiff_types::IfdEntry;
 use crate::types::{DirectoryInfo, ExifError, ProcessorType, Result, SonyProcessor, TagSourceInfo};
 use std::collections::HashMap;
@@ -520,5 +521,315 @@ impl ExifReader {
             0x927C => true, // MakerNotes - Manufacturer-specific data
             _ => false,
         }
+    }
+
+    /// Process data using enhanced processor dispatch (Phase 1 integration)
+    ///
+    /// This method integrates the new trait-based processor system with the existing
+    /// enum-based system through the ProcessorBridge. It provides enhanced capabilities
+    /// while maintaining backward compatibility.
+    ///
+    /// ## Migration Strategy
+    ///
+    /// 1. Try trait-based processors first for enhanced capabilities
+    /// 2. Fall back to existing enum processors for compatibility
+    /// 3. Graceful degradation if no processor is available
+    ///
+    /// ## Usage
+    ///
+    /// This method is used internally during EXIF processing when the system
+    /// encounters data that can benefit from the enhanced processor capabilities.
+    ///
+    /// TODO: MILESTONE-15+ will integrate this into the main processing flow
+    #[allow(dead_code)]
+    pub(crate) fn process_with_enhanced_dispatch(
+        &mut self,
+        data: &[u8],
+        table_name: &str,
+        tag_id: Option<u16>,
+        data_offset: usize,
+    ) -> Result<()> {
+        debug!(
+            "Enhanced dispatch processing {} bytes for table: {}, tag: {:?}",
+            data.len(),
+            table_name,
+            tag_id
+        );
+
+        // Build processor context from current ExifReader state
+        let context = self.build_processor_context(table_name, tag_id, data_offset);
+
+        // Use bridge to select processor
+        match PROCESSOR_BRIDGE.select_processor(&context) {
+            ProcessorSelection::Trait(key, processor) => {
+                debug!("Enhanced dispatch selected trait-based processor: {}", key);
+
+                match processor.process_data(data, &context) {
+                    Ok(result) => {
+                        let tag_count = result.extracted_tags.len();
+
+                        // Merge extracted tags into ExifReader
+                        for (tag_name, tag_value) in result.extracted_tags {
+                            self.store_extracted_tag_by_name(&tag_name, tag_value);
+                        }
+
+                        // Log warnings
+                        for warning in result.warnings {
+                            self.warnings.push(warning);
+                        }
+
+                        // Process nested processors (recursive processing)
+                        for (next_key, _next_context) in result.next_processors {
+                            debug!("Processing nested processor: {}", next_key);
+                            // TODO: Implement nested processor handling in Phase 2+
+                            // This would recursively call find_best_processor and process_data
+                        }
+
+                        debug!(
+                            "Enhanced dispatch completed with {} tags extracted",
+                            tag_count
+                        );
+                        Ok(())
+                    }
+                    Err(e) => {
+                        self.warnings.push(format!(
+                            "Trait processor {key} failed for table {table_name}: {e}"
+                        ));
+                        debug!("Trait processor failed, falling back to enum processing");
+                        // Fall back to enum processing
+                        self.process_with_enum_fallback(data, table_name, tag_id, data_offset)
+                    }
+                }
+            }
+            ProcessorSelection::Enum(processor_type, params) => {
+                debug!(
+                    "Enhanced dispatch selected enum-based processor: {:?}",
+                    processor_type
+                );
+                // Delegate to existing enum-based processing
+                self.process_with_enum_system(data, table_name, tag_id, processor_type, params)
+            }
+        }
+    }
+
+    /// Build ProcessorContext from current ExifReader state
+    ///
+    /// This method creates a rich context object that provides the trait-based
+    /// processors with all the information they need for sophisticated processing.
+    ///
+    /// TODO: MILESTONE-15+ will use this when enhanced dispatch is integrated
+    #[allow(dead_code)]
+    fn build_processor_context(
+        &self,
+        table_name: &str,
+        tag_id: Option<u16>,
+        data_offset: usize,
+    ) -> ProcessorContext {
+        use crate::formats::FileFormat;
+
+        // Determine file format (simplified for Phase 1)
+        let file_format = FileFormat::Jpeg; // Could be enhanced to detect actual format
+
+        // Build base context
+        let mut context = ProcessorContext::new(file_format, table_name.to_string())
+            .with_tag_id(tag_id.unwrap_or(0))
+            .with_data_offset(data_offset);
+
+        // Add manufacturer information if available
+        if let Some(make) = self.get_tag_by_id(0x010F).and_then(|v| v.as_string()) {
+            context = context.with_manufacturer(make.to_string());
+        }
+
+        // Add model information if available
+        if let Some(model) = self.get_tag_by_id(0x0110).and_then(|v| v.as_string()) {
+            context = context.with_model(model.to_string());
+        }
+
+        // Add firmware information if available
+        if let Some(firmware) = self.get_tag_by_id(0x0131).and_then(|v| v.as_string()) {
+            context = context.with_firmware(firmware.to_string());
+        }
+
+        // Add byte order from TIFF header
+        if let Some(header) = &self.header {
+            context = context.with_byte_order(header.byte_order);
+        }
+
+        // Add parent tags (convert extracted tags to the format expected by ProcessorContext)
+        let parent_tags: HashMap<String, crate::types::TagValue> = self
+            .extracted_tags
+            .iter()
+            .map(|(tag_id, tag_value)| (format!("tag_{tag_id:04X}"), tag_value.clone()))
+            .collect();
+
+        context = context.with_parent_tags(parent_tags);
+
+        // Add Nikon encryption keys to parent tags if this is a Nikon camera
+        if let Some(make) = context.manufacturer.as_ref() {
+            if make.contains("NIKON") {
+                // Extract encryption keys from parent tags if available and add them to context
+                if let Some(serial) = self.get_tag_by_id(0x001d).and_then(|v| v.as_string()) {
+                    context = context.with_parent_tag(
+                        "SerialNumber".to_string(),
+                        crate::types::TagValue::String(serial.to_string()),
+                    );
+                }
+                if let Some(count) = self.get_tag_by_id(0x00a7).and_then(|v| v.as_u32()) {
+                    context = context.with_parent_tag(
+                        "ShutterCount".to_string(),
+                        crate::types::TagValue::U32(count),
+                    );
+                }
+            }
+        }
+
+        debug!(
+            "Built processor context for {}: manufacturer={:?}, model={:?}",
+            table_name, context.manufacturer, context.model
+        );
+
+        context
+    }
+
+    /// Store extracted tag by name (helper for trait processor integration)
+    ///
+    /// This method converts tag names back to tag IDs and stores them in the
+    /// ExifReader's tag storage system with appropriate source information.
+    ///
+    /// TODO: MILESTONE-15+ will use this when enhanced dispatch is integrated
+    #[allow(dead_code)]
+    fn store_extracted_tag_by_name(&mut self, tag_name: &str, tag_value: crate::types::TagValue) {
+        // Parse the tag name to extract namespace and tag
+        // Format: "Namespace:TagName" or just "TagName"
+        let (namespace, base_name) = if let Some(colon_pos) = tag_name.find(':') {
+            let namespace = &tag_name[..colon_pos];
+            let base_name = &tag_name[colon_pos + 1..];
+            (namespace, base_name)
+        } else {
+            ("Unknown", tag_name)
+        };
+
+        // For Phase 1, use a simple mapping strategy
+        // TODO: Phase 2+ could implement more sophisticated tag name -> ID mapping
+        let tag_id = match base_name {
+            "SerialNumber" => 0x001d,
+            "FirmwareVersion" => 0x0131,
+            "EncryptionDetected" => 0x00FE, // Custom tag for encryption detection
+            "EncryptionStatus" => 0x00FF,   // Custom tag for encryption status
+            name if name.starts_with("Tag_") => {
+                // Parse hex tag ID from Tag_XXXX format
+                u16::from_str_radix(&name[4..], 16).unwrap_or(0xFFFF)
+            }
+            _ => {
+                // Use a synthetic tag ID for unknown tag names
+                // This ensures data is preserved even if mapping is incomplete
+                0xF000 + (tag_name.len() as u16 % 0x0FFF)
+            }
+        };
+
+        // Create source info for this tag
+        let source_info = self.create_tag_source_info_with_namespace(namespace);
+
+        // Store the tag with precedence handling
+        self.store_tag_with_precedence(tag_id, tag_value, source_info);
+
+        debug!(
+            "Stored trait processor tag: {} -> ID {:#x} (namespace: {})",
+            tag_name, tag_id, namespace
+        );
+    }
+
+    /// Create tag source info with specific namespace
+    ///
+    /// TODO: MILESTONE-15+ will use this when enhanced dispatch is integrated
+    #[allow(dead_code)]
+    fn create_tag_source_info_with_namespace(&self, namespace: &str) -> TagSourceInfo {
+        use crate::types::ProcessorType;
+
+        let processor_type = match namespace {
+            "Canon" => ProcessorType::Canon(crate::types::CanonProcessor::Main),
+            "Nikon" => ProcessorType::Nikon(crate::types::NikonProcessor::Main),
+            "Sony" => ProcessorType::Sony(crate::types::SonyProcessor::Main),
+            _ => ProcessorType::Exif,
+        };
+
+        TagSourceInfo::new(
+            namespace.to_string(),
+            self.get_current_path(),
+            processor_type,
+        )
+    }
+
+    /// Fall back to enum processing when trait processing fails
+    ///
+    /// TODO: MILESTONE-15+ will use this when enhanced dispatch is integrated
+    #[allow(dead_code)]
+    fn process_with_enum_fallback(
+        &mut self,
+        data: &[u8],
+        table_name: &str,
+        tag_id: Option<u16>,
+        data_offset: usize,
+    ) -> Result<()> {
+        debug!(
+            "Enhanced dispatch falling back to enum processing for table: {}",
+            table_name
+        );
+
+        // Create DirectoryInfo for enum processing
+        let dir_info = DirectoryInfo {
+            name: table_name.to_string(),
+            dir_start: data_offset,
+            dir_len: data.len(),
+            base: self.base,
+            data_pos: 0,
+            allow_reprocess: false,
+        };
+
+        // Use existing processor selection logic
+        let (processor_type, params) = self.select_processor_with_conditions(
+            table_name,
+            tag_id,
+            data,
+            data.len() as u32,
+            None,
+        );
+
+        // Dispatch to enum processor
+        self.dispatch_processor_with_params(processor_type, &dir_info, &params)
+    }
+
+    /// Process with existing enum system (bridge integration)
+    ///
+    /// TODO: MILESTONE-15+ will use this when enhanced dispatch is integrated
+    #[allow(dead_code)]
+    fn process_with_enum_system(
+        &mut self,
+        data: &[u8],
+        table_name: &str,
+        _tag_id: Option<u16>,
+        processor_type: ProcessorType,
+        params: HashMap<String, String>,
+    ) -> Result<()> {
+        debug!(
+            "Enhanced dispatch using enum processor: {:?} for table: {}",
+            processor_type, table_name
+        );
+
+        // Create DirectoryInfo for enum processing
+        let dir_info = DirectoryInfo {
+            name: table_name.to_string(),
+            dir_start: params
+                .get("data_offset")
+                .and_then(|s| s.parse().ok())
+                .unwrap_or(0),
+            dir_len: data.len(),
+            base: self.base,
+            data_pos: 0,
+            allow_reprocess: false,
+        };
+
+        // Dispatch to enum processor with parameters
+        self.dispatch_processor_with_params(processor_type, &dir_info, &params)
     }
 }

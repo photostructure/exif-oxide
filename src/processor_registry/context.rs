@@ -170,6 +170,12 @@ impl ProcessorContext {
         self.parent_tags.insert(name, value);
     }
 
+    /// Add a parent tag (builder pattern)
+    pub fn with_parent_tag(mut self, name: String, value: TagValue) -> Self {
+        self.parent_tags.insert(name, value);
+        self
+    }
+
     /// Set processing parameters
     pub fn with_parameters(mut self, parameters: HashMap<String, String>) -> Self {
         self.parameters = parameters;
