@@ -54,6 +54,7 @@ Before starting work on exif-oxide, familiarize yourself with:
 
 - [EXIFTOOL-CONCEPTS.md](docs/guides/EXIFTOOL-CONCEPTS.md) - Critical ExifTool concepts
 - [READING-EXIFTOOL-SOURCE.md](docs/guides/READING-EXIFTOOL-SOURCE.md) - Navigating ExifTool's Perl code
+- [TESTING.md](docs/guides/TESTING.md) - Testing details
 - [DEVELOPMENT-WORKFLOW.md](docs/guides/DEVELOPMENT-WORKFLOW.md) - Day-to-day development process
 - [COMMON-PITFALLS.md](docs/guides/COMMON-PITFALLS.md) - Common mistakes and debugging
 - [TRIBAL-KNOWLEDGE.md](docs/guides/TRIBAL-KNOWLEDGE.md) - Undocumented quirks
@@ -79,31 +80,105 @@ before starting work!
 
 ### 1. Trust ExifTool
 
-See [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md). This is the #1 most important principle - trust ExifTool, not the spec. We translate ExifTool **verbatim**, including all its quirks and apparent inefficiencies.
+READ [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md)
+
+The Trust ExifTool principle is the fundamental law of the exif-oxide project: we translate ExifTool's implementation exactly, never attempting to "improve," "optimize," or "simplify" its logic, because every seemingly odd piece of code exists to handle specific camera quirks discovered over 25 years of development. The only changes allowed are syntax translations required for Rust (like string formatting or type conversions), but the **underlying logic must remain identical**. This principle exists because no camera follows the spec perfectly, and ExifTool's battle-tested code handles millions of real-world files from thousands of camera models with their unique firmware bugs and non-standard behaviors.
+
+Whenever possible, our rust code should include a comment pointing back to the ExifTool source code, function or variable name, and line number range.
 
 ### 2. Only `perl` can parse `perl`
 
-WE CANNOT INTERPRET PERL CODE IN RUST. Only perl is competent at parsing perl.
-There are too many gotchas and surprising perlisms--any rust parser we make will
-be brittle and haunt us in the future.
+WE CANNOT INTERPRET PERL CODE IN RUST.
 
-### 3. Scope: Mainstream Tags Only
+Only perl is competent at parsing perl! There are too many gotchas and
+surprising perl-isms--any perl parser we make in rust or regex will be brittle
+and haunt us in the future.
+
+### 3. Incremental improvements with a focus on common, mainstream tags
 
 To maintain a manageable scope:
 
-- We only implement tags with >80% frequency or marked `mainstream: true` in TagMetadata.json
+- We are initially targeting support for tags with >80% frequency or marked `mainstream: true` in TagMetadata.json
 - This reduces scope from ExifTool's 15,000+ tags to approximately 500-1000
 - See [TagMetadata.json](third-party/exiftool/doc/TagMetadata.json) for tag popularity data
 
-### 4. When a task is complete
+### 4. Look for easy codegen wins
 
-1. Verify and validate! No task is complete until both `make fix` and `make test`
-   pass. Many tasks will require adding new integration tests.
+ExifTool releases new versions monthly. The more our code can be generated automatically from ExifTool source, the better.
+
+**CRITICAL**: If you ever see any simple, static mapping in our code, **immediately look for where that came from in the ExifTool source, and ask the user to rewrite it with the codegen infrastructure**. See [CODEGEN-STRATEGY.md](docs/design/CODEGEN-STRATEGY.md) "Simple Table Extraction Framework" for details.
+
+#### Simple Table Detection
+
+Be especially vigilant for these patterns that should NEVER be manually maintained:
+
+❌ **Manual lookup tables** (should be generated):
+```rust
+// BAD - This should be generated from ExifTool!
+fn canon_white_balance_lookup(value: u8) -> &'static str {
+    match value {
+        0 => "Auto",
+        1 => "Daylight", 
+        2 => "Cloudy",
+        3 => "Tungsten",
+        _ => "Unknown",
+    }
+}
+```
+
+✅ **Using generated tables**:
+```rust
+// GOOD - Using simple table extraction framework
+use crate::generated::canon::white_balance::lookup_canon_white_balance;
+
+fn canon_white_balance_print_conv(value: &TagValue) -> Result<String> {
+    if let Some(wb_value) = value.as_u8() {
+        if let Some(description) = lookup_canon_white_balance(wb_value) {
+            return Ok(description.to_string());
+        }
+    }
+    Ok(format!("Unknown ({})", value))
+}
+```
+
+#### What to Look For
+
+- **HashMap/match statements** with >5 static entries
+- **Lens identification databases** (should use simple table framework)
+- **Camera model mappings** (should be generated)
+- **Mode/setting lookup tables** (white balance, picture styles, etc.)
+- **Any hardcoded string constants** that map values to names
+
+#### How to Address
+
+1. **Find the ExifTool source** - Usually a `%hashName = (...)` pattern
+2. **Check if primitive** - Only numbers/strings, no Perl expressions
+3. **Add to simple_tables.json** - If safe for extraction
+4. **Regenerate codegen** - `make codegen-simple-tables`
+5. **Replace manual code** - Use generated lookup functions
+
+See [CODEGEN-STRATEGY.md](docs/design/CODEGEN-STRATEGY.md#simple-table-extraction-framework) for the complete HOWTO guide.
+
+#### Red Flags
+
+If you see ANY of these, immediately suggest codegen extraction:
+- Files with hundreds of manual constant definitions
+- Match statements mapping numbers to camera/lens names  
+- Static arrays of string literals that look like they came from ExifTool
+- TODO comments about "add more lens types when we have time"
+- Version-specific model lists that need manual updates
+
+**Remember**: Every manually maintained lookup table is a maintenance burden that grows with each ExifTool release. The simple table extraction framework can automate hundreds of these tables with zero ongoing maintenance cost.
+
+### 5. When a task is complete
+
+1. Verify and validate! No task is complete until `make precommit`
+   passes.
 
 2. Concisely update any impacted and related docs, including reference
    documentation, todo lists, milestone planning, and architectural design.
 
-### 5. The user is a rust newbie...
+### 6. The user is a rust newbie...
 
 ...so explaining things as we go would be wonderful. We want to make this
 project be as idiomatic rust as possible, so please web search and examine the
