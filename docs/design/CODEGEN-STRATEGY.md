@@ -365,6 +365,119 @@ When a new ExifTool version is released:
 
 For minor ExifTool updates that only add tags within existing processors, the process is often just regenerate and ship. New processors or complex conversions require manual implementation.
 
+## Simple Table Extraction Framework
+
+### What Are Simple Tables?
+
+ExifTool contains hundreds of primitive lookup tables across manufacturer modules that provide valuable metadata conversion capabilities. These are safe for automated extraction:
+
+**Safe to Extract** ✅:
+```perl
+%canonWhiteBalance = (
+    0 => 'Auto',
+    1 => 'Daylight', 
+    2 => 'Cloudy',
+    3 => 'Tungsten',
+    4 => 'Fluorescent',
+);
+```
+
+**Never Extract** ❌:
+```perl
+0xd => [
+    {
+        Name => 'CanonCameraInfo1D',
+        Condition => '$$self{Model} =~ /\b1DS?$/',
+        SubDirectory => { TagTable => 'Image::ExifTool::Canon::CameraInfo1D' },
+    },
+];
+```
+
+### How to Add New Simple Tables
+
+1. **Identify Candidate Tables**: Look for simple `%hash = (key => 'value')` patterns in ExifTool modules
+2. **Validate Primitive-ness**: Ensure no Perl variables, expressions, or complex structures
+3. **Add to Configuration**: Update `codegen/simple_tables.json`
+4. **Run Extraction**: `make codegen-simple-tables` 
+5. **Integrate**: Use generated lookup functions in PrintConv implementations
+
+### Adding a New Table (Example)
+
+Found a new simple table in `Canon.pm`:
+```perl
+%canonFlashMode = (
+    0 => 'Off',
+    1 => 'Auto', 
+    2 => 'On',
+    3 => 'Red-eye Reduction',
+    4 => 'Slow Sync',
+    5 => 'Auto + Red-eye Reduction',
+);
+```
+
+**Step 1**: Add entry to `codegen/simple_tables.json`:
+```json
+{
+  "module": "Canon.pm",
+  "hash_name": "%canonFlashMode", 
+  "output_file": "canon/flash_mode.rs",
+  "constant_name": "CANON_FLASH_MODE",
+  "key_type": "u8",
+  "description": "Canon flash mode setting names"
+}
+```
+
+**Step 2**: Run extraction:
+```bash
+make codegen-simple-tables
+```
+
+**Step 3**: Use in PrintConv:
+```rust
+use crate::generated::canon::flash_mode::lookup_canon_flash_mode;
+
+pub fn canon_flash_mode_print_conv(value: &TagValue) -> Result<String> {
+    if let Some(mode_value) = value.as_u8() {
+        if let Some(description) = lookup_canon_flash_mode(mode_value) {
+            return Ok(description.to_string());
+        }
+    }
+    Ok(format!("Unknown ({})", value))
+}
+```
+
+### Guidelines for Table Selection
+
+**Include**:
+- Simple hash tables with primitive keys (numbers, strings)
+- Values are plain strings (no variables or expressions)
+- High-value data (lens databases, mode settings, model IDs)
+- Tables with >10 entries (worth the automation)
+
+**Exclude**:
+- Any Perl expressions in keys or values
+- Nested structures or references
+- Conditional logic or complex formatting
+- Tables with <5 entries (manual implementation easier)
+
+### Validation Process
+
+The extraction framework automatically validates tables:
+- ✅ Keys must be simple primitives (numbers, quoted strings)
+- ✅ Values must be simple quoted strings
+- ✅ No variables, expressions, or function calls
+- ❌ Skips tables that don't meet criteria
+
+### Benefits
+
+- **Systematic Coverage**: Extract hundreds of tables consistently
+- **Automatic Updates**: Regenerate with ExifTool releases  
+- **Type Safety**: Generated Rust code with proper types
+- **Performance**: Fast HashMap lookups with LazyLock initialization
+- **Traceability**: Every entry references ExifTool source line
+
+See [MILESTONE-CODEGEN-SIMPLE-TABLES.md](../milestones/MILESTONE-CODEGEN-SIMPLE-TABLES.md) for complete implementation details.
+
 ## Related Documentation
 
 - [API-DESIGN.md](API-DESIGN.md) - How the generated API is structured
