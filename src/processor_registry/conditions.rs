@@ -89,26 +89,122 @@ impl ConditionEvaluator {
             data.len()
         );
 
-        // Handle data pattern matching ($$valPt =~ /pattern/)
-        if let Some(pattern) = self.extract_data_pattern(condition_expr) {
-            let regex = self.get_or_compile_regex(&pattern)?;
+        let condition = Self::parse_condition(condition_expr)?;
+        self.evaluate_data_condition_parsed(data, &condition)
+    }
 
-            // Convert data to string for pattern matching
-            let data_str = String::from_utf8_lossy(data);
-            Ok(regex.is_match(&data_str))
-        } else {
-            // For non-data patterns, we can't evaluate without context
-            Err(ExifError::ParseError(format!(
-                "Cannot evaluate context-dependent condition without context: {condition_expr}"
-            )))
+    /// Evaluate a parsed condition against binary data
+    pub fn evaluate_data_condition_parsed(
+        &mut self,
+        data: &[u8],
+        condition: &Condition,
+    ) -> Result<bool> {
+        match condition {
+            Condition::DataPattern(pattern) => {
+                let regex = self.get_or_compile_regex(pattern)?;
+
+                // Try multiple data representations for pattern matching
+                // 1. Raw binary as string
+                let data_str = String::from_utf8_lossy(data);
+                if regex.is_match(&data_str) {
+                    return Ok(true);
+                }
+
+                // 2. Hex representation for patterns like "^0204"
+                let hex_str = hex_string_from_bytes(data);
+                if regex.is_match(&hex_str) {
+                    return Ok(true);
+                }
+
+                // 3. Decimal representation for specific byte patterns
+                if data.len() >= 4 {
+                    let first_u32 = u32::from_le_bytes([data[0], data[1], data[2], data[3]]);
+                    let u32_str = first_u32.to_string();
+                    if regex.is_match(&u32_str) {
+                        return Ok(true);
+                    }
+                }
+
+                Ok(false)
+            }
+
+            Condition::RegexMatch(field_name, pattern) if field_name == "valPt" => {
+                // Handle $$valPt conditions that aren't explicitly DataPattern
+                let regex = self.get_or_compile_regex(pattern)?;
+                let data_str = String::from_utf8_lossy(data);
+                Ok(regex.is_match(&data_str))
+            }
+
+            Condition::And(conditions) => {
+                for cond in conditions {
+                    if !self.evaluate_data_condition_parsed(data, cond)? {
+                        return Ok(false);
+                    }
+                }
+                Ok(true)
+            }
+
+            Condition::Or(conditions) => {
+                for cond in conditions {
+                    if self.evaluate_data_condition_parsed(data, cond)? {
+                        return Ok(true);
+                    }
+                }
+                Ok(false)
+            }
+
+            Condition::Not(inner_condition) => {
+                Ok(!self.evaluate_data_condition_parsed(data, inner_condition)?)
+            }
+
+            _ => {
+                // For non-data patterns, we can't evaluate without context
+                Err(ExifError::ParseError(format!(
+                    "Cannot evaluate context-dependent condition without binary data: {condition:?}"
+                )))
+            }
         }
     }
 
     /// Parse a condition expression into a structured condition
-    /// TODO: MILESTONE-14.5 Phase 2 - Implement full ExifTool condition parsing
-    /// This is a minimal stub for Phase 1, will be fully implemented in Phase 2
+    /// MILESTONE-14.5 Phase 2 - Full ExifTool condition parsing implementation
+    /// Supports comprehensive ExifTool condition syntax including data patterns,
+    /// logical operators, numeric comparisons, and complex expressions
     fn parse_condition(expr: &str) -> Result<Condition> {
         let expr = expr.trim();
+
+        // Handle parentheses for grouping
+        if expr.starts_with('(') && expr.ends_with(')') {
+            return Self::parse_condition(&expr[1..expr.len() - 1]);
+        }
+
+        // Handle logical NOT operator
+        if let Some(stripped) = expr.strip_prefix("not ") {
+            let inner_condition = Self::parse_condition(stripped)?;
+            return Ok(Condition::Not(Box::new(inner_condition)));
+        }
+        if let Some(stripped) = expr.strip_prefix("!") {
+            let inner_condition = Self::parse_condition(stripped)?;
+            return Ok(Condition::Not(Box::new(inner_condition)));
+        }
+
+        // Handle logical operators (and, or) with proper precedence
+        // Parse OR first (lower precedence), then AND (higher precedence)
+        if let Some(or_index) = Self::find_operator_outside_parens(expr, " or ") {
+            let left_expr = &expr[..or_index];
+            let right_expr = &expr[or_index + 4..]; // " or " is 4 chars
+            let left_condition = Self::parse_condition(left_expr)?;
+            let right_condition = Self::parse_condition(right_expr)?;
+            return Ok(Condition::Or(vec![left_condition, right_condition]));
+        }
+
+        if let Some(and_index) = Self::find_operator_outside_parens(expr, " and ") {
+            let left_expr = &expr[..and_index];
+            let right_expr = &expr[and_index + 5..]; // " and " is 5 chars
+            let left_condition = Self::parse_condition(left_expr)?;
+            let right_condition = Self::parse_condition(right_expr)?;
+            return Ok(Condition::And(vec![left_condition, right_condition]));
+        }
 
         // Handle exists() function
         if expr.starts_with("exists(") && expr.ends_with(")") {
@@ -120,87 +216,243 @@ impl ConditionEvaluator {
             return Ok(Condition::Exists(tag_name.to_string()));
         }
 
-        // Handle regex patterns (=~)
-        if expr.contains("=~") {
-            let parts: Vec<&str> = expr.split("=~").collect();
-            if parts.len() == 2 {
-                let var_name = parts[0].trim().trim_start_matches('$');
-                let pattern_str = parts[1].trim().trim_matches('/');
-                return Ok(Condition::RegexMatch(
-                    var_name.to_string(),
-                    pattern_str.to_string(),
-                ));
-            }
+        // Handle data pattern matching ($$valPt =~ /pattern/)
+        if expr.contains("$$valPt") && expr.contains("=~") {
+            return Self::parse_data_pattern_condition(expr);
         }
 
-        // Handle equality comparisons (== or eq)
-        if expr.contains("==") || expr.contains(" eq ") {
-            let (var_name, value) = if expr.contains("==") {
-                let parts: Vec<&str> = expr.split("==").collect();
-                if parts.len() != 2 {
-                    return Err(ExifError::ParseError(format!(
-                        "Invalid == expression: {expr}"
-                    )));
-                }
-                (parts[0].trim(), parts[1].trim())
-            } else {
-                let parts: Vec<&str> = expr.split(" eq ").collect();
-                if parts.len() != 2 {
-                    return Err(ExifError::ParseError(format!(
-                        "Invalid eq expression: {expr}"
-                    )));
-                }
-                (parts[0].trim(), parts[1].trim())
-            };
-
-            let var_name = var_name.trim_start_matches('$');
-            let value_str = value.trim_matches('"').trim_matches('\'');
-
-            // Try to parse as integer
-            if let Ok(int_val) = value_str.parse::<i32>() {
-                return Ok(Condition::Equals(
-                    var_name.to_string(),
-                    TagValue::I32(int_val),
-                ));
-            }
-
-            // Otherwise treat as string
-            return Ok(Condition::Equals(
-                var_name.to_string(),
-                TagValue::String(value_str.to_string()),
-            ));
+        // Handle regex patterns (=~ and !~)
+        if expr.contains("=~") || expr.contains("!~") {
+            return Self::parse_regex_condition(expr);
         }
 
-        // Handle numeric comparisons
-        if expr.contains(">") || expr.contains("<") {
-            // TODO: Implement numeric comparison parsing
-            return Err(ExifError::ParseError(format!(
-                "Numeric comparisons not yet implemented: {expr}"
-            )));
+        // Handle numeric comparisons (>, <, >=, <=)
+        if let Some(comparison_op) = Self::find_comparison_operator(expr) {
+            return Self::parse_numeric_comparison(expr, &comparison_op);
         }
 
-        // Handle logical operators (and, or)
-        if expr.contains(" and ") {
-            let parts: Vec<&str> = expr.split(" and ").collect();
-            let conditions: Result<Vec<_>> = parts
-                .iter()
-                .map(|part| Self::parse_condition(part))
-                .collect();
-            return Ok(Condition::And(conditions?));
+        // Handle equality and inequality comparisons (==, eq, !=, ne)
+        if expr.contains("==")
+            || expr.contains(" eq ")
+            || expr.contains("!=")
+            || expr.contains(" ne ")
+        {
+            return Self::parse_equality_condition(expr);
         }
 
-        if expr.contains(" or ") {
-            let parts: Vec<&str> = expr.split(" or ").collect();
-            let conditions: Result<Vec<_>> = parts
-                .iter()
-                .map(|part| Self::parse_condition(part))
-                .collect();
-            return Ok(Condition::Or(conditions?));
+        // Handle hexadecimal number patterns (0x1234, 0X1234)
+        if Self::is_hex_number_condition(expr) {
+            return Self::parse_hex_condition(expr);
         }
 
         Err(ExifError::ParseError(format!(
             "Unsupported condition expression: {expr}"
         )))
+    }
+
+    /// Find operator position outside of parentheses
+    fn find_operator_outside_parens(expr: &str, operator: &str) -> Option<usize> {
+        let mut paren_count = 0;
+        let mut quote_char: Option<char> = None;
+        let operator_bytes = operator.as_bytes();
+        let expr_bytes = expr.as_bytes();
+
+        for i in 0..expr_bytes.len() {
+            let ch = expr_bytes[i] as char;
+
+            // Handle quote tracking
+            if quote_char.is_none() && (ch == '"' || ch == '\'') {
+                quote_char = Some(ch);
+                continue;
+            } else if let Some(qc) = quote_char {
+                if ch == qc {
+                    quote_char = None;
+                }
+                continue;
+            }
+
+            // Skip if inside quotes
+            if quote_char.is_some() {
+                continue;
+            }
+
+            // Handle parentheses
+            if ch == '(' {
+                paren_count += 1;
+            } else if ch == ')' {
+                paren_count -= 1;
+            } else if paren_count == 0 {
+                // Check for operator match
+                if i + operator_bytes.len() <= expr_bytes.len()
+                    && &expr_bytes[i..i + operator_bytes.len()] == operator_bytes
+                {
+                    return Some(i);
+                }
+            }
+        }
+
+        None
+    }
+
+    /// Parse data pattern condition ($$valPt =~ /pattern/)
+    fn parse_data_pattern_condition(expr: &str) -> Result<Condition> {
+        if let Some(pattern_start) = expr.find('/') {
+            if let Some(pattern_end) = expr.rfind('/') {
+                if pattern_start < pattern_end {
+                    let pattern = &expr[pattern_start + 1..pattern_end];
+                    return Ok(Condition::DataPattern(pattern.to_string()));
+                }
+            }
+        }
+        Err(ExifError::ParseError(format!(
+            "Invalid data pattern condition: {expr}"
+        )))
+    }
+
+    /// Parse regex condition (field =~ /pattern/ or field !~ /pattern/)
+    fn parse_regex_condition(expr: &str) -> Result<Condition> {
+        let is_negative = expr.contains("!~");
+        let operator = if is_negative { "!~" } else { "=~" };
+
+        if let Some(op_pos) = expr.find(operator) {
+            let var_part = expr[..op_pos].trim();
+            let pattern_part = expr[op_pos + operator.len()..].trim();
+
+            let var_name = var_part.trim_start_matches('$');
+            let pattern_str = pattern_part.trim_matches('/');
+
+            let condition = Condition::RegexMatch(var_name.to_string(), pattern_str.to_string());
+
+            if is_negative {
+                Ok(Condition::Not(Box::new(condition)))
+            } else {
+                Ok(condition)
+            }
+        } else {
+            Err(ExifError::ParseError(format!(
+                "Invalid regex condition: {expr}"
+            )))
+        }
+    }
+
+    /// Find comparison operator in expression
+    fn find_comparison_operator(expr: &str) -> Option<String> {
+        // Check in order of specificity (longer operators first)
+        for op in &[">=", "<=", ">", "<"] {
+            if expr.contains(op) {
+                return Some(op.to_string());
+            }
+        }
+        None
+    }
+
+    /// Parse numeric comparison condition
+    fn parse_numeric_comparison(expr: &str, operator: &str) -> Result<Condition> {
+        if let Some(op_pos) = expr.find(operator) {
+            let var_part = expr[..op_pos].trim();
+            let value_part = expr[op_pos + operator.len()..].trim();
+
+            let var_name = var_part.trim_start_matches('$');
+            let value = Self::parse_value(value_part)?;
+
+            match operator {
+                ">" => Ok(Condition::GreaterThan(var_name.to_string(), value)),
+                ">=" => Ok(Condition::GreaterThanOrEqual(var_name.to_string(), value)),
+                "<" => Ok(Condition::LessThan(var_name.to_string(), value)),
+                "<=" => Ok(Condition::LessThanOrEqual(var_name.to_string(), value)),
+                _ => Err(ExifError::ParseError(format!(
+                    "Unknown comparison operator: {operator}"
+                ))),
+            }
+        } else {
+            Err(ExifError::ParseError(format!(
+                "Invalid comparison condition: {expr}"
+            )))
+        }
+    }
+
+    /// Parse equality/inequality condition
+    fn parse_equality_condition(expr: &str) -> Result<Condition> {
+        let (operator, is_negative) = if expr.contains("!=") {
+            ("!=", true)
+        } else if expr.contains(" ne ") {
+            (" ne ", true)
+        } else if expr.contains("==") {
+            ("==", false)
+        } else if expr.contains(" eq ") {
+            (" eq ", false)
+        } else {
+            return Err(ExifError::ParseError(format!(
+                "No equality operator found in: {expr}"
+            )));
+        };
+
+        if let Some(op_pos) = expr.find(operator) {
+            let var_part = expr[..op_pos].trim();
+            let value_part = expr[op_pos + operator.len()..].trim();
+
+            let var_name = var_part.trim_start_matches('$');
+            let value = Self::parse_value(value_part)?;
+
+            let condition = Condition::Equals(var_name.to_string(), value);
+
+            if is_negative {
+                Ok(Condition::Not(Box::new(condition)))
+            } else {
+                Ok(condition)
+            }
+        } else {
+            Err(ExifError::ParseError(format!(
+                "Invalid equality condition: {expr}"
+            )))
+        }
+    }
+
+    /// Check if expression is a hex number condition
+    fn is_hex_number_condition(expr: &str) -> bool {
+        expr.contains("0x") || expr.contains("0X")
+    }
+
+    /// Parse hex number condition
+    fn parse_hex_condition(expr: &str) -> Result<Condition> {
+        // This handles cases like "$tagID == 0x001d"
+        if expr.contains("==") {
+            return Self::parse_equality_condition(expr);
+        }
+
+        Err(ExifError::ParseError(format!(
+            "Unsupported hex condition format: {expr}"
+        )))
+    }
+
+    /// Parse a value from string representation
+    fn parse_value(value_str: &str) -> Result<TagValue> {
+        let value_str = value_str.trim().trim_matches('"').trim_matches('\'');
+
+        // Try hex number first
+        if value_str.starts_with("0x") || value_str.starts_with("0X") {
+            if let Ok(hex_val) = u32::from_str_radix(&value_str[2..], 16) {
+                return Ok(TagValue::U32(hex_val));
+            }
+        }
+
+        // Try decimal integers
+        if let Ok(int_val) = value_str.parse::<i32>() {
+            return Ok(TagValue::I32(int_val));
+        }
+
+        // Try unsigned integers
+        if let Ok(uint_val) = value_str.parse::<u32>() {
+            return Ok(TagValue::U32(uint_val));
+        }
+
+        // Try floating point
+        if let Ok(float_val) = value_str.parse::<f64>() {
+            return Ok(TagValue::F64(float_val));
+        }
+
+        // Default to string
+        Ok(TagValue::String(value_str.to_string()))
     }
 
     /// Evaluate a structured condition against context
@@ -267,6 +519,30 @@ impl ConditionEvaluator {
                     Ok(false)
                 }
             }
+
+            Condition::GreaterThanOrEqual(field_name, expected_value) => {
+                if let Some(actual_value) = self.get_field_value(context, field_name) {
+                    Ok(self.compare_values(&actual_value, expected_value) >= 0)
+                } else {
+                    Ok(false)
+                }
+            }
+
+            Condition::LessThanOrEqual(field_name, expected_value) => {
+                if let Some(actual_value) = self.get_field_value(context, field_name) {
+                    Ok(self.compare_values(&actual_value, expected_value) <= 0)
+                } else {
+                    Ok(false)
+                }
+            }
+
+            Condition::DataPattern(_pattern) => {
+                // Data pattern conditions require binary data, which isn't available in context
+                // This should be evaluated separately using evaluate_data_condition
+                Err(ExifError::ParseError(
+                    "Data pattern conditions cannot be evaluated without binary data".to_string(),
+                ))
+            }
         }
     }
 
@@ -323,7 +599,14 @@ impl ConditionEvaluator {
             (TagValue::U16(a), TagValue::U16(b)) => a == b,
             (TagValue::U32(a), TagValue::U32(b)) => a == b,
             (TagValue::F64(a), TagValue::F64(b)) => (a - b).abs() < f64::EPSILON,
-            // Cross-type comparisons
+            // Cross-type numeric comparisons
+            (TagValue::U16(a), TagValue::U32(b)) => *a as u32 == *b,
+            (TagValue::U32(a), TagValue::U16(b)) => *a == *b as u32,
+            (TagValue::U16(a), TagValue::I32(b)) => *a as i32 == *b,
+            (TagValue::I32(a), TagValue::U16(b)) => *a == *b as i32,
+            (TagValue::U32(a), TagValue::I32(b)) => *a as i32 == *b,
+            (TagValue::I32(a), TagValue::U32(b)) => *a == *b as i32,
+            // String to numeric comparisons
             (TagValue::String(s), TagValue::I32(i)) => {
                 s.parse::<i32>().map(|parsed| parsed == *i).unwrap_or(false)
             }
@@ -335,6 +618,12 @@ impl ConditionEvaluator {
             }
             (TagValue::U16(i), TagValue::String(s)) => {
                 s.parse::<u16>().map(|parsed| parsed == *i).unwrap_or(false)
+            }
+            (TagValue::String(s), TagValue::U32(i)) => {
+                s.parse::<u32>().map(|parsed| parsed == *i).unwrap_or(false)
+            }
+            (TagValue::U32(i), TagValue::String(s)) => {
+                s.parse::<u32>().map(|parsed| parsed == *i).unwrap_or(false)
             }
             _ => false,
         }
@@ -379,24 +668,50 @@ impl ConditionEvaluator {
                     0
                 }
             }
+            // Cross-type numeric comparisons
+            (TagValue::U16(a), TagValue::U32(b)) => {
+                let a_val = *a as u32;
+                if a_val < *b {
+                    -1
+                } else if a_val > *b {
+                    1
+                } else {
+                    0
+                }
+            }
+            (TagValue::U32(a), TagValue::U16(b)) => {
+                let b_val = *b as u32;
+                if *a < b_val {
+                    -1
+                } else if *a > b_val {
+                    1
+                } else {
+                    0
+                }
+            }
+            (TagValue::U16(a), TagValue::I32(b)) => {
+                let a_val = *a as i32;
+                if a_val < *b {
+                    -1
+                } else if a_val > *b {
+                    1
+                } else {
+                    0
+                }
+            }
+            (TagValue::I32(a), TagValue::U16(b)) => {
+                let b_val = *b as i32;
+                if *a < b_val {
+                    -1
+                } else if *a > b_val {
+                    1
+                } else {
+                    0
+                }
+            }
             (TagValue::String(a), TagValue::String(b)) => a.cmp(b) as i8,
             _ => 0, // Can't compare different types
         }
-    }
-
-    /// Extract data pattern from condition expression
-    fn extract_data_pattern(&self, expr: &str) -> Option<String> {
-        // Look for $$valPt =~ /pattern/ expressions
-        if expr.contains("$$valPt") && expr.contains("=~") {
-            if let Some(start) = expr.find('/') {
-                if let Some(end) = expr.rfind('/') {
-                    if start < end {
-                        return Some(expr[start + 1..end].to_string());
-                    }
-                }
-            }
-        }
-        None
     }
 
     /// Get or compile a regex pattern
@@ -409,7 +724,22 @@ impl ConditionEvaluator {
         }
         Ok(self.regex_cache.get(pattern).unwrap())
     }
+}
 
+/// Convert binary data to hex string for pattern matching
+///
+/// This helper function converts binary data to a hex string representation
+/// used for ExifTool-style data pattern matching.
+fn hex_string_from_bytes(data: &[u8]) -> String {
+    // Take only the first few bytes for pattern matching to avoid huge strings
+    let max_bytes = std::cmp::min(data.len(), 16);
+    data[..max_bytes]
+        .iter()
+        .map(|b| format!("{b:02X}"))
+        .collect::<String>()
+}
+
+impl ConditionEvaluator {
     /// Register default tag evaluators
     fn register_default_evaluators(&mut self) {
         // Add default evaluators for common tag types
@@ -452,11 +782,20 @@ pub enum Condition {
     /// Check if a field is greater than a value
     GreaterThan(String, TagValue),
 
+    /// Check if a field is greater than or equal to a value
+    GreaterThanOrEqual(String, TagValue),
+
     /// Check if a field is less than a value
     LessThan(String, TagValue),
 
+    /// Check if a field is less than or equal to a value
+    LessThanOrEqual(String, TagValue),
+
     /// Check if a field matches a regex pattern
     RegexMatch(String, String),
+
+    /// Check if binary data matches a pattern ($$valPt =~ /pattern/)
+    DataPattern(String),
 
     /// Logical AND of multiple conditions
     And(Vec<Condition>),
@@ -611,12 +950,267 @@ mod tests {
         assert!(!result);
     }
 
-    // TODO: MILESTONE-14.5 Phase 2 - Add comprehensive logical operator tests
-    // Test cases for: and, or, not operators with complex conditions
+    #[test]
+    fn test_complex_logical_operators() {
+        let mut evaluator = ConditionEvaluator::new();
 
-    // TODO: MILESTONE-14.5 Phase 2 - Add data pattern condition tests
-    // Test cases for: $$valPt pattern matching with binary data
+        // Test AND operator
+        let context = ProcessorContext::new(FileFormat::Jpeg, "Canon::Main".to_string())
+            .with_manufacturer("Canon".to_string())
+            .with_model("EOS R5".to_string());
 
-    // TODO: MILESTONE-14.5 Phase 2 - Add tag ID condition tests
-    // Test cases for: $tagID numeric comparisons with hex and decimal values
+        let result = evaluator
+            .evaluate_context_condition(&context, "$manufacturer eq 'Canon' and $model =~ /EOS R5/")
+            .unwrap();
+        assert!(result);
+
+        let result = evaluator
+            .evaluate_context_condition(&context, "$manufacturer eq 'Canon' and $model =~ /R6/")
+            .unwrap();
+        assert!(!result);
+
+        // Test OR operator
+        let result = evaluator
+            .evaluate_context_condition(&context, "$model =~ /R5/ or $model =~ /R6/")
+            .unwrap();
+        assert!(result);
+
+        let result = evaluator
+            .evaluate_context_condition(&context, "$model =~ /R6/ or $model =~ /R3/")
+            .unwrap();
+        assert!(!result);
+
+        // Test NOT operator
+        let result = evaluator
+            .evaluate_context_condition(&context, "not $manufacturer eq 'Nikon'")
+            .unwrap();
+        assert!(result);
+
+        let result = evaluator
+            .evaluate_context_condition(&context, "!($model =~ /R6/)")
+            .unwrap();
+        assert!(result);
+    }
+
+    #[test]
+    fn test_data_pattern_conditions() {
+        let mut evaluator = ConditionEvaluator::new();
+
+        // Test Nikon encryption pattern
+        let nikon_encrypted_data = vec![0x02, 0x00, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04];
+
+        let result = evaluator
+            .evaluate_data_condition(&nikon_encrypted_data, "$$valPt =~ /^0200/")
+            .unwrap();
+        assert!(result);
+
+        // Test pattern that doesn't match
+        let result = evaluator
+            .evaluate_data_condition(&nikon_encrypted_data, "$$valPt =~ /^0400/")
+            .unwrap();
+        assert!(!result);
+
+        // Test different encryption patterns
+        let nikon_204_data = vec![0x02, 0x04, 0x00, 0x01];
+        let result = evaluator
+            .evaluate_data_condition(&nikon_204_data, "$$valPt =~ /^0204/")
+            .unwrap();
+        assert!(result);
+
+        let nikon_402_data = vec![0x04, 0x02, 0x00, 0x01];
+        let result = evaluator
+            .evaluate_data_condition(&nikon_402_data, "$$valPt =~ /^0402/")
+            .unwrap();
+        assert!(result);
+    }
+
+    #[test]
+    fn test_tag_id_conditions() {
+        let mut evaluator = ConditionEvaluator::new();
+
+        // Test hex tag ID
+        let context = ProcessorContext::new(FileFormat::Jpeg, "Nikon::Main".to_string())
+            .with_manufacturer("NIKON CORPORATION".to_string())
+            .with_tag_id(0x001d);
+
+        let result = evaluator
+            .evaluate_context_condition(&context, "$tagID == 0x001d")
+            .unwrap();
+        assert!(result);
+
+        let result = evaluator
+            .evaluate_context_condition(&context, "$tagID == 0x00a7")
+            .unwrap();
+        assert!(!result);
+
+        // Test decimal tag ID
+        let context =
+            ProcessorContext::new(FileFormat::Jpeg, "Canon::Main".to_string()).with_tag_id(29); // 0x001d in decimal
+
+        let result = evaluator
+            .evaluate_context_condition(&context, "$tag_id == 29")
+            .unwrap();
+        assert!(result);
+    }
+
+    #[test]
+    fn test_numeric_comparisons() {
+        let mut evaluator = ConditionEvaluator::new();
+
+        let mut context = ProcessorContext::new(FileFormat::Jpeg, "Canon::Main".to_string());
+        context.add_parent_tag("AFInfoVersion".to_string(), TagValue::U16(0x0002));
+
+        // Test greater than
+        let result = evaluator
+            .evaluate_context_condition(&context, "$AFInfoVersion > 0x0001")
+            .unwrap();
+        assert!(result);
+
+        // Test greater than or equal
+        let result = evaluator
+            .evaluate_context_condition(&context, "$AFInfoVersion >= 0x0002")
+            .unwrap();
+        assert!(result);
+
+        // Test less than
+        let result = evaluator
+            .evaluate_context_condition(&context, "$AFInfoVersion < 0x0003")
+            .unwrap();
+        assert!(result);
+
+        // Test less than or equal
+        let result = evaluator
+            .evaluate_context_condition(&context, "$AFInfoVersion <= 0x0002")
+            .unwrap();
+        assert!(result);
+    }
+
+    #[test]
+    fn test_inequality_conditions() {
+        let mut evaluator = ConditionEvaluator::new();
+
+        let context = ProcessorContext::new(FileFormat::Jpeg, "Canon::Main".to_string())
+            .with_manufacturer("Canon".to_string());
+
+        // Test not equal (!=)
+        let result = evaluator
+            .evaluate_context_condition(&context, "$manufacturer != 'Nikon'")
+            .unwrap();
+        assert!(result);
+
+        // Test not equal (ne)
+        let result = evaluator
+            .evaluate_context_condition(&context, "$manufacturer ne 'Nikon'")
+            .unwrap();
+        assert!(result);
+
+        let result = evaluator
+            .evaluate_context_condition(&context, "$manufacturer != 'Canon'")
+            .unwrap();
+        assert!(!result);
+    }
+
+    #[test]
+    fn test_parentheses_grouping() {
+        let mut evaluator = ConditionEvaluator::new();
+
+        let context = ProcessorContext::new(FileFormat::Jpeg, "Canon::Main".to_string())
+            .with_manufacturer("Canon".to_string())
+            .with_model("EOS R5".to_string());
+
+        // Test simple parentheses
+        let result = evaluator
+            .evaluate_context_condition(&context, "($manufacturer eq 'Canon')")
+            .unwrap();
+        assert!(result);
+
+        // Test AND with parentheses
+        let result = evaluator
+            .evaluate_context_condition(
+                &context,
+                "($manufacturer eq 'Canon' and $model eq 'EOS R5')",
+            )
+            .unwrap();
+        assert!(result);
+
+        // Test OR with simple conditions
+        let result = evaluator
+            .evaluate_context_condition(
+                &context,
+                "$manufacturer eq 'Canon' or $manufacturer eq 'Nikon'",
+            )
+            .unwrap();
+        assert!(result);
+
+        let result = evaluator
+            .evaluate_context_condition(
+                &context,
+                "$manufacturer eq 'Nikon' or $manufacturer eq 'Sony'",
+            )
+            .unwrap();
+        assert!(!result);
+    }
+
+    #[test]
+    fn test_regex_negation() {
+        let mut evaluator = ConditionEvaluator::new();
+
+        let context = ProcessorContext::new(FileFormat::Jpeg, "Canon::Main".to_string())
+            .with_model("Canon EOS R5".to_string());
+
+        // Test regex negation (!~)
+        let result = evaluator
+            .evaluate_context_condition(&context, "$model !~ /R6/")
+            .unwrap();
+        assert!(result);
+
+        let result = evaluator
+            .evaluate_context_condition(&context, "$model !~ /R5/")
+            .unwrap();
+        assert!(!result);
+    }
+
+    #[test]
+    fn test_binary_data_complex_patterns() {
+        let mut evaluator = ConditionEvaluator::new();
+
+        // Test complex Nikon data patterns
+        let complex_data = vec![0x02, 0x04, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06];
+
+        // Test multiple pattern matching attempts
+        let result = evaluator
+            .evaluate_data_condition(&complex_data, "$$valPt =~ /^0204/ and $$valPt =~ /0102/")
+            .unwrap();
+        assert!(result);
+
+        let result = evaluator
+            .evaluate_data_condition(&complex_data, "$$valPt =~ /^0300/ or $$valPt =~ /^0204/")
+            .unwrap();
+        assert!(result);
+    }
+
+    #[test]
+    fn test_error_handling() {
+        let mut evaluator = ConditionEvaluator::new();
+
+        // Test invalid syntax
+        assert!(evaluator
+            .evaluate_context_condition(&ProcessorContext::default(), "invalid syntax")
+            .is_err());
+
+        // Test invalid regex pattern
+        assert!(evaluator
+            .evaluate_data_condition(&[0u8; 4], "$$valPt =~ /[/")
+            .is_err());
+
+        // Test truly unsupported syntax - malformed expression
+        let result = evaluator.evaluate_context_condition(
+            &ProcessorContext::default(),
+            "malformed & invalid #% syntax",
+        );
+        assert!(
+            result.is_err(),
+            "Expected error for malformed syntax but got: {result:?}"
+        );
+    }
 }
