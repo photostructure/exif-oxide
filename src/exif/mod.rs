@@ -265,8 +265,16 @@ impl ExifReader {
             // Apply conversions to get both value and print
             let (value, print) = self.apply_conversions(raw_value, tag_def);
 
+            // Get group1 value using TagSourceInfo
+            let group1_name = if let Some(source_info) = source_info {
+                source_info.get_group1()
+            } else {
+                "IFD0".to_string() // Default fallback
+            };
+
             let entry = TagEntry {
                 group: group_name.to_string(),
+                group1: group1_name,
                 name: base_tag_name,
                 value,
                 print,
@@ -290,6 +298,7 @@ impl ExifReader {
 
                 let entry = TagEntry {
                     group: "Composite".to_string(),
+                    group1: "Composite".to_string(),
                     name: name.to_string(),
                     value,
                     print,
@@ -300,6 +309,7 @@ impl ExifReader {
                 // Fallback if definition not found
                 let entry = TagEntry {
                     group: "Composite".to_string(),
+                    group1: "Composite".to_string(),
                     name: name.to_string(),
                     value: raw_value.clone(),
                     print: raw_value.to_string(),

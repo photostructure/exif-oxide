@@ -28,6 +28,8 @@ pub static SUPPORTED_TAGS: &[&str] = &[
     "EXIF:FNumber",
     "EXIF:ExposureTime",
     "EXIF:FocalLength",
+    "EXIF:ISO",
+    "EXIF:SubSecTimeDigitized",
     "EXIF:GPSLatitude",
     "EXIF:GPSLongitude",
     "EXIF:GPSAltitude",
@@ -37,4 +39,9 @@ pub static SUPPORTED_TAGS: &[&str] = &[
     "EXIF:LensMake",
     "EXIF:LensInfo",
     "EXIF:LensSerialNumber",
+    "EXIF:DateTimeOriginal",
+    "EXIF:CreateDate",
+    "EXIF:SubSecTimeOriginal",
+    "EXIF:SubSecTime",
+    "EXIF:SubSecTimeDigitized",
 ];

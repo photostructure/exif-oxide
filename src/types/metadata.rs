@@ -21,6 +21,7 @@ use std::collections::HashMap;
 /// // A typical EXIF tag entry
 /// let entry = TagEntry {
 ///     group: "EXIF".to_string(),
+///     group1: "ExifIFD".to_string(),  // Located in ExifIFD subdirectory
 ///     name: "FNumber".to_string(),
 ///     value: TagValue::F64(4.0),      // Post-ValueConv: 4/1 → 4.0
 ///     print: "4.0".to_string(),       // Post-PrintConv: formatted for display
@@ -31,6 +32,7 @@ use std::collections::HashMap;
 /// // A tag with units in the display string
 /// let focal_entry = TagEntry {
 ///     group: "EXIF".to_string(),
+///     group1: "ExifIFD".to_string(),
 ///     name: "FocalLength".to_string(),
 ///     value: TagValue::F64(24.0),     // Numeric value
 ///     print: "24 mm".to_string(),     // Human-readable with units
@@ -46,7 +48,21 @@ pub struct TagEntry {
     /// - Main IFDs: "EXIF", "GPS", "IFD0", "IFD1"
     /// - Manufacturer: "Canon", "Nikon", "Sony", etc.
     /// - Sub-groups: "Canon::CameraSettings", etc.
+    ///
+    /// This corresponds to ExifTool's Group0 (format family).
     pub group: String,
+
+    /// ExifTool Group1 (subdirectory location)
+    ///
+    /// Identifies the specific IFD or subdirectory where the tag was found:
+    /// - "IFD0" - Main image IFD
+    /// - "ExifIFD" - EXIF subdirectory (tag 0x8769)
+    /// - "GPS" - GPS subdirectory (tag 0x8825)
+    /// - "InteropIFD" - Interoperability subdirectory (tag 0xa005)
+    /// - "MakerNotes" - Manufacturer-specific subdirectory (tag 0x927c)
+    ///
+    /// This field enables ExifTool-compatible group-based tag access patterns.
+    pub group1: String,
 
     /// Tag name without group prefix (e.g., "FNumber", "ExposureTime")
     ///
@@ -164,6 +180,72 @@ impl ExifData {
                 }
             }
         }
+    }
+
+    /// Get all ExifIFD tags specifically
+    /// ExifTool compatibility: access tags by Group1 location
+    pub fn get_exif_ifd_tags(&self) -> Vec<&TagEntry> {
+        self.tags
+            .iter()
+            .filter(|tag| tag.group1 == "ExifIFD")
+            .collect()
+    }
+
+    /// Get all tags from a specific Group1 (subdirectory location)
+    /// ExifTool: Group1-based filtering
+    ///
+    /// # Examples
+    /// ```
+    /// // Get all GPS tags
+    /// let gps_tags = exif_data.get_tags_by_group1("GPS");
+    ///
+    /// // Get all ExifIFD tags
+    /// let exif_ifd_tags = exif_data.get_tags_by_group1("ExifIFD");
+    /// ```
+    pub fn get_tags_by_group1(&self, group1_name: &str) -> Vec<&TagEntry> {
+        self.tags
+            .iter()
+            .filter(|tag| tag.group1 == group1_name)
+            .collect()
+    }
+
+    /// ExifTool compatibility: get tag by group-qualified name
+    /// Supports both Group0 and Group1 based access
+    ///
+    /// # Examples
+    /// ```
+    /// // Access by Group1 (subdirectory location)
+    /// let exposure_time = exif_data.get_tag_by_group("ExifIFD", "ExposureTime");
+    ///
+    /// // Access by Group0 (format family)
+    /// let make = exif_data.get_tag_by_group("EXIF", "Make");
+    /// ```
+    pub fn get_tag_by_group(&self, group_name: &str, tag_name: &str) -> Option<&TagEntry> {
+        self.tags.iter().find(|tag| {
+            (tag.group == group_name || tag.group1 == group_name) && tag.name == tag_name
+        })
+    }
+
+    /// ExifTool-style group access: EXIF:ExposureTime vs ExifIFD:ExposureTime
+    /// Parses qualified tag names in "Group:TagName" format
+    ///
+    /// # Examples
+    /// ```
+    /// let exposure_time = exif_data.get_tag_exiftool_style("ExifIFD:ExposureTime");
+    /// let gps_lat = exif_data.get_tag_exiftool_style("GPS:GPSLatitude");
+    /// ```
+    pub fn get_tag_exiftool_style(&self, qualified_name: &str) -> Option<&TagEntry> {
+        if let Some((group, name)) = qualified_name.split_once(':') {
+            self.get_tag_by_group(group, name)
+        } else {
+            self.get_tag_by_name(qualified_name)
+        }
+    }
+
+    /// Get tag by name (without group qualifier)
+    /// Returns the first matching tag found
+    pub fn get_tag_by_name(&self, tag_name: &str) -> Option<&TagEntry> {
+        self.tags.iter().find(|tag| tag.name == tag_name)
     }
 }
 
@@ -286,6 +368,20 @@ impl TagSourceInfo {
     /// ExifTool format: "Group:TagName"
     pub fn format_tag_name(&self, tag_name: &str) -> String {
         format!("{}:{}", self.namespace, tag_name)
+    }
+
+    /// Get ExifTool Group1 value based on IFD name
+    /// ExifTool: Groups => { 1 => 'ExifIFD' } specification
+    pub fn get_group1(&self) -> String {
+        match self.ifd_name.as_str() {
+            "ExifIFD" => "ExifIFD".to_string(),
+            "GPS" => "GPS".to_string(),
+            "InteropIFD" => "InteropIFD".to_string(),
+            "MakerNotes" => "MakerNotes".to_string(),
+            "IFD1" => "IFD1".to_string(),
+            // Default to IFD0 for main IFD and unknown IFDs
+            _ => "IFD0".to_string(),
+        }
     }
 }
 

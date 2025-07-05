@@ -109,6 +109,8 @@ enum NormalizationRule {
     CleanNumericPrecision { max_places: u8 },
     /// GPS altitude tolerance: strip unit, validate values within 0.09m tolerance
     GPSAltitudeTolerance,
+    /// Convert numbers to strings for SubSec* tags
+    NumberToString,
 }
 
 /// Tag normalization configuration
@@ -142,6 +144,12 @@ fn get_normalization_rules() -> HashMap<&'static str, NormalizationRule> {
     // GPS accuracy is ~1-3m, so validate values are within 0.09m tolerance
     rules.insert("EXIF:GPSAltitude", NormalizationRule::GPSAltitudeTolerance);
 
+    // SubSec* tags - convert numbers to strings for consistency
+    // ExifTool outputs as numbers, exif-oxide outputs as strings
+    rules.insert("EXIF:SubSecTime", NormalizationRule::NumberToString);
+    rules.insert("EXIF:SubSecTimeDigitized", NormalizationRule::NumberToString);
+    rules.insert("EXIF:SubSecTimeOriginal", NormalizationRule::NumberToString);
+
     rules
 }
 
@@ -157,6 +165,7 @@ fn apply_normalization_rule(value: &Value, rule: &NormalizationRule) -> Value {
             normalize_clean_numeric_precision(value, *max_places)
         }
         NormalizationRule::GPSAltitudeTolerance => normalize_gps_altitude_tolerance(value),
+        NormalizationRule::NumberToString => normalize_number_to_string(value),
     }
 }
 
@@ -344,6 +353,18 @@ fn normalize_for_comparison(mut data: Value, _is_exiftool: bool) -> Value {
     }
 
     data
+}
+
+/// Convert numbers to strings for SubSec* tags
+/// ExifTool outputs SubSec* tags as numbers, but exif-oxide outputs them as strings
+fn normalize_number_to_string(value: &Value) -> Value {
+    match value {
+        Value::Number(n) => {
+            // Convert number to string
+            Value::String(n.to_string())
+        }
+        _ => value.clone(),
+    }
 }
 
 /// Normalize GPS altitude for tolerance-based comparison

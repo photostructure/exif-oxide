@@ -143,7 +143,9 @@
       "Bash(RUST_BACKTRACE=1 cargo test implementations::nikon::offset_schemes::tests::test_format1_insufficient_ifd_space -- --exact)",
       "Bash(do echo \"=== $file.pm ===\")",
       "Bash(RUST_LOG=debug cargo run -- test-images/nikon/nikon_z8_73.jpg)",
-      "Bash(RUST_LOG=trace cargo run -- test-images/nikon/nikon_z8_73.jpg)"
+      "Bash(RUST_LOG=trace cargo run -- test-images/nikon/nikon_z8_73.jpg)",
+      "Bash(RUST_LOG=debug cargo run --bin exif-oxide -- \"third-party/exiftool/t/images/MWG.jpg\")",
+      "Bash(RUST_LOG=trace cargo run --bin exif-oxide -- \"third-party/exiftool/t/images/MWG.jpg\")"
     ],
     "deny": []
   }

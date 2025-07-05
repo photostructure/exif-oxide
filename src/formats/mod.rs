@@ -51,6 +51,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         .to_string();
     tag_entries.push(TagEntry {
         group: "File".to_string(),
+        group1: "File".to_string(),
         name: "FileName".to_string(),
         value: TagValue::String(filename.clone()),
         print: filename,
@@ -63,6 +64,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         .to_string();
     tag_entries.push(TagEntry {
         group: "File".to_string(),
+        group1: "File".to_string(),
         name: "Directory".to_string(),
         value: TagValue::String(directory.clone()),
         print: directory,
@@ -76,6 +78,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
     };
     tag_entries.push(TagEntry {
         group: "File".to_string(),
+        group1: "File".to_string(),
         name: "FileSize".to_string(),
         value: file_size_value,
         print: file_size.to_string(),
@@ -90,6 +93,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
         tag_entries.push(TagEntry {
             group: "File".to_string(),
+            group1: "File".to_string(),
             name: "FileModifyDate".to_string(),
             value: TagValue::String(formatted.clone()),
             print: formatted,
@@ -100,6 +104,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
     let file_type = format.file_type().to_string();
     tag_entries.push(TagEntry {
         group: "File".to_string(),
+        group1: "File".to_string(),
         name: "FileType".to_string(),
         value: TagValue::String(file_type.clone()),
         print: file_type,
@@ -108,6 +113,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
     let file_type_ext = format.file_type_extension().to_string();
     tag_entries.push(TagEntry {
         group: "File".to_string(),
+        group1: "File".to_string(),
         name: "FileTypeExtension".to_string(),
         value: TagValue::String(file_type_ext.clone()),
         print: file_type_ext,
@@ -116,6 +122,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
     let mime_type = format.mime_type().to_string();
     tag_entries.push(TagEntry {
         group: "File".to_string(),
+        group1: "File".to_string(),
         name: "MIMEType".to_string(),
         value: TagValue::String(mime_type.clone()),
         print: mime_type,
