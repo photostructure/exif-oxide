@@ -9,6 +9,46 @@
       "constant_name": "NIKON_LENS_IDS",
       "key_type": "String",
       "description": "Nikon lens identification database"
+    },
+    {
+      "module": "Canon.pm",
+      "hash_name": "%canonModelID",
+      "output_file": "canon/models.rs",
+      "constant_name": "CANON_MODEL_ID",
+      "key_type": "u32",
+      "description": "Canon camera model identification"
+    },
+    {
+      "module": "Canon.pm",
+      "hash_name": "%canonWhiteBalance",
+      "output_file": "canon/white_balance.rs",
+      "constant_name": "CANON_WHITE_BALANCE",
+      "key_type": "u8",
+      "description": "White balance mode names"
+    },
+    {
+      "module": "Canon.pm",
+      "hash_name": "%pictureStyles",
+      "output_file": "canon/picture_styles.rs",
+      "constant_name": "PICTURE_STYLES",
+      "key_type": "u16",
+      "description": "Picture style mode names"
+    },
+    {
+      "module": "Canon.pm",
+      "hash_name": "%canonImageSize",
+      "output_file": "canon/image_size.rs",
+      "constant_name": "CANON_IMAGE_SIZE",
+      "key_type": "i16",
+      "description": "Image size setting names"
+    },
+    {
+      "module": "Canon.pm",
+      "hash_name": "%canonQuality",
+      "output_file": "canon/quality.rs",
+      "constant_name": "CANON_QUALITY",
+      "key_type": "i16",
+      "description": "Image quality setting names"
     }
   ]
 }
