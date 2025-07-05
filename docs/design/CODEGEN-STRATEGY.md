@@ -13,6 +13,14 @@ The code generation pipeline extracts metadata definitions from ExifTool's Perl 
 
 Complex logic is intentionally NOT generated - it's manually implemented with ExifTool source references.
 
+## DO NOT WRITE A PERL CODE PARSER
+
+**The `perl` interpreter is the only competent perl parser!**
+
+Use `use` or `require` in `perl`. DO NOT USE REGEX to try to extract something from a perl script!
+
+There are too many gotchas and surprising perl-isms--any code that tries to extract maps, hashes, or other bits from perl in rust or regex is a bad idea, be brittle, lead us to ruin, and haunt us in the future. Use perl to read perl.
+
 ## Build Pipeline
 
 1. **ExifTool Source** (Perl modules)
@@ -82,7 +90,7 @@ fn select_processor(table: &TagTable) -> ProcessFunc {
 // Ensures single source of truth for conversion requirements
 pub static REQUIRED_PRINT_CONV: &[&str] = &[
     "orientation_print_conv",
-    "flash_print_conv", 
+    "flash_print_conv",
     "colorspace_print_conv",
     // ... automatically extracted from all tag tables
 ];
@@ -276,6 +284,7 @@ cargo run -p codegen
 ```
 
 Output:
+
 ```
 Generated: 823 mainstream tag definitions (from 15,234 total)
 Simple conversions implemented: 156
@@ -323,6 +332,7 @@ cargo test
 When a new ExifTool version is released:
 
 1. **Update ExifTool Submodule**
+
    ```bash
    cd third-party/exiftool
    git fetch origin
@@ -331,6 +341,7 @@ When a new ExifTool version is released:
    ```
 
 2. **Regenerate and Build**
+
    ```bash
    # Extract updated tag definitions
    perl codegen/extract_tables.pl > codegen/tag_tables.json
@@ -340,6 +351,7 @@ When a new ExifTool version is released:
    ```
 
 3. **Review Changes**
+
    ```
    New in ExifTool 12.77:
    - 3 new mainstream tags requiring implementation
@@ -353,6 +365,7 @@ When a new ExifTool version is released:
    ```
 
 4. **Implement Missing Pieces**
+
    - Add implementations to palette
    - Reference ExifTool source
    - Test against provided images
@@ -372,10 +385,11 @@ For minor ExifTool updates that only add tags within existing processors, the pr
 ExifTool contains hundreds of primitive lookup tables across manufacturer modules that provide valuable metadata conversion capabilities. These are safe for automated extraction:
 
 **Safe to Extract** ✅:
+
 ```perl
 %canonWhiteBalance = (
     0 => 'Auto',
-    1 => 'Daylight', 
+    1 => 'Daylight',
     2 => 'Cloudy',
     3 => 'Tungsten',
     4 => 'Fluorescent',
@@ -383,6 +397,7 @@ ExifTool contains hundreds of primitive lookup tables across manufacturer module
 ```
 
 **Never Extract** ❌:
+
 ```perl
 0xd => [
     {
@@ -398,16 +413,17 @@ ExifTool contains hundreds of primitive lookup tables across manufacturer module
 1. **Identify Candidate Tables**: Look for simple `%hash = (key => 'value')` patterns in ExifTool modules
 2. **Validate Primitive-ness**: Ensure no Perl variables, expressions, or complex structures
 3. **Add to Configuration**: Update `codegen/simple_tables.json`
-4. **Run Extraction**: `make codegen-simple-tables` 
+4. **Run Extraction**: `make codegen-simple-tables`
 5. **Integrate**: Use generated lookup functions in PrintConv implementations
 
 ### Adding a New Table (Example)
 
 Found a new simple table in `Canon.pm`:
+
 ```perl
 %canonFlashMode = (
     0 => 'Off',
-    1 => 'Auto', 
+    1 => 'Auto',
     2 => 'On',
     3 => 'Red-eye Reduction',
     4 => 'Slow Sync',
@@ -416,10 +432,11 @@ Found a new simple table in `Canon.pm`:
 ```
 
 **Step 1**: Add entry to `codegen/simple_tables.json`:
+
 ```json
 {
   "module": "Canon.pm",
-  "hash_name": "%canonFlashMode", 
+  "hash_name": "%canonFlashMode",
   "output_file": "canon/flash_mode.rs",
   "constant_name": "CANON_FLASH_MODE",
   "key_type": "u8",
@@ -428,11 +445,13 @@ Found a new simple table in `Canon.pm`:
 ```
 
 **Step 2**: Run extraction:
+
 ```bash
 make codegen-simple-tables
 ```
 
 **Step 3**: Use in PrintConv:
+
 ```rust
 use crate::generated::canon::flash_mode::lookup_canon_flash_mode;
 
@@ -449,12 +468,14 @@ pub fn canon_flash_mode_print_conv(value: &TagValue) -> Result<String> {
 ### Guidelines for Table Selection
 
 **Include**:
+
 - Simple hash tables with primitive keys (numbers, strings)
 - Values are plain strings (no variables or expressions)
 - High-value data (lens databases, mode settings, model IDs)
 - Tables with >10 entries (worth the automation)
 
 **Exclude**:
+
 - Any Perl expressions in keys or values
 - Nested structures or references
 - Conditional logic or complex formatting
@@ -463,6 +484,7 @@ pub fn canon_flash_mode_print_conv(value: &TagValue) -> Result<String> {
 ### Validation Process
 
 The extraction framework automatically validates tables:
+
 - ✅ Keys must be simple primitives (numbers, quoted strings)
 - ✅ Values must be simple quoted strings
 - ✅ No variables, expressions, or function calls
@@ -471,7 +493,7 @@ The extraction framework automatically validates tables:
 ### Benefits
 
 - **Systematic Coverage**: Extract hundreds of tables consistently
-- **Automatic Updates**: Regenerate with ExifTool releases  
+- **Automatic Updates**: Regenerate with ExifTool releases
 - **Type Safety**: Generated Rust code with proper types
 - **Performance**: Fast HashMap lookups with LazyLock initialization
 - **Traceability**: Every entry references ExifTool source line
