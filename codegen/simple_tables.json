@@ -49,6 +49,15 @@
       "constant_name": "CANON_QUALITY",
       "key_type": "i16",
       "description": "Image quality setting names"
+    },
+    {
+      "module": "ExifTool.pm",
+      "hash_name": "%magicNumber",
+      "output_file": "file_types/magic_numbers.rs",
+      "constant_name": "MAGIC_NUMBER_PATTERNS",
+      "key_type": "String",
+      "extraction_type": "regex_strings",
+      "description": "Magic number regex patterns for file type detection"
     }
   ]
 }
