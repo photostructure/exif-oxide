@@ -97,8 +97,8 @@ sub is_mainstream_tag {
         # TODO: Lower frequency to include more tags
         return 1 if ($meta->{frequency} && $meta->{frequency} > 0.95);
 
-        # TODO: Uncomment to include all mainstream tags
-        # return 1 if ($meta->{mainstream});
+        # Include all mainstream tags
+        return 1 if ($meta->{mainstream});
     }
     
     # Always include basic file information tags and tags with working PrintConv implementations

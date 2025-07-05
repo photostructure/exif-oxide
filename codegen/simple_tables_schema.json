@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Simple Tables Configuration",
+  "description": "Schema for configuring ExifTool simple table extraction",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of this configuration"
+    },
+    "tables": {
+      "type": "array",
+      "description": "List of tables to extract",
+      "items": {
+        "type": "object",
+        "properties": {
+          "module": {
+            "type": "string",
+            "pattern": "^\\w+\\.pm$",
+            "description": "ExifTool module filename (e.g. Canon.pm)"
+          },
+          "hash_name": {
+            "type": "string",
+            "pattern": "^%\\w+$",
+            "description": "Perl hash variable name (e.g. %canonLensTypes)"
+          },
+          "output_file": {
+            "type": "string",
+            "pattern": "^[\\w/]+\\.rs$",
+            "description": "Output Rust file path relative to src/generated/"
+          },
+          "constant_name": {
+            "type": "string",
+            "pattern": "^[A-Z_]+$",
+            "description": "Rust constant name (SCREAMING_SNAKE_CASE)"
+          },
+          "key_type": {
+            "type": "string",
+            "enum": ["u8", "u16", "u32", "f32", "String"],
+            "description": "Rust type for hash keys"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Human-readable description of this table"
+          }
+        },
+        "required": ["module", "hash_name", "output_file", "constant_name", "key_type", "description"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["tables"],
+  "additionalProperties": false
+}
