@@ -8,15 +8,20 @@ pub mod composite_tags;
 pub mod conditions;
 pub mod examples;
 pub mod exif;
+pub mod file_detection;
 pub mod formats;
 pub mod generated;
+
 pub mod implementations;
 pub mod processor_registry;
+#[cfg(test)]
+mod regex_test;
 pub mod registry;
 pub mod tiff_types;
 pub mod types;
 pub mod value_extraction;
 
+pub use file_detection::{FileDetectionError, FileTypeDetectionResult, FileTypeDetector};
 pub use generated::*;
 pub use registry::Registry;
 pub use types::{ExifData, ExifError, TagValue};

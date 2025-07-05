@@ -35,6 +35,19 @@ doc:
 # Clean build artifacts
 clean:
 	cargo clean
+	$(MAKE) -C codegen -f Makefile.modular clean
+	@echo "Note: Generated code was not cleaned. Use 'make clean-generated' to remove it."
+	@echo "      You'll need to run 'make codegen' to regenerate if you clean generated code."
+
+# Clean generated code (use with caution - requires regeneration)
+clean-generated:
+	@echo "Cleaning generated code..."
+	rm -rf src/generated/*
+	rm -rf codegen/generated/*
+	@echo "Generated code cleaned. Run 'make codegen' to regenerate."
+
+# Deep clean - removes all build artifacts and generated code
+clean-all: clean clean-generated
 
 # Patch ExifTool modules to expose my-scoped variables
 patch-exiftool:
@@ -47,6 +60,10 @@ codegen-simple-tables:
 	@echo "Extracting simple tables from ExifTool..."
 	cd codegen && perl extract_simple_tables.pl > generated/simple_tables.json
 	@echo "Generated: codegen/generated/simple_tables.json"
+
+# Check that all Perl extractors are working correctly
+check-extractors:
+	$(MAKE) -C codegen -f Makefile.modular check-extractors
 
 # Extract EXIF tags from ExifTool and regenerate Rust code
 codegen: codegen-simple-tables
@@ -70,7 +87,7 @@ audit:
 	cargo audit
 
 # Pre-commit checks: do everything: update deps, codegen, fix code, lint, test, audit, and build
-precommit: update codegen fix lint compat-gen test audit build 
+precommit: update codegen check-extractors fix lint compat-gen test audit build 
 
 # Generate ExifTool JSON reference data for compatibility testing
 compat-gen:
@@ -80,5 +97,41 @@ compat-gen:
 compat-test:
 	cargo test --test exiftool_compatibility_tests -- --nocapture
 
+# Run MIME type compatibility tests
+test-mime-compat:
+	@echo "Running MIME type compatibility tests..."
+	cargo test --test mime_type_compatibility_tests -- --nocapture
+
 # Generate reference data and run compatibility tests
-compat: compat-gen compat-test
+compat: compat-gen compat-test test-mime-compat
+
+# Show available make targets
+help:
+	@echo "exif-oxide Makefile targets:"
+	@echo ""
+	@echo "Development:"
+	@echo "  make check         - Run all checks without modifying (for CI)"
+	@echo "  make fmt           - Format code"
+	@echo "  make lint          - Run clippy linter"
+	@echo "  make test          - Run tests"
+	@echo "  make fix           - Fix formatting and auto-fixable issues"
+	@echo "  make build         - Build in release mode"
+	@echo "  make doc           - Generate and open documentation"
+	@echo ""
+	@echo "Code Generation:"
+	@echo "  make codegen       - Generate all code from ExifTool"
+	@echo "  make patch-exiftool - Patch ExifTool modules (required before codegen)"
+	@echo ""
+	@echo "Cleaning:"
+	@echo "  make clean         - Clean build artifacts (cargo clean)"
+	@echo "  make clean-generated - Clean generated code (requires regeneration)"
+	@echo "  make clean-all     - Clean everything (build + generated)"
+	@echo ""
+	@echo "Maintenance:"
+	@echo "  make update        - Update dependencies"
+	@echo "  make audit         - Security audit for vulnerabilities"
+	@echo "  make precommit     - Run full pre-commit checks"
+	@echo ""
+	@echo "Testing:"
+	@echo "  make compat        - Run compatibility tests"
+	@echo "  make snapshot-tests - Run snapshot tests"

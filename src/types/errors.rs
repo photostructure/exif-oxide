@@ -3,6 +3,7 @@
 //! This module defines the error types used throughout the exif-oxide library,
 //! following ExifTool's error classification patterns.
 
+use crate::file_detection::FileDetectionError;
 use thiserror::Error;
 
 /// Error types for exif-oxide
@@ -23,6 +24,9 @@ pub enum ExifError {
 
     #[error("Registry error: {0}")]
     Registry(String),
+
+    #[error("File detection error: {0}")]
+    FileDetection(#[from] FileDetectionError),
 }
 
 /// Result type alias for convenience

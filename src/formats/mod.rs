@@ -14,6 +14,7 @@ pub use jpeg::{extract_jpeg_exif, scan_jpeg_segments, JpegSegment, JpegSegmentIn
 pub use tiff::{extract_tiff_exif, get_tiff_endianness, validate_tiff_format};
 
 use crate::exif::ExifReader;
+use crate::file_detection::FileTypeDetector;
 use crate::generated::{EXIF_MAIN_TAGS, REQUIRED_PRINT_CONV, REQUIRED_VALUE_CONV};
 use crate::types::{ExifData, Result, TagEntry, TagValue};
 use std::collections::HashMap;
@@ -33,8 +34,9 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
     let file = File::open(path)?;
     let mut reader = BufReader::new(file);
 
-    // Detect format using magic bytes
-    let format = detect_file_format(&mut reader)?;
+    // Detect file type using the new ExifTool-compatible detector
+    let detector = FileTypeDetector::new();
+    let detection_result = detector.detect_file_type(path, &mut reader)?;
 
     // Get actual file metadata
     let file_metadata = std::fs::metadata(path)?;
@@ -101,16 +103,19 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
     }
 
     // Add FileType and FileTypeExtension using ExifTool-compatible values
-    let file_type = format.file_type().to_string();
+    // Note: We'll store the initial file type here, but it may be overridden later
+    // (e.g., NEF -> NRW during TIFF processing)
+    let mut file_type = detection_result.file_type.clone();
     tag_entries.push(TagEntry {
         group: "File".to_string(),
         group1: "File".to_string(),
         name: "FileType".to_string(),
         value: TagValue::String(file_type.clone()),
-        print: file_type,
+        print: file_type.clone(),
     });
 
-    let file_type_ext = format.file_type_extension().to_string();
+    // File extension is based on the detected file type
+    let file_type_ext = detection_result.file_type.to_lowercase();
     tag_entries.push(TagEntry {
         group: "File".to_string(),
         group1: "File".to_string(),
@@ -119,7 +124,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         print: file_type_ext,
     });
 
-    let mime_type = format.mime_type().to_string();
+    let mime_type = detection_result.mime_type.clone();
     tag_entries.push(TagEntry {
         group: "File".to_string(),
         group1: "File".to_string(),
@@ -128,9 +133,9 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         print: mime_type,
     });
 
-    // Format-specific processing
-    match format {
-        FileFormat::Jpeg => {
+    // Format-specific processing based on the detected format
+    match detection_result.format.as_str() {
+        "JPEG" => {
             // Scan for EXIF data in JPEG segments
             match scan_jpeg_segments(&mut reader)? {
                 Some(segment_info) => {
@@ -192,21 +197,82 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                 }
             }
         }
-        FileFormat::Tiff => {
-            // For TIFF, the entire file is potentially EXIF data
-            tags.insert(
-                "System:ExifDetectionStatus".to_string(),
-                TagValue::String(
-                    "TIFF format detected (EXIF parsing deferred to future milestone)".to_string(),
-                ),
-            );
+        "TIFF" => {
+            // For TIFF-based files (including NEF, NRW, CR2, etc.), process as TIFF
+            // Reset reader to start of file
+            reader.seek(SeekFrom::Start(0))?;
+
+            // Read entire file for TIFF processing
+            let mut tiff_data = Vec::new();
+            reader.read_to_end(&mut tiff_data)?;
+
+            // Parse TIFF/EXIF data
+            let mut exif_reader = ExifReader::new();
+
+            // Store the original file type for NEF/NRW detection
+            exif_reader.set_file_type(detection_result.file_type.clone());
+
+            match exif_reader.parse_exif_data(&tiff_data) {
+                Ok(()) => {
+                    // Check if file type was overridden during processing
+                    if let Some(new_file_type) = exif_reader.get_overridden_file_type() {
+                        // Update file type tags with the overridden value
+                        file_type = new_file_type.clone();
+
+                        // Find and update the FileType tag entry
+                        for entry in &mut tag_entries {
+                            if entry.name == "FileType" {
+                                entry.value = TagValue::String(file_type.clone());
+                                entry.print = file_type.clone();
+                            } else if entry.name == "FileTypeExtension" {
+                                entry.value = TagValue::String(file_type.to_lowercase());
+                                entry.print = file_type.to_lowercase();
+                            } else if entry.name == "MIMEType" {
+                                // Update MIME type for NRW
+                                if file_type == "NRW" {
+                                    entry.value = TagValue::String("image/x-nikon-nrw".to_string());
+                                    entry.print = "image/x-nikon-nrw".to_string();
+                                }
+                            }
+                        }
+                    }
+
+                    // Extract all found tags using new TagEntry API
+                    let mut exif_tag_entries = exif_reader.get_all_tag_entries();
+
+                    // Append EXIF tag entries to our collection
+                    tag_entries.append(&mut exif_tag_entries);
+
+                    // Also populate legacy tags for backward compatibility
+                    let exif_tags = exif_reader.get_all_tags();
+                    for (key, value) in exif_tags {
+                        tags.insert(key, value);
+                    }
+
+                    // Add EXIF processing warnings as tags for debugging
+                    for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
+                        tags.insert(
+                            format!("Warning:ExifWarning{i}"),
+                            TagValue::String(warning.clone()),
+                        );
+                    }
+                }
+                Err(e) => {
+                    // Failed to parse TIFF - add error information
+                    tags.insert(
+                        "Warning:TiffParseError".to_string(),
+                        TagValue::String(format!("Failed to parse TIFF: {e}")),
+                    );
+                }
+            }
         }
         _ => {
             // Other formats not yet supported
             tags.insert(
                 "System:ExifDetectionStatus".to_string(),
                 TagValue::String(format!(
-                    "Format {format:?} not yet supported for EXIF extraction"
+                    "Format {} not yet supported for EXIF extraction",
+                    detection_result.format
                 )),
             );
         }

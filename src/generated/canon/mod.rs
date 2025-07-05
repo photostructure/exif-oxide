@@ -1,7 +1,4 @@
-//! Generated Canon manufacturer-specific modules
-//!
-//! This module contains all generated code for Canon camera data
-//! extracted from ExifTool's Canon.pm module.
+//! Canon-specific generated code
 
 pub mod image_size;
 pub mod models;

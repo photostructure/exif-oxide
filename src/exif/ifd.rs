@@ -193,7 +193,19 @@ impl ExifReader {
                 );
 
                 let source_info = self.create_tag_source_info(ifd_name);
-                self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
+                self.store_tag_with_precedence(entry.tag_id, final_value.clone(), source_info);
+
+                // Check for NEF -> NRW conversion
+                // ExifTool Exif.pm:1139-1140 - recognize NRW from JPEG-compressed thumbnail in IFD0
+                if entry.tag_id == 0x0103 && ifd_name == "IFD0" {
+                    if let TagValue::U16(compression) = final_value {
+                        if compression == 6 && self.original_file_type.as_deref() == Some("NEF") {
+                            // Override file type from NEF to NRW
+                            debug!("Detected NRW format: IFD0 Compression=6 in NEF file");
+                            self.overridden_file_type = Some("NRW".to_string());
+                        }
+                    }
+                }
             }
             TiffFormat::Long => {
                 let value = value_extraction::extract_long_value(&self.data, &entry, byte_order)?;
