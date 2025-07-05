@@ -39,13 +39,61 @@
             "enum": ["u8", "u16", "u32", "i8", "i16", "i32", "f32", "String"],
             "description": "Rust type for hash keys"
           },
+          "extraction_type": {
+            "type": "string",
+            "enum": ["simple_table", "regex_strings", "file_type_lookup"],
+            "description": "Type of extraction to perform"
+          },
           "description": {
             "type": "string",
             "minLength": 1,
             "description": "Human-readable description of this table"
           }
         },
-        "required": ["module", "hash_name", "output_file", "constant_name", "key_type", "description"],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "extraction_type": {
+                  "const": "simple_table"
+                }
+              }
+            },
+            "then": {
+              "required": ["module", "hash_name", "output_file", "constant_name", "key_type", "description"]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "extraction_type": {
+                  "const": "regex_strings"
+                }
+              }
+            },
+            "then": {
+              "required": ["module", "hash_name", "output_file", "constant_name", "key_type", "description"]
+            }
+          },
+          {
+            "if": {
+              "not": {
+                "anyOf": [
+                  {
+                    "properties": {
+                      "extraction_type": {
+                        "const": "regex_strings"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "then": {
+              "required": ["module", "hash_name", "output_file", "constant_name", "key_type", "description"]
+            }
+          }
+        ],
         "additionalProperties": false
       }
     }
