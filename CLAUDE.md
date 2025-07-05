@@ -90,9 +90,7 @@ Whenever possible, our rust code should include a comment pointing back to the E
 
 WE CANNOT INTERPRET PERL CODE IN RUST.
 
-Only perl is competent at parsing perl! There are too many gotchas and
-surprising perl-isms--any perl parser we make in rust or regex will be brittle
-and haunt us in the future.
+The perl interpreter is the only competent perl parsing! There are too many gotchas and surprising perl-isms--any perl parser we make in rust or regex is a bad idea, be brittle, lead us to ruin, and haunt us in the future.
 
 ### 3. Incremental improvements with a focus on common, mainstream tags
 
