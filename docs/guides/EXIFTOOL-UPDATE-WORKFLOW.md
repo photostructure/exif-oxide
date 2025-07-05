@@ -205,6 +205,6 @@ diff expected.json actual.json
 
 ## Related Documentation
 
-- [CODEGEN-STRATEGY.md](../design/CODEGEN-STRATEGY.md) - How code generation works
+- [CODEGEN.md](../design/CODEGEN.md) - How code generation works
 - [IMPLEMENTATION-PALETTE.md](../design/IMPLEMENTATION-PALETTE.md) - How to add implementations
 - [ENGINEER-GUIDE.md](../ENGINEER-GUIDE.md) - General development guide
