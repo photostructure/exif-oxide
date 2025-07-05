@@ -461,7 +461,9 @@ fn generate_tag_table(tags: &[GeneratedTag], output_dir: &str) -> Result<()> {
     code.push_str("];\n\n");
 
     // Lookup by ID
-    code.push_str("pub static TAG_BY_ID: LazyLock<HashMap<u32, &'static TagDef>> = LazyLock::new(|| {\n");
+    code.push_str(
+        "pub static TAG_BY_ID: LazyLock<HashMap<u32, &'static TagDef>> = LazyLock::new(|| {\n",
+    );
     code.push_str("    let mut map = HashMap::new();\n");
     code.push_str("    for tag in EXIF_MAIN_TAGS {\n");
     code.push_str("        map.insert(tag.id, tag);\n");
@@ -537,10 +539,14 @@ fn generate_conversion_refs(
     code.push_str("];\n\n");
 
     // Runtime check functions
-    code.push_str("static REQUIRED_PRINT_CONV_SET: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {\n");
+    code.push_str(
+        "static REQUIRED_PRINT_CONV_SET: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {\n",
+    );
     code.push_str("    REQUIRED_PRINT_CONV.iter().copied().collect()\n");
     code.push_str("});\n\n");
-    code.push_str("static REQUIRED_VALUE_CONV_SET: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {\n");
+    code.push_str(
+        "static REQUIRED_VALUE_CONV_SET: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {\n",
+    );
     code.push_str("    REQUIRED_VALUE_CONV.iter().copied().collect()\n");
     code.push_str("});\n\n");
 
@@ -605,9 +611,11 @@ fn generate_supported_tags(_tags: &[GeneratedTag], output_dir: &str) -> Result<(
         (
             "Milestone 8b",
             &[
-                "EXIF:FNumber",      // fnumber_print_conv ✅
-                "EXIF:ExposureTime", // exposuretime_print_conv ✅
-                "EXIF:FocalLength",  // focallength_print_conv ✅
+                "EXIF:FNumber",             // fnumber_print_conv ✅
+                "EXIF:ExposureTime",        // exposuretime_print_conv ✅
+                "EXIF:FocalLength",         // focallength_print_conv ✅
+                "EXIF:ISO",                 // Standard ISO value ✅
+                "EXIF:SubSecTimeDigitized", // Sub-second precision for DateTimeDigitized ✅
             ],
         ),
         (
@@ -623,10 +631,24 @@ fn generate_supported_tags(_tags: &[GeneratedTag], output_dir: &str) -> Result<(
         (
             "Lens Support",
             &[
-                "EXIF:LensModel",      // Standard EXIF lens model name
-                "EXIF:LensMake",       // Standard EXIF lens make name
-                "EXIF:LensInfo",       // Standard EXIF lens information
+                "EXIF:LensModel",        // Standard EXIF lens model name
+                "EXIF:LensMake",         // Standard EXIF lens make name
+                "EXIF:LensInfo",         // Standard EXIF lens information
                 "EXIF:LensSerialNumber", // Standard EXIF lens serial number
+            ],
+        ),
+        (
+            "ExifIFD Core Tags",
+            &[
+                "EXIF:DateTimeOriginal", // Original capture date/time
+                "EXIF:CreateDate",       // File creation date/time
+                // "EXIF:ExifImageWidth",      // Image width in ExifIFD -- worthless tag
+                // "EXIF:ExifImageHeight",     // Image height in ExifIFD -- worthless tag
+                // "EXIF:ExposureMode",        // Exposure mode setting (TODO: needs PrintConv)
+                // "EXIF:SceneCaptureType",    // Scene type (TODO: needs PrintConv)
+                "EXIF:SubSecTimeOriginal", // Sub-second precision for DateTimeOriginal
+                "EXIF:SubSecTime",         // Sub-second precision for DateTime
+                "EXIF:SubSecTimeDigitized", // Sub-second precision for DateTimeDigitized
             ],
         ),
     ];
@@ -874,7 +896,7 @@ fn generate_composite_tag_table(
 fn generate_simple_tables(input_path: &str, output_dir: &str) -> Result<()> {
     let json_content = fs::read_to_string(input_path)
         .with_context(|| format!("Failed to read simple tables JSON: {}", input_path))?;
-    
+
     let tables_data: SimpleTablesData = serde_json::from_str(&json_content)
         .with_context(|| "Failed to parse simple tables JSON")?;
 
@@ -893,7 +915,10 @@ fn generate_simple_tables(input_path: &str, output_dir: &str) -> Result<()> {
         fs::write(&output_path, code)
             .with_context(|| format!("Failed to write: {:?}", output_path))?;
 
-        println!("Generated: {} ({} entries)", config.output_file, table_data.entry_count);
+        println!(
+            "Generated: {} ({} entries)",
+            config.output_file, table_data.entry_count
+        );
     }
 
     println!("Generated {} simple tables total", tables_data.total_tables);
@@ -920,7 +945,7 @@ fn generate_table_code(hash_name: &str, table_data: &ExtractedTable) -> Result<S
     // Determine HashMap type based on key_type
     let key_rust_type = match config.key_type.as_str() {
         "u8" => "u8",
-        "u16" => "u16", 
+        "u16" => "u16",
         "u32" => "u32",
         "i8" => "i8",
         "i16" => "i16",
@@ -975,15 +1000,26 @@ fn generate_table_code(hash_name: &str, table_data: &ExtractedTable) -> Result<S
 
     // Generate lookup function
     let fn_name = config.constant_name.to_lowercase();
-    let fn_param_type = if config.key_type == "String" { "&str" } else { key_rust_type };
+    let fn_param_type = if config.key_type == "String" {
+        "&str"
+    } else {
+        key_rust_type
+    };
     code.push_str(&format!(
         "/// Look up {} value by key\npub fn lookup_{}(key: {}) -> Option<&'static str> {{\n",
         config.description.to_lowercase(),
         fn_name,
         fn_param_type
     ));
-    let key_ref = if config.key_type == "String" { "key" } else { "&key" };
-    code.push_str(&format!("    {}.get({}).copied()\n", config.constant_name, key_ref));
+    let key_ref = if config.key_type == "String" {
+        "key"
+    } else {
+        "&key"
+    };
+    code.push_str(&format!(
+        "    {}.get({}).copied()\n",
+        config.constant_name, key_ref
+    ));
     code.push_str("}\n");
 
     Ok(code)
