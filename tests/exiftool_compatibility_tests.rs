@@ -147,7 +147,10 @@ fn get_normalization_rules() -> HashMap<&'static str, NormalizationRule> {
     // SubSec* tags - convert numbers to strings for consistency
     // ExifTool outputs as numbers, exif-oxide outputs as strings
     rules.insert("EXIF:SubSecTime", NormalizationRule::NumberToString);
-    rules.insert("EXIF:SubSecTimeDigitized", NormalizationRule::NumberToString);
+    rules.insert(
+        "EXIF:SubSecTimeDigitized",
+        NormalizationRule::NumberToString,
+    );
     rules.insert("EXIF:SubSecTimeOriginal", NormalizationRule::NumberToString);
 
     rules

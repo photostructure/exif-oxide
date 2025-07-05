@@ -9,14 +9,10 @@ use crate::types::{ExifError, Result, TagValue};
 
 /// Extract ASCII string value from IFD entry
 /// ExifTool: lib/Image/ExifTool/Exif.pm:6372-6398 ASCII value handling
-pub fn extract_ascii_value(
-    data: &[u8],
-    entry: &IfdEntry,
-    byte_order: ByteOrder,
-) -> Result<String> {
-    // debug!("extract_ascii_value: tag {:#x}, count {}, is_inline: {}, value_or_offset: {:#x}", 
+pub fn extract_ascii_value(data: &[u8], entry: &IfdEntry, byte_order: ByteOrder) -> Result<String> {
+    // debug!("extract_ascii_value: tag {:#x}, count {}, is_inline: {}, value_or_offset: {:#x}",
     //        entry.tag_id, entry.count, entry.is_inline(), entry.value_or_offset);
-    
+
     let value_data = if entry.is_inline() {
         // Value stored inline in the 4-byte value field
         // ExifTool: lib/Image/ExifTool/Exif.pm:6372 inline value handling
