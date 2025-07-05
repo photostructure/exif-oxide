@@ -45,6 +45,8 @@ sub load_and_extract_table {
         # Extract entries based on extraction type
         if ($extraction_type && $extraction_type eq 'regex_strings') {
             return extract_regex_entries($hash_ref);
+        } elsif ($extraction_type && $extraction_type eq 'file_type_lookup') {
+            return extract_file_type_lookup_entries($hash_ref);
         } else {
             return extract_primitive_entries($hash_ref);
         }
@@ -220,6 +222,62 @@ sub validate_regex_for_rust {
     return { compatible => 1, reason => "Pattern appears compatible with Rust regex" };
 }
 
+# Extract file type lookup entries from a loaded hash (discriminated union pattern)
+sub extract_file_type_lookup_entries {
+    my ($hash_ref) = @_;
+    
+    my @entries;
+    
+    for my $extension (keys %$hash_ref) {
+        my $value = $hash_ref->{$extension};
+        
+        # Skip special ExifTool entries
+        next if $extension eq 'Notes';
+        next if $extension eq 'OTHER';
+        
+        # Handle the discriminated union pattern
+        if (!ref $value) {
+            # String alias - pointing to another extension
+            push @entries, {
+                extension => $extension,
+                entry_type => 'alias',
+                target => $value,
+                source_line => 0,  # Not available with dynamic loading
+                raw_line => "$extension => '$value'",
+            };
+        } elsif (ref $value eq 'ARRAY' && @$value == 2) {
+            # [format_info, description] definition
+            my ($format_info, $description) = @$value;
+            my $formats;
+            
+            if (ref $format_info eq 'ARRAY') {
+                # Multiple formats: [['PDF','PS'], 'Adobe Illustrator']
+                $formats = $format_info;
+            } else {
+                # Single format: ['MOV', 'GoPro 360 video']
+                $formats = [$format_info];
+            }
+            
+            push @entries, {
+                extension => $extension,
+                entry_type => 'definition',
+                formats => $formats,
+                description => $description,
+                source_line => 0,  # Not available with dynamic loading
+                raw_line => "$extension => [" . (ref $format_info eq 'ARRAY' ? 
+                    "['" . join("','", @$format_info) . "']" : 
+                    "'$format_info'") . ", '$description']",
+            };
+        } else {
+            # Malformed entry - skip with warning
+            warn "SKIPPED: Malformed fileTypeLookup entry for $extension: " . 
+                 (ref $value ? "unexpected " . ref($value) : "undefined value") . "\n";
+        }
+    }
+    
+    return @entries;
+}
+
 
 
 # Legacy function for backward compatibility - now calls the new implementation
@@ -237,6 +295,13 @@ sub validate_primitive_table {
         if (exists $entry->{rust_compatible}) {
             # Regex entries are valid if they passed extraction
             # Compatibility warnings are already issued during extraction
+            next;
+        }
+        
+        # Check for file type lookup entries
+        if (exists $entry->{entry_type}) {
+            # File type lookup entries are valid if they passed extraction
+            # Structure validation is already done during extraction
             next;
         }
         
