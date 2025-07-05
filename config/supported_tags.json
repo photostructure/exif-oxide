@@ -22,5 +22,9 @@
   "EXIF:GPSLongitude",
   "EXIF:GPSAltitude",
   "EXIF:GPSDestLatitude",
-  "EXIF:GPSDestLongitude"
+  "EXIF:GPSDestLongitude",
+  "EXIF:LensModel",
+  "EXIF:LensMake",
+  "EXIF:LensInfo",
+  "EXIF:LensSerialNumber"
 ]

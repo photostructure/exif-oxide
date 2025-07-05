@@ -332,6 +332,15 @@ fn normalize_for_comparison(mut data: Value, _is_exiftool: bool) -> Value {
                 *value = normalized;
             }
         }
+
+        // Normalize LensSerialNumber to always be a string
+        // The EXIF specification defines LensSerialNumber as a string type (tag 0xa435)
+        // but some processors may extract it as a number. Always stringify it.
+        if let Some(lens_serial) = obj.get_mut("EXIF:LensSerialNumber") {
+            if let Value::Number(n) = lens_serial {
+                *lens_serial = Value::String(n.to_string());
+            }
+        }
     }
 
     data

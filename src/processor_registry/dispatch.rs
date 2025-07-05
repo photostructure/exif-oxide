@@ -168,11 +168,23 @@ impl DispatchRule for CanonDispatchRule {
             }
 
             _ => {
-                // For other Canon tables, prefer Canon namespace processors
-                candidates
-                    .iter()
-                    .find(|(key, _, _)| key.namespace == "Canon")
-                    .map(|(key, processor, _)| (key.clone(), processor.clone()))
+                // Only handle Canon-specific tables (those starting with "Canon::")
+                // Standard EXIF directories (ExifIFD, GPS, etc.) should use standard processors
+                // ExifTool Exif.pm shows ExifIFD is processed by standard EXIF processor, not Canon-specific
+                if context.table_name.starts_with("Canon::") {
+                    // For other Canon tables, prefer Canon namespace processors
+                    candidates
+                        .iter()
+                        .find(|(key, _, _)| key.namespace == "Canon")
+                        .map(|(key, processor, _)| (key.clone(), processor.clone()))
+                } else {
+                    // Not a Canon-specific table - let standard processor handle it
+                    debug!(
+                        "Canon dispatch rule ignoring non-Canon table: {}",
+                        context.table_name
+                    );
+                    None
+                }
             }
         }
     }
@@ -280,21 +292,33 @@ impl DispatchRule for NikonDispatchRule {
             }
 
             _ => {
-                // Check if this might be encrypted data based on context
-                if self.has_encryption_keys(context) && self.might_be_encrypted(context) {
-                    debug!("Trying encrypted processor for: {}", context.table_name);
-                    if let Some(encrypted_processor) =
-                        self.find_processor_variant(candidates, "Nikon", "Encrypted", None)
-                    {
-                        return Some(encrypted_processor);
+                // Only handle Nikon-specific tables (those starting with "Nikon::")
+                // Standard EXIF directories (ExifIFD, GPS, etc.) should use standard processors
+                // ExifTool Nikon.pm shows standard directories are processed by EXIF processor
+                if context.table_name.starts_with("Nikon::") {
+                    // Check if this might be encrypted data based on context
+                    if self.has_encryption_keys(context) && self.might_be_encrypted(context) {
+                        debug!("Trying encrypted processor for: {}", context.table_name);
+                        if let Some(encrypted_processor) =
+                            self.find_processor_variant(candidates, "Nikon", "Encrypted", None)
+                        {
+                            return Some(encrypted_processor);
+                        }
                     }
-                }
 
-                // Default to any Nikon processor
-                candidates
-                    .iter()
-                    .find(|(key, _, _)| key.namespace == "Nikon")
-                    .map(|(key, processor, _)| (key.clone(), processor.clone()))
+                    // Default to any Nikon processor for Nikon-specific tables
+                    candidates
+                        .iter()
+                        .find(|(key, _, _)| key.namespace == "Nikon")
+                        .map(|(key, processor, _)| (key.clone(), processor.clone()))
+                } else {
+                    // Not a Nikon-specific table - let standard processor handle it
+                    debug!(
+                        "Nikon dispatch rule ignoring non-Nikon table: {}",
+                        context.table_name
+                    );
+                    None
+                }
             }
         }
     }

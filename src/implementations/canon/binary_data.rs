@@ -670,7 +670,7 @@ pub fn extract_binary_data_tags(
         let source_info = TagSourceInfo::new(
             group_0,
             "Canon".to_string(),
-            crate::types::ProcessorType::BinaryData,
+            "Canon::BinaryData".to_string(),
         );
 
         reader.extracted_tags.insert(index as u16, final_value);

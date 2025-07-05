@@ -5,7 +5,7 @@
 //!
 //! ExifTool Reference: Tag storage and conflict resolution logic
 
-use crate::types::{ProcessorType, TagSourceInfo, TagValue};
+use crate::types::{TagSourceInfo, TagValue};
 use tracing::debug;
 
 use super::ExifReader;
@@ -68,17 +68,14 @@ impl ExifReader {
             _ => "EXIF", // Default to EXIF for unknown IFDs
         };
 
-        let processor_type = if namespace == "MakerNotes" {
-            // For MakerNotes, try to determine the specific processor
-            self.processor_dispatch
-                .table_processor
-                .clone()
-                .unwrap_or(ProcessorType::Exif)
+        let processor_name = if namespace == "MakerNotes" {
+            // For MakerNotes, use a generic MakerNotes processor name
+            "MakerNotes".to_string()
         } else {
-            ProcessorType::Exif
+            "Exif".to_string()
         };
 
-        TagSourceInfo::new(namespace.to_string(), ifd_name.to_string(), processor_type)
+        TagSourceInfo::new(namespace.to_string(), ifd_name.to_string(), processor_name)
     }
 
     /// Apply ValueConv and PrintConv conversions to a raw tag value
