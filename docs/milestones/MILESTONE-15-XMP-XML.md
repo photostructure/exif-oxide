@@ -16,6 +16,8 @@ From ExifTool's XMP implementation:
 - **Complex RDF/XML processing** with structure flattening and namespace management
 - **No external XML dependencies** - uses pure Perl regex-based parsing
 
+- **ALWAYS IN `exiftool -j -struct` MODE** - our values should always be structured XMP information instead of flattening to individual tags.
+
 ## Key Architectural Decision
 
 **⚠️ CRITICAL DESIGN CHOICE**: XML Parsing Implementation
@@ -48,7 +50,7 @@ ExifTool uses regex-based XML parsing to avoid external dependencies. For exif-o
 **Cons**:
 
 - External dependency
-- May reject malformed XML that ExifTool accepts
+- May reject malformed XML that ExifTool accepts (this is acceptable, but needs to be noted in the README)
 - Different error behavior
 
 **Recommendation**: **Option B** with fail-fast approach for malformed XML. Analysis of ExifTool's XMP tests shows focus on well-formed XML rather than malformed edge cases. We should trust ExifTool's namespace definitions and tag structures, not necessarily its parsing implementation.
