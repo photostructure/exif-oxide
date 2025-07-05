@@ -1,507 +1,253 @@
 # exif-oxide Code Generation Strategy
 
-This document describes the code generation approach for exif-oxide, including what is generated automatically from ExifTool source analysis versus what is manually implemented.
+This document describes how engineers can use and extend the code generation system for exif-oxide.
 
 ## Overview
 
-The code generation pipeline extracts metadata definitions from ExifTool's Perl modules and generates Rust code for:
+Codegen extracts metadata definitions from ExifTool's Perl modules and generates Rust code for:
 
-- Tag table definitions
-- Simple conversion functions
-- Processor dispatch tables
+- Tag table definitions with runtime conversion references
+- Simple lookup table extraction from manufacturer modules
 - Reference lists for required implementations
+- Type-safe generated code with graceful fallbacks
 
-Complex logic is intentionally NOT generated - it's manually implemented with ExifTool source references.
+**Core Principle**: Complex logic is NOT generated - it's manually implemented with ExifTool source references.
 
-## DO NOT WRITE A PERL CODE PARSER
+## Critical Rule: Only Perl Parses Perl
 
-**The `perl` interpreter is the only competent perl parser!**
+**Use `require`/`use` in Perl scripts. NEVER use regex to parse Perl code.**
 
-Use `use` or `require` in `perl`. DO NOT USE REGEX to try to extract something from a perl script!
-
-There are too many gotchas and surprising perl-isms--any code that tries to extract maps, hashes, or other bits from perl in rust or regex is a bad idea, be brittle, lead us to ruin, and haunt us in the future. Use perl to read perl.
+The Perl interpreter is the only competent Perl parser. Any attempt to parse Perl with regex will be brittle and cause future maintenance nightmares.
 
 ## Build Pipeline
 
-1. **ExifTool Source** (Perl modules)
-2. **Perl Extractor** (`codegen/extract_tables.pl`)
-3. **JSON** (`codegen/generated/tag_tables.json`)
-4. **Rust Codegen** (`codegen/src/main.rs`)
-5. **Generated Code** (`src/generated/`)
-6. **Implementation Palette** (`src/implementations/`)
-7. **exif-oxide Library**
+1. **ExifTool Source** → 2. **Perl Extractors** → 3. **JSON** → 4. **Rust Codegen** → 5. **Generated Code**
+
+```bash
+# Full codegen pipeline
+make codegen
+```
 
 ## What Codegen Handles
 
-### 1. Tag Table Generation
+### 1. Tag Tables with Runtime References
 
 ```rust
-// Generated from ExifTool tables
-pub static EXIF_TAGS: TagTable = TagTable {
-    name: "EXIF::Main",
-    process_proc: ProcessProc::Exif,
-    tags: &[
-        Tag {
-            id: 0x010e,
-            name: "ImageDescription",
-            format: Format::String,
-            // Simple PrintConv only
-            print_conv: Some(PrintConv::PassThrough),
-        },
-        // ... more tags
-    ],
-};
-```
+// Generated: No function stubs, just references
+Tag {
+    id: 0x0112,
+    name: "Orientation",
+    print_conv: Some("orientation_print_conv"), // Runtime reference
+    value_conv: None,
+}
 
-### 2. Simple Conversions
-
-```rust
-// Generated for simple hash lookups
-fn print_conv_orientation(val: &TagValue) -> String {
-    match val.as_u16() {
-        Some(1) => "Horizontal (normal)".to_string(),
-        Some(2) => "Mirror horizontal".to_string(),
-        // ...
-        _ => format!("Unknown ({})", val),
+// Runtime: Graceful fallback when implementation missing
+fn apply_print_conv(tag: &Tag, value: &TagValue) -> String {
+    match registry.get_print_conv(conv_name) {
+        Some(conv_fn) => conv_fn(value),
+        None => format!("{:?}", value), // Never panic!
     }
 }
 ```
 
-### 3. Dispatch Tables
+### 2. Simple Table Extraction
 
-```rust
-// Generated processor dispatch
-fn select_processor(table: &TagTable) -> ProcessFunc {
-    match table.process_proc {
-        ProcessProc::Exif => process::exif::process_exif,
-        ProcessProc::BinaryData => process::binary_data::process_binary,
-        ProcessProc::Custom(name) => {
-            registry::get_processor(name)
-                .unwrap_or(process::exif::process_exif)
-        }
-    }
-}
+Automatically extracts primitive lookup tables from ExifTool manufacturer modules:
+
+```perl
+// Safe to extract ✅
+%canonWhiteBalance = (
+    0 => 'Auto',
+    1 => 'Daylight',
+    2 => 'Cloudy',
+);
+
+// Never extract ❌ (this needs to be manually ported)
+%complexTable = (
+    condition => '$$self{Model} =~ /regex/',
+    subdirectory => { complex => 'structure' },
+);
 ```
 
-### 4. Conversion Reference Lists
+### 3. Reference Lists
+
+Generated lists show what implementations are needed:
 
 ```rust
-// Generated from same source as tag definitions
-// Ensures single source of truth for conversion requirements
 pub static REQUIRED_PRINT_CONV: &[&str] = &[
     "orientation_print_conv",
     "flash_print_conv",
-    "colorspace_print_conv",
-    // ... automatically extracted from all tag tables
-];
-
-pub static REQUIRED_VALUE_CONV: &[&str] = &[
-    "gps_coordinate_value_conv",
-    "apex_shutter_value_conv",
-    // ... extracted from ExifTool value conversion references
+    "canon_white_balance_print_conv",
 ];
 ```
 
 ## What Codegen Does NOT Handle
 
 1. **Complex Perl Logic**: Multi-line conditions, evals, complex math
-2. **Dynamic Patterns**: Anything beyond `simple[$val{N}]`
-3. **Encryption**: All crypto is manually implemented
-4. **Hook Logic**: ProcessBinaryData Hooks are manual
-5. **Error Recovery**: Manufacturer quirks are manual
+2. **Encryption/Decryption**: All crypto is manually implemented
+3. **Manufacturer Quirks**: Error recovery and special cases
+4. **Binary Processing Hooks**: Custom data parsing logic
 
 ## Mainstream Tag Filtering
 
-To maintain a manageable scope, exif-oxide only implements tags that meet one of these criteria:
+Only generates code for tags meeting these criteria:
 
-1. **Frequency > 80%**: Tags appearing in more than 80% of images
-2. **Mainstream flag**: Tags marked as `mainstream: true` in TagMetadata.json
-3. **Critical dependencies**: Tags required by other mainstream tags (DataMember)
+- **Frequency > 80%**: Tags in >80% of images
+- **Mainstream flag**: Marked `mainstream: true` in TagMetadata.json
+- **Critical dependencies**: Required by other mainstream tags
 
-This reduces scope from ~15,000 tags to ~500-1000, focusing on tags that matter for media management applications.
-
-### Filtering During Codegen
-
-```rust
-// In codegen/src/filter.rs
-fn should_generate_tag(tag: &Tag, metadata: &TagMetadata) -> bool {
-    if let Some(meta) = metadata.get(&tag.name) {
-        meta.mainstream || meta.frequency > 0.8
-    } else {
-        false // Unknown tags excluded by default
-    }
-}
-```
-
-## TODO Tracking System
-
-Instead of generating thousands of stub functions that would panic with `todo!()`, we use a runtime fallback system:
-
-### For PrintConv/ValueConv - Runtime References
-
-```rust
-// In generated code - NO STUBS GENERATED
-Tag {
-    id: 0x0112,
-    name: "Orientation",
-    print_conv: Some("exif_orientation_lookup"), // Just a reference
-    value_conv: None,
-}
-
-// At runtime - graceful fallback
-fn apply_print_conv(tag: &Tag, value: &TagValue) -> String {
-    if let Some(conv_name) = &tag.print_conv {
-        match registry.get_print_conv(conv_name) {
-            Some(conv_fn) => conv_fn(value),
-            None => {
-                // Track missing implementation
-                metrics::log_missing_impl(conv_name, &tag.name);
-                // Return raw value formatted - never panic!
-                format!("{:?}", value)
-            }
-        }
-    } else {
-        format!("{:?}", value)
-    }
-}
-```
-
-The auto-generated `REQUIRED_PRINT_CONV`/`REQUIRED_VALUE_CONV` arrays provide development visibility into the complete scope of conversion implementations needed, while maintaining DRY principles.
-
-### For PROCESS_PROC - Required Implementations
-
-Since there are only ~50 custom processors, we can enumerate them:
-
-```rust
-// Generated enum of all known processors
-pub enum ProcessorType {
-    Exif,
-    BinaryData,
-    Canon(CanonProcessor),
-    Nikon(NikonProcessor),
-    // ... ~50 variants total
-}
-
-// Runtime dispatch with clear errors
-fn dispatch_processor(proc_type: ProcessorType, data: &[u8]) -> Result<()> {
-    match proc_type {
-        ProcessorType::Canon(CanonProcessor::SerialData) => {
-            registry.get_processor("Canon::SerialData")
-                .ok_or(ExifError::missing_processor("Canon::SerialData"))?
-                (data)
-        }
-        // ...
-    }
-}
-```
-
-### Missing Implementation Tracking
-
-```rust
-// Generated metadata about what implementations are needed
-pub static TAG_IMPL_REQUIREMENTS: &[(TagDef, ImplRequirement)] = &[
-    (
-        TagDef { table: "EXIF::Main", id: 0x0112, name: "Orientation" },
-        ImplRequirement {
-            print_conv: Some("orientation_lookup"),
-            value_conv: None,
-            priority: Priority::High,
-            test_images: &["t/images/Canon.jpg"],
-        }
-    ),
-    // ... all requirements
-];
-
-// Runtime tracking
-lazy_static! {
-    static ref MISSING_IMPLS: Mutex<HashMap<String, MissingImpl>> =
-        Mutex::new(HashMap::new());
-}
-```
-
-## Developer Tools
-
-```bash
-# Show what implementations are actually needed
-cargo run -p exif-oxide -- --show-missing photo.jpg
-
-Output:
-Missing Implementations for photo.jpg
-=====================================
-HIGH PRIORITY (blocks common tags):
-- orientation_lookup (PrintConv)
-  Used by: EXIF:Orientation
-
-MEDIUM PRIORITY:
-- canon_custom_functions (PrintConv)
-  Used by: Canon:CustomFunctions
-
-# Generate stubs only for what's needed
-cargo run -p exif-oxide -- --generate-stubs photo.jpg
-# Creates: implementations/stubs/photo_jpg_stubs.rs with 2 functions
-```
-
-## Graceful Degradation
-
-```rust
-// In generated tag extraction
-impl Tag {
-    fn extract(&self, data: &[u8], ctx: &Context) -> Result<ExtractedTag> {
-        let raw_value = self.parse_raw(data)?;
-
-        // ValueConv with fallback
-        let converted_value = self.value_conv
-            .and_then(|ref_name| ctx.apply_value_conv(ref_name, &raw_value).ok())
-            .unwrap_or(raw_value.clone());
-
-        // PrintConv with fallback
-        let display_value = self.print_conv
-            .and_then(|ref_name| ctx.apply_print_conv(ref_name, &converted_value).ok())
-            .unwrap_or_else(|| format!("{:?}", converted_value));
-
-        Ok(ExtractedTag {
-            name: self.name.clone(),
-            raw: raw_value,
-            converted: converted_value,
-            display: display_value,
-        })
-    }
-}
-```
+This reduces scope from ~15,000 tags to ~500-1000 essential tags.
 
 ## Development Workflow
 
-### 1. Extract Phase
+### 1. Run Codegen
 
 ```bash
-perl codegen/extract_tables.pl > codegen/tag_tables.json
-```
+# Extract and generate all code
+make codegen
 
-### 2. Generate Phase
-
-```bash
-cargo run -p codegen
-```
-
-Output:
-
-```
-Generated: 823 mainstream tag definitions (from 15,234 total)
-Simple conversions implemented: 156
+# Output shows what's needed
+Generated: 823 mainstream tag definitions
 Complex conversions referenced: 234 (no stubs generated)
-Custom processors identified: 47
-
-Code is ready to compile and run!
-Use --show-missing on actual images to see what's needed.
 ```
 
-### 3. Discover Missing Implementations
+### 2. Find Missing Implementations
 
 ```bash
-# Run on actual images to find what's needed
-cargo run -p exif-oxide -- t/images/Canon/EOS-5D.jpg --show-missing
+# Test on real images to see what's needed
+cargo run -- photo.jpg --show-missing
 
-Missing implementations for this file:
-- orientation_lookup (EXIF:Orientation)
-- canon_ev_format (Canon:ExposureCompensation)
+# Output
+Missing implementations:
+- orientation_print_conv (EXIF:Orientation)
 - canon_wb_lookup (Canon:WhiteBalance)
-
-# Generate just these stubs
-cargo run -p exif-oxide -- t/images/Canon/EOS-5D.jpg --generate-stubs
-# Creates: implementations/stubs/eos_5d_stubs.rs
 ```
 
-### 4. Implement What's Needed
+### 3. Implement What's Needed
 
-- Developer implements the specific functions
-- References ExifTool source
-- Registers in implementation palette
-- No need to implement unused conversions!
+Implement only the conversion functions actually used by your test images. Reference ExifTool source and register in implementation palette.
 
-### 5. Validate Phase
+### 4. Validate
 
 ```bash
-cargo test
-# Runs against ExifTool test images
-# Compares output with exiftool -j
-# Shows coverage metrics
+cargo test  # Compares against ExifTool reference output
 ```
-
-## Update Workflow for ExifTool Releases
-
-When a new ExifTool version is released:
-
-1. **Update ExifTool Submodule**
-
-   ```bash
-   cd third-party/exiftool
-   git fetch origin
-   git checkout v12.77  # new version
-   cd ../..
-   ```
-
-2. **Regenerate and Build**
-
-   ```bash
-   # Extract updated tag definitions
-   perl codegen/extract_tables.pl > codegen/tag_tables.json
-
-   # Run codegen - will show new missing implementations
-   cargo run -p codegen
-   ```
-
-3. **Review Changes**
-
-   ```
-   New in ExifTool 12.77:
-   - 3 new mainstream tags requiring implementation
-   - 1 new Canon processor variant
-   - 47 non-mainstream tags (ignored)
-
-   Missing implementations (priority order):
-   1. canon_new_lens_type (PrintConv) - 15 test images
-   2. nikon_z9_af_mode (PrintConv) - 8 test images
-   3. ProcessCanonCR3 (Processor) - 5 test images
-   ```
-
-4. **Implement Missing Pieces**
-
-   - Add implementations to palette
-   - Reference ExifTool source
-   - Test against provided images
-
-5. **Ship Updated Version**
-   ```bash
-   cargo test
-   # All passing - ready to release!
-   ```
-
-For minor ExifTool updates that only add tags within existing processors, the process is often just regenerate and ship. New processors or complex conversions require manual implementation.
 
 ## Simple Table Extraction Framework
 
-### What Are Simple Tables?
+### Adding New Simple Tables
 
-ExifTool contains hundreds of primitive lookup tables across manufacturer modules that provide valuable metadata conversion capabilities. These are safe for automated extraction:
-
-**Safe to Extract** ✅:
+**Step 1**: Identify candidate table in ExifTool modules:
 
 ```perl
-%canonWhiteBalance = (
-    0 => 'Auto',
-    1 => 'Daylight',
-    2 => 'Cloudy',
-    3 => 'Tungsten',
-    4 => 'Fluorescent',
+%newCanonTable = (
+    0 => 'Setting A',
+    1 => 'Setting B',
+    2 => 'Setting C',
 );
 ```
 
-**Never Extract** ❌:
-
-```perl
-0xd => [
-    {
-        Name => 'CanonCameraInfo1D',
-        Condition => '$$self{Model} =~ /\b1DS?$/',
-        SubDirectory => { TagTable => 'Image::ExifTool::Canon::CameraInfo1D' },
-    },
-];
-```
-
-### How to Add New Simple Tables
-
-1. **Identify Candidate Tables**: Look for simple `%hash = (key => 'value')` patterns in ExifTool modules
-2. **Validate Primitive-ness**: Ensure no Perl variables, expressions, or complex structures
-3. **Add to Configuration**: Update `codegen/simple_tables.json`
-4. **Run Extraction**: `make codegen-simple-tables`
-5. **Integrate**: Use generated lookup functions in PrintConv implementations
-
-### Adding a New Table (Example)
-
-Found a new simple table in `Canon.pm`:
-
-```perl
-%canonFlashMode = (
-    0 => 'Off',
-    1 => 'Auto',
-    2 => 'On',
-    3 => 'Red-eye Reduction',
-    4 => 'Slow Sync',
-    5 => 'Auto + Red-eye Reduction',
-);
-```
-
-**Step 1**: Add entry to `codegen/simple_tables.json`:
+**Step 2**: Add to `codegen/simple_tables.json`:
 
 ```json
 {
   "module": "Canon.pm",
-  "hash_name": "%canonFlashMode",
-  "output_file": "canon/flash_mode.rs",
-  "constant_name": "CANON_FLASH_MODE",
+  "hash_name": "%newCanonTable",
+  "output_file": "canon/new_table.rs",
+  "constant_name": "NEW_CANON_TABLE",
   "key_type": "u8",
-  "description": "Canon flash mode setting names"
+  "description": "Canon new setting names"
 }
 ```
 
-**Step 2**: Run extraction:
+**Step 3**: Run extraction:
 
 ```bash
-make codegen-simple-tables
+cd codegen && perl extract_simple_tables.pl > generated/simple_tables.json
+cd codegen && cargo run  # Generates Rust code
 ```
 
-**Step 3**: Use in PrintConv:
+**Step 4**: Use in PrintConv implementation:
 
 ```rust
-use crate::generated::canon::flash_mode::lookup_canon_flash_mode;
+use crate::generated::canon::new_table::lookup_new_canon_table;
 
-pub fn canon_flash_mode_print_conv(value: &TagValue) -> Result<String> {
-    if let Some(mode_value) = value.as_u8() {
-        if let Some(description) = lookup_canon_flash_mode(mode_value) {
-            return Ok(description.to_string());
+pub fn canon_new_setting_print_conv(value: &TagValue) -> Result<String> {
+    if let Some(setting) = value.as_u8() {
+        if let Some(name) = lookup_new_canon_table(setting) {
+            return Ok(name.to_string());
         }
     }
     Ok(format!("Unknown ({})", value))
 }
 ```
 
-### Guidelines for Table Selection
+### Table Selection Guidelines
 
 **Include**:
 
-- Simple hash tables with primitive keys (numbers, strings)
-- Values are plain strings (no variables or expressions)
-- High-value data (lens databases, mode settings, model IDs)
-- Tables with >10 entries (worth the automation)
+- Simple hash tables with primitive keys/values
+- No Perl variables or expressions
+- High-value data (lens databases, mode settings)
+- Tables with >10 entries
 
 **Exclude**:
 
-- Any Perl expressions in keys or values
+- Any Perl expressions in keys/values
 - Nested structures or references
-- Conditional logic or complex formatting
-- Tables with <5 entries (manual implementation easier)
+- Conditional logic
+- Tables with <5 entries (manual easier)
 
-### Validation Process
+The extraction framework automatically validates and skips complex tables.
 
-The extraction framework automatically validates tables:
+### Generated Code Benefits
 
-- ✅ Keys must be simple primitives (numbers, quoted strings)
-- ✅ Values must be simple quoted strings
-- ✅ No variables, expressions, or function calls
-- ❌ Skips tables that don't meet criteria
-
-### Benefits
-
-- **Systematic Coverage**: Extract hundreds of tables consistently
-- **Automatic Updates**: Regenerate with ExifTool releases
-- **Type Safety**: Generated Rust code with proper types
-- **Performance**: Fast HashMap lookups with LazyLock initialization
+- **Type Safety**: Proper Rust types for all keys
+- **Performance**: Fast HashMap lookups with LazyLock
 - **Traceability**: Every entry references ExifTool source line
+- **Maintenance**: Automatic updates with ExifTool releases
 
-See [MILESTONE-CODEGEN-SIMPLE-TABLES.md](../milestones/MILESTONE-CODEGEN-SIMPLE-TABLES.md) for complete implementation details.
+## ExifTool Update Workflow
+
+When ExifTool releases a new version:
+
+```bash
+# 1. Update submodule
+cd third-party/exiftool
+git checkout v12.XX  # new version
+
+# 2. Regenerate code
+make codegen
+
+# 3. Check what's new
+# Output shows: X new mainstream tags, Y new processors
+
+# 4. Implement missing pieces (if any)
+# 5. Test and ship
+cargo test
+```
+
+For minor updates that only add tags within existing processors, it's often just regenerate and ship.
+
+## Key Tools and Commands
+
+```bash
+# Full codegen pipeline
+make codegen
+
+# Simple tables only
+cd codegen && perl extract_simple_tables.pl > generated/simple_tables.json
+
+# Test on real images
+cargo run -- image.jpg --show-missing
+
+# Run compatibility tests
+make compat-test
+```
 
 ## Related Documentation
 
-- [API-DESIGN.md](API-DESIGN.md) - How the generated API is structured
-- [IMPLEMENTATION-PALETTE.md](IMPLEMENTATION-PALETTE.md) - How manual implementations are registered
+- [API-DESIGN.md](API-DESIGN.md) - Generated API structure
+- [IMPLEMENTATION-PALETTE.md](IMPLEMENTATION-PALETTE.md) - Manual implementation registration
 - [ENGINEER-GUIDE.md](../ENGINEER-GUIDE.md) - Practical implementation guide
+- [MILESTONE-CODEGEN-SIMPLE-TABLES.md](../milestones/MILESTONE-CODEGEN-SIMPLE-TABLES.md) - Complete simple tables implementation details
