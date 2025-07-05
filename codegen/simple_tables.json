@@ -1,0 +1,14 @@
+{
+  "$schema": "./simple_tables_schema.json",
+  "description": "Configuration for ExifTool simple table extraction",
+  "tables": [
+    {
+      "module": "Nikon.pm",
+      "hash_name": "%nikonLensIDs",
+      "output_file": "nikon/lenses.rs",
+      "constant_name": "NIKON_LENS_IDS",
+      "key_type": "String",
+      "description": "Nikon lens identification database"
+    }
+  ]
+}
