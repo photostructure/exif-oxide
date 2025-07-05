@@ -139,6 +139,10 @@ impl ExifReader {
         // Parse 12-byte IFD entry structure
         let entry = IfdEntry::parse(&self.data, entry_offset, byte_order)?;
 
+        // Debug: Log all tag IDs being processed
+        // debug!("Processing tag {:#x} ({}) from {} (format: {:?}, count: {})", 
+        //        entry.tag_id, entry.tag_id, ifd_name, entry.format, entry.count);
+
         // Look up tag definition in appropriate table based on IFD type
         // ExifTool: Different IFDs use different tag tables
         let tag_def = TAG_BY_ID.get(&(entry.tag_id as u32));
@@ -148,6 +152,7 @@ impl ExifReader {
         match entry.format {
             TiffFormat::Ascii => {
                 let value = value_extraction::extract_ascii_value(&self.data, &entry, byte_order)?;
+                // debug!("ASCII tag {:#x} extracted value: {:?} (length: {})", entry.tag_id, value, value.len());
                 if !value.is_empty() {
                     let tag_value = TagValue::String(value);
                     let (final_value, _print) =

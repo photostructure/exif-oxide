@@ -12,12 +12,19 @@ use crate::types::{ExifError, Result, TagValue};
 pub fn extract_ascii_value(
     data: &[u8],
     entry: &IfdEntry,
-    _byte_order: ByteOrder,
+    byte_order: ByteOrder,
 ) -> Result<String> {
+    // debug!("extract_ascii_value: tag {:#x}, count {}, is_inline: {}, value_or_offset: {:#x}", 
+    //        entry.tag_id, entry.count, entry.is_inline(), entry.value_or_offset);
+    
     let value_data = if entry.is_inline() {
         // Value stored inline in the 4-byte value field
         // ExifTool: lib/Image/ExifTool/Exif.pm:6372 inline value handling
-        let bytes = entry.value_or_offset.to_le_bytes(); // Always stored in entry byte order
+        let bytes = match byte_order {
+            ByteOrder::BigEndian => entry.value_or_offset.to_be_bytes(),
+            ByteOrder::LittleEndian => entry.value_or_offset.to_le_bytes(),
+        };
+        // debug!("Inline bytes for tag {:#x}: {:02x?}", entry.tag_id, &bytes[..entry.count.min(4) as usize]);
         bytes[..entry.count.min(4) as usize].to_vec()
     } else {
         // Value stored at offset
