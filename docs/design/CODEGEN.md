@@ -1,4 +1,4 @@
-# exif-oxide Code Generation Strategy
+# exif-oxide Code Generation
 
 This document describes how engineers can use and extend the code generation system for exif-oxide.
 

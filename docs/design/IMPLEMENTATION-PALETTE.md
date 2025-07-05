@@ -353,6 +353,6 @@ cargo run -p exif-oxide -- test.jpg > actual.json
 
 ## Related Documentation
 
-- [CODEGEN-STRATEGY.md](CODEGEN-STRATEGY.md) - What's generated vs manual
+- [CODEGEN.md](CODEGEN.md) - What's generated vs manual
 - [PROCESSOR-PROC-DISPATCH.md](../PROCESSOR-PROC-DISPATCH.md) - Processor dispatch design
 - [STATE-MANAGEMENT.md](../STATE-MANAGEMENT.md) - How state is managed during processing
