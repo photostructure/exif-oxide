@@ -9,20 +9,28 @@
 use crate::types::TagValue;
 
 /// EXIF Orientation PrintConv
-/// ExifTool: lib/Image/ExifTool/Exif.pm:2719-2728
+/// ExifTool: lib/Image/ExifTool/Exif.pm:281-290 (%orientation hash)
+/// Generated table: src/generated/exif/orientation.rs
 pub fn orientation_print_conv(val: &TagValue) -> String {
-    match val.as_u16() {
-        Some(1) => "Horizontal (normal)",
-        Some(2) => "Mirror horizontal",
-        Some(3) => "Rotate 180",
-        Some(4) => "Mirror vertical",
-        Some(5) => "Mirror horizontal and rotate 270 CW",
-        Some(6) => "Rotate 90 CW",
-        Some(7) => "Mirror horizontal and rotate 90 CW",
-        Some(8) => "Rotate 270 CW",
-        _ => return format!("Unknown ({val})"),
+    use crate::generated::exif::orientation::lookup_orientation;
+
+    // Handle both u8 and u16 types - orientation values are 1-8 so fit in u8
+    let orientation_val = match val {
+        TagValue::U8(v) => Some(*v),
+        TagValue::U16(v) if *v <= 255 => Some(*v as u8),
+        _ => None,
+    };
+
+    match orientation_val {
+        Some(val) => {
+            if let Some(description) = lookup_orientation(val) {
+                description.to_string()
+            } else {
+                format!("Unknown ({val})")
+            }
+        }
+        None => format!("Unknown ({val})"),
     }
-    .to_string()
 }
 
 /// EXIF ResolutionUnit PrintConv
