@@ -36,7 +36,7 @@
           },
           "key_type": {
             "type": "string",
-            "enum": ["u8", "u16", "u32", "f32", "String"],
+            "enum": ["u8", "u16", "u32", "i8", "i16", "i32", "f32", "String"],
             "description": "Rust type for hash keys"
           },
           "description": {

@@ -41,7 +41,7 @@ Before starting work on exif-oxide, familiarize yourself with:
 #### Design Documents
 
 - [API-DESIGN.md](docs/design/API-DESIGN.md) - Public API structure and TagEntry design
-- [CODEGEN-STRATEGY.md](docs/design/CODEGEN-STRATEGY.md) - Code generation approach
+- [CODEGEN.md](docs/design/CODEGEN.md) - Code generation approach
 - [IMPLEMENTATION-PALETTE.md](docs/design/IMPLEMENTATION-PALETTE.md) - Manual implementation patterns
 
 #### Technical Deep Dives
@@ -104,7 +104,7 @@ To maintain a manageable scope:
 
 ExifTool releases new versions monthly. The more our code can be generated automatically from ExifTool source, the better.
 
-**CRITICAL**: If you ever see any simple, static mapping in our code, **immediately look for where that came from in the ExifTool source, and ask the user to rewrite it with the codegen infrastructure**. See [CODEGEN-STRATEGY.md](docs/design/CODEGEN-STRATEGY.md) "Simple Table Extraction Framework" for details.
+**CRITICAL**: If you ever see any simple, static mapping in our code, **immediately look for where that came from in the ExifTool source, and ask the user to rewrite it with the codegen infrastructure**. See [CODEGEN.md](docs/design/CODEGEN.md) "Simple Table Extraction Framework" for details.
 
 #### Simple Table Detection
 
@@ -155,7 +155,7 @@ fn canon_white_balance_print_conv(value: &TagValue) -> Result<String> {
 4. **Regenerate codegen** - `make codegen-simple-tables`
 5. **Replace manual code** - Use generated lookup functions
 
-See [CODEGEN-STRATEGY.md](docs/design/CODEGEN-STRATEGY.md#simple-table-extraction-framework) for the complete HOWTO guide.
+See [CODEGEN.md](docs/design/CODEGEN.md#simple-table-extraction-framework) for the complete HOWTO guide.
 
 #### Red Flags
 

@@ -38,12 +38,18 @@ sub load_and_extract_table {
     my $module_name = load_module_from_file($module_file);
     return () unless $module_name;
 
-    # Access the package hash using symbolic references
+    # Try to access the package hash using symbolic references
     my $hash_ref = get_package_hash($module_name, $hash_name);
-    return () unless $hash_ref;
-
-    # Extract primitive entries from the loaded hash
-    return extract_primitive_entries($hash_ref);
+    
+    if ($hash_ref) {
+        # Extract primitive entries from the loaded hash
+        return extract_primitive_entries($hash_ref);
+    } else {
+        # Cannot extract this hash - it might be a 'my' scoped variable
+        warn "SKIPPED: $hash_name not found as package variable (might be 'my' scoped)\n";
+        warn "Try running: make patch-exiftool to convert 'my' variables to package variables\n";
+        return ();
+    }
 }
 
 # Safely load a Perl module from a file path
@@ -98,6 +104,7 @@ sub get_package_hash {
     return $hash_ref;
 }
 
+
 # Extract primitive entries from a loaded hash
 sub extract_primitive_entries {
     my ($hash_ref) = @_;
@@ -129,6 +136,7 @@ sub extract_primitive_entries {
     
     return @entries;
 }
+
 
 # Legacy function for backward compatibility - now calls the new implementation
 sub extract_table {
