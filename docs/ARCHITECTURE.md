@@ -60,7 +60,7 @@ ExifTool Source → Perl Extractor → JSON → Rust Codegen → Generated Code
 
 ### Key Components
 
-1. **Code Generation** ([design/CODEGEN-STRATEGY.md](design/CODEGEN-STRATEGY.md))
+1. **Code Generation** ([design/CODEGEN.md](design/CODEGEN.md))
    - Extracts tag definitions from ExifTool
    - Generates Rust tag tables
    - Creates conversion reference lists
@@ -160,7 +160,7 @@ Binary data uses streaming references:
 
 ### Design Documents
 - [API Design](design/API-DESIGN.md) - Public API structure
-- [Code Generation Strategy](design/CODEGEN-STRATEGY.md) - What's generated vs manual
+- [Code Generation Strategy](design/CODEGEN.md) - What's generated vs manual
 - [Implementation Palette](design/IMPLEMENTATION-PALETTE.md) - How manual implementations work
 
 ### Guides
