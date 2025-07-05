@@ -58,6 +58,15 @@
       "key_type": "String",
       "extraction_type": "regex_strings",
       "description": "Magic number regex patterns for file type detection"
+    },
+    {
+      "module": "ExifTool.pm",
+      "hash_name": "%fileTypeLookup",
+      "output_file": "file_types/file_type_lookup.rs",
+      "constant_name": "FILE_TYPE_LOOKUP",
+      "key_type": "String",
+      "extraction_type": "file_type_lookup",
+      "description": "Core file type detection lookup table"
     }
   ]
 }
