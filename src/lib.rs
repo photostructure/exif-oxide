@@ -22,15 +22,14 @@ pub use registry::Registry;
 pub use types::{ExifData, ExifError, TagValue};
 
 // Initialize all conversion implementations when library is loaded
-lazy_static::lazy_static! {
-    static ref _INIT: () = {
-        implementations::register_all_conversions();
-    };
-}
+use std::sync::LazyLock;
+static _INIT: LazyLock<()> = LazyLock::new(|| {
+    implementations::register_all_conversions();
+});
 
 /// Ensure conversions are registered (call this before using the library)
 pub fn init() {
-    lazy_static::initialize(&_INIT);
+    LazyLock::force(&_INIT);
 }
 
 use serde_json::Value;

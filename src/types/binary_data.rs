@@ -6,13 +6,12 @@
 use crate::types::{DataMemberValue, ExifError};
 use regex::Regex;
 use std::collections::HashMap;
+use std::sync::LazyLock;
 
 // Static regexes for format expression parsing
 // ExifTool: lib/Image/ExifTool.pm:9850-9856 format parsing patterns
-lazy_static::lazy_static! {
-    static ref ARRAY_REGEX: Regex = Regex::new(r"^(.+)\[(.+)\]$").unwrap();
-    static ref VAL_REGEX: Regex = Regex::new(r"\$val\{([^}]+)\}").unwrap();
-}
+static ARRAY_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^(.+)\[(.+)\]$").unwrap());
+static VAL_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\$val\{([^}]+)\}").unwrap());
 
 /// Binary data formats for ProcessBinaryData
 /// ExifTool: lib/Image/ExifTool.pm %formatSize and @formatName arrays
@@ -289,11 +288,8 @@ impl<'a> ExpressionEvaluator<'a> {
     pub fn evaluate_complex_expression(&self, expr: &str) -> std::result::Result<usize, ExifError> {
         // Pattern for int(($val{N}+CONST)/DIVISOR) - ceiling division for bit arrays
         // ExifTool: Canon.pm uses this pattern for AFPointsInFocus bit array sizing
-        lazy_static::lazy_static! {
-            static ref CEILING_DIV_REGEX: Regex = Regex::new(
-                r"^int\(\(\$val\{(\d+)\}\+(\d+)\)/(\d+)\)$"
-            ).unwrap();
-        }
+        static CEILING_DIV_REGEX: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new(r"^int\(\(\$val\{(\d+)\}\+(\d+)\)/(\d+)\)$").unwrap());
 
         if let Some(captures) = CEILING_DIV_REGEX.captures(expr) {
             let val_index: u32 = captures.get(1).unwrap().as_str().parse().map_err(|_| {

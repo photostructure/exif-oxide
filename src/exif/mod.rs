@@ -16,8 +16,6 @@ mod ifd;
 mod processors;
 mod tags;
 
-pub mod tests;
-
 // Only re-export what needs to be public - most functionality is internal
 
 use crate::tiff_types::TiffHeader;
@@ -388,14 +386,14 @@ impl ExifReader {
     /// DO NOT USE in production code - only for tests
     #[cfg(any(test, feature = "test-helpers"))]
     pub fn add_test_tag(&mut self, tag_id: u16, value: TagValue, namespace: &str, ifd_name: &str) {
-        use crate::types::{ProcessorType, TagSourceInfo};
+        use crate::types::TagSourceInfo;
         self.extracted_tags.insert(tag_id, value);
         self.tag_sources.insert(
             tag_id,
             TagSourceInfo::new(
                 namespace.to_string(),
                 ifd_name.to_string(),
-                ProcessorType::Exif,
+                "Exif".to_string(),
             ),
         );
     }

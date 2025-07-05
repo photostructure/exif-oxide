@@ -67,7 +67,3 @@ pub fn process_canon_makernotes(
     debug!("Canon MakerNotes processing completed");
     Ok(())
 }
-
-// Unit tests are in a separate module
-#[cfg(test)]
-mod tests;

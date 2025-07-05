@@ -50,7 +50,7 @@ impl ExifReader {
         // Select and dispatch to appropriate processor
         // ExifTool: ProcessDirectory with PROCESS_PROC dispatch
         let processor = self.select_processor(&dir_info.name, None);
-        let result = self.dispatch_processor(processor, dir_info);
+        let result = self.dispatch_processor(&processor, dir_info);
 
         // Exit subdirectory context
         self.path.pop();
@@ -323,52 +323,5 @@ impl ExifReader {
     pub fn process_exif_ifd(&mut self, ifd_offset: usize, ifd_name: &str) -> Result<()> {
         // This is the existing parse_ifd logic, renamed for clarity
         self.parse_ifd(ifd_offset, ifd_name)
-    }
-
-    /// Extract tag value from IFD entry (helper method)
-    pub(crate) fn extract_tag_value(
-        &self,
-        entry: &IfdEntry,
-        byte_order: ByteOrder,
-    ) -> Result<TagValue> {
-        match entry.format {
-            TiffFormat::Ascii => Ok(TagValue::String(value_extraction::extract_ascii_value(
-                &self.data, entry, byte_order,
-            )?)),
-            TiffFormat::Short => Ok(TagValue::U16(value_extraction::extract_short_value(
-                &self.data, entry, byte_order,
-            )?)),
-            TiffFormat::Long => Ok(TagValue::U32(value_extraction::extract_long_value(
-                &self.data, entry, byte_order,
-            )?)),
-            TiffFormat::Byte => Ok(TagValue::U8(value_extraction::extract_byte_value(
-                &self.data, entry,
-            )?)),
-            TiffFormat::Rational => {
-                value_extraction::extract_rational_value(&self.data, entry, byte_order)
-            }
-            TiffFormat::SRational => {
-                value_extraction::extract_srational_value(&self.data, entry, byte_order)
-            }
-            TiffFormat::SShort => {
-                let unsigned =
-                    value_extraction::extract_short_value(&self.data, entry, byte_order)?;
-                Ok(TagValue::I16(unsigned as i16))
-            }
-            TiffFormat::SLong => {
-                let unsigned = value_extraction::extract_long_value(&self.data, entry, byte_order)?;
-                Ok(TagValue::I32(unsigned as i32))
-            }
-            _ => {
-                debug!(
-                    "Unsupported format {:?} for tag {:#x}",
-                    entry.format, entry.tag_id
-                );
-                Err(ExifError::Unsupported(format!(
-                    "Format {:?} not yet supported",
-                    entry.format
-                )))
-            }
-        }
     }
 }

@@ -6,12 +6,17 @@
 //! These are just the registry keys - actual implementations
 //! must be provided in the implementations/ directory.
 
-use lazy_static::lazy_static;
 use std::collections::HashSet;
+use std::sync::LazyLock;
 
 /// All PrintConv references that need implementation
 /// These match the print_conv_ref values used in generated/tags.rs
 pub static REQUIRED_PRINT_CONV: &[&str] = &[
+    "ambienttemperature_print_conv",
+    "aperturevalue_print_conv",
+    "cfapattern_print_conv",
+    "cfaplanecolor_print_conv",
+    "chromaticaberrationcorrection_print_conv",
     "colorspace_print_conv",
     "composite_aperture_print_conv",
     "composite_bluebalance_print_conv",
@@ -63,13 +68,25 @@ pub static REQUIRED_PRINT_CONV: &[&str] = &[
     "composite_subseccreatedate_print_conv",
     "composite_subsecdatetimeoriginal_print_conv",
     "composite_subsecmodifydate_print_conv",
+    "compositeimage_print_conv",
+    "contrast_print_conv",
     "createdate_print_conv",
+    "customrendered_print_conv",
     "datetimeoriginal_print_conv",
+    "distortioncorrection_print_conv",
+    "dngbackwardversion_print_conv",
+    "dngversion_print_conv",
+    "exposuremode_print_conv",
     "exposureprogram_print_conv",
     "exposuretime_print_conv",
+    "filesource_print_conv",
     "flash_print_conv",
     "fnumber_print_conv",
     "focallength_print_conv",
+    "focallengthin35mmformat_print_conv",
+    "focalplaneresolutionunit_print_conv",
+    "framerate_print_conv",
+    "gaincontrol_print_conv",
     "gpsaltitude_print_conv",
     "gpsaltituderef_print_conv",
     "gpsdestbearingref_print_conv",
@@ -91,9 +108,31 @@ pub static REQUIRED_PRINT_CONV: &[&str] = &[
     "gpstimestamp_print_conv",
     "gpstrackref_print_conv",
     "gpsversionid_print_conv",
+    "interopindex_print_conv",
+    "iso_print_conv",
+    "lensinfo_print_conv",
+    "lightsource_print_conv",
+    "maxaperturevalue_print_conv",
     "meteringmode_print_conv",
+    "modifydate_print_conv",
     "orientation_print_conv",
+    "photometricinterpretation_print_conv",
+    "planarconfiguration_print_conv",
+    "previewdatetime_print_conv",
     "resolutionunit_print_conv",
+    "saturation_print_conv",
+    "scenecapturetype_print_conv",
+    "scenetype_print_conv",
+    "sensingmethod_print_conv",
+    "sensitivitytype_print_conv",
+    "sharpness_print_conv",
+    "shutterspeedvalue_print_conv",
+    "sonyrawfiletype_print_conv",
+    "spatialfrequencyresponse_print_conv",
+    "subfiletype_print_conv",
+    "subjectdistance_print_conv",
+    "subjectdistancerange_print_conv",
+    "vignettingcorrection_print_conv",
     "whitebalance_print_conv",
     "ycbcrpositioning_print_conv",
     "ycbcrsubsampling_print_conv",
@@ -102,6 +141,10 @@ pub static REQUIRED_PRINT_CONV: &[&str] = &[
 /// All ValueConv references that need implementation
 /// Includes both ExifTool-extracted and custom implementations
 pub static REQUIRED_VALUE_CONV: &[&str] = &[
+    "aperturevalue_value_conv",
+    "brightness_value_conv",
+    "contrast_value_conv",
+    "converter_value_conv",
     "exposuretime_value_conv",
     "fnumber_value_conv",
     "focallength_value_conv",
@@ -111,15 +154,34 @@ pub static REQUIRED_VALUE_CONV: &[&str] = &[
     "gpslatitude_value_conv",
     "gpslongitude_value_conv",
     "gpstimestamp_value_conv",
+    "lens_value_conv",
+    "maxaperturevalue_value_conv",
+    "ownername_value_conv",
+    "previewdatetime_value_conv",
+    "rawdatauniqueid_value_conv",
+    "saturation_value_conv",
+    "serialnumber_value_conv",
+    "shadows_value_conv",
+    "sharpness_value_conv",
+    "shutterspeedvalue_value_conv",
+    "subsectime_value_conv",
+    "subsectimedigitized_value_conv",
+    "subsectimeoriginal_value_conv",
+    "tilebytecounts_value_conv",
+    "tileoffsets_value_conv",
     "whitebalance_value_conv",
+    "xpauthor_value_conv",
+    "xpcomment_value_conv",
+    "xpkeywords_value_conv",
+    "xpsubject_value_conv",
+    "xptitle_value_conv",
 ];
 
-lazy_static! {
-    static ref REQUIRED_PRINT_CONV_SET: HashSet<&'static str> =
-        REQUIRED_PRINT_CONV.iter().copied().collect();
-    static ref REQUIRED_VALUE_CONV_SET: HashSet<&'static str> =
-        REQUIRED_VALUE_CONV.iter().copied().collect();
-}
+static REQUIRED_PRINT_CONV_SET: LazyLock<HashSet<&'static str>> =
+    LazyLock::new(|| REQUIRED_PRINT_CONV.iter().copied().collect());
+
+static REQUIRED_VALUE_CONV_SET: LazyLock<HashSet<&'static str>> =
+    LazyLock::new(|| REQUIRED_VALUE_CONV.iter().copied().collect());
 
 /// Check if a PrintConv reference is required by generated tags
 pub fn is_print_conv_required(reference: &str) -> bool {

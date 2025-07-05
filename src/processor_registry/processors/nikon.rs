@@ -33,18 +33,22 @@ impl BinaryDataProcessor for NikonEncryptedDataProcessor {
             return ProcessorCapability::Incompatible;
         }
 
-        // Perfect match for encrypted data tables
-        if context.table_name.contains("Encrypted") || context.table_name.contains("LensData") {
+        // Perfect match for Nikon encrypted data tables
+        if context.table_name.starts_with("Nikon::")
+            && (context.table_name.contains("Encrypted") || context.table_name.contains("LensData"))
+        {
             return ProcessorCapability::Perfect;
         }
 
-        // Good match if we have encryption keys available
-        if context.get_nikon_encryption_keys().is_some() {
+        // Good match for Nikon-specific tables if we have encryption keys available
+        if context.table_name.starts_with("Nikon::")
+            && context.get_nikon_encryption_keys().is_some()
+        {
             return ProcessorCapability::Good; // Can process with keys
         }
 
-        // Fallback for any Nikon data (can at least detect encryption)
-        ProcessorCapability::Fallback
+        // Only compatible with Nikon-specific tables
+        ProcessorCapability::Incompatible
     }
 
     fn process_data(&self, data: &[u8], context: &ProcessorContext) -> Result<ProcessorResult> {
@@ -163,25 +167,26 @@ pub struct NikonAFInfoProcessor;
 
 impl BinaryDataProcessor for NikonAFInfoProcessor {
     fn can_process(&self, context: &ProcessorContext) -> ProcessorCapability {
-        // Check for Nikon manufacturer
+        // Only process Nikon-specific tables, not standard EXIF directories
+        // ExifTool Nikon.pm only processes Nikon:: prefixed tables
         if !context.is_manufacturer("NIKON CORPORATION") && !context.is_manufacturer("NIKON") {
             return ProcessorCapability::Incompatible;
         }
 
-        // Perfect match for AF-related tables (but not encrypted tables)
-        if (context.table_name.contains("AFInfo") || context.table_name.contains("AF"))
+        // Perfect match for Nikon AF-related tables
+        if context.table_name.starts_with("Nikon::")
+            && (context.table_name.contains("AFInfo") || context.table_name.contains("AF"))
             && !context.table_name.contains("Encrypted")
         {
             return ProcessorCapability::Perfect;
         }
 
-        // Good match for Nikon binary data that might contain AF info (but not encrypted)
-        if (context.is_manufacturer("NIKON CORPORATION") || context.is_manufacturer("NIKON"))
-            && !context.table_name.contains("Encrypted")
-        {
+        // Good match for other Nikon-specific tables that might contain AF info
+        if context.table_name.starts_with("Nikon::") && !context.table_name.contains("Encrypted") {
             return ProcessorCapability::Good;
         }
 
+        // Incompatible with non-Nikon tables (like ExifIFD, GPS, etc.)
         ProcessorCapability::Incompatible
     }
 
@@ -262,8 +267,10 @@ impl BinaryDataProcessor for NikonLensDataProcessor {
             return ProcessorCapability::Incompatible;
         }
 
-        // Perfect match for lens data tables
-        if context.table_name.contains("LensData") || context.table_name.contains("Lens") {
+        // Perfect match for Nikon-specific lens data tables
+        if context.table_name.starts_with("Nikon::")
+            && (context.table_name.contains("LensData") || context.table_name.contains("Lens"))
+        {
             return ProcessorCapability::Perfect;
         }
 

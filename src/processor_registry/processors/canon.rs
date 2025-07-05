@@ -39,11 +39,7 @@ impl BinaryDataProcessor for CanonSerialDataProcessor {
             return ProcessorCapability::Good;
         }
 
-        // Fallback for Canon cameras (can process but not optimal)
-        if context.is_manufacturer("Canon") {
-            return ProcessorCapability::Fallback;
-        }
-
+        // Only compatible with Canon-specific tables
         ProcessorCapability::Incompatible
     }
 
@@ -115,23 +111,23 @@ pub struct CanonCameraSettingsProcessor;
 
 impl BinaryDataProcessor for CanonCameraSettingsProcessor {
     fn can_process(&self, context: &ProcessorContext) -> ProcessorCapability {
+        // Only process Canon-specific tables, not standard EXIF directories
+        // ExifTool Canon.pm only processes Canon:: prefixed tables
+        if !context.is_manufacturer("Canon") {
+            return ProcessorCapability::Incompatible;
+        }
+
         // Perfect match for Canon CameraSettings table
-        if context.is_manufacturer("Canon") && context.table_name.contains("CameraSettings") {
+        if context.table_name == "Canon::CameraSettings" {
             return ProcessorCapability::Perfect;
         }
 
-        // Good match for Canon binary data processing
-        if context.is_manufacturer("Canon")
-            && (context.table_name.contains("Canon") || context.table_name.contains("Binary"))
-        {
+        // Good match for Canon binary data tables that start with Canon::
+        if context.table_name.starts_with("Canon::") && context.table_name.contains("Settings") {
             return ProcessorCapability::Good;
         }
 
-        // Fallback for Canon cameras
-        if context.is_manufacturer("Canon") {
-            return ProcessorCapability::Fallback;
-        }
-
+        // Incompatible with non-Canon tables (like ExifIFD, GPS, etc.)
         ProcessorCapability::Incompatible
     }
 

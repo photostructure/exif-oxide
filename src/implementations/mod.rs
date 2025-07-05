@@ -63,6 +63,7 @@ pub fn register_all_conversions() {
         print_conv::exposuretime_print_conv,
     );
     registry::register_print_conv("focallength_print_conv", print_conv::focallength_print_conv);
+    registry::register_print_conv("lensinfo_print_conv", print_conv::lensinfo_print_conv);
 
     // Composite tag PrintConv functions
     registry::register_print_conv(

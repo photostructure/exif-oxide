@@ -370,6 +370,127 @@ pub fn composite_gps_gpsaltitude_print_conv(val: &TagValue) -> String {
     format!("Unknown ({val})")
 }
 
+/// EXIF LensInfo PrintConv
+/// ExifTool: lib/Image/ExifTool/Exif.pm PrintLensInfo function
+/// Converts 4 rational values to form "12-20mm f/3.8-4.5" or "50mm f/1.4"
+pub fn lensinfo_print_conv(val: &TagValue) -> String {
+    // LensInfo should contain 4 rational values
+    let vals = match val {
+        TagValue::RationalArray(array) => {
+            // Extract the 4 rational values
+            if array.len() != 4 {
+                return format!("Unknown ({val})");
+            }
+
+            let mut values = Vec::new();
+            for (numerator, denominator) in array {
+                if *denominator == 0 {
+                    values.push(None); // undefined value (ExifTool shows as "undef")
+                } else {
+                    values.push(Some(*numerator as f64 / *denominator as f64));
+                }
+            }
+            values
+        }
+        _ => return format!("Unknown ({val})"),
+    };
+
+    // Check we have exactly 4 values
+    if vals.len() != 4 {
+        return format!("Unknown ({val})");
+    }
+
+    // Build the lens info string
+    // vals[0] = min focal length
+    // vals[1] = max focal length
+    // vals[2] = min aperture
+    // vals[3] = max aperture
+
+    let mut result = String::new();
+
+    // Focal length range
+    match (vals[0], vals[1]) {
+        (Some(min_focal), Some(max_focal)) => {
+            // Format focal length - use integer formatting unless fractional part exists
+            // ExifTool: 3.99mm shows as "3.99mm", not "4mm"
+            if min_focal.fract() == 0.0 {
+                result.push_str(&format!("{min_focal:.0}"));
+            } else {
+                // Format with enough precision to match ExifTool
+                // ExifTool uses Perl's default number stringification
+                // For 299253/190607 = 1.570000052...
+                let formatted = format!("{min_focal:.9}");
+                // Remove trailing zeros but keep meaningful precision
+                let trimmed = formatted.trim_end_matches('0').trim_end_matches('.');
+                result.push_str(trimmed);
+            }
+
+            // Add max focal if different from min (not a prime lens)
+            // Pentax Q writes zero for upper value of fixed-focal-length lenses (ExifTool comment)
+            if max_focal != min_focal && max_focal > 0.0 {
+                result.push('-');
+                if max_focal.fract() == 0.0 {
+                    result.push_str(&format!("{max_focal:.0}"));
+                } else {
+                    // Format with enough precision to match ExifTool
+                    let formatted = format!("{max_focal:.9}");
+                    let trimmed = formatted.trim_end_matches('0').trim_end_matches('.');
+                    result.push_str(trimmed);
+                }
+            }
+            result.push_str("mm");
+        }
+        _ => return format!("Unknown ({val})"),
+    }
+
+    // Aperture range
+    match (vals[2], vals[3]) {
+        (Some(min_aperture), Some(max_aperture)) => {
+            result.push_str(" f/");
+            // Format aperture per ExifTool logic
+            if min_aperture == 0.0 {
+                result.push('0');
+            } else if min_aperture < 1.0 {
+                result.push_str(&format!("{min_aperture:.2}"));
+            } else {
+                // ExifTool: Use 1 decimal place, but remove trailing zeros
+                let formatted = format!("{min_aperture:.1}");
+                let trimmed = if formatted.ends_with(".0") {
+                    &formatted[..formatted.len() - 2]
+                } else {
+                    &formatted
+                };
+                result.push_str(trimmed);
+            }
+
+            // Add max aperture if different from min (variable aperture zoom)
+            if max_aperture != min_aperture && max_aperture > 0.0 {
+                result.push('-');
+                if max_aperture == 0.0 {
+                    result.push('0');
+                } else if max_aperture < 1.0 {
+                    result.push_str(&format!("{max_aperture:.2}"));
+                } else {
+                    let formatted = format!("{max_aperture:.1}");
+                    let trimmed = if formatted.ends_with(".0") {
+                        &formatted[..formatted.len() - 2]
+                    } else {
+                        &formatted
+                    };
+                    result.push_str(trimmed);
+                }
+            }
+        }
+        (None, None) => {
+            // Both aperture values are undefined - ExifTool shows as "f/?"
+            result.push_str(" f/?");
+        }
+        _ => return format!("Unknown ({val})"),
+    }
+
+    result
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

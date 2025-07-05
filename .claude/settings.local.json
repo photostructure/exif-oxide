@@ -140,7 +140,10 @@
       "Bash(RUST_LOG=debug cargo run --bin exif-oxide test-images/canon/Canon_T3i.JPG)",
       "Bash(RUST_LOG=debug cargo test test_canon_af_info_processing -p exif-oxide -- --nocapture)",
       "Bash(RUST_BACKTRACE=1 cargo test implementations::nikon::tests::offset_scheme_tests::test_format3_tiff_header_space_requirement)",
-      "Bash(RUST_BACKTRACE=1 cargo test implementations::nikon::offset_schemes::tests::test_format1_insufficient_ifd_space -- --exact)"
+      "Bash(RUST_BACKTRACE=1 cargo test implementations::nikon::offset_schemes::tests::test_format1_insufficient_ifd_space -- --exact)",
+      "Bash(do echo \"=== $file.pm ===\")",
+      "Bash(RUST_LOG=debug cargo run -- test-images/nikon/nikon_z8_73.jpg)",
+      "Bash(RUST_LOG=trace cargo run -- test-images/nikon/nikon_z8_73.jpg)"
     ],
     "deny": []
   }

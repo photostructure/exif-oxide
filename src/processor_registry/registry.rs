@@ -335,9 +335,11 @@ impl BinaryDataProcessor for StandardExifProcessor {
     }
 
     fn process_data(&self, _data: &[u8], _context: &ProcessorContext) -> Result<ProcessorResult> {
-        // Placeholder implementation - would delegate to existing EXIF processing
-        debug!("Processing with standard EXIF processor");
-        Ok(ProcessorResult::new())
+        // Temporary fix: return error to force fallback to existing processing
+        debug!("StandardExifProcessor: Returning error to force fallback");
+        Err(crate::types::ExifError::ParseError(
+            "Forcing fallback to existing processing".to_string(),
+        ))
     }
 
     fn get_metadata(&self) -> ProcessorMetadata {
@@ -365,9 +367,11 @@ impl BinaryDataProcessor for StandardBinaryDataProcessor {
     }
 
     fn process_data(&self, _data: &[u8], _context: &ProcessorContext) -> Result<ProcessorResult> {
-        // Placeholder implementation - would delegate to existing binary data processing
-        debug!("Processing with standard binary data processor");
-        Ok(ProcessorResult::new())
+        // Temporary fix: return error to force fallback to existing processing
+        debug!("StandardBinaryDataProcessor: Returning error to force fallback");
+        Err(crate::types::ExifError::ParseError(
+            "Forcing fallback to existing processing".to_string(),
+        ))
     }
 
     fn get_metadata(&self) -> ProcessorMetadata {
