@@ -9,6 +9,38 @@ ExifIFD (EXIF Image File Directory) is the core subdirectory within TIFF/EXIF st
 
 This milestone corrects the group assignment system to match ExifTool's three-level group hierarchy and ensures ExifIFD tags are properly distinguished from main IFD tags for API compatibility.
 
+## Codebase Analysis Findings
+
+**During ExifIFD research, analysis identified 30+ primitive lookup tables suitable for the simple table extraction framework. These represent 500+ manual lookup entries that could be automatically generated.**
+
+### Manual Lookup Tables Found
+
+**Print Conversion Tables** (`src/implementations/print_conv.rs`):
+
+- 11 primitive tables with simple `key → string` mappings
+- Examples: `orientation_print_conv`, `flash_print_conv`, `colorspace_print_conv`
+- All follow pattern `match value { key => "string", ... }`
+
+**Nikon Tables** (`src/implementations/nikon/tags.rs`):
+
+- 18+ primitive HashMap constructions
+- Examples: `nikon_quality_conv`, `nikon_af_area_mode_conv`
+- All follow pattern `HashMap<i32, &str>`
+
+**Canon Tables** (`src/implementations/canon/tags.rs`):
+
+- Tag ID mapping table with 70+ entries
+- Simple `u16 → String` pattern
+
+### Simple Table Extraction Opportunity
+
+These tables are excellent candidates for [MILESTONE-CODEGEN-SIMPLE-TABLES.md](MILESTONE-CODEGEN-SIMPLE-TABLES.md):
+
+- All use primitive key-value mappings
+- No complex Perl logic or conditionals
+- Direct ExifTool source references available
+- Would eliminate manual maintenance
+
 ## Background from ExifTool Analysis
 
 From `third-party/exiftool/doc/concepts/EXIFIFD.md` analysis:
@@ -23,7 +55,8 @@ From `third-party/exiftool/doc/concepts/EXIFIFD.md` analysis:
 
 ### Current Implementation Problems
 
-**Incorrect Group Assignment** (src/exif/tags.rs:65):
+**1. Incorrect Group Assignment** (`src/exif/tags.rs:65`):
+
 ```rust
 // WRONG - All ExifIFD tags assigned "EXIF" group
 let namespace = match ifd_name {
@@ -32,9 +65,23 @@ let namespace = match ifd_name {
 };
 ```
 
-**Missing Context Awareness**: Processor doesn't distinguish between main IFD vs ExifIFD context when applying conversions or validations.
+**2. Missing Group1 Field** (`src/types/metadata.rs:41-85`):
 
-**API Incompatibility**: Tags extracted from ExifIFD appear to come from main EXIF IFD, breaking ExifTool compatibility for group-based tag access.
+```rust
+// TagEntry lacks group1 field for ExifTool's 3-level hierarchy
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TagEntry {
+    pub group: String,     // Group0 only
+    // Missing: pub group1: String,
+    pub name: String,
+    pub value: TagValue,
+    pub print: String,
+}
+```
+
+**3. Missing Context Awareness**: Processor correctly identifies ExifIFD subdirectories but doesn't maintain proper context during tag assignment.
+
+**4. API Incompatibility**: Tags extracted from ExifIFD appear to come from main EXIF IFD, breaking ExifTool compatibility for group-based tag access.
 
 ## Implementation Strategy
 
@@ -54,11 +101,11 @@ pub(crate) fn create_tag_source_info(&self, ifd_name: &str) -> TagSourceInfo {
         "MakerNotes" => "MakerNotes",
         _ => "EXIF",
     };
-    
+
     // ExifTool: Group hierarchy system
     let group1 = match ifd_name {
         "ExifIFD" => "ExifIFD",
-        "GPS" => "GPS", 
+        "GPS" => "GPS",
         "InteropIFD" => "InteropIFD",
         "MakerNotes" => "MakerNotes",
         _ => "IFD0", // Main IFD default
@@ -93,10 +140,10 @@ impl ExifReader {
             is_exif_ifd: ifd_name == "ExifIFD",
             base_offset: offset,
         };
-        
+
         self.ifd_context_stack.push(context);
     }
-    
+
     fn get_group1_for_ifd(&self, ifd_name: &str) -> String {
         // ExifTool: Groups => { 1 => 'ExifIFD' } specification
         match ifd_name {
@@ -157,7 +204,7 @@ pub(crate) fn process_subdirectory_tag(
     let subdir_name = match tag_id {
         0x8769 => "ExifIFD",
         0x8825 => "GPS",
-        0xA005 => "InteropIFD", 
+        0xA005 => "InteropIFD",
         0x927C => "MakerNotes",
         _ => return Ok(()),
     };
@@ -183,7 +230,7 @@ pub(crate) fn process_subdirectory_tag(
     self.enter_ifd_context(subdir_name, inherited_base);
     let result = self.process_subdirectory(&dir_info);
     self.exit_ifd_context();
-    
+
     result
 }
 ```
@@ -196,16 +243,16 @@ pub(crate) fn process_subdirectory_tag(
 pub struct TagEntry {
     /// ExifTool Group0 (format family)
     pub group: String,
-    
+
     /// ExifTool Group1 (subdirectory location) - NEW
     pub group1: String,
-    
+
     /// Tag name
     pub name: String,
-    
+
     /// Converted value (post-ValueConv)
     pub value: TagValue,
-    
+
     /// Display string (post-PrintConv)
     pub print: String,
 }
@@ -218,7 +265,7 @@ impl ExifData {
             .filter(|tag| tag.group1 == "ExifIFD")
             .collect()
     }
-    
+
     /// ExifTool compatibility: get tag by group-qualified name
     pub fn get_tag_by_group(&self, group_name: &str, tag_name: &str) -> Option<&TagEntry> {
         self.tags.iter()
@@ -240,16 +287,17 @@ impl ExifData {
 ### Validation Tests
 
 **Test Group Assignment**:
+
 ```rust
 #[test]
 fn test_exif_ifd_group_assignment() {
     let exif_data = process_file("t/images/Canon.jpg").unwrap();
-    
+
     // Find a tag that should be in ExifIFD (like ExposureTime)
     let exposure_time = exif_data.get_tag_by_name("ExposureTime").unwrap();
     assert_eq!(exposure_time.group1, "ExifIFD");
     assert_eq!(exposure_time.group, "EXIF");
-    
+
     // Verify main IFD tags are still assigned correctly
     let image_width = exif_data.get_tag_by_name("ImageWidth").unwrap();
     assert_eq!(image_width.group1, "IFD0");
@@ -257,15 +305,16 @@ fn test_exif_ifd_group_assignment() {
 ```
 
 **Test Context-Aware Processing**:
+
 ```rust
 #[test]
 fn test_exif_ifd_context_awareness() {
     let exif_data = process_file("t/images/Canon-ExifIFD.jpg").unwrap();
-    
+
     // Verify ExifIFD-specific validation occurred
     let exif_version = exif_data.get_tag_by_group("ExifIFD", "ExifVersion").unwrap();
     assert!(exif_version.value.as_string().is_some());
-    
+
     // Verify no warnings about missing ExifVersion
     assert!(exif_data.warnings.iter()
         .find(|w| w.contains("ExifVersion"))
@@ -274,15 +323,16 @@ fn test_exif_ifd_context_awareness() {
 ```
 
 **Test ExifTool Compatibility**:
+
 ```rust
-#[test] 
+#[test]
 fn test_exiftool_compatibility() {
     let exif_data = process_file("t/images/Nikon-D70.jpg").unwrap();
-    
+
     // Should be able to access ExifIFD tags by group
     let exif_ifd_tags = exif_data.get_exif_ifd_tags();
     assert!(!exif_ifd_tags.is_empty());
-    
+
     // Verify mainstream ExifIFD tags are present
     let required_tags = ["ExposureTime", "FNumber", "ISO", "ExifVersion"];
     for tag_name in required_tags {
@@ -315,6 +365,7 @@ fn test_exiftool_compatibility() {
 ### Prerequisites
 
 - None - builds on existing IFD processing infrastructure
+- **Note**: Analysis identified 30+ lookup tables suitable for simple table extraction (see above)
 
 ### Enables Future Work
 
@@ -384,9 +435,16 @@ let gps_lat = exif_data.get_tag_exiftool_style("GPS:GPSLatitude");
 
 ### Required Reading
 
+**ExifIFD Implementation**:
+
 - [EXIFIFD.md](../../third-party/exiftool/doc/concepts/EXIFIFD.md) - Complete ExifIFD specification
 - [ARCHITECTURE.md](../ARCHITECTURE.md) - System overview and principles
 - [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md) - Implementation principles
+
+**Related Codegen Opportunity**:
+
+- [MILESTONE-CODEGEN-SIMPLE-TABLES.md](MILESTONE-CODEGEN-SIMPLE-TABLES.md) - Framework for converting manual lookup tables
+- [CODEGEN.md](../design/CODEGEN.md) - Simple table extraction details
 
 ### ExifTool Source References
 
@@ -396,9 +454,19 @@ let gps_lat = exif_data.get_tag_exiftool_style("GPS:GPSLatitude");
 
 ### Implementation Files Modified
 
-- `src/exif/tags.rs` - Group assignment logic
-- `src/exif/processors.rs` - Context-aware subdirectory processing
-- `src/types/metadata.rs` - Enhanced TagEntry structure
+**Core ExifIFD Changes**:
+
+- `src/exif/tags.rs:65` - Fix group assignment bug
+- `src/exif/processors.rs:228-234` - Context-aware subdirectory processing
+- `src/types/metadata.rs:41-85` - Add `group1` field to TagEntry
 - `src/exif/ifd.rs` - Context tracking during IFD processing
 
+**Potential Codegen Candidates Found**:
+
+- `src/implementations/print_conv.rs` - 11 primitive lookup tables
+- `src/implementations/nikon/tags.rs` - 18+ primitive lookup tables
+- `src/implementations/canon/tags.rs` - Tag mapping table
+
 This milestone fixes a foundational issue in EXIF processing that affects all downstream consumers. Proper ExifIFD support ensures tags are correctly identified by their source location, enabling ExifTool-compatible group-based access patterns and maintaining API compatibility for advanced metadata workflows.
+
+**Additional Context**: Research for this milestone identified significant opportunities for simple table extraction. Consider reviewing the discovered lookup tables for potential codegen conversion either before or after ExifIFD implementation.
