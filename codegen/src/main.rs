@@ -73,7 +73,7 @@ struct TableConfig {
 }
 
 /// Individual table entry
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 struct TableEntry {
     key: String,
     value: String,
@@ -693,6 +693,7 @@ fn generate_mod_file(output_dir: &str) -> Result<()> {
 //!
 //! This module contains all code generated from ExifTool tables.
 
+pub mod canon;
 pub mod composite_tags;
 pub mod conversion_refs;
 pub mod nikon;
@@ -921,6 +922,9 @@ fn generate_table_code(hash_name: &str, table_data: &ExtractedTable) -> Result<S
         "u8" => "u8",
         "u16" => "u16", 
         "u32" => "u32",
+        "i8" => "i8",
+        "i16" => "i16",
+        "i32" => "i32",
         "f32" => "f32",
         "String" => "&'static str",
         _ => "&'static str", // Default fallback
@@ -939,8 +943,21 @@ fn generate_table_code(hash_name: &str, table_data: &ExtractedTable) -> Result<S
 
     code.push_str("    let mut map = HashMap::new();\n");
 
+    // Sort entries by key for deterministic output
+    let mut sorted_entries = table_data.entries.clone();
+    sorted_entries.sort_by(|a, b| {
+        if config.key_type == "String" {
+            a.key.cmp(&b.key)
+        } else {
+            // Parse numeric keys for proper sorting
+            let a_num: i64 = a.key.parse().unwrap_or(0);
+            let b_num: i64 = b.key.parse().unwrap_or(0);
+            a_num.cmp(&b_num)
+        }
+    });
+
     // Add entries
-    for entry in &table_data.entries {
+    for entry in &sorted_entries {
         let key_value = if config.key_type == "String" {
             format!("\"{}\"", entry.key)
         } else {
@@ -948,11 +965,9 @@ fn generate_table_code(hash_name: &str, table_data: &ExtractedTable) -> Result<S
         };
 
         code.push_str(&format!(
-            "    map.insert({}, \"{}\"); // ExifTool {}:{}\n",
+            "    map.insert({}, \"{}\");\n",
             key_value,
-            escape_rust_string(&entry.value),
-            config.module,
-            entry.source_line
+            escape_rust_string(&entry.value)
         ));
     }
 
@@ -967,7 +982,8 @@ fn generate_table_code(hash_name: &str, table_data: &ExtractedTable) -> Result<S
         fn_name,
         fn_param_type
     ));
-    code.push_str(&format!("    {}.get(key).copied()\n", config.constant_name));
+    let key_ref = if config.key_type == "String" { "key" } else { "&key" };
+    code.push_str(&format!("    {}.get({}).copied()\n", config.constant_name, key_ref));
     code.push_str("}\n");
 
     Ok(code)

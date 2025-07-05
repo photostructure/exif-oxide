@@ -2,6 +2,7 @@
 //!
 //! This module contains all code generated from ExifTool tables.
 
+pub mod canon;
 pub mod composite_tags;
 pub mod conversion_refs;
 pub mod nikon;
