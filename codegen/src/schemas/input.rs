@@ -1,0 +1,134 @@
+//! Input schemas for deserializing JSON from Perl extractors
+
+use serde::Deserialize;
+use std::collections::HashMap;
+
+/// JSON structure from extract_tables.pl
+#[derive(Debug, Deserialize)]
+#[allow(dead_code)]
+pub struct ExtractedData {
+    pub extracted_at: String,
+    pub exiftool_version: String,
+    pub filter_criteria: String,
+    pub total_tags: usize,
+    pub tags: Vec<ExtractedTag>,
+    #[serde(default)]
+    pub composite_tags: Vec<ExtractedCompositeTag>,
+    pub conversion_refs: ConversionRefs,
+}
+
+/// Conversion references extracted from tag definitions
+#[derive(Debug, Deserialize)]
+pub struct ConversionRefs {
+    pub print_conv: Vec<String>,
+    pub value_conv: Vec<String>,
+}
+
+/// Individual extracted tag from ExifTool
+#[derive(Debug, Deserialize)]
+pub struct ExtractedTag {
+    pub id: String,
+    pub name: String,
+    pub format: String,
+    #[serde(default)]
+    pub groups: Vec<String>,
+    pub writable: u8,
+    #[serde(default)]
+    pub description: Option<String>,
+    #[serde(default)]
+    pub print_conv_ref: Option<String>,
+    #[serde(default)]
+    pub value_conv_ref: Option<String>,
+    #[serde(default)]
+    pub notes: Option<String>,
+    #[serde(default)]
+    pub frequency: Option<f64>,
+    #[serde(default)]
+    pub mainstream: Option<u8>,
+}
+
+/// Composite tag definition
+#[derive(Debug, Deserialize)]
+pub struct ExtractedCompositeTag {
+    pub name: String,
+    pub table: String,
+    pub full_name: String,
+    #[serde(default)]
+    pub require: Option<Vec<String>>,
+    #[serde(default)]
+    pub desire: Option<Vec<String>>,
+    #[serde(default)]
+    pub print_conv_ref: Option<String>,
+    #[serde(default)]
+    pub value_conv_ref: Option<String>,
+    #[serde(default)]
+    pub description: Option<String>,
+    #[serde(default)]
+    pub writable: u8,
+    #[serde(default)]
+    pub frequency: Option<f64>,
+    #[serde(default)]
+    pub mainstream: Option<u8>,
+}
+
+/// JSON structure from extract_simple_tables.pl
+#[derive(Debug, Deserialize)]
+#[allow(dead_code)]
+pub struct SimpleTablesData {
+    pub extracted_at: String,
+    pub extraction_config: String,
+    pub total_tables: usize,
+    pub tables: HashMap<String, ExtractedTable>,
+}
+
+/// Extracted table data from extract_simple_tables.pl
+#[derive(Debug, Deserialize)]
+pub struct ExtractedTable {
+    pub config: TableConfig,
+    pub entries: Vec<TableEntry>,
+    pub entry_count: usize,
+    #[serde(default)]
+    pub extraction_type: Option<String>,
+}
+
+/// Table configuration from simple_tables.json
+#[derive(Debug, Deserialize)]
+pub struct TableConfig {
+    pub module: String,
+    pub output_file: String,
+    #[serde(default)]
+    pub constant_name: Option<String>,
+    #[serde(default)]
+    pub key_type: Option<String>,
+    #[serde(default)]
+    pub extraction_type: Option<String>,
+    pub description: String,
+}
+
+/// Individual table entry (polymorphic for different extraction types)
+#[derive(Debug, Deserialize, Clone)]
+pub struct TableEntry {
+    // Standard simple table fields
+    #[serde(default)]
+    pub key: Option<String>,
+    #[serde(default)]
+    pub value: Option<String>,
+    
+    // Regex pattern fields
+    #[serde(default)]
+    pub rust_compatible: Option<bool>,
+    #[serde(default)]
+    pub compatibility_notes: Option<String>,
+    
+    // File type lookup specific fields
+    #[serde(default)]
+    pub extension: Option<String>,
+    #[serde(default)]
+    pub entry_type: Option<String>,
+    #[serde(default)]
+    pub target: Option<String>,
+    #[serde(default)]
+    pub formats: Option<Vec<String>>,
+    #[serde(default)]
+    pub description: Option<String>,
+}

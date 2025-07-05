@@ -60,6 +60,10 @@ pub struct ExifReader {
     /// Computed composite tag values
     /// Milestone 8f: Infrastructure for composite tag computation
     pub(crate) composite_tags: HashMap<String, TagValue>,
+    /// Original file type from detection (e.g., "NEF")
+    pub(crate) original_file_type: Option<String>,
+    /// Overridden file type based on content (e.g., "NRW")
+    pub(crate) overridden_file_type: Option<String>,
 }
 
 impl ExifReader {
@@ -78,7 +82,19 @@ impl ExifReader {
             base: 0,
             processor_dispatch: ProcessorDispatch::default(),
             composite_tags: HashMap::new(),
+            original_file_type: None,
+            overridden_file_type: None,
         }
+    }
+
+    /// Set the original file type from detection
+    pub fn set_file_type(&mut self, file_type: String) {
+        self.original_file_type = Some(file_type);
+    }
+
+    /// Get the overridden file type if any
+    pub fn get_overridden_file_type(&self) -> Option<String> {
+        self.overridden_file_type.clone()
     }
 
     /// Parse EXIF data from JPEG APP1 segment after "Exif\0\0"

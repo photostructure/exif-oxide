@@ -1,13 +1,9 @@
-//! File type detection and lookup functionality
-//!
-//! This module contains generated code for file type detection based on
-//! ExifTool's fileTypeLookup infrastructure.
+//! File type detection and identification
 
 pub mod file_type_lookup;
 pub mod magic_numbers;
-
-#[cfg(test)]
-mod file_type_lookup_tests;
+pub mod mime_types;
 
 pub use file_type_lookup::*;
 pub use magic_numbers::*;
+pub use mime_types::*;
