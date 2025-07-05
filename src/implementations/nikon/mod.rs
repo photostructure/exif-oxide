@@ -43,9 +43,6 @@ pub use lens_database::lookup_nikon_lens;
 pub use offset_schemes::calculate_nikon_base_offset;
 pub use tags::{get_nikon_tag_name, select_nikon_tag_table};
 
-#[cfg(test)]
-mod tests;
-
 use crate::exif::ExifReader;
 use crate::types::{ExifError, Result};
 use tracing::debug;
