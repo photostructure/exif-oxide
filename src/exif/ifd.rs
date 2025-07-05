@@ -140,7 +140,7 @@ impl ExifReader {
         let entry = IfdEntry::parse(&self.data, entry_offset, byte_order)?;
 
         // Debug: Log all tag IDs being processed
-        // debug!("Processing tag {:#x} ({}) from {} (format: {:?}, count: {})", 
+        // debug!("Processing tag {:#x} ({}) from {} (format: {:?}, count: {})",
         //        entry.tag_id, entry.tag_id, ifd_name, entry.format, entry.count);
 
         // Look up tag definition in appropriate table based on IFD type
