@@ -5,9 +5,8 @@
 //! This approach keeps the codebase manageable while providing flexibility.
 
 use crate::types::{Result, TagValue};
-use lazy_static::lazy_static;
 use std::collections::{HashMap, HashSet};
-use std::sync::{Arc, RwLock};
+use std::sync::{Arc, LazyLock, RwLock};
 
 /// Function signature for PrintConv implementations
 ///
@@ -21,11 +20,10 @@ pub type PrintConvFn = fn(&TagValue) -> String;
 /// For example: APEX values to actual f-stop numbers
 pub type ValueConvFn = fn(&TagValue) -> Result<TagValue>;
 
-// Global registry instance - uses lazy_static to create a singleton registry that can be
+// Global registry instance - uses LazyLock to create a singleton registry that can be
 // accessed from anywhere in the application. RwLock allows concurrent reads while protecting writes.
-lazy_static! {
-    static ref GLOBAL_REGISTRY: Arc<RwLock<Registry>> = Arc::new(RwLock::new(Registry::new()));
-}
+static GLOBAL_REGISTRY: LazyLock<Arc<RwLock<Registry>>> =
+    LazyLock::new(|| Arc::new(RwLock::new(Registry::new())));
 
 /// Core registry for conversion function lookup
 ///

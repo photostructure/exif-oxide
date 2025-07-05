@@ -205,11 +205,8 @@ impl ExifReader {
                     .get(&0)
                     .cloned()
                     .unwrap_or_else(|| "Unknown".to_string());
-                let source_info = TagSourceInfo::new(
-                    group_0,
-                    "BinaryData".to_string(),
-                    crate::types::ProcessorType::BinaryData,
-                );
+                let source_info =
+                    TagSourceInfo::new(group_0, "BinaryData".to_string(), "BinaryData".to_string());
 
                 self.extracted_tags.insert(index as u16, final_value);
                 self.tag_sources.insert(index as u16, source_info);

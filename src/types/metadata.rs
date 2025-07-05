@@ -3,7 +3,7 @@
 //! This module defines the core metadata structures including TagEntry,
 //! ExifData, and TagSourceInfo that represent extracted EXIF information.
 
-use crate::types::{ProcessorType, TagValue};
+use crate::types::TagValue;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -265,20 +265,20 @@ pub struct TagSourceInfo {
     /// Source priority for conflict resolution
     /// ExifTool: Main EXIF tags take precedence over MakerNote tags
     pub priority: SourcePriority,
-    /// Processor type that handled this tag
+    /// Processor name that handled this tag
     /// ExifTool: PROCESS_PROC information
-    pub processor_type: ProcessorType,
+    pub processor_name: String,
 }
 
 impl TagSourceInfo {
     /// Create new tag source info
-    pub fn new(namespace: String, ifd_name: String, processor_type: ProcessorType) -> Self {
+    pub fn new(namespace: String, ifd_name: String, processor_name: String) -> Self {
         let priority = SourcePriority::from_namespace(&namespace);
         Self {
             namespace,
             ifd_name,
             priority,
-            processor_type,
+            processor_name,
         }
     }
 
@@ -286,5 +286,19 @@ impl TagSourceInfo {
     /// ExifTool format: "Group:TagName"
     pub fn format_tag_name(&self, tag_name: &str) -> String {
         format!("{}:{}", self.namespace, tag_name)
+    }
+}
+
+/// Temporary placeholder for ProcessorDispatch during Phase 5 cleanup
+/// TODO: Remove this once trait-based dispatch is fully integrated
+#[derive(Debug, Clone, Default)]
+pub struct ProcessorDispatch {
+    pub subdirectory_overrides: HashMap<u16, String>,
+    pub parameters: HashMap<String, String>,
+}
+
+impl ProcessorDispatch {
+    pub fn with_table_processor(_processor: String) -> Self {
+        Self::default()
     }
 }

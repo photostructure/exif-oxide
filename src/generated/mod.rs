@@ -4,6 +4,7 @@
 
 pub mod composite_tags;
 pub mod conversion_refs;
+pub mod nikon;
 pub mod supported_tags;
 pub mod tags;
 
