@@ -27,7 +27,14 @@ Study the concepts documentation:
 - [CHARSETS.md](../../third-party/exiftool/doc/concepts/CHARSETS.md) - Character encoding handling
 - [PATTERNS.md](../../third-party/exiftool/doc/concepts/PATTERNS.md) - Common code patterns
 - [WRITE_PROC.md](../../third-party/exiftool/doc/concepts/WRITE_PROC.md) - Writing procedures
-- [\_HOWTO.md](../../third-party/exiftool/doc/concepts/_HOWTO.md) - Development how-to guide
+- [CONTAINER_FORMATS.md](../../third-party/exiftool/doc/concepts/CONTAINER_FORMATS.md) - Container format handling
+- [ERROR_HANDLING.md](../../third-party/exiftool/doc/concepts/ERROR_HANDLING.md) - Error handling strategies
+- [EXIFIFD.md](../../third-party/exiftool/doc/concepts/EXIFIFD.md) - EXIF IFD structure and handling
+- [GROUP_SYSTEM.md](../../third-party/exiftool/doc/concepts/GROUP_SYSTEM.md) - Tag group organization
+- [OFFSET_BASE_MANAGEMENT.md](../../third-party/exiftool/doc/concepts/OFFSET_BASE_MANAGEMENT.md) - Offset calculation patterns
+- [SUBDIRECTORY_SYSTEM.md](../../third-party/exiftool/doc/concepts/SUBDIRECTORY_SYSTEM.md) - Subdirectory processing
+- [TAG_INFO_HASH.md](../../third-party/exiftool/doc/concepts/TAG_INFO_HASH.md) - Tag information structure
+- [WRITE_SYSTEM.md](../../third-party/exiftool/doc/concepts/WRITE_SYSTEM.md) - Writing system architecture
 
 Also study the module documentation:
 
