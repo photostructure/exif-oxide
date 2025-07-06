@@ -60,17 +60,11 @@ ExifTool Source → Perl Extractor → JSON → Rust Codegen → Generated Code
 
 ### Key Components
 
-1. **Code Generation** ([design/CODEGEN.md](design/CODEGEN.md))
-   - Extracts tag definitions from ExifTool
-   - Generates Rust tag tables
-   - Creates conversion reference lists
-   - Mainstream tag filtering
-
-2. **Implementation Palette** ([design/IMPLEMENTATION-PALETTE.md](design/IMPLEMENTATION-PALETTE.md))
-   - Manual implementations of complex logic
+1. **ExifTool Integration** ([design/EXIFTOOL-INTEGRATION.md](design/EXIFTOOL-INTEGRATION.md))
+   - Code generation for tag tables and lookups
+   - Manual implementation patterns
    - PrintConv/ValueConv functions
    - Manufacturer-specific processors
-   - Format parsers
 
 3. **Public API** ([design/API-DESIGN.md](design/API-DESIGN.md))
    - Streaming-first design
@@ -160,8 +154,7 @@ Binary data uses streaming references:
 
 ### Design Documents
 - [API Design](design/API-DESIGN.md) - Public API structure
-- [Code Generation Strategy](design/CODEGEN.md) - What's generated vs manual
-- [Implementation Palette](design/IMPLEMENTATION-PALETTE.md) - How manual implementations work
+- [ExifTool Integration](design/EXIFTOOL-INTEGRATION.md) - Unified code generation and implementation guide
 
 ### Guides
 - [Engineer's Guide](ENGINEER-GUIDE.md) - Getting started with the codebase

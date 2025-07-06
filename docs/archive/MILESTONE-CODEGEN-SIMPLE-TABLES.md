@@ -118,9 +118,8 @@ All tests passing with 100% coverage of generated code.
 
 ## 🔗 **Related Documentation**
 
-- **[CODEGEN.md](../design/CODEGEN.md)**: Core codegen philosophy and patterns
+- **[EXIFTOOL-INTEGRATION.md](../design/EXIFTOOL-INTEGRATION.md)**: Unified code generation and implementation guide
 - **[TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md)**: Fundamental principle driving this work
-- **[IMPLEMENTATION-PALETTE.md](../design/IMPLEMENTATION-PALETTE.md)**: Manual implementation integration patterns
 
 ## 🏆 **Impact**
 

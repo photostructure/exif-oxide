@@ -35,7 +35,7 @@ Start with these guides in order:
 
 ### Common Tasks
 
-- **Adding PrintConv/ValueConv** - See [IMPLEMENTATION-PALETTE.md](design/IMPLEMENTATION-PALETTE.md)
+- **Adding PrintConv/ValueConv** - See [EXIFTOOL-INTEGRATION.md](design/EXIFTOOL-INTEGRATION.md)
 - **Understanding State** - See [STATE-MANAGEMENT.md](STATE-MANAGEMENT.md)
 - **Processor Dispatch** - See [PROCESSOR-PROC-DISPATCH.md](PROCESSOR-PROC-DISPATCH.md)
 - **Offset Calculations** - See [OFFSET-BASE-MANAGEMENT.md](OFFSET-BASE-MANAGEMENT.md)

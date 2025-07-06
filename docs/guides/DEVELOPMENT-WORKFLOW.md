@@ -237,7 +237,6 @@ Creates: `implementations/stubs/canon_t3i_stubs.rs` with skeleton functions.
 
 ## Related Documentation
 
-- [CODEGEN.md](../design/CODEGEN.md) - Code generation details
-- [IMPLEMENTATION-PALETTE.md](../design/IMPLEMENTATION-PALETTE.md) - Implementation patterns
+- [EXIFTOOL-INTEGRATION.md](../design/EXIFTOOL-INTEGRATION.md) - Unified code generation and implementation guide
 - [ENGINEER-GUIDE.md](../ENGINEER-GUIDE.md) - Background and concepts
 - [EXIFTOOL-UPDATE-WORKFLOW.md](EXIFTOOL-UPDATE-WORKFLOW.md) - Updating ExifTool
