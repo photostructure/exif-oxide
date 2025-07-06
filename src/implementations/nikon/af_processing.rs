@@ -117,7 +117,7 @@ pub fn process_nikon_af_info(
             let tag_source = reader.create_tag_source_info("Nikon");
             reader.store_tag_with_precedence(
                 0x0088,
-                TagValue::String(format!("Unknown version 0x{version:04x}")),
+                TagValue::string(format!("Unknown version 0x{version:04x}")),
                 tag_source,
             );
             Ok(())
@@ -150,7 +150,7 @@ fn process_af_info_v0100(
     if af_point > 0 && af_point <= af_system.point_count() as u8 {
         reader.store_tag_with_precedence(
             0x008A,
-            TagValue::String(format!("Point {af_point}")),
+            TagValue::string(format!("Point {af_point}")),
             tag_source,
         );
     }
@@ -361,7 +361,7 @@ fn process_af_info_v0300(
         };
         reader.store_tag_with_precedence(
             0x0099,
-            TagValue::String(detection_readable.to_string()),
+            TagValue::string(detection_readable.to_string()),
             tag_source,
         );
     }
