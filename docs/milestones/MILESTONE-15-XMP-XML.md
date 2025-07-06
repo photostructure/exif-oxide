@@ -29,14 +29,16 @@ From ExifTool's XMP implementation:
 ### Structured vs Flattened Comparison
 
 **Flattened mode** (what we DON'T do):
+
 ```
 ContactInfo.CiAdrCity = "New York"
-dc:creator[1] = "John Doe"  
+dc:creator[1] = "John Doe"
 dc:creator[2] = "Jane Smith"
 dc:title[x-default] = "Photo Title"
 ```
 
 **Structured mode** (our target):
+
 ```json
 {
   "XMP": {
@@ -95,18 +97,20 @@ ExifTool uses regex-based XML parsing to avoid external dependencies. For exif-o
 ExifTool's `-struct` option preserves the hierarchical nature of XMP data structures rather than flattening them into individual tags. Key behaviors:
 
 **RDF Container Mappings**:
+
 - **rdf:Bag** → JSON Array: `["item1", "item2", "item3"]`
-- **rdf:Seq** → JSON Array: `["first", "second", "third"]` 
+- **rdf:Seq** → JSON Array: `["first", "second", "third"]`
 - **rdf:Alt** → JSON Object: `{"x-default": "value", "en-US": "English value"}`
 
 **Namespace Grouping**:
+
 ```json
 {
   "XMP": {
     "dc": {
       "creator": ["Photographer Name"],
       "subject": ["keyword1", "keyword2"],
-      "rights": {"x-default": "Copyright notice"}
+      "rights": { "x-default": "Copyright notice" }
     },
     "xmp": {
       "CreateDate": "2024-01-01T12:00:00Z",
@@ -121,11 +125,12 @@ ExifTool's `-struct` option preserves the hierarchical nature of XMP data struct
 ```
 
 **Nested Structure Preservation**:
+
 ```json
 {
   "ContactInfo": {
     "CiAdrExtadr": "123 Main St",
-    "CiAdrCity": "New York", 
+    "CiAdrCity": "New York",
     "CiAdrCtry": "USA",
     "CiEmailWork": "contact@example.com"
   },
@@ -145,6 +150,7 @@ ExifTool's `-struct` option preserves the hierarchical nature of XMP data struct
 ### Implementation Requirements
 
 **TagValue Extensions Needed**:
+
 ```rust
 pub enum TagValue {
     // ... existing variants
@@ -154,6 +160,7 @@ pub enum TagValue {
 ```
 
 **Structure Building Algorithm**:
+
 1. Parse XML with namespace awareness
 2. Build hierarchical object tree preserving nesting
 3. Convert RDF containers to appropriate JSON types
@@ -169,7 +176,7 @@ pub enum TagValue {
 ```rust
 pub enum TagValue {
     String(String),
-    Number(i64), 
+    Number(i64),
     Float(f64),
     Object(HashMap<String, TagValue>),  // NEW: For nested XMP structures
     Array(Vec<TagValue>),               // NEW: For RDF containers
@@ -182,7 +189,7 @@ pub enum TagValue {
 ```rust
 pub enum XmpContainer {
     Bag(Vec<TagValue>),     // Unordered collection → Array
-    Seq(Vec<TagValue>),     // Ordered sequence → Array  
+    Seq(Vec<TagValue>),     // Ordered sequence → Array
     Alt(HashMap<String, TagValue>), // Language alternatives → Object
 }
 
@@ -233,7 +240,7 @@ pub struct StructureBuilder {
 ```bash
 # Add 80+ XMP lookup tables to simple table extraction framework
 # Priority tables identified:
-# - %nsURI (100+ namespace URI mappings) 
+# - %nsURI (100+ namespace URI mappings)
 # - %xmpNS (ExifTool group name translations)
 # - %charName/%charNum (XML character escapes)
 # - All PrintConv tables from XMP.pm/XMP2.pl (even in struct mode, some values need conversion)
@@ -241,7 +248,7 @@ pub struct StructureBuilder {
 # Example simple_tables.json entries:
 {
   "module": "XMP.pm",
-  "hash_name": "%nsURI", 
+  "hash_name": "%nsURI",
   "output_file": "xmp/namespaces.rs",
   "constant_name": "NAMESPACE_URIS",
   "key_type": "string",
@@ -273,7 +280,7 @@ pub struct NamespaceResolver {
 
 **Format Integration**:
 
-- JPEG APP1 XMP segment extraction  
+- JPEG APP1 XMP segment extraction
 - TIFF IFD0 XMP tag processing
 - Standalone .xmp sidecar file support
 - Extended XMP multi-segment handling
@@ -328,8 +335,8 @@ pub fn select_processor() -> TagEntry {
   "XMP": {
     "dc": {
       "creator": ["Photographer Name"],
-      "subject": ["keyword1", "keyword2"], 
-      "rights": {"x-default": "Copyright notice"}
+      "subject": ["keyword1", "keyword2"],
+      "rights": { "x-default": "Copyright notice" }
     },
     "ContactInfo": {
       "CiAdrCity": "New York",
@@ -346,14 +353,16 @@ Based on comprehensive analysis of XMP.pm and XMP2.pl, identified **80+ lookup t
 ### High-Priority Tables (Week 1)
 
 **Core Infrastructure Tables**:
+
 - `%nsURI` (100+ entries) - Namespace prefix to URI mappings
-- `%xmpNS` (7 entries) - ExifTool group name translations  
+- `%xmpNS` (7 entries) - ExifTool group name translations
 - `%charName`/`%charNum` (5 entries each) - XML character escapes
 
 **PrintConv Lookup Tables** (50+ tables):
+
 - Color Mode mappings (CMYK, RGB, LAB)
 - Photoshop ColorMode (9 entries)
-- Urgency levels (10 entries) 
+- Urgency levels (10 entries)
 - White Balance settings (9 entries)
 - Exposure Program modes (9 entries)
 - Metering Mode types (7 entries)
@@ -371,13 +380,13 @@ Based on comprehensive analysis of XMP.pm and XMP2.pl, identified **80+ lookup t
     {
       "module": "XMP.pm",
       "hash_name": "%nsURI",
-      "output_file": "xmp/namespaces.rs", 
+      "output_file": "xmp/namespaces.rs",
       "constant_name": "NAMESPACE_URIS",
       "key_type": "string",
       "value_type": "string"
     },
     {
-      "module": "XMP.pm", 
+      "module": "XMP.pm",
       "hash_name": "%charName",
       "output_file": "xmp/xml_chars.rs",
       "constant_name": "XML_CHAR_NAMES",
@@ -410,7 +419,7 @@ Many XMP structures contain **nested hash definitions** that exceed current simp
 );
 
 %sTime = (
-    STRUCT_NAME => 'Time', 
+    STRUCT_NAME => 'Time',
     NAMESPACE   => 'xmpDM',
     scale => { Writable => 'rational' },
     value => { Writable => 'integer' },
@@ -418,16 +427,18 @@ Many XMP structures contain **nested hash definitions** that exceed current simp
 ```
 
 **Enhancement Needed**: Extend simple table framework to handle:
+
 - Nested hash references (`Struct => \%otherHash`)
 - Complex value types (`Writable => 'boolean'`, `List => 0`)
 - Structure metadata (`STRUCT_NAME`, `NAMESPACE`)
 
 **Alternative Approach**: Extract nested structures to separate generated files with cross-references:
+
 ```rust
 // Generated from nested hash extraction:
 pub struct CorrectionMask {
     pub what: Option<String>,
-    pub mask_active: Option<bool>, 
+    pub mask_active: Option<bool>,
     pub masks: Option<Vec<OtherMask>>,
 }
 ```
@@ -527,6 +538,7 @@ pub struct CorrectionMask {
 ### Comparison Testing Methodology
 
 **Primary Validation**: Compare with `exiftool -j -struct` output
+
 ```bash
 # Generate reference output for testing
 exiftool -j -struct t/images/XMP.jpg > reference_output.json
@@ -538,6 +550,7 @@ cargo run -- t/images/XMP.jpg --output-format json > our_output.json
 ```
 
 **Key Test Cases**:
+
 1. **Basic XMP extraction**: `t/images/XMP.jpg` - standard Dublin Core, EXIF metadata
 2. **Extended XMP**: `t/images/ExtendedXMP.jpg` - multi-segment XMP handling
 3. **Standalone XMP**: `.xmp` sidecar files - pure XMP document processing
@@ -548,6 +561,7 @@ cargo run -- t/images/XMP.jpg --output-format json > our_output.json
 ### Structure Validation Tests
 
 **RDF Container Mapping**:
+
 ```rust
 #[test]
 fn test_rdf_bag_to_array() {
@@ -555,7 +569,7 @@ fn test_rdf_bag_to_array() {
     // Should become: ["item1", "item2"]
 }
 
-#[test] 
+#[test]
 fn test_rdf_alt_to_object() {
     // <rdf:Alt><rdf:li xml:lang="x-default">Title</rdf:li></rdf:Alt>
     // Should become: {"x-default": "Title"}
@@ -563,6 +577,7 @@ fn test_rdf_alt_to_object() {
 ```
 
 **Namespace Grouping**:
+
 ```rust
 #[test]
 fn test_namespace_grouping() {
