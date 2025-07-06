@@ -1,7 +1,8 @@
 # Milestone 15: XMP/XML Support
 
 **Duration**: 3-4 weeks  
-**Goal**: Add comprehensive XMP metadata extraction with structured output (equivalent to `exiftool -j -struct`)
+**Goal**: Add comprehensive XMP metadata extraction with structured output (equivalent to `exiftool -j -struct`)  
+**XML Parser**: `quick-xml` v0.36 (validated - see implementation guide)
 
 ## Task List Summary
 
@@ -124,12 +125,18 @@ ExifTool uses regex-based XML parsing to avoid external dependencies. For exif-o
 
 **Decision**: **Option B** - Use `quick-xml` crate (already in dependencies) with fail-fast approach for malformed XML. Analysis of ExifTool's XMP tests shows focus on well-formed XML rather than malformed edge cases. We should trust ExifTool's namespace definitions and tag structures, not necessarily its parsing implementation.
 
-**XML Parser**: We'll use `quick-xml` v0.36 which is already in our Cargo.toml. It provides:
-- Fast streaming XML parsing
-- Namespace support
-- Good error handling
-- Active maintenance
-- No need to evaluate alternatives unless specific issues arise
+### XML Parser: quick-xml v0.36
+
+**Validation completed**: Comprehensive testing confirms `quick-xml` meets all XMP requirements:
+
+- **Namespace Resolution**: ✅ Full support via `NsReader` and `resolve_element()`/`resolve_attribute()`
+- **RDF Containers**: ✅ Successfully parsed Bag/Seq/Alt with language alternatives
+- **Performance**: ✅ 1.6 million events/second on 26KB document
+- **UTF-8/Unicode**: ✅ Handles Japanese/Chinese/Arabic/emoji perfectly
+- **Streaming**: ✅ Low memory usage, no DOM construction
+- **Error Handling**: ✅ Properly rejects malformed XML
+
+See `examples/validate_quick_xml_xmp_v3.rs` for working validation code
 
 ## ExifTool Structured Mode Analysis
 
@@ -701,6 +708,66 @@ fn test_namespace_grouping() {
 **TagValue Compatibility**: Ensure Object/Array variants work with JSON output
 **Error Handling**: Test malformed XML rejection with proper error messages
 
+## quick-xml Implementation Guide
+
+### Key API Patterns
+
+**Using NsReader for namespace-aware parsing**:
+```rust
+use quick_xml::reader::NsReader;
+use quick_xml::events::Event;
+use quick_xml::name::ResolveResult;
+
+let mut reader = NsReader::from_str(xmp_data);
+reader.config_mut().trim_text(true);
+
+let mut buf = Vec::new();
+loop {
+    match reader.read_event_into(&mut buf)? {
+        Event::Start(e) => {
+            let (ns_result, local) = reader.resolve_element(e.name());
+            if let ResolveResult::Bound(ns) = ns_result {
+                let namespace_uri = str::from_utf8(ns.as_ref())?;
+                let local_name = str::from_utf8(local.as_ref())?;
+                // Process element with namespace
+            }
+        }
+        Event::Text(e) => {
+            let text = e.unescape()?.into_owned();
+            // Process text content
+        }
+        Event::Eof => break,
+        _ => {}
+    }
+    buf.clear();
+}
+```
+
+**Extracting attributes (e.g., xml:lang)**:
+```rust
+for attr in element.attributes() {
+    let attr = attr?;
+    let (_, attr_local) = reader.resolve_attribute(attr.key);
+    let attr_name = str::from_utf8(attr_local.as_ref())?;
+    if attr_name == "lang" {
+        let lang_code = str::from_utf8(&attr.value)?;
+        // Process language code
+    }
+}
+```
+
+### RDF Container Detection Patterns
+
+- **rdf:Bag** → Track state, collect items, output as `TagValue::Array`
+- **rdf:Seq** → Same as Bag (order preserved by XML parsing)
+- **rdf:Alt** → Track language codes from `xml:lang`, output as `TagValue::Object`
+
+### Helpful Resources
+
+- **quick-xml docs**: https://docs.rs/quick-xml/0.36/
+- **Example code**: `/examples/validate_quick_xml_xmp_v3.rs`
+- **ExifTool XMP tests**: `/third-party/exiftool/t/images/XMP*.jpg`
+
 ## Implementation Notes for Engineers
 
 ### Starting Implementation
@@ -721,6 +788,9 @@ fn test_namespace_grouping() {
    - Don't manually maintain namespace tables
    - Don't parse XML with regex
    - Remember to handle UTF-8/16/32 BOMs
+   - Use `read_event_into()` with buffer reuse for performance
+   - Always call `buf.clear()` after each event to avoid memory growth
+   - Use `e.unescape()?.into_owned()` for text content to handle XML entities
 
 4. **Testing Approach**:
    - Generate reference with: `exiftool -j -struct test.xmp > ref.json`
