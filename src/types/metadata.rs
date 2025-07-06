@@ -24,7 +24,7 @@ use std::collections::HashMap;
 ///     group1: "ExifIFD".to_string(),  // Located in ExifIFD subdirectory
 ///     name: "FNumber".to_string(),
 ///     value: TagValue::F64(4.0),      // Post-ValueConv: 4/1 → 4.0
-///     print: "4.0".to_string(),       // Post-PrintConv: formatted for display
+///     print: TagValue::String("4.0".to_string()),       // Post-PrintConv: formatted for display
 /// };
 ///
 /// assert_eq!(entry.name, "FNumber");
@@ -35,10 +35,10 @@ use std::collections::HashMap;
 ///     group1: "ExifIFD".to_string(),
 ///     name: "FocalLength".to_string(),
 ///     value: TagValue::F64(24.0),     // Numeric value
-///     print: "24 mm".to_string(),     // Human-readable with units
+///     print: TagValue::String("24 mm".to_string()),     // Human-readable with units
 /// };
 ///
-/// assert_eq!(focal_entry.print, "24 mm");
+/// assert_eq!(focal_entry.print, TagValue::String("24 mm".to_string()));
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TagEntry {
