@@ -86,7 +86,7 @@ pub fn can_build_composite(
     // Special case: if there are no required dependencies, check if we have any desired ones
     if composite_def.require.is_empty() && !composite_def.desire.is_empty() {
         // Need at least one desired dependency
-        for (_index, tag_name) in composite_def.desire {
+        for tag_name in composite_def.desire {
             if is_dependency_available(tag_name, available_tags, built_composites) {
                 return true; // At least one desired dependency available
             }
@@ -100,7 +100,7 @@ pub fn can_build_composite(
     }
 
     // Check all required dependencies
-    for (_index, tag_name) in composite_def.require {
+    for tag_name in composite_def.require {
         if !is_dependency_available(tag_name, available_tags, built_composites) {
             trace!(
                 "Missing required dependency for {}: {}",

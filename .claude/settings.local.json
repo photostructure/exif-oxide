@@ -145,7 +145,16 @@
       "Bash(RUST_LOG=debug cargo run -- test-images/nikon/nikon_z8_73.jpg)",
       "Bash(RUST_LOG=trace cargo run -- test-images/nikon/nikon_z8_73.jpg)",
       "Bash(RUST_LOG=debug cargo run --bin exif-oxide -- \"third-party/exiftool/t/images/MWG.jpg\")",
-      "Bash(RUST_LOG=trace cargo run --bin exif-oxide -- \"third-party/exiftool/t/images/MWG.jpg\")"
+      "Bash(RUST_LOG=trace cargo run --bin exif-oxide -- \"third-party/exiftool/t/images/MWG.jpg\")",
+      "Bash(./test_regex)",
+      "Bash(RUST_BACKTRACE=1 cargo test file_detection::mimetypes_validation::test_all_mimetypes_formats_detectable -- --nocapture)",
+      "Bash(./test_heic_detection:*)",
+      "Bash(./test_file_detection)",
+      "Bash(git add:*)",
+      "Bash(./test_debug)",
+      "Bash(./target/release/generate_rust:*)",
+      "Bash(RUST_LOG=debug cargo run --release -- --tag-data generated/tag_tables.json --simple-tables generated/simple_tables.json -o ../src/generated)",
+      "Bash(RUST_LOG=trace cargo test test_exposuretime_printconv_json_formatting --test exposuretime_printconv_test -- --nocapture)"
     ],
     "deny": []
   }
