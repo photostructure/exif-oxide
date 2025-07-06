@@ -6,13 +6,25 @@
 
 ## Task List Summary
 
-### Phase 0: Codegen Infrastructure (Week 1)
-1. Extract XMP namespace tables (`%nsURI`, `%xmpNS`) via simple table framework
-2. Extract XML character escape tables (`%charName`, `%charNum`)
-3. Extract 50+ PrintConv lookup tables from XMP.pm/XMP2.pl
+### Phase 0: Codegen Infrastructure (Week 1) ✅ COMPLETED
+
+1. ✅ Extract XMP namespace tables (`%nsURI`, `%xmpNS`) via simple table framework
+2. ✅ Extract XML character escape tables (`%charName`, `%charNum`)
+3. ✅ Extract 50+ PrintConv lookup tables from XMP.pm/XMP2.pl
 4. Validate generated code compiles and matches ExifTool data
 
+(needs to be addressed: error[E0762]: unterminated character literal
+--> /home/mrm/src/exif-oxide/src/generated/simple_tables/xmp/char_names.rs:18:17
+|
+18 | map.insert("'", "#39");
+| ^^^^^^^^^^^
+
+Error writing files: failed to resolve mod `char_names`: cannot parse /home/mrm/src/exif-oxide/src/generated/simple_tables/xmp/char_names.rs
+make: \*\*\* [Makefile:24: fix] Error 1
+)
+
 ### Phase 1: TagValue Architecture Enhancement (Week 1-2)
+
 1. Add `Object(HashMap<String, TagValue>)` variant to TagValue enum
 2. Add `Array(Vec<TagValue>)` variant to TagValue enum
 3. Update JSON serialization to handle nested structures
@@ -20,6 +32,7 @@
 5. Update existing code to handle new variants gracefully
 
 ### Phase 2: Core XMP Processing (Week 2-3)
+
 1. Implement standalone .xmp file reader (simplest case)
 2. Create XmpProcessor with namespace resolution
 3. Implement RDF/XML parsing using quick-xml
@@ -27,12 +40,14 @@
 5. Convert RDF containers to appropriate types (Bag/Seq→Array, Alt→Object)
 
 ### Phase 3: Format Integration (Week 3)
+
 1. Add JPEG APP1 XMP segment extraction
-2. Add TIFF IFD0 XMP tag (0x02bc) processing  
+2. Add TIFF IFD0 XMP tag (0x02bc) processing
 3. Handle Extended XMP in JPEG (multi-segment)
 4. Integrate with processor dispatch system
 
 ### Phase 4: Testing & Validation (Week 4)
+
 1. Generate reference outputs with `exiftool -j -struct`
 2. Compare our output for semantic equivalence
 3. Performance profiling vs ExifTool
@@ -226,12 +241,13 @@ Before writing any XMP processing code, we need the lookup tables:
 ```bash
 # Priority extractions:
 1. %nsURI - 100+ namespace URI mappings (XMP.pm)
-2. %xmpNS - ExifTool group translations (XMP.pm) 
+2. %xmpNS - ExifTool group translations (XMP.pm)
 3. %charName/%charNum - XML escapes (XMP.pm)
 4. PrintConv tables from XMP.pm/XMP2.pl
 ```
 
 **Implementation Steps**:
+
 1. Analyze XMP.pm to identify all simple hash tables
 2. Add entries to codegen/simple_tables.json
 3. Run `make codegen-simple-tables`
@@ -270,6 +286,7 @@ pub struct XmpStructure {
 ### Phase 2: Core XMP Processing Implementation (Week 2-3)
 
 **Processing Order** (simplest to complex):
+
 1. **Start with standalone .xmp files** - Pure XML, no container extraction needed
 2. **Then JPEG APP1 segments** - Single XMP packet in APP1 marker
 3. **Finally Extended XMP** - Multi-segment handling in JPEG
@@ -354,16 +371,19 @@ pub struct NamespaceResolver {
 **Format Integration Priority**:
 
 1. **Standalone .xmp files** (simplest - pure XML):
+
    - Direct file reading
    - No container format complications
    - Test files: XMP.xmp, XMP2.xmp, etc.
 
 2. **JPEG APP1 XMP segments**:
+
    - Extract from APP1 marker (0xFFE1)
    - Identifier: "http://ns.adobe.com/xap/1.0/\0"
    - Test files: XMP.jpg, PhotoMechanic.jpg
 
 3. **TIFF IFD0 XMP tag**:
+
    - Tag 0x02bc (700) in IFD0
    - Contains XMP packet as string
    - Integration with existing TIFF processor
@@ -445,6 +465,7 @@ Based on analysis of XMP.pm and XMP2.pl, we need to extract **80+ lookup tables*
 **Week 1 Codegen Tasks**:
 
 1. **Namespace Tables** (MUST HAVE):
+
 ```json
 {
   "module": "XMP.pm",
@@ -458,9 +479,10 @@ Based on analysis of XMP.pm and XMP2.pl, we need to extract **80+ lookup tables*
 ```
 
 2. **Group Name Translations**:
+
 ```json
 {
-  "module": "XMP.pm", 
+  "module": "XMP.pm",
   "hash_name": "%xmpNS",
   "output_file": "xmp/group_names.rs",
   "constant_name": "XMP_GROUP_NAMES",
@@ -470,6 +492,7 @@ Based on analysis of XMP.pm and XMP2.pl, we need to extract **80+ lookup tables*
 ```
 
 3. **XML Character Escapes**:
+
 ```json
 {
   "module": "XMP.pm",
@@ -537,6 +560,7 @@ make codegen-simple-tables
 **Current Limitation**: Some XMP structures in ExifTool (like `%sCorrectionMask`, `%sTime`) contain nested hash references and metadata that exceed our simple table framework.
 
 **Milestone 15 Approach**:
+
 1. Extract simple lookup tables only (namespaces, PrintConv mappings)
 2. Complex structures will be parsed dynamically from XML
 3. Focus on mainstream namespaces that don't require complex structure definitions
@@ -655,8 +679,8 @@ cargo run -- t/images/XMP.jpg --output-format json > our_output.json
 1. **Standalone XMP files** (10 test files available):
    - `XMP.xmp` through `XMP9.xmp` - Various namespace and structure tests
    - `PLUS.xmp` - PLUS licensing metadata
-   
 2. **JPEG with XMP** (4 test files available):
+
    - `XMP.jpg` - Basic XMP in APP1 segment
    - `ExtendedXMP.jpg` - Multi-segment extended XMP
    - `PhotoMechanic.jpg` - Real-world Photo Mechanic XMP
@@ -666,7 +690,7 @@ cargo run -- t/images/XMP.jpg --output-format json > our_output.json
    - Nested structures (ContactInfo, LocationCreated)
    - RDF containers (Bag, Seq, Alt)
    - Language alternatives (dc:title with xml:lang)
-   - Namespace grouping (dc:*, xmp:*, exif:*)
+   - Namespace grouping (dc:_, xmp:_, exif:\*)
 
 ### Structure Validation Tests
 
@@ -713,6 +737,7 @@ fn test_namespace_grouping() {
 ### Key API Patterns
 
 **Using NsReader for namespace-aware parsing**:
+
 ```rust
 use quick_xml::reader::NsReader;
 use quick_xml::events::Event;
@@ -744,6 +769,7 @@ loop {
 ```
 
 **Extracting attributes (e.g., xml:lang)**:
+
 ```rust
 for attr in element.attributes() {
     let attr = attr?;
@@ -770,20 +796,116 @@ for attr in element.attributes() {
 
 ## Implementation Notes for Engineers
 
+### Progress Update (2025-01-06)
+
+**Phase 0: Codegen Infrastructure** ✅ **COMPLETED**
+- Successfully extracted all XMP namespace tables (96 entries in %nsURI)
+- Extracted XML character escape tables (%charName, %charNum)
+- Fixed escape issue in char_names.rs (single quote handling in codegen)
+- Generated XMP lookup tables in src/generated/simple_tables/xmp/
+
+**Phase 1: TagValue Architecture Enhancement** ✅ **COMPLETED**
+- Added `TagValue::Object(HashMap<String, TagValue>)` variant for nested structures
+- Added `TagValue::Array(Vec<TagValue>)` variant for heterogeneous arrays
+- Implemented Display formatting for JSON-like output
+- Added helper methods: `as_object()`, `as_object_mut()`, `as_array()`, `as_array_mut()`
+- Comprehensive tests for nested XMP-like structures
+
+**Phase 2: Core XMP Processing** ✅ **COMPLETED**
+- Created `src/xmp/` module with fully functional `XmpProcessor`
+- **CRITICAL**: Using `quick-xml` `read_resolved_event_into()` for automatic namespace resolution
+- Implemented proper namespace resolution using generated URI-to-prefix mapping (follows ExifTool's %uri2ns pattern)
+- RDF container handling working correctly: Bag/Seq → Array, Alt → Object with language keys
+- Element hierarchy tracking correctly identifies properties and containers
+- **Test Status**: Both unit tests passing with correct structured output
+
+**Current XMP Output Example** (from test):
+```
+XMP structure keys: ["dc"]
+  dc: Object({
+    "title": Object({"x-default": String("Test Photo"), "en-US": String("Test Photo")}), 
+    "creator": Array([String("John Doe"), String("Jane Smith")])
+  })
+```
+
+**Phase 3: Format Integration** - **PENDING**
+**Phase 4: Testing & Validation** - **PENDING**
+
+### Next Engineer TODO List
+
+**IMMEDIATE PRIORITIES (High)**:
+
+1. **Test with real ExifTool XMP files**:
+   - Test files: `third-party/exiftool/t/images/XMP*.xmp`, `XMP*.jpg`
+   - Compare against: `exiftool -j -struct file.xmp > expected.json`
+   - Current tests are synthetic - need real-world validation
+
+2. **Implement format integration**:
+   - **JPEG APP1**: Extract XMP from segments with identifier "http://ns.adobe.com/xap/1.0/\0"
+   - **TIFF IFD0**: Process tag 0x02bc (XMP packet as byte array)
+   - **Extended XMP**: Multi-segment reassembly using GUID
+
+3. **Add XMP processor to dispatch system**:
+   - Integrate with existing processor registry
+   - Return single TagEntry with tag_id "XMP"
+
+**MEDIUM PRIORITIES**:
+
+4. **Handle edge cases**:
+   - UTF-16/32 BOM detection and conversion (currently TODO)
+   - Malformed XML graceful degradation
+   - Unknown namespaces preservation
+
+5. **Performance validation**:
+   - Memory usage profiling vs ExifTool
+   - Processing speed benchmarks
+
+### Critical Implementation Notes
+
+**Trust ExifTool Approach**:
+- Current implementation uses generated namespace tables from ExifTool's %nsURI (96 namespaces)
+- Built reverse URI-to-prefix lookup following ExifTool's %uri2ns pattern (XMP.pm:215-221)
+- Using quick-xml `read_resolved_event_into()` for robust namespace resolution
+
+**Key Architecture Decisions**:
+- **Structured-only mode**: Equivalent to `exiftool -j -struct` (no flattening)
+- **Single TagEntry output**: Entire XMP structure as nested TagValue::Object
+- **Namespace grouping**: Properties grouped by standard prefix (dc, xmp, exif, etc.)
+- **Generated tables**: Zero maintenance burden for namespace/conversion lookups
+
+**Files Modified**:
+- `src/types/values.rs` - Added Object/Array TagValue variants
+- `src/xmp/processor.rs` - Complete XMP processor implementation
+- `src/xmp/mod.rs` - Module declarations
+- `codegen/simple_tables.json` - XMP table configurations
+- Generated: `src/generated/simple_tables/xmp/*.rs` - Namespace and escape tables
+
+**Testing Commands**:
+```bash
+cargo test xmp                    # Run XMP tests
+cargo test test_simple_xmp_parsing -- --nocapture  # See output structure
+make codegen                      # Regenerate tables if needed
+```
+
+**Quick-xml Documentation**: https://docs.rs/quick-xml/latest/quick_xml/reader/struct.NsReader.html
+
 ### Starting Implementation
 
 1. **First Steps**:
-   - Run codegen for XMP tables (Phase 0)
+
+   - ✅ Run codegen for XMP tables (Phase 0)
    - Implement TagValue::Object and TagValue::Array
    - Start with standalone .xmp file parsing (simplest case)
 
 2. **Key Design Decisions**:
+
    - We output ONLY structured mode (no flattening)
    - Use quick-xml for parsing (already in dependencies)
    - Single XMP TagEntry containing entire structure
    - Trust ExifTool's namespace definitions via codegen
 
 3. **Common Pitfalls**:
+
    - Don't try to flatten XMP structures
    - Don't manually maintain namespace tables
    - Don't parse XML with regex
@@ -800,22 +922,26 @@ for attr in element.attributes() {
 ### XMP Packet Detection
 
 **Standalone .xmp files**:
+
 - Direct XML parsing, no packet extraction needed
 - May have XML declaration: `<?xml version="1.0"?>`
 - Root element: `<x:xmpmeta xmlns:x="adobe:ns:meta/">`
 
 **JPEG APP1 segments**:
+
 - Marker: 0xFFE1 (APP1)
 - Identifier: "http://ns.adobe.com/xap/1.0/\0" (29 bytes)
 - XMP packet follows identifier
 - Packet format: `<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>...<?xpacket end="r"?>`
 
 **Extended XMP in JPEG**:
+
 - Multiple APP1 segments with identifier "http://ns.adobe.com/xmp/extension/\0"
 - Contains MD5 digest (32 bytes) and offset/length info
 - Reassemble segments in order before parsing
 
 **TIFF IFD0**:
+
 - Tag 0x02bc (XMP tag)
 - Contains complete XMP packet as byte array
 - Same packet format as JPEG
@@ -823,6 +949,7 @@ for attr in element.attributes() {
 ### Expected Output Structure
 
 Our XMP processor should return a single TagEntry:
+
 ```rust
 TagEntry {
     tag_id: "XMP",

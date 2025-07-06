@@ -20,6 +20,7 @@ pub mod registry;
 pub mod tiff_types;
 pub mod types;
 pub mod value_extraction;
+pub mod xmp;
 
 pub use file_detection::{FileDetectionError, FileTypeDetectionResult, FileTypeDetector};
 pub use generated::*;
