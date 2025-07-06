@@ -56,7 +56,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         group1: "File".to_string(),
         name: "FileName".to_string(),
         value: TagValue::String(filename.clone()),
-        print: filename,
+        print: TagValue::String(filename),
     });
 
     let directory = path
@@ -69,7 +69,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         group1: "File".to_string(),
         name: "Directory".to_string(),
         value: TagValue::String(directory.clone()),
-        print: directory,
+        print: TagValue::String(directory),
     });
 
     // Handle file size - use U32 if it fits, otherwise F64 for large files
@@ -83,7 +83,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         group1: "File".to_string(),
         name: "FileSize".to_string(),
         value: file_size_value,
-        print: file_size.to_string(),
+        print: TagValue::String(file_size.to_string()),
     });
 
     // Format file modification time to match ExifTool format: "YYYY:MM:DD HH:MM:SS±TZ:TZ"
@@ -98,7 +98,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
             group1: "File".to_string(),
             name: "FileModifyDate".to_string(),
             value: TagValue::String(formatted.clone()),
-            print: formatted,
+            print: TagValue::String(formatted),
         });
     }
 
@@ -111,7 +111,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         group1: "File".to_string(),
         name: "FileType".to_string(),
         value: TagValue::String(file_type.clone()),
-        print: file_type.clone(),
+        print: TagValue::String(file_type.clone()),
     });
 
     // File extension is based on the detected file type
@@ -121,7 +121,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         group1: "File".to_string(),
         name: "FileTypeExtension".to_string(),
         value: TagValue::String(file_type_ext.clone()),
-        print: file_type_ext,
+        print: TagValue::String(file_type_ext),
     });
 
     let mime_type = detection_result.mime_type.clone();
@@ -130,7 +130,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         group1: "File".to_string(),
         name: "MIMEType".to_string(),
         value: TagValue::String(mime_type.clone()),
-        print: mime_type,
+        print: TagValue::String(mime_type),
     });
 
     // Format-specific processing based on the detected format
@@ -223,15 +223,15 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                         for entry in &mut tag_entries {
                             if entry.name == "FileType" {
                                 entry.value = TagValue::String(file_type.clone());
-                                entry.print = file_type.clone();
+                                entry.print = TagValue::String(file_type.clone());
                             } else if entry.name == "FileTypeExtension" {
                                 entry.value = TagValue::String(file_type.to_lowercase());
-                                entry.print = file_type.to_lowercase();
+                                entry.print = TagValue::String(file_type.to_lowercase());
                             } else if entry.name == "MIMEType" {
                                 // Update MIME type for NRW
                                 if file_type == "NRW" {
                                     entry.value = TagValue::String("image/x-nikon-nrw".to_string());
-                                    entry.print = "image/x-nikon-nrw".to_string();
+                                    entry.print = TagValue::String("image/x-nikon-nrw".to_string());
                                 }
                             }
                         }

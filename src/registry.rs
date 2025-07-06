@@ -10,9 +10,14 @@ use std::sync::{Arc, LazyLock, RwLock};
 
 /// Function signature for PrintConv implementations
 ///
-/// PrintConv functions convert logical values to human-readable strings.
-/// For example: 1 -> "Horizontal (normal)" for Orientation
-pub type PrintConvFn = fn(&TagValue) -> String;
+/// PrintConv functions convert logical values to display values.
+/// The return type can be:
+/// - String for human-readable formatting (e.g., "1/100", "Rotate 90 CW")
+/// - Numeric TagValue for data that should remain numeric in JSON (e.g., ISO: 100)
+///
+/// This design allows PrintConv to control JSON serialization type directly,
+/// avoiding ExifTool's regex-based type guessing.
+pub type PrintConvFn = fn(&TagValue) -> TagValue;
 
 /// Function signature for ValueConv implementations
 ///
@@ -86,17 +91,17 @@ impl Registry {
     /// * `value` - Value to convert
     ///
     /// # Returns
-    /// Converted string, or the original value as string if not found
-    pub fn apply_print_conv(&mut self, name: &str, value: &TagValue) -> String {
+    /// Converted value (string or numeric), or the original value if not found
+    pub fn apply_print_conv(&mut self, name: &str, value: &TagValue) -> TagValue {
         if let Some(func) = self.print_conv.get(name) {
             // Track successful hit
             *self.print_conv_hits.entry(name.to_string()).or_insert(0) += 1;
             func(value)
         } else {
-            // Track miss and return raw value
+            // Track miss and return original value
             *self.print_conv_misses.entry(name.to_string()).or_insert(0) += 1;
             self.missing_print_conv.insert(name.to_string());
-            value.to_string()
+            value.clone()
         }
     }
 
@@ -173,7 +178,7 @@ pub fn register_value_conv(name: impl Into<String>, func: ValueConvFn) {
 }
 
 /// Apply PrintConv globally
-pub fn apply_print_conv(name: &str, value: &TagValue) -> String {
+pub fn apply_print_conv(name: &str, value: &TagValue) -> TagValue {
     let mut registry = GLOBAL_REGISTRY.write().unwrap();
     registry.apply_print_conv(name, value)
 }
@@ -214,19 +219,19 @@ mod tests {
         let mut registry = Registry::new();
 
         // Test PrintConv registration and lookup
-        fn test_print_conv(val: &TagValue) -> String {
-            format!("Test: {val}")
+        fn test_print_conv(val: &TagValue) -> TagValue {
+            TagValue::String(format!("Test: {val}"))
         }
 
         registry.register_print_conv("test", test_print_conv);
 
         let value = TagValue::U16(42);
         let result = registry.apply_print_conv("test", &value);
-        assert_eq!(result, "Test: 42");
+        assert_eq!(result, TagValue::String("Test: 42".to_string()));
 
         // Test missing function fallback
         let missing_result = registry.apply_print_conv("missing", &value);
-        assert_eq!(missing_result, "42");
+        assert_eq!(missing_result, TagValue::U16(42));
 
         // Test missing tracking
         let missing = registry.get_missing_print_conv();
@@ -239,14 +244,14 @@ mod tests {
         clear_missing_tracking();
 
         // Test global registration
-        fn test_global(val: &TagValue) -> String {
-            format!("Global: {val}")
+        fn test_global(val: &TagValue) -> TagValue {
+            TagValue::String(format!("Global: {val}"))
         }
 
         register_print_conv("global_test", test_global);
 
         let value = TagValue::String("hello".to_string());
         let result = apply_print_conv("global_test", &value);
-        assert_eq!(result, "Global: hello");
+        assert_eq!(result, TagValue::String("Global: hello".to_string()));
     }
 }

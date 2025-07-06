@@ -26,6 +26,9 @@ pub use generated::*;
 pub use registry::Registry;
 pub use types::{ExifData, ExifError, TagValue};
 
+// Backward compatibility alias for tests
+pub use generated::COMPOSITE_TAG_LOOKUP as COMPOSITE_TAG_BY_NAME;
+
 // Initialize all conversion implementations when library is loaded
 use std::sync::LazyLock;
 static _INIT: LazyLock<()> = LazyLock::new(|| {
