@@ -321,7 +321,7 @@ pub fn process_encrypted_sections(
     } else {
         reader.store_tag_with_precedence(
             0x00FF, // Custom tag for encryption summary
-            TagValue::String("No encrypted sections detected".to_string()),
+            "No encrypted sections detected".into(),
             tag_source,
         );
 

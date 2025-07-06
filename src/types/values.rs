@@ -10,6 +10,30 @@ use serde::{Deserialize, Serialize};
 ///
 /// ExifTool handles many different data types. This enum represents
 /// the possible values a tag can contain after parsing.
+///
+/// # Creating String TagValues
+///
+/// There are several convenient ways to create string TagValues:
+///
+/// ```
+/// use exif_oxide::types::TagValue;
+///
+/// // Most ergonomic - using From trait
+/// let tag1: TagValue = "Hello".into();
+/// let tag2 = TagValue::from("World");
+///
+/// // Using the convenience method
+/// let tag3 = TagValue::string("Foo");
+///
+/// // Traditional way (still works)
+/// let tag4 = TagValue::String("Bar".to_string());
+///
+/// // All create the same type
+/// assert_eq!(tag1, TagValue::String("Hello".to_string()));
+/// assert_eq!(tag2, TagValue::String("World".to_string()));
+/// assert_eq!(tag3, TagValue::String("Foo".to_string()));
+/// assert_eq!(tag4, TagValue::String("Bar".to_string()));
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum TagValue {
@@ -200,5 +224,92 @@ impl std::fmt::Display for TagValue {
             }
             TagValue::Binary(data) => write!(f, "[{} bytes of binary data]", data.len()),
         }
+    }
+}
+
+// Convenience implementations for easier TagValue creation
+impl From<&str> for TagValue {
+    fn from(s: &str) -> Self {
+        TagValue::String(s.to_string())
+    }
+}
+
+impl From<String> for TagValue {
+    fn from(s: String) -> Self {
+        TagValue::String(s)
+    }
+}
+
+impl From<&String> for TagValue {
+    fn from(s: &String) -> Self {
+        TagValue::String(s.clone())
+    }
+}
+
+impl TagValue {
+    /// Convenience method for creating a string TagValue
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use exif_oxide::types::TagValue;
+    ///
+    /// let tag_value = TagValue::string("Hello");
+    /// assert_eq!(tag_value, TagValue::String("Hello".to_string()));
+    /// ```
+    pub fn string<S: Into<String>>(s: S) -> Self {
+        TagValue::String(s.into())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_tagvalue_from_str() {
+        let tag_value: TagValue = "Hello".into();
+        assert_eq!(tag_value, TagValue::String("Hello".to_string()));
+    }
+
+    #[test]
+    fn test_tagvalue_from_string() {
+        let s = "World".to_string();
+        let tag_value = TagValue::from(s);
+        assert_eq!(tag_value, TagValue::String("World".to_string()));
+    }
+
+    #[test]
+    fn test_tagvalue_from_string_ref() {
+        let s = "Test".to_string();
+        let tag_value = TagValue::from(&s);
+        assert_eq!(tag_value, TagValue::String("Test".to_string()));
+    }
+
+    #[test]
+    fn test_tagvalue_string_method() {
+        let tag_value = TagValue::string("Convenience");
+        assert_eq!(tag_value, TagValue::String("Convenience".to_string()));
+    }
+
+    #[test]
+    fn test_tagvalue_string_method_with_owned_string() {
+        let s = "Owned".to_string();
+        let tag_value = TagValue::string(s);
+        assert_eq!(tag_value, TagValue::String("Owned".to_string()));
+    }
+
+    #[test]
+    fn test_all_string_creation_methods_equivalent() {
+        let str_literal = "test";
+
+        let tag1: TagValue = str_literal.into();
+        let tag2 = TagValue::from(str_literal);
+        let tag3 = TagValue::string(str_literal);
+        let tag4 = TagValue::String(str_literal.to_string());
+
+        assert_eq!(tag1, tag2);
+        assert_eq!(tag2, tag3);
+        assert_eq!(tag3, tag4);
     }
 }

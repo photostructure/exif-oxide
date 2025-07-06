@@ -35,67 +35,27 @@ pub fn create_test_reader_with_tags(test_data: Vec<(u16, TagValue, &str, &str)>)
 /// Create a test reader with typical camera EXIF data
 pub fn create_camera_test_reader() -> ExifReader {
     create_test_reader_with_tags(vec![
-        (
-            0x829a,
-            TagValue::String("50".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // FocalLength
-        (
-            0xa405,
-            TagValue::String("75".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // FocalLengthIn35mmFormat
-        (
-            0x829d,
-            TagValue::String("2.8".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // FNumber
+        (0x829a, "50".into(), "EXIF", "ExifIFD"),  // FocalLength
+        (0xa405, "75".into(), "EXIF", "ExifIFD"),  // FocalLengthIn35mmFormat
+        (0x829d, "2.8".into(), "EXIF", "ExifIFD"), // FNumber
         (0xa002, TagValue::U32(1920), "EXIF", "ExifIFD"), // ExifImageWidth
         (0xa003, TagValue::U32(1280), "EXIF", "ExifIFD"), // ExifImageHeight
-        (0x8827, TagValue::U32(400), "EXIF", "ExifIFD"),  // ISO
-        (
-            0x829a,
-            TagValue::String("1/60".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // ExposureTime
+        (0x8827, TagValue::U32(400), "EXIF", "ExifIFD"), // ISO
+        (0x829a, "1/60".into(), "EXIF", "ExifIFD"), // ExposureTime
     ])
 }
 
 /// Create a test reader with GPS EXIF data
 pub fn create_gps_test_reader() -> ExifReader {
     create_test_reader_with_tags(vec![
-        (
-            0x0002,
-            TagValue::String("37 46 29.7".to_string()),
-            "GPS",
-            "GPS",
-        ), // GPSLatitude
-        (0x0001, TagValue::String("N".to_string()), "GPS", "GPS"), // GPSLatitudeRef
-        (
-            0x0004,
-            TagValue::String("122 25 9.8".to_string()),
-            "GPS",
-            "GPS",
-        ), // GPSLongitude
-        (0x0003, TagValue::String("W".to_string()), "GPS", "GPS"), // GPSLongitudeRef
-        (0x0006, TagValue::String("10".to_string()), "GPS", "GPS"), // GPSAltitude
-        (0x0005, TagValue::U8(0), "GPS", "GPS"), // GPSAltitudeRef (0 = above sea level)
-        (
-            0x001d,
-            TagValue::String("2024:01:15".to_string()),
-            "GPS",
-            "GPS",
-        ), // GPSDateStamp
-        (
-            0x0007,
-            TagValue::String("14 30 25".to_string()),
-            "GPS",
-            "GPS",
-        ), // GPSTimeStamp
+        (0x0002, "37 46 29.7".into(), "GPS", "GPS"), // GPSLatitude
+        (0x0001, "N".into(), "GPS", "GPS"),          // GPSLatitudeRef
+        (0x0004, "122 25 9.8".into(), "GPS", "GPS"), // GPSLongitude
+        (0x0003, "W".into(), "GPS", "GPS"),          // GPSLongitudeRef
+        (0x0006, "10".into(), "GPS", "GPS"),         // GPSAltitude
+        (0x0005, TagValue::U8(0), "GPS", "GPS"),     // GPSAltitudeRef (0 = above sea level)
+        (0x001d, "2024:01:15".into(), "GPS", "GPS"), // GPSDateStamp
+        (0x0007, "14 30 25".into(), "GPS", "GPS"),   // GPSTimeStamp
     ])
 }
 
@@ -110,54 +70,14 @@ pub fn create_minimal_test_reader() -> ExifReader {
 /// Create a test reader with comprehensive EXIF data for performance testing
 pub fn create_comprehensive_test_reader() -> ExifReader {
     create_test_reader_with_tags(vec![
-        (
-            0x010f,
-            TagValue::String("Canon".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // Make
-        (
-            0x0110,
-            TagValue::String("Canon EOS R5".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // Model
-        (
-            0x829a,
-            TagValue::String("85".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // FocalLength
-        (
-            0xa405,
-            TagValue::String("85".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // FocalLengthIn35mmFormat
-        (
-            0x829d,
-            TagValue::String("1.4".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // FNumber
-        (
-            0x9201,
-            TagValue::String("1.4".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // ApertureValue
-        (
-            0x829a,
-            TagValue::String("1/200".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // ExposureTime
-        (
-            0x9201,
-            TagValue::String("7.64".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // ShutterSpeedValue
+        (0x010f, "Canon".into(), "EXIF", "ExifIFD"), // Make
+        (0x0110, "Canon EOS R5".into(), "EXIF", "ExifIFD"), // Model
+        (0x829a, "85".into(), "EXIF", "ExifIFD"),    // FocalLength
+        (0xa405, "85".into(), "EXIF", "ExifIFD"),    // FocalLengthIn35mmFormat
+        (0x829d, "1.4".into(), "EXIF", "ExifIFD"),   // FNumber
+        (0x9201, "1.4".into(), "EXIF", "ExifIFD"),   // ApertureValue
+        (0x829a, "1/200".into(), "EXIF", "ExifIFD"), // ExposureTime
+        (0x9201, "7.64".into(), "EXIF", "ExifIFD"),  // ShutterSpeedValue
         (0x8827, TagValue::U32(100), "EXIF", "ExifIFD"), // ISO
         (0xa002, TagValue::U32(8192), "EXIF", "ExifIFD"), // ExifImageWidth
         (0xa003, TagValue::U32(5464), "EXIF", "ExifIFD"), // ExifImageHeight
@@ -169,24 +89,9 @@ pub fn create_comprehensive_test_reader() -> ExifReader {
 /// Create a test reader for dependency resolution testing
 pub fn create_dependency_test_reader() -> ExifReader {
     create_test_reader_with_tags(vec![
-        (
-            0x829a,
-            TagValue::String("50".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // FocalLength
-        (
-            0xa405,
-            TagValue::String("75".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // FocalLengthIn35mmFormat
-        (
-            0x829d,
-            TagValue::String("2.8".to_string()),
-            "EXIF",
-            "ExifIFD",
-        ), // FNumber
+        (0x829a, "50".into(), "EXIF", "ExifIFD"),  // FocalLength
+        (0xa405, "75".into(), "EXIF", "ExifIFD"),  // FocalLengthIn35mmFormat
+        (0x829d, "2.8".into(), "EXIF", "ExifIFD"), // FNumber
         (0xa002, TagValue::U32(1920), "EXIF", "ExifIFD"), // ExifImageWidth
         (0xa003, TagValue::U32(1280), "EXIF", "ExifIFD"), // ExifImageHeight
     ])

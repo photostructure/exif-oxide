@@ -212,14 +212,8 @@ fn test_dependency_resolution_logic() {
 
     // Test is_dependency_available with various scenarios
     let mut available_tags = HashMap::new();
-    available_tags.insert(
-        "EXIF:FocalLength".to_string(),
-        TagValue::String("50".to_string()),
-    );
-    available_tags.insert(
-        "GPS:GPSLatitude".to_string(),
-        TagValue::String("37.7749".to_string()),
-    );
+    available_tags.insert("EXIF:FocalLength".to_string(), "50".into());
+    available_tags.insert("GPS:GPSLatitude".to_string(), "37.7749".into());
     available_tags.insert("ImageWidth".to_string(), TagValue::U32(1920));
 
     let mut built_composites = HashSet::new();
@@ -278,16 +272,10 @@ fn test_multi_pass_simulation() {
     let mut available_tags = HashMap::new();
 
     // Add base tags that ScaleFactor35efl might need
-    available_tags.insert(
-        "EXIF:FocalLength".to_string(),
-        TagValue::String("50".to_string()),
-    );
+    available_tags.insert("EXIF:FocalLength".to_string(), "50".into());
     available_tags.insert("EXIF:ImageWidth".to_string(), TagValue::U32(1920));
     available_tags.insert("EXIF:ImageHeight".to_string(), TagValue::U32(1080));
-    available_tags.insert(
-        "EXIF:FocalLengthIn35mmFormat".to_string(),
-        TagValue::String("75".to_string()),
-    );
+    available_tags.insert("EXIF:FocalLengthIn35mmFormat".to_string(), "75".into());
 
     // Simulate what should happen in each pass:
     // Pass 1: ScaleFactor35efl could be built (has FocalLengthIn35mmFormat)
@@ -311,14 +299,8 @@ fn test_multi_pass_simulation() {
     // Simulate after ScaleFactor35efl is built
     let mut built_composites_pass2 = HashSet::new();
     built_composites_pass2.insert("ScaleFactor35efl");
-    available_tags.insert(
-        "Composite:ScaleFactor35efl".to_string(),
-        TagValue::String("1.5".to_string()),
-    );
-    available_tags.insert(
-        "ScaleFactor35efl".to_string(),
-        TagValue::String("1.5".to_string()),
-    );
+    available_tags.insert("Composite:ScaleFactor35efl".to_string(), "1.5".into());
+    available_tags.insert("ScaleFactor35efl".to_string(), "1.5".into());
 
     if let Some(circle_def) = exif_oxide::COMPOSITE_TAG_BY_NAME.get("CircleOfConfusion") {
         let can_build = exif_oxide::composite_tags::can_build_composite(

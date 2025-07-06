@@ -2118,12 +2118,14 @@ pub static FILE_TYPE_LOOKUP: LazyLock<HashMap<&'static str, FileTypeEntry>> = La
 
 /// Look up file type by extension
 pub fn lookup_file_type_lookup(ext: &str) -> Option<&'static FileTypeEntry> {
-    FILE_TYPE_LOOKUP.get(ext)
+    let ext_upper = ext.to_uppercase();
+    FILE_TYPE_LOOKUP.get(ext_upper.as_str())
 }
 
 /// Resolve file type aliases to their final definition
 pub fn resolve_file_type(ext: &str) -> Option<(Vec<&'static str>, &'static str)> {
-    let mut current_ext = ext;
+    let ext_upper = ext.to_uppercase();
+    let mut current_ext = ext_upper.as_str();
     let mut seen = std::collections::HashSet::new();
 
     loop {

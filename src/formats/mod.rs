@@ -83,7 +83,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
         group1: "File".to_string(),
         name: "FileSize".to_string(),
         value: file_size_value,
-        print: TagValue::String(file_size.to_string()),
+        print: TagValue::string(file_size.to_string()),
     });
 
     // Format file modification time to match ExifTool format: "YYYY:MM:DD HH:MM:SS±TZ:TZ"
@@ -183,7 +183,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                             // Failed to parse EXIF - add error information
                             tags.insert(
                                 "Warning:ExifParseError".to_string(),
-                                TagValue::String(format!("Failed to parse EXIF: {e}")),
+                                TagValue::string(format!("Failed to parse EXIF: {e}")),
                             );
                         }
                     }
@@ -192,7 +192,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                     // No EXIF data found
                     tags.insert(
                         "System:ExifDetectionStatus".to_string(),
-                        TagValue::String("No EXIF data found in JPEG".to_string()),
+                        "No EXIF data found in JPEG".into(),
                     );
                 }
             }
@@ -230,8 +230,8 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                             } else if entry.name == "MIMEType" {
                                 // Update MIME type for NRW
                                 if file_type == "NRW" {
-                                    entry.value = TagValue::String("image/x-nikon-nrw".to_string());
-                                    entry.print = TagValue::String("image/x-nikon-nrw".to_string());
+                                    entry.value = "image/x-nikon-nrw".into();
+                                    entry.print = "image/x-nikon-nrw".into();
                                 }
                             }
                         }
@@ -261,7 +261,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                     // Failed to parse TIFF - add error information
                     tags.insert(
                         "Warning:TiffParseError".to_string(),
-                        TagValue::String(format!("Failed to parse TIFF: {e}")),
+                        TagValue::string(format!("Failed to parse TIFF: {e}")),
                     );
                 }
             }
@@ -270,7 +270,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
             // Other formats not yet supported
             tags.insert(
                 "System:ExifDetectionStatus".to_string(),
-                TagValue::String(format!(
+                TagValue::string(format!(
                     "Format {} not yet supported for EXIF extraction",
                     detection_result.format
                 )),

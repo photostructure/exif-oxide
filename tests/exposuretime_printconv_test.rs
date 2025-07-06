@@ -17,7 +17,7 @@ fn test_exposuretime_printconv_json_formatting() {
         group1: "ExifIFD".to_string(),
         name: "ExposureTime".to_string(),
         value: TagValue::Rational(1, 100),
-        print: TagValue::String("1/100".to_string()), // PrintConv produces a string for ExposureTime
+        print: "1/100".into(), // PrintConv produces a string for ExposureTime
     };
 
     exif_data.tags = vec![exposure_entry];
@@ -63,54 +63,36 @@ fn test_various_exposuretime_values() {
     // Fast shutter speeds (< 0.25001) should be fractional
     assert_eq!(
         exposuretime_print_conv(&TagValue::F64(0.0005)),
-        TagValue::String("1/2000".to_string())
+        "1/2000".into()
     );
     assert_eq!(
         exposuretime_print_conv(&TagValue::F64(0.01)),
-        TagValue::String("1/100".to_string())
+        "1/100".into()
     );
-    assert_eq!(
-        exposuretime_print_conv(&TagValue::F64(0.125)),
-        TagValue::String("1/8".to_string())
-    );
-    assert_eq!(
-        exposuretime_print_conv(&TagValue::F64(0.25)),
-        TagValue::String("1/4".to_string())
-    );
+    assert_eq!(exposuretime_print_conv(&TagValue::F64(0.125)), "1/8".into());
+    assert_eq!(exposuretime_print_conv(&TagValue::F64(0.25)), "1/4".into());
 
     // Slower speeds (>= 0.25001) should be decimal
-    assert_eq!(
-        exposuretime_print_conv(&TagValue::F64(0.5)),
-        TagValue::String("0.5".to_string())
-    );
-    assert_eq!(
-        exposuretime_print_conv(&TagValue::F64(1.0)),
-        TagValue::String("1".to_string())
-    ); // .0 stripped
-    assert_eq!(
-        exposuretime_print_conv(&TagValue::F64(2.0)),
-        TagValue::String("2".to_string())
-    ); // .0 stripped
-    assert_eq!(
-        exposuretime_print_conv(&TagValue::F64(2.5)),
-        TagValue::String("2.5".to_string())
-    );
+    assert_eq!(exposuretime_print_conv(&TagValue::F64(0.5)), "0.5".into());
+    assert_eq!(exposuretime_print_conv(&TagValue::F64(1.0)), "1".into()); // .0 stripped
+    assert_eq!(exposuretime_print_conv(&TagValue::F64(2.0)), "2".into()); // .0 stripped
+    assert_eq!(exposuretime_print_conv(&TagValue::F64(2.5)), "2.5".into());
 
     // Test with rational values
     assert_eq!(
         exposuretime_print_conv(&TagValue::Rational(1, 2000)),
-        TagValue::String("1/2000".to_string())
+        "1/2000".into()
     );
     assert_eq!(
         exposuretime_print_conv(&TagValue::Rational(1, 100)),
-        TagValue::String("1/100".to_string())
+        "1/100".into()
     );
     assert_eq!(
         exposuretime_print_conv(&TagValue::Rational(1, 2)),
-        TagValue::String("0.5".to_string())
+        "0.5".into()
     );
     assert_eq!(
         exposuretime_print_conv(&TagValue::Rational(2, 1)),
-        TagValue::String("2".to_string())
+        "2".into()
     );
 }

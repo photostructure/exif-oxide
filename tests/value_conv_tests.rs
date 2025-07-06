@@ -95,7 +95,7 @@ fn test_apex_shutter_speed_edge_cases() {
 #[test]
 fn test_apex_shutter_speed_invalid() {
     // Non-numeric values
-    let value = TagValue::String("5.0".to_string());
+    let value = "5.0".into();
     let result = apex_shutter_speed_value_conv(&value);
     assert!(matches!(result, Err(ExifError::ParseError(_))));
 
@@ -225,7 +225,7 @@ fn test_fnumber_passthrough() {
     }
 
     // String value (should pass through)
-    let fnumber = TagValue::String("f/2.8".to_string());
+    let fnumber = "f/2.8".into();
     let result = fnumber_value_conv(&fnumber).unwrap();
     if let TagValue::String(s) = result {
         assert_eq!(s, "f/2.8");
@@ -298,7 +298,7 @@ fn test_gps_timestamp_edge_cases() {
 #[test]
 fn test_gps_timestamp_invalid() {
     // Wrong type
-    let value = TagValue::String("14:30:45".to_string());
+    let value = "14:30:45".into();
     let result = gpstimestamp_value_conv(&value);
     assert!(matches!(result, Err(ExifError::ParseError(_))));
 
@@ -457,7 +457,7 @@ fn test_apex_exposure_compensation() {
     }
 
     // Non-numeric passthrough
-    let ev = TagValue::String("+1.5 EV".to_string());
+    let ev = "+1.5 EV".into();
     let result = apex_exposure_compensation_value_conv(&ev).unwrap();
     if let TagValue::String(s) = result {
         assert_eq!(s, "+1.5 EV");
@@ -469,7 +469,7 @@ fn test_apex_exposure_compensation() {
 #[test]
 fn test_placeholder_functions() {
     // Test GPSDateStamp passthrough
-    let date = TagValue::String("2024:01:15".to_string());
+    let date = "2024:01:15".into();
     let result = gpsdatestamp_value_conv(&date).unwrap();
     if let TagValue::String(s) = result {
         assert_eq!(s, "2024:01:15");
@@ -492,7 +492,7 @@ fn test_placeholder_functions() {
 fn test_no_panics_on_any_input() {
     // Create a variety of TagValue types
     let test_values = vec![
-        TagValue::String("test".to_string()),
+        "test".into(),
         TagValue::U8(42),
         TagValue::U16(1000),
         TagValue::U32(100000),

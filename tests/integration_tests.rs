@@ -277,7 +277,7 @@ fn test_registry_functions() {
 
     // Register a test function
     fn test_converter(val: &TagValue) -> TagValue {
-        TagValue::String(format!("Converted: {val}"))
+        TagValue::string(format!("Converted: {val}"))
     }
 
     register_print_conv("test_function", test_converter);
@@ -285,7 +285,7 @@ fn test_registry_functions() {
     // Test it works
     let value = TagValue::U16(42);
     let result = apply_print_conv("test_function", &value);
-    assert_eq!(result, TagValue::String("Converted: 42".to_string()));
+    assert_eq!(result, "Converted: 42".into());
 
     // Test missing function fallback
     let missing_result = apply_print_conv("nonexistent_function", &value);

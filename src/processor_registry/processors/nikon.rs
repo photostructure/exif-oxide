@@ -72,7 +72,7 @@ impl BinaryDataProcessor for NikonEncryptedDataProcessor {
             if has_encryption_signature {
                 result.add_tag(
                     "EncryptionDetected".to_string(),
-                    TagValue::String("Nikon encryption detected".to_string()),
+                    "Nikon encryption detected".into(),
                 );
 
                 // Process encryption status based on available keys
@@ -123,7 +123,7 @@ impl BinaryDataProcessor for NikonEncryptedDataProcessor {
                 // No encryption detected - process as regular binary data
                 result.add_tag(
                     "EncryptionStatus".to_string(),
-                    TagValue::String("No encryption detected".to_string()),
+                    "No encryption detected".into(),
                 );
 
                 // Could process as regular Nikon binary data here
@@ -293,7 +293,7 @@ impl BinaryDataProcessor for NikonLensDataProcessor {
             );
             result.add_tag(
                 "LensDataStatus".to_string(),
-                TagValue::String("Encrypted lens data detected".to_string()),
+                "Encrypted lens data detected".into(),
             );
         } else {
             // Process unencrypted lens data using existing implementation
@@ -314,7 +314,7 @@ impl BinaryDataProcessor for NikonLensDataProcessor {
 
             result.add_tag(
                 "LensDataStatus".to_string(),
-                TagValue::String("Unencrypted lens data processed".to_string()),
+                "Unencrypted lens data processed".into(),
             );
         }
 
@@ -388,7 +388,7 @@ fn process_encrypted_data_with_existing_impl(
     // Add information about the encryption context
     result.add_tag(
         "EncryptionKeys".to_string(),
-        TagValue::String(format!(
+        TagValue::string(format!(
             "Serial: {}, Count: {}",
             keys.get_serial_key().unwrap_or("none"),
             keys.get_count_key()

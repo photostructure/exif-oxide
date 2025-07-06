@@ -25,7 +25,7 @@ pub fn compute_image_size(available_tags: &HashMap<String, TagValue>) -> Option<
         available_tags.get("ExifImageHeight"),
     ) {
         if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
-            return Some(TagValue::String(format!("{w} {h}"))); // ExifTool uses space separator
+            return Some(TagValue::string(format!("{w} {h}"))); // ExifTool uses space separator
         }
     }
 
@@ -35,7 +35,7 @@ pub fn compute_image_size(available_tags: &HashMap<String, TagValue>) -> Option<
         available_tags.get("ImageHeight"),
     ) {
         if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
-            return Some(TagValue::String(format!("{w} {h}"))); // ExifTool uses space separator
+            return Some(TagValue::string(format!("{w} {h}"))); // ExifTool uses space separator
         }
     }
 
@@ -67,7 +67,7 @@ pub fn compute_gps_altitude(available_tags: &HashMap<String, TagValue>) -> Optio
                 ""
             };
 
-            return Some(TagValue::String(format!("{sign}{decimal_alt:.1} m")));
+            return Some(TagValue::string(format!("{sign}{decimal_alt:.1} m")));
         }
     }
     None
@@ -80,7 +80,7 @@ pub fn compute_preview_image_size(available_tags: &HashMap<String, TagValue>) ->
         available_tags.get("PreviewImageHeight"),
     ) {
         if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
-            return Some(TagValue::String(format!("{w}x{h}")));
+            return Some(TagValue::string(format!("{w}x{h}")));
         }
     }
     None
@@ -139,14 +139,14 @@ pub fn compute_shutter_speed(available_tags: &HashMap<String, TagValue>) -> Opti
 pub fn format_shutter_speed(time_seconds: f64) -> TagValue {
     if time_seconds >= 1.0 {
         // Slow shutter speeds: format as decimal seconds
-        TagValue::String(format!("{time_seconds:.1}"))
+        TagValue::string(format!("{time_seconds:.1}"))
     } else if time_seconds > 0.0 {
         // Fast shutter speeds: format as 1/x
         let reciprocal = 1.0 / time_seconds;
-        TagValue::String(format!("1/{:.0}", reciprocal.round()))
+        TagValue::string(format!("1/{:.0}", reciprocal.round()))
     } else {
         // Invalid time value
-        TagValue::String("0".to_string())
+        "0".into()
     }
 }
 
@@ -186,7 +186,7 @@ pub fn compute_datetime_original(available_tags: &HashMap<String, TagValue>) -> 
         available_tags.get("TimeCreated"),
     ) {
         if let (Some(date_str), Some(time_str)) = (date.as_string(), time.as_string()) {
-            return Some(TagValue::String(format!("{date_str} {time_str}")));
+            return Some(TagValue::string(format!("{date_str} {time_str}")));
         }
     }
 
@@ -329,7 +329,7 @@ pub fn compute_gps_position(available_tags: &HashMap<String, TagValue>) -> Optio
 
     // ExifTool: (length($val[0]) or length($val[1])) ? "$val[0] $val[1]" : undef
     if !lat_str.is_empty() || !lon_str.is_empty() {
-        Some(TagValue::String(format!("{lat_str} {lon_str}")))
+        Some(TagValue::string(format!("{lat_str} {lon_str}")))
     } else {
         None
     }
@@ -350,7 +350,7 @@ pub fn compute_hyperfocal_distance(available_tags: &HashMap<String, TagValue>) -
 
     // ExifTool: return 'inf' unless $val[1] and $val[2]
     if aperture == 0.0 || circle_of_confusion == 0.0 {
-        return Some(TagValue::String("inf".to_string()));
+        return Some("inf".into());
     }
 
     // ExifTool: $val[0] * $val[0] / ($val[1] * $val[2] * 1000)
@@ -426,7 +426,7 @@ pub fn compute_dof(available_tags: &HashMap<String, TagValue>) -> Option<TagValu
 
     // ExifTool: return 0 unless $f and $val[2];
     if focal_length == 0.0 || circle_of_confusion == 0.0 {
-        return Some(TagValue::String("0".to_string()));
+        return Some("0".into());
     }
 
     // ExifTool distance fallback logic: try multiple distance sources
@@ -490,5 +490,5 @@ pub fn compute_dof(available_tags: &HashMap<String, TagValue>) -> Option<TagValu
     }
 
     // ExifTool: return join(' ',@v);
-    Some(TagValue::String(format!("{near:.3} {far:.3}")))
+    Some(TagValue::string(format!("{near:.3} {far:.3}")))
 }
