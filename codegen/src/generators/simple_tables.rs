@@ -419,13 +419,15 @@ fn generate_file_type_lookup_code(hash_name: &str, table_data: &ExtractedTable) 
         fn_name
     ));
     
-    code.push_str(&format!("    {}.get(ext)\n", constant_name));
+    code.push_str("    let ext_upper = ext.to_uppercase();\n");
+    code.push_str(&format!("    {}.get(ext_upper.as_str())\n", constant_name));
     code.push_str("}\n\n");
     
     // Helper function to resolve aliases
     code.push_str("/// Resolve file type aliases to their final definition\n");
     code.push_str("pub fn resolve_file_type(ext: &str) -> Option<(Vec<&'static str>, &'static str)> {\n");
-    code.push_str("    let mut current_ext = ext;\n");
+    code.push_str("    let ext_upper = ext.to_uppercase();\n");
+    code.push_str("    let mut current_ext = ext_upper.as_str();\n");
     code.push_str("    let mut seen = std::collections::HashSet::new();\n");
     code.push_str("    \n");
     code.push_str("    loop {\n");

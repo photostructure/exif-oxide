@@ -452,7 +452,7 @@ impl ConditionEvaluator {
         }
 
         // Default to string
-        Ok(TagValue::String(value_str.to_string()))
+        Ok(value_str.into())
     }
 
     /// Evaluate a structured condition against context

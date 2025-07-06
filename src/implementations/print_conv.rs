@@ -24,12 +24,12 @@ pub fn orientation_print_conv(val: &TagValue) -> TagValue {
     match orientation_val {
         Some(val) => {
             if let Some(description) = lookup_orientation(val) {
-                TagValue::String(description.to_string())
+                TagValue::string(description)
             } else {
-                TagValue::String(format!("Unknown ({val})"))
+                TagValue::string(format!("Unknown ({val})"))
             }
         }
-        None => TagValue::String(format!("Unknown ({val})")),
+        None => TagValue::string(format!("Unknown ({val})")),
     }
 }
 
@@ -37,10 +37,10 @@ pub fn orientation_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2778-2782
 pub fn resolutionunit_print_conv(val: &TagValue) -> TagValue {
     match val.as_u16() {
-        Some(1) => TagValue::String("None".to_string()),
-        Some(2) => TagValue::String("inches".to_string()),
-        Some(3) => TagValue::String("cm".to_string()),
-        _ => TagValue::String(format!("Unknown ({val})")),
+        Some(1) => "None".into(),
+        Some(2) => "inches".into(),
+        Some(3) => "cm".into(),
+        _ => TagValue::string(format!("Unknown ({val})")),
     }
 }
 
@@ -48,9 +48,9 @@ pub fn resolutionunit_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2802-2805
 pub fn ycbcrpositioning_print_conv(val: &TagValue) -> TagValue {
     match val.as_u16() {
-        Some(1) => TagValue::String("Centered".to_string()),
-        Some(2) => TagValue::String("Co-sited".to_string()),
-        _ => TagValue::String(format!("Unknown ({val})")),
+        Some(1) => "Centered".into(),
+        Some(2) => "Co-sited".into(),
+        _ => TagValue::string(format!("Unknown ({val})")),
     }
 }
 
@@ -58,10 +58,10 @@ pub fn ycbcrpositioning_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/GPS.pm:124 - '$val =~ /^(inf|undef)$/ ? $val : "$val m"'
 pub fn gpsaltitude_print_conv(val: &TagValue) -> TagValue {
     match val.as_f64() {
-        Some(v) if v.is_infinite() => TagValue::String("inf".to_string()),
-        Some(v) if v.is_nan() => TagValue::String("undef".to_string()),
-        Some(v) => TagValue::String(format!("{v:.1} m")), // Round to 0.1m - GPS accuracy limit
-        None => TagValue::String(format!("Unknown ({val})")),
+        Some(v) if v.is_infinite() => "inf".into(),
+        Some(v) if v.is_nan() => "undef".into(),
+        Some(v) => TagValue::string(format!("{v:.1} m")), // Round to 0.1m - GPS accuracy limit
+        None => TagValue::string(format!("Unknown ({val})")),
     }
 }
 
@@ -69,9 +69,9 @@ pub fn gpsaltitude_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/GPS.pm GPSAltitudeRef tag definition
 pub fn gpsaltituderef_print_conv(val: &TagValue) -> TagValue {
     match val.as_u8() {
-        Some(0) => TagValue::String("Above Sea Level".to_string()),
-        Some(1) => TagValue::String("Below Sea Level".to_string()),
-        _ => TagValue::String(format!("Unknown ({val})")),
+        Some(0) => "Above Sea Level".into(),
+        Some(1) => "Below Sea Level".into(),
+        _ => TagValue::string(format!("Unknown ({val})")),
     }
 }
 
@@ -79,9 +79,9 @@ pub fn gpsaltituderef_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/GPS.pm GPSLatitudeRef tag definition
 pub fn gpslatituderef_print_conv(val: &TagValue) -> TagValue {
     match val.as_string() {
-        Some("N") => TagValue::String("North".to_string()),
-        Some("S") => TagValue::String("South".to_string()),
-        _ => TagValue::String(format!("Unknown ({val})")),
+        Some("N") => "North".into(),
+        Some("S") => "South".into(),
+        _ => TagValue::string(format!("Unknown ({val})")),
     }
 }
 
@@ -89,9 +89,9 @@ pub fn gpslatituderef_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/GPS.pm GPSLongitudeRef tag definition
 pub fn gpslongituderef_print_conv(val: &TagValue) -> TagValue {
     match val.as_string() {
-        Some("E") => TagValue::String("East".to_string()),
-        Some("W") => TagValue::String("West".to_string()),
-        _ => TagValue::String(format!("Unknown ({val})")),
+        Some("E") => "East".into(),
+        Some("W") => "West".into(),
+        _ => TagValue::string(format!("Unknown ({val})")),
     }
 }
 
@@ -99,7 +99,7 @@ pub fn gpslongituderef_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/Exif.pm:164-197, tag definition lines 2379-2386
 /// NOTE: This is NOT a bitmask conversion - ExifTool uses direct hash lookup for specific combined values
 pub fn flash_print_conv(val: &TagValue) -> TagValue {
-    TagValue::String(match val.as_u16() {
+    TagValue::string(match val.as_u16() {
         Some(0x00) => "No Flash".to_string(),
         Some(0x01) => "Fired".to_string(),
         Some(0x05) => "Fired, Return not detected".to_string(),
@@ -142,7 +142,7 @@ pub fn flash_print_conv(val: &TagValue) -> TagValue {
 /// EXIF ColorSpace PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2620-2638
 pub fn colorspace_print_conv(val: &TagValue) -> TagValue {
-    TagValue::String(match val.as_u16() {
+    TagValue::string(match val.as_u16() {
         Some(1) => "sRGB".to_string(),
         Some(2) => "Adobe RGB".to_string(),
         Some(0xffff) => "Uncalibrated".to_string(),
@@ -164,7 +164,7 @@ pub fn colorspace_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2809-2821
 // TODO: Add manufacturer-specific handling - Canon uses "Evaluative" vs "Multi-segment" for MeteringMode
 pub fn whitebalance_print_conv(val: &TagValue) -> TagValue {
-    TagValue::String(match val.as_u16() {
+    TagValue::string(match val.as_u16() {
         Some(0) => "Auto".to_string(),
         Some(1) => "Manual".to_string(),
         _ => format!("Unknown ({val})"),
@@ -175,7 +175,7 @@ pub fn whitebalance_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2357-2371
 // TODO: Add manufacturer-specific handling - Canon uses "Evaluative" instead of "Multi-segment"
 pub fn meteringmode_print_conv(val: &TagValue) -> TagValue {
-    TagValue::String(match val.as_u16() {
+    TagValue::string(match val.as_u16() {
         Some(0) => "Unknown".to_string(),
         Some(1) => "Average".to_string(),
         Some(2) => "Center-weighted average".to_string(),
@@ -192,7 +192,7 @@ pub fn meteringmode_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2082-2097
 /// NOTE: Value 9 is not standard EXIF but used by some Canon models
 pub fn exposureprogram_print_conv(val: &TagValue) -> TagValue {
-    TagValue::String(match val.as_u16() {
+    TagValue::string(match val.as_u16() {
         Some(0) => "Not Defined".to_string(),
         Some(1) => "Manual".to_string(),
         Some(2) => "Program AE".to_string(),
@@ -224,7 +224,7 @@ pub fn fnumber_print_conv(val: &TagValue) -> TagValue {
                 };
                 TagValue::F64(rounded)
             } else {
-                TagValue::String(format!("Unknown ({val})"))
+                TagValue::string(format!("Unknown ({val})"))
             }
         }
         None => {
@@ -242,7 +242,7 @@ pub fn fnumber_print_conv(val: &TagValue) -> TagValue {
                     }
                 }
             }
-            TagValue::String(format!("Unknown ({val})"))
+            TagValue::string(format!("Unknown ({val})"))
         }
     }
 }
@@ -251,7 +251,7 @@ pub fn fnumber_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/Exif.pm:5595-5605 PrintExposureTime
 /// Converts decimal seconds to fractional notation (e.g., 0.0005 -> "1/2000")
 pub fn exposuretime_print_conv(val: &TagValue) -> TagValue {
-    TagValue::String(match val.as_f64() {
+    TagValue::string(match val.as_f64() {
         Some(secs) => {
             // ExifTool: return $secs unless Image::ExifTool::IsFloat($secs);
             // We always have floats from as_f64(), so continue with the logic
@@ -279,13 +279,13 @@ pub fn exposuretime_print_conv(val: &TagValue) -> TagValue {
                     // Apply the same logic as above
                     if secs < 0.25001 && secs > 0.0 {
                         let denominator = (0.5 + 1.0 / secs) as i32;
-                        return TagValue::String(format!("1/{denominator}"));
+                        return TagValue::string(format!("1/{denominator}"));
                     } else {
                         let mut result = format!("{secs:.1}");
                         if result.ends_with(".0") {
                             result.truncate(result.len() - 2);
                         }
-                        return TagValue::String(result);
+                        return TagValue::string(result);
                     }
                 }
             }
@@ -298,7 +298,7 @@ pub fn exposuretime_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/Exif.pm lines 2387-2393
 /// Note: We normalize ExifTool's inconsistent formatting to show integers without decimals
 pub fn focallength_print_conv(val: &TagValue) -> TagValue {
-    TagValue::String(match val.as_f64() {
+    TagValue::string(match val.as_f64() {
         Some(focal_length) => {
             // Round to 1 decimal place like ExifTool, but remove .0 for integers
             let rounded = (focal_length * 10.0).round() / 10.0;
@@ -315,9 +315,9 @@ pub fn focallength_print_conv(val: &TagValue) -> TagValue {
                     let focal_length = *num as f64 / *denom as f64;
                     let rounded = (focal_length * 10.0).round() / 10.0;
                     if (rounded.fract()).abs() < 0.001 {
-                        return TagValue::String(format!("{} mm", rounded as i32));
+                        return TagValue::string(format!("{} mm", rounded as i32));
                     } else {
-                        return TagValue::String(format!("{rounded:.1} mm"));
+                        return TagValue::string(format!("{rounded:.1} mm"));
                     }
                 }
             }
@@ -330,7 +330,7 @@ pub fn focallength_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/Exif.pm lines 2827-2834
 /// PrintConv => '"$val mm"',
 pub fn focallength_in_35mm_format_print_conv(val: &TagValue) -> TagValue {
-    TagValue::String(match val.as_u16() {
+    TagValue::string(match val.as_u16() {
         Some(focal_length) => {
             // Format as integer with no decimal places to match ExifTool
             format!("{focal_length} mm")
@@ -343,7 +343,7 @@ pub fn focallength_in_35mm_format_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/GPS.pm:423-431
 /// Formats GPS altitude with "Above/Below Sea Level" based on sign
 pub fn composite_gps_gpsaltitude_print_conv(val: &TagValue) -> TagValue {
-    TagValue::String(
+    TagValue::string(
         // Handle numeric value
         if let Some(v) = val.as_f64() {
             if v.is_infinite() {
@@ -403,7 +403,7 @@ pub fn lensinfo_print_conv(val: &TagValue) -> TagValue {
         TagValue::RationalArray(array) => {
             // Extract the 4 rational values
             if array.len() != 4 {
-                return TagValue::String(format!("Unknown ({val})"));
+                return TagValue::string(format!("Unknown ({val})"));
             }
 
             let mut values = Vec::new();
@@ -416,12 +416,12 @@ pub fn lensinfo_print_conv(val: &TagValue) -> TagValue {
             }
             values
         }
-        _ => return TagValue::String(format!("Unknown ({val})")),
+        _ => return TagValue::string(format!("Unknown ({val})")),
     };
 
     // Check we have exactly 4 values
     if vals.len() != 4 {
-        return TagValue::String(format!("Unknown ({val})"));
+        return TagValue::string(format!("Unknown ({val})"));
     }
 
     // Build the lens info string
@@ -464,7 +464,7 @@ pub fn lensinfo_print_conv(val: &TagValue) -> TagValue {
             }
             result.push_str("mm");
         }
-        _ => return TagValue::String(format!("Unknown ({val})")),
+        _ => return TagValue::string(format!("Unknown ({val})")),
     }
 
     // Aperture range
@@ -509,10 +509,10 @@ pub fn lensinfo_print_conv(val: &TagValue) -> TagValue {
             // Both aperture values are undefined - ExifTool shows as "f/?"
             result.push_str(" f/?");
         }
-        _ => return TagValue::String(format!("Unknown ({val})")),
+        _ => return TagValue::string(format!("Unknown ({val})")),
     }
 
-    TagValue::String(result)
+    TagValue::string(result)
 }
 
 #[cfg(test)]
@@ -523,35 +523,29 @@ mod tests {
     fn test_orientation_print_conv() {
         assert_eq!(
             orientation_print_conv(&TagValue::U16(1)),
-            TagValue::String("Horizontal (normal)".to_string())
+            "Horizontal (normal)".into()
         );
         assert_eq!(
             orientation_print_conv(&TagValue::U16(8)),
-            TagValue::String("Rotate 270 CW".to_string())
+            "Rotate 270 CW".into()
         );
         assert_eq!(
             orientation_print_conv(&TagValue::U16(99)),
-            TagValue::String("Unknown (99)".to_string())
+            "Unknown (99)".into()
         );
     }
 
     #[test]
     fn test_resolutionunit_print_conv() {
-        assert_eq!(
-            resolutionunit_print_conv(&TagValue::U16(1)),
-            TagValue::String("None".to_string())
-        );
+        assert_eq!(resolutionunit_print_conv(&TagValue::U16(1)), "None".into());
         assert_eq!(
             resolutionunit_print_conv(&TagValue::U16(2)),
-            TagValue::String("inches".to_string())
+            "inches".into()
         );
-        assert_eq!(
-            resolutionunit_print_conv(&TagValue::U16(3)),
-            TagValue::String("cm".to_string())
-        );
+        assert_eq!(resolutionunit_print_conv(&TagValue::U16(3)), "cm".into());
         assert_eq!(
             resolutionunit_print_conv(&TagValue::U16(99)),
-            TagValue::String("Unknown (99)".to_string())
+            "Unknown (99)".into()
         );
     }
 
@@ -559,132 +553,99 @@ mod tests {
     fn test_ycbcrpositioning_print_conv() {
         assert_eq!(
             ycbcrpositioning_print_conv(&TagValue::U16(1)),
-            TagValue::String("Centered".to_string())
+            "Centered".into()
         );
         assert_eq!(
             ycbcrpositioning_print_conv(&TagValue::U16(2)),
-            TagValue::String("Co-sited".to_string())
+            "Co-sited".into()
         );
         assert_eq!(
             ycbcrpositioning_print_conv(&TagValue::U16(99)),
-            TagValue::String("Unknown (99)".to_string())
+            "Unknown (99)".into()
         );
     }
 
     #[test]
     fn test_flash_print_conv() {
         // Test standard values
-        assert_eq!(
-            flash_print_conv(&TagValue::U16(0x00)),
-            TagValue::String("No Flash".to_string())
-        );
-        assert_eq!(
-            flash_print_conv(&TagValue::U16(0x01)),
-            TagValue::String("Fired".to_string())
-        );
-        assert_eq!(
-            flash_print_conv(&TagValue::U16(0x19)),
-            TagValue::String("Auto, Fired".to_string())
-        );
+        assert_eq!(flash_print_conv(&TagValue::U16(0x00)), "No Flash".into());
+        assert_eq!(flash_print_conv(&TagValue::U16(0x01)), "Fired".into());
+        assert_eq!(flash_print_conv(&TagValue::U16(0x19)), "Auto, Fired".into());
         assert_eq!(
             flash_print_conv(&TagValue::U16(0x20)),
-            TagValue::String("No flash function".to_string())
+            "No flash function".into()
         );
 
         // Test red-eye reduction values
         assert_eq!(
             flash_print_conv(&TagValue::U16(0x41)),
-            TagValue::String("Fired, Red-eye reduction".to_string())
+            "Fired, Red-eye reduction".into()
         );
         assert_eq!(
             flash_print_conv(&TagValue::U16(0x59)),
-            TagValue::String("Auto, Fired, Red-eye reduction".to_string())
+            "Auto, Fired, Red-eye reduction".into()
         );
 
         // Test unknown value
         assert_eq!(
             flash_print_conv(&TagValue::U16(0x99)),
-            TagValue::String("Unknown (153)".to_string())
+            "Unknown (153)".into()
         );
     }
 
     #[test]
     fn test_colorspace_print_conv() {
-        assert_eq!(
-            colorspace_print_conv(&TagValue::U16(1)),
-            TagValue::String("sRGB".to_string())
-        );
-        assert_eq!(
-            colorspace_print_conv(&TagValue::U16(2)),
-            TagValue::String("Adobe RGB".to_string())
-        );
+        assert_eq!(colorspace_print_conv(&TagValue::U16(1)), "sRGB".into());
+        assert_eq!(colorspace_print_conv(&TagValue::U16(2)), "Adobe RGB".into());
         assert_eq!(
             colorspace_print_conv(&TagValue::U16(0xffff)),
-            TagValue::String("Uncalibrated".to_string())
+            "Uncalibrated".into()
         );
 
         // Test Sony-specific values
         assert_eq!(
             colorspace_print_conv(&TagValue::U16(0xfffe)),
-            TagValue::String("ICC Profile".to_string())
+            "ICC Profile".into()
         );
         assert_eq!(
             colorspace_print_conv(&TagValue::U16(0xfffd)),
-            TagValue::String("Wide Gamut RGB".to_string())
+            "Wide Gamut RGB".into()
         );
 
         // Test unknown value
         assert_eq!(
             colorspace_print_conv(&TagValue::U16(0x99)),
-            TagValue::String("Unknown (153)".to_string())
+            "Unknown (153)".into()
         );
     }
 
     #[test]
     fn test_whitebalance_print_conv() {
-        assert_eq!(
-            whitebalance_print_conv(&TagValue::U16(0)),
-            TagValue::String("Auto".to_string())
-        );
-        assert_eq!(
-            whitebalance_print_conv(&TagValue::U16(1)),
-            TagValue::String("Manual".to_string())
-        );
+        assert_eq!(whitebalance_print_conv(&TagValue::U16(0)), "Auto".into());
+        assert_eq!(whitebalance_print_conv(&TagValue::U16(1)), "Manual".into());
         assert_eq!(
             whitebalance_print_conv(&TagValue::U16(99)),
-            TagValue::String("Unknown (99)".to_string())
+            "Unknown (99)".into()
         );
     }
 
     #[test]
     fn test_meteringmode_print_conv() {
-        assert_eq!(
-            meteringmode_print_conv(&TagValue::U16(0)),
-            TagValue::String("Unknown".to_string())
-        );
-        assert_eq!(
-            meteringmode_print_conv(&TagValue::U16(1)),
-            TagValue::String("Average".to_string())
-        );
+        assert_eq!(meteringmode_print_conv(&TagValue::U16(0)), "Unknown".into());
+        assert_eq!(meteringmode_print_conv(&TagValue::U16(1)), "Average".into());
         assert_eq!(
             meteringmode_print_conv(&TagValue::U16(2)),
-            TagValue::String("Center-weighted average".to_string())
+            "Center-weighted average".into()
         );
-        assert_eq!(
-            meteringmode_print_conv(&TagValue::U16(3)),
-            TagValue::String("Spot".to_string())
-        );
+        assert_eq!(meteringmode_print_conv(&TagValue::U16(3)), "Spot".into());
         assert_eq!(
             meteringmode_print_conv(&TagValue::U16(5)),
-            TagValue::String("Multi-segment".to_string())
+            "Multi-segment".into()
         );
-        assert_eq!(
-            meteringmode_print_conv(&TagValue::U16(255)),
-            TagValue::String("Other".to_string())
-        );
+        assert_eq!(meteringmode_print_conv(&TagValue::U16(255)), "Other".into());
         assert_eq!(
             meteringmode_print_conv(&TagValue::U16(99)),
-            TagValue::String("Unknown (99)".to_string())
+            "Unknown (99)".into()
         );
     }
 
@@ -692,34 +653,31 @@ mod tests {
     fn test_exposureprogram_print_conv() {
         assert_eq!(
             exposureprogram_print_conv(&TagValue::U16(0)),
-            TagValue::String("Not Defined".to_string())
+            "Not Defined".into()
         );
         assert_eq!(
             exposureprogram_print_conv(&TagValue::U16(1)),
-            TagValue::String("Manual".to_string())
+            "Manual".into()
         );
         assert_eq!(
             exposureprogram_print_conv(&TagValue::U16(2)),
-            TagValue::String("Program AE".to_string())
+            "Program AE".into()
         );
         assert_eq!(
             exposureprogram_print_conv(&TagValue::U16(3)),
-            TagValue::String("Aperture-priority AE".to_string())
+            "Aperture-priority AE".into()
         );
         assert_eq!(
             exposureprogram_print_conv(&TagValue::U16(7)),
-            TagValue::String("Portrait".to_string())
+            "Portrait".into()
         );
 
         // Test Canon-specific non-standard value
-        assert_eq!(
-            exposureprogram_print_conv(&TagValue::U16(9)),
-            TagValue::String("Bulb".to_string())
-        );
+        assert_eq!(exposureprogram_print_conv(&TagValue::U16(9)), "Bulb".into());
 
         assert_eq!(
             exposureprogram_print_conv(&TagValue::U16(99)),
-            TagValue::String("Unknown (99)".to_string())
+            "Unknown (99)".into()
         );
     }
 
@@ -757,112 +715,82 @@ mod tests {
         // Test fractional exposures < 0.25001
         assert_eq!(
             exposuretime_print_conv(&TagValue::F64(0.0005)),
-            TagValue::String("1/2000".to_string())
+            "1/2000".into()
         );
         assert_eq!(
             exposuretime_print_conv(&TagValue::F64(0.01)),
-            TagValue::String("1/100".to_string())
+            "1/100".into()
         );
-        assert_eq!(
-            exposuretime_print_conv(&TagValue::F64(0.125)),
-            TagValue::String("1/8".to_string())
-        );
-        assert_eq!(
-            exposuretime_print_conv(&TagValue::F64(0.25)),
-            TagValue::String("1/4".to_string())
-        );
+        assert_eq!(exposuretime_print_conv(&TagValue::F64(0.125)), "1/8".into());
+        assert_eq!(exposuretime_print_conv(&TagValue::F64(0.25)), "1/4".into());
 
         // Test exposures >= 0.25001
-        assert_eq!(
-            exposuretime_print_conv(&TagValue::F64(0.5)),
-            TagValue::String("0.5".to_string())
-        );
-        assert_eq!(
-            exposuretime_print_conv(&TagValue::F64(1.0)),
-            TagValue::String("1".to_string())
-        ); // .0 is stripped
-        assert_eq!(
-            exposuretime_print_conv(&TagValue::F64(2.0)),
-            TagValue::String("2".to_string())
-        ); // .0 is stripped
-        assert_eq!(
-            exposuretime_print_conv(&TagValue::F64(2.5)),
-            TagValue::String("2.5".to_string())
-        );
+        assert_eq!(exposuretime_print_conv(&TagValue::F64(0.5)), "0.5".into());
+        assert_eq!(exposuretime_print_conv(&TagValue::F64(1.0)), "1".into()); // .0 is stripped
+        assert_eq!(exposuretime_print_conv(&TagValue::F64(2.0)), "2".into()); // .0 is stripped
+        assert_eq!(exposuretime_print_conv(&TagValue::F64(2.5)), "2.5".into());
 
         // Test with rational input
         assert_eq!(
             exposuretime_print_conv(&TagValue::Rational(1, 2000)),
-            TagValue::String("1/2000".to_string())
+            "1/2000".into()
         );
         assert_eq!(
             exposuretime_print_conv(&TagValue::Rational(1, 100)),
-            TagValue::String("1/100".to_string())
+            "1/100".into()
         );
         assert_eq!(
             exposuretime_print_conv(&TagValue::Rational(1, 2)),
-            TagValue::String("0.5".to_string())
+            "0.5".into()
         );
     }
 
     #[test]
     fn test_focallength_print_conv() {
         // Integers should not show decimal places
-        assert_eq!(
-            focallength_print_conv(&TagValue::F64(24.0)),
-            TagValue::String("24 mm".to_string())
-        );
-        assert_eq!(
-            focallength_print_conv(&TagValue::F64(50.0)),
-            TagValue::String("50 mm".to_string())
-        );
+        assert_eq!(focallength_print_conv(&TagValue::F64(24.0)), "24 mm".into());
+        assert_eq!(focallength_print_conv(&TagValue::F64(50.0)), "50 mm".into());
         assert_eq!(
             focallength_print_conv(&TagValue::F64(200.0)),
-            TagValue::String("200 mm".to_string())
+            "200 mm".into()
         );
-        assert_eq!(
-            focallength_print_conv(&TagValue::F64(0.0)),
-            TagValue::String("0 mm".to_string())
-        );
+        assert_eq!(focallength_print_conv(&TagValue::F64(0.0)), "0 mm".into());
 
         // Decimals should be rounded to 1 decimal place like ExifTool
         assert_eq!(
             focallength_print_conv(&TagValue::F64(4.67)),
-            TagValue::String("4.7 mm".to_string())
+            "4.7 mm".into()
         ); // 4.67 -> 4.7
         assert_eq!(
             focallength_print_conv(&TagValue::F64(42.3)),
-            TagValue::String("42.3 mm".to_string())
+            "42.3 mm".into()
         );
         assert_eq!(
             focallength_print_conv(&TagValue::F64(105.5)),
-            TagValue::String("105.5 mm".to_string())
+            "105.5 mm".into()
         );
-        assert_eq!(
-            focallength_print_conv(&TagValue::F64(5.7)),
-            TagValue::String("5.7 mm".to_string())
-        );
+        assert_eq!(focallength_print_conv(&TagValue::F64(5.7)), "5.7 mm".into());
         assert_eq!(
             focallength_print_conv(&TagValue::F64(1.56)),
-            TagValue::String("1.6 mm".to_string())
+            "1.6 mm".into()
         ); // 1.56 -> 1.6 (round up)
         assert_eq!(
             focallength_print_conv(&TagValue::F64(1.54)),
-            TagValue::String("1.5 mm".to_string())
+            "1.5 mm".into()
         ); // 1.54 -> 1.5 (round down)
         assert_eq!(
             focallength_print_conv(&TagValue::F64(1.57)),
-            TagValue::String("1.6 mm".to_string())
+            "1.6 mm".into()
         ); // iPhone case: 1.57 -> 1.6
 
         // Test with rational input
         assert_eq!(
             focallength_print_conv(&TagValue::Rational(24, 1)),
-            TagValue::String("24 mm".to_string())
+            "24 mm".into()
         );
         assert_eq!(
             focallength_print_conv(&TagValue::Rational(57, 10)),
-            TagValue::String("5.7 mm".to_string())
+            "5.7 mm".into()
         );
     }
 
@@ -871,25 +799,25 @@ mod tests {
         // Values should be formatted as integers with no decimal places
         assert_eq!(
             focallength_in_35mm_format_print_conv(&TagValue::U16(28)),
-            TagValue::String("28 mm".to_string())
+            "28 mm".into()
         );
         assert_eq!(
             focallength_in_35mm_format_print_conv(&TagValue::U16(50)),
-            TagValue::String("50 mm".to_string())
+            "50 mm".into()
         );
         assert_eq!(
             focallength_in_35mm_format_print_conv(&TagValue::U16(167)),
-            TagValue::String("167 mm".to_string())
+            "167 mm".into()
         );
         assert_eq!(
             focallength_in_35mm_format_print_conv(&TagValue::U16(400)),
-            TagValue::String("400 mm".to_string())
+            "400 mm".into()
         );
 
         // Test with non-U16 value
         assert_eq!(
-            focallength_in_35mm_format_print_conv(&TagValue::String("invalid".to_string())),
-            TagValue::String("Unknown (invalid)".to_string())
+            focallength_in_35mm_format_print_conv(&"invalid".into()),
+            "Unknown (invalid)".into()
         );
     }
 }
