@@ -10,11 +10,26 @@ pub struct ExtractedData {
     pub extracted_at: String,
     pub exiftool_version: String,
     pub filter_criteria: String,
-    pub total_tags: usize,
-    pub tags: Vec<ExtractedTag>,
-    #[serde(default)]
-    pub composite_tags: Vec<ExtractedCompositeTag>,
+    pub stats: TagStats,
+    pub tags: TagGroups,
     pub conversion_refs: ConversionRefs,
+}
+
+/// Tag statistics
+#[derive(Debug, Deserialize)]
+pub struct TagStats {
+    pub exif_count: usize,
+    pub gps_count: usize,
+    pub total_tags: usize,
+}
+
+/// Tag groups (EXIF, GPS, etc)
+#[derive(Debug, Deserialize)]
+pub struct TagGroups {
+    #[serde(default)]
+    pub exif: Vec<ExtractedTag>,
+    #[serde(default)]
+    pub gps: Vec<ExtractedTag>,
 }
 
 /// Conversion references extracted from tag definitions
@@ -103,6 +118,26 @@ pub struct TableConfig {
     #[serde(default)]
     pub extraction_type: Option<String>,
     pub description: String,
+}
+
+/// Composite tags JSON structure
+#[derive(Debug, Deserialize)]
+pub struct CompositeData {
+    pub extracted_at: String,
+    pub exiftool_version: String,
+    pub filter_criteria: String,
+    pub stats: CompositeStats,
+    pub composite_tags: Vec<ExtractedCompositeTag>,
+    pub conversion_refs: ConversionRefs,
+}
+
+/// Composite tag statistics
+#[derive(Debug, Deserialize)]
+pub struct CompositeStats {
+    pub total_composite_tags: usize,
+    pub exif_table: usize,
+    pub gps_table: usize,
+    pub main_table: usize,
 }
 
 /// Individual table entry (polymorphic for different extraction types)
