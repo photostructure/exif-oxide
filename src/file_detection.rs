@@ -14,7 +14,7 @@
 //! - Conflict resolution patterns
 //! - Error recovery mechanisms
 
-use crate::generated::file_types::{
+use crate::generated::simple_tables::file_types::{
     lookup_magic_number_patterns, lookup_mime_types, resolve_file_type,
 };
 use std::io::{Read, Seek};
@@ -396,7 +396,7 @@ impl FileTypeDetector {
                     if let Some(format_pattern) = lookup_magic_number_patterns(format) {
                         // Special case: HEIC/HEIF use MOV format but need to be tested as HEIC/HEIF
                         // not MOV to avoid the MOV pattern excluding HEIC brands
-                        if (file_type == "HEIC" || file_type == "HEIF") && format == "MOV" {
+                        if (file_type == "HEIC" || file_type == "HEIF") && *format == "MOV" {
                             return self.match_binary_magic_pattern(
                                 file_type,
                                 format_pattern,
@@ -637,31 +637,29 @@ impl FileTypeDetector {
         _path: &Path,
     ) -> Result<FileTypeDetectionResult, FileDetectionError> {
         // Get primary format for processing
-        let format = if let Some((formats, description)) = resolve_file_type(file_type) {
-            (
-                formats
-                    .into_iter()
-                    .next()
-                    .unwrap_or_else(|| file_type.to_string()),
-                description,
-            )
-        } else {
-            (file_type.to_string(), format!("{file_type} file"))
-        };
+        let (format, description) =
+            if let Some((formats, description)) = resolve_file_type(file_type) {
+                (
+                    formats.into_iter().next().unwrap_or(file_type).to_string(),
+                    description.to_string(),
+                )
+            } else {
+                (file_type.to_string(), format!("{file_type} file"))
+            };
 
         // Get MIME type from generated lookup - try the file type first, then fallback, then the format
         // This ensures file-type-specific MIME types take precedence over generic format MIME types
         let mime_type = lookup_mime_types(file_type)
             .or_else(|| self.get_fallback_mime_type(file_type))
-            .or_else(|| lookup_mime_types(&format.0))
+            .or_else(|| lookup_mime_types(&format))
             .unwrap_or("application/octet-stream")
             .to_string();
 
         Ok(FileTypeDetectionResult {
             file_type: file_type.to_string(),
-            format: format.0,
+            format,
             mime_type,
-            description: format.1,
+            description,
         })
     }
 

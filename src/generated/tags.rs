@@ -35,7 +35,7 @@ pub struct TagDef {
     pub notes: Option<&'static str>,
 }
 
-pub static EXIF_MAIN_TAGS: &[TagDef] = &[
+pub static TAG_TABLE: &[TagDef] = &[
     TagDef {
         id: 0x1,
         name: "InteropIndex",
@@ -518,7 +518,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: None,
         value_conv_ref: None,
-        notes: Some("\n            may contain copyright notices for photographer and editor, separated by a\n            newline.  As per the EXIF specification, the newline is replaced by a null\n            byte when writing to file, but this may be avoided by disabling the print\n            conversion\n        "),
+        notes: Some(" may contain copyright notices for photographer and editor, separated by a newline.  As per the EXIF specification, the newline is replaced by a null byte when writing to file, but this may be avoided by disabling the print conversion "),
     },
     TagDef {
         id: 0x829a,
@@ -528,7 +528,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         writable: true,
         description: None,
         print_conv_ref: Some("exposuretime_print_conv"),
-        value_conv_ref: Some("exposuretime_value_conv"),
+        value_conv_ref: None,
         notes: None,
     },
     TagDef {
@@ -539,7 +539,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         writable: true,
         description: None,
         print_conv_ref: Some("fnumber_print_conv"),
-        value_conv_ref: Some("fnumber_value_conv"),
+        value_conv_ref: None,
         notes: None,
     },
     TagDef {
@@ -584,7 +584,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: Some("iso_print_conv"),
         value_conv_ref: None,
-        notes: Some("\n            called ISOSpeedRatings by EXIF 2.2, then PhotographicSensitivity by the EXIF\n            2.3 spec.\n        "),
+        notes: Some(" called ISOSpeedRatings by EXIF 2.2, then PhotographicSensitivity by the EXIF 2.3 spec. "),
     },
     TagDef {
         id: 0x882a,
@@ -595,7 +595,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: None,
         value_conv_ref: None,
-        notes: Some("\n            1 or 2 values: 1. The time zone offset of DateTimeOriginal from GMT in\n            hours, 2. If present, the time zone offset of ModifyDate\n        "),
+        notes: Some(" 1 or 2 values: 1. The time zone offset of DateTimeOriginal from GMT in hours, 2. If present, the time zone offset of ModifyDate "),
     },
     TagDef {
         id: 0x8830,
@@ -803,7 +803,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         writable: true,
         description: None,
         print_conv_ref: Some("focallength_print_conv"),
-        value_conv_ref: Some("focallength_value_conv"),
+        value_conv_ref: None,
         notes: None,
     },
     TagDef {
@@ -958,7 +958,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: None,
         value_conv_ref: Some("xptitle_value_conv"),
-        notes: Some("\n            tags 0x9c9b-0x9c9f are used by Windows Explorer; special characters\n            in these values are converted to UTF-8 by default, or Windows Latin1\n            with the -L option.  XPTitle is ignored by Windows Explorer if\n            ImageDescription exists\n        "),
+        notes: Some(" tags 0x9c9b-0x9c9f are used by Windows Explorer; special characters in these values are converted to UTF-8 by default, or Windows Latin1 with the -L option.  XPTitle is ignored by Windows Explorer if ImageDescription exists "),
     },
     TagDef {
         id: 0x9c9c,
@@ -1013,7 +1013,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: Some("colorspace_print_conv"),
         value_conv_ref: None,
-        notes: Some("\n            the value of 0x2 is not standard EXIF.  Instead, an Adobe RGB image is\n            indicated by \"Uncalibrated\" with an InteropIndex of \"R03\".  The values\n            0xfffd and 0xfffe are also non-standard, and are used by some Sony cameras\n        "),
+        notes: Some(" the value of 0x2 is not standard EXIF.  Instead, an Adobe RGB image is indicated by \"Uncalibrated\" with an InteropIndex of \"R03\".  The values 0xfffd and 0xfffe are also non-standard, and are used by some Sony cameras "),
     },
     TagDef {
         id: 0xa002,
@@ -1200,7 +1200,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: Some("customrendered_print_conv"),
         value_conv_ref: None,
-        notes: Some("\n            only 0 and 1 are standard EXIF, but other values are used by Apple iOS\n            devices\n        "),
+        notes: Some(" only 0 and 1 are standard EXIF, but other values are used by Apple iOS devices "),
     },
     TagDef {
         id: 0xa402,
@@ -1365,7 +1365,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: Some("lensinfo_print_conv"),
         value_conv_ref: None,
-        notes: Some("\n            4 rational values giving focal and aperture ranges, called LensSpecification\n            by the EXIF spec.\n        "),
+        notes: Some(" 4 rational values giving focal and aperture ranges, called LensSpecification by the EXIF spec. "),
     },
     TagDef {
         id: 0xa433,
@@ -1442,7 +1442,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: Some("dngversion_print_conv"),
         value_conv_ref: None,
-        notes: Some("\n            tags 0xc612-0xcd48 are defined by the DNG specification unless otherwise\n            noted.  See L<https://helpx.adobe.com/photoshop/digital-negative.html> for\n            the specification\n        "),
+        notes: Some(" tags 0xc612-0xcd48 are defined by the DNG specification unless otherwise noted.  See L<https://helpx.adobe.com/photoshop/digital-negative.html> for the specification "),
     },
     TagDef {
         id: 0xc613,
@@ -1585,7 +1585,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: None,
         value_conv_ref: None,
-        notes: Some("\n            used in segmented Canon CR2 images.  3 numbers: 1. Number of segments minus\n            one; 2. Pixel width of segments except last; 3. Pixel width of last segment\n        "),
+        notes: Some(" used in segmented Canon CR2 images.  3 numbers: 1. Number of segments minus one; 2. Pixel width of segments except last; 3. Pixel width of last segment "),
     },
     TagDef {
         id: 0xc65d,
@@ -1717,7 +1717,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: None,
         value_conv_ref: Some("ownername_value_conv"),
-        notes: Some("\n            tags 0xfde8-0xfdea and 0xfe4c-0xfe58 are generated by Photoshop Camera RAW.\n            Some names are the same as other EXIF tags, but ExifTool will avoid writing\n            these unless they already exist in the file\n        "),
+        notes: Some(" tags 0xfde8-0xfdea and 0xfe4c-0xfe58 are generated by Photoshop Camera RAW. Some names are the same as other EXIF tags, but ExifTool will avoid writing these unless they already exist in the file "),
     },
     TagDef {
         id: 0xfde9,
@@ -1838,7 +1838,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: Some("gpslatituderef_print_conv"),
         value_conv_ref: None,
-        notes: Some("\n            tags 0x0001-0x0006 used for camera location according to MWG 2.0. ExifTool\n            will also accept a number when writing GPSLatitudeRef, positive for north\n            latitudes or negative for south, or a string containing N, North, S or South\n        "),
+        notes: Some(" tags 0x0001-0x0006 used for camera location according to MWG 2.0. ExifTool will also accept a number when writing GPSLatitudeRef, positive for north latitudes or negative for south, or a string containing N, North, S or South "),
     },
     TagDef {
         id: 0xa,
@@ -2069,7 +2069,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: None,
         value_conv_ref: Some("gpsdatestamp_value_conv"),
-        notes: Some("\n            when writing, time is stripped off if present, after adjusting date/time to\n            UTC if time includes a timezone.  Format is YYYY:mm:dd\n        "),
+        notes: Some(" when writing, time is stripped off if present, after adjusting date/time to UTC if time includes a timezone.  Format is YYYY:mm:dd "),
     },
     TagDef {
         id: 0x3,
@@ -2080,7 +2080,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: Some("gpslongituderef_print_conv"),
         value_conv_ref: None,
-        notes: Some("\n            ExifTool will also accept a number when writing this tag, positive for east\n            longitudes or negative for west, or a string containing E, East, W or West\n        "),
+        notes: Some(" ExifTool will also accept a number when writing this tag, positive for east longitudes or negative for west, or a string containing E, East, W or West "),
     },
     TagDef {
         id: 0x1e,
@@ -2124,7 +2124,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: Some("gpsaltituderef_print_conv"),
         value_conv_ref: None,
-        notes: Some("\n            ExifTool will also accept number when writing this tag, with negative\n            numbers indicating below sea level\n        "),
+        notes: Some(" ExifTool will also accept number when writing this tag, with negative numbers indicating below sea level "),
     },
     TagDef {
         id: 0x6,
@@ -2146,7 +2146,7 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
         description: None,
         print_conv_ref: Some("gpstimestamp_print_conv"),
         value_conv_ref: Some("gpstimestamp_value_conv"),
-        notes: Some("\n            UTC time of GPS fix.  When writing, date is stripped off if present, and\n            time is adjusted to UTC if it includes a timezone\n        "),
+        notes: Some(" UTC time of GPS fix.  When writing, date is stripped off if present, and time is adjusted to UTC if it includes a timezone "),
     },
     TagDef {
         id: 0x8,
@@ -2172,18 +2172,31 @@ pub static EXIF_MAIN_TAGS: &[TagDef] = &[
     },
 ];
 
-pub static TAG_BY_ID: LazyLock<HashMap<u32, &'static TagDef>> = LazyLock::new(|| {
+/// Lazy-loaded lookup map from tag ID to tag definition
+pub static TAG_LOOKUP: LazyLock<HashMap<u32, &'static TagDef>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    for tag in EXIF_MAIN_TAGS {
+    for tag in TAG_TABLE {
         map.insert(tag.id, tag);
     }
     map
 });
 
-pub static TAG_BY_NAME: LazyLock<HashMap<&'static str, &'static TagDef>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    for tag in EXIF_MAIN_TAGS {
-        map.insert(tag.name, tag);
-    }
-    map
-});
+/// Lazy-loaded lookup map from tag name to tag definition
+pub static TAG_NAME_LOOKUP: LazyLock<HashMap<&'static str, &'static TagDef>> =
+    LazyLock::new(|| {
+        let mut map = HashMap::new();
+        for tag in TAG_TABLE {
+            map.insert(tag.name, tag);
+        }
+        map
+    });
+
+/// Look up a tag definition by its ID
+pub fn lookup_tag_by_id(id: u32) -> Option<&'static TagDef> {
+    TAG_LOOKUP.get(&id).copied()
+}
+
+/// Look up a tag definition by its name
+pub fn lookup_tag_by_name(name: &str) -> Option<&'static TagDef> {
+    TAG_NAME_LOOKUP.get(name).copied()
+}

@@ -1,0 +1,135 @@
+# Modular Codegen Makefile
+# This demonstrates the updated build system for parallel execution
+
+.PHONY: all clean extract-perl generate-rust codegen parallel-extract
+
+# Output directories
+GENERATED_DIR := generated
+SIMPLE_TABLES_DIR := $(GENERATED_DIR)/simple_tables
+
+# Perl extractor outputs
+TAG_TABLES_JSON := $(GENERATED_DIR)/tag_tables.json
+COMPOSITE_TAGS_JSON := $(GENERATED_DIR)/composite_tags.json
+REGEX_PATTERNS_JSON := $(GENERATED_DIR)/regex_patterns.json
+FILE_TYPE_LOOKUP_JSON := $(GENERATED_DIR)/file_type_lookup.json
+
+# Individual extractors can run in parallel
+EXTRACTOR_OUTPUTS := \
+	$(TAG_TABLES_JSON) \
+	$(COMPOSITE_TAGS_JSON) \
+	$(REGEX_PATTERNS_JSON) \
+	$(FILE_TYPE_LOOKUP_JSON)
+
+# Simple tables are extracted to individual files
+SIMPLE_TABLE_FILES := \
+	$(SIMPLE_TABLES_DIR)/canon_model_id.json \
+	$(SIMPLE_TABLES_DIR)/nikon_lens_ids.json \
+	$(SIMPLE_TABLES_DIR)/canon_white_balance.json \
+	$(SIMPLE_TABLES_DIR)/orientation.json
+
+# Default target
+all: codegen
+
+# Main codegen pipeline
+codegen: extract-perl generate-rust
+	@echo "✅ Code generation complete!"
+
+# Create directories
+$(GENERATED_DIR) $(SIMPLE_TABLES_DIR):
+	@mkdir -p $@
+
+# Parallel extraction of all Perl data
+extract-perl: $(GENERATED_DIR) $(SIMPLE_TABLES_DIR) parallel-extract simple-tables
+	@echo "✅ All extraction complete"
+
+# Run extractors in parallel (make -j4 will use 4 cores)
+parallel-extract: $(EXTRACTOR_OUTPUTS)
+
+# Individual extractor rules
+$(TAG_TABLES_JSON): extractors/tag_tables.pl
+	@echo "📋 Extracting EXIF/GPS tags..."
+	@perl $< > $@
+
+$(COMPOSITE_TAGS_JSON): extractors/composite_tags.pl
+	@echo "🔗 Extracting composite tags..."
+	@perl $< > $@
+
+$(REGEX_PATTERNS_JSON): extractors/regex_patterns.pl
+	@echo "🔍 Extracting regex patterns..."
+	@perl $< > $@
+
+$(FILE_TYPE_LOOKUP_JSON): extractors/file_type_lookup.pl
+	@echo "📁 Extracting file type lookups..."
+	@perl $< > $@
+
+# Simple tables extraction (generates multiple files)
+simple-tables: $(SIMPLE_TABLE_FILES)
+
+$(SIMPLE_TABLE_FILES): extractors/simple_tables.pl simple_tables.json
+	@echo "📊 Extracting simple tables..."
+	@perl extractors/simple_tables.pl
+	@touch $(SIMPLE_TABLE_FILES)  # Update timestamps
+
+# Rust code generation
+generate-rust: extract-perl
+	@echo "🦀 Generating Rust code..."
+	@cd . && cargo run --release
+
+# Clean generated files
+clean:
+	@echo "🧹 Cleaning generated files..."
+	@rm -f $(EXTRACTOR_OUTPUTS)
+	@rm -f $(SIMPLE_TABLES_DIR)/*.json
+	@rm -rf ../src/generated/*
+
+# Individual cleaning targets
+clean-tags:
+	@rm -f $(TAG_TABLES_JSON)
+
+clean-simple-tables:
+	@rm -f $(SIMPLE_TABLES_DIR)/*.json
+
+# Incremental regeneration targets
+regen-tags: clean-tags $(TAG_TABLES_JSON) generate-rust
+
+regen-simple-tables: clean-simple-tables simple-tables generate-rust
+
+# Development helpers
+check-extractors:
+	@echo "Checking Perl extractor syntax..."
+	@perl -c extractors/tag_tables.pl
+	@perl -c extractors/composite_tags.pl
+	@perl -c extractors/regex_patterns.pl
+	@perl -c extractors/file_type_lookup.pl
+	@perl -c extractors/simple_tables.pl
+
+# Show what would be built
+dry-run:
+	@$(MAKE) -n codegen
+
+# Parallel execution example
+parallel-demo:
+	@echo "Running parallel extraction with 4 jobs..."
+	@$(MAKE) -j4 parallel-extract
+
+# Help target
+help:
+	@echo "Modular Codegen Makefile"
+	@echo "======================="
+	@echo ""
+	@echo "Targets:"
+	@echo "  make              - Run full codegen pipeline"
+	@echo "  make -j4          - Run with 4 parallel jobs"
+	@echo "  make clean        - Clean all generated files"
+	@echo "  make regen-tags   - Regenerate only tag tables"
+	@echo "  make parallel-demo - Demo parallel extraction"
+	@echo ""
+	@echo "Individual extractors:"
+	@echo "  make $(TAG_TABLES_JSON)"
+	@echo "  make $(COMPOSITE_TAGS_JSON)"
+	@echo "  make simple-tables"
+	@echo ""
+	@echo "The modular design allows:"
+	@echo "  - Parallel execution of extractors"
+	@echo "  - Incremental regeneration"
+	@echo "  - Individual extractor testing"

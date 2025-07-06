@@ -50,7 +50,7 @@ pub fn generate_tag_table(tags: &[GeneratedTag], output_dir: &str) -> Result<()>
     code.push_str("}\n\n");
 
     // Static tag array
-    code.push_str("pub static EXIF_MAIN_TAGS: &[TagDef] = &[\n");
+    code.push_str("pub static TAG_TABLE: &[TagDef] = &[\n");
 
     for tag in tags {
         code.push_str("    TagDef {\n");
@@ -116,7 +116,7 @@ pub fn generate_tag_table(tags: &[GeneratedTag], output_dir: &str) -> Result<()>
     code.push_str("/// Lazy-loaded lookup map from tag ID to tag definition\n");
     code.push_str("pub static TAG_LOOKUP: LazyLock<HashMap<u32, &'static TagDef>> = LazyLock::new(|| {\n");
     code.push_str("    let mut map = HashMap::new();\n");
-    code.push_str("    for tag in EXIF_MAIN_TAGS {\n");
+    code.push_str("    for tag in TAG_TABLE {\n");
     code.push_str("        map.insert(tag.id, tag);\n");
     code.push_str("    }\n");
     code.push_str("    map\n");
@@ -128,7 +128,7 @@ pub fn generate_tag_table(tags: &[GeneratedTag], output_dir: &str) -> Result<()>
         "pub static TAG_NAME_LOOKUP: LazyLock<HashMap<&'static str, &'static TagDef>> = LazyLock::new(|| {\n"
     );
     code.push_str("    let mut map = HashMap::new();\n");
-    code.push_str("    for tag in EXIF_MAIN_TAGS {\n");
+    code.push_str("    for tag in TAG_TABLE {\n");
     code.push_str("        map.insert(tag.name, tag);\n");
     code.push_str("    }\n");
     code.push_str("    map\n");
@@ -146,9 +146,9 @@ pub fn generate_tag_table(tags: &[GeneratedTag], output_dir: &str) -> Result<()>
     code.push_str("}\n");
 
     // Write to file
-    let output_path = format!("{}/tag_tables.rs", output_dir);
+    let output_path = format!("{}/tags.rs", output_dir);
     fs::write(&output_path, code)?;
 
-    println!("✅ Generated {}", output_path);
+    println!("  ✓ Generated {}", output_path);
     Ok(())
 }
