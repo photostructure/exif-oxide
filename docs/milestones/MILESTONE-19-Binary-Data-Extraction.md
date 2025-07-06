@@ -15,15 +15,69 @@ From ExifTool manual:
 
 **Common Use Cases**:
 
-- Extract JPEG thumbnails from EXIF data
-- Save preview images from RAW files
-- Extract ICC color profiles
-- Save embedded audio/video from image files
-- Extract lens correction data and manufacturer-specific binary metadata
+- Extract JPEG thumbnails from EXIF data (ThumbnailImage)
+- Save preview images from RAW files (PreviewImage, JpgFromRaw)  
+- Note: We emulate ExifTool's group resolution logic to find the "best" group delivering the requested payload
 
 ## Implementation Strategy
 
+### Prerequisites
+
+Before starting implementation, verify test sample availability:
+
+1. **Check existing test images**: Review `test-images/*` directory for RAW and JPEG samples
+2. **Required formats**: Ensure we have samples for:
+   - Canon CR2/CR3 with embedded previews
+   - Nikon NEF with preview images
+   - Sony ARW with embedded JPEGs
+   - JPEG files with EXIF thumbnails
+3. **Request missing samples**: Ask user to provide any missing format samples needed for comprehensive testing
+
 ### Phase 1: Core Binary Extraction Infrastructure (Week 1)
+
+**ExifTool Group Resolution**:
+
+When users request a tag like `exiftool -b -PreviewImage`, ExifTool performs intelligent group resolution to find the best available preview. We must emulate this behavior:
+
+```rust
+pub struct GroupResolver {
+    priority_groups: HashMap<String, Vec<String>>,
+}
+
+impl GroupResolver {
+    fn resolve_binary_tag(&self, tag_name: &str, available_tags: &[BinaryTag]) -> Option<&BinaryTag> {
+        // Follow ExifTool's priority order for common binary tags
+        match tag_name {
+            "PreviewImage" => {
+                // Priority: JpgFromRaw > PreviewImage > ThumbnailImage
+                self.find_best_match(&["JpgFromRaw", "PreviewImage", "ThumbnailImage"], available_tags)
+            },
+            _ => available_tags.iter().find(|t| t.name == tag_name),
+        }
+    }
+}
+```
+
+**Tag Include-List Infrastructure**:
+
+```rust
+pub struct BinaryTagFilter {
+    allowed_tags: HashSet<String>,
+}
+
+impl Default for BinaryTagFilter {
+    fn default() -> Self {
+        // Start with mainstream binary tags only
+        Self {
+            allowed_tags: HashSet::from([
+                "ThumbnailImage".to_string(),
+                "PreviewImage".to_string(), 
+                "JpgFromRaw".to_string(),
+            ]),
+        }
+    }
+}
+```
 
 **Binary Tag Detection**:
 
@@ -56,6 +110,8 @@ pub enum DataLocation {
 ```
 
 **Streaming API**:
+
+**CRITICAL**: Verify that our streaming API infrastructure from the core library supports binary data extraction without loading entire payloads into memory.
 
 ```rust
 impl ExifReader {
@@ -113,20 +169,6 @@ impl BinaryHandler for JPEGBinaryHandler {
                     },
                 });
             }
-        }
-
-        // ICC Profile extraction
-        if let Some(icc_profile) = reader.get_binary_tag("ICC_Profile") {
-            tags.push(BinaryTag {
-                name: "ICC_Profile".to_string(),
-                size: icc_profile.len() as u64,
-                mime_type: Some("application/vnd.iccprofile".to_string()),
-                description: "Embedded ICC color profile".to_string(),
-                data_location: DataLocation::Embedded {
-                    offset: icc_profile.offset,
-                    size: icc_profile.size,
-                },
-            });
         }
 
         Ok(tags)
@@ -200,36 +242,19 @@ impl BinaryHandler for VideoBinaryHandler {
     fn extract_binary_tags(&self, reader: &ExifReader) -> Result<Vec<BinaryTag>> {
         let mut tags = Vec::new();
 
-        // Video thumbnail extraction from QuickTime/MP4
-        if let Some(video_thumbnails) = self.extract_video_thumbnails(reader)? {
-            for (index, thumbnail) in video_thumbnails.iter().enumerate() {
-                tags.push(BinaryTag {
-                    name: format!("VideoThumbnail{}", index + 1),
+        // Basic video thumbnail extraction only
+        // (Advanced video/audio extraction deferred to future milestones)
+        if let Some(thumbnail) = self.extract_first_video_thumbnail(reader)? {
+            tags.push(BinaryTag {
+                name: "VideoThumbnail".to_string(),
+                size: thumbnail.size,
+                mime_type: Some("image/jpeg".to_string()),
+                description: "Video thumbnail".to_string(),
+                data_location: DataLocation::Embedded {
+                    offset: thumbnail.offset,
                     size: thumbnail.size,
-                    mime_type: Some("image/jpeg".to_string()),
-                    description: format!("Video thumbnail {}", index + 1),
-                    data_location: DataLocation::Embedded {
-                        offset: thumbnail.offset,
-                        size: thumbnail.size,
-                    },
-                });
-            }
-        }
-
-        // Audio track extraction
-        if let Some(audio_tracks) = self.extract_audio_tracks(reader)? {
-            for (index, track) in audio_tracks.iter().enumerate() {
-                tags.push(BinaryTag {
-                    name: format!("AudioTrack{}", index + 1),
-                    size: track.size,
-                    mime_type: Some(track.codec.mime_type()),
-                    description: format!("Audio track {} ({})", index + 1, track.codec),
-                    data_location: DataLocation::Embedded {
-                        offset: track.offset,
-                        size: track.size,
-                    },
-                });
-            }
+                },
+            });
         }
 
         Ok(tags)
@@ -249,47 +274,28 @@ pub struct BinaryArgs {
     #[arg(short = 'b', long = "binary")]
     pub binary: bool,
 
-    /// Extract all binary tags
-    #[arg(short = 'a', long = "all")]
-    pub all: bool,
-
     /// Specific tag name to extract
-    pub tag_name: Option<String>,
-
-    /// Output file (default: stdout)
-    #[arg(short = 'o', long = "output")]
-    pub output: Option<PathBuf>,
+    pub tag_name: String,  // Required - we always need a tag name
+    
+    // Note: Output is always to stdout - no output file option needed
 }
 
-// CLI implementation
+// CLI implementation - stdout only, no file output option
 pub fn extract_binary_data(args: &BinaryArgs, input_file: &Path) -> Result<()> {
     let reader = ExifReader::from_file(input_file)?;
-
-    if args.all {
-        // Extract all binary tags
-        let binary_tags = reader.list_binary_tags()?;
-        for tag in binary_tags {
-            let output_path = format!("{}_{}",
-                input_file.file_stem().unwrap().to_str().unwrap(),
-                tag.name);
-            let mut output_file = File::create(output_path)?;
-            reader.stream_binary_tag(&tag.name, &mut output_file)?;
-            println!("Extracted: {} ({} bytes)", tag.name, tag.size);
-        }
-    } else if let Some(tag_name) = &args.tag_name {
-        // Extract specific tag
-        let mut output: Box<dyn Write> = if let Some(output_path) = &args.output {
-            Box::new(File::create(output_path)?)
-        } else {
-            Box::new(io::stdout())
-        };
-
-        let bytes_written = reader.stream_binary_tag(tag_name, &mut output)?;
-        if args.output.is_some() {
-            eprintln!("Extracted {} bytes to {}", bytes_written, args.output.as_ref().unwrap().display());
-        }
+    
+    // Always output to stdout
+    let mut stdout = io::stdout();
+    
+    // Use group resolver to find best matching tag
+    let available_tags = reader.list_binary_tags()?;
+    let resolver = GroupResolver::default();
+    
+    if let Some(tag) = resolver.resolve_binary_tag(&args.tag_name, &available_tags) {
+        // Stream directly to stdout
+        reader.stream_binary_tag(&tag.name, &mut stdout)?;
     } else {
-        return Err(ExifError::MissingBinaryTag);
+        return Err(ExifError::BinaryTagNotFound(args.tag_name.clone()));
     }
 
     Ok(())
@@ -302,31 +308,90 @@ pub fn extract_binary_data(args: &BinaryArgs, input_file: &Path) -> Result<()> {
 # Extract EXIF thumbnail
 exif-oxide -b ThumbnailImage photo.jpg > thumbnail.jpg
 
-# Extract RAW preview image
-exif-oxide -b PreviewImage camera.nef -o preview.jpg
+# Extract RAW preview image (uses group resolution to find best preview)
+exif-oxide -b PreviewImage camera.nef > preview.jpg
 
-# Extract ICC color profile
-exif-oxide -b ICC_Profile image.tiff > profile.icc
-
-# Extract all binary data from file
-exif-oxide -b -a video.mp4
-
-# List available binary tags
-exif-oxide --list-binary photo.jpg
+# Extract full resolution JPEG from RAW
+exif-oxide -b JpgFromRaw photo.cr2 > full_res.jpg
 ```
 
-### Phase 4: Advanced Features and Testing (Week 3)
+### Phase 4: Testing Infrastructure (Week 3)
+
+**Test Setup**:
+
+```rust
+// tests/binary_extraction_tests.rs
+use common::*;
+use std::process::Command;
+use sha2::{Sha256, Digest};
+
+#[test]
+fn test_binary_extraction_compatibility() {
+    // Check if we have required test images
+    let test_images = vec![
+        "test-images/Canon/canon_cr2.cr2",
+        "test-images/Nikon/nikon_nef.nef", 
+        "test-images/Sony/sony_arw.arw",
+        "test-images/jpeg_with_thumbnail.jpg",
+    ];
+    
+    // Request missing samples if needed
+    for image_path in &test_images {
+        if !Path::new(image_path).exists() {
+            eprintln!("Missing test image: {} - please add to test-images/", image_path);
+        }
+    }
+    
+    // Test each supported binary tag
+    let binary_tags = vec!["ThumbnailImage", "PreviewImage", "JpgFromRaw"];
+    
+    for test_image in test_images {
+        for tag in &binary_tags {
+            // Extract with ExifTool
+            let exiftool_output = Command::new("exiftool")
+                .args(&["-b", &format!("-{}", tag), test_image])
+                .output()
+                .expect("Failed to run exiftool");
+                
+            if !exiftool_output.stdout.is_empty() {
+                // Extract with exif-oxide
+                let oxide_output = Command::new("./target/release/exif-oxide")
+                    .args(&["-b", tag, test_image])
+                    .output()
+                    .expect("Failed to run exif-oxide");
+                    
+                // Compare SHA256 hashes
+                let exiftool_sha = Sha256::digest(&exiftool_output.stdout);
+                let oxide_sha = Sha256::digest(&oxide_output.stdout);
+                
+                assert_eq!(exiftool_sha, oxide_sha, 
+                    "Binary extraction mismatch for {} in {}", tag, test_image);
+                    
+                // Optionally save for debugging
+                if std::env::var("SAVE_BINARY_DEBUG").is_ok() {
+                    let debug_path = format!("tmp/{}/{}.jpg", 
+                        test_image.replace('/', "_"), tag);
+                    std::fs::create_dir_all(Path::new(&debug_path).parent().unwrap()).ok();
+                    std::fs::write(&debug_path, &oxide_output.stdout).ok();
+                }
+            }
+        }
+    }
+}
+```
+
+### Phase 5: Safety and Size Limits (Week 3)
 
 **Size Limits and Safety**:
 
 ```rust
 #[derive(Debug, Clone)]
 pub struct BinarySizeLimits {
-    pub max_thumbnail_size: u64,      // 10MB default
-    pub max_preview_size: u64,        // 50MB default
+    pub max_thumbnail_size: u64,      // 1MB default (conservative)
+    pub max_preview_size: u64,        // 10MB default (conservative)
     pub max_profile_size: u64,        // 1MB default
-    pub max_total_extraction: u64,    // 500MB default
-    pub warn_large_extraction: u64,   // 100MB default
+    pub max_total_extraction: u64,    // 50MB default
+    pub warn_large_extraction: u64,   // 5MB default
 }
 
 impl BinaryExtractor {
@@ -402,18 +467,21 @@ impl BinaryExtractor {
 ### Core Requirements
 
 - [ ] **CLI Compatibility**: `exif-oxide -b TagName file.jpg` works equivalent to ExifTool
-- [ ] **Streaming API**: Extract large binary data without loading into memory
-- [ ] **Format Coverage**: Support JPEG, TIFF, RAW, and video binary extraction
-- [ ] **Safety Limits**: Configurable size limits prevent excessive memory usage
+- [ ] **Group Resolution**: Emulate ExifTool's logic for finding best binary tag match
+- [ ] **Streaming API**: Verify existing API supports binary extraction without loading into memory
+- [ ] **Format Coverage**: Support JPEG, TIFF, RAW binary extraction (ThumbnailImage, PreviewImage, JpgFromRaw)
+- [ ] **Tag Filtering**: Include-list based approach for supported binary tags
+- [ ] **Safety Limits**: Conservative size limits prevent excessive memory usage
 - [ ] **Error Handling**: Graceful handling of missing or corrupted binary data
 
 ### Validation Tests
 
-- Extract thumbnails from JPEG files and verify they are valid images
-- Extract preview images from Canon CR2, Nikon NEF, Sony ARW files
-- Extract ICC profiles and validate they can be used by color management systems
-- Test with large video files to ensure streaming works correctly
-- Verify size limits prevent extraction of maliciously large data
+- [ ] **SHA Comparison**: Extract binary data with both tools and compare SHA256 hashes
+- [ ] **Test Coverage**: Use existing test-images/* samples for each manufacturer
+- [ ] **Missing Samples**: Check and request any missing RAW format samples
+- [ ] **Tag Support**: Test all tags in include-list (ThumbnailImage, PreviewImage, JpgFromRaw)
+- [ ] **Size Limits**: Verify conservative limits prevent malicious extraction
+- [ ] **Debug Output**: Optional saving to tmp/ directories for debugging
 
 ## Implementation Boundaries
 
@@ -427,9 +495,11 @@ impl BinaryExtractor {
 ### Non-Goals (Future Milestones)
 
 - **Binary data writing**: Only extraction, not modification
-- **Format conversion**: Extract data as-is, no format conversion
-- **Advanced video processing**: Basic preview/thumbnail extraction only
-- **Lens correction application**: Extract data only, not apply corrections
+- **Format conversion**: Extract data as-is, no format conversion  
+- **Advanced features**: No -a (all) flag, no --list-binary option
+- **Output options**: Stdout only, no -o output file option
+- **Complex video/audio**: Future milestone, only basic video thumbnail for now
+- **Lens correction**: Future milestone
 
 ## Dependencies and Prerequisites
 
@@ -450,8 +520,9 @@ impl BinaryExtractor {
 ### Memory Usage Risk
 
 - **Risk**: Large binary extractions could cause memory issues
-- **Mitigation**: Streaming API with configurable size limits
+- **Mitigation**: Streaming API with conservative default size limits (1MB thumbnail, 10MB preview)
 - **Implementation**: Process data in chunks, never load entire binary data
+- **Validation**: Compare extracted size against file size before extraction
 
 ### Security Risk: Binary Data Size
 
