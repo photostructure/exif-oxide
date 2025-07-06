@@ -30,9 +30,9 @@ After you think you're done implementing a milestone:
 
 ## Important Steps After Completing a Milestone
 
-1. Remove the completed milestone section from this document, $REPO_ROOT/docs/MILESTONES.md
-2. Concisely summarize the completed work and add it to $REPO_ROOT/docs/archive/DONE-MILESTONES.md.
-3. If you worked from a separate MILESTONES-$desc.md file, move it to $REPO_ROOT/docs/archive and edit with completion status and any surprising gotchas or tribal knowledge that tripped you up in the implementation.
+1. If there is a direct reference in $REPO_ROOT/docs/MILESTONES.md to the milestone, remove the completed milestone section from this document.
+2. Add a terse summary of the completed work to the end of $REPO_ROOT/docs/archive/DONE-MILESTONES.md.
+3. If you worked from a separate MILESTONES-$desc.md file, move it to $REPO_ROOT/docs/archive and edit with completion status and any surprising gotchas or tribal knowledge that tripped you up in the implementation. If you can, remove spurious or incorrect code or skipped tasks (due to in-flight strategic changes) to make sure the archived doc concisely preserves what was actually done (and not mislead the Engineers of Tomorrow if they ever refer to the doc)
 
 ## Core Principles
 
@@ -108,12 +108,6 @@ This milestone plan embraces the reality that we're building a complex system in
 - 72 namespace support (Adobe, IPTC, PLUS)
 - Structure flattening and namespace management
 - **Planning**: See [MILESTONE-15-XMP-XML.md](milestones/MILESTONE-15-XMP-XML.md)
-
-### Milestone 16: MIME Type Detection  
-- File type detection for all MIMETYPES.md formats
-- Magic number validation and extension handling
-- Foundation for format-specific processing
-- **Planning**: See [MILESTONE-16-MIME-Type-Detection.md](milestones/MILESTONE-16-MIME-Type-Detection.md)
 
 ### Milestone 17: RAW Image Format Support (Consolidated)
 - Unified RAW processing foundation for all manufacturers
