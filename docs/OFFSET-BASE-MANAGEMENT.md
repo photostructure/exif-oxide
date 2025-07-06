@@ -1,4 +1,4 @@
-# TODO: Offset Base Management Design for exif-oxide
+# Offset Base Management Design for exif-oxide
 
 ## Problem Statement
 
@@ -6,7 +6,7 @@ ExifTool has a sophisticated offset calculation system that handles various base
 
 ## Update from Milestone 14
 
-We haven't adopted this yet, but Milestone 22 and 24 will, incrementally. See Offset Management Complexity Analysis in $REPO_ROOT/docs/archive/MILESTONE-14-Nikon.md
+We haven't adopted this yet, but Milestone 17 (RAW Format Support) and Milestone 22 (Advanced Write Support) will need it incrementally. See Offset Management Complexity Analysis in $REPO_ROOT/docs/archive/MILESTONE-14-Nikon.md for why simpler offset schemes suffice for some manufacturers like Nikon.
 
 ## Research Summary: ExifTool's Offset Management Architecture
 
