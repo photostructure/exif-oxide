@@ -157,7 +157,13 @@ impl RawFormatHandler for SonyRawHandler {
 
 #### 3.0 Advanced Offset Management System
 
-**Context**: While simple manufacturers like Nikon work perfectly with basic offset schemes, complex manufacturers (Leica, Panasonic, some Sony) require sophisticated offset management as identified in the gap analysis.
+**Context**: While simple manufacturers like Nikon work perfectly with basic offset schemes (as proven in Milestone 14), complex manufacturers (Leica, Panasonic, some Sony) require sophisticated offset management.
+
+**See [OFFSET-BASE-MANAGEMENT.md](../../OFFSET-BASE-MANAGEMENT.md) for comprehensive design details** including:
+- ExifTool's offset management architecture research
+- Core directory info structure and offset calculation schemes
+- Manufacturer-specific patterns (Canon, Nikon, Sony, Leica)
+- Implementation recommendations for exif-oxide
 
 **Advanced Offset Management Foundation**:
 
@@ -412,6 +418,7 @@ impl RawProcessor {
 - **Existing Nikon Implementation**: Milestone 14 patterns for complex manufacturer handling
 - **TIFF Processing**: Existing TIFF infrastructure in exif-oxide
 - **MIMETYPES.md**: Complete list of formats to support
+- **[OFFSET-BASE-MANAGEMENT.md](../../OFFSET-BASE-MANAGEMENT.md)**: Critical offset calculation patterns for complex manufacturers
 
 ### Implementation References
 
@@ -420,3 +427,5 @@ impl RawProcessor {
 - **DNG.pm**: Multi-manufacturer container approach
 
 This milestone establishes comprehensive RAW format support through a unified foundation while respecting manufacturer-specific requirements. The phased approach ensures rapid delivery of basic functionality while building toward complete RAW ecosystem support.
+
+**Note**: For detailed offset management implementation guidance, see [OFFSET-BASE-MANAGEMENT.md](../../OFFSET-BASE-MANAGEMENT.md).
