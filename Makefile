@@ -1,4 +1,4 @@
-.PHONY: check fmt-check fmt lint test fix build doc clean patch-exiftool codegen codegen-simple-tables sync update audit precommit help snapshot-generate snapshot-tests snapshots
+.PHONY: check fmt-check fmt lint test fix build doc clean patch-exiftool codegen sync update audit precommit help snapshot-generate snapshot-tests snapshots
 
 # Run all checks without modifying (for CI)
 check: fmt-check lint test
@@ -55,24 +55,14 @@ patch-exiftool:
 	cd codegen && perl patch_exiftool_modules.pl
 	@echo "ExifTool modules patched successfully"
 
-# Extract simple tables from ExifTool
-codegen-simple-tables:
-	@echo "Extracting simple tables from ExifTool..."
-	cd codegen && perl extract_simple_tables.pl > generated/simple_tables.json
-	@echo "Generated: codegen/generated/simple_tables.json"
-
 # Check that all Perl extractors are working correctly
 check-extractors:
 	$(MAKE) -C codegen -f Makefile.modular check-extractors
 
 # Extract EXIF tags from ExifTool and regenerate Rust code
-codegen: codegen-simple-tables
-	@echo "Extracting tag tables from ExifTool..."
-	perl codegen/extract_tables.pl > codegen/generated/tag_tables.json
-	@echo "Generating Rust code from extractions..."
-	cd codegen && cargo run -- generated/tag_tables.json --output-dir ../src/generated
-	@echo "Code generation complete"
-
+codegen:
+	@echo "Running parallel code generation (4 jobs)..."
+	$(MAKE) -C codegen -f Makefile.modular -j4 codegen
 # Extract all ExifTool algorithms and regenerate code  
 sync: codegen
 	cargo build

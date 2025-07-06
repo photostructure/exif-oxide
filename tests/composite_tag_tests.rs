@@ -56,10 +56,10 @@ fn test_composite_tag_definition_structure() {
             "Composite tag should have non-empty name"
         );
 
-        // Should have proper groups (typically including "Composite")
+        // Should have a table (typically "Main", "EXIF", or "GPS")
         assert!(
-            !composite_def.groups.is_empty(),
-            "Composite tag should have groups"
+            !composite_def.table.is_empty(),
+            "Composite tag should have table"
         );
 
         // Either require or desire dependencies should be present (or both)
@@ -69,8 +69,8 @@ fn test_composite_tag_definition_structure() {
             // Some composite tags might not have explicit dependencies
             // but should have value_conv logic
             assert!(
-                composite_def.value_conv.is_some(),
-                "Composite tag {} should have dependencies or value_conv",
+                composite_def.value_conv_ref.is_some(),
+                "Composite tag {} should have dependencies or value_conv_ref",
                 composite_def.name
             );
         }
@@ -79,8 +79,8 @@ fn test_composite_tag_definition_structure() {
 
 #[test]
 fn test_composite_tag_lookup_by_name() {
-    // Test the COMPOSITE_TAG_BY_NAME lookup table
-    use exif_oxide::generated::COMPOSITE_TAG_BY_NAME;
+    // Test the COMPOSITE_TAG_LOOKUP lookup table (aliased as COMPOSITE_TAG_BY_NAME)
+    use exif_oxide::COMPOSITE_TAG_BY_NAME;
 
     // Should be able to look up our implemented composite tags
     assert!(COMPOSITE_TAG_BY_NAME.contains_key("ImageSize"));
@@ -137,7 +137,7 @@ fn test_composite_tag_integration_with_real_image() {
 #[test]
 fn test_print_conv_integration_structure() {
     // Test that PrintConv integration structure is in place
-    use exif_oxide::generated::COMPOSITE_TAG_BY_NAME;
+    use exif_oxide::COMPOSITE_TAG_BY_NAME;
 
     // Test with a known composite tag definition that has PrintConv
     if let Some(shutter_speed_def) = COMPOSITE_TAG_BY_NAME.get("ShutterSpeed") {
@@ -148,7 +148,7 @@ fn test_print_conv_integration_structure() {
         );
 
         if let Some(print_conv_ref) = shutter_speed_def.print_conv_ref {
-            assert_eq!(print_conv_ref, "composite_shutterspeed_print_conv");
+            assert_eq!(print_conv_ref, "shutterspeed_print_conv");
         }
     }
 
@@ -168,33 +168,24 @@ fn test_print_conv_integration_structure() {
 #[test]
 fn test_multi_pass_composite_dependencies() {
     // Test that composite-on-composite dependencies are resolved correctly
-    use exif_oxide::generated::COMPOSITE_TAG_BY_NAME;
+    use exif_oxide::COMPOSITE_TAG_BY_NAME;
 
     // Verify the expected dependency chains exist in the definitions
 
     // Chain 1: ScaleFactor35efl -> CircleOfConfusion -> DOF/HyperfocalDistance
     let circle_def = COMPOSITE_TAG_BY_NAME.get("CircleOfConfusion").unwrap();
-    let has_scale_factor_dep = circle_def
-        .require
-        .iter()
-        .any(|(_idx, name)| *name == "ScaleFactor35efl");
+    let has_scale_factor_dep = circle_def.require.contains(&"ScaleFactor35efl");
     assert!(
         has_scale_factor_dep,
         "CircleOfConfusion should require ScaleFactor35efl"
     );
 
     let dof_def = COMPOSITE_TAG_BY_NAME.get("DOF").unwrap();
-    let has_circle_dep = dof_def
-        .require
-        .iter()
-        .any(|(_idx, name)| *name == "CircleOfConfusion");
+    let has_circle_dep = dof_def.require.contains(&"CircleOfConfusion");
     assert!(has_circle_dep, "DOF should require CircleOfConfusion");
 
     let hyperfocal_def = COMPOSITE_TAG_BY_NAME.get("HyperfocalDistance").unwrap();
-    let has_circle_dep = hyperfocal_def
-        .require
-        .iter()
-        .any(|(_idx, name)| *name == "CircleOfConfusion");
+    let has_circle_dep = hyperfocal_def.require.contains(&"CircleOfConfusion");
     assert!(
         has_circle_dep,
         "HyperfocalDistance should require CircleOfConfusion"
@@ -202,22 +193,13 @@ fn test_multi_pass_composite_dependencies() {
 
     // Chain 2: ImageSize -> Megapixels
     let megapixels_def = COMPOSITE_TAG_BY_NAME.get("Megapixels").unwrap();
-    let has_imagesize_dep = megapixels_def
-        .require
-        .iter()
-        .any(|(_idx, name)| *name == "ImageSize");
+    let has_imagesize_dep = megapixels_def.require.contains(&"ImageSize");
     assert!(has_imagesize_dep, "Megapixels should require ImageSize");
 
     // Chain 3: GPSLatitude & GPSLongitude -> GPSPosition
     let gps_position_def = COMPOSITE_TAG_BY_NAME.get("GPSPosition").unwrap();
-    let has_gps_lat_dep = gps_position_def
-        .require
-        .iter()
-        .any(|(_idx, name)| *name == "GPSLatitude");
-    let has_gps_lon_dep = gps_position_def
-        .require
-        .iter()
-        .any(|(_idx, name)| *name == "GPSLongitude");
+    let has_gps_lat_dep = gps_position_def.require.contains(&"GPSLatitude");
+    let has_gps_lon_dep = gps_position_def.require.contains(&"GPSLongitude");
     assert!(has_gps_lat_dep, "GPSPosition should require GPSLatitude");
     assert!(has_gps_lon_dep, "GPSPosition should require GPSLongitude");
 }
@@ -315,9 +297,7 @@ fn test_multi_pass_simulation() {
     let built_composites = HashSet::new();
 
     // Check can_build_composite for various dependency scenarios
-    if let Some(scale_factor_def) =
-        exif_oxide::generated::COMPOSITE_TAG_BY_NAME.get("ScaleFactor35efl")
-    {
+    if let Some(scale_factor_def) = exif_oxide::COMPOSITE_TAG_BY_NAME.get("ScaleFactor35efl") {
         // ScaleFactor35efl should be buildable in pass 1 (has base tags)
         let can_build = exif_oxide::composite_tags::can_build_composite(
             scale_factor_def,
@@ -340,8 +320,7 @@ fn test_multi_pass_simulation() {
         TagValue::String("1.5".to_string()),
     );
 
-    if let Some(circle_def) = exif_oxide::generated::COMPOSITE_TAG_BY_NAME.get("CircleOfConfusion")
-    {
+    if let Some(circle_def) = exif_oxide::COMPOSITE_TAG_BY_NAME.get("CircleOfConfusion") {
         let can_build = exif_oxide::composite_tags::can_build_composite(
             circle_def,
             &available_tags,

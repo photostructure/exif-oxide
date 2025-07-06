@@ -23,7 +23,7 @@ pub fn compute_composite_tag(
         // ImageSize handles its own dependency logic internally
     } else {
         // Check if all required dependencies are available for other composites
-        for (_index, tag_name) in composite_def.require {
+        for tag_name in composite_def.require {
             if !available_tags.contains_key(*tag_name) {
                 trace!(
                     "Missing required dependency for {}: {}",
@@ -62,7 +62,7 @@ pub fn compute_composite_tag(
             let mut available_deps = Vec::new();
             let mut missing_deps = Vec::new();
 
-            for (_index, tag_name) in composite_def
+            for tag_name in composite_def
                 .require
                 .iter()
                 .chain(composite_def.desire.iter())

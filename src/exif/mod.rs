@@ -328,7 +328,7 @@ impl ExifReader {
                     group1: "Composite".to_string(),
                     name: name.to_string(),
                     value: raw_value.clone(),
-                    print: raw_value.to_string(),
+                    print: raw_value.clone(),
                 };
 
                 entries.push(entry);

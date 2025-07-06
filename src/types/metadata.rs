@@ -83,21 +83,24 @@ pub struct TagEntry {
     /// - Make: `TagValue::String("Canon")` (no ValueConv needed)
     pub value: TagValue,
 
-    /// The display string after PrintConv processing.
+    /// The display value after PrintConv processing.
     ///
-    /// This is the human-readable representation:
-    /// - Numbers may be formatted ("4.0" not "4")
-    /// - Units may be added ("24.0 mm")
-    /// - Coded values decoded ("Rotate 90 CW" not "6")
+    /// This can be either:
+    /// - A string for human-readable formatting (e.g., "1/100", "24.0 mm", "Rotate 90 CW")
+    /// - A numeric value for data that should remain numeric in JSON (e.g., ISO: 100, FNumber: 4.0)
     ///
-    /// If no PrintConv exists, this equals `value.to_string()`.
+    /// PrintConv functions decide the appropriate type based on the tag's semantics:
+    /// - Display-oriented tags return strings
+    /// - Data-oriented tags may pass through numeric values
     ///
-    /// # ExifTool JSON Compatibility
+    /// If no PrintConv exists, this equals the original `value`.
     ///
-    /// When serializing to JSON, some numeric PrintConv results
-    /// (like FNumber's "4.0") are encoded as JSON numbers, not strings.
-    /// The CLI handles this compatibility layer.
-    pub print: String,
+    /// # Design Note
+    ///
+    /// This differs from ExifTool where PrintConv always returns strings.
+    /// We chose this approach to avoid regex-based type guessing during JSON serialization.
+    /// See docs/design/PRINTCONV-DESIGN-DECISIONS.md for details.
+    pub print: TagValue,
 }
 
 /// Represents extracted EXIF data from an image
@@ -153,6 +156,8 @@ impl ExifData {
         &mut self,
         numeric_tags: Option<&std::collections::HashSet<String>>,
     ) {
+        use tracing::debug;
+
         self.legacy_tags.clear();
 
         for entry in &self.tags {
@@ -165,19 +170,13 @@ impl ExifData {
 
             if should_use_value {
                 // Use value field for -# tags
+                debug!("Tag {}: using numeric value {:?}", key, entry.value);
                 self.legacy_tags.insert(key, entry.value.clone());
             } else {
-                // Use PrintConv (human-readable string) unless PrintConv is missing/invalid
-                // If PrintConv provides meaningful conversion, use it; otherwise use ValueConv
-                let value_as_string = format!("{}", entry.value);
-                if entry.print != value_as_string && !entry.print.is_empty() {
-                    // PrintConv provides meaningful conversion (like "Rotate 270 CW" instead of "6")
-                    self.legacy_tags
-                        .insert(key, TagValue::String(entry.print.clone()));
-                } else {
-                    // No meaningful PrintConv available, use ValueConv to preserve data types
-                    self.legacy_tags.insert(key, entry.value.clone());
-                }
+                // Use PrintConv result directly - it already has the correct type
+                // (string for display values, numeric for data values)
+                debug!("Tag {}: using print value {:?}", key, entry.print);
+                self.legacy_tags.insert(key, entry.print.clone());
             }
         }
     }

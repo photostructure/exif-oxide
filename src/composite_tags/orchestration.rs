@@ -22,7 +22,7 @@ pub fn handle_unresolved_composites(unresolved_composites: &[&CompositeTagDef]) 
 
     for composite_def in unresolved_composites {
         let mut missing_deps = Vec::new();
-        for (_index, tag_name) in composite_def.require {
+        for tag_name in composite_def.require {
             // Note: We could make this more detailed by checking available_tags/built_composites
             // but for now, just log the unresolved composite and its requirements
             missing_deps.push(*tag_name);
@@ -38,11 +38,11 @@ pub fn handle_unresolved_composites(unresolved_composites: &[&CompositeTagDef]) 
 /// Apply ValueConv and PrintConv transformations to composite tag values
 /// Returns tuple of (value, print) where:
 /// - value: The computed value (composite tags don't have ValueConv)
-/// - print: The result after PrintConv (or value.to_string() if no PrintConv)
+/// - print: The result after PrintConv (or value if no PrintConv)
 pub fn apply_composite_conversions(
     computed_value: &TagValue,
     composite_def: &CompositeTagDef,
-) -> (TagValue, String) {
+) -> (TagValue, TagValue) {
     use crate::registry;
 
     let value = computed_value.clone();
@@ -51,7 +51,7 @@ pub fn apply_composite_conversions(
     let print = if let Some(print_conv_ref) = composite_def.print_conv_ref {
         registry::apply_print_conv(print_conv_ref, &value)
     } else {
-        value.to_string()
+        value.clone()
     };
 
     (value, print)

@@ -82,12 +82,12 @@ impl ExifReader {
     /// ExifTool: lib/Image/ExifTool.pm conversion pipeline
     /// Returns tuple of (value, print) where:
     /// - value: The result after ValueConv (or raw if no ValueConv)
-    /// - print: The result after PrintConv (or value.to_string() if no PrintConv)
+    /// - print: The result after PrintConv (or value if no PrintConv)
     pub(crate) fn apply_conversions(
         &self,
         raw_value: &TagValue,
         tag_def: Option<&'static crate::generated::tags::TagDef>,
-    ) -> (TagValue, String) {
+    ) -> (TagValue, TagValue) {
         use crate::registry;
 
         let mut value = raw_value.clone();
@@ -99,15 +99,15 @@ impl ExifReader {
             }
         }
 
-        // Apply PrintConv second (if present) to get human-readable string
+        // Apply PrintConv second (if present) to get display value
         let print = if let Some(tag_def) = tag_def {
             if let Some(print_conv_ref) = tag_def.print_conv_ref {
                 registry::apply_print_conv(print_conv_ref, &value)
             } else {
-                value.to_string()
+                value.clone()
             }
         } else {
-            value.to_string()
+            value.clone()
         };
 
         (value, print)
