@@ -195,7 +195,12 @@ fn generate_simple_table_code(hash_name: &str, table_data: &ExtractedTable) -> R
     for entry in &sorted_entries {
         if let (Some(key), Some(value)) = (&entry.key, &entry.value) {
             let key_value = if key_type == "String" {
-                format!("\"{}\"", key)
+                // Handle single quote specially for Rust string literals
+                if key == "'" {
+                    "\"'\"".to_string()
+                } else {
+                    format!("\"{}\"", escape_string(key))
+                }
             } else {
                 key.clone()
             };

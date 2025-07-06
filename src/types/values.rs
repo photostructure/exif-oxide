@@ -5,6 +5,7 @@
 //! display formatting.
 
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 /// Represents a tag value that can be of various types
 ///
@@ -72,6 +73,12 @@ pub enum TagValue {
     SRationalArray(Vec<(i32, i32)>),
     /// Raw binary data when type is unknown
     Binary(Vec<u8>),
+    /// Nested object for structured data (e.g., XMP structures)
+    /// Used for hierarchical metadata like ContactInfo, LocationCreated
+    Object(HashMap<String, TagValue>),
+    /// Array of heterogeneous values (e.g., XMP RDF containers)
+    /// Used for RDF Bag/Seq containers and mixed-type arrays
+    Array(Vec<TagValue>),
 }
 
 impl TagValue {
@@ -156,6 +163,38 @@ impl TagValue {
 
     // gps_to_decimal_with_ref REMOVED in Milestone 8e
     // GPS coordinate conversion moved to Composite tag system
+
+    /// Get as object (HashMap) if this is an Object variant
+    pub fn as_object(&self) -> Option<&HashMap<String, TagValue>> {
+        match self {
+            TagValue::Object(map) => Some(map),
+            _ => None,
+        }
+    }
+
+    /// Get as mutable object (HashMap) if this is an Object variant
+    pub fn as_object_mut(&mut self) -> Option<&mut HashMap<String, TagValue>> {
+        match self {
+            TagValue::Object(map) => Some(map),
+            _ => None,
+        }
+    }
+
+    /// Get as array if this is an Array variant
+    pub fn as_array(&self) -> Option<&Vec<TagValue>> {
+        match self {
+            TagValue::Array(vec) => Some(vec),
+            _ => None,
+        }
+    }
+
+    /// Get as mutable array if this is an Array variant
+    pub fn as_array_mut(&mut self) -> Option<&mut Vec<TagValue>> {
+        match self {
+            TagValue::Array(vec) => Some(vec),
+            _ => None,
+        }
+    }
 }
 
 impl std::fmt::Display for TagValue {
@@ -223,6 +262,30 @@ impl std::fmt::Display for TagValue {
                 write!(f, "]")
             }
             TagValue::Binary(data) => write!(f, "[{} bytes of binary data]", data.len()),
+            TagValue::Object(map) => {
+                // For display, show as JSON-like structure
+                write!(f, "{{")?;
+                let mut first = true;
+                for (key, value) in map {
+                    if !first {
+                        write!(f, ", ")?;
+                    }
+                    write!(f, r#""{key}": {value}"#)?;
+                    first = false;
+                }
+                write!(f, "}}")
+            }
+            TagValue::Array(values) => {
+                // For display, show as JSON-like array
+                write!(f, "[")?;
+                for (i, value) in values.iter().enumerate() {
+                    if i > 0 {
+                        write!(f, ", ")?;
+                    }
+                    write!(f, "{value}")?;
+                }
+                write!(f, "]")
+            }
         }
     }
 }
@@ -311,5 +374,95 @@ mod tests {
         assert_eq!(tag1, tag2);
         assert_eq!(tag2, tag3);
         assert_eq!(tag3, tag4);
+    }
+
+    #[test]
+    fn test_object_variant() {
+        let mut map = HashMap::new();
+        map.insert("city".to_string(), TagValue::string("New York"));
+        map.insert("country".to_string(), TagValue::string("USA"));
+
+        let tag_value = TagValue::Object(map);
+
+        assert!(tag_value.as_object().is_some());
+        assert_eq!(tag_value.as_object().unwrap().len(), 2);
+        assert_eq!(
+            tag_value
+                .as_object()
+                .unwrap()
+                .get("city")
+                .unwrap()
+                .as_string(),
+            Some("New York")
+        );
+    }
+
+    #[test]
+    fn test_array_variant() {
+        let values = vec![
+            TagValue::string("keyword1"),
+            TagValue::string("keyword2"),
+            TagValue::U32(123),
+        ];
+
+        let tag_value = TagValue::Array(values);
+
+        assert!(tag_value.as_array().is_some());
+        assert_eq!(tag_value.as_array().unwrap().len(), 3);
+        assert_eq!(
+            tag_value.as_array().unwrap()[0].as_string(),
+            Some("keyword1")
+        );
+    }
+
+    #[test]
+    fn test_nested_structures() {
+        // Test nested XMP-like structure
+        let mut contact_info = HashMap::new();
+        contact_info.insert("CiAdrCity".to_string(), TagValue::string("Paris"));
+        contact_info.insert("CiAdrCtry".to_string(), TagValue::string("France"));
+
+        let mut main_object = HashMap::new();
+        main_object.insert("ContactInfo".to_string(), TagValue::Object(contact_info));
+        main_object.insert(
+            "Keywords".to_string(),
+            TagValue::Array(vec![TagValue::string("travel"), TagValue::string("europe")]),
+        );
+
+        let xmp = TagValue::Object(main_object);
+
+        // Test access to nested data
+        let contact = xmp
+            .as_object()
+            .unwrap()
+            .get("ContactInfo")
+            .unwrap()
+            .as_object()
+            .unwrap();
+        assert_eq!(contact.get("CiAdrCity").unwrap().as_string(), Some("Paris"));
+
+        let keywords = xmp
+            .as_object()
+            .unwrap()
+            .get("Keywords")
+            .unwrap()
+            .as_array()
+            .unwrap();
+        assert_eq!(keywords.len(), 2);
+    }
+
+    #[test]
+    fn test_display_formatting() {
+        // Test Object display
+        let mut map = HashMap::new();
+        map.insert("key1".to_string(), TagValue::string("value1"));
+        map.insert("key2".to_string(), TagValue::U32(42));
+        let obj = TagValue::Object(map);
+        let display = format!("{obj}");
+        assert!(display.contains(r#""key1": value1"#) || display.contains(r#""key2": 42"#));
+
+        // Test Array display
+        let arr = TagValue::Array(vec![TagValue::string("item1"), TagValue::U32(123)]);
+        assert_eq!(format!("{arr}"), "[item1, 123]");
     }
 }
