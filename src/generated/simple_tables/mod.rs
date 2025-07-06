@@ -7,3 +7,4 @@ pub mod canon;
 pub mod exif;
 pub mod file_types;
 pub mod nikon;
+pub mod xmp;

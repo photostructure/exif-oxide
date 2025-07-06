@@ -28,6 +28,8 @@ sub convert_my_to_package_variables {
         @variables_to_convert = qw(canonQuality canonImageSize canonWhiteBalance pictureStyles);
     } elsif ($module_name eq 'Nikon.pm') {
         @variables_to_convert = qw(nikonLensIDs);
+    } elsif ($module_name eq 'XMP.pm') {
+        @variables_to_convert = qw(xmpNS charName charNum latConv longConv);
     }
     
     return unless @variables_to_convert;
