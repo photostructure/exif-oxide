@@ -36,7 +36,11 @@ my @all_lookups;
 
 # Process each file type lookup table
 for my $table_config (@file_type_tables) {
-    my $module_file = "$Bin/../../third-party/exiftool/lib/Image/ExifTool/$table_config->{module}";
+    # Special case for ExifTool.pm which is at the root of Image/
+    my $module_path = ($table_config->{module} eq 'ExifTool.pm') 
+        ? "Image/ExifTool.pm"
+        : "Image/ExifTool/$table_config->{module}";
+    my $module_file = "$Bin/../../third-party/exiftool/lib/$module_path";
     my $hash_name = $table_config->{hash_name};
     
     print STDERR "\nExtracting $hash_name from $table_config->{module}...\n";
