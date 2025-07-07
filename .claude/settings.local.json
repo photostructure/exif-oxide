@@ -157,7 +157,9 @@
       "Bash(RUST_LOG=trace cargo test test_exposuretime_printconv_json_formatting --test exposuretime_printconv_test -- --nocapture)",
       "Bash(codegen/target/release/generate_rust:*)",
       "Bash(RUST_BACKTRACE=1 cargo test test_scan_jpeg_segments_with_app1_xmp --lib -- --nocapture)",
-      "Bash(RUST_LOG=debug cargo run --release -- third-party/exiftool/t/images/XMP.jpg)"
+      "Bash(RUST_LOG=debug cargo run --release -- third-party/exiftool/t/images/XMP.jpg)",
+      "Bash(RUST_LOG=debug cargo run --release -- third-party/exiftool/t/images/ExtendedXMP.jpg)",
+      "Bash(od:*)"
     ],
     "deny": []
   }
