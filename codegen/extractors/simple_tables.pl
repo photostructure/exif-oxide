@@ -29,7 +29,7 @@ use ExifToolExtract qw(
 # Read configuration file
 my $config = load_json_config("$Bin/../simple_tables.json");
 my @tables = grep { 
-    !$_->{extraction_type} || $_->{extraction_type} eq 'simple'
+    !$_->{extraction_type} || $_->{extraction_type} eq 'simple' || $_->{extraction_type} eq 'boolean_set'
 } @{$config->{tables}};
 
 print STDERR "Processing " . scalar(@tables) . " simple lookup tables...\n";

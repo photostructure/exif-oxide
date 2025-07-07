@@ -117,6 +117,8 @@ pub struct TableConfig {
     pub key_type: Option<String>,
     #[serde(default)]
     pub extraction_type: Option<String>,
+    #[serde(default)]
+    pub value_type: Option<String>,
     pub description: String,
 }
 

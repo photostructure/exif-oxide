@@ -6,6 +6,7 @@
 use anyhow::{Context, Result};
 use clap::{Arg, Command};
 use std::fs;
+use std::path::Path;
 
 mod common;
 mod schemas;
@@ -19,6 +20,8 @@ use generators::{
     generate_conversion_refs,
     generate_supported_tags,
     generate_simple_tables,
+    generate_file_type_lookup,
+    generate_regex_patterns,
     generate_mod_file,
 };
 
@@ -41,18 +44,10 @@ fn main() -> Result<()> {
                 .help("Path to tag extraction JSON")
                 .default_value("generated/tag_tables.json"),
         )
-        .arg(
-            Arg::new("simple-tables")
-                .long("simple-tables")
-                .value_name("FILE")
-                .help("Path to simple tables JSON")
-                .default_value("generated/simple_tables.json"),
-        )
         .get_matches();
 
     let output_dir = matches.get_one::<String>("output").unwrap();
     let tag_data_path = matches.get_one::<String>("tag-data").unwrap();
-    let simple_tables_path = matches.get_one::<String>("simple-tables").unwrap();
 
     // We're running from the codegen directory
     let current_dir = std::env::current_dir()?;
@@ -101,14 +96,75 @@ fn main() -> Result<()> {
         println!("Tag data file not found!");
     }
 
-    // Process simple tables
-    let simple_tables_file = current_dir.join(simple_tables_path);
-    println!("Looking for simple tables at: {}", simple_tables_file.display());
-    if simple_tables_file.exists() {
-        println!("\n📊 Processing simple tables...");
-        generate_simple_tables(&simple_tables_file, output_dir)?;
+    // Process simple tables from individual files
+    let simple_tables_dir = current_dir.join("generated/simple_tables");
+    println!("Looking for simple tables directory at: {}", simple_tables_dir.display());
+    if simple_tables_dir.exists() && simple_tables_dir.is_dir() {
+        println!("\n📊 Processing simple tables from individual files...");
+        generate_simple_tables(&simple_tables_dir, output_dir)?;
     } else {
-        println!("Simple tables file not found!");
+        println!("Simple tables directory not found!");
+    }
+
+    // Process file type lookup data
+    let file_type_lookup_file = current_dir.join("generated/file_type_lookup.json");
+    println!("Looking for file type lookup at: {}", file_type_lookup_file.display());
+    if file_type_lookup_file.exists() {
+        println!("\n🔍 Processing file type lookup data...");
+        generate_file_type_lookup(&file_type_lookup_file, output_dir)?;
+    } else {
+        println!("File type lookup data not found!");
+    }
+
+    // Process regex patterns data
+    let regex_patterns_file = current_dir.join("generated/regex_patterns.json");
+    println!("Looking for regex patterns at: {}", regex_patterns_file.display());
+    if regex_patterns_file.exists() {
+        println!("\n🎯 Processing regex patterns data...");
+        // TODO: Temporarily disabled due to UTF-8 error
+        // generate_regex_patterns(&regex_patterns_file, output_dir)?;
+        println!("⚠️  Skipping regex patterns due to UTF-8 encoding issue");
+    } else {
+        println!("Regex patterns data not found!");
+    }
+    
+    // Update file_types mod.rs to include generated modules
+    let file_types_mod_path = format!("{}/simple_tables/file_types/mod.rs", output_dir);
+    if Path::new(&file_types_mod_path).exists() {
+        println!("\n📝 Updating file_types mod.rs with generated modules...");
+        let mut content = fs::read_to_string(&file_types_mod_path)?;
+        
+        // Check if modules are already declared
+        let mut updated = false;
+        
+        if !content.contains("pub mod file_type_lookup;") {
+            // Find where to insert the module declarations (after other module declarations)
+            if let Some(pos) = content.find("\n// Re-export") {
+                let module_decls = "pub mod file_type_lookup;\npub mod magic_numbers;\n\n";
+                content.insert_str(pos, &format!("\n{}", module_decls));
+                updated = true;
+            }
+        }
+        
+        // Add re-exports if not present
+        if !content.contains("pub use file_type_lookup::") {
+            // Find the end of existing re-exports
+            if let Some(pos) = content.rfind("pub use") {
+                if let Some(end_pos) = content[pos..].find(";\n") {
+                    let insert_pos = pos + end_pos + 2;
+                    let re_exports = "pub use file_type_lookup::{resolve_file_type, get_primary_format, supports_format, extensions_for_format};\npub use magic_numbers::{get_magic_pattern, get_magic_file_types};\n";
+                    content.insert_str(insert_pos, re_exports);
+                    updated = true;
+                }
+            }
+        }
+        
+        if updated {
+            fs::write(&file_types_mod_path, content)?;
+            println!("  ✓ Updated file_types mod.rs with file_type_lookup and magic_numbers modules");
+        } else {
+            println!("  ✓ file_types mod.rs already contains all necessary declarations");
+        }
     }
 
     // Generate module file
