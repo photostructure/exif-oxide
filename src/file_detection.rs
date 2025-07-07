@@ -14,9 +14,7 @@
 //! - Conflict resolution patterns
 //! - Error recovery mechanisms
 
-use crate::generated::simple_tables::file_types::{
-    lookup_magic_number_patterns, lookup_mime_types, resolve_file_type,
-};
+use crate::generated::simple_tables::file_types::lookup_mime_types;
 use std::io::{Read, Seek};
 use std::path::Path;
 
@@ -149,6 +147,7 @@ impl FileTypeDetector {
         let normalized_ext = self.normalize_extension(extension);
 
         // Resolve through fileTypeLookup with alias following
+        use crate::generated::simple_tables::file_types::resolve_file_type;
         if let Some((_formats, _description)) = resolve_file_type(&normalized_ext) {
             // For most cases, return the extension itself as candidate
             // Special case: HEIC/HEIF extensions should use MOV format for detection
@@ -182,6 +181,7 @@ impl FileTypeDetector {
 
     /// Convert Perl regex pattern to Rust regex pattern
     /// ExifTool patterns use Perl syntax that needs conversion for Rust regex crate
+    #[allow(dead_code)]
     fn convert_perl_pattern_to_rust(&self, pattern: &str) -> String {
         // Convert common Perl regex patterns to Rust-compatible patterns
         // These conversions preserve ExifTool's exact matching behavior
@@ -219,6 +219,7 @@ impl FileTypeDetector {
 
     /// Match binary magic patterns using specialized logic for common cases
     /// This handles patterns that mix hex bytes with ASCII text more reliably than regex
+    #[allow(dead_code)]
     fn match_binary_magic_pattern(&self, file_type: &str, pattern: &str, buffer: &[u8]) -> bool {
         // Handle specific patterns that are known to be problematic with regex
         match file_type {
@@ -382,37 +383,16 @@ impl FileTypeDetector {
             return self.validate_tiff_raw_format(file_type, buffer);
         }
 
-        // Use ExifTool's generated magic number patterns
-        // ExifTool.pm:2964 - `next if $buff !~ /^$magicNumber{$type}/s`
-        if let Some(pattern) = lookup_magic_number_patterns(file_type) {
-            // Use specialized binary pattern matching for patterns with hex bytes
-            // This is more reliable than trying to convert Perl regex to Rust regex
-            self.match_binary_magic_pattern(file_type, pattern, buffer)
-        } else {
-            // No direct pattern - check if this type maps to a format with a magic pattern
-            // E.g., CR3 maps to MOV format, so test against MOV magic pattern
-            if let Some((formats, _description)) = resolve_file_type(file_type) {
-                if let Some(format) = formats.first() {
-                    if let Some(format_pattern) = lookup_magic_number_patterns(format) {
-                        // Special case: HEIC/HEIF use MOV format but need to be tested as HEIC/HEIF
-                        // not MOV to avoid the MOV pattern excluding HEIC brands
-                        if (file_type == "HEIC" || file_type == "HEIF") && *format == "MOV" {
-                            return self.match_binary_magic_pattern(
-                                file_type,
-                                format_pattern,
-                                buffer,
-                            );
-                        } else {
-                            return self.match_binary_magic_pattern(format, format_pattern, buffer);
-                        }
-                    }
-                }
-            }
-
-            // No pattern available - this type cannot be validated by magic number
-            // Fail validation to allow other candidates or fallback recovery
-            false
+        // Check if we have a generated magic number pattern
+        use crate::generated::simple_tables::file_types::get_magic_pattern;
+        if let Some(_pattern) = get_magic_pattern(file_type) {
+            // TODO: Use regex patterns when UTF-8 issue is fixed
+            // For now, fall back to binary pattern matching
+            return self.match_binary_magic_pattern(file_type, _pattern, buffer);
         }
+
+        // Fall back to hardcoded binary patterns for common file types
+        self.match_binary_magic_pattern(file_type, "", buffer)
     }
 
     /// Check if a file type is based on RIFF container format
@@ -637,15 +617,12 @@ impl FileTypeDetector {
         _path: &Path,
     ) -> Result<FileTypeDetectionResult, FileDetectionError> {
         // Get primary format for processing
-        let (format, description) =
-            if let Some((formats, description)) = resolve_file_type(file_type) {
-                (
-                    formats.into_iter().next().unwrap_or(file_type).to_string(),
-                    description.to_string(),
-                )
-            } else {
-                (file_type.to_string(), format!("{file_type} file"))
-            };
+        use crate::generated::simple_tables::file_types::resolve_file_type;
+        let (format, description) = if let Some((formats, desc)) = resolve_file_type(file_type) {
+            (formats[0].to_string(), desc.to_string())
+        } else {
+            (file_type.to_string(), format!("{file_type} file"))
+        };
 
         // Get MIME type from generated lookup - try the file type first, then fallback, then the format
         // This ensures file-type-specific MIME types take precedence over generic format MIME types
@@ -657,7 +634,7 @@ impl FileTypeDetector {
 
         Ok(FileTypeDetectionResult {
             file_type: file_type.to_string(),
-            format,
+            format: format.to_string(),
             mime_type,
             description,
         })
@@ -668,6 +645,11 @@ impl FileTypeDetector {
     fn get_fallback_mime_type(&self, file_type: &str) -> Option<&'static str> {
         match file_type {
             // Image formats
+            "JPEG" => Some("image/jpeg"),
+            "PNG" => Some("image/png"),
+            "TIFF" => Some("image/tiff"),
+            "GIF" => Some("image/gif"),
+            "BMP" => Some("image/bmp"),
             "WEBP" => Some("image/webp"),
             "HEIC" => Some("image/heic"), // HEIC gets its own MIME type
             "HEIF" => Some("image/heif"), // High Efficiency Image Format (general)
