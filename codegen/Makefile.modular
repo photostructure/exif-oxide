@@ -1,7 +1,7 @@
 # Modular Codegen Makefile
 # This demonstrates the updated build system for parallel execution
 
-.PHONY: all clean extract-perl generate-rust codegen parallel-extract
+.PHONY: all clean extract-perl generate-rust codegen parallel-extract patch-exiftool revert-exiftool-patches
 
 # Output directories
 GENERATED_DIR := generated
@@ -31,15 +31,28 @@ SIMPLE_TABLE_FILES := \
 all: codegen
 
 # Main codegen pipeline
-codegen: extract-perl generate-rust
+codegen: generate-rust
+	@$(MAKE) -f Makefile.modular revert-exiftool-patches
 	@echo "✅ Code generation complete!"
 
 # Create directories
 $(GENERATED_DIR) $(SIMPLE_TABLES_DIR):
 	@mkdir -p $@
 
+# Patch ExifTool modules to expose my-scoped variables
+patch-exiftool:
+	@echo "🔧 Patching ExifTool modules to expose variables..."
+	@perl patch_exiftool_modules.pl
+	@echo "✅ ExifTool modules patched"
+
+# Revert ExifTool module patches to keep submodule clean
+revert-exiftool-patches:
+	@echo "🔄 Reverting ExifTool module patches..."
+	@git -C ../third-party/exiftool checkout -- lib/Image/*.pm lib/Image/ExifTool/*.pm
+	@echo "✅ ExifTool modules reverted to original state"
+
 # Parallel extraction of all Perl data
-extract-perl: $(GENERATED_DIR) $(SIMPLE_TABLES_DIR) parallel-extract simple-tables
+extract-perl: patch-exiftool $(GENERATED_DIR) $(SIMPLE_TABLES_DIR) parallel-extract simple-tables
 	@echo "✅ All extraction complete"
 
 # Run extractors in parallel (make -j4 will use 4 cores)
