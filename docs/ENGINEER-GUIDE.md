@@ -71,6 +71,27 @@ Key documentation files:
 - [WRITE_PROC.md](../third-party/exiftool/doc/concepts/WRITE_PROC.md) - Writing (future milestone)
 - [PROCESSOR-PROC-DISPATCH.md](PROCESSOR-PROC-DISPATCH.md) - Our dispatch strategy
 
+## Code Maintenance Practices
+
+### Watch for Codegen Opportunities
+
+When reviewing or writing code, be vigilant for manually-maintained lookup tables that should be generated:
+
+- **Red flag**: Any match statement or HashMap with >5 static entries mapping to strings
+- **Red flag**: Hardcoded camera/lens names, white balance modes, or other manufacturer settings
+- **Action**: Check if it came from ExifTool source (usually `%hashName = (...)`)
+- **Solution**: Use the simple table extraction framework (see [EXIFTOOL-INTEGRATION.md](design/EXIFTOOL-INTEGRATION.md))
+
+Remember: Every manually-ported lookup table becomes a maintenance burden with monthly ExifTool updates.
+
+### File Size Guidelines
+
+Keep source files under 500 lines for better maintainability:
+
+- Files >500 lines should be refactored into focused modules
+- The Read tool truncates at 2000 lines, hindering code analysis
+- Smaller files improve code organization and tool effectiveness
+
 ## Remember
 
 - ExifTool compatibility is the #1 priority
