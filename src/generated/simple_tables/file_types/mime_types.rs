@@ -10,276 +10,33 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// MIME type mappings for file types lookup table
-/// Source: ExifTool ExifTool.pm %mimeType (225 entries)
+/// Source: ExifTool ExifTool.pm %mimeType (24 entries)
 pub static MIME_TYPES: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("3FR", "image/x-hasselblad-3fr");
     map.insert("7Z", "application/x-7z-compressed");
-    map.insert("AA", "audio/audible");
-    map.insert("AAC", "audio/aac");
-    map.insert("AAE", "application/vnd.apple.photos");
-    map.insert("AI", "application/vnd.adobe.illustrator");
-    map.insert("AIFF", "audio/x-aiff");
-    map.insert("ALIAS", "application/x-macos");
-    map.insert("APE", "audio/x-monkeys-audio");
-    map.insert("APNG", "image/apng");
-    map.insert("ARW", "image/x-sony-arw");
-    map.insert("ASF", "video/x-ms-asf");
-    map.insert("BMP", "image/bmp");
-    map.insert("BPG", "image/bpg");
-    map.insert("BTF", "image/x-tiff-big");
     map.insert("BZ2", "application/bzip2");
     map.insert("C2PA", "application/c2pa");
-    map.insert("CHM", "application/x-chm");
-    map.insert("COS", "application/octet-stream");
     map.insert("CR2", "image/x-canon-cr2");
     map.insert("CR3", "image/x-canon-cr3");
-    map.insert("CRM", "video/x-canon-crm");
-    map.insert("CRW", "image/x-canon-crw");
-    map.insert("CSV", "text/csv");
-    map.insert("CUR", "image/x-cursor");
-    map.insert("CZI", "image/x-zeiss-czi");
     map.insert("Canon 1D RAW", "image/x-raw");
-    map.insert("DCP", "application/octet-stream");
-    map.insert("DCR", "image/x-kodak-dcr");
-    map.insert("DCX", "image/dcx");
-    map.insert("DEX", "application/octet-stream");
-    map.insert("DFONT", "application/x-dfont");
-    map.insert("DICOM", "application/dicom");
-    map.insert("DIVX", "video/divx");
-    map.insert("DJVU", "image/vnd.djvu");
-    map.insert("DNG", "image/x-adobe-dng");
-    map.insert("DOC", "application/msword");
-    map.insert("DOCM", "application/vnd.ms-word.document.macroEnabled.12");
-    map.insert(
-        "DOCX",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    );
-    map.insert("DOT", "application/msword");
-    map.insert(
-        "DOTM",
-        "application/vnd.ms-word.template.macroEnabledTemplate",
-    );
-    map.insert(
-        "DOTX",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
-    );
-    map.insert("DPX", "image/x-dpx");
     map.insert("DR4", "application/octet-stream");
     map.insert("DS2", "audio/x-ds2");
-    map.insert("DSS", "audio/x-dss");
-    map.insert("DV", "video/x-dv");
     map.insert("DVR-MS", "video/x-ms-dvr");
-    map.insert("DWF", "model/vnd.dwf");
-    map.insert("DWG", "image/vnd.dwg");
-    map.insert("DXF", "application/dxf");
-    map.insert("EIP", "application/x-captureone");
-    map.insert("EPS", "application/postscript");
-    map.insert("ERF", "image/x-epson-erf");
-    map.insert("EXE", "application/octet-stream");
-    map.insert("EXR", "image/x-exr");
-    map.insert("EXV", "image/x-exv");
-    map.insert("FFF", "image/x-hasselblad-fff");
-    map.insert("FITS", "image/fits");
-    map.insert("FLA", "application/vnd.adobe.fla");
-    map.insert("FLAC", "audio/flac");
-    map.insert("FLIF", "image/flif");
-    map.insert("FLIR", "image/x-flir-fff");
-    map.insert("FLV", "video/x-flv");
-    map.insert("FPF", "image/x-flir-fpf");
-    map.insert("FPX", "image/vnd.fpx");
     map.insert("Font", "application/x-font-type1");
-    map.insert("GIF", "image/gif");
-    map.insert("GPR", "image/x-gopro-gpr");
-    map.insert("GZIP", "application/x-gzip");
-    map.insert("HDP", "image/vnd.ms-photo");
-    map.insert("HDR", "image/vnd.radiance");
-    map.insert("HTML", "text/html");
-    map.insert("ICC", "application/vnd.iccprofile");
-    map.insert("ICO", "image/x-icon");
-    map.insert("ICS", "text/calendar");
-    map.insert("IDML", "application/vnd.adobe.indesign-idml-package");
-    map.insert("IIQ", "image/x-raw");
-    map.insert("IND", "application/x-indesign");
-    map.insert("INX", "application/x-indesign-interchange");
-    map.insert("ISO", "application/x-iso9660-image");
-    map.insert("ITC", "application/itunes");
     map.insert("J2C", "image/x-j2c");
-    map.insert("JNG", "image/jng");
     map.insert("JP2", "image/jp2");
-    map.insert("JPEG", "image/jpeg");
-    map.insert("JPH", "image/jph");
-    map.insert("JPM", "image/jpm");
-    map.insert("JPS", "image/x-jps");
-    map.insert("JPX", "image/jpx");
-    map.insert("JSON", "application/json");
-    map.insert("JUMBF", "application/octet-stream");
-    map.insert("JXL", "image/jxl");
-    map.insert("JXR", "image/jxr");
     map.insert("K25", "image/x-kodak-k25");
-    map.insert("KDC", "image/x-kodak-kdc");
-    map.insert("KEY", "application/x-iwork-keynote-sffkey");
-    map.insert("LFP", "image/x-lytro-lfp");
-    map.insert("LIF", "image/x-lif");
-    map.insert("LNK", "application/octet-stream");
-    map.insert("LRI", "image/x-light-lri");
     map.insert("M2T", "video/mpeg");
     map.insert("M2TS", "video/m2ts");
-    map.insert("MAX", "application/x-3ds");
-    map.insert("MEF", "image/x-mamiya-mef");
-    map.insert("MIE", "application/x-mie");
-    map.insert("MIFF", "application/x-magick-image");
-    map.insert("MKA", "audio/x-matroska");
-    map.insert("MKS", "application/x-matroska");
-    map.insert("MKV", "video/x-matroska");
-    map.insert("MNG", "video/mng");
-    map.insert("MOBI", "application/x-mobipocket-ebook");
-    map.insert("MOI", "application/octet-stream");
-    map.insert("MOS", "image/x-raw");
-    map.insert("MOV", "video/quicktime");
     map.insert("MP3", "audio/mpeg");
     map.insert("MP4", "video/mp4");
-    map.insert("MPC", "audio/x-musepack");
-    map.insert("MPEG", "video/mpeg");
-    map.insert("MRC", "image/x-mrc");
-    map.insert("MRW", "image/x-minolta-mrw");
-    map.insert("MXF", "application/mxf");
-    map.insert("NEF", "image/x-nikon-nef");
-    map.insert("NKSC", "application/x-nikon-nxstudio");
-    map.insert("NRW", "image/x-nikon-nrw");
-    map.insert("NUMBERS", "application/x-iwork-numbers-sffnumbers");
-    map.insert("ODB", "application/vnd.oasis.opendocument.database");
-    map.insert("ODC", "application/vnd.oasis.opendocument.chart");
-    map.insert("ODF", "application/vnd.oasis.opendocument.formula");
-    map.insert("ODG", "application/vnd.oasis.opendocument.graphics");
-    map.insert("ODI", "application/vnd.oasis.opendocument.image");
-    map.insert("ODP", "application/vnd.oasis.opendocument.presentation");
-    map.insert("ODS", "application/vnd.oasis.opendocument.spreadsheet");
-    map.insert("ODT", "application/vnd.oasis.opendocument.text");
-    map.insert("OGG", "audio/ogg");
-    map.insert("OGV", "video/ogg");
-    map.insert("ONP", "application/on1");
-    map.insert("ORF", "image/x-olympus-orf");
-    map.insert("OTF", "application/font-otf");
-    map.insert("PAGES", "application/x-iwork-pages-sffpages");
-    map.insert("PBM", "image/x-portable-bitmap");
-    map.insert("PCAP", "application/vnd.tcpdump.pcap");
-    map.insert("PCD", "image/x-photo-cd");
-    map.insert("PCX", "image/pcx");
-    map.insert("PDB", "application/vnd.palm");
-    map.insert("PDF", "application/pdf");
-    map.insert("PEF", "image/x-pentax-pef");
-    map.insert("PFA", "application/x-font-type1");
-    map.insert("PGF", "image/pgf");
-    map.insert("PGM", "image/x-portable-graymap");
-    map.insert("PHP", "application/x-httpd-php");
-    map.insert("PICT", "image/pict");
-    map.insert("PLIST", "application/xml");
-    map.insert("PMP", "image/x-sony-pmp");
-    map.insert("PNG", "image/png");
-    map.insert("POT", "application/vnd.ms-powerpoint");
-    map.insert(
-        "POTM",
-        "application/vnd.ms-powerpoint.template.macroEnabled.12",
-    );
-    map.insert(
-        "POTX",
-        "application/vnd.openxmlformats-officedocument.presentationml.template",
-    );
-    map.insert(
-        "PPAM",
-        "application/vnd.ms-powerpoint.addin.macroEnabled.12",
-    );
-    map.insert(
-        "PPAX",
-        "application/vnd.openxmlformats-officedocument.presentationml.addin",
-    );
-    map.insert("PPM", "image/x-portable-pixmap");
-    map.insert("PPS", "application/vnd.ms-powerpoint");
-    map.insert(
-        "PPSM",
-        "application/vnd.ms-powerpoint.slideshow.macroEnabled.12",
-    );
-    map.insert(
-        "PPSX",
-        "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
-    );
-    map.insert("PPT", "application/vnd.ms-powerpoint");
-    map.insert(
-        "PPTM",
-        "application/vnd.ms-powerpoint.presentation.macroEnabled.12",
-    );
-    map.insert(
-        "PPTX",
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    );
-    map.insert("PS", "application/postscript");
-    map.insert("PSD", "application/vnd.adobe.photoshop");
-    map.insert("PSP", "image/x-paintshoppro");
-    map.insert("QTIF", "image/x-quicktime");
     map.insert("R3D", "video/x-red-r3d");
-    map.insert("RA", "audio/x-pn-realaudio");
-    map.insert("RAF", "image/x-fujifilm-raf");
-    map.insert("RAM", "audio/x-pn-realaudio");
-    map.insert("RAR", "application/x-rar-compressed");
-    map.insert("RAW", "image/x-raw");
-    map.insert("RM", "application/vnd.rn-realmedia");
-    map.insert("RMVB", "application/vnd.rn-realmedia-vbr");
-    map.insert("RPM", "audio/x-pn-realaudio-plugin");
-    map.insert("RSRC", "application/ResEdit");
-    map.insert("RTF", "text/rtf");
-    map.insert("RV", "video/vnd.rn-realvideo");
     map.insert("RW2", "image/x-panasonic-rw2");
-    map.insert("RWL", "image/x-leica-rwl");
-    map.insert("RWZ", "image/x-rawzor");
-    map.insert("SEQ", "image/x-flir-seq");
-    map.insert("SKETCH", "application/sketch");
     map.insert("SR2", "image/x-sony-sr2");
-    map.insert("SRF", "image/x-sony-srf");
-    map.insert("SRW", "image/x-samsung-srw");
-    map.insert("SVG", "image/svg+xml");
-    map.insert("SWF", "application/x-shockwave-flash");
-    map.insert("TAR", "application/x-tar");
-    map.insert("THMX", "application/vnd.ms-officetheme");
-    map.insert("TIFF", "image/tiff");
-    map.insert("TTC", "application/font-ttf");
-    map.insert("TTF", "application/font-ttf");
-    map.insert("TXT", "text/plain");
     map.insert("Torrent", "application/x-bittorrent");
     map.insert("VCard", "text/vcard");
-    map.insert("VRD", "application/octet-stream");
-    map.insert("VSD", "application/x-visio");
-    map.insert("WDP", "image/vnd.ms-photo");
-    map.insert("WEBM", "video/webm");
-    map.insert("WMA", "audio/x-ms-wma");
-    map.insert("WMF", "application/x-wmf");
-    map.insert("WMV", "video/x-ms-wmv");
-    map.insert("WPG", "image/x-wpg");
-    map.insert("WTV", "video/x-ms-wtv");
     map.insert("X3F", "image/x-sigma-x3f");
-    map.insert("XCF", "image/x-xcf");
-    map.insert("XISF", "image/x-xisf");
-    map.insert("XLA", "application/vnd.ms-excel");
-    map.insert("XLAM", "application/vnd.ms-excel.addin.macroEnabled.12");
-    map.insert("XLS", "application/vnd.ms-excel");
-    map.insert(
-        "XLSB",
-        "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
-    );
-    map.insert("XLSM", "application/vnd.ms-excel.sheet.macroEnabled.12");
-    map.insert(
-        "XLSX",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    );
-    map.insert("XLT", "application/vnd.ms-excel");
-    map.insert("XLTM", "application/vnd.ms-excel.template.macroEnabled.12");
-    map.insert(
-        "XLTX",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.template",
-    );
-    map.insert("XML", "application/xml");
-    map.insert("XMP", "application/rdf+xml");
-    map.insert("ZIP", "application/zip");
     map
 });
 
