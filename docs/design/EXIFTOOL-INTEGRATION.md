@@ -34,6 +34,7 @@ ExifTool Source → Perl Extractors → JSON → Rust Codegen → Generated Code
 
 ```
 codegen/
+├── patch_exiftool_modules.pl # Auto-patches ExifTool for variable access
 ├── extractors/           # Perl scripts extract from ExifTool
 │   ├── simple_tables.pl  # Lookup tables
 │   ├── tag_tables.pl     # Tag definitions
@@ -162,12 +163,14 @@ pub fn canon_wb_print_conv(value: &TagValue) -> TagValue {
 **Step 2: Generate and Use**
 
 ```bash
-# Regenerate code
+# Regenerate code (auto-patches ExifTool modules)
 make codegen
 
 # Use in implementation
 use crate::generated::simple_tables::canon::new_setting::lookup_new_canon_setting;
 ```
+
+**Note**: The build system automatically patches ExifTool modules to expose `my`-scoped variables as package variables based on entries in `simple_tables.json`. No manual patching is required.
 
 ## Code Generation System
 
@@ -216,9 +219,15 @@ The system supports three extraction patterns:
 
 ### Build Pipeline
 
+The build pipeline automatically handles all necessary steps:
+
+1. **Auto-patching**: Converts `my` variables to `our` in ExifTool modules
+2. **Extraction**: Runs Perl extractors in parallel
+3. **Generation**: Creates Rust code from extracted data
+
 ```bash
 # Full pipeline with parallel execution
-make codegen              # Full build
+make codegen              # Full build (includes auto-patching)
 make -j4 codegen         # Parallel (4 jobs)
 
 # Individual components
@@ -228,6 +237,17 @@ make generated/tag_tables.json  # Just tag definitions
 # Incremental updates
 make regen-simple-tables # Regenerate tables only
 ```
+
+#### Why Patching is Required
+
+ExifTool uses `my`-scoped lexical variables for many lookup tables (e.g., `my %canonWhiteBalance`). These variables are private to their module and cannot be accessed by external scripts. To extract these tables programmatically, we need to convert them to package variables (`our %canonWhiteBalance`) which are accessible via the symbol table.
+
+**Auto-Patching Details**: The `patch_exiftool_modules.pl` script automatically:
+- Reads `simple_tables.json` to identify required variables
+- Converts `my %varName` to `our %varName` in ExifTool modules
+- Runs before extraction to ensure variables are accessible
+- Tracks conversions to avoid redundant processing
+- Only patches variables we actually need (based on `simple_tables.json`)
 
 ## Manual Implementation System
 

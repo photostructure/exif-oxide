@@ -22,15 +22,8 @@ use JSON qw(decode_json);
 sub convert_my_to_package_variables {
     my ($module_path, $module_name) = @_;
     
-    # Define which variables to convert based on our config
-    my @variables_to_convert;
-    if ($module_name eq 'Canon.pm') {
-        @variables_to_convert = qw(canonQuality canonImageSize canonWhiteBalance pictureStyles);
-    } elsif ($module_name eq 'Nikon.pm') {
-        @variables_to_convert = qw(nikonLensIDs);
-    } elsif ($module_name eq 'XMP.pm') {
-        @variables_to_convert = qw(xmpNS charName charNum latConv longConv);
-    }
+    # Get variables to convert from the configuration
+    my @variables_to_convert = get_variables_for_module($module_name);
     
     return unless @variables_to_convert;
     
@@ -68,6 +61,24 @@ sub load_table_config {
     
     my $config = decode_json($json_text);
     return @{$config->{tables}};
+}
+
+# Get list of variables to convert for a specific module
+sub get_variables_for_module {
+    my ($module_name) = @_;
+    my @table_configs = load_table_config();
+    my @variables;
+    
+    for my $config (@table_configs) {
+        if ($config->{module} eq $module_name) {
+            # Extract variable name from hash_name (remove the % prefix)
+            if ($config->{hash_name} =~ /^%(.+)$/) {
+                push @variables, $1;
+            }
+        }
+    }
+    
+    return @variables;
 }
 
 # Get unique list of modules that need patching
@@ -133,10 +144,16 @@ sub main {
         @modules_to_patch = get_modules_to_patch();
     }
     
-    my $exiftool_lib_path = "$Bin/../third-party/exiftool/lib/Image/ExifTool";
+    my $exiftool_lib_path = "$Bin/../third-party/exiftool/lib/Image";
     
     for my $module_name (@modules_to_patch) {
-        my $module_path = "$exiftool_lib_path/$module_name";
+        # ExifTool.pm is in Image/, other modules are in Image/ExifTool/
+        my $module_path;
+        if ($module_name eq 'ExifTool.pm') {
+            $module_path = "$exiftool_lib_path/$module_name";
+        } else {
+            $module_path = "$exiftool_lib_path/ExifTool/$module_name";
+        }
         
         unless (-f $module_path) {
             warn "Module not found: $module_path\n";
