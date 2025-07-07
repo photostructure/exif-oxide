@@ -185,6 +185,27 @@ as a best practice, and explain those aspects to the user as we embrace them.
 
 ## Development guidance
 
+### Watch for manually-ported hashes that could use codegen
+
+Be vigilant for manually-maintained lookup tables and hash mappings that could be automatically generated. If you encounter any static mappings, immediately:
+
+1. Check if it came from ExifTool source (usually a `%hashName = (...)` pattern)
+2. Suggest converting it to use the codegen infrastructure
+3. See [EXIFTOOL-INTEGRATION.md](docs/design/EXIFTOOL-INTEGRATION.md) for the simple table extraction framework
+
+This is critical for maintainability as ExifTool releases monthly updates.
+
+### Refactor large source files
+
+When working with source files that exceed 500 lines:
+
+1. Suggest refactoring into smaller, focused modules
+2. The Read tool will truncate files larger than 2000 lines, which can cause incomplete code analysis
+3. Breaking up large files improves:
+   - Code readability and maintenance
+   - Tool effectiveness for analysis
+   - Module organization and separation of concerns
+
 ### Mark where the code smells
 
 While reviewing or editing code, if there are components that feel like a
