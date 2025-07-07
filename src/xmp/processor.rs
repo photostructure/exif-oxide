@@ -54,11 +54,12 @@ impl XmpProcessor {
     /// Returns a single TagEntry with tag_id "XMP" containing the entire
     /// XMP structure as a TagValue::Object with namespace grouping.
     pub fn process_xmp_data(&mut self, data: &[u8]) -> Result<TagEntry> {
-        // Detect and handle BOM if present
-        let data = self.strip_bom(data);
+        // Detect and handle BOM if present, and convert UTF-16 if needed
+        let processed_data = self.strip_bom(data);
 
         // Convert to string for XML parsing
-        let xmp_str = std::str::from_utf8(data).context("XMP data is not valid UTF-8")?;
+        let xmp_str =
+            std::str::from_utf8(&processed_data).context("XMP data is not valid UTF-8")?;
 
         // Parse XML and build structure
         let xmp_structure = self.parse_xmp_xml(xmp_str)?;
@@ -73,23 +74,60 @@ impl XmpProcessor {
         })
     }
 
-    /// Strip UTF BOM if present
-    fn strip_bom<'a>(&self, data: &'a [u8]) -> &'a [u8] {
+    /// Strip UTF BOM if present and handle UTF-16 conversion
+    fn strip_bom<'a>(&self, data: &'a [u8]) -> std::borrow::Cow<'a, [u8]> {
+        use std::borrow::Cow;
+
         // UTF-8 BOM
         if data.starts_with(b"\xEF\xBB\xBF") {
-            return &data[3..];
+            return Cow::Borrowed(&data[3..]);
         }
+
         // UTF-16 BE BOM
         if data.starts_with(b"\xFE\xFF") {
-            // TODO: Handle UTF-16 conversion
-            return data;
+            return Cow::Owned(self.convert_utf16_be_to_utf8(&data[2..]));
         }
+
         // UTF-16 LE BOM
         if data.starts_with(b"\xFF\xFE") {
-            // TODO: Handle UTF-16 conversion
-            return data;
+            return Cow::Owned(self.convert_utf16_le_to_utf8(&data[2..]));
         }
-        data
+
+        // Check if data looks like UTF-16 LE without BOM (starts with '<' followed by null)
+        if data.len() >= 4 && data[0] == b'<' && data[1] == 0 {
+            return Cow::Owned(self.convert_utf16_le_to_utf8(data));
+        }
+
+        // Check if data looks like UTF-16 BE without BOM (starts with null followed by '<')
+        if data.len() >= 4 && data[0] == 0 && data[1] == b'<' {
+            return Cow::Owned(self.convert_utf16_be_to_utf8(data));
+        }
+
+        Cow::Borrowed(data)
+    }
+
+    /// Convert UTF-16 LE bytes to UTF-8
+    fn convert_utf16_le_to_utf8(&self, data: &[u8]) -> Vec<u8> {
+        // Convert bytes to u16 pairs (little-endian)
+        let utf16_chars: Vec<u16> = data
+            .chunks_exact(2)
+            .map(|chunk| u16::from_le_bytes([chunk[0], chunk[1]]))
+            .collect();
+
+        // Convert UTF-16 to string, then to UTF-8 bytes
+        String::from_utf16_lossy(&utf16_chars).into_bytes()
+    }
+
+    /// Convert UTF-16 BE bytes to UTF-8
+    fn convert_utf16_be_to_utf8(&self, data: &[u8]) -> Vec<u8> {
+        // Convert bytes to u16 pairs (big-endian)
+        let utf16_chars: Vec<u16> = data
+            .chunks_exact(2)
+            .map(|chunk| u16::from_be_bytes([chunk[0], chunk[1]]))
+            .collect();
+
+        // Convert UTF-16 to string, then to UTF-8 bytes
+        String::from_utf16_lossy(&utf16_chars).into_bytes()
     }
 
     /// Parse XMP XML and build structured representation
@@ -235,7 +273,7 @@ impl XmpProcessor {
     fn process_text_content(
         &self,
         text: String,
-        element_stack: &mut Vec<ElementContext>,
+        element_stack: &mut [ElementContext],
         namespace_objects: &mut HashMap<String, HashMap<String, TagValue>>,
     ) -> Result<()> {
         if element_stack.len() < 2 {
@@ -334,6 +372,8 @@ impl XmpProcessor {
     }
 
     /// Extract a reasonable prefix from namespace URI
+    /// TODO: Used for unknown namespace handling in future implementation
+    #[allow(dead_code)]
     fn extract_prefix_from_uri(&self, uri: &str) -> String {
         // Common namespace patterns
         if uri.contains("/dc/") {
@@ -374,6 +414,8 @@ struct ElementContext {
     namespace_prefix: Option<String>,
     container_type: Option<RdfContainerType>,
     language: Option<String>,
+    /// TODO: Used for RDF list item context tracking in future implementation
+    #[allow(dead_code)]
     is_rdf_li: bool,
 }
 

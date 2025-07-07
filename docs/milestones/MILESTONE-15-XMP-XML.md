@@ -3,6 +3,7 @@
 **Duration**: 3-4 weeks  
 **Goal**: Add comprehensive XMP metadata extraction with structured output (equivalent to `exiftool -j -struct`)  
 **XML Parser**: `quick-xml` v0.36 (validated - see implementation guide)
+**Status**: 90% Complete - Extended XMP support remaining
 
 ## Task List Summary
 
@@ -11,42 +12,32 @@
 1. ✅ Extract XMP namespace tables (`%nsURI`, `%xmpNS`) via simple table framework
 2. ✅ Extract XML character escape tables (`%charName`, `%charNum`)
 3. ✅ Extract 50+ PrintConv lookup tables from XMP.pm/XMP2.pl
-4. Validate generated code compiles and matches ExifTool data
+4. ✅ Validate generated code compiles and matches ExifTool data
 
-(needs to be addressed: error[E0762]: unterminated character literal
---> /home/mrm/src/exif-oxide/src/generated/simple_tables/xmp/char_names.rs:18:17
-|
-18 | map.insert("'", "#39");
-| ^^^^^^^^^^^
+### Phase 1: TagValue Architecture Enhancement (Week 1-2) ✅ COMPLETED
 
-Error writing files: failed to resolve mod `char_names`: cannot parse /home/mrm/src/exif-oxide/src/generated/simple_tables/xmp/char_names.rs
-make: \*\*\* [Makefile:24: fix] Error 1
-)
+1. ✅ Add `Object(HashMap<String, TagValue>)` variant to TagValue enum
+2. ✅ Add `Array(Vec<TagValue>)` variant to TagValue enum
+3. ✅ Update JSON serialization to handle nested structures
+4. ✅ Write unit tests for new TagValue variants
+5. ✅ Update existing code to handle new variants gracefully
 
-### Phase 1: TagValue Architecture Enhancement (Week 1-2)
+### Phase 2: Core XMP Processing (Week 2-3) ✅ COMPLETED
 
-1. Add `Object(HashMap<String, TagValue>)` variant to TagValue enum
-2. Add `Array(Vec<TagValue>)` variant to TagValue enum
-3. Update JSON serialization to handle nested structures
-4. Write unit tests for new TagValue variants
-5. Update existing code to handle new variants gracefully
+1. ✅ Implement standalone .xmp file reader (simplest case)
+2. ✅ Create XmpProcessor with namespace resolution
+3. ✅ Implement RDF/XML parsing using quick-xml
+4. ✅ Build structure tree (no flattening)
+5. ✅ Convert RDF containers to appropriate types (Bag/Seq→Array, Alt→Object)
 
-### Phase 2: Core XMP Processing (Week 2-3)
+### Phase 3: Format Integration (Week 3) - IN PROGRESS
 
-1. Implement standalone .xmp file reader (simplest case)
-2. Create XmpProcessor with namespace resolution
-3. Implement RDF/XML parsing using quick-xml
-4. Build structure tree (no flattening)
-5. Convert RDF containers to appropriate types (Bag/Seq→Array, Alt→Object)
+1. ✅ Add JPEG APP1 XMP segment extraction
+2. ✅ Add TIFF IFD0 XMP tag (0x02bc) processing
+3. ⏳ Handle Extended XMP in JPEG (multi-segment) - Basic infrastructure ready, GUID reassembly pending
+4. ✅ Integrate with processor dispatch system
 
-### Phase 3: Format Integration (Week 3)
-
-1. Add JPEG APP1 XMP segment extraction
-2. Add TIFF IFD0 XMP tag (0x02bc) processing
-3. Handle Extended XMP in JPEG (multi-segment)
-4. Integrate with processor dispatch system
-
-### Phase 4: Testing & Validation (Week 4)
+### Phase 4: Testing & Validation (Week 4) - READY TO START
 
 1. Generate reference outputs with `exiftool -j -struct`
 2. Compare our output for semantic equivalence
@@ -420,12 +411,12 @@ pub fn select_processor() -> TagEntry {
 
 ### Core Requirements
 
-- [ ] **Structured Output**: Single XMP TagEntry with nested TagValue::Object structure
-- [ ] **Namespace Grouping**: Properties grouped by namespace (dc, xmp, exif, etc.)
-- [ ] **RDF Container Support**: Bag/Seq → Arrays, Alt → Objects with lang keys
-- [ ] **Hierarchy Preservation**: Nested structures maintained (ContactInfo, LocationCreated)
-- [ ] **Format Support**: JPEG APP1, TIFF IFD0, standalone .xmp files processed
-- [ ] **Codegen Integration**: 80+ lookup tables generated automatically
+- [x] **Structured Output**: Single XMP TagEntry with nested TagValue::Object structure
+- [x] **Namespace Grouping**: Properties grouped by namespace (dc, xmp, exif, etc.)
+- [x] **RDF Container Support**: Bag/Seq → Arrays, Alt → Objects with lang keys
+- [x] **Hierarchy Preservation**: Nested structures maintained (ContactInfo, LocationCreated)
+- [x] **Format Support**: JPEG APP1, TIFF IFD0, standalone .xmp files processed
+- [x] **Codegen Integration**: 80+ lookup tables generated automatically
 
 ### Validation Tests
 
@@ -819,46 +810,57 @@ for attr in element.attributes() {
 - Element hierarchy tracking correctly identifies properties and containers
 - **Test Status**: Both unit tests passing with correct structured output
 
-**Current XMP Output Example** (from test):
-```
-XMP structure keys: ["dc"]
-  dc: Object({
-    "title": Object({"x-default": String("Test Photo"), "en-US": String("Test Photo")}), 
-    "creator": Array([String("John Doe"), String("Jane Smith")])
-  })
-```
+**Phase 3: Format Integration** ✅ **COMPLETED** (except Extended XMP)
+- **JPEG XMP**: Fixed multi-segment APP1 scanning - now finds both EXIF and XMP in same file
+- **TIFF XMP**: Implemented IFD0 tag 0x02bc extraction  
+- **UTF-16 Support**: Added automatic UTF-16 LE/BE to UTF-8 conversion (with and without BOM)
+- **Standalone XMP**: Successfully processes .xmp files
+- **System Tags**: Fixed preservation of System:/Warning: diagnostic tags in JSON output
 
-**Phase 3: Format Integration** - **PENDING**
-**Phase 4: Testing & Validation** - **PENDING**
+**Critical Bug Fixed**: 
+- JPEG scanner was returning after first APP1 (EXIF), preventing XMP detection
+- Modified `scan_jpeg_segments()` to scan all APP1 segments and prioritize EXIF over XMP
+- Now correctly processes files with multiple APP1 segments
+
+**Test Results**:
+```
+✅ EXIF Detection: "System:ExifDetectionStatus": "EXIF data found in APP1 segment at offset 0x1e, length 842 bytes"
+✅ XMP Detection:  "System:XmpDetectionStatus": "XMP data found in APP1 segment at offset 0x389, length 5982 bytes"  
+✅ XMP Processing: "XMP:XMP": { ... structured XMP data ... }
+```
 
 ### Next Engineer TODO List
 
 **IMMEDIATE PRIORITIES (High)**:
 
-1. **Test with real ExifTool XMP files**:
-   - Test files: `third-party/exiftool/t/images/XMP*.xmp`, `XMP*.jpg`
-   - Compare against: `exiftool -j -struct file.xmp > expected.json`
-   - Current tests are synthetic - need real-world validation
+1. **Complete Extended XMP support**:
+   - Implement GUID-based multi-segment reassembly in `scan_jpeg_xmp_segments()`
+   - Test with `third-party/exiftool/t/images/ExtendedXMP.jpg`
+   - Extended segments use identifier "http://ns.adobe.com/xmp/extension/\0"
+   - See existing TODO comment in `extract_jpeg_xmp()` at line 315
 
-2. **Implement format integration**:
-   - **JPEG APP1**: Extract XMP from segments with identifier "http://ns.adobe.com/xap/1.0/\0"
-   - **TIFF IFD0**: Process tag 0x02bc (XMP packet as byte array)
-   - **Extended XMP**: Multi-segment reassembly using GUID
-
-3. **Add XMP processor to dispatch system**:
-   - Integrate with existing processor registry
-   - Return single TagEntry with tag_id "XMP"
+2. **Run comprehensive validation tests**:
+   - Generate reference: `exiftool -j -struct third-party/exiftool/t/images/XMP*.jpg > ref.json`
+   - Compare semantic structure (not exact string format)
+   - Focus on namespace grouping and container conversion accuracy
+   - Verify all 96 namespaces from generated tables work correctly
 
 **MEDIUM PRIORITIES**:
 
-4. **Handle edge cases**:
-   - UTF-16/32 BOM detection and conversion (currently TODO)
-   - Malformed XML graceful degradation
-   - Unknown namespaces preservation
+3. **Edge case handling**:
+   - Test malformed XML rejection behavior
+   - Verify unknown namespace preservation
+   - Add more UTF-32 encoding support if needed
 
-5. **Performance validation**:
-   - Memory usage profiling vs ExifTool
+4. **Performance profiling**:
+   - Memory usage vs ExifTool on large XMP blocks
    - Processing speed benchmarks
+   - Stream efficiency validation
+
+5. **Documentation updates**:
+   - Update usage examples with XMP output
+   - Document UTF-16 handling behavior
+   - Add troubleshooting guide for common XMP issues
 
 ### Critical Implementation Notes
 
@@ -873,10 +875,14 @@ XMP structure keys: ["dc"]
 - **Namespace grouping**: Properties grouped by standard prefix (dc, xmp, exif, etc.)
 - **Generated tables**: Zero maintenance burden for namespace/conversion lookups
 
-**Files Modified**:
-- `src/types/values.rs` - Added Object/Array TagValue variants
-- `src/xmp/processor.rs` - Complete XMP processor implementation
+**Files Modified/Created**:
+- `src/types/values.rs` - Added Object/Array TagValue variants with helper methods
+- `src/types/metadata.rs` - Fixed System:/Warning: tag preservation in `prepare_for_serialization()`
+- `src/xmp/processor.rs` - Complete XMP processor with UTF-16 support
 - `src/xmp/mod.rs` - Module declarations
+- `src/formats/jpeg.rs` - Fixed multi-segment APP1 scanning bug
+- `src/formats/tiff.rs` - Added XMP extraction from IFD0 tag 0x02bc
+- `src/formats/mod.rs` - Integrated XMP processing for JPEG/TIFF/XMP formats
 - `codegen/simple_tables.json` - XMP table configurations
 - Generated: `src/generated/simple_tables/xmp/*.rs` - Namespace and escape tables
 
@@ -889,35 +895,41 @@ make codegen                      # Regenerate tables if needed
 
 **Quick-xml Documentation**: https://docs.rs/quick-xml/latest/quick_xml/reader/struct.NsReader.html
 
-### Starting Implementation
+### Critical Bugs Encountered and Fixed
 
-1. **First Steps**:
+1. **JPEG Multi-Segment APP1 Bug**:
+   - **Issue**: `scan_jpeg_segments()` returned after finding first APP1 (EXIF)
+   - **Impact**: XMP in second APP1 segment was never detected
+   - **Fix**: Modified to scan all APP1 segments, store both EXIF and XMP info
+   - **Location**: `src/formats/jpeg.rs` lines 77-191
 
-   - ✅ Run codegen for XMP tables (Phase 0)
-   - Implement TagValue::Object and TagValue::Array
-   - Start with standalone .xmp file parsing (simplest case)
+2. **UTF-16 XMP Encoding Bug**:
+   - **Issue**: XMP processor only handled UTF-8, but many files use UTF-16
+   - **Impact**: "XMP data is not valid UTF-8" errors on valid files
+   - **Fix**: Added UTF-16 LE/BE detection and conversion (with/without BOM)
+   - **Location**: `src/xmp/processor.rs` `strip_bom()` method
 
-2. **Key Design Decisions**:
+3. **System Tag Loss Bug**:
+   - **Issue**: `prepare_for_serialization()` cleared all legacy_tags
+   - **Impact**: System: and Warning: diagnostic tags disappeared from output
+   - **Fix**: Preserve and re-add System:/Warning: tags after clearing
+   - **Location**: `src/types/metadata.rs` line 155
 
-   - We output ONLY structured mode (no flattening)
-   - Use quick-xml for parsing (already in dependencies)
-   - Single XMP TagEntry containing entire structure
-   - Trust ExifTool's namespace definitions via codegen
+### Key Implementation Insights
 
-3. **Common Pitfalls**:
+1. **Use `read_resolved_event_into()`** not `read_event_into()`:
+   - Provides automatic namespace resolution via `ResolveResult`
+   - Essential for proper namespace grouping
 
-   - Don't try to flatten XMP structures
-   - Don't manually maintain namespace tables
-   - Don't parse XML with regex
-   - Remember to handle UTF-8/16/32 BOMs
-   - Use `read_event_into()` with buffer reuse for performance
-   - Always call `buf.clear()` after each event to avoid memory growth
-   - Use `e.unescape()?.into_owned()` for text content to handle XML entities
+2. **UTF-16 Detection Heuristics**:
+   - Check for BOM markers (0xFEFF or 0xFFFE)
+   - Also check for `<` followed by null (UTF-16 LE) or null followed by `<` (UTF-16 BE)
+   - Many XMP packets lack BOM but are still UTF-16 encoded
 
-4. **Testing Approach**:
-   - Generate reference with: `exiftool -j -struct test.xmp > ref.json`
-   - Compare semantic structure, not exact string format
-   - Use available test files in third-party/exiftool/t/images/
+3. **Element Stack Management**:
+   - Track full element hierarchy to identify property context
+   - RDF list items (`rdf:li`) need parent container type for proper conversion
+   - Language alternatives need `xml:lang` attribute tracking
 
 ### XMP Packet Detection
 
