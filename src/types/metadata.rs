@@ -158,7 +158,16 @@ impl ExifData {
     ) {
         use tracing::debug;
 
+        // Preserve existing legacy_tags (like System: and Warning: tags) before clearing
+        let existing_legacy_tags = self.legacy_tags.clone();
         self.legacy_tags.clear();
+
+        // Re-add preserved legacy tags that don't come from TagEntry
+        for (key, value) in existing_legacy_tags {
+            if key.starts_with("System:") || key.starts_with("Warning:") {
+                self.legacy_tags.insert(key, value);
+            }
+        }
 
         for entry in &self.tags {
             let key = format!("{}:{}", entry.group, entry.name);
