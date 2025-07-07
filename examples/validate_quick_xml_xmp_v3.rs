@@ -65,6 +65,7 @@ const SAMPLE_XMP: &str = r#"<?xml version="1.0" encoding="UTF-8"?>
 
 // Minimal TagValue enum for testing
 #[derive(Debug, Clone, PartialEq)]
+#[allow(dead_code)]
 enum TagValue {
     String(String),
     Array(Vec<TagValue>),

@@ -10,13 +10,17 @@ mod tiff;
 pub use detection::{
     detect_file_format, detect_file_format_from_path, get_format_properties, FileFormat,
 };
-pub use jpeg::{extract_jpeg_exif, scan_jpeg_segments, JpegSegment, JpegSegmentInfo};
-pub use tiff::{extract_tiff_exif, get_tiff_endianness, validate_tiff_format};
+pub use jpeg::{
+    extract_jpeg_exif, extract_jpeg_xmp, scan_jpeg_segments, scan_jpeg_xmp_segments, JpegSegment,
+    JpegSegmentInfo,
+};
+pub use tiff::{extract_tiff_exif, extract_tiff_xmp, get_tiff_endianness, validate_tiff_format};
 
 use crate::exif::ExifReader;
 use crate::file_detection::FileTypeDetector;
 use crate::generated::{EXIF_MAIN_TAGS, REQUIRED_PRINT_CONV, REQUIRED_VALUE_CONV};
 use crate::types::{ExifData, Result, TagEntry, TagValue};
+use crate::xmp::XmpProcessor;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufReader, Read, Seek, SeekFrom};
@@ -196,6 +200,56 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                     );
                 }
             }
+
+            // Scan for XMP data in JPEG segments
+            reader.seek(SeekFrom::Start(0))?;
+            match scan_jpeg_xmp_segments(&mut reader) {
+                Ok(xmp_segments) if !xmp_segments.is_empty() => {
+                    // Extract XMP data from first segment
+                    reader.seek(SeekFrom::Start(xmp_segments[0].offset))?;
+                    let mut xmp_data = vec![0u8; xmp_segments[0].length as usize];
+                    reader.read_exact(&mut xmp_data)?;
+
+                    // Process XMP data with XmpProcessor
+                    let mut xmp_processor = XmpProcessor::new();
+                    match xmp_processor.process_xmp_data(&xmp_data) {
+                        Ok(xmp_entry) => {
+                            // Add structured XMP TagEntry
+                            tag_entries.push(xmp_entry);
+
+                            // Add XMP detection status
+                            tags.insert(
+                                "System:XmpDetectionStatus".to_string(),
+                                TagValue::String(format!(
+                                    "XMP data found in APP1 segment at offset {:#x}, length {} bytes",
+                                    xmp_segments[0].offset, xmp_segments[0].length
+                                )),
+                            );
+                        }
+                        Err(e) => {
+                            // Failed to parse XMP - add error information
+                            tags.insert(
+                                "Warning:XmpParseError".to_string(),
+                                TagValue::string(format!("Failed to parse XMP: {e}")),
+                            );
+                        }
+                    }
+                }
+                Ok(_) => {
+                    // No XMP data found
+                    tags.insert(
+                        "System:XmpDetectionStatus".to_string(),
+                        "No XMP data found in JPEG".into(),
+                    );
+                }
+                Err(e) => {
+                    // Error scanning for XMP
+                    tags.insert(
+                        "Warning:XmpScanError".to_string(),
+                        TagValue::string(format!("Error scanning for XMP: {e}")),
+                    );
+                }
+            }
         }
         "TIFF" => {
             // For TIFF-based files (including NEF, NRW, CR2, etc.), process as TIFF
@@ -262,6 +316,81 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                     tags.insert(
                         "Warning:TiffParseError".to_string(),
                         TagValue::string(format!("Failed to parse TIFF: {e}")),
+                    );
+                }
+            }
+
+            // Check for XMP data in TIFF IFD0
+            match extract_tiff_xmp(&tiff_data) {
+                Ok(Some(xmp_data)) => {
+                    // Process XMP data with XmpProcessor
+                    let mut xmp_processor = XmpProcessor::new();
+                    match xmp_processor.process_xmp_data(&xmp_data) {
+                        Ok(xmp_entry) => {
+                            // Add structured XMP TagEntry
+                            tag_entries.push(xmp_entry);
+
+                            // Add XMP detection status
+                            tags.insert(
+                                "System:XmpDetectionStatus".to_string(),
+                                TagValue::String(format!(
+                                    "XMP data found in TIFF IFD0 tag 0x02bc, length {} bytes",
+                                    xmp_data.len()
+                                )),
+                            );
+                        }
+                        Err(e) => {
+                            // Failed to parse XMP - add error information
+                            tags.insert(
+                                "Warning:XmpParseError".to_string(),
+                                TagValue::string(format!("Failed to parse XMP: {e}")),
+                            );
+                        }
+                    }
+                }
+                Ok(None) => {
+                    // No XMP data found
+                    tags.insert(
+                        "System:XmpDetectionStatus".to_string(),
+                        "No XMP data found in TIFF".into(),
+                    );
+                }
+                Err(e) => {
+                    // Error extracting XMP
+                    tags.insert(
+                        "Warning:XmpExtractionError".to_string(),
+                        TagValue::string(format!("Error extracting XMP: {e}")),
+                    );
+                }
+            }
+        }
+        "XMP" => {
+            // Standalone XMP file processing
+            reader.seek(SeekFrom::Start(0))?;
+            let mut xmp_data = Vec::new();
+            reader.read_to_end(&mut xmp_data)?;
+
+            // Process XMP data with XmpProcessor
+            let mut xmp_processor = XmpProcessor::new();
+            match xmp_processor.process_xmp_data(&xmp_data) {
+                Ok(xmp_entry) => {
+                    // Add structured XMP TagEntry
+                    tag_entries.push(xmp_entry);
+
+                    // Add XMP detection status
+                    tags.insert(
+                        "System:XmpDetectionStatus".to_string(),
+                        TagValue::String(format!(
+                            "XMP data processed from standalone file, length {} bytes",
+                            xmp_data.len()
+                        )),
+                    );
+                }
+                Err(e) => {
+                    // Failed to parse XMP - add error information
+                    tags.insert(
+                        "Warning:XmpParseError".to_string(),
+                        TagValue::string(format!("Failed to parse XMP: {e}")),
                     );
                 }
             }
