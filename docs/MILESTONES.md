@@ -109,6 +109,12 @@ This milestone plan embraces the reality that we're building a complex system in
 - Structure flattening and namespace management
 - **Planning**: See [MILESTONE-15-XMP-XML.md](milestones/MILESTONE-15-XMP-XML.md)
 
+### Milestone 16: Codegen Architecture Clarity
+- Refactor confusing "simple_tables" naming into logical modules
+- Reorganize into `lookup_tables/`, `file_detection/`, `data_sets/`
+- Reduce cognitive load for new engineers and improve maintainability
+- **Planning**: See [MILESTONE-16-Codegen-Architecture-Clarity.md](milestones/MILESTONE-16-Codegen-Architecture-Clarity.md)
+
 ### Milestone 17: RAW Image Format Support (Consolidated)
 - Unified RAW processing foundation for all manufacturers
 - Canon, Nikon, Sony, Olympus, Fujifilm, Panasonic support  
