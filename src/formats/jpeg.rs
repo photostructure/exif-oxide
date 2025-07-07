@@ -5,6 +5,7 @@
 //! and EXIF data extraction.
 
 use crate::types::{ExifError, Result};
+use std::collections::{BTreeMap, HashMap};
 use std::io::{Read, Seek, SeekFrom};
 
 /// JPEG segment types
@@ -68,6 +69,25 @@ pub struct JpegSegmentInfo {
     pub length: u16,
     pub has_exif: bool,
     pub has_xmp: bool,
+}
+
+/// Extended XMP segment data
+///
+/// Extended XMP is split across multiple APP1 segments, each containing:
+/// - 35 bytes: signature "http://ns.adobe.com/xmp/extension/\0"
+/// - 32 bytes: GUID (MD5 hash of full extended XMP data)
+/// - 4 bytes: total size of extended XMP data
+/// - 4 bytes: offset for this XMP data portion
+/// - Remaining: XMP data chunk
+///
+/// ExifTool: lib/Image/ExifTool.pm:7731-7754 (Extended XMP parsing)
+#[derive(Debug)]
+pub struct ExtendedXmpInfo {
+    pub guid: String,
+    pub total_size: u32,
+    pub chunk_offset: u32,
+    pub segment_offset: u64, // File offset to start of XMP data chunk
+    pub chunk_length: u16,   // Length of this chunk
 }
 
 /// Scan JPEG file for all APP1 segments containing EXIF or XMP data
@@ -190,11 +210,17 @@ pub fn scan_jpeg_segments<R: Read + Seek>(mut reader: R) -> Result<Option<JpegSe
     Ok(found_exif.or(found_xmp))
 }
 
+/// Result of scanning JPEG for XMP segments
+pub struct XmpScanResult {
+    pub regular_xmp: Option<JpegSegmentInfo>,
+    pub extended_xmp: Vec<ExtendedXmpInfo>,
+}
+
 /// Scan JPEG file for all XMP segments
 ///
-/// Returns all APP1 segments containing XMP data. For regular XMP, there's usually
-/// just one segment. For Extended XMP, there may be multiple segments that need reassembly.
-pub fn scan_jpeg_xmp_segments<R: Read + Seek>(mut reader: R) -> Result<Vec<JpegSegmentInfo>> {
+/// Returns regular XMP segment info (if found) and all Extended XMP segments.
+/// Extended XMP segments contain GUID-based chunks that need reassembly.
+pub fn scan_jpeg_xmp_segments<R: Read + Seek>(mut reader: R) -> Result<XmpScanResult> {
     // Verify JPEG magic bytes
     let mut magic = [0u8; 2];
     reader.read_exact(&mut magic)?;
@@ -204,7 +230,8 @@ pub fn scan_jpeg_xmp_segments<R: Read + Seek>(mut reader: R) -> Result<Vec<JpegS
         ));
     }
 
-    let mut xmp_segments = Vec::new();
+    let mut regular_xmp = None;
+    let mut extended_xmp = Vec::new();
     let mut current_pos = 2u64; // After SOI marker
 
     loop {
@@ -240,18 +267,22 @@ pub fn scan_jpeg_xmp_segments<R: Read + Seek>(mut reader: R) -> Result<Vec<JpegS
                 if reader.read_exact(&mut xmp_header).is_ok()
                     && &xmp_header == b"http://ns.adobe.com/xap/1.0/\0"
                 {
-                    xmp_segments.push(JpegSegmentInfo {
-                        segment_type: segment,
-                        offset: current_pos + 29,
-                        length: length - 31, // Subtract length header + identifier
-                        has_exif: false,
-                        has_xmp: true,
-                    });
+                    // Store first regular XMP segment only
+                    if regular_xmp.is_none() {
+                        regular_xmp = Some(JpegSegmentInfo {
+                            segment_type: segment,
+                            offset: current_pos + 29,
+                            length: length - 31, // Subtract length header + identifier
+                            has_exif: false,
+                            has_xmp: true,
+                        });
+                    }
 
                     // Skip to next segment
+                    // ExifTool: lib/Image/ExifTool/JPEG.pm:436-440 - seek to next segment
                     let remaining = (length - 31) as u64;
                     reader.seek(SeekFrom::Current(remaining as i64))?;
-                    current_pos += length as u64;
+                    current_pos = segment_start + (length - 2) as u64;
                     continue;
                 }
 
@@ -261,19 +292,56 @@ pub fn scan_jpeg_xmp_segments<R: Read + Seek>(mut reader: R) -> Result<Vec<JpegS
                 if reader.read_exact(&mut ext_xmp_header).is_ok()
                     && &ext_xmp_header[0..35] == b"http://ns.adobe.com/xmp/extension/\0"
                 {
-                    // Extended XMP segment - store for later reassembly
-                    xmp_segments.push(JpegSegmentInfo {
-                        segment_type: segment,
-                        offset: current_pos + 35,
-                        length: length - 37, // Subtract length header + identifier
-                        has_exif: false,
-                        has_xmp: true,
+                    // Read Extended XMP header fields
+                    // ExifTool: lib/Image/ExifTool.pm:7738-7751
+                    // off len -- extended XMP header (75 bytes total):
+                    //   0  35 bytes - signature
+                    //  35  32 bytes - GUID (MD5 hash of full extended XMP data in ASCII)
+                    //  67   4 bytes - total size of extended XMP data
+                    //  71   4 bytes - offset for this XMP data portion
+
+                    // Read GUID (32 bytes)
+                    let mut guid_bytes = [0u8; 32];
+                    reader.read_exact(&mut guid_bytes)?;
+                    let guid = String::from_utf8_lossy(&guid_bytes).to_string();
+
+                    // Validate GUID contains only alphanumeric characters
+                    // ExifTool: lib/Image/ExifTool.pm:7741-7742
+                    if !guid.chars().all(|c| c.is_ascii_alphanumeric()) {
+                        // Skip invalid Extended XMP segment
+                        reader.seek(SeekFrom::Start(segment_start))?;
+                        let segment_data_length = length.saturating_sub(2) as u64;
+                        reader.seek(SeekFrom::Current(segment_data_length as i64))?;
+                        current_pos = segment_start + segment_data_length;
+                        continue;
+                    }
+
+                    // Read total size (4 bytes)
+                    // ExifTool: lib/Image/ExifTool.pm:7739 - unpack('x67N2', $$segDataPt)
+                    let mut size_bytes = [0u8; 4];
+                    reader.read_exact(&mut size_bytes)?;
+                    let total_size = u32::from_be_bytes(size_bytes);
+
+                    // Read chunk offset (4 bytes)
+                    let mut offset_bytes = [0u8; 4];
+                    reader.read_exact(&mut offset_bytes)?;
+                    let chunk_offset = u32::from_be_bytes(offset_bytes);
+
+                    // Extended XMP header is 75 bytes total (35 + 32 + 4 + 4)
+                    // ExifTool: lib/Image/ExifTool.pm:7751 - $$extXMP{$off} = substr($$segDataPt, 75)
+                    extended_xmp.push(ExtendedXmpInfo {
+                        guid,
+                        total_size,
+                        chunk_offset,
+                        segment_offset: current_pos + 75, // After full header
+                        chunk_length: length - 77, // Subtract length header (2) + extended header (75)
                     });
 
                     // Skip to next segment
-                    let remaining = (length - 37) as u64;
+                    // ExifTool: lib/Image/ExifTool.pm:7753-7754 - processing next segment
+                    let remaining = (length - 77) as u64;
                     reader.seek(SeekFrom::Current(remaining as i64))?;
-                    current_pos += length as u64;
+                    current_pos = segment_start + (length - 2) as u64;
                     continue;
                 }
 
@@ -281,7 +349,7 @@ pub fn scan_jpeg_xmp_segments<R: Read + Seek>(mut reader: R) -> Result<Vec<JpegS
                 reader.seek(SeekFrom::Start(segment_start))?;
                 let segment_data_length = length.saturating_sub(2) as u64;
                 reader.seek(SeekFrom::Current(segment_data_length as i64))?;
-                current_pos += segment_data_length;
+                current_pos = segment_start + segment_data_length;
             }
             _ => {
                 // Other segments - skip them
@@ -298,31 +366,227 @@ pub fn scan_jpeg_xmp_segments<R: Read + Seek>(mut reader: R) -> Result<Vec<JpegS
         }
     }
 
-    Ok(xmp_segments)
+    Ok(XmpScanResult {
+        regular_xmp,
+        extended_xmp,
+    })
+}
+
+/// Extract HasExtendedXMP GUID from regular XMP data
+///
+/// This searches for the xmpNote:HasExtendedXMP property in the XMP packet
+/// which contains the GUID of the extended XMP data to reassemble.
+///
+/// ExifTool: lib/Image/ExifTool.pm:7485 - my $goodGuid = $$self{VALUE}{HasExtendedXMP} || '';
+fn extract_has_extended_xmp_guid(xmp_data: &[u8]) -> Option<String> {
+    // Convert to string for searching
+    let xmp_str = std::str::from_utf8(xmp_data).ok()?;
+
+    // Look for HasExtendedXMP property
+    // ExifTool: lib/Image/ExifTool/XMP.pm:2380-2390 - HasExtendedXMP extraction
+    // Can be in attribute format: xmpNote:HasExtendedXMP="GUID"
+    // Or element format: <xmpNote:HasExtendedXMP>GUID</xmpNote:HasExtendedXMP>
+
+    // First try element format (more common)
+    if let Some(start_pos) = xmp_str.find("<xmpNote:HasExtendedXMP>") {
+        let guid_start = start_pos + "<xmpNote:HasExtendedXMP>".len();
+        if let Some(end_pos) = xmp_str[guid_start..].find("</xmpNote:HasExtendedXMP>") {
+            let guid = &xmp_str[guid_start..guid_start + end_pos];
+            // Validate GUID is 32 alphanumeric characters
+            // ExifTool: lib/Image/ExifTool.pm:7741 - $$extXMP{GUID} =~ /[^0-9a-fA-F]/
+            if guid.len() == 32 && guid.chars().all(|c| c.is_ascii_alphanumeric()) {
+                return Some(guid.to_string());
+            }
+        }
+    }
+
+    // Also try without namespace prefix
+    if let Some(start_pos) = xmp_str.find("<HasExtendedXMP>") {
+        let guid_start = start_pos + "<HasExtendedXMP>".len();
+        if let Some(end_pos) = xmp_str[guid_start..].find("</HasExtendedXMP>") {
+            let guid = &xmp_str[guid_start..guid_start + end_pos];
+            // Validate GUID is 32 alphanumeric characters
+            // ExifTool: lib/Image/ExifTool.pm:7741 - $$extXMP{GUID} =~ /[^0-9a-fA-F]/
+            if guid.len() == 32 && guid.chars().all(|c| c.is_ascii_alphanumeric()) {
+                return Some(guid.to_string());
+            }
+        }
+    }
+
+    // Try attribute format
+    let patterns = [
+        "xmpNote:HasExtendedXMP=\"",
+        "xmpNote:HasExtendedXMP='",
+        "HasExtendedXMP=\"",
+        "HasExtendedXMP='",
+    ];
+
+    for pattern in &patterns {
+        if let Some(start_pos) = xmp_str.find(pattern) {
+            let guid_start = start_pos + pattern.len();
+            let quote_char = pattern.chars().last()?;
+
+            // Find closing quote
+            if let Some(end_pos) = xmp_str[guid_start..].find(quote_char) {
+                let guid = &xmp_str[guid_start..guid_start + end_pos];
+
+                // Validate GUID is 32 alphanumeric characters
+                if guid.len() == 32 && guid.chars().all(|c| c.is_ascii_alphanumeric()) {
+                    return Some(guid.to_string());
+                }
+            }
+        }
+    }
+
+    None
 }
 
 /// Extract XMP data from JPEG file
 ///
 /// This function scans for APP1 segments containing XMP data and returns
 /// the raw XMP packet(s). For Extended XMP, multiple segments are reassembled.
+///
+/// ExifTool: lib/Image/ExifTool.pm:7482-7524 (Extended XMP reassembly)
 pub fn extract_jpeg_xmp<R: Read + Seek>(mut reader: R) -> Result<Vec<u8>> {
-    let xmp_segments = scan_jpeg_xmp_segments(&mut reader)?;
+    let scan_result = scan_jpeg_xmp_segments(&mut reader)?;
 
-    if xmp_segments.is_empty() {
+    // First, check if we have regular XMP
+    if let Some(regular_xmp) = &scan_result.regular_xmp {
+        // Read regular XMP data
+        reader.seek(SeekFrom::Start(regular_xmp.offset))?;
+        let mut xmp_data = vec![0u8; regular_xmp.length as usize];
+        reader.read_exact(&mut xmp_data)?;
+
+        // Check if this XMP contains HasExtendedXMP property
+        if let Some(has_extended_guid) = extract_has_extended_xmp_guid(&xmp_data) {
+            // We have Extended XMP to reassemble
+            // ExifTool: lib/Image/ExifTool.pm:7487-7488
+            if !scan_result.extended_xmp.is_empty() {
+                // Group Extended XMP chunks by GUID
+                let mut guid_chunks: HashMap<String, BTreeMap<u32, Vec<u8>>> = HashMap::new();
+
+                for ext_info in &scan_result.extended_xmp {
+                    // Only process chunks matching the HasExtendedXMP GUID
+                    if ext_info.guid == has_extended_guid {
+                        // Read chunk data
+                        reader.seek(SeekFrom::Start(ext_info.segment_offset))?;
+                        let mut chunk_data = vec![0u8; ext_info.chunk_length as usize];
+                        reader.read_exact(&mut chunk_data)?;
+
+                        // Store chunk indexed by offset for ordered reassembly
+                        // ExifTool: lib/Image/ExifTool.pm:7751 - $$extXMP{$off} = substr($$segDataPt, 75)
+                        guid_chunks
+                            .entry(ext_info.guid.clone())
+                            .or_default()
+                            .insert(ext_info.chunk_offset, chunk_data);
+                    }
+                }
+
+                // Reassemble Extended XMP with matching GUID
+                if let Some(chunks) = guid_chunks.get(&has_extended_guid) {
+                    // Check if we have all chunks
+                    let mut expected_offset = 0u32;
+                    let mut total_size = 0u32;
+                    let mut is_complete = true;
+
+                    // Get total size from first matching segment
+                    for ext_info in &scan_result.extended_xmp {
+                        if ext_info.guid == has_extended_guid {
+                            total_size = ext_info.total_size;
+                            break;
+                        }
+                    }
+
+                    // Verify we have all chunks in sequence
+                    // ExifTool: lib/Image/ExifTool.pm:7494-7498 - check for missing chunks
+                    for (offset, chunk) in chunks {
+                        if *offset != expected_offset {
+                            is_complete = false;
+                            break;
+                        }
+                        expected_offset += chunk.len() as u32;
+                    }
+
+                    if is_complete && expected_offset == total_size {
+                        // Combine regular XMP with Extended XMP
+                        // The Extended XMP is appended after the regular XMP
+                        // ExifTool: lib/Image/ExifTool.pm:7506-7507
+                        let mut combined_xmp = xmp_data;
+                        for chunk in chunks.values() {
+                            combined_xmp.extend_from_slice(chunk);
+                        }
+                        return Ok(combined_xmp);
+                    }
+                }
+            }
+        }
+
+        // Return just regular XMP if no Extended XMP or incomplete
+        return Ok(xmp_data);
+    }
+
+    // No regular XMP - check for Extended XMP only (unusual but possible)
+    if !scan_result.extended_xmp.is_empty() {
+        // Group Extended XMP chunks by GUID
+        let mut guid_chunks: HashMap<String, BTreeMap<u32, Vec<u8>>> = HashMap::new();
+
+        for ext_info in &scan_result.extended_xmp {
+            // Read chunk data
+            reader.seek(SeekFrom::Start(ext_info.segment_offset))?;
+            let mut chunk_data = vec![0u8; ext_info.chunk_length as usize];
+            reader.read_exact(&mut chunk_data)?;
+
+            // Store chunk indexed by offset for ordered reassembly
+            guid_chunks
+                .entry(ext_info.guid.clone())
+                .or_default()
+                .insert(ext_info.chunk_offset, chunk_data);
+        }
+
+        // Find the first complete Extended XMP
+        // ExifTool: lib/Image/ExifTool.pm:7493-7500
+        for (guid, chunks) in guid_chunks {
+            // Check if we have all chunks
+            let mut expected_offset = 0u32;
+            let mut total_size = 0u32;
+            let mut is_complete = true;
+
+            // Get total size from first matching segment
+            for ext_info in &scan_result.extended_xmp {
+                if ext_info.guid == guid {
+                    total_size = ext_info.total_size;
+                    break;
+                }
+            }
+
+            // Verify we have all chunks in sequence
+            for (offset, chunk) in &chunks {
+                if *offset != expected_offset {
+                    is_complete = false;
+                    break;
+                }
+                expected_offset += chunk.len() as u32;
+            }
+
+            if is_complete && expected_offset == total_size {
+                // Reassemble complete Extended XMP
+                // ExifTool: lib/Image/ExifTool.pm:7506-7507
+                let mut reassembled = Vec::with_capacity(total_size as usize);
+                for (_, chunk) in chunks {
+                    reassembled.extend_from_slice(&chunk);
+                }
+                return Ok(reassembled);
+            }
+        }
+
         return Err(ExifError::InvalidFormat(
-            "No XMP data found in JPEG file".to_string(),
+            "Incomplete Extended XMP data".to_string(),
         ));
     }
 
-    // For now, just handle the first XMP segment (regular XMP)
-    // TODO: Handle Extended XMP reassembly in future implementation
-    let first_segment = &xmp_segments[0];
-
-    reader.seek(SeekFrom::Start(first_segment.offset))?;
-    let mut xmp_data = vec![0u8; first_segment.length as usize];
-    reader.read_exact(&mut xmp_data)?;
-
-    Ok(xmp_data)
+    Err(ExifError::InvalidFormat(
+        "No XMP data found in JPEG file".to_string(),
+    ))
 }
 
 /// Extract EXIF data from JPEG file
@@ -478,9 +742,10 @@ mod tests {
 
         let cursor = Cursor::new(&jpeg_data);
         let result = scan_jpeg_xmp_segments(cursor).unwrap();
-        assert_eq!(result.len(), 1);
+        assert!(result.regular_xmp.is_some());
+        assert!(result.extended_xmp.is_empty());
 
-        let segment_info = &result[0];
+        let segment_info = result.regular_xmp.unwrap();
         assert!(segment_info.has_xmp);
         assert_eq!(segment_info.length, 30); // Just the XMP packet size
     }

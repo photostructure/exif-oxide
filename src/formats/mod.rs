@@ -11,8 +11,7 @@ pub use detection::{
     detect_file_format, detect_file_format_from_path, get_format_properties, FileFormat,
 };
 pub use jpeg::{
-    extract_jpeg_exif, extract_jpeg_xmp, scan_jpeg_segments, scan_jpeg_xmp_segments, JpegSegment,
-    JpegSegmentInfo,
+    extract_jpeg_exif, extract_jpeg_xmp, scan_jpeg_segments, JpegSegment, JpegSegmentInfo,
 };
 pub use tiff::{extract_tiff_exif, extract_tiff_xmp, get_tiff_endianness, validate_tiff_format};
 
@@ -201,15 +200,10 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                 }
             }
 
-            // Scan for XMP data in JPEG segments
+            // Extract XMP data (handles both regular and Extended XMP)
             reader.seek(SeekFrom::Start(0))?;
-            match scan_jpeg_xmp_segments(&mut reader) {
-                Ok(xmp_segments) if !xmp_segments.is_empty() => {
-                    // Extract XMP data from first segment
-                    reader.seek(SeekFrom::Start(xmp_segments[0].offset))?;
-                    let mut xmp_data = vec![0u8; xmp_segments[0].length as usize];
-                    reader.read_exact(&mut xmp_data)?;
-
+            match extract_jpeg_xmp(&mut reader) {
+                Ok(xmp_data) => {
                     // Process XMP data with XmpProcessor
                     let mut xmp_processor = XmpProcessor::new();
                     match xmp_processor.process_xmp_data(&xmp_data) {
@@ -221,8 +215,8 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                             tags.insert(
                                 "System:XmpDetectionStatus".to_string(),
                                 TagValue::String(format!(
-                                    "XMP data found in APP1 segment at offset {:#x}, length {} bytes",
-                                    xmp_segments[0].offset, xmp_segments[0].length
+                                    "XMP data found ({} bytes total)",
+                                    xmp_data.len()
                                 )),
                             );
                         }
@@ -235,15 +229,15 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                         }
                     }
                 }
-                Ok(_) => {
-                    // No XMP data found
+                Err(e) if e.to_string().contains("No XMP data found") => {
+                    // No XMP data found (not an error)
                     tags.insert(
                         "System:XmpDetectionStatus".to_string(),
                         "No XMP data found in JPEG".into(),
                     );
                 }
                 Err(e) => {
-                    // Error scanning for XMP
+                    // Real error scanning for XMP
                     tags.insert(
                         "Warning:XmpScanError".to_string(),
                         TagValue::string(format!("Error scanning for XMP: {e}")),
