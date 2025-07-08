@@ -1,4 +1,4 @@
-.PHONY: check fmt-check fmt lint test fix build doc clean patch-exiftool codegen sync update audit precommit help snapshot-generate snapshot-tests snapshots
+.PHONY: check fmt-check fmt lint test fix build doc clean patch-exiftool codegen sync update audit precommit help snapshot-generate snapshot-tests snapshots perl-deps perl-setup
 
 # Run all checks without modifying (for CI)
 check: fmt-check lint test
@@ -67,6 +67,22 @@ codegen:
 sync: codegen
 	cargo build
 
+# Set up local Perl environment and install cpanminus
+perl-setup:
+	@echo "Setting up local Perl environment..."
+	@if [ ! -f "$$HOME/perl5/bin/cpanm" ]; then \
+		echo "Installing cpanminus locally..."; \
+		curl -L http://cpanmin.us | perl - -l ~/perl5 App::cpanminus local::lib; \
+	fi
+	@echo "Setting up local::lib..."
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
+	@echo "Perl environment ready. Run 'make perl-deps' to install dependencies."
+
+# Install Perl dependencies using cpanminus
+perl-deps: perl-setup
+	@echo "Installing Perl dependencies from cpanfile..."
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && ~/perl5/bin/cpanm --installdeps .
+
 # Update dependencies
 update:
 	cargo update
@@ -77,7 +93,7 @@ audit:
 	cargo audit
 
 # Pre-commit checks: do everything: update deps, codegen, fix code, lint, test, audit, and build
-precommit: update codegen check-extractors fix lint compat-gen test audit build 
+precommit: update perl-deps codegen check-extractors fix lint compat-gen test audit build 
 
 # Generate ExifTool JSON reference data for compatibility testing
 compat-gen:
@@ -119,6 +135,8 @@ help:
 	@echo ""
 	@echo "Maintenance:"
 	@echo "  make update        - Update dependencies"
+	@echo "  make perl-setup    - Set up local Perl environment"
+	@echo "  make perl-deps     - Install Perl dependencies"
 	@echo "  make audit         - Security audit for vulnerabilities"
 	@echo "  make precommit     - Run full pre-commit checks"
 	@echo ""
