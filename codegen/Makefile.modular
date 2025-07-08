@@ -42,7 +42,7 @@ $(GENERATED_DIR) $(SIMPLE_TABLES_DIR):
 # Patch ExifTool modules to expose my-scoped variables
 patch-exiftool:
 	@echo "🔧 Patching ExifTool modules to expose variables..."
-	@perl patch_exiftool_modules.pl
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl patch_exiftool_modules.pl
 	@echo "✅ ExifTool modules patched"
 
 # Revert ExifTool module patches to keep submodule clean
@@ -61,26 +61,26 @@ parallel-extract: $(EXTRACTOR_OUTPUTS)
 # Individual extractor rules
 $(TAG_TABLES_JSON): extractors/tag_tables.pl
 	@echo "📋 Extracting EXIF/GPS tags..."
-	@perl $< > $@
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl $< > $@
 
 $(COMPOSITE_TAGS_JSON): extractors/composite_tags.pl
 	@echo "🔗 Extracting composite tags..."
-	@perl $< > $@
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl $< > $@
 
 $(REGEX_PATTERNS_JSON): extractors/regex_patterns.pl
 	@echo "🔍 Extracting regex patterns..."
-	@perl $< > $@
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl $< > $@
 
 $(FILE_TYPE_LOOKUP_JSON): extractors/file_type_lookup.pl
 	@echo "📁 Extracting file type lookups..."
-	@perl $< > $@
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl $< > $@
 
 # Simple tables extraction (generates multiple files)
 simple-tables: $(SIMPLE_TABLE_FILES)
 
 $(SIMPLE_TABLE_FILES): extractors/simple_tables.pl simple_tables.json
 	@echo "📊 Extracting simple tables..."
-	@perl extractors/simple_tables.pl
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl extractors/simple_tables.pl
 	@touch $(SIMPLE_TABLE_FILES)  # Update timestamps
 
 # Rust code generation
@@ -110,11 +110,11 @@ regen-simple-tables: clean-simple-tables simple-tables generate-rust
 # Development helpers
 check-extractors:
 	@echo "Checking Perl extractor syntax..."
-	@perl -c extractors/tag_tables.pl
-	@perl -c extractors/composite_tags.pl
-	@perl -c extractors/regex_patterns.pl
-	@perl -c extractors/file_type_lookup.pl
-	@perl -c extractors/simple_tables.pl
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/tag_tables.pl
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/composite_tags.pl
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/regex_patterns.pl
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/file_type_lookup.pl
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/simple_tables.pl
 
 # Show what would be built
 dry-run:
