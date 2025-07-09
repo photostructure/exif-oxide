@@ -153,14 +153,17 @@ sub determine_lookup_type {
         # Simple string value
         if ($value =~ m{/}) {
             return 'mime';  # Looks like MIME type
-        } elsif (length($value) <= 10 && $value =~ /^[A-Z]+$/i) {
-            return 'extension';  # Short uppercase string
+        } elsif (length($value) <= 10 && $value =~ /^[A-Z0-9]+$/i) {
+            return 'description';  # Short uppercase string (alias to another type)
         } else {
             return 'description';  # Longer descriptive string
         }
     } elsif (ref $value eq 'ARRAY') {
-        # Array of values (usually alternate extensions or MIME types)
-        return 'extension' if $key =~ /^[A-Z]+$/;
+        # Array values in %fileTypeLookup typically mean [format, description]
+        # These are file extensions that map to a format type
+        if (ref $value->[0] eq 'ARRAY' || (defined $value->[0] && defined $value->[1])) {
+            return 'extension';  # File extension with format mapping
+        }
         return 'mime';
     } elsif (ref $value eq 'HASH') {
         # Complex structure (magic number lookup)
