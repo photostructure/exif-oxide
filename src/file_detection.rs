@@ -147,19 +147,25 @@ impl FileTypeDetector {
         let normalized_ext = self.normalize_extension(extension);
 
         // Resolve through fileTypeLookup with alias following
+        // ExifTool.pm:258-404 %fileTypeLookup hash defines extension mappings
         use crate::generated::file_types::resolve_file_type;
-        if let Some((_formats, _description)) = resolve_file_type(&normalized_ext) {
-            // For most cases, return the extension itself as candidate
+        if let Some((formats, _description)) = resolve_file_type(&normalized_ext) {
+            // Get the primary file type from the resolved formats
+            let primary_type = formats[0].to_string();
+
             // Special case: HEIC/HEIF/CR3/MP4 extensions should use MOV format for detection
             // This matches ExifTool's behavior where these formats use MOV magic pattern
-            if normalized_ext == "HEIC"
-                || normalized_ext == "HEIF"
-                || normalized_ext == "CR3"
-                || normalized_ext == "MP4"
+            // ExifTool QuickTime.pm:9868-9877 - ftyp brand determines actual file type
+            if primary_type == "HEIC"
+                || primary_type == "HEIF"
+                || primary_type == "CR3"
+                || primary_type == "MP4"
             {
                 Ok(vec!["MOV".to_string()])
             } else {
-                Ok(vec![normalized_ext.clone()])
+                // Use the resolved file type (handles aliases like MTS -> M2TS)
+                // ExifTool.pm:258-404 %fileTypeLookup handles extension aliases
+                Ok(vec![primary_type])
             }
         } else {
             // Unknown extension - return normalized extension as candidate
@@ -433,7 +439,7 @@ impl FileTypeDetector {
                     if buffer[4..6] == [0x6a, 0x50] {
                         // "jP"
                         let version = &buffer[6..8];
-                        (version == b"  " || version == &[0x1a, 0x1a])
+                        (version == b"  " || version == [0x1a, 0x1a])
                             && buffer.len() >= 12
                             && buffer[8..12] == [0x0d, 0x0a, 0x87, 0x0a]
                     } else {
@@ -498,6 +504,7 @@ impl FileTypeDetector {
         }
 
         // Check if we have a generated magic number pattern
+        // ExifTool.pm:912-1027 %magicNumber hash defines magic number patterns
         use crate::generated::file_types::get_magic_number_pattern;
         if let Some(_pattern) = get_magic_number_pattern(file_type) {
             // TODO: Use regex patterns when UTF-8 issue is fixed
@@ -750,12 +757,8 @@ impl FileTypeDetector {
             }
         }
         if pos + 2 <= buffer.len() {
-            // UTF-16 BE BOM: FE FF
-            if buffer[pos..pos + 2] == [0xfe, 0xff] {
-                pos += 2;
-            }
-            // UTF-16 LE BOM: FF FE
-            else if buffer[pos..pos + 2] == [0xff, 0xfe] {
+            // UTF-16 BE BOM: FE FF or UTF-16 LE BOM: FF FE
+            if buffer[pos..pos + 2] == [0xfe, 0xff] || buffer[pos..pos + 2] == [0xff, 0xfe] {
                 pos += 2;
             }
         }
@@ -783,7 +786,7 @@ impl FileTypeDetector {
     pub fn build_result(
         &self,
         file_type: &str,
-        _path: &Path,
+        path: &Path,
     ) -> Result<FileTypeDetectionResult, FileDetectionError> {
         // Get primary format for processing
         use crate::generated::file_types::resolve_file_type;
@@ -800,6 +803,22 @@ impl FileTypeDetector {
             .or_else(|| lookup_mime_types(&format))
             .unwrap_or("application/octet-stream")
             .to_string();
+
+        // Special case: ASF files with .wmv extension should use video/x-ms-wmv MIME type
+        // ExifTool.pm:9570-9592 SetFileType() applies extension-specific MIME types for ASF/WMV
+        // Reference: ExifTool.pm lines 557 (WMV->ASF mapping) and 816 (WMV MIME type)
+        let mime_type = if file_type == "ASF" {
+            if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
+                match ext.to_lowercase().as_str() {
+                    "wmv" => "video/x-ms-wmv".to_string(),
+                    _ => mime_type,
+                }
+            } else {
+                mime_type
+            }
+        } else {
+            mime_type
+        };
 
         Ok(FileTypeDetectionResult {
             file_type: file_type.to_string(),
