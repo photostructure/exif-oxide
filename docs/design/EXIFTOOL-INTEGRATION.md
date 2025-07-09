@@ -35,17 +35,32 @@ ExifTool Source → Perl Extractors → JSON → Rust Codegen → Generated Code
 ```
 codegen/
 ├── patch_exiftool_modules.pl # Auto-patches ExifTool for variable access
-├── extractors/           # Perl scripts extract from ExifTool
-│   ├── extract.pl        # Lookup tables
-│   ├── tag_tables.pl     # Tag definitions
+├── config/               # Source-file-based configuration
+│   ├── Canon_pm/        # Canon.pm extractions
+│   │   ├── simple_table.json
+│   │   └── print_conv.json
+│   ├── ExifTool_pm/     # ExifTool.pm extractions
+│   │   ├── simple_table.json
+│   │   ├── file_type_lookup.json
+│   │   └── boolean_set.json
+│   └── Nikon_pm/        # Nikon.pm extractions
+│       ├── simple_table.json
+│       └── print_conv.json
+├── schemas/             # JSON schema validation
+│   ├── simple_table.json
+│   ├── file_type_lookup.json
+│   └── boolean_set.json
+├── extractors/          # Perl scripts extract from ExifTool
+│   ├── extract.pl       # Lookup tables
+│   ├── tag_tables.pl    # Tag definitions
 │   └── file_type_lookup.pl # File detection
-├── src/generators/       # Rust code generation
-│   ├── lookup_tables/    # Lookup table generators
-│   ├── file_detection/   # File type detection
-│   └── data_sets/        # Boolean set generators
-│   ├── tags.rs          # Tag table generator
+├── src/generators/      # Rust code generation
+│   ├── lookup_tables/   # Lookup table generators
+│   ├── file_detection/  # File type detection
+│   └── data_sets/       # Boolean set generators
+│   ├── tags.rs         # Tag table generator
 │   └── composite_tags.rs # Composite tag generator
-└── generated/           # Extracted JSON data
+└── generated/          # Extracted JSON data
 ```
 
 ### Runtime System
@@ -57,6 +72,14 @@ src/
 │   ├── print_conv.rs             # PrintConv implementations
 │   ├── value_conv.rs             # ValueConv implementations
 │   └── [manufacturer]/          # Specialized processors
+├── generated/                     # Generated lookup tables
+│   ├── macros.rs                 # Shared generation macros
+│   ├── Canon_pm/                 # Canon.pm extractions
+│   │   └── mod.rs               # All Canon tables with re-exports
+│   ├── ExifTool_pm/             # ExifTool.pm extractions
+│   │   └── mod.rs               # File type detection tables
+│   └── Nikon_pm/                # Nikon.pm extractions
+│       └── mod.rs               # All Nikon tables with re-exports
 └── processor_registry/           # Advanced processor architecture
     ├── traits.rs                # BinaryDataProcessor trait
     └── capability.rs            # Capability assessment
@@ -95,9 +118,9 @@ cargo run -- photo.jpg --show-missing
 ```rust
 /// EXIF Orientation PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:281-290 (%orientation hash)
-/// Generated table: src/generated/exif/orientation.rs
+/// Generated table: src/generated/Exif_pm/mod.rs
 pub fn orientation_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::exif::orientation::lookup_orientation;
+    use crate::generated::Exif_pm::lookup_orientation;
 
     if let Some(orientation_val) = val.as_u8() {
         if let Some(description) = lookup_orientation(orientation_val) {
@@ -132,7 +155,7 @@ Generated tables integrate seamlessly with manual functions:
 
 ```rust
 // Generated: Canon white balance lookup
-use crate::generated::canon::white_balance::lookup_canon_white_balance;
+use crate::generated::Canon_pm::lookup_canon_white_balance;
 
 // Manual: PrintConv function using generated table
 pub fn canon_wb_print_conv(value: &TagValue) -> TagValue {
@@ -150,15 +173,17 @@ pub fn canon_wb_print_conv(value: &TagValue) -> TagValue {
 **Step 1: Add to Configuration**
 
 ```json
-// In codegen/extract.json
+// In codegen/config/Canon_pm/simple_table.json
 {
-  "module": "Canon.pm",
-  "hash_name": "%newCanonTable",
-  "output_file": "canon/new_setting.rs",
-  "constant_name": "NEW_CANON_SETTING",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Canon new setting names"
+  "description": "Canon.pm simple lookup tables",
+  "tables": [
+    {
+      "hash_name": "%newCanonTable",
+      "constant_name": "NEW_CANON_SETTING",
+      "key_type": "u8",
+      "description": "Canon new setting names"
+    }
+  ]
 }
 ```
 
@@ -169,10 +194,10 @@ pub fn canon_wb_print_conv(value: &TagValue) -> TagValue {
 make codegen
 
 # Use in implementation
-use crate::generated::canon::new_setting::lookup_new_canon_setting;
+use crate::generated::Canon_pm::lookup_new_canon_setting;
 ```
 
-**Note**: The build system automatically patches ExifTool modules to expose `my`-scoped variables as package variables based on entries in `extract.json`. No manual patching is required.
+**Note**: The build system automatically patches ExifTool modules to expose `my`-scoped variables as package variables based on entries in configuration files. No manual patching is required.
 
 ## Code Generation System
 
@@ -214,10 +239,11 @@ The system supports three extraction patterns:
 ### Generated Code Benefits
 
 - **Type Safety**: Proper Rust types for all keys
-- **Performance**: LazyLock HashMap lookups
+- **Performance**: LazyLock HashMap lookups with macro-generated efficiency
 - **Traceability**: Every entry references ExifTool source
 - **Maintenance**: Automatic updates with ExifTool releases
-- **Integration**: Seamless use in manual functions
+- **Integration**: Seamless use in manual functions via clean imports
+- **Scalability**: Consolidated source-file-based organization
 
 ### Build Pipeline
 
@@ -229,12 +255,13 @@ The build pipeline automatically handles all necessary steps:
 
 ```bash
 # Full pipeline with parallel execution
-make codegen              # Full build (includes auto-patching)
+make codegen              # Full build (includes auto-patching and schema validation)
 make -j4 codegen         # Parallel (4 jobs)
 
 # Individual components
 make extract             # Just lookup tables
 make generated/tag_tables.json  # Just tag definitions
+make check-schemas       # Validate all configuration files
 
 # Incremental updates
 make regen-extract       # Regenerate tables only
@@ -453,10 +480,11 @@ make check-extractors
 ### Generation
 
 ```bash
-make codegen              # Full pipeline
+make codegen              # Full pipeline with schema validation
 make -j4 codegen         # Parallel execution
 make extract             # Just lookup tables
 make generated/tag_tables.json  # Just tag definitions
+make check-schemas       # Validate configuration files
 ```
 
 ### Development
@@ -472,6 +500,7 @@ exiftool -j image.jpg > expected.json  # Reference output
 ```bash
 cargo test               # Full test suite
 make compat-test        # ExifTool compatibility
+make precommit          # Full validation including schema checks
 ```
 
 ### Incremental
@@ -509,8 +538,9 @@ make clean              # Clean all generated files
 - **Nikon Support**: AF processing, encryption, lens database, IFD handling
 - **Sony Support**: Basic manufacturer-specific processing
 - **File Detection**: Magic number patterns, MIME types, extension lookup
-- **Generated Integration**: Automatic use of lookup tables in manual functions
+- **Generated Integration**: Source-file-based organization with clean imports
 - **Runtime Registry**: Zero-overhead function dispatch with graceful fallbacks
+- **Scalable Architecture**: Macro-based generation supporting 300+ lookup tables
 
 ## Related Documentation
 
