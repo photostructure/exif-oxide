@@ -87,120 +87,134 @@ All of these are simple key-value mappings perfect for the simple table extracti
 **Camera-Specific Settings (20-100 entries)**:
 
 ```json
-// Sony lookup tables
+// Add to codegen/config/Sony_pm/simple_table.json
 {
-  "module": "Sony.pm",
-  "hash_name": "%whiteBalanceSetting",
-  "output_file": "sony/white_balance.rs",
-  "constant_name": "SONY_WHITE_BALANCE_SETTING",
-  "key_type": "u16",
-  "extraction_type": "simple_table",
-  "description": "Sony white balance settings with fine-tune adjustments"
-},
-{
-  "module": "Sony.pm",
-  "hash_name": "%afPoints79",
-  "output_file": "sony/af_points_79.rs",
-  "constant_name": "SONY_AF_POINTS_79",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Sony 79-point AF system point mappings"
-},
-{
-  "module": "Sony.pm",
-  "hash_name": "%isoSetting2010",
-  "output_file": "sony/iso_setting_2010.rs",
-  "constant_name": "SONY_ISO_SETTING_2010",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Sony ISO setting values to actual ISO numbers"
-},
-{
-  "module": "Sony.pm",
-  "hash_name": "%sonyExposureProgram",
-  "output_file": "sony/exposure_program.rs",
-  "constant_name": "SONY_EXPOSURE_PROGRAM",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Sony exposure program modes"
-},
-{
-  "module": "Sony.pm",
-  "hash_name": "%pictureProfile2010",
-  "output_file": "sony/picture_profile_2010.rs",
-  "constant_name": "SONY_PICTURE_PROFILE_2010",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Sony picture profile settings"
-},
+  "description": "Sony.pm simple lookup tables",
+  "tables": [
+    {
+      "hash_name": "%whiteBalanceSetting",
+      "constant_name": "SONY_WHITE_BALANCE_SETTING",
+      "key_type": "u16",
+      "description": "Sony white balance settings with fine-tune adjustments"
+    },
+    {
+      "hash_name": "%afPoints79",
+      "constant_name": "SONY_AF_POINTS_79",
+      "key_type": "u8",
+      "description": "Sony 79-point AF system point mappings"
+    },
+    {
+      "hash_name": "%isoSetting2010",
+      "constant_name": "SONY_ISO_SETTING_2010",
+      "key_type": "u8",
+      "description": "Sony ISO setting values to actual ISO numbers"
+    },
+    {
+      "hash_name": "%sonyExposureProgram",
+      "constant_name": "SONY_EXPOSURE_PROGRAM",
+      "key_type": "u8",
+      "description": "Sony exposure program modes"
+    },
+    {
+      "hash_name": "%pictureProfile2010",
+      "constant_name": "SONY_PICTURE_PROFILE_2010",
+      "key_type": "u8",
+      "description": "Sony picture profile settings"
+    }
+  ]
+}
 
-// Nikon lookup tables
+// Add to codegen/config/Nikon_pm/simple_table.json (additional tables)
 {
-  "module": "Nikon.pm",
-  "hash_name": "%afPoints153",
-  "output_file": "nikon/af_points_153.rs",
-  "constant_name": "NIKON_AF_POINTS_153",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Nikon 153-point AF system point mappings"
-},
-{
-  "module": "Nikon.pm",
-  "hash_name": "%afPoints135",
-  "output_file": "nikon/af_points_135.rs",
-  "constant_name": "NIKON_AF_POINTS_135",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Nikon 135-point AF system point mappings"
-},
-{
-  "module": "Nikon.pm",
-  "hash_name": "%afPoints105",
-  "output_file": "nikon/af_points_105.rs",
-  "constant_name": "NIKON_AF_POINTS_105",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Nikon 105-point AF system point mappings"
-},
-{
-  "module": "Nikon.pm",
-  "hash_name": "%iSOAutoShutterTimeZ9",
-  "output_file": "nikon/iso_auto_shutter_time_z9.rs",
-  "constant_name": "NIKON_ISO_AUTO_SHUTTER_TIME_Z9",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Nikon Z9 ISO auto shutter time settings"
-},
+  "description": "Nikon.pm simple lookup tables",
+  "tables": [
+    {
+      "hash_name": "%nikonLensIDs",
+      "constant_name": "NIKON_LENS_IDS",
+      "key_type": "string",
+      "description": "Nikon lens signatures to lens names"
+    },
+    {
+      "hash_name": "%afPoints153",
+      "constant_name": "NIKON_AF_POINTS_153",
+      "key_type": "u8",
+      "description": "Nikon 153-point AF system point mappings"
+    },
+    {
+      "hash_name": "%afPoints135",
+      "constant_name": "NIKON_AF_POINTS_135",
+      "key_type": "u8",
+      "description": "Nikon 135-point AF system point mappings"
+    },
+    {
+      "hash_name": "%afPoints105",
+      "constant_name": "NIKON_AF_POINTS_105",
+      "key_type": "u8",
+      "description": "Nikon 105-point AF system point mappings"
+    },
+    {
+      "hash_name": "%iSOAutoShutterTimeZ9",
+      "constant_name": "NIKON_ISO_AUTO_SHUTTER_TIME_Z9",
+      "key_type": "u8",
+      "description": "Nikon Z9 ISO auto shutter time settings"
+    }
+  ]
+}
 
-// Olympus lookup tables
+// Add to codegen/config/Olympus_pm/simple_table.json (additional tables)
 {
-  "module": "Olympus.pm",
-  "hash_name": "%filters",
-  "output_file": "olympus/filters.rs",
-  "constant_name": "OLYMPUS_FILTERS",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Olympus art filter modes"
-},
+  "description": "Olympus.pm simple lookup tables",
+  "tables": [
+    {
+      "hash_name": "%olympusCameraTypes",
+      "constant_name": "OLYMPUS_CAMERA_TYPES",
+      "key_type": "string",
+      "description": "Olympus camera type codes to camera names"
+    },
+    {
+      "hash_name": "%olympusLensTypes",
+      "constant_name": "OLYMPUS_LENS_TYPES",
+      "key_type": "string",
+      "description": "Olympus lens type codes to lens names"
+    },
+    {
+      "hash_name": "%filters",
+      "constant_name": "OLYMPUS_FILTERS",
+      "key_type": "u8",
+      "description": "Olympus art filter modes"
+    }
+  ]
+}
 
-// Canon lookup tables
+// Add to codegen/config/Canon_pm/simple_table.json (additional tables)
 {
-  "module": "Canon.pm",
-  "hash_name": "%canonWhiteBalance",
-  "output_file": "canon/white_balance.rs",
-  "constant_name": "CANON_WHITE_BALANCE",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Canon white balance settings"
-},
-{
-  "module": "Canon.pm",
-  "hash_name": "%pictureStyles",
-  "output_file": "canon/picture_styles.rs",
-  "constant_name": "CANON_PICTURE_STYLES",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Canon picture style modes"
+  "description": "Canon.pm simple lookup tables",
+  "tables": [
+    {
+      "hash_name": "%canonLensTypes",
+      "constant_name": "CANON_LENS_TYPES",
+      "key_type": "u16",
+      "description": "Canon lens type IDs to lens names"
+    },
+    {
+      "hash_name": "%canonModelID",
+      "constant_name": "CANON_CAMERA_MODELS",
+      "key_type": "u32",
+      "description": "Canon camera model IDs to camera names"
+    },
+    {
+      "hash_name": "%canonWhiteBalance",
+      "constant_name": "CANON_WHITE_BALANCE",
+      "key_type": "u8",
+      "description": "Canon white balance settings"
+    },
+    {
+      "hash_name": "%pictureStyles",
+      "constant_name": "CANON_PICTURE_STYLES",
+      "key_type": "u8",
+      "description": "Canon picture style modes"
+    }
+  ]
 }
 ```
 
@@ -209,57 +223,69 @@ All of these are simple key-value mappings perfect for the simple table extracti
 **All Remaining Tables by Manufacturer**:
 
 ```json
-// Panasonic tables
+// Add to codegen/config/PanasonicRaw_pm/simple_table.json
 {
-  "module": "PanasonicRaw.pm",
-  "hash_name": "%panasonicWhiteBalance",
-  "output_file": "panasonic/white_balance.rs",
-  "constant_name": "PANASONIC_WHITE_BALANCE",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Panasonic white balance settings"
-},
+  "description": "PanasonicRaw.pm simple lookup tables",
+  "tables": [
+    {
+      "hash_name": "%panasonicWhiteBalance",
+      "constant_name": "PANASONIC_WHITE_BALANCE",
+      "key_type": "u8",
+      "description": "Panasonic white balance settings"
+    }
+  ]
+}
 
-// Minolta tables
+// Add to codegen/config/MinoltaRaw_pm/simple_table.json
 {
-  "module": "MinoltaRaw.pm",
-  "hash_name": "%mrwWB",
-  "output_file": "minolta/wb_mode.rs",
-  "constant_name": "MINOLTA_WB_MODE",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Minolta white balance mode conversion"
-},
+  "description": "MinoltaRaw.pm simple lookup tables",
+  "tables": [
+    {
+      "hash_name": "%mrwWB",
+      "constant_name": "MINOLTA_WB_MODE",
+      "key_type": "u8",
+      "description": "Minolta white balance mode conversion"
+    }
+  ]
+}
 
-// Kyocera tables
+// Add to codegen/config/KyoceraRaw_pm/simple_table.json
 {
-  "module": "KyoceraRaw.pm",
-  "hash_name": "%isoConv",
-  "output_file": "kyocera/iso_conversion.rs",
-  "constant_name": "KYOCERA_ISO_CONVERSION",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Kyocera ISO value conversion"
-},
+  "description": "KyoceraRaw.pm simple lookup tables",
+  "tables": [
+    {
+      "hash_name": "%isoConv",
+      "constant_name": "KYOCERA_ISO_CONVERSION",
+      "key_type": "u8",
+      "description": "Kyocera ISO value conversion"
+    }
+  ]
+}
 
-// Additional RAW format tables
+// Add to codegen/config/CanonRaw_pm/simple_table.json
 {
-  "module": "CanonRaw.pm",
-  "hash_name": "%targetImageType",
-  "output_file": "canon_raw/target_image_type.rs",
-  "constant_name": "CANON_RAW_TARGET_IMAGE_TYPE",
-  "key_type": "u8",
-  "extraction_type": "simple_table",
-  "description": "Canon RAW target image type"
-},
+  "description": "CanonRaw.pm simple lookup tables",
+  "tables": [
+    {
+      "hash_name": "%targetImageType",
+      "constant_name": "CANON_RAW_TARGET_IMAGE_TYPE",
+      "key_type": "u8",
+      "description": "Canon RAW target image type"
+    }
+  ]
+}
+
+// Add to codegen/config/SigmaRaw_pm/simple_table.json
 {
-  "module": "SigmaRaw.pm",
-  "hash_name": "%driveMode",
-  "output_file": "sigma_raw/drive_mode.rs",
-  "constant_name": "SIGMA_RAW_DRIVE_MODE",
-  "key_type": "string",
-  "extraction_type": "simple_table",
-  "description": "Sigma RAW drive mode settings"
+  "description": "SigmaRaw.pm simple lookup tables",
+  "tables": [
+    {
+      "hash_name": "%driveMode",
+      "constant_name": "SIGMA_RAW_DRIVE_MODE",
+      "key_type": "string",
+      "description": "Sigma RAW drive mode settings"
+    }
+  ]
 }
 ```
 
@@ -268,26 +294,32 @@ All of these are simple key-value mappings perfect for the simple table extracti
 **Inline PrintConv Tables** (extract from within tag definitions):
 
 ```json
-// Extract PrintConv blocks from tag definitions
+// Add to codegen/config/Olympus_pm/print_conv.json
 {
-  "module": "Olympus.pm",
-  "tag_id": "0x0403",
-  "field": "PrintConv",
-  "output_file": "olympus/scene_mode.rs",
-  "constant_name": "OLYMPUS_SCENE_MODE",
-  "key_type": "u16",
-  "extraction_type": "printconv_table",
-  "description": "Olympus scene mode settings"
-},
+  "description": "Olympus.pm PrintConv table extractions",
+  "tables": [
+    {
+      "tag_id": "0x0403",
+      "field": "PrintConv",
+      "constant_name": "OLYMPUS_SCENE_MODE",
+      "key_type": "u16",
+      "description": "Olympus scene mode settings"
+    }
+  ]
+}
+
+// Add to codegen/config/Sony_pm/print_conv.json
 {
-  "module": "Sony.pm",
-  "tag_id": "0x1002",
-  "field": "PrintConv",
-  "output_file": "sony/picture_effect.rs",
-  "constant_name": "SONY_PICTURE_EFFECT",
-  "key_type": "u16",
-  "extraction_type": "printconv_table",
-  "description": "Sony picture effect modes"
+  "description": "Sony.pm PrintConv table extractions",
+  "tables": [
+    {
+      "tag_id": "0x1002",
+      "field": "PrintConv",
+      "constant_name": "SONY_PICTURE_EFFECT",
+      "key_type": "u16",
+      "description": "Sony picture effect modes"
+    }
+  ]
 }
 ```
 
