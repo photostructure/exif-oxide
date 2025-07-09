@@ -1,0 +1,10 @@
+{
+  "description": "ExifTool file type detection with discriminated unions and aliases",
+  "tables": [
+    {
+      "hash_name": "%fileTypeLookup",
+      "constant_name": "FILE_TYPE_LOOKUP",
+      "description": "Core file type detection lookup table"
+    }
+  ]
+}

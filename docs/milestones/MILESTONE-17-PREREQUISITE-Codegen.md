@@ -30,51 +30,55 @@ All of these are simple key-value mappings perfect for the simple table extracti
 **Massive Lookup Tables (1000+ entries)**:
 
 ```json
-// Add to codegen/extract.json
+// Add to codegen/config/Canon_pm/simple_table.json
 {
-  "module": "Canon.pm",
-  "hash_name": "%canonLensTypes",
-  "output_file": "canon/lens_types.rs",
-  "constant_name": "CANON_LENS_TYPES",
-  "key_type": "u16",
-  "extraction_type": "simple_table",
-  "description": "Canon lens type IDs to lens names"
-},
+  "description": "Canon.pm simple lookup tables",
+  "tables": [
+    {
+      "hash_name": "%canonLensTypes",
+      "constant_name": "CANON_LENS_TYPES",
+      "key_type": "u16",
+      "description": "Canon lens type IDs to lens names"
+    },
+    {
+      "hash_name": "%canonModelID",
+      "constant_name": "CANON_CAMERA_MODELS",
+      "key_type": "u32",
+      "description": "Canon camera model IDs to camera names"
+    }
+  ]
+}
+
+// Add to codegen/config/Nikon_pm/simple_table.json
 {
-  "module": "Canon.pm", 
-  "hash_name": "%canonModelID",
-  "output_file": "canon/camera_models.rs",
-  "constant_name": "CANON_CAMERA_MODELS",
-  "key_type": "u32",
-  "extraction_type": "simple_table",
-  "description": "Canon camera model IDs to camera names"
-},
+  "description": "Nikon.pm simple lookup tables",
+  "tables": [
+    {
+      "hash_name": "%nikonLensIDs",
+      "constant_name": "NIKON_LENS_IDS", 
+      "key_type": "string",
+      "description": "Nikon lens signatures to lens names"
+    }
+  ]
+}
+
+// Add to codegen/config/Olympus_pm/simple_table.json
 {
-  "module": "Nikon.pm",
-  "hash_name": "%nikonLensIDs", 
-  "output_file": "nikon/lens_ids.rs",
-  "constant_name": "NIKON_LENS_IDS",
-  "key_type": "string",
-  "extraction_type": "simple_table",
-  "description": "Nikon lens signatures to lens names"
-},
-{
-  "module": "Olympus.pm",
-  "hash_name": "%olympusCameraTypes",
-  "output_file": "olympus/camera_types.rs", 
-  "constant_name": "OLYMPUS_CAMERA_TYPES",
-  "key_type": "string",
-  "extraction_type": "simple_table",
-  "description": "Olympus camera type codes to camera names"
-},
-{
-  "module": "Olympus.pm",
-  "hash_name": "%olympusLensTypes",
-  "output_file": "olympus/lens_types.rs",
-  "constant_name": "OLYMPUS_LENS_TYPES", 
-  "key_type": "string",
-  "extraction_type": "simple_table",
-  "description": "Olympus lens type codes to lens names"
+  "description": "Olympus.pm simple lookup tables",
+  "tables": [
+    {
+      "hash_name": "%olympusCameraTypes",
+      "constant_name": "OLYMPUS_CAMERA_TYPES",
+      "key_type": "string", 
+      "description": "Olympus camera type codes to camera names"
+    },
+    {
+      "hash_name": "%olympusLensTypes",
+      "constant_name": "OLYMPUS_LENS_TYPES",
+      "key_type": "string",
+      "description": "Olympus lens type codes to lens names"
+    }
+  ]
 }
 ```
 
@@ -301,13 +305,13 @@ make precommit        # Verify everything compiles
 ### Generated Code Structure
 
 ```rust
-// Example: src/generated/canon/lens_types.rs
+// Example: src/generated/Canon_pm/mod.rs
 use std::collections::HashMap;
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 
 /// Canon lens type IDs to lens names
 /// Generated from ExifTool Canon.pm %canonLensTypes
-pub static CANON_LENS_TYPES: Lazy<HashMap<u16, &'static str>> = Lazy::new(|| {
+pub static CANON_LENS_TYPES: LazyLock<HashMap<u16, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert(1, "Canon EF 50mm f/1.8");
     map.insert(2, "Canon EF 28mm f/2.8");
@@ -326,7 +330,7 @@ pub fn lookup_canon_lens_type(id: u16) -> Option<&'static str> {
 
 ```rust
 // In implementations/canon/print_conv.rs
-use crate::generated::canon::lens_types::lookup_canon_lens_type;
+use crate::generated::Canon_pm::lookup_canon_lens_type;
 
 pub fn canon_lens_type_print_conv(value: &TagValue) -> TagValue {
     if let Some(lens_id) = value.as_u16() {

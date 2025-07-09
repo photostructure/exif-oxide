@@ -73,13 +73,12 @@ src/
 │   ├── value_conv.rs             # ValueConv implementations
 │   └── [manufacturer]/          # Specialized processors
 ├── generated/                     # Generated lookup tables
-│   ├── macros.rs                 # Shared generation macros
 │   ├── Canon_pm/                 # Canon.pm extractions
-│   │   └── mod.rs               # All Canon tables with re-exports
+│   │   └── mod.rs               # All Canon tables (direct generation)
 │   ├── ExifTool_pm/             # ExifTool.pm extractions
 │   │   └── mod.rs               # File type detection tables
 │   └── Nikon_pm/                # Nikon.pm extractions
-│       └── mod.rs               # All Nikon tables with re-exports
+│       └── mod.rs               # All Nikon tables (direct generation)
 └── processor_registry/           # Advanced processor architecture
     ├── traits.rs                # BinaryDataProcessor trait
     └── capability.rs            # Capability assessment
@@ -201,6 +200,32 @@ use crate::generated::Canon_pm::lookup_new_canon_setting;
 
 ## Code Generation System
 
+### Direct Code Generation
+
+The system generates simple, direct Rust code without macros:
+
+```rust
+// Generated lookup table (no macros)
+pub static ORIENTATION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert(1, "Horizontal (normal)");
+    map.insert(2, "Mirror horizontal");
+    // ... more entries
+    map
+});
+
+// Generated lookup function
+pub fn lookup_orientation(key: u8) -> Option<&'static str> {
+    ORIENTATION.get(&key).copied()
+}
+```
+
+This approach prioritizes:
+- **Readability**: Generated code looks like hand-written Rust
+- **Debuggability**: Stack traces point to real code, not macro expansions
+- **IDE Support**: Autocomplete and go-to-definition work perfectly
+- **Simplicity**: No macro expertise needed to understand or modify
+
 ### Extraction Types
 
 The system supports three extraction patterns:
@@ -239,7 +264,9 @@ The system supports three extraction patterns:
 ### Generated Code Benefits
 
 - **Type Safety**: Proper Rust types for all keys
-- **Performance**: LazyLock HashMap lookups with macro-generated efficiency
+- **Performance**: LazyLock HashMap lookups with direct generation
+- **Simplicity**: No macro complexity - generated code is plain Rust
+- **Debugging**: Easy to read and debug generated functions
 - **Traceability**: Every entry references ExifTool source
 - **Maintenance**: Automatic updates with ExifTool releases
 - **Integration**: Seamless use in manual functions via clean imports
@@ -540,7 +567,7 @@ make clean              # Clean all generated files
 - **File Detection**: Magic number patterns, MIME types, extension lookup
 - **Generated Integration**: Source-file-based organization with clean imports
 - **Runtime Registry**: Zero-overhead function dispatch with graceful fallbacks
-- **Scalable Architecture**: Macro-based generation supporting 300+ lookup tables
+- **Scalable Architecture**: Direct code generation supporting 300+ lookup tables
 
 ## Related Documentation
 

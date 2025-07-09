@@ -1,0 +1,48 @@
+{
+  "description": "XMP module lookup tables for namespace mappings and character conversions",
+  "tables": [
+    {
+      "hash_name": "%nsURI",
+      "constant_name": "NAMESPACE_URIS",
+      "key_type": "String",
+      "description": "XMP namespace prefix to URI mappings"
+    },
+    {
+      "hash_name": "%xmpNS",
+      "constant_name": "XMP_GROUP_NAMES",
+      "key_type": "String",
+      "description": "ExifTool XMP family 1 group name translations"
+    },
+    {
+      "hash_name": "%charName",
+      "constant_name": "XML_CHAR_NAMES",
+      "key_type": "String",
+      "description": "XML character to entity name mappings"
+    },
+    {
+      "hash_name": "%charNum",
+      "constant_name": "XML_CHAR_NUMS",
+      "key_type": "String",
+      "value_type": "u32",
+      "description": "XML entity name to character code mappings"
+    },
+    {
+      "hash_name": "%stdXlatNS",
+      "constant_name": "STD_XLAT_NS",
+      "key_type": "String",
+      "description": "Standard XMP namespace prefix translations"
+    },
+    {
+      "hash_name": "%latConv",
+      "constant_name": "LAT_CONV",
+      "key_type": "String",
+      "description": "GPS latitude hemisphere conversion"
+    },
+    {
+      "hash_name": "%longConv",
+      "constant_name": "LONG_CONV",
+      "key_type": "String",
+      "description": "GPS longitude hemisphere conversion"
+    }
+  ]
+}

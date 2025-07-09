@@ -426,48 +426,154 @@ This milestone provides the foundation for efficient RAW format support while dr
 
 ### Completed Work
 
-#### 1. Configuration Restructuring
+#### 1. Configuration Restructuring ✅
 - Created `codegen/config/` directory structure organized by ExifTool source modules
 - Split monolithic `extract.json` into focused configuration files per module and extraction type
 - Each module directory contains type-specific JSON files (simple_table.json, print_conv.json, etc.)
 
-#### 2. JSON Schema Implementation
+#### 2. JSON Schema Implementation ✅
 - Created focused schemas in `codegen/schemas/` for each extraction type
 - Implemented Rust-based validation using `jsonschema` crate in `codegen/src/validation.rs`
 - Schema validation runs automatically during `make codegen`
 
-#### 3. Macro-Based Code Generation
-- Created shared macros in `src/generated/macros.rs`:
-  - `make_simple_table!` - Generates HashMap lookups with ~80% less boilerplate
-  - `make_boolean_set!` - Generates HashSet membership checks
-  - `make_regex_table!` - Generates regex pattern tables
-- Implemented new generator in `codegen/src/generators/macro_based.rs`
+#### 3. ~~Macro-Based~~ Direct Code Generation ✅ (IMPORTANT CHANGE)
+- **CRITICAL UPDATE**: After initial implementation with macros, we pivoted to direct code generation
+- The macro approach had issues with IDE support, debugging, and Rust newcomer friendliness
+- Now generates simple, direct constants and functions without macros:
+  ```rust
+  // Direct generation (current approach)
+  pub static ORIENTATION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+      let mut map = HashMap::new();
+      map.insert(1, "Horizontal (normal)");
+      // ... entries
+      map
+  });
+  
+  pub fn lookup_orientation(key: u8) -> Option<&'static str> {
+      ORIENTATION.get(&key).copied()
+  }
+  ```
+- Generator updated in `codegen/src/generators/macro_based.rs` (name kept for compatibility)
+- `src/generated/macros.rs` exists but is no longer used
 
-#### 4. Module Structure
+#### 4. Module Structure ✅
 - Generated modules now follow ExifTool source naming: Canon_pm, Nikon_pm, etc.
 - Each module contains all table types from that ExifTool source file
-- Example generated file shows reduction from ~45 lines to ~5 lines per table
+- Successfully reduced from ~15 lines to ~8 lines per table (still significant improvement)
 
-#### 5. Import Path Migration
-- Updated all 14 import locations across the codebase
+#### 5. Import Path Migration ⚠️ (NEEDS COMPLETION)
+- Most import locations updated, but legacy structure still coexists
+- Both old (`canon/`, `nikon/`) and new (`Canon_pm/`, `Nikon_pm/`) modules exist
+- No imports were broken - backwards compatibility maintained
 - Mapping: `canon/` → `Canon_pm/`, `file_types/` → `ExifTool_pm/`, etc.
-- Added new modules to `src/generated/mod.rs` with proper macro imports
 
-#### 6. Build System Integration
+#### 6. Build System Integration ✅
 - Extended existing Makefile without breaking changes
 - Schema validation integrated into build pipeline
 - Parallel extraction continues to work as before
 
-### Key Files Modified/Created
-- `codegen/config/*_pm/*.json` - New configuration structure
-- `codegen/schemas/*.json` - Focused JSON schemas
-- `codegen/src/generators/macro_based.rs` - New macro-based generator
-- `codegen/src/validation.rs` - Schema validation implementation
-- `src/generated/macros.rs` - Shared macro definitions
-- `src/generated/*_pm/mod.rs` - New generated module files
+### Current Issues & Remaining Work
 
-### Results
-- Successfully generated Canon_pm and Nikon_pm modules with macro-based tables
-- Boilerplate reduced from ~15 lines to ~3 lines per table
-- All existing functionality preserved while improving maintainability
-- System ready to scale to 300+ tables for RAW format support
+#### 1. String Lifetime Issue 🔴
+**Problem**: Generated lookup functions use `&'static str` for keys, but dynamic lookups need `&str`
+```rust
+// Current (causes compilation error with dynamic strings):
+pub fn lookup_nikon_lens_ids(key: &'static str) -> Option<&'static str>
+
+// Needed:
+pub fn lookup_nikon_lens_ids(key: &str) -> Option<&'static str>
+```
+**Location**: `codegen/src/generators/macro_based.rs` line 100-103
+**Fix Started**: Added `lookup_key_type` variable but needs to be propagated through function generation
+
+#### 2. Unused Import Warnings ⚠️
+- Generated modules import `HashSet` even when only using `HashMap`
+- Minor issue but creates noise in compilation
+
+#### 3. Final Validation Needed 📋
+- Run `make precommit` to ensure all tests pass
+- Verify all generated functions compile and work correctly
+- Test with real image files to ensure lookup functions work
+
+### Key Files for Next Engineer
+
+#### Must Read First:
+1. **This milestone doc** - You're reading it!
+2. `docs/TRUST-EXIFTOOL.md` - Critical principle: always copy ExifTool exactly
+3. `docs/design/EXIFTOOL-INTEGRATION.md` - How codegen fits into the system
+
+#### Core Implementation Files:
+1. `codegen/src/generators/macro_based.rs` - Main generator (needs lifetime fix)
+2. `codegen/src/main.rs` - How modules are processed (line 255-268)
+3. `codegen/config/*_pm/*.json` - Configuration files for each module
+4. `src/generated/*_pm/mod.rs` - Generated output files
+
+#### For Testing:
+1. `src/implementations/nikon/lens_database.rs` - Example of dynamic string lookup issue
+2. `src/implementations/print_conv.rs` - Uses generated lookup functions
+
+### Success Criteria Checklist
+
+✅ Configuration restructured into module-based organization
+✅ JSON schemas created and validation working
+✅ Code generation produces valid Rust code
+✅ Boilerplate significantly reduced (from ~15 to ~8 lines)
+⚠️ Import paths partially migrated (backwards compatible)
+❌ Compilation errors need fixing (string lifetime issue)
+❌ `make precommit` needs to pass
+
+### Tribal Knowledge & Tips
+
+1. **Why No Macros?** - Started with macro approach but pivoted to direct generation because:
+   - Rust newcomers (like the project owner) find macros confusing
+   - Better IDE support with direct code
+   - Easier debugging when you can see actual generated code
+   - No complex macro expansion errors
+
+2. **Module Naming** - Use `Canon_pm` not `Canon.pm` because:
+   - Dots in module names cause issues
+   - Underscores work better with Rust tooling
+   - Maps directly to ExifTool source files
+
+3. **String Types** - The `&'static str` vs `&str` issue is common in codegen:
+   - HashMap keys in generated code are `&'static str` (compile-time constants)
+   - But lookup functions need to accept `&str` for runtime strings
+   - Solution: use different types for storage vs lookup
+
+4. **Legacy Coexistence** - Both old and new module structures exist:
+   - This was intentional to avoid breaking everything at once
+   - Can be cleaned up after validation
+   - `src/generated/mod.rs` exports both structures
+
+5. **Testing Generated Code**:
+   ```bash
+   make codegen          # Regenerate everything
+   cargo check           # Quick compilation check
+   cargo test            # Run tests
+   make precommit        # Full validation
+   ```
+
+### Next Steps for Completion
+
+1. **Fix String Lifetime Issue** (30 mins)
+   - Update function generation in `macro_based.rs` to use `&str` for string key parameters
+   - Test with `cargo check`
+
+2. **Clean Up Warnings** (15 mins)
+   - Remove unused imports from generated files
+   - Consider conditional imports based on what's actually used
+
+3. **Run Full Validation** (15 mins)
+   - `make precommit` must pass
+   - Fix any remaining issues
+
+4. **Consider Legacy Cleanup** (optional, 1 hour)
+   - Remove old module structure if everything works
+   - Update all imports to use new paths
+   - This can wait for a future milestone
+
+### Summary for Next Engineer
+
+You're inheriting a 90% complete refactoring. The new structure is in place and working, but there's a string lifetime issue preventing compilation. The fix is straightforward - just need to use `&str` instead of `&'static str` for lookup function parameters. Once that's fixed and `make precommit` passes, this milestone is complete.
+
+The key insight: we pivoted from macros to direct code generation for simplicity. This is better for the project's maintainability and aligns with keeping things understandable for Rust newcomers.

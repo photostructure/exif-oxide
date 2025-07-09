@@ -1,0 +1,11 @@
+{
+  "description": "Nikon PrintConv inline extractions for advanced camera settings",
+  "tables": [
+    {
+      "hash_name": "%isoAutoHiLimitZ7",
+      "constant_name": "ISO_AUTO_HI_LIMIT_Z7",
+      "key_type": "u8",
+      "description": "ISO Auto Hi Limit settings for Z7 series"
+    }
+  ]
+}
