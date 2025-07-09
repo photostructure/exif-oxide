@@ -98,12 +98,50 @@ The sub-milestones will build these shared components:
 
 **Critical Principle**: All RAW format implementations must strictly follow the [Trust ExifTool](../TRUST-EXIFTOOL.md) principle. We translate ExifTool's logic exactly, preserving all quirks, special cases, and seemingly "odd" code that handles real-world camera behavior.
 
+### 🔥 MANDATORY: Use Generated Lookup Tables
+
+**NEVER manually implement lookup tables** - they are automatically generated in Milestone 18:
+
+```rust
+// ❌ WRONG - Manual lookup table maintenance
+fn canon_lens_type_lookup(id: u16) -> &'static str {
+    match id {
+        1 => "Canon EF 50mm f/1.8",
+        2 => "Canon EF 28mm f/2.8",
+        // ... DON'T DO THIS - 1000+ entries to maintain manually!
+    }
+}
+
+// ✅ CORRECT - Use generated lookup tables
+use crate::generated::canon::lens_types::lookup_canon_lens_type;
+
+fn canon_lens_type_print_conv(value: &TagValue) -> TagValue {
+    if let Some(lens_id) = value.as_u16() {
+        if let Some(lens_name) = lookup_canon_lens_type(lens_id) {
+            return TagValue::string(lens_name);
+        }
+    }
+    TagValue::string(format!("Unknown lens type ({})", value))
+}
+```
+
+**Available Generated Tables**:
+
+- `crate::generated::canon::lens_types::lookup_canon_lens_type()` - 1000+ Canon lenses
+- `crate::generated::nikon::lens_ids::lookup_nikon_lens_id()` - 618 Nikon lenses
+- `crate::generated::olympus::camera_types::lookup_olympus_camera_type()` - 200+ cameras
+- `crate::generated::sony::white_balance::lookup_sony_white_balance()` - 50+ WB settings
+- **See Milestone 18 for complete list of ~300+ generated lookup functions**
+
+### Implementation Steps
+
 1. **Start Simple**: Begin with 173-line KyoceraRaw to validate architecture
 2. **Build Incrementally**: Each format adds complexity and capability
 3. **Reuse Infrastructure**: Shared TIFF and offset management code
-4. **Test Continuously**: Every milestone includes compatibility tests
-5. **Document Patterns**: Extract common patterns for future formats
-6. **Trust ExifTool**: Study and follow ExifTool's implementation precisely - no "improvements" or "optimizations"
+4. **Use Generated Tables**: Always use `crate::generated::*` lookup functions
+5. **Test Continuously**: Every milestone includes compatibility tests
+6. **Document Patterns**: Extract common patterns for future formats
+7. **Trust ExifTool**: Study and follow ExifTool's implementation precisely - no "improvements" or "optimizations"
 
 ## Overall Success Criteria
 
@@ -142,6 +180,14 @@ The sub-milestones will build these shared components:
 - **Sidecar XMP**: Focus on embedded metadata only
 
 ## Dependencies and Prerequisites
+
+### Critical Prerequisites
+
+- **⚠️ MANDATORY: MILESTONE-17-PREREQUISITE-Codegen.md MUST BE COMPLETED FIRST**
+  - **Why**: Contains ~3000+ automatically generated lookup tables for all manufacturers
+  - **Impact**: Eliminates need to manually maintain massive lookup tables during implementation
+  - **Location**: See [MILESTONE-17-PREREQUISITE-Codegen.md](MILESTONE-17-PREREQUISITE-Codegen.md)
+  - **Generated Tables**: Canon lens types (~1000+), Nikon lens IDs (~618), camera models, settings, etc.
 
 ### Milestone Prerequisites
 

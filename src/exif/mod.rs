@@ -259,6 +259,7 @@ impl ExifReader {
                     match info.ifd_name.as_str() {
                         name if name.starts_with("Canon") => false, // Canon maker notes - don't lookup GPS/EXIF tags
                         name if name.starts_with("Nikon") => false, // Nikon maker notes - don't lookup GPS/EXIF tags
+                        "KyoceraRaw" => false, // Kyocera RAW - don't lookup GPS/EXIF tags
                         _ => true, // Standard IFDs (IFD0, ExifIFD, GPS, etc.) - lookup in global table
                     }
                 });
@@ -274,7 +275,22 @@ impl ExifReader {
                 } else {
                     // Maker note tags - don't lookup in global table to avoid conflicts
                     // ExifTool: lib/Image/ExifTool/Exif.pm:6190-6191 inMakerNotes context detection
-                    (format!("Tag_{tag_id:04X}"), None)
+
+                    // Check for Kyocera RAW tags first
+                    if let Some(source_info) = source_info {
+                        if source_info.ifd_name == "KyoceraRaw" {
+                            // Use Kyocera-specific tag name lookup
+                            let kyocera_tag_name = crate::raw::get_kyocera_tag_name(tag_id)
+                                .map(|name| name.to_string())
+                                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                            (kyocera_tag_name, None)
+                        } else {
+                            // Other maker note tags
+                            (format!("Tag_{tag_id:04X}"), None)
+                        }
+                    } else {
+                        (format!("Tag_{tag_id:04X}"), None)
+                    }
                 }
             };
 
