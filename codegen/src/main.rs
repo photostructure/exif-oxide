@@ -3,7 +3,7 @@
 //! This tool reads JSON output from Perl extractors and generates
 //! Rust code following the "runtime references, no stubs" architecture.
 
-use anyhow::{Context, Result};
+use anyhow::{anyhow, Context, Result};
 use clap::{Arg, Command};
 use std::fs;
 use std::path::Path;
@@ -13,16 +13,16 @@ mod schemas;
 mod generators;
 
 use common::{parse_hex_id, normalize_format};
-use schemas::{ExtractedData, GeneratedTag, GeneratedCompositeTag, CompositeData};
+use schemas::{ExtractedData, ExtractedTable, GeneratedTag, GeneratedCompositeTag, CompositeData};
 use generators::{
     generate_tag_table,
     generate_composite_tag_table,
     generate_conversion_refs,
     generate_supported_tags,
-    generate_simple_tables,
-    generate_file_type_lookup,
-    generate_regex_patterns,
     generate_mod_file,
+    lookup_tables,
+    file_detection,
+    data_sets,
 };
 
 fn main() -> Result<()> {
@@ -96,40 +96,91 @@ fn main() -> Result<()> {
         println!("Tag data file not found!");
     }
 
-    // Process simple tables from individual files
-    let simple_tables_dir = current_dir.join("generated/simple_tables");
-    println!("Looking for simple tables directory at: {}", simple_tables_dir.display());
-    if simple_tables_dir.exists() && simple_tables_dir.is_dir() {
-        println!("\n📊 Processing simple tables from individual files...");
-        generate_simple_tables(&simple_tables_dir, output_dir)?;
+    // Process extracted data from individual files using modular architecture directly
+    let extract_dir = current_dir.join("generated/extract");
+    println!("Looking for extract directory at: {}", extract_dir.display());
+    if extract_dir.exists() && extract_dir.is_dir() {
+        println!("\n📊 Processing extracted data from individual files...");
+        
+        // Read the extract.json configuration
+        let config_path = current_dir.join("extract.json");
+        let config_data = fs::read_to_string(&config_path)
+            .with_context(|| format!("Failed to read config at {}", config_path.display()))?;
+        let config: serde_json::Value = serde_json::from_str(&config_data)
+            .with_context(|| "Failed to parse extract.json config")?;
+        
+        let tables = config["tables"].as_array()
+            .ok_or_else(|| anyhow::anyhow!("No tables array in config"))?;
+        
+        println!("  Processing {} extracted data tables...", tables.len());
+        
+        // Process each table based on its extraction type
+        let mut processed_count = 0;
+        for table_config in tables {
+            let hash_name = table_config["hash_name"].as_str()
+                .ok_or_else(|| anyhow::anyhow!("Missing hash_name"))?;
+            let output_file = table_config["output_file"].as_str()
+                .ok_or_else(|| anyhow::anyhow!("Missing output_file"))?;
+            let extraction_type = table_config["extraction_type"].as_str();
+            let constant_name = table_config["constant_name"].as_str()
+                .ok_or_else(|| anyhow::anyhow!("Missing constant_name"))?;
+            
+            // Load the extracted JSON data
+            // The extract.pl script generates filenames from constant_name in lowercase
+            let json_filename = constant_name.to_lowercase().replace("_table", "") + ".json";
+            let json_file = extract_dir.join(&json_filename);
+            
+            if !json_file.exists() {
+                println!("    ⚠️  Skipping {} - no extracted data found", hash_name);
+                continue;
+            }
+            
+            let json_data = fs::read_to_string(&json_file)?;
+            let extracted_table: schemas::ExtractedTable = serde_json::from_str(&json_data)?;
+            
+            // Generate code based on extraction type
+            let code = match extraction_type {
+                Some("boolean_set") => {
+                    data_sets::generate_boolean_set(hash_name, &extracted_table)?
+                }
+                Some("regex_strings") | Some("file_type_lookup") => {
+                    // These are handled by file_detection module below
+                    continue;
+                }
+                _ => {
+                    // Default to standard lookup table
+                    lookup_tables::generate_lookup_table(hash_name, &extracted_table)?
+                }
+            };
+            
+            // Write to file (directly to output_dir for flattened structure)
+            let output_path = format!("{}/{}", output_dir, output_file);
+            
+            // Create subdirectory if needed
+            if let Some(parent) = std::path::Path::new(&output_path).parent() {
+                fs::create_dir_all(parent)?;
+            }
+            
+            println!("    Writing to: {}", output_path);
+            fs::write(&output_path, code)?;
+            
+            processed_count += 1;
+        }
+        
+        println!("  ✓ Generated {} tables using modular architecture", processed_count);
+        
+        // Generate file detection code (file_type_lookup and regex patterns)
+        println!("\n  🔍 Generating file detection code...");
+        file_detection::generate_file_detection_code(&extract_dir, output_dir)?;
     } else {
-        println!("Simple tables directory not found!");
+        println!("Extract directory not found!");
     }
 
-    // Process file type lookup data
-    let file_type_lookup_file = current_dir.join("generated/file_type_lookup.json");
-    println!("Looking for file type lookup at: {}", file_type_lookup_file.display());
-    if file_type_lookup_file.exists() {
-        println!("\n🔍 Processing file type lookup data...");
-        generate_file_type_lookup(&file_type_lookup_file, output_dir)?;
-    } else {
-        println!("File type lookup data not found!");
-    }
-
-    // Process regex patterns data
-    let regex_patterns_file = current_dir.join("generated/regex_patterns.json");
-    println!("Looking for regex patterns at: {}", regex_patterns_file.display());
-    if regex_patterns_file.exists() {
-        println!("\n🎯 Processing regex patterns data...");
-        // TODO: Temporarily disabled due to UTF-8 error
-        // generate_regex_patterns(&regex_patterns_file, output_dir)?;
-        println!("⚠️  Skipping regex patterns due to UTF-8 encoding issue");
-    } else {
-        println!("Regex patterns data not found!");
-    }
+    // Note: file_type_lookup and regex_patterns are now handled by the modular architecture
+    // through the file_detection module
     
     // Update file_types mod.rs to include generated modules
-    let file_types_mod_path = format!("{}/simple_tables/file_types/mod.rs", output_dir);
+    let file_types_mod_path = format!("{}/file_types/mod.rs", output_dir);
     if Path::new(&file_types_mod_path).exists() {
         println!("\n📝 Updating file_types mod.rs with generated modules...");
         let mut content = fs::read_to_string(&file_types_mod_path)?;

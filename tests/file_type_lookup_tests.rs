@@ -1,6 +1,6 @@
 //! Integration tests for file type lookup functionality
 
-use exif_oxide::generated::simple_tables::file_types::{
+use exif_oxide::generated::file_types::{
     extensions_for_format, get_primary_format, resolve_file_type, supports_format,
 };
 

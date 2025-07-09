@@ -53,7 +53,7 @@ sub convert_my_to_package_variables {
 
 # Read configuration to get list of modules to patch
 sub load_table_config {
-    my $config_file = "$Bin/simple_tables.json";
+    my $config_file = "$Bin/extract.json";
     
     open(my $fh, '<', $config_file) or die "Cannot open $config_file: $!";
     my $json_text = do { local $/; <$fh> };

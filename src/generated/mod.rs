@@ -5,11 +5,15 @@
 //!
 //! This module re-exports all generated code for easy access.
 
+pub mod canon;
 pub mod composite_tags;
 pub mod conversion_refs;
-pub mod simple_tables;
+pub mod exif;
+pub mod file_types;
+pub mod nikon;
 pub mod supported_tags;
 pub mod tags;
+pub mod xmp;
 
 // Re-export commonly used types and functions
 pub use composite_tags::{
@@ -29,12 +33,6 @@ pub use tags::TAG_LOOKUP as TAG_BY_ID;
 pub use tags::TAG_NAME_LOOKUP as TAG_BY_NAME;
 pub use tags::TAG_TABLE as EXIF_MAIN_TAGS;
 pub use tags::{lookup_tag_by_id, lookup_tag_by_name, TagDef, TagFormat, TAG_LOOKUP, TAG_TABLE};
-
-// Re-export simple table modules for backward compatibility
-pub use simple_tables::canon;
-pub use simple_tables::exif;
-pub use simple_tables::file_types;
-pub use simple_tables::nikon;
 
 /// Initialize all lazy static data structures
 /// This can be called during startup to avoid lazy initialization costs later

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Simple Tables Configuration",
-  "description": "Schema for configuring ExifTool simple table extraction",
+  "title": "Extraction Configuration",
+  "description": "Schema for configuring ExifTool code extractions",
   "type": "object",
   "properties": {
     "description": {
@@ -60,7 +60,14 @@
               }
             },
             "then": {
-              "required": ["module", "hash_name", "output_file", "constant_name", "key_type", "description"]
+              "required": [
+                "module",
+                "hash_name",
+                "output_file",
+                "constant_name",
+                "key_type",
+                "description"
+              ]
             }
           },
           {
@@ -72,7 +79,14 @@
               }
             },
             "then": {
-              "required": ["module", "hash_name", "output_file", "constant_name", "key_type", "description"]
+              "required": [
+                "module",
+                "hash_name",
+                "output_file",
+                "constant_name",
+                "key_type",
+                "description"
+              ]
             }
           },
           {
@@ -90,7 +104,14 @@
               }
             },
             "then": {
-              "required": ["module", "hash_name", "output_file", "constant_name", "key_type", "description"]
+              "required": [
+                "module",
+                "hash_name",
+                "output_file",
+                "constant_name",
+                "key_type",
+                "description"
+              ]
             }
           }
         ],

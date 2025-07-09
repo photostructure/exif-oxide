@@ -279,11 +279,15 @@ fn normalize_for_comparison(mut data: Value, _is_exiftool: bool) -> Value {
         if let Some(source_file) = obj.get_mut("SourceFile") {
             if let Some(path_str) = source_file.as_str() {
                 if path_str.starts_with('/') {
-                    // Convert absolute to relative
-                    if let Ok(cwd) = std::env::current_dir() {
-                        if let Ok(rel_path) = Path::new(path_str).strip_prefix(&cwd) {
-                            *source_file =
-                                serde_json::Value::String(rel_path.to_string_lossy().to_string());
+                    // For absolute paths, try to extract the relative part after a known directory
+                    // This handles cases where snapshots were generated from a different absolute path
+                    if path_str.contains("/test-images/") {
+                        if let Some(idx) = path_str.find("test-images/") {
+                            *source_file = serde_json::Value::String(path_str[idx..].to_string());
+                        }
+                    } else if path_str.contains("/third-party/") {
+                        if let Some(idx) = path_str.find("third-party/") {
+                            *source_file = serde_json::Value::String(path_str[idx..].to_string());
                         }
                     }
                 }
@@ -294,10 +298,14 @@ fn normalize_for_comparison(mut data: Value, _is_exiftool: bool) -> Value {
         if let Some(directory) = obj.get_mut("File:Directory") {
             if let Some(dir_str) = directory.as_str() {
                 if dir_str.starts_with('/') {
-                    if let Ok(cwd) = std::env::current_dir() {
-                        if let Ok(rel_path) = Path::new(dir_str).strip_prefix(&cwd) {
-                            *directory =
-                                serde_json::Value::String(rel_path.to_string_lossy().to_string());
+                    // For absolute paths, try to extract the relative part after a known directory
+                    if dir_str.contains("/test-images") {
+                        if let Some(idx) = dir_str.find("test-images") {
+                            *directory = serde_json::Value::String(dir_str[idx..].to_string());
+                        }
+                    } else if dir_str.contains("/third-party") {
+                        if let Some(idx) = dir_str.find("third-party") {
+                            *directory = serde_json::Value::String(dir_str[idx..].to_string());
                         }
                     }
                 }

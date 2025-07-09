@@ -153,7 +153,7 @@
       "Bash(git add:*)",
       "Bash(./test_debug)",
       "Bash(./target/release/generate_rust:*)",
-      "Bash(RUST_LOG=debug cargo run --release -- --tag-data generated/tag_tables.json --simple-tables generated/simple_tables.json -o ../src/generated)",
+      "Bash(RUST_LOG=debug cargo run --release -- --tag-data generated/tag_tables.json -o ../src/generated)",
       "Bash(RUST_LOG=trace cargo test test_exposuretime_printconv_json_formatting --test exposuretime_printconv_test -- --nocapture)",
       "Bash(codegen/target/release/generate_rust:*)",
       "Bash(RUST_BACKTRACE=1 cargo test test_scan_jpeg_segments_with_app1_xmp --lib -- --nocapture)",

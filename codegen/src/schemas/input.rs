@@ -1,6 +1,7 @@
 //! Input schemas for deserializing JSON from Perl extractors
 
 use serde::Deserialize;
+use serde_json::Value;
 use std::collections::HashMap;
 
 /// JSON structure from extract_tables.pl
@@ -86,7 +87,7 @@ pub struct ExtractedCompositeTag {
     pub mainstream: Option<u8>,
 }
 
-/// JSON structure from extract_simple_tables.pl
+/// JSON structure from extract.pl
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
 pub struct SimpleTablesData {
@@ -96,17 +97,32 @@ pub struct SimpleTablesData {
     pub tables: HashMap<String, ExtractedTable>,
 }
 
-/// Extracted table data from extract_simple_tables.pl
+/// Extracted table data from extract.pl
 #[derive(Debug, Deserialize)]
 pub struct ExtractedTable {
-    pub config: TableConfig,
+    pub source: TableSource,
+    pub metadata: TableMetadata,
     pub entries: Vec<TableEntry>,
-    pub entry_count: usize,
-    #[serde(default)]
-    pub extraction_type: Option<String>,
 }
 
-/// Table configuration from simple_tables.json
+/// Table source information
+#[derive(Debug, Deserialize)]
+pub struct TableSource {
+    pub module: String,
+    pub hash_name: String,
+    pub extracted_at: String,
+}
+
+/// Table metadata from extraction
+#[derive(Debug, Deserialize)]
+pub struct TableMetadata {
+    pub description: String,
+    pub constant_name: String,
+    pub key_type: String,
+    pub entry_count: usize,
+}
+
+/// Table configuration from extract.json
 #[derive(Debug, Deserialize)]
 pub struct TableConfig {
     pub module: String,
@@ -149,7 +165,7 @@ pub struct TableEntry {
     #[serde(default)]
     pub key: Option<String>,
     #[serde(default)]
-    pub value: Option<String>,
+    pub value: Option<Value>,
     
     // Regex pattern fields
     #[serde(default)]

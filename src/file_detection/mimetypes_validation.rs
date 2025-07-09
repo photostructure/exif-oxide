@@ -10,7 +10,7 @@ use std::io::Cursor;
 /// This ensures we test exactly what we support and stays in sync with ExifTool updates
 fn get_test_formats() -> Vec<(String, String)> {
     // TODO: Re-enable when file_type_lookup module is available
-    // use crate::generated::simple_tables::file_types::file_type_lookup::FILE_TYPE_LOOKUP;
+    // use crate::generated::file_types::file_type_lookup::FILE_TYPE_LOOKUP;
 
     let mut formats = Vec::new();
     let detector = super::FileTypeDetector::new();
@@ -231,7 +231,7 @@ fn test_raw_format_coverage() {
 
         // Verify we have MIME type mapping
         let file_type = &candidates[0];
-        let mime_type = crate::generated::simple_tables::file_types::lookup_mime_types(file_type);
+        let mime_type = crate::generated::file_types::lookup_mime_types(file_type);
         assert!(
             mime_type.is_some(),
             "No MIME type mapping for RAW format: {ext} (file type: {file_type})"

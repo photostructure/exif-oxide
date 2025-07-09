@@ -14,7 +14,7 @@
 //! - Conflict resolution patterns
 //! - Error recovery mechanisms
 
-use crate::generated::simple_tables::file_types::lookup_mime_types;
+use crate::generated::file_types::lookup_mime_types;
 use std::io::{Read, Seek};
 use std::path::Path;
 
@@ -147,7 +147,7 @@ impl FileTypeDetector {
         let normalized_ext = self.normalize_extension(extension);
 
         // Resolve through fileTypeLookup with alias following
-        use crate::generated::simple_tables::file_types::resolve_file_type;
+        use crate::generated::file_types::resolve_file_type;
         if let Some((_formats, _description)) = resolve_file_type(&normalized_ext) {
             // For most cases, return the extension itself as candidate
             // Special case: HEIC/HEIF extensions should use MOV format for detection
@@ -279,6 +279,21 @@ impl FileTypeDetector {
                 // TIFF pattern: (II|MM)
                 buffer.len() >= 2 && (buffer.starts_with(b"II") || buffer.starts_with(b"MM"))
             }
+            "GIF" => {
+                // GIF pattern: GIF8[79]a - matches GIF87a or GIF89a
+                buffer.len() >= 6
+                    && buffer.starts_with(b"GIF8")
+                    && (buffer[4] == b'7' || buffer[4] == b'9')
+                    && buffer[5] == b'a'
+            }
+            "BMP" => {
+                // BMP pattern: BM
+                buffer.len() >= 2 && buffer.starts_with(b"BM")
+            }
+            "ZIP" => {
+                // ZIP pattern: PK\x03\x04
+                buffer.len() >= 4 && buffer.starts_with(&[0x50, 0x4b, 0x03, 0x04])
+            }
             "MRW" => {
                 // MRW pattern: \0MR[MI]
                 buffer.len() >= 4
@@ -347,6 +362,11 @@ impl FileTypeDetector {
                 }
             }
             _ => {
+                // If pattern is empty, no magic number exists for this type
+                if pattern.is_empty() {
+                    return false;
+                }
+
                 // For ASCII-only patterns, try regex as a fallback
                 if !pattern.contains("\\x") {
                     // Pure ASCII pattern - safe to use regex
@@ -356,12 +376,12 @@ impl FileTypeDetector {
                         .build()
                     {
                         Ok(re) => re.is_match(buffer),
-                        Err(_) => true, // Allow type if regex fails
+                        Err(_) => false, // Reject type if regex fails
                     }
                 } else {
                     // Contains hex bytes but we don't have specific handling
-                    // Be conservative and allow the type
-                    true
+                    // Default to rejecting unknown patterns
+                    false
                 }
             }
         }
@@ -384,7 +404,7 @@ impl FileTypeDetector {
         }
 
         // Check if we have a generated magic number pattern
-        use crate::generated::simple_tables::file_types::get_magic_pattern;
+        use crate::generated::file_types::get_magic_pattern;
         if let Some(_pattern) = get_magic_pattern(file_type) {
             // TODO: Use regex patterns when UTF-8 issue is fixed
             // For now, fall back to binary pattern matching
@@ -617,7 +637,7 @@ impl FileTypeDetector {
         _path: &Path,
     ) -> Result<FileTypeDetectionResult, FileDetectionError> {
         // Get primary format for processing
-        use crate::generated::simple_tables::file_types::resolve_file_type;
+        use crate::generated::file_types::resolve_file_type;
         let (format, description) = if let Some((formats, desc)) = resolve_file_type(file_type) {
             (formats[0].to_string(), desc.to_string())
         } else {
@@ -656,6 +676,10 @@ impl FileTypeDetector {
 
             // Video formats
             "AVI" => Some("video/x-msvideo"),
+            "3GP" => Some("video/3gpp"),  // 3GPP video format
+            "3G2" => Some("video/3gpp2"), // 3GPP2 video format
+            "M4V" => Some("video/x-m4v"), // Apple M4V video
+            "MTS" => Some("video/m2ts"),  // MPEG-2 Transport Stream (alias for M2TS)
 
             // Audio formats
             "WAV" => Some("audio/x-wav"), // WAV audio files
@@ -745,7 +769,8 @@ mod tests {
     #[test]
     fn test_embedded_jpeg_recovery() {
         let detector = FileTypeDetector::new();
-        let path = Path::new("unknown.dat");
+        // Use a filename with unknown extension to trigger embedded signature scan
+        let path = Path::new("unknown.xyz");
 
         // Unknown header followed by JPEG signature
         let mut data = vec![0x00, 0x01, 0x02, 0x03]; // Unknown header

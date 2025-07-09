@@ -36,11 +36,13 @@ ExifTool Source → Perl Extractors → JSON → Rust Codegen → Generated Code
 codegen/
 ├── patch_exiftool_modules.pl # Auto-patches ExifTool for variable access
 ├── extractors/           # Perl scripts extract from ExifTool
-│   ├── simple_tables.pl  # Lookup tables
+│   ├── extract.pl        # Lookup tables
 │   ├── tag_tables.pl     # Tag definitions
 │   └── file_type_lookup.pl # File detection
 ├── src/generators/       # Rust code generation
-│   ├── simple_tables.rs  # Table generators (3 types)
+│   ├── lookup_tables/    # Lookup table generators
+│   ├── file_detection/   # File type detection
+│   └── data_sets/        # Boolean set generators
 │   ├── tags.rs          # Tag table generator
 │   └── composite_tags.rs # Composite tag generator
 └── generated/           # Extracted JSON data
@@ -130,7 +132,7 @@ Generated tables integrate seamlessly with manual functions:
 
 ```rust
 // Generated: Canon white balance lookup
-use crate::generated::simple_tables::canon::white_balance::lookup_canon_white_balance;
+use crate::generated::canon::white_balance::lookup_canon_white_balance;
 
 // Manual: PrintConv function using generated table
 pub fn canon_wb_print_conv(value: &TagValue) -> TagValue {
@@ -148,7 +150,7 @@ pub fn canon_wb_print_conv(value: &TagValue) -> TagValue {
 **Step 1: Add to Configuration**
 
 ```json
-// In codegen/simple_tables.json
+// In codegen/extract.json
 {
   "module": "Canon.pm",
   "hash_name": "%newCanonTable",
@@ -167,10 +169,10 @@ pub fn canon_wb_print_conv(value: &TagValue) -> TagValue {
 make codegen
 
 # Use in implementation
-use crate::generated::simple_tables::canon::new_setting::lookup_new_canon_setting;
+use crate::generated::canon::new_setting::lookup_new_canon_setting;
 ```
 
-**Note**: The build system automatically patches ExifTool modules to expose `my`-scoped variables as package variables based on entries in `simple_tables.json`. No manual patching is required.
+**Note**: The build system automatically patches ExifTool modules to expose `my`-scoped variables as package variables based on entries in `extract.json`. No manual patching is required.
 
 ## Code Generation System
 
@@ -231,11 +233,11 @@ make codegen              # Full build (includes auto-patching)
 make -j4 codegen         # Parallel (4 jobs)
 
 # Individual components
-make simple-tables       # Just lookup tables
+make extract             # Just lookup tables
 make generated/tag_tables.json  # Just tag definitions
 
 # Incremental updates
-make regen-simple-tables # Regenerate tables only
+make regen-extract       # Regenerate tables only
 ```
 
 #### Why Patching is Required
@@ -243,11 +245,11 @@ make regen-simple-tables # Regenerate tables only
 ExifTool uses `my`-scoped lexical variables for many lookup tables (e.g., `my %canonWhiteBalance`). These variables are private to their module and cannot be accessed by external scripts. To extract these tables programmatically, we need to convert them to package variables (`our %canonWhiteBalance`) which are accessible via the symbol table.
 
 **Auto-Patching Details**: The `patch_exiftool_modules.pl` script automatically:
-- Reads `simple_tables.json` to identify required variables
+- Reads `extract.json` to identify required variables
 - Converts `my %varName` to `our %varName` in ExifTool modules
 - Runs before extraction to ensure variables are accessible
 - Tracks conversions to avoid redundant processing
-- Only patches variables we actually need (based on `simple_tables.json`)
+- Only patches variables we actually need (based on `extract.json`)
 
 ## Manual Implementation System
 
@@ -436,11 +438,11 @@ make -j4 codegen
 
 # Individual extractors (for debugging)
 make generated/tag_tables.json
-make simple-tables
+make extract
 
 # Incremental regeneration (for rapid iteration)
 make regen-tags
-make regen-simple-tables
+make regen-extract
 
 # Syntax checking
 make check-extractors
@@ -453,7 +455,7 @@ make check-extractors
 ```bash
 make codegen              # Full pipeline
 make -j4 codegen         # Parallel execution
-make simple-tables       # Just lookup tables
+make extract             # Just lookup tables
 make generated/tag_tables.json  # Just tag definitions
 ```
 
@@ -476,7 +478,7 @@ make compat-test        # ExifTool compatibility
 
 ```bash
 make regen-tags         # Regenerate tag tables only
-make regen-simple-tables # Regenerate lookup tables only
+make regen-extract       # Regenerate lookup tables only
 make clean              # Clean all generated files
 ```
 

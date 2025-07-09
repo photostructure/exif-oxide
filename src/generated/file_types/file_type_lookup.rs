@@ -1,6 +1,6 @@
 //! File type lookup tables generated from ExifTool's fileTypeLookup hash
 //!
-//! Generated at: Mon Jul  7 03:35:20 2025 GMT
+//! Generated at: Tue Jul  8 21:54:45 2025 GMT
 //! Total lookups: 343
 
 use once_cell::sync::Lazy;
@@ -404,13 +404,16 @@ static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'stati
 
 /// Resolve file type from extension, following aliases
 pub fn resolve_file_type(extension: &str) -> Option<(Vec<&'static str>, &'static str)> {
+    // Convert to uppercase for case-insensitive lookup
+    let ext_upper = extension.to_uppercase();
+
     // First check for direct format lookup
-    if let Some((formats, desc)) = FILE_TYPE_FORMATS.get(extension) {
+    if let Some((formats, desc)) = FILE_TYPE_FORMATS.get(ext_upper.as_str()) {
         return Some((formats.clone(), *desc));
     }
 
     // Check for alias resolution
-    if let Some(alias) = EXTENSION_ALIASES.get(extension) {
+    if let Some(alias) = EXTENSION_ALIASES.get(ext_upper.as_str()) {
         return resolve_file_type(alias);
     }
 
