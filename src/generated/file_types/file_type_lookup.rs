@@ -399,6 +399,51 @@ static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'stati
         );
         map.insert("XMP", (vec!["XMP"], "Extensible Metadata Platform"));
         map.insert("ZIP", (vec!["ZIP"], "ZIP archive"));
+        map.insert("360", (vec!["MOV"], "GoPro 360 video"));
+        map.insert("3FR", (vec!["TIFF"], "Hasselblad RAW format"));
+        map.insert(
+            "3G2",
+            (vec!["MOV"], "3rd Gen. Partnership Project 2 audio/video"),
+        );
+        map.insert(
+            "3GP",
+            (vec!["MOV"], "3rd Gen. Partnership Project audio/video"),
+        );
+        map.insert("7Z", (vec!["7Z"], "7z archive"));
+        map.insert("BZ2", (vec!["BZ2"], "BZIP2 archive"));
+        map.insert(
+            "C2PA",
+            (
+                vec!["JUMBF"],
+                "Coalition for Content Provenance and Authenticity",
+            ),
+        );
+        map.insert("CR2", (vec!["TIFF"], "Canon RAW 2 format"));
+        map.insert("CR3", (vec!["MOV"], "Canon RAW 3 format"));
+        map.insert("CS1", (vec!["PSD"], "Sinar CaptureShop 1-Shot RAW"));
+        map.insert("DR4", (vec!["DR4"], "Canon VRD version 4 Recipe"));
+        map.insert("DS2", (vec!["DSS"], "Digital Speech Standard 2"));
+        map.insert("DVR-MS", (vec!["ASF"], "Microsoft Digital Video recording"));
+        map.insert("F4A", (vec!["MOV"], "Adobe Flash Player 9+ Audio"));
+        map.insert("F4B", (vec!["MOV"], "Adobe Flash Player 9+ audio Book"));
+        map.insert("F4P", (vec!["MOV"], "Adobe Flash Player 9+ Protected"));
+        map.insert("F4V", (vec!["MOV"], "Adobe Flash Player 9+ Video"));
+        map.insert("J2C", (vec!["JP2"], "JPEG 2000 codestream"));
+        map.insert("JP2", (vec!["JP2"], "JPEG 2000 file"));
+        map.insert("K25", (vec!["TIFF"], "Kodak DC25 RAW"));
+        map.insert("M2TS", (vec!["M2TS"], "MPEG-2 Transport Stream"));
+        map.insert("M2V", (vec!["MPEG"], "MPEG-2 Video"));
+        map.insert("M4A", (vec!["MOV"], "MPEG-4 Audio"));
+        map.insert("M4B", (vec!["MOV"], "MPEG-4 audio Book"));
+        map.insert("M4P", (vec!["MOV"], "MPEG-4 Protected"));
+        map.insert("M4V", (vec!["MOV"], "MPEG-4 Video"));
+        map.insert("MP3", (vec!["MP3"], "MPEG-1 Layer 3 audio"));
+        map.insert("MP4", (vec!["MOV"], "MPEG-4 video"));
+        map.insert("R3D", (vec!["R3D"], "Redcode RAW Video"));
+        map.insert("RW2", (vec!["TIFF"], "Panasonic RAW 2"));
+        map.insert("SR2", (vec!["TIFF"], "Sony RAW Format 2"));
+        map.insert("WOFF2", (vec!["Font"], "Web Open Font Format 2"));
+        map.insert("X3F", (vec!["X3F"], "Sigma RAW format"));
         map
     });
 
