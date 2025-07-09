@@ -98,8 +98,11 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
     code.push_str("static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'static str)>> = Lazy::new(|| {\n");
     code.push_str("    let mut map = HashMap::new();\n");
     
-    // Add entries from extensions that have array values
-    for entry in &data.file_type_lookups.extensions {
+    // Process entries from both extensions and mime_types that have array values
+    let all_entries = data.file_type_lookups.extensions.iter()
+        .chain(data.file_type_lookups.mime_types.iter());
+    
+    for entry in all_entries {
         if let Some(arr) = entry.value.as_array() {
             if arr.len() >= 2 {
                 let formats = &arr[0];
