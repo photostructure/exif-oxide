@@ -44,16 +44,14 @@ pub fn nikon_quality_conv(value: &crate::types::TagValue) -> Result<String, Stri
 /// ExifTool: Nikon.pm WhiteBalance PrintConv hash
 pub fn nikon_white_balance_conv(value: &crate::types::TagValue) -> Result<String, String> {
     // TODO: This manual HashMap should be moved to codegen infrastructure
-    // Add to extract.json:
+    // Add to codegen/config/Nikon_pm/simple_table.json:
     // {
-    //   "module": "Nikon.pm",
     //   "hash_name": "%nikonWhiteBalance",
-    //   "output_file": "nikon/white_balance.rs",
     //   "constant_name": "NIKON_WHITE_BALANCE",
     //   "key_type": "u8",
     //   "description": "Nikon white balance settings"
     // }
-    // Then use: crate::generated::nikon::white_balance::lookup_nikon_white_balance
+    // Then use: crate::generated::Nikon_pm::lookup_nikon_white_balance
 
     let wb_map: HashMap<i32, &str> = [
         (0, "Auto"),

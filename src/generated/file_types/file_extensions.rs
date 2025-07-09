@@ -11,20 +11,19 @@ use std::sync::LazyLock;
 
 /// Canonical file extensions for file types lookup table
 /// Source: ExifTool ExifTool.pm %fileTypeExt (9 entries)
-pub static FILE_TYPE_EXTENSIONS: LazyLock<HashMap<&'static str, &'static str>> =
-    LazyLock::new(|| {
-        let mut map = HashMap::new();
-        map.insert("Canon 1D RAW", "tif");
-        map.insert("DICOM", "dcm");
-        map.insert("FLIR", "fff");
-        map.insert("GZIP", "gz");
-        map.insert("JPEG", "jpg");
-        map.insert("M2TS", "mts");
-        map.insert("MPEG", "mpg");
-        map.insert("TIFF", "tif");
-        map.insert("VCard", "vcf");
-        map
-    });
+pub static FILE_TYPE_EXTENSIONS: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("Canon 1D RAW", "tif");
+    map.insert("DICOM", "dcm");
+    map.insert("FLIR", "fff");
+    map.insert("GZIP", "gz");
+    map.insert("JPEG", "jpg");
+    map.insert("M2TS", "mts");
+    map.insert("MPEG", "mpg");
+    map.insert("TIFF", "tif");
+    map.insert("VCard", "vcf");
+    map
+});
 
 /// Look up canonical file extensions for file types value by key
 pub fn lookup_file_type_extensions(key: &str) -> Option<&'static str> {

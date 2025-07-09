@@ -55,7 +55,7 @@ All of these are simple key-value mappings perfect for the simple table extracti
   "tables": [
     {
       "hash_name": "%nikonLensIDs",
-      "constant_name": "NIKON_LENS_IDS", 
+      "constant_name": "NIKON_LENS_IDS",
       "key_type": "string",
       "description": "Nikon lens signatures to lens names"
     }
@@ -69,7 +69,7 @@ All of these are simple key-value mappings perfect for the simple table extracti
     {
       "hash_name": "%olympusCameraTypes",
       "constant_name": "OLYMPUS_CAMERA_TYPES",
-      "key_type": "string", 
+      "key_type": "string",
       "description": "Olympus camera type codes to camera names"
     },
     {
@@ -226,7 +226,7 @@ All of these are simple key-value mappings perfect for the simple table extracti
   "hash_name": "%mrwWB",
   "output_file": "minolta/wb_mode.rs",
   "constant_name": "MINOLTA_WB_MODE",
-  "key_type": "u8", 
+  "key_type": "u8",
   "extraction_type": "simple_table",
   "description": "Minolta white balance mode conversion"
 },
@@ -282,7 +282,7 @@ All of these are simple key-value mappings perfect for the simple table extracti
 {
   "module": "Sony.pm",
   "tag_id": "0x1002",
-  "field": "PrintConv", 
+  "field": "PrintConv",
   "output_file": "sony/picture_effect.rs",
   "constant_name": "SONY_PICTURE_EFFECT",
   "key_type": "u16",
