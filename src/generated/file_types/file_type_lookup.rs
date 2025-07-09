@@ -1,6 +1,6 @@
 //! File type lookup tables generated from ExifTool's fileTypeLookup hash
 //!
-//! Generated at: Tue Jul  8 21:54:45 2025 GMT
+//! Generated at: Wed Jul  9 02:13:54 2025 GMT
 //! Total lookups: 343
 
 use once_cell::sync::Lazy;
@@ -11,12 +11,56 @@ static EXTENSION_ALIASES: Lazy<HashMap<&'static str, &'static str>> = Lazy::new(
     let mut map = HashMap::new();
     map.insert("3GP2", "3G2");
     map.insert("3GPP", "3GP");
+    map.insert("AIF", "AIFF");
+    map.insert("AIT", "AI");
+    map.insert("AZW", "MOBI");
+    map.insert("AZW3", "MOBI");
+    map.insert("CAP", "PCAP");
+    map.insert("DC3", "DICM");
+    map.insert("DCM", "DICM");
+    map.insert("DIC", "DICM");
+    map.insert("DJV", "DJVU");
+    map.insert("EPS2", "EPS");
+    map.insert("EPS3", "EPS");
+    map.insert("EPSF", "EPS");
+    map.insert("FIT", "FITS");
+    map.insert("GZ", "GZIP");
+    map.insert("HIF", "HEIF");
+    map.insert("HTM", "HTML");
+    map.insert("ICAL", "ICS");
+    map.insert("ICM", "ICC");
     map.insert("J2K", "J2C");
     map.insert("JPC", "J2C");
+    map.insert("JPE", "JPEG");
     map.insert("JPF", "JP2");
+    map.insert("JPG", "JPEG");
+    map.insert("LFR", "LFP");
     map.insert("M2T", "M2TS");
+    map.insert("MIF", "MIFF");
+    map.insert("MPG", "MPEG");
     map.insert("MTS", "M2TS");
+    map.insert("NEWER", "COS");
+    map.insert("ORI", "ORF");
+    map.insert("PCT", "PICT");
+    map.insert("PHP3", "PHP");
+    map.insert("PHP4", "PHP");
+    map.insert("PHP5", "PHP");
+    map.insert("PHPS", "PHP");
+    map.insert("PHTML", "PHP");
+    map.insert("PS2", "PS");
+    map.insert("PS3", "PS");
+    map.insert("PSPFRAME", "PSP");
+    map.insert("PSPIMAGE", "PSP");
+    map.insert("PSPSHAPE", "PSP");
+    map.insert("PSPTUBE", "PSP");
+    map.insert("QIF", "QTIF");
+    map.insert("QT", "MOV");
+    map.insert("QTI", "QTIF");
+    map.insert("RIF", "RIFF");
+    map.insert("TIF", "TIFF");
     map.insert("TS", "M2TS");
+    map.insert("TUB", "PSP");
+    map.insert("VCF", "VCARD");
     map
 });
 
@@ -24,6 +68,17 @@ static EXTENSION_ALIASES: Lazy<HashMap<&'static str, &'static str>> = Lazy::new(
 static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'static str)>> =
     Lazy::new(|| {
         let mut map = HashMap::new();
+        map.insert("360", (vec!["MOV"], "GoPro 360 video"));
+        map.insert("3FR", (vec!["TIFF"], "Hasselblad RAW format"));
+        map.insert(
+            "3G2",
+            (vec!["MOV"], "3rd Gen. Partnership Project 2 audio/video"),
+        );
+        map.insert(
+            "3GP",
+            (vec!["MOV"], "3rd Gen. Partnership Project audio/video"),
+        );
+        map.insert("7Z", (vec!["7Z"], "7z archive"));
         map.insert("A", (vec!["EXE"], "Static library"));
         map.insert("AA", (vec!["AA"], "Audible Audiobook"));
         map.insert("AAC", (vec!["AAC"], "Advanced Audio Coding"));
@@ -54,11 +109,22 @@ static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'stati
         map.insert("BMP", (vec!["BMP"], "Windows Bitmap"));
         map.insert("BPG", (vec!["BPG"], "Better Portable Graphics"));
         map.insert("BTF", (vec!["BTF"], "Big Tagged Image File Format"));
+        map.insert("BZ2", (vec!["BZ2"], "BZIP2 archive"));
+        map.insert(
+            "C2PA",
+            (
+                vec!["JUMBF"],
+                "Coalition for Content Provenance and Authenticity",
+            ),
+        );
         map.insert("CHM", (vec!["CHM"], "Microsoft Compiled HTML format"));
         map.insert("CIFF", (vec!["CRW"], "Camera Image File Format"));
         map.insert("COS", (vec!["COS"], "Capture One Settings"));
+        map.insert("CR2", (vec!["TIFF"], "Canon RAW 2 format"));
+        map.insert("CR3", (vec!["MOV"], "Canon RAW 3 format"));
         map.insert("CRM", (vec!["MOV"], "Canon RAW Movie"));
         map.insert("CRW", (vec!["CRW"], "Canon RAW format"));
+        map.insert("CS1", (vec!["PSD"], "Sinar CaptureShop 1-Shot RAW"));
         map.insert("CSV", (vec!["TXT"], "Comma-Separated Values"));
         map.insert("CUR", (vec!["ICO"], "Windows Cursor"));
         map.insert("CZI", (vec!["CZI"], "Zeiss Integrated Software RAW"));
@@ -99,9 +165,12 @@ static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'stati
             (vec!["ZIP", "FPX"], "Office Open XML Document Template"),
         );
         map.insert("DPX", (vec!["DPX"], "Digital Picture Exchange"));
+        map.insert("DR4", (vec!["DR4"], "Canon VRD version 4 Recipe"));
+        map.insert("DS2", (vec!["DSS"], "Digital Speech Standard 2"));
         map.insert("DSS", (vec!["DSS"], "Digital Speech Standard"));
         map.insert("DV", (vec!["DV"], "Digital Video"));
         map.insert("DVB", (vec!["MOV"], "Digital Video Broadcasting"));
+        map.insert("DVR-MS", (vec!["ASF"], "Microsoft Digital Video recording"));
         map.insert("DWF", (vec!["DWF"], "Autodesk drawing (Design Web Format)"));
         map.insert("DWG", (vec!["DWG"], "AutoCAD Drawing"));
         map.insert("DXF", (vec!["DXF"], "AutoCAD Drawing Exchange Format"));
@@ -114,6 +183,10 @@ static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'stati
         map.insert("EXIF", (vec!["EXIF"], "Exchangable Image File Metadata"));
         map.insert("EXR", (vec!["EXR"], "Open EXR"));
         map.insert("EXV", (vec!["EXV"], "Exiv2 metadata"));
+        map.insert("F4A", (vec!["MOV"], "Adobe Flash Player 9+ Audio"));
+        map.insert("F4B", (vec!["MOV"], "Adobe Flash Player 9+ audio Book"));
+        map.insert("F4P", (vec!["MOV"], "Adobe Flash Player 9+ Protected"));
+        map.insert("F4V", (vec!["MOV"], "Adobe Flash Player 9+ Video"));
         map.insert(
             "FFF",
             (vec!["TIFF", "FLIR"], "Hasselblad Flexible File Format"),
@@ -157,7 +230,9 @@ static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'stati
         map.insert("INX", (vec!["XMP"], "Adobe InDesign Interchange"));
         map.insert("ISO", (vec!["ISO"], "ISO 9660 disk image"));
         map.insert("ITC", (vec!["ITC"], "iTunes Cover Flow"));
+        map.insert("J2C", (vec!["JP2"], "JPEG 2000 codestream"));
         map.insert("JNG", (vec!["PNG"], "JPG Network Graphics"));
+        map.insert("JP2", (vec!["JP2"], "JPEG 2000 file"));
         map.insert("JPEG", (vec!["JPEG"], "Joint Photographic Experts Group"));
         map.insert("JPH", (vec!["JP2"], "High-throughput JPEG 2000"));
         map.insert("JPM", (vec!["JP2"], "JPEG 2000 compound image"));
@@ -170,6 +245,7 @@ static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'stati
         );
         map.insert("JXL", (vec!["JXL"], "JPEG XL"));
         map.insert("JXR", (vec!["TIFF"], "JPEG XR"));
+        map.insert("K25", (vec!["TIFF"], "Kodak DC25 RAW"));
         map.insert("KDC", (vec!["TIFF"], "Kodak Digital Camera RAW"));
         map.insert("KEY", (vec!["ZIP"], "Apple Keynote presentation"));
         map.insert("KTH", (vec!["ZIP"], "Apple Keynote Theme"));
@@ -179,6 +255,12 @@ static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'stati
         map.insert("LNK", (vec!["LNK"], "Windows shortcut"));
         map.insert("LRI", (vec!["LRI"], "Light RAW"));
         map.insert("LRV", (vec!["MOV"], "Low-Resolution Video"));
+        map.insert("M2TS", (vec!["M2TS"], "MPEG-2 Transport Stream"));
+        map.insert("M2V", (vec!["MPEG"], "MPEG-2 Video"));
+        map.insert("M4A", (vec!["MOV"], "MPEG-4 Audio"));
+        map.insert("M4B", (vec!["MOV"], "MPEG-4 audio Book"));
+        map.insert("M4P", (vec!["MOV"], "MPEG-4 Protected"));
+        map.insert("M4V", (vec!["MOV"], "MPEG-4 Video"));
         map.insert("MACOS", (vec!["MacOS"], "MacOS ._ sidecar file"));
         map.insert("MAX", (vec!["FPX"], "3D Studio MAX"));
         map.insert("MEF", (vec!["TIFF"], "Mamiya (RAW) Electronic Format"));
@@ -196,6 +278,8 @@ static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'stati
         map.insert("MOI", (vec!["MOI"], "MOD Information file"));
         map.insert("MOS", (vec!["TIFF"], "Creo Leaf Mosaic"));
         map.insert("MOV", (vec!["MOV"], "Apple QuickTime movie"));
+        map.insert("MP3", (vec!["MP3"], "MPEG-1 Layer 3 audio"));
+        map.insert("MP4", (vec!["MOV"], "MPEG-4 video"));
         map.insert("MPC", (vec!["MPC"], "Musepack Audio"));
         map.insert("MPEG", (vec!["MPEG"], "MPEG-1 or MPEG-2 audio/video"));
         map.insert("MPO", (vec!["JPEG"], "Extended Multi-Picture format"));
@@ -301,6 +385,7 @@ static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'stati
         map.insert("PSDT", (vec!["PSD"], "Photoshop Document Template"));
         map.insert("PSP", (vec!["PSP"], "Paint Shop Pro"));
         map.insert("QTIF", (vec!["QTIF"], "QuickTime Image File"));
+        map.insert("R3D", (vec!["R3D"], "Redcode RAW Video"));
         map.insert("RA", (vec!["Real"], "Real Audio"));
         map.insert("RAF", (vec!["RAF"], "FujiFilm RAW Format"));
         map.insert("RAM", (vec!["Real"], "Real Audio Metafile"));
@@ -319,11 +404,13 @@ static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'stati
         map.insert("RSRC", (vec!["RSRC"], "Mac OS Resource"));
         map.insert("RTF", (vec!["RTF"], "Rich Text Format"));
         map.insert("RV", (vec!["Real"], "Real Video"));
+        map.insert("RW2", (vec!["TIFF"], "Panasonic RAW 2"));
         map.insert("RWL", (vec!["TIFF"], "Leica RAW"));
         map.insert("RWZ", (vec!["RWZ"], "Rawzor compressed image"));
         map.insert("SEQ", (vec!["FLIR"], "FLIR image Sequence"));
         map.insert("SKETCH", (vec!["ZIP"], "Sketch design file"));
         map.insert("SO", (vec!["EXE"], "Shared Object file"));
+        map.insert("SR2", (vec!["TIFF"], "Sony RAW Format 2"));
         map.insert("SRF", (vec!["TIFF"], "Sony RAW Format"));
         map.insert("SRW", (vec!["TIFF"], "Samsung RAW format"));
         map.insert("SVG", (vec!["XMP"], "Scalable Vector Graphics"));
@@ -352,9 +439,11 @@ static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'stati
         map.insert("WMF", (vec!["WMF"], "Windows Metafile Format"));
         map.insert("WMV", (vec!["ASF"], "Windows Media Video"));
         map.insert("WOFF", (vec!["Font"], "Web Open Font Format"));
+        map.insert("WOFF2", (vec!["Font"], "Web Open Font Format 2"));
         map.insert("WPG", (vec!["WPG"], "WordPerfect Graphics"));
         map.insert("WTV", (vec!["WTV"], "Windows recorded TV show"));
         map.insert("WV", (vec!["RIFF"], "WavePack lossless audio"));
+        map.insert("X3F", (vec!["X3F"], "Sigma RAW format"));
         map.insert("XCF", (vec!["XCF"], "GIMP native image format"));
         map.insert(
             "XHTML",
@@ -399,51 +488,6 @@ static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'stati
         );
         map.insert("XMP", (vec!["XMP"], "Extensible Metadata Platform"));
         map.insert("ZIP", (vec!["ZIP"], "ZIP archive"));
-        map.insert("360", (vec!["MOV"], "GoPro 360 video"));
-        map.insert("3FR", (vec!["TIFF"], "Hasselblad RAW format"));
-        map.insert(
-            "3G2",
-            (vec!["MOV"], "3rd Gen. Partnership Project 2 audio/video"),
-        );
-        map.insert(
-            "3GP",
-            (vec!["MOV"], "3rd Gen. Partnership Project audio/video"),
-        );
-        map.insert("7Z", (vec!["7Z"], "7z archive"));
-        map.insert("BZ2", (vec!["BZ2"], "BZIP2 archive"));
-        map.insert(
-            "C2PA",
-            (
-                vec!["JUMBF"],
-                "Coalition for Content Provenance and Authenticity",
-            ),
-        );
-        map.insert("CR2", (vec!["TIFF"], "Canon RAW 2 format"));
-        map.insert("CR3", (vec!["MOV"], "Canon RAW 3 format"));
-        map.insert("CS1", (vec!["PSD"], "Sinar CaptureShop 1-Shot RAW"));
-        map.insert("DR4", (vec!["DR4"], "Canon VRD version 4 Recipe"));
-        map.insert("DS2", (vec!["DSS"], "Digital Speech Standard 2"));
-        map.insert("DVR-MS", (vec!["ASF"], "Microsoft Digital Video recording"));
-        map.insert("F4A", (vec!["MOV"], "Adobe Flash Player 9+ Audio"));
-        map.insert("F4B", (vec!["MOV"], "Adobe Flash Player 9+ audio Book"));
-        map.insert("F4P", (vec!["MOV"], "Adobe Flash Player 9+ Protected"));
-        map.insert("F4V", (vec!["MOV"], "Adobe Flash Player 9+ Video"));
-        map.insert("J2C", (vec!["JP2"], "JPEG 2000 codestream"));
-        map.insert("JP2", (vec!["JP2"], "JPEG 2000 file"));
-        map.insert("K25", (vec!["TIFF"], "Kodak DC25 RAW"));
-        map.insert("M2TS", (vec!["M2TS"], "MPEG-2 Transport Stream"));
-        map.insert("M2V", (vec!["MPEG"], "MPEG-2 Video"));
-        map.insert("M4A", (vec!["MOV"], "MPEG-4 Audio"));
-        map.insert("M4B", (vec!["MOV"], "MPEG-4 audio Book"));
-        map.insert("M4P", (vec!["MOV"], "MPEG-4 Protected"));
-        map.insert("M4V", (vec!["MOV"], "MPEG-4 Video"));
-        map.insert("MP3", (vec!["MP3"], "MPEG-1 Layer 3 audio"));
-        map.insert("MP4", (vec!["MOV"], "MPEG-4 video"));
-        map.insert("R3D", (vec!["R3D"], "Redcode RAW Video"));
-        map.insert("RW2", (vec!["TIFF"], "Panasonic RAW 2"));
-        map.insert("SR2", (vec!["TIFF"], "Sony RAW Format 2"));
-        map.insert("WOFF2", (vec!["Font"], "Web Open Font Format 2"));
-        map.insert("X3F", (vec!["X3F"], "Sigma RAW format"));
         map
     });
 
