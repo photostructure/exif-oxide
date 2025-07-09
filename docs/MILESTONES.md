@@ -103,11 +103,6 @@ This milestone plan embraces the reality that we're building a complex system in
 
 **Note**: Detailed planning documents exist in `docs/milestones/` for milestones with research completed.
 
-### Milestone 15: XMP/XML Support
-- Comprehensive RDF/XML metadata extraction  
-- 72 namespace support (Adobe, IPTC, PLUS)
-- Structure flattening and namespace management
-- **Planning**: See [MILESTONE-15-XMP-XML.md](milestones/MILESTONE-15-XMP-XML.md)
 
 
 ### Milestone 17: RAW Image Format Support (Consolidated)

@@ -185,3 +185,15 @@ Refactored confusing "simple_tables" naming into logical, purpose-driven modules
 **Architecture implemented**: Each module has single responsibility with intuitive naming. `file_detection/patterns.rs` clearly indicates purpose vs confusing "simple_tables handling regex". Created `simple_tables_v2.rs` demonstrating migration path.
 
 **Impact**: Reduced cognitive overhead for new engineers, improved maintainability, clear extension points for future milestones (XMP, RAW, Video). Foundation ready for complete migration from monolithic to modular architecture.
+
+---
+
+## ✅ Milestone 15: XMP/XML Support (COMPLETED - July 2025)
+
+Implemented comprehensive XMP metadata extraction with structured output equivalent to `exiftool -j -struct`. Built production-ready XMP processor supporting regular and Extended XMP across JPEG, TIFF, and standalone .xmp files.
+
+**Key achievements**: Structured-only output with proper namespace grouping (dc, xmp, exif, etc.), Extended XMP multi-segment reassembly with GUID validation, UTF-16 encoding detection and conversion, 96 auto-generated namespace tables from ExifTool source.
+
+**Files implemented**: `src/xmp/processor.rs` (complete XMP processor), `src/formats/jpeg.rs` (Extended XMP extraction), Enhanced TagValue with Object/Array variants for nested structures, generated XMP lookup tables.
+
+**Impact**: Full ExifTool XMP compatibility, zero maintenance burden via codegen, foundation for all structured metadata processing. Successfully handles complex XMP structures while maintaining Trust ExifTool principle.
