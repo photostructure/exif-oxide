@@ -20,17 +20,7 @@ use std::sync::LazyLock;
 /// These represent cases where we intentionally differ (e.g., providing fallback MIME types)
 static KNOWN_DIFFERENCES: LazyLock<HashMap<&'static str, KnownDifference>> = LazyLock::new(|| {
     [
-        // NEF/NRW detection happens during TIFF processing, not in FileTypeDetector
-        // This test only uses FileTypeDetector, so it sees NEF based on extension
-        (
-            "test-images/nikon/nikon_z8_73.NEF",
-            KnownDifference::ContentBasedOverride,
-        ),
-        // HEIF/HEIC detection in ExifTool is based on ftyp box content, not extension
-        (
-            "third-party/exiftool/t/images/QuickTime.heic",
-            KnownDifference::ContentBasedOverride,
-        ),
+        // No known differences - all files should match ExifTool exactly
     ]
     .into_iter()
     .collect()
@@ -48,6 +38,7 @@ enum KnownDifference {
     #[allow(dead_code)]
     StandardVariation,
     /// File type detection differs based on content analysis vs extension
+    #[allow(dead_code)]
     ContentBasedOverride,
 }
 
