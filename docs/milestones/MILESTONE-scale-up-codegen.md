@@ -574,6 +574,104 @@ pub fn lookup_nikon_lens_ids(key: &str) -> Option<&'static str>
 
 ### Summary for Next Engineer
 
-You're inheriting a 90% complete refactoring. The new structure is in place and working, but there's a string lifetime issue preventing compilation. The fix is straightforward - just need to use `&str` instead of `&'static str` for lookup function parameters. Once that's fixed and `make precommit` passes, this milestone is complete.
+You're inheriting a 95% complete refactoring. The core issues have been fixed, but there's important cleanup work remaining around extract.json removal.
 
-The key insight: we pivoted from macros to direct code generation for simplicity. This is better for the project's maintainability and aligns with keeping things understandable for Rust newcomers.
+#### What's Been Completed ✅
+
+1. **String lifetime issue** - Fixed! Lookup functions now accept `&str` instead of `&'static str`
+2. **Unused imports** - Fixed! HashSet only imported when boolean sets are present
+3. **Module naming warnings** - Fixed! Added `#[allow(non_snake_case)]` attributes
+4. **Code compiles successfully** - All generated code works correctly
+5. **Direct code generation** - Successfully using simple, readable code instead of macros
+
+#### Critical Remaining Work 🚨
+
+**The extract.json Cleanup Problem:**
+- We started removing extract.json but discovered it's still deeply integrated
+- `extract.pl` still reads from extract.json to generate JSON files in `generated/extract/`
+- These JSON files are then consumed by the new macro-based system
+- The patch script was updated to read from new config structure
+
+**Current State:**
+- extract.json has been restored (it's needed)
+- Old processing code removed from main.rs
+- Comments updated to reference new config structure
+- BUT: The system is now in a hybrid state - partially old, partially new
+
+#### Files You Must Study 📚
+
+1. **Core Implementation**:
+   - `codegen/src/generators/macro_based.rs` - The new generator (already fixed)
+   - `codegen/src/main.rs` - Main entry point (old code removed, but see line 154)
+   - `codegen/extractors/extract.pl` - STILL USES extract.json (needs refactoring)
+
+2. **Configuration Files**:
+   - `codegen/extract.json` - The old config (still needed by extract.pl)
+   - `codegen/config/*/` - New modular config structure
+
+3. **Build System**:
+   - `codegen/Makefile.modular` - References to extract.json removed
+   - `codegen/patch_exiftool_modules.pl` - Updated to use new config
+
+#### The Extract.json Problem Explained 🔍
+
+The current flow is:
+1. `patch_exiftool_modules.pl` reads from NEW config structure ✅
+2. `extract.pl` reads from OLD extract.json ❌
+3. `extract.pl` generates JSON files in `generated/extract/`
+4. New macro-based system reads these JSON files ✅
+5. Generated code uses direct generation (no macros) ✅
+
+**What needs to happen:**
+- Either update `extract.pl` to read from new config structure
+- OR create a new extraction system that works with the modular configs
+- The goal: eliminate extract.json completely
+
+#### Testing Your Changes 🧪
+
+```bash
+# Full pipeline test
+make codegen
+
+# Check compilation
+cargo check
+
+# Run full validation
+make precommit
+
+# The MIME type test failure is pre-existing, not related to these changes
+```
+
+#### Tribal Knowledge 🧠
+
+1. **Why extract.json still exists**: We discovered mid-refactoring that extract.pl depends on it. The new system reads the JSON files that extract.pl generates, creating a dependency chain.
+
+2. **The macro pivot**: Originally used macros, but switched to direct code generation for better readability and debugging. This was the right call.
+
+3. **Module naming**: `Canon_pm` not `canon_pm` - intentionally matches ExifTool source files with underscores instead of dots.
+
+4. **String lifetimes**: The fix was simple - use `&str` for lookup parameters even though HashMap keys are `&'static str`.
+
+5. **Build complexity**: The system has multiple stages:
+   - Perl extraction → JSON files
+   - JSON files → Rust code generation
+   - Two parallel systems running (old + new)
+
+#### Success Criteria for Completion ✅
+
+- [ ] Remove extract.json completely
+- [ ] Update extract.pl to use new config OR replace it
+- [ ] Ensure `make codegen` works without extract.json
+- [ ] All tests pass (except pre-existing MIME type issue)
+- [ ] Remove any remaining references to extract.json
+- [ ] Document the new extraction flow
+
+#### Recommended Approach 💡
+
+1. Study how `extract.pl` works and what it generates
+2. Decide: update extract.pl or replace it?
+3. If updating: make it read from `codegen/config/*/simple_table.json` etc.
+4. If replacing: the new system might be able to generate everything directly
+5. Test extensively - the extraction is critical for codegen
+
+Good luck! The hard parts are done - this is mostly cleanup and ensuring consistency.

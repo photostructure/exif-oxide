@@ -9,7 +9,7 @@
 //!
 //! Implementation: Uses generated lens database from ExifTool simple table extraction
 
-use crate::generated::nikon::lenses::{lookup_nikon_lens_ids, NIKON_LENS_IDS};
+use crate::generated::Nikon_pm::{lookup_nikon_lens_ids, NIKON_LENS_IDS};
 use std::collections::HashMap;
 use tracing::{debug, trace, warn};
 

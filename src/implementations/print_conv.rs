@@ -10,9 +10,9 @@ use crate::types::TagValue;
 
 /// EXIF Orientation PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:281-290 (%orientation hash)
-/// Generated table: src/generated/exif/orientation.rs
+/// Generated table: src/generated/Exif_pm/mod.rs
 pub fn orientation_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::exif::orientation::lookup_orientation;
+    use crate::generated::Exif_pm::lookup_orientation;
 
     // Handle both u8 and u16 types - orientation values are 1-8 so fit in u8
     let orientation_val = match val {
