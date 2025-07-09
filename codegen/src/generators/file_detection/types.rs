@@ -1,4 +1,4 @@
-//! Generator for file type lookup tables from ExifTool's fileTypeLookup hash
+//! File type discriminated union generation with alias support
 
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
@@ -41,22 +41,25 @@ pub struct FileTypeStats {
     pub by_type: HashMap<String, usize>,
 }
 
-/// Generate file type lookup tables from ExifTool's fileTypeLookup data
-pub fn generate_file_type_lookup(json_path: &Path, output_dir: &str) -> Result<()> {
-    let json_data = fs::read_to_string(json_path)?;
+/// Generate file type lookup table from file_type_lookup.json
+pub fn generate_file_type_lookup(json_dir: &Path, output_dir: &str) -> Result<()> {
+    // Look for file_type_lookup.json
+    let file_type_lookup_path = json_dir.parent()
+        .ok_or_else(|| anyhow::anyhow!("Invalid json_dir path"))?
+        .join("file_type_lookup.json");
+    
+    if !file_type_lookup_path.exists() {
+        println!("    ⚠️  file_type_lookup.json not found, skipping file type lookups");
+        return Ok(());
+    }
+    
+    let json_data = fs::read_to_string(&file_type_lookup_path)?;
     let data: FileTypeLookupData = serde_json::from_str(&json_data)?;
     
-    // Create file_types directory
-    let file_types_dir = Path::new(output_dir).join("simple_tables").join("file_types");
-    fs::create_dir_all(&file_types_dir)?;
+    // Generate file_type_lookup.rs directly in output_dir (not in subdirectory)
+    generate_file_type_lookup_module(&data, Path::new(output_dir))?;
     
-    // Generate file_type_lookup.rs
-    generate_file_type_lookup_module(&data, &file_types_dir)?;
-    
-    // Generate magic_numbers.rs
-    generate_magic_numbers_module(&data, &file_types_dir)?;
-    
-    println!("Generated file type lookup tables with {} total lookups", data.stats.total_lookups);
+    println!("    ✓ Generated file type lookup tables with {} total lookups", data.stats.total_lookups);
     
     Ok(())
 }
@@ -126,13 +129,16 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
     // Generate public API functions
     code.push_str("/// Resolve file type from extension, following aliases\n");
     code.push_str("pub fn resolve_file_type(extension: &str) -> Option<(Vec<&'static str>, &'static str)> {\n");
+    code.push_str("    // Convert to uppercase for case-insensitive lookup\n");
+    code.push_str("    let ext_upper = extension.to_uppercase();\n");
+    code.push_str("    \n");
     code.push_str("    // First check for direct format lookup\n");
-    code.push_str("    if let Some((formats, desc)) = FILE_TYPE_FORMATS.get(extension) {\n");
+    code.push_str("    if let Some((formats, desc)) = FILE_TYPE_FORMATS.get(ext_upper.as_str()) {\n");
     code.push_str("        return Some((formats.clone(), *desc));\n");
     code.push_str("    }\n");
     code.push_str("    \n");
     code.push_str("    // Check for alias resolution\n");
-    code.push_str("    if let Some(alias) = EXTENSION_ALIASES.get(extension) {\n");
+    code.push_str("    if let Some(alias) = EXTENSION_ALIASES.get(ext_upper.as_str()) {\n");
     code.push_str("        return resolve_file_type(alias);\n");
     code.push_str("    }\n");
     code.push_str("    \n");
@@ -168,61 +174,11 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
     code.push_str("    extensions\n");
     code.push_str("}\n");
     
-    // Write the file
-    let output_path = output_dir.join("file_type_lookup.rs");
+    // Write the file to file_types subdirectory
+    let file_types_dir = output_dir.join("file_types");
+    fs::create_dir_all(&file_types_dir)?;
+    let output_path = file_types_dir.join("file_type_lookup.rs");
     fs::write(&output_path, code)?;
-    
-    println!("Generated file_type_lookup.rs");
-    
-    Ok(())
-}
-
-fn generate_magic_numbers_module(data: &FileTypeLookupData, output_dir: &Path) -> Result<()> {
-    let mut code = String::new();
-    
-    // File header
-    code.push_str("//! Magic number patterns for file type detection\n");
-    code.push_str("//!\n");
-    code.push_str(&format!("//! Generated at: {}\n", data.extracted_at));
-    code.push_str("\n");
-    code.push_str("use std::collections::HashMap;\n");
-    code.push_str("use once_cell::sync::Lazy;\n");
-    code.push_str("\n");
-    
-    // Generate magic number patterns
-    code.push_str("/// Magic number patterns for file type detection\n");
-    code.push_str("static MAGIC_PATTERNS: Lazy<HashMap<&'static str, &'static str>> = Lazy::new(|| {\n");
-    code.push_str("    let mut map = HashMap::new();\n");
-    
-    for entry in &data.file_type_lookups.magic_lookups {
-        if let Some(pattern) = entry.value.as_str() {
-            // Escape pattern for Rust string literal
-            let escaped_pattern = pattern.replace('\\', "\\\\").replace('"', "\\\"");
-            code.push_str(&format!("    map.insert(\"{}\", \"{}\");\n", entry.key, escaped_pattern));
-        }
-    }
-    
-    code.push_str("    map\n");
-    code.push_str("});\n");
-    code.push_str("\n");
-    
-    // Generate public API
-    code.push_str("/// Get magic number pattern for a file type\n");
-    code.push_str("pub fn get_magic_pattern(file_type: &str) -> Option<&'static str> {\n");
-    code.push_str("    MAGIC_PATTERNS.get(file_type).copied()\n");
-    code.push_str("}\n");
-    code.push_str("\n");
-    
-    code.push_str("/// Get all file types that have magic number patterns\n");
-    code.push_str("pub fn get_magic_file_types() -> Vec<&'static str> {\n");
-    code.push_str("    MAGIC_PATTERNS.keys().copied().collect()\n");
-    code.push_str("}\n");
-    
-    // Write the file
-    let output_path = output_dir.join("magic_numbers.rs");
-    fs::write(&output_path, code)?;
-    
-    println!("Generated magic_numbers.rs");
     
     Ok(())
 }

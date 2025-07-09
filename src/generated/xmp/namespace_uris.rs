@@ -10,9 +10,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// XMP namespace prefix to URI mappings lookup table
-/// Source: ExifTool XMP.pm %nsURI (93 entries)
+/// Source: ExifTool XMP.pm %nsURI (96 entries)
 pub static NAMESPACE_URIS: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("DICOM", "http://ns.adobe.com/DICOM/");
     map.insert("GAudio", "http://ns.google.com/photos/1.0/audio/");
     map.insert("GCamera", "http://ns.google.com/photos/1.0/camera/");
     map.insert("GContainer", "http://ns.google.com/photos/1.0/container/");
@@ -30,7 +31,9 @@ pub static NAMESPACE_URIS: LazyLock<HashMap<&'static str, &'static str>> = LazyL
     );
     map.insert("Iptc4xmpExt", "http://iptc.org/std/Iptc4xmpExt/2008-02-29/");
     map.insert("LImage", "http://ns.leiainc.com/photos/1.0/image/");
+    map.insert("MP", "http://ns.microsoft.com/photo/1.2/");
     map.insert("MP1", "http://ns.microsoft.com/photo/1.1");
+    map.insert("MPRI", "http://ns.microsoft.com/photo/1.2/t/RegionInfo#");
     map.insert("MPReg", "http://ns.microsoft.com/photo/1.2/t/Region#");
     map.insert("MicrosoftPhoto", "http://ns.microsoft.com/photo/1.0");
     map.insert("Profile", "http://ns.google.com/photos/dd/1.0/profile/");

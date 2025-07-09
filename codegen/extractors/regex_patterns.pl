@@ -26,7 +26,7 @@ use ExifToolExtract qw(
 );
 
 # Read configuration for regex pattern tables
-my $config = load_json_config("$Bin/../simple_tables.json");
+my $config = load_json_config("$Bin/../extract.json");
 my @regex_tables = grep {
     $_->{extraction_type} && $_->{extraction_type} eq 'regex_strings'
 } @{$config->{tables}};

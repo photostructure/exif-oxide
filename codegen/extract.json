@@ -1,6 +1,6 @@
 {
-  "$schema": "./simple_tables_schema.json",
-  "description": "Configuration for ExifTool simple table extraction",
+  "$schema": "./extract_schema.json",
+  "description": "Configuration for ExifTool data extraction",
   "tables": [
     {
       "module": "Nikon.pm",
