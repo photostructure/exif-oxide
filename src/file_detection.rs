@@ -116,6 +116,11 @@ impl FileTypeDetector {
                 let detected_type = if candidate == "MOV" {
                     self.determine_mov_subtype(&buffer)
                         .unwrap_or_else(|| candidate.clone())
+                } else if self.is_riff_based_format(candidate) {
+                    // For RIFF-based formats, detect the actual type from the header
+                    // ExifTool RIFF.pm:2038-2039 - Sets file type based on RIFF format identifier
+                    self.detect_riff_type(&buffer)
+                        .unwrap_or_else(|| candidate.clone())
                 } else {
                     candidate.clone()
                 };
@@ -149,23 +154,17 @@ impl FileTypeDetector {
         // Resolve through fileTypeLookup with alias following
         // ExifTool.pm:258-404 %fileTypeLookup hash defines extension mappings
         use crate::generated::file_types::resolve_file_type;
-        if let Some((formats, _description)) = resolve_file_type(&normalized_ext) {
-            // Get the primary file type from the resolved formats
-            let primary_type = formats[0].to_string();
-
-            // Special case: HEIC/HEIF/CR3/MP4 extensions should use MOV format for detection
-            // This matches ExifTool's behavior where these formats use MOV magic pattern
-            // ExifTool QuickTime.pm:9868-9877 - ftyp brand determines actual file type
-            if primary_type == "HEIC"
-                || primary_type == "HEIF"
-                || primary_type == "CR3"
-                || primary_type == "MP4"
-            {
-                Ok(vec!["MOV".to_string()])
-            } else {
-                // Use the resolved file type (handles aliases like MTS -> M2TS)
-                // ExifTool.pm:258-404 %fileTypeLookup handles extension aliases
-                Ok(vec![primary_type])
+        if let Some((_formats, _description)) = resolve_file_type(&normalized_ext) {
+            // For most formats, the extension itself is the file type candidate
+            // The formats array tells us what processing module to use, not the file type
+            // ExifTool.pm:2940-2950 - GetFileType returns the extension-based type
+            
+            // Special case: Some extensions are aliases that should map to a different type
+            // These are hardcoded in ExifTool.pm GetFileType()
+            match normalized_ext.as_str() {
+                "3GP2" => Ok(vec!["3G2".to_string()]),  // ExifTool.pm alias
+                "MTS" => Ok(vec!["M2TS".to_string()]),  // ExifTool.pm alias
+                _ => Ok(vec![normalized_ext.clone()]),   // Use the extension as the type
             }
         } else {
             // Unknown extension - return normalized extension as candidate
@@ -514,6 +513,49 @@ impl FileTypeDetector {
 
         // Fall back to hardcoded binary patterns for common file types
         self.match_binary_magic_pattern(file_type, "", buffer)
+    }
+
+    /// Detect actual RIFF format type from buffer
+    /// ExifTool RIFF.pm:2037-2046 - Detects specific RIFF variant
+    fn detect_riff_type(&self, buffer: &[u8]) -> Option<String> {
+        // Need at least 12 bytes for RIFF header analysis
+        if buffer.len() < 12 {
+            return None;
+        }
+
+        // Extract RIFF magic signature (bytes 0-3) and format identifier (bytes 8-11)
+        let magic = &buffer[0..4];
+        let format_id = &buffer[8..12];
+
+        // Check RIFF magic signature first
+        // ExifTool RIFF.pm:2040 - "if ($buff =~ /^(RIFF|RF64)....(.{4})/s)"
+        let is_riff = magic == b"RIFF" || magic == b"RF64";
+        if !is_riff {
+            // Check for obscure lossless audio variants
+            // ExifTool RIFF.pm:2044 - "return 0 unless $buff =~ /^(LA0[234]|OFR |LPAC|wvpk)/"
+            let is_audio_variant = magic == b"LA02"
+                || magic == b"LA03"
+                || magic == b"LA04"
+                || magic == b"OFR "
+                || magic == b"LPAC"
+                || magic == b"wvpk";
+            if !is_audio_variant {
+                return None;
+            }
+        }
+
+        // Map format identifier to file type using ExifTool's riffType mapping
+        // ExifTool RIFF.pm:49-53 - %riffType hash
+        match format_id {
+            b"WAVE" => Some("WAV".to_string()),
+            b"AVI " => Some("AVI".to_string()), // Note: AVI has trailing space
+            b"WEBP" => Some("WEBP".to_string()),
+            b"LA02" | b"LA03" | b"LA04" => Some("LA".to_string()),
+            b"OFR " => Some("OFR".to_string()),
+            b"LPAC" => Some("PAC".to_string()),
+            b"wvpk" => Some("WV".to_string()),
+            _ => Some("RIFF".to_string()), // Unknown RIFF format
+        }
     }
 
     /// Check if a file type is based on RIFF container format
