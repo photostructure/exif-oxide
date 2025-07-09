@@ -150,9 +150,13 @@ impl FileTypeDetector {
         use crate::generated::file_types::resolve_file_type;
         if let Some((_formats, _description)) = resolve_file_type(&normalized_ext) {
             // For most cases, return the extension itself as candidate
-            // Special case: HEIC/HEIF extensions should use MOV format for detection
+            // Special case: HEIC/HEIF/CR3/MP4 extensions should use MOV format for detection
             // This matches ExifTool's behavior where these formats use MOV magic pattern
-            if normalized_ext == "HEIC" || normalized_ext == "HEIF" {
+            if normalized_ext == "HEIC"
+                || normalized_ext == "HEIF"
+                || normalized_ext == "CR3"
+                || normalized_ext == "MP4"
+            {
                 Ok(vec!["MOV".to_string()])
             } else {
                 Ok(vec![normalized_ext.clone()])
@@ -372,14 +376,25 @@ impl FileTypeDetector {
                 if buffer.len() >= 12 && &buffer[4..8] == b"ftyp" {
                     let brand = &buffer[8..12];
                     // MP4 brands: mp41, mp42, mp4v, isom, etc.
-                    brand == b"mp41" || brand == b"mp42" || brand == b"mp4v" || brand == b"isom"
-                        || brand == b"M4A " || brand == b"M4V " || brand == b"dash"
+                    brand == b"mp41"
+                        || brand == b"mp42"
+                        || brand == b"mp4v"
+                        || brand == b"isom"
+                        || brand == b"M4A "
+                        || brand == b"M4V "
+                        || brand == b"dash"
                 } else {
                     // Also check for other MP4 atoms
                     if buffer.len() >= 8 {
                         let atom = &buffer[4..8];
-                        atom == b"free" || atom == b"skip" || atom == b"wide" || atom == b"ftyp"
-                            || atom == b"moov" || atom == b"mdat" || atom == b"junk" || atom == b"uuid"
+                        atom == b"free"
+                            || atom == b"skip"
+                            || atom == b"wide"
+                            || atom == b"ftyp"
+                            || atom == b"moov"
+                            || atom == b"mdat"
+                            || atom == b"junk"
+                            || atom == b"uuid"
                     } else {
                         false
                     }
@@ -393,17 +408,17 @@ impl FileTypeDetector {
             "PSD" => {
                 // PSD pattern: 8BPS\0[\x01\x02]
                 // ExifTool magic number pattern
-                buffer.len() >= 6 && buffer.starts_with(&[0x38, 0x42, 0x50, 0x53, 0x00])
+                buffer.len() >= 6
+                    && buffer.starts_with(&[0x38, 0x42, 0x50, 0x53, 0x00])
                     && (buffer[5] == 0x01 || buffer[5] == 0x02)
             }
             "EPS" => {
                 // EPS pattern: (%!PS|%!Ad|\xc5\xd0\xd3\xc6)
                 // ExifTool magic number pattern
-                buffer.len() >= 4 && (
-                    buffer.starts_with(b"%!PS") ||
-                    buffer.starts_with(b"%!Ad") ||
-                    buffer.starts_with(&[0xc5, 0xd0, 0xd3, 0xc6])
-                )
+                buffer.len() >= 4
+                    && (buffer.starts_with(b"%!PS")
+                        || buffer.starts_with(b"%!Ad")
+                        || buffer.starts_with(&[0xc5, 0xd0, 0xd3, 0xc6]))
             }
             "J2C" => {
                 // J2C pattern: \xff\x4f\xff\x51\0
@@ -415,11 +430,12 @@ impl FileTypeDetector {
                 // JPEG 2000 file format magic number
                 if buffer.len() >= 12 && buffer.starts_with(&[0x00, 0x00, 0x00, 0x0c]) {
                     // Check for jP signature followed by version/compatibility
-                    if buffer[4..6] == [0x6a, 0x50] { // "jP"
+                    if buffer[4..6] == [0x6a, 0x50] {
+                        // "jP"
                         let version = &buffer[6..8];
-                        (version == b"  " || version == &[0x1a, 0x1a]) &&
-                        buffer.len() >= 12 &&
-                        buffer[8..12] == [0x0d, 0x0a, 0x87, 0x0a]
+                        (version == b"  " || version == &[0x1a, 0x1a])
+                            && buffer.len() >= 12
+                            && buffer[8..12] == [0x0d, 0x0a, 0x87, 0x0a]
                     } else {
                         false
                     }
@@ -433,10 +449,11 @@ impl FileTypeDetector {
             "ASF" => {
                 // ASF pattern: \x30\x26\xb2\x75\x8e\x66\xcf\x11\xa6\xd9\x00\xaa\x00\x62\xce\x6c
                 // Windows Media ASF/WMV format
-                buffer.len() >= 16 && buffer.starts_with(&[
-                    0x30, 0x26, 0xb2, 0x75, 0x8e, 0x66, 0xcf, 0x11,
-                    0xa6, 0xd9, 0x00, 0xaa, 0x00, 0x62, 0xce, 0x6c
-                ])
+                buffer.len() >= 16
+                    && buffer.starts_with(&[
+                        0x30, 0x26, 0xb2, 0x75, 0x8e, 0x66, 0xcf, 0x11, 0xa6, 0xd9, 0x00, 0xaa,
+                        0x00, 0x62, 0xce, 0x6c,
+                    ])
             }
             _ => {
                 // If pattern is empty, no magic number exists for this type
@@ -701,7 +718,9 @@ impl FileTypeDetector {
                 b"avif" => Some("AVIF".to_string()),
                 b"crx " => Some("CR3".to_string()), // Canon RAW 3 format
                 // Common MP4 brands
-                b"mp41" | b"mp42" | b"mp4v" | b"isom" | b"M4A " | b"M4V " | b"dash" => Some("MP4".to_string()),
+                b"mp41" | b"mp42" | b"mp4v" | b"isom" | b"M4A " | b"M4V " | b"dash" | b"avc1" => {
+                    Some("MP4".to_string())
+                }
                 _ => None, // Keep as MOV for other brands
             }
         } else {
@@ -715,42 +734,47 @@ impl FileTypeDetector {
         if buffer.is_empty() {
             return false;
         }
-        
+
         let mut pos = 0;
-        
+
         // Skip up to 3 null bytes at the beginning
         while pos < buffer.len() && pos < 3 && buffer[pos] == 0 {
             pos += 1;
         }
-        
+
         // Check for optional BOM (Byte Order Mark)
         if pos + 3 <= buffer.len() {
             // UTF-8 BOM: EF BB BF
-            if buffer[pos..pos+3] == [0xef, 0xbb, 0xbf] {
+            if buffer[pos..pos + 3] == [0xef, 0xbb, 0xbf] {
                 pos += 3;
             }
         }
         if pos + 2 <= buffer.len() {
             // UTF-16 BE BOM: FE FF
-            if buffer[pos..pos+2] == [0xfe, 0xff] {
+            if buffer[pos..pos + 2] == [0xfe, 0xff] {
                 pos += 2;
             }
             // UTF-16 LE BOM: FF FE
-            else if buffer[pos..pos+2] == [0xff, 0xfe] {
+            else if buffer[pos..pos + 2] == [0xff, 0xfe] {
                 pos += 2;
             }
         }
-        
+
         // Skip up to 3 more null bytes after BOM
         while pos < buffer.len() && pos < 6 && buffer[pos] == 0 {
             pos += 1;
         }
-        
+
         // Skip whitespace (space, tab, newline, carriage return)
-        while pos < buffer.len() && (buffer[pos] == b' ' || buffer[pos] == b'\t' || buffer[pos] == b'\n' || buffer[pos] == b'\r') {
+        while pos < buffer.len()
+            && (buffer[pos] == b' '
+                || buffer[pos] == b'\t'
+                || buffer[pos] == b'\n'
+                || buffer[pos] == b'\r')
+        {
             pos += 1;
         }
-        
+
         // Finally, check for '<' character
         pos < buffer.len() && buffer[pos] == b'<'
     }
@@ -803,13 +827,13 @@ impl FileTypeDetector {
 
             // Video formats
             "AVI" => Some("video/x-msvideo"),
-            "3GP" => Some("video/3gpp"),  // 3GPP video format
-            "3G2" => Some("video/3gpp2"), // 3GPP2 video format
-            "M4V" => Some("video/x-m4v"), // Apple M4V video
-            "MTS" => Some("video/m2ts"),  // MPEG-2 Transport Stream (alias for M2TS)
-            "M2TS" => Some("video/m2ts"), // MPEG-2 Transport Stream
-            "MP4" => Some("video/mp4"),   // MPEG-4 Part 14
-            "FLV" => Some("video/x-flv"), // Flash Video
+            "3GP" => Some("video/3gpp"),     // 3GPP video format
+            "3G2" => Some("video/3gpp2"),    // 3GPP2 video format
+            "M4V" => Some("video/x-m4v"),    // Apple M4V video
+            "MTS" => Some("video/m2ts"),     // MPEG-2 Transport Stream (alias for M2TS)
+            "M2TS" => Some("video/m2ts"),    // MPEG-2 Transport Stream
+            "MP4" => Some("video/mp4"),      // MPEG-4 Part 14
+            "FLV" => Some("video/x-flv"),    // Flash Video
             "WMV" => Some("video/x-ms-wmv"), // Windows Media Video
             "ASF" => Some("video/x-ms-wmv"), // Advanced Systems Format (usually WMV)
 
