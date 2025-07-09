@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Boolean Set Configuration",
+  "description": "Configuration for set membership tables (HashSet generation)",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string",
+      "description": "Overview of what these sets contain"
+    },
+    "tables": {
+      "type": "array",
+      "description": "List of boolean sets to extract",
+      "items": {
+        "type": "object",
+        "properties": {
+          "hash_name": {
+            "type": "string",
+            "pattern": "^%\\w+$",
+            "description": "ExifTool hash variable name (e.g., %weakMagic)"
+          },
+          "constant_name": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "description": "Rust constant name"
+          },
+          "key_type": {
+            "type": "string",
+            "enum": ["String", "&'static str"],
+            "default": "String",
+            "description": "Rust type for set elements"
+          },
+          "description": {
+            "type": "string",
+            "description": "Documentation for this set"
+          }
+        },
+        "required": ["hash_name", "constant_name"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["tables"],
+  "additionalProperties": false
+}
