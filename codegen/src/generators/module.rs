@@ -43,6 +43,10 @@ pub fn generate_mod_file(output_dir: &str) -> Result<()> {
     
     // Add module declarations
     for module in &modules {
+        // Add allow attribute for non-snake-case module names that match ExifTool source files
+        if module.ends_with("_pm") {
+            code.push_str("#[allow(non_snake_case)]\n");
+        }
         code.push_str(&format!("pub mod {};\n", module));
     }
     

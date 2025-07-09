@@ -51,16 +51,43 @@ sub convert_my_to_package_variables {
     return $modified;
 }
 
-# Read configuration to get list of modules to patch
+# Read configuration from the new modular config structure
 sub load_table_config {
-    my $config_file = "$Bin/extract.json";
+    my @configs;
+    my $config_dir = "$Bin/config";
     
-    open(my $fh, '<', $config_file) or die "Cannot open $config_file: $!";
-    my $json_text = do { local $/; <$fh> };
-    close($fh);
+    # Read all config files from module directories
+    opendir(my $dh, $config_dir) or die "Cannot open config directory: $!";
+    my @modules = grep { -d "$config_dir/$_" && $_ !~ /^\./ } readdir($dh);
+    closedir($dh);
     
-    my $config = decode_json($json_text);
-    return @{$config->{tables}};
+    for my $module (@modules) {
+        my $module_dir = "$config_dir/$module";
+        opendir(my $mdh, $module_dir) or next;
+        my @json_files = grep { /\.json$/ } readdir($mdh);
+        closedir($mdh);
+        
+        for my $json_file (@json_files) {
+            my $file_path = "$module_dir/$json_file";
+            open(my $fh, '<', $file_path) or next;
+            my $json_text = do { local $/; <$fh> };
+            close($fh);
+            
+            my $data = decode_json($json_text);
+            if ($data->{tables}) {
+                # Transform module name from Canon_pm to Canon.pm
+                (my $module_name = $module) =~ s/_pm$/.pm/;
+                for my $table (@{$data->{tables}}) {
+                    push @configs, {
+                        module => $module_name,
+                        hash_name => $table->{hash_name},
+                    };
+                }
+            }
+        }
+    }
+    
+    return @configs;
 }
 
 # Get list of variables to convert for a specific module

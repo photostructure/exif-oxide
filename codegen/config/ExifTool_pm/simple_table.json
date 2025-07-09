@@ -1,0 +1,17 @@
+{
+  "description": "ExifTool core module lookup tables for file type metadata",
+  "tables": [
+    {
+      "hash_name": "%mimeType",
+      "constant_name": "MIME_TYPES",
+      "key_type": "String",
+      "description": "MIME type mappings for file types"
+    },
+    {
+      "hash_name": "%fileTypeExt",
+      "constant_name": "FILE_TYPE_EXTENSIONS",
+      "key_type": "String",
+      "description": "Canonical file extensions for file types"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "description": "ExifTool magic number patterns for file type detection",
+  "tables": [
+    {
+      "hash_name": "%magicNumber",
+      "constant_name": "MAGIC_NUMBER_PATTERNS",
+      "description": "Magic number regex patterns for file type detection"
+    }
+  ]
+}
