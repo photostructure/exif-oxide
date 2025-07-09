@@ -41,7 +41,7 @@ mod tests {
 
     #[test]
     fn list_all_mime_types() {
-        use crate::generated::file_types::mime_types::MIME_TYPES;
+        use crate::generated::ExifTool_pm::MIME_TYPES;
 
         println!("\n=== All Available MIME Types ===");
         let mut entries: Vec<_> = MIME_TYPES.iter().collect();
