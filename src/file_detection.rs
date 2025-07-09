@@ -154,17 +154,28 @@ impl FileTypeDetector {
         // Resolve through fileTypeLookup with alias following
         // ExifTool.pm:258-404 %fileTypeLookup hash defines extension mappings
         use crate::generated::file_types::resolve_file_type;
-        if let Some((_formats, _description)) = resolve_file_type(&normalized_ext) {
+
+        // Check if this extension is known to ExifTool
+        let is_known_extension = resolve_file_type(&normalized_ext).is_some();
+
+        // For HEIC/HEIF, we need special handling
+        // Even if not in the generated lookup, these are valid extensions
+        let is_heif_extension = matches!(normalized_ext.as_str(), "HEIC" | "HEIF" | "HIF");
+
+        if is_known_extension || is_heif_extension {
             // For most formats, the extension itself is the file type candidate
             // The formats array tells us what processing module to use, not the file type
             // ExifTool.pm:2940-2950 - GetFileType returns the extension-based type
-            
+
             // Special case: Some extensions are aliases that should map to a different type
             // These are hardcoded in ExifTool.pm GetFileType()
             match normalized_ext.as_str() {
-                "3GP2" => Ok(vec!["3G2".to_string()]),  // ExifTool.pm alias
-                "MTS" => Ok(vec!["M2TS".to_string()]),  // ExifTool.pm alias
-                _ => Ok(vec![normalized_ext.clone()]),   // Use the extension as the type
+                "3GP2" => Ok(vec!["3G2".to_string()]), // ExifTool.pm alias
+                "MTS" => Ok(vec!["M2TS".to_string()]), // ExifTool.pm alias
+                // HEIC/HEIF/HIF extensions should use MOV format for detection
+                // ExifTool QuickTime.pm handles these as MOV-based formats
+                "HEIC" | "HEIF" | "HIF" => Ok(vec!["MOV".to_string()]),
+                _ => Ok(vec![normalized_ext.clone()]), // Use the extension as the type
             }
         } else {
             // Unknown extension - return normalized extension as candidate
@@ -1114,6 +1125,37 @@ mod tests {
         assert_eq!(result.file_type, "WEBP");
         assert_eq!(result.format, "RIFF");
         assert_eq!(result.mime_type, "image/webp");
+    }
+
+    #[test]
+    fn test_heic_extension_detection() {
+        let detector = FileTypeDetector::new();
+        let path = Path::new("test.heic");
+
+        // MOV file with HEIC ftyp brand
+        let mut heic_data = Vec::new();
+        heic_data.extend_from_slice(&[0x00, 0x00, 0x00, 0x20]); // Size
+        heic_data.extend_from_slice(b"ftyp"); // Box type
+        heic_data.extend_from_slice(b"mif1"); // Major brand (HEIF)
+        heic_data.extend_from_slice(&[0x00, 0x00, 0x00, 0x00]); // Minor version
+        heic_data.extend_from_slice(b"mif1heic"); // Compatible brands
+        let mut cursor = Cursor::new(heic_data);
+
+        match detector.detect_file_type(path, &mut cursor) {
+            Ok(result) => {
+                println!(
+                    "HEIC detection result: file_type={}, format={}, mime_type={}",
+                    result.file_type, result.format, result.mime_type
+                );
+                // Should detect as HEIF due to mif1 brand
+                assert_eq!(result.file_type, "HEIF");
+                assert_eq!(result.format, "MOV");
+                assert_eq!(result.mime_type, "image/heif");
+            }
+            Err(e) => {
+                panic!("Failed to detect HEIC file: {e:?}");
+            }
+        }
     }
 
     #[test]
