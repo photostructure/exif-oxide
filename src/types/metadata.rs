@@ -399,6 +399,7 @@ impl TagSourceInfo {
             "InteropIFD" => "InteropIFD".to_string(),
             "MakerNotes" => "MakerNotes".to_string(),
             "IFD1" => "IFD1".to_string(),
+            "KyoceraRaw" => "KyoceraRaw".to_string(),
             // Default to IFD0 for main IFD and unknown IFDs
             _ => "IFD0".to_string(),
         }
