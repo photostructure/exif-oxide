@@ -120,7 +120,6 @@
       "Bash(RUST_LOG=trace cargo test composite_tag -- --nocapture)",
       "Bash(RUST_LOG=trace cargo run --bin exif-oxide test-images/canon/Canon_T3i.JPG)",
       "Bash(./test_focal_length)",
-      "Bash(rm:*)",
       "Bash(./exiftool -json t/images/Canon.jpg)",
       "Bash(./exiftool t/images/Canon.jpg)",
       "Bash(RUST_LOG=debug cargo run -- test-images/apple/IMG_3755.JPG)",
