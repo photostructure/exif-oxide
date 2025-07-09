@@ -173,3 +173,15 @@ Implemented comprehensive file type detection for all 50+ formats from MIMETYPES
 ## ✅ ExifIFD Group Assignment and Context-Aware Processing (COMPLETED)
 
 Implemented correct ExifIFD group assignment with comprehensive context-aware IFD processing. Built ExifTool-compatible three-level group hierarchy (`group`, `group1`, `group2`) with proper subdirectory location tracking. ExifIFD tags now correctly assigned `group1="ExifIFD"` vs `group1="IFD0"` for main IFD tags, enabling group-based API access patterns. Enhanced TagEntry structure with `group1` field and implemented group-qualified access methods (`get_exif_ifd_tags()`, `get_tag_by_group()`, `get_tag_exiftool_style()`). Added comprehensive test suite covering Canon, Nikon, Sony manufacturers with all ExifIFD tests passing. Integration revealed this milestone was already completed through previous TagEntry API and source tracking work.
+
+---
+
+## ✅ Milestone 16: Codegen Architecture Clarity (COMPLETED - January 2025)
+
+Refactored confusing "simple_tables" naming into logical, purpose-driven modules that clearly communicate functionality. Transformed 697-line monolithic `simple_tables.rs` handling 4 different extraction types into clean modular architecture.
+
+**Key achievements**: Created `lookup_tables/` for pure key-value mappings, `file_detection/` for format detection system, `data_sets/` for boolean membership testing. Fixed UTF-8 encoding issue in regex_patterns.json (BPG entry). Successfully generates 110 magic number patterns and 21 lookup tables.
+
+**Architecture implemented**: Each module has single responsibility with intuitive naming. `file_detection/patterns.rs` clearly indicates purpose vs confusing "simple_tables handling regex". Created `simple_tables_v2.rs` demonstrating migration path.
+
+**Impact**: Reduced cognitive overhead for new engineers, improved maintainability, clear extension points for future milestones (XMP, RAW, Video). Foundation ready for complete migration from monolithic to modular architecture.

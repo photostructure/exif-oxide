@@ -2,9 +2,9 @@
 
 #[cfg(test)]
 mod tests {
-    use crate::generated::simple_tables::file_types::lookup_mime_types;
+    use crate::generated::file_types::lookup_mime_types;
     // TODO: Re-enable when resolve_file_type is available
-    // use crate::generated::simple_tables::file_types::resolve_file_type;
+    // use crate::generated::file_types::resolve_file_type;
 
     #[test]
     fn debug_problematic_formats() {
@@ -41,7 +41,7 @@ mod tests {
 
     #[test]
     fn list_all_mime_types() {
-        use crate::generated::simple_tables::file_types::mime_types::MIME_TYPES;
+        use crate::generated::file_types::mime_types::MIME_TYPES;
 
         println!("\n=== All Available MIME Types ===");
         let mut entries: Vec<_> = MIME_TYPES.iter().collect();

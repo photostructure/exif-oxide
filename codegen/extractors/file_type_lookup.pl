@@ -25,7 +25,7 @@ use ExifToolExtract qw(
 );
 
 # Read configuration for file type lookup tables
-my $config = load_json_config("$Bin/../simple_tables.json");
+my $config = load_json_config("$Bin/../extract.json");
 my @file_type_tables = grep {
     $_->{extraction_type} && $_->{extraction_type} eq 'file_type_lookup'
 } @{$config->{tables}};

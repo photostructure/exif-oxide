@@ -78,14 +78,8 @@ pub fn generate_mod_file(output_dir: &str) -> Result<()> {
         code.push_str("};\n");
     }
     
-    // Add simple table re-exports for backward compatibility
-    if modules.contains(&"simple_tables".to_string()) {
-        code.push_str("\n// Re-export simple table modules for backward compatibility\n");
-        code.push_str("pub use simple_tables::canon;\n");
-        code.push_str("pub use simple_tables::nikon;\n");
-        code.push_str("pub use simple_tables::exif;\n");
-        code.push_str("pub use simple_tables::file_types;\n");
-    }
+    // No need for re-exports since modules are already public
+    // The flattened structure means users can access them directly
     
     code.push_str("\n");
     

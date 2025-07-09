@@ -1,11 +1,11 @@
 #!/usr/bin/env perl
 
 #------------------------------------------------------------------------------
-# File:         simple_tables.pl
+# File:         extract.pl
 #
 # Description:  Extract simple lookup tables from ExifTool modules
 #
-# Usage:        perl simple_tables.pl
+# Usage:        perl extract.pl
 #
 # Notes:        This script extracts only simple primitive lookup tables.
 #               Each table is saved as an individual JSON file.
@@ -27,7 +27,7 @@ use ExifToolExtract qw(
 );
 
 # Read configuration file
-my $config = load_json_config("$Bin/../simple_tables.json");
+my $config = load_json_config("$Bin/../extract.json");
 my @tables = grep { 
     !$_->{extraction_type} || $_->{extraction_type} eq 'simple' || $_->{extraction_type} eq 'boolean_set'
 } @{$config->{tables}};
@@ -35,7 +35,7 @@ my @tables = grep {
 print STDERR "Processing " . scalar(@tables) . " simple lookup tables...\n";
 
 # Create output directory
-my $output_dir = "$Bin/../generated/simple_tables";
+my $output_dir = "$Bin/../generated/extract";
 mkdir $output_dir unless -d $output_dir;
 
 # Process each table individually
@@ -124,7 +124,6 @@ sub extract_primitive_entries {
         # Skip special entries
         next if $key eq 'Notes';
         next if $key eq 'OTHER';
-        next if $key =~ /^[A-Z_]+$/;
         
         # Only process primitive values
         next unless validate_primitive_value($value);

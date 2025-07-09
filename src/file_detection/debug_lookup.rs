@@ -8,10 +8,10 @@ pub fn debug_file_type_lookup(
     Option<(Vec<&'static str>, &'static str)>,
     Option<&'static str>,
 ) {
-    use crate::generated::simple_tables::file_types::lookup_mime_types;
+    use crate::generated::file_types::lookup_mime_types;
 
     // TODO: Re-enable when resolve_file_type is available
-    // use crate::generated::simple_tables::file_types::resolve_file_type;
+    // use crate::generated::file_types::resolve_file_type;
     // let resolved = resolve_file_type(extension);
     let resolved = None;
 

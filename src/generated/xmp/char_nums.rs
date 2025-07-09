@@ -11,17 +11,17 @@ use std::sync::LazyLock;
 
 /// XML entity name to character code mappings lookup table
 /// Source: ExifTool XMP.pm %charNum (5 entries)
-pub static XML_CHAR_NUMS: LazyLock<HashMap<&'static str, u32>> = LazyLock::new(|| {
+pub static XML_CHAR_NUMS: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("amp", 38);
-    map.insert("apos", 39);
-    map.insert("gt", 62);
-    map.insert("lt", 60);
-    map.insert("quot", 34);
+    map.insert("amp", "38");
+    map.insert("apos", "39");
+    map.insert("gt", "62");
+    map.insert("lt", "60");
+    map.insert("quot", "34");
     map
 });
 
 /// Look up xml entity name to character code mappings value by key
-pub fn lookup_xml_char_nums(key: &str) -> Option<u32> {
+pub fn lookup_xml_char_nums(key: &str) -> Option<&'static str> {
     XML_CHAR_NUMS.get(key).copied()
 }

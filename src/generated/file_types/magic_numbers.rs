@@ -6,10 +6,7 @@ use once_cell::sync::Lazy;
 use std::collections::HashMap;
 
 /// Magic number patterns for file type detection
-static MAGIC_PATTERNS: Lazy<HashMap<&'static str, &'static str>> = Lazy::new(|| {
-    
-    HashMap::new()
-});
+static MAGIC_PATTERNS: Lazy<HashMap<&'static str, &'static str>> = Lazy::new(HashMap::new);
 
 /// Get magic number pattern for a file type
 pub fn get_magic_pattern(file_type: &str) -> Option<&'static str> {
