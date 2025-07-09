@@ -404,8 +404,8 @@ impl FileTypeDetector {
         }
 
         // Check if we have a generated magic number pattern
-        use crate::generated::file_types::get_magic_pattern;
-        if let Some(_pattern) = get_magic_pattern(file_type) {
+        use crate::generated::file_types::get_magic_number_pattern;
+        if let Some(_pattern) = get_magic_number_pattern(file_type) {
             // TODO: Use regex patterns when UTF-8 issue is fixed
             // For now, fall back to binary pattern matching
             return self.match_binary_magic_pattern(file_type, _pattern, buffer);
