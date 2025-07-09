@@ -3,27 +3,23 @@
 //! This tool reads JSON output from Perl extractors and generates
 //! Rust code following the "runtime references, no stubs" architecture.
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result};
 use clap::{Arg, Command};
 use std::fs;
 use std::path::Path;
 
 mod common;
-mod schemas;
 mod generators;
+mod schemas;
+mod validation;
 
-use common::{parse_hex_id, normalize_format};
-use schemas::{ExtractedData, ExtractedTable, GeneratedTag, GeneratedCompositeTag, CompositeData};
+use common::{normalize_format, parse_hex_id};
 use generators::{
-    generate_tag_table,
-    generate_composite_tag_table,
-    generate_conversion_refs,
-    generate_supported_tags,
-    generate_mod_file,
-    lookup_tables,
-    file_detection,
-    data_sets,
+    generate_composite_tag_table, generate_conversion_refs,
+    generate_mod_file, generate_supported_tags, generate_tag_table, macro_based,
 };
+use schemas::{CompositeData, ExtractedData, ExtractedTable, GeneratedCompositeTag, GeneratedTag};
+use validation::validate_all_configs;
 
 fn main() -> Result<()> {
     let matches = Command::new("exif-oxide-codegen")
@@ -65,7 +61,7 @@ fn main() -> Result<()> {
         println!("\n📋 Processing tag tables...");
         let json_data = fs::read_to_string(&tag_data_file)
             .with_context(|| format!("Failed to read {}", tag_data_file.display()))?;
-        
+
         let extracted: ExtractedData = serde_json::from_str(&json_data)
             .with_context(|| "Failed to parse tag extraction JSON")?;
 
@@ -75,7 +71,7 @@ fn main() -> Result<()> {
         // Generate code for tag tables
         generate_tag_table(&generated_tags, output_dir)?;
         generate_conversion_refs(&extracted.conversion_refs, output_dir)?;
-        
+
         // Process composite tags separately
         let composite_file = current_dir.join("generated/composite_tags.json");
         if composite_file.exists() {
@@ -84,7 +80,7 @@ fn main() -> Result<()> {
                 .with_context(|| format!("Failed to read {}", composite_file.display()))?;
             let composite_data: CompositeData = serde_json::from_str(&composite_json)
                 .with_context(|| "Failed to parse composite tags JSON")?;
-            
+
             let generated_composites = convert_composite_tags_from_data(&composite_data)?;
             generate_composite_tag_table(&generated_composites, output_dir)?;
             generate_supported_tags(&generated_tags, &generated_composites, output_dir)?;
@@ -96,98 +92,18 @@ fn main() -> Result<()> {
         println!("Tag data file not found!");
     }
 
-    // Process extracted data from individual files using modular architecture directly
-    let extract_dir = current_dir.join("generated/extract");
-    println!("Looking for extract directory at: {}", extract_dir.display());
-    if extract_dir.exists() && extract_dir.is_dir() {
-        println!("\n📊 Processing extracted data from individual files...");
-        
-        // Read the extract.json configuration
-        let config_path = current_dir.join("extract.json");
-        let config_data = fs::read_to_string(&config_path)
-            .with_context(|| format!("Failed to read config at {}", config_path.display()))?;
-        let config: serde_json::Value = serde_json::from_str(&config_data)
-            .with_context(|| "Failed to parse extract.json config")?;
-        
-        let tables = config["tables"].as_array()
-            .ok_or_else(|| anyhow::anyhow!("No tables array in config"))?;
-        
-        println!("  Processing {} extracted data tables...", tables.len());
-        
-        // Process each table based on its extraction type
-        let mut processed_count = 0;
-        for table_config in tables {
-            let hash_name = table_config["hash_name"].as_str()
-                .ok_or_else(|| anyhow::anyhow!("Missing hash_name"))?;
-            let output_file = table_config["output_file"].as_str()
-                .ok_or_else(|| anyhow::anyhow!("Missing output_file"))?;
-            let extraction_type = table_config["extraction_type"].as_str();
-            let constant_name = table_config["constant_name"].as_str()
-                .ok_or_else(|| anyhow::anyhow!("Missing constant_name"))?;
-            
-            // Load the extracted JSON data
-            // The extract.pl script generates filenames from constant_name in lowercase
-            let json_filename = constant_name.to_lowercase().replace("_table", "") + ".json";
-            let json_file = extract_dir.join(&json_filename);
-            
-            if !json_file.exists() {
-                println!("    ⚠️  Skipping {} - no extracted data found", hash_name);
-                continue;
-            }
-            
-            let json_data = fs::read_to_string(&json_file)?;
-            let extracted_table: schemas::ExtractedTable = serde_json::from_str(&json_data)?;
-            
-            // Generate code based on extraction type
-            let code = match extraction_type {
-                Some("boolean_set") => {
-                    data_sets::generate_boolean_set(hash_name, &extracted_table)?
-                }
-                Some("regex_strings") | Some("file_type_lookup") => {
-                    // These are handled by file_detection module below
-                    continue;
-                }
-                _ => {
-                    // Default to standard lookup table
-                    lookup_tables::generate_lookup_table(hash_name, &extracted_table)?
-                }
-            };
-            
-            // Write to file (directly to output_dir for flattened structure)
-            let output_path = format!("{}/{}", output_dir, output_file);
-            
-            // Create subdirectory if needed
-            if let Some(parent) = std::path::Path::new(&output_path).parent() {
-                fs::create_dir_all(parent)?;
-            }
-            
-            println!("    Writing to: {}", output_path);
-            fs::write(&output_path, code)?;
-            
-            processed_count += 1;
-        }
-        
-        println!("  ✓ Generated {} tables using modular architecture", processed_count);
-        
-        // Generate file detection code (file_type_lookup and regex patterns)
-        println!("\n  🔍 Generating file detection code...");
-        file_detection::generate_file_detection_code(&extract_dir, output_dir)?;
-    } else {
-        println!("Extract directory not found!");
-    }
+    // The old extract.json processing has been removed.
+    // All extraction is now handled by the new modular configuration system below.
 
-    // Note: file_type_lookup and regex_patterns are now handled by the modular architecture
-    // through the file_detection module
-    
     // Update file_types mod.rs to include generated modules
     let file_types_mod_path = format!("{}/file_types/mod.rs", output_dir);
     if Path::new(&file_types_mod_path).exists() {
         println!("\n📝 Updating file_types mod.rs with generated modules...");
         let mut content = fs::read_to_string(&file_types_mod_path)?;
-        
+
         // Check if modules are already declared
         let mut updated = false;
-        
+
         if !content.contains("pub mod file_type_lookup;") {
             // Find where to insert the module declarations (after other module declarations)
             if let Some(pos) = content.find("\n// Re-export") {
@@ -196,7 +112,7 @@ fn main() -> Result<()> {
                 updated = true;
             }
         }
-        
+
         // Add re-exports if not present
         if !content.contains("pub use file_type_lookup::") {
             // Find the end of existing re-exports
@@ -209,23 +125,79 @@ fn main() -> Result<()> {
                 }
             }
         }
-        
+
         if updated {
             fs::write(&file_types_mod_path, content)?;
-            println!("  ✓ Updated file_types mod.rs with file_type_lookup and magic_numbers modules");
+            println!(
+                "  ✓ Updated file_types mod.rs with file_type_lookup and magic_numbers modules"
+            );
         } else {
             println!("  ✓ file_types mod.rs already contains all necessary declarations");
         }
+    }
+
+    // NEW: Process using the new macro-based configuration system
+    println!("\n🔄 Processing new macro-based configuration...");
+
+    let config_dir = current_dir.join("config");
+    let schemas_dir = current_dir.join("schemas");
+
+    // Validate all configurations first
+    if config_dir.exists() && schemas_dir.exists() {
+        validate_all_configs(&config_dir, &schemas_dir)?;
+
+        // Load all extracted tables into a HashMap for easy lookup
+        let mut all_extracted_tables = std::collections::HashMap::new();
+
+        // Read all JSON files from generated/extract directory
+        let extract_dir = current_dir.join("generated/extract");
+        if extract_dir.exists() {
+            for entry in fs::read_dir(&extract_dir)? {
+                let entry = entry?;
+                let path = entry.path();
+                if path.extension().and_then(|s| s.to_str()) == Some("json") {
+                    let json_data = fs::read_to_string(&path)?;
+                    if let Ok(table) = serde_json::from_str::<ExtractedTable>(&json_data) {
+                        // Use the hash name as the key
+                        all_extracted_tables.insert(table.source.hash_name.clone(), table);
+                    }
+                }
+            }
+        }
+
+        println!("  Found {} extracted tables", all_extracted_tables.len());
+
+        // Process each module directory
+        let modules = ["Canon_pm", "Nikon_pm", "ExifTool_pm", "Exif_pm", "XMP_pm"];
+        for module in &modules {
+            let module_config_dir = config_dir.join(module);
+            if module_config_dir.exists() {
+                println!("  Processing module: {}", module);
+                macro_based::process_config_directory(
+                    &module_config_dir,
+                    module,
+                    &all_extracted_tables,
+                    output_dir,
+                )?;
+            }
+        }
+
+        // Generate macros.rs file
+        let macros_path = format!("{}/macros.rs", output_dir);
+        if !Path::new(&macros_path).exists() {
+            println!("  Note: macros.rs should already exist at src/generated/macros.rs");
+        }
+
+        // Update the main mod.rs to include new modules
+        update_generated_mod_file(output_dir)?;
+    } else {
+        println!("  ⚠️  New config directory structure not found, using legacy generation only");
     }
 
     // Generate module file
     generate_mod_file(output_dir)?;
 
     println!("\n✅ Code generation complete!");
-    println!("\nNext steps:");
-    println!("1. Add 'mod generated;' to src/lib.rs");
-    println!("2. Use --show-missing on real images to see what implementations are needed");
-    println!("3. Implement missing PrintConv/ValueConv and composite functions in implementations/");
 
     Ok(())
 }
@@ -233,7 +205,7 @@ fn main() -> Result<()> {
 /// Convert extracted tags to generated format
 fn convert_tags(data: &ExtractedData) -> Result<Vec<GeneratedTag>> {
     let mut all_tags = Vec::new();
-    
+
     // Convert EXIF tags
     for tag in &data.tags.exif {
         all_tags.push(GeneratedTag {
@@ -248,7 +220,7 @@ fn convert_tags(data: &ExtractedData) -> Result<Vec<GeneratedTag>> {
             notes: tag.notes.clone(),
         });
     }
-    
+
     // Convert GPS tags
     for tag in &data.tags.gps {
         all_tags.push(GeneratedTag {
@@ -263,11 +235,41 @@ fn convert_tags(data: &ExtractedData) -> Result<Vec<GeneratedTag>> {
             notes: tag.notes.clone(),
         });
     }
-    
+
     Ok(all_tags)
 }
 
 /// Convert extracted composite tags to generated format
+/// Update the generated mod.rs file to include new module structure
+fn update_generated_mod_file(output_dir: &str) -> Result<()> {
+    let mod_path = format!("{}/mod.rs", output_dir);
+    let mut content = if Path::new(&mod_path).exists() {
+        fs::read_to_string(&mod_path)?
+    } else {
+        String::new()
+    };
+
+    // Add macros module if not present
+    if !content.contains("pub mod macros;") {
+        content.insert_str(0, "#[macro_use]\npub mod macros;\n\n");
+    }
+
+    // Add new module directories
+    let modules = ["Canon_pm", "Nikon_pm", "ExifTool_pm", "Exif_pm", "XMP_pm"];
+    for module in &modules {
+        let module_dir = Path::new(output_dir).join(module);
+        if module_dir.exists() && module_dir.join("mod.rs").exists() {
+            let mod_declaration = format!("pub mod {};\n", module);
+            if !content.contains(&mod_declaration) {
+                content.push_str(&mod_declaration);
+            }
+        }
+    }
+
+    fs::write(&mod_path, content)?;
+    Ok(())
+}
+
 fn convert_composite_tags_from_data(data: &CompositeData) -> Result<Vec<GeneratedCompositeTag>> {
     Ok(data
         .composite_tags

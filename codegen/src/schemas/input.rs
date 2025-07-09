@@ -98,7 +98,7 @@ pub struct SimpleTablesData {
 }
 
 /// Extracted table data from extract.pl
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct ExtractedTable {
     pub source: TableSource,
     pub metadata: TableMetadata,
@@ -106,7 +106,7 @@ pub struct ExtractedTable {
 }
 
 /// Table source information
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct TableSource {
     pub module: String,
     pub hash_name: String,
@@ -114,7 +114,7 @@ pub struct TableSource {
 }
 
 /// Table metadata from extraction
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct TableMetadata {
     pub description: String,
     pub constant_name: String,
@@ -122,7 +122,7 @@ pub struct TableMetadata {
     pub entry_count: usize,
 }
 
-/// Table configuration from extract.json
+/// Table configuration from module config files
 #[derive(Debug, Deserialize)]
 pub struct TableConfig {
     pub module: String,

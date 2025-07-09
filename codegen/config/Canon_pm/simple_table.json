@@ -1,0 +1,35 @@
+{
+  "description": "Canon module lookup tables for camera models, settings, and modes",
+  "tables": [
+    {
+      "hash_name": "%canonModelID",
+      "constant_name": "CANON_MODEL_ID",
+      "key_type": "u32",
+      "description": "Canon camera model identification"
+    },
+    {
+      "hash_name": "%canonWhiteBalance",
+      "constant_name": "CANON_WHITE_BALANCE",
+      "key_type": "u8",
+      "description": "White balance mode names"
+    },
+    {
+      "hash_name": "%pictureStyles",
+      "constant_name": "PICTURE_STYLES",
+      "key_type": "u16",
+      "description": "Picture style mode names"
+    },
+    {
+      "hash_name": "%canonImageSize",
+      "constant_name": "CANON_IMAGE_SIZE",
+      "key_type": "i16",
+      "description": "Image size setting names"
+    },
+    {
+      "hash_name": "%canonQuality",
+      "constant_name": "CANON_QUALITY",
+      "key_type": "i16",
+      "description": "Image quality setting names"
+    }
+  ]
+}

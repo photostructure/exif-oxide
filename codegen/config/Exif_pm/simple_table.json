@@ -1,0 +1,11 @@
+{
+  "description": "EXIF module lookup tables for standard EXIF tag values",
+  "tables": [
+    {
+      "hash_name": "%orientation",
+      "constant_name": "ORIENTATION",
+      "key_type": "u8",
+      "description": "EXIF Orientation tag PrintConv values"
+    }
+  ]
+}

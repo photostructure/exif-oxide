@@ -78,7 +78,7 @@ $(FILE_TYPE_LOOKUP_JSON): extractors/file_type_lookup.pl
 # Extract data (generates multiple files)
 extract-data: $(EXTRACT_FILES)
 
-$(EXTRACT_FILES): extractors/extract.pl extract.json
+$(EXTRACT_FILES): extractors/extract.pl
 	@echo "📊 Extracting data..."
 	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl extractors/extract.pl
 	@touch $(EXTRACT_FILES)  # Update timestamps
