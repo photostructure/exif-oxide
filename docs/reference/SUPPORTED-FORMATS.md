@@ -1,4 +1,6 @@
-# TODO: Supported File Formats for Digital Asset Management
+# Supported File Formats for Digital Asset Management
+
+**🚨 CRITICAL: All format support follows [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md) - we implement exactly what ExifTool supports.**
 
 This document lists all file formats that should be supported by exif-oxide for use in digital asset management systems. The list is based on ExifTool's comprehensive format support and focuses on formats relevant to professional photography and videography.
 
@@ -173,3 +175,9 @@ This document lists all file formats that should be supported by exif-oxide for 
    - GPR (GoPro RAW) - action camera format
    - MEF (Mamiya) - medium format camera
    - CRM (Canon) - newer Canon format variant
+
+## ExifTool Compatibility
+
+All format support decisions are based on what ExifTool supports. We implement exactly the same format detection, parsing, and metadata extraction logic as ExifTool, following [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md).
+
+Any format not supported by ExifTool is out of scope for exif-oxide.

@@ -1,5 +1,7 @@
 # exif-oxide Public API Design
 
+**🚨 CRITICAL: This API design maintains ExifTool compatibility per [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md).**
+
 This document describes the public API that the CLI and library consumers use to extract metadata from image files.
 
 ## Overview

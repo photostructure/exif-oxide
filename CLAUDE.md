@@ -37,27 +37,27 @@ Before starting work on exif-oxide, familiarize yourself with:
 - [ARCHITECTURE.md](docs/ARCHITECTURE.md) - High-level system overview and philosophy
 - [MILESTONES.md](docs/MILESTONES.md) - Active development milestones
 - [ENGINEER-GUIDE.md](docs/ENGINEER-GUIDE.md) - Starting point for new contributors
+- [EXCLUDED-TAGS.md](docs/EXCLUDED-TAGS.md) - Tags excluded from implementation scope
 
 #### Design Documents
 
 - [API-DESIGN.md](docs/design/API-DESIGN.md) - Public API structure and TagEntry design
 - [EXIFTOOL-INTEGRATION.md](docs/design/EXIFTOOL-INTEGRATION.md) - Unified code generation and implementation guide
-
-#### Technical Deep Dives
-
-- [STATE-MANAGEMENT.md](docs/STATE-MANAGEMENT.md) - How we handle stateful processing
-- [PROCESSOR-PROC-DISPATCH.md](docs/PROCESSOR-PROC-DISPATCH.md) - Processor dispatch strategy
-- [OFFSET-BASE-MANAGEMENT.md](docs/OFFSET-BASE-MANAGEMENT.md) - Critical offset calculation patterns
+- [PRINTCONV-DESIGN-DECISIONS.md](docs/design/PRINTCONV-DESIGN-DECISIONS.md) - PrintConv implementation decisions
 
 #### Guides
 
-- [EXIFTOOL-CONCEPTS.md](docs/guides/EXIFTOOL-CONCEPTS.md) - Critical ExifTool concepts
-- [READING-EXIFTOOL-SOURCE.md](docs/guides/READING-EXIFTOOL-SOURCE.md) - Navigating ExifTool's Perl code
-- [TESTING.md](docs/guides/TESTING.md) - Testing details
-- [DEVELOPMENT-WORKFLOW.md](docs/guides/DEVELOPMENT-WORKFLOW.md) - Day-to-day development process
-- [COMMON-PITFALLS.md](docs/guides/COMMON-PITFALLS.md) - Common mistakes and debugging
-- [TRIBAL-KNOWLEDGE.md](docs/guides/TRIBAL-KNOWLEDGE.md) - Undocumented quirks
-- [EXIFTOOL-UPDATE-WORKFLOW.md](docs/guides/EXIFTOOL-UPDATE-WORKFLOW.md) - Updating to new ExifTool versions
+- [GETTING-STARTED.md](docs/GETTING-STARTED.md) - Quick start guide for new contributors
+- [CORE-ARCHITECTURE.md](docs/guides/CORE-ARCHITECTURE.md) - Core system architecture and offset management
+- [DEVELOPMENT-GUIDE.md](docs/guides/DEVELOPMENT-GUIDE.md) - Development workflow and best practices
+- [EXIFTOOL-GUIDE.md](docs/guides/EXIFTOOL-GUIDE.md) - Complete guide to working with ExifTool source
+- [PROCESSOR-DISPATCH.md](docs/guides/PROCESSOR-DISPATCH.md) - Processor dispatch strategy
+
+#### Reference
+
+- [MANUFACTURER-FACTS.md](docs/reference/MANUFACTURER-FACTS.md) - Manufacturer-specific implementation facts
+- [SUPPORTED-FORMATS.md](docs/reference/SUPPORTED-FORMATS.md) - Currently supported file formats
+- [TROUBLESHOOTING.md](docs/reference/TROUBLESHOOTING.md) - Common issues and solutions
 
 ### ExifTool Documentation
 

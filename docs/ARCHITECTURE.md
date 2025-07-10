@@ -1,5 +1,7 @@
 # exif-oxide Architecture
 
+**🚨 CRITICAL: This architecture is built on [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md) - the fundamental law of this project.**
+
 ## Overview
 
 exif-oxide is a Rust translation of [ExifTool](https://exiftool.org/), focusing on mainstream metadata extraction from image files. This document provides a high-level overview of the architecture and design decisions.
@@ -8,7 +10,7 @@ exif-oxide is a Rust translation of [ExifTool](https://exiftool.org/), focusing 
 
 ## Core Philosophy
 
-1. **No Novel Parsing**: ExifTool has already solved every edge case - we port, not reinvent. Study TRUST-EXIFTOOL.md
+1. **No Novel Parsing**: ExifTool has already solved every edge case - we port, not reinvent. Follow [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md)
 2. **Manual Excellence**: Complex logic is manually ported with references to ExifTool source
 3. **Simple Codegen**: Generator handles only straightforward, unambiguous translations
 4. **Always Working**: System produces compilable code at every stage

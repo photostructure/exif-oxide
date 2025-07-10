@@ -1,5 +1,7 @@
 # PrintConv Design Decisions
 
+**🚨 CRITICAL: While we mostly follow [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md), this is a rare case where we improve presentation logic.**
+
 This document explains why exif-oxide diverges from ExifTool's PrintConv implementation and the design choices we made.
 
 ## The Problem

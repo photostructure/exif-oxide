@@ -1,5 +1,7 @@
 # Engineer's Guide to exif-oxide
 
+**🚨 CRITICAL: Start with [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md) - the keystone principle that governs ALL development.**
+
 This guide helps new engineers understand the exif-oxide project and start contributing effectively. Read this after understanding the high-level [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Essential Background
