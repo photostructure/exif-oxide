@@ -52,15 +52,16 @@ $(COMPOSITE_TAGS_JSON): extractors/composite_tags.pl
 	@echo "🔗 Extracting composite tags..."
 	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl $< > $@
 
-# Note: regex_patterns.pl and file_type_lookup.pl disabled because they depend on extract.json
+# Note: regex_patterns.pl disabled because it depends on extract.json
 # Our simplified simple_table.pl handles these tables as simple lookups instead
 $(REGEX_PATTERNS_JSON):
 	@echo "🔍 Creating empty regex patterns file (handled by simplified extraction)..."
 	@echo '{"extracted_at":"'$(shell date)'","patterns":{"file_extensions":[],"magic_numbers":[]},"compatibility_notes":"Handled by simplified simple_table.pl"}' > $@
 
+# file_type_lookup.pl is now integrated into Rust orchestration via special extractor support
 $(FILE_TYPE_LOOKUP_JSON):
-	@echo "📁 Creating empty file type lookup file (handled by simplified extraction)..."
-	@echo '{"extracted_at":"'$(shell date)'","file_type_lookups":{"extensions":[],"mime_types":[],"descriptions":[],"magic_lookups":[]},"stats":{"total_lookups":0,"by_type":{}}}' > $@
+	@echo "📁 File type lookup extraction is handled by Rust orchestration..."
+	@echo "(This target is kept for backward compatibility only)"
 
 # Legacy extraction targets - now handled by Rust orchestration
 # These targets are kept for backwards compatibility but no longer used by the main pipeline

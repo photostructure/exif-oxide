@@ -9,7 +9,7 @@ pub mod conditions;
 pub mod examples;
 pub mod exif;
 pub mod file_detection;
-pub mod file_types_compat;
+// file_types_compat removed - using generated file_types module instead
 pub mod formats;
 pub mod generated;
 

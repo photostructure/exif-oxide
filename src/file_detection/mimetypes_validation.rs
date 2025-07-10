@@ -231,7 +231,7 @@ fn test_raw_format_coverage() {
 
         // Verify we have MIME type mapping
         let file_type = &candidates[0];
-        let mime_type = crate::generated::file_types::lookup_mime_types(file_type);
+        let mime_type = crate::generated::ExifTool_pm::lookup_mime_types(file_type);
         assert!(
             mime_type.is_some(),
             "No MIME type mapping for RAW format: {ext} (file type: {file_type})"

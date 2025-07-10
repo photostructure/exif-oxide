@@ -13,5 +13,5 @@ pub use super::Exif_pm as exif_pm; // Avoid conflict with crate::exif module
 pub use super::Nikon_pm as nikon;
 pub use super::XMP_pm as xmp_pm; // Avoid conflict with crate::xmp module
 
-// Re-export the file_types compatibility module
-pub use crate::file_types_compat::file_types;
+// Re-export the generated file_types module
+pub use super::file_types;

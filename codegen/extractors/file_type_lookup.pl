@@ -5,7 +5,7 @@
 #
 # Description:  Extract file type lookup structures from ExifTool
 #
-# Usage:        perl file_type_lookup.pl > ../generated/file_type_lookup.json
+# Usage:        perl file_type_lookup.pl <module_path> <hash_name>
 #
 # Notes:        This script extracts the complex file type lookup
 #               discriminated unions used for file type detection.
@@ -20,51 +20,50 @@ use lib "$Bin/../../third-party/exiftool/lib";
 use ExifToolExtract qw(
     load_module_from_file
     get_package_hash
-    load_json_config
     format_json_output
 );
 
-# Read configuration for file type lookup tables
-my $config = load_json_config("$Bin/../extract.json");
-my @file_type_tables = grep {
-    $_->{extraction_type} && $_->{extraction_type} eq 'file_type_lookup'
-} @{$config->{tables}};
+# Check arguments - take explicit module path and hash name
+if (@ARGV < 2) {
+    die "Usage: $0 <module_path> <hash_name>\n" .
+        "Example: $0 ../third-party/exiftool/lib/Image/ExifTool.pm %fileTypeLookup\n";
+}
 
-print STDERR "Processing " . scalar(@file_type_tables) . " file type lookup tables...\n";
+my $module_path = shift @ARGV;
+my $hash_name = shift @ARGV;
+
+# Validate module path
+unless (-f $module_path) {
+    die "Error: Module file not found: $module_path\n";
+}
+
+print STDERR "Extracting $hash_name from $module_path...\n";
 
 my @all_lookups;
 
-# Process each file type lookup table
-for my $table_config (@file_type_tables) {
-    # Special case for ExifTool.pm which is at the root of Image/
-    my $module_path = ($table_config->{module} eq 'ExifTool.pm') 
-        ? "Image/ExifTool.pm"
-        : "Image/ExifTool/$table_config->{module}";
-    my $module_file = "$Bin/../../third-party/exiftool/lib/$module_path";
-    my $hash_name = $table_config->{hash_name};
-    
-    print STDERR "\nExtracting $hash_name from $table_config->{module}...\n";
-    
-    # Load module
-    my $module_name = load_module_from_file($module_file);
-    unless ($module_name) {
-        warn "  SKIPPED: Failed to load module\n";
-        next;
-    }
-    
-    # Get package hash
-    my $hash_ref = get_package_hash($module_name, $hash_name);
-    unless ($hash_ref) {
-        warn "  SKIPPED: Hash not found\n";
-        next;
-    }
-    
-    # Extract file type lookups
-    my @lookups = extract_file_type_lookups($hash_ref, $table_config);
-    
-    push @all_lookups, @lookups;
-    print STDERR "  Extracted " . scalar(@lookups) . " file type lookups\n";
+# Load module
+my $module_name = load_module_from_file($module_path);
+unless ($module_name) {
+    die "Error: Failed to load module from $module_path\n";
 }
+
+# Get package hash
+my $hash_ref = get_package_hash($module_name, $hash_name);
+unless ($hash_ref) {
+    die "Error: Hash $hash_name not found in module\n";
+}
+
+# Create a minimal config object for extract_file_type_lookups
+my $table_config = {
+    module => $module_path,
+    hash_name => $hash_name,
+};
+
+# Extract file type lookups
+my @lookups = extract_file_type_lookups($hash_ref, $table_config);
+
+push @all_lookups, @lookups;
+print STDERR "  Extracted " . scalar(@lookups) . " file type lookups\n";
 
 # Categorize lookups
 my %lookups_by_type = (
