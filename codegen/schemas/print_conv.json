@@ -4,6 +4,10 @@
   "description": "Configuration for inline PrintConv extractions from tag tables",
   "type": "object",
   "properties": {
+    "source": {
+      "type": "string",
+      "description": "Path to ExifTool source file relative to repo root"
+    },
     "description": {
       "type": "string",
       "description": "Overview of PrintConv extractions"

@@ -166,7 +166,11 @@
       "Bash(RUST_BACKTRACE=1 make generate-rust)",
       "Bash(RUST_BACKTRACE=1 target/release/generate_rust:*)",
       "Bash(strace:*)",
-      "Bash(RUST_BACKTRACE=1 cargo run --release)"
+      "Bash(RUST_BACKTRACE=1 cargo run --release)",
+      "Bash(do)",
+      "Bash(RUST_LOG=debug cargo run --release)",
+      "Bash(iconv:*)",
+      "WebFetch(domain:crates.io)"
     ],
     "deny": []
   }

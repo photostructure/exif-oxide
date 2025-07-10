@@ -1,4 +1,5 @@
 {
+  "source": "third-party/exiftool/lib/Image/ExifTool.pm",
   "description": "ExifTool magic number patterns for file type detection",
   "tables": [
     {

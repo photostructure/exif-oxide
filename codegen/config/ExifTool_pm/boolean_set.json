@@ -1,4 +1,5 @@
 {
+  "source": "third-party/exiftool/lib/Image/ExifTool.pm",
   "description": "ExifTool file types with weak magic numbers",
   "tables": [
     {

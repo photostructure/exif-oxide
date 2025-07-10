@@ -1,4 +1,5 @@
 {
+  "source": "third-party/exiftool/lib/Image/ExifTool/Nikon.pm",
   "description": "Nikon PrintConv inline extractions for advanced camera settings",
   "tables": [
     {
