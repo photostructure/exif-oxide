@@ -1,5 +1,7 @@
 # ExifTool Integration: Code Generation & Implementation
 
+**🚨 CRITICAL: All integration follows [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md) - we translate ExifTool exactly, never innovate.**
+
 This document describes the complete system for integrating ExifTool's metadata extraction capabilities into exif-oxide through automated code generation and manual implementations.
 
 ## Overview
@@ -51,7 +53,7 @@ codegen/
 │   ├── file_type_lookup.json
 │   └── boolean_set.json
 ├── extractors/          # Perl scripts extract from ExifTool
-│   ├── extract.pl       # Lookup tables
+│   ├── simple_table.pl       # Lookup tables
 │   ├── tag_tables.pl    # Tag definitions
 │   └── file_type_lookup.pl # File detection
 ├── src/generators/      # Rust code generation
@@ -221,6 +223,7 @@ pub fn lookup_orientation(key: u8) -> Option<&'static str> {
 ```
 
 This approach prioritizes:
+
 - **Readability**: Generated code looks like hand-written Rust
 - **Debuggability**: Stack traces point to real code, not macro expansions
 - **IDE Support**: Autocomplete and go-to-definition work perfectly
@@ -299,6 +302,7 @@ make regen-extract       # Regenerate tables only
 ExifTool uses `my`-scoped lexical variables for many lookup tables (e.g., `my %canonWhiteBalance`). These variables are private to their module and cannot be accessed by external scripts. To extract these tables programmatically, we need to convert them to package variables (`our %canonWhiteBalance`) which are accessible via the symbol table.
 
 **Auto-Patching Details**: The `patch_exiftool_modules.pl` script automatically:
+
 - Reads `extract.json` to identify required variables
 - Converts `my %varName` to `our %varName` in ExifTool modules
 - Runs before extraction to ensure variables are accessible
