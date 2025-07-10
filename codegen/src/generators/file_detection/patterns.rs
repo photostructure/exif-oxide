@@ -35,6 +35,31 @@ pub struct RegexPatternSource {
     pub description: String,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct MagicNumberData {
+    pub extracted_at: String,
+    pub magic_patterns: Vec<MagicPatternEntry>,
+    pub stats: MagicNumberStats,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct MagicPatternEntry {
+    pub file_type: String,
+    pub pattern: String,
+    pub source: MagicPatternSource,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct MagicPatternSource {
+    pub module: String,
+    pub hash: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct MagicNumberStats {
+    pub total_patterns: usize,
+}
+
 /// Escape a string pattern for use in Rust string literals
 /// This handles non-UTF-8 bytes by converting them to \xNN escape sequences
 fn escape_pattern_for_rust(pattern: &str) -> String {
@@ -60,20 +85,20 @@ fn escape_pattern_for_rust(pattern: &str) -> String {
     escaped
 }
 
-/// Generate magic number patterns from regex_patterns.json
+/// Generate magic number patterns from magic_number.json
 pub fn generate_magic_patterns(json_dir: &Path, output_dir: &str) -> Result<()> {
-    // Look for regex_patterns.json
-    let regex_patterns_path = json_dir.parent()
+    // Look for magic_number.json
+    let magic_number_path = json_dir.parent()
         .ok_or_else(|| anyhow::anyhow!("Invalid json_dir path"))?
-        .join("regex_patterns.json");
+        .join("magic_number.json");
     
-    if !regex_patterns_path.exists() {
-        println!("    ⚠️  regex_patterns.json not found, skipping magic patterns");
+    if !magic_number_path.exists() {
+        println!("    ⚠️  magic_number.json not found, skipping magic patterns");
         return Ok(());
     }
     
     // Read as bytes first to handle potential non-UTF-8 content
-    let json_bytes = fs::read(&regex_patterns_path)?;
+    let json_bytes = fs::read(&magic_number_path)?;
     
     // Try to parse as UTF-8, but if it fails, we need to handle it
     let json_data = match String::from_utf8(json_bytes.clone()) {
@@ -106,12 +131,12 @@ pub fn generate_magic_patterns(json_dir: &Path, output_dir: &str) -> Result<()> 
         }
     };
     
-    let data: RegexPatternsData = serde_json::from_str(&json_data)?;
+    let data: MagicNumberData = serde_json::from_str(&json_data)?;
     
     // Generate magic_number_patterns.rs directly in output_dir
-    generate_magic_number_patterns(&data, Path::new(output_dir))?;
+    generate_magic_number_patterns_from_new_format(&data, Path::new(output_dir))?;
     
-    println!("    ✓ Generated regex patterns with {} magic number patterns", data.patterns.magic_numbers.len());
+    println!("    ✓ Generated regex patterns with {} magic number patterns", data.magic_patterns.len());
     
     Ok(())
 }
