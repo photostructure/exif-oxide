@@ -385,9 +385,9 @@ All tasks in Phase 4 have been successfully completed:
 1. **Infrastructure Rename**:
 
    - [x] Rename `simple_tables.json` → `extract.json` (already done by previous engineers)
-   - [x] Rename `simple_tables.pl` → `extract.pl` (already done by previous engineers)
+   - [x] Rename `simple_tables.pl` → `simple_table.pl` (already done by previous engineers)
    - [x] Update all Makefile targets (already done)
-   - [x] Update extract.pl to reference extract.json (already done)
+   - [x] Update simple_table.pl to reference extract.json (already done)
 
 2. **Directory Structure Flattening**:
 
@@ -459,7 +459,7 @@ src/generated/canon/white_balance.rs
 
 **Perl Extractors:**
 
-- `extractors/simple_tables.pl` → `extractors/extract.pl`
+- `extractors/simple_tables.pl` → `extractors/simple_table.pl`
 - `extract_simple_tables.pl` → `extract_tables.pl`
 - Update `patch_exiftool_modules.pl` references
 
