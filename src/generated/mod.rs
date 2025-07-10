@@ -18,6 +18,7 @@ pub mod XMP_pm;
 pub mod compat_aliases;
 pub mod composite_tags;
 pub mod conversion_refs;
+pub mod file_types;
 pub mod supported_tags;
 pub mod tags;
 

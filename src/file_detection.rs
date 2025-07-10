@@ -14,7 +14,7 @@
 //! - Conflict resolution patterns
 //! - Error recovery mechanisms
 
-use crate::file_types_compat::file_types::lookup_mime_types;
+use crate::generated::ExifTool_pm::lookup_mime_types;
 use std::io::{Read, Seek};
 use std::path::Path;
 
@@ -153,7 +153,7 @@ impl FileTypeDetector {
 
         // Resolve through fileTypeLookup with alias following
         // ExifTool.pm:258-404 %fileTypeLookup hash defines extension mappings
-        use crate::file_types_compat::file_types::resolve_file_type;
+        use crate::generated::file_types::resolve_file_type;
 
         // Check if this extension is known to ExifTool
         let is_known_extension = resolve_file_type(&normalized_ext).is_some();
@@ -515,7 +515,7 @@ impl FileTypeDetector {
 
         // Check if we have a generated magic number pattern
         // ExifTool.pm:912-1027 %magicNumber hash defines magic number patterns
-        use crate::file_types_compat::file_types::get_magic_number_pattern;
+        use crate::generated::file_types::get_magic_pattern as get_magic_number_pattern;
         if let Some(_pattern) = get_magic_number_pattern(file_type) {
             // TODO: Use regex patterns when UTF-8 issue is fixed
             // For now, fall back to binary pattern matching
@@ -842,7 +842,7 @@ impl FileTypeDetector {
         path: &Path,
     ) -> Result<FileTypeDetectionResult, FileDetectionError> {
         // Get primary format for processing
-        use crate::file_types_compat::file_types::resolve_file_type;
+        use crate::generated::file_types::resolve_file_type;
         let (format, description) = if let Some((formats, desc)) = resolve_file_type(file_type) {
             (formats[0].to_string(), desc.to_string())
         } else {

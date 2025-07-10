@@ -2,8 +2,8 @@
 
 #[cfg(test)]
 mod tests {
-    use crate::file_types_compat::file_types::lookup_mime_types;
-    use crate::file_types_compat::file_types::resolve_file_type;
+    use crate::generated::file_types::resolve_file_type;
+    use crate::generated::ExifTool_pm::lookup_mime_types;
 
     #[test]
     fn debug_problematic_formats() {
