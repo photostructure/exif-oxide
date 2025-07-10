@@ -4,6 +4,10 @@
   "description": "Configuration for regex pattern string extraction",
   "type": "object",
   "properties": {
+    "source": {
+      "type": "string",
+      "description": "Path to ExifTool source file relative to repo root"
+    },
     "description": {
       "type": "string",
       "description": "Overview of what these patterns are used for"

@@ -4,6 +4,10 @@
   "description": "Configuration for file type detection with discriminated unions",
   "type": "object",
   "properties": {
+    "source": {
+      "type": "string",
+      "description": "Path to ExifTool source file relative to repo root"
+    },
     "description": {
       "type": "string",
       "description": "Overview of file type detection system"
