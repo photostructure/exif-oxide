@@ -162,7 +162,10 @@
       "Bash(./debug_heic)",
       "Bash(./test_extended_xmp)",
       "Bash(RUST_BACKTRACE=1 cargo test --test raw_integration_tests test_invalid_raw_file -- --nocapture)",
-      "Bash(RUST_LOG=debug cargo test --test raw_integration_tests test_kyocera_raw_detection_and_processing -- --nocapture)"
+      "Bash(RUST_LOG=debug cargo test --test raw_integration_tests test_kyocera_raw_detection_and_processing -- --nocapture)",
+      "Bash(RUST_BACKTRACE=1 make generate-rust)",
+      "Bash(RUST_BACKTRACE=1 target/release/generate_rust:*)",
+      "Bash(strace:*)"
     ],
     "deny": []
   }

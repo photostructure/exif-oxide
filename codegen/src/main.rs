@@ -157,6 +157,11 @@ fn main() -> Result<()> {
                 let path = entry.path();
                 if path.extension().and_then(|s| s.to_str()) == Some("json") {
                     let json_data = fs::read_to_string(&path)?;
+                    // Skip empty files
+                    if json_data.trim().is_empty() {
+                        println!("  ⚠️  Skipping empty file: {}", path.display());
+                        continue;
+                    }
                     if let Ok(table) = serde_json::from_str::<ExtractedTable>(&json_data) {
                         // Use the hash name as the key
                         all_extracted_tables.insert(table.source.hash_name.clone(), table);

@@ -6,42 +6,6 @@
       "constant_name": "NIKON_LENS_IDS",
       "key_type": "String",
       "description": "Nikon lens identification database"
-    },
-    {
-      "hash_name": "%focusModeZ7",
-      "constant_name": "FOCUS_MODE_Z7",
-      "key_type": "u8",
-      "description": "Focus mode settings for Z7 series"
-    },
-    {
-      "hash_name": "%aFAreaModePD",
-      "constant_name": "AF_AREA_MODE_PD",
-      "key_type": "u8",
-      "description": "AF area mode phase detect settings"
-    },
-    {
-      "hash_name": "%activeDLightingZ7",
-      "constant_name": "ACTIVE_D_LIGHTING_Z7",
-      "key_type": "u8",
-      "description": "Active D-Lighting strength levels"
-    },
-    {
-      "hash_name": "%hdrLevelZ8",
-      "constant_name": "HDR_LEVEL_Z8",
-      "key_type": "u8",
-      "description": "HDR level settings for Z8 series"
-    },
-    {
-      "hash_name": "%subjectDetectionZ9",
-      "constant_name": "SUBJECT_DETECTION_Z9",
-      "key_type": "u8",
-      "description": "Subject detection modes for Z9 series"
-    },
-    {
-      "hash_name": "%nefCompression",
-      "constant_name": "NEF_COMPRESSION",
-      "key_type": "u8",
-      "description": "NEF (RAW) compression modes"
     }
   ]
 }
