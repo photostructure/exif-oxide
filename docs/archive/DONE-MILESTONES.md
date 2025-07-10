@@ -209,3 +209,13 @@ Implemented complete RAW processing infrastructure with simplest format (Kyocera
 **Files implemented**: `src/raw/` module (detector.rs, processor.rs, mod.rs), `src/raw/formats/kyocera.rs` (430+ lines), Enhanced formats/mod.rs with RAW processing dispatch, comprehensive test suite using real ExifTool test file.
 
 **Impact**: Foundation for all RAW format processing, proven architecture for adding Canon/Nikon/Sony formats, Trust ExifTool compliance with exact translation of KyoceraRaw.pm logic. Successfully extracts 18 tags from real Kyocera RAW files with proper names and values matching ExifTool output.
+
+---
+
+## ✅ Fix File Type Lookup Extraction (COMPLETED - July 2025)
+
+Fixed broken file type lookup extraction in simplified codegen architecture. Updated `file_type_lookup.pl` to work without `extract.json` dependency, added special extractor support in Rust orchestration, and successfully generates file type detection code from ExifTool's complex `%fileTypeLookup` hash.
+
+**Key achievements**: Extracts all 343 file type lookups including aliases, complex entries, and multi-format mappings. Removed manual `file_types_compat.rs` workaround that violated codegen principles. Integrated special extractor pattern for complex Perl data structures.
+
+**Impact**: Eliminates manual maintenance burden for file type mappings, ensures compatibility with monthly ExifTool updates, proves special extractor pattern for future complex extractions (magic numbers, regex patterns).

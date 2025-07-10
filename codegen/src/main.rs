@@ -133,6 +133,11 @@ fn main() -> Result<()> {
     // The old extract.json processing has been removed.
     // All extraction is now handled by the new modular configuration system below.
 
+    // Generate file type detection code
+    println!("\n📁 Generating file type detection code...");
+    let extract_dir = current_dir.join("generated").join("extract");
+    generators::file_detection::generate_file_detection_code(&extract_dir, &output_dir)?;
+
     // Update file_types mod.rs to include generated modules
     let file_types_mod_path = format!("{}/file_types/mod.rs", output_dir);
     if Path::new(&file_types_mod_path).exists() {

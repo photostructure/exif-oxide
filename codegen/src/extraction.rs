@@ -18,6 +18,12 @@ pub struct ModuleConfig {
     pub module_name: String,
 }
 
+#[derive(Debug)]
+enum SpecialExtractor {
+    FileTypeLookup,
+    // Future: RegexPatterns, etc.
+}
+
 /// Extract all simple tables using Rust orchestration (replaces Makefile targets)
 pub fn extract_all_simple_tables() -> Result<()> {
     println!("\n📊 Extracting simple lookup tables...");
@@ -119,7 +125,19 @@ fn process_module_config(config: &ModuleConfig, extract_dir: &Path) -> Result<()
     let module_path = repo_root.join(&config.source_path);
     
     patch_module_if_needed(&module_path, &config.hash_names)?;
-    run_extraction_script(config, extract_dir)?;
+    
+    // Check if this module needs a special extractor
+    let module_config_dir = Path::new("config")
+        .join(config.module_name.replace(".pm", "_pm").replace("::", "_"));
+    
+    match needs_special_extractor(&module_config_dir) {
+        Some(SpecialExtractor::FileTypeLookup) => {
+            run_file_type_lookup_extractor(config, extract_dir)?;
+        }
+        None => {
+            run_extraction_script(config, extract_dir)?;
+        }
+    }
     
     Ok(())
 }
@@ -180,6 +198,56 @@ fn execute_extraction_command(mut cmd: Command, module_name: &str) -> Result<()>
     if !stdout.is_empty() {
         print!("{}", stdout);
     }
+    
+    Ok(())
+}
+
+fn needs_special_extractor(config_dir: &Path) -> Option<SpecialExtractor> {
+    if config_dir.join("file_type_lookup.json").exists() {
+        return Some(SpecialExtractor::FileTypeLookup);
+    }
+    None
+}
+
+fn run_file_type_lookup_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+    // File type lookup always extracts from %fileTypeLookup hash
+    let hash_name = "%fileTypeLookup";
+    
+    // From generated/extract directory, we need ../../../ to get to repo root
+    let source_path_for_perl = format!("../../../{}", config.source_path);
+    
+    let mut cmd = Command::new("perl");
+    cmd.arg("../../extractors/file_type_lookup.pl")  // From generated/extract, go up to codegen
+       .arg(&source_path_for_perl)
+       .arg(hash_name)
+       .current_dir(extract_dir);
+    
+    setup_perl_environment(&mut cmd);
+    
+    println!("    Running: perl file_type_lookup.pl {} {}", 
+        source_path_for_perl, 
+        hash_name
+    );
+    
+    // Redirect output to file_type_lookup.json
+    let output_path = extract_dir.join("file_type_lookup.json");
+    cmd.stdout(fs::File::create(&output_path)?);
+    
+    let output = cmd.output()
+        .with_context(|| format!("Failed to execute file_type_lookup.pl for {}", config.module_name))?;
+    
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        return Err(anyhow::anyhow!("file_type_lookup.pl failed for {}: {}", config.module_name, stderr));
+    }
+    
+    // Print any stderr output from the script
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    if !stderr.is_empty() {
+        print!("{}", stderr);
+    }
+    
+    println!("    Created file_type_lookup.json");
     
     Ok(())
 }
