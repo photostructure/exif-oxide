@@ -5,8 +5,9 @@
 #
 # Description:  Convert my-scoped variables to package variables in ExifTool modules
 #
-# Usage:        perl patch_exiftool_modules.pl [module1.pm module2.pm ...]
-#               perl patch_exiftool_modules.pl  # patches all modules in config
+# Usage:        perl patch_exiftool_modules.pl <module_path> <variable1> [<variable2> ...]
+#
+# Example:      perl patch_exiftool_modules.pl third-party/exiftool/lib/Image/ExifTool/Canon.pm canonModelID canonWhiteBalance
 #
 # Notes:        This script converts specific 'my %variable' declarations to
 #               'our %variable' declarations, making them accessible as package
@@ -15,17 +16,35 @@
 
 use strict;
 use warnings;
-use FindBin qw($Bin);
-use JSON qw(decode_json);
+
+# Check arguments
+if (@ARGV < 2) {
+    die "Usage: $0 <module_path> <variable1> [<variable2> ...]\n" .
+        "Example: $0 third-party/exiftool/lib/Image/ExifTool/Canon.pm canonModelID canonWhiteBalance\n";
+}
+
+my $module_path = shift @ARGV;
+my @variables_to_convert = @ARGV;
+
+# Validate module path
+unless (-f $module_path) {
+    die "Error: Module file not found: $module_path\n";
+}
+
+# Check if already converted (using a marker comment)
+sub has_been_converted {
+    my ($module_path) = @_;
+    
+    # Use grep to search for our conversion marker
+    my $result = `grep -q "# EXIF-OXIDE: converted my variables to package variables" "$module_path" 2>/dev/null`;
+    return $? == 0;  # grep returns 0 if found
+}
 
 # Convert my variables to package variables for specific hashes
 sub convert_my_to_package_variables {
-    my ($module_path, $module_name) = @_;
+    my ($module_path, @variables) = @_;
     
-    # Get variables to convert from the configuration
-    my @variables_to_convert = get_variables_for_module($module_name);
-    
-    return unless @variables_to_convert;
+    return unless @variables;
     
     # Read the file
     open(my $fh, '<', $module_path) or die "Cannot read $module_path: $!";
@@ -33,7 +52,7 @@ sub convert_my_to_package_variables {
     close($fh);
     
     my $modified = 0;
-    for my $var (@variables_to_convert) {
+    for my $var (@variables) {
         # Convert "my %varName =" to "our %varName ="
         if ($content =~ s/^(\s*)my(\s+%$var\s*=)/$1our$2/gm) {
             print STDERR "  Converted 'my %$var' to 'our %$var'\n";
@@ -46,94 +65,18 @@ sub convert_my_to_package_variables {
         open(my $out_fh, '>', $module_path) or die "Cannot write to $module_path: $!";
         print $out_fh $content;
         close($out_fh);
+        
+        # Add a marker comment to track conversion
+        open(my $append_fh, '>>', $module_path) or die "Cannot append to $module_path: $!";
+        print $append_fh "\n# EXIF-OXIDE: converted my variables to package variables\n";
+        close($append_fh);
     }
     
     return $modified;
 }
 
-# Read configuration from the new modular config structure
-sub load_table_config {
-    my @configs;
-    my $config_dir = "$Bin/config";
-    
-    # Read all config files from module directories
-    opendir(my $dh, $config_dir) or die "Cannot open config directory: $!";
-    my @modules = grep { -d "$config_dir/$_" && $_ !~ /^\./ } readdir($dh);
-    closedir($dh);
-    
-    for my $module (@modules) {
-        my $module_dir = "$config_dir/$module";
-        opendir(my $mdh, $module_dir) or next;
-        my @json_files = grep { /\.json$/ } readdir($mdh);
-        closedir($mdh);
-        
-        for my $json_file (@json_files) {
-            my $file_path = "$module_dir/$json_file";
-            open(my $fh, '<', $file_path) or next;
-            my $json_text = do { local $/; <$fh> };
-            close($fh);
-            
-            my $data = decode_json($json_text);
-            if ($data->{tables}) {
-                # Transform module name from Canon_pm to Canon.pm
-                (my $module_name = $module) =~ s/_pm$/.pm/;
-                for my $table (@{$data->{tables}}) {
-                    push @configs, {
-                        module => $module_name,
-                        hash_name => $table->{hash_name},
-                    };
-                }
-            }
-        }
-    }
-    
-    return @configs;
-}
-
-# Get list of variables to convert for a specific module
-sub get_variables_for_module {
-    my ($module_name) = @_;
-    my @table_configs = load_table_config();
-    my @variables;
-    
-    for my $config (@table_configs) {
-        if ($config->{module} eq $module_name) {
-            # Extract variable name from hash_name (remove the % prefix)
-            if ($config->{hash_name} =~ /^%(.+)$/) {
-                push @variables, $1;
-            }
-        }
-    }
-    
-    return @variables;
-}
-
-# Get unique list of modules that need patching
-sub get_modules_to_patch {
-    my @table_configs = load_table_config();
-    my %modules_seen;
-    
-    for my $config (@table_configs) {
-        $modules_seen{$config->{module}} = 1;
-    }
-    
-    return keys %modules_seen;
-}
-
-# Check if a module has already been converted (using a marker comment)
-sub has_been_converted {
-    my ($module_path) = @_;
-    
-    # Use grep to search for our conversion marker
-    my $result = `grep -q "# EXIF-OXIDE: converted my variables to package variables" "$module_path" 2>/dev/null`;
-    return $? == 0;  # grep returns 0 if found
-}
-
-
-# Convert my variables to package variables in a module file
-sub convert_module {
-    my ($module_path, $module_name) = @_;
-    
+# Main logic
+sub main {
     print "Checking $module_path...\n";
     
     # Check if already converted
@@ -145,49 +88,12 @@ sub convert_module {
     print "  Converting 'my' variables to package variables...\n";
     
     # Convert the variables
-    my $modified = convert_my_to_package_variables($module_path, $module_name);
+    my $modified = convert_my_to_package_variables($module_path, @variables_to_convert);
     
     if ($modified) {
-        # Add a marker comment to track conversion
-        open(my $fh, '>>', $module_path) or die "Cannot append to $module_path: $!";
-        print $fh "\n# EXIF-OXIDE: converted my variables to package variables\n";
-        close($fh);
-        
         print "  Successfully converted $module_path\n";
     } else {
         print "  No variables to convert in $module_path\n";
-    }
-}
-
-# Main logic
-sub main {
-    my @modules_to_patch;
-    
-    if (@ARGV) {
-        # Use command line arguments
-        @modules_to_patch = @ARGV;
-    } else {
-        # Use modules from configuration
-        @modules_to_patch = get_modules_to_patch();
-    }
-    
-    my $exiftool_lib_path = "$Bin/../third-party/exiftool/lib/Image";
-    
-    for my $module_name (@modules_to_patch) {
-        # ExifTool.pm is in Image/, other modules are in Image/ExifTool/
-        my $module_path;
-        if ($module_name eq 'ExifTool.pm') {
-            $module_path = "$exiftool_lib_path/$module_name";
-        } else {
-            $module_path = "$exiftool_lib_path/ExifTool/$module_name";
-        }
-        
-        unless (-f $module_path) {
-            warn "Module not found: $module_path\n";
-            next;
-        }
-        
-        convert_module($module_path, $module_name);
     }
     
     print "Patching complete!\n";

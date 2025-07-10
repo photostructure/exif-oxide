@@ -172,15 +172,30 @@ fn main() -> Result<()> {
 
         println!("  Found {} extracted tables", all_extracted_tables.len());
 
-        // Process each module directory
-        let modules = ["Canon_pm", "Nikon_pm", "ExifTool_pm", "Exif_pm", "XMP_pm"];
-        for module in &modules {
-            let module_config_dir = config_dir.join(module);
-            if module_config_dir.exists() {
-                println!("  Processing module: {}", module);
+        // Auto-discover and process each module directory
+        let config_entries = fs::read_dir(&config_dir)
+            .context("Failed to read config directory")?;
+        
+        for entry in config_entries {
+            let entry = entry.context("Failed to read directory entry")?;
+            let module_config_dir = entry.path();
+            
+            // Skip files, only process directories
+            if !module_config_dir.is_dir() {
+                continue;
+            }
+            
+            // Skip hidden directories
+            if let Some(dir_name) = module_config_dir.file_name() {
+                if dir_name.to_string_lossy().starts_with('.') {
+                    continue;
+                }
+                
+                let module_name = dir_name.to_string_lossy();
+                println!("  Processing module: {}", module_name);
                 macro_based::process_config_directory(
                     &module_config_dir,
-                    module,
+                    &module_name,
                     &all_extracted_tables,
                     output_dir,
                 )?;

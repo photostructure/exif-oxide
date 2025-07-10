@@ -13,6 +13,7 @@ use std::path::Path;
 /// Configuration for a source module (e.g., Canon_pm, Nikon_pm)
 pub struct ModuleConfig {
     pub module_name: String,
+    pub source_path: Option<String>,
     pub simple_tables: Vec<(ExtractedTable, Option<String>)>,
     pub print_conv_tables: Vec<(ExtractedTable, Option<String>)>,
     pub boolean_sets: Vec<(ExtractedTable, Option<String>)>,
@@ -338,6 +339,7 @@ pub fn process_config_directory(
 ) -> Result<()> {
     let mut config = ModuleConfig {
         module_name: module_name.to_string(),
+        source_path: None,
         simple_tables: Vec::new(),
         print_conv_tables: Vec::new(),
         boolean_sets: Vec::new(),
@@ -350,35 +352,36 @@ pub fn process_config_directory(
         // Read simple_table.json
         let simple_table_path = config_dir.join("simple_table.json");
         if simple_table_path.exists() {
-            let tables = read_table_config(&simple_table_path, extracted_tables)?;
+            let (tables, source) = read_table_config(&simple_table_path, extracted_tables)?;
             config.simple_tables = tables;
+            config.source_path = Some(source);
         }
         
         // Read print_conv.json
         let print_conv_path = config_dir.join("print_conv.json");
         if print_conv_path.exists() {
-            let tables = read_table_config(&print_conv_path, extracted_tables)?;
+            let (tables, _source) = read_table_config(&print_conv_path, extracted_tables)?;
             config.print_conv_tables = tables;
         }
         
         // Read boolean_set.json
         let boolean_set_path = config_dir.join("boolean_set.json");
         if boolean_set_path.exists() {
-            let tables = read_table_config(&boolean_set_path, extracted_tables)?;
+            let (tables, _source) = read_table_config(&boolean_set_path, extracted_tables)?;
             config.boolean_sets = tables;
         }
         
         // Read regex_patterns.json
         let regex_patterns_path = config_dir.join("regex_patterns.json");
         if regex_patterns_path.exists() {
-            let tables = read_table_config(&regex_patterns_path, extracted_tables)?;
+            let (tables, _source) = read_table_config(&regex_patterns_path, extracted_tables)?;
             config.regex_patterns = tables;
         }
         
         // Read file_type_lookup.json
         let file_type_lookup_path = config_dir.join("file_type_lookup.json");
         if file_type_lookup_path.exists() {
-            let tables = read_table_config(&file_type_lookup_path, extracted_tables)?;
+            let (tables, _source) = read_table_config(&file_type_lookup_path, extracted_tables)?;
             config.file_type_lookups = tables;
         }
     }
@@ -399,7 +402,7 @@ pub fn process_config_directory(
 fn read_table_config(
     config_path: &Path,
     extracted_tables: &HashMap<String, ExtractedTable>,
-) -> Result<Vec<(ExtractedTable, Option<String>)>> {
+) -> Result<(Vec<(ExtractedTable, Option<String>)>, String)> {
     let config_json = fs::read_to_string(config_path)?;
     let config: TableConfig = serde_json::from_str(&config_json)?;
     
@@ -416,11 +419,12 @@ fn read_table_config(
         }
     }
     
-    Ok(tables)
+    Ok((tables, config.source))
 }
 
 #[derive(serde::Deserialize)]
 struct TableConfig {
+    source: String,
     description: String,
     tables: Vec<TableReference>,
 }
