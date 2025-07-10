@@ -9,15 +9,19 @@ use std::fs;
 use std::path::Path;
 
 mod common;
+mod extraction;
 mod generators;
+mod patching;
 mod schemas;
 mod validation;
 
 use common::{normalize_format, parse_hex_id};
+use extraction::extract_all_simple_tables;
 use generators::{
     generate_composite_tag_table, generate_conversion_refs,
     generate_mod_file, generate_supported_tags, generate_tag_table, macro_based,
 };
+use patching::revert_patches;
 use schemas::{CompositeData, ExtractedData, ExtractedTable, GeneratedCompositeTag, GeneratedTag};
 use validation::validate_all_configs;
 
@@ -53,6 +57,9 @@ fn main() -> Result<()> {
 
     println!("🔧 exif-oxide Code Generation");
     println!("=============================");
+    
+    // Extract simple tables using Rust orchestration (replaces Makefile extract-* targets)
+    extract_all_simple_tables()?;
 
     // Process tag tables
     let tag_data_file = current_dir.join(tag_data_path);
@@ -216,6 +223,9 @@ fn main() -> Result<()> {
 
     // Generate module file
     generate_mod_file(output_dir)?;
+    
+    // Clean up ExifTool patches
+    revert_patches()?;
 
     println!("\n✅ Code generation complete!");
 

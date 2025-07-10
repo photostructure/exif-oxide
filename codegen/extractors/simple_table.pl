@@ -60,40 +60,9 @@ for my $hash_name (@hash_names) {
     # Get the hash
     my $hash_ref = get_package_hash($module_name, $hash_name);
     unless ($hash_ref) {
-        warn "Hash $hash_name not found in $module_display_name - attempting to patch...\n";
-        
-        # Auto-patch the module
-        my $var_name = $hash_name;
-        $var_name =~ s/^%//;  # Remove % prefix
-        
-        # Find codegen directory and call patch script
-        my $codegen_dir = $FindBin::Bin;
-        $codegen_dir =~ s{/extractors$}{};  # Remove /extractors suffix
-        my $patch_script = "$codegen_dir/patch_exiftool_modules.pl";
-        
-        if (-f $patch_script) {
-            print STDERR "  Running: perl $patch_script $module_path $var_name\n";
-            my $result = system("perl", $patch_script, $module_path, $var_name);
-            
-            if ($result == 0) {
-                # Retry loading the module to pick up patched variables
-                load_module_from_file($module_path);
-                $hash_ref = get_package_hash($module_name, $hash_name);
-                
-                if ($hash_ref) {
-                    print STDERR "  Successfully patched and loaded $hash_name\n";
-                } else {
-                    warn "Warning: Hash $hash_name still not found after patching\n";
-                    next;
-                }
-            } else {
-                warn "Warning: Failed to patch module for $hash_name\n";
-                next;
-            }
-        } else {
-            warn "Warning: Patch script not found at $patch_script\n";
-            next;
-        }
+        warn "Warning: Hash $hash_name not found in $module_display_name\n";
+        warn "Note: Module should be patched by Rust orchestration before calling this script\n";
+        next;
     }
     
     # Extract primitive entries
