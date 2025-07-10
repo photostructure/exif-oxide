@@ -83,7 +83,6 @@ extract-data: $(EXTRACT_FILES)
 $(EXTRACT_FILES): extractors/simple_table.pl config/Canon_pm/simple_table.json config/Nikon_pm/simple_table.json config/ExifTool_pm/simple_table.json config/Exif_pm/simple_table.json config/XMP_pm/simple_table.json
 	@echo "📊 Extracting lookup tables from config..."
 	@$(MAKE) -f Makefile.modular extract-canon extract-nikon extract-exiftool extract-exif extract-xmp
-	@$(MAKE) -f Makefile.modular split-extractions
 	@touch $(EXTRACT_FILES)  # Update timestamps
 
 # Extract from each module using the simplified simple_table.pl
@@ -91,35 +90,26 @@ EXIFTOOL_LIB := ../third-party/exiftool/lib/Image/ExifTool
 
 extract-canon:
 	@echo "  📷 Canon tables..."
-	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl extractors/simple_table.pl $(EXIFTOOL_LIB)/Canon.pm canonModelID canonWhiteBalance pictureStyles canonImageSize canonQuality > $(EXTRACT_DIR)/canon_combined.json
+	@cd $(EXTRACT_DIR) && eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl ../../extractors/simple_table.pl ../../$(EXIFTOOL_LIB)/Canon.pm canonModelID canonWhiteBalance pictureStyles canonImageSize canonQuality
 
 extract-nikon:
 	@echo "  📷 Nikon tables..."
-	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl extractors/simple_table.pl $(EXIFTOOL_LIB)/Nikon.pm nikonLensIDs > $(EXTRACT_DIR)/nikon_combined.json
+	@cd $(EXTRACT_DIR) && eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl ../../extractors/simple_table.pl ../../$(EXIFTOOL_LIB)/Nikon.pm nikonLensIDs
 
 extract-exiftool:
 	@echo "  🔧 ExifTool core tables..."
-	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl extractors/simple_table.pl $(EXIFTOOL_LIB).pm mimeType fileTypeExt magicNumber fileTypeLookup > $(EXTRACT_DIR)/exiftool_simple.json
-	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl extractors/simple_table.pl $(EXIFTOOL_LIB).pm weakMagic > $(EXTRACT_DIR)/exiftool_boolean.json
+	@cd $(EXTRACT_DIR) && eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl ../../extractors/simple_table.pl ../../$(EXIFTOOL_LIB).pm mimeType fileTypeExt
+	@cd $(EXTRACT_DIR) && eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl ../../extractors/simple_table.pl ../../$(EXIFTOOL_LIB).pm weakMagic
 
 extract-exif:
 	@echo "  📸 EXIF tables..."
-	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl extractors/simple_table.pl $(EXIFTOOL_LIB)/Exif.pm orientation > $(EXTRACT_DIR)/exif_combined.json
+	@cd $(EXTRACT_DIR) && eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl ../../extractors/simple_table.pl ../../$(EXIFTOOL_LIB)/Exif.pm orientation
 
 extract-xmp:
 	@echo "  🏷️  XMP tables..."
-	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl extractors/simple_table.pl $(EXIFTOOL_LIB)/XMP.pm nsURI xmpNS charName charNum stdXlatNS > $(EXTRACT_DIR)/xmp_combined.json
+	@cd $(EXTRACT_DIR) && eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl ../../extractors/simple_table.pl ../../$(EXIFTOOL_LIB)/XMP.pm nsURI xmpNS charName charNum stdXlatNS
 
-# Split combined extractions into individual files (for compatibility with existing system)
-split-extractions:
-	@echo "📄 Splitting combined extractions into individual files..."
-	@cd $(EXTRACT_DIR) && \
-	for combined in *_combined.json *_simple.json *_boolean.json; do \
-		if [ -f "$$combined" ]; then \
-			echo "  Processing $$combined..."; \
-			eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -MJSON -E 'local $$/; $$data = decode_json(<>); if (ref $$data eq "ARRAY") { for my $$i (0..$$#$$data) { $$item = $$data->[$$i]; $$hash = $$item->{source}{hash_name}; $$hash =~ s/^%//; say STDERR "    Creating $${hash}.json"; open my $$fh, ">", "$${hash}.json"; print $$fh encode_json($$item); close $$fh; } } else { $$hash = $$data->{source}{hash_name}; $$hash =~ s/^%//; say STDERR "    Creating $${hash}.json"; open my $$fh, ">", "$${hash}.json"; print $$fh encode_json($$data); close $$fh; }' < "$$combined"; \
-		fi; \
-	done
+# Note: split-extractions step removed - simple_table.pl now outputs individual files directly
 
 # Rust code generation
 generate-rust: extract-perl
