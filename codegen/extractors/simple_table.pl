@@ -10,7 +10,7 @@
 # Example:      perl simple_table.pl ../third-party/exiftool/lib/Image/ExifTool/Canon.pm %canonWhiteBalance %pictureStyles
 #
 # Notes:        This script extracts only simple primitive lookup tables.
-#               Output is written to stdout as JSON.
+#               Output is written to individual JSON files in current directory.
 #------------------------------------------------------------------------------
 
 use strict;
@@ -60,8 +60,40 @@ for my $hash_name (@hash_names) {
     # Get the hash
     my $hash_ref = get_package_hash($module_name, $hash_name);
     unless ($hash_ref) {
-        warn "Warning: Hash $hash_name not found in $module_display_name (may need patching)\n";
-        next;
+        warn "Hash $hash_name not found in $module_display_name - attempting to patch...\n";
+        
+        # Auto-patch the module
+        my $var_name = $hash_name;
+        $var_name =~ s/^%//;  # Remove % prefix
+        
+        # Find codegen directory and call patch script
+        my $codegen_dir = $FindBin::Bin;
+        $codegen_dir =~ s{/extractors$}{};  # Remove /extractors suffix
+        my $patch_script = "$codegen_dir/patch_exiftool_modules.pl";
+        
+        if (-f $patch_script) {
+            print STDERR "  Running: perl $patch_script $module_path $var_name\n";
+            my $result = system("perl", $patch_script, $module_path, $var_name);
+            
+            if ($result == 0) {
+                # Retry loading the module to pick up patched variables
+                load_module_from_file($module_path);
+                $hash_ref = get_package_hash($module_name, $hash_name);
+                
+                if ($hash_ref) {
+                    print STDERR "  Successfully patched and loaded $hash_name\n";
+                } else {
+                    warn "Warning: Hash $hash_name still not found after patching\n";
+                    next;
+                }
+            } else {
+                warn "Warning: Failed to patch module for $hash_name\n";
+                next;
+            }
+        } else {
+            warn "Warning: Patch script not found at $patch_script\n";
+            next;
+        }
     }
     
     # Extract primitive entries
@@ -101,14 +133,23 @@ for my $hash_name (@hash_names) {
     }
 }
 
-# Output JSON to stdout
+# Output individual JSON files
 if (@all_extractions) {
-    # If only one extraction, output it directly
-    # If multiple, output as array
-    if (@all_extractions == 1) {
-        print format_json_output($all_extractions[0]);
-    } else {
-        print format_json_output(\@all_extractions);
+    for my $extraction (@all_extractions) {
+        # Generate filename from hash name
+        my $hash_name = $extraction->{source}{hash_name};
+        $hash_name =~ s/^%//;  # Remove % prefix
+        $hash_name =~ s/([A-Z])/_\L$1/g;  # Convert camelCase to snake_case
+        $hash_name =~ s/^_//;  # Remove leading underscore
+        $hash_name = lc($hash_name);  # Ensure lowercase
+        my $filename = "${hash_name}.json";
+        
+        # Write to file
+        open(my $fh, '>', $filename) or die "Cannot write to $filename: $!";
+        print $fh format_json_output($extraction);
+        close($fh);
+        
+        print STDERR "Created $filename\n";
     }
 } else {
     die "Error: No tables successfully extracted\n";
