@@ -31,18 +31,6 @@
       "constant_name": "STD_XLAT_NS",
       "key_type": "String",
       "description": "Standard XMP namespace prefix translations"
-    },
-    {
-      "hash_name": "%latConv",
-      "constant_name": "LAT_CONV",
-      "key_type": "String",
-      "description": "GPS latitude hemisphere conversion"
-    },
-    {
-      "hash_name": "%longConv",
-      "constant_name": "LONG_CONV",
-      "key_type": "String",
-      "description": "GPS longitude hemisphere conversion"
     }
   ]
 }

@@ -87,7 +87,7 @@ pub struct ExtractedCompositeTag {
     pub mainstream: Option<u8>,
 }
 
-/// JSON structure from extract.pl
+/// JSON structure from simple_table.pl
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
 pub struct SimpleTablesData {
@@ -97,7 +97,7 @@ pub struct SimpleTablesData {
     pub tables: HashMap<String, ExtractedTable>,
 }
 
-/// Extracted table data from extract.pl
+/// Extracted table data from simple_table.pl
 #[derive(Debug, Clone, Deserialize)]
 pub struct ExtractedTable {
     pub source: TableSource,
