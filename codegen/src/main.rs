@@ -21,11 +21,27 @@ use generators::{
     generate_composite_tag_table, generate_conversion_refs,
     generate_mod_file, generate_supported_tags, generate_tag_table, macro_based,
 };
-use patching::revert_patches;
-use schemas::{CompositeData, ExtractedData, ExtractedTable, GeneratedCompositeTag, GeneratedTag};
+use schemas::{CompositeData, ExtractedData, ExtractedTable, GeneratedCompositeTag, GeneratedTag, TableEntry, TableSource};
 use validation::validate_all_configs;
+use serde::Deserialize;
+
+/// Simplified structure for extracted JSON files (temporary)
+#[derive(Debug, Deserialize)]
+struct SimpleExtractedTable {
+    pub source: TableSource,
+    pub metadata: SimpleMetadata,
+    pub entries: Vec<TableEntry>,
+}
+
+#[derive(Debug, Deserialize)]
+struct SimpleMetadata {
+    pub entry_count: usize,
+}
 
 fn main() -> Result<()> {
+    // Initialize tracing
+    tracing_subscriber::fmt::init();
+    
     let matches = Command::new("exif-oxide-codegen")
         .version("0.1.0")
         .about("Generate Rust code from ExifTool extraction data")
@@ -66,8 +82,16 @@ fn main() -> Result<()> {
     println!("Looking for tag data at: {}", tag_data_file.display());
     if tag_data_file.exists() {
         println!("\n📋 Processing tag tables...");
-        let json_data = fs::read_to_string(&tag_data_file)
-            .with_context(|| format!("Failed to read {}", tag_data_file.display()))?;
+        let json_data = match fs::read_to_string(&tag_data_file) {
+            Ok(data) => data,
+            Err(err) => {
+                // Handle UTF-8 errors gracefully by reading as bytes and converting
+                eprintln!("Warning: UTF-8 error reading {}: {}", tag_data_file.display(), err);
+                let bytes = fs::read(&tag_data_file)
+                    .with_context(|| format!("Failed to read bytes from {}", tag_data_file.display()))?;
+                String::from_utf8_lossy(&bytes).into_owned()
+            }
+        };
 
         let extracted: ExtractedData = serde_json::from_str(&json_data)
             .with_context(|| "Failed to parse tag extraction JSON")?;
@@ -83,8 +107,15 @@ fn main() -> Result<()> {
         let composite_file = current_dir.join("generated/composite_tags.json");
         if composite_file.exists() {
             println!("\n🔗 Processing composite tags...");
-            let composite_json = fs::read_to_string(&composite_file)
-                .with_context(|| format!("Failed to read {}", composite_file.display()))?;
+            let composite_json = match fs::read_to_string(&composite_file) {
+                Ok(data) => data,
+                Err(err) => {
+                    eprintln!("Warning: UTF-8 error reading {}: {}", composite_file.display(), err);
+                    let bytes = fs::read(&composite_file)
+                        .with_context(|| format!("Failed to read bytes from {}", composite_file.display()))?;
+                    String::from_utf8_lossy(&bytes).into_owned()
+                }
+            };
             let composite_data: CompositeData = serde_json::from_str(&composite_json)
                 .with_context(|| "Failed to parse composite tags JSON")?;
 
@@ -163,15 +194,59 @@ fn main() -> Result<()> {
                 let entry = entry?;
                 let path = entry.path();
                 if path.extension().and_then(|s| s.to_str()) == Some("json") {
-                    let json_data = fs::read_to_string(&path)?;
+                    let json_data = match fs::read_to_string(&path) {
+                        Ok(data) => data,
+                        Err(err) => {
+                            eprintln!("Warning: UTF-8 error reading {}: {}", path.display(), err);
+                            let bytes = fs::read(&path)
+                                .with_context(|| format!("Failed to read bytes from {}", path.display()))?;
+                            String::from_utf8_lossy(&bytes).into_owned()
+                        }
+                    };
                     // Skip empty files
                     if json_data.trim().is_empty() {
                         println!("  ⚠️  Skipping empty file: {}", path.display());
                         continue;
                     }
-                    if let Ok(table) = serde_json::from_str::<ExtractedTable>(&json_data) {
-                        // Use the hash name as the key
-                        all_extracted_tables.insert(table.source.hash_name.clone(), table);
+                    // Try to parse as SimpleExtractedTable first
+                    match serde_json::from_str::<SimpleExtractedTable>(&json_data) {
+                        Ok(simple_table) => {
+                            // Get config metadata from the module's simple_table.json
+                            let module_name = simple_table.source.module.replace(".pm", "_pm");
+                            let config_file = config_dir.join(&module_name).join("simple_table.json");
+                            
+                            if config_file.exists() {
+                                if let Ok(config_content) = fs::read_to_string(&config_file) {
+                                    if let Ok(config_json) = serde_json::from_str::<serde_json::Value>(&config_content) {
+                                        if let Some(tables) = config_json["tables"].as_array() {
+                                            // Find matching table config
+                                            let hash_name = &simple_table.source.hash_name;
+                                            if let Some(table_config) = tables.iter().find(|t| t["hash_name"] == *hash_name) {
+                                                // Create full ExtractedTable with metadata from config
+                                                let table = ExtractedTable {
+                                                    source: simple_table.source,
+                                                    metadata: schemas::input::TableMetadata {
+                                                        description: table_config["description"].as_str().unwrap_or("").to_string(),
+                                                        constant_name: table_config["constant_name"].as_str().unwrap_or("").to_string(),
+                                                        key_type: table_config["key_type"].as_str().unwrap_or("String").to_string(),
+                                                        entry_count: simple_table.metadata.entry_count,
+                                                    },
+                                                    entries: simple_table.entries,
+                                                };
+                                                all_extracted_tables.insert(table.source.hash_name.clone(), table);
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            eprintln!("Warning: Could not find config for {}: {}", path.display(), simple_table.source.hash_name);
+                        }
+                        Err(e) => {
+                            eprintln!("Warning: Failed to parse {}: {}", path.display(), e);
+                            eprintln!("  First 200 chars of content: {}", &json_data.chars().take(200).collect::<String>());
+                        }
                     }
                 }
             }
@@ -223,9 +298,6 @@ fn main() -> Result<()> {
 
     // Generate module file
     generate_mod_file(output_dir)?;
-    
-    // Clean up ExifTool patches
-    revert_patches()?;
 
     println!("\n✅ Code generation complete!");
 

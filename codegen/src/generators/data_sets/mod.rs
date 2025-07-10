@@ -5,4 +5,3 @@
 
 pub mod boolean;
 
-pub use boolean::generate_boolean_set;

@@ -5,10 +5,46 @@
 //!
 //! This module re-exports all generated code for easy access.
 
+#[allow(non_snake_case)]
+pub mod Canon_pm;
+#[allow(non_snake_case)]
+pub mod ExifTool_pm;
+#[allow(non_snake_case)]
+pub mod Exif_pm;
+#[allow(non_snake_case)]
+pub mod Nikon_pm;
+#[allow(non_snake_case)]
+pub mod XMP_pm;
+pub mod compat_aliases;
+pub mod composite_tags;
+pub mod conversion_refs;
+pub mod supported_tags;
+pub mod tags;
 
 // Re-export commonly used types and functions
+pub use composite_tags::{
+    lookup_composite_tag, CompositeTagDef, COMPOSITE_TAGS, COMPOSITE_TAG_LOOKUP,
+};
+pub use conversion_refs::PRINT_CONV_REFS as REQUIRED_PRINT_CONV;
+pub use conversion_refs::VALUE_CONV_REFS as REQUIRED_VALUE_CONV;
+pub use conversion_refs::{
+    has_print_conv_ref, has_value_conv_ref, PRINT_CONV_REFS, VALUE_CONV_REFS,
+};
+pub use supported_tags::{
+    supported_tag_summary, tag_counts_by_group, SUPPORTED_COMPOSITE_TAG_COUNT,
+    SUPPORTED_COMPOSITE_TAG_NAMES, SUPPORTED_TAG_COUNT, SUPPORTED_TAG_NAMES,
+    TOTAL_SUPPORTED_TAG_COUNT,
+};
+pub use tags::TAG_LOOKUP as TAG_BY_ID;
+pub use tags::TAG_NAME_LOOKUP as TAG_BY_NAME;
+pub use tags::TAG_TABLE as EXIF_MAIN_TAGS;
+pub use tags::{lookup_tag_by_id, lookup_tag_by_name, TagDef, TagFormat, TAG_LOOKUP, TAG_TABLE};
 
 /// Initialize all lazy static data structures
 /// This can be called during startup to avoid lazy initialization costs later
 pub fn initialize_all() {
+    let _ = &*TAG_LOOKUP;
+    let _ = &*COMPOSITE_TAG_LOOKUP;
+    let _ = &*PRINT_CONV_REFS;
+    let _ = &*VALUE_CONV_REFS;
 }

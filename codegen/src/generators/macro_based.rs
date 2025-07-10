@@ -3,7 +3,7 @@
 //! This module generates code that uses the shared macros from src/generated/macros.rs
 //! to significantly reduce boilerplate in generated lookup tables.
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use crate::schemas::ExtractedTable;
 use crate::common::escape_string;
 use std::collections::HashMap;
@@ -403,8 +403,10 @@ fn read_table_config(
     config_path: &Path,
     extracted_tables: &HashMap<String, ExtractedTable>,
 ) -> Result<(Vec<(ExtractedTable, Option<String>)>, String)> {
-    let config_json = fs::read_to_string(config_path)?;
-    let config: TableConfig = serde_json::from_str(&config_json)?;
+    let config_json = fs::read_to_string(config_path)
+        .with_context(|| format!("Failed to read {}", config_path.display()))?;
+    let config: TableConfig = serde_json::from_str(&config_json)
+        .with_context(|| format!("Failed to parse JSON from {}", config_path.display()))?;
     
     let mut tables = Vec::new();
     for table_ref in &config.tables {

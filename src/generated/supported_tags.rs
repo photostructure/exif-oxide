@@ -293,8 +293,6 @@ pub fn tag_counts_by_group() -> &'static [(&'static str, usize)] {
 pub fn supported_tag_summary() -> String {
     format!(
         "Supported tags: {} standard, {} composite, {} total",
-        SUPPORTED_TAG_COUNT,
-        SUPPORTED_COMPOSITE_TAG_COUNT,
-        TOTAL_SUPPORTED_TAG_COUNT
+        SUPPORTED_TAG_COUNT, SUPPORTED_COMPOSITE_TAG_COUNT, TOTAL_SUPPORTED_TAG_COUNT
     )
 }

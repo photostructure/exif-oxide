@@ -68,7 +68,11 @@ $(FILE_TYPE_LOOKUP_JSON):
 # Rust code generation (now includes extraction orchestration)
 generate-rust: extract-perl
 	@echo "🦀 Generating Rust code..."
-	@cd . && cargo run --release
+	@cd . && cargo run --release ; ret=$$? ; \
+	echo "🔄 Reverting ExifTool module patches..." ; \
+	git -C ../third-party/exiftool checkout -- lib/Image/*.pm lib/Image/ExifTool/*.pm ; \
+	echo "  ✓ ExifTool modules reverted to original state" ; \
+	exit $$ret
 
 # Clean generated files
 clean:

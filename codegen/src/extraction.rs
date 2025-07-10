@@ -7,6 +7,7 @@ use serde_json::Value;
 use std::fs;
 use std::path::Path;
 use std::process::Command;
+use tracing::debug;
 
 use crate::patching;
 
@@ -68,8 +69,16 @@ fn try_parse_module_config(module_config_dir: &Path) -> Result<Option<ModuleConf
         return Ok(None);
     }
     
-    let config_content = fs::read_to_string(&simple_table_config)
-        .with_context(|| format!("Failed to read {}", simple_table_config.display()))?;
+    debug!("Reading config file: {}", simple_table_config.display());
+    let config_content = match fs::read_to_string(&simple_table_config) {
+        Ok(data) => data,
+        Err(err) => {
+            eprintln!("Warning: UTF-8 error reading {}: {}", simple_table_config.display(), err);
+            let bytes = fs::read(&simple_table_config)
+                .with_context(|| format!("Failed to read bytes from {}", simple_table_config.display()))?;
+            String::from_utf8_lossy(&bytes).into_owned()
+        }
+    };
     
     let config: Value = serde_json::from_str(&config_content)
         .with_context(|| format!("Failed to parse {}", simple_table_config.display()))?;
