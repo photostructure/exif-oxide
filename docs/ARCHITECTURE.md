@@ -41,6 +41,13 @@ exif-oxide is a Rust translation of [ExifTool](https://exiftool.org/), focusing 
 - Manufacturer-specific quirk handling
 - Size limits and validation boundaries
 
+### Non-UTF-8 Data Handling
+
+- Binary magic numbers with raw bytes (e.g., BPG format: `BPG\xfb`)
+- Pattern matching on binary data streams
+- Proper escaping for Rust string literals
+- JSON-safe representation of non-UTF-8 content
+
 ### State Management Requirements
 
 - PROCESSED hash for recursion prevention
@@ -61,6 +68,8 @@ The simplified codegen architecture uses Rust orchestration with minimal Perl sc
 4. Calls simple Perl scripts with explicit arguments
 5. Perl outputs individual JSON files directly
 6. Rust reads JSON and generates code
+   - Handles non-UTF-8 bytes in patterns
+   - Escapes binary data for Rust string literals
 7. Reverts ExifTool patches
 
 ExifTool Source → [Rust Orchestration] → Perl Extractors → JSON → Generated Code
