@@ -170,7 +170,11 @@
       "Bash(do)",
       "Bash(RUST_LOG=debug cargo run --release)",
       "Bash(iconv:*)",
-      "WebFetch(domain:crates.io)"
+      "WebFetch(domain:crates.io)",
+      "Bash(RUST_LOG=debug cargo test -p codegen generators::file_detection::patterns::tests::test_bpg_pattern_utf8_handling -- --nocapture)",
+      "Bash(RUST_LOG=debug cargo test generators::file_detection::patterns::tests::test_bpg_pattern_utf8_handling -- --nocapture)",
+      "Bash(RUST_BACKTRACE=1 cargo test generators::file_detection::patterns::tests::test_bpg_pattern_utf8_handling -- --nocapture)",
+      "Bash(./test_bytes)"
     ],
     "deny": []
   }

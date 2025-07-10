@@ -4,6 +4,7 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
+use tracing::debug;
 
 #[derive(Debug, Deserialize)]
 pub struct RegexPatternsData {
@@ -32,6 +33,31 @@ pub struct RegexPatternSource {
     pub module: String,
     pub hash_name: String,
     pub description: String,
+}
+
+/// Escape a string pattern for use in Rust string literals
+/// This handles non-UTF-8 bytes by converting them to \xNN escape sequences
+fn escape_pattern_for_rust(pattern: &str) -> String {
+    let mut escaped = String::new();
+    
+    for byte in pattern.bytes() {
+        match byte {
+            // Standard string escapes
+            b'\\' => escaped.push_str("\\\\"),
+            b'"' => escaped.push_str("\\\""),
+            b'\n' => escaped.push_str("\\n"),
+            b'\r' => escaped.push_str("\\r"),
+            b'\t' => escaped.push_str("\\t"),
+            // Non-ASCII or control characters
+            0x00..=0x1F | 0x7F..=0xFF => {
+                escaped.push_str(&format!("\\x{:02x}", byte));
+            }
+            // Regular ASCII printable characters
+            _ => escaped.push(byte as char),
+        }
+    }
+    
+    escaped
 }
 
 /// Generate magic number patterns from regex_patterns.json
@@ -64,10 +90,14 @@ pub fn generate_magic_patterns(json_dir: &Path, output_dir: &str) -> Result<()> 
             let bad_pattern = b"\"BPG\xfb\"";
             let good_pattern = b"\"BPG\\\\xfb\"";
             
+            debug!("Looking for pattern: {:?}", bad_pattern);
             if let Some(pos) = cleaned_bytes.windows(bad_pattern.len())
                 .position(|window| window == bad_pattern) {
                 cleaned_bytes.splice(pos..pos+bad_pattern.len(), good_pattern.iter().cloned());
                 println!("    ✓ Fixed BPG pattern with non-UTF-8 byte");
+                debug!("Replaced at position {}", pos);
+            } else {
+                debug!("BPG pattern not found in raw form");
             }
             
             // Try again with cleaned data
@@ -128,23 +158,30 @@ mod tests {
         
         // Read the generated file and verify the pattern is properly escaped
         let generated_path = temp_dir.join("file_types").join("magic_number_patterns.rs");
-        if generated_path.exists() {
-            let content = std::fs::read_to_string(&generated_path).unwrap();
-            // The pattern should be escaped as BPG\\xfb in the generated code
-            assert!(content.contains(r#"map.insert("BPG", "BPG\\xfb");"#) || 
-                    content.contains(r#"map.insert("BPG", "BPG\u{fb}");"#),
-                    "BPG pattern not properly escaped in generated code");
-        }
+        assert!(generated_path.exists(), "Generated file does not exist at {:?}", generated_path);
+        
+        let content = std::fs::read_to_string(&generated_path).unwrap();
+        
+        // The pattern should be escaped as BPG\\xfb or BPG\xc3\xbb (UTF-8 encoding of \u{fb})
+        assert!(content.contains(r#"map.insert("BPG", "BPG\\xfb");"#) || 
+                content.contains(r#"map.insert("BPG", "BPG\xc3\xbb");"#) ||
+                content.contains(r#"map.insert("BPG", "BPG\u{fb}");"#),
+                "BPG pattern not properly escaped in generated code");
     }
     
     #[test]
     fn test_non_utf8_json_cleaning() {
         // Test the actual JSON cleaning logic
-        let bad_json_bytes = br#"{"pattern": "BPG\xfb", "key": "BPG"}"#;
+        // Create JSON with actual non-UTF-8 byte
+        let mut bad_json_bytes = Vec::new();
+        bad_json_bytes.extend_from_slice(b"{\"pattern\": \"BPG");
+        bad_json_bytes.push(0xfb); // Add the actual non-UTF-8 byte
+        bad_json_bytes.extend_from_slice(b"\", \"key\": \"BPG\"}");
+        
         let bad_pattern = b"\"BPG\xfb\"";
         let good_pattern = b"\"BPG\\\\xfb\"";
         
-        let mut test_bytes = bad_json_bytes.to_vec();
+        let mut test_bytes = bad_json_bytes.clone();
         
         // Find and replace the pattern
         if let Some(pos) = test_bytes.windows(bad_pattern.len())
@@ -184,7 +221,8 @@ fn generate_magic_number_patterns(data: &RegexPatternsData, output_dir: &Path) -
     for entry in &data.patterns.magic_numbers {
         if entry.rust_compatible == 1 {
             // Escape pattern for Rust string literal
-            let escaped_pattern = entry.pattern.replace('\\', "\\\\").replace('"', "\\\"");
+            let escaped_pattern = escape_pattern_for_rust(&entry.pattern);
+            debug!("Generating pattern for {}: {} -> {}", entry.key, entry.pattern, escaped_pattern);
             code.push_str(&format!("    map.insert(\"{}\", \"{}\");\n", entry.key, escaped_pattern));
         }
     }

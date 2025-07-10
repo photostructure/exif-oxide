@@ -247,10 +247,11 @@ The system supports three extraction patterns:
 #### Regex Patterns
 
 ```perl
-# File type magic numbers
+# File type magic numbers (may contain non-UTF-8 bytes)
 %magicNumber = (
     JPEG => '\xff\xd8\xff',
     PNG  => '\x89PNG\r\n\x1a\n',
+    BPG  => 'BPG\xfb',  # Contains raw byte 0xFB
 );
 ```
 
@@ -274,6 +275,49 @@ The system supports three extraction patterns:
 - **Maintenance**: Automatic updates with ExifTool releases
 - **Integration**: Seamless use in manual functions via clean imports
 - **Scalability**: Consolidated source-file-based organization
+- **Binary Safety**: Proper handling of non-UTF-8 bytes in patterns
+
+### Non-UTF-8 Data Handling
+
+The code generation system properly handles non-UTF-8 bytes found in ExifTool's binary patterns:
+
+#### Pattern Escaping
+
+The `escape_pattern_for_rust` function ensures all patterns are valid Rust string literals:
+
+```rust
+// Handles non-UTF-8 bytes like 0xFB in BPG magic number
+fn escape_pattern_for_rust(pattern: &str) -> String {
+    let mut escaped = String::new();
+    
+    for byte in pattern.bytes() {
+        match byte {
+            b'\\' => escaped.push_str("\\\\"),
+            b'"' => escaped.push_str("\\\""),
+            b'\n' => escaped.push_str("\\n"),
+            b'\r' => escaped.push_str("\\r"), 
+            b'\t' => escaped.push_str("\\t"),
+            // Non-ASCII or control characters become \xNN
+            0x00..=0x1F | 0x7F..=0xFF => {
+                escaped.push_str(&format!("\\x{:02x}", byte));
+            }
+            _ => escaped.push(byte as char),
+        }
+    }
+    escaped
+}
+```
+
+#### JSON Cleaning
+
+When extracting patterns from ExifTool that contain raw bytes:
+
+1. Perl extracts the data (may contain non-UTF-8)
+2. Rust detects and cleans problematic bytes in JSON
+3. Patterns are properly escaped for Rust string literals
+4. Generated code contains valid UTF-8 with escape sequences
+
+Example: BPG magic number `BPG\xfb` becomes `"BPG\\xfb"` in generated Rust code.
 
 ### Build Pipeline
 
