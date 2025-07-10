@@ -2182,14 +2182,13 @@ pub static TAG_LOOKUP: LazyLock<HashMap<u32, &'static TagDef>> = LazyLock::new(|
 });
 
 /// Lazy-loaded lookup map from tag name to tag definition
-pub static TAG_NAME_LOOKUP: LazyLock<HashMap<&'static str, &'static TagDef>> =
-    LazyLock::new(|| {
-        let mut map = HashMap::new();
-        for tag in TAG_TABLE {
-            map.insert(tag.name, tag);
-        }
-        map
-    });
+pub static TAG_NAME_LOOKUP: LazyLock<HashMap<&'static str, &'static TagDef>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    for tag in TAG_TABLE {
+        map.insert(tag.name, tag);
+    }
+    map
+});
 
 /// Look up a tag definition by its ID
 pub fn lookup_tag_by_id(id: u32) -> Option<&'static TagDef> {
