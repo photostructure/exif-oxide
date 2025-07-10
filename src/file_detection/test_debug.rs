@@ -2,9 +2,8 @@
 
 #[cfg(test)]
 mod tests {
-    use crate::generated::file_types::lookup_mime_types;
-    // TODO: Re-enable when resolve_file_type is available
-    // use crate::generated::file_types::resolve_file_type;
+    use crate::file_types_compat::file_types::lookup_mime_types;
+    use crate::file_types_compat::file_types::resolve_file_type;
 
     #[test]
     fn debug_problematic_formats() {
@@ -13,11 +12,7 @@ mod tests {
         for ext in problem_formats {
             println!("\n=== Extension: {ext} ===");
 
-            // TODO: Re-enable when resolve_file_type is available
-            // if let Some((formats, description)) = resolve_file_type(&ext.to_uppercase()) {
-            if false {
-                let formats: Vec<&str> = vec![];
-                let description = "";
+            if let Some((formats, description)) = resolve_file_type(&ext.to_uppercase()) {
                 println!("Resolves to formats: {formats:?}");
                 println!("Description: {description}");
 
