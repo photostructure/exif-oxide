@@ -1,4 +1,5 @@
 {
+  "source": "third-party/exiftool/lib/Image/ExifTool/XMP.pm",
   "description": "XMP module lookup tables for namespace mappings and character conversions",
   "tables": [
     {

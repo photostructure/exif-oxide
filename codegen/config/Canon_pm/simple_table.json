@@ -1,4 +1,5 @@
 {
+  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
   "description": "Canon module lookup tables for camera models, settings, and modes",
   "tables": [
     {

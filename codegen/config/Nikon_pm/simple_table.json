@@ -1,4 +1,5 @@
 {
+  "source": "third-party/exiftool/lib/Image/ExifTool/Nikon.pm",
   "description": "Nikon module lookup tables for lenses, camera settings, and modes",
   "tables": [
     {
