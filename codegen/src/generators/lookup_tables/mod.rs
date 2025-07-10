@@ -7,4 +7,3 @@
 
 pub mod standard;
 
-pub use standard::generate_lookup_table;

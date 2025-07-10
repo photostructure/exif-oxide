@@ -266,7 +266,7 @@ mod tests {
     #[test]
     fn test_generated_lookup_function_works() {
         // Test that the generated lookup function from simple table extraction works
-        use crate::generated::nikon::lenses::lookup_nikon_lens_ids;
+        use crate::generated::nikon::lookup_nikon_lens_ids;
 
         // Test AF Nikkor 50mm f/1.8 - ExifTool Nikon.pm:96
         let result = lookup_nikon_lens_ids("01 58 50 50 14 14 02 00");

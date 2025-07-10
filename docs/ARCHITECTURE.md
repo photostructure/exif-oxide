@@ -52,12 +52,21 @@ exif-oxide is a Rust translation of [ExifTool](https://exiftool.org/), focusing 
 
 ### Build Pipeline
 
+The simplified codegen architecture uses Rust orchestration with minimal Perl scripts:
+
 ```
-ExifTool Source → Perl Extractor → JSON → Rust Codegen → Generated Code
-                                               ↓
-                                    Implementation Palette
-                                               ↓
-                                       exif-oxide Library
+1. Rust scans codegen/config/ directories
+2. Reads source paths from config files
+3. Patches ExifTool modules (temporary)
+4. Calls simple Perl scripts with explicit arguments
+5. Perl outputs individual JSON files directly
+6. Rust reads JSON and generates code
+7. Reverts ExifTool patches
+
+ExifTool Source → [Rust Orchestration] → Perl Extractors → JSON → Generated Code
+                     ↓                        ↓                         ↓
+              Config-driven            Explicit arguments        Direct output
+                                      No config reading         No split step
 ```
 
 ### Key Components

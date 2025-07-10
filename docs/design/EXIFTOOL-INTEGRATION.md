@@ -277,37 +277,51 @@ The system supports three extraction patterns:
 
 ### Build Pipeline
 
-The build pipeline automatically handles all necessary steps:
+The simplified build pipeline uses Rust orchestration with minimal Perl scripts:
 
-1. **Auto-patching**: Converts `my` variables to `our` in ExifTool modules
-2. **Extraction**: Runs Perl extractors in parallel
-3. **Generation**: Creates Rust code from extracted data
+1. **Auto-discovery**: Rust scans `codegen/config/` directories for modules
+2. **Configuration**: Each module has JSON configs specifying tables and source paths
+3. **Patching**: Rust temporarily patches ExifTool modules to expose variables
+4. **Extraction**: Rust calls Perl scripts with explicit arguments (no config reading)
+5. **Generation**: Creates Rust code from individual JSON files (no split step)
+6. **Cleanup**: Reverts ExifTool patches to original state
 
 ```bash
-# Full pipeline with parallel execution
-make codegen              # Full build (includes auto-patching and schema validation)
-make -j4 codegen         # Parallel (4 jobs)
+# Full pipeline
+make codegen              # Complete build with schema validation
+make -j4 codegen         # Parallel execution (faster)
 
-# Individual components
-make extract             # Just lookup tables
-make generated/tag_tables.json  # Just tag definitions
+# Development commands
 make check-schemas       # Validate all configuration files
-
-# Incremental updates
-make regen-extract       # Regenerate tables only
+cargo run -p codegen     # Run code generation directly
 ```
+
+#### Architecture Improvements
+
+**Old System**:
+- Complex Makefile with parallel extraction logic
+- Perl scripts read JSON configs
+- Combined extraction → split-extractions → individual files
+- Hardcoded module lists in Rust
+
+**New System**:
+- Rust orchestrates everything
+- Simple, dumb Perl scripts with explicit arguments
+- Direct output of individual JSON files
+- Auto-discovery of modules from config directories
+- Streaming file operations with atomic replacement
 
 #### Why Patching is Required
 
 ExifTool uses `my`-scoped lexical variables for many lookup tables (e.g., `my %canonWhiteBalance`). These variables are private to their module and cannot be accessed by external scripts. To extract these tables programmatically, we need to convert them to package variables (`our %canonWhiteBalance`) which are accessible via the symbol table.
 
-**Auto-Patching Details**: The `patch_exiftool_modules.pl` script automatically:
+**Patching Implementation**: The Rust code now handles patching:
 
-- Reads `extract.json` to identify required variables
-- Converts `my %varName` to `our %varName` in ExifTool modules
-- Runs before extraction to ensure variables are accessible
-- Tracks conversions to avoid redundant processing
-- Only patches variables we actually need (based on `extract.json`)
+- Reads configuration to identify required variables per module
+- Streams file content and patches `my` → `our` for specific variables
+- Uses atomic file replacement with tempfile crate
+- Automatically reverts patches after extraction
+- Only patches variables actually needed by configurations
 
 ## Manual Implementation System
 

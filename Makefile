@@ -49,11 +49,6 @@ clean-generated:
 # Deep clean - removes all build artifacts and generated code
 clean-all: clean clean-generated
 
-# Patch ExifTool modules to expose my-scoped variables
-patch-exiftool:
-	@echo "Patching ExifTool modules to expose my-scoped variables..."
-	cd codegen && perl patch_exiftool_modules.pl
-	@echo "ExifTool modules patched successfully"
 
 # Check that all Perl extractors are working correctly
 check-extractors:

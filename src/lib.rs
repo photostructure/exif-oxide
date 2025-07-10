@@ -9,6 +9,7 @@ pub mod conditions;
 pub mod examples;
 pub mod exif;
 pub mod file_detection;
+pub mod file_types_compat;
 pub mod formats;
 pub mod generated;
 
