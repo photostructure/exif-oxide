@@ -1,4 +1,4 @@
-.PHONY: check fmt-check fmt lint test fix build doc clean patch-exiftool codegen sync update audit precommit help snapshot-generate snapshot-tests snapshots perl-deps perl-setup
+.PHONY: check fmt-check fmt lint test codegen-test fix build doc clean patch-exiftool codegen sync update audit precommit help snapshot-generate snapshot-tests snapshots perl-deps perl-setup
 
 # Run all checks without modifying (for CI)
 check: fmt-check lint test
@@ -18,6 +18,10 @@ lint:
 # Run tests
 test:
 	cargo test --all --features test-helpers
+
+# Run codegen tests
+codegen-test:
+	$(MAKE) -C codegen -f Makefile.modular test
 
 # Fix formatting and auto-fixable clippy issues
 fix:
@@ -89,7 +93,7 @@ audit:
 	cargo audit
 
 # Pre-commit checks: do everything: update deps, codegen, fix code, lint, test, audit, and build
-precommit: update perl-deps codegen check-extractors fix lint compat-gen test audit build 
+precommit: update perl-deps codegen check-extractors fix lint compat-gen test codegen-test audit build 
 
 # Generate ExifTool JSON reference data for compatibility testing
 compat-gen:

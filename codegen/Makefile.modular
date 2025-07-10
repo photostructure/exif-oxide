@@ -1,7 +1,7 @@
 # Modular Codegen Makefile
 # This demonstrates the updated build system for parallel execution
 
-.PHONY: all clean extract-perl generate-rust codegen parallel-extract check-schemas
+.PHONY: all clean extract-perl generate-rust codegen parallel-extract check-schemas test
 
 # Output directories
 GENERATED_DIR := generated
@@ -105,6 +105,11 @@ check-extractors:
 	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/regex_patterns.pl
 	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/file_type_lookup.pl
 	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/simple_table.pl
+
+# Run codegen tests
+test:
+	@echo "🧪 Running codegen tests..."
+	@cargo test --all
 
 # Show what would be built
 dry-run:
