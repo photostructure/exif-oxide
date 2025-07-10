@@ -1,7 +1,7 @@
 # Modular Codegen Makefile
 # This demonstrates the updated build system for parallel execution
 
-.PHONY: all clean extract-perl generate-rust codegen parallel-extract patch-exiftool revert-exiftool-patches check-schemas
+.PHONY: all clean extract-perl generate-rust codegen parallel-extract check-schemas
 
 # Output directories
 GENERATED_DIR := generated
@@ -20,39 +20,24 @@ EXTRACTOR_OUTPUTS := \
 	$(REGEX_PATTERNS_JSON) \
 	$(FILE_TYPE_LOOKUP_JSON)
 
-# Extract data to individual files
-EXTRACT_FILES := \
-	$(EXTRACT_DIR)/canon_model_id.json \
-	$(EXTRACT_DIR)/nikon_lens_ids.json \
-	$(EXTRACT_DIR)/canon_white_balance.json \
-	$(EXTRACT_DIR)/orientation.json
+# Extract data to individual files (now handled by Rust orchestration)
 
 # Default target
 all: codegen
 
-# Main codegen pipeline
+# Main codegen pipeline (Rust now handles everything including patch cleanup)
 codegen: check-schemas generate-rust
-	@$(MAKE) -f Makefile.modular revert-exiftool-patches
 	@echo "✅ Code generation complete!"
 
 # Create directories
 $(GENERATED_DIR) $(EXTRACT_DIR):
 	@mkdir -p $@
 
-# Patch ExifTool modules to expose my-scoped variables
-patch-exiftool:
-	@echo "🔧 Patching ExifTool modules to expose variables..."
-	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl patch_exiftool_modules.pl
-	@echo "✅ ExifTool modules patched"
+# Legacy targets (now handled by Rust orchestration)
+# patch-exiftool and revert-exiftool-patches moved to Rust
 
-# Revert ExifTool module patches to keep submodule clean
-revert-exiftool-patches:
-	@echo "🔄 Reverting ExifTool module patches..."
-	@git -C ../third-party/exiftool checkout -- lib/Image/*.pm lib/Image/ExifTool/*.pm
-	@echo "✅ ExifTool modules reverted to original state"
-
-# Parallel extraction of all Perl data
-extract-perl: patch-exiftool $(GENERATED_DIR) $(EXTRACT_DIR) parallel-extract extract-data
+# Legacy extraction targets (now handled by Rust orchestration)
+extract-perl: $(GENERATED_DIR) $(EXTRACT_DIR) parallel-extract
 	@echo "✅ All extraction complete"
 
 # Run extractors in parallel (make -j4 will use 4 cores)
@@ -77,41 +62,10 @@ $(FILE_TYPE_LOOKUP_JSON):
 	@echo "📁 Creating empty file type lookup file (handled by simplified extraction)..."
 	@echo '{"extracted_at":"'$(shell date)'","file_type_lookups":{"extensions":[],"mime_types":[],"descriptions":[],"magic_lookups":[]},"stats":{"total_lookups":0,"by_type":{}}}' > $@
 
-# Extract data using the new simplified simple_table.pl
-extract-data: $(EXTRACT_FILES)
+# Legacy extraction targets - now handled by Rust orchestration
+# These targets are kept for backwards compatibility but no longer used by the main pipeline
 
-$(EXTRACT_FILES): extractors/simple_table.pl config/Canon_pm/simple_table.json config/Nikon_pm/simple_table.json config/ExifTool_pm/simple_table.json config/Exif_pm/simple_table.json config/XMP_pm/simple_table.json
-	@echo "📊 Extracting lookup tables from config..."
-	@$(MAKE) -f Makefile.modular extract-canon extract-nikon extract-exiftool extract-exif extract-xmp
-	@touch $(EXTRACT_FILES)  # Update timestamps
-
-# Extract from each module using the simplified simple_table.pl
-EXIFTOOL_LIB := ../third-party/exiftool/lib/Image/ExifTool
-
-extract-canon:
-	@echo "  📷 Canon tables..."
-	@cd $(EXTRACT_DIR) && eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl ../../extractors/simple_table.pl ../../$(EXIFTOOL_LIB)/Canon.pm canonModelID canonWhiteBalance pictureStyles canonImageSize canonQuality
-
-extract-nikon:
-	@echo "  📷 Nikon tables..."
-	@cd $(EXTRACT_DIR) && eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl ../../extractors/simple_table.pl ../../$(EXIFTOOL_LIB)/Nikon.pm nikonLensIDs
-
-extract-exiftool:
-	@echo "  🔧 ExifTool core tables..."
-	@cd $(EXTRACT_DIR) && eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl ../../extractors/simple_table.pl ../../$(EXIFTOOL_LIB).pm mimeType fileTypeExt
-	@cd $(EXTRACT_DIR) && eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl ../../extractors/simple_table.pl ../../$(EXIFTOOL_LIB).pm weakMagic
-
-extract-exif:
-	@echo "  📸 EXIF tables..."
-	@cd $(EXTRACT_DIR) && eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl ../../extractors/simple_table.pl ../../$(EXIFTOOL_LIB)/Exif.pm orientation
-
-extract-xmp:
-	@echo "  🏷️  XMP tables..."
-	@cd $(EXTRACT_DIR) && eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl ../../extractors/simple_table.pl ../../$(EXIFTOOL_LIB)/XMP.pm nsURI xmpNS charName charNum stdXlatNS
-
-# Note: split-extractions step removed - simple_table.pl now outputs individual files directly
-
-# Rust code generation
+# Rust code generation (now includes extraction orchestration)
 generate-rust: extract-perl
 	@echo "🦀 Generating Rust code..."
 	@cd . && cargo run --release
@@ -133,7 +87,7 @@ clean-extract:
 # Incremental regeneration targets
 regen-tags: clean-tags $(TAG_TABLES_JSON) generate-rust
 
-regen-extract: clean-extract extract-data generate-rust
+regen-extract: clean-extract generate-rust
 
 # Development helpers
 check-schemas:
@@ -172,7 +126,6 @@ help:
 	@echo "Individual extractors:"
 	@echo "  make $(TAG_TABLES_JSON)"
 	@echo "  make $(COMPOSITE_TAGS_JSON)"
-	@echo "  make extract-data"
 	@echo ""
 	@echo "The modular design allows:"
 	@echo "  - Parallel execution of extractors"

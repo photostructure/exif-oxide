@@ -63,6 +63,7 @@ check-extractors:
 codegen:
 	@echo "Running modular code generation (4 jobs)..."
 	$(MAKE) -C codegen -f Makefile.modular -j4 codegen
+	
 # Extract all ExifTool algorithms and regenerate code  
 sync: codegen
 	cargo build
