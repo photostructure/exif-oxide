@@ -1,11 +1,11 @@
 {
   "source": "third-party/exiftool/lib/Image/ExifTool.pm",
-  "description": "ExifTool magic number patterns for file type detection",
+  "description": "Regex patterns for file type detection",
   "tables": [
     {
       "hash_name": "%magicNumber",
-      "constant_name": "MAGIC_NUMBER_PATTERNS",
-      "description": "Magic number regex patterns for file type detection"
+      "constant_name": "REGEX_PATTERNS",
+      "description": "Regex patterns for file type validation"
     }
   ]
 }

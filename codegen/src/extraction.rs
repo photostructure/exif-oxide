@@ -21,7 +21,7 @@ pub struct ModuleConfig {
 #[derive(Debug)]
 enum SpecialExtractor {
     FileTypeLookup,
-    // Future: RegexPatterns, etc.
+    RegexPatterns,
 }
 
 /// Extract all simple tables using Rust orchestration (replaces Makefile targets)
@@ -53,9 +53,9 @@ fn discover_module_configs() -> Result<Vec<ModuleConfig>> {
             continue;
         }
         
-        if let Some(config) = try_parse_module_config(&module_config_dir)? {
-            configs.push(config);
-        }
+        // Process all configs in this module directory
+        let module_configs = parse_all_module_configs(&module_config_dir)?;
+        configs.extend(module_configs);
     }
     
     Ok(configs)
@@ -68,32 +68,64 @@ fn should_skip_directory(path: &Path) -> bool {
         .map_or(true, |name| name.starts_with('.'))
 }
 
-fn try_parse_module_config(module_config_dir: &Path) -> Result<Option<ModuleConfig>> {
-    let simple_table_config = module_config_dir.join("simple_table.json");
+fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig>> {
+    let mut configs = Vec::new();
     
-    if !simple_table_config.exists() {
-        return Ok(None);
+    // Look for all supported config files
+    let config_files = [
+        "simple_table.json",
+        "file_type_lookup.json", 
+        "regex_patterns.json"
+    ];
+    
+    for config_file in &config_files {
+        let config_path = module_config_dir.join(config_file);
+        if config_path.exists() {
+            if let Some(config) = try_parse_single_config(&config_path)? {
+                configs.push(config);
+            }
+        }
     }
     
-    debug!("Reading config file: {}", simple_table_config.display());
-    let config_content = match fs::read_to_string(&simple_table_config) {
+    Ok(configs)
+}
+
+fn try_parse_module_config(module_config_dir: &Path) -> Result<Option<ModuleConfig>> {
+    // Check for any of the supported config files
+    let simple_table_config = module_config_dir.join("simple_table.json");
+    let file_type_lookup_config = module_config_dir.join("file_type_lookup.json");
+    let magic_number_config = module_config_dir.join("magic_number.json");
+    
+    // Determine which config file exists
+    let config_path = if simple_table_config.exists() {
+        simple_table_config
+    } else if file_type_lookup_config.exists() {
+        file_type_lookup_config
+    } else if magic_number_config.exists() {
+        magic_number_config
+    } else {
+        return Ok(None);
+    };
+    
+    debug!("Reading config file: {}", config_path.display());
+    let config_content = match fs::read_to_string(&config_path) {
         Ok(data) => data,
         Err(err) => {
-            eprintln!("Warning: UTF-8 error reading {}: {}", simple_table_config.display(), err);
-            let bytes = fs::read(&simple_table_config)
-                .with_context(|| format!("Failed to read bytes from {}", simple_table_config.display()))?;
+            eprintln!("Warning: UTF-8 error reading {}: {}", config_path.display(), err);
+            let bytes = fs::read(&config_path)
+                .with_context(|| format!("Failed to read bytes from {}", config_path.display()))?;
             String::from_utf8_lossy(&bytes).into_owned()
         }
     };
     
     let config: Value = serde_json::from_str(&config_content)
-        .with_context(|| format!("Failed to parse {}", simple_table_config.display()))?;
+        .with_context(|| format!("Failed to parse {}", config_path.display()))?;
     
     let source_path = config["source"].as_str()
-        .ok_or_else(|| anyhow::anyhow!("Missing 'source' field in {}", simple_table_config.display()))?;
+        .ok_or_else(|| anyhow::anyhow!("Missing 'source' field in {}", config_path.display()))?;
     
     let tables = config["tables"].as_array()
-        .ok_or_else(|| anyhow::anyhow!("Missing 'tables' field in {}", simple_table_config.display()))?;
+        .ok_or_else(|| anyhow::anyhow!("Missing 'tables' field in {}", config_path.display()))?;
     
     if tables.is_empty() {
         return Ok(None);
@@ -117,6 +149,52 @@ fn try_parse_module_config(module_config_dir: &Path) -> Result<Option<ModuleConf
     }))
 }
 
+fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
+    debug!("Reading config file: {}", config_path.display());
+    let config_content = match fs::read_to_string(&config_path) {
+        Ok(data) => data,
+        Err(err) => {
+            eprintln!("Warning: UTF-8 error reading {}: {}", config_path.display(), err);
+            let bytes = fs::read(&config_path)
+                .with_context(|| format!("Failed to read bytes from {}", config_path.display()))?;
+            String::from_utf8_lossy(&bytes).into_owned()
+        }
+    };
+    
+    let config: Value = serde_json::from_str(&config_content)
+        .with_context(|| format!("Failed to parse {}", config_path.display()))?;
+    
+    let source_path = config["source"].as_str()
+        .ok_or_else(|| anyhow::anyhow!("Missing 'source' field in {}", config_path.display()))?;
+    
+    let tables = config["tables"].as_array()
+        .ok_or_else(|| anyhow::anyhow!("Missing 'tables' field in {}", config_path.display()))?;
+    
+    if tables.is_empty() {
+        return Ok(None);
+    }
+    
+    let hash_names: Vec<String> = tables.iter()
+        .filter_map(|table| table["hash_name"].as_str())
+        .map(|name| name.trim_start_matches('%').to_string())
+        .collect();
+    
+    if hash_names.is_empty() {
+        return Ok(None);
+    }
+    
+    let module_name = config_path.file_stem()
+        .and_then(|name| name.to_str())
+        .ok_or_else(|| anyhow::anyhow!("Invalid config filename: {}", config_path.display()))?
+        .to_string();
+    
+    Ok(Some(ModuleConfig {
+        source_path: source_path.to_string(),
+        hash_names,
+        module_name,
+    }))
+}
+
 fn process_module_config(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
     println!("  📷 Processing {} tables...", config.module_name);
     
@@ -126,13 +204,13 @@ fn process_module_config(config: &ModuleConfig, extract_dir: &Path) -> Result<()
     
     patch_module_if_needed(&module_path, &config.hash_names)?;
     
-    // Check if this module needs a special extractor
-    let module_config_dir = Path::new("config")
-        .join(config.module_name.replace(".pm", "_pm").replace("::", "_"));
-    
-    match needs_special_extractor(&module_config_dir) {
+    // Check if this config needs a special extractor based on the config filename
+    match needs_special_extractor_by_name(&config.module_name) {
         Some(SpecialExtractor::FileTypeLookup) => {
             run_file_type_lookup_extractor(config, extract_dir)?;
+        }
+        Some(SpecialExtractor::RegexPatterns) => {
+            run_regex_patterns_extractor(config, extract_dir)?;
         }
         None => {
             run_extraction_script(config, extract_dir)?;
@@ -206,7 +284,18 @@ fn needs_special_extractor(config_dir: &Path) -> Option<SpecialExtractor> {
     if config_dir.join("file_type_lookup.json").exists() {
         return Some(SpecialExtractor::FileTypeLookup);
     }
+    if config_dir.join("magic_number.json").exists() {
+        return Some(SpecialExtractor::MagicNumber);
+    }
     None
+}
+
+fn needs_special_extractor_by_name(config_name: &str) -> Option<SpecialExtractor> {
+    match config_name {
+        "file_type_lookup" => Some(SpecialExtractor::FileTypeLookup),
+        "magic_number" => Some(SpecialExtractor::MagicNumber),
+        _ => None,
+    }
 }
 
 fn run_file_type_lookup_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
@@ -248,6 +337,49 @@ fn run_file_type_lookup_extractor(config: &ModuleConfig, extract_dir: &Path) -> 
     }
     
     println!("    Created file_type_lookup.json");
+    
+    Ok(())
+}
+
+fn run_magic_number_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+    // Magic number always extracts from %magicNumber hash
+    let hash_name = "%magicNumber";
+    
+    // From generated/extract directory, we need ../../../ to get to repo root
+    let source_path_for_perl = format!("../../../{}", config.source_path);
+    
+    let mut cmd = Command::new("perl");
+    cmd.arg("../../extractors/regex_patterns.pl")  // From generated/extract, go up to codegen
+       .arg(&source_path_for_perl)
+       .arg(hash_name)
+       .current_dir(extract_dir);
+    
+    setup_perl_environment(&mut cmd);
+    
+    println!("    Running: perl regex_patterns.pl {} {}", 
+        source_path_for_perl, 
+        hash_name
+    );
+    
+    // Redirect output to magic_number.json
+    let output_path = extract_dir.join("magic_number.json");
+    cmd.stdout(fs::File::create(&output_path)?);
+    
+    let output = cmd.output()
+        .with_context(|| format!("Failed to execute regex_patterns.pl for {}", config.module_name))?;
+    
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        return Err(anyhow::anyhow!("regex_patterns.pl failed for {}: {}", config.module_name, stderr));
+    }
+    
+    // Print any stderr output (status messages)
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    if !stderr.is_empty() {
+        print!("{}", stderr);
+    }
+    
+    println!("    Created magic_number.json");
     
     Ok(())
 }
