@@ -1,5 +1,7 @@
 # Processor Dispatch Guide
 
+**🚨 CRITICAL: This dispatch system faithfully translates ExifTool patterns per [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md).**
+
 **Understanding exif-oxide's processor selection system and its relationship to ExifTool**
 
 ## Overview
