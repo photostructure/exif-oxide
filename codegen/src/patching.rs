@@ -5,10 +5,11 @@
 
 use anyhow::{Context, Result};
 use regex::Regex;
-use std::fs::{File, OpenOptions};
+use std::fs::File;
 use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
 use std::process::Command;
+use tempfile::NamedTempFile;
 
 /// Patch ExifTool module to convert my-scoped variables to package variables
 /// This operation is idempotent - safe to run multiple times
@@ -35,16 +36,22 @@ pub fn patch_module(module_path: &Path, variables: &[String]) -> Result<()> {
         .with_context(|| format!("Failed to open {}", module_path.display()))?;
     let reader = BufReader::new(input);
     
-    let temp_path = module_path.with_extension("tmp");
-    let mut output = OpenOptions::new()
-        .write(true)
-        .create(true)
-        .truncate(true)
-        .open(&temp_path)
-        .with_context(|| format!("Failed to create temp file {}", temp_path.display()))?;
+    // Create temp file in the same directory as the target to ensure same filesystem
+    let parent_dir = module_path.parent()
+        .ok_or_else(|| anyhow::anyhow!("Module path has no parent directory"))?;
+    let mut temp_file = NamedTempFile::new_in(parent_dir)
+        .with_context(|| format!("Failed to create temp file in {}", parent_dir.display()))?;
     
-    for line in reader.lines() {
-        let mut line = line.with_context(|| format!("Failed to read line from {}", module_path.display()))?;
+    for line_result in reader.lines() {
+        let mut line = match line_result {
+            Ok(line) => line,
+            Err(err) => {
+                // Skip lines with invalid UTF-8 (e.g., camera names in various encodings)
+                eprintln!("    Warning: Skipping line with invalid UTF-8 in {}: {}", 
+                    module_path.display(), err);
+                continue;
+            }
+        };
         
         // Apply all variable patches to this line
         for (var, pattern) in variables.iter().zip(&patterns) {
@@ -55,13 +62,11 @@ pub fn patch_module(module_path: &Path, variables: &[String]) -> Result<()> {
             }
         }
         
-        writeln!(output, "{}", line)?;
+        writeln!(temp_file, "{}", line)?;
     }
     
-    drop(output); // Ensure file is closed before rename
-    
-    // Atomically replace the original file
-    std::fs::rename(&temp_path, module_path)
+    // Atomically replace the original file using tempfile's persist method
+    temp_file.persist(module_path)
         .with_context(|| format!("Failed to replace {}", module_path.display()))?;
     
     println!("    Patched {}", module_path.display());
