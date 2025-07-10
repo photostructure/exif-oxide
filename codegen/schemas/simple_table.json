@@ -4,6 +4,10 @@
   "description": "Configuration for basic key-value lookup table extraction",
   "type": "object",
   "properties": {
+    "source": {
+      "type": "string",
+      "description": "Path to ExifTool source file (relative to repository root, e.g., 'third-party/exiftool/lib/Image/ExifTool/Canon.pm')"
+    },
     "description": {
       "type": "string",
       "description": "Overview of what these tables contain"
@@ -45,6 +49,6 @@
       }
     }
   },
-  "required": ["tables"],
+  "required": ["source", "tables"],
   "additionalProperties": false
 }

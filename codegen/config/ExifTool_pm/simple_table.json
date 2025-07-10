@@ -1,4 +1,5 @@
 {
+  "source": "third-party/exiftool/lib/Image/ExifTool.pm",
   "description": "ExifTool core module lookup tables for file type metadata",
   "tables": [
     {
