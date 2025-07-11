@@ -284,8 +284,8 @@ fn needs_special_extractor(config_dir: &Path) -> Option<SpecialExtractor> {
     if config_dir.join("file_type_lookup.json").exists() {
         return Some(SpecialExtractor::FileTypeLookup);
     }
-    if config_dir.join("magic_number.json").exists() {
-        return Some(SpecialExtractor::MagicNumber);
+    if config_dir.join("regex_patterns.json").exists() {
+        return Some(SpecialExtractor::RegexPatterns);
     }
     None
 }
@@ -293,7 +293,7 @@ fn needs_special_extractor(config_dir: &Path) -> Option<SpecialExtractor> {
 fn needs_special_extractor_by_name(config_name: &str) -> Option<SpecialExtractor> {
     match config_name {
         "file_type_lookup" => Some(SpecialExtractor::FileTypeLookup),
-        "magic_number" => Some(SpecialExtractor::MagicNumber),
+        "regex_patterns" => Some(SpecialExtractor::RegexPatterns),
         _ => None,
     }
 }
@@ -341,9 +341,15 @@ fn run_file_type_lookup_extractor(config: &ModuleConfig, extract_dir: &Path) -> 
     Ok(())
 }
 
-fn run_magic_number_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
-    // Magic number always extracts from %magicNumber hash
-    let hash_name = "%magicNumber";
+fn run_regex_patterns_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+    // Get hash names from config, adding % prefix as needed
+    let hash_names_with_percent: Vec<String> = config.hash_names.iter()
+        .map(|name| format!("%{}", name))
+        .collect();
+    
+    if hash_names_with_percent.is_empty() {
+        return Err(anyhow::anyhow!("No hash names specified in regex_patterns config"));
+    }
     
     // From generated/extract directory, we need ../../../ to get to repo root
     let source_path_for_perl = format!("../../../{}", config.source_path);
@@ -351,18 +357,18 @@ fn run_magic_number_extractor(config: &ModuleConfig, extract_dir: &Path) -> Resu
     let mut cmd = Command::new("perl");
     cmd.arg("../../extractors/regex_patterns.pl")  // From generated/extract, go up to codegen
        .arg(&source_path_for_perl)
-       .arg(hash_name)
+       .arg(&hash_names_with_percent[0])  // regex_patterns.pl expects single hash name
        .current_dir(extract_dir);
     
     setup_perl_environment(&mut cmd);
     
     println!("    Running: perl regex_patterns.pl {} {}", 
         source_path_for_perl, 
-        hash_name
+        hash_names_with_percent[0]
     );
     
-    // Redirect output to magic_number.json
-    let output_path = extract_dir.join("magic_number.json");
+    // Redirect output to regex_patterns.json  
+    let output_path = extract_dir.join("regex_patterns.json");
     cmd.stdout(fs::File::create(&output_path)?);
     
     let output = cmd.output()
@@ -379,7 +385,7 @@ fn run_magic_number_extractor(config: &ModuleConfig, extract_dir: &Path) -> Resu
         print!("{}", stderr);
     }
     
-    println!("    Created magic_number.json");
+    println!("    Created regex_patterns.json");
     
     Ok(())
 }

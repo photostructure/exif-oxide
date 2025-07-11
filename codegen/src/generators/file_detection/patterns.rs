@@ -4,7 +4,7 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
-use tracing::debug;
+use tracing::{debug, info};
 
 #[derive(Debug, Deserialize)]
 pub struct RegexPatternsData {
@@ -57,7 +57,42 @@ pub struct MagicPatternSource {
 
 #[derive(Debug, Deserialize)]
 pub struct MagicNumberStats {
+    #[serde(deserialize_with = "string_or_number")]
     pub total_patterns: usize,
+}
+
+fn string_or_number<'de, D>(deserializer: D) -> Result<usize, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    use serde::de::{self, Visitor};
+    use std::fmt;
+
+    struct StringOrNumber;
+
+    impl<'de> Visitor<'de> for StringOrNumber {
+        type Value = usize;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            formatter.write_str("a string or number")
+        }
+
+        fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
+        where
+            E: de::Error,
+        {
+            Ok(value as usize)
+        }
+
+        fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+        where
+            E: de::Error,
+        {
+            value.parse().map_err(de::Error::custom)
+        }
+    }
+
+    deserializer.deserialize_any(StringOrNumber)
 }
 
 /// Escape a string pattern for use in Rust string literals
@@ -87,18 +122,16 @@ fn escape_pattern_for_rust(pattern: &str) -> String {
 
 /// Generate magic number patterns from magic_number.json
 pub fn generate_magic_patterns(json_dir: &Path, output_dir: &str) -> Result<()> {
-    // Look for magic_number.json
-    let magic_number_path = json_dir.parent()
-        .ok_or_else(|| anyhow::anyhow!("Invalid json_dir path"))?
-        .join("magic_number.json");
+    // Look for regex_patterns.json in the extract directory
+    let regex_patterns_path = json_dir.join("regex_patterns.json");
     
-    if !magic_number_path.exists() {
-        println!("    ⚠️  magic_number.json not found, skipping magic patterns");
+    if !regex_patterns_path.exists() {
+        println!("    ⚠️  regex_patterns.json not found, skipping magic patterns");
         return Ok(());
     }
     
     // Read as bytes first to handle potential non-UTF-8 content
-    let json_bytes = fs::read(&magic_number_path)?;
+    let json_bytes = fs::read(&regex_patterns_path)?;
     
     // Try to parse as UTF-8, but if it fails, we need to handle it
     let json_data = match String::from_utf8(json_bytes.clone()) {
@@ -133,7 +166,17 @@ pub fn generate_magic_patterns(json_dir: &Path, output_dir: &str) -> Result<()> 
     
     let data: MagicNumberData = serde_json::from_str(&json_data)?;
     
-    // Generate magic_number_patterns.rs directly in output_dir
+    info!("Parsed MagicNumberData with {} patterns", data.magic_patterns.len());
+    
+    // Log patterns that contain \0 for debugging
+    let patterns_with_null = data.magic_patterns.iter()
+        .filter(|p| p.pattern.contains("\\0"))
+        .count();
+    if patterns_with_null > 0 {
+        info!("Found {} patterns containing \\0 that need conversion", patterns_with_null);
+    }
+    
+    // Generate magic_number_patterns.rs directly in output_dir  
     generate_magic_number_patterns_from_new_format(&data, Path::new(output_dir))?;
     
     println!("    ✓ Generated regex patterns with {} magic number patterns", data.magic_patterns.len());
@@ -223,15 +266,15 @@ mod tests {
     }
 }
 
-fn generate_magic_number_patterns(data: &RegexPatternsData, output_dir: &Path) -> Result<()> {
+fn generate_magic_number_patterns_from_new_format(data: &MagicNumberData, output_dir: &Path) -> Result<()> {
     let mut code = String::new();
     
     // File header
     code.push_str("//! Magic number regex patterns generated from ExifTool's magicNumber hash\n");
     code.push_str("//!\n");
     code.push_str(&format!("//! Generated at: {}\n", data.extracted_at));
-    code.push_str(&format!("//! Total patterns: {}\n", data.patterns.magic_numbers.len()));
-    code.push_str(&format!("//! Compatibility: {}\n", data.compatibility_notes));
+    code.push_str(&format!("//! Total patterns: {}\n", data.magic_patterns.len()));
+    code.push_str("//! Source: ExifTool.pm %magicNumber hash\n");
     code.push_str("\n");
     code.push_str("use std::collections::HashMap;\n");
     code.push_str("use once_cell::sync::Lazy;\n");
@@ -243,13 +286,19 @@ fn generate_magic_number_patterns(data: &RegexPatternsData, output_dir: &Path) -
     code.push_str("static MAGIC_NUMBER_PATTERNS: Lazy<HashMap<&'static str, &'static str>> = Lazy::new(|| {\n");
     code.push_str("    let mut map = HashMap::new();\n");
     
-    for entry in &data.patterns.magic_numbers {
-        if entry.rust_compatible == 1 {
-            // Escape pattern for Rust string literal
-            let escaped_pattern = escape_pattern_for_rust(&entry.pattern);
-            debug!("Generating pattern for {}: {} -> {}", entry.key, entry.pattern, escaped_pattern);
-            code.push_str(&format!("    map.insert(\"{}\", \"{}\");\n", entry.key, escaped_pattern));
-        }
+    for entry in &data.magic_patterns {
+        // All patterns from extractor are considered compatible
+        // First convert Perl \0 to Rust \x00 to avoid backreference interpretation
+        let mut converted_pattern = entry.pattern.replace("\\0", "\\x00");
+        
+        // Also convert \r and \n to their hex equivalents for regex::bytes
+        converted_pattern = converted_pattern.replace("\\r", "\\x0d");
+        converted_pattern = converted_pattern.replace("\\n", "\\x0a");
+        
+        // Then escape pattern for Rust string literal
+        let escaped_pattern = escape_pattern_for_rust(&converted_pattern);
+        debug!("Generating pattern for {}: {} -> {} -> {}", entry.file_type, entry.pattern, converted_pattern, escaped_pattern);
+        code.push_str(&format!("    map.insert(\"{}\", \"{}\");\n", entry.file_type, escaped_pattern));
     }
     
     code.push_str("    map\n");
@@ -261,8 +310,9 @@ fn generate_magic_number_patterns(data: &RegexPatternsData, output_dir: &Path) -
     code.push_str("static PATTERN_COMPATIBILITY: Lazy<HashMap<&'static str, bool>> = Lazy::new(|| {\n");
     code.push_str("    let mut map = HashMap::new();\n");
     
-    for entry in &data.patterns.magic_numbers {
-        code.push_str(&format!("    map.insert(\"{}\", {});\n", entry.key, entry.rust_compatible == 1));
+    for entry in &data.magic_patterns {
+        // All patterns from the extractor are considered compatible
+        code.push_str(&format!("    map.insert(\"{}\", true);\n", entry.file_type));
     }
     
     code.push_str("    map\n");

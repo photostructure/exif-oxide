@@ -237,265 +237,8 @@ impl FileTypeDetector {
         rust_pattern
     }
 
-    /// Match binary magic patterns using specialized logic for common cases
-    /// This handles patterns that mix hex bytes with ASCII text more reliably than regex
-    #[allow(dead_code)]
-    fn match_binary_magic_pattern(&self, file_type: &str, pattern: &str, buffer: &[u8]) -> bool {
-        // Handle specific patterns that are known to be problematic with regex
-        match file_type {
-            "PNG" => {
-                // PNG pattern: (\x89P|\x8aM|\x8bJ)NG\r\n\x1a\n
-                // Standard PNG: \x89PNG\r\n\x1a\n
-                buffer.len() >= 8
-                    && (buffer.starts_with(&[0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
-                        || buffer.starts_with(&[0x8a, 0x4d, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
-                        || buffer.starts_with(&[0x8b, 0x4a, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
-            }
-            "BPG" => {
-                // BPG pattern: BPGû (where û is 0xfb)
-                buffer.len() >= 4 && buffer.starts_with(&[0x42, 0x50, 0x47, 0xfb])
-            }
-            "AAC" => {
-                // AAC pattern: \xff[\xf0\xf1]
-                buffer.len() >= 2 && buffer[0] == 0xff && (buffer[1] == 0xf0 || buffer[1] == 0xf1)
-            }
-            "JXL" => {
-                // JXL pattern: (\xff\x0a|\0\0\0\x0cJXL \x0d\x0a......ftypjxl )
-                if buffer.len() >= 2 && buffer.starts_with(&[0xff, 0x0a]) {
-                    true // First alternative matches
-                } else if buffer.len() >= 23 {
-                    // Second alternative: \0\0\0\x0cJXL \x0d\x0a......ftypjxl
-                    buffer.starts_with(&[0x00, 0x00, 0x00, 0x0c]) &&
-                    buffer[4..8] == [0x4a, 0x58, 0x4c, 0x20] && // "JXL "
-                    buffer[8..10] == [0x0d, 0x0a] &&
-                    buffer.len() >= 21 &&
-                    buffer[16..21] == [0x66, 0x74, 0x79, 0x70, 0x6a] && // "ftypj"
-                    buffer[21..23] == [0x78, 0x6c] // "xl"
-                } else {
-                    false
-                }
-            }
-            "MKV" => {
-                // MKV pattern: \x1a\x45\xdf\xa3
-                buffer.len() >= 4 && buffer.starts_with(&[0x1a, 0x45, 0xdf, 0xa3])
-            }
-            "DV" => {
-                // DV pattern: \x1f\x07\0[\x3f\xbf]
-                buffer.len() >= 4
-                    && buffer.starts_with(&[0x1f, 0x07, 0x00])
-                    && (buffer[3] == 0x3f || buffer[3] == 0xbf)
-            }
-            "JPEG" => {
-                // JPEG pattern: \xff\xd8\xff
-                buffer.len() >= 3 && buffer.starts_with(&[0xff, 0xd8, 0xff])
-            }
-            "M2TS" => {
-                // M2TS pattern: (....)?\x47
-                // Check for 0x47 sync byte at position 0 or 4
-                (!buffer.is_empty() && buffer[0] == 0x47)
-                    || (buffer.len() >= 5 && buffer[4] == 0x47)
-            }
-            "TIFF" => {
-                // TIFF pattern: (II|MM)
-                buffer.len() >= 2 && (buffer.starts_with(b"II") || buffer.starts_with(b"MM"))
-            }
-            "GIF" => {
-                // GIF pattern: GIF8[79]a - matches GIF87a or GIF89a
-                buffer.len() >= 6
-                    && buffer.starts_with(b"GIF8")
-                    && (buffer[4] == b'7' || buffer[4] == b'9')
-                    && buffer[5] == b'a'
-            }
-            "BMP" => {
-                // BMP pattern: BM
-                buffer.len() >= 2 && buffer.starts_with(b"BM")
-            }
-            "ZIP" => {
-                // ZIP pattern: PK\x03\x04
-                buffer.len() >= 4 && buffer.starts_with(&[0x50, 0x4b, 0x03, 0x04])
-            }
-            "MRW" => {
-                // MRW pattern: \0MR[MI]
-                buffer.len() >= 4
-                    && buffer[0] == 0x00
-                    && buffer[1] == 0x4d
-                    && buffer[2] == 0x52
-                    && (buffer[3] == 0x4d || buffer[3] == 0x49) // M or I
-            }
-            "MOV" => {
-                // MOV pattern: .{4}(free|skip|wide|ftyp|pnot|PICT|pict|moov|mdat|junk|uuid)
-                // Check for common QuickTime/MP4 atoms at offset 4
-                if buffer.len() >= 8 {
-                    let atom = &buffer[4..8];
-                    // Accept all valid MOV/MP4 atoms - specific type determined later
-                    // ExifTool doesn't exclude HEIC/HEIF brands at this stage
-                    atom == b"free"
-                        || atom == b"skip"
-                        || atom == b"wide"
-                        || atom == b"ftyp"
-                        || atom == b"pnot"
-                        || atom == b"PICT"
-                        || atom == b"pict"
-                        || atom == b"moov"
-                        || atom == b"mdat"
-                        || atom == b"junk"
-                        || atom == b"uuid"
-                } else {
-                    false
-                }
-            }
-            "HEIC" => {
-                // HEIC detection: MOV/MP4 container with HEVC-specific ftyp brands
-                // HEIC is specifically for HEVC-encoded images
-                // ExifTool QuickTime.pm:227 - heic/hevc brands map to HEIC
-                if buffer.len() >= 12 && &buffer[4..8] == b"ftyp" {
-                    let brand = &buffer[8..12];
-                    brand == b"heic" || brand == b"hevc"
-                } else {
-                    false
-                }
-            }
-            "HEIF" => {
-                // HEIF detection: MOV/MP4 container with general HEIF ftyp brands
-                // HEIF is the general format (not necessarily HEVC)
-                // ExifTool QuickTime.pm:229-231 - mif1/msf1/heix brands map to HEIF
-                if buffer.len() >= 12 && &buffer[4..8] == b"ftyp" {
-                    let brand = &buffer[8..12];
-                    brand == b"mif1"
-                        || brand == b"msf1"
-                        || brand == b"heix"
-                        || brand == b"heim"
-                        || brand == b"heis"
-                        || brand == b"hevx"
-                } else {
-                    false
-                }
-            }
-            "AVIF" => {
-                // AVIF detection: AV1 Image File Format
-                // ExifTool QuickTime.pm:232 - avif brand maps to AVIF
-                if buffer.len() >= 12 && &buffer[4..8] == b"ftyp" {
-                    let brand = &buffer[8..12];
-                    brand == b"avif"
-                } else {
-                    false
-                }
-            }
-            "XMP" => {
-                // XMP pattern: \0{0,3}(\xfe\xff|\xff\xfe|\xef\xbb\xbf)?\0{0,3}\s*<
-                // ExifTool.pm:1018 - XMP files start with optional BOM and null bytes, then '<'
-                self.validate_xmp_pattern(buffer)
-            }
-            "MP4" => {
-                // MP4 is a specific MOV subtype - use same logic as MOV
-                // Check for ftyp atom at offset 4 with MP4-specific brands
-                if buffer.len() >= 12 && &buffer[4..8] == b"ftyp" {
-                    let brand = &buffer[8..12];
-                    // MP4 brands: mp41, mp42, mp4v, isom, etc.
-                    brand == b"mp41"
-                        || brand == b"mp42"
-                        || brand == b"mp4v"
-                        || brand == b"isom"
-                        || brand == b"M4A "
-                        || brand == b"M4V "
-                        || brand == b"dash"
-                } else {
-                    // Also check for other MP4 atoms
-                    if buffer.len() >= 8 {
-                        let atom = &buffer[4..8];
-                        atom == b"free"
-                            || atom == b"skip"
-                            || atom == b"wide"
-                            || atom == b"ftyp"
-                            || atom == b"moov"
-                            || atom == b"mdat"
-                            || atom == b"junk"
-                            || atom == b"uuid"
-                    } else {
-                        false
-                    }
-                }
-            }
-            "FLV" => {
-                // FLV pattern: FLV\x01
-                // ExifTool magic number pattern
-                buffer.len() >= 4 && buffer.starts_with(&[0x46, 0x4c, 0x56, 0x01])
-            }
-            "PSD" => {
-                // PSD pattern: 8BPS\0[\x01\x02]
-                // ExifTool magic number pattern
-                buffer.len() >= 6
-                    && buffer.starts_with(&[0x38, 0x42, 0x50, 0x53, 0x00])
-                    && (buffer[5] == 0x01 || buffer[5] == 0x02)
-            }
-            "EPS" => {
-                // EPS pattern: (%!PS|%!Ad|\xc5\xd0\xd3\xc6)
-                // ExifTool magic number pattern
-                buffer.len() >= 4
-                    && (buffer.starts_with(b"%!PS")
-                        || buffer.starts_with(b"%!Ad")
-                        || buffer.starts_with(&[0xc5, 0xd0, 0xd3, 0xc6]))
-            }
-            "J2C" => {
-                // J2C pattern: \xff\x4f\xff\x51\0
-                // JPEG 2000 codestream magic number
-                buffer.len() >= 5 && buffer.starts_with(&[0xff, 0x4f, 0xff, 0x51, 0x00])
-            }
-            "JP2" => {
-                // JP2 pattern: (\0\0\0\x0cjP(  |\x1a\x1a)\x0d\x0a\x87\x0a|\xff\x4f\xff\x51\0)
-                // JPEG 2000 file format magic number
-                if buffer.len() >= 12 && buffer.starts_with(&[0x00, 0x00, 0x00, 0x0c]) {
-                    // Check for jP signature followed by version/compatibility
-                    if buffer[4..6] == [0x6a, 0x50] {
-                        // "jP"
-                        let version = &buffer[6..8];
-                        (version == b"  " || version == [0x1a, 0x1a])
-                            && buffer.len() >= 12
-                            && buffer[8..12] == [0x0d, 0x0a, 0x87, 0x0a]
-                    } else {
-                        false
-                    }
-                } else if buffer.len() >= 5 {
-                    // Alternative: JPEG 2000 codestream header
-                    buffer.starts_with(&[0xff, 0x4f, 0xff, 0x51, 0x00])
-                } else {
-                    false
-                }
-            }
-            "ASF" => {
-                // ASF pattern: \x30\x26\xb2\x75\x8e\x66\xcf\x11\xa6\xd9\x00\xaa\x00\x62\xce\x6c
-                // Windows Media ASF/WMV format
-                buffer.len() >= 16
-                    && buffer.starts_with(&[
-                        0x30, 0x26, 0xb2, 0x75, 0x8e, 0x66, 0xcf, 0x11, 0xa6, 0xd9, 0x00, 0xaa,
-                        0x00, 0x62, 0xce, 0x6c,
-                    ])
-            }
-            _ => {
-                // If pattern is empty, no magic number exists for this type
-                if pattern.is_empty() {
-                    return false;
-                }
-
-                // For ASCII-only patterns, try regex as a fallback
-                if !pattern.contains("\\x") {
-                    // Pure ASCII pattern - safe to use regex
-                    let rust_pattern = self.convert_perl_pattern_to_rust(pattern);
-                    match regex::bytes::RegexBuilder::new(&format!("^{rust_pattern}"))
-                        .dot_matches_new_line(true)
-                        .build()
-                    {
-                        Ok(re) => re.is_match(buffer),
-                        Err(_) => false, // Reject type if regex fails
-                    }
-                } else {
-                    // Contains hex bytes but we don't have specific handling
-                    // Default to rejecting unknown patterns
-                    false
-                }
-            }
-        }
-    }
+    // REMOVED: match_binary_magic_pattern function - replaced with generated patterns from ExifTool
+    // All magic number validation now uses generated patterns from ExifTool.pm %magicNumber hash
 
     /// Validate magic number for a file type candidate
     /// ExifTool equivalent: magic number testing in ExifTool.pm:2960-2975
@@ -513,17 +256,39 @@ impl FileTypeDetector {
             return self.validate_tiff_raw_format(file_type, buffer);
         }
 
-        // Check if we have a generated magic number pattern
-        // ExifTool.pm:912-1027 %magicNumber hash defines magic number patterns
-        use crate::generated::file_types::get_magic_pattern as get_magic_number_pattern;
-        if let Some(_pattern) = get_magic_number_pattern(file_type) {
-            // TODO: Use regex patterns when UTF-8 issue is fixed
-            // For now, fall back to binary pattern matching
-            return self.match_binary_magic_pattern(file_type, _pattern, buffer);
+        // Use generated magic number patterns from ExifTool's %magicNumber hash
+        // ExifTool.pm:912-1027 - patterns extracted and properly escaped for Rust
+        use crate::generated::file_types::magic_number_patterns::get_magic_number_pattern;
+        use regex::bytes::Regex;
+
+        if let Some(pattern) = get_magic_number_pattern(file_type) {
+            // Debug logging for PNG detection
+            if file_type == "PNG" {
+                eprintln!("DEBUG: PNG pattern: {pattern}");
+                eprintln!(
+                    "DEBUG: Buffer first 16 bytes: {:?}",
+                    &buffer[..buffer.len().min(16)]
+                );
+            }
+
+            // Compile and test the regex pattern against the buffer
+            match Regex::new(pattern) {
+                Ok(regex) => {
+                    let matches = regex.is_match(buffer);
+                    if file_type == "PNG" {
+                        eprintln!("DEBUG: PNG regex match result: {matches}");
+                    }
+                    return matches;
+                }
+                Err(e) => {
+                    eprintln!("Warning: Invalid regex pattern for {file_type}: {pattern} - {e}");
+                    return false;
+                }
+            }
         }
 
-        // Fall back to hardcoded binary patterns for common file types
-        self.match_binary_magic_pattern(file_type, "", buffer)
+        // No pattern found for this file type
+        false
     }
 
     /// Detect actual RIFF format type from buffer

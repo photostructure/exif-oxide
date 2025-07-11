@@ -39,16 +39,32 @@ const EXCLUDED_FILES: &[&str] = &[
 
 /// Load ExifTool reference snapshot for a file
 fn load_exiftool_snapshot(file_path: &str) -> Result<Value, Box<dyn std::error::Error>> {
-    // Convert file path to snapshot name (same logic as generate_snapshots.sh)
-    let relative_path = Path::new(file_path)
-        .strip_prefix(std::env::current_dir()?)
-        .unwrap_or(Path::new(file_path))
-        .to_string_lossy();
+    // First try to get the current directory to make path relative
+    let current_dir = std::env::current_dir()?;
 
+    // Convert file path to snapshot name (same logic as generate_exiftool_json.sh)
+    // The shell script uses realpath --relative-to="$PROJECT_ROOT"
+    let path = Path::new(file_path);
+    let relative_path = if path.is_absolute() {
+        path.strip_prefix(&current_dir)
+            .unwrap_or(path)
+            .to_string_lossy()
+    } else {
+        path.to_string_lossy()
+    };
+
+    // Replace any sequence of non-alphanumeric characters with single underscore
+    // This matches the sed command: sed 's/[^a-zA-Z0-9]\+/_/g'
     let snapshot_name = relative_path
         .chars()
-        .map(|c| if c.is_alphanumeric() { c } else { '_' })
-        .collect::<String>()
+        .fold(String::new(), |mut acc, c| {
+            if c.is_alphanumeric() {
+                acc.push(c);
+            } else if acc.is_empty() || !acc.ends_with('_') {
+                acc.push('_');
+            }
+            acc
+        })
         .trim_matches('_')
         .to_string();
 
@@ -405,13 +421,8 @@ fn normalize_gps_altitude_tolerance(value: &Value) -> Value {
 /// Compare ExifTool snapshot and exif-oxide output for a specific file
 fn compare_file_output(file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     // Load ExifTool reference snapshot
-    let exiftool_output = match load_exiftool_snapshot(file_path) {
-        Ok(output) => output,
-        Err(e) => {
-            println!("  Skipping: snapshot not found: {e}");
-            return Ok(());
-        }
-    };
+    let exiftool_output = load_exiftool_snapshot(file_path)
+        .map_err(|e| format!("Snapshot not found for {file_path}: {e}"))?;
 
     // Get exif-oxide output (test)
     let exif_oxide_output = match run_exif_oxide(file_path) {
@@ -471,14 +482,34 @@ fn test_exiftool_compatibility() {
         for entry in entries.flatten() {
             if let Some(filename) = entry.file_name().to_str() {
                 if filename.ends_with(".json") {
+                    // Reconstruct the original file path from the snapshot filename
+                    // The snapshot name is created by replacing non-alphanumeric chars with _
+                    // We need to reverse this process, but we can't perfectly reconstruct it
+                    // Instead, read the snapshot to get the relative path portion
                     let snapshot_path = entry.path();
-                    // Read the snapshot to get the SourceFile
                     if let Ok(content) = std::fs::read_to_string(&snapshot_path) {
                         if let Ok(json) = serde_json::from_str::<Value>(&content) {
                             if let Some(source_file) =
                                 json.get("SourceFile").and_then(|f| f.as_str())
                             {
-                                snapshot_files.push(source_file.to_string());
+                                // Extract the relative path portion from the absolute path
+                                let relative_part = if source_file.contains("/test-images/") {
+                                    source_file
+                                        .split("/test-images/")
+                                        .last()
+                                        .map(|s| format!("test-images/{s}"))
+                                } else if source_file.contains("/third-party/") {
+                                    source_file
+                                        .split("/third-party/")
+                                        .last()
+                                        .map(|s| format!("third-party/{s}"))
+                                } else {
+                                    None
+                                };
+
+                                if let Some(rel_path) = relative_part {
+                                    snapshot_files.push(rel_path);
+                                }
                             }
                         }
                     }
