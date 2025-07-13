@@ -1,6 +1,6 @@
 //! File type lookup tables generated from ExifTool's fileTypeLookup hash
 //!
-//! Generated at: Fri Jul 11 03:11:17 2025 GMT
+//! Generated at: Fri Jul 11 04:48:48 2025 GMT
 //! Total lookups: 343
 
 use std::collections::HashMap;

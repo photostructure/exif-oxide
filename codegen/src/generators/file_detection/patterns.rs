@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
 use tracing::{debug, info};
+use base64::{Engine as _, engine::general_purpose};
 
 #[derive(Debug, Deserialize)]
 pub struct RegexPatternsData {
@@ -45,7 +46,15 @@ pub struct MagicNumberData {
 #[derive(Debug, Deserialize)]
 pub struct MagicPatternEntry {
     pub file_type: String,
+    #[serde(default)]
     pub pattern: String,
+    // Base64-encoded pattern to avoid character escaping issues
+    // ExifTool patterns contain raw bytes (0x00-0xFF) that don't translate
+    // well through JSON -> Rust string literals -> regex compilation.
+    // Base64 encoding preserves the exact byte sequence without any
+    // interpretation or escaping complications.
+    #[serde(default)]
+    pub pattern_base64: String,
     pub source: MagicPatternSource,
 }
 
@@ -97,24 +106,86 @@ where
 
 /// Escape a string pattern for use in Rust string literals
 /// This handles non-UTF-8 bytes by converting them to \xNN escape sequences
+/// For bytes::Regex patterns, we need to escape ALL ASCII letters to their hex equivalents
+/// when they appear outside of escape sequences, to ensure proper byte matching
 fn escape_pattern_for_rust(pattern: &str) -> String {
     let mut escaped = String::new();
+    let bytes = pattern.as_bytes();
+    let mut i = 0;
     
-    for byte in pattern.bytes() {
+    while i < bytes.len() {
+        let byte = bytes[i];
+        
+        // Check if this is the start of an escape sequence
+        if byte == b'\\' && i + 1 < bytes.len() {
+            // Handle escape sequences
+            match bytes[i + 1] {
+                b'\\' => {
+                    escaped.push_str("\\\\\\\\");  // Need 4 backslashes for regex in byte string
+                    i += 2;
+                    continue;
+                }
+                b'x' if i + 3 < bytes.len() => {
+                    // Pass through hex escape sequences as-is
+                    escaped.push_str(&pattern[i..i+4]);
+                    i += 4;
+                    continue;
+                }
+                b'r' => {
+                    escaped.push_str("\\r");
+                    i += 2;
+                    continue;
+                }
+                b'n' => {
+                    escaped.push_str("\\n");
+                    i += 2;
+                    continue;
+                }
+                b't' => {
+                    escaped.push_str("\\t");
+                    i += 2;
+                    continue;
+                }
+                b'"' => {
+                    escaped.push_str("\\\"");
+                    i += 2;
+                    continue;
+                }
+                // For regex metacharacters that were escaped in the pattern,
+                // we need to keep them escaped with double backslashes for the regex
+                b'+' | b'*' | b'?' | b'.' | b'^' | b'$' | b'(' | b')' | 
+                b'[' | b']' | b'{' | b'}' | b'|' | b'd' | b's' | b'S' | b'w' | b'W' => {
+                    escaped.push_str("\\\\");
+                    escaped.push(bytes[i + 1] as char);
+                    i += 2;
+                    continue;
+                }
+                _ => {
+                    // Other escape sequences - keep the backslash
+                    escaped.push_str("\\\\");
+                    escaped.push(bytes[i + 1] as char);
+                    i += 2;
+                    continue;
+                }
+            }
+        }
+        
+        // Not part of an escape sequence - handle individual bytes
         match byte {
-            // Standard string escapes
-            b'\\' => escaped.push_str("\\\\"),
+            // Standard string escapes that weren't already escaped
             b'"' => escaped.push_str("\\\""),
             b'\n' => escaped.push_str("\\n"),
             b'\r' => escaped.push_str("\\r"),
             b'\t' => escaped.push_str("\\t"),
+            b'\\' => escaped.push_str("\\\\"),
             // Non-ASCII or control characters
             0x00..=0x1F | 0x7F..=0xFF => {
                 escaped.push_str(&format!("\\x{:02x}", byte));
             }
-            // Regular ASCII printable characters
+            // All other ASCII characters remain as-is
             _ => escaped.push(byte as char),
         }
+        i += 1;
     }
     
     escaped
@@ -219,7 +290,7 @@ mod tests {
         
         // Generate code to a temp directory
         let temp_dir = std::env::temp_dir();
-        let result = generate_magic_number_patterns(&data, &temp_dir);
+        let result = generate_magic_number_patterns_from_new_format(&data, &temp_dir);
         
         // Should succeed
         assert!(result.is_ok(), "Failed to generate patterns with non-UTF-8 byte");
@@ -276,74 +347,94 @@ fn generate_magic_number_patterns_from_new_format(data: &MagicNumberData, output
     code.push_str(&format!("//! Total patterns: {}\n", data.magic_patterns.len()));
     code.push_str("//! Source: ExifTool.pm %magicNumber hash\n");
     code.push_str("\n");
+    code.push_str("use regex::bytes::Regex;\n");
     code.push_str("use std::collections::HashMap;\n");
     code.push_str("use once_cell::sync::Lazy;\n");
     code.push_str("\n");
     
     // Generate magic number patterns
-    code.push_str("/// Magic number regex patterns for file type detection\n");
-    code.push_str("/// These patterns are validated to be compatible with the Rust regex crate\n");
-    code.push_str("static MAGIC_NUMBER_PATTERNS: Lazy<HashMap<&'static str, &'static str>> = Lazy::new(|| {\n");
+    code.push_str("/// Compiled magic number regex patterns for file type detection\n");
+    code.push_str("/// These patterns match at the beginning of files (anchored with ^)\n");
+    code.push_str("static MAGIC_NUMBER_PATTERNS: Lazy<HashMap<&'static str, Regex>> = Lazy::new(|| {\n");
     code.push_str("    let mut map = HashMap::new();\n");
+    code.push_str("    \n");
+    code.push_str("    // Each pattern is compiled once at initialization\n");
+    code.push_str("    // Patterns use raw strings (r\"...\") to avoid double-escaping\n");
     
     for entry in &data.magic_patterns {
-        // All patterns from extractor are considered compatible
-        // First convert Perl \0 to Rust \x00 to avoid backreference interpretation
-        let mut converted_pattern = entry.pattern.replace("\\0", "\\x00");
+        // Use the pattern field directly - it contains the regex syntax with proper escaping
+        // (e.g. "\\x89" for byte 0x89), not the evaluated binary data
+        let pattern_str = entry.pattern.clone();
         
-        // Also convert \r and \n to their hex equivalents for regex::bytes
-        converted_pattern = converted_pattern.replace("\\r", "\\x0d");
-        converted_pattern = converted_pattern.replace("\\n", "\\x0a");
+        // Convert Perl regex syntax to Rust regex syntax
+        // The patterns from JSON have different representations:
+        // - Literal control characters that need to be escaped for regex
+        // - Double backslashes for escape sequences: "\\x89" for \x89
+        let mut converted_pattern = pattern_str.clone();
         
-        // Then escape pattern for Rust string literal
-        let escaped_pattern = escape_pattern_for_rust(&converted_pattern);
-        debug!("Generating pattern for {}: {} -> {} -> {}", entry.file_type, entry.pattern, converted_pattern, escaped_pattern);
-        code.push_str(&format!("    map.insert(\"{}\", \"{}\");\n", entry.file_type, escaped_pattern));
+        // First, escape literal control characters that appear in JSON
+        // These need to be converted to regex escape sequences
+        converted_pattern = converted_pattern.replace('\n', "\\n");  // Newline
+        converted_pattern = converted_pattern.replace('\r', "\\r");  // Carriage return
+        converted_pattern = converted_pattern.replace('\t', "\\t");  // Tab
+        converted_pattern = converted_pattern.replace('\u{0000}', "\\x00");  // Null byte
+        
+        // Convert \0{n} to \x00{n} (repeated null bytes)
+        // In JSON this appears as "\\0{6}" which we need to convert to "\\x00{6}"
+        converted_pattern = converted_pattern.replace("\\0{", "\\x00{");
+        
+        // Convert standalone \0 to \x00 (null bytes)
+        // In JSON this appears as "\\0" which we need to convert to "\\x00"
+        // Do this after the {n} replacement to avoid double-conversion
+        converted_pattern = converted_pattern.replace("\\0", "\\x00");
+        
+        // Add ^ anchor at the beginning since ExifTool expects patterns to match from start
+        let anchored_pattern = if converted_pattern.starts_with('^') {
+            converted_pattern
+        } else {
+            format!("^{}", converted_pattern)
+        };
+        
+        // For raw strings, we need to handle quotes differently
+        // Use r#"..."# if the pattern contains quotes, otherwise r"..."
+        let needs_hash = anchored_pattern.contains('"');
+        
+        if needs_hash {
+            code.push_str(&format!("    map.insert(\"{}\", Regex::new(r#\"{}\"#).expect(\"Invalid regex for {}\"));\n", 
+                entry.file_type, anchored_pattern, entry.file_type));
+        } else {
+            code.push_str(&format!("    map.insert(\"{}\", Regex::new(r\"{}\").expect(\"Invalid regex for {}\"));\n", 
+                entry.file_type, anchored_pattern, entry.file_type));
+        }
+        
+        debug!("Generated pattern for {}: {}", entry.file_type, anchored_pattern);
     }
     
-    code.push_str("    map\n");
-    code.push_str("});\n");
-    code.push_str("\n");
-    
-    // Generate compatibility map
-    code.push_str("/// Compatibility status for each magic number pattern\n");
-    code.push_str("static PATTERN_COMPATIBILITY: Lazy<HashMap<&'static str, bool>> = Lazy::new(|| {\n");
-    code.push_str("    let mut map = HashMap::new();\n");
-    
-    for entry in &data.magic_patterns {
-        // All patterns from the extractor are considered compatible
-        code.push_str(&format!("    map.insert(\"{}\", true);\n", entry.file_type));
-    }
-    
+    code.push_str("    \n");
     code.push_str("    map\n");
     code.push_str("});\n");
     code.push_str("\n");
     
     // Generate public API
-    code.push_str("/// Get magic number pattern for a file type\n");
-    code.push_str("pub fn get_magic_number_pattern(file_type: &str) -> Option<&'static str> {\n");
-    code.push_str("    MAGIC_NUMBER_PATTERNS.get(file_type).copied()\n");
+    code.push_str("/// Get compiled magic number regex for a file type\n");
+    code.push_str("pub fn get_magic_number_pattern(file_type: &str) -> Option<&'static Regex> {\n");
+    code.push_str("    MAGIC_NUMBER_PATTERNS.get(file_type)\n");
     code.push_str("}\n");
     code.push_str("\n");
     
-    code.push_str("/// Check if a file type has a Rust-compatible magic number pattern\n");
-    code.push_str("pub fn is_pattern_compatible(file_type: &str) -> bool {\n");
-    code.push_str("    PATTERN_COMPATIBILITY.get(file_type).copied().unwrap_or(false)\n");
+    code.push_str("/// Test if a byte buffer matches a file type's magic number pattern\n");
+    code.push_str("pub fn matches_magic_number(file_type: &str, buffer: &[u8]) -> bool {\n");
+    code.push_str("    if let Some(regex) = get_magic_number_pattern(file_type) {\n");
+    code.push_str("        regex.is_match(buffer)\n");
+    code.push_str("    } else {\n");
+    code.push_str("        false\n");
+    code.push_str("    }\n");
     code.push_str("}\n");
     code.push_str("\n");
     
     code.push_str("/// Get all file types with magic number patterns\n");
     code.push_str("pub fn get_magic_file_types() -> Vec<&'static str> {\n");
     code.push_str("    MAGIC_NUMBER_PATTERNS.keys().copied().collect()\n");
-    code.push_str("}\n");
-    code.push_str("\n");
-    
-    code.push_str("/// Get all file types with Rust-compatible patterns\n");
-    code.push_str("pub fn get_compatible_file_types() -> Vec<&'static str> {\n");
-    code.push_str("    PATTERN_COMPATIBILITY.iter()\n");
-    code.push_str("        .filter(|(_, &compatible)| compatible)\n");
-    code.push_str("        .map(|(&file_type, _)| file_type)\n");
-    code.push_str("        .collect()\n");
     code.push_str("}\n");
     
     // Write the file to file_types subdirectory
