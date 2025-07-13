@@ -257,38 +257,12 @@ impl FileTypeDetector {
         }
 
         // Use generated magic number patterns from ExifTool's %magicNumber hash
-        // ExifTool.pm:912-1027 - patterns extracted and properly escaped for Rust
-        use crate::generated::file_types::magic_number_patterns::get_magic_number_pattern;
-        use regex::bytes::Regex;
+        // ExifTool.pm:912-1027 - patterns extracted and compiled as regex::bytes::Regex
+        use crate::generated::file_types::magic_number_patterns::matches_magic_number;
 
-        if let Some(pattern) = get_magic_number_pattern(file_type) {
-            // Debug logging for PNG detection
-            if file_type == "PNG" {
-                eprintln!("DEBUG: PNG pattern: {pattern}");
-                eprintln!(
-                    "DEBUG: Buffer first 16 bytes: {:?}",
-                    &buffer[..buffer.len().min(16)]
-                );
-            }
-
-            // Compile and test the regex pattern against the buffer
-            match Regex::new(pattern) {
-                Ok(regex) => {
-                    let matches = regex.is_match(buffer);
-                    if file_type == "PNG" {
-                        eprintln!("DEBUG: PNG regex match result: {matches}");
-                    }
-                    return matches;
-                }
-                Err(e) => {
-                    eprintln!("Warning: Invalid regex pattern for {file_type}: {pattern} - {e}");
-                    return false;
-                }
-            }
-        }
-
-        // No pattern found for this file type
-        false
+        // The patterns are now pre-compiled regex::bytes::Regex objects
+        // They already include ^ anchoring and handle binary data correctly
+        matches_magic_number(file_type, buffer)
     }
 
     /// Detect actual RIFF format type from buffer
