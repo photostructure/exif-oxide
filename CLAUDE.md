@@ -110,12 +110,13 @@ ExifTool releases new versions monthly. The more our code can be generated autom
 Be especially vigilant for these patterns that should NEVER be manually maintained:
 
 ❌ **Manual lookup tables** (should be generated):
+
 ```rust
 // BAD - This should be generated from ExifTool!
 fn canon_white_balance_lookup(value: u8) -> &'static str {
     match value {
         0 => "Auto",
-        1 => "Daylight", 
+        1 => "Daylight",
         2 => "Cloudy",
         3 => "Tungsten",
         _ => "Unknown",
@@ -124,6 +125,7 @@ fn canon_white_balance_lookup(value: u8) -> &'static str {
 ```
 
 ✅ **Using generated tables**:
+
 ```rust
 // GOOD - Using simple table extraction framework
 use crate::generated::canon::white_balance::lookup_canon_white_balance;
@@ -159,8 +161,9 @@ See [EXIFTOOL-INTEGRATION.md](docs/design/EXIFTOOL-INTEGRATION.md#simple-table-e
 #### Red Flags
 
 If you see ANY of these, immediately suggest codegen extraction:
+
 - Files with hundreds of manual constant definitions
-- Match statements mapping numbers to camera/lens names  
+- Match statements mapping numbers to camera/lens names
 - Static arrays of string literals that look like they came from ExifTool
 - TODO comments about "add more lens types when we have time"
 - Version-specific model lists that need manual updates
