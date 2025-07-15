@@ -103,29 +103,42 @@ impl FileTypeDetector {
 
         // Phase 3: Magic number validation against candidates
         // ExifTool.pm:2960-2975 - Test candidates against magic numbers
+        // CRITICAL: Test all candidates before giving up, per TRUST-EXIFTOOL.md
+        let mut matched_type = None;
+        
         for candidate in &candidates {
             // Check if this is a weak magic type that defers to extension
             if WEAK_MAGIC_TYPES.contains(&candidate.as_str()) {
-                // Skip magic testing for weak magic types - trust extension
-                return self.build_result(candidate, path);
+                // Weak magic types are fallback only if no strong magic matches
+                // ExifTool.pm:2970 - "next if $weakMagic{$type} and defined $recognizedExt"
+                if matched_type.is_none() {
+                    matched_type = Some(candidate.clone());
+                }
+                continue;
             }
 
             if self.validate_magic_number(candidate, &buffer) {
-                // Special handling for MOV format to determine specific subtype
-                // ExifTool QuickTime.pm:9868-9877 - ftyp brand determines actual file type
-                let detected_type = if candidate == "MOV" {
-                    self.determine_mov_subtype(&buffer)
-                        .unwrap_or_else(|| candidate.clone())
-                } else if self.is_riff_based_format(candidate) {
-                    // For RIFF-based formats, detect the actual type from the header
-                    // ExifTool RIFF.pm:2038-2039 - Sets file type based on RIFF format identifier
-                    self.detect_riff_type(&buffer)
-                        .unwrap_or_else(|| candidate.clone())
-                } else {
-                    candidate.clone()
-                };
-                return self.build_result(&detected_type, path);
+                // Strong magic match - use this type
+                matched_type = Some(candidate.clone());
+                break;
             }
+        }
+        
+        if let Some(file_type) = matched_type {
+            // Special handling for MOV format to determine specific subtype
+            // ExifTool QuickTime.pm:9868-9877 - ftyp brand determines actual file type
+            let detected_type = if file_type == "MOV" {
+                self.determine_mov_subtype(&buffer)
+                    .unwrap_or_else(|| file_type.clone())
+            } else if self.is_riff_based_format(&file_type) {
+                // For RIFF-based formats, detect the actual type from the header
+                // ExifTool RIFF.pm:2038-2039 - Sets file type based on RIFF format identifier
+                self.detect_riff_type(&buffer)
+                    .unwrap_or_else(|| file_type.clone())
+            } else {
+                file_type
+            };
+            return self.build_result(&detected_type, path);
         }
 
         // Phase 4: Last-ditch recovery - scan for embedded signatures
@@ -396,6 +409,13 @@ impl FileTypeDetector {
         if !buffer.starts_with(b"II") && !buffer.starts_with(b"MM") {
             return false;
         }
+        
+        // CRITICAL: CR3 is MOV-based, not TIFF-based! Check for MOV signature first
+        // ExifTool.pm - CR3 uses QuickTime.pm not TIFF processing
+        if file_type == "CR3" && buffer.len() >= 12 && &buffer[4..8] == b"ftyp" {
+            // This is a MOV-based file, not TIFF - return false to prevent TIFF processing
+            return false;
+        }
 
         // Extract byte order and TIFF identifier
         let little_endian = buffer.starts_with(b"II");
@@ -472,6 +492,7 @@ impl FileTypeDetector {
             }
             "CR3" => {
                 // CR3 is MOV-based, not TIFF-based - should not reach here
+                // This case exists only for completeness - validate_tiff_raw_format checks MOV signature
                 false
             }
             _ => false,
