@@ -26,10 +26,15 @@ The ExifTool integration system uses a hybrid approach combining automated code 
 
 ## System Architecture
 
-```
-ExifTool Source → Perl Extractors → JSON → Rust Codegen → Generated Code
-                                                      ↓
-                Manual Implementations ←← Runtime Registry ←← Function References
+```mermaid
+flowchart
+    A[ExifTool Source] --> B[Perl Extractors]
+    B --> C[JSON]
+    C --> D[Rust Codegen]
+    D --> E[Generated Code]
+    E -->|Function References| F[Runtime Registry]
+    F -->|Manual Implementations| G[Manual Implementations]
+    G -.-> F
 ```
 
 ### Build System
@@ -289,13 +294,13 @@ The `escape_pattern_for_rust` function ensures all patterns are valid Rust strin
 // Handles non-UTF-8 bytes like 0xFB in BPG magic number
 fn escape_pattern_for_rust(pattern: &str) -> String {
     let mut escaped = String::new();
-    
+
     for byte in pattern.bytes() {
         match byte {
             b'\\' => escaped.push_str("\\\\"),
             b'"' => escaped.push_str("\\\""),
             b'\n' => escaped.push_str("\\n"),
-            b'\r' => escaped.push_str("\\r"), 
+            b'\r' => escaped.push_str("\\r"),
             b'\t' => escaped.push_str("\\t"),
             // Non-ASCII or control characters become \xNN
             0x00..=0x1F | 0x7F..=0xFF => {
@@ -343,12 +348,14 @@ cargo run -p codegen     # Run code generation directly
 #### Architecture Improvements
 
 **Old System**:
+
 - Complex Makefile with parallel extraction logic
 - Perl scripts read JSON configs
 - Combined extraction → split-extractions → individual files
 - Hardcoded module lists in Rust
 
 **New System**:
+
 - Rust orchestrates everything
 - Simple, dumb Perl scripts with explicit arguments
 - Direct output of individual JSON files
