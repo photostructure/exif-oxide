@@ -350,20 +350,14 @@ fn generate_magic_number_patterns_from_new_format(data: &MagicNumberData, output
     code.push_str("//! IMPORTANT: These patterns use bytes::RegexBuilder with unicode(false)\n");
     code.push_str("//! to ensure hex escapes like \\x89 match raw bytes, not Unicode codepoints.\n");
     code.push_str("\n");
-    code.push_str("use regex::bytes::{Regex, RegexBuilder};\n");
-    code.push_str("use std::collections::HashMap;\n");
+    code.push_str("use crate::file_types::lazy_regex::LazyRegexMap;\n");
     code.push_str("use once_cell::sync::Lazy;\n");
+    code.push_str("use regex::bytes::Regex;\n");
     code.push_str("\n");
     
-    // Generate magic number patterns
-    code.push_str("/// Compiled magic number regex patterns for file type detection\n");
-    code.push_str("/// These patterns match at the beginning of files (anchored with ^)\n");
-    code.push_str("/// Unicode mode is disabled to ensure hex escapes match raw bytes\n");
-    code.push_str("static MAGIC_NUMBER_PATTERNS: Lazy<HashMap<&'static str, Regex>> = Lazy::new(|| {\n");
-    code.push_str("    let mut map = HashMap::new();\n");
-    code.push_str("    \n");
-    code.push_str("    // Each pattern is compiled once at initialization\n");
-    code.push_str("    // Unicode mode is disabled so \\x89 matches byte 0x89, not U+0089\n");
+    // Generate pattern storage - just the patterns as strings, not compiled
+    code.push_str("/// Magic number patterns from ExifTool's %magicNumber hash\n");
+    code.push_str("static PATTERN_DATA: &[(&str, &str)] = &[\n");
     
     for entry in &data.magic_patterns {
         // Use the pattern field directly - it contains the regex syntax with proper escaping
@@ -406,38 +400,40 @@ fn generate_magic_number_patterns_from_new_format(data: &MagicNumberData, output
             .replace('"', "\\\"");  // Escape quotes
         
         code.push_str(&format!(
-            "    map.insert(\"{}\", RegexBuilder::new(\"{}\").unicode(false).build().expect(\"Invalid regex for {}\"));\n", 
-            entry.file_type, escaped_pattern, entry.file_type
+            "    (\"{}\", \"{}\"),\n", 
+            entry.file_type, escaped_pattern
         ));
         
         debug!("Generated pattern for {}: {}", entry.file_type, anchored_pattern);
     }
     
-    code.push_str("    \n");
-    code.push_str("    map\n");
+    code.push_str("];\n");
+    code.push_str("\n");
+    
+    // Create the lazy regex map
+    code.push_str("/// Lazy-compiled regex patterns for magic number detection\n");
+    code.push_str("static MAGIC_PATTERNS: Lazy<LazyRegexMap> = Lazy::new(|| {\n");
+    code.push_str("    LazyRegexMap::new(PATTERN_DATA)\n");
     code.push_str("});\n");
     code.push_str("\n");
     
-    // Generate public API
-    code.push_str("/// Get compiled magic number regex for a file type\n");
-    code.push_str("pub fn get_magic_number_pattern(file_type: &str) -> Option<&'static Regex> {\n");
-    code.push_str("    MAGIC_NUMBER_PATTERNS.get(file_type)\n");
-    code.push_str("}\n");
-    code.push_str("\n");
-    
+    // Generate public API using the LazyRegexMap
     code.push_str("/// Test if a byte buffer matches a file type's magic number pattern\n");
     code.push_str("pub fn matches_magic_number(file_type: &str, buffer: &[u8]) -> bool {\n");
-    code.push_str("    if let Some(regex) = get_magic_number_pattern(file_type) {\n");
-    code.push_str("        regex.is_match(buffer)\n");
-    code.push_str("    } else {\n");
-    code.push_str("        false\n");
-    code.push_str("    }\n");
+    code.push_str("    MAGIC_PATTERNS.matches(file_type, buffer)\n");
     code.push_str("}\n");
     code.push_str("\n");
     
     code.push_str("/// Get all file types with magic number patterns\n");
     code.push_str("pub fn get_magic_file_types() -> Vec<&'static str> {\n");
-    code.push_str("    MAGIC_NUMBER_PATTERNS.keys().copied().collect()\n");
+    code.push_str("    MAGIC_PATTERNS.file_types()\n");
+    code.push_str("}\n");
+    code.push_str("\n");
+    
+    code.push_str("/// Get compiled magic number regex for a file type\n");
+    code.push_str("/// Uses the cached version if available, compiles and caches if not\n");
+    code.push_str("pub fn get_magic_number_pattern(file_type: &str) -> Option<Regex> {\n");
+    code.push_str("    MAGIC_PATTERNS.get_regex(file_type)\n");
     code.push_str("}\n");
     
     // Write the file to file_types subdirectory
