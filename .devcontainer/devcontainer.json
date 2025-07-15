@@ -1,0 +1,58 @@
+{
+  "name": "exif-oxide",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Anthropic.claude-code",
+        "bierner.markdown-mermaid",
+        "dnut.rewrap-revived",
+        "ms-vscode.cmake-tools",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-vscode.cpptools",
+        "ms-vscode.makefile-tools",
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "usernamehw.errorlens",
+        "vadimcn.vscode-lldb"
+      ],
+      "settings": {
+        "rust-analyzer.cargo.features": "all",
+        "rust-analyzer.checkOnSave.command": "clippy",
+        "editor.formatOnSave": true,
+        "[rust]": {
+          "editor.defaultFormatter": "rust-lang.rust-analyzer"
+        }
+      }
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true,
+      "upgradePackages": true
+    }
+  },
+  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
+  "postCreateCommand": ".devcontainer/post-create.sh",
+  "remoteUser": "vscode",
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.cargo/registry,target=/usr/local/cargo/registry,type=bind,consistency=cached"
+  ],
+  "runArgs": [
+    "--cap-add=SYS_PTRACE",
+    "--cap-add=NET_ADMIN",
+    "--security-opt",
+    "seccomp=unconfined",
+    "--privileged"
+  ],
+  "containerEnv": {
+    "RUST_BACKTRACE": "1"
+  }
+}
