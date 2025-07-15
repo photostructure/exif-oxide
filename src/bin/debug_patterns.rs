@@ -30,9 +30,9 @@ fn main() {
         println!("\nChecking available patterns...");
         for key in ["JPEG", "GIF", "BMP", "TIFF", "PNG"] {
             if get_magic_number_pattern(key).is_some() {
-                println!("  {} pattern exists", key);
+                println!("  {key} pattern exists");
             } else {
-                println!("  {} pattern NOT FOUND", key);
+                println!("  {key} pattern NOT FOUND");
             }
         }
     }

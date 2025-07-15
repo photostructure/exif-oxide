@@ -346,8 +346,11 @@ fn generate_magic_number_patterns_from_new_format(data: &MagicNumberData, output
     code.push_str(&format!("//! Generated at: {}\n", data.extracted_at));
     code.push_str(&format!("//! Total patterns: {}\n", data.magic_patterns.len()));
     code.push_str("//! Source: ExifTool.pm %magicNumber hash\n");
+    code.push_str("//!\n");
+    code.push_str("//! IMPORTANT: These patterns use bytes::RegexBuilder with unicode(false)\n");
+    code.push_str("//! to ensure hex escapes like \\x89 match raw bytes, not Unicode codepoints.\n");
     code.push_str("\n");
-    code.push_str("use regex::bytes::Regex;\n");
+    code.push_str("use regex::bytes::{Regex, RegexBuilder};\n");
     code.push_str("use std::collections::HashMap;\n");
     code.push_str("use once_cell::sync::Lazy;\n");
     code.push_str("\n");
@@ -355,11 +358,12 @@ fn generate_magic_number_patterns_from_new_format(data: &MagicNumberData, output
     // Generate magic number patterns
     code.push_str("/// Compiled magic number regex patterns for file type detection\n");
     code.push_str("/// These patterns match at the beginning of files (anchored with ^)\n");
+    code.push_str("/// Unicode mode is disabled to ensure hex escapes match raw bytes\n");
     code.push_str("static MAGIC_NUMBER_PATTERNS: Lazy<HashMap<&'static str, Regex>> = Lazy::new(|| {\n");
     code.push_str("    let mut map = HashMap::new();\n");
     code.push_str("    \n");
     code.push_str("    // Each pattern is compiled once at initialization\n");
-    code.push_str("    // Patterns use raw strings (r\"...\") to avoid double-escaping\n");
+    code.push_str("    // Unicode mode is disabled so \\x89 matches byte 0x89, not U+0089\n");
     
     for entry in &data.magic_patterns {
         // Use the pattern field directly - it contains the regex syntax with proper escaping
@@ -395,17 +399,16 @@ fn generate_magic_number_patterns_from_new_format(data: &MagicNumberData, output
             format!("^{}", converted_pattern)
         };
         
-        // For raw strings, we need to handle quotes differently
-        // Use r#"..."# if the pattern contains quotes, otherwise r"..."
-        let needs_hash = anchored_pattern.contains('"');
+        // Escape the pattern for use in a Rust string literal
+        // We need to escape backslashes and quotes
+        let escaped_pattern = anchored_pattern
+            .replace('\\', "\\\\")  // Escape backslashes
+            .replace('"', "\\\"");  // Escape quotes
         
-        if needs_hash {
-            code.push_str(&format!("    map.insert(\"{}\", Regex::new(r#\"{}\"#).expect(\"Invalid regex for {}\"));\n", 
-                entry.file_type, anchored_pattern, entry.file_type));
-        } else {
-            code.push_str(&format!("    map.insert(\"{}\", Regex::new(r\"{}\").expect(\"Invalid regex for {}\"));\n", 
-                entry.file_type, anchored_pattern, entry.file_type));
-        }
+        code.push_str(&format!(
+            "    map.insert(\"{}\", RegexBuilder::new(\"{}\").unicode(false).build().expect(\"Invalid regex for {}\"));\n", 
+            entry.file_type, escaped_pattern, entry.file_type
+        ));
         
         debug!("Generated pattern for {}: {}", entry.file_type, anchored_pattern);
     }
