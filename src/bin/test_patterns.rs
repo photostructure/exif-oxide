@@ -15,7 +15,7 @@ fn main() {
 
     // Test PNG pattern
     let png_match = matches_magic_number("PNG", &buffer);
-    println!("PNG pattern matches: {}", png_match);
+    println!("PNG pattern matches: {png_match}");
 
     // Test other patterns
     println!(
@@ -29,7 +29,7 @@ fn main() {
 
     // Test with synthetic PNG data
     let png_data = vec![0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
-    println!("\nSynthetic PNG data: {:02x?}", png_data);
+    println!("\nSynthetic PNG data: {png_data:02x?}");
     println!(
         "Synthetic PNG matches: {}",
         matches_magic_number("PNG", &png_data)

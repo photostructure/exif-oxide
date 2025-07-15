@@ -4,7 +4,7 @@ fn main() {
     // Test the exact PNG pattern from claude-regex.md
     let claude_pattern = r"^(\x89P|\x8aM|\x8bJ)NG\r\n\x1a\n";
 
-    println!("Testing pattern from claude-regex.md: {}", claude_pattern);
+    println!("Testing pattern from claude-regex.md: {claude_pattern}");
 
     match Regex::new(claude_pattern) {
         Ok(regex) => {
@@ -12,7 +12,7 @@ fn main() {
 
             // Test with real PNG data
             let png_data = vec![0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
-            println!("\nTesting with PNG data: {:02x?}", png_data);
+            println!("\nTesting with PNG data: {png_data:02x?}");
             println!("Pattern matches: {}", regex.is_match(&png_data));
 
             // Test each alternative
@@ -41,7 +41,7 @@ fn main() {
             println!("Pattern matches: {}", no_anchor_regex.is_match(&png_data));
         }
         Err(e) => {
-            println!("✗ Pattern FAILED to compile: {}", e);
+            println!("✗ Pattern FAILED to compile: {e}");
         }
     }
 
@@ -51,12 +51,12 @@ fn main() {
     let simple_pattern = r"^\x89PNG";
     match Regex::new(simple_pattern) {
         Ok(regex) => {
-            println!("Simple pattern {} compiles!", simple_pattern);
+            println!("Simple pattern {simple_pattern} compiles!");
             let data = vec![0x89, 0x50, 0x4e, 0x47]; // \x89PNG
             println!("Matches {:02x?}: {}", data, regex.is_match(&data));
         }
         Err(e) => {
-            println!("Simple pattern FAILED: {}", e);
+            println!("Simple pattern FAILED: {e}");
         }
     }
 }

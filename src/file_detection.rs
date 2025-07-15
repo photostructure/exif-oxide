@@ -529,6 +529,7 @@ impl FileTypeDetector {
 
     /// Validate XMP pattern: \0{0,3}(\xfe\xff|\xff\xfe|\xef\xbb\xbf)?\0{0,3}\s*<
     /// ExifTool.pm:1018 - XMP files can start with optional BOM and null bytes, then whitespace, then '<'
+    #[allow(dead_code)]
     fn validate_xmp_pattern(&self, buffer: &[u8]) -> bool {
         if buffer.is_empty() {
             return false;
