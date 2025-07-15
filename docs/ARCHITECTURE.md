@@ -81,27 +81,31 @@ ExifTool Source → [Rust Orchestration] → Perl Extractors → JSON → Genera
 ### Key Components
 
 1. **ExifTool Integration** ([design/EXIFTOOL-INTEGRATION.md](design/EXIFTOOL-INTEGRATION.md))
+
    - Code generation for tag tables and lookups
    - Manual implementation patterns
    - PrintConv/ValueConv functions
    - Manufacturer-specific processors
 
-3. **Public API** ([design/API-DESIGN.md](design/API-DESIGN.md))
+2. **Public API** ([design/API-DESIGN.md](design/API-DESIGN.md))
+
    - Streaming-first design
    - TagEntry with value/print fields
    - ExifTool compatibility
 
-4. **State Management** ([STATE-MANAGEMENT.md](STATE-MANAGEMENT.md))
+3. **State Management** ([STATE-MANAGEMENT.md](STATE-MANAGEMENT.md))
+
    - Stateful ExifReader object
    - DataMember dependencies
    - Recursion prevention
 
-5. **Processor Dispatch** ([PROCESSOR-PROC-DISPATCH.md](PROCESSOR-PROC-DISPATCH.md))
+4. **Processor Dispatch** ([PROCESSOR-PROC-DISPATCH.md](PROCESSOR-PROC-DISPATCH.md))
+
    - Conditional processor selection
    - Runtime evaluation
    - Manufacturer-specific routing
 
-6. **Offset Management** ([OFFSET-BASE-MANAGEMENT.md](OFFSET-BASE-MANAGEMENT.md))
+5. **Offset Management** ([OFFSET-BASE-MANAGEMENT.md](OFFSET-BASE-MANAGEMENT.md))
    - Complex offset calculations
    - Manufacturer-specific schemes
    - Base offset fixing
@@ -119,6 +123,7 @@ See [guides/DEVELOPMENT-WORKFLOW.md](guides/DEVELOPMENT-WORKFLOW.md) for detaile
 ## Implementation Status
 
 ### Completed
+
 - Basic JPEG/EXIF parsing
 - PrintConv infrastructure
 - Canon MakerNote support
@@ -127,9 +132,11 @@ See [guides/DEVELOPMENT-WORKFLOW.md](guides/DEVELOPMENT-WORKFLOW.md) for detaile
 - ProcessBinaryData for simple formats
 
 ### In Progress
+
 - See [MILESTONES.md](MILESTONES.md) for current work
 
 ### Future
+
 - Additional manufacturers (Nikon, Panasonic)
 - Video metadata (MP4, QuickTime)
 - Write support
@@ -140,6 +147,7 @@ See [guides/DEVELOPMENT-WORKFLOW.md](guides/DEVELOPMENT-WORKFLOW.md) for detaile
 ### Manual Implementation Over Code Generation
 
 We manually implement complex logic because:
+
 - Perl expressions are too complex to parse reliably
 - Manual code can reference ExifTool source directly
 - Easier to debug and understand
@@ -148,6 +156,7 @@ We manually implement complex logic because:
 ### Runtime Fallback Over Compile-Time Stubs
 
 Missing implementations return raw values instead of panicking:
+
 - System remains usable during development
 - Clear visibility into what's missing
 - No stub function explosion
@@ -155,6 +164,7 @@ Missing implementations return raw values instead of panicking:
 ### Streaming Over In-Memory
 
 Binary data uses streaming references:
+
 - Handles large embedded images/videos
 - Minimal memory footprint
 - Efficient for partial extraction
@@ -173,19 +183,23 @@ Binary data uses streaming references:
 ## Documentation Guide
 
 ### Design Documents
+
 - [API Design](design/API-DESIGN.md) - Public API structure
 - [ExifTool Integration](design/EXIFTOOL-INTEGRATION.md) - Unified code generation and implementation guide
 
 ### Guides
+
 - [Engineer's Guide](ENGINEER-GUIDE.md) - Getting started with the codebase
 - [Development Workflow](guides/DEVELOPMENT-WORKFLOW.md) - Day-to-day development
 - [ExifTool Update Workflow](guides/EXIFTOOL-UPDATE-WORKFLOW.md) - Updating to new ExifTool versions
 
 ### Milestones
+
 - [Current Milestones](MILESTONES.md) - Active development work
 - [Completed Milestones](archive/DONE-MILESTONES.md) - Historical progress
 
 ### Technical Deep Dives
+
 - [State Management](STATE-MANAGEMENT.md) - How state is managed during processing
 - [Processor Dispatch](PROCESSOR-PROC-DISPATCH.md) - Conditional processor selection
 - [Offset Management](OFFSET-BASE-MANAGEMENT.md) - Complex offset calculations
