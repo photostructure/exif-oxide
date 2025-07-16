@@ -12,7 +12,7 @@ use std::sync::LazyLock;
 // Description: EXIF Orientation tag PrintConv values
 
 /// Static data for exif orientation tag printconv values lookup (8 entries)
-static ORIENTATION_DATA: &[(u8, &str)] = &[
+static ORIENTATION_DATA: &[(u8, &'static str)] = &[
     (1, "Horizontal (normal)"),
     (2, "Mirror horizontal"),
     (3, "Rotate 180"),

@@ -4,6 +4,8 @@
 //! DO NOT EDIT MANUALLY - changes will be overwritten.
 
 use super::common::{TagDef, TagFormat};
+use std::collections::HashMap;
+use std::sync::LazyLock;
 
 /// Special and mixed-group tags
 pub static SPECIAL_TAGS: &[TagDef] = &[
