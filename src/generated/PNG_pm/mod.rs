@@ -11,8 +11,7 @@ use std::sync::LazyLock;
 // Source: ExifTool Image::ExifTool::PNG %isDatChunk
 // Description: PNG chunks containing image data (IDAT, JDAT, JDAA)
 
-/// Static data for png chunks containing image data (idat, jdat, jdaa) set
-/// Source: ExifTool Image::ExifTool::PNG %isDatChunk (3 entries)
+/// Static data for png chunks containing image data (idat, jdat, jdaa) set (3 entries)
 static PNG_DATA_CHUNKS_DATA: &[&str] = &["IDAT", "JDAA", "JDAT"];
 
 /// PNG chunks containing image data (IDAT, JDAT, JDAA) boolean set table
@@ -29,8 +28,7 @@ pub fn is_png_data_chunks(file_type: &str) -> bool {
 // Source: ExifTool Image::ExifTool::PNG %isTxtChunk
 // Description: PNG chunks containing text metadata (tEXt, zTXt, iTXt, eXIf)
 
-/// Static data for png chunks containing text metadata (text, ztxt, itxt, exif) set
-/// Source: ExifTool Image::ExifTool::PNG %isTxtChunk (4 entries)
+/// Static data for png chunks containing text metadata (text, ztxt, itxt, exif) set (4 entries)
 static PNG_TEXT_CHUNKS_DATA: &[&str] = &["eXIf", "iTXt", "tEXt", "zTXt"];
 
 /// PNG chunks containing text metadata (tEXt, zTXt, iTXt, eXIf) boolean set table
@@ -47,8 +45,7 @@ pub fn is_png_text_chunks(file_type: &str) -> bool {
 // Source: ExifTool Image::ExifTool::PNG %noLeapFrog
 // Description: PNG chunks that shouldn't be moved across during editing
 
-/// Static data for png chunks that shouldn't be moved across during editing set
-/// Source: ExifTool Image::ExifTool::PNG %noLeapFrog (12 entries)
+/// Static data for png chunks that shouldn't be moved across during editing set (12 entries)
 static PNG_NO_LEAPFROG_CHUNKS_DATA: &[&str] = &[
     "BASI", "CLON", "DHDR", "IEND", "IHDR", "JHDR", "MAGN", "MEND", "PAST", "SAVE", "SEEK", "SHOW",
 ];

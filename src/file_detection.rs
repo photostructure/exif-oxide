@@ -1044,11 +1044,12 @@ mod tests {
     }
 
     #[test]
-    fn test_riff_format_mismatch() {
+    fn test_riff_format_content_detection() {
         let detector = FileTypeDetector::new();
         let path = Path::new("test.avi"); // AVI extension
 
-        // But contains WAV data - should fail validation
+        // But contains WAV data - should detect as WAV based on content
+        // Following ExifTool's behavior: content takes precedence over extension
         let mut wav_data = Vec::new();
         wav_data.extend_from_slice(b"RIFF"); // RIFF magic
         wav_data.extend_from_slice(&[0x24, 0x00, 0x00, 0x00]); // File size
@@ -1056,8 +1057,17 @@ mod tests {
         wav_data.extend_from_slice(b"fmt "); // Format chunk
         let mut cursor = Cursor::new(wav_data);
 
-        // Should fail since extension says AVI but content is WAV
+        // Should detect as WAV based on content, following ExifTool's behavior
         let result = detector.detect_file_type(path, &mut cursor);
-        assert!(matches!(result, Err(FileDetectionError::UnknownFileType)));
+        match result {
+            Ok(detection) => {
+                assert_eq!(detection.file_type, "WAV");
+                assert_eq!(detection.format, "RIFF");
+                assert_eq!(detection.mime_type, "audio/x-wav");
+            }
+            Err(e) => {
+                panic!("Expected WAV detection but got error: {e:?}");
+            }
+        }
     }
 }

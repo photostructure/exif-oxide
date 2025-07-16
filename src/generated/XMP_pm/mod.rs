@@ -8,11 +8,11 @@ use std::sync::LazyLock;
 
 // Simple lookup tables
 // Generated namespace_uris lookup table
+// DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 // Source: ExifTool XMP.pm %nsURI
 // Description: XMP namespace prefix to URI mappings
 
-/// Static data for xmp namespace prefix to uri mappings lookup
-/// Source: ExifTool XMP.pm %nsURI (96 entries)
+/// Static data for xmp namespace prefix to uri mappings lookup (96 entries)
 static NAMESPACE_URIS_DATA: &[(&str, &str)] = &[
     ("DICOM", "http://ns.adobe.com/DICOM/"),
     ("GAudio", "http://ns.google.com/photos/1.0/audio/"),
@@ -153,11 +153,11 @@ pub fn lookup_namespace_uris(key: &str) -> Option<&'static str> {
 }
 
 // Generated xmp_group_names lookup table
+// DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 // Source: ExifTool XMP.pm %xmpNS
 // Description: ExifTool XMP family 1 group name translations
 
-/// Static data for exiftool xmp family 1 group name translations lookup
-/// Source: ExifTool XMP.pm %xmpNS (5 entries)
+/// Static data for exiftool xmp family 1 group name translations lookup (5 entries)
 static XMP_GROUP_NAMES_DATA: &[(&str, &str)] = &[
     ("getty", "GettyImagesGIFT"),
     ("iptcCore", "Iptc4xmpCore"),
@@ -177,11 +177,11 @@ pub fn lookup_xmp_group_names(key: &str) -> Option<&'static str> {
 }
 
 // Generated xml_char_names lookup table
+// DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 // Source: ExifTool XMP.pm %charName
 // Description: XML character to entity name mappings
 
-/// Static data for xml character to entity name mappings lookup
-/// Source: ExifTool XMP.pm %charName (5 entries)
+/// Static data for xml character to entity name mappings lookup (5 entries)
 static XML_CHAR_NAMES_DATA: &[(&str, &str)] = &[
     ("\"", "quot"),
     ("&", "amp"),
@@ -201,11 +201,11 @@ pub fn lookup_xml_char_names(key: &str) -> Option<&'static str> {
 }
 
 // Generated xml_char_nums lookup table
+// DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 // Source: ExifTool XMP.pm %charNum
 // Description: XML entity name to character code mappings
 
-/// Static data for xml entity name to character code mappings lookup
-/// Source: ExifTool XMP.pm %charNum (5 entries)
+/// Static data for xml entity name to character code mappings lookup (5 entries)
 static XML_CHAR_NUMS_DATA: &[(&str, &str)] = &[
     ("amp", "38"),
     ("apos", "39"),
@@ -225,11 +225,11 @@ pub fn lookup_xml_char_nums(key: &str) -> Option<&'static str> {
 }
 
 // Generated std_xlat_ns lookup table
+// DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 // Source: ExifTool XMP.pm %stdXlatNS
 // Description: Standard XMP namespace prefix translations
 
-/// Static data for standard xmp namespace prefix translations lookup
-/// Source: ExifTool XMP.pm %stdXlatNS (7 entries)
+/// Static data for standard xmp namespace prefix translations lookup (7 entries)
 static STD_XLAT_NS_DATA: &[(&str, &str)] = &[
     ("GettyImagesGIFT", "getty"),
     ("Iptc4xmpCore", "iptcCore"),
