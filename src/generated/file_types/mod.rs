@@ -9,6 +9,4 @@ pub mod magic_number_patterns;
 pub use file_type_lookup::{
     extensions_for_format, get_primary_format, resolve_file_type, supports_format,
 };
-pub use magic_number_patterns::{
-    get_magic_file_types, get_magic_number_pattern, matches_magic_number,
-};
+pub use magic_number_patterns::{get_magic_file_types, matches_magic_number};

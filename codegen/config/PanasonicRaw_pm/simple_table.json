@@ -1,0 +1,12 @@
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/PanasonicRaw.pm",
+  "description": "PanasonicRaw module lookup tables for white balance and compression",
+  "tables": [
+    {
+      "hash_name": "%panasonicWhiteBalance",
+      "constant_name": "PANASONIC_WHITE_BALANCE",
+      "key_type": "u8",
+      "description": "Panasonic white balance settings"
+    }
+  ]
+}

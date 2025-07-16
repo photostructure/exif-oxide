@@ -12,7 +12,7 @@ use std::sync::LazyLock;
 // Description: MIME type mappings for file types
 
 /// Static data for mime type mappings for file types lookup (225 entries)
-static MIME_TYPES_DATA: &[(&'static str, &'static str)] = &[
+static MIME_TYPES_DATA: &[(&str, &str)] = &[
     ("3FR", "image/x-hasselblad-3fr"),
     ("7Z", "application/x-7z-compressed"),
     ("AA", "audio/audible"),

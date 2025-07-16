@@ -12,7 +12,7 @@ use std::sync::LazyLock;
 // Description: ExifTool XMP family 1 group name translations
 
 /// Static data for exiftool xmp family 1 group name translations lookup (5 entries)
-static XMP_GROUP_NAMES_DATA: &[(&'static str, &'static str)] = &[
+static XMP_GROUP_NAMES_DATA: &[(&str, &str)] = &[
     ("getty", "GettyImagesGIFT"),
     ("iptcCore", "Iptc4xmpCore"),
     ("iptcExt", "Iptc4xmpExt"),

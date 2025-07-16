@@ -12,7 +12,7 @@ use std::sync::LazyLock;
 // Description: Standard XMP namespace prefix translations
 
 /// Static data for standard xmp namespace prefix translations lookup (7 entries)
-static STD_XLAT_NS_DATA: &[(&'static str, &'static str)] = &[
+static STD_XLAT_NS_DATA: &[(&str, &str)] = &[
     ("GettyImagesGIFT", "getty"),
     ("Iptc4xmpCore", "iptcCore"),
     ("Iptc4xmpExt", "iptcExt"),
