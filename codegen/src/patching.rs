@@ -74,25 +74,6 @@ pub fn patch_module(module_path: &Path, variables: &[String]) -> Result<()> {
     Ok(())
 }
 
-/// Revert all ExifTool module patches to keep submodule clean
-pub fn revert_patches() -> Result<()> {
-    println!("🔄 Reverting ExifTool module patches...");
-    
-    let output = Command::new("git")
-        .args(&["-C", "../third-party/exiftool", "checkout", "--", 
-               "lib/Image/*.pm", "lib/Image/ExifTool/*.pm"])
-        .output()
-        .context("Failed to execute git checkout")?;
-    
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        return Err(anyhow::anyhow!("Git checkout failed: {}", stderr));
-    }
-    
-    println!("  ✓ ExifTool modules reverted to original state");
-    Ok(())
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
