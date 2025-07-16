@@ -68,10 +68,8 @@ pub fn generate_lookup_table(hash_name: &str, table_data: &ExtractedTable) -> Re
     // Generate static data array
     let data_name = format!("{}_DATA", constant_name);
     code.push_str(&format!(
-        "/// Static data for {} lookup\n/// Source: ExifTool {} {} ({} entries)\n",
+        "/// Static data for {} lookup ({} entries)\n",
         metadata.description.to_lowercase(),
-        source.module,
-        hash_name,
         metadata.entry_count
     ));
     code.push_str(&format!(
