@@ -80,12 +80,22 @@ src/
 │   ├── value_conv.rs             # ValueConv implementations
 │   └── [manufacturer]/          # Specialized processors
 ├── generated/                     # Generated lookup tables
-│   ├── Canon_pm/                 # Canon.pm extractions
-│   │   └── mod.rs               # All Canon tables (direct generation)
-│   ├── ExifTool_pm/             # ExifTool.pm extractions
-│   │   └── mod.rs               # File type detection tables
-│   └── Nikon_pm/                # Nikon.pm extractions
-│       └── mod.rs               # All Nikon tables (direct generation)
+│   ├── tags/                     # Modular tag structure (semantic grouping)
+│   │   ├── core.rs               # Core EXIF tags
+│   │   ├── camera.rs             # Camera-specific tags
+│   │   ├── gps.rs                # GPS-related tags
+│   │   └── mod.rs                # Re-exports and unified interface
+│   ├── Canon_pm/                 # Canon.pm extractions (functional modules)
+│   │   ├── canonimagesize.rs     # Image size lookup
+│   │   ├── canonwhitebalance.rs  # White balance lookup
+│   │   └── mod.rs                # Re-exports all Canon tables
+│   ├── ExifTool_pm/              # ExifTool.pm extractions (functional modules)
+│   │   ├── mimetype.rs           # MIME type lookup
+│   │   ├── filetypeext.rs        # File type extension lookup
+│   │   └── mod.rs                # Re-exports all ExifTool tables
+│   └── Nikon_pm/                 # Nikon.pm extractions (functional modules)
+│       ├── nikonlensids.rs       # Lens ID lookup
+│       └── mod.rs                # Re-exports all Nikon tables
 └── processor_registry/           # Advanced processor architecture
     ├── traits.rs                # BinaryDataProcessor trait
     └── capability.rs            # Capability assessment
@@ -212,7 +222,7 @@ use crate::generated::Canon_pm::lookup_new_canon_setting;
 The system generates simple, direct Rust code without macros:
 
 ```rust
-// Generated lookup table (no macros)
+// Generated lookup table using std::sync::LazyLock (no external dependencies)
 pub static ORIENTATION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert(1, "Horizontal (normal)");
@@ -279,8 +289,9 @@ The system supports three extraction patterns:
 - **Traceability**: Every entry references ExifTool source
 - **Maintenance**: Automatic updates with ExifTool releases
 - **Integration**: Seamless use in manual functions via clean imports
-- **Scalability**: Consolidated source-file-based organization
+- **Scalability**: Modular structure with semantic grouping and functional splitting
 - **Binary Safety**: Proper handling of non-UTF-8 bytes in patterns
+- **Minimal Dependencies**: Uses std::sync::LazyLock, no external crates for core functionality
 
 ### Non-UTF-8 Data Handling
 

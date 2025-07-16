@@ -232,6 +232,7 @@ how it should be fixed in the future.
 
 - **NEVER use `rm -rf` in scripts** - it's too dangerous and can accidentally delete important files. Use specific file patterns with `rm -f` instead (e.g., `rm -f "$DIR/*.json"`)
 - Always prefer targeted cleanup over recursive deletion
+- **Use existing dependencies** - prefer already-imported crates (like `std::sync::LazyLock`) instead of adding new external dependencies unless really necessary
 
 ### Wondering what's going on?
 

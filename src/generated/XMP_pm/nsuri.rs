@@ -12,7 +12,7 @@ use std::sync::LazyLock;
 // Description: XMP namespace prefix to URI mappings
 
 /// Static data for xmp namespace prefix to uri mappings lookup (96 entries)
-static NAMESPACE_URIS_DATA: &[(&str, &str)] = &[
+static NAMESPACE_URIS_DATA: &[(&'static str, &'static str)] = &[
     ("DICOM", "http://ns.adobe.com/DICOM/"),
     ("GAudio", "http://ns.google.com/photos/1.0/audio/"),
     ("GCamera", "http://ns.google.com/photos/1.0/camera/"),
