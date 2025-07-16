@@ -1,6 +1,5 @@
 //! File type lookup tables generated from ExifTool's fileTypeLookup hash
 //!
-//! Generated at: Tue Jul 15 23:38:32 2025 GMT
 //! Total lookups: 343
 
 use once_cell::sync::Lazy;
