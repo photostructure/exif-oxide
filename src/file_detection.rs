@@ -105,7 +105,7 @@ impl FileTypeDetector {
         // ExifTool.pm:2960-2975 - Test candidates against magic numbers
         // CRITICAL: Test all candidates before giving up, per TRUST-EXIFTOOL.md
         let mut matched_type = None;
-        
+
         for candidate in &candidates {
             // Check if this is a weak magic type that defers to extension
             if WEAK_MAGIC_TYPES.contains(&candidate.as_str()) {
@@ -117,17 +117,26 @@ impl FileTypeDetector {
                 continue;
             }
 
+            // validate_magic_number now checks both file type and format patterns
             if self.validate_magic_number(candidate, &buffer) {
                 // Strong magic match - use this type
                 matched_type = Some(candidate.clone());
                 break;
             }
         }
-        
+
         if let Some(file_type) = matched_type {
             // Special handling for MOV format to determine specific subtype
             // ExifTool QuickTime.pm:9868-9877 - ftyp brand determines actual file type
-            let detected_type = if file_type == "MOV" {
+            // CRITICAL: Check against the format, not the file type
+            use crate::generated::file_types::resolve_file_type;
+            let format = if let Some((formats, _)) = resolve_file_type(&file_type) {
+                formats[0]
+            } else {
+                &file_type
+            };
+
+            let detected_type = if format == "MOV" {
                 self.determine_mov_subtype(&buffer)
                     .unwrap_or_else(|| file_type.clone())
             } else if self.is_riff_based_format(&file_type) {
@@ -271,11 +280,25 @@ impl FileTypeDetector {
 
         // Use generated magic number patterns from ExifTool's %magicNumber hash
         // ExifTool.pm:912-1027 - patterns extracted and compiled as regex::bytes::Regex
-        use crate::generated::file_types::magic_number_patterns::matches_magic_number;
+        use crate::generated::file_types::{
+            magic_number_patterns::matches_magic_number, resolve_file_type,
+        };
 
-        // The patterns are now pre-compiled regex::bytes::Regex objects
-        // They already include ^ anchoring and handle binary data correctly
-        matches_magic_number(file_type, buffer)
+        // First try to match against the file type itself
+        if matches_magic_number(file_type, buffer) {
+            return true;
+        }
+
+        // If no direct match, check if this file type has a format that has magic patterns
+        // ExifTool uses the format (MOV, TIFF, etc.) for magic pattern matching
+        if let Some((formats, _desc)) = resolve_file_type(file_type) {
+            // Try magic pattern for the primary format
+            if matches_magic_number(formats[0], buffer) {
+                return true;
+            }
+        }
+
+        false
     }
 
     /// Detect actual RIFF format type from buffer
@@ -409,7 +432,7 @@ impl FileTypeDetector {
         if !buffer.starts_with(b"II") && !buffer.starts_with(b"MM") {
             return false;
         }
-        
+
         // CRITICAL: CR3 is MOV-based, not TIFF-based! Check for MOV signature first
         // ExifTool.pm - CR3 uses QuickTime.pm not TIFF processing
         if file_type == "CR3" && buffer.len() >= 12 && &buffer[4..8] == b"ftyp" {

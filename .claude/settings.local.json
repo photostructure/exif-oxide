@@ -177,7 +177,8 @@
       "Bash(./test_bytes)",
       "Bash(./test_patterns)",
       "WebFetch(domain:claude.ai)",
-      "WebFetch(domain:docs.anthropic.com)"
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(test:*)"
     ],
     "deny": []
   }
