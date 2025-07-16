@@ -283,3 +283,13 @@ Implemented boolean set extraction and code generation for ExifTool's membership
 **Key achievements**: Successfully generated 7 boolean sets across PNG_pm and ExifTool_pm modules, resolved module name format inconsistencies between simple tables and boolean sets, implemented dynamic config directory discovery eliminating hardcoded module lists, achieved consistent LazyLock<HashSet> pattern matching simple table architecture.
 
 **Impact**: Complete boolean set support enabling efficient membership testing (e.g., `if PNG_DATA_CHUNKS.contains(chunk)`), scalable codegen infrastructure supporting any ExifTool module with minimal configuration overhead, foundation for additional extraction types beyond simple tables and boolean sets.
+
+---
+
+## ✅ Codegen Main.rs Modular Refactoring (COMPLETED - July 2025)
+
+Refactored monolithic `codegen/src/main.rs` from 433 lines into focused, maintainable modules improving code organization and development velocity. Achieved clean separation of concerns while preserving all existing functionality and test compatibility.
+
+**Key achievements**: Extracted table processing logic to `table_processor.rs`, created `file_operations.rs` for atomic I/O operations, built `config/mod.rs` for configuration management, implemented `discovery.rs` for module auto-discovery, reduced main.rs by 60% to 172 lines focused on high-level orchestration.
+
+**Impact**: Significantly improved maintainability and testability of codegen system, easier onboarding for new contributors, clear extension points for future codegen features, better error isolation and debugging capabilities.
