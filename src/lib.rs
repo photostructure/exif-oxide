@@ -10,7 +10,6 @@ pub mod examples;
 pub mod exif;
 pub mod file_detection;
 pub mod file_types;
-// file_types_compat removed - using generated file_types module instead
 pub mod formats;
 pub mod generated;
 
@@ -30,7 +29,6 @@ pub use generated::*;
 pub use registry::Registry;
 pub use types::{ExifData, ExifError, TagValue};
 
-// Backward compatibility alias for tests
 pub use generated::COMPOSITE_TAG_LOOKUP as COMPOSITE_TAG_BY_NAME;
 
 // Initialize all conversion implementations when library is loaded

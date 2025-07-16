@@ -19,7 +19,7 @@ use common::{normalize_format, parse_hex_id};
 use extraction::extract_all_simple_tables;
 use generators::{
     generate_composite_tag_table, generate_conversion_refs,
-    generate_mod_file, generate_supported_tags, generate_tag_table, macro_based,
+    generate_mod_file, generate_supported_tags, generate_tag_table, lookup_tables,
 };
 use schemas::{CompositeData, ExtractedData, ExtractedTable, GeneratedCompositeTag, GeneratedTag, TableEntry, TableSource};
 use validation::validate_all_configs;
@@ -280,7 +280,7 @@ fn main() -> Result<()> {
                 
                 let module_name = dir_name.to_string_lossy();
                 println!("  Processing module: {}", module_name);
-                macro_based::process_config_directory(
+                lookup_tables::process_config_directory(
                     &module_config_dir,
                     &module_name,
                     &all_extracted_tables,
@@ -289,11 +289,7 @@ fn main() -> Result<()> {
             }
         }
 
-        // Generate macros.rs file
-        let macros_path = format!("{}/macros.rs", output_dir);
-        if !Path::new(&macros_path).exists() {
-            println!("  Note: macros.rs should already exist at src/generated/macros.rs");
-        }
+        // No macros.rs needed - using direct code generation
 
         // Update the main mod.rs to include new modules
         update_generated_mod_file(output_dir)?;
@@ -356,10 +352,7 @@ fn update_generated_mod_file(output_dir: &str) -> Result<()> {
         String::new()
     };
 
-    // Add macros module if not present
-    if !content.contains("pub mod macros;") {
-        content.insert_str(0, "#[macro_use]\npub mod macros;\n\n");
-    }
+    // No macros module needed - using direct code generation
 
     // Add new module directories
     let modules = ["Canon_pm", "Nikon_pm", "ExifTool_pm", "Exif_pm", "XMP_pm"];
