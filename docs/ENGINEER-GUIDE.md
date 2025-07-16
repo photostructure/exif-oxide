@@ -19,12 +19,11 @@ Every line of ExifTool code exists for a reason - usually to work around a speci
 Start with these guides in order:
 
 1. **[TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md)** - This is the keystone guide for this project
-1. **[TESTING.md](guides/TESTING.md)** - No test mocking for this project!
-1. **[EXIFTOOL-CONCEPTS.md](guides/EXIFTOOL-CONCEPTS.md)** - Critical concepts like PROCESS_PROC, tag tables, and the conversion pipeline
-1. **[READING-EXIFTOOL-SOURCE.md](guides/READING-EXIFTOOL-SOURCE.md)** - How to navigate ExifTool's Perl source code
-1. **[DEVELOPMENT-WORKFLOW.md](guides/DEVELOPMENT-WORKFLOW.md)** - The extract-generate-implement cycle
-1. **[COMMON-PITFALLS.md](guides/COMMON-PITFALLS.md)** - Mistakes to avoid and debugging tips
-1. **[TRIBAL-KNOWLEDGE.md](guides/TRIBAL-KNOWLEDGE.md)** - Undocumented quirks and mysteries
+1. **[EXIFTOOL-GUIDE.md](guides/EXIFTOOL-GUIDE.md)** - Complete guide to working with ExifTool source
+1. **[CORE-ARCHITECTURE.md](guides/CORE-ARCHITECTURE.md)** - Core system architecture and offset management
+1. **[DEVELOPMENT-GUIDE.md](guides/DEVELOPMENT-GUIDE.md)** - Development workflow and best practices
+1. **[PROCESSOR-DISPATCH.md](guides/PROCESSOR-DISPATCH.md)** - Processor dispatch strategy
+1. **[TROUBLESHOOTING.md](reference/TROUBLESHOOTING.md)** - Common issues and solutions
 
 ## Quick Reference
 
@@ -38,9 +37,9 @@ Start with these guides in order:
 ### Common Tasks
 
 - **Adding PrintConv/ValueConv** - See [EXIFTOOL-INTEGRATION.md](design/EXIFTOOL-INTEGRATION.md)
-- **Understanding State** - See [STATE-MANAGEMENT.md](STATE-MANAGEMENT.md)
-- **Processor Dispatch** - See [PROCESSOR-PROC-DISPATCH.md](PROCESSOR-PROC-DISPATCH.md)
-- **Offset Calculations** - See [OFFSET-BASE-MANAGEMENT.md](OFFSET-BASE-MANAGEMENT.md)
+- **Understanding Architecture** - See [CORE-ARCHITECTURE.md](guides/CORE-ARCHITECTURE.md)
+- **Processor Dispatch** - See [PROCESSOR-DISPATCH.md](guides/PROCESSOR-DISPATCH.md)
+- **Development Workflow** - See [DEVELOPMENT-GUIDE.md](guides/DEVELOPMENT-GUIDE.md)
 
 ## Generated Code Policy
 
@@ -53,9 +52,10 @@ Start with these guides in order:
 
 **When to regenerate**:
 
-- After modifying extraction scripts (`codegen/extract_tables.pl`)
+- After modifying extraction scripts (`codegen/extractors/*.pl`)
 - After updating ExifTool version
-- When adding new tag implementations to MILESTONE_COMPLETIONS
+- After adding/modifying configuration files in `codegen/config/`
+- When adding new simple table extractions
 - Run: `make codegen` then commit the updated `src/generated/` files
 
 ## Getting Help
@@ -69,9 +69,10 @@ Start with these guides in order:
 
 Key documentation files:
 
-- [FILE_TYPES.md](../third-party/exiftool/doc/concepts/FILE_TYPES.md) - File format detection
-- [WRITE_PROC.md](../third-party/exiftool/doc/concepts/WRITE_PROC.md) - Writing (future milestone)
-- [PROCESSOR-PROC-DISPATCH.md](PROCESSOR-PROC-DISPATCH.md) - Our dispatch strategy
+- [ExifTool documentation](../third-party/exiftool/doc/concepts/) - ExifTool concepts and patterns
+- [PROCESSOR-DISPATCH.md](guides/PROCESSOR-DISPATCH.md) - Our dispatch strategy
+- [ARCHITECTURE.md](ARCHITECTURE.md) - High-level system overview
+- [API-DESIGN.md](design/API-DESIGN.md) - Public API structure and TagEntry design
 
 ## Code Maintenance Practices
 
