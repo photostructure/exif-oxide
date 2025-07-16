@@ -4,6 +4,12 @@
 **Actual Duration**: Already implemented (discovered complete during analysis)
 **Goal**: Implement comprehensive file type detection for all formats in MIMETYPES.md
 
+## IMPORTANT NOTE
+
+MUCH OF THIS WORK DOCUMENTED HERE HAD TO BE SUBSEQUENTLY REWRITTEN, as it did not follow docs/TRUST-EXIFTOOL.md due to the largely-manual porting work. DO NOT FOLLOW THIS DOCUMENT'S EFFORTS AS A HOWTO!
+
+This is more like how NOT to!
+
 ## Implementation Notes
 
 This milestone was discovered to be **fully implemented** with `src/file_detection.rs` containing 907 lines of ExifTool-compatible detection logic. All success criteria met:
