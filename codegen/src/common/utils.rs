@@ -69,3 +69,37 @@ pub fn escape_regex_for_rust(pattern: &str) -> String {
         pattern.to_string()
     }
 }
+
+/// Convert ExifTool module names to relative source file paths
+pub fn module_to_source_path(module: &str) -> String {
+    if module.contains("/") {
+        // Already a path format: "third-party/exiftool/lib/Image/ExifTool/Canon.pm"
+        module.to_string()
+    } else if module == "Image::ExifTool" {
+        // Main module
+        "third-party/exiftool/lib/Image/ExifTool.pm".to_string()
+    } else if module.starts_with("Image::ExifTool::") {
+        // Perl module format: "Image::ExifTool::Canon" -> "third-party/exiftool/lib/Image/ExifTool/Canon.pm"
+        let module_name = module.strip_prefix("Image::ExifTool::").unwrap();
+        format!("third-party/exiftool/lib/Image/ExifTool/{}.pm", module_name)
+    } else {
+        // Filename format: "Canon.pm" -> "third-party/exiftool/lib/Image/ExifTool/Canon.pm"
+        let base_name = module.strip_suffix(".pm").unwrap_or(module);
+        format!("third-party/exiftool/lib/Image/ExifTool/{}.pm", base_name)
+    }
+}
+
+/// Convert module directory name (e.g., "Canon_pm") to source file path
+pub fn module_dir_to_source_path(module_dir: &str) -> String {
+    if module_dir.ends_with("_pm") {
+        let base_name = module_dir.strip_suffix("_pm").unwrap();
+        if base_name == "ExifTool" {
+            "third-party/exiftool/lib/Image/ExifTool.pm".to_string()
+        } else {
+            format!("third-party/exiftool/lib/Image/ExifTool/{}.pm", base_name)
+        }
+    } else {
+        // Fallback for non-standard naming
+        format!("third-party/exiftool/lib/Image/ExifTool/{}.pm", module_dir)
+    }
+}
