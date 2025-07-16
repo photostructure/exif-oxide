@@ -1,7 +1,7 @@
 # MIME Type Detection Fix - Handoff Document
 
 ## Current Status
-We've fixed 5 out of 7 MIME type detection issues. The test now passes with 120 exact matches and 2 known differences (marked as acceptable).
+We've fixed 5 out of 7 MIME type detection issues. The test now passes with 122 exact matches out of 210 total files processed, with 2 known differences (marked as acceptable). Average detection time is ~52.786µs.
 
 ### Fixed Issues ✅
 1. **CR3 files** - Were detected as TIFF, now correctly detected as image/x-canon-cr3
@@ -59,10 +59,11 @@ Created `src/bin/diagnose_mime_failures.rs` to help debug file detection issues.
    cargo run --bin diagnose_mime_failures
    ```
 
-3. Run full precommit (note: there's an unrelated PNG pattern test failing):
+3. Run full precommit:
    ```bash
    make precommit
    ```
+   ✅ Currently passes with only minor warnings about unused variables in the codegen module
 
 ### Understanding the Architecture
 1. **File Detection Flow** (`src/file_detection.rs`):
@@ -97,7 +98,7 @@ Created `src/bin/diagnose_mime_failures.rs` to help debug file detection issues.
    - Implement deeper EXIF analysis to detect camera model
    - Keep as known difference (current approach)
 
-3. **Pattern Test Failure**: There's an unrelated PNG pattern test failing in `tests/pattern_test.rs`
+3. **~~Pattern Test Failure~~**: ✅ RESOLVED - The PNG pattern test in `tests/pattern_test.rs` is now passing
 
 ### Important References
 - @docs/TRUST-EXIFTOOL.md - **CRITICAL**: Always follow ExifTool's logic exactly
@@ -105,6 +106,28 @@ Created `src/bin/diagnose_mime_failures.rs` to help debug file detection issues.
 - @docs/design/EXIFTOOL-INTEGRATION.md - Codegen and integration approach
 - @third-party/exiftool/doc/concepts/FILE_TYPES.md - ExifTool's file type system
 - ExifTool source: `third-party/exiftool/lib/Image/ExifTool.pm` lines 2913-2999 for detection flow
+
+### Key ExifTool References in Implementation
+The implementation includes comprehensive ExifTool references throughout:
+
+1. **src/file_detection.rs**:
+   - Lines 3-15: References ExifTool.pm:2913-2999 (overall detection flow)
+   - Line 23: MAGIC_TEST_BUFFER_SIZE from ExifTool.pm:2955
+   - Line 27: Weak magic types from ExifTool.pm:1030
+   - Lines 84-85: detect_file_type() references ExifTool.pm:2913-2999
+   - Lines 163-164: GetFileType() references ExifTool.pm:9010-9050
+   - Lines 209-210: GetFileExtension() references ExifTool.pm:9013-9040
+   - Lines 266-268: Magic number testing references ExifTool.pm:2960-2975
+   - Lines 304-306: RIFF detection references RIFF.pm:2037-2046
+   - Lines 421-423: DoProcessTIFF() references ExifTool.pm:8531-8612
+   - Lines 550-552: MOV subtype detection references QuickTime.pm:9868-9877
+   - Lines 526-527: Embedded signature scan references ExifTool.pm:2976-2983
+   - Lines 646-647: ASF/WMV MIME type handling references ExifTool.pm:9570-9592
+
+2. **Generated Code**:
+   - `src/generated/file_types/magic_number_patterns.rs`: "Source: ExifTool.pm %magicNumber hash"
+   - `src/generated/file_types/file_type_lookup.rs`: "generated from ExifTool's fileTypeLookup hash"
+   - `src/generated/ExifTool_pm/mod.rs`: Contains MIME type mappings from ExifTool
 
 ### Testing Other Files
 To test specific problem files:

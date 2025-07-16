@@ -7,22 +7,29 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Simple lookup tables
-// EXIF Orientation tag PrintConv values
-// Source: ExifTool Exif.pm %orientation (8 entries)
-pub static ORIENTATION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert(1, "Horizontal (normal)");
-    map.insert(2, "Mirror horizontal");
-    map.insert(3, "Rotate 180");
-    map.insert(4, "Mirror vertical");
-    map.insert(5, "Mirror horizontal and rotate 270 CW");
-    map.insert(6, "Rotate 90 CW");
-    map.insert(7, "Mirror horizontal and rotate 90 CW");
-    map.insert(8, "Rotate 270 CW");
-    map
-});
+// Generated orientation lookup table
+// Source: ExifTool Exif.pm %orientation
+// Description: EXIF Orientation tag PrintConv values
 
-/// Look up ORIENTATION value by key
+/// Static data for exif orientation tag printconv values lookup
+/// Source: ExifTool Exif.pm %orientation (8 entries)
+static ORIENTATION_DATA: &[(u8, &str)] = &[
+    (1, "Horizontal (normal)"),
+    (2, "Mirror horizontal"),
+    (3, "Rotate 180"),
+    (4, "Mirror vertical"),
+    (5, "Mirror horizontal and rotate 270 CW"),
+    (6, "Rotate 90 CW"),
+    (7, "Mirror horizontal and rotate 90 CW"),
+    (8, "Rotate 270 CW"),
+];
+
+/// EXIF Orientation tag PrintConv values lookup table
+/// Built from static data on first access
+pub static ORIENTATION: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| ORIENTATION_DATA.iter().cloned().collect());
+
+/// Look up exif orientation tag printconv values value by key
 pub fn lookup_orientation(key: u8) -> Option<&'static str> {
     ORIENTATION.get(&key).copied()
 }

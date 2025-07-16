@@ -138,45 +138,45 @@ fn main() -> Result<()> {
     let extract_dir = current_dir.join("generated").join("extract");
     generators::file_detection::generate_file_detection_code(&extract_dir, &output_dir)?;
 
-    // Update file_types mod.rs to include generated modules
+    // Create or update file_types mod.rs to include generated modules
     let file_types_mod_path = format!("{}/file_types/mod.rs", output_dir);
-    if Path::new(&file_types_mod_path).exists() {
-        println!("\n📝 Updating file_types mod.rs with generated modules...");
-        let mut content = fs::read_to_string(&file_types_mod_path)?;
+    println!("\n📝 Creating/updating file_types mod.rs with generated modules...");
+    
+    // Create default content if file doesn't exist
+    let mut content = if Path::new(&file_types_mod_path).exists() {
+        fs::read_to_string(&file_types_mod_path)?
+    } else {
+        // Create default mod.rs content
+        String::from(
+            "//! File type detection module\n\
+             //!\n\
+             //! This module contains generated code for file type detection.\n\n"
+        )
+    };
 
-        // Check if modules are already declared
-        let mut updated = false;
+    // Check if modules are already declared
+    let mut updated = false;
 
-        if !content.contains("pub mod file_type_lookup;") {
-            // Find where to insert the module declarations (after other module declarations)
-            if let Some(pos) = content.find("\n// Re-export") {
-                let module_decls = "pub mod file_type_lookup;\npub mod magic_numbers;\n\n";
-                content.insert_str(pos, &format!("\n{}", module_decls));
-                updated = true;
-            }
-        }
+    if !content.contains("pub mod file_type_lookup;") {
+        // Add module declarations
+        content.push_str("pub mod file_type_lookup;\n");
+        content.push_str("pub mod magic_number_patterns;\n\n");
+        updated = true;
+    }
 
-        // Add re-exports if not present
-        if !content.contains("pub use file_type_lookup::") {
-            // Find the end of existing re-exports
-            if let Some(pos) = content.rfind("pub use") {
-                if let Some(end_pos) = content[pos..].find(";\n") {
-                    let insert_pos = pos + end_pos + 2;
-                    let re_exports = "pub use file_type_lookup::{resolve_file_type, get_primary_format, supports_format, extensions_for_format};\npub use magic_numbers::{get_magic_pattern, get_magic_file_types};\n";
-                    content.insert_str(insert_pos, re_exports);
-                    updated = true;
-                }
-            }
-        }
+    // Add re-exports if not present
+    if !content.contains("pub use file_type_lookup::") {
+        content.push_str("// Re-export commonly used items\n");
+        content.push_str("pub use file_type_lookup::{lookup_file_type_by_extension, FILE_TYPE_EXTENSIONS};\n");
+        content.push_str("pub use magic_number_patterns::{detect_file_type_by_magic, MAGIC_NUMBER_PATTERNS};\n");
+        updated = true;
+    }
 
-        if updated {
-            fs::write(&file_types_mod_path, content)?;
-            println!(
-                "  ✓ Updated file_types mod.rs with file_type_lookup and magic_numbers modules"
-            );
-        } else {
-            println!("  ✓ file_types mod.rs already contains all necessary declarations");
-        }
+    if updated || !Path::new(&file_types_mod_path).exists() {
+        fs::write(&file_types_mod_path, content)?;
+        println!("  ✓ Created/updated file_types mod.rs with file_type_lookup and magic_number_patterns modules");
+    } else {
+        println!("  ✓ file_types mod.rs already contains all necessary declarations");
     }
 
     // NEW: Process using the new macro-based configuration system
@@ -216,34 +216,76 @@ fn main() -> Result<()> {
                     // Try to parse as SimpleExtractedTable first
                     match serde_json::from_str::<SimpleExtractedTable>(&json_data) {
                         Ok(simple_table) => {
-                            // Get config metadata from the module's simple_table.json
-                            let module_name = simple_table.source.module.replace(".pm", "_pm");
-                            let config_file = config_dir.join(&module_name).join("simple_table.json");
+                            // Get config metadata from the module's config files
+                            let module_name = if simple_table.source.module.starts_with("Image::ExifTool::") {
+                                simple_table.source.module
+                                    .strip_prefix("Image::ExifTool::")
+                                    .unwrap()
+                                    .to_string() + "_pm"
+                            } else if simple_table.source.module == "Image::ExifTool" {
+                                "ExifTool_pm".to_string()
+                            } else {
+                                simple_table.source.module.replace(".pm", "_pm")
+                            };
+                            let hash_name = &simple_table.source.hash_name;
                             
-                            if config_file.exists() {
-                                if let Ok(config_content) = fs::read_to_string(&config_file) {
+                            // Try simple_table.json first
+                            let mut found_config = false;
+                            let simple_config_file = config_dir.join(&module_name).join("simple_table.json");
+                            if simple_config_file.exists() {
+                                if let Ok(config_content) = fs::read_to_string(&simple_config_file) {
                                     if let Ok(config_json) = serde_json::from_str::<serde_json::Value>(&config_content) {
                                         if let Some(tables) = config_json["tables"].as_array() {
-                                            // Find matching table config
-                                            let hash_name = &simple_table.source.hash_name;
                                             if let Some(table_config) = tables.iter().find(|t| t["hash_name"] == *hash_name) {
                                                 // Create full ExtractedTable with metadata from config
                                                 let table = ExtractedTable {
-                                                    source: simple_table.source,
+                                                    source: simple_table.source.clone(),
                                                     metadata: schemas::input::TableMetadata {
                                                         description: table_config["description"].as_str().unwrap_or("").to_string(),
                                                         constant_name: table_config["constant_name"].as_str().unwrap_or("").to_string(),
                                                         key_type: table_config["key_type"].as_str().unwrap_or("String").to_string(),
                                                         entry_count: simple_table.metadata.entry_count,
                                                     },
-                                                    entries: simple_table.entries,
+                                                    entries: simple_table.entries.clone(),
                                                 };
                                                 all_extracted_tables.insert(table.source.hash_name.clone(), table);
-                                                continue;
+                                                found_config = true;
                                             }
                                         }
                                     }
                                 }
+                            }
+                            
+                            // Try boolean_set.json if not found in simple_table.json
+                            if !found_config {
+                                let boolean_config_file = config_dir.join(&module_name).join("boolean_set.json");
+                                if boolean_config_file.exists() {
+                                    if let Ok(config_content) = fs::read_to_string(&boolean_config_file) {
+                                        if let Ok(config_json) = serde_json::from_str::<serde_json::Value>(&config_content) {
+                                            if let Some(tables) = config_json["tables"].as_array() {
+                                                if let Some(table_config) = tables.iter().find(|t| t["hash_name"] == *hash_name) {
+                                                    // Create full ExtractedTable with metadata from config
+                                                    let table = ExtractedTable {
+                                                        source: simple_table.source.clone(),
+                                                        metadata: schemas::input::TableMetadata {
+                                                            description: table_config["description"].as_str().unwrap_or("").to_string(),
+                                                            constant_name: table_config["constant_name"].as_str().unwrap_or("").to_string(),
+                                                            key_type: table_config["key_type"].as_str().unwrap_or("String").to_string(),
+                                                            entry_count: simple_table.metadata.entry_count,
+                                                        },
+                                                        entries: simple_table.entries.clone(),
+                                                    };
+                                                    all_extracted_tables.insert(table.source.hash_name.clone(), table);
+                                                    found_config = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            if found_config {
+                                continue;
                             }
                             
                             eprintln!("Warning: Could not find config for {}: {}", path.display(), simple_table.source.hash_name);
@@ -352,16 +394,19 @@ fn update_generated_mod_file(output_dir: &str) -> Result<()> {
         String::new()
     };
 
-    // No macros module needed - using direct code generation
-
-    // Add new module directories
-    let modules = ["Canon_pm", "Nikon_pm", "ExifTool_pm", "Exif_pm", "XMP_pm"];
-    for module in &modules {
-        let module_dir = Path::new(output_dir).join(module);
-        if module_dir.exists() && module_dir.join("mod.rs").exists() {
-            let mod_declaration = format!("pub mod {};\n", module);
-            if !content.contains(&mod_declaration) {
-                content.push_str(&mod_declaration);
+    // Auto-discover module directories (any directory ending in _pm)
+    let entries = fs::read_dir(output_dir)?;
+    for entry in entries {
+        let entry = entry?;
+        let path = entry.path();
+        if path.is_dir() {
+            if let Some(dir_name) = path.file_name().and_then(|n| n.to_str()) {
+                if dir_name.ends_with("_pm") && path.join("mod.rs").exists() {
+                    let mod_declaration = format!("pub mod {};\n", dir_name);
+                    if !content.contains(&mod_declaration) {
+                        content.push_str(&mod_declaration);
+                    }
+                }
             }
         }
     }

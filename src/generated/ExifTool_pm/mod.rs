@@ -4,306 +4,396 @@
 //! DO NOT EDIT MANUALLY - changes will be overwritten.
 
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::sync::LazyLock;
 
 // Simple lookup tables
-// MIME type mappings for file types
-// Source: ExifTool ExifTool.pm %mimeType (225 entries)
-pub static MIME_TYPES: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("3FR", "image/x-hasselblad-3fr");
-    map.insert("7Z", "application/x-7z-compressed");
-    map.insert("AA", "audio/audible");
-    map.insert("AAC", "audio/aac");
-    map.insert("AAE", "application/vnd.apple.photos");
-    map.insert("AI", "application/vnd.adobe.illustrator");
-    map.insert("AIFF", "audio/x-aiff");
-    map.insert("ALIAS", "application/x-macos");
-    map.insert("APE", "audio/x-monkeys-audio");
-    map.insert("APNG", "image/apng");
-    map.insert("ARW", "image/x-sony-arw");
-    map.insert("ASF", "video/x-ms-asf");
-    map.insert("BMP", "image/bmp");
-    map.insert("BPG", "image/bpg");
-    map.insert("BTF", "image/x-tiff-big");
-    map.insert("BZ2", "application/bzip2");
-    map.insert("C2PA", "application/c2pa");
-    map.insert("CHM", "application/x-chm");
-    map.insert("COS", "application/octet-stream");
-    map.insert("CR2", "image/x-canon-cr2");
-    map.insert("CR3", "image/x-canon-cr3");
-    map.insert("CRM", "video/x-canon-crm");
-    map.insert("CRW", "image/x-canon-crw");
-    map.insert("CSV", "text/csv");
-    map.insert("CUR", "image/x-cursor");
-    map.insert("CZI", "image/x-zeiss-czi");
-    map.insert("Canon 1D RAW", "image/x-raw");
-    map.insert("DCP", "application/octet-stream");
-    map.insert("DCR", "image/x-kodak-dcr");
-    map.insert("DCX", "image/dcx");
-    map.insert("DEX", "application/octet-stream");
-    map.insert("DFONT", "application/x-dfont");
-    map.insert("DICOM", "application/dicom");
-    map.insert("DIVX", "video/divx");
-    map.insert("DJVU", "image/vnd.djvu");
-    map.insert("DNG", "image/x-adobe-dng");
-    map.insert("DOC", "application/msword");
-    map.insert("DOCM", "application/vnd.ms-word.document.macroEnabled.12");
-    map.insert(
+// Generated mime_types lookup table
+// Source: ExifTool ExifTool.pm %mimeType
+// Description: MIME type mappings for file types
+
+/// Static data for mime type mappings for file types lookup
+/// Source: ExifTool ExifTool.pm %mimeType (225 entries)
+static MIME_TYPES_DATA: &[(&str, &str)] = &[
+    ("3FR", "image/x-hasselblad-3fr"),
+    ("7Z", "application/x-7z-compressed"),
+    ("AA", "audio/audible"),
+    ("AAC", "audio/aac"),
+    ("AAE", "application/vnd.apple.photos"),
+    ("AI", "application/vnd.adobe.illustrator"),
+    ("AIFF", "audio/x-aiff"),
+    ("ALIAS", "application/x-macos"),
+    ("APE", "audio/x-monkeys-audio"),
+    ("APNG", "image/apng"),
+    ("ARW", "image/x-sony-arw"),
+    ("ASF", "video/x-ms-asf"),
+    ("BMP", "image/bmp"),
+    ("BPG", "image/bpg"),
+    ("BTF", "image/x-tiff-big"),
+    ("BZ2", "application/bzip2"),
+    ("C2PA", "application/c2pa"),
+    ("CHM", "application/x-chm"),
+    ("COS", "application/octet-stream"),
+    ("CR2", "image/x-canon-cr2"),
+    ("CR3", "image/x-canon-cr3"),
+    ("CRM", "video/x-canon-crm"),
+    ("CRW", "image/x-canon-crw"),
+    ("CSV", "text/csv"),
+    ("CUR", "image/x-cursor"),
+    ("CZI", "image/x-zeiss-czi"),
+    ("Canon 1D RAW", "image/x-raw"),
+    ("DCP", "application/octet-stream"),
+    ("DCR", "image/x-kodak-dcr"),
+    ("DCX", "image/dcx"),
+    ("DEX", "application/octet-stream"),
+    ("DFONT", "application/x-dfont"),
+    ("DICOM", "application/dicom"),
+    ("DIVX", "video/divx"),
+    ("DJVU", "image/vnd.djvu"),
+    ("DNG", "image/x-adobe-dng"),
+    ("DOC", "application/msword"),
+    ("DOCM", "application/vnd.ms-word.document.macroEnabled.12"),
+    (
         "DOCX",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    );
-    map.insert("DOT", "application/msword");
-    map.insert(
+    ),
+    ("DOT", "application/msword"),
+    (
         "DOTM",
         "application/vnd.ms-word.template.macroEnabledTemplate",
-    );
-    map.insert(
+    ),
+    (
         "DOTX",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
-    );
-    map.insert("DPX", "image/x-dpx");
-    map.insert("DR4", "application/octet-stream");
-    map.insert("DS2", "audio/x-ds2");
-    map.insert("DSS", "audio/x-dss");
-    map.insert("DV", "video/x-dv");
-    map.insert("DVR-MS", "video/x-ms-dvr");
-    map.insert("DWF", "model/vnd.dwf");
-    map.insert("DWG", "image/vnd.dwg");
-    map.insert("DXF", "application/dxf");
-    map.insert("EIP", "application/x-captureone");
-    map.insert("EPS", "application/postscript");
-    map.insert("ERF", "image/x-epson-erf");
-    map.insert("EXE", "application/octet-stream");
-    map.insert("EXR", "image/x-exr");
-    map.insert("EXV", "image/x-exv");
-    map.insert("FFF", "image/x-hasselblad-fff");
-    map.insert("FITS", "image/fits");
-    map.insert("FLA", "application/vnd.adobe.fla");
-    map.insert("FLAC", "audio/flac");
-    map.insert("FLIF", "image/flif");
-    map.insert("FLIR", "image/x-flir-fff");
-    map.insert("FLV", "video/x-flv");
-    map.insert("FPF", "image/x-flir-fpf");
-    map.insert("FPX", "image/vnd.fpx");
-    map.insert("Font", "application/x-font-type1");
-    map.insert("GIF", "image/gif");
-    map.insert("GPR", "image/x-gopro-gpr");
-    map.insert("GZIP", "application/x-gzip");
-    map.insert("HDP", "image/vnd.ms-photo");
-    map.insert("HDR", "image/vnd.radiance");
-    map.insert("HTML", "text/html");
-    map.insert("ICC", "application/vnd.iccprofile");
-    map.insert("ICO", "image/x-icon");
-    map.insert("ICS", "text/calendar");
-    map.insert("IDML", "application/vnd.adobe.indesign-idml-package");
-    map.insert("IIQ", "image/x-raw");
-    map.insert("IND", "application/x-indesign");
-    map.insert("INX", "application/x-indesign-interchange");
-    map.insert("ISO", "application/x-iso9660-image");
-    map.insert("ITC", "application/itunes");
-    map.insert("J2C", "image/x-j2c");
-    map.insert("JNG", "image/jng");
-    map.insert("JP2", "image/jp2");
-    map.insert("JPEG", "image/jpeg");
-    map.insert("JPH", "image/jph");
-    map.insert("JPM", "image/jpm");
-    map.insert("JPS", "image/x-jps");
-    map.insert("JPX", "image/jpx");
-    map.insert("JSON", "application/json");
-    map.insert("JUMBF", "application/octet-stream");
-    map.insert("JXL", "image/jxl");
-    map.insert("JXR", "image/jxr");
-    map.insert("K25", "image/x-kodak-k25");
-    map.insert("KDC", "image/x-kodak-kdc");
-    map.insert("KEY", "application/x-iwork-keynote-sffkey");
-    map.insert("LFP", "image/x-lytro-lfp");
-    map.insert("LIF", "image/x-lif");
-    map.insert("LNK", "application/octet-stream");
-    map.insert("LRI", "image/x-light-lri");
-    map.insert("M2T", "video/mpeg");
-    map.insert("M2TS", "video/m2ts");
-    map.insert("MAX", "application/x-3ds");
-    map.insert("MEF", "image/x-mamiya-mef");
-    map.insert("MIE", "application/x-mie");
-    map.insert("MIFF", "application/x-magick-image");
-    map.insert("MKA", "audio/x-matroska");
-    map.insert("MKS", "application/x-matroska");
-    map.insert("MKV", "video/x-matroska");
-    map.insert("MNG", "video/mng");
-    map.insert("MOBI", "application/x-mobipocket-ebook");
-    map.insert("MOI", "application/octet-stream");
-    map.insert("MOS", "image/x-raw");
-    map.insert("MOV", "video/quicktime");
-    map.insert("MP3", "audio/mpeg");
-    map.insert("MP4", "video/mp4");
-    map.insert("MPC", "audio/x-musepack");
-    map.insert("MPEG", "video/mpeg");
-    map.insert("MRC", "image/x-mrc");
-    map.insert("MRW", "image/x-minolta-mrw");
-    map.insert("MXF", "application/mxf");
-    map.insert("NEF", "image/x-nikon-nef");
-    map.insert("NKSC", "application/x-nikon-nxstudio");
-    map.insert("NRW", "image/x-nikon-nrw");
-    map.insert("NUMBERS", "application/x-iwork-numbers-sffnumbers");
-    map.insert("ODB", "application/vnd.oasis.opendocument.database");
-    map.insert("ODC", "application/vnd.oasis.opendocument.chart");
-    map.insert("ODF", "application/vnd.oasis.opendocument.formula");
-    map.insert("ODG", "application/vnd.oasis.opendocument.graphics");
-    map.insert("ODI", "application/vnd.oasis.opendocument.image");
-    map.insert("ODP", "application/vnd.oasis.opendocument.presentation");
-    map.insert("ODS", "application/vnd.oasis.opendocument.spreadsheet");
-    map.insert("ODT", "application/vnd.oasis.opendocument.text");
-    map.insert("OGG", "audio/ogg");
-    map.insert("OGV", "video/ogg");
-    map.insert("ONP", "application/on1");
-    map.insert("ORF", "image/x-olympus-orf");
-    map.insert("OTF", "application/font-otf");
-    map.insert("PAGES", "application/x-iwork-pages-sffpages");
-    map.insert("PBM", "image/x-portable-bitmap");
-    map.insert("PCAP", "application/vnd.tcpdump.pcap");
-    map.insert("PCD", "image/x-photo-cd");
-    map.insert("PCX", "image/pcx");
-    map.insert("PDB", "application/vnd.palm");
-    map.insert("PDF", "application/pdf");
-    map.insert("PEF", "image/x-pentax-pef");
-    map.insert("PFA", "application/x-font-type1");
-    map.insert("PGF", "image/pgf");
-    map.insert("PGM", "image/x-portable-graymap");
-    map.insert("PHP", "application/x-httpd-php");
-    map.insert("PICT", "image/pict");
-    map.insert("PLIST", "application/xml");
-    map.insert("PMP", "image/x-sony-pmp");
-    map.insert("PNG", "image/png");
-    map.insert("POT", "application/vnd.ms-powerpoint");
-    map.insert(
+    ),
+    ("DPX", "image/x-dpx"),
+    ("DR4", "application/octet-stream"),
+    ("DS2", "audio/x-ds2"),
+    ("DSS", "audio/x-dss"),
+    ("DV", "video/x-dv"),
+    ("DVR-MS", "video/x-ms-dvr"),
+    ("DWF", "model/vnd.dwf"),
+    ("DWG", "image/vnd.dwg"),
+    ("DXF", "application/dxf"),
+    ("EIP", "application/x-captureone"),
+    ("EPS", "application/postscript"),
+    ("ERF", "image/x-epson-erf"),
+    ("EXE", "application/octet-stream"),
+    ("EXR", "image/x-exr"),
+    ("EXV", "image/x-exv"),
+    ("FFF", "image/x-hasselblad-fff"),
+    ("FITS", "image/fits"),
+    ("FLA", "application/vnd.adobe.fla"),
+    ("FLAC", "audio/flac"),
+    ("FLIF", "image/flif"),
+    ("FLIR", "image/x-flir-fff"),
+    ("FLV", "video/x-flv"),
+    ("FPF", "image/x-flir-fpf"),
+    ("FPX", "image/vnd.fpx"),
+    ("Font", "application/x-font-type1"),
+    ("GIF", "image/gif"),
+    ("GPR", "image/x-gopro-gpr"),
+    ("GZIP", "application/x-gzip"),
+    ("HDP", "image/vnd.ms-photo"),
+    ("HDR", "image/vnd.radiance"),
+    ("HTML", "text/html"),
+    ("ICC", "application/vnd.iccprofile"),
+    ("ICO", "image/x-icon"),
+    ("ICS", "text/calendar"),
+    ("IDML", "application/vnd.adobe.indesign-idml-package"),
+    ("IIQ", "image/x-raw"),
+    ("IND", "application/x-indesign"),
+    ("INX", "application/x-indesign-interchange"),
+    ("ISO", "application/x-iso9660-image"),
+    ("ITC", "application/itunes"),
+    ("J2C", "image/x-j2c"),
+    ("JNG", "image/jng"),
+    ("JP2", "image/jp2"),
+    ("JPEG", "image/jpeg"),
+    ("JPH", "image/jph"),
+    ("JPM", "image/jpm"),
+    ("JPS", "image/x-jps"),
+    ("JPX", "image/jpx"),
+    ("JSON", "application/json"),
+    ("JUMBF", "application/octet-stream"),
+    ("JXL", "image/jxl"),
+    ("JXR", "image/jxr"),
+    ("K25", "image/x-kodak-k25"),
+    ("KDC", "image/x-kodak-kdc"),
+    ("KEY", "application/x-iwork-keynote-sffkey"),
+    ("LFP", "image/x-lytro-lfp"),
+    ("LIF", "image/x-lif"),
+    ("LNK", "application/octet-stream"),
+    ("LRI", "image/x-light-lri"),
+    ("M2T", "video/mpeg"),
+    ("M2TS", "video/m2ts"),
+    ("MAX", "application/x-3ds"),
+    ("MEF", "image/x-mamiya-mef"),
+    ("MIE", "application/x-mie"),
+    ("MIFF", "application/x-magick-image"),
+    ("MKA", "audio/x-matroska"),
+    ("MKS", "application/x-matroska"),
+    ("MKV", "video/x-matroska"),
+    ("MNG", "video/mng"),
+    ("MOBI", "application/x-mobipocket-ebook"),
+    ("MOI", "application/octet-stream"),
+    ("MOS", "image/x-raw"),
+    ("MOV", "video/quicktime"),
+    ("MP3", "audio/mpeg"),
+    ("MP4", "video/mp4"),
+    ("MPC", "audio/x-musepack"),
+    ("MPEG", "video/mpeg"),
+    ("MRC", "image/x-mrc"),
+    ("MRW", "image/x-minolta-mrw"),
+    ("MXF", "application/mxf"),
+    ("NEF", "image/x-nikon-nef"),
+    ("NKSC", "application/x-nikon-nxstudio"),
+    ("NRW", "image/x-nikon-nrw"),
+    ("NUMBERS", "application/x-iwork-numbers-sffnumbers"),
+    ("ODB", "application/vnd.oasis.opendocument.database"),
+    ("ODC", "application/vnd.oasis.opendocument.chart"),
+    ("ODF", "application/vnd.oasis.opendocument.formula"),
+    ("ODG", "application/vnd.oasis.opendocument.graphics"),
+    ("ODI", "application/vnd.oasis.opendocument.image"),
+    ("ODP", "application/vnd.oasis.opendocument.presentation"),
+    ("ODS", "application/vnd.oasis.opendocument.spreadsheet"),
+    ("ODT", "application/vnd.oasis.opendocument.text"),
+    ("OGG", "audio/ogg"),
+    ("OGV", "video/ogg"),
+    ("ONP", "application/on1"),
+    ("ORF", "image/x-olympus-orf"),
+    ("OTF", "application/font-otf"),
+    ("PAGES", "application/x-iwork-pages-sffpages"),
+    ("PBM", "image/x-portable-bitmap"),
+    ("PCAP", "application/vnd.tcpdump.pcap"),
+    ("PCD", "image/x-photo-cd"),
+    ("PCX", "image/pcx"),
+    ("PDB", "application/vnd.palm"),
+    ("PDF", "application/pdf"),
+    ("PEF", "image/x-pentax-pef"),
+    ("PFA", "application/x-font-type1"),
+    ("PGF", "image/pgf"),
+    ("PGM", "image/x-portable-graymap"),
+    ("PHP", "application/x-httpd-php"),
+    ("PICT", "image/pict"),
+    ("PLIST", "application/xml"),
+    ("PMP", "image/x-sony-pmp"),
+    ("PNG", "image/png"),
+    ("POT", "application/vnd.ms-powerpoint"),
+    (
         "POTM",
         "application/vnd.ms-powerpoint.template.macroEnabled.12",
-    );
-    map.insert(
+    ),
+    (
         "POTX",
         "application/vnd.openxmlformats-officedocument.presentationml.template",
-    );
-    map.insert(
+    ),
+    (
         "PPAM",
         "application/vnd.ms-powerpoint.addin.macroEnabled.12",
-    );
-    map.insert(
+    ),
+    (
         "PPAX",
         "application/vnd.openxmlformats-officedocument.presentationml.addin",
-    );
-    map.insert("PPM", "image/x-portable-pixmap");
-    map.insert("PPS", "application/vnd.ms-powerpoint");
-    map.insert(
+    ),
+    ("PPM", "image/x-portable-pixmap"),
+    ("PPS", "application/vnd.ms-powerpoint"),
+    (
         "PPSM",
         "application/vnd.ms-powerpoint.slideshow.macroEnabled.12",
-    );
-    map.insert(
+    ),
+    (
         "PPSX",
         "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
-    );
-    map.insert("PPT", "application/vnd.ms-powerpoint");
-    map.insert(
+    ),
+    ("PPT", "application/vnd.ms-powerpoint"),
+    (
         "PPTM",
         "application/vnd.ms-powerpoint.presentation.macroEnabled.12",
-    );
-    map.insert(
+    ),
+    (
         "PPTX",
         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    );
-    map.insert("PS", "application/postscript");
-    map.insert("PSD", "application/vnd.adobe.photoshop");
-    map.insert("PSP", "image/x-paintshoppro");
-    map.insert("QTIF", "image/x-quicktime");
-    map.insert("R3D", "video/x-red-r3d");
-    map.insert("RA", "audio/x-pn-realaudio");
-    map.insert("RAF", "image/x-fujifilm-raf");
-    map.insert("RAM", "audio/x-pn-realaudio");
-    map.insert("RAR", "application/x-rar-compressed");
-    map.insert("RAW", "image/x-raw");
-    map.insert("RM", "application/vnd.rn-realmedia");
-    map.insert("RMVB", "application/vnd.rn-realmedia-vbr");
-    map.insert("RPM", "audio/x-pn-realaudio-plugin");
-    map.insert("RSRC", "application/ResEdit");
-    map.insert("RTF", "text/rtf");
-    map.insert("RV", "video/vnd.rn-realvideo");
-    map.insert("RW2", "image/x-panasonic-rw2");
-    map.insert("RWL", "image/x-leica-rwl");
-    map.insert("RWZ", "image/x-rawzor");
-    map.insert("SEQ", "image/x-flir-seq");
-    map.insert("SKETCH", "application/sketch");
-    map.insert("SR2", "image/x-sony-sr2");
-    map.insert("SRF", "image/x-sony-srf");
-    map.insert("SRW", "image/x-samsung-srw");
-    map.insert("SVG", "image/svg+xml");
-    map.insert("SWF", "application/x-shockwave-flash");
-    map.insert("TAR", "application/x-tar");
-    map.insert("THMX", "application/vnd.ms-officetheme");
-    map.insert("TIFF", "image/tiff");
-    map.insert("TTC", "application/font-ttf");
-    map.insert("TTF", "application/font-ttf");
-    map.insert("TXT", "text/plain");
-    map.insert("Torrent", "application/x-bittorrent");
-    map.insert("VCard", "text/vcard");
-    map.insert("VRD", "application/octet-stream");
-    map.insert("VSD", "application/x-visio");
-    map.insert("WDP", "image/vnd.ms-photo");
-    map.insert("WEBM", "video/webm");
-    map.insert("WMA", "audio/x-ms-wma");
-    map.insert("WMF", "application/x-wmf");
-    map.insert("WMV", "video/x-ms-wmv");
-    map.insert("WPG", "image/x-wpg");
-    map.insert("WTV", "video/x-ms-wtv");
-    map.insert("X3F", "image/x-sigma-x3f");
-    map.insert("XCF", "image/x-xcf");
-    map.insert("XISF", "image/x-xisf");
-    map.insert("XLA", "application/vnd.ms-excel");
-    map.insert("XLAM", "application/vnd.ms-excel.addin.macroEnabled.12");
-    map.insert("XLS", "application/vnd.ms-excel");
-    map.insert(
+    ),
+    ("PS", "application/postscript"),
+    ("PSD", "application/vnd.adobe.photoshop"),
+    ("PSP", "image/x-paintshoppro"),
+    ("QTIF", "image/x-quicktime"),
+    ("R3D", "video/x-red-r3d"),
+    ("RA", "audio/x-pn-realaudio"),
+    ("RAF", "image/x-fujifilm-raf"),
+    ("RAM", "audio/x-pn-realaudio"),
+    ("RAR", "application/x-rar-compressed"),
+    ("RAW", "image/x-raw"),
+    ("RM", "application/vnd.rn-realmedia"),
+    ("RMVB", "application/vnd.rn-realmedia-vbr"),
+    ("RPM", "audio/x-pn-realaudio-plugin"),
+    ("RSRC", "application/ResEdit"),
+    ("RTF", "text/rtf"),
+    ("RV", "video/vnd.rn-realvideo"),
+    ("RW2", "image/x-panasonic-rw2"),
+    ("RWL", "image/x-leica-rwl"),
+    ("RWZ", "image/x-rawzor"),
+    ("SEQ", "image/x-flir-seq"),
+    ("SKETCH", "application/sketch"),
+    ("SR2", "image/x-sony-sr2"),
+    ("SRF", "image/x-sony-srf"),
+    ("SRW", "image/x-samsung-srw"),
+    ("SVG", "image/svg+xml"),
+    ("SWF", "application/x-shockwave-flash"),
+    ("TAR", "application/x-tar"),
+    ("THMX", "application/vnd.ms-officetheme"),
+    ("TIFF", "image/tiff"),
+    ("TTC", "application/font-ttf"),
+    ("TTF", "application/font-ttf"),
+    ("TXT", "text/plain"),
+    ("Torrent", "application/x-bittorrent"),
+    ("VCard", "text/vcard"),
+    ("VRD", "application/octet-stream"),
+    ("VSD", "application/x-visio"),
+    ("WDP", "image/vnd.ms-photo"),
+    ("WEBM", "video/webm"),
+    ("WMA", "audio/x-ms-wma"),
+    ("WMF", "application/x-wmf"),
+    ("WMV", "video/x-ms-wmv"),
+    ("WPG", "image/x-wpg"),
+    ("WTV", "video/x-ms-wtv"),
+    ("X3F", "image/x-sigma-x3f"),
+    ("XCF", "image/x-xcf"),
+    ("XISF", "image/x-xisf"),
+    ("XLA", "application/vnd.ms-excel"),
+    ("XLAM", "application/vnd.ms-excel.addin.macroEnabled.12"),
+    ("XLS", "application/vnd.ms-excel"),
+    (
         "XLSB",
         "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
-    );
-    map.insert("XLSM", "application/vnd.ms-excel.sheet.macroEnabled.12");
-    map.insert(
+    ),
+    ("XLSM", "application/vnd.ms-excel.sheet.macroEnabled.12"),
+    (
         "XLSX",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    );
-    map.insert("XLT", "application/vnd.ms-excel");
-    map.insert("XLTM", "application/vnd.ms-excel.template.macroEnabled.12");
-    map.insert(
+    ),
+    ("XLT", "application/vnd.ms-excel"),
+    ("XLTM", "application/vnd.ms-excel.template.macroEnabled.12"),
+    (
         "XLTX",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.template",
-    );
-    map.insert("XML", "application/xml");
-    map.insert("XMP", "application/rdf+xml");
-    map.insert("ZIP", "application/zip");
-    map
-});
+    ),
+    ("XML", "application/xml"),
+    ("XMP", "application/rdf+xml"),
+    ("ZIP", "application/zip"),
+];
 
-/// Look up MIME_TYPES value by key
+/// MIME type mappings for file types lookup table
+/// Built from static data on first access
+pub static MIME_TYPES: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| MIME_TYPES_DATA.iter().copied().collect());
+
+/// Look up mime type mappings for file types value by key
 pub fn lookup_mime_types(key: &str) -> Option<&'static str> {
-    MIME_TYPES.get(&key).copied()
+    MIME_TYPES.get(key).copied()
 }
 
-// Canonical file extensions for file types
-// Source: ExifTool ExifTool.pm %fileTypeExt (9 entries)
-pub static FILE_TYPE_EXTENSIONS: LazyLock<HashMap<&'static str, &'static str>> =
-    LazyLock::new(|| {
-        let mut map = HashMap::new();
-        map.insert("Canon 1D RAW", "tif");
-        map.insert("DICOM", "dcm");
-        map.insert("FLIR", "fff");
-        map.insert("GZIP", "gz");
-        map.insert("JPEG", "jpg");
-        map.insert("M2TS", "mts");
-        map.insert("MPEG", "mpg");
-        map.insert("TIFF", "tif");
-        map.insert("VCard", "vcf");
-        map
-    });
+// Generated file_type_extensions lookup table
+// Source: ExifTool ExifTool.pm %fileTypeExt
+// Description: Canonical file extensions for file types
 
-/// Look up FILE_TYPE_EXTENSIONS value by key
+/// Static data for canonical file extensions for file types lookup
+/// Source: ExifTool ExifTool.pm %fileTypeExt (9 entries)
+static FILE_TYPE_EXTENSIONS_DATA: &[(&str, &str)] = &[
+    ("Canon 1D RAW", "tif"),
+    ("DICOM", "dcm"),
+    ("FLIR", "fff"),
+    ("GZIP", "gz"),
+    ("JPEG", "jpg"),
+    ("M2TS", "mts"),
+    ("MPEG", "mpg"),
+    ("TIFF", "tif"),
+    ("VCard", "vcf"),
+];
+
+/// Canonical file extensions for file types lookup table
+/// Built from static data on first access
+pub static FILE_TYPE_EXTENSIONS: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| FILE_TYPE_EXTENSIONS_DATA.iter().copied().collect());
+
+/// Look up canonical file extensions for file types value by key
 pub fn lookup_file_type_extensions(key: &str) -> Option<&'static str> {
-    FILE_TYPE_EXTENSIONS.get(&key).copied()
+    FILE_TYPE_EXTENSIONS.get(key).copied()
+}
+
+// Boolean set tables
+// Generated weak magic file types boolean set
+// Source: ExifTool Image::ExifTool %weakMagic
+// Description: File types with weak magic number recognition (MP3)
+
+/// Static data for file types with weak magic number recognition (mp3) set
+/// Source: ExifTool Image::ExifTool %weakMagic (1 entries)
+static WEAK_MAGIC_FILE_TYPES_DATA: &[&str] = &["MP3"];
+
+/// File types with weak magic number recognition (MP3) boolean set table
+/// Built from static data on first access
+pub static WEAK_MAGIC_FILE_TYPES: LazyLock<HashSet<&'static str>> =
+    LazyLock::new(|| WEAK_MAGIC_FILE_TYPES_DATA.iter().copied().collect());
+
+/// Check if a file type is in the file types with weak magic number recognition (mp3) set
+pub fn is_weak_magic_file(file_type: &str) -> bool {
+    WEAK_MAGIC_FILE_TYPES.contains(file_type)
+}
+
+// Generated creatable file types boolean set
+// Source: ExifTool Image::ExifTool %createTypes
+// Description: File types that can be created from scratch (XMP, ICC, MIE, VRD, etc.)
+
+/// Static data for file types that can be created from scratch (xmp, icc, mie, vrd, etc.) set
+/// Source: ExifTool Image::ExifTool %createTypes (7 entries)
+static CREATABLE_FILE_TYPES_DATA: &[&str] = &["DR4", "EXIF", "EXV", "ICC", "MIE", "VRD", "XMP"];
+
+/// File types that can be created from scratch (XMP, ICC, MIE, VRD, etc.) boolean set table
+/// Built from static data on first access
+pub static CREATABLE_FILE_TYPES: LazyLock<HashSet<&'static str>> =
+    LazyLock::new(|| CREATABLE_FILE_TYPES_DATA.iter().copied().collect());
+
+/// Check if a file type is in the file types that can be created from scratch (xmp, icc, mie, vrd, etc.) set
+pub fn is_creatable_file(file_type: &str) -> bool {
+    CREATABLE_FILE_TYPES.contains(file_type)
+}
+
+// Generated process determined types boolean set
+// Source: ExifTool Image::ExifTool %processType
+// Description: File types determined by process proc during FastScan == 3
+
+/// Static data for file types determined by process proc during fastscan == 3 set
+/// Source: ExifTool Image::ExifTool %processType (10 entries)
+static PROCESS_DETERMINED_TYPES_DATA: &[&str] = &[
+    "AIFF", "EXE", "Font", "JPEG", "PS", "Real", "TIFF", "TXT", "VCard", "XMP",
+];
+
+/// File types determined by process proc during FastScan == 3 boolean set table
+/// Built from static data on first access
+pub static PROCESS_DETERMINED_TYPES: LazyLock<HashSet<&'static str>> =
+    LazyLock::new(|| PROCESS_DETERMINED_TYPES_DATA.iter().copied().collect());
+
+/// Check if a file type is in the file types determined by process proc during fastscan == 3 set
+pub fn is_process_determined(file_type: &str) -> bool {
+    PROCESS_DETERMINED_TYPES.contains(file_type)
+}
+
+// Generated pc operating systems boolean set
+// Source: ExifTool Image::ExifTool %isPC
+// Description: Operating systems that use PC-style file paths
+
+/// Static data for operating systems that use pc-style file paths set
+/// Source: ExifTool Image::ExifTool %isPC (6 entries)
+static PC_OPERATING_SYSTEMS_DATA: &[&str] =
+    &["MSWin32", "NetWare", "cygwin", "dos", "os2", "symbian"];
+
+/// Operating systems that use PC-style file paths boolean set table
+/// Built from static data on first access
+pub static PC_OPERATING_SYSTEMS: LazyLock<HashSet<&'static str>> =
+    LazyLock::new(|| PC_OPERATING_SYSTEMS_DATA.iter().copied().collect());
+
+/// Check if a file type is in the operating systems that use pc-style file paths set
+pub fn is_pc_operating_systems(file_type: &str) -> bool {
+    PC_OPERATING_SYSTEMS.contains(file_type)
 }

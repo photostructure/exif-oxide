@@ -93,7 +93,8 @@ audit:
 	cargo audit
 
 # Pre-commit checks: do everything: update deps, codegen, fix code, lint, test, audit, and build
-precommit: update perl-deps codegen check-extractors fix lint compat-gen test codegen-test audit build 
+precommit: update perl-deps codegen check-extractors fix lint compat-gen test codegen-test audit build
+	@echo "✅ precommit success" 
 
 # Generate ExifTool JSON reference data for compatibility testing
 compat-gen:

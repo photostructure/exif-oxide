@@ -243,3 +243,13 @@ Refactored codegen extraction system to scale from 35 to 300+ tables with improv
 **Architecture implemented**: Config files in `codegen/config/ModuleName_pm/` → patching → extraction → direct Rust code generation. Each ExifTool source module gets its own config directory with type-specific JSON files.
 
 **Impact**: Ready to scale to 300+ lookup tables for RAW format support, zero maintenance overhead with monthly ExifTool updates, improved developer experience with readable generated code instead of complex macros.
+
+---
+
+## ✅ Simple Table Code Generation Optimization (COMPLETED - July 2025)
+
+Optimized simple lookup table code generation to reduce generated file sizes by ~75%. Changed from verbose HashMap construction with hundreds of `map.insert()` calls to compact static array + lazy HashMap pattern matching existing `LazyRegexMap` architecture.
+
+**Key achievements**: Canon model ID table reduced from ~1,400 to ~380 lines (354 entries), improved readability with clean tuple format, faster compilation due to simpler code structure, consistent pattern across all generated modules using `std::sync::LazyLock`.
+
+**Impact**: Significantly smaller generated files improving IDE performance and code review, identical runtime performance with potentially faster initialization, easier to modify generator templates for future enhancements.
