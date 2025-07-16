@@ -51,10 +51,8 @@ pub fn generate_boolean_set(
     // Generate static data array
     let data_name = format!("{}_DATA", constant_name);
     code.push_str(&format!(
-        "/// Static data for {} set\n/// Source: ExifTool {} {} ({} entries)\n",
+        "/// Static data for {} set ({} entries)\n",
         metadata.description.to_lowercase(),
-        source.module,
-        hash_name,
         truthy_keys.len()
     ));
     code.push_str(&format!(
