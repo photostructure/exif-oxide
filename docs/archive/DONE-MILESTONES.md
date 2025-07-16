@@ -293,3 +293,15 @@ Refactored monolithic `codegen/src/main.rs` from 433 lines into focused, maintai
 **Key achievements**: Extracted table processing logic to `table_processor.rs`, created `file_operations.rs` for atomic I/O operations, built `config/mod.rs` for configuration management, implemented `discovery.rs` for module auto-discovery, reduced main.rs by 60% to 172 lines focused on high-level orchestration.
 
 **Impact**: Significantly improved maintainability and testability of codegen system, easier onboarding for new contributors, clear extension points for future codegen features, better error isolation and debugging capabilities.
+
+---
+
+## ✅ Milestone 17 Prerequisite: RAW Format Codegen Extraction (COMPLETED - July 16, 2025)
+
+Successfully eliminated all manual maintenance of lookup tables for RAW format support by extracting 3,109+ lookup table entries from ExifTool source across all manufacturers. Achieved complete automation from ExifTool to Rust code generation with zero ongoing maintenance burden.
+
+**Key achievements**: 35 extracted tables across 9 manufacturers (Canon: 526 lens types + 354 models + 5 settings tables, Nikon: 614 lens IDs + 4 AF point tables, Sony: 4 camera setting tables, Olympus: 3 major tables, PanasonicRaw: 1 table, XMP: 5 namespace tables, ExifTool: 6 core tables, Exif: orientation, PNG: 3 boolean sets), simplified build system to single `make codegen` command, 59 generated Rust files with idiomatic HashMap lookup functions.
+
+**Files implemented**: Configuration files for all manufacturers in `codegen/config/`, generated lookup modules in `src/generated/`, comprehensive extraction system handling multiple data types (simple_table, boolean_set, file_type_lookup, regex_patterns).
+
+**Impact**: Eliminated the largest maintenance burden for RAW format implementation (3,000+ manual lookup entries), enabled rapid RAW format milestone development, automatic updates with each ExifTool release, zero risk of manual transcription errors.
