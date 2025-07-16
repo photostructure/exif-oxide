@@ -24,6 +24,9 @@ Thumbs.db
 # Sync outputs
 .cache/
 
+# Makefile lock files
+/codegen/.make.flock
+
 # Benchmark results
 /criterion/
 

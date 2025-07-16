@@ -2,11 +2,11 @@
 //!
 //! Total lookups: 343
 
-use once_cell::sync::Lazy;
 use std::collections::HashMap;
+use std::sync::LazyLock;
 
 /// Extension aliases - maps extensions to their canonical forms
-static EXTENSION_ALIASES: Lazy<HashMap<&'static str, &'static str>> = Lazy::new(|| {
+static EXTENSION_ALIASES: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("3GP2", "3G2");
     map.insert("3GPP", "3GP");
@@ -64,8 +64,8 @@ static EXTENSION_ALIASES: Lazy<HashMap<&'static str, &'static str>> = Lazy::new(
 });
 
 /// File type formats - maps file types to their format descriptions
-static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'static str)>> =
-    Lazy::new(|| {
+static FILE_TYPE_FORMATS: LazyLock<HashMap<&'static str, (Vec<&'static str>, &'static str)>> =
+    LazyLock::new(|| {
         let mut map = HashMap::new();
         map.insert("360", (vec!["MOV"], "GoPro 360 video"));
         map.insert("3FR", (vec!["TIFF"], "Hasselblad RAW format"));

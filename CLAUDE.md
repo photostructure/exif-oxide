@@ -212,12 +212,13 @@ This is critical for maintainability as ExifTool releases monthly updates.
 
 When working with source files that exceed 500 lines:
 
-1. Suggest refactoring into smaller, focused modules
+1. Suggest refactoring into smaller, focused modules using semantic grouping (completed for generated files in July 2025)
 2. The Read tool will truncate files larger than 2000 lines, which can cause incomplete code analysis
 3. Breaking up large files improves:
    - Code readability and maintenance
    - Tool effectiveness for analysis
    - Module organization and separation of concerns
+   - IDE performance and compile times
 
 ### Mark where the code smells
 

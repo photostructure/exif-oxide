@@ -10,9 +10,9 @@
 //! - `$format eq "undef"` - Format-based conditions
 
 use crate::types::{ExifError, Result};
-use once_cell::sync::Lazy;
 use regex::Regex;
 use std::collections::HashMap;
+use std::sync::LazyLock;
 use std::sync::Mutex;
 
 /// Condition types for runtime processor selection
@@ -83,7 +83,8 @@ pub struct EvalContext<'a> {
 
 /// Compiled regex cache for performance
 /// ExifTool: Perl compiles regexes once, we cache them similarly
-static REGEX_CACHE: Lazy<Mutex<HashMap<String, Regex>>> = Lazy::new(|| Mutex::new(HashMap::new()));
+static REGEX_CACHE: LazyLock<Mutex<HashMap<String, Regex>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
 
 impl Condition {
     /// Evaluate condition against provided context

@@ -77,13 +77,13 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
     ));
     code.push_str("\n");
     code.push_str("use std::collections::HashMap;\n");
-    code.push_str("use once_cell::sync::Lazy;\n");
+    code.push_str("use std::sync::LazyLock;\n");
     code.push_str("\n");
 
     // Generate extension aliases (simple string mappings)
     code.push_str("/// Extension aliases - maps extensions to their canonical forms\n");
     code.push_str(
-        "static EXTENSION_ALIASES: Lazy<HashMap<&'static str, &'static str>> = Lazy::new(|| {\n",
+        "static EXTENSION_ALIASES: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {\n",
     );
     code.push_str("    let mut map = HashMap::new();\n");
 
@@ -103,7 +103,7 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
 
     // Generate file type formats (complex mappings)
     code.push_str("/// File type formats - maps file types to their format descriptions\n");
-    code.push_str("static FILE_TYPE_FORMATS: Lazy<HashMap<&'static str, (Vec<&'static str>, &'static str)>> = Lazy::new(|| {\n");
+    code.push_str("static FILE_TYPE_FORMATS: LazyLock<HashMap<&'static str, (Vec<&'static str>, &'static str)>> = LazyLock::new(|| {\n");
     code.push_str("    let mut map = HashMap::new();\n");
 
     // Process entries from both extensions and mime_types that have array values

@@ -179,7 +179,9 @@
       "WebFetch(domain:claude.ai)",
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(test:*)",
-      "Bash(./debug_png_pattern)"
+      "Bash(./debug_png_pattern)",
+      "WebFetch(domain:stackoverflow.com)",
+      "WebFetch(domain:gist.github.com)"
     ],
     "deny": []
   }

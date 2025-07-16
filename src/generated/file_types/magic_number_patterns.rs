@@ -7,8 +7,8 @@
 //! to ensure hex escapes like \x89 match raw bytes, not Unicode codepoints.
 
 use crate::file_types::lazy_regex::LazyRegexMap;
-use once_cell::sync::Lazy;
 use regex::bytes::Regex;
+use std::sync::LazyLock;
 
 /// Magic number patterns from ExifTool's %magicNumber hash
 static PATTERN_DATA: &[(&str, &str)] = &[
@@ -125,7 +125,7 @@ static PATTERN_DATA: &[(&str, &str)] = &[
 ];
 
 /// Lazy-compiled regex patterns for magic number detection
-static MAGIC_PATTERNS: Lazy<LazyRegexMap> = Lazy::new(|| LazyRegexMap::new(PATTERN_DATA));
+static MAGIC_PATTERNS: LazyLock<LazyRegexMap> = LazyLock::new(|| LazyRegexMap::new(PATTERN_DATA));
 
 /// Test if a byte buffer matches a file type's magic number pattern
 pub fn matches_magic_number(file_type: &str, buffer: &[u8]) -> bool {
