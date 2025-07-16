@@ -53,6 +53,7 @@ if ($source_file =~ m{/Image/ExifTool/([^/]+)\.pm$}) {
     die "Cannot determine module name from path: $source_file\n";
 }
 
+
 # Load the module
 eval "require $module_name" or die "Cannot load module $module_name: $@\n";
 
