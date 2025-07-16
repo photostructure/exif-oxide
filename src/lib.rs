@@ -20,6 +20,7 @@ pub mod raw;
 mod regex_test;
 pub mod registry;
 pub mod tiff_types;
+pub mod tiff_utils;
 pub mod types;
 pub mod value_extraction;
 pub mod xmp;
