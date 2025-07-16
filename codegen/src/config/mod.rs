@@ -174,10 +174,20 @@ pub fn load_extracted_tables_with_config(
 /// - "Canon.pm" -> "Canon_pm"
 fn normalize_module_name(module: &str) -> String {
     if module.starts_with("Image::ExifTool::") {
+        // Old Perl module format: Image::ExifTool::Canon -> Canon_pm
         module.strip_prefix("Image::ExifTool::").unwrap().to_string() + "_pm"
     } else if module == "Image::ExifTool" {
+        // Old main module format: Image::ExifTool -> ExifTool_pm
         "ExifTool_pm".to_string()
+    } else if module.contains("/") {
+        // New full path format: third-party/exiftool/lib/Image/ExifTool/Canon.pm -> Canon_pm
+        if let Some(filename) = module.split('/').last() {
+            filename.replace(".pm", "_pm")
+        } else {
+            module.replace(".pm", "_pm")
+        }
     } else {
+        // Old filename format: Canon.pm -> Canon_pm
         module.replace(".pm", "_pm")
     }
 }

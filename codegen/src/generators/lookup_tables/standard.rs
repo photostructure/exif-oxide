@@ -10,16 +10,7 @@ pub fn generate_lookup_table(hash_name: &str, table_data: &ExtractedTable) -> Re
     let source = &table_data.source;
     let mut code = String::new();
 
-    // Table header comment (not file header)
     let constant_name = &metadata.constant_name;
-
-    code.push_str(&format!(
-        "// Generated {} lookup table\n// DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n// Source: ExifTool {} {}\n// Description: {}\n\n",
-        constant_name.to_lowercase(),
-        source.module,
-        hash_name,
-        metadata.description
-    ));
 
     // Determine key type
     let key_type = &metadata.key_type;
@@ -68,8 +59,7 @@ pub fn generate_lookup_table(hash_name: &str, table_data: &ExtractedTable) -> Re
     // Generate static data array
     let data_name = format!("{}_DATA", constant_name);
     code.push_str(&format!(
-        "/// Static data for {} lookup ({} entries)\n",
-        metadata.description.to_lowercase(),
+        "/// Raw data ({} entries)\n",
         metadata.entry_count
     ));
     code.push_str(&format!(
@@ -111,8 +101,7 @@ pub fn generate_lookup_table(hash_name: &str, table_data: &ExtractedTable) -> Re
 
     // Generate lazy HashMap
     code.push_str(&format!(
-        "/// {} lookup table\n/// Built from static data on first access\n",
-        metadata.description
+        "/// Lookup table (lazy-initialized)\n"
     ));
     code.push_str(&format!(
         "pub static {}: LazyLock<HashMap<{}, {}>> = LazyLock::new(|| {{\n",
@@ -137,8 +126,7 @@ pub fn generate_lookup_table(hash_name: &str, table_data: &ExtractedTable) -> Re
     };
 
     code.push_str(&format!(
-        "/// Look up {} value by key\npub fn lookup_{}(key: {}) -> Option<{}> {{\n",
-        metadata.description.to_lowercase(),
+        "/// Look up value by key\npub fn lookup_{}(key: {}) -> Option<{}> {{\n",
         fn_name,
         fn_param_type,
         value_rust_type
