@@ -41,33 +41,40 @@ flowchart
 
 ```
 codegen/
-├── patch_exiftool_modules.pl # Auto-patches ExifTool for variable access
-├── config/               # Source-file-based configuration
-│   ├── Canon_pm/        # Canon.pm extractions
-│   │   ├── simple_table.json
-│   │   └── print_conv.json
-│   ├── ExifTool_pm/     # ExifTool.pm extractions
+├── src/                 # Rust orchestration (simplified architecture)
+│   ├── main.rs         # Command-line interface and coordination
+│   ├── discovery.rs    # Auto-discovery of module directories
+│   ├── config/         # Configuration management
+│   ├── extraction.rs   # Calls Perl extractors with explicit arguments
+│   ├── patching.rs     # Atomic ExifTool patching with tempfile
+│   ├── file_operations.rs # Atomic file I/O operations
+│   ├── table_processor.rs # Table processing and validation
+│   └── generators/     # Rust code generation
+│       ├── lookup_tables/ # Lookup table generators (modular output)
+│       ├── file_detection/ # File type detection
+│       ├── data_sets/   # Boolean set generators
+│       ├── tags.rs     # Tag table generator (semantic grouping)
+│       └── composite_tags.rs # Composite tag generator
+├── config/             # Source-file-based configuration
+│   ├── Canon_pm/      # Canon.pm extractions
+│   │   └── simple_table.json
+│   ├── ExifTool_pm/   # ExifTool.pm extractions
 │   │   ├── simple_table.json
 │   │   ├── file_type_lookup.json
-│   │   └── boolean_set.json
-│   └── Nikon_pm/        # Nikon.pm extractions
-│       ├── simple_table.json
-│       └── print_conv.json
-├── schemas/             # JSON schema validation
-│   ├── simple_table.json
-│   ├── file_type_lookup.json
-│   └── boolean_set.json
-├── extractors/          # Perl scripts extract from ExifTool
-│   ├── simple_table.pl       # Lookup tables
-│   ├── tag_tables.pl    # Tag definitions
-│   └── file_type_lookup.pl # File detection
-├── src/generators/      # Rust code generation
-│   ├── lookup_tables/   # Lookup table generators
-│   ├── file_detection/  # File type detection
-│   └── data_sets/       # Boolean set generators
-│   ├── tags.rs         # Tag table generator
-│   └── composite_tags.rs # Composite tag generator
-└── generated/          # Extracted JSON data
+│   │   ├── boolean_set.json
+│   │   └── regex_patterns.json
+│   ├── Nikon_pm/      # Nikon.pm extractions
+│   │   ├── simple_table.json
+│   │   └── print_conv.json
+│   └── [Other]_pm/    # Auto-discovered modules
+├── extractors/        # Simple Perl scripts (explicit arguments)
+│   ├── simple_table.pl     # Takes file path + hash name
+│   ├── tag_tables.pl       # Tag definitions
+│   ├── file_type_lookup.pl # File detection
+│   ├── boolean_set.pl      # Boolean sets
+│   └── regex_patterns.pl   # Pattern extraction
+├── schemas/           # JSON schema validation
+└── generated/         # Temporary extraction data (gitignored)
 ```
 
 ### Runtime System
@@ -79,23 +86,53 @@ src/
 │   ├── print_conv.rs             # PrintConv implementations
 │   ├── value_conv.rs             # ValueConv implementations
 │   └── [manufacturer]/          # Specialized processors
-├── generated/                     # Generated lookup tables
-│   ├── tags/                     # Modular tag structure (semantic grouping)
-│   │   ├── core.rs               # Core EXIF tags
-│   │   ├── camera.rs             # Camera-specific tags
-│   │   ├── gps.rs                # GPS-related tags
+├── generated/                     # Generated lookup tables (modular structure)
+│   ├── tags/                     # Semantic tag grouping (8 focused modules)
+│   │   ├── core.rs               # Core EXIF tags (1,256 lines)
+│   │   ├── camera.rs             # Camera-specific tags (376 lines)
+│   │   ├── gps.rs                # GPS-related tags (365 lines)
+│   │   ├── time.rs               # Time-related tags (123 lines)
+│   │   ├── author.rs             # Author/copyright tags (46 lines)
+│   │   ├── special.rs            # Special/mixed-group tags (46 lines)
+│   │   ├── common.rs             # Shared types (33 lines)
 │   │   └── mod.rs                # Re-exports and unified interface
-│   ├── Canon_pm/                 # Canon.pm extractions (functional modules)
+│   ├── Canon_pm/                 # Canon.pm extractions (functional splitting)
 │   │   ├── canonimagesize.rs     # Image size lookup
 │   │   ├── canonwhitebalance.rs  # White balance lookup
+│   │   ├── canonmodelid.rs       # Model ID lookup
+│   │   ├── canonquality.rs       # Quality lookup
+│   │   ├── picturestyles.rs      # Picture styles lookup
 │   │   └── mod.rs                # Re-exports all Canon tables
-│   ├── ExifTool_pm/              # ExifTool.pm extractions (functional modules)
+│   ├── ExifTool_pm/              # ExifTool.pm extractions (6 functional modules)
 │   │   ├── mimetype.rs           # MIME type lookup
 │   │   ├── filetypeext.rs        # File type extension lookup
+│   │   ├── weakmagic.rs          # Weak magic patterns
+│   │   ├── createtypes.rs        # Create types
+│   │   ├── processtype.rs        # Process types
+│   │   ├── ispc.rs               # IsPC checks
 │   │   └── mod.rs                # Re-exports all ExifTool tables
-│   └── Nikon_pm/                 # Nikon.pm extractions (functional modules)
-│       ├── nikonlensids.rs       # Lens ID lookup
-│       └── mod.rs                # Re-exports all Nikon tables
+│   ├── XMP_pm/                   # XMP.pm extractions (5 functional modules)
+│   │   ├── nsuri.rs              # Namespace URI lookup
+│   │   ├── xmpns.rs              # XMP namespace lookup
+│   │   ├── charname.rs           # Character name lookup
+│   │   ├── charnum.rs            # Character number lookup
+│   │   ├── stdxlatns.rs          # Standard translation namespace
+│   │   └── mod.rs                # Re-exports all XMP tables
+│   ├── Nikon_pm/                 # Nikon.pm extractions
+│   │   ├── nikonlensids.rs       # Lens ID lookup
+│   │   └── mod.rs                # Re-exports all Nikon tables
+│   ├── Exif_pm/                  # Exif.pm extractions
+│   │   ├── orientation.rs        # Orientation lookup
+│   │   └── mod.rs                # Re-exports all Exif tables
+│   ├── PNG_pm/                   # PNG.pm extractions (3 functional modules)
+│   │   ├── isdatchunk.rs         # IsDatChunk checks
+│   │   ├── istxtchunk.rs         # IsTxtChunk checks
+│   │   ├── noleapfrog.rs         # NoLeapFrog checks
+│   │   └── mod.rs                # Re-exports all PNG tables
+│   └── file_types/               # File type detection
+│       ├── file_type_lookup.rs   # File type lookup
+│       ├── magic_number_patterns.rs # Magic number patterns
+│       └── mod.rs                # Re-exports all file type tables
 └── processor_registry/           # Advanced processor architecture
     ├── traits.rs                # BinaryDataProcessor trait
     └── capability.rs            # Capability assessment
@@ -337,14 +374,14 @@ Example: BPG magic number `BPG\xfb` becomes `"BPG\\xfb"` in generated Rust code.
 
 ### Build Pipeline
 
-The simplified build pipeline uses Rust orchestration with minimal Perl scripts:
+The simplified build pipeline uses Rust orchestration with simple Perl scripts:
 
 1. **Auto-discovery**: Rust scans `codegen/config/` directories for modules
-2. **Configuration**: Each module has JSON configs specifying tables and source paths
-3. **Patching**: Rust temporarily patches ExifTool modules to expose variables
-4. **Extraction**: Rust calls Perl scripts with explicit arguments (no config reading)
-5. **Generation**: Creates Rust code from individual JSON files (no split step)
-6. **Cleanup**: Reverts ExifTool patches to original state
+2. **Configuration**: Each module has JSON configs with explicit `source` paths
+3. **Patching**: Rust uses atomic file operations to temporarily patch ExifTool modules
+4. **Extraction**: Rust calls Perl scripts with explicit file paths and hash names
+5. **Generation**: Creates modular Rust code directly from individual JSON files
+6. **Cleanup**: Makefile reverts ExifTool patches using git checkout
 
 ```bash
 # Full pipeline
@@ -353,37 +390,41 @@ make -j4 codegen         # Parallel execution (faster)
 
 # Development commands
 make check-schemas       # Validate all configuration files
-cargo run -p codegen     # Run code generation directly
+cd codegen && cargo run --release  # Run code generation directly
 ```
 
 #### Architecture Improvements
 
-**Old System**:
+**Old System** (pre-July 2025):
 
 - Complex Makefile with parallel extraction logic
-- Perl scripts read JSON configs
+- Perl scripts read JSON configs and knew about structure
 - Combined extraction → split-extractions → individual files
-- Hardcoded module lists in Rust
+- Hardcoded module lists in Rust main.rs
+- Path guessing logic for ExifTool modules
 
-**New System**:
+**New System** (July 2025):
 
-- Rust orchestrates everything
-- Simple, dumb Perl scripts with explicit arguments
-- Direct output of individual JSON files
-- Auto-discovery of modules from config directories
-- Streaming file operations with atomic replacement
+- **Rust orchestrates everything** - Single `cargo run` handles full pipeline
+- **Simple Perl scripts** - Take explicit file paths and hash names as arguments
+- **Direct JSON output** - No split-extractions step needed
+- **Auto-discovery** - Scans config directories, no hardcoded module lists
+- **Atomic file operations** - Uses tempfile crate for safe ExifTool patching
+- **Modular generated code** - Semantic grouping and functional splitting
+- **Explicit source paths** - No path guessing, all configured in JSON
 
 #### Why Patching is Required
 
 ExifTool uses `my`-scoped lexical variables for many lookup tables (e.g., `my %canonWhiteBalance`). These variables are private to their module and cannot be accessed by external scripts. To extract these tables programmatically, we need to convert them to package variables (`our %canonWhiteBalance`) which are accessible via the symbol table.
 
-**Patching Implementation**: The Rust code now handles patching:
+**Patching Implementation**: Rust handles patching with atomic file operations:
 
-- Reads configuration to identify required variables per module
-- Streams file content and patches `my` → `our` for specific variables
-- Uses atomic file replacement with tempfile crate
-- Automatically reverts patches after extraction
-- Only patches variables actually needed by configurations
+- **Auto-discovery**: Reads all configurations to identify required variables per module
+- **Streaming replacement**: Uses `tempfile::NamedTempFile::new_in()` for same-filesystem temp files
+- **Atomic operations**: `temp_file.persist()` ensures safe replacement
+- **Targeted patching**: Only patches variables actually needed by configurations
+- **Safe cleanup**: Makefile uses `git checkout` to revert patches after generation
+- **Error handling**: Graceful fallback if patching fails for specific variables
 
 ## Manual Implementation System
 
@@ -564,22 +605,23 @@ cargo test
 
 ### Build System Capabilities
 
-The modular build system supports efficient development:
+The simplified build system supports efficient development:
 
 ```bash
 # Parallel execution (faster development)
 make -j4 codegen
 
-# Individual extractors (for debugging)
-make generated/tag_tables.json
-make extract
+# Direct Rust execution (for debugging)
+cd codegen && cargo run --release
 
-# Incremental regeneration (for rapid iteration)
-make regen-tags
-make regen-extract
+# Schema validation
+make check-schemas
 
 # Syntax checking
 make check-extractors
+
+# Clean generated files
+make clean
 ```
 
 ## Complete Command Reference
@@ -589,8 +631,7 @@ make check-extractors
 ```bash
 make codegen              # Full pipeline with schema validation
 make -j4 codegen         # Parallel execution
-make extract             # Just lookup tables
-make generated/tag_tables.json  # Just tag definitions
+cd codegen && cargo run --release  # Direct Rust execution
 make check-schemas       # Validate configuration files
 ```
 
@@ -613,9 +654,8 @@ make precommit          # Full validation including schema checks
 ### Incremental
 
 ```bash
-make regen-tags         # Regenerate tag tables only
-make regen-extract       # Regenerate lookup tables only
 make clean              # Clean all generated files
+make check-extractors   # Check Perl script syntax
 ```
 
 ## Performance Characteristics
@@ -645,14 +685,16 @@ make clean              # Clean all generated files
 - **Nikon Support**: AF processing, encryption, lens database, IFD handling
 - **Sony Support**: Basic manufacturer-specific processing
 - **File Detection**: Magic number patterns, MIME types, extension lookup
-- **Generated Integration**: Source-file-based organization with clean imports
-- **Runtime Registry**: Zero-overhead function dispatch with graceful fallbacks
-- **Scalable Architecture**: Direct code generation supporting 300+ lookup tables
+- **Generated Integration**: Source-file-based organization with functional splitting
+- **Runtime Registry**: Zero-overhead function dispatch with graceful fallbacks  
+- **Scalable Architecture**: Modular code generation supporting 300+ lookup tables
+- **Semantic Organization**: Tags grouped by logical categories (core, camera, GPS, etc.)
+- **Build Performance**: Smaller files improve IDE response and compilation speed
 
 ## Related Documentation
 
 - [API-DESIGN.md](API-DESIGN.md) - Public API structure and TagValue design
-- [PROCESSOR-PROC-DISPATCH.md](../PROCESSOR-PROC-DISPATCH.md) - Advanced processor dispatch
-- [STATE-MANAGEMENT.md](../STATE-MANAGEMENT.md) - State management during processing
-- [ENGINEER-GUIDE.md](../ENGINEER-GUIDE.md) - Practical implementation guide
+- [PROCESSOR-DISPATCH.md](../guides/PROCESSOR-DISPATCH.md) - Advanced processor dispatch
+- [ENGINEER-GUIDE.md](../ENGINEER-GUIDE.md) - Practical implementation guide  
 - [ARCHITECTURE.md](../ARCHITECTURE.md) - High-level system overview
+- [DEVELOPMENT-GUIDE.md](../guides/DEVELOPMENT-GUIDE.md) - Development workflow and best practices
