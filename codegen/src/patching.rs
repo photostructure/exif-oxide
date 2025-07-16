@@ -63,8 +63,13 @@ pub fn patch_module(module_path: &Path, variables: &[String]) -> Result<()> {
             patched_content + "\n"
         };
         
-        fs::write(module_path, final_content)
-            .with_context(|| format!("Failed to write {}", module_path.display()))?;
+        // Use atomic write: write to unique temp file, then rename
+        let temp_path = module_path.with_extension(&format!("tmp.{}", std::process::id()));
+        fs::write(&temp_path, final_content)
+            .with_context(|| format!("Failed to write temp file {}", temp_path.display()))?;
+        
+        fs::rename(&temp_path, module_path)
+            .with_context(|| format!("Failed to rename {} to {}", temp_path.display(), module_path.display()))?;
         
         println!("    Patched {}", module_path.display());
     } else {
