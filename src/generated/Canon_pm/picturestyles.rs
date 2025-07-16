@@ -12,7 +12,7 @@ use std::sync::LazyLock;
 // Description: Picture style mode names
 
 /// Static data for picture style mode names lookup (24 entries)
-static PICTURE_STYLES_DATA: &[(u16, &'static str)] = &[
+static PICTURE_STYLES_DATA: &[(u16, &str)] = &[
     (0, "None"),
     (1, "Standard"),
     (2, "Portrait"),

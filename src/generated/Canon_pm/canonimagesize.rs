@@ -12,7 +12,7 @@ use std::sync::LazyLock;
 // Description: Image size setting names
 
 /// Static data for image size setting names lookup (19 entries)
-static CANON_IMAGE_SIZE_DATA: &[(i16, &'static str)] = &[
+static CANON_IMAGE_SIZE_DATA: &[(i16, &str)] = &[
     (-1, "n/a"),
     (0, "Large"),
     (1, "Medium"),

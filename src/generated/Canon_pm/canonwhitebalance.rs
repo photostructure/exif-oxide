@@ -12,7 +12,7 @@ use std::sync::LazyLock;
 // Description: White balance mode names
 
 /// Static data for white balance mode names lookup (22 entries)
-static CANON_WHITE_BALANCE_DATA: &[(u8, &'static str)] = &[
+static CANON_WHITE_BALANCE_DATA: &[(u8, &str)] = &[
     (0, "Auto"),
     (1, "Daylight"),
     (2, "Cloudy"),

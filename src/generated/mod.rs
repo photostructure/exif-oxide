@@ -14,7 +14,13 @@ pub mod Exif_pm;
 #[allow(non_snake_case)]
 pub mod Nikon_pm;
 #[allow(non_snake_case)]
+pub mod Olympus_pm;
+#[allow(non_snake_case)]
 pub mod PNG_pm;
+#[allow(non_snake_case)]
+pub mod PanasonicRaw_pm;
+#[allow(non_snake_case)]
+pub mod Sony_pm;
 #[allow(non_snake_case)]
 pub mod XMP_pm;
 pub mod composite_tags;

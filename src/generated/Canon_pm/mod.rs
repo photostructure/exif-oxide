@@ -4,14 +4,18 @@
 //! DO NOT EDIT MANUALLY - changes will be overwritten.
 
 pub mod canonimagesize;
+pub mod canonlenstypes;
 pub mod canonmodelid;
 pub mod canonquality;
 pub mod canonwhitebalance;
 pub mod picturestyles;
+pub mod userdefstyles;
 
 // Re-export all lookup functions and constants
 pub use canonimagesize::*;
+pub use canonlenstypes::*;
 pub use canonmodelid::*;
 pub use canonquality::*;
 pub use canonwhitebalance::*;
 pub use picturestyles::*;
+pub use userdefstyles::*;

@@ -3,6 +3,12 @@
   "description": "Canon module lookup tables for camera models, settings, and modes",
   "tables": [
     {
+      "hash_name": "%canonLensTypes",
+      "constant_name": "CANON_LENS_TYPES",
+      "key_type": "String",
+      "description": "Canon lens type identification database"
+    },
+    {
       "hash_name": "%canonModelID",
       "constant_name": "CANON_MODEL_ID",
       "key_type": "u32",
@@ -31,6 +37,12 @@
       "constant_name": "CANON_QUALITY",
       "key_type": "i16",
       "description": "Image quality setting names"
+    },
+    {
+      "hash_name": "%userDefStyles",
+      "constant_name": "CANON_USER_DEF_STYLES",
+      "key_type": "u8",
+      "description": "Canon user-defined picture styles"
     }
   ]
 }

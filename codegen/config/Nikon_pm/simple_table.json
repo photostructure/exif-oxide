@@ -7,6 +7,30 @@
       "constant_name": "NIKON_LENS_IDS",
       "key_type": "String",
       "description": "Nikon lens identification database"
+    },
+    {
+      "hash_name": "%afPoints153",
+      "constant_name": "AF_POINTS_153",
+      "key_type": "u8",
+      "description": "AF point indices for 153-point AF system"
+    },
+    {
+      "hash_name": "%afPoints135",
+      "constant_name": "AF_POINTS_135",
+      "key_type": "u8",
+      "description": "AF point indices for 135-point AF system"
+    },
+    {
+      "hash_name": "%afPoints105",
+      "constant_name": "AF_POINTS_105",
+      "key_type": "u8",
+      "description": "AF point indices for 105-point AF system"
+    },
+    {
+      "hash_name": "%iSOAutoShutterTimeZ9",
+      "constant_name": "ISO_AUTO_SHUTTER_TIME_Z9",
+      "key_type": "String",
+      "description": "Z9 ISO auto shutter time mappings"
     }
   ]
 }

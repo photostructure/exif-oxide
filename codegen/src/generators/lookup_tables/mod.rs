@@ -41,8 +41,20 @@ pub fn process_config_directory(
             for table_config in tables {
                 let hash_name = table_config["hash_name"].as_str().unwrap_or("");
                 if let Some(extracted_table) = extracted_tables.get(hash_name) {
+                    // Update the extracted table's metadata with config values
+                    let mut updated_table = extracted_table.clone();
+                    if let Some(constant_name) = table_config["constant_name"].as_str() {
+                        updated_table.metadata.constant_name = constant_name.to_string();
+                    }
+                    if let Some(key_type) = table_config["key_type"].as_str() {
+                        updated_table.metadata.key_type = key_type.to_string();
+                    }
+                    if let Some(description) = table_config["description"].as_str() {
+                        updated_table.metadata.description = description.to_string();
+                    }
+                    
                     // Generate individual file for this table
-                    let file_name = generate_table_file(hash_name, extracted_table, &module_output_dir)?;
+                    let file_name = generate_table_file(hash_name, &updated_table, &module_output_dir)?;
                     generated_files.push(file_name);
                     has_content = true;
                 }

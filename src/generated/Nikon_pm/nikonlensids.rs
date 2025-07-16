@@ -12,7 +12,7 @@ use std::sync::LazyLock;
 // Description: Nikon lens identification database
 
 /// Static data for nikon lens identification database lookup (614 entries)
-static NIKON_LENS_IDS_DATA: &[(&'static str, &'static str)] = &[
+static NIKON_LENS_IDS_DATA: &[(&str, &str)] = &[
     ("00 00 00 00 00 00 00 01", "Manual Lens No CPU"),
     ("00 00 00 00 00 00 E1 12", "TC-17E II"),
     (
