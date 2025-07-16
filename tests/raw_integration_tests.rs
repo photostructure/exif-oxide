@@ -184,39 +184,56 @@ fn test_minimal_kyocera_raw_file() {
 }
 
 #[test]
-fn test_unrecognized_raw_file() {
-    // Create file with .raw extension but no valid magic bytes
-    // This should fail at file detection stage, not RAW processing
-    use std::io::Write;
-    use tempfile::NamedTempFile;
+fn test_recognized_raw_file() {
+    // Test that actual RAW files are correctly detected
+    // Using the real Kyocera RAW file from ExifTool's test suite
+    let raw_file = "third-party/exiftool/t/images/KyoceraRaw.raw";
 
-    let mut temp_file = NamedTempFile::with_suffix(".raw").expect("Failed to create temp file");
-    let mut data = vec![0u8; 156];
-
-    // Add invalid magic at offset 0x19 (not ARECOYK, II, or MM)
-    data[0x19..0x19 + 7].copy_from_slice(b"WRONGXY");
-
-    temp_file
-        .write_all(&data)
-        .expect("Failed to write test data");
-    temp_file.flush().expect("Failed to flush");
-
-    // This should be handled as an unknown file type, not as RAW
-    let result = extract_metadata(temp_file.path(), false);
-    if result.is_err() {
-        println!(
-            "✅ Error processing unrecognized .raw file: {:?}",
-            result.err()
-        );
-        // Expected: our file detection is strict and rejects invalid magic
+    if !std::path::Path::new(raw_file).exists() {
+        println!("⚠️  Skipping RAW test - {raw_file} not found");
         return;
     }
 
-    // If we get here, the file was processed successfully (shouldn't happen with our strict detection)
-    let metadata = result.unwrap();
+    let result = extract_metadata(std::path::Path::new(raw_file), false);
+    assert!(result.is_ok(), "Should successfully process valid RAW file");
 
-    // Should have basic file tags
-    assert!(!metadata.tags.is_empty(), "Should have basic file tags");
+    let metadata = result.unwrap();
+    assert!(!metadata.tags.is_empty(), "Should have metadata tags");
+
+    // Check that FileType was correctly detected as RAW
+    let file_type_entries: Vec<_> = metadata
+        .tags
+        .iter()
+        .filter(|entry| entry.name == "FileType")
+        .collect();
+
+    assert!(!file_type_entries.is_empty(), "Should have FileType tag");
+
+    if let TagValue::String(file_type) = &file_type_entries[0].value {
+        assert_eq!(
+            file_type, "RAW",
+            "FileType should be RAW for valid Kyocera RAW file"
+        );
+        println!("✅ File correctly detected as: {file_type}");
+    }
+}
+
+#[test]
+fn test_non_raw_file_not_detected_as_raw() {
+    // Test that non-RAW files are not incorrectly detected as RAW
+    // Using an actual JPEG file from the test suite
+    let jpeg_file = "test-images/casio/QVCI.jpg";
+
+    if !std::path::Path::new(jpeg_file).exists() {
+        println!("⚠️  Skipping non-RAW test - {jpeg_file} not found");
+        return;
+    }
+
+    let result = extract_metadata(std::path::Path::new(jpeg_file), false);
+    assert!(result.is_ok(), "Should successfully process JPEG file");
+
+    let metadata = result.unwrap();
+    assert!(!metadata.tags.is_empty(), "Should have metadata tags");
 
     // Check that FileType was NOT detected as RAW
     let file_type_entries: Vec<_> = metadata
@@ -225,15 +242,11 @@ fn test_unrecognized_raw_file() {
         .filter(|entry| entry.name == "FileType")
         .collect();
 
-    if !file_type_entries.is_empty() {
-        if let TagValue::String(file_type) = &file_type_entries[0].value {
-            // Should be detected as unknown, not RAW
-            assert_ne!(
-                file_type, "RAW",
-                "FileType should not be RAW for invalid magic"
-            );
-            println!("File correctly detected as: {file_type}");
-        }
+    assert!(!file_type_entries.is_empty(), "Should have FileType tag");
+
+    if let TagValue::String(file_type) = &file_type_entries[0].value {
+        assert_ne!(file_type, "RAW", "FileType should not be RAW for JPEG file");
+        println!("✅ File correctly detected as: {file_type} (not RAW)");
     }
 }
 
