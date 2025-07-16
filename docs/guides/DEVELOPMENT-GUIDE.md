@@ -23,7 +23,7 @@ Extract → Generate → Discover → Implement → Validate
 Extract tag definitions from ExifTool source:
 
 ```bash
-perl codegen/extract_tables.pl > codegen/generated/tag_tables.json
+make codegen
 ```
 
 This parses ExifTool's Perl modules and extracts:
@@ -38,7 +38,7 @@ This parses ExifTool's Perl modules and extracts:
 Run code generation to create Rust code:
 
 ```bash
-cargo run -p codegen
+cd codegen && cargo run --release
 ```
 
 Expected output:
@@ -67,7 +67,7 @@ Generated files in `src/generated/`:
 Run on actual test images to discover what's needed:
 
 ```bash
-cargo run -p exif-oxide -- test-images/Canon/Canon_T3i.jpg --show-missing
+cargo run -- test-images/Canon/Canon_T3i.jpg --show-missing
 ```
 
 Output:
@@ -789,8 +789,7 @@ Keep source files under 500 lines for better maintainability:
 ```bash
 make codegen              # Full pipeline with schema validation
 make -j4 codegen         # Parallel execution
-make extract             # Just lookup tables
-make generated/tag_tables.json  # Just tag definitions
+cd codegen && cargo run --release  # Direct code generation
 make check-schemas       # Validate configuration files
 ```
 

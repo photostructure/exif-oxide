@@ -93,22 +93,17 @@ ExifTool Source → [Rust Orchestration] → Perl Extractors → JSON → Genera
    - TagEntry with value/print fields
    - ExifTool compatibility
 
-3. **State Management** ([STATE-MANAGEMENT.md](STATE-MANAGEMENT.md))
+3. **Core Architecture** ([guides/CORE-ARCHITECTURE.md](guides/CORE-ARCHITECTURE.md))
 
    - Stateful ExifReader object
    - DataMember dependencies
-   - Recursion prevention
+   - Offset management and state tracking
 
-4. **Processor Dispatch** ([PROCESSOR-PROC-DISPATCH.md](PROCESSOR-PROC-DISPATCH.md))
+4. **Processor Dispatch** ([guides/PROCESSOR-DISPATCH.md](guides/PROCESSOR-DISPATCH.md))
 
    - Conditional processor selection
    - Runtime evaluation
    - Manufacturer-specific routing
-
-5. **Offset Management** ([OFFSET-BASE-MANAGEMENT.md](OFFSET-BASE-MANAGEMENT.md))
-   - Complex offset calculations
-   - Manufacturer-specific schemes
-   - Base offset fixing
 
 ## Development Workflow
 
@@ -118,7 +113,7 @@ ExifTool Source → [Rust Orchestration] → Perl Extractors → JSON → Genera
 4. **Implement**: Port complex logic manually
 5. **Validate**: Test against ExifTool output
 
-See [guides/DEVELOPMENT-WORKFLOW.md](guides/DEVELOPMENT-WORKFLOW.md) for detailed steps.
+See [guides/DEVELOPMENT-GUIDE.md](guides/DEVELOPMENT-GUIDE.md) for detailed steps.
 
 ## Implementation Status
 
@@ -190,8 +185,8 @@ Binary data uses streaming references:
 ### Guides
 
 - [Engineer's Guide](ENGINEER-GUIDE.md) - Getting started with the codebase
-- [Development Workflow](guides/DEVELOPMENT-WORKFLOW.md) - Day-to-day development
-- [ExifTool Update Workflow](guides/EXIFTOOL-UPDATE-WORKFLOW.md) - Updating to new ExifTool versions
+- [Development Guide](guides/DEVELOPMENT-GUIDE.md) - Development workflow and best practices
+- [ExifTool Guide](guides/EXIFTOOL-GUIDE.md) - Complete guide to working with ExifTool source
 
 ### Milestones
 
@@ -200,9 +195,8 @@ Binary data uses streaming references:
 
 ### Technical Deep Dives
 
-- [State Management](STATE-MANAGEMENT.md) - How state is managed during processing
-- [Processor Dispatch](PROCESSOR-PROC-DISPATCH.md) - Conditional processor selection
-- [Offset Management](OFFSET-BASE-MANAGEMENT.md) - Complex offset calculations
+- [Core Architecture](guides/CORE-ARCHITECTURE.md) - Core system architecture and offset management
+- [Processor Dispatch](guides/PROCESSOR-DISPATCH.md) - Processor dispatch strategy
 
 ## Getting Help
 

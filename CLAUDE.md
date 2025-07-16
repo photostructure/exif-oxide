@@ -153,10 +153,10 @@ fn canon_white_balance_print_conv(value: &TagValue) -> Result<String> {
 1. **Find the ExifTool source** - Usually a `%hashName = (...)` pattern
 2. **Check if primitive** - Only numbers/strings, no Perl expressions
 3. **Add to module config** - Add to appropriate `codegen/config/$ModuleName_pm/simple_table.json`
-4. **Regenerate codegen** - `make codegen-extract`
+4. **Regenerate codegen** - `make codegen`
 5. **Replace manual code** - Use generated lookup functions
 
-See [EXIFTOOL-INTEGRATION.md](docs/design/EXIFTOOL-INTEGRATION.md#simple-table-extraction-framework) for the complete HOWTO guide.
+See [EXIFTOOL-INTEGRATION.md](docs/design/EXIFTOOL-INTEGRATION.md#3-adding-simple-extraction-types) for the complete HOWTO guide.
 
 #### Red Flags
 
