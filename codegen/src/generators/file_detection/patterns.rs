@@ -391,7 +391,7 @@ fn generate_magic_number_patterns_from_new_format(
     );
     code.push_str("\n");
     code.push_str("use crate::file_types::lazy_regex::LazyRegexMap;\n");
-    code.push_str("use once_cell::sync::Lazy;\n");
+    code.push_str("use std::sync::LazyLock;\n");
     code.push_str("use regex::bytes::Regex;\n");
     code.push_str("\n");
 
@@ -455,7 +455,7 @@ fn generate_magic_number_patterns_from_new_format(
 
     // Create the lazy regex map
     code.push_str("/// Lazy-compiled regex patterns for magic number detection\n");
-    code.push_str("static MAGIC_PATTERNS: Lazy<LazyRegexMap> = Lazy::new(|| {\n");
+    code.push_str("static MAGIC_PATTERNS: LazyLock<LazyRegexMap> = LazyLock::new(|| {\n");
     code.push_str("    LazyRegexMap::new(PATTERN_DATA)\n");
     code.push_str("});\n");
     code.push_str("\n");

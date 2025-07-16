@@ -1,7 +1,7 @@
 # Modular Codegen Makefile
 # Simplified build system - Rust now handles extraction orchestration internally
 
-.PHONY: all clean generate-rust codegen check-schemas check-extractors test clean-extract
+.PHONY: all clean generate-rust codegen codegen-flocked check-schemas check-extractors test clean-extract
 
 # Output directories
 GENERATED_DIR := generated
@@ -11,12 +11,16 @@ EXTRACT_DIR := $(GENERATED_DIR)/extract
 all: codegen
 
 # Main codegen pipeline (Rust now handles everything including patch cleanup)
-codegen: check-schemas generate-rust
+codegen:
+	flock --verbose --exclusive --timeout=30 .make.flock $(MAKE) -f Makefile.modular codegen-flocked
+
+codegen-flocked: check-schemas generate-rust
 
 generate-rust:
 	cargo run --release ; ret=$$? ; \
 	echo "🔄 Reverting ExifTool module patches..." ; \
 	git -C ../third-party/exiftool checkout -- lib/Image/*.pm lib/Image/ExifTool/*.pm ; \
+	sync ; \
 	echo "  ✓ ExifTool modules reverted to original state" ; \
 	exit $$ret
 
