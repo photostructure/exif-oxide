@@ -17,7 +17,6 @@ pub mod implementations;
 pub mod processor_registry;
 pub mod raw;
 #[cfg(test)]
-mod regex_test;
 pub mod registry;
 pub mod tiff_types;
 pub mod tiff_utils;

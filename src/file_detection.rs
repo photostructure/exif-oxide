@@ -820,12 +820,6 @@ impl Default for FileTypeDetector {
 mod mimetypes_validation;
 
 #[cfg(test)]
-mod debug_lookup;
-
-#[cfg(test)]
-mod test_debug;
-
-#[cfg(test)]
 mod tests {
     use super::*;
     use std::io::Cursor;
