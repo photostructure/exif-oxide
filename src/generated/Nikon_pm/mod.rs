@@ -8,11 +8,11 @@ use std::sync::LazyLock;
 
 // Simple lookup tables
 // Generated nikon_lens_ids lookup table
+// DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 // Source: ExifTool Nikon.pm %nikonLensIDs
 // Description: Nikon lens identification database
 
-/// Static data for nikon lens identification database lookup
-/// Source: ExifTool Nikon.pm %nikonLensIDs (614 entries)
+/// Static data for nikon lens identification database lookup (614 entries)
 static NIKON_LENS_IDS_DATA: &[(&str, &str)] = &[
     ("00 00 00 00 00 00 00 01", "Manual Lens No CPU"),
     ("00 00 00 00 00 00 E1 12", "TC-17E II"),

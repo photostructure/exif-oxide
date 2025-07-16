@@ -9,11 +9,11 @@ use std::sync::LazyLock;
 
 // Simple lookup tables
 // Generated mime_types lookup table
+// DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 // Source: ExifTool ExifTool.pm %mimeType
 // Description: MIME type mappings for file types
 
-/// Static data for mime type mappings for file types lookup
-/// Source: ExifTool ExifTool.pm %mimeType (225 entries)
+/// Static data for mime type mappings for file types lookup (225 entries)
 static MIME_TYPES_DATA: &[(&str, &str)] = &[
     ("3FR", "image/x-hasselblad-3fr"),
     ("7Z", "application/x-7z-compressed"),
@@ -295,11 +295,11 @@ pub fn lookup_mime_types(key: &str) -> Option<&'static str> {
 }
 
 // Generated file_type_extensions lookup table
+// DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 // Source: ExifTool ExifTool.pm %fileTypeExt
 // Description: Canonical file extensions for file types
 
-/// Static data for canonical file extensions for file types lookup
-/// Source: ExifTool ExifTool.pm %fileTypeExt (9 entries)
+/// Static data for canonical file extensions for file types lookup (9 entries)
 static FILE_TYPE_EXTENSIONS_DATA: &[(&str, &str)] = &[
     ("Canon 1D RAW", "tif"),
     ("DICOM", "dcm"),
@@ -327,8 +327,7 @@ pub fn lookup_file_type_extensions(key: &str) -> Option<&'static str> {
 // Source: ExifTool Image::ExifTool %weakMagic
 // Description: File types with weak magic number recognition (MP3)
 
-/// Static data for file types with weak magic number recognition (mp3) set
-/// Source: ExifTool Image::ExifTool %weakMagic (1 entries)
+/// Static data for file types with weak magic number recognition (mp3) set (1 entries)
 static WEAK_MAGIC_FILE_TYPES_DATA: &[&str] = &["MP3"];
 
 /// File types with weak magic number recognition (MP3) boolean set table
@@ -345,8 +344,7 @@ pub fn is_weak_magic_file(file_type: &str) -> bool {
 // Source: ExifTool Image::ExifTool %createTypes
 // Description: File types that can be created from scratch (XMP, ICC, MIE, VRD, etc.)
 
-/// Static data for file types that can be created from scratch (xmp, icc, mie, vrd, etc.) set
-/// Source: ExifTool Image::ExifTool %createTypes (7 entries)
+/// Static data for file types that can be created from scratch (xmp, icc, mie, vrd, etc.) set (7 entries)
 static CREATABLE_FILE_TYPES_DATA: &[&str] = &["DR4", "EXIF", "EXV", "ICC", "MIE", "VRD", "XMP"];
 
 /// File types that can be created from scratch (XMP, ICC, MIE, VRD, etc.) boolean set table
@@ -363,8 +361,7 @@ pub fn is_creatable_file(file_type: &str) -> bool {
 // Source: ExifTool Image::ExifTool %processType
 // Description: File types determined by process proc during FastScan == 3
 
-/// Static data for file types determined by process proc during fastscan == 3 set
-/// Source: ExifTool Image::ExifTool %processType (10 entries)
+/// Static data for file types determined by process proc during fastscan == 3 set (10 entries)
 static PROCESS_DETERMINED_TYPES_DATA: &[&str] = &[
     "AIFF", "EXE", "Font", "JPEG", "PS", "Real", "TIFF", "TXT", "VCard", "XMP",
 ];
@@ -383,8 +380,7 @@ pub fn is_process_determined(file_type: &str) -> bool {
 // Source: ExifTool Image::ExifTool %isPC
 // Description: Operating systems that use PC-style file paths
 
-/// Static data for operating systems that use pc-style file paths set
-/// Source: ExifTool Image::ExifTool %isPC (6 entries)
+/// Static data for operating systems that use pc-style file paths set (6 entries)
 static PC_OPERATING_SYSTEMS_DATA: &[&str] =
     &["MSWin32", "NetWare", "cygwin", "dos", "os2", "symbian"];
 

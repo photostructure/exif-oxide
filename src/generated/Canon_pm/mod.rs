@@ -8,11 +8,11 @@ use std::sync::LazyLock;
 
 // Simple lookup tables
 // Generated canon_model_id lookup table
+// DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 // Source: ExifTool Canon.pm %canonModelID
 // Description: Canon camera model identification
 
-/// Static data for canon camera model identification lookup
-/// Source: ExifTool Canon.pm %canonModelID (354 entries)
+/// Static data for canon camera model identification lookup (354 entries)
 static CANON_MODEL_ID_DATA: &[(u32, &str)] = &[
     (1042, "EOS M50 / Kiss M"),
     (2049, "PowerShot SX740 HS"),
@@ -510,11 +510,11 @@ pub fn lookup_canon_model_id(key: u32) -> Option<&'static str> {
 }
 
 // Generated canon_white_balance lookup table
+// DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 // Source: ExifTool Canon.pm %canonWhiteBalance
 // Description: White balance mode names
 
-/// Static data for white balance mode names lookup
-/// Source: ExifTool Canon.pm %canonWhiteBalance (22 entries)
+/// Static data for white balance mode names lookup (22 entries)
 static CANON_WHITE_BALANCE_DATA: &[(u8, &str)] = &[
     (0, "Auto"),
     (1, "Daylight"),
@@ -551,11 +551,11 @@ pub fn lookup_canon_white_balance(key: u8) -> Option<&'static str> {
 }
 
 // Generated picture_styles lookup table
+// DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 // Source: ExifTool Canon.pm %pictureStyles
 // Description: Picture style mode names
 
-/// Static data for picture style mode names lookup
-/// Source: ExifTool Canon.pm %pictureStyles (24 entries)
+/// Static data for picture style mode names lookup (24 entries)
 static PICTURE_STYLES_DATA: &[(u16, &str)] = &[
     (0, "None"),
     (1, "Standard"),
@@ -594,11 +594,11 @@ pub fn lookup_picture_styles(key: u16) -> Option<&'static str> {
 }
 
 // Generated canon_image_size lookup table
+// DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 // Source: ExifTool Canon.pm %canonImageSize
 // Description: Image size setting names
 
-/// Static data for image size setting names lookup
-/// Source: ExifTool Canon.pm %canonImageSize (19 entries)
+/// Static data for image size setting names lookup (19 entries)
 static CANON_IMAGE_SIZE_DATA: &[(i16, &str)] = &[
     (-1, "n/a"),
     (0, "Large"),
@@ -632,11 +632,11 @@ pub fn lookup_canon_image_size(key: i16) -> Option<&'static str> {
 }
 
 // Generated canon_quality lookup table
+// DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 // Source: ExifTool Canon.pm %canonQuality
 // Description: Image quality setting names
 
-/// Static data for image quality setting names lookup
-/// Source: ExifTool Canon.pm %canonQuality (9 entries)
+/// Static data for image quality setting names lookup (9 entries)
 static CANON_QUALITY_DATA: &[(i16, &str)] = &[
     (-1, "n/a"),
     (1, "Economy"),
