@@ -1,7 +1,7 @@
 # Milestone 17b: Simple TIFF-Based RAW Formats
 
 **Duration**: 2 weeks  
-**Goal**: Implement Minolta MRW and Panasonic RW2 RAW formats
+**Goal**: Read support for Minolta MRW and Panasonic RW2 RAW formats
 
 ## Overview
 
