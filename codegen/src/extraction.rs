@@ -11,6 +11,11 @@ use tracing::debug;
 
 use crate::patching;
 
+// Constants for path navigation
+const REPO_ROOT_FROM_CODEGEN: &str = "..";
+const CODEGEN_FROM_EXTRACT: &str = "../..";
+const REPO_ROOT_FROM_EXTRACT: &str = "../../..";
+
 #[derive(Debug)]
 pub struct ModuleConfig {
     pub source_path: String,
@@ -68,6 +73,17 @@ fn should_skip_directory(path: &Path) -> bool {
         .map_or(true, |name| name.starts_with('.'))
 }
 
+/// Parse all config files in a module directory.
+/// 
+/// A module can have multiple config types (simple_table.json, file_type_lookup.json, etc.)
+/// and this function collects all of them, allowing for multi-config modules like:
+/// 
+/// ```
+/// ExifTool_pm/
+/// ├── simple_table.json      # Basic lookup tables
+/// ├── file_type_lookup.json  # File type detection
+/// └── boolean_set.json       # Boolean sets
+/// ```
 fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig>> {
     let mut configs = Vec::new();
     
@@ -90,64 +106,6 @@ fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig
     Ok(configs)
 }
 
-fn try_parse_module_config(module_config_dir: &Path) -> Result<Option<ModuleConfig>> {
-    // Check for any of the supported config files
-    let simple_table_config = module_config_dir.join("simple_table.json");
-    let file_type_lookup_config = module_config_dir.join("file_type_lookup.json");
-    let magic_number_config = module_config_dir.join("magic_number.json");
-    
-    // Determine which config file exists
-    let config_path = if simple_table_config.exists() {
-        simple_table_config
-    } else if file_type_lookup_config.exists() {
-        file_type_lookup_config
-    } else if magic_number_config.exists() {
-        magic_number_config
-    } else {
-        return Ok(None);
-    };
-    
-    debug!("Reading config file: {}", config_path.display());
-    let config_content = match fs::read_to_string(&config_path) {
-        Ok(data) => data,
-        Err(err) => {
-            eprintln!("Warning: UTF-8 error reading {}: {}", config_path.display(), err);
-            let bytes = fs::read(&config_path)
-                .with_context(|| format!("Failed to read bytes from {}", config_path.display()))?;
-            String::from_utf8_lossy(&bytes).into_owned()
-        }
-    };
-    
-    let config: Value = serde_json::from_str(&config_content)
-        .with_context(|| format!("Failed to parse {}", config_path.display()))?;
-    
-    let source_path = config["source"].as_str()
-        .ok_or_else(|| anyhow::anyhow!("Missing 'source' field in {}", config_path.display()))?;
-    
-    let tables = config["tables"].as_array()
-        .ok_or_else(|| anyhow::anyhow!("Missing 'tables' field in {}", config_path.display()))?;
-    
-    if tables.is_empty() {
-        return Ok(None);
-    }
-    
-    let hash_names: Vec<String> = tables.iter()
-        .filter_map(|table| table["hash_name"].as_str())
-        .map(|name| name.trim_start_matches('%').to_string())
-        .collect();
-    
-    let module_name = Path::new(source_path)
-        .file_name()
-        .and_then(|n| n.to_str())
-        .unwrap_or("unknown")
-        .to_string();
-    
-    Ok(Some(ModuleConfig {
-        source_path: source_path.to_string(),
-        hash_names,
-        module_name,
-    }))
-}
 
 fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
     debug!("Reading config file: {}", config_path.display());
@@ -202,7 +160,7 @@ fn process_module_config(config: &ModuleConfig, extract_dir: &Path) -> Result<()
     let repo_root = Path::new("..");
     let module_path = repo_root.join(&config.source_path);
     
-    patch_module_if_needed(&module_path, &config.hash_names)?;
+    patching::patch_module(&module_path, &config.hash_names)?;
     
     // Check if this config needs a special extractor based on the config filename
     match needs_special_extractor_by_name(&config.module_name) {
@@ -220,9 +178,6 @@ fn process_module_config(config: &ModuleConfig, extract_dir: &Path) -> Result<()
     Ok(())
 }
 
-fn patch_module_if_needed(module_path: &Path, hash_names: &[String]) -> Result<()> {
-    patching::patch_module(module_path, hash_names)
-}
 
 fn run_extraction_script(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
     let hash_names_with_percent: Vec<String> = config.hash_names.iter()
@@ -280,15 +235,6 @@ fn execute_extraction_command(mut cmd: Command, module_name: &str) -> Result<()>
     Ok(())
 }
 
-fn needs_special_extractor(config_dir: &Path) -> Option<SpecialExtractor> {
-    if config_dir.join("file_type_lookup.json").exists() {
-        return Some(SpecialExtractor::FileTypeLookup);
-    }
-    if config_dir.join("regex_patterns.json").exists() {
-        return Some(SpecialExtractor::RegexPatterns);
-    }
-    None
-}
 
 fn needs_special_extractor_by_name(config_name: &str) -> Option<SpecialExtractor> {
     match config_name {
