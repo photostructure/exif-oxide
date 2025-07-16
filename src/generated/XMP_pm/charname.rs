@@ -12,7 +12,7 @@ use std::sync::LazyLock;
 // Description: XML character to entity name mappings
 
 /// Static data for xml character to entity name mappings lookup (5 entries)
-static XML_CHAR_NAMES_DATA: &[(&'static str, &'static str)] = &[
+static XML_CHAR_NAMES_DATA: &[(&str, &str)] = &[
     ("\"", "quot"),
     ("&", "amp"),
     ("'", "#39"),
