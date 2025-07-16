@@ -19,22 +19,8 @@ use std::sync::LazyLock;
 /// Known acceptable differences between our implementation and ExifTool
 /// These represent cases where we intentionally differ (e.g., providing fallback MIME types)
 static KNOWN_DIFFERENCES: LazyLock<HashMap<&'static str, KnownDifference>> = LazyLock::new(|| {
-    [
-        // JXL test file has a format that doesn't match ExifTool's compiled pattern
-        // The pattern expects 6 bytes between headers but this file has 4 bytes
-        (
-            "third-party/exiftool/t/images/JXL2.jxl",
-            KnownDifference::PatternMismatch,
-        ),
-        // ExifTool detects some NEF files as NRW based on model-specific analysis
-        // We correctly detect based on file extension which is acceptable
-        (
-            "test-images/nikon/nikon_z8_73.NEF",
-            KnownDifference::ContentBasedOverride,
-        ),
-    ]
-    .into_iter()
-    .collect()
+    // Currently empty - all known differences have been resolved
+    HashMap::new()
 });
 
 #[derive(Debug, Clone)]
