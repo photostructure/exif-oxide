@@ -231,3 +231,15 @@ Transformed overly complex codegen system with interdependent Perl scripts into 
 **Architecture implemented**: Rust scans config/ → reads source paths → patches modules → calls Perl with explicit args → individual JSON files → cleanup. Perl scripts are now "dumb" with single responsibilities. Fixed cross-filesystem atomic file replacement issue, cleaned up unused Perl dependencies, removed all vestigial macro references.
 
 **Impact**: Adding new modules now requires only config directory (no code changes), simplified debugging with sequential processing, maintainable codebase ready for monthly ExifTool updates. Migration to new module names completed, removing all compatibility layers.
+
+---
+
+## ✅ Milestone: Codegen Configuration Architecture Scale-Up (COMPLETED - July 2025)
+
+Refactored codegen extraction system to scale from 35 to 300+ tables with improved maintainability. Completely eliminated monolithic extract.json in favor of modular, source-file-based configuration aligned with ExifTool modules.
+
+**Key achievements**: Module-based config structure (Canon_pm/, Nikon_pm/, etc.), focused JSON schemas with validation, direct code generation (no macros), simplified simple_table.pl taking explicit arguments, reduced boilerplate by ~50%, full backward compatibility during migration.
+
+**Architecture implemented**: Config files in `codegen/config/ModuleName_pm/` → patching → extraction → direct Rust code generation. Each ExifTool source module gets its own config directory with type-specific JSON files.
+
+**Impact**: Ready to scale to 300+ lookup tables for RAW format support, zero maintenance overhead with monthly ExifTool updates, improved developer experience with readable generated code instead of complex macros.
