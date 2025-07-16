@@ -27,6 +27,14 @@ pub struct ModuleConfig {
 enum SpecialExtractor {
     FileTypeLookup,
     RegexPatterns,
+    BooleanSet,
+}
+
+#[derive(Debug)]
+struct ExtractorConfig<'a> {
+    script_name: &'a str,
+    output_file: Option<&'a str>,
+    hash_args: Vec<String>,
 }
 
 /// Extract all simple tables using Rust orchestration (replaces Makefile targets)
@@ -82,7 +90,7 @@ fn should_skip_directory(path: &Path) -> bool {
 /// ExifTool_pm/
 /// ├── simple_table.json      # Basic lookup tables
 /// ├── file_type_lookup.json  # File type detection
-/// └── boolean_set.json       # Boolean sets
+/// └── boolean_set.json       # Boolean set membership
 /// ```
 fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig>> {
     let mut configs = Vec::new();
@@ -91,7 +99,8 @@ fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig
     let config_files = [
         "simple_table.json",
         "file_type_lookup.json", 
-        "regex_patterns.json"
+        "regex_patterns.json",
+        "boolean_set.json"
     ];
     
     for config_file in &config_files {
@@ -157,7 +166,7 @@ fn process_module_config(config: &ModuleConfig, extract_dir: &Path) -> Result<()
     println!("  📷 Processing {} tables...", config.module_name);
     
     // Resolve source path relative to repo root (one level up from codegen/)
-    let repo_root = Path::new("..");
+    let repo_root = Path::new(REPO_ROOT_FROM_CODEGEN);
     let module_path = repo_root.join(&config.source_path);
     
     patching::patch_module(&module_path, &config.hash_names)?;
@@ -169,6 +178,9 @@ fn process_module_config(config: &ModuleConfig, extract_dir: &Path) -> Result<()
         }
         Some(SpecialExtractor::RegexPatterns) => {
             run_regex_patterns_extractor(config, extract_dir)?;
+        }
+        Some(SpecialExtractor::BooleanSet) => {
+            run_boolean_set_extractor(config, extract_dir)?;
         }
         None => {
             run_extraction_script(config, extract_dir)?;
@@ -184,23 +196,13 @@ fn run_extraction_script(config: &ModuleConfig, extract_dir: &Path) -> Result<()
         .map(|name| format!("%{}", name))
         .collect();
     
-    // From generated/extract directory, we need ../../../ to get to repo root
-    let source_path_for_perl = format!("../../../{}", config.source_path);
+    let extractor_config = ExtractorConfig {
+        script_name: "simple_table.pl",
+        output_file: None,
+        hash_args: hash_names_with_percent,
+    };
     
-    let mut cmd = Command::new("perl");
-    cmd.arg("../../extractors/simple_table.pl")  // From generated/extract, go up to codegen
-       .arg(&source_path_for_perl)
-       .args(&hash_names_with_percent)
-       .current_dir(extract_dir);
-    
-    setup_perl_environment(&mut cmd);
-    
-    println!("    Running: perl simple_table.pl {} {}", 
-        source_path_for_perl, 
-        hash_names_with_percent.join(" ")
-    );
-    
-    execute_extraction_command(cmd, &config.module_name)
+    run_extractor(config, extract_dir, extractor_config)
 }
 
 fn setup_perl_environment(cmd: &mut Command) {
@@ -212,13 +214,46 @@ fn setup_perl_environment(cmd: &mut Command) {
     cmd.env("PERL5LIB", perl5lib);
 }
 
-fn execute_extraction_command(mut cmd: Command, module_name: &str) -> Result<()> {
+/// Common extraction function that handles all extractor types
+fn run_extractor(config: &ModuleConfig, extract_dir: &Path, extractor_config: ExtractorConfig) -> Result<()> {
+    let source_path_for_perl = format!("{}/{}", REPO_ROOT_FROM_EXTRACT, config.source_path);
+    
+    let mut cmd = Command::new("perl");
+    cmd.arg(format!("{}/extractors/{}", CODEGEN_FROM_EXTRACT, extractor_config.script_name))
+       .arg(&source_path_for_perl)
+       .args(&extractor_config.hash_args)
+       .current_dir(extract_dir);
+    
+    setup_perl_environment(&mut cmd);
+    
+    println!("    Running: perl {} {} {}", 
+        extractor_config.script_name,
+        source_path_for_perl, 
+        extractor_config.hash_args.join(" ")
+    );
+    
+    // Redirect output to file if specified
+    if let Some(output_file) = extractor_config.output_file {
+        let output_path = extract_dir.join(output_file);
+        cmd.stdout(fs::File::create(&output_path)?);
+    }
+    
+    execute_extraction_command(cmd, &config.module_name, extractor_config.script_name)?;
+    
+    if let Some(output_file) = extractor_config.output_file {
+        println!("    Created {}", output_file);
+    }
+    
+    Ok(())
+}
+
+fn execute_extraction_command(mut cmd: Command, module_name: &str, script_name: &str) -> Result<()> {
     let output = cmd.output()
-        .with_context(|| format!("Failed to execute simple_table.pl for {}", module_name))?;
+        .with_context(|| format!("Failed to execute {} for {}", script_name, module_name))?;
     
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr);
-        return Err(anyhow::anyhow!("simple_table.pl failed for {}: {}", module_name, stderr));
+        return Err(anyhow::anyhow!("{} failed for {}: {}", script_name, module_name, stderr));
     }
     
     // Print any output from the script
@@ -240,51 +275,19 @@ fn needs_special_extractor_by_name(config_name: &str) -> Option<SpecialExtractor
     match config_name {
         "file_type_lookup" => Some(SpecialExtractor::FileTypeLookup),
         "regex_patterns" => Some(SpecialExtractor::RegexPatterns),
+        "boolean_set" => Some(SpecialExtractor::BooleanSet),
         _ => None,
     }
 }
 
 fn run_file_type_lookup_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
-    // File type lookup always extracts from %fileTypeLookup hash
-    let hash_name = "%fileTypeLookup";
+    let extractor_config = ExtractorConfig {
+        script_name: "file_type_lookup.pl",
+        output_file: Some("file_type_lookup.json"),
+        hash_args: vec!["%fileTypeLookup".to_string()],
+    };
     
-    // From generated/extract directory, we need ../../../ to get to repo root
-    let source_path_for_perl = format!("../../../{}", config.source_path);
-    
-    let mut cmd = Command::new("perl");
-    cmd.arg("../../extractors/file_type_lookup.pl")  // From generated/extract, go up to codegen
-       .arg(&source_path_for_perl)
-       .arg(hash_name)
-       .current_dir(extract_dir);
-    
-    setup_perl_environment(&mut cmd);
-    
-    println!("    Running: perl file_type_lookup.pl {} {}", 
-        source_path_for_perl, 
-        hash_name
-    );
-    
-    // Redirect output to file_type_lookup.json
-    let output_path = extract_dir.join("file_type_lookup.json");
-    cmd.stdout(fs::File::create(&output_path)?);
-    
-    let output = cmd.output()
-        .with_context(|| format!("Failed to execute file_type_lookup.pl for {}", config.module_name))?;
-    
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        return Err(anyhow::anyhow!("file_type_lookup.pl failed for {}: {}", config.module_name, stderr));
-    }
-    
-    // Print any stderr output from the script
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    if !stderr.is_empty() {
-        print!("{}", stderr);
-    }
-    
-    println!("    Created file_type_lookup.json");
-    
-    Ok(())
+    run_extractor(config, extract_dir, extractor_config)
 }
 
 fn run_regex_patterns_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
@@ -297,41 +300,29 @@ fn run_regex_patterns_extractor(config: &ModuleConfig, extract_dir: &Path) -> Re
         return Err(anyhow::anyhow!("No hash names specified in regex_patterns config"));
     }
     
-    // From generated/extract directory, we need ../../../ to get to repo root
-    let source_path_for_perl = format!("../../../{}", config.source_path);
+    let extractor_config = ExtractorConfig {
+        script_name: "regex_patterns.pl",
+        output_file: Some("regex_patterns.json"),
+        hash_args: vec![hash_names_with_percent[0].clone()], // regex_patterns.pl expects single hash name
+    };
     
-    let mut cmd = Command::new("perl");
-    cmd.arg("../../extractors/regex_patterns.pl")  // From generated/extract, go up to codegen
-       .arg(&source_path_for_perl)
-       .arg(&hash_names_with_percent[0])  // regex_patterns.pl expects single hash name
-       .current_dir(extract_dir);
-    
-    setup_perl_environment(&mut cmd);
-    
-    println!("    Running: perl regex_patterns.pl {} {}", 
-        source_path_for_perl, 
-        hash_names_with_percent[0]
-    );
-    
-    // Redirect output to regex_patterns.json  
-    let output_path = extract_dir.join("regex_patterns.json");
-    cmd.stdout(fs::File::create(&output_path)?);
-    
-    let output = cmd.output()
-        .with_context(|| format!("Failed to execute regex_patterns.pl for {}", config.module_name))?;
-    
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        return Err(anyhow::anyhow!("regex_patterns.pl failed for {}: {}", config.module_name, stderr));
+    run_extractor(config, extract_dir, extractor_config)
+}
+
+fn run_boolean_set_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+    // Extract each boolean set separately since they need individual output files
+    for hash_name in &config.hash_names {
+        let hash_name_with_percent = format!("%{}", hash_name);
+        let output_file = format!("boolean_set_{}.json", hash_name);
+        
+        let extractor_config = ExtractorConfig {
+            script_name: "boolean_set.pl",
+            output_file: Some(&output_file),
+            hash_args: vec![hash_name_with_percent],
+        };
+        
+        run_extractor(config, extract_dir, extractor_config)?;
     }
-    
-    // Print any stderr output (status messages)
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    if !stderr.is_empty() {
-        print!("{}", stderr);
-    }
-    
-    println!("    Created regex_patterns.json");
     
     Ok(())
 }

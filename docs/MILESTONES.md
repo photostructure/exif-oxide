@@ -28,11 +28,11 @@ After you think you're done implementing a milestone:
 
 4. **DON'T DELETE YOUR STUBS**: if clippy is complaining about unused code, and the code is something that will be used in a near-future phase of work -- delete your stub! Instead add a TODO with the milestone that will replace the stub with a real implementation.
 
-## Important Steps After Completing a Milestone
+## Important Steps After Completing a Milestone 
 
 1. If there is a direct reference in $REPO_ROOT/docs/MILESTONES.md to the milestone, remove the completed milestone section from this document.
 2. Add a terse summary of the completed work to the end of $REPO_ROOT/docs/archive/DONE-MILESTONES.md.
-3. If you worked from a separate MILESTONES-$desc.md file, move it to $REPO_ROOT/docs/archive and edit with completion status and any surprising gotchas or tribal knowledge that tripped you up in the implementation. If you can, remove spurious or incorrect code or skipped tasks (due to in-flight strategic changes) to make sure the archived doc concisely preserves what was actually done (and not mislead the Engineers of Tomorrow if they ever refer to the doc)
+3. If you worked from a separate MILESTONES-$desc.md or HANDOFF-$desc.md file, move it to $REPO_ROOT/docs/archive/DONE-$(YYYYMMDD)-$desc.md and edit with completion status and any surprising gotchas or tribal knowledge that tripped you up in the implementation. If you can, remove spurious or incorrect code or skipped tasks (due to in-flight strategic changes) to make sure the archived doc concisely preserves what was actually done (and not mislead the Engineers of Tomorrow if they ever refer to the doc)
 
 ## Core Principles
 

@@ -105,6 +105,7 @@ impl FileTypeDetector {
         // ExifTool.pm:2960-2975 - Test candidates against magic numbers
         // CRITICAL: Test all candidates before giving up, per TRUST-EXIFTOOL.md
         let mut matched_type = None;
+        let mut recognized_ext = None;
 
         for candidate in &candidates {
             // Check if this is a weak magic type that defers to extension
@@ -123,6 +124,19 @@ impl FileTypeDetector {
                 matched_type = Some(candidate.clone());
                 break;
             }
+
+            // ExifTool behavior: Keep track of recognized extensions with modules
+            // Even if magic pattern fails, ExifTool may still process the file
+            // if it has a module defined (like JXL -> Jpeg2000)
+            if recognized_ext.is_none() && self.has_processing_module(candidate) {
+                recognized_ext = Some(candidate.clone());
+            }
+        }
+
+        // If no magic match but we have a recognized extension with a module,
+        // use that as fallback (mimics ExifTool's behavior for JXL and others)
+        if matched_type.is_none() && recognized_ext.is_some() {
+            matched_type = recognized_ext;
         }
 
         if let Some(file_type) = matched_type {
@@ -143,6 +157,11 @@ impl FileTypeDetector {
                 // For RIFF-based formats, detect the actual type from the header
                 // ExifTool RIFF.pm:2038-2039 - Sets file type based on RIFF format identifier
                 self.detect_riff_type(&buffer)
+                    .unwrap_or_else(|| file_type.clone())
+            } else if file_type == "NEF" || file_type == "NRW" {
+                // NEF/NRW correction based on content analysis
+                // ExifTool Exif.pm distinguishes based on compression and linearization table
+                self.correct_nef_nrw_type(&file_type, &buffer)
                     .unwrap_or_else(|| file_type.clone())
             } else {
                 file_type
@@ -484,9 +503,47 @@ impl FileTypeDetector {
                 identifier == 0x4f52 || identifier == 0x5352
             }
             "NEF" | "NRW" => {
-                // NEF/NRW detection: Standard TIFF structure (0x2a) but trust extension
-                // ExifTool confirms these based on make/model, we trust the extension
-                identifier == 0x2a
+                // NEF/NRW detection: ExifTool uses content analysis to distinguish
+                // ExifTool Exif.pm: NRW has JPEG compression in IFD0, NEF has linearization table
+                if identifier == 0x2a {
+                    // Valid TIFF structure, now check content to distinguish NEF from NRW
+                    use crate::tiff_utils::{read_tiff_ifd0_info, COMPRESSION_JPEG};
+                    use std::io::Cursor;
+
+                    let mut cursor = Cursor::new(buffer);
+                    if let Some((compression, has_nef_linearization)) =
+                        read_tiff_ifd0_info(&mut cursor)
+                    {
+                        match file_type {
+                            "NEF" => {
+                                // If NEF file has JPEG compression in IFD0, it's actually NRW
+                                // ExifTool Exif.pm: "recognize NRW file from a JPEG-compressed thumbnail in IFD0"
+                                if compression == Some(COMPRESSION_JPEG) {
+                                    // This will be corrected to NRW in post-processing
+                                    true
+                                } else {
+                                    true // Valid NEF
+                                }
+                            }
+                            "NRW" => {
+                                // If NRW file has NEFLinearizationTable, it's actually NEF
+                                // ExifTool.pm: "fix NEF type if misidentified as NRW"
+                                if has_nef_linearization {
+                                    // This will be corrected to NEF in post-processing
+                                    true
+                                } else {
+                                    true // Valid NRW
+                                }
+                            }
+                            _ => false,
+                        }
+                    } else {
+                        // If we can't read IFD0, trust the extension
+                        true
+                    }
+                } else {
+                    false // Not even TIFF
+                }
             }
             "ARW" => {
                 // ARW detection: Standard TIFF structure (0x2a) but trust extension
@@ -519,6 +576,50 @@ impl FileTypeDetector {
                 false
             }
             _ => false,
+        }
+    }
+
+    /// Check if a file type has a processing module defined
+    /// This mimics ExifTool's %moduleName hash behavior
+    fn has_processing_module(&self, file_type: &str) -> bool {
+        // In ExifTool, having a module means it can be processed even without magic match
+        // Notable examples include JXL -> Jpeg2000 module
+        // We check if the file type has a defined format/processing path
+        use crate::generated::file_types::resolve_file_type;
+
+        // If resolve_file_type returns Some, it means ExifTool knows how to process this type
+        resolve_file_type(file_type).is_some()
+    }
+
+    /// Correct NEF/NRW type based on content analysis
+    /// ExifTool Exif.pm distinguishes based on compression and linearization table
+    fn correct_nef_nrw_type(&self, file_type: &str, buffer: &[u8]) -> Option<String> {
+        use crate::tiff_utils::{read_tiff_ifd0_info, COMPRESSION_JPEG};
+        use std::io::Cursor;
+
+        let mut cursor = Cursor::new(buffer);
+        if let Some((compression, has_nef_linearization)) = read_tiff_ifd0_info(&mut cursor) {
+            match file_type {
+                "NEF" => {
+                    // ExifTool Exif.pm: "recognize NRW file from a JPEG-compressed thumbnail in IFD0"
+                    if compression == Some(COMPRESSION_JPEG) {
+                        Some("NRW".to_string()) // NEF with JPEG compression is actually NRW
+                    } else {
+                        None // Keep as NEF
+                    }
+                }
+                "NRW" => {
+                    // ExifTool.pm: "fix NEF type if misidentified as NRW"
+                    if has_nef_linearization {
+                        Some("NEF".to_string()) // NRW with linearization table is actually NEF
+                    } else {
+                        None // Keep as NRW
+                    }
+                }
+                _ => None,
+            }
+        } else {
+            None // Can't determine, keep original
         }
     }
 

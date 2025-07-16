@@ -4,6 +4,8 @@
 //! with realistic EXIF data scenarios to demonstrate proper handling of
 //! composite-on-composite dependencies.
 
+#![cfg(feature = "test-helpers")]
+
 mod common;
 
 use exif_oxide::types::TagValue;

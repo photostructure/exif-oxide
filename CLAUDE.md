@@ -188,6 +188,16 @@ as a best practice, and explain those aspects to the user as we embrace them.
 
 ## Development guidance
 
+### ⚠️ IMPORTANT: ExifTool is a Git Submodule
+
+The `third-party/exiftool` directory is a **git submodule**. This means:
+
+- **NEVER run `git checkout`, `git add`, or any git commands directly on files in this directory**
+- The submodule tracks a specific commit of the ExifTool repository
+- Any changes to files in `third-party/exiftool/` will affect the submodule state
+- The codegen process may temporarily patch ExifTool files, but these changes should be reverted automatically
+- If you need to update or modify anything in the ExifTool directory, coordinate with the user first
+
 ### Watch for manually-ported hashes that could use codegen
 
 Be vigilant for manually-maintained lookup tables and hash mappings that could be automatically generated. If you encounter any static mappings, immediately:
