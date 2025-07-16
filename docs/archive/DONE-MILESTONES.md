@@ -253,3 +253,23 @@ Optimized simple lookup table code generation to reduce generated file sizes by 
 **Key achievements**: Canon model ID table reduced from ~1,400 to ~380 lines (354 entries), improved readability with clean tuple format, faster compilation due to simpler code structure, consistent pattern across all generated modules using `std::sync::LazyLock`.
 
 **Impact**: Significantly smaller generated files improving IDE performance and code review, identical runtime performance with potentially faster initialization, easier to modify generator templates for future enhancements.
+
+---
+
+## ✅ MIME Type Detection Complete Fix (COMPLETED - July 2025)
+
+Fixed MIME type detection to achieve 100% ExifTool compatibility (122/122 files passing). Resolved JXL and NEF/NRW detection issues by implementing ExifTool's exact detection logic including extension-based fallback for recognized modules.
+
+**Key achievements**: Added recognized extension tracking for files with processing modules (JXL→Jpeg2000), implemented content-based NEF/NRW detection using TIFF IFD0 analysis (Compression=6 for NRW, NEFLinearizationTable for NEF), created diagnostic tool for debugging detection failures.
+
+**Impact**: Complete MIME type compatibility unlocking all format-specific processing, foundation for RAW and video format support with proper detection guarantees.
+
+---
+
+## ✅ Boolean Set Code Generation Implementation (COMPLETED - July 2025)
+
+Implemented boolean set extraction and code generation for ExifTool's membership testing patterns, extending the codegen infrastructure to handle HashSet generation alongside existing HashMap lookup tables.
+
+**Key achievements**: Successfully generated 7 boolean sets across PNG_pm and ExifTool_pm modules, resolved module name format inconsistencies between simple tables and boolean sets, implemented dynamic config directory discovery eliminating hardcoded module lists, achieved consistent LazyLock<HashSet> pattern matching simple table architecture.
+
+**Impact**: Complete boolean set support enabling efficient membership testing (e.g., `if PNG_DATA_CHUNKS.contains(chunk)`), scalable codegen infrastructure supporting any ExifTool module with minimal configuration overhead, foundation for additional extraction types beyond simple tables and boolean sets.
