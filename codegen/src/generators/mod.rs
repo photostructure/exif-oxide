@@ -10,7 +10,6 @@ pub mod module;
 pub mod lookup_tables;
 pub mod file_detection;
 pub mod data_sets;
-pub mod macro_based;
 
 
 pub use tags::generate_tag_table;

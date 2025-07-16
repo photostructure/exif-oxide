@@ -1,6 +1,5 @@
 //! Magic number regex patterns generated from ExifTool's magicNumber hash
 //!
-//! Generated at: Tue Jul 15 23:38:32 2025 GMT
 //! Total patterns: 110
 //! Source: ExifTool.pm %magicNumber hash
 //!

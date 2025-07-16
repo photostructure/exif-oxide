@@ -219,3 +219,15 @@ Fixed broken file type lookup extraction in simplified codegen architecture. Upd
 **Key achievements**: Extracts all 343 file type lookups including aliases, complex entries, and multi-format mappings. Removed manual `file_types_compat.rs` workaround that violated codegen principles. Integrated special extractor pattern for complex Perl data structures.
 
 **Impact**: Eliminates manual maintenance burden for file type mappings, ensures compatibility with monthly ExifTool updates, proves special extractor pattern for future complex extractions (magic numbers, regex patterns).
+
+---
+
+## ✅ Simplify Codegen Architecture (COMPLETED - July 2025)
+
+Transformed overly complex codegen system with interdependent Perl scripts into clean Rust-orchestrated architecture. Eliminated hardcoded module lists, path guessing logic, and multi-stage processing in favor of simple, explicit, testable components.
+
+**Key achievements**: Auto-discovery of modules via directory scanning, explicit source paths in all configs eliminating guessing, simplified Perl scripts taking explicit arguments (no config parsing), moved patching from Perl to Rust with atomic file operations using tempfile crate, direct JSON output eliminating split-extractions step, 1000+ entries extracted successfully from all modules.
+
+**Architecture implemented**: Rust scans config/ → reads source paths → patches modules → calls Perl with explicit args → individual JSON files → cleanup. Perl scripts are now "dumb" with single responsibilities. Fixed cross-filesystem atomic file replacement issue, cleaned up unused Perl dependencies, removed all vestigial macro references.
+
+**Impact**: Adding new modules now requires only config directory (no code changes), simplified debugging with sequential processing, maintainable codebase ready for monthly ExifTool updates. Migration to new module names completed, removing all compatibility layers.
