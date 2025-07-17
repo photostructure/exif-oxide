@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (7 entries)
-static STD_XLAT_NS_DATA: &[(&str, &str)] = &[
+static STD_XLAT_NS_DATA: &[(&'static str, &'static str)] = &[
     ("GettyImagesGIFT", "getty"),
     ("Iptc4xmpCore", "iptcCore"),
     ("Iptc4xmpExt", "iptcExt"),

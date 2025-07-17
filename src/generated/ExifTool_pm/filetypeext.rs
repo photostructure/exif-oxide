@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (9 entries)
-static FILE_TYPE_EXTENSIONS_DATA: &[(&str, &str)] = &[
+static FILE_TYPE_EXTENSIONS_DATA: &[(&'static str, &'static str)] = &[
     ("Canon 1D RAW", "tif"),
     ("DICOM", "dcm"),
     ("FLIR", "fff"),

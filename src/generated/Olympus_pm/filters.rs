@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (42 entries)
-static OLYMPUS_FILTERS_DATA: &[(u8, &str)] = &[
+static OLYMPUS_FILTERS_DATA: &[(u8, &'static str)] = &[
     (0, "Off"),
     (1, "Soft Focus"),
     (2, "Pop Art"),

@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (5 entries)
-static XML_CHAR_NAMES_DATA: &[(&str, &str)] = &[
+static XML_CHAR_NAMES_DATA: &[(&'static str, &'static str)] = &[
     ("\"", "quot"),
     ("&", "amp"),
     ("'", "#39"),

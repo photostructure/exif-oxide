@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (22 entries)
-static CANON_WHITE_BALANCE_DATA: &[(u8, &str)] = &[
+static CANON_WHITE_BALANCE_DATA: &[(u8, &'static str)] = &[
     (0, "Auto"),
     (1, "Daylight"),
     (2, "Cloudy"),

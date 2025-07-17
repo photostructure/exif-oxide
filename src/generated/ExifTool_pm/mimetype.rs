@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (225 entries)
-static MIME_TYPES_DATA: &[(&str, &str)] = &[
+static MIME_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("3FR", "image/x-hasselblad-3fr"),
     ("7Z", "application/x-7z-compressed"),
     ("AA", "audio/audible"),

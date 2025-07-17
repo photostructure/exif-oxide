@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (43 entries)
-static SONY_ISO_SETTING_2010_DATA: &[(u8, &str)] = &[
+static SONY_ISO_SETTING_2010_DATA: &[(u8, &'static str)] = &[
     (0, "Auto"),
     (5, "25"),
     (7, "40"),

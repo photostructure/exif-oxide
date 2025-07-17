@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (9 entries)
-static CANON_QUALITY_DATA: &[(i16, &str)] = &[
+static CANON_QUALITY_DATA: &[(i16, &'static str)] = &[
     (-1, "n/a"),
     (1, "Economy"),
     (2, "Normal"),

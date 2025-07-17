@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (19 entries)
-static CANON_IMAGE_SIZE_DATA: &[(i16, &str)] = &[
+static CANON_IMAGE_SIZE_DATA: &[(i16, &'static str)] = &[
     (-1, "n/a"),
     (0, "Large"),
     (1, "Medium"),
