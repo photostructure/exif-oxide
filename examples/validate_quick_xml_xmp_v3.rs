@@ -190,7 +190,7 @@ fn test_rdf_containers() -> Result<()> {
                 }
             }
             Event::Text(e) => {
-                let text = e.unescape()?.into_owned();
+                let text = e.decode()?.into_owned();
                 if in_bag && !text.trim().is_empty() {
                     bag_items.push(text);
                 } else if in_seq && !text.trim().is_empty() {
@@ -284,7 +284,7 @@ fn test_nested_structures() -> Result<()> {
                 }
             }
             Event::Text(e) if in_contact_info => {
-                let text = e.unescape()?.into_owned();
+                let text = e.decode()?.into_owned();
                 if !current_field.is_empty() && !text.trim().is_empty() {
                     contact_info.insert(current_field.clone(), text);
                 }
@@ -348,7 +348,7 @@ fn test_language_alternatives() -> Result<()> {
                 }
             }
             Event::Text(e) if in_alt && !current_lang.is_empty() => {
-                let text = e.unescape()?.into_owned();
+                let text = e.decode()?.into_owned();
                 if !text.trim().is_empty() {
                     title_langs.insert(current_lang.clone(), text);
                 }
@@ -413,7 +413,7 @@ fn test_utf_encoding() -> Result<()> {
     loop {
         match reader.read_event_into(&mut buf)? {
             Event::Text(e) => {
-                let text = e.unescape()?.into_owned();
+                let text = e.decode()?.into_owned();
                 if !text.trim().is_empty() {
                     unicode_texts.push(text);
                 }
