@@ -13,6 +13,14 @@ pub enum RawFormat {
     /// ExifTool: lib/Image/ExifTool/KyoceraRaw.pm - Simple ProcessBinaryData format
     Kyocera,
 
+    /// Minolta RAW format (MRW)
+    /// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm - Multi-block format with TTW, PRD, WBG blocks
+    Minolta,
+
+    /// Panasonic RAW format (RW2, RWL)
+    /// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm - TIFF-based with entry-based offsets
+    Panasonic,
+
     /// Unknown or unsupported RAW format
     Unknown,
     // Future formats will be added here as we implement them:
@@ -20,7 +28,6 @@ pub enum RawFormat {
     // Nikon,     // NEF, NRW formats
     // Sony,      // ARW, SR2, SRF formats
     // Olympus,   // ORF format
-    // Panasonic, // RW2 format
     // Fujifilm,  // RAF format
 }
 
@@ -29,6 +36,8 @@ impl RawFormat {
     pub fn name(&self) -> &'static str {
         match self {
             RawFormat::Kyocera => "Kyocera",
+            RawFormat::Minolta => "Minolta",
+            RawFormat::Panasonic => "Panasonic",
             RawFormat::Unknown => "Unknown",
         }
     }
@@ -38,7 +47,19 @@ impl RawFormat {
 /// ExifTool: Each manufacturer module has specific detection logic
 /// Based on file extension, magic bytes, and manufacturer detection
 pub fn detect_raw_format(detection_result: &FileTypeDetectionResult) -> RawFormat {
-    // Check for Kyocera RAW format first
+    // Check for Minolta MRW format
+    // ExifTool: MinoltaRaw.pm lines 407-410 - checks for '\0MR[MI]' magic
+    if detection_result.file_type == "MRW" {
+        return RawFormat::Minolta;
+    }
+
+    // Check for Panasonic RW2/RWL formats
+    // ExifTool: PanasonicRaw.pm - TIFF-based format
+    if detection_result.file_type == "RW2" || detection_result.file_type == "RWL" {
+        return RawFormat::Panasonic;
+    }
+
+    // Check for Kyocera RAW format
     // ExifTool: KyoceraRaw.pm uses .raw extension + magic validation
     if detection_result.file_type == "RAW" && detection_result.format == "RAW" {
         // For now, assume .raw files are Kyocera format
@@ -51,7 +72,6 @@ pub fn detect_raw_format(detection_result: &FileTypeDetectionResult) -> RawForma
     // if detection_result.file_type == "NEF" || detection_result.file_type == "NRW" { return RawFormat::Nikon; }
     // if detection_result.file_type == "ARW" { return RawFormat::Sony; }
     // if detection_result.file_type == "ORF" { return RawFormat::Olympus; }
-    // if detection_result.file_type == "RW2" { return RawFormat::Panasonic; }
     // if detection_result.file_type == "RAF" { return RawFormat::Fujifilm; }
 
     RawFormat::Unknown
@@ -74,6 +94,37 @@ pub fn validate_kyocera_magic(data: &[u8]) -> bool {
     &data[magic_offset..magic_offset + 7] == expected_magic
 }
 
+/// Validate Minolta MRW magic bytes
+/// ExifTool: MinoltaRaw.pm lines 407-410 - checks for '\0MR[MI]' header
+/// MRW files start with "\0MRM" (big-endian) or "\0MRI" (little-endian from ARW)
+pub fn validate_minolta_mrw_magic(data: &[u8]) -> bool {
+    // Need at least 8 bytes for MRW header
+    if data.len() < 8 {
+        return false;
+    }
+
+    // Check for MRW magic bytes at start of file
+    // ExifTool: MinoltaRaw.pm line 410 - $data =~ /^\0MR([MI])/
+    data.starts_with(b"\0MRM") || data.starts_with(b"\0MRI")
+}
+
+/// Validate Panasonic RW2/RWL magic bytes
+/// ExifTool: PanasonicRaw.pm - TIFF-based format, so validate as TIFF
+/// RW2/RWL files are essentially TIFF files with Panasonic-specific tags
+pub fn validate_panasonic_rw2_magic(data: &[u8]) -> bool {
+    // Need at least 8 bytes for TIFF header
+    if data.len() < 8 {
+        return false;
+    }
+
+    // Check for TIFF magic bytes (big-endian or little-endian)
+    // ExifTool: Uses standard TIFF processing for RW2/RWL
+    let is_tiff_be = data.starts_with(b"MM\x00\x2A"); // Big-endian TIFF
+    let is_tiff_le = data.starts_with(b"II\x2A\x00"); // Little-endian TIFF
+
+    is_tiff_be || is_tiff_le
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -81,6 +132,8 @@ mod tests {
     #[test]
     fn test_raw_format_names() {
         assert_eq!(RawFormat::Kyocera.name(), "Kyocera");
+        assert_eq!(RawFormat::Minolta.name(), "Minolta");
+        assert_eq!(RawFormat::Panasonic.name(), "Panasonic");
         assert_eq!(RawFormat::Unknown.name(), "Unknown");
     }
 
@@ -104,7 +157,72 @@ mod tests {
     }
 
     #[test]
+    fn test_minolta_mrw_magic_validation() {
+        // Test valid MRW big-endian magic
+        let mrw_be_data = b"\0MRM\x00\x00\x00\x08test_data";
+        assert!(validate_minolta_mrw_magic(mrw_be_data));
+
+        // Test valid MRW little-endian magic (from ARW)
+        let mrw_le_data = b"\0MRI\x00\x00\x00\x08test_data";
+        assert!(validate_minolta_mrw_magic(mrw_le_data));
+
+        // Test invalid magic
+        let invalid_data = b"\0MRX\x00\x00\x00\x08test_data";
+        assert!(!validate_minolta_mrw_magic(invalid_data));
+
+        // Test insufficient data
+        let short_data = b"\0MR";
+        assert!(!validate_minolta_mrw_magic(short_data));
+    }
+
+    #[test]
+    fn test_panasonic_rw2_magic_validation() {
+        // Test valid TIFF big-endian magic
+        let tiff_be_data = b"MM\x00\x2A\x00\x00\x00\x08";
+        assert!(validate_panasonic_rw2_magic(tiff_be_data));
+
+        // Test valid TIFF little-endian magic
+        let tiff_le_data = b"II\x2A\x00\x08\x00\x00\x00";
+        assert!(validate_panasonic_rw2_magic(tiff_le_data));
+
+        // Test invalid magic
+        let invalid_data = b"XX\x2A\x00\x08\x00\x00\x00";
+        assert!(!validate_panasonic_rw2_magic(invalid_data));
+
+        // Test insufficient data
+        let short_data = b"MM\x00";
+        assert!(!validate_panasonic_rw2_magic(short_data));
+    }
+
+    #[test]
     fn test_detect_raw_format() {
+        // Test Minolta MRW detection
+        let mrw_result = FileTypeDetectionResult {
+            file_type: "MRW".to_string(),
+            format: "MRW".to_string(),
+            mime_type: "image/x-minolta-mrw".to_string(),
+            description: "Minolta RAW image".to_string(),
+        };
+        assert_eq!(detect_raw_format(&mrw_result), RawFormat::Minolta);
+
+        // Test Panasonic RW2 detection
+        let rw2_result = FileTypeDetectionResult {
+            file_type: "RW2".to_string(),
+            format: "RW2".to_string(),
+            mime_type: "image/x-panasonic-rw2".to_string(),
+            description: "Panasonic RAW image".to_string(),
+        };
+        assert_eq!(detect_raw_format(&rw2_result), RawFormat::Panasonic);
+
+        // Test Panasonic RWL detection
+        let rwl_result = FileTypeDetectionResult {
+            file_type: "RWL".to_string(),
+            format: "RWL".to_string(),
+            mime_type: "image/x-panasonic-rwl".to_string(),
+            description: "Panasonic RAW image".to_string(),
+        };
+        assert_eq!(detect_raw_format(&rwl_result), RawFormat::Panasonic);
+
         // Test Kyocera detection
         let kyocera_result = FileTypeDetectionResult {
             file_type: "RAW".to_string(),
@@ -112,7 +230,6 @@ mod tests {
             mime_type: "application/octet-stream".to_string(),
             description: "RAW image".to_string(),
         };
-
         assert_eq!(detect_raw_format(&kyocera_result), RawFormat::Kyocera);
 
         // Test unknown format
@@ -122,7 +239,6 @@ mod tests {
             mime_type: "application/octet-stream".to_string(),
             description: "Unknown format".to_string(),
         };
-
         assert_eq!(detect_raw_format(&unknown_result), RawFormat::Unknown);
     }
 }
