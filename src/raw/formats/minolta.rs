@@ -1,4 +1,6 @@
 //! Minolta RAW format handler
+
+#![allow(dead_code, unused_variables)]
 //!
 //! This module implements ExifTool's MinoltaRaw.pm processing logic exactly.
 //! Minolta/Konica-Minolta MRW files use a multi-block structure with separate

@@ -305,3 +305,21 @@ Successfully eliminated all manual maintenance of lookup tables for RAW format s
 **Files implemented**: Configuration files for all manufacturers in `codegen/config/`, generated lookup modules in `src/generated/`, comprehensive extraction system handling multiple data types (simple_table, boolean_set, file_type_lookup, regex_patterns).
 
 **Impact**: Eliminated the largest maintenance burden for RAW format implementation (3,000+ manual lookup entries), enabled rapid RAW format milestone development, automatic updates with each ExifTool release, zero risk of manual transcription errors.
+
+---
+
+## ✅ Milestone 17b: Simple TIFF-Based RAW Formats (COMPLETED)
+
+Added support for Minolta MRW and Panasonic RW2/RWL RAW formats with full TIFF integration:
+
+**Key Achievements**:
+
+- **Panasonic RW2/RWL**: Complete TIFF integration with entry-based offset processing for embedded JPEG data
+- **Minolta MRW**: Multi-block structure processing (PRD, WBG, RIF blocks) with proper byte order detection
+- **TIFF Magic Number Fix**: Added support for RW2's non-standard magic number (85 vs 42)
+- **Format Detection**: Extended RAW processor to handle MRW/RW2/RWL file types alongside existing RAW support
+- **Real File Testing**: Both formats successfully extract metadata from actual camera files in test-images/
+
+**Technical Foundation**: Built robust entry-based offset infrastructure that will be critical for Sony and other complex RAW formats. All implementation follows Trust ExifTool principle with exact logic translation from MinoltaRaw.pm and PanasonicRaw.pm.
+
+**Validation**: Integration tests pass with real camera files, CLI extraction working, `make precommit` passes cleanly.
