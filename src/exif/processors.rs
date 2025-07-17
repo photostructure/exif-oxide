@@ -5,7 +5,7 @@
 //!
 //! ExifTool Reference: PROCESS_PROC system and ProcessDirectory dispatch
 
-use crate::implementations::{canon, nikon, sony};
+use crate::implementations::{canon, nikon, olympus, sony};
 use crate::processor_registry::{get_global_registry, ProcessorContext};
 use crate::types::{DirectoryInfo, Result};
 use std::collections::HashMap;
@@ -354,6 +354,12 @@ impl ExifReader {
         if sony::is_sony_makernote(make, model) {
             debug!("Detected Sony MakerNote (Make field: {})", make);
             return Some("Sony::Main".to_string());
+        }
+
+        // ExifTool: lib/Image/ExifTool/MakerNotes.pm:515-533 Olympus detection
+        if olympus::is_olympus_makernote(make) {
+            debug!("Detected Olympus MakerNote (Make field: {})", make);
+            return Some("Olympus::Main".to_string());
         }
 
         // Return None to fall back to EXIF processor when no manufacturer detected
