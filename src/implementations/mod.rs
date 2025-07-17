@@ -5,6 +5,7 @@
 
 pub mod canon;
 pub mod nikon;
+pub mod olympus;
 pub mod print_conv;
 pub mod sony;
 pub mod value_conv;

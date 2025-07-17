@@ -456,23 +456,53 @@ This milestone validates that our RAW processing architecture can handle manufac
    - **Solution**: Added ORF magic numbers: `20306` and `21330` (0x5352, "SR")
    - **Trust ExifTool**: ExifTool specifically handles these ORF magic numbers
 
+**✅ Additional Infrastructure Work (July 17, 2025)**
+1. **Olympus MakerNote Detection**: Created `src/implementations/olympus.rs`
+   - Implements Olympus signature detection following ExifTool MakerNotes.pm:515-533
+   - Supports all three Olympus formats: OLYMP\0, OLYMPUS\0, OM SYSTEM\0
+   - Integrated into MakerNote processor detection in `src/exif/processors.rs`
+
+2. **Processor Registry Integration**: Updated `src/processor_registry/mod.rs`
+   - Registered OlympusEquipmentProcessor, OlympusCameraSettingsProcessor, FocusInfoProcessor
+   - Processors follow ExifTool's dual-mode processing pattern
+
+3. **Tag Conflict Prevention**: Updated `src/exif/mod.rs:259-265`
+   - Added Olympus to maker note exclusion list to prevent GPS/EXIF tag conflicts
+   - Prevents maker note tags from being misinterpreted as standard EXIF tags
+
 **✅ Current Status**
 - **CLI Integration**: `cargo run -- file.orf` works correctly
 - **EXIF Extraction**: Successfully extracts camera info, lens data, exposure settings
 - **Generated Tables**: Using olympuscameratypes.rs (303 cameras), olympuslenstypes.rs (138 lenses)
-- **All Tests Pass**: 244 tests passing, `make precommit` succeeds
+- **All Tests Pass**: 244 tests passing, builds successfully
 
 ### **REMAINING WORK**
 
 **🔧 Data Quality Issues to Address**
 
-1. **GPS/Maker Note Data Corruption** (HIGH PRIORITY)
-   - **Issue**: Some maker note fields contain binary data being interpreted as strings
-   - **Example**: `MakerNotes:GPSLongitudeRef` shows garbled Unicode characters
-   - **Root Cause**: Binary data sections not being properly parsed as binary
-   - **Solution Needed**: Update section processors to handle binary vs string data correctly
+1. **GPS/Maker Note Data Corruption** (HIGH PRIORITY - CRITICAL ISSUE)
+   - **Issue**: Tag 0x0003 in Olympus sections is being misinterpreted as GPSLongitudeRef
+   - **Example**: `MakerNotes:GPSLongitudeRef` shows garbled Unicode characters (binary data)
+   - **Root Cause**: Tag ID 0x0003 exists in both GPS (GPSLongitudeRef) and Olympus sections
+   - **Investigation Results**:
+     - The corrupted data is coming from Olympus maker note sections, not GPS IFD
+     - Tag 0x0003 appears in multiple Olympus sections with binary data
+     - The tag lookup logic is incorrectly resolving 0x0003 to GPSLongitudeRef
+   - **Solution Needed**: 
+     - Ensure Olympus section tags are NOT looked up in the global GPS/EXIF tag table
+     - Binary data from Olympus sections should remain as Tag_XXXX format
+     - The fix in `src/exif/mod.rs:262` (adding Olympus to exclusion list) may not be sufficient
+     - Need to trace where the incorrect tag name resolution is happening
 
-2. **Add ORF to Compatibility Test Suite** (MEDIUM PRIORITY)
+2. **Binary Data Processing in Equipment Section** (HIGH PRIORITY)
+   - **Issue**: `extract_camera_type()` and `extract_lens_type()` are placeholder implementations
+   - **Current State**: Methods exist but don't properly extract data from Equipment section
+   - **Solution Needed**: 
+     - Study ExifTool's Equipment section binary data layout
+     - Implement proper offset-based extraction following ExifTool's logic
+     - The Equipment section (0x2010) needs to be processed as an IFD structure
+
+3. **Add ORF to Compatibility Test Suite** (MEDIUM PRIORITY)
    - **Task**: Copy ORF test file to `test-images/` directory
    - **Update**: Add ORF to compatibility test generation scripts
    - **File**: Use `../photostructure/examples/Raw/oly.ORF` as test case
@@ -509,16 +539,28 @@ This extracts: Make, Model, ISO, F-stop, exposure time, lens info, image dimensi
 
 ### **Specific Issues to Investigate**
 
-1. **Equipment Section Binary Parsing**
-   - **File**: `src/raw/formats/olympus.rs:98-138`
-   - **Issue**: `extract_camera_type()` and `extract_lens_type()` are placeholders
-   - **ExifTool Reference**: Olympus.pm Equipment section processing
-   - **Fix Needed**: Implement exact binary offset extraction logic
+1. **Tag Name Resolution Conflict** (HIGHEST PRIORITY)
+   - **Files to Check**: 
+     - `src/raw/formats/olympus.rs:98-138` - Where Olympus tags are extracted
+     - `src/exif/mod.rs:get_all_tag_entries()` - Where tag names are resolved
+   - **Issue**: Tag 0x0003 from Olympus sections is being resolved as GPSLongitudeRef
+   - **Root Cause**: Missing or incorrect TagSourceInfo for Olympus section tags
+   - **Fix Needed**: 
+     - Ensure `process_equipment_section()` sets proper TagSourceInfo with `ifd_name = "Olympus"`
+     - Verify the tag name exclusion logic in `get_all_tag_entries()` works for "Olympus" prefix
 
-2. **String vs Binary Data Detection**
-   - **Problem**: GPS and maker note fields showing garbled data
-   - **Solution**: Check ExifTool's format specifications for each tag
-   - **Pattern**: Use ExifTool's `Format` field to determine string vs binary
+2. **Equipment Section Binary Parsing**
+   - **File**: `src/raw/formats/olympus.rs:196-287`
+   - **Issue**: `extract_camera_type()` and `extract_lens_type()` have incorrect offset logic
+   - **ExifTool Reference**: Olympus.pm lines 1598-1647 (Equipment table)
+   - **Fix Needed**: 
+     - Equipment section is an IFD structure, not raw binary at fixed offsets
+     - Need to parse as IFD and extract tags 0x100 (CameraType2) and 0x201 (LensType)
+
+3. **Processor Integration**
+   - **File**: `src/processor_registry/processors/olympus.rs`
+   - **Issue**: OlympusEquipmentProcessor may not be called or integrated properly
+   - **Fix Needed**: Verify processor is actually being invoked for Equipment sections
 
 ### **Code Architecture Notes**
 
@@ -526,11 +568,13 @@ This extracts: Make, Model, ISO, F-stop, exposure time, lens info, image dimensi
 - **Section Mapping**: HashMap approach in `OlympusRawHandler::new()` is extensible
 - **Generated Tables**: Automatic camera/lens lookup integration works perfectly
 - **TIFF Integration**: Leverages existing infrastructure correctly
+- **Processor Registry**: All three Olympus processors registered and available
 
 **🔧 Areas Needing Refinement**
-- **Binary Data Processing**: Currently treats all maker note data as strings
-- **Error Handling**: GPS parsing errors should be graceful, not corrupt display
-- **Section Processors**: Placeholder implementations need ExifTool's exact logic
+- **Tag Name Resolution**: The core issue is that Olympus section tags are being resolved through the global tag name lookup
+- **Binary Data Processing**: Equipment section needs proper IFD parsing, not string interpretation
+- **Section Processors**: Current implementations are placeholders - need ExifTool's exact binary parsing
+- **Source Context**: Need to ensure TagSourceInfo properly identifies Olympus sections to prevent tag conflicts
 
 ### **Future Enhancements to Consider**
 
@@ -551,17 +595,33 @@ This extracts: Make, Model, ISO, F-stop, exposure time, lens info, image dimensi
 - **ExifTool Compatibility**: Compare output with ExifTool for same ORF file
 - **Binary Data Tests**: Verify Equipment section extracts camera/lens correctly
 
+### **Critical Debug Information**
+
+**🎯 The Core Problem**: Tag 0x0003 from Olympus sections is being incorrectly resolved to "GPSLongitudeRef"
+
+**Debug Strategy**:
+1. Run with `RUST_LOG=debug cargo run -- ../photostructure/examples/Raw/oly.ORF 2>&1 | grep -E "0x0003|Tag_0003|GPSLongitudeRef"`
+2. Look for where tag 0x0003 gets its name resolved
+3. The issue likely happens in the tag entry creation flow, not in the initial extraction
+
+**Key Investigation Points**:
+- `src/exif/mod.rs:get_all_tag_entries()` - This is where tag names are resolved
+- The Olympus section tags should have `TagSourceInfo` with `ifd_name` starting with "Olympus"
+- Check if `process_olympus_sections()` is properly setting TagSourceInfo for extracted tags
+
 ### **Success Criteria for Completion**
 
-1. **GPS Data**: Should extract clean latitude/longitude, not garbled Unicode
-2. **Maker Notes**: Camera-specific tags should show meaningful values, not binary dumps  
-3. **Compatibility Test**: ORF file added to test suite and passing
-4. **ExifTool Parity**: Key tags (Make, Model, LensInfo, GPS) match ExifTool output
+1. **No Tag Conflicts**: Tag 0x0003 from Olympus sections should appear as "MakerNotes:Tag_0003", NOT "MakerNotes:GPSLongitudeRef"
+2. **Equipment Data**: Camera type and lens type should extract actual model names using generated tables
+3. **Binary Data**: All Olympus section binary data should remain as Tag_XXXX with proper values
+4. **Compatibility Test**: ORF file added to test suite and passing
+5. **ExifTool Parity**: Core tags (Make, Model, camera/lens from Equipment) match ExifTool output
 
 ### **Estimated Time to Complete Remaining Work**
-- **Data quality fixes**: 2-4 hours (binary parsing implementation)
+- **Tag conflict fix**: 1-2 hours (trace and fix tag name resolution)
+- **Equipment section parsing**: 2-3 hours (implement proper IFD parsing)
 - **Compatibility test addition**: 30 minutes
 - **Testing and validation**: 1 hour
-- **Total**: 3-5 hours for experienced engineer
+- **Total**: 4-6 hours for experienced engineer
 
-**The foundation is solid - just need to clean up the data quality issues by following ExifTool's exact binary parsing logic.**
+**The foundation is solid - the main issue is tag name resolution conflict between GPS and Olympus namespaces.**
