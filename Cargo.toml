@@ -17,22 +17,22 @@ redundant_static_lifetimes = "allow"
 
 [dependencies]
 byteorder = "1.5"      # Efficient endian handling
-thiserror = "1.0"      # Error handling
+thiserror = "2.0"      # Error handling
 anyhow = "1.0"         # Error handling in examples/tests
 regex = "1.11"         # For parsing ExifTool tables (used in dev tools)
 serde = { version = "1.0", features = ["derive"] }  # Serialization
 serde_json = "1.0"     # JSON output
-clap = { version = "4.0", features = ["derive"] }  # CLI argument parsing
-quick-xml = "0.36"     # Fast XML parsing for XMP metadata
+clap = { version = "4.5", features = ["derive"] }  # CLI argument parsing
+quick-xml = "0.38"     # Fast XML parsing for XMP metadata
 tracing = "0.1"        # Structured logging and instrumentation
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }  # Tracing subscriber implementation
 chrono = { version = "0.4", features = ["serde"] }  # Date and time handling for File:FileModifyDate
 
 [dev-dependencies]
-criterion = "0.5"      # Benchmarking
+criterion = "0.6"      # Benchmarking
 pretty_assertions = "1.4"  # Better test assertions
-tempfile = "3.8"       # Temporary files for testing
-clap = { version = "4.0", features = ["derive"] }  # CLI argument parsing for analysis tools
+tempfile = "3.20"       # Temporary files for testing
+clap = { version = "4.5", features = ["derive"] }  # CLI argument parsing for analysis tools
 similar = { version = "2.7", features = ["text"] }  # Text diffing for ExifTool comparison
 tracing-test = "0.2"   # Testing utilities for tracing
 
