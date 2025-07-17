@@ -1,135 +1,126 @@
-# exif-oxide: A translation of ExifTool to Rust
+# exif-oxide: Rust translation of ExifTool
 
-This directory contains the exif-oxide project, which ports ExifTool's metadata extraction functionality to Rust using a hybrid approach of code generation and manual implementations.
+High-performance Rust implementation of ExifTool's metadata extraction, translating ExifTool's battle-tested logic to provide a single binary solution with 10-20x performance improvements.
 
 ## Why exif-oxide?
 
-While ExifTool is the gold standard for metadata extraction, the Perl runtime
-that it relies on can grind against Windows and macOS security systems.
+ExifTool is the gold standard for metadata extraction, but the Perl runtime can conflict with Windows Defender and macOS Gatekeeper. `exif-oxide` provides a single, native binary that avoids these security issues while delivering substantial performance gains over child process approaches.
 
-By translating to rust, applications using exif-oxide can be a single, "normal"
-binary application that can "play nicely" with Defender and Gatekeeper, as well
-as providing substantive performance gains over an approach that `fork`s
-`exiftool` as a child process.
+## Current Status
+
+### ✅ **Working Now**
+- **JPEG metadata extraction** - Complete EXIF, XMP, GPS, and maker notes
+- **Multiple RAW formats** - Kyocera, Minolta MRW, Panasonic RW2/RWL
+- **File type detection** - 50+ formats with ExifTool-compatible MIME types
+- **Canon cameras** - Full maker note support with ProcessBinaryData
+- **Sony cameras** - Complete maker note integration  
+- **Nikon cameras** - Maker note support with encryption detection and lens database
+- **GPS coordinates** - Decimal degree conversion and composite tags
+- **Composite tags** - Advanced calculations like ShutterSpeed
+- **CLI compatibility** - JSON output with -TagName# numeric mode
+
+### 🚧 **In Progress** 
+- **More RAW formats** - Olympus ORF, Canon CR2/CR3, Sony ARW (Milestones 17c-17e)
+- **Video metadata** - MP4, MOV, and other video formats (Milestone 18)
+
+### 📋 **Planned**
+- **Write support** - Tag modification and file updates (Milestones 21-22)
+- **Binary data extraction** - Thumbnails and embedded images (Milestone 19)
+- **Error classification** - Detailed error reporting (Milestone 20)
 
 ## Project Goals
 
-- Leverage ExifTool's invaluable camera-specific quirks and edge cases, and not introduce any novel parsing or heuristics--ExifTool has figured everything out already.
-- Create a Rust library with behavioral compatibility with ExifTool for reading metadata
-- Use code generation for static tag definitions while manually implementing complex logic
-- Maintain the ability to track ExifTool's monthly updates through regeneration
-- Provide streaming I/O to handle large files efficiently without loading them into memory
-- Support mainstream metadata tags (>80% frequency) for the most common formats and manufacturers
+- **Trust ExifTool**: Translate ExifTool's logic exactly—no "improvements" or novel parsing
+- **Mainstream focus**: Support 500-1000 most common tags (>80% frequency) vs ExifTool's 15,000+
+- **Performance**: 10-20x faster than ExifTool through native compilation
+- **Compatibility**: Maintain behavioral compatibility with ExifTool output
+- **Maintainability**: Use code generation to track ExifTool's monthly updates
 
-## Project Non-Goals
+## Differences from ExifTool
 
-- We will not provide 100% tag compatibility for reading nor writing. We focus on mainstream tags (frequency >80% in TagMetadata.json), translating approximately 500-1000 tags out of ExifTool's 15,000+.
-- We will not port over the `geolocation` functionality
-- We will not port over ExifTool's custom tag definitions and user-defined tags
-- No filesystem recursion: we will not support batch-update operations via the CLI
-- We will not support tag value updates that are not static values (no pattern-match replacements)
-- We will not provide verbatim exiftool logging results
-- We will not seek to reproduce exiftool warnings or error verbiage verbatim
-- We aren't doing any date or time parsing.
+- **JSON-only output**: Always outputs JSON (no text mode)
+- **Mainstream tags**: Focuses on ~500-1000 most common tags vs ExifTool's 15,000+
+- **No geolocation**: Excludes ExifTool's GPS coordinate lookup features
+- **No write patterns**: No pattern-match replacements for tag updates
 
-## Design
+## Usage
 
-See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for architectural details.
+```bash
+# Extract all metadata as JSON
+exif-oxide photo.jpg
 
-For engineers starting on the project, see [ENGINEER-GUIDE.md](docs/ENGINEER-GUIDE.md) for practical guidance on understanding ExifTool and implementing features.
+# Multiple files
+exif-oxide photo1.jpg photo2.jpg
 
-## Differences from default `exiftool` behavior
+# Show numeric values with -TagName# syntax
+exif-oxide photo.jpg -FNumber# -ExposureTime#
 
-- `-j` (JSON output) is default behavior by the tool. There is no non-JSON output.
-
-## Licensing
-
-This program and code is offered under a commercial and under the GNU Affero
-General Public License. See [LICENSE](./LICENSE) for details.
-
-## Development
-
-This project includes a branch of `exiftool` as a submodule: use `git clone
---recursive`. This branch has a number of documents to bolster comprehension of
-ExifTool, which has a **ton** of surprising bits going on.
-
-The production code paths are mostly produced via automatic code generation that
-reads from the ExifTool source directly.
-
-### Quick Start
-
-1. Clone with submodules: `git clone --recursive https://github.com/yourusername/exif-oxide`
-2. Read [ENGINEER-GUIDE.md](docs/ENGINEER-GUIDE.md) to understand ExifTool concepts
-
-### Expected CLI (coming soon)
-
-```sh
-$ exif-oxide --help
-
-Extracts EXIF data from image files
-
-Usage: exif-oxide [OPTIONS] [ARGS]...
-
-Arguments:
-  [ARGS]...  All remaining arguments (files and -TagName patterns)
-
-Options:
-  -G, --groups   Include group names in output
-  -n, --numeric  Show numeric/raw values (no PrintConv)
-  -b, --binary   Extract raw binary data (requires single tag and single file)
-      --api      API mode: show both raw and formatted values with full type information
-  -h, --help     Show help information
-
-EXAMPLES:
-  exif-oxide photo.jpg                          # All tags as JSON
-  exif-oxide photo1.jpg photo2.jpg              # Multiple files
-  exif-oxide -G photo.jpg                       # All tags with groups
-  exif-oxide -Make -Model photo.jpg             # Only return Make and Model tag values
-  exif-oxide -b -ThumbnailImage photo.jpg > thumb.jpg  # Save thumbnail
+# Show implementation status
+exif-oxide --show-missing photo.jpg
 ```
 
-### Expected Usage (Future API)
+## Library Usage
 
 ```rust
-use exif_oxide::ExifReader;
-use std::fs::File;
+use exif_oxide::formats::extract_metadata;
+use std::path::Path;
 
-let mut reader = ExifReader::new();
-let file = File::open("photo.jpg")?;
-
-// Extract all mainstream metadata
-let metadata = reader.read_metadata_stream(file, Default::default())?;
-println!("Camera: {} {}", metadata.tags["Make"], metadata.tags["Model"]);
-
-// Stream large binary data (thumbnails) without loading into memory
-if let Some(thumbnail_ref) = metadata.get_binary_ref("ThumbnailImage") {
-    let file = File::open("photo.jpg")?;
-    let mut thumbnail_reader = reader.stream_binary_tag(file, thumbnail_ref)?;
-    let mut thumbnail_file = File::create("thumbnail.jpg")?;
-    std::io::copy(&mut thumbnail_reader, &mut thumbnail_file)?;
+let metadata = extract_metadata(Path::new("photo.jpg"), false)?;
+for tag in &metadata.tags {
+    println!("{}: {}", tag.tag_name, tag.print_value);
 }
 ```
 
-### Key Design Decisions
+## Licensing
 
-1. **Hybrid Approach**: Generate static tag tables at compile time, manually implement complex logic
-2. **Minimal Perl**: Use Perl only to extract tag definitions to JSON, then process with Rust
-3. **Implementation Library**: Manual Rust implementations indexed by Perl snippet signatures
-4. **Always Compilable**: Codegen produces working code even with missing implementations
-5. **Incremental Scope**: Start with basic JPEG/EXIF, then one manufacturer at a time
-6. **Streaming First**: Handle large files efficiently without requiring full file loads
+Dual-licensed under commercial license and GNU Affero General Public License v3.0+. See [LICENSE](./LICENSE) for details.
 
-## Tag Naming Compatibility
+## Development
 
-ExifTool tag names are preserved when possible, but tags with invalid Rust
-identifier characters are modified:
+### Quick Start
 
-- **ExifTool**: `"NikonActiveD-Lighting"`
-- **exif-oxide**: `"NikonActiveD_Lighting"`
+1. Clone with submodules:
+   ```bash
+   git clone --recursive https://github.com/photostructure/exif-oxide
+   cd exif-oxide
+   ```
 
-Hyphens (and any other invalid characters) are converted to underscores to
-ensure that they are valid Rust identifiers, while mostly preserving semantic
-meaning.
+2. Build and test:
+   ```bash
+   make precommit  # Build, test, and lint
+   ```
+
+3. Run on test images:
+   ```bash
+   cargo run test-images/canon/Canon_T3i.JPG
+   ```
+
+### Architecture
+
+- **Code generation**: Automatically extracts 3,000+ lookup tables from ExifTool source
+- **Runtime registries**: PrintConv/ValueConv implementations avoid code bloat
+- **Trust ExifTool**: Every complex feature manually ported with ExifTool source references
+- **Hybrid approach**: Generated static data + manual complex logic
+
+### Essential Reading
+
+- [ENGINEER-GUIDE.md](docs/ENGINEER-GUIDE.md) - Start here for new contributors
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md) - System design and philosophy  
+- [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md) - **Critical**: Our #1 development rule
+- [MILESTONES.md](docs/MILESTONES.md) - Current development roadmap
+
+## Tag Compatibility
+
+ExifTool tag names are preserved exactly. Group-prefixed output matches `exiftool -j -G`:
+
+```json
+{
+  "EXIF:Make": "Canon",
+  "EXIF:Model": "Canon EOS T3i", 
+  "GPS:GPSLatitude": 40.7589,
+  "Composite:ShutterSpeed": "1/60"
+}
+```
 
 ## Acknowledgments
 
