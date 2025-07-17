@@ -1,4 +1,6 @@
 //! Panasonic RAW format handler
+
+#![allow(dead_code, unused_variables)]
 //!
 //! This module implements ExifTool's PanasonicRaw.pm processing logic exactly.
 //! Panasonic RW2/RWL files are TIFF-based formats with manufacturer-specific tags
@@ -12,8 +14,10 @@ use crate::raw::offset::{
     EntryBasedOffsetProcessor, OffsetBase, OffsetExtractionRule, OffsetField,
 };
 use crate::raw::RawFormatHandler;
-use crate::types::{ExifError, Result, TagSourceInfo, TagValue};
+use crate::tiff_types::TiffHeader;
+use crate::types::{DirectoryInfo, ExifError, Result, TagSourceInfo, TagValue};
 use std::collections::HashMap;
+use tracing;
 
 /// Panasonic RAW format handler
 /// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm - TIFF-based with entry-based offsets
@@ -146,6 +150,133 @@ impl Default for PanasonicRawHandler {
 }
 
 impl PanasonicRawHandler {
+    /// Process entry-based offsets for Panasonic-specific data blocks
+    /// ExifTool: PanasonicRaw.pm applies additional processing for tags like JpgFromRaw (0x002e)
+    fn process_entry_based_offsets(&self, reader: &mut ExifReader, data: &[u8]) -> Result<()> {
+        // Get the currently extracted tags from TIFF IFD processing
+        // Clone the tags to avoid borrowing issues
+        let extracted_tags: Vec<(u16, TagValue)> = reader
+            .get_extracted_tags()
+            .iter()
+            .map(|(tag_id, tag_value)| (*tag_id, tag_value.clone()))
+            .collect();
+
+        // Process each tag that has entry-based offset rules
+        for (tag_id, tag_value) in extracted_tags {
+            if let Some(rule) = self.offset_processor.get_rule(tag_id) {
+                // Extract offset from the tag value based on the rule
+                let offset = match rule.offset_field {
+                    OffsetField::ActualValue => {
+                        // The tag value itself is the offset
+                        match tag_value.as_u32() {
+                            Some(val) => val as u64,
+                            None => continue, // Skip if not convertible to u32
+                        }
+                    }
+                    OffsetField::ValueOffset => {
+                        // This would be for more complex offset extraction
+                        // For now, treat as actual value
+                        match tag_value.as_u32() {
+                            Some(val) => val as u64,
+                            None => continue,
+                        }
+                    }
+                };
+
+                // Calculate the final offset based on the rule's base
+                let final_offset = match rule.base {
+                    OffsetBase::FileStart => offset + rule.additional_offset as u64,
+                    OffsetBase::IfdStart => {
+                        // Would need IFD start position - for now use file start
+                        offset + rule.additional_offset as u64
+                    }
+                    OffsetBase::MakerNoteStart => {
+                        // Would need maker note start - for now use file start
+                        offset + rule.additional_offset as u64
+                    }
+                    OffsetBase::DataPosition => offset + rule.additional_offset as u64,
+                };
+
+                // Extract data at the calculated offset
+                // ExifTool: PanasonicRaw.pm extracts additional data blocks at these offsets
+                if let Some(extracted_data) =
+                    self.extract_data_at_offset(data, final_offset, tag_id)
+                {
+                    // Process the extracted data based on the tag type
+                    self.process_offset_data(reader, tag_id, &extracted_data)?;
+                }
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Extract data at a specific offset for entry-based processing
+    /// ExifTool: PanasonicRaw.pm extracts data blocks at calculated offsets
+    fn extract_data_at_offset(&self, data: &[u8], offset: u64, tag_id: u16) -> Option<Vec<u8>> {
+        let offset = offset as usize;
+
+        // Bounds check
+        if offset >= data.len() {
+            return None;
+        }
+
+        // Determine data size based on tag type
+        // ExifTool: Different tags extract different amounts of data
+        let size = match tag_id {
+            0x002e => 4, // JpgFromRaw - typically a 4-byte offset
+            0x0127 => 4, // JpgFromRaw2 - typically a 4-byte offset
+            _ => 4,      // Default size for unknown entry-based tags
+        };
+
+        // Extract the data block
+        if offset + size <= data.len() {
+            Some(data[offset..offset + size].to_vec())
+        } else {
+            // Extract remaining data if partial block available
+            Some(data[offset..].to_vec())
+        }
+    }
+
+    /// Process data extracted at calculated offsets
+    /// ExifTool: PanasonicRaw.pm processes different types of offset data
+    fn process_offset_data(
+        &self,
+        _reader: &mut ExifReader,
+        tag_id: u16,
+        data: &[u8],
+    ) -> Result<()> {
+        // Process based on the specific tag type
+        match tag_id {
+            0x002e => {
+                // JpgFromRaw - points to embedded JPEG data
+                // For now, just note that we found the offset
+                if data.len() >= 4 {
+                    let jpeg_offset = u32::from_le_bytes([data[0], data[1], data[2], data[3]]);
+                    // Could extract JPEG metadata here in the future
+                    // ExifTool: PanasonicRaw.pm extracts embedded JPEG EXIF data
+                    tracing::debug!("Found JpgFromRaw offset: {:#x}", jpeg_offset);
+                }
+            }
+            0x0127 => {
+                // JpgFromRaw2 - alternate JPEG data pointer
+                if data.len() >= 4 {
+                    let jpeg_offset = u32::from_le_bytes([data[0], data[1], data[2], data[3]]);
+                    tracing::debug!("Found JpgFromRaw2 offset: {:#x}", jpeg_offset);
+                }
+            }
+            _ => {
+                // Unknown entry-based tag - log for debugging
+                tracing::debug!(
+                    "Processed entry-based offset for tag {:#x}: {} bytes",
+                    tag_id,
+                    data.len()
+                );
+            }
+        }
+
+        Ok(())
+    }
     /// Create new Panasonic RAW handler with processors
     /// ExifTool: %Image::ExifTool::PanasonicRaw::Main hash construction
     pub fn new() -> Self {
@@ -193,16 +324,31 @@ impl RawFormatHandler for PanasonicRawHandler {
     /// Process Panasonic RW2/RWL data
     /// ExifTool: Standard TIFF processing with Panasonic-specific handling
     fn process_raw(&self, reader: &mut ExifReader, data: &[u8]) -> Result<()> {
-        // Panasonic RW2/RWL files are TIFF-based, so we need TIFF IFD processing
-        // For now, we'll process the basic binary data that we can handle
-        // TODO: Full TIFF IFD processing requires integration with TIFF module
+        // Panasonic RW2/RWL files are TIFF-based, so we parse the TIFF header first
+        // ExifTool: lib/Image/ExifTool/PanasonicRaw.pm uses standard TIFF processing
 
-        // Process standard binary data first
-        self.binary_processor.process(reader, data)?;
+        // Step 1: Parse TIFF header to get IFD structure
+        let header = TiffHeader::parse(data)?;
+        reader.set_test_header(header.clone());
+        reader.set_test_data(data.to_vec());
 
-        // Process entry-based offsets if we have IFD entries available
-        // TODO: This requires TIFF IFD parsing to get entry information
-        // For now, skip entry-based processing
+        // Step 2: Process the main IFD using existing TIFF infrastructure
+        // ExifTool: PanasonicRaw.pm processes TIFF IFDs first, then applies special handling
+        let dir_info = DirectoryInfo {
+            name: "PanasonicRaw".to_string(),
+            dir_start: header.ifd0_offset as usize,
+            dir_len: 0,  // Will be calculated by IFD processing
+            base: 0,     // Standard TIFF base
+            data_pos: 0, // No additional data position offset
+            allow_reprocess: false,
+        };
+
+        // Process the TIFF IFD to extract real tag entries
+        reader.process_subdirectory(&dir_info)?;
+
+        // Step 3: Apply entry-based offset processing to extracted IFD entries
+        // ExifTool: PanasonicRaw.pm applies additional processing for specific tags like JpgFromRaw
+        self.process_entry_based_offsets(reader, data)?;
 
         Ok(())
     }
