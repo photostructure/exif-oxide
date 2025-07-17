@@ -225,8 +225,11 @@ This tells you exactly what needs to be implemented.
    # Make sure test images exist
    ls test-images/Canon/
    
-   # Verify ExifTool reference data
+   # Verify ExifTool reference data (generates missing files)
    make compat-gen
+   
+   # Force regenerate all reference data if needed
+   make compat-gen-force
    ```
 
 3. **Fix clippy import issues:**
