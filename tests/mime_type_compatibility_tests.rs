@@ -8,6 +8,11 @@
 //! The system validates that our FileTypeDetector produces identical results to
 //! ExifTool across hundreds of real-world test files, ensuring ongoing compatibility
 //! and regression prevention.
+//!
+//! Note: These tests require the `integration-tests` feature to be enabled and
+//! external test assets to be available. They are automatically skipped in published crates.
+
+#![cfg(feature = "integration-tests")]
 
 use exif_oxide::file_detection::{FileDetectionError, FileTypeDetector};
 use serde_json::Value;

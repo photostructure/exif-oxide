@@ -1,3 +1,12 @@
+//! File detection integration tests
+//!
+//! These tests verify file type detection against real-world sample files.
+//!
+//! Note: These tests require the `integration-tests` feature to be enabled and
+//! external test assets to be available. They are automatically skipped in published crates.
+
+#![cfg(feature = "integration-tests")]
+
 use exif_oxide::file_detection::FileTypeDetector;
 use std::fs::File;
 use std::path::Path;

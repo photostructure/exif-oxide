@@ -8,6 +8,11 @@
 //! the EXIF standard is universal (despite manufacturer-specific quirks).
 //!
 //! ExifTool Reference: lib/Image/ExifTool/Exif.pm manufacturer-agnostic processing
+//!
+//! Note: These tests require the `integration-tests` feature to be enabled and
+//! external test assets to be available. They are automatically skipped in published crates.
+
+#![cfg(feature = "integration-tests")]
 //! Milestone: docs/milestones/MILESTONE-ExifIFD.md Multi-Manufacturer Support
 
 use exif_oxide::formats::extract_metadata;
