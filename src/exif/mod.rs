@@ -259,6 +259,7 @@ impl ExifReader {
                     match info.ifd_name.as_str() {
                         name if name.starts_with("Canon") => false, // Canon maker notes - don't lookup GPS/EXIF tags
                         name if name.starts_with("Nikon") => false, // Nikon maker notes - don't lookup GPS/EXIF tags
+                        name if name.starts_with("Olympus") => false, // Olympus maker notes - don't lookup GPS/EXIF tags
                         "KyoceraRaw" => false, // Kyocera RAW - don't lookup GPS/EXIF tags
                         _ => true, // Standard IFDs (IFD0, ExifIFD, GPS, etc.) - lookup in global table
                     }
