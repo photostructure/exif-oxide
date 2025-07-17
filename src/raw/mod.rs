@@ -31,10 +31,12 @@
 //! - No "improvements" or "optimizations" to the original logic
 
 pub mod detector;
+pub mod offset;
 pub mod processor;
 
 // Re-export main types for convenience
 pub use detector::{detect_raw_format, RawFormat};
+pub use offset::{EntryBasedOffsetProcessor, OffsetContext, SimpleOffsetProcessor};
 pub use processor::{RawFormatHandler, RawProcessor};
 
 // Import format-specific handlers (will expand as we add more formats)
@@ -42,18 +44,21 @@ pub mod formats {
     //! Manufacturer-specific RAW format handlers
 
     pub mod kyocera;
+    pub mod minolta;
+    pub mod panasonic;
 
     // Future format handlers will be added here:
     // pub mod canon;
     // pub mod nikon;
     // pub mod sony;
     // pub mod olympus;
-    // pub mod panasonic;
     // pub mod fujifilm;
 }
 
 // Re-export format handlers and utility functions
 pub use formats::kyocera::get_kyocera_tag_name;
+pub use formats::minolta::get_minolta_tag_name;
+pub use formats::panasonic::get_panasonic_tag_name;
 
 pub mod utils {
     //! RAW processing utilities and helper functions

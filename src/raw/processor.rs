@@ -45,6 +45,20 @@ impl RawProcessor {
             Box::new(super::formats::kyocera::KyoceraRawHandler::new()),
         );
 
+        // Register Minolta handler
+        // ExifTool: MinoltaRaw.pm module registration
+        handlers.insert(
+            RawFormat::Minolta,
+            Box::new(super::formats::minolta::MinoltaRawHandler::new()),
+        );
+
+        // Register Panasonic handler
+        // ExifTool: PanasonicRaw.pm module registration
+        handlers.insert(
+            RawFormat::Panasonic,
+            Box::new(super::formats::panasonic::PanasonicRawHandler::new()),
+        );
+
         // Future handlers will be registered here:
         // handlers.insert(RawFormat::Canon, Box::new(CanonRawHandler::new()));
         // handlers.insert(RawFormat::Nikon, Box::new(NikonRawHandler::new()));
@@ -148,6 +162,9 @@ mod tests {
         let supported = processor.supported_formats();
 
         assert!(supported.contains(&RawFormat::Kyocera));
+        assert!(supported.contains(&RawFormat::Minolta));
+        assert!(supported.contains(&RawFormat::Panasonic));
+        assert_eq!(supported.len(), 3); // Should have exactly 3 supported formats
     }
 
     #[test]
