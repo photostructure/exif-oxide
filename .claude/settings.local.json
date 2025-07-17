@@ -184,7 +184,8 @@
       "WebFetch(domain:gist.github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(gh run view:*)",
-      "WebFetch(domain:release-plz.dev)"
+      "WebFetch(domain:release-plz.dev)",
+      "Bash(RUST_LOG=warn cargo run -- ../photostructure/examples/Apple_iPhone_X.jpg)"
     ],
     "deny": []
   }
