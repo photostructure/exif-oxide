@@ -601,7 +601,7 @@ fn test_exiftool_compatibility() {
 /// Test a specific known file using snapshots
 #[test]
 fn test_canon_t3i_compatibility() {
-    let test_file = "test-images/canon/Canon_T3i.JPG";
+    let test_file = "test-images/canon/Canon_T3i.jpg";
 
     // Skip if test file doesn't exist
     if !Path::new(test_file).exists() {
@@ -610,4 +610,18 @@ fn test_canon_t3i_compatibility() {
     }
 
     compare_file_output(test_file).expect("Canon T3i should match ExifTool snapshot");
+}
+
+/// Test Olympus ORF compatibility
+#[test]
+fn test_olympus_orf_compatibility() {
+    let test_file = "test-images/olympus/test.orf";
+
+    // Skip if test file doesn't exist
+    if !Path::new(test_file).exists() {
+        println!("Test file {test_file} not found, skipping");
+        return;
+    }
+
+    compare_file_output(test_file).expect("Olympus ORF should match ExifTool snapshot");
 }

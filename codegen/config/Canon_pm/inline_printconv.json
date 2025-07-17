@@ -1,0 +1,54 @@
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
+  "description": "Canon inline PrintConv tables extracted from tag definitions",
+  "tables": [
+    {
+      "table_name": "CameraSettings",
+      "description": "Canon camera settings tag table with inline PrintConv definitions"
+    },
+    {
+      "table_name": "ShotInfo",
+      "description": "Canon shot information tag table"
+    },
+    {
+      "table_name": "FocalLength",
+      "description": "Canon focal length information"
+    },
+    {
+      "table_name": "Panorama",
+      "description": "Canon panorama settings"
+    },
+    {
+      "table_name": "FileInfo",
+      "description": "Canon file information"
+    },
+    {
+      "table_name": "CameraInfo1D",
+      "description": "Canon 1D camera information"
+    },
+    {
+      "table_name": "AFInfo",
+      "description": "Canon autofocus information"
+    },
+    {
+      "table_name": "AFInfo2",
+      "description": "Canon autofocus information version 2"
+    },
+    {
+      "table_name": "Main",
+      "description": "Canon main maker notes table"
+    },
+    {
+      "table_name": "MyColors",
+      "description": "Canon My Colors settings"
+    },
+    {
+      "table_name": "FaceDetect1",
+      "description": "Canon face detection information"
+    },
+    {
+      "table_name": "FaceDetect2",
+      "description": "Canon face detection information version 2"
+    }
+  ]
+}
