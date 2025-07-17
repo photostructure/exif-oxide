@@ -1,0 +1,15 @@
+---
+extends: default
+
+rules:
+  # Allow longer lines for GitHub Actions (common for run commands)
+  line-length:
+    max: 120
+  
+  # Don't require document start markers for GitHub Actions
+  document-start: disable
+  
+  # Allow truthy values in GitHub Actions (on: push, etc.)
+  truthy:
+    allowed-values: ['true', 'false', 'on', 'off', 'yes', 'no']
+    check-keys: false

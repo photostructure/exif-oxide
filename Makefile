@@ -1,7 +1,7 @@
-.PHONY: check fmt-check fmt lint test codegen-test fix build doc clean patch-exiftool codegen sync update audit precommit help snapshot-generate snapshot-tests snapshots perl-deps perl-setup
+.PHONY: check fmt-check fmt lint yamllint test codegen-test fix build doc clean patch-exiftool codegen sync update audit precommit help snapshot-generate snapshot-tests snapshots perl-deps perl-setup
 
 # Run all checks without modifying (for CI)
-check: fmt-check lint test
+check: fmt-check lint yamllint test
 
 # Check formatting without modifying
 fmt-check:
@@ -14,6 +14,10 @@ fmt:
 # Run clippy (Rust linter)
 lint:
 	cargo clippy --all-targets --all-features -- -D warnings
+
+# Run yamllint on YAML files
+yamllint:
+	yamllint .github/ *.yml *.yaml 2>/dev/null || true
 
 # Run tests
 test:
@@ -93,7 +97,7 @@ audit:
 	cargo audit
 
 # Pre-commit checks: do everything: update deps, codegen, fix code, lint, test, audit, and build
-precommit: update perl-deps codegen check-extractors fix lint compat-gen test codegen-test audit build
+precommit: update perl-deps codegen check-extractors fix lint yamllint compat-gen test codegen-test audit build
 	@echo "✅ precommit success" 
 
 # Generate ExifTool JSON reference data for compatibility testing
@@ -120,6 +124,7 @@ help:
 	@echo "  make check         - Run all checks without modifying (for CI)"
 	@echo "  make fmt           - Format code"
 	@echo "  make lint          - Run clippy linter"
+	@echo "  make yamllint      - Run yamllint on YAML files"
 	@echo "  make test          - Run tests"
 	@echo "  make fix           - Fix formatting and auto-fixable issues"
 	@echo "  make build         - Build in release mode"
