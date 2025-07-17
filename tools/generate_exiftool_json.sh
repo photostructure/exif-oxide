@@ -32,9 +32,16 @@ fi
 
 echo "ExifTool version: $(exiftool -ver)"
 
-# Clean and create snapshots directory
+# Create snapshots directory if it doesn't exist
 mkdir -p "$SNAPSHOTS_DIR"
-rm -f "$SNAPSHOTS_DIR"/*.json
+
+# Check if we should regenerate all files (optional --force flag)
+FORCE_REGENERATE=false
+if [ "${1:-}" = "--force" ]; then
+    FORCE_REGENERATE=true
+    echo "Force regeneration enabled - all snapshots will be recreated"
+    rm -f "$SNAPSHOTS_DIR"/*.json
+fi
 
 # Create temporary file for all JPEG data
 TEMP_JSON=$(mktemp)
@@ -94,6 +101,12 @@ jq -c '.[]' "$TEMP_JSON" | while IFS= read -r file_data; do
     SNAPSHOT_NAME=$(echo "$RELATIVE_PATH" | sed 's/[^a-zA-Z0-9]\+/_/g')
     SNAPSHOT_FILE="$SNAPSHOTS_DIR/${SNAPSHOT_NAME}.json"
     
+    # Skip if file already exists and we're not forcing regeneration
+    if [ "$FORCE_REGENERATE" = false ] && [ -f "$SNAPSHOT_FILE" ]; then
+        # echo "Skipping existing: $SNAPSHOT_FILE"
+        continue
+    fi
+    
     # Filter to only supported tags and normalize paths before saving as snapshot
     # supported_tags.json now contains full group:tag format (e.g., "EXIF:Make")
     # Match the full key directly against the supported list
@@ -135,7 +148,13 @@ echo ""
 # Show summary
 SNAPSHOT_COUNT=$(find "$SNAPSHOTS_DIR" -name "*.json" | wc -l)
 echo "Summary:"
-echo "  - Total snapshots created: $SNAPSHOT_COUNT"
+echo "  - Total snapshots in directory: $SNAPSHOT_COUNT"
+if [ "$FORCE_REGENERATE" = true ]; then
+    echo "  - All snapshots were regenerated (--force mode)"
+else
+    echo "  - Only missing snapshots were generated"
+    echo "  - To regenerate all snapshots, run: $0 --force"
+fi
 echo "  - Supported tags: $(echo "$SUPPORTED_TAGS" | jq -r '.[]' | tr '\n' ' ')"
 echo ""
 echo "To run compatibility tests:"

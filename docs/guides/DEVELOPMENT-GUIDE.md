@@ -307,7 +307,7 @@ The `tests/exiftool_compatibility_tests.rs` provides automated validation agains
 
 #### How It Works
 
-1. **Reference Generation**: `tools/generate_exiftool_json.sh` creates snapshots of ExifTool's JSON output for all test images
+1. **Reference Generation**: `tools/generate_exiftool_json.sh` creates snapshots of ExifTool's JSON output for test images (only generates missing files by default, use `--force` to regenerate all)
 2. **Comparison Testing**: Tests run exif-oxide against the same images and compare JSON outputs
 3. **Normalization Layer**: Handles ExifTool's presentation inconsistencies without changing core parsing logic
 
@@ -343,8 +343,11 @@ This approach follows the updated TRUST-EXIFTOOL principle: preserve core parsin
 #### Running Compatibility Tests
 
 ```bash
-# Generate ExifTool reference snapshots
+# Generate missing ExifTool reference snapshots (incremental)
 make compat-gen
+
+# Force regenerate all ExifTool reference snapshots
+make compat-gen-force
 
 # Run compatibility tests
 make compat-test
