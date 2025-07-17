@@ -182,7 +182,8 @@
       "Bash(./debug_png_pattern)",
       "WebFetch(domain:stackoverflow.com)",
       "WebFetch(domain:gist.github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(gh run view:*)"
     ],
     "deny": []
   }
