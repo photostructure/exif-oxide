@@ -88,11 +88,18 @@ fn main() {
                 .help("Show unimplemented features for development")
                 .action(clap::ArgAction::SetTrue), // Boolean flag
         )
+        .arg(
+            Arg::new("warnings")
+                .long("warnings")
+                .help("Include parsing warnings in output (suppressed by default)")
+                .action(clap::ArgAction::SetTrue), // Boolean flag
+        )
         .get_matches();
 
     // Extract all arguments and separate them into files and numeric tags
     let args: Vec<&String> = matches.get_many::<String>("args").unwrap().collect();
     let show_missing = matches.get_flag("show-missing");
+    let show_warnings = matches.get_flag("warnings");
 
     // Separate arguments into files and numeric tags based on their format
     let (file_paths, numeric_tags) = parse_mixed_args(args);
@@ -108,10 +115,11 @@ fn main() {
 
     debug!("Processing {} files", paths.len());
     debug!("Show missing implementations: {}", show_missing);
+    debug!("Show warnings: {}", show_warnings);
     debug!("Numeric tags: {:?}", numeric_tags);
 
     // Process all files - this will output a JSON array like ExifTool
-    match process_files(&paths, show_missing, numeric_tags) {
+    match process_files(&paths, show_missing, show_warnings, numeric_tags) {
         Ok(()) => {
             // Success - output has already been printed
         }
@@ -132,6 +140,7 @@ fn main() {
 fn process_files(
     paths: &[PathBuf],
     show_missing: bool,
+    show_warnings: bool,
     numeric_tags: HashSet<String>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     use exif_oxide::types::ExifData;
@@ -141,7 +150,7 @@ fn process_files(
     // Process each file
     for path in paths {
         debug!("Processing file: {}", path.display());
-        match process_single_file(path, show_missing) {
+        match process_single_file(path, show_missing, show_warnings) {
             Ok(metadata) => {
                 info!("Successfully processed: {}", path.display());
                 results.push(metadata);
@@ -188,6 +197,7 @@ fn process_files(
 fn process_single_file(
     path: &std::path::Path,
     show_missing: bool,
+    show_warnings: bool,
 ) -> Result<exif_oxide::types::ExifData, Box<dyn std::error::Error>> {
     // Verify file exists
     if !path.exists() {
@@ -195,7 +205,7 @@ fn process_single_file(
     }
 
     // Extract metadata using our library
-    let metadata = extract_metadata(path, show_missing)?;
+    let metadata = extract_metadata(path, show_missing, show_warnings)?;
 
     Ok(metadata)
 }
