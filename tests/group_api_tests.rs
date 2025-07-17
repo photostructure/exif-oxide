@@ -26,6 +26,7 @@ fn test_get_exif_ifd_tags_method() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
         false,
+        false,
     )
     .unwrap();
 
@@ -73,6 +74,7 @@ fn test_get_exif_ifd_tags_method() {
 fn test_get_tags_by_group1_method() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
+        false,
         false,
     )
     .unwrap();
@@ -147,6 +149,7 @@ fn test_get_tag_by_group_method() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
         false,
+        false,
     )
     .unwrap();
 
@@ -218,6 +221,7 @@ fn test_get_tag_by_group_method() {
 fn test_get_tag_exiftool_style_method() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
+        false,
         false,
     )
     .unwrap();
@@ -298,6 +302,7 @@ fn test_get_tag_by_name_method() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
         false,
+        false,
     )
     .unwrap();
 
@@ -353,6 +358,7 @@ fn test_get_tag_by_name_method() {
 fn test_api_method_consistency() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
+        false,
         false,
     )
     .unwrap();
@@ -411,6 +417,7 @@ fn test_api_method_consistency() {
 fn test_api_performance_and_edge_cases() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
+        false,
         false,
     )
     .unwrap();

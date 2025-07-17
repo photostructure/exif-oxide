@@ -561,7 +561,7 @@ mod tests {
     #[test]
     fn test_extract_metadata_nonexistent_file() {
         let path = Path::new("nonexistent_file.jpg");
-        let result = extract_metadata(path, false);
+        let result = extract_metadata(path, false, false);
         assert!(result.is_err());
         // Should be an IO error for file not found
         assert!(result.is_err());

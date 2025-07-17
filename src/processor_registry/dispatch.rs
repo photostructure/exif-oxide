@@ -369,6 +369,97 @@ impl NikonDispatchRule {
     }
 }
 
+/// Olympus-specific dispatch rules
+///
+/// Implements Olympus's processor selection logic for Equipment, CameraSettings,
+/// FocusInfo and other Olympus-specific sections.
+///
+/// ## ExifTool Reference
+///
+/// lib/Image/ExifTool/Olympus.pm section processing with dual IFD/binary modes
+pub struct OlympusDispatchRule;
+
+impl DispatchRule for OlympusDispatchRule {
+    fn applies_to(&self, context: &ProcessorContext) -> bool {
+        context.is_manufacturer("OLYMPUS IMAGING CORP.")
+            || context.is_manufacturer("OLYMPUS")
+            || context.is_manufacturer("OLYMPUS CORPORATION")
+    }
+
+    fn select_processor(
+        &self,
+        candidates: &[(
+            ProcessorKey,
+            Arc<dyn BinaryDataProcessor>,
+            ProcessorCapability,
+        )],
+        context: &ProcessorContext,
+    ) -> Option<(ProcessorKey, Arc<dyn BinaryDataProcessor>)> {
+        debug!(
+            "Olympus dispatch rule processing table: {} for manufacturer: {:?}",
+            context.table_name, context.manufacturer
+        );
+
+        // Olympus-specific processor selection logic based on ExifTool Olympus.pm
+        match context.table_name.as_str() {
+            "Equipment" => {
+                // Select Olympus Equipment processor
+                candidates
+                    .iter()
+                    .find(|(key, _, _)| {
+                        key.namespace == "Olympus" && key.processor_name == "Equipment"
+                    })
+                    .map(|(key, processor, _)| (key.clone(), processor.clone()))
+            }
+            "CameraSettings" => {
+                // Select Olympus CameraSettings processor
+                candidates
+                    .iter()
+                    .find(|(key, _, _)| {
+                        key.namespace == "Olympus" && key.processor_name == "CameraSettings"
+                    })
+                    .map(|(key, processor, _)| (key.clone(), processor.clone()))
+            }
+            "FocusInfo" => {
+                // Select Olympus FocusInfo processor
+                candidates
+                    .iter()
+                    .find(|(key, _, _)| {
+                        key.namespace == "Olympus" && key.processor_name == "FocusInfo"
+                    })
+                    .map(|(key, processor, _)| (key.clone(), processor.clone()))
+            }
+            _ => {
+                // Only handle Olympus-specific tables (those starting with "Olympus::")
+                // Standard EXIF directories (ExifIFD, GPS, etc.) should use standard processors
+                // ExifTool Olympus.pm shows standard directories are processed by EXIF processor
+                if context.table_name.starts_with("Olympus::") {
+                    // Default to any Olympus processor for Olympus-specific tables
+                    candidates
+                        .iter()
+                        .find(|(key, _, _)| key.namespace == "Olympus")
+                        .map(|(key, processor, _)| (key.clone(), processor.clone()))
+                } else {
+                    // Not an Olympus-specific table - let standard processor handle it
+                    debug!(
+                        "Olympus dispatch rule ignoring non-Olympus table: {}",
+                        context.table_name
+                    );
+                    None
+                }
+            }
+        }
+    }
+
+    fn description(&self) -> &str {
+        "Olympus manufacturer-specific processor dispatch"
+    }
+
+    fn priority(&self) -> u8 {
+        100 // High priority, same as Canon and Nikon
+    }
+}
+
 /// Format-specific dispatch rule
 ///
 /// Selects processors based on file format and format-specific requirements.

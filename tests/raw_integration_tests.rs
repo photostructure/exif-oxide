@@ -26,7 +26,7 @@ fn test_kyocera_raw_detection_and_processing() {
     assert!(path.exists(), "ExifTool test file not found: {path:?}");
 
     // Test metadata extraction
-    let result = extract_metadata(path, false);
+    let result = extract_metadata(path, false, false);
     assert!(
         result.is_ok(),
         "Failed to extract metadata: {:?}",
@@ -163,7 +163,7 @@ fn test_minimal_kyocera_raw_file() {
     temp_file.flush().expect("Failed to flush");
 
     // Test should handle gracefully - file detection succeeds, RAW processing extracts what it can
-    let result = extract_metadata(temp_file.path(), false);
+    let result = extract_metadata(temp_file.path(), false, false);
     assert!(result.is_ok(), "Should handle minimal RAW file gracefully");
 
     let metadata = result.unwrap();
@@ -199,7 +199,7 @@ fn test_recognized_raw_file() {
         return;
     }
 
-    let result = extract_metadata(std::path::Path::new(raw_file), false);
+    let result = extract_metadata(std::path::Path::new(raw_file), false, false);
     assert!(result.is_ok(), "Should successfully process valid RAW file");
 
     let metadata = result.unwrap();
@@ -234,7 +234,7 @@ fn test_non_raw_file_not_detected_as_raw() {
         return;
     }
 
-    let result = extract_metadata(std::path::Path::new(jpeg_file), false);
+    let result = extract_metadata(std::path::Path::new(jpeg_file), false, false);
     assert!(result.is_ok(), "Should successfully process JPEG file");
 
     let metadata = result.unwrap();
@@ -339,7 +339,7 @@ fn test_milestone_17b_panasonic_rw2_real_file() {
     println!("🧪 Testing Panasonic RW2 file with TIFF integration...");
 
     // Extract metadata using our implementation
-    let result = extract_metadata(Path::new(test_file), false);
+    let result = extract_metadata(Path::new(test_file), false, false);
     assert!(
         result.is_ok(),
         "Failed to process RW2 file: {:?}",
@@ -417,7 +417,7 @@ fn test_milestone_17b_minolta_mrw_real_file() {
     println!("🧪 Testing Minolta MRW file with multi-block processing...");
 
     // Extract metadata using our implementation
-    let result = extract_metadata(Path::new(test_file), false);
+    let result = extract_metadata(Path::new(test_file), false, false);
     assert!(
         result.is_ok(),
         "Failed to process MRW file: {:?}",
@@ -501,7 +501,7 @@ fn test_milestone_17b_multiple_raw_formats() {
         println!("🧪 Testing multi-format processing: {file_path}");
 
         // Test that we can process the file without errors
-        let result = extract_metadata(Path::new(file_path), false);
+        let result = extract_metadata(Path::new(file_path), false, false);
         assert!(
             result.is_ok(),
             "Failed to process {} file: {:?}",

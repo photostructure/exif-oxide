@@ -18,7 +18,9 @@
 
 pub mod canon;
 pub mod nikon;
+pub mod olympus;
 
 // Re-export processor implementations
 pub use canon::*;
 pub use nikon::*;
+pub use olympus::*;
