@@ -118,6 +118,12 @@ impl ExifReader {
                     // Graceful degradation - log warning but continue
                     // ExifTool: lib/Image/ExifTool/Exif.pm:6360-6365 error handling
                     debug!("Error parsing {} entry {}: {}", ifd_name, index, e);
+                    warn!(
+                        ifd_name = %ifd_name,
+                        entry_index = index,
+                        error = %e,
+                        "Failed to parse IFD entry, continuing with graceful degradation"
+                    );
                     self.warnings
                         .push(format!("Error parsing {ifd_name} entry {index}: {e}"));
                 }
