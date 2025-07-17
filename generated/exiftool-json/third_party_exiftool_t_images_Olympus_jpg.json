@@ -1,0 +1,23 @@
+{
+  "SourceFile": "third-party/exiftool/t/images/Olympus.jpg",
+  "File:FileSize": 1573,
+  "File:FileName": "Olympus.jpg",
+  "File:Directory": "third-party/exiftool/t/images",
+  "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:MIMEType": "image/jpeg",
+  "EXIF:Make": "OLYMPUS OPTICAL CO.,LTD",
+  "EXIF:Model": "C2000Z",
+  "EXIF:Orientation": "Horizontal (normal)",
+  "EXIF:ResolutionUnit": "inches",
+  "EXIF:YCbCrPositioning": "Co-sited",
+  "EXIF:ExposureTime": "1/30",
+  "EXIF:FNumber": 2.0,
+  "EXIF:ExposureProgram": "Program AE",
+  "EXIF:ISO": 100,
+  "EXIF:DateTimeOriginal": "1999:12:06 16:38:40",
+  "EXIF:CreateDate": "1999:12:06 16:38:40",
+  "EXIF:MeteringMode": "Multi-segment",
+  "EXIF:Flash": "Fired",
+  "EXIF:FocalLength": "7.0 mm",
+  "EXIF:ColorSpace": "sRGB"
+}

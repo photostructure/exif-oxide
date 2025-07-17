@@ -1,0 +1,21 @@
+{
+  "SourceFile": "third-party/exiftool/t/images/JVC.jpg",
+  "File:FileSize": 1253,
+  "File:FileName": "JVC.jpg",
+  "File:Directory": "third-party/exiftool/t/images",
+  "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:MIMEType": "image/jpeg",
+  "EXIF:Make": "JVC",
+  "EXIF:Model": "GR-DV500",
+  "EXIF:Orientation": "Horizontal (normal)",
+  "EXIF:ResolutionUnit": "inches",
+  "EXIF:YCbCrPositioning": "Co-sited",
+  "EXIF:ExposureTime": "1/25",
+  "EXIF:FNumber": 11.0,
+  "EXIF:DateTimeOriginal": "2004:06:26 12:36:46",
+  "EXIF:CreateDate": "2004:06:26 12:36:46",
+  "EXIF:MeteringMode": "Center-weighted average",
+  "EXIF:Flash": "Off, Did not fire",
+  "EXIF:FocalLength": "8.4 mm",
+  "EXIF:ColorSpace": "sRGB"
+}
