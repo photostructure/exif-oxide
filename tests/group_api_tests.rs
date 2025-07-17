@@ -6,6 +6,11 @@
 //! Tests the API methods added for the ExifIFD milestone:
 //! - get_exif_ifd_tags() - Get all ExifIFD-specific tags
 //! - get_tags_by_group1() - Get tags by Group1 (subdirectory location)
+//!
+//! Note: These tests require the `integration-tests` feature to be enabled and
+//! external test assets to be available. They are automatically skipped in published crates.
+
+#![cfg(feature = "integration-tests")]
 //! - get_tag_by_group() - Get tag by group name and tag name
 //! - get_tag_exiftool_style() - Parse "Group:TagName" qualified names
 //! - get_tag_by_name() - Get tag by name (without group qualifier)

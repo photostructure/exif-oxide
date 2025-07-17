@@ -5,6 +5,11 @@
 //! - Canon MakerNote detection and CameraSettings extraction
 //! - MacroMode and FocusMode tag extraction
 //! - PrintConv conversion application
+//!
+//! Note: These tests require the `integration-tests` feature to be enabled and
+//! external test assets to be available. They are automatically skipped in published crates.
+
+#![cfg(feature = "integration-tests")]
 
 use exif_oxide::exif::ExifReader;
 use exif_oxide::types::{BinaryDataFormat, BinaryDataTable, TagValue};

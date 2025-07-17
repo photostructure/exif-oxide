@@ -38,7 +38,7 @@ jobs:
           restore-keys: |
             cargo-check-${{ runner.os }}-
 
-      - name: Run format check, clippy, and tests
+      - name: Run format check, clippy, and tests with integration tests
         run: make check
 
   # Cross-platform testing matrix
@@ -132,8 +132,8 @@ jobs:
 
       - name: Build for target
         run: |
-          ${{ env.CARGO_CMD }} build --target ${{ matrix.target }} --features test-helpers
+          ${{ env.CARGO_CMD }} build --target ${{ matrix.target }} --features test-helpers,integration-tests
 
       - name: Run tests for target
         run: |
-          ${{ env.CARGO_CMD }} test --target ${{ matrix.target }} --features test-helpers
+          ${{ env.CARGO_CMD }} test --target ${{ matrix.target }} --features test-helpers,integration-tests

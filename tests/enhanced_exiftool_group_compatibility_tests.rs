@@ -7,6 +7,11 @@
 //! This complements the existing exiftool_compatibility_tests.rs by focusing
 //! specifically on group assignment correctness rather than value accuracy.
 //!
+//! Note: These tests require the `integration-tests` feature to be enabled and
+//! external test assets to be available. They are automatically skipped in published crates.
+
+#![cfg(feature = "integration-tests")]
+//!
 //! ExifTool Reference: ExifTool -G/-G1/-G2 flags for group hierarchies
 //! Milestone: docs/milestones/MILESTONE-ExifIFD.md Group Assignment Validation
 

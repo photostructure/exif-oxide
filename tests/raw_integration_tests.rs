@@ -6,6 +6,11 @@
 //! Following CLAUDE.md guidance: "your current approach has been problematic in the past"
 //! - these tests use actual ExifTool test files rather than synthetic data
 //! - this ensures we handle real-world camera quirks and edge cases
+//!
+//! Note: These tests require the `integration-tests` feature to be enabled and
+//! external test assets to be available. They are automatically skipped in published crates.
+
+#![cfg(feature = "integration-tests")]
 
 use exif_oxide::formats::extract_metadata;
 use exif_oxide::types::TagValue;

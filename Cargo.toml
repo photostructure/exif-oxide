@@ -11,9 +11,8 @@ categories = ["multimedia::images", "parser-implementations"]
 default-run = "exif-oxide"
 exclude = [
     "third-party/*",       # Exclude ExifTool submodule (400MB+)
-    "test-images/*",       # Exclude test images
+    "test-images/*",       # Exclude test images (integration tests use feature flag)
     "docs/*",              # Exclude docs  
-    "tests/*",             # Exclude tests (they don't work without ExifTool and test-images)  
     "codegen/generated/*", # Exclude codegen artifacts
     "generated/*",         # Exclude compat artifacts
     ".*/*",                # Exclude dev bot and gha gunk
@@ -54,8 +53,11 @@ similar = { version = "2.7", features = [
 tracing-test = "0.2" # Testing utilities for tracing
 
 [features]
+default = []
 # Test helpers feature - enables test-only public methods for integration tests
 test-helpers = []
+# Integration tests feature - enables tests that require external test assets
+integration-tests = []
 
 [[bin]]
 name = "exif-oxide"

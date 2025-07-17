@@ -2,6 +2,11 @@
 //!
 //! These tests compare our output with ExifTool's output to ensure compatibility.
 //! For Milestone 0a, we test the basic CLI structure and JSON format.
+//!
+//! Note: These tests require the `integration-tests` feature to be enabled and
+//! external test assets to be available. They are automatically skipped in published crates.
+
+#![cfg(feature = "integration-tests")]
 
 use serde_json::Value;
 use std::path::PathBuf;
