@@ -6,6 +6,7 @@
 //! These are straightforward mappings from numeric or string keys to descriptive values.
 
 pub mod standard;
+pub mod inline_printconv;
 
 use anyhow::Result;
 use std::collections::HashMap;
@@ -84,6 +85,43 @@ pub fn process_config_directory(
                     
                     // Generate individual file for this boolean set
                     let file_name = generate_boolean_set_file(hash_name, &updated_table, &module_output_dir)?;
+                    generated_files.push(file_name);
+                    has_content = true;
+                }
+            }
+        }
+    }
+    
+    // Check for inline_printconv.json configuration - create individual files
+    let inline_printconv_config = config_dir.join("inline_printconv.json");
+    if inline_printconv_config.exists() {
+        let config_content = fs::read_to_string(&inline_printconv_config)?;
+        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
+        
+        if let Some(tables) = config_json["tables"].as_array() {
+            for table_config in tables {
+                let table_name = table_config["table_name"].as_str().unwrap_or("");
+                
+                // Look for the corresponding extracted inline printconv JSON file
+                let extract_dir = Path::new("generated/extract");
+                let inline_file_name = format!("inline_printconv__{}.json", 
+                    table_name.chars()
+                        .map(|c| if c.is_alphanumeric() { c.to_ascii_lowercase() } else { '_' })
+                        .collect::<String>()
+                );
+                let inline_file_path = extract_dir.join(&inline_file_name);
+                
+                if inline_file_path.exists() {
+                    let inline_data_content = fs::read_to_string(&inline_file_path)?;
+                    let inline_data: inline_printconv::InlinePrintConvData = 
+                        serde_json::from_str(&inline_data_content)?;
+                    
+                    // Generate file for this table's inline PrintConv entries
+                    let file_name = generate_inline_printconv_file(
+                        &inline_data, 
+                        table_name,
+                        &module_output_dir
+                    )?;
                     generated_files.push(file_name);
                     has_content = true;
                 }
@@ -206,5 +244,39 @@ fn hash_name_to_filename(hash_name: &str) -> String {
             }
         })
         .collect()
+}
+
+/// Generate file for inline PrintConv tables
+fn generate_inline_printconv_file(
+    inline_data: &inline_printconv::InlinePrintConvData,
+    table_name: &str,
+    output_dir: &Path,
+) -> Result<String> {
+    let table_code = inline_printconv::generate_inline_printconv_file(inline_data, table_name)?;
+    
+    // Create descriptive filename from table name
+    let file_name = table_name
+        .chars()
+        .map(|c| if c.is_alphanumeric() { c.to_ascii_lowercase() } else { '_' })
+        .collect::<String>() + "_inline";
+    
+    let file_path = output_dir.join(format!("{}.rs", file_name));
+    
+    let mut content = String::new();
+    content.push_str(&format!("//! Inline PrintConv tables for {} table\n", table_name));
+    
+    // Convert module filename to relative path for display
+    let module_path = module_to_source_path(&inline_data.source.module);
+    
+    content.push_str(&format!("//! \n//! Auto-generated from {} (table: {})\n", module_path, table_name));
+    content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
+    content.push_str("use std::collections::HashMap;\n");
+    content.push_str("use std::sync::LazyLock;\n\n");
+    content.push_str(&table_code);
+    
+    fs::write(&file_path, content)?;
+    println!("  ✓ Generated {}", file_path.display());
+    
+    Ok(file_name)
 }
 

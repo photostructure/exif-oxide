@@ -21,7 +21,7 @@ mod validation;
 
 use config::load_extracted_tables_with_config;
 use discovery::{discover_and_process_modules, update_generated_mod_file};
-use extraction::extract_all_simple_tables;
+use extraction::{extract_all_simple_tables, extract_tag_definitions};
 use table_processor::process_tag_tables;
 use file_operations::{create_directories, file_exists, read_utf8_with_fallback, write_file_atomic};
 use generators::{generate_conversion_refs, generate_mod_file};
@@ -66,6 +66,9 @@ fn main() -> Result<()> {
     
     // Extract simple tables using Rust orchestration (replaces Makefile extract-* targets)
     extract_all_simple_tables()?;
+    
+    // Extract tag definitions (tag tables and composite tags)
+    extract_tag_definitions()?;
 
     // Process tag tables
     let tag_data_file = current_dir.join(tag_data_path);
