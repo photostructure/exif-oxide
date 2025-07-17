@@ -21,6 +21,7 @@ fn test_exif_version_requirement() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
         false,
+        false,
     )
     .unwrap();
 
@@ -108,6 +109,7 @@ fn test_flashpix_version_validation() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
         false,
+        false,
     )
     .unwrap();
 
@@ -173,6 +175,7 @@ fn test_flashpix_version_validation() {
 fn test_color_space_validation() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
+        false,
         false,
     )
     .unwrap();
@@ -240,6 +243,7 @@ fn test_color_space_validation() {
 fn test_exif_image_dimensions_validation() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
+        false,
         false,
     )
     .unwrap();
@@ -332,6 +336,7 @@ fn test_exif_image_dimensions_validation() {
 fn test_exif_ifd_datetime_validation() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
+        false,
         false,
     )
     .unwrap();
@@ -426,6 +431,7 @@ fn test_exif_ifd_processing_warnings() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
         false,
+        false,
     )
     .unwrap();
 
@@ -512,6 +518,7 @@ fn test_exif_ifd_processing_warnings() {
 fn test_mandatory_exif_ifd_tags() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
+        false,
         false,
     )
     .unwrap();

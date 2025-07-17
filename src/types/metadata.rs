@@ -206,7 +206,7 @@ impl ExifData {
     /// ```no_run
     /// use exif_oxide::formats::extract_metadata;
     ///
-    /// let exif_data = extract_metadata(std::path::Path::new("image.jpg"), false).unwrap();
+    /// let exif_data = extract_metadata(std::path::Path::new("image.jpg"), false, false).unwrap();
     ///
     /// // Get all GPS tags
     /// let gps_tags = exif_data.get_tags_by_group1("GPS");
@@ -228,7 +228,7 @@ impl ExifData {
     /// ```no_run
     /// use exif_oxide::formats::extract_metadata;
     ///
-    /// let exif_data = extract_metadata(std::path::Path::new("image.jpg"), false).unwrap();
+    /// let exif_data = extract_metadata(std::path::Path::new("image.jpg"), false, false).unwrap();
     ///
     /// // Access by Group1 (subdirectory location)
     /// let exposure_time = exif_data.get_tag_by_group("ExifIFD", "ExposureTime");
@@ -249,7 +249,7 @@ impl ExifData {
     /// ```no_run
     /// use exif_oxide::formats::extract_metadata;
     ///
-    /// let exif_data = extract_metadata(std::path::Path::new("image.jpg"), false).unwrap();
+    /// let exif_data = extract_metadata(std::path::Path::new("image.jpg"), false, false).unwrap();
     ///
     /// let exposure_time = exif_data.get_tag_exiftool_style("ExifIFD:ExposureTime");
     /// let gps_lat = exif_data.get_tag_exiftool_style("GPS:GPSLatitude");

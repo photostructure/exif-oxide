@@ -194,39 +194,93 @@ impl OlympusRawHandler {
     }
 
     /// Extract camera type from Equipment section data
-    /// ExifTool: Olympus.pm camera type extraction logic
+    /// ExifTool: Olympus.pm Equipment table, tag 0x100 (CameraType2)
+    /// Format: string, Count=6, uses olympusCameraTypes lookup
     fn extract_camera_type(&self, tag_value: &TagValue, data: &[u8]) -> Option<String> {
-        // Placeholder implementation - would need to study ExifTool's exact logic
-        // ExifTool: Equipment section camera type extraction
         match tag_value {
-            TagValue::String(s) => Some(s.clone()),
             TagValue::Binary(bytes) => {
-                // Extract camera type from binary data - simplified for now
-                if bytes.len() >= 8 {
-                    // This is a placeholder - real implementation would follow ExifTool exactly
-                    Some("D4040".to_string()) // Example camera code
-                } else {
-                    None
+                // ExifTool: Equipment section processed as IFD or binary data
+                // Look for CameraType2 field at offset 0x100 within Equipment section
+                if bytes.len() >= 262 {
+                    // 0x100 + 6 bytes minimum
+                    // Extract 6-character camera type string from offset 0x100
+                    let camera_bytes = &bytes[0x100..0x106];
+                    // Convert to string, handling null termination
+                    let camera_str = String::from_utf8_lossy(camera_bytes)
+                        .trim_end_matches('\0')
+                        .trim()
+                        .to_string();
+                    if !camera_str.is_empty() {
+                        return Some(camera_str);
+                    }
                 }
+                // Fallback: try to parse as structured binary data
+                // This handles cases where the Equipment section format is different
+                None
+            }
+            TagValue::String(s) => {
+                // If already extracted as string (from IFD processing)
+                Some(s.clone())
             }
             _ => None,
         }
     }
 
-    /// Extract lens type from Equipment section data
-    /// ExifTool: Olympus.pm lens type extraction logic
+    /// Extract lens type from Equipment section data  
+    /// ExifTool: Olympus.pm Equipment table, tag 0x201 (LensType)
+    /// Format: int8u, Count=6, ValueConv: sprintf("%x %.2x %.2x",@a[0,2,3])
     fn extract_lens_type(&self, tag_value: &TagValue, data: &[u8]) -> Option<String> {
-        // Placeholder implementation - would need to study ExifTool's exact logic
-        // ExifTool: Equipment section lens type extraction
         match tag_value {
             TagValue::Binary(bytes) => {
-                // Extract lens type from binary data - simplified for now
-                if bytes.len() >= 8 {
-                    // This is a placeholder - real implementation would follow ExifTool exactly
-                    Some("0 01 00".to_string()) // Example lens code
-                } else {
-                    None
+                // ExifTool: Equipment section processed as IFD or binary data
+                // Look for LensType field at offset 0x201 within Equipment section
+                if bytes.len() >= 0x207 {
+                    // 0x201 + 6 bytes minimum
+                    // Extract 6 bytes for lens type from offset 0x201
+                    let lens_bytes = &bytes[0x201..0x207];
+
+                    // ExifTool logic: sprintf("%x %.2x %.2x", bytes[0], bytes[2], bytes[3])
+                    // This formats bytes 0, 2, 3 as hex values like "0 01 00"
+                    let lens_code = format!(
+                        "{:x} {:02x} {:02x}",
+                        lens_bytes[0], lens_bytes[2], lens_bytes[3]
+                    );
+
+                    tracing::debug!(
+                        "Extracted lens code: {} from bytes: {:?}",
+                        lens_code,
+                        lens_bytes
+                    );
+                    return Some(lens_code);
                 }
+
+                // Fallback: try to parse as the raw 6-byte sequence if offset-based approach fails
+                if bytes.len() >= 6 {
+                    let lens_code = format!("{:x} {:02x} {:02x}", bytes[0], bytes[2], bytes[3]);
+                    tracing::debug!(
+                        "Fallback lens code: {} from bytes: {:?}",
+                        lens_code,
+                        &bytes[0..6]
+                    );
+                    return Some(lens_code);
+                }
+
+                None
+            }
+            TagValue::Array(values) => {
+                // Handle case where lens type is already parsed as array of integers
+                if values.len() >= 6 {
+                    if let (
+                        Some(TagValue::U8(b0)),
+                        Some(TagValue::U8(b2)),
+                        Some(TagValue::U8(b3)),
+                    ) = (values.first(), values.get(2), values.get(3))
+                    {
+                        let lens_code = format!("{b0:x} {b2:02x} {b3:02x}");
+                        return Some(lens_code);
+                    }
+                }
+                None
             }
             _ => None,
         }
