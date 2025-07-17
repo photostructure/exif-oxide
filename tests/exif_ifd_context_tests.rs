@@ -23,6 +23,7 @@ fn test_exif_ifd_context_tracking() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
         false,
+        false,
     )
     .unwrap();
 
@@ -67,6 +68,7 @@ fn test_exif_ifd_context_tracking() {
 fn test_exif_ifd_validation_rules() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
+        false,
         false,
     )
     .unwrap();
@@ -137,6 +139,7 @@ fn test_subdirectory_offset_inheritance() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
         false,
+        false,
     )
     .unwrap();
 
@@ -199,6 +202,7 @@ fn test_processor_context_awareness() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
         false,
+        false,
     )
     .unwrap();
 
@@ -245,6 +249,7 @@ fn test_exif_ifd_recursion_prevention() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
         false,
+        false,
     )
     .unwrap();
 
@@ -280,6 +285,7 @@ fn test_exif_ifd_recursion_prevention() {
 fn test_exif_ifd_vs_main_ifd_processing() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
+        false,
         false,
     )
     .unwrap();
@@ -332,6 +338,7 @@ fn test_exif_ifd_vs_main_ifd_processing() {
 fn test_exif_ifd_subdirectory_recognition() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
+        false,
         false,
     )
     .unwrap();

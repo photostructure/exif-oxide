@@ -96,9 +96,26 @@ static PROCESSOR_REGISTRY: LazyLock<ProcessorRegistry> = LazyLock::new(|| {
         NikonLensDataProcessor,
     );
 
+    // Register Olympus processors
+    registry.register_processor(
+        ProcessorKey::new("Olympus".to_string(), "Equipment".to_string()),
+        OlympusEquipmentProcessor,
+    );
+
+    registry.register_processor(
+        ProcessorKey::new("Olympus".to_string(), "CameraSettings".to_string()),
+        OlympusCameraSettingsProcessor,
+    );
+
+    registry.register_processor(
+        ProcessorKey::new("Olympus".to_string(), "FocusInfo".to_string()),
+        OlympusFocusInfoProcessor,
+    );
+
     // Add dispatch rules for sophisticated processor selection
     registry.add_dispatch_rule(CanonDispatchRule);
     registry.add_dispatch_rule(NikonDispatchRule);
+    registry.add_dispatch_rule(OlympusDispatchRule);
     registry.add_dispatch_rule(FormatDispatchRule);
     registry.add_dispatch_rule(TableDispatchRule);
 

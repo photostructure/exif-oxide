@@ -23,6 +23,7 @@ fn test_exif_ifd_group_assignment() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
         false,
+        false,
     )
     .unwrap();
 
@@ -96,6 +97,7 @@ fn test_main_ifd_group_assignment() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
         false,
+        false,
     )
     .unwrap();
 
@@ -147,6 +149,7 @@ fn test_gps_group_assignment() {
     let exif_data = match extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
         false,
+        false,
     ) {
         Ok(data) => data,
         Err(_) => return, // Skip if file not available
@@ -181,6 +184,7 @@ fn test_gps_group_assignment() {
 fn test_group_based_api_access() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
+        false,
         false,
     )
     .unwrap();
@@ -234,6 +238,7 @@ fn test_group_based_api_access() {
 fn test_exif_ifd_vs_main_ifd_distinction() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
+        false,
         false,
     )
     .unwrap();
@@ -289,6 +294,7 @@ fn test_namespace_assignment_bug_fixed() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
         false,
+        false,
     )
     .unwrap();
 
@@ -323,6 +329,7 @@ fn test_namespace_assignment_bug_fixed() {
 fn test_exif_ifd_specific_tags() {
     let exif_data = extract_metadata(
         std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
+        false,
         false,
     )
     .unwrap();

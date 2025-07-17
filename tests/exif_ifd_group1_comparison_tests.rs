@@ -70,7 +70,7 @@ fn test_group1_assignments_match_exiftool_canon() {
     };
 
     // Get our EXIF data
-    let exif_data = extract_metadata(std::path::Path::new(image_path), false).unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(image_path), false, false).unwrap();
 
     // Compare Group1 assignments for each tag
     let mut total_compared = 0;
@@ -175,7 +175,7 @@ fn test_group1_assignments_multiple_formats() {
         };
 
         // Get our EXIF data
-        let exif_data = match extract_metadata(std::path::Path::new(image_path), false) {
+        let exif_data = match extract_metadata(std::path::Path::new(image_path), false, false) {
             Ok(data) => data,
             Err(e) => {
                 println!("Skipping {image_path} - processing failed: {e}");
@@ -226,7 +226,7 @@ fn test_exif_ifd_specific_tags_group1() {
     };
 
     // Get our EXIF data
-    let exif_data = extract_metadata(std::path::Path::new(image_path), false).unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(image_path), false, false).unwrap();
 
     // Tags that should definitely be in ExifIFD according to ExifTool
     let expected_exif_ifd_tags = [
