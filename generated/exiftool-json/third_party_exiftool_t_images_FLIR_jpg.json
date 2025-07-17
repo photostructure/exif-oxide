@@ -1,0 +1,18 @@
+{
+  "SourceFile": "third-party/exiftool/t/images/FLIR.jpg",
+  "File:FileSize": 7338,
+  "File:FileName": "FLIR.jpg",
+  "File:Directory": "third-party/exiftool/t/images",
+  "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:MIMEType": "image/jpeg",
+  "EXIF:Make": "FLIR Systems AB",
+  "EXIF:Model": "FLIR_i7",
+  "EXIF:Orientation": "Horizontal (normal)",
+  "EXIF:ResolutionUnit": "inches",
+  "EXIF:YCbCrPositioning": "Centered",
+  "EXIF:ExposureTime": "1/32",
+  "EXIF:DateTimeOriginal": "2012:02:11 14:17:08",
+  "EXIF:CreateDate": "2012:02:11 14:17:08",
+  "EXIF:FocalLength": "6.7 mm",
+  "EXIF:ColorSpace": "sRGB"
+}

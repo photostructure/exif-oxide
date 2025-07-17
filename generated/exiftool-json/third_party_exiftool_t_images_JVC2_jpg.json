@@ -1,0 +1,23 @@
+{
+  "SourceFile": "third-party/exiftool/t/images/JVC2.jpg",
+  "File:FileSize": 947,
+  "File:FileName": "JVC2.jpg",
+  "File:Directory": "third-party/exiftool/t/images",
+  "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:MIMEType": "image/jpeg",
+  "EXIF:Make": "JVC",
+  "EXIF:Model": "GC-X1E",
+  "EXIF:Orientation": "Horizontal (normal)",
+  "EXIF:ResolutionUnit": "inches",
+  "EXIF:YCbCrPositioning": "Co-sited",
+  "EXIF:ExposureTime": "1/30",
+  "EXIF:FNumber": 3.8,
+  "EXIF:ExposureProgram": "Program AE",
+  "EXIF:ISO": 80,
+  "EXIF:DateTimeOriginal": "2002:07:14 22:59:31",
+  "EXIF:CreateDate": "2002:07:14 22:59:31",
+  "EXIF:MeteringMode": "Multi-segment",
+  "EXIF:Flash": "No Flash",
+  "EXIF:FocalLength": "17.5 mm",
+  "EXIF:ColorSpace": "sRGB"
+}

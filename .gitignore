@@ -4,7 +4,6 @@
 
 # Generated code from ExifTool
 /codegen/generated
-/generated
 
 # IDE files
 .idea/

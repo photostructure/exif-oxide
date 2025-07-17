@@ -183,7 +183,8 @@
       "WebFetch(domain:stackoverflow.com)",
       "WebFetch(domain:gist.github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(gh run view:*)"
+      "Bash(gh run view:*)",
+      "WebFetch(domain:release-plz.dev)"
     ],
     "deny": []
   }
