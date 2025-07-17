@@ -119,9 +119,13 @@ audit:
 precommit: update perl-deps codegen check-extractors fix lint yamllint compat-gen test codegen-test audit build
 	@echo "✅ precommit success" 
 
-# Generate ExifTool JSON reference data for compatibility testing
+# Generate ExifTool JSON reference data for compatibility testing (only missing files)
 compat-gen:
 	./tools/generate_exiftool_json.sh
+
+# Force regenerate all ExifTool JSON reference data
+compat-gen-force:
+	./tools/generate_exiftool_json.sh --force
 
 # Run ExifTool compatibility tests
 compat-test:
@@ -174,4 +178,7 @@ help:
 	@echo ""
 	@echo "Testing:"
 	@echo "  make compat        - Run compatibility tests"
+	@echo "  make compat-gen    - Generate missing ExifTool JSON reference files"
+	@echo "  make compat-gen-force - Force regenerate all ExifTool JSON reference files"
+	@echo "  make compat-test   - Run ExifTool compatibility tests"
 	@echo "  make snapshot-tests - Run snapshot tests"
