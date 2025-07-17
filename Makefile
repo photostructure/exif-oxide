@@ -91,6 +91,11 @@ perl-deps: perl-setup
 update:
 	cargo update
 
+# Upgrade to latest versions (requires: cargo install cargo-edit)
+upgrade:
+	@command -v cargo-upgrade >/dev/null 2>&1 || { echo "cargo-upgrade not found. Install with: cargo install cargo-edit"; exit 1; }
+	cargo upgrade --incompatible
+
 # Security audit for vulnerabilities in dependencies (requires: cargo install cargo-audit)
 audit:
 	@command -v cargo-audit >/dev/null 2>&1 || { echo "cargo-audit not found. Install with: cargo install cargo-audit --locked"; exit 1; }
@@ -141,6 +146,7 @@ help:
 	@echo ""
 	@echo "Maintenance:"
 	@echo "  make update        - Update dependencies"
+	@echo "  make upgrade       - Upgrade to latest dependency versions"
 	@echo "  make perl-setup    - Set up local Perl environment"
 	@echo "  make perl-deps     - Install Perl dependencies"
 	@echo "  make audit         - Security audit for vulnerabilities"
