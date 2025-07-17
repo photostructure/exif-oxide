@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (303 entries)
-static OLYMPUS_CAMERA_TYPES_DATA: &[(&str, &str)] = &[
+static OLYMPUS_CAMERA_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("D4028", "X-2,C-50Z"),
     ("D4029", "E-20,E-20N,E-20P"),
     ("D4034", "C720UZ"),

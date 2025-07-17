@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (153 entries)
-static AF_POINTS_153_DATA: &[(u8, &str)] = &[
+static AF_POINTS_153_DATA: &[(u8, &'static str)] = &[
     (1, "E9"),
     (2, "D9"),
     (3, "C9"),

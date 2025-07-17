@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (14 entries)
-static SONY_EXPOSURE_PROGRAM_DATA: &[(u8, &str)] = &[
+static SONY_EXPOSURE_PROGRAM_DATA: &[(u8, &'static str)] = &[
     (0, "Auto"),
     (1, "Manual"),
     (2, "Program AE"),

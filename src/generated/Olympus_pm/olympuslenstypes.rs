@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (138 entries)
-static OLYMPUS_LENS_TYPES_DATA: &[(&str, &str)] = &[
+static OLYMPUS_LENS_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("0 00 00", "None"),
     ("0 01 00", "Olympus Zuiko Digital ED 50mm F2.0 Macro"),
     ("0 01 01", "Olympus Zuiko Digital 40-150mm F3.5-4.5"),

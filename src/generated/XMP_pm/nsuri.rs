@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (96 entries)
-static NAMESPACE_URIS_DATA: &[(&str, &str)] = &[
+static NAMESPACE_URIS_DATA: &[(&'static str, &'static str)] = &[
     ("DICOM", "http://ns.adobe.com/DICOM/"),
     ("GAudio", "http://ns.google.com/photos/1.0/audio/"),
     ("GCamera", "http://ns.google.com/photos/1.0/camera/"),

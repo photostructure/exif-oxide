@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (5 entries)
-static XMP_GROUP_NAMES_DATA: &[(&str, &str)] = &[
+static XMP_GROUP_NAMES_DATA: &[(&'static str, &'static str)] = &[
     ("getty", "GettyImagesGIFT"),
     ("iptcCore", "Iptc4xmpCore"),
     ("iptcExt", "Iptc4xmpExt"),
