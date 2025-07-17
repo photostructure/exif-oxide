@@ -108,6 +108,7 @@ Dual-licensed under commercial license and GNU Affero General Public License v3.
 - [ARCHITECTURE.md](docs/ARCHITECTURE.md) - System design and philosophy  
 - [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md) - **Critical**: Our #1 development rule
 - [MILESTONES.md](docs/MILESTONES.md) - Current development roadmap
+- [SECURITY.md](SECURITY.md) - Security policy and vulnerability reporting
 
 ## Tag Compatibility
 
