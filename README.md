@@ -65,7 +65,7 @@ exif-oxide --show-missing photo.jpg
 use exif_oxide::formats::extract_metadata;
 use std::path::Path;
 
-let metadata = extract_metadata(Path::new("photo.jpg"), false)?;
+let metadata = extract_metadata(Path::new("photo.jpg"), false, false)?;
 for tag in &metadata.tags {
     println!("{}: {}", tag.tag_name, tag.print_value);
 }
