@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (354 entries)
-static CANON_MODEL_ID_DATA: &[(u32, &str)] = &[
+static CANON_MODEL_ID_DATA: &[(u32, &'static str)] = &[
     (1042, "EOS M50 / Kiss M"),
     (2049, "PowerShot SX740 HS"),
     (2052, "PowerShot G5 X Mark II"),

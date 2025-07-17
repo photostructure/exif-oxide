@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (24 entries)
-static PICTURE_STYLES_DATA: &[(u16, &str)] = &[
+static PICTURE_STYLES_DATA: &[(u16, &'static str)] = &[
     (0, "None"),
     (1, "Standard"),
     (2, "Portrait"),

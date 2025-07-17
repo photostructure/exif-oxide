@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (51 entries)
-static SONY_WHITE_BALANCE_SETTING_DATA: &[(u16, &str)] = &[
+static SONY_WHITE_BALANCE_SETTING_DATA: &[(u16, &'static str)] = &[
     (16, "Auto (-3)"),
     (17, "Auto (-2)"),
     (18, "Auto (-1)"),

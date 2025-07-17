@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (526 entries)
-static CANON_LENS_TYPES_DATA: &[(&str, &str)] = &[
+static CANON_LENS_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("-1", "n/a"),
     ("1", "Canon EF 50mm f/1.8"),
     ("10", "Canon EF 50mm f/2.5 Macro or Sigma Lens"),

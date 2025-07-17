@@ -10,6 +10,11 @@ keywords = ["exif", "metadata", "image", "photo", "jpeg", "exiftool"]
 categories = ["multimedia::images", "parser-implementations"]
 default-run = "exif-oxide"
 
+[lints.clippy]
+# Allow explicit 'static lifetimes in generated code
+# This is good practice for public APIs where lifetime guarantees matter
+redundant_static_lifetimes = "allow"
+
 [dependencies]
 byteorder = "1.5"      # Efficient endian handling
 thiserror = "1.0"      # Error handling

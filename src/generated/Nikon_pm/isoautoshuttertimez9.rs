@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (50 entries)
-static ISO_AUTO_SHUTTER_TIME_Z9_DATA: &[(&str, &str)] = &[
+static ISO_AUTO_SHUTTER_TIME_Z9_DATA: &[(&'static str, &'static str)] = &[
     ("-12", "15 s"),
     ("-15", "Auto"),
     ("-3", "2 s"),

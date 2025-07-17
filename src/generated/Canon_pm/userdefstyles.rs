@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (10 entries)
-static CANON_USER_DEF_STYLES_DATA: &[(u8, &str)] = &[
+static CANON_USER_DEF_STYLES_DATA: &[(u8, &'static str)] = &[
     (65, "PC 1"),
     (66, "PC 2"),
     (67, "PC 3"),
