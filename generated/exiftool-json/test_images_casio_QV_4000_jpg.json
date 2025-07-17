@@ -1,0 +1,22 @@
+{
+  "SourceFile": "test-images/casio/QV_4000.jpg",
+  "File:FileSize": 1203,
+  "File:FileName": "QV_4000.jpg",
+  "File:Directory": "test-images/casio",
+  "File:FileModifyDate": "2025:06:30 10:16:41-07:00",
+  "File:MIMEType": "image/jpeg",
+  "EXIF:Make": "CASIO",
+  "EXIF:Model": "QV-3000EX",
+  "EXIF:Orientation": "Horizontal (normal)",
+  "EXIF:ResolutionUnit": "inches",
+  "EXIF:YCbCrPositioning": "Centered",
+  "EXIF:ExposureTime": "1/114",
+  "EXIF:FNumber": 2.0,
+  "EXIF:ExposureProgram": "Program AE",
+  "EXIF:DateTimeOriginal": "2000:03:31 10:44:15",
+  "EXIF:CreateDate": "2000:03:31 10:44:15",
+  "EXIF:MeteringMode": "Multi-segment",
+  "EXIF:Flash": "No Flash",
+  "EXIF:FocalLength": "13.3 mm",
+  "EXIF:ColorSpace": "sRGB"
+}

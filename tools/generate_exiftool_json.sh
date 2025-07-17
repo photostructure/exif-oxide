@@ -94,16 +94,34 @@ jq -c '.[]' "$TEMP_JSON" | while IFS= read -r file_data; do
     SNAPSHOT_NAME=$(echo "$RELATIVE_PATH" | sed 's/[^a-zA-Z0-9]\+/_/g')
     SNAPSHOT_FILE="$SNAPSHOTS_DIR/${SNAPSHOT_NAME}.json"
     
-    # Filter to only supported tags and save as snapshot
+    # Filter to only supported tags and normalize paths before saving as snapshot
     # supported_tags.json now contains full group:tag format (e.g., "EXIF:Make")
     # Match the full key directly against the supported list
-    echo "$file_data" | jq --argjson tags "$SUPPORTED_TAGS" \
+    echo "$file_data" | jq --argjson tags "$SUPPORTED_TAGS" --arg project_root "$PROJECT_ROOT" \
         'with_entries(select(
             .key as $k | 
             if $k == "SourceFile" then true
             else ($tags | index($k))
             end
-        ))' \
+        )) |
+        # Normalize SourceFile to relative path
+        if .SourceFile then
+            .SourceFile = (.SourceFile | 
+                if startswith($project_root) then
+                    .[$project_root | length + 1:]
+                else
+                    .
+                end)
+        else . end |
+        # Normalize File:Directory to relative path  
+        if .["File:Directory"] then
+            .["File:Directory"] = (.["File:Directory"] |
+                if startswith($project_root) then
+                    .[$project_root | length + 1:]
+                else
+                    .
+                end)
+        else . end' \
         > "$SNAPSHOT_FILE"
     
     # echo "Created: $SNAPSHOT_FILE (for $SOURCE_FILE)"

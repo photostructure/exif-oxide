@@ -1,0 +1,16 @@
+{
+  "SourceFile": "third-party/exiftool/t/images/MWG.jpg",
+  "File:FileSize": 2255,
+  "File:FileName": "MWG.jpg",
+  "File:Directory": "third-party/exiftool/t/images",
+  "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:MIMEType": "image/jpeg",
+  "EXIF:Orientation": "Rotate 90 CW",
+  "EXIF:ResolutionUnit": "inches",
+  "EXIF:YCbCrPositioning": "Centered",
+  "EXIF:DateTimeOriginal": "2001:01:01 01:11:11",
+  "EXIF:SubSecTime": 133,
+  "EXIF:SubSecTimeOriginal": 111,
+  "EXIF:SubSecTimeDigitized": 122,
+  "EXIF:ColorSpace": "Uncalibrated"
+}

@@ -1,0 +1,14 @@
+{
+  "SourceFile": "third-party/exiftool/t/images/InfiRay.jpg",
+  "EXIF:GPSLatitude": "",
+  "EXIF:GPSLongitude": "",
+  "EXIF:GPSAltitude": "undef",
+  "File:FileSize": 2207,
+  "File:FileName": "InfiRay.jpg",
+  "File:Directory": "third-party/exiftool/t/images",
+  "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:MIMEType": "image/jpeg",
+  "EXIF:Model": "P2_USB_IR",
+  "EXIF:Make": "Infisense",
+  "EXIF:Orientation": "Horizontal (normal)"
+}
