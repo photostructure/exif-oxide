@@ -20,6 +20,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          lfs: true
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -60,6 +61,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          lfs: true
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
