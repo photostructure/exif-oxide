@@ -59,6 +59,13 @@ impl RawProcessor {
             Box::new(super::formats::panasonic::PanasonicRawHandler::new()),
         );
 
+        // Register Olympus handler
+        // ExifTool: Olympus.pm module registration
+        handlers.insert(
+            RawFormat::Olympus,
+            Box::new(super::formats::olympus::OlympusRawHandler::new()),
+        );
+
         // Future handlers will be registered here:
         // handlers.insert(RawFormat::Canon, Box::new(CanonRawHandler::new()));
         // handlers.insert(RawFormat::Nikon, Box::new(NikonRawHandler::new()));
@@ -164,7 +171,8 @@ mod tests {
         assert!(supported.contains(&RawFormat::Kyocera));
         assert!(supported.contains(&RawFormat::Minolta));
         assert!(supported.contains(&RawFormat::Panasonic));
-        assert_eq!(supported.len(), 3); // Should have exactly 3 supported formats
+        assert!(supported.contains(&RawFormat::Olympus));
+        assert_eq!(supported.len(), 4); // Should have exactly 4 supported formats
     }
 
     #[test]

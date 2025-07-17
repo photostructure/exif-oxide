@@ -29,7 +29,7 @@ use std::path::Path;
 ///
 /// This function now implements real file reading and JPEG segment scanning.
 /// It detects JPEG files by magic bytes and locates EXIF data in APP1 segments.
-pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
+pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) -> Result<ExifData> {
     // Ensure conversions are registered
     crate::init();
 
@@ -169,11 +169,13 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                     }
 
                     // Add RAW processing warnings as tags for debugging
-                    for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
-                        tags.insert(
-                            format!("Warning:RawWarning{i}"),
-                            TagValue::String(warning.clone()),
-                        );
+                    if show_warnings {
+                        for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
+                            tags.insert(
+                                format!("Warning:RawWarning{i}"),
+                                TagValue::String(warning.clone()),
+                            );
+                        }
                     }
                 }
                 Err(e) => {
@@ -222,11 +224,13 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                             }
 
                             // Add EXIF processing warnings as tags for debugging
-                            for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
-                                tags.insert(
-                                    format!("Warning:ExifWarning{i}"),
-                                    TagValue::String(warning.clone()),
-                                );
+                            if show_warnings {
+                                for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
+                                    tags.insert(
+                                        format!("Warning:ExifWarning{i}"),
+                                        TagValue::String(warning.clone()),
+                                    );
+                                }
                             }
                         }
                         Err(e) => {
@@ -292,8 +296,8 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                 }
             }
         }
-        "TIFF" => {
-            // For TIFF-based files (including NEF, NRW, CR2, etc.), process as TIFF
+        "TIFF" | "ORF" => {
+            // For TIFF-based files (including NEF, NRW, CR2, ORF, etc.), process as TIFF
             // Reset reader to start of file
             reader.seek(SeekFrom::Start(0))?;
 
@@ -345,11 +349,13 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                     }
 
                     // Add EXIF processing warnings as tags for debugging
-                    for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
-                        tags.insert(
-                            format!("Warning:ExifWarning{i}"),
-                            TagValue::String(warning.clone()),
-                        );
+                    if show_warnings {
+                        for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
+                            tags.insert(
+                                format!("Warning:ExifWarning{i}"),
+                                TagValue::String(warning.clone()),
+                            );
+                        }
                     }
                 }
                 Err(e) => {
@@ -460,11 +466,13 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                         tags.insert(key, value);
                     }
                     // Add RAW processing warnings as tags for debugging
-                    for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
-                        tags.insert(
-                            format!("Warning:RawWarning{i}"),
-                            TagValue::String(warning.clone()),
-                        );
+                    if show_warnings {
+                        for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
+                            tags.insert(
+                                format!("Warning:RawWarning{i}"),
+                                TagValue::String(warning.clone()),
+                            );
+                        }
                     }
                 }
                 Err(e) => {

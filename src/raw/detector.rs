@@ -21,13 +21,16 @@ pub enum RawFormat {
     /// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm - TIFF-based with entry-based offsets
     Panasonic,
 
+    /// Olympus RAW format (ORF)
+    /// ExifTool: lib/Image/ExifTool/Olympus.pm - TIFF-based with dual processing modes
+    Olympus,
+
     /// Unknown or unsupported RAW format
     Unknown,
     // Future formats will be added here as we implement them:
     // Canon,     // CR2, CR3 formats
     // Nikon,     // NEF, NRW formats
     // Sony,      // ARW, SR2, SRF formats
-    // Olympus,   // ORF format
     // Fujifilm,  // RAF format
 }
 
@@ -38,6 +41,7 @@ impl RawFormat {
             RawFormat::Kyocera => "Kyocera",
             RawFormat::Minolta => "Minolta",
             RawFormat::Panasonic => "Panasonic",
+            RawFormat::Olympus => "Olympus",
             RawFormat::Unknown => "Unknown",
         }
     }
@@ -59,6 +63,12 @@ pub fn detect_raw_format(detection_result: &FileTypeDetectionResult) -> RawForma
         return RawFormat::Panasonic;
     }
 
+    // Check for Olympus ORF format
+    // ExifTool: Olympus.pm - TIFF-based format with dual processing modes
+    if detection_result.file_type == "ORF" {
+        return RawFormat::Olympus;
+    }
+
     // Check for Kyocera RAW format
     // ExifTool: KyoceraRaw.pm uses .raw extension + magic validation
     if detection_result.file_type == "RAW" && detection_result.format == "RAW" {
@@ -71,7 +81,6 @@ pub fn detect_raw_format(detection_result: &FileTypeDetectionResult) -> RawForma
     // if detection_result.file_type == "CR2" { return RawFormat::Canon; }
     // if detection_result.file_type == "NEF" || detection_result.file_type == "NRW" { return RawFormat::Nikon; }
     // if detection_result.file_type == "ARW" { return RawFormat::Sony; }
-    // if detection_result.file_type == "ORF" { return RawFormat::Olympus; }
     // if detection_result.file_type == "RAF" { return RawFormat::Fujifilm; }
 
     RawFormat::Unknown
@@ -125,6 +134,23 @@ pub fn validate_panasonic_rw2_magic(data: &[u8]) -> bool {
     is_tiff_be || is_tiff_le
 }
 
+/// Validate Olympus ORF magic bytes
+/// ExifTool: Olympus.pm - TIFF-based format with dual processing modes
+/// ORF files are essentially TIFF files with Olympus-specific maker note sections
+pub fn validate_olympus_orf_magic(data: &[u8]) -> bool {
+    // Need at least 8 bytes for TIFF header
+    if data.len() < 8 {
+        return false;
+    }
+
+    // Check for TIFF magic bytes (big-endian or little-endian)
+    // ExifTool: Uses standard TIFF processing for ORF files
+    let is_tiff_be = data.starts_with(b"MM\x00\x2A"); // Big-endian TIFF
+    let is_tiff_le = data.starts_with(b"II\x2A\x00"); // Little-endian TIFF
+
+    is_tiff_be || is_tiff_le
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -134,6 +160,7 @@ mod tests {
         assert_eq!(RawFormat::Kyocera.name(), "Kyocera");
         assert_eq!(RawFormat::Minolta.name(), "Minolta");
         assert_eq!(RawFormat::Panasonic.name(), "Panasonic");
+        assert_eq!(RawFormat::Olympus.name(), "Olympus");
         assert_eq!(RawFormat::Unknown.name(), "Unknown");
     }
 
@@ -195,6 +222,25 @@ mod tests {
     }
 
     #[test]
+    fn test_olympus_orf_magic_validation() {
+        // Test valid TIFF big-endian magic
+        let tiff_be_data = b"MM\x00\x2A\x00\x00\x00\x08";
+        assert!(validate_olympus_orf_magic(tiff_be_data));
+
+        // Test valid TIFF little-endian magic
+        let tiff_le_data = b"II\x2A\x00\x08\x00\x00\x00";
+        assert!(validate_olympus_orf_magic(tiff_le_data));
+
+        // Test invalid magic
+        let invalid_data = b"XX\x2A\x00\x08\x00\x00\x00";
+        assert!(!validate_olympus_orf_magic(invalid_data));
+
+        // Test insufficient data
+        let short_data = b"MM\x00";
+        assert!(!validate_olympus_orf_magic(short_data));
+    }
+
+    #[test]
     fn test_detect_raw_format() {
         // Test Minolta MRW detection
         let mrw_result = FileTypeDetectionResult {
@@ -222,6 +268,15 @@ mod tests {
             description: "Panasonic RAW image".to_string(),
         };
         assert_eq!(detect_raw_format(&rwl_result), RawFormat::Panasonic);
+
+        // Test Olympus ORF detection
+        let orf_result = FileTypeDetectionResult {
+            file_type: "ORF".to_string(),
+            format: "ORF".to_string(),
+            mime_type: "image/x-olympus-orf".to_string(),
+            description: "Olympus RAW image".to_string(),
+        };
+        assert_eq!(detect_raw_format(&orf_result), RawFormat::Olympus);
 
         // Test Kyocera detection
         let kyocera_result = FileTypeDetectionResult {

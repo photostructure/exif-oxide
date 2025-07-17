@@ -70,7 +70,7 @@ pub fn extract_metadata_json(file_path: &str) -> Result<Value, ExifError> {
 
     // Use the existing extract_metadata function from formats module
     let path = Path::new(file_path);
-    let mut exif_data = formats::extract_metadata(path, false)?;
+    let mut exif_data = formats::extract_metadata(path, false, false)?;
 
     // Prepare for serialization (converts TagEntry to legacy format with PrintConv)
     exif_data.prepare_for_serialization(None);
