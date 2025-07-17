@@ -1,0 +1,139 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  # Quick checks - format, clippy, and basic tests on Linux
+  check:
+    name: Format, Clippy & Test (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: cargo-check-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            cargo-check-${{ runner.os }}-
+
+      - name: Run format check, clippy, and tests
+        run: make check
+
+  # Cross-platform testing matrix
+  test-platforms:
+    name: Test (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macOS (ARM64 and Intel)
+          - name: macOS ARM64
+            os: macos-latest
+            target: aarch64-apple-darwin
+            use-cross: false
+
+          - name: macOS Intel
+            os: macos-13  # Use Intel runner
+            target: x86_64-apple-darwin
+            use-cross: false
+
+          # Windows (Intel and ARM)
+          - name: Windows x64
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
+            use-cross: false
+
+          - name: Windows ARM64
+            os: windows-latest
+            target: aarch64-pc-windows-msvc
+            use-cross: true
+
+          # Linux x86_64 (native)
+          - name: Linux x64 (glibc)
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            use-cross: false
+
+          - name: Linux x64 (musl)
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            use-cross: true
+
+          # Linux ARM64 (cross-compilation)
+          - name: Linux ARM64 (glibc)
+            os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            use-cross: true
+
+          - name: Linux ARM64 (musl)
+            os: ubuntu-latest
+            target: aarch64-unknown-linux-musl
+            use-cross: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install cross-compilation tool
+        if: matrix.use-cross
+        run: |
+          cargo install cross --git https://github.com/cross-rs/cross --locked
+          echo "CARGO_CMD=cross" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Set cargo command for native builds
+        if: ${{ !matrix.use-cross }}
+        run: echo "CARGO_CMD=cargo" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: cargo-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            cargo-${{ matrix.target }}-
+            cargo-
+
+      - name: Build for target
+        run: |
+          ${{ env.CARGO_CMD }} build --target ${{ matrix.target }} --features test-helpers
+
+      - name: Run tests for target
+        run: |
+          ${{ env.CARGO_CMD }} test --target ${{ matrix.target }} --features test-helpers
