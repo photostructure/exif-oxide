@@ -102,8 +102,11 @@ perl-deps: perl-setup
 update:
 	cargo update
 
+upgrade-gha:
+	pinact run -u || { echo "pinact not found. Install with: go install github.com/suzuki-shunsuke/pinact/cmd/pinact@latest"; exit 1; }
+
 # Upgrade to latest versions (requires: cargo install cargo-edit)
-upgrade:
+upgrade: upgrade-gha
 	@command -v cargo-upgrade >/dev/null 2>&1 || { echo "cargo-upgrade not found. Install with: cargo install cargo-edit"; exit 1; }
 	cargo upgrade --incompatible
 
