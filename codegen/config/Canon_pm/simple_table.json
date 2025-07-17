@@ -43,6 +43,12 @@
       "constant_name": "CANON_USER_DEF_STYLES",
       "key_type": "u8",
       "description": "Canon user-defined picture styles"
+    },
+    {
+      "hash_name": "%offOn",
+      "constant_name": "OFF_ON",
+      "key_type": "u8",
+      "description": "Simple Off/On mapping used throughout Canon tags"
     }
   ]
 }

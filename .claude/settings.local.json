@@ -186,7 +186,8 @@
       "Bash(gh run view:*)",
       "WebFetch(domain:release-plz.dev)",
       "Bash(RUST_LOG=warn cargo run -- ../photostructure/examples/Apple_iPhone_X.jpg)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(RUST_LOG=debug cargo run -- ../photostructure/examples/Raw/oly.ORF)"
     ],
     "deny": []
   }

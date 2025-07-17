@@ -8,6 +8,9 @@ pub mod canonlenstypes;
 pub mod canonmodelid;
 pub mod canonquality;
 pub mod canonwhitebalance;
+pub mod main_inline;
+pub mod offon;
+pub mod panorama_inline;
 pub mod picturestyles;
 pub mod userdefstyles;
 
@@ -17,5 +20,8 @@ pub use canonlenstypes::*;
 pub use canonmodelid::*;
 pub use canonquality::*;
 pub use canonwhitebalance::*;
+pub use main_inline::*;
+pub use offon::*;
+pub use panorama_inline::*;
 pub use picturestyles::*;
 pub use userdefstyles::*;
