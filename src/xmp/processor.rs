@@ -173,7 +173,7 @@ impl XmpProcessor {
                     )?;
                 }
                 Ok((_, Event::Text(e))) => {
-                    let text = e.unescape()?.into_owned();
+                    let text = e.decode()?.into_owned();
                     if !text.trim().is_empty() {
                         self.process_text_content(
                             text,

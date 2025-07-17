@@ -1,0 +1,41 @@
+[workspace]
+# Automatically create GitHub releases
+github_release = true
+
+# Generate changelogs from conventional commits
+changelog_update = true
+
+# Git tag format for releases
+git_tag_name = "v{{ version }}"
+
+# Ensure all changes go through PR process
+pr_template = """
+## Summary
+This release PR was automatically created by release-plz.
+
+## Changes
+{{ changelog }}
+
+## Checklist
+- [ ] Version bumped appropriately
+- [ ] Changelog updated
+- [ ] All CI checks pass
+- [ ] Ready to release
+
+---
+*Generated with [release-plz](https://release-plz.ieni.dev/)*
+"""
+
+[package.exif-oxide]
+# Conventional commit types that trigger releases
+release_commits = [
+    "feat",   # New features (minor version bump)
+    "fix",    # Bug fixes (patch version bump)
+    "perf"    # Performance improvements (patch version bump)
+]
+
+# Changelog configuration
+changelog_config = "cliff.toml"
+
+# Don't publish pre-release versions
+publish = true
