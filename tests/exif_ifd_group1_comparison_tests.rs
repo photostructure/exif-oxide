@@ -5,6 +5,11 @@
 //!
 //! ExifTool Reference: ExifTool -G1 flag shows Group1 (directory location) assignments
 //! Milestone: docs/milestones/MILESTONE-ExifIFD.md Group1 Assignment
+//!
+//! Note: These tests require the `integration-tests` feature to be enabled and
+//! external test assets to be available. They are automatically skipped in published crates.
+
+#![cfg(feature = "integration-tests")]
 
 use exif_oxide::formats::extract_metadata;
 use serde_json::Value;

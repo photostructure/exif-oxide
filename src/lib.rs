@@ -3,6 +3,22 @@
 //! This library provides metadata extraction from image files with ExifTool compatibility.
 //! The architecture uses runtime registries for PrintConv/ValueConv implementations to avoid
 //! code generation bloat while maintaining flexible extensibility.
+//!
+//! ## Testing
+//!
+//! This crate includes both unit tests and integration tests:
+//!
+//! - **Unit tests**: Always available, test individual components in isolation
+//! - **Integration tests**: Require the `integration-tests` feature flag and external test assets
+//!
+//! To run all tests including integration tests:
+//! ```bash
+//! cargo test --features integration-tests
+//! ```
+//!
+//! Integration tests compare our output against ExifTool reference data and require
+//! test images and the ExifTool submodule to be available. They are automatically
+//! excluded from published crates to keep package size manageable.
 
 pub mod composite_tags;
 pub mod conditions;

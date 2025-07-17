@@ -7,6 +7,11 @@
 //!
 //! ExifTool Reference: lib/Image/ExifTool/Exif.pm ExifIFD group assignment
 //! Milestone: docs/milestones/MILESTONE-ExifIFD.md
+//!
+//! Note: These tests require the `integration-tests` feature to be enabled and
+//! external test assets to be available. They are automatically skipped in published crates.
+
+#![cfg(feature = "integration-tests")]
 
 use exif_oxide::formats::extract_metadata;
 use std::collections::HashMap;

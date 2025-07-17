@@ -1,4 +1,7 @@
-.PHONY: check fmt-check fmt lint yamllint test codegen-test fix build doc clean patch-exiftool codegen sync update audit precommit help snapshot-generate snapshot-tests snapshots perl-deps perl-setup
+.PHONY: all check fmt-check fmt lint yamllint test codegen-test fix build install doc clean patch-exiftool codegen sync update audit precommit help snapshot-generate snapshot-tests snapshots perl-deps perl-setup
+
+# Default target: build the project
+all: build
 
 # Run all checks without modifying (for CI)
 check: fmt-check lint yamllint test
@@ -19,9 +22,13 @@ lint:
 yamllint:
 	yamllint .github/ *.yml *.yaml 2>/dev/null || true
 
-# Run tests
-test:
+# Run unit tests only (no integration tests)
+unit-test:
 	cargo test --all --features test-helpers
+
+# Run all tests including integration tests
+test:
+	cargo test --all --features test-helpers,integration-tests
 
 # Run codegen tests
 codegen-test:
@@ -35,6 +42,10 @@ fix:
 # Build in release mode
 build:
 	cargo build --release
+
+# Install the binary locally
+install:
+	cargo install --path . --force
 
 # Generate documentation
 doc:
@@ -125,14 +136,20 @@ compat: compat-gen compat-test test-mime-compat
 help:
 	@echo "exif-oxide Makefile targets:"
 	@echo ""
+	@echo "Default:"
+	@echo "  make               - Build the project (same as 'make all')"
+	@echo "  make all           - Build the project"
+	@echo ""
 	@echo "Development:"
 	@echo "  make check         - Run all checks without modifying (for CI)"
 	@echo "  make fmt           - Format code"
 	@echo "  make lint          - Run clippy linter"
 	@echo "  make yamllint      - Run yamllint on YAML files"
-	@echo "  make test          - Run tests"
+	@echo "  make unit-test     - Run unit tests only (fast)"
+	@echo "  make test          - Run all tests including integration tests"
 	@echo "  make fix           - Fix formatting and auto-fixable issues"
 	@echo "  make build         - Build in release mode"
+	@echo "  make install       - Install the binary locally"
 	@echo "  make doc           - Generate and open documentation"
 	@echo ""
 	@echo "Code Generation:"

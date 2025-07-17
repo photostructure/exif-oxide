@@ -2,6 +2,11 @@
 //!
 //! These tests compare exif-oxide output against stored ExifTool reference snapshots
 //! to ensure compatibility. ExifTool snapshots are the authoritative reference.
+//!
+//! Note: These tests require the `integration-tests` feature to be enabled and
+//! external test assets to be available. They are automatically skipped in published crates.
+
+#![cfg(feature = "integration-tests")]
 
 use serde_json::Value;
 use similar::{ChangeTag, TextDiff};

@@ -3,6 +3,11 @@
 //! These tests verify the composite tag computation infrastructure implemented
 //! in Milestone 8f, including dependency resolution, computation logic, and
 //! PrintConv support.
+//!
+//! Note: These tests require the `integration-tests` feature to be enabled and
+//! external test assets to be available. They are automatically skipped in published crates.
+
+#![cfg(feature = "integration-tests")]
 
 use exif_oxide::exif::ExifReader;
 

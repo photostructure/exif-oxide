@@ -5,6 +5,11 @@
 //!
 //! ExifTool Reference: lib/Image/ExifTool/Exif.pm ExifIFD validation logic
 //! Milestone: docs/milestones/MILESTONE-ExifIFD.md Validation Rules
+//!
+//! Note: These tests require the `integration-tests` feature to be enabled and
+//! external test assets to be available. They are automatically skipped in published crates.
+
+#![cfg(feature = "integration-tests")]
 
 use exif_oxide::formats::extract_metadata;
 use exif_oxide::types::TagValue;
