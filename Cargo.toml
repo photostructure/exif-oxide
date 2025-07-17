@@ -9,6 +9,15 @@ repository = "https://github.com/photostructure/exif-oxide"
 keywords = ["exif", "metadata", "image", "photo", "jpeg", "exiftool"]
 categories = ["multimedia::images", "parser-implementations"]
 default-run = "exif-oxide"
+exclude = [
+    "third-party/*",       # Exclude ExifTool submodule (400MB+)
+    "test-images/*",       # Exclude test images
+    "docs/*",              # Exclude docs  
+    "tests/*",             # Exclude tests (they don't work without ExifTool and test-images)  
+    "codegen/generated/*", # Exclude codegen artifacts
+    "generated/*",         # Exclude compat artifacts
+    ".*/*",                # Exclude dev bot and gha gunk
+]
 
 [lints.clippy]
 # Allow explicit 'static lifetimes in generated code
@@ -16,25 +25,33 @@ default-run = "exif-oxide"
 redundant_static_lifetimes = "allow"
 
 [dependencies]
-byteorder = "1.5"      # Efficient endian handling
-thiserror = "2.0"      # Error handling
-anyhow = "1.0"         # Error handling in examples/tests
-regex = "1.11"         # For parsing ExifTool tables (used in dev tools)
-serde = { version = "1.0", features = ["derive"] }  # Serialization
-serde_json = "1.0"     # JSON output
-clap = { version = "4.5", features = ["derive"] }  # CLI argument parsing
-quick-xml = "0.38"     # Fast XML parsing for XMP metadata
-tracing = "0.1"        # Structured logging and instrumentation
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }  # Tracing subscriber implementation
-chrono = { version = "0.4", features = ["serde"] }  # Date and time handling for File:FileModifyDate
+byteorder = "1.5" # Efficient endian handling
+thiserror = "2.0" # Error handling
+anyhow = "1.0" # Error handling in examples/tests
+regex = "1.11" # For parsing ExifTool tables (used in dev tools)
+serde = { version = "1.0", features = ["derive"] } # Serialization
+serde_json = "1.0" # JSON output
+clap = { version = "4.5", features = ["derive"] } # CLI argument parsing
+quick-xml = "0.38" # Fast XML parsing for XMP metadata
+tracing = "0.1" # Structured logging and instrumentation
+tracing-subscriber = { version = "0.3", features = [
+    "env-filter",
+] } # Tracing subscriber implementation
+chrono = { version = "0.4", features = [
+    "serde",
+] } # Date and time handling for File:FileModifyDate
 
 [dev-dependencies]
-criterion = "0.6"      # Benchmarking
-pretty_assertions = "1.4"  # Better test assertions
-tempfile = "3.20"       # Temporary files for testing
-clap = { version = "4.5", features = ["derive"] }  # CLI argument parsing for analysis tools
-similar = { version = "2.7", features = ["text"] }  # Text diffing for ExifTool comparison
-tracing-test = "0.2"   # Testing utilities for tracing
+criterion = "0.6" # Benchmarking
+pretty_assertions = "1.4" # Better test assertions
+tempfile = "3.20" # Temporary files for testing
+clap = { version = "4.5", features = [
+    "derive",
+] } # CLI argument parsing for analysis tools
+similar = { version = "2.7", features = [
+    "text",
+] } # Text diffing for ExifTool comparison
+tracing-test = "0.2" # Testing utilities for tracing
 
 [features]
 # Test helpers feature - enables test-only public methods for integration tests
