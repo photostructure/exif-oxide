@@ -436,6 +436,49 @@ pub fn extract_metadata(path: &Path, show_missing: bool) -> Result<ExifData> {
                 }
             }
         }
+        "MRW" | "RW2" | "RWL" => {
+            // RAW format processing (Milestone 17b: Minolta MRW and Panasonic RW2 support)
+            // Reset reader to start of file
+            reader.seek(SeekFrom::Start(0))?;
+            // Read entire file for RAW processing
+            let mut raw_data = Vec::new();
+            reader.read_to_end(&mut raw_data)?;
+            // Process RAW data using RAW processor
+            let raw_processor = crate::raw::RawProcessor::new();
+            let mut exif_reader = ExifReader::new();
+            // Store the original file type for format detection
+            exif_reader.set_file_type(detection_result.file_type.clone());
+            match raw_processor.process_raw(&mut exif_reader, &raw_data, &detection_result) {
+                Ok(()) => {
+                    // Successfully processed RAW - extract all found tags using new TagEntry API
+                    let mut raw_tag_entries = exif_reader.get_all_tag_entries();
+                    // Append RAW tag entries to our collection
+                    tag_entries.append(&mut raw_tag_entries);
+                    // Also populate legacy tags for backward compatibility
+                    let raw_tags = exif_reader.get_all_tags();
+                    for (key, value) in raw_tags {
+                        tags.insert(key, value);
+                    }
+                    // Add RAW processing warnings as tags for debugging
+                    for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
+                        tags.insert(
+                            format!("Warning:RawWarning{i}"),
+                            TagValue::String(warning.clone()),
+                        );
+                    }
+                }
+                Err(e) => {
+                    // Failed to parse RAW - add error information
+                    tags.insert(
+                        "Warning:RawParseError".to_string(),
+                        TagValue::string(format!(
+                            "Failed to parse {} RAW: {e}",
+                            detection_result.format
+                        )),
+                    );
+                }
+            }
+        }
         _ => {
             // Other formats not yet supported
             tags.insert(

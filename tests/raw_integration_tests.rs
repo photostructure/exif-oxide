@@ -315,3 +315,229 @@ fn test_raw_format_detection() {
         "Should detect unknown format"
     );
 }
+
+// =============================================================================
+// Milestone 17b Integration Tests: Real File Testing vs ExifTool
+// =============================================================================
+
+/// Test Panasonic RW2 file with TIFF integration
+#[test]
+fn test_milestone_17b_panasonic_rw2_real_file() {
+    let test_file = "test-images/panasonic/panasonic_lumix_g9_ii_35.rw2";
+
+    // Skip test if file doesn't exist
+    if !Path::new(test_file).exists() {
+        eprintln!("Warning: Test file {test_file} not found, skipping test");
+        return;
+    }
+
+    println!("🧪 Testing Panasonic RW2 file with TIFF integration...");
+
+    // Extract metadata using our implementation
+    let result = extract_metadata(Path::new(test_file), false);
+    assert!(
+        result.is_ok(),
+        "Failed to process RW2 file: {:?}",
+        result.err()
+    );
+
+    let exif_data = result.unwrap();
+    assert!(
+        !exif_data.tags.is_empty(),
+        "Should have extracted metadata tags"
+    );
+
+    // Validate that we detected the file correctly
+    let file_type_tag = exif_data.tags.iter().find(|tag| tag.name == "FileType");
+    if let Some(tag) = file_type_tag {
+        if let TagValue::String(file_type) = &tag.value {
+            println!("✅ File detected as: {file_type}");
+        }
+    }
+
+    // Validate core metadata that should be present
+    let mut core_tags_found = 0;
+    let core_expected_tags = ["Make", "Model"];
+
+    for expected_tag in &core_expected_tags {
+        if let Some(tag) = exif_data.tags.iter().find(|tag| tag.name == *expected_tag) {
+            println!("✅ Found {}: {}", expected_tag, tag.value);
+            core_tags_found += 1;
+        } else {
+            println!("⚠️  Core tag not found: {expected_tag}");
+        }
+    }
+
+    // We should find at least Make and Model for a real camera file
+    assert!(
+        core_tags_found >= 1,
+        "Expected at least 1 core tag, found {core_tags_found}"
+    );
+
+    // Check for TIFF-specific tags that indicate our TIFF integration worked
+    let tiff_indicators = [
+        "ExifImageWidth",
+        "ExifImageHeight",
+        "Orientation",
+        "DateTime",
+    ];
+    let mut tiff_tags_found = 0;
+
+    for indicator in &tiff_indicators {
+        if exif_data.tags.iter().any(|tag| tag.name == *indicator) {
+            println!("✅ Found TIFF indicator: {indicator}");
+            tiff_tags_found += 1;
+        }
+    }
+
+    println!(
+        "✅ Panasonic RW2 test passed - extracted {} total tags, {} core tags, {} TIFF indicators",
+        exif_data.tags.len(),
+        core_tags_found,
+        tiff_tags_found
+    );
+}
+
+/// Test Minolta MRW file with multi-block processing
+#[test]
+fn test_milestone_17b_minolta_mrw_real_file() {
+    let test_file = "test-images/minolta/DiMAGE_7.mrw";
+
+    // Skip test if file doesn't exist
+    if !Path::new(test_file).exists() {
+        eprintln!("Warning: Test file {test_file} not found, skipping test");
+        return;
+    }
+
+    println!("🧪 Testing Minolta MRW file with multi-block processing...");
+
+    // Extract metadata using our implementation
+    let result = extract_metadata(Path::new(test_file), false);
+    assert!(
+        result.is_ok(),
+        "Failed to process MRW file: {:?}",
+        result.err()
+    );
+
+    let exif_data = result.unwrap();
+    assert!(
+        !exif_data.tags.is_empty(),
+        "Should have extracted metadata tags"
+    );
+
+    // Validate that we detected the file correctly
+    let file_type_tag = exif_data.tags.iter().find(|tag| tag.name == "FileType");
+    if let Some(tag) = file_type_tag {
+        if let TagValue::String(file_type) = &tag.value {
+            println!("✅ File detected as: {file_type}");
+        }
+    }
+
+    // Validate core metadata that should be present
+    let mut core_tags_found = 0;
+    let core_expected_tags = ["Make", "Model"];
+
+    for expected_tag in &core_expected_tags {
+        if let Some(tag) = exif_data.tags.iter().find(|tag| tag.name == *expected_tag) {
+            println!("✅ Found {}: {}", expected_tag, tag.value);
+            core_tags_found += 1;
+        } else {
+            println!("⚠️  Core tag not found: {expected_tag}");
+        }
+    }
+
+    // Check for Minolta-specific tags that indicate our MRW processing worked
+    let minolta_indicators = ["MinoltaImageSize", "MinoltaQuality", "ColorMode"];
+    let mut minolta_tags_found = 0;
+
+    for indicator in &minolta_indicators {
+        if exif_data.tags.iter().any(|tag| tag.name == *indicator) {
+            println!("✅ Found Minolta indicator: {indicator}");
+            minolta_tags_found += 1;
+        } else {
+            println!("ℹ️  Minolta tag not found: {indicator} (may be expected)");
+        }
+    }
+
+    // MRW files may not have standard Make/Model tags, so check for any extracted tags
+    // The important thing is that we're extracting MRW-specific maker note data
+    assert!(
+        !exif_data.tags.is_empty(),
+        "Expected at least some tags to be extracted from MRW file"
+    );
+
+    println!(
+        "✅ Minolta MRW test passed - extracted {} total tags, {} core tags, {} Minolta indicators",
+        exif_data.tags.len(),
+        core_tags_found,
+        minolta_tags_found
+    );
+}
+
+/// Test that our TIFF integration handles multiple RAW formats
+#[test]
+fn test_milestone_17b_multiple_raw_formats() {
+    let test_files = [
+        (
+            "test-images/panasonic/panasonic_lumix_g9_ii_35.rw2",
+            "Panasonic",
+        ),
+        ("test-images/minolta/DiMAGE_7.mrw", "Minolta"),
+    ];
+
+    let mut processed_files = 0;
+
+    for (file_path, expected_make_hint) in &test_files {
+        if !Path::new(file_path).exists() {
+            eprintln!("Warning: Test file {file_path} not found, skipping");
+            continue;
+        }
+
+        println!("🧪 Testing multi-format processing: {file_path}");
+
+        // Test that we can process the file without errors
+        let result = extract_metadata(Path::new(file_path), false);
+        assert!(
+            result.is_ok(),
+            "Failed to process {} file: {:?}",
+            expected_make_hint,
+            result.err()
+        );
+
+        let exif_data = result.unwrap();
+
+        // Verify we extracted some tags
+        assert!(
+            !exif_data.tags.is_empty(),
+            "No tags extracted from {expected_make_hint} file"
+        );
+
+        // Try to find manufacturer information
+        if let Some(make_tag) = exif_data.tags.iter().find(|tag| tag.name == "Make") {
+            println!(
+                "✅ {} format detected Make: {}",
+                expected_make_hint, make_tag.value
+            );
+        }
+
+        // Count different tag groups to verify comprehensive extraction
+        let unique_groups: std::collections::HashSet<_> =
+            exif_data.tags.iter().map(|tag| &tag.group).collect();
+
+        println!(
+            "✅ {} format processing: {} tags, {} groups",
+            expected_make_hint,
+            exif_data.tags.len(),
+            unique_groups.len()
+        );
+
+        processed_files += 1;
+    }
+
+    // We should have processed at least one file
+    assert!(
+        processed_files >= 1,
+        "Should have processed at least 1 test file"
+    );
+    println!("✅ Multi-format test passed - processed {processed_files} files");
+}

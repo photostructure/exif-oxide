@@ -101,7 +101,7 @@ impl ByteOrder {
 #[derive(Debug, Clone)]
 pub struct TiffHeader {
     pub byte_order: ByteOrder,
-    pub magic: u16,       // Should be 42 (0x002A)
+    pub magic: u16,       // Should be 42 (0x002A) for TIFF or 85 (0x0055) for RW2
     pub ifd0_offset: u32, // Offset to first IFD
 }
 
@@ -126,11 +126,12 @@ impl TiffHeader {
             }
         };
 
-        // Read magic number (should be 42)
+        // Read magic number (should be 42 for standard TIFF or 85 for RW2)
+        // ExifTool: Panasonic RW2 files use magic number 85 (0x0055) instead of 42 (0x002A)
         let magic = byte_order.read_u16(data, 2)?;
-        if magic != 42 {
+        if magic != 42 && magic != 85 {
             return Err(ExifError::ParseError(format!(
-                "Invalid TIFF magic number: {magic} (expected 42)"
+                "Invalid TIFF magic number: {magic} (expected 42 or 85 for RW2)"
             )));
         }
 
