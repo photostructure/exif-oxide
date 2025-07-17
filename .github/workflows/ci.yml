@@ -39,6 +39,13 @@ jobs:
           restore-keys: |
             cargo-check-${{ runner.os }}-
 
+      - name: Setup ExifTool for integration tests
+        run: |
+          # Add bundled ExifTool to PATH (from git submodule)
+          echo "${{ github.workspace }}/third-party/exiftool" >> $GITHUB_PATH
+          # Verify ExifTool is working
+          third-party/exiftool/exiftool -ver
+
       - name: Run format check, clippy, and tests with integration tests
         run: make check
 
@@ -131,6 +138,14 @@ jobs:
           restore-keys: |
             cargo-${{ matrix.target }}-
             cargo-
+
+      - name: Setup ExifTool for integration tests
+        if: ${{ !matrix.use-cross && !contains(matrix.os, 'windows') }}
+        run: |
+          # Add bundled ExifTool to PATH (from git submodule) for Unix native builds only
+          echo "${{ github.workspace }}/third-party/exiftool" >> $GITHUB_PATH
+          # Verify ExifTool is working
+          third-party/exiftool/exiftool -ver
 
       - name: Build for target
         run: |
