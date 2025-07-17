@@ -129,7 +129,7 @@ impl TiffHeader {
         // Read magic number (should be 42 for standard TIFF, 85 for RW2, or ORF-specific values)
         // ExifTool: Different formats use different magic numbers:
         // - Standard TIFF: 42 (0x002A)
-        // - Panasonic RW2: 85 (0x0055) 
+        // - Panasonic RW2: 85 (0x0055)
         // - Olympus ORF: 20306 (0x4F52, "OR") or 21330 (0x5352, "SR")
         let magic = byte_order.read_u16(data, 2)?;
         if magic != 42 && magic != 85 && magic != 20306 && magic != 21330 {
