@@ -129,12 +129,12 @@ compat-gen-force:
 
 # Run ExifTool compatibility tests
 compat-test:
-	cargo test --test exiftool_compatibility_tests -- --nocapture
+	cargo test --test exiftool_compatibility_tests --features integration-tests -- --nocapture
 
 # Run MIME type compatibility tests
 test-mime-compat:
 	@echo "Running MIME type compatibility tests..."
-	cargo test --test mime_type_compatibility_tests -- --nocapture
+	cargo test --test mime_type_compatibility_tests --features integration-tests -- --nocapture
 
 # Generate reference data and run compatibility tests
 compat: compat-gen compat-test test-mime-compat

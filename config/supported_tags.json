@@ -35,13 +35,5 @@
   "EXIF:CreateDate",
   "EXIF:SubSecTimeOriginal",
   "EXIF:SubSecTime",
-  "EXIF:SubSecTimeDigitized",
-  "MakerNotes:Model",
-  "MakerNotes:Make",
-  "MakerNotes:DateTimeOriginal",
-  "MakerNotes:ISO",
-  "MakerNotes:ExposureTime",
-  "MakerNotes:FNumber",
-  "MakerNotes:FocalLength",
-  "MakerNotes:Lens"
+  "EXIF:SubSecTimeDigitized"
 ]

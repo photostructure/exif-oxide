@@ -5,7 +5,6 @@
 //!
 //! ExifTool Reference: lib/Image/ExifTool/Exif.pm IFD processing
 
-use crate::generated::TAG_BY_ID;
 use crate::tiff_types::{ByteOrder, IfdEntry, TiffFormat};
 use crate::types::{DirectoryInfo, ExifError, Result, TagValue};
 use crate::value_extraction;
@@ -149,9 +148,9 @@ impl ExifReader {
         // debug!("Processing tag {:#x} ({}) from {} (format: {:?}, count: {})",
         //        entry.tag_id, entry.tag_id, ifd_name, entry.format, entry.count);
 
-        // Look up tag definition in appropriate table based on IFD type
-        // ExifTool: Different IFDs use different tag tables
-        let tag_def = TAG_BY_ID.get(&(entry.tag_id as u32));
+        // Look up tag definition in appropriate table based on IFD type and file format
+        // ExifTool: Different IFDs use different tag tables, and RAW formats have specific tables
+        let tag_def = self.get_tag_definition(entry.tag_id, ifd_name);
 
         // Milestone 3: Support for common numeric formats with PrintConv
         // ExifTool: lib/Image/ExifTool/Exif.pm:6390-6570 value extraction
@@ -161,8 +160,7 @@ impl ExifReader {
                 // debug!("ASCII tag {:#x} extracted value: {:?} (length: {})", entry.tag_id, value, value.len());
                 if !value.is_empty() {
                     let tag_value = TagValue::String(value);
-                    let (final_value, _print) =
-                        self.apply_conversions(&tag_value, tag_def.copied());
+                    let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
                     trace!(
                         "Extracted ASCII tag {:#x} from {}: {:?}",
                         entry.tag_id,
@@ -176,7 +174,7 @@ impl ExifReader {
             TiffFormat::Byte => {
                 let value = value_extraction::extract_byte_value(&self.data, &entry)?;
                 let tag_value = TagValue::U8(value);
-                let (final_value, _print) = self.apply_conversions(&tag_value, tag_def.copied());
+                let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
                 trace!(
                     "Extracted BYTE tag {:#x} from {}: {:?}",
                     entry.tag_id,
@@ -189,7 +187,7 @@ impl ExifReader {
             TiffFormat::Short => {
                 let value = value_extraction::extract_short_value(&self.data, &entry, byte_order)?;
                 let tag_value = TagValue::U16(value);
-                let (final_value, _print) = self.apply_conversions(&tag_value, tag_def.copied());
+                let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
 
                 trace!(
                     "Extracted SHORT tag {:#x} from {}: {:?}",
@@ -219,13 +217,14 @@ impl ExifReader {
 
                 // Milestone 5: Check for SubDirectory tags (ExifIFD, GPS, etc.)
                 // ExifTool: SubDirectory processing for nested IFDs
-                if let Some(tag_def) = tag_def {
+                if let Some(_tag_def) = tag_def {
                     if self.is_subdirectory_tag(entry.tag_id) {
-                        self.process_subdirectory_tag(entry.tag_id, value, tag_def.name, None)?;
+                        let tag_name = self.get_tag_name(entry.tag_id, ifd_name);
+                        self.process_subdirectory_tag(entry.tag_id, value, &tag_name, None)?;
                     }
                 }
 
-                let (final_value, _print) = self.apply_conversions(&tag_value, tag_def.copied());
+                let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
                 trace!(
                     "Extracted LONG tag {:#x} from {}: {:?}",
                     entry.tag_id,
@@ -240,7 +239,7 @@ impl ExifReader {
                 // ExifTool: 2x uint32 values representing numerator/denominator
                 let value =
                     value_extraction::extract_rational_value(&self.data, &entry, byte_order)?;
-                let (final_value, _print) = self.apply_conversions(&value, tag_def.copied());
+                let (final_value, _print) = self.apply_conversions(&value, tag_def);
                 trace!(
                     "Extracted RATIONAL tag {:#x} from {}: {:?}",
                     entry.tag_id,
@@ -255,7 +254,7 @@ impl ExifReader {
                 // ExifTool: 2x int32 values representing numerator/denominator
                 let value =
                     value_extraction::extract_srational_value(&self.data, &entry, byte_order)?;
-                let (final_value, _print) = self.apply_conversions(&value, tag_def.copied());
+                let (final_value, _print) = self.apply_conversions(&value, tag_def);
                 trace!(
                     "Extracted SRATIONAL tag {:#x} from {}: {:?}",
                     entry.tag_id,
@@ -286,12 +285,12 @@ impl ExifReader {
                     let size = entry.count as usize;
 
                     // Get tag name from definition or use fallback for known subdirectory tags
-                    let tag_name = if let Some(tag_def) = tag_def {
-                        Some(tag_def.name)
+                    let tag_name = if let Some(_tag_def) = tag_def {
+                        Some(self.get_tag_name(entry.tag_id, ifd_name))
                     } else {
                         // Fallback names for known subdirectory tags without definitions
                         match entry.tag_id {
-                            0x927C => Some("MakerNotes"),
+                            0x927C => Some("MakerNotes".to_string()),
                             _ => {
                                 debug!("UNDEFINED subdirectory tag {:#x} has no tag definition and no fallback", entry.tag_id);
                                 None // Skip unknown subdirectory tags
@@ -311,30 +310,28 @@ impl ExifReader {
                         self.process_subdirectory_tag(
                             entry.tag_id,
                             offset as u32,
-                            name,
+                            &name,
                             Some(size),
                         )?;
                     }
                 } else {
                     // Regular UNDEFINED data - store as raw bytes for now
                     // TODO: Implement specific UNDEFINED tag processing as needed
-                    if let Some(tag_def) = tag_def {
-                        debug!(
-                            "UNDEFINED tag {:#x} ({}) not yet implemented (format 7, {} bytes)",
-                            entry.tag_id, tag_def.name, entry.count
-                        );
-                    }
+                    let tag_name = self.get_tag_name(entry.tag_id, ifd_name);
+                    debug!(
+                        "UNDEFINED tag {:#x} ({}) not yet implemented (format 7, {} bytes)",
+                        entry.tag_id, tag_name, entry.count
+                    );
                 }
             }
             _ => {
                 // For other formats, store raw value for now
                 // Future milestones will implement additional formats
-                if let Some(tag_def) = tag_def {
-                    self.warnings.push(format!(
-                        "Unimplemented format {:?} for tag {} ({})",
-                        entry.format, entry.tag_id, tag_def.name
-                    ));
-                }
+                let tag_name = self.get_tag_name(entry.tag_id, ifd_name);
+                self.warnings.push(format!(
+                    "Unimplemented format {:?} for tag {} ({})",
+                    entry.format, entry.tag_id, tag_name
+                ));
             }
         }
 
@@ -346,5 +343,42 @@ impl ExifReader {
     pub fn process_exif_ifd(&mut self, ifd_offset: usize, ifd_name: &str) -> Result<()> {
         // This is the existing parse_ifd logic, renamed for clarity
         self.parse_ifd(ifd_offset, ifd_name)
+    }
+
+    /// Get tag definition based on file type and IFD context
+    /// ExifTool: Uses format-specific tag tables (e.g., PanasonicRaw::Main for RW2 files)
+    fn get_tag_definition(
+        &self,
+        tag_id: u16,
+        _ifd_name: &str,
+    ) -> Option<&'static crate::generated::tags::TagDef> {
+        // Standard EXIF tag lookup
+        // ExifTool: Standard EXIF tag tables
+        crate::generated::TAG_BY_ID.get(&(tag_id as u32)).copied()
+    }
+
+    /// Get tag name based on file type and IFD context
+    /// ExifTool: Uses format-specific tag tables (e.g., PanasonicRaw::Main for RW2 files)  
+    fn get_tag_name(&self, tag_id: u16, ifd_name: &str) -> String {
+        // For RAW formats, use format-specific tag tables for main IFD
+        // ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main table for RW2 IFD0
+        if let Some(file_type) = &self.original_file_type {
+            if file_type == "RW2" && ifd_name == "IFD0" {
+                // Use Panasonic-specific tag definitions for IFD0 in RW2 files
+                // ExifTool: PanasonicRaw.pm %Image::ExifTool::PanasonicRaw::Main hash
+                if let Some(panasonic_name) =
+                    crate::raw::formats::panasonic::get_panasonic_tag_name(tag_id)
+                {
+                    return panasonic_name.to_string();
+                }
+                // Fall through to standard lookup if not a known Panasonic tag
+            }
+            // TODO: Add other RAW format handlers (MRW, etc.) as they're implemented
+        }
+
+        // Standard EXIF tag lookup for non-RAW formats or unknown tags
+        self.get_tag_definition(tag_id, ifd_name)
+            .map(|def| def.name.to_string())
+            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
     }
 }
