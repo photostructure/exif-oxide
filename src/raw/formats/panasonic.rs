@@ -358,11 +358,11 @@ impl RawFormatHandler for PanasonicRawHandler {
         reader.set_test_header(header.clone());
         reader.set_test_data(data.to_vec());
 
-        // Step 2: Process the main IFD using existing TIFF infrastructure  
+        // Step 2: Process the main IFD using existing TIFF infrastructure
         // ExifTool: Uses PanasonicRaw::Main table for IFD0 processing in RW2 files
         // We use "IFD0" name so our tag lookup correctly identifies this as Panasonic RW2 IFD0
         let dir_info = DirectoryInfo {
-            name: "IFD0".to_string(),  // Use IFD0 so get_tag_name() recognizes this as Panasonic context
+            name: "IFD0".to_string(), // Use IFD0 so get_tag_name() recognizes this as Panasonic context
             dir_start: header.ifd0_offset as usize,
             dir_len: 0,  // Will be calculated by IFD processing
             base: 0,     // Standard TIFF base
