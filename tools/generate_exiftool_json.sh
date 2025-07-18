@@ -19,6 +19,10 @@ SNAPSHOTS_DIR="$PROJECT_ROOT/generated/exiftool-json"
 SUPPORTED_TAGS=$(cat "$PROJECT_ROOT/config/supported_tags.json")
 ALLOWED_GROUPS='["EXIF", "File", "System"]'
 
+# Supported file extensions for compatibility testing
+# Add new extensions here as support is added
+SUPPORTED_EXTENSIONS=("jpg" "jpeg" "orf")
+
 echo "Generating ExifTool reference snapshots for exif-oxide compatibility testing"
 echo "Project root: $PROJECT_ROOT"
 echo "Snapshots directory: $SNAPSHOTS_DIR"
@@ -43,21 +47,46 @@ if [ "${1:-}" = "--force" ]; then
     rm -f "$SNAPSHOTS_DIR"/*.json
 fi
 
-# Create temporary file for all JPEG data
+# Create temporary file for all supported image data
 TEMP_JSON=$(mktemp)
 trap "rm -f '$TEMP_JSON'" EXIT
 
-echo "Scanning for JPEG files..."
+echo "Scanning for supported image files..."
+echo "Supported extensions: ${SUPPORTED_EXTENSIONS[*]}"
 
-# Get all JPEG files from both test directories
+# Build ExifTool filter condition dynamically from supported extensions
+# This avoids hardcoding MIME types and makes it easy to add new formats
+EXTENSION_CONDITIONS=()
+for ext in "${SUPPORTED_EXTENSIONS[@]}"; do
+    # Convert extension to ExifTool condition using exact match
+    # Handle both lower and upper case extensions (jpg, JPG, orf, ORF, etc.)
+    EXTENSION_CONDITIONS+=("\$FileTypeExtension eq \"${ext}\"")
+    if [ "$ext" != "${ext^^}" ]; then
+        EXTENSION_CONDITIONS+=("\$FileTypeExtension eq \"${ext^^}\"")
+    fi
+done
+
+# Join conditions with ' or ' properly for ExifTool
+FILTER_CONDITION=""
+for i in "${!EXTENSION_CONDITIONS[@]}"; do
+    if [ $i -eq 0 ]; then
+        FILTER_CONDITION="${EXTENSION_CONDITIONS[$i]}"
+    else
+        FILTER_CONDITION="$FILTER_CONDITION or ${EXTENSION_CONDITIONS[$i]}"
+    fi
+done
+
+echo "ExifTool filter: $FILTER_CONDITION"
+
+# Get all supported image files from both test directories
 # Note: Using default ExifTool behavior (rational arrays) for Milestone 6
 # Milestone 8c: Using -G flag to get group-prefixed tag names (e.g., "EXIF:Make", "GPS:GPSLatitude")
 
-if ! exiftool -r -json -struct -G -GPSLatitude\# -GPSLongitude\# -GPSAltitude\# -FileSize\# -all -if '$MIMEType eq "image/jpeg"' \
+if ! exiftool -r -json -struct -G -GPSLatitude\# -GPSLongitude\# -GPSAltitude\# -FileSize\# -all -if "$FILTER_CONDITION" \
     "$PROJECT_ROOT/test-images" \
     "$PROJECT_ROOT/third-party/exiftool/t/images" \
     > "$TEMP_JSON" 2>/dev/null; then
-    echo "Warning: ExifTool scan failed or no JPEG files found"
+    echo "Warning: ExifTool scan failed or no supported image files found"
     echo "Contents of temp file:"
     cat "$TEMP_JSON" || true
     exit 1
@@ -65,21 +94,21 @@ fi
 
 # Check if we got any data
 if [ ! -s "$TEMP_JSON" ] || [ "$(cat "$TEMP_JSON")" = "[]" ]; then
-    echo "No JPEG files found in test directories"
+    echo "No supported image files found in test directories"
     echo "Checked directories:"
     echo "  - $PROJECT_ROOT/test-images"
     echo "  - $PROJECT_ROOT/third-party/exiftool/t/images"
     exit 1
 fi
 
-echo "Processing JPEG files and generating snapshots..."
+echo "Processing supported image files and generating snapshots..."
 
 # Count files for progress
 TOTAL_FILES=$(jq length "$TEMP_JSON")
-echo "Found $TOTAL_FILES JPEG files"
+echo "Found $TOTAL_FILES supported image files"
 
 if [ "$TOTAL_FILES" -eq 0 ]; then
-    echo "No JPEG files to process"
+    echo "No supported image files to process"
     exit 1
 fi
 

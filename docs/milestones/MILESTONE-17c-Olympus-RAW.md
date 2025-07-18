@@ -299,6 +299,7 @@ const OLYMPUS_SECTION_TAGS: &[(u16, &str)] = &[
 - [ ] **Core Section Support**: Process 9 primary data sections (Equipment, CameraSettings, etc.)
 - [ ] **Generated Table Usage**: Use `lookup_olympus_camera_types()` and `lookup_olympus_lens_types()`
 - [ ] **CLI Integration**: `exif-oxide file.orf` works correctly
+- [ ] **🔧 Compat Script Update**: Add "orf" to `SUPPORTED_EXTENSIONS` in `tools/generate_exiftool_json.sh` and regenerate reference files with `make compat-gen`
 
 ### Validation Tests (Realistic Scope)
 

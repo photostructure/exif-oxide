@@ -436,6 +436,7 @@ fn test_idc_corruption_recovery() {
 - [ ] **IDC Recovery**: Detect and recover from IDC corruption
 - [ ] **139 Data Types**: All Sony ProcessBinaryData sections
 - [ ] **Offset Validation**: Robust validation prevents crashes
+- [ ] **🔧 Compat Script Update**: Add "arw", "sr2", "srf" to `SUPPORTED_EXTENSIONS` in `tools/generate_exiftool_json.sh` and regenerate reference files with `make compat-gen`
 
 ### Validation Tests
 
