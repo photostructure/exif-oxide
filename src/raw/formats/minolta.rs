@@ -366,6 +366,47 @@ impl MinoltaRawHandler {
             blocks,
         })
     }
+
+    /// Process TTW (TIFF Tags) block as TIFF subdirectory
+    /// ExifTool: MinoltaRaw.pm line 31 - TTW subdirectory with ProcessTIFF
+    fn process_ttw_block(
+        &self,
+        reader: &mut ExifReader,
+        ttw_data: &[u8],
+        byte_order: &ByteOrder,
+    ) -> Result<()> {
+        tracing::debug!("Processing TTW block with {} bytes", ttw_data.len());
+
+        // The TTW block contains TIFF data that should be processed by the TIFF processor
+        // ExifTool: MinoltaRaw.pm line 31 - TTW subdirectory ProcessTIFF
+
+        // Create a cursor for the TTW data to use as a reader
+        use std::io::Cursor;
+        let mut ttw_cursor = Cursor::new(ttw_data);
+
+        // Use our existing TIFF extraction to get the TIFF data
+        match crate::formats::extract_tiff_exif(&mut ttw_cursor) {
+            Ok(tiff_data) => {
+                // Process the TIFF data using our existing EXIF processor
+                // This should extract standard EXIF tags like Make, Model, ExposureTime, etc.
+                match reader.parse_exif_data(&tiff_data) {
+                    Ok(()) => {
+                        tracing::debug!("Successfully processed TTW TIFF data");
+                    }
+                    Err(e) => {
+                        tracing::warn!("Failed to process TTW TIFF data: {}", e);
+                        return Err(e);
+                    }
+                }
+            }
+            Err(e) => {
+                tracing::warn!("Failed to extract TIFF from TTW block: {}", e);
+                return Err(e);
+            }
+        }
+
+        Ok(())
+    }
 }
 
 impl RawFormatHandler for MinoltaRawHandler {
@@ -382,9 +423,13 @@ impl RawFormatHandler for MinoltaRawHandler {
                 // TTW block - TIFF tags (processed by standard TIFF processor)
                 // ExifTool: lines 31-38 - TTW subdirectory with ProcessTIFF
                 b"\0TTW" => {
-                    // TODO: Process as TIFF subdirectory when TIFF processor is available
-                    // For now, skip TTW blocks as they require TIFF infrastructure
-                    continue;
+                    // Process TTW block as TIFF subdirectory
+                    // ExifTool: MinoltaRaw.pm line 31 - TTW subdirectory ProcessTIFF
+                    if let Err(e) = self.process_ttw_block(reader, &block.data, &header.byte_order)
+                    {
+                        tracing::warn!("Failed to process TTW block: {}", e);
+                        // Continue processing other blocks even if TTW fails
+                    }
                 }
 
                 // PRD block - Picture Raw Data
@@ -551,8 +596,15 @@ impl MinoltaPrdProcessor {
     fn process(&self, reader: &mut ExifReader, data: &[u8], byte_order: &ByteOrder) -> Result<()> {
         // Process each tag definition
         for (&offset, tag_def) in &self.tag_definitions {
-            let tag_value =
+            let raw_value =
                 self.extract_value(data, offset as usize, &tag_def.format, byte_order)?;
+
+            // Apply PrintConv for enhanced metadata interpretation
+            // ExifTool: MinoltaRaw.pm PRD hash PrintConv fields
+            let tag_value = crate::implementations::minolta_raw::apply_prd_print_conv(
+                &tag_def.name,
+                &raw_value,
+            );
 
             // Store the tag with source info
             // ExifTool: GROUPS => { 0 => 'MakerNotes', 2 => 'Camera' }
@@ -821,8 +873,15 @@ impl MinoltaRifProcessor {
     fn process(&self, reader: &mut ExifReader, data: &[u8], byte_order: &ByteOrder) -> Result<()> {
         // Process each tag definition
         for (&offset, tag_def) in &self.tag_definitions {
-            let tag_value =
+            let raw_value =
                 self.extract_value(data, offset as usize, &tag_def.format, byte_order)?;
+
+            // Apply PrintConv for enhanced metadata interpretation
+            // ExifTool: MinoltaRaw.pm RIF hash PrintConv fields
+            let tag_value = crate::implementations::minolta_raw::apply_rif_print_conv(
+                &tag_def.name,
+                &raw_value,
+            );
 
             // Store the tag with source info
             // ExifTool: GROUPS => { 0 => 'MakerNotes', 2 => 'Image' }
