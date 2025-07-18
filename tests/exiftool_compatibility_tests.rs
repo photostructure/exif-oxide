@@ -449,6 +449,49 @@ fn compare_file_output(file_path: &str) -> Result<(), Box<dyn std::error::Error>
     let normalized_exiftool = normalize_for_comparison(filtered_exiftool, true);
     let normalized_exif_oxide = normalize_for_comparison(filtered_exif_oxide, false);
 
+    // TODO: Add manufacturer-specific missing MakerNotes tag documentation
+    let manufacturer_info = detect_manufacturer_from_path(file_path);
+    if let Some(info) = manufacturer_info {
+        match info.as_str() {
+            "sony" => {
+                // TODO: Missing Sony MakerNotes tags tracked in MILESTONE-17e-Sony-RAW
+                // Expected missing: MakerNotes:ExposureTime, MakerNotes:FocalLength
+                // These will be implemented with Sony.pm codegen extraction
+            }
+            "nikon" => {
+                // TODO: Missing Nikon MakerNotes tags - no milestone yet
+                // Expected missing: MakerNotes:ISO, MakerNotes:FocalLength, MakerNotes:Lens
+                // Requires Nikon-specific tag extraction implementation
+            }
+            "canon" => {
+                // TODO: Missing Canon MakerNotes tags tracked in MILESTONE-17d-Canon-RAW
+                // Expected missing: Various Canon-specific MakerNotes
+                // Includes Canon lens database and binary data extraction
+            }
+            "casio" => {
+                // TODO: Missing Casio MakerNotes - not yet scheduled
+                // Multiple Casio files failing, needs manufacturer-specific implementation
+            }
+            "minolta" => {
+                // TODO: Missing Minolta MakerNotes - not yet scheduled
+                // Both MRW and JPG files failing, needs Minolta-specific implementation
+            }
+            "pentax" => {
+                // TODO: Missing Pentax MakerNotes - mentioned in MILESTONE-MOAR-CODEGEN
+                // Pentax lens types and model mappings (~5-8 tables planned)
+            }
+            "kodak" => {
+                // TODO: Missing Kodak MakerNotes - not yet scheduled
+                // Kodak files failing, needs manufacturer-specific implementation
+            }
+            "panasonic" => {
+                // TODO: Missing Panasonic MakerNotes - mentioned in MILESTONE-MOAR-CODEGEN
+                // Panasonic lens databases and quality settings (~8-12 tables planned)
+            }
+            _ => {}
+        }
+    }
+
     // Compare JSON objects directly (ignores field order)
     if normalized_exiftool != normalized_exif_oxide {
         // Pretty print both for diff display
@@ -473,6 +516,44 @@ fn compare_file_output(file_path: &str) -> Result<(), Box<dyn std::error::Error>
     }
 
     Ok(())
+}
+
+/// Detect manufacturer from file path for TODO tracking
+/// Returns lowercase manufacturer name if detected in path
+fn detect_manufacturer_from_path(file_path: &str) -> Option<String> {
+    let path_lower = file_path.to_lowercase();
+
+    // Check directory names and file names for manufacturer hints
+    if path_lower.contains("sony") || path_lower.contains("ilce") || path_lower.contains("a7c") {
+        Some("sony".to_string())
+    } else if path_lower.contains("nikon")
+        || path_lower.contains("d70")
+        || path_lower.contains("d2hs")
+        || path_lower.contains("nikon_z8")
+    {
+        Some("nikon".to_string())
+    } else if path_lower.contains("canon")
+        || path_lower.contains("t3i")
+        || path_lower.contains("1dmk")
+        || path_lower.contains("eos")
+    {
+        Some("canon".to_string())
+    } else if path_lower.contains("casio")
+        || path_lower.contains("qv")
+        || path_lower.contains("ex-z")
+    {
+        Some("casio".to_string())
+    } else if path_lower.contains("minolta") || path_lower.contains("dimage") {
+        Some("minolta".to_string())
+    } else if path_lower.contains("pentax") || path_lower.contains("k-1") {
+        Some("pentax".to_string())
+    } else if path_lower.contains("kodak") || path_lower.contains("dc4800") {
+        Some("kodak".to_string())
+    } else if path_lower.contains("panasonic") || path_lower.contains("lumix") {
+        Some("panasonic".to_string())
+    } else {
+        None
+    }
 }
 
 /// Test ExifTool compatibility using stored snapshots
@@ -500,8 +581,13 @@ fn test_exiftool_compatibility() {
                             if let Some(source_file) =
                                 json.get("SourceFile").and_then(|f| f.as_str())
                             {
-                                // Extract the relative path portion from the absolute path
-                                let relative_part = if source_file.contains("/test-images/") {
+                                // Extract the relative path portion - handle both absolute and relative paths
+                                let relative_part = if source_file.starts_with("test-images/")
+                                    || source_file.starts_with("third-party/")
+                                {
+                                    // Already a relative path starting with test-images/ or third-party/
+                                    Some(source_file.to_string())
+                                } else if source_file.contains("/test-images/") {
                                     source_file
                                         .split("/test-images/")
                                         .last()

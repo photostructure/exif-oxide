@@ -20,9 +20,5 @@
   "EXIF:MeteringMode": "Multi-segment",
   "EXIF:Flash": "Fired",
   "EXIF:FocalLength": "6.0 mm",
-  "EXIF:ColorSpace": "sRGB",
-  "MakerNotes:DateTimeOriginal": "1998:05:01 21:33:18",
-  "MakerNotes:Make": "Canon",
-  "MakerNotes:Model": "Canon PowerShot A5",
-  "MakerNotes:FocalLength": "5 mm"
+  "EXIF:ColorSpace": "sRGB"
 }
