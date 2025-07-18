@@ -184,16 +184,42 @@ impl ExifReader {
                 "EXIF" // Default fallback
             };
 
-            // Look up tag name in unified table or use Canon-specific names
+            // Look up tag name using format-specific tables when appropriate
             let base_tag_name = if tag_id >= 0xC000 {
                 // Only check Canon names for synthetic Canon tag IDs
                 canon::get_canon_tag_name(tag_id).unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
             } else {
-                // Regular EXIF tags - use main tag table
-                TAG_BY_ID
-                    .get(&(tag_id as u32))
-                    .map(|tag_def| tag_def.name.to_string())
-                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                // Check for RAW format-specific tag names
+                // ExifTool: Uses format-specific tag tables (e.g., PanasonicRaw::Main for RW2 files)
+                if let Some(file_type) = &self.original_file_type {
+                    if file_type == "RW2" && group_name == "EXIF" {
+                        // Use Panasonic-specific tag definitions for RW2 files
+                        // ExifTool: PanasonicRaw.pm %Image::ExifTool::PanasonicRaw::Main hash
+                        if let Some(panasonic_name) =
+                            crate::raw::formats::panasonic::get_panasonic_tag_name(tag_id)
+                        {
+                            panasonic_name.to_string()
+                        } else {
+                            // Fall through to standard lookup if not a known Panasonic tag
+                            TAG_BY_ID
+                                .get(&(tag_id as u32))
+                                .map(|tag_def| tag_def.name.to_string())
+                                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                        }
+                    } else {
+                        // Regular EXIF tags for other formats - use main tag table
+                        TAG_BY_ID
+                            .get(&(tag_id as u32))
+                            .map(|tag_def| tag_def.name.to_string())
+                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                    }
+                } else {
+                    // No file type information - use standard lookup
+                    TAG_BY_ID
+                        .get(&(tag_id as u32))
+                        .map(|tag_def| tag_def.name.to_string())
+                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                }
             };
 
             // Format with group prefix
@@ -262,6 +288,7 @@ impl ExifReader {
                         name if name.starts_with("Olympus") => false, // Olympus maker notes - don't lookup GPS/EXIF tags
                         "MakerNotes" => false, // Generic maker notes - don't lookup GPS/EXIF tags
                         "KyoceraRaw" => false, // Kyocera RAW - don't lookup GPS/EXIF tags
+                        "IFD0" if self.original_file_type.as_deref() == Some("RW2") => false, // Panasonic RW2 IFD0 - use Panasonic table
                         _ => true, // Standard IFDs (IFD0, ExifIFD, GPS, etc.) - lookup in global table
                     }
                 });
@@ -278,7 +305,7 @@ impl ExifReader {
                     // Maker note tags - don't lookup in global table to avoid conflicts
                     // ExifTool: lib/Image/ExifTool/Exif.pm:6190-6191 inMakerNotes context detection
 
-                    // Check for Kyocera RAW tags first
+                    // Check for RAW format-specific tags
                     if let Some(source_info) = source_info {
                         if source_info.ifd_name == "KyoceraRaw" {
                             // Use Kyocera-specific tag name lookup
@@ -286,6 +313,13 @@ impl ExifReader {
                                 .map(|name| name.to_string())
                                 .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
                             (kyocera_tag_name, None)
+                        } else if source_info.ifd_name == "IFD0" && self.original_file_type.as_deref() == Some("RW2") {
+                            // Use Panasonic RW2-specific tag name lookup
+                            // ExifTool: PanasonicRaw.pm Main table for RW2 IFD0
+                            let panasonic_tag_name = crate::raw::formats::panasonic::get_panasonic_tag_name(tag_id)
+                                .map(|name| name.to_string())
+                                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                            (panasonic_tag_name, None)
                         } else {
                             // Other maker note tags
                             (format!("Tag_{tag_id:04X}"), None)

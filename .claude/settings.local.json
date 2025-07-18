@@ -189,7 +189,8 @@
       "Bash(git log:*)",
       "Bash(RUST_LOG=debug cargo run -- ../photostructure/examples/Raw/oly.ORF)",
       "Bash(git stash show:*)",
-      "Bash(./tools/generate_exiftool_json.sh:*)"
+      "Bash(./tools/generate_exiftool_json.sh:*)",
+      "Bash(yamllint:*)"
     ],
     "deny": []
   }
