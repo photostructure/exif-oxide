@@ -318,6 +318,32 @@ impl PanasonicRawHandler {
 
         EntryBasedOffsetProcessor::new(offset_rules)
     }
+
+    /// Apply PrintConv to extracted Panasonic RAW tags
+    /// ExifTool: PanasonicRaw.pm Main hash PrintConv fields
+    fn apply_print_conv_to_extracted_tags(&self, reader: &mut ExifReader) -> Result<()> {
+        // Get the currently extracted tags to apply PrintConv
+        let extracted_tags: Vec<(u16, TagValue)> = reader
+            .get_extracted_tags()
+            .iter()
+            .map(|(&k, v)| (k, v.clone()))
+            .collect();
+
+        // Apply PrintConv to applicable tags
+        for (tag_id, raw_value) in extracted_tags {
+            let converted_value =
+                crate::implementations::panasonic_raw::apply_panasonic_raw_print_conv_by_tag_id(
+                    tag_id, &raw_value,
+                );
+
+            // Only update if PrintConv actually changed the value
+            if converted_value != raw_value {
+                reader.extracted_tags.insert(tag_id, converted_value);
+            }
+        }
+
+        Ok(())
+    }
 }
 
 impl RawFormatHandler for PanasonicRawHandler {
@@ -349,6 +375,10 @@ impl RawFormatHandler for PanasonicRawHandler {
         // Step 3: Apply entry-based offset processing to extracted IFD entries
         // ExifTool: PanasonicRaw.pm applies additional processing for specific tags like JpgFromRaw
         self.process_entry_based_offsets(reader, data)?;
+
+        // Step 4: Apply PrintConv for enhanced metadata interpretation
+        // ExifTool: PanasonicRaw.pm Main hash PrintConv fields
+        self.apply_print_conv_to_extracted_tags(reader)?;
 
         Ok(())
     }
