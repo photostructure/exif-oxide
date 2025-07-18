@@ -109,7 +109,6 @@ for my $tag_id (sort keys %$table_ref) {
                         tag_name => $tag_name,
                         key_type => $key_type,
                         entries => \%entries,
-                        entry_count => scalar(keys %entries),
                     };
                     
                     push @inline_printconvs, $inline_printconv;
@@ -194,6 +193,7 @@ sub determine_key_type {
     my $has_large = 0;
     my $has_very_large = 0;
     my $has_string = 0;
+    my $has_negative_large = 0;
     
     for my $key (@keys) {
         if ($key !~ /^-?\d+$/) {
@@ -201,6 +201,10 @@ sub determine_key_type {
             $has_string = 1;
         } elsif ($key < 0) {
             $has_negative = 1;
+            # Check if negative value exceeds i16 range
+            if ($key < -32768) {
+                $has_negative_large = 1;
+            }
         } elsif ($key > 2147483647) {
             # Exceeds i32 max
             $has_very_large = 1;
@@ -214,10 +218,10 @@ sub determine_key_type {
         return "String";
     } elsif ($has_very_large) {
         return "u32";  # Unsigned 32-bit for very large values
-    } elsif ($has_negative && !$has_large) {
-        return "i16";  # Signed 16-bit
-    } elsif ($has_large || $has_negative) {
+    } elsif ($has_negative_large || $has_large) {
         return "i32";  # Signed 32-bit for safety
+    } elsif ($has_negative) {
+        return "i16";  # Signed 16-bit (fits in range)
     } elsif (grep { $_ > 255 } @keys) {
         return "u16";  # Unsigned 16-bit
     } else {
