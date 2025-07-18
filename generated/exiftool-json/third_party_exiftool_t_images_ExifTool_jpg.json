@@ -4,6 +4,8 @@
   "File:FileName": "ExifTool.jpg",
   "File:Directory": "third-party/exiftool/t/images",
   "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileType": "JPEG",
+  "File:FileTypeExtension": "jpg",
   "File:MIMEType": "image/jpeg",
   "EXIF:Make": "FUJIFILM",
   "EXIF:Model": "FinePix2400Zoom",
@@ -18,5 +20,9 @@
   "EXIF:MeteringMode": "Multi-segment",
   "EXIF:Flash": "Fired",
   "EXIF:FocalLength": "6.0 mm",
-  "EXIF:ColorSpace": "sRGB"
+  "EXIF:ColorSpace": "sRGB",
+  "MakerNotes:DateTimeOriginal": "1998:05:01 21:33:18",
+  "MakerNotes:Make": "Canon",
+  "MakerNotes:Model": "Canon PowerShot A5",
+  "MakerNotes:FocalLength": "5 mm"
 }

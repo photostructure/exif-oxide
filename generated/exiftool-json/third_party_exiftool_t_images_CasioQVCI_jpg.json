@@ -4,5 +4,8 @@
   "File:FileName": "CasioQVCI.jpg",
   "File:Directory": "third-party/exiftool/t/images",
   "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
-  "File:MIMEType": "image/jpeg"
+  "File:FileType": "JPEG",
+  "File:FileTypeExtension": "jpg",
+  "File:MIMEType": "image/jpeg",
+  "MakerNotes:DateTimeOriginal": "1998:10:24 12:08:57"
 }
