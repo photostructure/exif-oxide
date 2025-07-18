@@ -49,6 +49,34 @@
     {
       "table_name": "FaceDetect2",
       "description": "Canon face detection information version 2"
+    },
+    {
+      "table_name": "TimeInfo",
+      "description": "Canon time information - timezone cities (34 PrintConv entries)"
+    },
+    {
+      "table_name": "Processing",
+      "description": "Canon processing settings - tone curve, sharpness frequency"
+    },
+    {
+      "table_name": "ModifiedInfo", 
+      "description": "Canon modified processing information - modified tone curve and sharpness"
+    },
+    {
+      "table_name": "Ambience",
+      "description": "Canon ambience modes - 9 artistic processing modes"
+    },
+    {
+      "table_name": "ContrastInfo",
+      "description": "Canon contrast information - intelligent contrast settings"
+    },
+    {
+      "table_name": "PSInfo",
+      "description": "Canon picture style info - filter effects, toning for monochrome"
+    },
+    {
+      "table_name": "AFConfig",
+      "description": "Canon AF configuration - advanced autofocus settings for modern bodies"
     }
   ]
 }
