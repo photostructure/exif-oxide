@@ -20,7 +20,7 @@ pub fn prd_storage_method_print_conv(val: &TagValue) -> TagValue {
             return TagValue::string(description);
         }
     }
-    TagValue::string(format!("Unknown ({})", val))
+    TagValue::string(format!("Unknown ({val})"))
 }
 
 /// Minolta PRD BayerPattern PrintConv
@@ -34,7 +34,7 @@ pub fn prd_bayer_pattern_print_conv(val: &TagValue) -> TagValue {
             return TagValue::string(description);
         }
     }
-    TagValue::string(format!("Unknown ({})", val))
+    TagValue::string(format!("Unknown ({val})"))
 }
 
 /// Minolta RIF ProgramMode PrintConv
@@ -48,7 +48,7 @@ pub fn rif_program_mode_print_conv(val: &TagValue) -> TagValue {
             return TagValue::string(description);
         }
     }
-    TagValue::string(format!("Unknown ({})", val))
+    TagValue::string(format!("Unknown ({val})"))
 }
 
 /// Minolta RIF ZoneMatching PrintConv
@@ -62,7 +62,7 @@ pub fn rif_zone_matching_print_conv(val: &TagValue) -> TagValue {
             return TagValue::string(description);
         }
     }
-    TagValue::string(format!("Unknown ({})", val))
+    TagValue::string(format!("Unknown ({val})"))
 }
 
 /// Minolta RIF ZoneMatching74 PrintConv (for tag offset 74)
@@ -76,7 +76,7 @@ pub fn rif_zone_matching_74_print_conv(val: &TagValue) -> TagValue {
             return TagValue::string(description);
         }
     }
-    TagValue::string(format!("Unknown ({})", val))
+    TagValue::string(format!("Unknown ({val})"))
 }
 
 /// Apply PrintConv to Minolta PRD block tags

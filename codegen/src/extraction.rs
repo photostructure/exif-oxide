@@ -29,6 +29,8 @@ enum SpecialExtractor {
     RegexPatterns,
     BooleanSet,
     InlinePrintConv,
+    TagDefinitions,
+    CompositeTags,
 }
 
 #[derive(Debug)]
@@ -102,7 +104,9 @@ fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig
         "file_type_lookup.json", 
         "regex_patterns.json",
         "boolean_set.json",
-        "inline_printconv.json"
+        "inline_printconv.json",
+        "tag_definitions.json",
+        "composite_tags.json"
     ];
     
     for config_file in &config_files {
@@ -136,31 +140,43 @@ fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
     let source_path = config["source"].as_str()
         .ok_or_else(|| anyhow::anyhow!("Missing 'source' field in {}", config_path.display()))?;
     
-    let tables = config["tables"].as_array()
-        .ok_or_else(|| anyhow::anyhow!("Missing 'tables' field in {}", config_path.display()))?;
-    
-    if tables.is_empty() {
-        return Ok(None);
-    }
-    
-    // For inline_printconv, we look for table_name instead of hash_name
-    let is_inline_printconv = config_path.file_name()
+    let config_type = config_path.file_name()
         .and_then(|n| n.to_str())
-        .map(|n| n == "inline_printconv.json")
-        .unwrap_or(false);
+        .unwrap_or("");
     
-    let hash_names: Vec<String> = if is_inline_printconv {
-        // For inline PrintConv, we extract table names
-        tables.iter()
-            .filter_map(|table| table["table_name"].as_str())
-            .map(|name| name.to_string())
-            .collect()
-    } else {
-        // For other configs, we extract hash names
-        tables.iter()
-            .filter_map(|table| table["hash_name"].as_str())
-            .map(|name| name.trim_start_matches('%').to_string())
-            .collect()
+    let hash_names: Vec<String> = match config_type {
+        "tag_definitions.json" | "composite_tags.json" => {
+            // For tag definitions and composite tags, we use the table name from config root
+            let table = config["table"].as_str()
+                .ok_or_else(|| anyhow::anyhow!("Missing 'table' field in {}", config_path.display()))?;
+            vec![table.to_string()]
+        },
+        _ => {
+            // For other configs, we need the tables array
+            let tables = config["tables"].as_array()
+                .ok_or_else(|| anyhow::anyhow!("Missing 'tables' field in {}", config_path.display()))?;
+            
+            if tables.is_empty() {
+                return Ok(None);
+            }
+            
+            match config_type {
+                "inline_printconv.json" => {
+                    // For inline PrintConv, we extract table names
+                    tables.iter()
+                        .filter_map(|table| table["table_name"].as_str())
+                        .map(|name| name.to_string())
+                        .collect()
+                },
+                _ => {
+                    // For other configs, we extract hash names
+                    tables.iter()
+                        .filter_map(|table| table["hash_name"].as_str())
+                        .map(|name| name.trim_start_matches('%').to_string())
+                        .collect()
+                }
+            }
+        }
     };
     
     if hash_names.is_empty() {
@@ -186,8 +202,8 @@ fn process_module_config(config: &ModuleConfig, extract_dir: &Path) -> Result<()
     let repo_root = Path::new(REPO_ROOT_FROM_CODEGEN);
     let module_path = repo_root.join(&config.source_path);
     
-    // Only patch if we're extracting hashes (not for inline_printconv)
-    if config.module_name != "inline_printconv" {
+    // Only patch if we're extracting hashes (not for inline_printconv, tag_definitions, or composite_tags)
+    if !matches!(config.module_name.as_str(), "inline_printconv" | "tag_definitions" | "composite_tags") {
         patching::patch_module(&module_path, &config.hash_names)?;
     }
     
@@ -204,6 +220,12 @@ fn process_module_config(config: &ModuleConfig, extract_dir: &Path) -> Result<()
         }
         Some(SpecialExtractor::InlinePrintConv) => {
             run_inline_printconv_extractor(config, extract_dir)?;
+        }
+        Some(SpecialExtractor::TagDefinitions) => {
+            run_tag_definitions_extractor(config, extract_dir)?;
+        }
+        Some(SpecialExtractor::CompositeTags) => {
+            run_composite_tags_extractor_new(config, extract_dir)?;
         }
         None => {
             run_extraction_script(config, extract_dir)?;
@@ -300,6 +322,8 @@ fn needs_special_extractor_by_name(config_name: &str) -> Option<SpecialExtractor
         "regex_patterns" => Some(SpecialExtractor::RegexPatterns),
         "boolean_set" => Some(SpecialExtractor::BooleanSet),
         "inline_printconv" => Some(SpecialExtractor::InlinePrintConv),
+        "tag_definitions" => Some(SpecialExtractor::TagDefinitions),
+        "composite_tags" => Some(SpecialExtractor::CompositeTags),
         _ => None,
     }
 }
@@ -374,80 +398,109 @@ fn run_inline_printconv_extractor(config: &ModuleConfig, extract_dir: &Path) -> 
     Ok(())
 }
 
-/// Extract tag definitions (tag tables and composite tags)
-/// These are global extractions that don't use the config system
-pub fn extract_tag_definitions() -> Result<()> {
-    println!("\n📏 Extracting tag definitions...");
+
+fn run_tag_definitions_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+    // Read the config file to get filter settings
+    let config_path = format!("config/{}_pm/tag_definitions.json", 
+        config.source_path.split('/').last()
+            .and_then(|name| name.strip_suffix(".pm"))
+            .unwrap_or("Unknown"));
     
-    let generated_dir = Path::new("generated");
-    fs::create_dir_all(generated_dir)?;
+    let config_content = std::fs::read_to_string(&config_path)
+        .with_context(|| format!("Failed to read config file: {}", config_path))?;
+    let config_json: serde_json::Value = serde_json::from_str(&config_content)
+        .with_context(|| format!("Failed to parse config file: {}", config_path))?;
     
-    // Extract tag tables
-    println!("  📋 Extracting tag tables...");
-    run_tag_tables_extractor(generated_dir)?;
+    // Extract filter settings
+    let mut args = vec![];
+    if let Some(filters) = config_json.get("filters").and_then(|f| f.as_object()) {
+        if let Some(threshold) = filters.get("frequency_threshold").and_then(|t| t.as_f64()) {
+            args.push("--frequency-threshold".to_string());
+            args.push(threshold.to_string());
+        }
+        if let Some(true) = filters.get("include_mainstream").and_then(|m| m.as_bool()) {
+            args.push("--include-mainstream".to_string());
+        }
+        if let Some(groups) = filters.get("groups").and_then(|g| g.as_array()) {
+            let group_strs: Vec<String> = groups.iter()
+                .filter_map(|g| g.as_str())
+                .map(|s| s.to_string())
+                .collect();
+            if !group_strs.is_empty() {
+                args.push("--groups".to_string());
+                args.push(group_strs.join(","));
+            }
+        }
+    }
     
-    // Extract composite tags
-    println!("  🔗 Extracting composite tags...");
-    run_composite_tags_extractor(generated_dir)?;
+    // Generate output filename
+    let table_name = &config.hash_names[0]; // table name is stored in hash_names for these configs
+    let module_name = config.source_path.split('/').last()
+        .and_then(|name| name.strip_suffix(".pm"))
+        .unwrap_or("unknown");
+    let output_file = format!("{}_tag_definitions.json", module_name.to_lowercase());
     
-    println!("  ✓ Tag definition extraction complete");
-    Ok(())
+    let extractor_config = ExtractorConfig {
+        script_name: "tag_definitions.pl",
+        output_file: Some(&output_file),
+        hash_args: vec![table_name.clone()],
+    };
+    
+    let mut final_args = extractor_config.hash_args.clone();
+    final_args.extend(args);
+    
+    let modified_config = ExtractorConfig {
+        hash_args: final_args,
+        ..extractor_config
+    };
+    
+    run_extractor(config, extract_dir, modified_config)
 }
 
-fn run_tag_tables_extractor(output_dir: &Path) -> Result<()> {
-    let output_file = output_dir.join("tag_tables.json");
+fn run_composite_tags_extractor_new(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+    // Read the config file to get filter settings
+    let config_path = format!("config/{}_pm/composite_tags.json", 
+        config.source_path.split('/').last()
+            .and_then(|name| name.strip_suffix(".pm"))
+            .unwrap_or("Unknown"));
     
-    let mut cmd = Command::new("perl");
-    cmd.arg("extractors/tag_tables.pl")
-       .stdout(fs::File::create(&output_file)?);
+    let config_content = std::fs::read_to_string(&config_path)
+        .with_context(|| format!("Failed to read config file: {}", config_path))?;
+    let config_json: serde_json::Value = serde_json::from_str(&config_content)
+        .with_context(|| format!("Failed to parse config file: {}", config_path))?;
     
-    setup_perl_environment(&mut cmd);
-    
-    println!("    Running: perl tag_tables.pl > tag_tables.json");
-    
-    let output = cmd.output()
-        .with_context(|| "Failed to execute tag_tables.pl")?;
-    
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        return Err(anyhow::anyhow!("tag_tables.pl failed: {}", stderr));
+    // Extract filter settings
+    let mut args = vec![];
+    if let Some(filters) = config_json.get("filters").and_then(|f| f.as_object()) {
+        if let Some(threshold) = filters.get("frequency_threshold").and_then(|t| t.as_f64()) {
+            args.push("--frequency-threshold".to_string());
+            args.push(threshold.to_string());
+        }
+        if let Some(true) = filters.get("include_mainstream").and_then(|m| m.as_bool()) {
+            args.push("--include-mainstream".to_string());
+        }
     }
     
-    // Print any stderr output (progress messages)
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    if !stderr.is_empty() {
-        print!("{}", stderr);
-    }
+    // Generate output filename
+    let table_name = &config.hash_names[0]; // table name is stored in hash_names for these configs
+    let module_name = config.source_path.split('/').last()
+        .and_then(|name| name.strip_suffix(".pm"))
+        .unwrap_or("unknown");
+    let output_file = format!("{}_composite_tags.json", module_name.to_lowercase());
     
-    println!("    Created tag_tables.json");
-    Ok(())
-}
-
-fn run_composite_tags_extractor(output_dir: &Path) -> Result<()> {
-    let output_file = output_dir.join("composite_tags.json");
+    let extractor_config = ExtractorConfig {
+        script_name: "composite_tags.pl",
+        output_file: Some(&output_file),
+        hash_args: vec![table_name.clone()],
+    };
     
-    let mut cmd = Command::new("perl");
-    cmd.arg("extractors/composite_tags.pl")
-       .stdout(fs::File::create(&output_file)?);
+    let mut final_args = extractor_config.hash_args.clone();
+    final_args.extend(args);
     
-    setup_perl_environment(&mut cmd);
+    let modified_config = ExtractorConfig {
+        hash_args: final_args,
+        ..extractor_config
+    };
     
-    println!("    Running: perl composite_tags.pl > composite_tags.json");
-    
-    let output = cmd.output()
-        .with_context(|| "Failed to execute composite_tags.pl")?;
-    
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        return Err(anyhow::anyhow!("composite_tags.pl failed: {}", stderr));
-    }
-    
-    // Print any stderr output (progress messages)
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    if !stderr.is_empty() {
-        print!("{}", stderr);
-    }
-    
-    println!("    Created composite_tags.json");
-    Ok(())
+    run_extractor(config, extract_dir, modified_config)
 }

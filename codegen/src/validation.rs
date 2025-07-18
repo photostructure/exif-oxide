@@ -81,6 +81,8 @@ pub fn validate_config_directory(config_dir: &Path, schemas_dir: &Path) -> Resul
         "print_conv.json",
         "regex_patterns.json",
         "simple_table.json",
+        "tag_definitions.json",
+        "composite_tags.json",
     ];
 
     for config_file in &config_files {
