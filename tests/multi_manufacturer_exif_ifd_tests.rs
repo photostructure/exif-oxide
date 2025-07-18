@@ -18,6 +18,9 @@
 use exif_oxide::formats::extract_metadata;
 use std::collections::HashMap;
 
+mod common;
+use common::CANON_T3I_JPG;
+
 /// Helper to test group assignment for any manufacturer's image
 fn test_manufacturer_group_assignment(
     image_path: &str,
@@ -83,7 +86,7 @@ fn test_manufacturer_group_assignment(
 #[test]
 fn test_canon_exif_ifd_group_assignment() {
     let canon_images = [
-        "test-images/canon/Canon_T3i.JPG",
+        CANON_T3I_JPG,
         "test-images/canon/Canon_T3i.CR2",
         "test-images/canon/canon_eos_r50v_01.jpg",
         "test-images/canon/canon_eos_r5_mark_ii_10.jpg",
@@ -266,7 +269,7 @@ fn test_other_manufacturers_exif_ifd() {
 #[test]
 fn test_cross_manufacturer_consistency() {
     let test_images = [
-        ("Canon", "test-images/canon/Canon_T3i.JPG"),
+        ("Canon", CANON_T3I_JPG),
         ("Nikon", "test-images/nikon/nikon_z8_73.jpg"),
         ("Sony", "test-images/sony/sony_a7c_ii_02.jpg"),
         ("Fujifilm", "test-images/fujifilm/fuji_xe5_02.jpg"),
@@ -327,7 +330,7 @@ fn test_cross_manufacturer_consistency() {
 #[test]
 fn test_maker_notes_exif_ifd_interaction() {
     let images_with_maker_notes = [
-        ("Canon", "test-images/canon/Canon_T3i.JPG"),
+        ("Canon", CANON_T3I_JPG),
         ("Nikon", "test-images/nikon/nikon_z8_73.jpg"),
         ("Sony", "test-images/sony/sony_a7c_ii_02.jpg"),
     ];
@@ -394,7 +397,7 @@ fn test_exif_ifd_across_file_formats() {
     let format_pairs = [
         (
             "Canon JPG",
-            "test-images/canon/Canon_T3i.JPG",
+            CANON_T3I_JPG,
             "Canon CR2",
             "test-images/canon/Canon_T3i.CR2",
         ),
@@ -492,7 +495,7 @@ fn test_multi_manufacturer_summary() {
     println!("Multi-manufacturer ExifIFD support summary:");
 
     let all_test_images = [
-        ("Canon", "test-images/canon/Canon_T3i.JPG"),
+        ("Canon", CANON_T3I_JPG),
         ("Nikon", "test-images/nikon/nikon_z8_73.jpg"),
         ("Sony", "test-images/sony/sony_a7c_ii_02.jpg"),
         ("Fujifilm", "test-images/fujifilm/fuji_xe5_02.jpg"),
