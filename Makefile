@@ -139,6 +139,8 @@ test-mime-compat:
 # Generate reference data and run compatibility tests
 compat: compat-gen compat-test test-mime-compat
 
+compat-force: compat-gen-force compat-test test-mime-compat
+
 # Show available make targets
 help:
 	@echo "exif-oxide Makefile targets:"

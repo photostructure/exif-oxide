@@ -17,11 +17,11 @@ SNAPSHOTS_DIR="$PROJECT_ROOT/generated/exiftool-json"
 # Single source of truth now maintained in config/supported_tags.json (Milestone 8a)
 # Milestone 8c: Now using group prefixes, need to specify allowed groups
 SUPPORTED_TAGS=$(cat "$PROJECT_ROOT/config/supported_tags.json")
-ALLOWED_GROUPS='["EXIF", "File", "System"]'
+ALLOWED_GROUPS='["EXIF", "File", "System", "MakerNotes"]'
 
 # Supported file extensions for compatibility testing
 # Add new extensions here as support is added
-SUPPORTED_EXTENSIONS=("jpg" "jpeg" "orf")
+SUPPORTED_EXTENSIONS=("jpg" "jpeg" "orf" "raw" "mrw" "rw2")
 
 echo "Generating ExifTool reference snapshots for exif-oxide compatibility testing"
 echo "Project root: $PROJECT_ROOT"
@@ -76,7 +76,7 @@ for i in "${!EXTENSION_CONDITIONS[@]}"; do
     fi
 done
 
-echo "ExifTool filter: $FILTER_CONDITION"
+# Debug: echo "ExifTool filter: $FILTER_CONDITION"
 
 # Get all supported image files from both test directories
 # Note: Using default ExifTool behavior (rational arrays) for Milestone 6

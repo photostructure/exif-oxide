@@ -4,6 +4,8 @@
   "File:FileName": "test.orf",
   "File:Directory": "test-images/olympus",
   "File:FileModifyDate": "2025:07:18 10:41:50-07:00",
+  "File:FileType": "ORF",
+  "File:FileTypeExtension": "orf",
   "File:MIMEType": "image/x-olympus-orf",
   "EXIF:Make": "OLYMPUS IMAGING CORP.",
   "EXIF:Model": "E-M1",
