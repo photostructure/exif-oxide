@@ -16,16 +16,14 @@
 
 use exif_oxide::formats::extract_metadata;
 
+mod common;
+use common::CANON_T3I_JPG;
+
 /// Test that ExifIFD processing maintains proper context
 /// The processor should know when it's processing ExifIFD vs main IFD
 #[test]
 fn test_exif_ifd_context_tracking() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Verify we can distinguish between IFD contexts by examining tag groups
     let mut ifd0_tags = 0;
@@ -66,12 +64,7 @@ fn test_exif_ifd_context_tracking() {
 /// ExifTool requires ExifVersion tag (0x9000) for valid ExifIFD
 #[test]
 fn test_exif_ifd_validation_rules() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Look for ExifVersion tag - mandatory for ExifIFD
     let exif_version = exif_data.get_tag_by_name("ExifVersion");
@@ -136,12 +129,7 @@ fn test_exif_ifd_validation_rules() {
 /// ExifTool: ExifIFD inherits base offset from main IFD
 #[test]
 fn test_subdirectory_offset_inheritance() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Look for subdirectory tags that should have been processed
     let _subdirectory_indicators = [
@@ -199,12 +187,7 @@ fn test_subdirectory_offset_inheritance() {
 /// The processor should handle ExifIFD tags differently from main IFD tags
 #[test]
 fn test_processor_context_awareness() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Tags that exist in both main IFD and ExifIFD contexts with different meanings
     let context_sensitive_tags = [
@@ -246,12 +229,7 @@ fn test_processor_context_awareness() {
 /// ExifTool uses PROCESSED hash to prevent infinite loops
 #[test]
 fn test_exif_ifd_recursion_prevention() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Check for warnings about circular references or recursion
     let recursion_warnings: Vec<_> = exif_data
@@ -283,12 +261,7 @@ fn test_exif_ifd_recursion_prevention() {
 /// Test ExifIFD-specific tag processing vs main IFD tag processing
 #[test]
 fn test_exif_ifd_vs_main_ifd_processing() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Collect statistics about tag processing by group1
     let mut tag_stats = std::collections::HashMap::new();
@@ -336,12 +309,7 @@ fn test_exif_ifd_vs_main_ifd_processing() {
 /// Test that ExifIFD subdirectory is properly recognized and processed
 #[test]
 fn test_exif_ifd_subdirectory_recognition() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Look for evidence that ExifIFD subdirectory was recognized
     // The presence of ExifIFD-specific tags indicates the subdirectory was found

@@ -20,6 +20,9 @@ use serde_json::Value;
 use std::collections::{HashMap, HashSet};
 use std::process::Command;
 
+mod common;
+use common::CANON_T3I_JPG;
+
 /// Helper to get ExifTool group assignments using various -G flags
 #[derive(Debug)]
 struct ExifToolGroupData {
@@ -104,7 +107,7 @@ impl ExifToolGroupData {
 /// Test Group0 (format family) assignments match ExifTool
 #[test]
 fn test_group0_assignments_match_exiftool() {
-    let image_path = "test-images/canon/Canon_T3i.JPG";
+    let image_path = CANON_T3I_JPG;
 
     let exiftool_groups = match ExifToolGroupData::extract_from_exiftool(image_path) {
         Some(data) => data,
@@ -169,7 +172,7 @@ fn test_group0_assignments_match_exiftool() {
 /// Test Group1 (subdirectory location) assignments match ExifTool  
 #[test]
 fn test_group1_assignments_match_exiftool() {
-    let image_path = "test-images/canon/Canon_T3i.JPG";
+    let image_path = CANON_T3I_JPG;
 
     let exiftool_groups = match ExifToolGroupData::extract_from_exiftool(image_path) {
         Some(data) => data,
@@ -258,7 +261,7 @@ fn test_group1_assignments_match_exiftool() {
 /// Test Group2 (full hierarchy) assignments for complex cases
 #[test]
 fn test_group2_full_hierarchy_compatibility() {
-    let image_path = "test-images/canon/Canon_T3i.JPG";
+    let image_path = CANON_T3I_JPG;
 
     let exiftool_groups = match ExifToolGroupData::extract_from_exiftool(image_path) {
         Some(data) => data,
@@ -326,7 +329,7 @@ fn test_group2_full_hierarchy_compatibility() {
 /// Test group assignment distribution and categories
 #[test]
 fn test_group_assignment_distribution() {
-    let image_path = "test-images/canon/Canon_T3i.JPG";
+    let image_path = CANON_T3I_JPG;
 
     let exiftool_groups = match ExifToolGroupData::extract_from_exiftool(image_path) {
         Some(data) => data,
@@ -410,7 +413,7 @@ fn test_group_assignment_distribution() {
 /// Test specific ExifIFD tags that are key indicators of correct grouping
 #[test]
 fn test_key_exif_ifd_tag_grouping() {
-    let image_path = "test-images/canon/Canon_T3i.JPG";
+    let image_path = CANON_T3I_JPG;
 
     let exiftool_groups = match ExifToolGroupData::extract_from_exiftool(image_path) {
         Some(data) => data,

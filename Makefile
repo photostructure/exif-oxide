@@ -117,7 +117,7 @@ audit:
 
 # Pre-commit checks: do everything: update deps, codegen, fix code, lint, test, audit, and build
 precommit: update perl-deps codegen check-extractors fix lint yamllint compat-gen test codegen-test audit build
-	@echo "✅ precommit success" 
+	@echo "✅ precommit successful 🥳" 
 
 # Generate ExifTool JSON reference data for compatibility testing (only missing files)
 compat-gen:

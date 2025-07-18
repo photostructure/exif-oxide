@@ -14,16 +14,14 @@
 use exif_oxide::formats::extract_metadata;
 use exif_oxide::types::TagValue;
 
+mod common;
+use common::CANON_T3I_JPG;
+
 /// Test ExifVersion tag requirement for valid ExifIFD
 /// ExifTool: ExifVersion (0x9000) is mandatory for valid ExifIFD
 #[test]
 fn test_exif_version_requirement() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Look for ExifVersion tag
     let exif_version = exif_data.get_tag_by_name("ExifVersion");
@@ -106,12 +104,7 @@ fn test_exif_version_requirement() {
 /// ExifTool: FlashpixVersion (0xA000) validation in ExifIFD context
 #[test]
 fn test_flashpix_version_validation() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Look for FlashpixVersion tag
     let flashpix_version = exif_data.get_tag_by_name("FlashpixVersion");
@@ -173,12 +166,7 @@ fn test_flashpix_version_validation() {
 /// ExifTool: ColorSpace (0xA001) validation and interpretation
 #[test]
 fn test_color_space_validation() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     let color_space = exif_data.get_tag_by_name("ColorSpace");
 
@@ -241,12 +229,7 @@ fn test_color_space_validation() {
 /// These tags are ExifIFD-specific and should be distinguished from main IFD ImageWidth/ImageHeight
 #[test]
 fn test_exif_image_dimensions_validation() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Look for ExifImageWidth and ExifImageHeight
     let exif_width = exif_data.get_tag_by_name("ExifImageWidth");
@@ -334,12 +317,7 @@ fn test_exif_image_dimensions_validation() {
 /// ExifTool: DateTimeOriginal and DateTimeDigitized are ExifIFD-specific
 #[test]
 fn test_exif_ifd_datetime_validation() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     let datetime_tags = ["DateTimeOriginal", "DateTimeDigitized"];
 
@@ -428,12 +406,7 @@ fn test_exif_ifd_datetime_validation() {
 /// Context-aware processing should handle ExifIFD gracefully
 #[test]
 fn test_exif_ifd_processing_warnings() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     println!("Processing warnings analysis:");
     println!("  Total warnings: {}", exif_data.errors.len());
@@ -516,12 +489,7 @@ fn test_exif_ifd_processing_warnings() {
 /// These tags indicate that ExifIFD subdirectory was found and processed
 #[test]
 fn test_mandatory_exif_ifd_tags() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Tags that should be present in a typical ExifIFD
     // Note: ExifVersion not implemented yet in current milestone

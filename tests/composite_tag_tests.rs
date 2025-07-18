@@ -11,6 +11,9 @@
 
 use exif_oxide::exif::ExifReader;
 
+mod common;
+use common::CANON_T3I_JPG;
+
 #[test]
 fn test_composite_tag_infrastructure_basic() {
     // Test that build_composite_tags doesn't crash with empty data
@@ -118,7 +121,7 @@ fn test_composite_tag_integration_with_real_image() {
     use std::fs;
     use std::path::Path;
 
-    let test_image_path = "test-images/canon/Canon_T3i.JPG";
+    let test_image_path = CANON_T3I_JPG;
 
     if Path::new(test_image_path).exists() {
         // Read JPEG file and extract EXIF
