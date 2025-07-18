@@ -307,6 +307,7 @@ fn test_panasonic_entry_based_offsets() {
 - [ ] **Entry-Based Offsets**: Working implementation for Panasonic
 - [ ] **CLI Integration**: Both formats work via CLI
 - [ ] **Test Coverage**: Compatibility tests pass vs ExifTool
+- [ ] **🔧 Compat Script Update**: Add "mrw" and "rw2" to `SUPPORTED_EXTENSIONS` in `tools/generate_exiftool_json.sh` and regenerate reference files with `make compat-gen`
 
 ### Validation Tests
 

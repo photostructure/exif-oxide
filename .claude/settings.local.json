@@ -187,7 +187,9 @@
       "WebFetch(domain:release-plz.dev)",
       "Bash(RUST_LOG=warn cargo run -- ../photostructure/examples/Apple_iPhone_X.jpg)",
       "Bash(git log:*)",
-      "Bash(RUST_LOG=debug cargo run -- ../photostructure/examples/Raw/oly.ORF)"
+      "Bash(RUST_LOG=debug cargo run -- ../photostructure/examples/Raw/oly.ORF)",
+      "Bash(git stash show:*)",
+      "Bash(./tools/generate_exiftool_json.sh:*)"
     ],
     "deny": []
   }
