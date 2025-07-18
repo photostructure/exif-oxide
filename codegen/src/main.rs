@@ -21,8 +21,8 @@ mod validation;
 
 use config::load_extracted_tables_with_config;
 use discovery::{discover_and_process_modules, update_generated_mod_file};
-use extraction::{extract_all_simple_tables, extract_tag_definitions};
-use table_processor::process_tag_tables;
+use extraction::extract_all_simple_tables;
+use table_processor::process_tag_tables_modular;
 use file_operations::{create_directories, file_exists, read_utf8_with_fallback, write_file_atomic};
 use generators::{generate_conversion_refs, generate_mod_file};
 use validation::validate_all_configs;
@@ -64,30 +64,14 @@ fn main() -> Result<()> {
     println!("🔧 exif-oxide Code Generation");
     println!("=============================");
     
-    // Extract simple tables using Rust orchestration (replaces Makefile extract-* targets)
+    // Extract all tables using Rust orchestration (replaces Makefile extract-* targets)
+    // This now includes tag definitions and composite tags via the config system
     extract_all_simple_tables()?;
-    
-    // Extract tag definitions (tag tables and composite tags)
-    extract_tag_definitions()?;
 
-    // Process tag tables
-    let tag_data_file = current_dir.join(tag_data_path);
-    let composite_file = current_dir.join("generated/composite_tags.json");
-    
-    println!("Looking for tag data at: {}", tag_data_file.display());
-    process_tag_tables(
-        &tag_data_file.to_string_lossy(),
-        &composite_file.to_string_lossy(),
-        output_dir,
-    )?;
-    
-    // Generate conversion references if tag data exists
-    if file_exists(&tag_data_file) {
-        let json_data = read_utf8_with_fallback(&tag_data_file)?;
-        let extracted: crate::schemas::ExtractedData = serde_json::from_str(&json_data)
-            .with_context(|| "Failed to parse tag extraction JSON")?;
-        generate_conversion_refs(&extracted.conversion_refs, output_dir)?;
-    }
+    // Process modular tag tables
+    let extract_dir = current_dir.join("generated").join("extract");
+    println!("\n📋 Processing modular tag tables...");
+    process_tag_tables_modular(&extract_dir, output_dir)?;
 
     // The old extract.json processing has been removed.
     // All extraction is now handled by the new modular configuration system below.

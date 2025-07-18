@@ -4,13 +4,13 @@
 //! DO NOT EDIT MANUALLY - changes will be overwritten.
 
 /// Total number of supported standard tags
-pub const SUPPORTED_TAG_COUNT: usize = 194;
+pub const SUPPORTED_TAG_COUNT: usize = 193;
 
 /// Total number of supported composite tags
-pub const SUPPORTED_COMPOSITE_TAG_COUNT: usize = 62;
+pub const SUPPORTED_COMPOSITE_TAG_COUNT: usize = 30;
 
 /// Total number of all supported tags
-pub const TOTAL_SUPPORTED_TAG_COUNT: usize = 256;
+pub const TOTAL_SUPPORTED_TAG_COUNT: usize = 223;
 
 /// All supported standard tag names
 pub const SUPPORTED_TAG_NAMES: &[&str] = &[
@@ -103,7 +103,6 @@ pub const SUPPORTED_TAG_NAMES: &[&str] = &[
     "GPSTimeStamp",
     "GPSTrack",
     "GPSTrackRef",
-    "GPSVersionID",
     "GainControl",
     "Gamma",
     "HostComputer",
@@ -213,66 +212,34 @@ pub const SUPPORTED_TAG_NAMES: &[&str] = &[
 /// All supported composite tag names
 pub const SUPPORTED_COMPOSITE_TAG_NAMES: &[&str] = &[
     "Aperture",
-    "Aperture",
-    "BlueBalance",
     "BlueBalance",
     "CFAPattern",
-    "CFAPattern",
     "CircleOfConfusion",
-    "CircleOfConfusion",
-    "DOF",
     "DateTimeOriginal",
-    "DateTimeOriginal",
-    "FOV",
-    "FocalLength35efl",
     "FocalLength35efl",
     "GPSAltitude",
-    "GPSAltitude",
-    "GPSDateTime",
     "GPSDateTime",
     "GPSDestLatitude",
-    "GPSDestLatitude",
-    "GPSDestLongitude",
     "GPSDestLongitude",
     "GPSLatitude",
-    "GPSLatitude",
-    "GPSLongitude",
     "GPSLongitude",
     "GPSPosition",
-    "GPSPosition",
-    "HyperfocalDistance",
     "HyperfocalDistance",
     "ImageSize",
-    "ImageSize",
-    "JpgFromRaw",
     "JpgFromRaw",
     "LensID",
-    "LensID",
-    "LightValue",
     "LightValue",
     "Megapixels",
-    "Megapixels",
-    "OtherImage",
     "OtherImage",
     "PreviewImage",
-    "PreviewImage",
-    "PreviewImageSize",
     "PreviewImageSize",
     "RedBalance",
-    "RedBalance",
-    "ScaleFactor35efl",
     "ScaleFactor35efl",
     "ShutterSpeed",
-    "ShutterSpeed",
-    "SubSecCreateDate",
     "SubSecCreateDate",
     "SubSecDateTimeOriginal",
-    "SubSecDateTimeOriginal",
-    "SubSecModifyDate",
     "SubSecModifyDate",
     "ThumbnailImage",
-    "ThumbnailImage",
-    "ThumbnailTIFF",
     "ThumbnailTIFF",
 ];
 
@@ -281,11 +248,11 @@ pub fn tag_counts_by_group() -> &'static [(&'static str, usize)] {
     &[
         ("Author", 3),
         ("Camera", 33),
-        ("EXIF", 162),
+        ("EXIF", 193),
         ("ExifIFD", 1),
-        ("GPS", 33),
+        ("GPS", 1),
         ("IFD1", 1),
-        ("Time", 10),
+        ("Time", 12),
     ]
 }
 
