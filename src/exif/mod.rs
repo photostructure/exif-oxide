@@ -313,12 +313,15 @@ impl ExifReader {
                                 .map(|name| name.to_string())
                                 .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
                             (kyocera_tag_name, None)
-                        } else if source_info.ifd_name == "IFD0" && self.original_file_type.as_deref() == Some("RW2") {
+                        } else if source_info.ifd_name == "IFD0"
+                            && self.original_file_type.as_deref() == Some("RW2")
+                        {
                             // Use Panasonic RW2-specific tag name lookup
                             // ExifTool: PanasonicRaw.pm Main table for RW2 IFD0
-                            let panasonic_tag_name = crate::raw::formats::panasonic::get_panasonic_tag_name(tag_id)
-                                .map(|name| name.to_string())
-                                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                            let panasonic_tag_name =
+                                crate::raw::formats::panasonic::get_panasonic_tag_name(tag_id)
+                                    .map(|name| name.to_string())
+                                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
                             (panasonic_tag_name, None)
                         } else {
                             // Other maker note tags
