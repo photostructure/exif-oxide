@@ -6,6 +6,10 @@
 use anyhow::{Context, Result};
 use crate::common::{normalize_format, parse_hex_id};
 use crate::schemas::{CompositeData, ExtractedData, GeneratedCompositeTag, GeneratedTag};
+use crate::file_operations::{file_exists, read_utf8_with_fallback};
+use crate::generators::{generate_composite_tag_table, generate_supported_tags, generate_tag_table, generate_conversion_refs};
+use std::path::Path;
+use std::fs;
 
 /// Convert extracted tags to generated format
 ///
@@ -116,6 +120,184 @@ pub fn process_tag_tables(
     }
 
     Ok(())
+}
+
+/// Process tag tables from modular extracted files
+/// 
+/// This function scans the extract directory for tag definition and composite tag files
+/// organized by source module (e.g., exif_tag_definitions.json, gps_composite_tags.json)
+/// and generates the unified tag table code.
+pub fn process_tag_tables_modular(extract_dir: &Path, output_dir: &str) -> Result<()> {
+    let mut all_tags = Vec::new();
+    let mut all_composites = Vec::new();
+    let mut all_conversion_refs = crate::schemas::input::ConversionRefs {
+        print_conv: Vec::new(),
+        value_conv: Vec::new(),
+    };
+
+    // Scan for tag definition files
+    let tag_def_pattern = [
+        "exif_tag_definitions.json",
+        "gps_tag_definitions.json",
+    ];
+    
+    for pattern in &tag_def_pattern {
+        let file_path = extract_dir.join(pattern);
+        if file_path.exists() {
+            println!("  📊 Processing {}", pattern);
+            let json_data = read_utf8_with_fallback(&file_path)?;
+            
+            // Parse the modular tag definition format
+            let tag_data: serde_json::Value = serde_json::from_str(&json_data)
+                .with_context(|| format!("Failed to parse {}", pattern))?;
+            
+            // Extract tags from the modular format
+            if let Some(tags) = tag_data["tags"].as_array() {
+                for tag_val in tags {
+                    let tag = extract_tag_from_json(tag_val)?;
+                    all_tags.push(tag);
+                }
+            }
+            
+            // Collect conversion references
+            if let Some(conv_refs) = tag_data["conversion_refs"].as_object() {
+                if let Some(print_conv) = conv_refs["print_conv"].as_array() {
+                    for pc in print_conv {
+                        if let Some(pc_str) = pc.as_str() {
+                            if !all_conversion_refs.print_conv.contains(&pc_str.to_string()) {
+                                all_conversion_refs.print_conv.push(pc_str.to_string());
+                            }
+                        }
+                    }
+                }
+                if let Some(value_conv) = conv_refs["value_conv"].as_array() {
+                    for vc in value_conv {
+                        if let Some(vc_str) = vc.as_str() {
+                            if !all_conversion_refs.value_conv.contains(&vc_str.to_string()) {
+                                all_conversion_refs.value_conv.push(vc_str.to_string());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Scan for composite tag files
+    let composite_patterns = [
+        "exiftool_composite_tags.json",
+        "exif_composite_tags.json",
+        "gps_composite_tags.json",
+    ];
+    
+    for pattern in &composite_patterns {
+        let file_path = extract_dir.join(pattern);
+        if file_path.exists() {
+            println!("  🔗 Processing {}", pattern);
+            let json_data = read_utf8_with_fallback(&file_path)?;
+            
+            // Parse the modular composite tag format
+            let composite_data: serde_json::Value = serde_json::from_str(&json_data)
+                .with_context(|| format!("Failed to parse {}", pattern))?;
+            
+            // Extract composite tags from the modular format
+            if let Some(composites) = composite_data["composite_tags"].as_array() {
+                for comp_val in composites {
+                    let composite = extract_composite_from_json(comp_val)?;
+                    all_composites.push(composite);
+                }
+            }
+            
+            // Collect conversion references from composite tags too
+            if let Some(conv_refs) = composite_data["conversion_refs"].as_object() {
+                if let Some(print_conv) = conv_refs["print_conv"].as_array() {
+                    for pc in print_conv {
+                        if let Some(pc_str) = pc.as_str() {
+                            if !all_conversion_refs.print_conv.contains(&pc_str.to_string()) {
+                                all_conversion_refs.print_conv.push(pc_str.to_string());
+                            }
+                        }
+                    }
+                }
+                if let Some(value_conv) = conv_refs["value_conv"].as_array() {
+                    for vc in value_conv {
+                        if let Some(vc_str) = vc.as_str() {
+                            if !all_conversion_refs.value_conv.contains(&vc_str.to_string()) {
+                                all_conversion_refs.value_conv.push(vc_str.to_string());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    println!("  ✅ Found {} tags and {} composite tags", all_tags.len(), all_composites.len());
+
+    // Generate code if we have any data
+    if !all_tags.is_empty() || !all_composites.is_empty() {
+        // Generate tag table code
+        if !all_tags.is_empty() {
+            generate_tag_table(&all_tags, output_dir)?;
+        }
+
+        // Generate composite tag code  
+        if !all_composites.is_empty() {
+            generate_composite_tag_table(&all_composites, output_dir)?;
+        }
+
+        // Generate supported tags (unified list)
+        generate_supported_tags(&all_tags, &all_composites, output_dir)?;
+        
+        // Generate conversion references
+        generate_conversion_refs(&all_conversion_refs, output_dir)?;
+    }
+
+    Ok(())
+}
+
+/// Extract a GeneratedTag from JSON value
+fn extract_tag_from_json(tag_val: &serde_json::Value) -> Result<GeneratedTag> {
+    Ok(GeneratedTag {
+        id: parse_hex_id(tag_val["id"].as_str().unwrap_or("0x0"))?,
+        name: tag_val["name"].as_str().unwrap_or("Unknown").to_string(),
+        format: normalize_format(tag_val["format"].as_str().unwrap_or("string")),
+        groups: tag_val["groups"].as_array()
+            .map(|arr| arr.iter()
+                .filter_map(|v| v.as_str())
+                .map(|s| s.to_string())
+                .collect())
+            .unwrap_or_default(),
+        writable: tag_val["writable"].as_u64().unwrap_or(0) != 0,
+        description: tag_val["description"].as_str().map(|s| s.to_string()),
+        print_conv_ref: tag_val["print_conv_ref"].as_str().map(|s| s.to_string()),
+        value_conv_ref: tag_val["value_conv_ref"].as_str().map(|s| s.to_string()),
+        notes: tag_val["notes"].as_str().map(|s| s.to_string()),
+    })
+}
+
+/// Extract a GeneratedCompositeTag from JSON value
+fn extract_composite_from_json(comp_val: &serde_json::Value) -> Result<GeneratedCompositeTag> {
+    Ok(GeneratedCompositeTag {
+        name: comp_val["name"].as_str().unwrap_or("Unknown").to_string(),
+        table: comp_val["table"].as_str().unwrap_or("Unknown").to_string(),
+        require: comp_val["require"].as_array()
+            .map(|arr| arr.iter()
+                .filter_map(|v| v.as_str())
+                .map(|s| s.to_string())
+                .collect())
+            .unwrap_or_default(),
+        desire: comp_val["desire"].as_array()
+            .map(|arr| arr.iter()
+                .filter_map(|v| v.as_str())
+                .map(|s| s.to_string())
+                .collect())
+            .unwrap_or_default(),
+        description: comp_val["description"].as_str().map(|s| s.to_string()),
+        writable: comp_val["writable"].as_u64().unwrap_or(0) != 0,
+        print_conv_ref: comp_val["print_conv_ref"].as_str().map(|s| s.to_string()),
+        value_conv_ref: comp_val["value_conv_ref"].as_str().map(|s| s.to_string()),
+    })
 }
 
 #[cfg(test)]
