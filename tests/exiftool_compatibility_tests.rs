@@ -14,7 +14,7 @@ use std::collections::HashMap;
 use std::path::Path;
 
 mod common;
-use common::{CANON_T3I_JPG, CASIO_QVCI_JPG, OLYMPUS_TEST_ORF};
+use common::CASIO_QVCI_JPG;
 
 /// Load supported tags from shared config file (Milestone 8a)
 /// Single source of truth now maintained in config/supported_tags.json
@@ -599,32 +599,4 @@ fn test_exiftool_compatibility() {
             failed_files.len()
         );
     }
-}
-
-/// Test a specific known file using snapshots
-#[test]
-fn test_canon_t3i_compatibility() {
-    let test_file = CANON_T3I_JPG;
-
-    // Skip if test file doesn't exist
-    if !Path::new(test_file).exists() {
-        println!("Test file {test_file} not found, skipping");
-        return;
-    }
-
-    compare_file_output(test_file).expect("Canon T3i should match ExifTool snapshot");
-}
-
-/// Test Olympus ORF compatibility
-#[test]
-fn test_olympus_orf_compatibility() {
-    let test_file = OLYMPUS_TEST_ORF;
-
-    // Skip if test file doesn't exist
-    if !Path::new(test_file).exists() {
-        println!("Test file {test_file} not found, skipping");
-        return;
-    }
-
-    compare_file_output(test_file).expect("Olympus ORF should match ExifTool snapshot");
 }

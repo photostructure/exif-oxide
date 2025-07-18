@@ -4,6 +4,8 @@
   "File:FileName": "Unknown.jpg",
   "File:Directory": "third-party/exiftool/t/images",
   "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileType": "JPEG",
+  "File:FileTypeExtension": "jpg",
   "File:MIMEType": "image/jpeg",
   "EXIF:Make": "Rollei",
   "EXIF:Model": "dk4010",

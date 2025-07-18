@@ -4,6 +4,8 @@
   "File:FileName": "Canon.jpg",
   "File:Directory": "third-party/exiftool/t/images",
   "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileType": "JPEG",
+  "File:FileTypeExtension": "jpg",
   "File:MIMEType": "image/jpeg",
   "EXIF:Make": "Canon",
   "EXIF:Model": "Canon EOS DIGITAL REBEL",
@@ -18,6 +20,9 @@
   "EXIF:MeteringMode": "Average",
   "EXIF:Flash": "No Flash",
   "EXIF:FocalLength": "34.0 mm",
+  "MakerNotes:FocalLength": "34 mm",
+  "MakerNotes:FNumber": 14,
+  "MakerNotes:ExposureTime": 128,
   "EXIF:ColorSpace": "sRGB",
   "EXIF:WhiteBalance": "Auto"
 }

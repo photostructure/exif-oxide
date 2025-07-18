@@ -7,6 +7,8 @@
   "File:Directory",
   "File:FileSize",
   "File:FileModifyDate",
+  "File:FileType",
+  "File:FileTypeExtension",
   "EXIF:Orientation",
   "EXIF:ResolutionUnit",
   "EXIF:YCbCrPositioning",
@@ -33,5 +35,13 @@
   "EXIF:CreateDate",
   "EXIF:SubSecTimeOriginal",
   "EXIF:SubSecTime",
-  "EXIF:SubSecTimeDigitized"
+  "EXIF:SubSecTimeDigitized",
+  "MakerNotes:Model",
+  "MakerNotes:Make",
+  "MakerNotes:DateTimeOriginal",
+  "MakerNotes:ISO",
+  "MakerNotes:ExposureTime",
+  "MakerNotes:FNumber",
+  "MakerNotes:FocalLength",
+  "MakerNotes:Lens"
 ]
