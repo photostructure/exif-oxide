@@ -12,14 +12,12 @@ pub use common::{TagDef, TagFormat};
 pub mod author;
 pub mod camera;
 pub mod core;
-pub mod gps;
 pub mod special;
 pub mod time;
 
 pub use author::AUTHOR_TAGS;
 pub use camera::CAMERA_TAGS;
 pub use core::CORE_TAGS;
-pub use gps::GPS_TAGS;
 pub use special::SPECIAL_TAGS;
 pub use time::TIME_TAGS;
 
@@ -29,7 +27,6 @@ pub static ALL_TAGS: LazyLock<Vec<&'static TagDef>> = LazyLock::new(|| {
     tags.extend(AUTHOR_TAGS.iter());
     tags.extend(CAMERA_TAGS.iter());
     tags.extend(CORE_TAGS.iter());
-    tags.extend(GPS_TAGS.iter());
     tags.extend(SPECIAL_TAGS.iter());
     tags.extend(TIME_TAGS.iter());
     tags

@@ -28,10 +28,10 @@ pub fn main_compression_print_conv(val: &TagValue) -> TagValue {
             if let Some(description) = lookup_main__compression(val) {
                 TagValue::string(description)
             } else {
-                TagValue::string(format!("Unknown ({})", val))
+                TagValue::string(format!("Unknown ({val})"))
             }
         }
-        None => TagValue::string(format!("Unknown ({})", val)),
+        None => TagValue::string(format!("Unknown ({val})")),
     }
 }
 
@@ -53,10 +53,10 @@ pub fn main_orientation_print_conv(val: &TagValue) -> TagValue {
             if let Some(description) = lookup_main__orientation(val) {
                 TagValue::string(description)
             } else {
-                TagValue::string(format!("Unknown ({})", val))
+                TagValue::string(format!("Unknown ({val})"))
             }
         }
-        None => TagValue::string(format!("Unknown ({})", val)),
+        None => TagValue::string(format!("Unknown ({val})")),
     }
 }
 
@@ -79,10 +79,10 @@ pub fn main_multishot_print_conv(val: &TagValue) -> TagValue {
             if let Some(description) = lookup_main__multishot(val) {
                 TagValue::string(description)
             } else {
-                TagValue::string(format!("Unknown ({})", val))
+                TagValue::string(format!("Unknown ({val})"))
             }
         }
-        None => TagValue::string(format!("Unknown ({})", val)),
+        None => TagValue::string(format!("Unknown ({val})")),
     }
 }
 
@@ -97,7 +97,7 @@ pub fn main_cfa_pattern_print_conv(val: &TagValue) -> TagValue {
             return TagValue::string(description);
         }
     }
-    TagValue::string(format!("Unknown ({})", val))
+    TagValue::string(format!("Unknown ({val})"))
 }
 
 /// Apply PrintConv to Panasonic Main table tags
