@@ -12,6 +12,9 @@ use serde_json::Value;
 use std::path::PathBuf;
 use std::process::Command;
 
+mod common;
+use common::{CANON_T3I_CR2, CANON_T3I_JPG};
+
 /// Test CLI basic functionality
 #[test]
 fn test_cli_help() {
@@ -30,7 +33,7 @@ fn test_cli_help() {
 #[test]
 fn test_cli_with_test_image() {
     let output = Command::new("cargo")
-        .args(["run", "--", "test-images/canon/Canon_T3i.JPG"])
+        .args(["run", "--", CANON_T3I_JPG])
         .output()
         .expect("Failed to run CLI with test image");
 
@@ -49,22 +52,14 @@ fn test_cli_with_test_image() {
     assert!(obj.get("ExifToolVersion").is_some());
 
     // Check that SourceFile matches input
-    assert_eq!(
-        obj["SourceFile"].as_str().unwrap(),
-        "test-images/canon/Canon_T3i.JPG"
-    );
+    assert_eq!(obj["SourceFile"].as_str().unwrap(), CANON_T3I_JPG);
 }
 
 /// Test CLI with --show-missing flag
 #[test]
 fn test_cli_show_missing() {
     let output = Command::new("cargo")
-        .args([
-            "run",
-            "--",
-            "--show-missing",
-            "test-images/canon/Canon_T3i.JPG",
-        ])
+        .args(["run", "--", "--show-missing", CANON_T3I_JPG])
         .output()
         .expect("Failed to run CLI with --show-missing");
 
@@ -130,7 +125,7 @@ fn test_cli_nonexistent_file() {
 #[test]
 fn test_json_structure_compatibility() {
     let output = Command::new("cargo")
-        .args(["run", "--", "test-images/canon/Canon_T3i.JPG"])
+        .args(["run", "--", CANON_T3I_JPG])
         .output()
         .expect("Failed to run CLI");
 
@@ -179,7 +174,7 @@ fn test_compare_with_exiftool() {
 
     // Get ExifTool output
     let exiftool_output = Command::new("exiftool")
-        .args(["-j", "test-images/canon/Canon_T3i.JPG"])
+        .args(["-j", CANON_T3I_JPG])
         .output()
         .expect("Failed to run ExifTool");
 
@@ -197,7 +192,7 @@ fn test_compare_with_exiftool() {
 
     // Get our output
     let our_output = Command::new("cargo")
-        .args(["run", "--", "test-images/canon/Canon_T3i.JPG"])
+        .args(["run", "--", CANON_T3I_JPG])
         .output()
         .expect("Failed to run our CLI");
 
@@ -232,10 +227,7 @@ fn test_compare_with_exiftool() {
 /// Test with different file formats
 #[test]
 fn test_different_file_formats() {
-    let test_files = vec![
-        "test-images/canon/Canon_T3i.JPG",
-        "test-images/canon/Canon_T3i.CR2",
-    ];
+    let test_files = vec![CANON_T3I_JPG, CANON_T3I_CR2];
 
     for file in test_files {
         let path = PathBuf::from(file);

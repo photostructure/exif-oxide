@@ -13,6 +13,9 @@ use similar::{ChangeTag, TextDiff};
 use std::collections::HashMap;
 use std::path::Path;
 
+mod common;
+use common::{CANON_T3I_JPG, CASIO_QVCI_JPG, OLYMPUS_TEST_ORF};
+
 /// Load supported tags from shared config file (Milestone 8a)
 /// Single source of truth now maintained in config/supported_tags.json
 ///
@@ -33,7 +36,7 @@ fn load_supported_tags() -> Vec<String> {
 
 /// Files to exclude from testing (problematic files to deal with later)
 const EXCLUDED_FILES: &[&str] = &[
-    "test-images/casio/QVCI.jpg",
+    CASIO_QVCI_JPG,
     "third-party/exiftool/t/images/ExtendedXMP.jpg",
     "third-party/exiftool/t/images/PhotoMechanic.jpg",
     "third-party/exiftool/t/images/ExifTool.jpg",
@@ -601,7 +604,7 @@ fn test_exiftool_compatibility() {
 /// Test a specific known file using snapshots
 #[test]
 fn test_canon_t3i_compatibility() {
-    let test_file = "test-images/canon/Canon_T3i.jpg";
+    let test_file = CANON_T3I_JPG;
 
     // Skip if test file doesn't exist
     if !Path::new(test_file).exists() {
@@ -615,7 +618,7 @@ fn test_canon_t3i_compatibility() {
 /// Test Olympus ORF compatibility
 #[test]
 fn test_olympus_orf_compatibility() {
-    let test_file = "test-images/olympus/test.orf";
+    let test_file = OLYMPUS_TEST_ORF;
 
     // Skip if test file doesn't exist
     if !Path::new(test_file).exists() {

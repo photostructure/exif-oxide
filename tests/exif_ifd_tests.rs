@@ -16,16 +16,14 @@
 use exif_oxide::formats::extract_metadata;
 use std::collections::HashMap;
 
+mod common;
+use common::CANON_T3I_JPG;
+
 /// Test that ExifIFD tags get correct group1 assignment
 /// This is the core requirement from the milestone specification
 #[test]
 fn test_exif_ifd_group_assignment() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Find tags that should be in ExifIFD based on their tag IDs
     // Common ExifIFD tags from Canon T3i image
@@ -94,12 +92,7 @@ fn test_exif_ifd_group_assignment() {
 /// Test that main IFD tags maintain correct group1 assignment
 #[test]
 fn test_main_ifd_group_assignment() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Tags that should be in main IFD (IFD0)
     let main_ifd_tag_names = [
@@ -146,11 +139,7 @@ fn test_main_ifd_group_assignment() {
 #[test]
 fn test_gps_group_assignment() {
     // Canon T3i may not have GPS data, so use a GPS-enabled image or skip
-    let exif_data = match extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    ) {
+    let exif_data = match extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false) {
         Ok(data) => data,
         Err(_) => return, // Skip if file not available
     };
@@ -182,12 +171,7 @@ fn test_gps_group_assignment() {
 /// Test group-based API access methods work correctly
 #[test]
 fn test_group_based_api_access() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Test get_exif_ifd_tags() method
     let exif_ifd_tags = exif_data.get_exif_ifd_tags();
@@ -236,12 +220,7 @@ fn test_group_based_api_access() {
 /// Test that ExifIFD and main IFD tags are properly distinguished
 #[test]
 fn test_exif_ifd_vs_main_ifd_distinction() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Group tags by their group1 assignment
     let mut tags_by_group1: HashMap<String, Vec<&str>> = HashMap::new();
@@ -291,12 +270,7 @@ fn test_exif_ifd_vs_main_ifd_distinction() {
 /// This test verifies that ExifIFD tags now have correct group1 assignment
 #[test]
 fn test_namespace_assignment_bug_fixed() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Find a tag that should be in ExifIFD (like ExposureTime)
     if let Some(exposure_time) = exif_data.get_tag_by_name("ExposureTime") {
@@ -327,12 +301,7 @@ fn test_namespace_assignment_bug_fixed() {
 /// Test ExifIFD-specific tags are present and accessible
 #[test]
 fn test_exif_ifd_specific_tags() {
-    let exif_data = extract_metadata(
-        std::path::Path::new("test-images/canon/Canon_T3i.JPG"),
-        false,
-        false,
-    )
-    .unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
 
     // Tags that only exist in ExifIFD subdirectory
     let exif_ifd_specific_tags = [

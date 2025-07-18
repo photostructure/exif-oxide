@@ -16,6 +16,9 @@ use serde_json::Value;
 use std::collections::HashMap;
 use std::process::Command;
 
+mod common;
+use common::CANON_T3I_JPG;
+
 /// Helper function to get ExifTool Group1 assignments using -G1 flag
 fn get_exiftool_group1_assignments(image_path: &str) -> Option<HashMap<String, String>> {
     // Check if ExifTool is available
@@ -58,7 +61,7 @@ fn get_exiftool_group1_assignments(image_path: &str) -> Option<HashMap<String, S
 /// Test Group1 assignments match ExifTool for Canon T3i image
 #[test]
 fn test_group1_assignments_match_exiftool_canon() {
-    let image_path = "test-images/canon/Canon_T3i.JPG";
+    let image_path = CANON_T3I_JPG;
 
     // Get ExifTool's Group1 assignments
     let exiftool_group1 = match get_exiftool_group1_assignments(image_path) {
@@ -154,10 +157,7 @@ fn test_group1_assignments_match_exiftool_canon() {
 /// Test Group1 assignments for multiple image formats
 #[test]
 fn test_group1_assignments_multiple_formats() {
-    let test_images = [
-        "test-images/canon/Canon_T3i.JPG",
-        "test-images/canon/Canon_T3i.CR2",
-    ];
+    let test_images = [CANON_T3I_JPG, "test-images/canon/Canon_T3i.CR2"];
 
     for image_path in &test_images {
         if !std::path::Path::new(image_path).exists() {
@@ -214,7 +214,7 @@ fn test_group1_assignments_multiple_formats() {
 /// Test specific ExifIFD tags have correct Group1 assignment vs ExifTool
 #[test]
 fn test_exif_ifd_specific_tags_group1() {
-    let image_path = "test-images/canon/Canon_T3i.JPG";
+    let image_path = CANON_T3I_JPG;
 
     // Get ExifTool's Group1 assignments
     let exiftool_group1 = match get_exiftool_group1_assignments(image_path) {
@@ -296,7 +296,7 @@ fn test_exif_ifd_specific_tags_group1() {
 /// Helper test to show ExifTool's Group1 output format for debugging
 #[test]
 fn test_debug_exiftool_group1_output() {
-    let image_path = "test-images/canon/Canon_T3i.JPG";
+    let image_path = CANON_T3I_JPG;
 
     // Check if ExifTool is available
     let exiftool_check = Command::new("exiftool").arg("-ver").output();

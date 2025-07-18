@@ -14,6 +14,9 @@
 use exif_oxide::exif::ExifReader;
 use exif_oxide::types::{BinaryDataFormat, BinaryDataTable, TagValue};
 
+mod common;
+use common::CANON_T3I_JPG;
+
 #[test]
 fn test_binary_data_format_byte_sizes() {
     assert_eq!(BinaryDataFormat::Int8u.byte_size(), 1);
@@ -182,7 +185,7 @@ fn test_extract_binary_value_pstring() {
 
 #[test]
 fn test_extract_binary_tags_with_print_conv() {
-    let test_file = "test-images/canon/Canon_T3i.JPG";
+    let test_file = CANON_T3I_JPG;
     if !std::path::Path::new(test_file).exists() {
         panic!("Canon test image not found: {test_file}");
     }
@@ -254,7 +257,7 @@ fn test_find_canon_camera_settings_tag() {
 
 #[test]
 fn test_process_canon_makernotes_integration() {
-    let test_file = "test-images/canon/Canon_T3i.JPG";
+    let test_file = CANON_T3I_JPG;
     if !std::path::Path::new(test_file).exists() {
         panic!("Canon test image not found: {test_file}");
     }
@@ -311,7 +314,7 @@ fn test_binary_data_bounds_checking() {
 
 #[test]
 fn test_canon_makernotes_error_handling() {
-    let test_file = "test-images/canon/Canon_T3i.JPG";
+    let test_file = CANON_T3I_JPG;
     if !std::path::Path::new(test_file).exists() {
         panic!("Canon test image not found: {test_file}");
     }
