@@ -369,7 +369,25 @@ impl SonyRawHandler {
 }
 ```
 
-### Phase 5: Testing and Validation (Week 3)
+### Phase 5: Generated PrintConv Integration (30 minutes)
+
+**Use Sony Inline PrintConv System**: Comprehensive Sony PrintConv extraction available:
+
+```bash
+# Generate Sony PrintConv tables
+make codegen  
+```
+
+**Available Generated Tables** (from `codegen/config/Sony_pm/inline_printconv.json`):
+- **Main** (62 entries): Quality, white balance, flash modes
+- **CameraSettings3** (48 entries): Full camera control for newer models
+- **CameraSettings/CameraSettings2** (33+28 entries): Drive modes, focus, creative styles
+- **MoreSettings** (28 entries): Extended camera configuration
+- **FocusInfo** (9 entries): AF system settings and status
+
+**Total**: 322 simple lookup tables from 858 total PrintConv entries - critical for Sony ARW metadata interpretation across all format versions.
+
+### Phase 6: Testing and Validation (Week 3)
 
 **Comprehensive Sony Testing**:
 

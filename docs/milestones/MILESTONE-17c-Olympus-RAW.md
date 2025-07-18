@@ -193,7 +193,24 @@ impl OlympusRawHandler {
 4. **Dual processing modes** - Each section can be binary data OR IFD (ExifTool pattern)
 5. **Incremental implementation** - Start with core sections, add FE sections later
 
-### Phase 4: Testing and Integration (1-2 hours)
+### Phase 4: Generated PrintConv Integration (30 minutes)
+
+**Use Inline PrintConv System**: Apply the new inline PrintConv extraction for Olympus metadata:
+
+```bash
+# Generate Olympus PrintConv tables
+make codegen
+```
+
+**Available Generated Tables** (from `codegen/config/Olympus_pm/inline_printconv.json`):
+- **Equipment section**: Camera/lens identification PrintConv  
+- **CameraSettings section**: Exposure, focus, metering modes
+- **RawDevelopment section**: Color space, processing engine settings
+- **Main table**: ~40 PrintConv entries for scene modes, flash, WB, sharpness
+
+**Critical for Equipment Section Fix**: The generated PrintConv tables will provide proper value interpretation for Equipment section tags, addressing the current TIFF format type 41015 issue.
+
+### Phase 5: Testing and Integration (1-2 hours)
 
 **Test File Availability**: Check for Olympus ORF test files in `test-images/olympus/`.
 

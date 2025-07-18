@@ -309,7 +309,22 @@ fn process_canon_color_data(&mut self, reader: &mut ExifReader) -> Result<()> {
 }
 ```
 
-### Phase 4: Testing and Optional Formats (Week 2-3)
+### Phase 4: Generated PrintConv Integration (30 minutes)
+
+**Use Expanded Inline PrintConv System**: Canon now has comprehensive PrintConv extraction:
+
+```bash
+# Generate expanded Canon PrintConv tables  
+make codegen
+```
+
+**Available Generated Tables** (from `codegen/config/Canon_pm/inline_printconv.json`):
+- **Existing**: CameraSettings, ShotInfo, FileInfo, AFInfo/AFInfo2, Main, MyColors, etc.
+- **New additions**: TimeInfo (34 timezone cities), Processing (tone curve settings), Ambience (9 modes), ContrastInfo, PSInfo (filter effects), AFConfig (modern AF settings)
+
+**Value for CR2/CR3**: These additions provide complete timezone handling, processing pipeline information, advanced AF metadata, and picture style details critical for accurate RAW metadata extraction.
+
+### Phase 5: Testing and Optional Formats (Week 2-3)
 
 **Comprehensive Testing**:
 
