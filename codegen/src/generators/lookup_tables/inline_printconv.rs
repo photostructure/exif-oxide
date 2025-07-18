@@ -33,7 +33,6 @@ pub struct InlinePrintConvEntry {
     pub tag_name: String,
     pub key_type: String,
     pub entries: HashMap<String, String>,
-    pub entry_count: usize,
 }
 
 /// Generate lookup table code for an inline PrintConv entry with custom tag name
@@ -67,7 +66,7 @@ pub fn generate_inline_printconv_lookup_with_name(
     let is_string_key = entry.key_type == "String";
     
     // Generate data array
-    code.push_str(&format!("/// Raw data ({} entries)\n", entry.entry_count));
+    code.push_str(&format!("/// Raw data ({} entries)\n", entry.entries.len()));
     
     if is_string_key {
         code.push_str(&format!("static {}_DATA: &[(&'static str, &'static str)] = &[\n", const_name));

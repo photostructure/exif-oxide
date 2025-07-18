@@ -4,8 +4,6 @@
 //! DO NOT EDIT MANUALLY - changes will be overwritten.
 
 use super::common::{TagDef, TagFormat};
-use std::collections::HashMap;
-use std::sync::LazyLock;
 
 /// Core EXIF tags
 pub static CORE_TAGS: &[TagDef] = &[
