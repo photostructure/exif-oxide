@@ -32,6 +32,10 @@ ExifTool is the accumulation of 25 years of camera-specific quirks, edge cases, 
 - Some values, notably GPS, we only render decimal values (so we're always in `-GPSLatitude#` and ``-GPSLongitude#` and `-GPSAltitude#` "mode")
 - Raise errors or warnings whenever ExifTool does -- but our errors and warnings only need to be semantically similar -- they don't have to match ExifTool errors verbatim.
 
+### 2. Compatible `exiftool` output
+
+We're trying to match ExifTool output with these options: `exiftool -j -struct -G`
+
 ### 3. Use codegen if applicable
 
 - Use automated ExifTool heuristics extraction with our [CODEGEN](./design/CODEGEN.md) infrastructure, when applicable. Any simple tabular data, especially if it's "big" (15+ elements) should be automatically generated for us and we use that instead of manually porting (which may quickly drift from correctness due to the frequency of ExifTool releases).
@@ -39,18 +43,6 @@ ExifTool is the accumulation of 25 years of camera-specific quirks, edge cases, 
 ### 4. Cite references
 
 Always add a comment with the source filename, line number, and if applicable, the function or variable name that the code is derived from.
-
-## The Bottom Line
-
-If you find yourself thinking:
-
-- "This could be cleaner"
-- "This is inefficient"
-- "This violates DRY"
-- "This could be more Rusty"
-- "Surely no camera actually needs this"
-
-**STOP.** Re-read this document. Then implement it exactly as ExifTool does.
 
 ## Corollary: Chesterton's Fence
 
@@ -65,7 +57,3 @@ Before you remove a seemingly useless piece of code, you must first understand w
 - **When not in doubt, still copy ExifTool**
 
 This is not a suggestion. This is not a guideline. This is the **fundamental law** of the exif-oxide project.
-
-## The Short Version
-
-**Trust ExifTool, Not the Spec.**
