@@ -5,7 +5,7 @@
 
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct InlinePrintConvData {
@@ -36,8 +36,8 @@ pub struct InlinePrintConvEntry {
     pub entry_count: usize,
 }
 
-/// Generate lookup table code for an inline PrintConv entry
-pub fn generate_inline_printconv_lookup(
+/// Generate lookup table code for an inline PrintConv entry with custom tag name
+pub fn generate_inline_printconv_lookup_with_name(
     table_name: &str,
     tag_name: &str,
     entry: &InlinePrintConvEntry,
@@ -140,19 +140,51 @@ pub fn generate_inline_printconv_lookup(
     Ok(code)
 }
 
+/// Generate lookup table code for an inline PrintConv entry
+pub fn generate_inline_printconv_lookup(
+    table_name: &str,
+    tag_name: &str,
+    entry: &InlinePrintConvEntry,
+) -> Result<String> {
+    generate_inline_printconv_lookup_with_name(table_name, tag_name, entry)
+}
+
 /// Generate all inline PrintConv lookups for a file
 pub fn generate_inline_printconv_file(
     data: &InlinePrintConvData,
     table_name: &str,
 ) -> Result<String> {
     let mut code = String::new();
+    let mut used_names = HashSet::new();
     
     // Generate lookup for each inline PrintConv
     for (i, entry) in data.inline_printconvs.iter().enumerate() {
         if i > 0 {
             code.push_str("\n");
         }
-        code.push_str(&generate_inline_printconv_lookup(table_name, &entry.tag_name, entry)?);
+        
+        // Handle duplicate tag names by adding tag_id suffix
+        let mut unique_tag_name = entry.tag_name.clone();
+        let base_const_name = format!(
+            "{}_{}", 
+            to_screaming_snake_case(table_name),
+            to_screaming_snake_case(&unique_tag_name)
+        );
+        
+        if used_names.contains(&base_const_name) {
+            // Add tag_id to make it unique
+            unique_tag_name = format!("{}_{}", entry.tag_name, entry.tag_id);
+        }
+        
+        let final_const_name = format!(
+            "{}_{}", 
+            to_screaming_snake_case(table_name),
+            to_screaming_snake_case(&unique_tag_name)
+        );
+        
+        used_names.insert(final_const_name);
+        
+        code.push_str(&generate_inline_printconv_lookup_with_name(table_name, &unique_tag_name, entry)?);
     }
     
     Ok(code)
@@ -163,27 +195,51 @@ fn is_numeric_type(rust_type: &str) -> bool {
     matches!(rust_type, "u8" | "u16" | "u32" | "i8" | "i16" | "i32" | "u64" | "i64")
 }
 
-/// Convert string to SCREAMING_SNAKE_CASE
+/// Convert string to SCREAMING_SNAKE_CASE with proper Rust identifier handling
 fn to_screaming_snake_case(s: &str) -> String {
     let mut result = String::new();
     for (i, ch) in s.chars().enumerate() {
         if i > 0 && ch.is_uppercase() {
             result.push('_');
         }
-        result.push(ch.to_uppercase().next().unwrap_or(ch));
+        
+        // Convert non-alphanumeric characters to underscores, but avoid consecutive underscores
+        if ch.is_alphanumeric() {
+            result.push(ch.to_uppercase().next().unwrap_or(ch));
+        } else if !result.ends_with('_') {
+            result.push('_');
+        }
     }
+    
+    // Remove trailing underscore
+    if result.ends_with('_') {
+        result.pop();
+    }
+    
     result
 }
 
-/// Convert string to snake_case
+/// Convert string to snake_case with proper Rust identifier handling
 fn to_snake_case(s: &str) -> String {
     let mut result = String::new();
     for (i, ch) in s.chars().enumerate() {
         if i > 0 && ch.is_uppercase() {
             result.push('_');
         }
-        result.push(ch.to_lowercase().next().unwrap_or(ch));
+        
+        // Convert non-alphanumeric characters to underscores, but avoid consecutive underscores
+        if ch.is_alphanumeric() {
+            result.push(ch.to_lowercase().next().unwrap_or(ch));
+        } else if !result.ends_with('_') {
+            result.push('_');
+        }
     }
+    
+    // Remove trailing underscore
+    if result.ends_with('_') {
+        result.pop();
+    }
+    
     result
 }
 
