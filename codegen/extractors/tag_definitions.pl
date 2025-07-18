@@ -1,15 +1,15 @@
 #!/usr/bin/env perl
 
 #------------------------------------------------------------------------------
-# File:         composite_tags.pl
+# File:         tag_definitions.pl
 #
-# Description:  Extract composite tag definitions from ExifTool (config-driven)
+# Description:  Extract tag definitions from ExifTool tag tables (config-driven)
 #
-# Usage:        perl composite_tags.pl <module_path> <table_name> [--frequency-threshold <value>] [--include-mainstream]
+# Usage:        perl tag_definitions.pl <module_path> <table_name> [--frequency-threshold <value>] [--include-mainstream] [--groups <group1,group2>]
 #
-# Example:      perl composite_tags.pl ../third-party/exiftool/lib/Image/ExifTool.pm Composite --frequency-threshold 0.5 --include-mainstream
+# Example:      perl tag_definitions.pl ../third-party/exiftool/lib/Image/ExifTool/Exif.pm Main --frequency-threshold 0.8 --include-mainstream --groups EXIF,ExifIFD
 #
-# Notes:        This script extracts composite tag definitions from a specific module and table
+# Notes:        This script extracts tag definitions from a specific module and table
 #               based on command-line configuration. Output is written to stdout.
 #------------------------------------------------------------------------------
 
@@ -22,25 +22,28 @@ use Getopt::Long;
 
 use ExifToolExtract qw(
     load_tag_metadata
-    is_mainstream_composite_tag
+    is_mainstream_tag
     generate_conv_ref
+    extract_format
+    extract_groups
     format_json_output
-    clean_tag_name
 );
 
 # Parse command line arguments
 my $frequency_threshold = 0;
 my $include_mainstream = 0;
+my $groups_str = "";
 
 GetOptions(
     "frequency-threshold=f" => \$frequency_threshold,
     "include-mainstream" => \$include_mainstream,
+    "groups=s" => \$groups_str,
 ) or die "Error parsing command line options\n";
 
 # Check required arguments
 if (@ARGV < 2) {
-    die "Usage: $0 <module_path> <table_name> [--frequency-threshold <value>] [--include-mainstream]\n" .
-        "Example: $0 ../third-party/exiftool/lib/Image/ExifTool.pm Composite --frequency-threshold 0.5 --include-mainstream\n";
+    die "Usage: $0 <module_path> <table_name> [--frequency-threshold <value>] [--include-mainstream] [--groups <group1,group2>]\n" .
+        "Example: $0 ../third-party/exiftool/lib/Image/ExifTool/Exif.pm Main --frequency-threshold 0.8 --include-mainstream\n";
 }
 
 my ($module_path, $table_name) = @ARGV;
@@ -50,13 +53,17 @@ unless (-f $module_path) {
     die "Error: Module file not found: $module_path\n";
 }
 
+# Parse groups filter
+my @groups_filter = split(/,/, $groups_str) if $groups_str;
+
 # Extract module name from path for display
 my $module_display_name = $module_path;
 $module_display_name =~ s{.*/}{}; # Remove path
 
-print STDERR "Extracting composite tags from $module_display_name table $table_name...\n";
+print STDERR "Extracting tag definitions from $module_display_name table $table_name...\n";
 print STDERR "  Frequency threshold: $frequency_threshold\n" if $frequency_threshold > 0;
 print STDERR "  Include mainstream: " . ($include_mainstream ? "yes" : "no") . "\n";
+print STDERR "  Groups filter: " . (@groups_filter ? join(", ", @groups_filter) : "none") . "\n";
 
 # Load the module dynamically
 my $module_name = load_module_from_file($module_path);
@@ -72,17 +79,17 @@ my $metadata = load_tag_metadata($metadata_file);
 my %print_conv_refs;
 my %value_conv_refs;
 
-# Get the composite table
+# Get the tag table
 my $table_symbol = "${module_name}::${table_name}";
 my $table_ref = eval "\\%${table_symbol}";
 if (!$table_ref || !%$table_ref) {
     die "Error: Table %$table_name not found in $module_display_name\n";
 }
 
-# Extract composite tags from the table
-my @composite_tags = extract_composite_from_table($table_ref, $table_name, $metadata, \%print_conv_refs, \%value_conv_refs);
+# Extract tags from the table
+my @tags = extract_tags_from_table($table_ref, $metadata, \%print_conv_refs, \%value_conv_refs);
 
-print STDERR "  Found " . scalar(@composite_tags) . " composite tags matching criteria\n";
+print STDERR "  Found " . scalar(@tags) . " tags matching criteria\n";
 
 # Convert references to sorted arrays
 my @print_conv_refs = sort keys %print_conv_refs;
@@ -98,11 +105,12 @@ my $output = {
     filters => {
         frequency_threshold => $frequency_threshold,
         include_mainstream => $include_mainstream ? 1 : 0,
+        groups => \@groups_filter,
     },
     metadata => {
-        total_composite_tags => scalar(@composite_tags),
+        total_tags => scalar(@tags),
     },
-    composite_tags => \@composite_tags,
+    tags => \@tags,
     conversion_refs => {
         print_conv => \@print_conv_refs,
         value_conv => \@value_conv_refs,
@@ -112,106 +120,71 @@ my $output = {
 print format_json_output($output);
 
 #------------------------------------------------------------------------------
-# Extract composite tags from a specific table
+# Extract tags from a tag table with filtering
 #------------------------------------------------------------------------------
-sub extract_composite_from_table {
-    my ($table_ref, $table_name, $metadata, $print_conv_refs, $value_conv_refs) = @_;
-    my @composite_tags;
+sub extract_tags_from_table {
+    my ($table_ref, $metadata, $print_conv_refs, $value_conv_refs) = @_;
+    my @tags;
     
-    foreach my $tag_name (sort keys %$table_ref) {
-        # Skip special table keys
-        next if $tag_name =~ /^[A-Z_]+$/;
-        next if $tag_name eq 'GROUPS';
+    foreach my $tag_id (sort keys %$table_ref) {
+        next if $tag_id =~ /^[A-Z]/;  # Skip special keys
         
-        my $tag_info = $table_ref->{$tag_name};
+        my $tag_info = $table_ref->{$tag_id};
         next unless ref $tag_info eq 'HASH';
+        next unless exists $tag_info->{Name};
         
-        # Clean tag name
-        my $clean_tag_name = clean_tag_name($tag_name);
+        my $tag_name = $tag_info->{Name};
         
         # Apply filtering
-        next unless passes_filters($clean_tag_name, $metadata);
+        next unless passes_filters($tag_name, $tag_info, $metadata);
         
-        # Build composite data
-        my $composite_data = {
-            name => $clean_tag_name,
-            table => $table_name,
-            full_name => $tag_name,
+        # Build tag data
+        my $tag_data = {
+            id => sprintf("0x%x", $tag_id),
+            name => $tag_name,
+            format => extract_format($tag_info),
+            groups => extract_groups($tag_info),
+            writable => $tag_info->{Writable} ? 1 : 0,
         };
         
-        # Extract dependencies
-        if ($tag_info->{Require}) {
-            $composite_data->{require} = extract_dependencies($tag_info->{Require});
-        }
-        
-        if ($tag_info->{Desire}) {
-            $composite_data->{desire} = extract_dependencies($tag_info->{Desire});
-        }
+        # Add optional fields
+        $tag_data->{description} = $tag_info->{Description} if $tag_info->{Description};
+        $tag_data->{notes} = $tag_info->{Notes} if $tag_info->{Notes};
         
         # Add conversion references
         if ($tag_info->{PrintConv}) {
-            my $ref = generate_conv_ref($clean_tag_name, 'print_conv', $tag_info->{PrintConv});
-            $composite_data->{print_conv_ref} = $ref;
+            my $ref = generate_conv_ref($tag_name, 'print_conv', $tag_info->{PrintConv});
+            $tag_data->{print_conv_ref} = $ref;
             $print_conv_refs->{$ref} = 1 if defined $ref;
         }
         
         if ($tag_info->{ValueConv}) {
-            my $ref = generate_conv_ref($clean_tag_name, 'value_conv', $tag_info->{ValueConv});
-            $composite_data->{value_conv_ref} = $ref;
+            my $ref = generate_conv_ref($tag_name, 'value_conv', $tag_info->{ValueConv});
+            $tag_data->{value_conv_ref} = $ref;
             $value_conv_refs->{$ref} = 1 if defined $ref;
         }
         
-        # Add description if available
-        $composite_data->{description} = $tag_info->{Description} if $tag_info->{Description};
-        
-        # Add writable flag
-        $composite_data->{writable} = $tag_info->{Writable} ? 1 : 0;
-        
-        # Add metadata if available
-        if (exists $metadata->{$clean_tag_name}) {
-            my $meta = $metadata->{$clean_tag_name};
-            $composite_data->{frequency} = $meta->{frequency} if $meta->{frequency};
-            $composite_data->{mainstream} = $meta->{mainstream} ? 1 : 0 if $meta->{mainstream};
+        # Add metadata
+        if (exists $metadata->{$tag_name}) {
+            my $meta = $metadata->{$tag_name};
+            $tag_data->{frequency} = $meta->{frequency} if $meta->{frequency};
+            $tag_data->{mainstream} = $meta->{mainstream} ? 1 : 0 if $meta->{mainstream};
         }
         
-        push @composite_tags, $composite_data;
+        push @tags, $tag_data;
     }
     
-    return @composite_tags;
+    return @tags;
 }
 
 #------------------------------------------------------------------------------
-# Extract dependency information from Require/Desire fields
-#------------------------------------------------------------------------------
-sub extract_dependencies {
-    my $deps = shift;
-    
-    if (ref $deps eq 'HASH') {
-        # Hash format with numbered keys
-        my @dep_list;
-        foreach my $key (sort { $a <=> $b } keys %$deps) {
-            push @dep_list, $deps->{$key} if $key =~ /^\d+$/;
-        }
-        return \@dep_list;
-    } elsif (ref $deps eq 'ARRAY') {
-        # Already an array
-        return $deps;
-    } elsif (!ref $deps) {
-        # Single dependency as string
-        return [$deps];
-    }
-    
-    return [];
-}
-
-#------------------------------------------------------------------------------
-# Check if a composite tag passes the configured filters
+# Check if a tag passes the configured filters
 #------------------------------------------------------------------------------
 sub passes_filters {
-    my ($tag_name, $metadata) = @_;
+    my ($tag_name, $tag_info, $metadata) = @_;
     
     # Check mainstream filter
-    if ($include_mainstream && is_mainstream_composite_tag($tag_name, $metadata)) {
+    if ($include_mainstream && is_mainstream_tag($tag_name, $metadata)) {
         return 1;
     }
     
@@ -222,8 +195,19 @@ sub passes_filters {
         }
     }
     
+    # Check groups filter
+    if (@groups_filter) {
+        my @tag_groups = extract_groups($tag_info);
+        foreach my $filter_group (@groups_filter) {
+            foreach my $tag_group (@tag_groups) {
+                return 1 if $tag_group eq $filter_group;
+            }
+        }
+        return 0; # No matching groups found
+    }
+    
     # If no filters are active or frequency threshold is 0, include all tags
-    return 1 if $frequency_threshold == 0 && !$include_mainstream;
+    return 1 if $frequency_threshold == 0 && !$include_mainstream && !@groups_filter;
     
     return 0;
 }

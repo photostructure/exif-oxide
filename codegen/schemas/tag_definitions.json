@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tag Definitions Configuration",
+  "description": "Configuration for extracting tag definitions from ExifTool tag tables",
+  "type": "object",
+  "properties": {
+    "source": {
+      "type": "string",
+      "description": "Path to ExifTool source file (relative to repository root, e.g., 'third-party/exiftool/lib/Image/ExifTool/Exif.pm')"
+    },
+    "description": {
+      "type": "string",
+      "description": "Overview of what these tag definitions contain"
+    },
+    "table": {
+      "type": "string",
+      "description": "Name of the tag table to extract (e.g., 'Main')"
+    },
+    "filters": {
+      "type": "object",
+      "description": "Filtering criteria for tag extraction",
+      "properties": {
+        "frequency_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Minimum frequency threshold for tag inclusion (0.0 to 1.0)"
+        },
+        "include_mainstream": {
+          "type": "boolean",
+          "description": "Whether to include tags marked as mainstream regardless of frequency"
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of tag groups to include (e.g., ['EXIF', 'ExifIFD', 'IFD0'])"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["source", "table"],
+  "additionalProperties": false
+}
