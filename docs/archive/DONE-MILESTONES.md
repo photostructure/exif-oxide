@@ -323,3 +323,9 @@ Added support for Minolta MRW and Panasonic RW2/RWL RAW formats with full TIFF i
 **Technical Foundation**: Built robust entry-based offset infrastructure that will be critical for Sony and other complex RAW formats. All implementation follows Trust ExifTool principle with exact logic translation from MinoltaRaw.pm and PanasonicRaw.pm.
 
 **Validation**: Integration tests pass with real camera files, CLI extraction working, `make precommit` passes cleanly.
+
+---
+
+## ✅ Inline PrintConv Extraction System (COMPLETED July 18, 2025)
+
+Successfully implemented automated extraction of inline PrintConv definitions from ExifTool tag tables. Created Perl extractor, Rust code generator, and pipeline integration. Generated 59 inline PrintConv lookup tables for Canon cameras with automatic key type detection (u8/u16/i16/String). All tests pass. System ready for extension to other manufacturers.

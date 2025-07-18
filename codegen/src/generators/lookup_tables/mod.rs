@@ -105,9 +105,7 @@ pub fn process_config_directory(
                 // Look for the corresponding extracted inline printconv JSON file
                 let extract_dir = Path::new("generated/extract");
                 let inline_file_name = format!("inline_printconv__{}.json", 
-                    table_name.chars()
-                        .map(|c| if c.is_alphanumeric() { c.to_ascii_lowercase() } else { '_' })
-                        .collect::<String>()
+                    convert_table_name_to_snake_case(table_name)
                 );
                 let inline_file_path = extract_dir.join(&inline_file_name);
                 
@@ -278,5 +276,27 @@ fn generate_inline_printconv_file(
     println!("  ✓ Generated {}", file_path.display());
     
     Ok(file_name)
+}
+
+/// Convert table name to snake_case to match Perl transformation
+/// Replicates: s/([A-Z])/_\L$1/g; s/^_//; lc($filename)
+fn convert_table_name_to_snake_case(table_name: &str) -> String {
+    let mut result = String::new();
+    
+    for ch in table_name.chars() {
+        if ch.is_uppercase() {
+            result.push('_');
+            result.push(ch.to_ascii_lowercase());
+        } else {
+            result.push(ch);
+        }
+    }
+    
+    // Remove leading underscore if present
+    if result.starts_with('_') {
+        result.remove(0);
+    }
+    
+    result
 }
 

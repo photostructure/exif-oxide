@@ -117,8 +117,20 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         print: TagValue::String(file_type.clone()),
     });
 
-    // File extension is based on the detected file type
-    let file_type_ext = detection_result.file_type.to_lowercase();
+    // FileTypeExtension follows ExifTool's logic exactly
+    // Source: ExifTool.pm:9583 - $self->FoundTag('FileTypeExtension', uc $normExt);
+    // Where $normExt comes from %fileTypeExt lookup or defaults to $fileType
+    let file_type_ext = {
+        use crate::generated::ExifTool_pm::filetypeext::lookup_file_type_extensions;
+        
+        // First check ExifTool's %fileTypeExt mapping for special cases
+        let norm_ext = lookup_file_type_extensions(&detection_result.file_type)
+            .unwrap_or(&detection_result.file_type); // Default to file_type if no mapping
+        
+        // ExifTool applies uc() (uppercase) to the extension
+        norm_ext.to_uppercase()
+    };
+    
     tag_entries.push(TagEntry {
         group: "File".to_string(),
         group1: "File".to_string(),
