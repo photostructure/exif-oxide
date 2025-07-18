@@ -524,6 +524,7 @@ fn test_nikon_d850_integration() {
 - [x] **Model-specific Processing**: Camera model extraction and table selection
 - [x] **Standard Tag Processing**: Process main Nikon tag table with real data
 - [x] **Real File Testing**: Validate with actual Nikon NEF files
+- [ ] **🔧 Compat Script Update**: Add "nef" to `SUPPORTED_EXTENSIONS` in `tools/generate_exiftool_json.sh` and regenerate reference files with `make compat-gen`
 
 ### Phase 3: Core Tag Processing & PrintConv ✅ COMPLETED
 - [x] **Complete PrintConv**: Implement remaining conversion functions (15+ functions implemented)

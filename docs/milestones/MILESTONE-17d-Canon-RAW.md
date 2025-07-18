@@ -374,6 +374,7 @@ fn test_canon_lens_identification() {
 - [ ] **Lens Database**: Accurate lens identification
 - [ ] **AF Information**: All three AF info versions
 - [ ] **Color Data**: Canon color processing information
+- [ ] **🔧 Compat Script Update**: Add "cr2" (and "crw", "cr3" if implemented) to `SUPPORTED_EXTENSIONS` in `tools/generate_exiftool_json.sh` and regenerate reference files with `make compat-gen`
 
 ### Optional Goals (CRW/CR3)
 

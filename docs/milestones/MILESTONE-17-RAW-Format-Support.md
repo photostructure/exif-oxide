@@ -84,6 +84,28 @@ Each sub-milestone must meet these criteria:
 3. **Test Coverage**: Integration tests validate against sample files
 4. **No Binary Extraction**: Metadata only - preview/thumbnail extraction is Milestone 19's responsibility
 
+### ⚠️ CRITICAL: Update Compatibility Script for New Formats
+
+**When adding support for a new RAW format, you MUST update the compatibility script:**
+
+1. **Add the new file extension** to `tools/generate_exiftool_json.sh`:
+   ```bash
+   # Line 24: Add your new extension to the array
+   SUPPORTED_EXTENSIONS=("jpg" "jpeg" "orf" "nef" "cr3" "arw" "rw2" "...")
+   ```
+
+2. **Regenerate reference JSON files**:
+   ```bash
+   make compat-gen
+   ```
+
+3. **Verify tests pass**:
+   ```bash
+   make compat-test
+   ```
+
+**Why this matters**: The compat script generates ExifTool reference JSON files that our tests compare against. Without updating it, your new format won't have reference files and compatibility tests will fail.
+
 ## Shared Infrastructure
 
 The sub-milestones will build these shared components:

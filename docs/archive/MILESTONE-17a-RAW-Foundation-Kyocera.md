@@ -233,6 +233,7 @@ fn test_raw_format_detection() {
 - [ ] **CLI Integration**: `exif-oxide kyocera.raw` successfully extracts metadata
 - [ ] **Test Coverage**: Compatibility tests pass against ExifTool output
 - [ ] **No Binary Data**: Metadata only - no preview/thumbnail extraction
+- [ ] **🔧 Compat Script Update**: Add "raw" to `SUPPORTED_EXTENSIONS` in `tools/generate_exiftool_json.sh` and regenerate reference files with `make compat-gen`
 
 ### Validation Tests
 
