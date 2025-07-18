@@ -95,7 +95,7 @@ impl FileFormat {
     /// Based on ExifTool.pm %fileTypeExt hash overrides
     /// ExifTool.pm:582-592 - Special cases where extension differs from FileType
     /// See: https://github.com/exiftool/exiftool/blob/master/lib/Image/ExifTool.pm#L582-L592
-    /// Note: ExifTool does NOT uppercase the extension despite the uc() call in FoundTag
+    /// Note: This method is deprecated - use the generated ExifTool lookup instead
     pub fn file_type_extension(&self) -> &'static str {
         match self {
             // ExifTool %fileTypeExt overrides: 'JPEG' => 'jpg', 'TIFF' => 'tif'
