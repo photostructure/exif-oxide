@@ -4,16 +4,16 @@
 
 This milestone implements **universal codegen extractors** that **eliminate 1000+ lines of manual maintenance** across all RAW format implementations. **Phase 1 & 2 are complete and proven** - the Tag Table Structure Extractor successfully replaced manual code across Canon, Olympus, and Nikon with more accurate, comprehensive ExifTool-derived implementations.
 
-**Current Status**: ✅ **ProcessBinaryData Extractor COMPLETE** - FujiFilm implementation working and validated
+**Current Status**: ✅ **4 of 5 extractors COMPLETE** - ProcessBinaryData, ModelDetection extractors working. ConditionalTags 95% complete.
 
-## 🎯 For the Next Engineer
+## 🎯 For the Next Engineer - FINAL INTEGRATION TASK
 
-### What You're Building
-You're implementing the **2 remaining universal extractors** to complete the milestone:
+### ⚠️ You're 95% Done! Just Need Final Integration
+You're completing the **last 5% of ConditionalTags integration** to finish the milestone:
 
 1. **ProcessBinaryData Table Extractor** - ✅ **COMPLETE** - Working implementation proven with FujiFilm FFMV
-2. **Model Detection Pattern Extractor** - Automates camera model detection logic  
-3. **Conditional Tag Definition Extractor** - Automates complex conditional tag mappings
+2. **Model Detection Pattern Extractor** - ✅ **COMPLETE** - Working implementation tested with FujiFilm
+3. **Conditional Tag Definition Extractor** - 🔄 **95% COMPLETE** - Just needs final build integration
 
 ### Why This Matters
 - **Monthly ExifTool releases** add new cameras, lenses, and bug fixes
@@ -162,7 +162,42 @@ cd codegen && cargo run --release  # Must work
 cd .. && cargo check --quiet       # Must compile
 ```
 
-### ProcessBinaryData Implementation (95% Complete)
+### 🧠 Critical Tribal Knowledge for Success
+
+**What the Previous Engineer Learned** (save yourself hours of debugging):
+
+1. **Config File Discovery**: Must add new config file names to `extraction.rs:113` config_files array or they won't be discovered
+2. **Special Extractor Detection**: Must add to `needs_special_extractor_by_name()` in `extraction.rs:338` 
+3. **Build Integration**: Must add to both `extraction.rs` dispatch AND `lookup_tables/mod.rs` generation
+4. **Perl Module Loading**: The `load_module_from_file()` function in `ExifToolExtract.pm` handles all module loading complexity
+5. **JSON Structure**: Keep the same JSON structure as ProcessBinaryData - the generators expect consistent format
+6. **HashMap vs Array**: Use HashMap + LazyLock pattern (not arrays) for lookup tables - better performance and cleaner API
+
+**Integration Points That Must Be Updated** (follow ProcessBinaryData pattern exactly):
+- `extraction.rs:35` - Add to SpecialExtractor enum
+- `extraction.rs:113` - Add to config_files array  
+- `extraction.rs:152` - Add to table field parsing logic
+- `extraction.rs:210` - Add to patching skip list
+- `extraction.rs:237` - Add dispatch case
+- `extraction.rs:338` - Add to special extractor detection
+- `lookup_tables/mod.rs:125-153` - Add generation logic (copy ProcessBinaryData block)
+- `generators/mod.rs:9,23` - Add module and export
+
+**Testing Strategy That Works**:
+1. Create minimal test config first (like FujiFilm FFMV - 1 simple table)
+2. Run `cd codegen && cargo run --release` to test extraction
+3. Check `generated/extract/` for JSON output
+4. Check `src/generated/` for Rust output  
+5. Run `cargo check --quiet` to verify compilation
+6. Only then add complexity
+
+**Common Gotchas**:
+- **Perl syntax**: Use `\\%${table_symbol}` not `%${table_symbol}` for table references
+- **JSON escaping**: Binary patterns need proper escaping (use `escape_string()`)
+- **Type safety**: All generated Rust must be clippy-compliant
+- **Error handling**: Graceful fallback for missing implementations (never panic)
+
+### Old ProcessBinaryData Section (Reference Only)
 
 **Files Created/Modified by Last Engineer**:
 - **Perl Extractor**: `codegen/extractors/process_binary_data.pl` - Extracts ProcessBinaryData tables to JSON
