@@ -12,6 +12,8 @@ pub mod ExifTool_pm;
 #[allow(non_snake_case)]
 pub mod Exif_pm;
 #[allow(non_snake_case)]
+pub mod FujiFilm_pm;
+#[allow(non_snake_case)]
 pub mod GPS_pm;
 #[allow(non_snake_case)]
 pub mod MinoltaRaw_pm;

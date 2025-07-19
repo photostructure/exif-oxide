@@ -122,6 +122,36 @@ pub fn process_config_directory(
         }
     }
     
+    // Check for process_binary_data.json configuration
+    let process_binary_data_config = config_dir.join("process_binary_data.json");
+    if process_binary_data_config.exists() {
+        let config_content = fs::read_to_string(&process_binary_data_config)?;
+        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
+        
+        // Extract table name from config
+        if let Some(table_name) = config_json["table"].as_str() {
+            // Look for the corresponding extracted binary data JSON file
+            let extract_dir = Path::new("generated/extract");
+            let module_base = module_name.trim_end_matches("_pm");
+            let binary_data_file = format!("{}_binary_data.json", module_base.to_lowercase());
+            let binary_data_path = extract_dir.join(&binary_data_file);
+            
+            if binary_data_path.exists() {
+                let binary_data_content = fs::read_to_string(&binary_data_path)?;
+                let binary_data_data: crate::generators::process_binary_data::ProcessBinaryDataExtraction = 
+                    serde_json::from_str(&binary_data_content)?;
+                
+                // Generate file for this ProcessBinaryData table
+                let file_name = generate_process_binary_data_file(
+                    &binary_data_data,
+                    &module_output_dir
+                )?;
+                generated_files.push(file_name);
+                has_content = true;
+            }
+        }
+    }
+    
     // Check for inline_printconv.json configuration - create individual files
     let inline_printconv_config = config_dir.join("inline_printconv.json");
     if inline_printconv_config.exists() {
@@ -323,6 +353,28 @@ fn generate_tag_structure_file(
     content.push_str("//! Auto-generated from ExifTool source\n");
     content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
     content.push_str(&structure_code);
+    
+    fs::write(&file_path, content)?;
+    println!("  ✓ Generated {}", file_path.display());
+    
+    Ok(file_name.to_string())
+}
+
+fn generate_process_binary_data_file(
+    binary_data: &crate::generators::process_binary_data::ProcessBinaryDataExtraction,
+    output_dir: &Path,
+) -> Result<String> {
+    let binary_code = crate::generators::process_binary_data::generate_process_binary_data(binary_data)?;
+    
+    // Create filename from table name
+    let table_name = &binary_data.table_data.table_name;
+    let file_name = format!("{}_binary_data", table_name.to_lowercase());
+    let file_path = output_dir.join(format!("{}.rs", file_name));
+    
+    let mut content = String::new();
+    content.push_str("//! Auto-generated from ExifTool source\n");
+    content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
+    content.push_str(&binary_code);
     
     fs::write(&file_path, content)?;
     println!("  ✓ Generated {}", file_path.display());
