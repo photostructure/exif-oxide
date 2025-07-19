@@ -230,6 +230,19 @@ impl ExifReader {
             0x8825 => "GPS",
             0xA005 => "InteropIFD",
             0x927C => "MakerNotes",
+
+            // Olympus subdirectory tags - only when in Olympus context
+            // ExifTool: lib/Image/ExifTool/Olympus.pm subdirectory definitions
+            0x2010 => "Olympus:Equipment",
+            0x2020 => "Olympus:CameraSettings",
+            0x2030 => "Olympus:RawDevelopment",
+            0x2031 => "Olympus:RawDev2",
+            0x2040 => "Olympus:ImageProcessing",
+            0x2050 => "Olympus:FocusInfo",
+            0x3000 => "Olympus:RawInfo",
+            0x4000 => "Olympus:MainInfo",
+            0x5000 => "Olympus:UnknownInfo",
+
             _ => return Ok(()), // Unknown subdirectory
         };
 
@@ -376,8 +389,37 @@ impl ExifReader {
             0x8825 => true, // GPS - GPS information subdirectory
             0xA005 => true, // InteropIFD - Interoperability subdirectory
             0x927C => true, // MakerNotes - Manufacturer-specific data
+
+            // Olympus subdirectory tags (when in Olympus MakerNotes context)
+            // ExifTool: lib/Image/ExifTool/Olympus.pm subdirectory definitions
+            0x2010 | // Equipment - Camera/lens hardware info
+            0x2020 | // CameraSettings - Core camera settings  
+            0x2030 | // RawDevelopment - RAW processing parameters
+            0x2031 | // RawDev2 - Additional RAW parameters
+            0x2040 | // ImageProcessing - Image processing, art filters
+            0x2050 | // FocusInfo - Autofocus information
+            0x3000 | // RawInfo - RAW file specific info
+            0x4000 | // MainInfo - Main Olympus tag table
+            0x5000   // UnknownInfo - Unknown/experimental data
+            => {
+                // Only treat as subdirectory if we're processing Olympus MakerNotes
+                self.is_olympus_subdirectory_context()
+            },
+
             _ => false,
         }
+    }
+
+    /// Check if we're currently in Olympus MakerNotes context for subdirectory processing
+    /// Used to determine if Olympus-specific subdirectory tags should be processed
+    fn is_olympus_subdirectory_context(&self) -> bool {
+        // Check if the Make field indicates this is an Olympus camera
+        if let Some(make_tag) = self.extracted_tags.get(&0x010F) {
+            if let Some(make_str) = make_tag.as_string() {
+                return olympus::is_olympus_makernote(make_str);
+            }
+        }
+        false
     }
 
     /// Create ProcessorContext from current ExifReader state
