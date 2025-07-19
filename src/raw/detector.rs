@@ -25,10 +25,13 @@ pub enum RawFormat {
     /// ExifTool: lib/Image/ExifTool/Olympus.pm - TIFF-based with dual processing modes
     Olympus,
 
+    /// Canon RAW format (CR2, CRW, CR3)
+    /// ExifTool: lib/Image/ExifTool/Canon.pm - Complex format with 169 ProcessBinaryData sections
+    Canon,
+
     /// Unknown or unsupported RAW format
     Unknown,
     // Future formats will be added here as we implement them:
-    // Canon,     // CR2, CR3 formats
     // Nikon,     // NEF, NRW formats
     // Sony,      // ARW, SR2, SRF formats
     // Fujifilm,  // RAF format
@@ -42,6 +45,7 @@ impl RawFormat {
             RawFormat::Minolta => "Minolta",
             RawFormat::Panasonic => "Panasonic",
             RawFormat::Olympus => "Olympus",
+            RawFormat::Canon => "Canon",
             RawFormat::Unknown => "Unknown",
         }
     }
@@ -69,6 +73,15 @@ pub fn detect_raw_format(detection_result: &FileTypeDetectionResult) -> RawForma
         return RawFormat::Olympus;
     }
 
+    // Check for Canon RAW formats
+    // ExifTool: Canon.pm - Multiple RAW format support
+    if detection_result.file_type == "CR2"
+        || detection_result.file_type == "CRW"
+        || detection_result.file_type == "CR3"
+    {
+        return RawFormat::Canon;
+    }
+
     // Check for Kyocera RAW format
     // ExifTool: KyoceraRaw.pm uses .raw extension + magic validation
     if detection_result.file_type == "RAW" && detection_result.format == "RAW" {
@@ -78,7 +91,6 @@ pub fn detect_raw_format(detection_result: &FileTypeDetectionResult) -> RawForma
     }
 
     // Future format detection will be added here:
-    // if detection_result.file_type == "CR2" { return RawFormat::Canon; }
     // if detection_result.file_type == "NEF" || detection_result.file_type == "NRW" { return RawFormat::Nikon; }
     // if detection_result.file_type == "ARW" { return RawFormat::Sony; }
     // if detection_result.file_type == "RAF" { return RawFormat::Fujifilm; }
@@ -161,6 +173,7 @@ mod tests {
         assert_eq!(RawFormat::Minolta.name(), "Minolta");
         assert_eq!(RawFormat::Panasonic.name(), "Panasonic");
         assert_eq!(RawFormat::Olympus.name(), "Olympus");
+        assert_eq!(RawFormat::Canon.name(), "Canon");
         assert_eq!(RawFormat::Unknown.name(), "Unknown");
     }
 
@@ -277,6 +290,33 @@ mod tests {
             description: "Olympus RAW image".to_string(),
         };
         assert_eq!(detect_raw_format(&orf_result), RawFormat::Olympus);
+
+        // Test Canon CR2 detection
+        let cr2_result = FileTypeDetectionResult {
+            file_type: "CR2".to_string(),
+            format: "CR2".to_string(),
+            mime_type: "image/x-canon-cr2".to_string(),
+            description: "Canon RAW image".to_string(),
+        };
+        assert_eq!(detect_raw_format(&cr2_result), RawFormat::Canon);
+
+        // Test Canon CRW detection
+        let crw_result = FileTypeDetectionResult {
+            file_type: "CRW".to_string(),
+            format: "CRW".to_string(),
+            mime_type: "image/x-canon-crw".to_string(),
+            description: "Canon RAW image".to_string(),
+        };
+        assert_eq!(detect_raw_format(&crw_result), RawFormat::Canon);
+
+        // Test Canon CR3 detection
+        let cr3_result = FileTypeDetectionResult {
+            file_type: "CR3".to_string(),
+            format: "CR3".to_string(),
+            mime_type: "image/x-canon-cr3".to_string(),
+            description: "Canon RAW image".to_string(),
+        };
+        assert_eq!(detect_raw_format(&cr3_result), RawFormat::Canon);
 
         // Test Kyocera detection
         let kyocera_result = FileTypeDetectionResult {
