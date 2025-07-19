@@ -13,3 +13,7 @@ rules:
   truthy:
     allowed-values: ['true', 'false', 'on', 'off', 'yes', 'no']
     check-keys: false
+  
+  # Allow single space before comments (common in GitHub Actions)
+  comments:
+    min-spaces-from-content: 1
