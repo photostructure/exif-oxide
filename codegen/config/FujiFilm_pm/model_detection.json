@@ -1,0 +1,5 @@
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/FujiFilm.pm",
+  "description": "FujiFilm model detection patterns and conditional tags",
+  "table": "Main"
+}
