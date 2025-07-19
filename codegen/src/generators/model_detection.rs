@@ -69,12 +69,8 @@ pub fn generate_model_detection(data: &ModelDetectionExtraction) -> Result<Strin
         data.manufacturer, data.patterns_data.table_name
     ));
     code.push_str(&format!(
-        "//! ExifTool: {} %{}::{}\n",
+        "//! ExifTool: {} %{}::{}\n\n",
         data.source.module, data.manufacturer, data.patterns_data.table_name
-    ));
-    code.push_str(&format!(
-        "//! Generated at: {}\n\n",
-        data.source.extracted_at
     ));
     
     // Add imports

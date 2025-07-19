@@ -80,12 +80,8 @@ pub fn generate_tag_structure(data: &TagStructureData) -> Result<String> {
         data.manufacturer, data.source.module
     ));
     code.push_str(&format!(
-        "//! ExifTool: {} %{}::{}\n",
+        "//! ExifTool: {} %{}::{}\n\n",
         data.source.module, data.manufacturer, data.source.table
-    ));
-    code.push_str(&format!(
-        "//! Generated at: {}\n\n",
-        data.source.extracted_at
     ));
     
     // Generate enum name

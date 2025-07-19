@@ -182,6 +182,36 @@ pub fn process_config_directory(
         }
     }
     
+    // Check for conditional_tags.json configuration
+    let conditional_tags_config = config_dir.join("conditional_tags.json");
+    if conditional_tags_config.exists() {
+        let config_content = fs::read_to_string(&conditional_tags_config)?;
+        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
+        
+        // Extract table name from config
+        if let Some(table_name) = config_json["table"].as_str() {
+            // Look for the corresponding extracted conditional tags JSON file
+            let extract_dir = Path::new("generated/extract");
+            let module_base = module_name.trim_end_matches("_pm");
+            let conditional_tags_file = format!("{}_conditional_tags.json", module_base.to_lowercase());
+            let conditional_tags_path = extract_dir.join(&conditional_tags_file);
+            
+            if conditional_tags_path.exists() {
+                let conditional_tags_content = fs::read_to_string(&conditional_tags_path)?;
+                let conditional_tags_data: crate::generators::conditional_tags::ConditionalTagsExtraction = 
+                    serde_json::from_str(&conditional_tags_content)?;
+                
+                // Generate file for this ConditionalTags table
+                let file_name = generate_conditional_tags_file(
+                    &conditional_tags_data,
+                    &module_output_dir
+                )?;
+                generated_files.push(file_name);
+                has_content = true;
+            }
+        }
+    }
+    
     // Check for inline_printconv.json configuration - create individual files
     let inline_printconv_config = config_dir.join("inline_printconv.json");
     if inline_printconv_config.exists() {
@@ -427,6 +457,28 @@ fn generate_model_detection_file(
     content.push_str("//! Auto-generated from ExifTool source\n");
     content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
     content.push_str(&model_code);
+    
+    fs::write(&file_path, content)?;
+    println!("  ✓ Generated {}", file_path.display());
+    
+    Ok(file_name.to_string())
+}
+
+fn generate_conditional_tags_file(
+    conditional_tags: &crate::generators::conditional_tags::ConditionalTagsExtraction,
+    output_dir: &Path,
+) -> Result<String> {
+    let conditional_code = crate::generators::conditional_tags::generate_conditional_tags(conditional_tags)?;
+    
+    // Create filename from table name
+    let table_name = &conditional_tags.conditional_data.table_name;
+    let file_name = format!("{}_conditional_tags", table_name.to_lowercase());
+    let file_path = output_dir.join(format!("{}.rs", file_name));
+    
+    let mut content = String::new();
+    content.push_str("//! Auto-generated from ExifTool source\n");
+    content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
+    content.push_str(&conditional_code);
     
     fs::write(&file_path, content)?;
     println!("  ✓ Generated {}", file_path.display());

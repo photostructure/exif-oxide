@@ -3,7 +3,6 @@
 
 //! Olympus tag table structure generated from Olympus.pm
 //! ExifTool: Olympus.pm %Olympus::Main
-//! Generated at: Sat Jul 19 20:59:48 2025 GMT
 
 /// Olympus data types from %Olympus::Main table
 /// Total tags: 119 (conditional: 18, with subdirectories: 4)

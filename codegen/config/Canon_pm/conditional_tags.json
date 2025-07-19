@@ -1,0 +1,5 @@
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
+  "description": "Canon conditional tag definitions with complex logic",
+  "table": "Main"
+}

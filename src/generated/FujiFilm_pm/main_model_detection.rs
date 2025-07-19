@@ -3,7 +3,6 @@
 
 //! FujiFilm model detection patterns from Main table
 //! ExifTool: FujiFilm.pm %FujiFilm::Main
-//! Generated at: Sat Jul 19 20:59:47 2025 GMT
 
 use std::collections::HashMap;
 use std::sync::LazyLock;
