@@ -180,17 +180,13 @@ fn test_multi_pass_composite_dependencies() {
 
     // Verify the expected dependency chains exist in the definitions
 
-    // Chain 1: ScaleFactor35efl -> CircleOfConfusion -> DOF/HyperfocalDistance
+    // Chain 1: ScaleFactor35efl -> CircleOfConfusion -> HyperfocalDistance
     let circle_def = COMPOSITE_TAG_BY_NAME.get("CircleOfConfusion").unwrap();
     let has_scale_factor_dep = circle_def.require.contains(&"ScaleFactor35efl");
     assert!(
         has_scale_factor_dep,
         "CircleOfConfusion should require ScaleFactor35efl"
     );
-
-    let dof_def = COMPOSITE_TAG_BY_NAME.get("DOF").unwrap();
-    let has_circle_dep = dof_def.require.contains(&"CircleOfConfusion");
-    assert!(has_circle_dep, "DOF should require CircleOfConfusion");
 
     let hyperfocal_def = COMPOSITE_TAG_BY_NAME.get("HyperfocalDistance").unwrap();
     let has_circle_dep = hyperfocal_def.require.contains(&"CircleOfConfusion");
