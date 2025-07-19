@@ -5,6 +5,7 @@
 //!
 //! ExifTool Reference: lib/Image/ExifTool/Exif.pm IFD processing
 
+use crate::implementations::olympus;
 use crate::tiff_types::{ByteOrder, IfdEntry, TiffFormat};
 use crate::types::{DirectoryInfo, ExifError, Result, TagValue};
 use crate::value_extraction;
@@ -141,12 +142,22 @@ impl ExifReader {
         ifd_name: &str,
         _index: usize,
     ) -> Result<()> {
-        // Parse 12-byte IFD entry structure
-        let entry = IfdEntry::parse(&self.data, entry_offset, byte_order)?;
+        // Check if we're processing Olympus MakerNotes for FixFormat support
+        // ExifTool: lib/Image/ExifTool/Olympus.pm dual-path processing
+        let is_olympus_makernotes = self.is_olympus_makernotes_context(ifd_name);
+
+        // Parse 12-byte IFD entry structure with Olympus context
+        let entry = if is_olympus_makernotes {
+            IfdEntry::parse_with_context(&self.data, entry_offset, byte_order, true)?
+        } else {
+            IfdEntry::parse(&self.data, entry_offset, byte_order)?
+        };
 
         // Debug: Log all tag IDs being processed
-        // debug!("Processing tag {:#x} ({}) from {} (format: {:?}, count: {})",
-        //        entry.tag_id, entry.tag_id, ifd_name, entry.format, entry.count);
+        // debug!(
+        //     "Processing tag {:#x} ({}) from {} (format: {:?}, count: {})",
+        //     entry.tag_id, entry.tag_id, ifd_name, entry.format, entry.count
+        // );
 
         // Look up tag definition in appropriate table based on IFD type and file format
         // ExifTool: Different IFDs use different tag tables, and RAW formats have specific tables
@@ -380,5 +391,20 @@ impl ExifReader {
         self.get_tag_definition(tag_id, ifd_name)
             .map(|def| def.name.to_string())
             .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+    }
+
+    /// Check if we're currently processing Olympus MakerNotes
+    /// ExifTool: lib/Image/ExifTool/Olympus.pm FixFormat processing context
+    fn is_olympus_makernotes_context(&self, ifd_name: &str) -> bool {
+        // Check if the IFD name indicates Olympus MakerNotes
+        if ifd_name.contains("MakerNotes") || ifd_name.starts_with("Olympus") {
+            // Check if the Make field indicates this is an Olympus camera
+            if let Some(make_tag) = self.extracted_tags.get(&0x010F) {
+                if let Some(make_str) = make_tag.as_string() {
+                    return olympus::is_olympus_makernote(make_str);
+                }
+            }
+        }
+        false
     }
 }

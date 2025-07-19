@@ -60,6 +60,71 @@ impl TiffFormat {
             ))),
         }
     }
+
+    /// Create from format number with Olympus FixFormat support
+    /// ExifTool: lib/Image/ExifTool/Olympus.pm dual-path processing with FixFormat
+    ///
+    /// **Problem**: Olympus MakerNotes use non-standard TIFF format types that violate the TIFF specification.
+    /// Old Olympus cameras write subdirectory entries with format types like `undef` or `string` instead of `ifd`.
+    /// This causes standard TIFF parsers to reject them as "Invalid TIFF format type".
+    ///
+    /// **ExifTool Solution**: Uses dual-path approach with `FixFormat => 'ifd'` directive:
+    /// - Path 1: When format is NOT `ifd` -> process as binary data  
+    /// - Path 2: When format is invalid -> apply FixFormat to convert to `ifd` format
+    ///
+    /// **Our Implementation**:
+    /// - Detection: Check if we're in Olympus MakerNotes and tag is known subdirectory (0x2010-0x5000)
+    /// - Correction: Convert invalid format types to `TiffFormat::Ifd`
+    /// - Processing: Continue with standard IFD processing
+    ///
+    /// This handles Equipment (0x2010), CameraSettings (0x2020), and other Olympus subdirectories.
+    pub fn from_u16_with_olympus_fixformat(
+        format: u16,
+        tag_id: u16,
+        is_olympus_makernotes: bool,
+    ) -> Result<Self> {
+        // First try standard validation
+        if let Ok(format_type) = Self::from_u16(format) {
+            return Ok(format_type);
+        }
+
+        // If standard validation fails and we're in Olympus MakerNotes,
+        // check if this tag should use FixFormat to IFD
+        if is_olympus_makernotes && Self::is_olympus_subdirectory_tag(tag_id) {
+            // ExifTool: Olympus.pm uses FixFormat => 'ifd' for these tags
+            // when format is invalid (undef, string, or other non-standard types)
+            tracing::debug!(
+                "Applying Olympus FixFormat: tag {:#x} format {} -> IFD (original format invalid)",
+                tag_id,
+                format
+            );
+            return Ok(TiffFormat::Ifd);
+        }
+
+        // Otherwise, fall back to original error
+        Err(ExifError::ParseError(format!(
+            "Invalid TIFF format type: {format}"
+        )))
+    }
+
+    /// Check if a tag ID corresponds to an Olympus subdirectory that needs FixFormat
+    /// ExifTool: lib/Image/ExifTool/Olympus.pm subdirectory tags with dual processing
+    fn is_olympus_subdirectory_tag(tag_id: u16) -> bool {
+        match tag_id {
+            0x2010 | // Equipment
+            0x2020 | // CameraSettings
+            0x2030 | // RawDevelopment
+            0x2031 | // RawDev2
+            0x2040 | // ImageProcessing
+            0x2050 | // FocusInfo
+            0x2100..=0x2900 | // FE model sections
+            0x3000 | // RawInfo
+            0x4000 | // MainInfo
+            0x5000   // UnknownInfo
+            => true,
+            _ => false,
+        }
+    }
 }
 
 /// Byte order for TIFF data
@@ -163,6 +228,17 @@ impl IfdEntry {
     /// Parse IFD entry from 12-byte data block
     /// ExifTool: lib/Image/ExifTool/Exif.pm:6348-6350 entry structure
     pub fn parse(data: &[u8], offset: usize, byte_order: ByteOrder) -> Result<Self> {
+        Self::parse_with_context(data, offset, byte_order, false)
+    }
+
+    /// Parse IFD entry with Olympus MakerNotes context support
+    /// ExifTool: lib/Image/ExifTool/Olympus.pm FixFormat mechanism
+    pub fn parse_with_context(
+        data: &[u8],
+        offset: usize,
+        byte_order: ByteOrder,
+        is_olympus_makernotes: bool,
+    ) -> Result<Self> {
         if offset + 12 > data.len() {
             return Err(ExifError::ParseError(
                 "Not enough data for IFD entry".to_string(),
@@ -171,7 +247,11 @@ impl IfdEntry {
 
         let tag_id = byte_order.read_u16(data, offset)?;
         let format_num = byte_order.read_u16(data, offset + 2)?;
-        let format = TiffFormat::from_u16(format_num)?;
+        let format = if is_olympus_makernotes {
+            TiffFormat::from_u16_with_olympus_fixformat(format_num, tag_id, true)?
+        } else {
+            TiffFormat::from_u16(format_num)?
+        };
         let count = byte_order.read_u32(data, offset + 4)?;
         let value_or_offset = byte_order.read_u32(data, offset + 8)?;
 

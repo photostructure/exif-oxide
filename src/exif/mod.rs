@@ -288,7 +288,14 @@ impl ExifReader {
                         name if name.starts_with("Olympus") => false, // Olympus maker notes - don't lookup GPS/EXIF tags
                         "MakerNotes" => false, // Generic maker notes - don't lookup GPS/EXIF tags
                         "KyoceraRaw" => false, // Kyocera RAW - don't lookup GPS/EXIF tags
-                        "IFD0" if self.original_file_type.as_deref() == Some("RW2") => false, // Panasonic RW2 IFD0 - use Panasonic table
+                        "IFD0" if self.original_file_type.as_deref() == Some("RW2") => {
+                            // TODO: HANDOFF TASK - Complete tag precedence fix
+                            // See: docs/milestones/HANDOFF-panasonic-rw2-tag-mapping-completion.md
+                            // For Panasonic RW2, only exclude Panasonic-specific tag ranges
+                            // ExifTool: PanasonicRaw.pm Main table covers 0x01-0x2F range
+                            // Allow standard EXIF tags (Make=0x10F, Model=0x110, ColorSpace=0xA001, etc.)
+                            !(0x01..=0x2F).contains(&tag_id) // Allow standard EXIF tags, exclude Panasonic-specific
+                        }
                         _ => true, // Standard IFDs (IFD0, ExifIFD, GPS, etc.) - lookup in global table
                     }
                 });
