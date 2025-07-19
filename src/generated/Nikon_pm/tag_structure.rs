@@ -3,7 +3,6 @@
 
 //! Nikon tag table structure generated from Nikon.pm
 //! ExifTool: Nikon.pm %Nikon::Main
-//! Generated at: Sat Jul 19 20:59:46 2025 GMT
 
 /// Nikon data types from %Nikon::Main table
 /// Total tags: 111 (conditional: 12, with subdirectories: 22)
