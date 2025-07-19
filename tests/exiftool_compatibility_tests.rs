@@ -528,7 +528,7 @@ fn get_known_missing_tags(file_path: &str) -> Vec<&'static str> {
     let path_lower = file_path.to_lowercase();
 
     // Panasonic RW2 files - missing tags due to incomplete IFD chaining and MakerNotes
-    // See: docs/milestones/HANDOFF-panasonic-rw2-complete-resolution.md
+    // See: docs/todo/HANDOFF-panasonic-rw2-complete-resolution.md
     if (path_lower.contains("panasonic") || path_lower.contains("lumix"))
         && path_lower.contains("rw2")
     {

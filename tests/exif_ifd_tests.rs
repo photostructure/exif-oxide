@@ -6,7 +6,7 @@
 //! 3. Context-aware processing and validation
 //!
 //! ExifTool Reference: lib/Image/ExifTool/Exif.pm ExifIFD group assignment
-//! Milestone: docs/milestones/MILESTONE-ExifIFD.md
+//! Milestone: docs/todo/MILESTONE-ExifIFD.md
 //!
 //! Note: These tests require the `integration-tests` feature to be enabled and
 //! external test assets to be available. They are automatically skipped in published crates.

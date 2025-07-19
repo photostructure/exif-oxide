@@ -13,7 +13,7 @@
 #![cfg(feature = "integration-tests")]
 //!
 //! ExifTool Reference: ExifTool -G/-G1/-G2 flags for group hierarchies
-//! Milestone: docs/milestones/MILESTONE-ExifIFD.md Group Assignment Validation
+//! Milestone: docs/todo/MILESTONE-ExifIFD.md Group Assignment Validation
 
 use exif_oxide::formats::extract_metadata;
 use serde_json::Value;

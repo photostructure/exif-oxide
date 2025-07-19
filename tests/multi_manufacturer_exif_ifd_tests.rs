@@ -13,7 +13,7 @@
 //! external test assets to be available. They are automatically skipped in published crates.
 
 #![cfg(feature = "integration-tests")]
-//! Milestone: docs/milestones/MILESTONE-ExifIFD.md Multi-Manufacturer Support
+//! Milestone: docs/todo/MILESTONE-ExifIFD.md Multi-Manufacturer Support
 
 use exif_oxide::formats::extract_metadata;
 use std::collections::HashMap;
