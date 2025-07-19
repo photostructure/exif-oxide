@@ -307,6 +307,18 @@ impl ExifReader {
                     let name = tag_def
                         .map(|def| def.name.to_string())
                         .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+
+                    // Debug logging for ColorSpace and WhiteBalance
+                    if tag_id == 0xa001 || tag_id == 0xa403 {
+                        debug!(
+                            "Processing tag 0x{:04x} ({}) with value {:?}, tag_def found: {}",
+                            tag_id,
+                            name,
+                            raw_value,
+                            tag_def.is_some()
+                        );
+                    }
+
                     (name, tag_def)
                 } else {
                     // Maker note tags - don't lookup in global table to avoid conflicts
@@ -349,6 +361,12 @@ impl ExifReader {
             } else {
                 "IFD0".to_string() // Default fallback
             };
+
+            // Debug logging for ColorSpace and WhiteBalance
+            if tag_id == 0xa001 || tag_id == 0xa403 {
+                debug!("Creating TagEntry for 0x{:04x}: group={}, group1={}, name={}, value={:?}, print={:?}", 
+                    tag_id, group_name, group1_name, base_tag_name, value, print);
+            }
 
             let entry = TagEntry {
                 group: group_name.to_string(),

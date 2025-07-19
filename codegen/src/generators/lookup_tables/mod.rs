@@ -92,6 +92,36 @@ pub fn process_config_directory(
         }
     }
     
+    // Check for tag_table_structure.json configuration
+    let tag_structure_config = config_dir.join("tag_table_structure.json");
+    if tag_structure_config.exists() {
+        let config_content = fs::read_to_string(&tag_structure_config)?;
+        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
+        
+        // Extract table name from config
+        if let Some(table_name) = config_json["table"].as_str() {
+            // Look for the corresponding extracted tag structure JSON file
+            let extract_dir = Path::new("generated/extract");
+            let module_base = module_name.trim_end_matches("_pm");
+            let structure_file = format!("{}_tag_structure.json", module_base.to_lowercase());
+            let structure_path = extract_dir.join(&structure_file);
+            
+            if structure_path.exists() {
+                let structure_content = fs::read_to_string(&structure_path)?;
+                let structure_data: crate::generators::tag_structure::TagStructureData = 
+                    serde_json::from_str(&structure_content)?;
+                
+                // Generate file for this tag structure
+                let file_name = generate_tag_structure_file(
+                    &structure_data,
+                    &module_output_dir
+                )?;
+                generated_files.push(file_name);
+                has_content = true;
+            }
+        }
+    }
+    
     // Check for inline_printconv.json configuration - create individual files
     let inline_printconv_config = config_dir.join("inline_printconv.json");
     if inline_printconv_config.exists() {
@@ -276,6 +306,28 @@ fn generate_inline_printconv_file(
     println!("  ✓ Generated {}", file_path.display());
     
     Ok(file_name)
+}
+
+/// Generate individual file for a tag table structure
+fn generate_tag_structure_file(
+    structure_data: &crate::generators::tag_structure::TagStructureData,
+    output_dir: &Path,
+) -> Result<String> {
+    let structure_code = crate::generators::tag_structure::generate_tag_structure(structure_data)?;
+    
+    // Create filename from manufacturer name
+    let file_name = "tag_structure";
+    let file_path = output_dir.join(format!("{}.rs", file_name));
+    
+    let mut content = String::new();
+    content.push_str("//! Auto-generated from ExifTool source\n");
+    content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
+    content.push_str(&structure_code);
+    
+    fs::write(&file_path, content)?;
+    println!("  ✓ Generated {}", file_path.display());
+    
+    Ok(file_name.to_string())
 }
 
 /// Convert table name to snake_case to match Perl transformation
