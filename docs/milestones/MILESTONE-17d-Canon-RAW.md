@@ -15,6 +15,38 @@ Canon RAW support represents a major complexity milestone:
 
 This milestone focuses on CR2 (TIFF-based) as the primary target, with CRW (legacy) and CR3 (MOV-based) as stretch goals.
 
+## 🔧 **INTEGRATION WITH UNIVERSAL CODEGEN EXTRACTORS**
+
+**Migration Target**: This milestone's manual implementations will be replaced with generated code via [MILESTONE-17-UNIVERSAL-CODEGEN-EXTRACTORS.md](MILESTONE-17-UNIVERSAL-CODEGEN-EXTRACTORS.md).
+
+**Generated Replacements for Manual Code**:
+
+**169 ProcessBinaryData Sections** → `crate::generated::canon::binary_data::*`
+- Each ProcessBinaryData table becomes a generated processor struct
+- Automatic field definitions, format specifications, PrintConv handling
+- Eliminates manual maintenance of complex binary parsing logic
+
+**CanonDataType Enum** → `crate::generated::canon::tag_structure::CanonDataType`  
+- All 23+ variants automatically generated from Canon.pm Main table
+- tag_id(), from_tag_id(), name() methods auto-generated
+- Replaces 215+ lines of manual enum maintenance
+
+**Model Detection Patterns** → `crate::generated::canon::model_patterns::*`
+- detect_canon_offset_scheme() function generated from ExifTool patterns
+- CANON_6_BYTE_MODELS, CANON_16_BYTE_MODELS arrays auto-generated
+- Replaces manual CanonOffsetManager pattern detection
+
+**Conditional Tag Processing** → `crate::generated::canon::conditional_tags::*`
+- Multi-variant tag definitions for SerialNumber (0x000c) and similar
+- Automatic model-based conditional logic generation
+
+**Migration Benefits**:
+- **~700 lines eliminated** from Canon implementation
+- **Perfect ExifTool compatibility** for all 169 ProcessBinaryData sections
+- **Automatic updates** for new Canon cameras and firmware
+
+**Implementation Note**: Manual implementations in this milestone serve as bridge until universal extractors complete.
+
 ## Background
 
 **Canon Format Evolution**:

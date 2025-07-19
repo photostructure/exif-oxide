@@ -205,11 +205,12 @@ fn canon_lens_type_print_conv(value: &TagValue) -> TagValue {
 
 ### Critical Prerequisites
 
-- **⚠️ MANDATORY: MILESTONE-17-PREREQUISITE-Codegen.md MUST BE COMPLETED FIRST**
-  - **Why**: Contains ~3000+ automatically generated lookup tables for all manufacturers
-  - **Impact**: Eliminates need to manually maintain massive lookup tables during implementation
-  - **Location**: See [MILESTONE-17-PREREQUISITE-Codegen.md](MILESTONE-17-PREREQUISITE-Codegen.md)
-  - **Generated Tables**: Canon lens types (~1000+), Nikon lens IDs (~618), camera models, settings, etc.
+- **⚠️ MANDATORY: MILESTONE-17-UNIVERSAL-CODEGEN-EXTRACTORS.md MUST BE COMPLETED FIRST**
+  - **Why**: Universal extractors eliminate 1000+ lines of manual maintenance across ALL manufacturers
+  - **Impact**: Canon, Nikon, Olympus, Panasonic implementations become 95% automated
+  - **Scope**: Works for ALL manufacturers, not just Canon
+  - **Location**: See [MILESTONE-17-UNIVERSAL-CODEGEN-EXTRACTORS.md](MILESTONE-17-UNIVERSAL-CODEGEN-EXTRACTORS.md)
+  - **Generated Code**: Tag structures, binary data processors, model detection, conditional logic
 
 ### Milestone Prerequisites
 
