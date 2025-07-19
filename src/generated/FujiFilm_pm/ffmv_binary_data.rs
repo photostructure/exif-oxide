@@ -3,7 +3,7 @@
 
 //! FujiFilm ProcessBinaryData table FFMV generated from FujiFilm.pm
 //! ExifTool: FujiFilm.pm %FujiFilm::FFMV
-//! Generated at: Sat Jul 19 20:43:18 2025 GMT
+//! Generated at: Sat Jul 19 20:59:47 2025 GMT
 
 use std::collections::HashMap;
 use std::sync::LazyLock;

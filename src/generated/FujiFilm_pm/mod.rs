@@ -4,6 +4,8 @@
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
 pub mod ffmv_binary_data;
+pub mod main_model_detection;
 
 // Re-export all lookup functions and constants
 pub use ffmv_binary_data::*;
+pub use main_model_detection::*;

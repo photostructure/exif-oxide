@@ -1,79 +1,48 @@
-# Universal RAW Format Codegen Extractors Implementation and Migration Plan
+# Universal RAW Format Codegen Extractors - Final Integration
 
 ## 📊 Executive Summary
 
-This milestone implements **universal codegen extractors** that **eliminate 1000+ lines of manual maintenance** across all RAW format implementations. **Phase 1 & 2 are complete and proven** - the Tag Table Structure Extractor successfully replaced manual code across Canon, Olympus, and Nikon with more accurate, comprehensive ExifTool-derived implementations.
+This milestone implements **universal codegen extractors** that **eliminate 1000+ lines of manual maintenance** across all RAW format implementations. **4 of 5 extractors are COMPLETE** - you just need to finish the final integration of ConditionalTags.
 
-**Current Status**: ✅ **4 of 5 extractors COMPLETE** - ProcessBinaryData, ModelDetection extractors working. ConditionalTags 95% complete.
+**Current Status**: ✅ **95% COMPLETE** - Just need 5 minutes to finish ConditionalTags integration
 
-## 🎯 For the Next Engineer - FINAL INTEGRATION TASK
+## 🎯 For the Next Engineer - FINAL TASK
 
-### ⚠️ You're 95% Done! Just Need Final Integration
-You're completing the **last 5% of ConditionalTags integration** to finish the milestone:
+### ⚠️ You're 95% Done! 5-Minute Completion Task
+You need to **complete the last 3 build integration changes** for ConditionalTags:
 
-1. **ProcessBinaryData Table Extractor** - ✅ **COMPLETE** - Working implementation proven with FujiFilm FFMV
-2. **Model Detection Pattern Extractor** - ✅ **COMPLETE** - Working implementation tested with FujiFilm
-3. **Conditional Tag Definition Extractor** - 🔄 **95% COMPLETE** - Just needs final build integration
+**Files Already Complete**:
+- ✅ **Perl Extractor**: `codegen/extractors/conditional_tags.pl` - Working, tested with Canon
+- ✅ **Rust Generator**: `codegen/src/generators/conditional_tags.rs` - Complete, ready
+- ✅ **Generated JSON**: `canon_conditional_tags.json` - Extracts 4 binary patterns, 14 count conditions, 50+ dependencies
 
-### Why This Matters
-- **Monthly ExifTool releases** add new cameras, lenses, and bug fixes
-- **Manual porting** of these changes is unsustainable (1000+ lines to maintain)
-- **Generated code** updates automatically with zero maintenance burden
-- **ExifTool accuracy** prevents the mapping errors found in manual implementations
+**Remaining Integration (3 edits in `extraction.rs`)**:
+1. Add `ConditionalTags` to `SpecialExtractor` enum (line 36)
+2. Add `"conditional_tags.json"` to config_files array (line 116) 
+3. Add `"conditional_tags.json"` to table field parsing (line 154)
+4. Add patching skip logic (line 212)
+5. Add dispatch case (line 244)
+6. Add to special extractor detection (line 344)
+7. Add extractor function (copy from model_detection pattern)
+8. Add to `generators/mod.rs` and `lookup_tables/mod.rs` (follow ProcessBinaryData pattern)
 
-## 📊 Current Status (Last Updated: 2025-07-19)
+## 🛠️ Implementation Status - All Extractors
 
-### ✅ COMPLETED: Phases 1 & 2 - Universal Pattern Proven
+### ✅ PHASE 1 & 2: Universal Pattern Proven
 - **Tag Table Structure Extractor**: ✅ Complete and universal
 - **Canon**: 84 generated variants (vs 24 manual), 215+ lines eliminated
-- **Olympus**: 119 generated variants, ~15 lines eliminated, tests updated
-- **Nikon**: 111 generated variants available for future use
-- **Pattern Validation**: ✅ Works identically across all manufacturers
-- **Build Status**: ✅ All tests passing, compilation clean
+- **Olympus**: 119 generated variants, tests updated
+- **Nikon**: 111 generated variants available
 
-### ✅ COMPLETED: ProcessBinaryData Table Extractor (2025-07-19)
+### ✅ PHASE 3: ProcessBinaryData Table Extractor 
+**🎉 COMPLETE** - Fully working and validated
 
-**🎉 IMPLEMENTATION SUCCESS**: ProcessBinaryData extractor is fully working and validated with FujiFilm FFMV table.
-
-**Final Implementation Status**:
-- **Perl Extractor**: ✅ Complete (`codegen/extractors/process_binary_data.pl`)
-- **Rust Generator**: ✅ Complete (`codegen/src/generators/process_binary_data.rs`)
-- **Build Integration**: ✅ Complete (added to extraction.rs, lookup_tables/mod.rs, generators/mod.rs)
-- **Config Discovery**: ✅ Complete (added "process_binary_data.json" to supported config files)
-- **Test Configuration**: ✅ Complete (`codegen/config/FujiFilm_pm/process_binary_data.json`)
-- **Build System Testing**: ✅ Complete (`cargo run --release` successful)
-- **Generated Code**: ✅ Complete (`src/generated/FujiFilm_pm/ffmv_binary_data.rs`)
-- **Validation**: ✅ Complete (compiles without errors, generates clean API)
-
-**Generated Output Example**:
-- **Extracted JSON**: `fujifilm_binary_data.json` with complete table metadata
-- **Generated Rust**: Type-safe `FujiFilmFFMVTable` with HashMap lookups
-- **API Methods**: `get_tag_name()`, `get_format()`, `get_offsets()`
-
-### 📋 REMAINING: Next Extractors (High Impact)
-1. **Model Detection Pattern Extractor** - Medium complexity, high value  
-2. **Conditional Tag Definition Extractor** - High complexity, highest value
-
-## 🛠️ Essential Background for Next Engineer
-
-### 🎯 Your Mission: Complete the Final 2 Extractors
-
-You need to implement **Model Detection Pattern Extractor** and **Conditional Tag Definition Extractor** to complete MILESTONE-17. The ProcessBinaryData foundation is complete and working - use it as your template.
-
-### 🏗️ ProcessBinaryData Implementation (Your Template)
-
-**Files Created by Previous Engineer** (study these as your implementation template):
-- **Perl Extractor**: `codegen/extractors/process_binary_data.pl` - Clean, well-documented pattern
-- **Rust Generator**: `codegen/src/generators/process_binary_data.rs` - Type-safe code generation
-- **Build Integration**: Changes in `extraction.rs:35,113,152,210,237,338`, `lookup_tables/mod.rs:125-153,363-383`, `generators/mod.rs:9,23`
-- **Test Config**: `codegen/config/FujiFilm_pm/process_binary_data.json` - Working configuration example
-- **Generated Output**: `src/generated/FujiFilm_pm/ffmv_binary_data.rs` - Clean Rust API
-
-**Validation Proof**:
-```bash
-cd codegen && cargo run --release  # ✅ Works 
-cd .. && cargo check --quiet       # ✅ Compiles
-```
+**Implementation**:
+- **Perl Extractor**: ✅ `codegen/extractors/process_binary_data.pl`
+- **Rust Generator**: ✅ `codegen/src/generators/process_binary_data.rs`
+- **Build Integration**: ✅ Complete in extraction.rs, lookup_tables/mod.rs, generators/mod.rs
+- **Test Config**: ✅ `codegen/config/FujiFilm_pm/process_binary_data.json`
+- **Generated Code**: ✅ `src/generated/FujiFilm_pm/ffmv_binary_data.rs`
 
 **Generated API Example**:
 ```rust
@@ -83,379 +52,183 @@ table.get_format(0);       // → "string[34]"
 table.get_offsets();       // → [0]
 ```
 
-### Critical Documents to Study
-1. **[TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md)** - ⚠️ CRITICAL: We translate ExifTool exactly, never "improve"
-2. **[EXIFTOOL-INTEGRATION.md](../design/EXIFTOOL-INTEGRATION.md)** - Complete codegen architecture and patterns
-3. **[ENGINEER-GUIDE.md](../ENGINEER-GUIDE.md)** - Development workflow and best practices
-4. **[20250719-enhanced-codegen-configuration-analysis.md](20250719-enhanced-codegen-configuration-analysis.md)** - Manufacturer complexity analysis and implementation strategy
+### ✅ PHASE 4: Model Detection Pattern Extractor
+**🎉 COMPLETE** - Fully working and validated
 
-### 🚀 Next Extractor 1: Model Detection Pattern Extractor
+**Implementation**:
+- **Perl Extractor**: ✅ `codegen/extractors/model_detection.pl`
+- **Rust Generator**: ✅ `codegen/src/generators/model_detection.rs` 
+- **Build Integration**: ✅ Complete in all files
+- **Test Config**: ✅ `codegen/config/FujiFilm_pm/model_detection.json`
+- **Generated Code**: ✅ `src/generated/FujiFilm_pm/main_model_detection.rs`
 
-**What This Extracts**: Camera model-specific conditions from ExifTool Main tables
-**Target Patterns**:
-```perl
-# Canon.pm example
-0xc => [
-    { Condition => '$$self{Model} =~ /EOS D30\\b/', Name => 'ImageType' },
-    { Condition => '$$self{Model} =~ /EOS-1D/', Name => 'FirmwareVersion' },
-    # Multiple model-specific interpretations for same tag ID
-]
+**Extracted Patterns from FujiFilm**:
+- 2 conditional tag arrays with model/make conditions
+- Generates clean conditional tag resolution logic
+
+### 🔄 PHASE 5: Conditional Tag Definition Extractor 
+**95% COMPLETE** - Just needs final build integration
+
+**Implementation Status**:
+- **Perl Extractor**: ✅ `codegen/extractors/conditional_tags.pl` - Working perfectly
+- **Rust Generator**: ✅ `codegen/src/generators/conditional_tags.rs` - Complete
+- **Build Integration**: 🔄 **In Progress** - Need 8 integration points
+- **Test Data**: ✅ Canon extraction works (4 binary patterns, 14 count conditions, 50+ dependencies)
+
+**Extracted Patterns from Canon**:
+- **4 binary patterns**: `$$valPt =~ /^\\0/` type conditions  
+- **5 conditional arrays**: Multiple conditions per tag ID (like ColorData variants)
+- **14 count conditions**: `$count == 582` style logic for different data sizes
+- **50+ cross-tag dependencies**: Model-specific patterns with `$$self{Model} =~ /EOS/`
+- **Format conditions**: `$format eq "int32u"` logic
+
+## 🚀 Immediate Next Steps (5 Minutes)
+
+### Step 1: Complete Build Integration
+Follow the **exact same pattern** as ProcessBinaryData and ModelDetection:
+
+**A. Update `extraction.rs`** (7 changes):
+```rust
+// 1. Line 36: Add to enum
+enum SpecialExtractor {
+    // ... existing ...
+    ConditionalTags,
+}
+
+// 2. Line 116: Add to config files
+let config_files = [
+    // ... existing ...
+    "conditional_tags.json"
+];
+
+// 3. Line 154: Add to table field parsing
+"tag_definitions.json" | "composite_tags.json" | "tag_table_structure.json" | 
+"process_binary_data.json" | "model_detection.json" | "conditional_tags.json" => {
+
+// 4. Line 212: Add to patching skip
+if !matches!(config.module_name.as_str(), "inline_printconv" | "tag_definitions" | 
+"composite_tags" | "tag_table_structure" | "process_binary_data" | "model_detection" | "conditional_tags") {
+
+// 5. Line 244: Add dispatch case
+Some(SpecialExtractor::ConditionalTags) => {
+    run_conditional_tags_extractor(config, extract_dir)?;
+}
+
+// 6. Line 344: Add to detection
+"conditional_tags" => Some(SpecialExtractor::ConditionalTags),
+
+// 7. Add extractor function (copy model_detection pattern)
+fn run_conditional_tags_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+    // Same pattern as model_detection
+}
 ```
 
-**Implementation Strategy**:
-1. **Start Simple**: FujiFilm (8 conditional entries) → test basic model regex extraction
-2. **Add Complexity**: Canon (complex conditional arrays) → handle multiple conditions per tag ID
-3. **Pattern**: Follow ProcessBinaryData implementation exactly - same files, same integration points
-
-**Files to Create**:
-- `codegen/extractors/model_detection.pl` - Extract model conditions from Main tables
-- `codegen/src/generators/model_detection.rs` - Generate model matching logic
-- `codegen/config/FujiFilm_pm/model_detection.json` - Start with simplest manufacturer
-- Add to `extraction.rs`, `lookup_tables/mod.rs`, `generators/mod.rs` (follow ProcessBinaryData pattern)
-
-### 🎯 Next Extractor 2: Conditional Tag Definition Extractor  
-
-**What This Extracts**: Complex conditional tag arrays with count-based and binary pattern conditions
-**Target Patterns**:
-```perl
-# Canon.pm examples
-{ Condition => '$count == 582', Name => 'ColorData1' },
-{ Condition => '$count == 653', Name => 'ColorData2' },
-{ Condition => '$$valPt =~ /^\\0/ and $$valPt !~ /^(\\0\\0\\0\\0|\\x00\\x40\\xdc\\x05)/', Name => 'VignettingCorrUnknown1' },
+**B. Update `generators/mod.rs`** (2 changes):
+```rust
+pub mod conditional_tags;
+pub use conditional_tags::generate_conditional_tags;
 ```
 
-**Implementation Strategy**:
-1. **Start with Count Conditions**: Simplest type - just numeric comparisons
-2. **Add Binary Pattern Matching**: Regex patterns on raw binary data  
-3. **Handle Cross-Tag Dependencies**: DataMember → RawConv → ValueConv chains
+**C. Update `lookup_tables/mod.rs`** (1 change):
+Copy the ProcessBinaryData block and adapt for conditional_tags.
 
-**Files to Create**:
-- `codegen/extractors/conditional_tags.pl` - Extract conditional tag definitions
-- `codegen/src/generators/conditional_tags.rs` - Generate conditional processing logic
-- `codegen/config/Canon_pm/conditional_tags.json` - Canon has most examples
-- Add to same integration points as ProcessBinaryData
-
-### 🔧 Implementation Template (Copy ProcessBinaryData Pattern)
-
-**Step 1: Create Perl Extractor** (copy `process_binary_data.pl`):
-- Same argument structure: `<module_path> <table_name>`
-- Same JSON output format
-- Same error handling and validation
-
-**Step 2: Create Rust Generator** (copy `process_binary_data.rs`):
-- Same serde data structures pattern
-- Same HashMap + LazyLock generation
-- Same clippy-compliant output
-
-**Step 3: Integrate Build System** (copy ProcessBinaryData changes):
-- Add to `SpecialExtractor` enum in `extraction.rs:35`
-- Add to config_files array in `extraction.rs:113` 
-- Add dispatch in `extraction.rs:237`
-- Add extractor function (copy `run_process_binary_data_extractor`)
-- Add to `needs_special_extractor_by_name` in `extraction.rs:338`
-- Add to `lookup_tables/mod.rs` (copy ProcessBinaryData handling)
-- Add to `generators/mod.rs` exports
-
-**Step 4: Test & Validate**:
+### Step 2: Test & Validate
 ```bash
 cd codegen && cargo run --release  # Must work
 cd .. && cargo check --quiet       # Must compile
 ```
 
-### 🧠 Critical Tribal Knowledge for Success
+### Step 3: Create Canon Test Config
+```json
+// codegen/config/Canon_pm/conditional_tags.json
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
+  "description": "Canon conditional tag definitions with complex logic",
+  "table": "Main"
+}
+```
 
-**What the Previous Engineer Learned** (save yourself hours of debugging):
+## 🧠 Critical Tribal Knowledge
 
-1. **Config File Discovery**: Must add new config file names to `extraction.rs:113` config_files array or they won't be discovered
-2. **Special Extractor Detection**: Must add to `needs_special_extractor_by_name()` in `extraction.rs:338` 
-3. **Build Integration**: Must add to both `extraction.rs` dispatch AND `lookup_tables/mod.rs` generation
-4. **Perl Module Loading**: The `load_module_from_file()` function in `ExifToolExtract.pm` handles all module loading complexity
-5. **JSON Structure**: Keep the same JSON structure as ProcessBinaryData - the generators expect consistent format
-6. **HashMap vs Array**: Use HashMap + LazyLock pattern (not arrays) for lookup tables - better performance and cleaner API
+### Integration Pattern (Proven Working)
+**Follow ProcessBinaryData and ModelDetection exactly**:
+1. Same enum entry in `SpecialExtractor`
+2. Same config file discovery pattern  
+3. Same dispatch logic in `extract_special_configs`
+4. Same extractor function pattern
+5. Same lookup_tables generation logic
 
-**Integration Points That Must Be Updated** (follow ProcessBinaryData pattern exactly):
-- `extraction.rs:35` - Add to SpecialExtractor enum
-- `extraction.rs:113` - Add to config_files array  
-- `extraction.rs:152` - Add to table field parsing logic
-- `extraction.rs:210` - Add to patching skip list
-- `extraction.rs:237` - Add dispatch case
-- `extraction.rs:338` - Add to special extractor detection
-- `lookup_tables/mod.rs:125-153` - Add generation logic (copy ProcessBinaryData block)
-- `generators/mod.rs:9,23` - Add module and export
-
-**Testing Strategy That Works**:
-1. Create minimal test config first (like FujiFilm FFMV - 1 simple table)
-2. Run `cd codegen && cargo run --release` to test extraction
-3. Check `generated/extract/` for JSON output
-4. Check `src/generated/` for Rust output  
-5. Run `cargo check --quiet` to verify compilation
-6. Only then add complexity
-
-**Common Gotchas**:
-- **Perl syntax**: Use `\\%${table_symbol}` not `%${table_symbol}` for table references
-- **JSON escaping**: Binary patterns need proper escaping (use `escape_string()`)
-- **Type safety**: All generated Rust must be clippy-compliant
-- **Error handling**: Graceful fallback for missing implementations (never panic)
-
-### Old ProcessBinaryData Section (Reference Only)
-
-**Files Created/Modified by Last Engineer**:
-- **Perl Extractor**: `codegen/extractors/process_binary_data.pl` - Extracts ProcessBinaryData tables to JSON
-- **Rust Generator**: `codegen/src/generators/process_binary_data.rs` - Generates Rust table structures
-- **Integration Points**: Modified `codegen/src/extraction.rs` (lines 113, 151, 209, 236-238, 337, 540-559)
-- **Generation Logic**: Modified `codegen/src/generators/lookup_tables/mod.rs` (lines 125-153, 363-383)
-- **Config Example**: `codegen/config/Canon_pm/process_binary_data.json` - Canon SensorInfo test case
-
-**Critical Bug Fixed**: Config discovery was failing because "process_binary_data.json" wasn't in the supported config files list in `extraction.rs:104-113`.
-
-### Key ExifTool Documentation
-- **[PROCESS_PROC.md](../third-party/exiftool/doc/concepts/PROCESS_PROC.md)** - How ProcessBinaryData works
-- **[PATTERNS.md](../third-party/exiftool/doc/concepts/PATTERNS.md)** - Common patterns across modules
-- **[MODULE_OVERVIEW.md](../third-party/exiftool/doc/concepts/MODULE_OVERVIEW.md)** - ExifTool module structure
-
-### Working Code to Study
-
-#### ProcessBinaryData Extractor (95% Complete - Your Starting Point)
-- **Extractor**: `codegen/extractors/process_binary_data.pl` - **WORKING** - Test with: `perl process_binary_data.pl ../third-party/exiftool/lib/Image/ExifTool/Canon.pm SensorInfo`
-- **Generator**: `codegen/src/generators/process_binary_data.rs` - **COMPLETE** - Generates table structs with HashMap lookups
-- **Config Example**: `codegen/config/Canon_pm/process_binary_data.json` - **READY FOR TESTING**
-- **Integration**: **COMPLETE** - Added to extraction.rs, lookup_tables/mod.rs, generators/mod.rs
-
-#### Tag Table Structure Extractor (Your Foundation Pattern)
-- **Extractor**: `codegen/extractors/tag_table_structure.pl` - Proven working pattern
-- **Generator**: `codegen/src/generators/tag_structure.rs` - Generates Rust enums with clippy compliance  
-- **Config Examples**: 
-  - `codegen/config/Canon_pm/tag_table_structure.json` - Working configuration
-  - `codegen/config/Olympus_pm/tag_table_structure.json` - Universal validation
-  - `codegen/config/Nikon_pm/tag_table_structure.json` - Universal validation
-- **Integration**: `codegen/src/extraction.rs:34` (SpecialExtractor enum) & `codegen/src/extraction.rs:329` (dispatch)
-
-#### Generated Code Examples
-- **Canon**: `src/generated/Canon_pm/tag_structure.rs` - 84 variants with full metadata
-- **Olympus**: `src/generated/Olympus_pm/tag_structure.rs` - 119 variants with full metadata
-- **Nikon**: `src/generated/Nikon_pm/tag_structure.rs` - 111 variants with full metadata
-
-#### Manual Code Replaced (Study These Changes)
-- **Canon**: `src/raw/formats/canon.rs` - Import replaced 215+ lines of manual enum
-- **Olympus**: `src/raw/formats/olympus.rs:27,42-55,69-94` - HashMap→array conversion with generated enum
-
-## 🔧 What Was Accomplished (Phase 1 & 2 Success)
-
-### Phase 1: Canon Validation
-- **Generated vs Manual**: 84 generated variants vs 24 manual variants (3.5x improvement)
-- **Accuracy Improvement**: Fixed 0x0003 mapping error (FlashInfo vs ShotInfo)
-- **Code Elimination**: 215+ lines removed from `src/raw/formats/canon.rs:368-583`
-- **Test Updates**: Updated test cases to match ExifTool's correct mappings
-
-### Phase 2: Universal Pattern Validation
-- **Olympus Integration**: Created config, generated 119 tags, replaced HashMap with array
-- **Test Modernization**: Updated `test_section_mapping` to use generated enum methods
-- **Nikon Preparation**: Created config, generated 111 tags (ready for future use)
-- **Compilation Clean**: Fixed test compilation errors, all tests passing
-
-### Key Technical Discoveries
-1. **Manual implementations often have errors** - Found incorrect tag ID mappings in Canon code
-2. **ExifTool is the source of truth** - Generated code found 60+ additional tags missed by manual code
-3. **Testing is critical** - Had to update test cases to match ExifTool's correct mappings
-4. **Array vs HashMap**: Array-based approach is more type-safe and performant than HashMap
-
-## 🔍 Issues You'll Need to Address
-
-### Critical Requirements
-1. **Trust ExifTool completely** - Never "improve" or "optimize" ExifTool logic
-2. **Handle Perl complexity** - ProcessBinaryData has complex format strings and conditionals
-3. **Maintain type safety** - Generated Rust code must be compile-time safe
-4. **Test thoroughly** - Generated code often exposes errors in manual implementations
-
-### Common Pitfalls to Avoid
-1. **Don't trust manual implementations** - They often have errors vs ExifTool
-2. **Always validate against ExifTool source** - Use `third-party/exiftool/lib/Image/ExifTool/*.pm`
-3. **Test case updates required** - Generated code may expose manual test errors
-4. **Clippy compliance matters** - Use modern Rust patterns like `matches!` macro
-
-## 📋 Immediate Next Steps (ProcessBinaryData 95% Complete)
-
-### ⚠️ PRIORITY 1: Complete ProcessBinaryData Testing
-
-**Last Engineer Status**: Fixed critical config discovery bug. Now ready for final validation.
-
-**What to Do Now**:
-1. **Run full build test**: `cd codegen && cargo run --release`
-2. **Look for**: "📷 Processing process_binary_data tables..." in output
-3. **Verify**: `canon_binary_data.json` file created in `generated/extract/`
-4. **Check**: Generated Rust code in `src/generated/Canon_pm/sensorinfo_binary_data.rs`
-5. **Validate**: No compilation errors, imports working
-
-**If Build Fails**: Check these integration points the last engineer added:
-- `extraction.rs:113` - "process_binary_data.json" in supported config files
-- `extraction.rs:151` - "process_binary_data.json" in table field parsing logic  
-- `extraction.rs:209` - "process_binary_data" in patching skip list
-- `extraction.rs:337` - "process_binary_data" -> ProcessBinaryData mapping
-- `lookup_tables/mod.rs:125-153` - ProcessBinaryData generation logic
-
-### Pattern Already Extracted (Reference)
+### JSON Boolean Fix (Critical)
+The Perl scripts use `JSON::true` not `true` literal:
 ```perl
-# Canon.pm SensorInfo table (test case)
-%Image::ExifTool::Canon::SensorInfo = (
-    PROCESS_PROC => \&Image::ExifTool::ProcessBinaryData,
-    FORMAT => 'int16s',
-    FIRST_ENTRY => 1,
-    GROUPS => { 0 => 'MakerNotes', 2 => 'Image' },
-    1 => 'SensorWidth',
-    2 => 'SensorHeight',
-    # ... 10 total tags
-);
+$condition_data->{writable} = JSON::true if $tag_def->{Writable};
 ```
 
-### After ProcessBinaryData is Complete: Next Extractors
+### Integration Points That Must Be Updated
+**Follow these exact locations** (ProcessBinaryData shows the pattern):
+- `extraction.rs:36` - Add to SpecialExtractor enum
+- `extraction.rs:116` - Add to config_files array  
+- `extraction.rs:154` - Add to table field parsing logic
+- `extraction.rs:212` - Add to patching skip list
+- `extraction.rs:244` - Add dispatch case
+- `extraction.rs:344` - Add to special extractor detection
+- Add extractor function (copy run_model_detection_extractor)
+- `lookup_tables/mod.rs` - Add generation logic (copy ProcessBinaryData block)
+- `generators/mod.rs` - Add module and export
 
-#### Option 1: Model Detection Pattern Extractor (Next Priority)
-**Why This**: Medium complexity, clear boundaries, good learning experience
+### Testing Strategy That Works
+1. **Start with simple config** (FujiFilm works for model_detection)
+2. **Run extraction first**: `cd codegen && cargo run --release`
+3. **Check JSON output**: Look in `generated/extract/` 
+4. **Check Rust output**: Look in `src/generated/`
+5. **Verify compilation**: `cargo check --quiet`
+6. **Add complexity**: Canon has the most complex patterns
 
-**Study These Files**:
-- Search for model-specific conditionals in ExifTool Main tables
-- Look for patterns like `$format{MODEL_NAME}` in tag definitions
+### What Makes This Hard vs Easy
+**Easy**: All the extractors follow identical patterns
+**Hard**: Missing any integration point breaks the build
+**Solution**: Copy ProcessBinaryData or ModelDetection exactly
 
-#### Option 2: Conditional Tag Definition Extractor
-**Why Last**: Most complex, requires understanding other extractors first
+## 🔍 Future Refactoring Opportunities
 
-### Implementation Steps Template (For Future Extractors)
-
-1. **Create Extractor Script**: `codegen/extractors/your_extractor.pl`
-   - Study `tag_table_structure.pl` as template
-   - Use explicit argument passing (file path + specific targets)
-   - Output structured JSON
-
-2. **Create Generator**: `codegen/src/generators/your_generator.rs`
-   - Study `tag_structure.rs` as template
-   - Generate direct Rust code (no macros)
-   - Ensure clippy compliance
-
-3. **Add Configuration Support**: `codegen/config/ModuleName_pm/your_extractor.json`
-   - Use same pattern as existing configs
-   - Explicit source paths, no guessing
-
-4. **Integrate with Build System**: 
-   - Add to `codegen/src/extraction.rs` SpecialExtractor enum
-   - Add dispatch logic
-   - Test with `make codegen`
-
-5. **Replace Manual Code**:
-   - Find manual implementations to replace
-   - Update imports to use generated code
-   - Update tests to match ExifTool accuracy
-
-6. **Validate and Test**:
-   - Run `make precommit`
-   - Compare output with ExifTool reference
-   - Update any failing tests
-
-## 🧪 Testing Strategy
-
-### Development Cycle
-```bash
-make codegen              # Regenerate all code  
-cargo check              # Verify compilation
-cargo test               # Run unit tests
-make precommit           # Full validation pipeline
-```
-
-### Validation Against ExifTool
-```bash
-# Test with real images (if available)
-cargo run -- test-images/canon/*.CR2 --debug
-exiftool -j test-images/canon/*.CR2 > expected.json
-# Compare outputs for accuracy
-```
-
-### Success Criteria Checklist
-- [ ] Extractor generates valid JSON from ExifTool source
-- [ ] Generator produces valid, clippy-compliant Rust code
-- [ ] Generated code compiles without warnings
-- [ ] Manual code successfully replaced
-- [ ] All tests pass
-- [ ] Output matches ExifTool reference behavior
-
-## 🔍 Debugging the ProcessBinaryData Implementation
-
-### Known Issues from Last Engineer
-1. **Unused Import Warning**: `process_binary_data::generate_process_binary_data` - This should disappear once generation works
-2. **Config Discovery Bug**: Fixed - "process_binary_data.json" not in supported files list
-3. **Manual Testing Works**: Direct perl script execution produces correct JSON
-4. **Build Integration**: All components added but not yet tested end-to-end
-
-### Troubleshooting Guide
-**If config not discovered**: Check `extraction.rs:104-113` for "process_binary_data.json" in config_files array
-**If extraction not called**: Check `extraction.rs:214` dispatch logic and `needs_special_extractor_by_name()`
-**If generation fails**: Check `lookup_tables/mod.rs:125-153` ProcessBinaryData handling
-**If compilation fails**: Check imports in `generators/mod.rs:23` and usage in `lookup_tables/mod.rs:141-142`
-
-## 🔮 Future Refactoring Considerations (Post-ProcessBinaryData)
-
-### High-Value Improvements Identified
-1. **Generator Base Classes**: Extract common patterns from tag_structure.rs and process_binary_data.rs for reuse
-2. **Error Standardization**: Unified error types across all extractors with context
-3. **Config Discovery**: Replace hardcoded file list with pattern matching (*.json)
-4. **Testing Infrastructure**: Automated comparison against ExifTool reference output
-
-### Code Organization Improvements Needed
-1. **Module Splitting**: Break large generators into focused, testable components
-2. **Utility Libraries**: Common Perl extraction utilities in ExifToolExtract.pm
-3. **Type Safety**: Stronger typing in JSON intermediate format with serde validation
-4. **Integration Simplification**: Reduce boilerplate when adding new extractor types
+### Code Organization Improvements
+1. **Extract Common Integration Pattern**: All extractors need identical integration points - could be a macro or shared function
+2. **Standardize Extractor Function Pattern**: `run_X_extractor` functions are nearly identical - could be templated
+3. **Simplify JSON Boolean Handling**: Create helper in ExifToolExtract.pm for JSON::true/false
+4. **Generic Lookup Table Generator**: ProcessBinaryData, ModelDetection, ConditionalTags follow same HashMap + LazyLock pattern
 
 ### Performance Optimizations
-1. **Parallel Extraction**: Run multiple extractors concurrently during build
-2. **Incremental Generation**: Only regenerate changed configurations  
-3. **Caching**: Cache ExifTool analysis results between builds
+1. **Parallel Extractor Execution**: Run multiple extractors concurrently  
+2. **Incremental Generation**: Only regenerate changed configurations
+3. **Shared Condition Evaluation**: Consolidate model/count/format condition logic across extractors
 
-## 📊 Impact Metrics
+### API Improvements
+1. **Unified Conditional Context**: Merge ConditionalContext across extractors
+2. **Type-Safe Condition Evaluation**: Generate Rust enums for known condition types
+3. **Centralized Pattern Matching**: Consolidate regex and pattern evaluation
 
-### ✅ Proven Results (Phases 1 & 2 Complete)
-- **Canon**: 215+ lines eliminated, 3.5x more comprehensive, mapping errors fixed
-- **Olympus**: ~15 lines eliminated, type-safe array implementation
-- **Nikon**: 111 tag structure ready for future use
-- **Total Achieved**: 230+ lines eliminated with universal pattern proven
-- **Maintenance**: Zero ongoing maintenance for tag definitions
+## 📋 Success Criteria ✅
 
-### 🎯 Projected Impact (ProcessBinaryData + Remaining Extractors)
-- **ProcessBinaryData**: ~400+ lines across manufacturers (95% complete)
-- **Model Detection**: ~200+ lines across manufacturers  
-- **Conditional Tags**: ~300+ lines across manufacturers
-- **Total Remaining**: ~900+ lines elimination potential
+**Final validation checklist**:
+- [ ] `cd codegen && cargo run --release` works without errors
+- [ ] Generated JSON files appear in `generated/extract/`
+- [ ] Generated Rust files appear in `src/generated/`
+- [ ] `cargo check --quiet` compiles without errors
+- [ ] All 3 extractors process their respective test configs
+- [ ] Generated code follows established API patterns
 
-### ⏱️ Development Time Impact
+## 🎯 Impact Achieved
+
+### Total Lines Eliminated (Projected)
+- **Tag Table Structure**: 230+ lines (✅ Complete)
+- **ProcessBinaryData**: ~400 lines (✅ Complete)
+- **Model Detection**: ~200 lines (✅ Complete)  
+- **Conditional Tags**: ~300 lines (🔄 95% Complete)
+- **Total Elimination**: ~1130+ lines of manual maintenance
+
+### Development Time Impact
 - **Manual Implementation**: 2-3 months per manufacturer
-- **With Universal Extractors**: 1-2 weeks per manufacturer  
+- **With Universal Extractors**: 1-2 weeks per manufacturer
 - **Monthly ExifTool Updates**: Hours → Minutes (fully automated)
 
-## 🚀 Immediate Action Plan
-
-### Your First Hour (ProcessBinaryData Completion)
-- [ ] `cd codegen && cargo run --release` - Test the 95% complete implementation
-- [ ] Look for "📷 Processing process_binary_data tables..." in output
-- [ ] Check if `generated/extract/canon_binary_data.json` is created
-- [ ] Verify generated Rust code appears in `src/generated/Canon_pm/`
-- [ ] If issues: Check integration points in `extraction.rs` and `lookup_tables/mod.rs`
-
-### Your First Day (If ProcessBinaryData Works)
-- [ ] Add more ProcessBinaryData tables (Canon ColorData, Nikon LensData, etc.)
-- [ ] Test with real images: `cargo run -- test-images/canon/*.CR2`
-- [ ] Update manual implementations to use generated tables
-- [ ] Run `make precommit` to ensure all tests pass
-
-### Your First Week (Next Extractor)
-- [ ] Study Model Detection patterns in ExifTool Main tables
-- [ ] Create model_detection.pl extractor following ProcessBinaryData pattern
-- [ ] Implement model_detection.rs generator
-- [ ] Add to build system using established integration points
-
-## 🔑 Key Success Factors
-
-- **Trust ExifTool completely** - Don't "improve" anything
-- **Test against real ExifTool output** - Generated code exposes manual errors
-- **Clippy compliance matters** - Use modern Rust patterns
-- **Atomic operations** - Build system handles ExifTool patching safely
-- **Incremental progress** - Start with one manufacturer, expand gradually
-
-**The foundation is solid. The pattern is proven. You have a clear roadmap to complete the remaining extractors and achieve full automation.**
+**The foundation is complete. The pattern is proven. You just need 3 integration edits to finish the milestone.**
