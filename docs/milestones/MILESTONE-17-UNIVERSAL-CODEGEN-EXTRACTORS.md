@@ -9,11 +9,14 @@
 - **Canon Validated**: Successfully generates 84-tag enum with all metadata
 - **Build Status**: ✅ All tests passing
 
-### 🚧 Immediate Next Steps (High Priority)
-1. **Replace Manual Canon Implementation** 
+### ✅ Recently Completed 
+1. **Canon Manual Implementation Replaced** 
    - File: `src/raw/formats/canon.rs:368-583`
-   - Action: Use generated `crate::generated::Canon_pm::tag_structure::CanonDataType`
-   - Benefit: Removes 215+ lines of manual maintenance
+   - Action: ✅ COMPLETED - Now uses generated `crate::generated::Canon_pm::tag_structure::CanonDataType`
+   - Benefit: ✅ Removed 215+ lines of manual maintenance, now using accurate ExifTool mappings
+   - Impact: Fixed incorrect tag mappings (e.g., 0x0003 is FlashInfo, not ShotInfo)
+
+### 🚧 Immediate Next Steps (High Priority)
 
 2. **Validate Universal Applicability**
    - Create configs for Olympus and Nikon
@@ -215,11 +218,11 @@ cargo expand ::generated::Canon_pm::tag_structure
 ## 📊 Impact Metrics
 
 ### Lines of Code Eliminated
-- Canon: 295+ lines (enum + offset manager)
-- Olympus: 80+ lines (section mappings)
-- Minolta: 400+ lines (processors)
-- Panasonic: 150+ lines (tag definitions)
-- **Total**: 1000+ lines eliminated
+- Canon: ✅ 215+ lines (manual CanonDataType enum replaced with generated code)
+- Olympus: 80+ lines (section mappings) - TODO
+- Minolta: 400+ lines (processors) - TODO
+- Panasonic: 150+ lines (tag definitions) - TODO
+- **Total**: 215+ lines eliminated so far, targeting 1000+ total
 
 ### Development Time Saved
 - Manual port: 2-3 months per manufacturer
