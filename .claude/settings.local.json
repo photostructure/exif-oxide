@@ -58,7 +58,8 @@
       "Bash(cargo test:*)",
       "Bash(cargo:*)",
       "Bash(rustc:*)",
-      "Bash(./test_tag_structure)"
+      "Bash(./test_tag_structure)",
+      "Bash(RUST_LOG=debug cargo run --release)"
     ],
     "deny": []
   }

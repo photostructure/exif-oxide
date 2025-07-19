@@ -102,7 +102,7 @@ Created `src/bin/diagnose_mime_failures.rs` to help debug file detection issues.
 
 ### Important References
 - @docs/TRUST-EXIFTOOL.md - **CRITICAL**: Always follow ExifTool's logic exactly
-- @docs/archive/MILESTONE-16-MIME-Type-Detection.md - Original MIME detection work
+- @docs/done/MILESTONE-16-MIME-Type-Detection.md - Original MIME detection work
 - @docs/design/EXIFTOOL-INTEGRATION.md - Codegen and integration approach
 - @third-party/exiftool/doc/concepts/FILE_TYPES.md - ExifTool's file type system
 - ExifTool source: `third-party/exiftool/lib/Image/ExifTool.pm` lines 2913-2999 for detection flow
