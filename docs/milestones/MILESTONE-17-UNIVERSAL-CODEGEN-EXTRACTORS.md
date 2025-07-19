@@ -133,6 +133,35 @@ After analyzing Canon.pm, Nikon.pm, Olympus.pm, Panasonic.pm, and Minolta.pm, **
 
 **Nikon, Olympus, Panasonic ALL use identical array-based conditional syntax**
 
+## 🏗️ Existing Codegen Infrastructure
+
+The universal extractors build upon exif-oxide's mature codegen infrastructure:
+
+### Current Extractors ([`codegen/extractors/`](../../codegen/extractors/))
+1. **[simple_table.pl](../../codegen/extractors/simple_table.pl)** - Extracts primitive lookup tables (e.g., %canonLensTypes)
+2. **[tag_tables.pl](../../codegen/extractors/tag_tables.pl)** - Extracts EXIF/GPS tag definitions from Main tables
+3. **[inline_printconv.pl](../../codegen/extractors/inline_printconv.pl)** - Extracts PrintConv definitions embedded in tag tables
+4. **[tag_definitions.pl](../../codegen/extractors/tag_definitions.pl)** - Config-driven tag definition extraction with filtering
+5. **[composite_tags.pl](../../codegen/extractors/composite_tags.pl)** - Extracts composite tag definitions
+6. **[file_type_lookup.pl](../../codegen/extractors/file_type_lookup.pl)** - File type detection patterns
+7. **[regex_patterns.pl](../../codegen/extractors/regex_patterns.pl)** - Regex pattern extraction for file detection
+8. **[boolean_set.pl](../../codegen/extractors/boolean_set.pl)** - Boolean set membership extraction
+
+### Infrastructure Components
+- **Orchestration**: [`codegen/src/extraction.rs`](../../codegen/src/extraction.rs) auto-discovers configs and runs extractors
+- **Utilities**: [`codegen/lib/ExifToolExtract.pm`](../../codegen/lib/ExifToolExtract.pm) provides Perl parsing utilities
+- **Patching**: [`codegen/patches/patch_exiftool_modules.pl`](../../codegen/patches/patch_exiftool_modules.pl) converts `my` to `our` variables
+- **Config System**: Module-specific configs in [`codegen/config/{Module}_pm/`](../../codegen/config/)
+- **Generators**: Rust code generators in [`codegen/src/generators/`](../../codegen/src/generators/)
+
+### Key Design Principles
+1. **No Perl parsing in Rust** - Only Perl can parse Perl correctly
+2. **Config-driven extraction** - JSON configs specify what to extract
+3. **Atomic operations** - Patch, extract, revert in single operation
+4. **Type safety** - Strong typing from extraction through generation
+
+The universal extractors follow these established patterns while adding new capabilities for RAW format support.
+
 ## 🎯 Solution: 4 Universal Codegen Extractors
 
 ### Extractor 1: Tag Table Structure Extractor
@@ -263,122 +292,143 @@ pub fn process_conditional_tag(tag_id: u16, model: &str) -> Option<TagDefinition
 
 **Replaces**: Manual conditional logic throughout manufacturer implementations
 
+## 📋 Configuration Examples
+
+The universal extractors follow the existing config-driven pattern. Place configs in `codegen/config/{Module}_pm/`:
+
+### Tag Table Structure Config (`tag_table_structure.json`)
+```json
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
+  "description": "Canon Main tag table structure for enum generation",
+  "table": "Main",
+  "output": {
+    "enum_name": "CanonDataType",
+    "include_metadata": true,
+    "generate_methods": ["tag_id", "from_tag_id", "name", "has_subdirectory", "groups"]
+  }
+}
+```
+
+### Binary Data Tables Config (`binary_data_tables.json`)
+```json
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
+  "description": "Canon ProcessBinaryData table extraction",
+  "tables": [
+    {
+      "table_name": "CameraSettings",
+      "processor_name": "CanonCameraSettingsProcessor"
+    },
+    {
+      "table_name": "ShotInfo",
+      "processor_name": "CanonShotInfoProcessor"
+    }
+  ],
+  "filters": {
+    "process_proc": "ProcessBinaryData"
+  }
+}
+```
+
+### Model Patterns Config (`model_patterns.json`)
+```json
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
+  "description": "Canon camera model detection patterns",
+  "pattern_types": [
+    {
+      "name": "6_byte_offset_models",
+      "constant_name": "CANON_6_BYTE_MODELS",
+      "pattern": "\\b(20D|350D|REBEL XT|Kiss Digital N)\\b"
+    }
+  ],
+  "detection_function": {
+    "name": "detect_canon_offset_scheme",
+    "return_type": "CanonOffsetScheme"
+  }
+}
+```
+
+### Conditional Tags Config (`conditional_tags.json`)
+```json
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
+  "description": "Canon conditional tag definitions",
+  "conditional_tags": [
+    {
+      "tag_id": "0x000c",
+      "tag_name": "SerialNumber",
+      "conditions": [
+        {
+          "model_pattern": "EOS D30\\b",
+          "variant_name": "serial_number_d30"
+        }
+      ]
+    }
+  ]
+}
+```
+
 ## 📊 Implementation Phases
 
-### Phase 1: Extractor Development (2-3 weeks)
-**Goal**: Implement the 4 universal extractors
+### Phase 1: Tag Table Structure Extractor (Week 1)
+1. Create `codegen/extractors/tag_table_structure.pl` based on existing patterns
+2. Add config support in `extraction.rs` for `tag_table_structure.json` files
+3. Test with Canon.pm (80+ tags), validate enum generation
+4. Create Rust generator in `codegen/src/generators/tag_structure.rs`
 
-**Week 1**: Tag Table Structure Extractor
-- Implement `tag_table_structure.pl`
-- Test with Canon.pm, Nikon.pm, Olympus.pm
-- Generate complete enum definitions
+### Phase 2: ProcessBinaryData Extractor (Week 2)
+1. Create `codegen/extractors/binary_data_tables.pl`
+2. Handle PROCESS_PROC, FORMAT, FIRST_ENTRY metadata extraction
+3. Test with Canon's 169 ProcessBinaryData tables
+4. Generate processor structs with field definitions
 
-**Week 2**: ProcessBinaryData Table Extractor  
-- Implement `binary_data_tables.pl`
-- Extract all ProcessBinaryData definitions
-- Generate parsing structure code
+### Phase 3: Model & Conditional Extractors (Week 3)
+1. Create `model_patterns.pl` for camera model detection
+2. Create `conditional_tags.pl` for array-based conditionals
+3. Test detection patterns across manufacturers
+4. Generate model detection functions and conditional logic
 
-**Week 3**: Model Patterns + Conditional Tags
-- Implement `model_patterns.pl` and `conditional_tags.pl`
-- Test across all manufacturers
-- Generate detection and conditional logic
-
-### Phase 2: Migration Strategy (2-3 weeks)
-**Goal**: Migrate existing manual implementations to use generated code
-
-**Phase 2A: Canon Migration**
-- Replace `CanonDataType` enum with generated version
-- Replace `CanonOffsetManager` patterns with generated detection
-- Test compatibility with existing CR2 files
-
-**Phase 2B: Olympus Migration**  
-- Replace hardcoded section mappings with generated definitions
-- Update `OlympusRawHandler` to use generated tag structures
-- Test compatibility with existing ORF files
-
-**Phase 2C: Minolta/Panasonic Migration**
-- Replace manual processors with generated equivalents
-- Update format handlers to use generated tables
-- Test compatibility with existing MRW/RW2 files
-
-### Phase 3: Integration & Testing (1 week)
-**Goal**: Validate complete migration and future-proof for new manufacturers
-
-- Run full compatibility test suite
-- Validate ExifTool output equivalency
-- Document integration patterns for future manufacturers
+### Phase 4: Migration & Validation (Week 4)
+1. **Canon**: Replace manual CanonDataType enum (validate with CR2 files)
+2. **Olympus**: Replace hardcoded mappings (validate with ORF files)
+3. **Full testing**: Compare output with manual implementations
+4. **Documentation**: Update integration guide for future manufacturers
 
 ## 🔄 Migration Strategy for Existing Code
 
-### Migration Phase A: Canon (`canon.rs` - 871 lines)
+### Before/After Examples
 
-**Before (Manual Maintenance)**:
+**Canon Tag Structure (`canon.rs`)**:
 ```rust
-// ❌ 215+ lines of manual enum maintenance
+// ❌ Before: 215+ lines of manual enum maintenance
 pub enum CanonDataType {
-    CameraSettings,
-    FocalLength,
-    ShotInfo,
-    // ... 20+ variants
+    CameraSettings,     // 0x0001
+    FocalLength,        // 0x0002
+    ShotInfo,           // 0x0003
+    // ... 20+ more variants
 }
 
-impl CanonDataType {
-    pub fn tag_id(&self) -> u16 {
-        match self {
-            CanonDataType::CameraSettings => 0x0001,
-            // ... 20+ manual mappings
-        }
-    }
-}
+// ✅ After: Auto-generated from Canon.pm
+use crate::generated::canon::tag_structure::CanonDataType;
 ```
 
-**After (Generated)**:
+**Olympus Section Mappings (`olympus.rs`)**:
 ```rust
-// ✅ Auto-generated from Canon.pm
-use crate::generated::canon::tag_structure::{CanonDataType, CanonTagMetadata};
-
-// All enum variants and methods automatically generated
-// No manual maintenance required
-```
-
-**Code Reduction**: 215+ lines → 2 import lines
-
-### Migration Phase B: Olympus (`olympus.rs` - 332 lines)
-
-**Before (Manual Maintenance)**:
-```rust
-// ❌ Hardcoded section mappings  
+// ❌ Before: Hardcoded mappings
 supported_sections.insert(0x2010, "Equipment");
 supported_sections.insert(0x2020, "CameraSettings");
-// ... 9 hardcoded sections
-```
 
-**After (Generated)**:
-```rust
-// ✅ Auto-generated from Olympus.pm
+// ✅ After: Generated metadata
 use crate::generated::olympus::tag_structure::OlympusTagMetadata;
-
-let metadata = OlympusTagMetadata::new();
-for (tag_id, section_info) in metadata.subdirectory_tags() {
-    // All sections automatically included
-}
 ```
 
-**Code Reduction**: 50+ lines → 5 lines + auto-updates
-
-### Migration Phase C: Minolta (`minolta.rs` - 1038 lines)
-
-**Target**: Replace manual PRD/WBG/RIF processors with generated equivalents
-
-**Before**: 400+ lines of manual processor definitions
-**After**: Generated processor structs from MinoltaRaw.pm tables
-
-### Migration Phase D: Panasonic (`panasonic.rs` - 150+ lines)
-
-**Target**: Replace manual tag definitions with generated equivalents
-
-**Before**: Manual PanasonicTagDef structures  
-**After**: Generated from PanasonicRaw.pm definitions
+### Migration Targets by Manufacturer
+- **Canon**: Replace CanonDataType enum and CanonOffsetManager (295+ lines)
+- **Olympus**: Replace hardcoded section mappings (80+ lines)
+- **Minolta**: Replace manual PRD/WBG/RIF processors (400+ lines)
+- **Panasonic**: Replace manual tag definitions (150+ lines)
 
 ## 📚 Updated Milestone Documentation
 
@@ -546,61 +596,6 @@ make codegen-universal
 use crate::generated::new_manufacturer::tag_structure::NewManufacturerDataType;
 ```
 
-### Before/After Code Examples
-
-**Canon Lens Type Lookup**:
-
-**Before (Manual)**:
-```rust
-// ❌ 1000+ manual lens entries to maintain
-fn canon_lens_type_lookup(id: u16) -> &'static str {
-    match id {
-        1 => "Canon EF 50mm f/1.8",
-        2 => "Canon EF 28mm f/2.8",
-        // ... 1000+ entries requiring manual updates
-    }
-}
-```
-
-**After (Generated)**:
-```rust
-// ✅ Auto-generated from Canon.pm %canonLensTypes
-use crate::generated::canon::lens_types::lookup_canon_lens_type;
-
-fn canon_lens_type_print_conv(value: &TagValue) -> TagValue {
-    if let Some(lens_id) = value.as_u16() {
-        if let Some(lens_name) = lookup_canon_lens_type(lens_id) {
-            return TagValue::string(lens_name);
-        }
-    }
-    TagValue::string(format!("Unknown lens type ({})", value))
-}
-```
-
-**Olympus Section Detection**:
-
-**Before (Manual)**:
-```rust
-// ❌ Hardcoded section mappings
-let mut supported_sections = HashMap::new();
-supported_sections.insert(0x2010, "Equipment");
-supported_sections.insert(0x2020, "CameraSettings");
-// ... 9 hardcoded sections
-```
-
-**After (Generated)**:
-```rust
-// ✅ Auto-generated from Olympus.pm Main table
-use crate::generated::olympus::tag_structure::OlympusTagMetadata;
-
-let metadata = OlympusTagMetadata::new();
-for (tag_id, section_info) in metadata.subdirectory_tags() {
-    // Process with generated metadata
-    if section_info.has_subdirectory() {
-        process_olympus_section(tag_id, section_info.name());
-    }
-}
-```
 
 ## 🎯 Success Criteria
 
@@ -659,6 +654,62 @@ for (tag_id, section_info) in metadata.subdirectory_tags() {
 3. **Incremental Migration**: Migrate one manufacturer at a time to isolate issues
 4. **Compatibility Validation**: Extensive before/after testing for each migration phase
 
+## ⚠️ Technical Gotchas and Challenges
+
+### ProcessBinaryData Complexity
+- **Variable-length fields**: Fields can have dynamic sizes based on previous values
+- **DataMember tags**: Must be processed first to determine subsequent field sizes
+- **FIRST_ENTRY offset**: Canon uses 1-based offsets, not 0-based
+- **Format overrides**: Each field can override table's default format
+- **Reference**: See [`src/exif/binary_data.rs`](../../src/exif/binary_data.rs) for implementation patterns
+
+### Conditional Tag Handling
+- **Perl regex limitations**: Rust regex crate doesn't support lookaround/backreferences
+- **Model patterns**: Handle variations like "EOS 1D" vs "EOS 1Ds"
+- **Condition types**: Model-based, data pattern, count-based, format-based
+- **Reference**: See [`src/conditions.rs`](../../src/conditions.rs) for evaluation framework
+
+### ExifTool Module Patching
+- **Requirement**: Convert `my %hash` to `our %hash` for extraction
+- **Git submodule**: NEVER modify third-party/exiftool directly
+- **Atomic operations**: Patch → Extract → Revert in single operation
+- **Tool**: [`codegen/patches/patch_exiftool_modules.pl`](../../codegen/patches/patch_exiftool_modules.pl)
+
+### Manufacturer-Specific Quirks
+- **Canon**: 4/6/16/28 byte offset schemes based on model
+- **Nikon**: TIFF header at offset 0x0a in maker notes
+- **Sony**: Double UTF-8 encoding in some models
+- **Olympus**: Complex subdirectory structures with 576+ tags
+
+### String Handling Gotchas
+- **Null termination**: Scan for nulls, don't assume clean strings
+- **Garbage data**: Cameras often leave junk after string terminators
+- **Encoding**: Some cameras encode UTF-8 twice (Sony)
+- **Magic values**: "n/a" often used instead of null
+
+### Debugging Tools
+```bash
+# Compare with ExifTool
+exiftool -v3 image.jpg > exiftool_verbose.txt
+exiftool -htmlDump image.jpg > dump.html
+
+# Enable trace logging
+RUST_LOG=trace cargo run -- test.jpg
+
+# Check missing implementations
+cargo run -- image.jpg --show-missing
+
+# Generate reference data
+make compat-gen
+```
+
+### Common Pitfalls
+1. **Don't parse Perl with regex** - Use Perl interpreter via extractors
+2. **Don't "fix" odd behavior** - It handles real camera quirks
+3. **Document references** - Include ExifTool file:line numbers
+4. **Test with real files** - Not synthetic test data
+5. **Handle errors gracefully** - One tag failure shouldn't stop processing
+
 ## 📚 Implementation Guide for Engineers
 
 ### Getting Started
@@ -690,10 +741,10 @@ study this document's "Universal Pattern" sections
 - `MakerNotes.pm:1136-1141` - Model detection patterns (cross-manufacturer)
 
 **Essential exif-oxide Code**:
-- `codegen/src/generators/lookup_tables/` - Existing simple table generation
-- `codegen/extractors/simple_table.pl` - Existing extractor pattern
-- `src/raw/formats/canon.rs:368-583` - Manual enum requiring replacement
-- `src/raw/formats/olympus.rs:42-52` - Manual mappings requiring replacement
+- [`codegen/src/generators/lookup_tables/`](../../codegen/src/generators/lookup_tables/) - Existing simple table generation
+- [`codegen/extractors/simple_table.pl`](../../codegen/extractors/simple_table.pl) - Existing extractor pattern
+- [`src/raw/formats/canon.rs:368-583`](../../src/raw/formats/canon.rs#L368) - Manual enum requiring replacement
+- [`src/raw/formats/olympus.rs:42-52`](../../src/raw/formats/olympus.rs#L42) - Manual mappings requiring replacement
 
 ### Common Pitfalls to Avoid
 
@@ -714,42 +765,16 @@ study this document's "Universal Pattern" sections
 
 ## 🎯 Long-Term Vision
 
-### Manufacturer Scaling
+### Impact on Development Time
+- **Current**: 2-3 months per new manufacturer (manual porting)
+- **With Extractors**: 1-2 weeks per manufacturer (mostly automated)
+- **Maintenance**: Monthly ExifTool updates become trivial (`make codegen-universal`)
 
-**Current Manual Effort per New Manufacturer**:
-- Study ExifTool module (weeks)
-- Port tag definitions manually (weeks)  
-- Implement binary data processing (weeks)
-- Create model detection logic (weeks)
-- **Total**: 2-3 months per manufacturer
-
-**Future with Universal Extractors**:
-- Add manufacturer to extractor config (minutes)
-- Run `make codegen-universal` (minutes)
-- Write manufacturer-specific format handler (days)
-- **Total**: 1-2 weeks per manufacturer
-
-### ExifTool Compatibility
-
-**Current Maintenance Burden**:
-- ExifTool releases monthly with new tags/cameras
-- Manual updates required for each manufacturer
-- Lag time of weeks/months for new camera support
-
-**Future with Universal Extractors**:
-- `git submodule update` + `make codegen-universal` = automatic updates
-- New cameras supported immediately when ExifTool adds them
-- Zero manual maintenance for lookup tables and tag definitions
-
-### Industry Impact
-
-**Supported Manufacturers (Current + Future)**:
-- **Tier 1**: Canon, Nikon, Sony (most complex)
+### Supported Manufacturers
+- **Tier 1**: Canon, Nikon, Sony (most complex, 100s of ProcessBinaryData tables)
 - **Tier 2**: Olympus, Panasonic, Fujifilm (medium complexity)  
 - **Tier 3**: Minolta, Pentax, Leica (simpler patterns)
-- **Emerging**: OM System, DJI, Insta360 (as ExifTool adds support)
-
-**Universal extractors enable rapid expansion to any manufacturer ExifTool supports.**
+- **Future**: Any manufacturer ExifTool supports
 
 ## 📚 Related Documentation
 
