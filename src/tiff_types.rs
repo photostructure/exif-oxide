@@ -89,16 +89,34 @@ impl TiffFormat {
         }
 
         // If standard validation fails and we're in Olympus MakerNotes,
-        // check if this tag should use FixFormat to IFD
-        if is_olympus_makernotes && Self::is_olympus_subdirectory_tag(tag_id) {
-            // ExifTool: Olympus.pm uses FixFormat => 'ifd' for these tags
-            // when format is invalid (undef, string, or other non-standard types)
-            tracing::debug!(
-                "Applying Olympus FixFormat: tag {:#x} format {} -> IFD (original format invalid)",
-                tag_id,
-                format
-            );
-            return Ok(TiffFormat::Ifd);
+        // check if this tag should use FixFormat
+        if is_olympus_makernotes {
+            // Two cases for Olympus FixFormat:
+            // 1. Main subdirectory tags (0x2010-0x5000) get converted to IFD format
+            // 2. All tags within Olympus subdirectories get appropriate FixFormat
+
+            if Self::is_olympus_subdirectory_tag(tag_id) {
+                // ExifTool: Olympus.pm uses FixFormat => 'ifd' for subdirectory tags
+                tracing::debug!(
+                    "Applying Olympus FixFormat: tag {:#x} format {} -> IFD (subdirectory tag)",
+                    tag_id,
+                    format
+                );
+                return Ok(TiffFormat::Ifd);
+            } else {
+                // ExifTool: Within Olympus subdirectories, invalid formats get converted
+                // Convert to most appropriate format based on ExifTool's usage patterns
+                // Most Equipment tags are strings or numeric values
+
+                // For most invalid formats, default to Ascii (string) as many Equipment
+                // tags are strings (CameraType2, SerialNumber, LensModel, etc.)
+                tracing::debug!(
+                    "Applying Olympus FixFormat: tag {:#x} format {} -> ASCII (data tag in Olympus context)",
+                    tag_id,
+                    format
+                );
+                return Ok(TiffFormat::Ascii);
+            }
         }
 
         // Otherwise, fall back to original error

@@ -145,6 +145,10 @@ impl ExifReader {
         // Check if we're processing Olympus MakerNotes for FixFormat support
         // ExifTool: lib/Image/ExifTool/Olympus.pm dual-path processing
         let is_olympus_makernotes = self.is_olympus_makernotes_context(ifd_name);
+        debug!(
+            "IFD {} olympus context: {}",
+            ifd_name, is_olympus_makernotes
+        );
 
         // Parse 12-byte IFD entry structure with Olympus context
         let entry = if is_olympus_makernotes {
@@ -334,6 +338,38 @@ impl ExifReader {
                         entry.tag_id, tag_name, entry.count
                     );
                 }
+            }
+            TiffFormat::Ifd => {
+                // IFD format - subdirectory pointer (typically from FixFormat conversion)
+                // ExifTool: Olympus FixFormat converts invalid formats to IFD for subdirectory processing
+                debug!(
+                    "Processing IFD tag {:#x} from {} (format: {:?}, count: {})",
+                    entry.tag_id, ifd_name, entry.format, entry.count
+                );
+
+                // For IFD format tags, extract the offset value like LONG format
+                let value = value_extraction::extract_long_value(&self.data, &entry, byte_order)?;
+                let tag_value = TagValue::U32(value);
+
+                // Check if this is a subdirectory tag
+                if self.is_subdirectory_tag(entry.tag_id) {
+                    debug!(
+                        "IFD tag {:#x} is a subdirectory tag, processing as subdirectory",
+                        entry.tag_id
+                    );
+                    let tag_name = self.get_tag_name(entry.tag_id, ifd_name);
+                    self.process_subdirectory_tag(entry.tag_id, value, &tag_name, None)?;
+                } else {
+                    debug!(
+                        "IFD tag {:#x} is not a subdirectory tag, storing as regular tag",
+                        entry.tag_id
+                    );
+                }
+
+                // Also store the tag value for completeness
+                let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
+                let source_info = self.create_tag_source_info(ifd_name);
+                self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
             }
             _ => {
                 // For other formats, store raw value for now

@@ -7,11 +7,12 @@
 //! ## Supported Formats (Milestone 17 Implementation)
 //!
 //! - **Kyocera** (.raw) - Milestone 17a: Simple ProcessBinaryData format (173 lines)
-//! - **Canon** (CR2, CR3) - Future: Complex TIFF-based with maker notes
+//! - **Minolta** (MRW) - Milestone 17b: Multi-block format with TTW, PRD, WBG blocks
+//! - **Panasonic** (RW2) - Milestone 17b: Entry-based offset handling
+//! - **Olympus** (ORF) - Milestone 17c: Multiple IFD navigation
+//! - **Canon** (CR2, CRW, CR3) - Milestone 17d: Complex TIFF-based with 169 ProcessBinaryData sections
 //! - **Nikon** (NEF, NRW) - Future: Integration with existing Nikon implementation
 //! - **Sony** (ARW, SR2, SRF) - Future: Advanced offset management
-//! - **Olympus** (ORF) - Future: Multiple IFD navigation
-//! - **Panasonic** (RW2) - Future: Entry-based offset handling
 //! - **Fujifilm** (RAF) - Future: Non-TIFF format
 //!
 //! ## Architecture
@@ -43,6 +44,7 @@ pub use processor::{RawFormatHandler, RawProcessor};
 pub mod formats;
 
 // Re-export format handlers and utility functions
+pub use formats::canon::get_canon_tag_name;
 pub use formats::kyocera::get_kyocera_tag_name;
 pub use formats::minolta::get_minolta_tag_name;
 pub use formats::olympus::get_olympus_tag_name;
