@@ -222,11 +222,7 @@ When working with source files that exceed 500 lines:
 
 ### Mark where the code smells
 
-While reviewing or editing code, if there are components that feel like a
-temporary hack or otherwise have a bad "code smell", ask the user to add a TODO
-comment into the code that tersely describes why it smells, along with either a
-link to a MILESTONES.md stage when it will be fixed, or a terse description of
-how it should be fixed in the future.
+While reviewing or editing code, if there are components that feel like a temporary hack or otherwise have a bad "code smell", ask the user to add a TODO comment into the code that tersely describes why it smells, along with either a link to a MILESTONES.md stage when it will be fixed, or a terse description of how it should be fixed in the future.
 
 ### Safety rules
 
@@ -241,12 +237,4 @@ We use `tracing`, and there's lots of examples in `src/main.rs`.
 
 ### Git commit messages
 
-All commit messages must follow the Conventional Commits specification
-(https://www.conventionalcommits.org/en/v1.0.0/). Use the format:
-`<type>[optional scope]: <description>` where type is `feat` (new features,
-MINOR version), `fix` (bug patches, PATCH version), or other types like `docs`,
-`style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`. Breaking changes
-are indicated with `!` after type/scope or with a `BREAKING CHANGE:` footer. The
-scope should reference the most significant file/module changed. Keep
-descriptions concise and avoid enumerating every change unless crucial for
-understanding.
+All commit messages must follow the Conventional Commits specification (https://www.conventionalcommits.org/en/v1.0.0/). Use the format: `<type>[optional scope]: <description>` where type is `feat` (new features, MINOR version), `fix` (bug patches, PATCH version), or other types like `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`. Breaking changes are indicated with `!` after type/scope or with a `BREAKING CHANGE:` footer. The scope should reference the most significant file/module changed. Keep descriptions concise and avoid enumerating every change unless crucial for understanding.
