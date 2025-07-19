@@ -91,10 +91,7 @@ pub fn generate_tag_structure(data: &TagStructureData) -> Result<String> {
     // Generate enum name
     let enum_name = format!("{}DataType", data.manufacturer);
     
-    // Add imports if needed
-    if data.tags.iter().any(|t| t.has_subdirectory) {
-        code.push_str("use std::collections::HashMap;\n\n");
-    }
+    // No imports needed for tag structure enums
     
     // Generate the enum
     code.push_str(&format!(
@@ -199,22 +196,25 @@ pub fn generate_tag_structure(data: &TagStructureData) -> Result<String> {
     // Generate has_subdirectory method
     code.push_str("    /// Check if this tag has a subdirectory\n");
     code.push_str("    pub fn has_subdirectory(&self) -> bool {\n");
-    code.push_str("        match self {\n");
     
     let subdirectory_tags: Vec<&(&TagDefinition, String)> = variant_mappings.iter()
         .filter(|(tag, _)| tag.has_subdirectory)
         .collect();
     
     if !subdirectory_tags.is_empty() {
-        for (_, variant_name) in subdirectory_tags {
-            code.push_str(&format!("            {}::{} => true,\n", enum_name, variant_name));
+        code.push_str("        matches!(self,\n");
+        for (i, (_, variant_name)) in subdirectory_tags.iter().enumerate() {
+            if i == 0 {
+                code.push_str(&format!("            {}::{}", enum_name, variant_name));
+            } else {
+                code.push_str(&format!(" |\n            {}::{}", enum_name, variant_name));
+            }
         }
-        code.push_str("            _ => false,\n");
+        code.push_str("\n        )\n");
     } else {
-        code.push_str("            _ => false,\n");
+        code.push_str("        false\n");
     }
     
-    code.push_str("        }\n");
     code.push_str("    }\n\n");
     
     // Generate groups method

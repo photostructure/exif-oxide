@@ -3,8 +3,7 @@
 
 //! Canon tag table structure generated from Canon.pm
 //! ExifTool: Canon.pm %Canon::Main
-//! Generated at: Sat Jul 19 14:26:02 2025 GMT
-
+//! Generated at: Sat Jul 19 15:44:38 2025 GMT
 
 /// Canon data types from %Canon::Main table
 /// Total tags: 84 (conditional: 6, with subdirectories: 43)
@@ -503,52 +502,52 @@ impl CanonDataType {
 
     /// Check if this tag has a subdirectory
     pub fn has_subdirectory(&self) -> bool {
-        match self {
-            CanonDataType::CameraSettings => true,
-            CanonDataType::FocalLength => true,
-            CanonDataType::ShotInfo => true,
-            CanonDataType::Panorama => true,
-            CanonDataType::UnknownD30 => true,
-            CanonDataType::MovieInfo => true,
-            CanonDataType::AFInfo => true,
-            CanonDataType::MyColors => true,
-            CanonDataType::FaceDetect1 => true,
-            CanonDataType::FaceDetect2 => true,
-            CanonDataType::AFInfo2 => true,
-            CanonDataType::ContrastInfo => true,
-            CanonDataType::WBInfo => true,
-            CanonDataType::FaceDetect3 => true,
-            CanonDataType::TimeInfo => true,
-            CanonDataType::AFInfo3 => true,
-            CanonDataType::CustomFunctions1D2 => true,
-            CanonDataType::PersonalFunctions => true,
-            CanonDataType::PersonalFunctionValues => true,
-            CanonDataType::FileInfo => true,
-            CanonDataType::CropInfo => true,
-            CanonDataType::CustomFunctions2 => true,
-            CanonDataType::AspectInfo => true,
-            CanonDataType::ProcessingInfo => true,
-            CanonDataType::ColorBalance => true,
-            CanonDataType::MeasuredColor => true,
-            CanonDataType::Flags => true,
-            CanonDataType::ModifiedInfo => true,
-            CanonDataType::PreviewImageInfo => true,
-            CanonDataType::SensorInfo => true,
-            CanonDataType::ColorInfo => true,
-            CanonDataType::AFMicroAdj => true,
-            CanonDataType::VignettingCorr2 => true,
-            CanonDataType::LightingOpt => true,
-            CanonDataType::LensInfo => true,
-            CanonDataType::AmbienceInfo => true,
-            CanonDataType::MultiExp => true,
-            CanonDataType::FilterInfo => true,
-            CanonDataType::HDRInfo => true,
-            CanonDataType::LogInfo => true,
-            CanonDataType::AFConfig => true,
-            CanonDataType::RawBurstModeRoll => true,
-            CanonDataType::LevelInfo => true,
-            _ => false,
-        }
+        matches!(
+            self,
+            CanonDataType::CameraSettings
+                | CanonDataType::FocalLength
+                | CanonDataType::ShotInfo
+                | CanonDataType::Panorama
+                | CanonDataType::UnknownD30
+                | CanonDataType::MovieInfo
+                | CanonDataType::AFInfo
+                | CanonDataType::MyColors
+                | CanonDataType::FaceDetect1
+                | CanonDataType::FaceDetect2
+                | CanonDataType::AFInfo2
+                | CanonDataType::ContrastInfo
+                | CanonDataType::WBInfo
+                | CanonDataType::FaceDetect3
+                | CanonDataType::TimeInfo
+                | CanonDataType::AFInfo3
+                | CanonDataType::CustomFunctions1D2
+                | CanonDataType::PersonalFunctions
+                | CanonDataType::PersonalFunctionValues
+                | CanonDataType::FileInfo
+                | CanonDataType::CropInfo
+                | CanonDataType::CustomFunctions2
+                | CanonDataType::AspectInfo
+                | CanonDataType::ProcessingInfo
+                | CanonDataType::ColorBalance
+                | CanonDataType::MeasuredColor
+                | CanonDataType::Flags
+                | CanonDataType::ModifiedInfo
+                | CanonDataType::PreviewImageInfo
+                | CanonDataType::SensorInfo
+                | CanonDataType::ColorInfo
+                | CanonDataType::AFMicroAdj
+                | CanonDataType::VignettingCorr2
+                | CanonDataType::LightingOpt
+                | CanonDataType::LensInfo
+                | CanonDataType::AmbienceInfo
+                | CanonDataType::MultiExp
+                | CanonDataType::FilterInfo
+                | CanonDataType::HDRInfo
+                | CanonDataType::LogInfo
+                | CanonDataType::AFConfig
+                | CanonDataType::RawBurstModeRoll
+                | CanonDataType::LevelInfo
+        )
     }
 
     /// Get the group hierarchy for this tag

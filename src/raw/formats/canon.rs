@@ -357,225 +357,8 @@ impl Default for CanonOffsetManager {
     }
 }
 
-/// Canon data types from ProcessBinaryData sections
-/// ExifTool: Canon.pm has 169 different ProcessBinaryData entries
-/// Each represents a specific type of camera data with its own parsing logic
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum CanonDataType {
-    /// 0x0001: Camera Settings
-    /// ExifTool: Canon.pm %Image::ExifTool::Canon::CameraSettings
-    CameraSettings,
-
-    /// 0x0002: Focal Length
-    /// ExifTool: Canon.pm %Image::ExifTool::Canon::FocalLength
-    FocalLength,
-
-    /// 0x0003: Shot Info
-    /// ExifTool: Canon.pm %Image::ExifTool::Canon::ShotInfo
-    ShotInfo,
-
-    /// 0x0004: Panorama
-    /// ExifTool: Canon.pm %Image::ExifTool::Canon::Panorama
-    Panorama,
-
-    /// 0x0006: Image Type
-    /// ExifTool: Canon.pm Simple string processing
-    ImageType,
-
-    /// 0x0007: Firmware Version
-    /// ExifTool: Canon.pm Simple string processing
-    FirmwareVersion,
-
-    /// 0x0008: File Number
-    /// ExifTool: Canon.pm Simple numeric processing
-    FileNumber,
-
-    /// 0x0009: Owner Name
-    /// ExifTool: Canon.pm Simple string processing
-    OwnerName,
-
-    /// 0x000d: Camera Info
-    /// ExifTool: Canon.pm Multiple camera-specific variants
-    CameraInfo,
-
-    /// 0x0010: Model ID
-    /// ExifTool: Canon.pm Model identification
-    ModelID,
-
-    /// 0x0012: AF Info
-    /// ExifTool: Canon.pm %Image::ExifTool::Canon::AFInfo (version 1)
-    AFInfo,
-
-    /// 0x0013: Thumbnail Image Valid Area
-    /// ExifTool: Canon.pm Simple coordinate processing
-    ThumbnailImageValidArea,
-
-    /// 0x0015: Serial Number Format
-    /// ExifTool: Canon.pm Serial number decoding
-    SerialNumberFormat,
-
-    /// 0x001a: Super Macro
-    /// ExifTool: Canon.pm Simple numeric processing
-    SuperMacro,
-
-    /// 0x001c: Date Stamp Mode
-    /// ExifTool: Canon.pm Simple lookup
-    DateStampMode,
-
-    /// 0x001d: My Colors
-    /// ExifTool: Canon.pm %Image::ExifTool::Canon::MyColors
-    MyColors,
-
-    /// 0x001e: Firmware Revision
-    /// ExifTool: Canon.pm Simple string processing
-    FirmwareRevision,
-
-    /// 0x0023: Categories
-    /// ExifTool: Canon.pm Bitmask processing
-    Categories,
-
-    /// 0x0024: Face Detect1
-    /// ExifTool: Canon.pm %Image::ExifTool::Canon::FaceDetect1
-    FaceDetect1,
-
-    /// 0x0025: Face Detect2  
-    /// ExifTool: Canon.pm %Image::ExifTool::Canon::FaceDetect2
-    FaceDetect2,
-
-    /// 0x0026: AF Info2
-    /// ExifTool: Canon.pm %Image::ExifTool::Canon::AFInfo2 (version 2)
-    AFInfo2,
-
-    /// 0x0027: Contrast Info
-    /// ExifTool: Canon.pm Simple processing
-    ContrastInfo,
-
-    /// 0x0028: Image Unique ID
-    /// ExifTool: Canon.pm Simple hex processing
-    ImageUniqueID,
-
-    /// 0x002f: WB Info
-    /// ExifTool: Canon.pm Color temperature processing
-    WBInfo,
-
-    /// 0x0035: Time Info
-    /// ExifTool: Canon.pm %Image::ExifTool::Canon::TimeInfo
-    TimeInfo,
-
-    /// 0x0038: Battery Type
-    /// ExifTool: Canon.pm Simple lookup
-    BatteryType,
-
-    /// 0x003c: AF Info3
-    /// ExifTool: Canon.pm %Image::ExifTool::Canon::AFInfo3 (version 3)
-    AFInfo3,
-    // Note: This is a subset - ExifTool has 169 total data types
-    // We'll implement the most critical ones first for CR2 support
-}
-
-impl CanonDataType {
-    /// Get Canon tag ID for this data type
-    /// ExifTool: Canon.pm %Canon::Main tag definitions
-    pub fn tag_id(&self) -> u16 {
-        match self {
-            CanonDataType::CameraSettings => 0x0001,
-            CanonDataType::FocalLength => 0x0002,
-            CanonDataType::ShotInfo => 0x0003,
-            CanonDataType::Panorama => 0x0004,
-            CanonDataType::ImageType => 0x0006,
-            CanonDataType::FirmwareVersion => 0x0007,
-            CanonDataType::FileNumber => 0x0008,
-            CanonDataType::OwnerName => 0x0009,
-            CanonDataType::CameraInfo => 0x000d,
-            CanonDataType::ModelID => 0x0010,
-            CanonDataType::AFInfo => 0x0012,
-            CanonDataType::ThumbnailImageValidArea => 0x0013,
-            CanonDataType::SerialNumberFormat => 0x0015,
-            CanonDataType::SuperMacro => 0x001a,
-            CanonDataType::DateStampMode => 0x001c,
-            CanonDataType::MyColors => 0x001d,
-            CanonDataType::FirmwareRevision => 0x001e,
-            CanonDataType::Categories => 0x0023,
-            CanonDataType::FaceDetect1 => 0x0024,
-            CanonDataType::FaceDetect2 => 0x0025,
-            CanonDataType::AFInfo2 => 0x0026,
-            CanonDataType::ContrastInfo => 0x0027,
-            CanonDataType::ImageUniqueID => 0x0028,
-            CanonDataType::WBInfo => 0x002f,
-            CanonDataType::TimeInfo => 0x0035,
-            CanonDataType::BatteryType => 0x0038,
-            CanonDataType::AFInfo3 => 0x003c,
-        }
-    }
-
-    /// Get data type from tag ID
-    /// ExifTool: Canon.pm reverse lookup for tag processing
-    pub fn from_tag_id(tag_id: u16) -> Option<CanonDataType> {
-        match tag_id {
-            0x0001 => Some(CanonDataType::CameraSettings),
-            0x0002 => Some(CanonDataType::FocalLength),
-            0x0003 => Some(CanonDataType::ShotInfo),
-            0x0004 => Some(CanonDataType::Panorama),
-            0x0006 => Some(CanonDataType::ImageType),
-            0x0007 => Some(CanonDataType::FirmwareVersion),
-            0x0008 => Some(CanonDataType::FileNumber),
-            0x0009 => Some(CanonDataType::OwnerName),
-            0x000d => Some(CanonDataType::CameraInfo),
-            0x0010 => Some(CanonDataType::ModelID),
-            0x0012 => Some(CanonDataType::AFInfo),
-            0x0013 => Some(CanonDataType::ThumbnailImageValidArea),
-            0x0015 => Some(CanonDataType::SerialNumberFormat),
-            0x001a => Some(CanonDataType::SuperMacro),
-            0x001c => Some(CanonDataType::DateStampMode),
-            0x001d => Some(CanonDataType::MyColors),
-            0x001e => Some(CanonDataType::FirmwareRevision),
-            0x0023 => Some(CanonDataType::Categories),
-            0x0024 => Some(CanonDataType::FaceDetect1),
-            0x0025 => Some(CanonDataType::FaceDetect2),
-            0x0026 => Some(CanonDataType::AFInfo2),
-            0x0027 => Some(CanonDataType::ContrastInfo),
-            0x0028 => Some(CanonDataType::ImageUniqueID),
-            0x002f => Some(CanonDataType::WBInfo),
-            0x0035 => Some(CanonDataType::TimeInfo),
-            0x0038 => Some(CanonDataType::BatteryType),
-            0x003c => Some(CanonDataType::AFInfo3),
-            _ => None, // Unknown or not yet implemented data type
-        }
-    }
-
-    /// Get data type name for debugging
-    pub fn name(&self) -> &'static str {
-        match self {
-            CanonDataType::CameraSettings => "CameraSettings",
-            CanonDataType::FocalLength => "FocalLength",
-            CanonDataType::ShotInfo => "ShotInfo",
-            CanonDataType::Panorama => "Panorama",
-            CanonDataType::ImageType => "ImageType",
-            CanonDataType::FirmwareVersion => "FirmwareVersion",
-            CanonDataType::FileNumber => "FileNumber",
-            CanonDataType::OwnerName => "OwnerName",
-            CanonDataType::CameraInfo => "CameraInfo",
-            CanonDataType::ModelID => "ModelID",
-            CanonDataType::AFInfo => "AFInfo",
-            CanonDataType::ThumbnailImageValidArea => "ThumbnailImageValidArea",
-            CanonDataType::SerialNumberFormat => "SerialNumberFormat",
-            CanonDataType::SuperMacro => "SuperMacro",
-            CanonDataType::DateStampMode => "DateStampMode",
-            CanonDataType::MyColors => "MyColors",
-            CanonDataType::FirmwareRevision => "FirmwareRevision",
-            CanonDataType::Categories => "Categories",
-            CanonDataType::FaceDetect1 => "FaceDetect1",
-            CanonDataType::FaceDetect2 => "FaceDetect2",
-            CanonDataType::AFInfo2 => "AFInfo2",
-            CanonDataType::ContrastInfo => "ContrastInfo",
-            CanonDataType::ImageUniqueID => "ImageUniqueID",
-            CanonDataType::WBInfo => "WBInfo",
-            CanonDataType::TimeInfo => "TimeInfo",
-            CanonDataType::BatteryType => "BatteryType",
-            CanonDataType::AFInfo3 => "AFInfo3",
-        }
-    }
-}
+// Use generated Canon tag structure from codegen
+pub use crate::generated::Canon_pm::tag_structure::CanonDataType;
 
 /// Canon RAW Handler - main processor for Canon RAW formats
 /// ExifTool: Canon.pm ProcessCanon() main entry point
@@ -846,7 +629,8 @@ mod tests {
     fn test_canon_data_type_tag_ids() {
         assert_eq!(CanonDataType::CameraSettings.tag_id(), 0x0001);
         assert_eq!(CanonDataType::FocalLength.tag_id(), 0x0002);
-        assert_eq!(CanonDataType::ShotInfo.tag_id(), 0x0003);
+        assert_eq!(CanonDataType::FlashInfo.tag_id(), 0x0003);
+        assert_eq!(CanonDataType::ShotInfo.tag_id(), 0x0004);
         assert_eq!(CanonDataType::AFInfo2.tag_id(), 0x0026);
     }
 
@@ -880,8 +664,8 @@ mod tests {
 
     #[test]
     fn test_canon_data_type_names() {
-        assert_eq!(CanonDataType::CameraSettings.name(), "CameraSettings");
-        assert_eq!(CanonDataType::AFInfo2.name(), "AFInfo2");
+        assert_eq!(CanonDataType::CameraSettings.name(), "CanonCameraSettings");
+        assert_eq!(CanonDataType::AFInfo2.name(), "CanonAFInfo2");
         assert_eq!(CanonDataType::TimeInfo.name(), "TimeInfo");
     }
 }
