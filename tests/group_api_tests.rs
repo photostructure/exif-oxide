@@ -16,7 +16,7 @@
 //! - get_tag_by_name() - Get tag by name (without group qualifier)
 //!
 //! ExifTool Reference: ExifTool group-based tag access patterns
-//! Milestone: docs/milestones/MILESTONE-ExifIFD.md API Compatibility
+//! Milestone: docs/todo/MILESTONE-ExifIFD.md API Compatibility
 
 use exif_oxide::formats::extract_metadata;
 

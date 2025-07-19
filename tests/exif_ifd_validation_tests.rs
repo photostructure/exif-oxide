@@ -4,7 +4,7 @@
 //! when processing ExifIFD subdirectories, as specified in the ExifIFD milestone.
 //!
 //! ExifTool Reference: lib/Image/ExifTool/Exif.pm ExifIFD validation logic
-//! Milestone: docs/milestones/MILESTONE-ExifIFD.md Validation Rules
+//! Milestone: docs/todo/MILESTONE-ExifIFD.md Validation Rules
 //!
 //! Note: These tests require the `integration-tests` feature to be enabled and
 //! external test assets to be available. They are automatically skipped in published crates.

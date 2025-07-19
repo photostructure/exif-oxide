@@ -7,7 +7,7 @@
 //! 4. Processor context awareness (knowing when processing ExifIFD vs main IFD)
 //!
 //! ExifTool Reference: lib/Image/ExifTool/Exif.pm ProcessExif context handling
-//! Milestone: docs/milestones/MILESTONE-ExifIFD.md Context-Aware Processing
+//! Milestone: docs/todo/MILESTONE-ExifIFD.md Context-Aware Processing
 //!
 //! Note: These tests require the `integration-tests` feature to be enabled and
 //! external test assets to be available. They are automatically skipped in published crates.
