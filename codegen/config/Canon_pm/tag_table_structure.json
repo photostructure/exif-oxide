@@ -1,0 +1,10 @@
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
+  "description": "Canon Main tag table structure for enum generation",
+  "table": "Main",
+  "output": {
+    "enum_name": "CanonDataType",
+    "include_metadata": true,
+    "generate_methods": ["tag_id", "from_tag_id", "name", "has_subdirectory", "groups"]
+  }
+}
