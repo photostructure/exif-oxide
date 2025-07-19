@@ -3,7 +3,7 @@
 
 //! Canon tag table structure generated from Canon.pm
 //! ExifTool: Canon.pm %Canon::Main
-//! Generated at: Sat Jul 19 16:13:39 2025 GMT
+//! Generated at: Sat Jul 19 20:43:17 2025 GMT
 
 /// Canon data types from %Canon::Main table
 /// Total tags: 84 (conditional: 6, with subdirectories: 43)
