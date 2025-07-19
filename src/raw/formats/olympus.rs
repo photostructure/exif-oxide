@@ -13,15 +13,17 @@ use crate::exif::ExifReader;
 use crate::raw::RawFormatHandler;
 use crate::tiff_types::TiffHeader;
 use crate::types::{DirectoryInfo, Result, TagValue};
-use std::collections::HashMap;
 use tracing;
+
+// Use generated Olympus tag structure enum
+pub use crate::generated::Olympus_pm::tag_structure::OlympusDataType;
 
 /// Olympus RAW format handler
 /// ExifTool: lib/Image/ExifTool/Olympus.pm - TIFF-based with dual processing modes
 pub struct OlympusRawHandler {
-    /// Track which sections we support
-    /// ExifTool: Olympus.pm sections 0x2010-0x5000 (9 core sections)
-    supported_sections: HashMap<u16, &'static str>,
+    /// Core sections we process - now using generated enum instead of manual mappings
+    /// ExifTool: Olympus.pm sections 0x2010-0x5000 (9 core sections from generated enum)
+    supported_sections: [OlympusDataType; 9],
 }
 
 impl Default for OlympusRawHandler {
@@ -31,22 +33,22 @@ impl Default for OlympusRawHandler {
 }
 
 impl OlympusRawHandler {
-    /// Create new Olympus RAW handler with section mappings
-    /// ExifTool: lib/Image/ExifTool/Olympus.pm section definitions
+    /// Create new Olympus RAW handler with section mappings from generated enum
+    /// ExifTool: lib/Image/ExifTool/Olympus.pm section definitions (now generated)
     pub fn new() -> Self {
-        let mut supported_sections = HashMap::new();
-
-        // Core data sections (tag ID -> section name)
-        // ExifTool: Olympus.pm lines with section definitions
-        supported_sections.insert(0x2010, "Equipment"); // Camera/lens hardware info
-        supported_sections.insert(0x2020, "CameraSettings"); // Core camera settings
-        supported_sections.insert(0x2030, "RawDevelopment"); // RAW processing parameters
-        supported_sections.insert(0x2031, "RawDev2"); // Additional RAW parameters
-        supported_sections.insert(0x2040, "ImageProcessing"); // Image processing, art filters
-        supported_sections.insert(0x2050, "FocusInfo"); // Autofocus information
-        supported_sections.insert(0x3000, "RawInfo"); // RAW file specific info
-        supported_sections.insert(0x4000, "MainInfo"); // Main Olympus tag table
-        supported_sections.insert(0x5000, "UnknownInfo"); // Unknown/experimental data
+        // Core data sections from generated enum - matches ExifTool exactly
+        // ExifTool: Olympus.pm Main table structure (84 total variants from generated enum)
+        let supported_sections = [
+            OlympusDataType::Equipment,       // 0x2010: Camera/lens hardware info
+            OlympusDataType::CameraSettings,  // 0x2020: Core camera settings
+            OlympusDataType::RawDevelopment,  // 0x2030: RAW processing parameters
+            OlympusDataType::RawDev2,         // 0x2031: Additional RAW parameters
+            OlympusDataType::ImageProcessing, // 0x2040: Image processing, art filters
+            OlympusDataType::FocusInfo,       // 0x2050: Autofocus information
+            OlympusDataType::RawInfo,         // 0x3000: RAW file specific info
+            OlympusDataType::MainInfo,        // 0x4000: Main Olympus tag table
+            OlympusDataType::UnknownInfo,     // 0x5000: Unknown/experimental data
+        ];
 
         Self { supported_sections }
     }
@@ -62,26 +64,31 @@ impl OlympusRawHandler {
             .map(|(tag_id, tag_value)| (*tag_id, tag_value.clone()))
             .collect();
 
-        // Process sections found in the maker notes
-        for (tag_id, section_name) in &self.supported_sections {
-            if let Some((_, tag_value)) = extracted_tags.iter().find(|(id, _)| id == tag_id) {
-                match *section_name {
-                    "Equipment" => self.process_equipment_section(reader, tag_value, data)?,
-                    "CameraSettings" => {
+        // Process sections found in the maker notes using generated enum
+        for &section_type in &self.supported_sections {
+            let tag_id = section_type.tag_id();
+            if let Some((_, tag_value)) = extracted_tags.iter().find(|(id, _)| *id == tag_id) {
+                match section_type {
+                    OlympusDataType::Equipment => {
+                        self.process_equipment_section(reader, tag_value, data)?
+                    }
+                    OlympusDataType::CameraSettings => {
                         self.process_camera_settings_section(reader, tag_value, data)?
                     }
-                    "FocusInfo" => self.process_focus_info_section(reader, tag_value, data)?,
-                    "RawDevelopment" => {
+                    OlympusDataType::FocusInfo => {
+                        self.process_focus_info_section(reader, tag_value, data)?
+                    }
+                    OlympusDataType::RawDevelopment => {
                         self.process_raw_development_section(reader, tag_value, data)?
                     }
-                    "ImageProcessing" => {
+                    OlympusDataType::ImageProcessing => {
                         self.process_image_processing_section(reader, tag_value, data)?
                     }
                     _ => {
                         // Basic section processing for unknown sections
                         tracing::debug!(
                             "Found Olympus section: {} at tag {:#x}",
-                            section_name,
+                            section_type.name(),
                             tag_id
                         );
                     }
@@ -302,30 +309,29 @@ mod tests {
     fn test_section_mapping() {
         let handler = OlympusRawHandler::new();
 
-        // Test that all expected sections are mapped
-        assert_eq!(handler.supported_sections.get(&0x2010), Some(&"Equipment"));
-        assert_eq!(
-            handler.supported_sections.get(&0x2020),
-            Some(&"CameraSettings")
-        );
-        assert_eq!(
-            handler.supported_sections.get(&0x2030),
-            Some(&"RawDevelopment")
-        );
-        assert_eq!(handler.supported_sections.get(&0x2031), Some(&"RawDev2"));
-        assert_eq!(
-            handler.supported_sections.get(&0x2040),
-            Some(&"ImageProcessing")
-        );
-        assert_eq!(handler.supported_sections.get(&0x2050), Some(&"FocusInfo"));
-        assert_eq!(handler.supported_sections.get(&0x3000), Some(&"RawInfo"));
-        assert_eq!(handler.supported_sections.get(&0x4000), Some(&"MainInfo"));
-        assert_eq!(
-            handler.supported_sections.get(&0x5000),
-            Some(&"UnknownInfo")
-        );
+        // Test that all expected sections are present using generated enum
+        assert!(handler.supported_sections.contains(&OlympusDataType::Equipment));
+        assert!(handler.supported_sections.contains(&OlympusDataType::CameraSettings));
+        assert!(handler.supported_sections.contains(&OlympusDataType::RawDevelopment));
+        assert!(handler.supported_sections.contains(&OlympusDataType::RawDev2));
+        assert!(handler.supported_sections.contains(&OlympusDataType::ImageProcessing));
+        assert!(handler.supported_sections.contains(&OlympusDataType::FocusInfo));
+        assert!(handler.supported_sections.contains(&OlympusDataType::RawInfo));
+        assert!(handler.supported_sections.contains(&OlympusDataType::MainInfo));
+        assert!(handler.supported_sections.contains(&OlympusDataType::UnknownInfo));
 
+        // Test that enum methods work correctly
+        assert_eq!(OlympusDataType::Equipment.tag_id(), 0x2010);
+        assert_eq!(OlympusDataType::CameraSettings.tag_id(), 0x2020);
+        assert_eq!(OlympusDataType::RawDevelopment.tag_id(), 0x2030);
+        assert_eq!(OlympusDataType::Equipment.name(), "Equipment");
+        assert_eq!(OlympusDataType::CameraSettings.name(), "CameraSettings");
+
+        // Test reverse lookup from tag ID
+        assert_eq!(OlympusDataType::from_tag_id(0x2010), Some(OlympusDataType::Equipment));
+        assert_eq!(OlympusDataType::from_tag_id(0x2020), Some(OlympusDataType::CameraSettings));
+        
         // Test unmapped section
-        assert_eq!(handler.supported_sections.get(&0x9999), None);
+        assert_eq!(OlympusDataType::from_tag_id(0x9999), None);
     }
 }
