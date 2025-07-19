@@ -55,6 +55,22 @@ This handles Equipment (0x2010), CameraSettings (0x2020), and other Olympus subd
 
 This milestone adds support for Olympus ORF (Olympus Raw Format). The core challenge was implementing ExifTool's "FixFormat" mechanism to handle Olympus's non-standard TIFF format types. **This breakthrough is now complete and working.**
 
+## 🔧 **INTEGRATION WITH UNIVERSAL CODEGEN EXTRACTORS**
+
+**Migration Target**: This milestone's manual implementations will be replaced with generated code via [MILESTONE-17-UNIVERSAL-CODEGEN-EXTRACTORS.md](MILESTONE-17-UNIVERSAL-CODEGEN-EXTRACTORS.md).
+
+**Current Manual Code (Will Be Replaced)**:
+- `supported_sections` HashMap (50+ lines) → `crate::generated::olympus::tag_structure::OlympusSubdirectories`
+- `get_olympus_tag_name()` function → `crate::generated::olympus::tag_structure::OlympusTagMetadata::tag_name()`
+- Hardcoded 0x2010-0x5000 ranges → Auto-generated from Olympus.pm Main table
+
+**Migration Benefits**:
+- **95% code reduction** for tag definitions and section mappings
+- **Automatic updates** when ExifTool adds new Olympus cameras/tags
+- **Perfect compatibility** with ExifTool's Olympus.pm processing
+
+**Migration Timeline**: Phase 2B (post-universal-extractor completion)
+
 ## 📋 **ENGINEER HANDOFF GUIDE**
 
 ### **Next Engineer Task: Complete Equipment Section Processing (1-2 hours)**
