@@ -15,6 +15,35 @@ Sony RAW support introduces the most sophisticated offset management requirement
 
 This milestone implements the advanced offset management system needed for Sony and other complex manufacturers.
 
+## 🔧 **INTEGRATION WITH UNIVERSAL CODEGEN EXTRACTORS**
+
+**Future Migration Target**: Sony implementation will leverage generated code via [MILESTONE-17-UNIVERSAL-CODEGEN-EXTRACTORS.md](MILESTONE-17-UNIVERSAL-CODEGEN-EXTRACTORS.md).
+
+**Generated Code for Sony Implementation**:
+
+**SonyDataType Enum** → `crate::generated::sony::tag_structure::SonyDataType`
+- Auto-generated from Sony.pm Main table (100+ tag definitions)
+- Handles all ARW format versions and model variations
+- Eliminates manual maintenance of Sony's complex tag structure
+
+**139 ProcessBinaryData Sections** → `crate::generated::sony::binary_data::*`
+- Each of Sony's 139 ProcessBinaryData tables becomes a generated processor
+- Automatic handling of format version differences (ARW v1.0 → v2.3.5)
+- Generated validation logic for IDC corruption detection
+
+**Sony Model Detection** → `crate::generated::sony::model_patterns::*`
+- Automatic generation of Sony camera model detection patterns
+- ARW format version detection based on model/firmware combinations
+- Offset scheme selection logic generated from ExifTool patterns
+
+**Benefits for Sony Implementation**:
+- **80% reduction** in manual code for Sony's complex tag structures
+- **Automatic compatibility** with Sony's 7+ ARW format versions
+- **Future-proof** against new Sony camera releases
+- **Perfect ExifTool alignment** for Sony's sophisticated processing logic
+
+**Implementation Priority**: Sony milestone will benefit significantly from universal extractors, making it simpler to implement despite Sony's complexity.
+
 ## Background
 
 **Sony Complexity Sources**:
