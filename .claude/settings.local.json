@@ -55,7 +55,10 @@
       "WebFetch(domain:www.conventionalcommits.org)",
       "WebFetch(domain:www.ftyps.com)",
       "Bash(cargo check:*)",
-      "Bash(cargo test:*)"
+      "Bash(cargo test:*)",
+      "Bash(cargo:*)",
+      "Bash(rustc:*)",
+      "Bash(./test_tag_structure)"
     ],
     "deny": []
   }
