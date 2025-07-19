@@ -222,7 +222,7 @@ When working with source files that exceed 500 lines:
 
 ### Mark where the code smells
 
-While reviewing or editing code, if there are components that feel like a temporary hack or otherwise have a bad "code smell", ask the user to add a TODO comment into the code that tersely describes why it smells, along with either a link to a MILESTONES.md stage when it will be fixed, or a terse description of how it should be fixed in the future.
+While reviewing or editing code, if there are components that feel like a temporary hack or otherwise have a bad "code smell", add a TODO comment into the code that tersely describes why it smells, along with either a link to a MILESTONES.md stage when it will be fixed, or a terse description of how it should be fixed in the future.
 
 ### Safety rules
 
