@@ -7,7 +7,7 @@
 
 ## Context
 
-All critical codegen issues have been resolved (see `docs/archive/DONE-20250716-codegen-fixes-and-refactoring.md`). The system is now fully functional with:
+All critical codegen issues have been resolved (see `docs/done/DONE-20250716-codegen-fixes-and-refactoring.md`). The system is now fully functional with:
 
 - ✅ All tests passing
 - ✅ Boolean sets generating cleanly 

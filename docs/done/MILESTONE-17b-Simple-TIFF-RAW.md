@@ -560,7 +560,7 @@ This milestone adds two more RAW formats with increasing complexity. Minolta pro
 **Key Documentation**:
 - `docs/TRUST-EXIFTOOL.md` - **CRITICAL** - Never deviate from this principle
 - `docs/design/EXIFTOOL-INTEGRATION.md` - Integration patterns and codegen usage
-- `docs/milestones/MILESTONE-17-RAW-Format-Support.md` - Overall context
+- `docs/todo/MILESTONE-17-RAW-Format-Support.md` - Overall context
 
 ### 🔧 Future Refactoring Opportunities
 
