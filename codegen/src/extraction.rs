@@ -32,6 +32,7 @@ enum SpecialExtractor {
     TagDefinitions,
     CompositeTags,
     TagTableStructure,
+    ProcessBinaryData,
 }
 
 #[derive(Debug)]
@@ -108,7 +109,8 @@ fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig
         "inline_printconv.json",
         "tag_definitions.json",
         "composite_tags.json",
-        "tag_table_structure.json"
+        "tag_table_structure.json",
+        "process_binary_data.json"
     ];
     
     for config_file in &config_files {
@@ -147,7 +149,7 @@ fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
         .unwrap_or("");
     
     let hash_names: Vec<String> = match config_type {
-        "tag_definitions.json" | "composite_tags.json" | "tag_table_structure.json" => {
+        "tag_definitions.json" | "composite_tags.json" | "tag_table_structure.json" | "process_binary_data.json" => {
             // For tag definitions, composite tags, and tag table structure, we use the table name from config root
             let table = config["table"].as_str()
                 .ok_or_else(|| anyhow::anyhow!("Missing 'table' field in {}", config_path.display()))?;
@@ -205,7 +207,7 @@ fn process_module_config(config: &ModuleConfig, extract_dir: &Path) -> Result<()
     let module_path = repo_root.join(&config.source_path);
     
     // Only patch if we're extracting hashes (not for inline_printconv, tag_definitions, composite_tags, or tag_table_structure)
-    if !matches!(config.module_name.as_str(), "inline_printconv" | "tag_definitions" | "composite_tags" | "tag_table_structure") {
+    if !matches!(config.module_name.as_str(), "inline_printconv" | "tag_definitions" | "composite_tags" | "tag_table_structure" | "process_binary_data") {
         patching::patch_module(&module_path, &config.hash_names)?;
     }
     
@@ -231,6 +233,9 @@ fn process_module_config(config: &ModuleConfig, extract_dir: &Path) -> Result<()
         }
         Some(SpecialExtractor::TagTableStructure) => {
             run_tag_table_structure_extractor(config, extract_dir)?;
+        }
+        Some(SpecialExtractor::ProcessBinaryData) => {
+            run_process_binary_data_extractor(config, extract_dir)?;
         }
         None => {
             run_extraction_script(config, extract_dir)?;
@@ -330,6 +335,7 @@ fn needs_special_extractor_by_name(config_name: &str) -> Option<SpecialExtractor
         "tag_definitions" => Some(SpecialExtractor::TagDefinitions),
         "composite_tags" => Some(SpecialExtractor::CompositeTags),
         "tag_table_structure" => Some(SpecialExtractor::TagTableStructure),
+        "process_binary_data" => Some(SpecialExtractor::ProcessBinaryData),
         _ => None,
     }
 }
@@ -525,6 +531,27 @@ fn run_tag_table_structure_extractor(config: &ModuleConfig, extract_dir: &Path) 
     
     let extractor_config = ExtractorConfig {
         script_name: "tag_table_structure.pl",
+        output_file: Some(&output_file),
+        hash_args: vec![table_name.clone()],
+    };
+    
+    run_extractor(config, extract_dir, extractor_config)
+}
+
+fn run_process_binary_data_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+    // For ProcessBinaryData, we need to pass the table name
+    // The config should have the table name stored in hash_names
+    let table_name = config.hash_names.get(0)
+        .ok_or_else(|| anyhow::anyhow!("No table name specified in process_binary_data config"))?;
+    
+    // Generate output filename based on module and table
+    let module_name = config.source_path.split('/').last()
+        .and_then(|name| name.strip_suffix(".pm"))
+        .unwrap_or("unknown");
+    let output_file = format!("{}_binary_data.json", module_name.to_lowercase());
+    
+    let extractor_config = ExtractorConfig {
+        script_name: "process_binary_data.pl",
         output_file: Some(&output_file),
         hash_args: vec![table_name.clone()],
     };

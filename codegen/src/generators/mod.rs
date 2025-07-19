@@ -6,6 +6,7 @@ pub mod conversion_refs;
 pub mod supported_tags;
 pub mod module;
 pub mod tag_structure;
+pub mod process_binary_data;
 
 // Modular architecture
 pub mod lookup_tables;
@@ -19,3 +20,4 @@ pub use conversion_refs::generate_conversion_refs;
 pub use supported_tags::generate_supported_tags;
 pub use module::generate_mod_file;
 pub use tag_structure::generate_tag_structure;
+pub use process_binary_data::generate_process_binary_data;

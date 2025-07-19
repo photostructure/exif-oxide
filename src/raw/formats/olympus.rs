@@ -310,15 +310,33 @@ mod tests {
         let handler = OlympusRawHandler::new();
 
         // Test that all expected sections are present using generated enum
-        assert!(handler.supported_sections.contains(&OlympusDataType::Equipment));
-        assert!(handler.supported_sections.contains(&OlympusDataType::CameraSettings));
-        assert!(handler.supported_sections.contains(&OlympusDataType::RawDevelopment));
-        assert!(handler.supported_sections.contains(&OlympusDataType::RawDev2));
-        assert!(handler.supported_sections.contains(&OlympusDataType::ImageProcessing));
-        assert!(handler.supported_sections.contains(&OlympusDataType::FocusInfo));
-        assert!(handler.supported_sections.contains(&OlympusDataType::RawInfo));
-        assert!(handler.supported_sections.contains(&OlympusDataType::MainInfo));
-        assert!(handler.supported_sections.contains(&OlympusDataType::UnknownInfo));
+        assert!(handler
+            .supported_sections
+            .contains(&OlympusDataType::Equipment));
+        assert!(handler
+            .supported_sections
+            .contains(&OlympusDataType::CameraSettings));
+        assert!(handler
+            .supported_sections
+            .contains(&OlympusDataType::RawDevelopment));
+        assert!(handler
+            .supported_sections
+            .contains(&OlympusDataType::RawDev2));
+        assert!(handler
+            .supported_sections
+            .contains(&OlympusDataType::ImageProcessing));
+        assert!(handler
+            .supported_sections
+            .contains(&OlympusDataType::FocusInfo));
+        assert!(handler
+            .supported_sections
+            .contains(&OlympusDataType::RawInfo));
+        assert!(handler
+            .supported_sections
+            .contains(&OlympusDataType::MainInfo));
+        assert!(handler
+            .supported_sections
+            .contains(&OlympusDataType::UnknownInfo));
 
         // Test that enum methods work correctly
         assert_eq!(OlympusDataType::Equipment.tag_id(), 0x2010);
@@ -328,9 +346,15 @@ mod tests {
         assert_eq!(OlympusDataType::CameraSettings.name(), "CameraSettings");
 
         // Test reverse lookup from tag ID
-        assert_eq!(OlympusDataType::from_tag_id(0x2010), Some(OlympusDataType::Equipment));
-        assert_eq!(OlympusDataType::from_tag_id(0x2020), Some(OlympusDataType::CameraSettings));
-        
+        assert_eq!(
+            OlympusDataType::from_tag_id(0x2010),
+            Some(OlympusDataType::Equipment)
+        );
+        assert_eq!(
+            OlympusDataType::from_tag_id(0x2020),
+            Some(OlympusDataType::CameraSettings)
+        );
+
         // Test unmapped section
         assert_eq!(OlympusDataType::from_tag_id(0x9999), None);
     }
