@@ -60,7 +60,9 @@
       "Bash(rustc:*)",
       "Bash(./test_tag_structure)",
       "Bash(RUST_LOG=debug cargo run --release)",
-      "Bash(RUST_BACKTRACE=1 cargo test test_model_condition_evaluation --features integration-tests -- --nocapture)"
+      "Bash(RUST_BACKTRACE=1 cargo test test_model_condition_evaluation --features integration-tests -- --nocapture)",
+      "Bash(RUST_LOG=trace cargo run -- test-images/olympus/test.orf)",
+      "Bash(RUST_LOG=debug cargo run -- test-images/olympus/test.orf)"
     ],
     "deny": []
   }

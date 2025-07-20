@@ -78,7 +78,7 @@ pub fn generate_conditional_tags(data: &ConditionalTagsExtraction) -> Result<Str
     // Add imports
     code.push_str("use std::collections::HashMap;\n");
     code.push_str("use std::sync::LazyLock;\n");
-    code.push_str("use crate::expressions::{ExpressionEvaluator, parse_expression};\n");
+    code.push_str("use crate::expressions::ExpressionEvaluator;\n");
     code.push_str("use crate::processor_registry::ProcessorContext;\n");
     code.push_str("use crate::types::TagValue;\n\n");
 

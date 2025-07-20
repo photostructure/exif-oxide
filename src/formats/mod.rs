@@ -504,6 +504,91 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                 }
             }
         }
+        "CR2" | "CRW" | "CR3" => {
+            // Canon RAW format processing (Milestone 17d: Canon CR2, CRW, CR3 support)
+            // CR2 is TIFF-based and will be processed by the TIFF handler through maker notes
+            // CRW is a legacy custom format, CR3 is MOV-based
+
+            if detection_result.file_type == "CR2" {
+                // CR2 is TIFF-based, so process it as TIFF
+                // The Canon-specific processing happens through maker notes
+                reader.seek(SeekFrom::Start(0))?;
+                let mut tiff_data = Vec::new();
+                reader.read_to_end(&mut tiff_data)?;
+
+                let mut exif_reader = ExifReader::new();
+                exif_reader.set_file_type(detection_result.file_type.clone());
+
+                match exif_reader.parse_exif_data(&tiff_data) {
+                    Ok(()) => {
+                        // Extract all found tags using new TagEntry API
+                        let mut exif_tag_entries = exif_reader.get_all_tag_entries();
+                        tag_entries.append(&mut exif_tag_entries);
+
+                        // Also populate legacy tags for backward compatibility
+                        let exif_tags = exif_reader.get_all_tags();
+                        for (key, value) in exif_tags {
+                            tags.insert(key, value);
+                        }
+
+                        // Add EXIF processing warnings as tags for debugging
+                        if show_warnings {
+                            for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
+                                tags.insert(
+                                    format!("Warning:ExifWarning{i}"),
+                                    TagValue::String(warning.clone()),
+                                );
+                            }
+                        }
+                    }
+                    Err(e) => {
+                        tags.insert(
+                            "Warning:CR2ParseError".to_string(),
+                            TagValue::string(format!("Failed to parse CR2: {e}")),
+                        );
+                    }
+                }
+            } else {
+                // CRW and CR3 are non-TIFF formats - use RAW processor
+                reader.seek(SeekFrom::Start(0))?;
+                let mut raw_data = Vec::new();
+                reader.read_to_end(&mut raw_data)?;
+
+                let raw_processor = crate::raw::RawProcessor::new();
+                let mut exif_reader = ExifReader::new();
+                exif_reader.set_file_type(detection_result.file_type.clone());
+
+                match raw_processor.process_raw(&mut exif_reader, &raw_data, &detection_result) {
+                    Ok(()) => {
+                        let mut raw_tag_entries = exif_reader.get_all_tag_entries();
+                        tag_entries.append(&mut raw_tag_entries);
+
+                        let raw_tags = exif_reader.get_all_tags();
+                        for (key, value) in raw_tags {
+                            tags.insert(key, value);
+                        }
+
+                        if show_warnings {
+                            for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
+                                tags.insert(
+                                    format!("Warning:RawWarning{i}"),
+                                    TagValue::String(warning.clone()),
+                                );
+                            }
+                        }
+                    }
+                    Err(e) => {
+                        tags.insert(
+                            "Warning:CanonRawParseError".to_string(),
+                            TagValue::string(format!(
+                                "Failed to parse Canon {} RAW: {e}",
+                                detection_result.file_type
+                            )),
+                        );
+                    }
+                }
+            }
+        }
         _ => {
             // Other formats not yet supported
             tags.insert(
