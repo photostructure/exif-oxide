@@ -45,6 +45,18 @@ pub enum Expression {
 
     /// Logical NOT of an expression
     Not(Box<Expression>),
+
+    /// Value reference ($val{N})
+    /// Used in binary data format expressions
+    ValueReference(u32),
+
+    /// Mathematical expression for ceiling division
+    /// int(($val{N} + addend) / divisor)
+    CeilingDivision {
+        val_index: u32,
+        addend: usize,
+        divisor: usize,
+    },
 }
 
 /// Trait for evaluating specific tag types

@@ -4,6 +4,8 @@
 //! FujiFilm model detection patterns from Main table
 //! ExifTool: FujiFilm.pm %FujiFilm::Main
 
+use crate::expressions::ExpressionEvaluator;
+use crate::processor_registry::ProcessorContext;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
@@ -61,46 +63,23 @@ impl FujiFilmModelDetection {
             .map(|condition| condition.name)
     }
 
-    /// Evaluate a single condition against the current context
+    /// Evaluate a condition using the unified expression system
     fn evaluate_condition(&self, condition: &str, context: &ConditionalContext) -> bool {
-        // Simplified condition evaluation - can be enhanced
-        if condition.contains("$$self{Model}") {
-            return self.evaluate_model_condition(condition);
-        }
-        if condition.contains("$$self{Make}") {
-            if let Some(make) = &context.make {
-                return self.evaluate_make_condition(condition, make);
-            }
-        }
-        false
-    }
+        let mut evaluator = ExpressionEvaluator::new();
 
-    /// Evaluate model-specific conditions
-    fn evaluate_model_condition(&self, condition: &str) -> bool {
-        // Simple string matching for now - can be enhanced with regex
-        if condition.contains(" eq ") {
-            if let Some(quoted) = extract_quoted_string(condition) {
-                return self.model == quoted;
-            }
+        // Build ProcessorContext from ConditionalContext
+        let mut processor_context = ProcessorContext::default();
+        if let Some(model) = &context.model {
+            processor_context = processor_context.with_model(model.clone());
         }
-        if condition.contains(" ne ") {
-            if let Some(quoted) = extract_quoted_string(condition) {
-                return self.model != quoted;
-            }
+        if let Some(make) = &context.make {
+            processor_context = processor_context.with_manufacturer(make.clone());
         }
-        // TODO: Implement regex matching for =~ patterns
-        false
-    }
 
-    /// Evaluate make-specific conditions
-    fn evaluate_make_condition(&self, condition: &str, make: &str) -> bool {
-        if condition.contains(" =~ ") {
-            // Simple substring matching for now
-            if condition.contains("/^GENERAL IMAGING/") {
-                return make.starts_with("GENERAL IMAGING");
-            }
-        }
-        false
+        // Try context-based evaluation
+        evaluator
+            .evaluate_context_condition(&processor_context, condition)
+            .unwrap_or(false)
     }
 }
 
@@ -108,16 +87,7 @@ impl FujiFilmModelDetection {
 #[derive(Debug, Clone)]
 pub struct ConditionalContext {
     pub make: Option<String>,
+    pub model: Option<String>,
     pub count: Option<u32>,
     pub format: Option<String>,
-}
-
-/// Extract quoted string from Perl condition
-fn extract_quoted_string(condition: &str) -> Option<String> {
-    if let Some(start) = condition.find('"') {
-        if let Some(end) = condition[start + 1..].find('"') {
-            return Some(condition[start + 1..start + 1 + end].to_string());
-        }
-    }
-    None
 }

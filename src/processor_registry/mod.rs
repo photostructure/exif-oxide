@@ -112,6 +112,12 @@ static PROCESSOR_REGISTRY: LazyLock<ProcessorRegistry> = LazyLock::new(|| {
         OlympusFocusInfoProcessor,
     );
 
+    // Register FujiFilm processors (demonstrates generated ProcessBinaryData table integration)
+    registry.register_processor(
+        ProcessorKey::new("FUJIFILM".to_string(), "FFMV".to_string()),
+        FujiFilmFFMVProcessor::new(),
+    );
+
     // Add dispatch rules for sophisticated processor selection
     registry.add_dispatch_rule(CanonDispatchRule);
     registry.add_dispatch_rule(NikonDispatchRule);

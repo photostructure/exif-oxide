@@ -12,9 +12,13 @@ use crate::file_operations::{file_exists, read_utf8_with_fallback};
 use crate::schemas::{input::TableMetadata, ExtractedTable, TableEntry, TableSource};
 
 /// Simplified metadata structure for extracted JSON files
+///
+/// IMPORTANT: DO NOT ADD `entry_count` field here!
+/// The Rust code calculates entry count from entries.len() to avoid inconsistencies.
+/// Adding entry_count back will cause parsing failures and duplicate logic.
 #[derive(Debug, serde::Deserialize)]
 pub struct SimpleMetadata {
-    pub entry_count: usize,
+    // entry_count field deliberately omitted - calculate from entries.len() instead
 }
 
 /// Simplified structure for extracted JSON files
@@ -125,6 +129,7 @@ pub fn load_extracted_tables_with_config(
         let path = entry.path();
         
         if path.extension().and_then(|s| s.to_str()) == Some("json") {
+            
             let json_data = read_utf8_with_fallback(&path)?;
             
             // Skip empty files
@@ -144,11 +149,12 @@ pub fn load_extracted_tables_with_config(
                     let module_config_dir = config_dir.join(&module_name);
                     if let Some(config) = load_table_config(&module_config_dir, hash_name)? {
                         // Create full ExtractedTable with metadata from config
+                        // NOTE: entry_count is calculated from entries.len() - DO NOT add to JSON!
                         let table = create_extracted_table(
                             simple_table.source.clone(),
                             simple_table.entries.clone(),
                             &config,
-                            simple_table.metadata.entry_count,
+                            simple_table.entries.len(), // Calculate from actual entries
                         );
                         all_extracted_tables.insert(table.source.hash_name.clone(), table);
                     } else {

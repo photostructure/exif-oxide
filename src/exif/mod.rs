@@ -18,12 +18,16 @@ mod tags;
 
 // Only re-export what needs to be public - most functionality is internal
 
+use crate::generated::Canon_pm::main_conditional_tags::{CanonConditionalTags, ConditionalContext};
+use crate::generated::FujiFilm_pm::main_model_detection::{
+    ConditionalContext as FujiFilmConditionalContext, FujiFilmModelDetection,
+};
 use crate::tiff_types::TiffHeader;
 use crate::types::{
     DataMemberValue, DirectoryInfo, ExifError, ProcessorDispatch, Result, TagSourceInfo, TagValue,
 };
 use std::collections::HashMap;
-use tracing::debug;
+use tracing::{debug, trace};
 
 /// Stateful EXIF reader for processing JPEG-embedded EXIF data
 /// ExifTool: lib/Image/ExifTool/Exif.pm ProcessExif function architecture
@@ -270,10 +274,22 @@ impl ExifReader {
 
             // Look up tag name and definition
             let (base_tag_name, tag_def) = if tag_id >= 0xC000 {
-                // Canon-specific synthetic tag IDs - no definition in main table
-                let canon_tag_name = canon::get_canon_tag_name(tag_id)
-                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
-                (canon_tag_name, None)
+                // Canon-specific synthetic tag IDs - try conditional resolution first
+                // For binary data, pass count as data length for count-based conditions
+                let count = match raw_value {
+                    TagValue::Binary(data) => Some(data.len() as u32),
+                    _ => None,
+                };
+                if let Some(conditional_name) =
+                    self.resolve_conditional_tag_name(tag_id, count, None, None)
+                {
+                    (conditional_name, None)
+                } else {
+                    // Fall back to static Canon tag names
+                    let canon_tag_name = canon::get_canon_tag_name(tag_id)
+                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                    (canon_tag_name, None)
+                }
             } else {
                 // Check if this tag should be looked up in the global table based on source context
                 // ExifTool: lib/Image/ExifTool/Exif.pm:6375 uses context-specific tag tables
@@ -301,25 +317,37 @@ impl ExifReader {
                 });
 
                 if should_lookup_global {
-                    // Regular EXIF tags - look up in unified table
-                    // ExifTool: lib/Image/ExifTool/ExifTool.pm:9026 $$tagTablePtr{$tagID}
-                    let tag_def = TAG_BY_ID.get(&(tag_id as u32)).copied();
-                    let name = tag_def
-                        .map(|def| def.name.to_string())
-                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                    // Regular EXIF tags - try conditional resolution first for Canon tags
+                    // For binary data, pass count as data length for count-based conditions
+                    let count = match raw_value {
+                        TagValue::Binary(data) => Some(data.len() as u32),
+                        _ => None,
+                    };
+                    if let Some(conditional_name) =
+                        self.resolve_conditional_tag_name(tag_id, count, None, None)
+                    {
+                        (conditional_name, None)
+                    } else {
+                        // Fall back to standard tag lookup in unified table
+                        // ExifTool: lib/Image/ExifTool/ExifTool.pm:9026 $$tagTablePtr{$tagID}
+                        let tag_def = TAG_BY_ID.get(&(tag_id as u32)).copied();
+                        let name = tag_def
+                            .map(|def| def.name.to_string())
+                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
 
-                    // Debug logging for ColorSpace and WhiteBalance
-                    if tag_id == 0xa001 || tag_id == 0xa403 {
-                        debug!(
-                            "Processing tag 0x{:04x} ({}) with value {:?}, tag_def found: {}",
-                            tag_id,
-                            name,
-                            raw_value,
-                            tag_def.is_some()
-                        );
+                        // Debug logging for ColorSpace and WhiteBalance
+                        if tag_id == 0xa001 || tag_id == 0xa403 {
+                            debug!(
+                                "Processing tag 0x{:04x} ({}) with value {:?}, tag_def found: {}",
+                                tag_id,
+                                name,
+                                raw_value,
+                                tag_def.is_some()
+                            );
+                        }
+
+                        (name, tag_def)
                     }
-
-                    (name, tag_def)
                 } else {
                     // Maker note tags - don't lookup in global table to avoid conflicts
                     // ExifTool: lib/Image/ExifTool/Exif.pm:6190-6191 inMakerNotes context detection
@@ -485,6 +513,114 @@ impl ExifReader {
     /// Get access to the raw EXIF data (public for Canon module)
     pub fn get_data(&self) -> &[u8] {
         &self.data
+    }
+
+    /// Create ConditionalContext for conditional tag resolution
+    /// Builds context from current ExifReader state for manufacturer-specific conditional logic
+    fn create_conditional_context(
+        &self,
+        count: Option<u32>,
+        format: Option<String>,
+        binary_data: Option<Vec<u8>>,
+    ) -> ConditionalContext {
+        // Extract manufacturer from already processed tags
+        let make = self
+            .extracted_tags
+            .get(&0x010F) // Make tag
+            .and_then(|v| v.as_string())
+            .map(|s| s.to_string());
+
+        // Extract model from already processed tags
+        let model = self
+            .extracted_tags
+            .get(&0x0110) // Model tag
+            .and_then(|v| v.as_string())
+            .map(|s| s.to_string());
+
+        ConditionalContext {
+            make,
+            model,
+            count,
+            format,
+            binary_data,
+        }
+    }
+
+    /// Create FujiFilm ConditionalContext for conditional tag resolution
+    /// Builds FujiFilm-specific context from current ExifReader state
+    fn create_fujifilm_conditional_context(
+        &self,
+        count: Option<u32>,
+        format: Option<String>,
+    ) -> FujiFilmConditionalContext {
+        // Extract manufacturer from already processed tags
+        let make = self
+            .extracted_tags
+            .get(&0x010F) // Make tag
+            .and_then(|v| v.as_string())
+            .map(|s| s.to_string());
+
+        // Extract model from already processed tags
+        let model = self
+            .extracted_tags
+            .get(&0x0110) // Model tag
+            .and_then(|v| v.as_string())
+            .map(|s| s.to_string());
+
+        FujiFilmConditionalContext {
+            make,
+            model,
+            count,
+            format,
+        }
+    }
+
+    /// Resolve conditional tag name using manufacturer-specific logic
+    /// Returns the resolved tag name if conditional resolution succeeds, None otherwise
+    fn resolve_conditional_tag_name(
+        &self,
+        tag_id: u16,
+        count: Option<u32>,
+        format: Option<String>,
+        binary_data: Option<Vec<u8>>,
+    ) -> Option<String> {
+        // Only perform conditional resolution for Canon tags when we have Canon context
+        if let Some(make) = self.extracted_tags.get(&0x010F).and_then(|v| v.as_string()) {
+            if make.contains("Canon") {
+                let context = self.create_conditional_context(count, format, binary_data);
+                let canon_resolver = CanonConditionalTags::new();
+
+                if let Some(resolved) = canon_resolver.resolve_tag(&tag_id.to_string(), &context) {
+                    trace!(
+                        "Conditional tag resolution: 0x{:04x} -> {} (subdirectory: {}, writable: {})",
+                        tag_id, resolved.name, resolved.subdirectory, resolved.writable
+                    );
+                    return Some(resolved.name);
+                }
+            } else if make.contains("FUJIFILM") {
+                let fujifilm_context = self.create_fujifilm_conditional_context(count, format);
+                let model = self
+                    .extracted_tags
+                    .get(&0x0110) // Model tag
+                    .and_then(|v| v.as_string())
+                    .unwrap_or("")
+                    .to_string();
+                let fujifilm_resolver = FujiFilmModelDetection::new(model);
+
+                if let Some(resolved_name) = fujifilm_resolver
+                    .resolve_conditional_tag(&tag_id.to_string(), &fujifilm_context)
+                {
+                    trace!(
+                        "FujiFilm conditional tag resolution: 0x{:04x} -> {}",
+                        tag_id,
+                        resolved_name
+                    );
+                    return Some(resolved_name.to_string());
+                }
+            }
+        }
+
+        None
     }
 
     /// Test helper: Add extracted tag with source info for testing

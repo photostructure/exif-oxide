@@ -3,6 +3,9 @@
 
 //! Canon conditional tag definitions from Main table
 //! ExifTool: Canon.pm %Canon::Main
+use crate::expressions::ExpressionEvaluator;
+use crate::processor_registry::ProcessorContext;
+use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
@@ -509,6 +512,16 @@ static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> 
             format: None,
         },
     ]);
+        map.insert(
+            "56",
+            vec![ConditionalEntry {
+                condition: "$count == 76",
+                name: "BatteryType",
+                subdirectory: false,
+                writable: true,
+                format: None,
+            }],
+        );
         map.insert("16385", vec![
         ConditionalEntry {
             condition: "$count == 582",
@@ -595,16 +608,6 @@ static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> 
             format: None,
         },
     ]);
-        map.insert(
-            "56",
-            vec![ConditionalEntry {
-                condition: "$count == 76",
-                name: "BatteryType",
-                subdirectory: false,
-                writable: true,
-                format: None,
-            }],
-        );
         map
     },
 );
@@ -623,6 +626,16 @@ static BINARY_PATTERNS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> =
                 format: None,
             }],
         );
+        map.insert(
+            "35",
+            vec![ConditionalEntry {
+                condition: "$$valPt =~ /^\\x08\\0\\0\\0/",
+                name: "Categories",
+                subdirectory: false,
+                writable: true,
+                format: Some("int32u"),
+            }],
+        );
         map.insert("16405", vec![
         ConditionalEntry {
             condition: "$$valPt =~ /^\\0/ and $$valPt !~ /^(\\0\\0\\0\\0|\\x00\\x40\\xdc\\x05)/",
@@ -639,16 +652,6 @@ static BINARY_PATTERNS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> =
             format: None,
         },
     ]);
-        map.insert(
-            "35",
-            vec![ConditionalEntry {
-                condition: "$$valPt =~ /^\\x08\\0\\0\\0/",
-                name: "Categories",
-                subdirectory: false,
-                writable: true,
-                format: Some("int32u"),
-            }],
-        );
         map
     },
 );
@@ -748,94 +751,60 @@ impl CanonConditionalTags {
         }
     }
 
-    /// Evaluate a general condition
+    /// Evaluate a condition using the unified expression system
     fn evaluate_condition(&self, condition: &str, context: &ConditionalContext) -> bool {
-        // Model conditions
-        if condition.contains("$$self{Model}") {
-            if let Some(model) = &context.model {
-                return self.evaluate_model_condition(condition, model);
-            }
+        let mut evaluator = ExpressionEvaluator::new();
+
+        // Build ProcessorContext from ConditionalContext
+        let mut processor_context = ProcessorContext::default();
+        if let Some(model) = &context.model {
+            processor_context = processor_context.with_model(model.clone());
+        }
+        if let Some(make) = &context.make {
+            processor_context = processor_context.with_manufacturer(make.clone());
         }
 
-        // Count conditions
-        if condition.contains("$count") {
-            return self.evaluate_count_condition(condition, context.count);
+        // Add conditional context values to processor context
+        if let Some(count) = context.count {
+            processor_context
+                .parent_tags
+                .insert("count".to_string(), TagValue::U32(count));
+        }
+        if let Some(format) = &context.format {
+            processor_context
+                .parent_tags
+                .insert("format".to_string(), TagValue::String(format.clone()));
         }
 
-        // Format conditions
-        if condition.contains("$format") {
-            if let Some(format) = &context.format {
-                return self.evaluate_format_condition(condition, format);
-            }
+        // Try context-based evaluation first
+        if let Ok(result) = evaluator.evaluate_context_condition(&processor_context, condition) {
+            return result;
         }
 
         false
     }
 
-    /// Evaluate model-specific conditions
-    fn evaluate_model_condition(&self, condition: &str, model: &str) -> bool {
-        // Simple regex matching for now - can be enhanced
-        if condition.contains("=~") {
-            // Extract regex pattern and evaluate
-            // TODO: Implement full regex pattern evaluation
-            return model.contains("EOS"); // Simplified for demo
-        }
-        false
-    }
-
-    /// Evaluate count-based conditions
+    /// Evaluate count-based conditions using unified system
     fn evaluate_count_condition(&self, condition: &str, count: Option<u32>) -> bool {
+        let mut evaluator = ExpressionEvaluator::new();
+        let mut processor_context = ProcessorContext::default();
+
         if let Some(count_val) = count {
-            // Parse simple count conditions like '$count == 582'
-            if let Some(expected) = extract_count_value(condition) {
-                return count_val == expected;
-            }
+            processor_context
+                .parent_tags
+                .insert("count".to_string(), TagValue::U32(count_val));
         }
-        false
+
+        evaluator
+            .evaluate_context_condition(&processor_context, condition)
+            .unwrap_or(false)
     }
 
-    /// Evaluate format-based conditions
-    fn evaluate_format_condition(&self, condition: &str, format: &str) -> bool {
-        if condition.contains("eq") {
-            if let Some(expected_format) = extract_quoted_string(condition) {
-                return format == expected_format;
-            }
-        }
-        false
-    }
-
-    /// Evaluate binary pattern conditions
+    /// Evaluate binary pattern conditions using unified system
     fn evaluate_binary_pattern(&self, condition: &str, binary_data: &[u8]) -> bool {
-        // Simple binary pattern matching
-        if condition.contains("$$valPt =~ /^\\0/") {
-            return !binary_data.is_empty() && binary_data[0] == 0;
-        }
-        // TODO: Implement full binary pattern evaluation
-        false
+        let mut evaluator = ExpressionEvaluator::new();
+        evaluator
+            .evaluate_data_condition(binary_data, condition)
+            .unwrap_or(false)
     }
-}
-
-/// Extract count value from condition string
-fn extract_count_value(condition: &str) -> Option<u32> {
-    // Simple parser for conditions like '$count == 582'
-    if let Some(start) = condition.find("== ") {
-        let number_part = &condition[start + 3..];
-        if let Some(end) = number_part.find(|c: char| !c.is_ascii_digit()) {
-            number_part[..end].parse().ok()
-        } else {
-            number_part.parse().ok()
-        }
-    } else {
-        None
-    }
-}
-
-/// Extract quoted string from condition
-fn extract_quoted_string(condition: &str) -> Option<String> {
-    if let Some(start) = condition.find('"') {
-        if let Some(end) = condition[start + 1..].find('"') {
-            return Some(condition[start + 1..start + 1 + end].to_string());
-        }
-    }
-    None
 }
