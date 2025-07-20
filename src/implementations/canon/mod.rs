@@ -733,6 +733,7 @@ fn apply_camera_settings_print_conv(
     tag_value: &crate::types::TagValue,
 ) -> crate::types::TagValue {
     use crate::generated::Canon_pm::camerasettings_inline::*;
+    use crate::generated::Canon_pm::canonquality::lookup_canon_quality;
 
     debug!(
         "Applying Canon CameraSettings PrintConv for tag: {}",
@@ -742,6 +743,30 @@ fn apply_camera_settings_print_conv(
     // Apply generated lookup tables based on the tag name
     // ExifTool: Canon.pm CameraSettings table PrintConv entries
     match tag_name {
+        "MacroMode" => {
+            if let Some(value) = tag_value.as_u8() {
+                if let Some(macro_mode) = lookup_camera_settings__macro_mode(value) {
+                    return crate::types::TagValue::String(macro_mode.to_string());
+                }
+            }
+        }
+        "Quality" => {
+            if let Some(value) = tag_value.as_u16() {
+                // Convert u16 to i16 for lookup function
+                let signed_value = value as i16;
+                if let Some(quality) = lookup_canon_quality(signed_value) {
+                    return crate::types::TagValue::String(quality.to_string());
+                }
+            }
+        }
+        "CanonFlashMode" => {
+            // CanonFlashMode might use the same lookup as FlashMode, or need a different one
+            if let Some(value) = tag_value.as_u8() {
+                if let Some(flash_mode) = lookup_camera_settings__flash_mode(value) {
+                    return crate::types::TagValue::String(flash_mode.to_string());
+                }
+            }
+        }
         "FlashMode" => {
             if let Some(value) = tag_value.as_u8() {
                 if let Some(flash_mode) = lookup_camera_settings__flash_mode(value) {

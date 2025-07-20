@@ -56,9 +56,16 @@ impl ExifReader {
             "GPS" => Some("GPS".to_string()),
             "ExifIFD" | "InteropIFD" => Some("Exif".to_string()),
             "MakerNotes" => {
-                // Detect manufacturer-specific MakerNote processing
-                // ExifTool: lib/Image/ExifTool/MakerNotes.pm conditional dispatch
-                self.detect_makernote_processor()
+                // Trust ExifTool: MakerNotes are parsed as standard TIFF IFDs first
+                // to discover subdirectory tags like Equipment (0x2010), CameraSettings (0x2020), etc.
+                Some("Exif".to_string())
+            }
+            // Manufacturer-specific subdirectories use manufacturer processors
+            _ if dir_name.starts_with("Olympus:")
+                || dir_name.starts_with("Canon:")
+                || dir_name.starts_with("Nikon:") =>
+            {
+                None // Let manufacturer processors handle these
             }
             _ => None,
         };
@@ -93,14 +100,25 @@ impl ExifReader {
     /// Phase 5: Now uses trait-based processor registry
     pub(crate) fn dispatch_processor_with_params(
         &mut self,
-        _processor: String, // Legacy parameter, now ignored
+        processor: String, // Trust ExifTool: "Exif" means standard IFD parsing
         dir_info: &DirectoryInfo,
         parameters: &HashMap<String, String>,
     ) -> Result<()> {
         debug!(
-            "dispatch_processor_with_params called for directory: {}",
-            dir_info.name
+            "dispatch_processor_with_params called for directory: {} with processor: {}",
+            dir_info.name, processor
         );
+
+        // Trust ExifTool: "Exif" processor means standard IFD parsing for standard directories
+        // But manufacturer subdirectories like "Olympus:Equipment" should use binary data processors
+        if processor == "Exif" && !dir_info.name.contains(":") {
+            debug!(
+                "Using standard IFD parsing for {} (Trust ExifTool)",
+                dir_info.name
+            );
+            return self.parse_ifd(dir_info.dir_start, &dir_info.name);
+        }
+
         debug!(
             "Dispatching processor for directory {} using processor registry",
             dir_info.name,
