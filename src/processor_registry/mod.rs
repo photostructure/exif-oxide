@@ -28,7 +28,7 @@
 //! processing patterns found throughout Canon.pm, Nikon.pm, and other manufacturer modules.
 
 pub mod capability;
-pub mod conditions;
+// Note: conditions module moved to src/expressions/
 pub mod context;
 pub mod dispatch;
 pub mod processors;
@@ -36,8 +36,8 @@ pub mod registry;
 pub mod traits;
 
 // Re-export core types for convenience
+pub use crate::expressions::ExpressionEvaluator as ConditionEvaluator;
 pub use capability::ProcessorCapability;
-pub use conditions::ConditionEvaluator;
 pub use context::ProcessorContext;
 pub use dispatch::DispatchRule;
 pub use processors::*;
