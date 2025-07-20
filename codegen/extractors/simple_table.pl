@@ -91,7 +91,8 @@ for my $hash_name (@hash_names) {
                 extracted_at => scalar(gmtime()) . " GMT",
             },
             metadata => {
-                entry_count => scalar(@entries),
+                # DO NOT ADD entry_count HERE!
+                # Rust calculates this from entries.len() - adding it creates inconsistencies
             },
             entries => \@entries,
         };

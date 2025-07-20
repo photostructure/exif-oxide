@@ -1,6 +1,7 @@
 //! Tests for the expression evaluation system
 
 use super::*;
+use crate::expressions::{parse_expression, types::Expression};
 use crate::formats::FileFormat;
 use crate::processor_registry::ProcessorContext;
 
@@ -435,4 +436,154 @@ fn test_colordata_count_conditions() {
             "Count {count_value} with condition '{condition}' should be {expected}"
         );
     }
+}
+
+#[test]
+fn test_parse_value_reference_expression() {
+    // Test simple $val{N} reference parsing
+    let expression = parse_expression("$val{0}").expect("Failed to parse $val{0}");
+
+    match expression {
+        Expression::ValueReference(index) => {
+            assert_eq!(index, 0, "Value reference should parse index 0");
+        }
+        _ => panic!("Expected ValueReference expression, got {expression:?}"),
+    }
+
+    // Test different indices
+    let expression = parse_expression("$val{15}").expect("Failed to parse $val{15}");
+    match expression {
+        Expression::ValueReference(index) => {
+            assert_eq!(index, 15, "Value reference should parse index 15");
+        }
+        _ => panic!("Expected ValueReference expression, got {expression:?}"),
+    }
+}
+
+#[test]
+fn test_parse_ceiling_division_expression() {
+    // Test complex ceiling division: int(($val{0}+15)/16)
+    let expression = parse_expression("int(($val{0}+15)/16)")
+        .expect("Failed to parse ceiling division expression");
+
+    match expression {
+        Expression::CeilingDivision {
+            val_index,
+            addend,
+            divisor,
+        } => {
+            assert_eq!(val_index, 0, "Value index should be 0");
+            assert_eq!(addend, 15, "Addend should be 15");
+            assert_eq!(divisor, 16, "Divisor should be 16");
+        }
+        _ => panic!("Expected CeilingDivision expression, got {expression:?}"),
+    }
+
+    // Test another example: int(($val{3}+7)/8)
+    let expression = parse_expression("int(($val{3}+7)/8)")
+        .expect("Failed to parse second ceiling division expression");
+
+    match expression {
+        Expression::CeilingDivision {
+            val_index,
+            addend,
+            divisor,
+        } => {
+            assert_eq!(val_index, 3, "Value index should be 3");
+            assert_eq!(addend, 7, "Addend should be 7");
+            assert_eq!(divisor, 8, "Divisor should be 8");
+        }
+        _ => panic!("Expected CeilingDivision expression, got {expression:?}"),
+    }
+}
+
+#[test]
+fn test_mathematical_expression_error_handling() {
+    // Test division by zero detection
+    let result = parse_expression("int(($val{0}+15)/0)");
+    assert!(result.is_err(), "Division by zero should return error");
+
+    // Test invalid $val syntax
+    let result = parse_expression("$val{invalid}");
+    assert!(result.is_err(), "Invalid index should return error");
+
+    // Test incomplete ceiling division
+    let result = parse_expression("int(($val{0}+15)");
+    assert!(result.is_err(), "Incomplete expression should return error");
+}
+
+#[test]
+fn test_comprehensive_expression_type_coverage() {
+    // Test all Expression enum variants are parseable
+
+    // Exists
+    let expr = parse_expression("exists($manufacturer)").unwrap();
+    assert!(matches!(expr, Expression::Exists(_)));
+
+    // Equals
+    let expr = parse_expression("$count == 582").unwrap();
+    assert!(matches!(expr, Expression::Equals(_, _)));
+
+    // GreaterThan
+    let expr = parse_expression("$count > 500").unwrap();
+    assert!(matches!(expr, Expression::GreaterThan(_, _)));
+
+    // GreaterThanOrEqual
+    let expr = parse_expression("$count >= 500").unwrap();
+    assert!(matches!(expr, Expression::GreaterThanOrEqual(_, _)));
+
+    // LessThan
+    let expr = parse_expression("$count < 1000").unwrap();
+    assert!(matches!(expr, Expression::LessThan(_, _)));
+
+    // LessThanOrEqual
+    let expr = parse_expression("$count <= 1000").unwrap();
+    assert!(matches!(expr, Expression::LessThanOrEqual(_, _)));
+
+    // RegexMatch
+    let expr = parse_expression("$model =~ /EOS/").unwrap();
+    assert!(matches!(expr, Expression::RegexMatch(_, _)));
+
+    // DataPattern
+    let expr = parse_expression("$$valPt =~ /^0204/").unwrap();
+    assert!(matches!(expr, Expression::DataPattern(_)));
+
+    // And
+    let expr = parse_expression("$count == 582 and $format eq \"int32u\"").unwrap();
+    assert!(matches!(expr, Expression::And(_)));
+
+    // Or
+    let expr = parse_expression("$count == 582 or $count == 692").unwrap();
+    assert!(matches!(expr, Expression::Or(_)));
+
+    // Not
+    let expr = parse_expression("not $count == 582").unwrap();
+    assert!(matches!(expr, Expression::Not(_)));
+
+    // ValueReference
+    let expr = parse_expression("$val{0}").unwrap();
+    assert!(matches!(expr, Expression::ValueReference(_)));
+
+    // CeilingDivision
+    let expr = parse_expression("int(($val{0}+15)/16)").unwrap();
+    assert!(matches!(expr, Expression::CeilingDivision { .. }));
+}
+
+#[test]
+fn test_mathematical_expressions_fail_in_context_evaluation() {
+    let mut evaluator = ExpressionEvaluator::new();
+    let context = ProcessorContext::new(FileFormat::Jpeg, "Canon::Main".to_string());
+
+    // Mathematical expressions should fail in context evaluation
+    let result = evaluator.evaluate_context_condition(&context, "$val{0}");
+    assert!(
+        result.is_err(),
+        "Value reference should fail in context evaluation"
+    );
+
+    let result = evaluator.evaluate_context_condition(&context, "int(($val{0}+15)/16)");
+    assert!(
+        result.is_err(),
+        "Ceiling division should fail in context evaluation"
+    );
 }

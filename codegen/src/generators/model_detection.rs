@@ -63,6 +63,9 @@ pub struct ConditionData {
 pub fn generate_model_detection(data: &ModelDetectionExtraction) -> Result<String> {
     let mut code = String::new();
     
+    // Analyze what fields are needed by examining all conditions
+    let required_fields = analyze_required_fields(data);
+    
     // Add header comment
     code.push_str(&format!(
         "//! {} model detection patterns from {} table\n",
@@ -76,7 +79,9 @@ pub fn generate_model_detection(data: &ModelDetectionExtraction) -> Result<Strin
     // Add imports
     code.push_str("use std::collections::HashMap;\n");
     code.push_str("use std::sync::LazyLock;\n");
-    code.push_str("use regex::Regex;\n\n");
+    code.push_str("use crate::expressions::{ExpressionEvaluator, parse_expression};\n");
+    code.push_str("use crate::processor_registry::ProcessorContext;\n");
+    code.push_str("use crate::types::TagValue;\n\n");
     
     // Generate model pattern matcher if we have patterns
     if !data.patterns_data.patterns.is_empty() {
@@ -182,70 +187,58 @@ pub fn generate_model_detection(data: &ModelDetectionExtraction) -> Result<Strin
         code.push_str("            .map(|condition| condition.name)\n");
         code.push_str("    }\n\n");
         
-        code.push_str("    /// Evaluate a single condition against the current context\n");
+        code.push_str("    /// Evaluate a condition using the unified expression system\n");
         code.push_str("    fn evaluate_condition(&self, condition: &str, context: &ConditionalContext) -> bool {\n");
-        code.push_str("        // Simplified condition evaluation - can be enhanced\n");
-        code.push_str("        if condition.contains(\"$$self{Model}\") {\n");
-        code.push_str("            return self.evaluate_model_condition(condition);\n");
-        code.push_str("        }\n");
-        code.push_str("        if condition.contains(\"$$self{Make}\") {\n");
-        code.push_str("            if let Some(make) = &context.make {\n");
-        code.push_str("                return self.evaluate_make_condition(condition, make);\n");
-        code.push_str("            }\n");
-        code.push_str("        }\n");
-        code.push_str("        false\n");
-        code.push_str("    }\n\n");
+        code.push_str("        let mut evaluator = ExpressionEvaluator::new();\n");
+        code.push_str("        \n");
+        code.push_str("        // Build ProcessorContext from ConditionalContext\n");
+        code.push_str("        let mut processor_context = ProcessorContext::default();\n");
         
-        code.push_str("    /// Evaluate model-specific conditions\n");
-        code.push_str("    fn evaluate_model_condition(&self, condition: &str) -> bool {\n");
-        code.push_str("        // Simple string matching for now - can be enhanced with regex\n");
-        code.push_str("        if condition.contains(\" eq \") {\n");
-        code.push_str("            if let Some(quoted) = extract_quoted_string(condition) {\n");
-        code.push_str("                return self.model == quoted;\n");
-        code.push_str("            }\n");
-        code.push_str("        }\n");
-        code.push_str("        if condition.contains(\" ne \") {\n");
-        code.push_str("            if let Some(quoted) = extract_quoted_string(condition) {\n");
-        code.push_str("                return self.model != quoted;\n");
-        code.push_str("            }\n");
-        code.push_str("        }\n");
-        code.push_str("        // TODO: Implement regex matching for =~ patterns\n");
-        code.push_str("        false\n");
-        code.push_str("    }\n\n");
+        // Only generate field access code for fields that exist in the ConditionalContext
+        if required_fields.model {
+            code.push_str("        if let Some(model) = &context.model {\n");
+            code.push_str("            processor_context = processor_context.with_model(model.clone());\n");
+            code.push_str("        }\n");
+        }
+        if required_fields.make {
+            code.push_str("        if let Some(make) = &context.make {\n");
+            code.push_str("            processor_context = processor_context.with_manufacturer(make.clone());\n");
+            code.push_str("        }\n");
+        }
         
-        code.push_str("    /// Evaluate make-specific conditions\n");
-        code.push_str("    fn evaluate_make_condition(&self, condition: &str, make: &str) -> bool {\n");
-        code.push_str("        if condition.contains(\" =~ \") {\n");
-        code.push_str("            // Simple substring matching for now\n");
-        code.push_str("            if condition.contains(\"/^GENERAL IMAGING/\") {\n");
-        code.push_str("                return make.starts_with(\"GENERAL IMAGING\");\n");
-        code.push_str("            }\n");
-        code.push_str("        }\n");
-        code.push_str("        false\n");
+        code.push_str("        \n");
+        code.push_str("        // Try context-based evaluation\n");
+        code.push_str("        evaluator.evaluate_context_condition(&processor_context, condition).unwrap_or(false)\n");
         code.push_str("    }\n");
     }
     
     code.push_str("}\n\n");
     
-    // Generate context structure
+    // Generate context structure with only required fields
     code.push_str("/// Context for evaluating conditional tag conditions\n");
     code.push_str("#[derive(Debug, Clone)]\n");
     code.push_str("pub struct ConditionalContext {\n");
-    code.push_str("    pub make: Option<String>,\n");
-    code.push_str("    pub count: Option<u32>,\n");
-    code.push_str("    pub format: Option<String>,\n");
+    
+    if required_fields.make {
+        code.push_str("    pub make: Option<String>,\n");
+    }
+    if required_fields.model {
+        code.push_str("    pub model: Option<String>,\n");
+    }
+    if required_fields.count {
+        code.push_str("    pub count: Option<u32>,\n");
+    }
+    if required_fields.format {
+        code.push_str("    pub format: Option<String>,\n");
+    }
+    if required_fields.binary_data {
+        code.push_str("    pub binary_data: Option<Vec<u8>>,\n");
+    }
+    
     code.push_str("}\n\n");
     
-    // Helper functions
-    code.push_str("/// Extract quoted string from Perl condition\n");
-    code.push_str("fn extract_quoted_string(condition: &str) -> Option<String> {\n");
-    code.push_str("    if let Some(start) = condition.find('\"') {\n");
-    code.push_str("        if let Some(end) = condition[start + 1..].find('\"') {\n");
-    code.push_str("            return Some(condition[start + 1..start + 1 + end].to_string());\n");
-    code.push_str("        }\n");
-    code.push_str("    }\n");
-    code.push_str("    None\n");
-    code.push_str("}\n");
+    // Helper functions (only generate if needed)
+    // Note: extract_quoted_string function removed as it's not currently used
     
     Ok(code)
 }
@@ -328,4 +321,77 @@ fn escape_regex_pattern(pattern: &str) -> String {
     // For now, return the pattern as-is for raw string literals
     // More sophisticated escaping may be needed for complex patterns
     pattern.to_string()
+}
+
+/// Required fields for the ConditionalContext struct
+#[derive(Debug, Clone, Default)]
+struct RequiredFields {
+    make: bool,
+    model: bool,
+    count: bool,
+    format: bool,
+    binary_data: bool,
+}
+
+/// Analyze all conditions to determine which fields are required
+fn analyze_required_fields(data: &ModelDetectionExtraction) -> RequiredFields {
+    let mut fields = RequiredFields::default();
+    
+    // Analyze patterns
+    for pattern in &data.patterns_data.patterns {
+        analyze_condition_for_fields(&pattern.pattern, &mut fields);
+    }
+    
+    // Analyze conditional tag conditions
+    for conditional_tag in &data.patterns_data.conditional_tags {
+        for condition_data in &conditional_tag.conditions {
+            analyze_condition_for_fields(&condition_data.condition, &mut fields);
+        }
+    }
+    
+    // Ensure runtime compatibility by including fields the runtime code expects
+    ensure_runtime_compatibility(&mut fields);
+    
+    fields
+}
+
+/// Analyze a single condition string to determine required fields
+fn analyze_condition_for_fields(condition: &str, fields: &mut RequiredFields) {
+    // Look for ExifTool patterns that indicate field usage
+    
+    // Model references: $$self{Model}
+    if condition.contains("$$self{Model}") || condition.contains("$self->{Model}") {
+        fields.model = true;
+    }
+    
+    // Make references: $$self{Make}
+    if condition.contains("$$self{Make}") || condition.contains("$self->{Make}") {
+        fields.make = true;
+    }
+    
+    // Count references: $count
+    if condition.contains("$count") {
+        fields.count = true;
+    }
+    
+    // Format references: $format
+    if condition.contains("$format") {
+        fields.format = true;
+    }
+    
+    // Binary data references: $$valPt
+    if condition.contains("$$valPt") || condition.contains("$valPt") {
+        fields.binary_data = true;
+    }
+}
+
+/// Ensure required fields for runtime compatibility
+fn ensure_runtime_compatibility(fields: &mut RequiredFields) {
+    // Always include basic fields that runtime code expects
+    // The runtime integration code in src/exif/mod.rs assumes these exist
+    fields.make = true;
+    fields.count = true;
+    fields.format = true;
+    
+    // model and binary_data are only included if actually used in conditions
 }

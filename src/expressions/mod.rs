@@ -271,6 +271,15 @@ impl ExpressionEvaluator {
                     "Data pattern conditions cannot be evaluated without binary data".to_string(),
                 ))
             }
+
+            Expression::ValueReference(_) | Expression::CeilingDivision { .. } => {
+                // Mathematical expressions require val_hash context, not processor context
+                // These should be evaluated separately using binary data evaluator
+                Err(ExifError::ParseError(
+                    "Mathematical expressions cannot be evaluated without val_hash context"
+                        .to_string(),
+                ))
+            }
         }
     }
 

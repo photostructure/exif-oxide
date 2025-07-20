@@ -17,10 +17,12 @@
 //! - **Parameter passing**: Rich context through ProcessorContext system
 
 pub mod canon;
+pub mod fujifilm;
 pub mod nikon;
 pub mod olympus;
 
 // Re-export processor implementations
 pub use canon::*;
+pub use fujifilm::*;
 pub use nikon::*;
 pub use olympus::*;
