@@ -3,7 +3,9 @@
 //! This module defines the types used for ExifTool's ProcessBinaryData
 //! functionality, including format definitions and table structures.
 
-use crate::types::{DataMemberValue, ExifError};
+use crate::expressions::ExpressionEvaluator as UnifiedExpressionEvaluator;
+use crate::processor_registry::ProcessorContext;
+use crate::types::{DataMemberValue, ExifError, TagValue};
 use regex::Regex;
 use std::collections::HashMap;
 use std::sync::LazyLock;
@@ -217,9 +219,62 @@ impl<'a> ExpressionEvaluator<'a> {
         }
     }
 
-    /// Evaluate a format expression to get a count value
+    /// Evaluate expression using unified expression system
+    /// Attempts to use the unified ExpressionEvaluator before falling back to specialized logic
+    fn evaluate_with_unified_system(&self, expr: &str) -> std::result::Result<usize, ExifError> {
+        let mut evaluator = UnifiedExpressionEvaluator::new();
+        let mut processor_context = ProcessorContext::default();
+
+        // Add val_hash values to processor context
+        for (index, value) in &self.val_hash {
+            // Convert DataMemberValue to TagValue
+            if let Ok(tag_value) = self.data_member_to_tag_value(value) {
+                processor_context
+                    .parent_tags
+                    .insert(format!("val{{{index}}}"), tag_value);
+            }
+        }
+
+        // Add data_members to processor context
+        for (name, value) in self.data_members.iter() {
+            if let Ok(tag_value) = self.data_member_to_tag_value(value) {
+                processor_context
+                    .parent_tags
+                    .insert(name.clone(), tag_value);
+            }
+        }
+
+        // Try to evaluate the expression
+        match evaluator.evaluate_context_condition(&processor_context, expr) {
+            Ok(true) => Ok(1),  // Boolean true -> count of 1
+            Ok(false) => Ok(0), // Boolean false -> count of 0
+            Err(_) => {
+                // Try as a numeric expression (this would need extension to ExpressionEvaluator)
+                Err(ExifError::ParseError(format!(
+                    "Unified expression evaluation failed for: {expr}"
+                )))
+            }
+        }
+    }
+
+    /// Convert DataMemberValue to TagValue for unified expression system
+    fn data_member_to_tag_value(&self, value: &DataMemberValue) -> Result<TagValue, ExifError> {
+        match value {
+            DataMemberValue::U8(v) => Ok(TagValue::U8(*v)),
+            DataMemberValue::U16(v) => Ok(TagValue::U16(*v)),
+            DataMemberValue::U32(v) => Ok(TagValue::U32(*v)),
+            DataMemberValue::String(v) => Ok(TagValue::String(v.clone())),
+        }
+    }
+
+    /// Evaluate a format expression to get a count value using unified expression system
     /// ExifTool: lib/Image/ExifTool.pm:9853-9856 eval $count mechanism
     pub fn evaluate_count_expression(&self, expr: &str) -> std::result::Result<usize, ExifError> {
+        // Try unified expression system first
+        if let Ok(result) = self.evaluate_with_unified_system(expr) {
+            return Ok(result);
+        }
+
         // Handle complex expressions first (before simple $val patterns)
         // ExifTool: Canon.pm:4480 'Format => int16s[int(($val{0}+15)/16)]'
         if let Ok(result) = self.evaluate_complex_expression(expr) {

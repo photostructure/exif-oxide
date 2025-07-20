@@ -9,7 +9,9 @@
 //! - `$count == 368` - Count-based conditions
 //! - `$format eq "undef"` - Format-based conditions
 
-use crate::types::{ExifError, Result};
+use crate::expressions::ExpressionEvaluator;
+use crate::processor_registry::ProcessorContext;
+use crate::types::{ExifError, Result, TagValue};
 use regex::Regex;
 use std::collections::HashMap;
 use std::sync::LazyLock;
@@ -87,9 +89,62 @@ static REGEX_CACHE: LazyLock<Mutex<HashMap<String, Regex>>> =
     LazyLock::new(|| Mutex::new(HashMap::new()));
 
 impl Condition {
-    /// Evaluate condition against provided context
+    /// Evaluate condition against provided context using unified expression system
     /// ExifTool: Runtime condition evaluation in processor dispatch
     pub fn evaluate(&self, context: &EvalContext) -> bool {
+        // Use unified expression system for all evaluations
+        let mut evaluator = ExpressionEvaluator::new();
+        
+        // Build ProcessorContext from EvalContext
+        let mut processor_context = ProcessorContext::default();
+        
+        if let Some(model) = context.model {
+            processor_context = processor_context.with_model(model.to_string());
+        }
+        if let Some(make) = context.make {
+            processor_context = processor_context.with_manufacturer(make.to_string());
+        }
+        if let Some(format) = context.format {
+            processor_context.parent_tags.insert("format".to_string(), TagValue::String(format.to_string()));
+        }
+        
+        processor_context.parent_tags.insert("count".to_string(), TagValue::U32(context.count));
+        
+        // Convert condition to expression string and evaluate using unified system
+        let expression = self.to_expression_string();
+        
+        match evaluator.evaluate_context_condition(&processor_context, &expression) {
+            Ok(result) => result,
+            Err(_) => {
+                // Fallback to legacy evaluation for complex conditions
+                self.evaluate_legacy(context)
+            }
+        }
+    }
+    
+    /// Convert condition to ExifTool expression string
+    fn to_expression_string(&self) -> String {
+        match self {
+            Condition::DataPattern(pattern) => format!("$$valPt =~ /{}/", pattern),
+            Condition::ModelMatch(pattern) => format!("$$self{{Model}} =~ /{}/", pattern), 
+            Condition::MakeMatch(pattern) => format!("$$self{{Make}} =~ /{}/", pattern),
+            Condition::CountEquals(expected) => format!("$count == {}", expected),
+            Condition::CountRange(min, max) => format!("$count >= {} && $count <= {}", min, max),
+            Condition::FormatEquals(expected) => format!("$format eq \"{}\"", expected),
+            Condition::Not(inner) => format!("!({})", inner.to_expression_string()),
+            Condition::And(conditions) => {
+                let exprs: Vec<String> = conditions.iter().map(|c| c.to_expression_string()).collect();
+                format!("({})", exprs.join(" && "))
+            }
+            Condition::Or(conditions) => {
+                let exprs: Vec<String> = conditions.iter().map(|c| c.to_expression_string()).collect();
+                format!("({})", exprs.join(" || "))
+            }
+        }
+    }
+    
+    /// Legacy evaluation for conditions that don't work with unified system yet
+    fn evaluate_legacy(&self, context: &EvalContext) -> bool {
         match self {
             Condition::DataPattern(pattern) => evaluate_data_pattern(pattern, context.data),
             Condition::ModelMatch(pattern) => context
@@ -106,9 +161,9 @@ impl Condition {
                 .format
                 .map(|format| format == expected)
                 .unwrap_or(false),
-            Condition::Not(inner) => !inner.evaluate(context),
-            Condition::And(conditions) => conditions.iter().all(|c| c.evaluate(context)),
-            Condition::Or(conditions) => conditions.iter().any(|c| c.evaluate(context)),
+            Condition::Not(inner) => !inner.evaluate_legacy(context),
+            Condition::And(conditions) => conditions.iter().all(|c| c.evaluate_legacy(context)),
+            Condition::Or(conditions) => conditions.iter().any(|c| c.evaluate_legacy(context)),
         }
     }
 

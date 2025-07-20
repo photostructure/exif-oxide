@@ -61,6 +61,9 @@ pub struct ExifReader {
     /// Processor dispatch configuration
     /// ExifTool: PROCESS_PROC system for different directory types
     pub(crate) processor_dispatch: ProcessorDispatch,
+    /// Track the original MakerNotes offset for subdirectory calculations
+    /// ExifTool: Subdirectory offsets within MakerNotes are relative to the original file position
+    pub(crate) maker_notes_original_offset: Option<usize>,
     /// Computed composite tag values
     /// Milestone 8f: Infrastructure for composite tag computation
     pub(crate) composite_tags: HashMap<String, TagValue>,
@@ -71,6 +74,11 @@ pub struct ExifReader {
 }
 
 impl ExifReader {
+    /// Get current base offset for pointer calculations
+    /// ExifTool: $$dirInfo{Base} + $$self{BASE}  
+    pub(crate) fn get_base(&self) -> u64 {
+        self.base
+    }
     /// Create new EXIF reader
     pub fn new() -> Self {
         Self {
@@ -85,6 +93,7 @@ impl ExifReader {
             data_members: HashMap::new(),
             base: 0,
             processor_dispatch: ProcessorDispatch::default(),
+            maker_notes_original_offset: None,
             composite_tags: HashMap::new(),
             original_file_type: None,
             overridden_file_type: None,

@@ -76,12 +76,16 @@ pub fn generate_model_detection(data: &ModelDetectionExtraction) -> Result<Strin
         data.source.module, data.manufacturer, data.patterns_data.table_name
     ));
     
-    // Add imports
-    code.push_str("use std::collections::HashMap;\n");
-    code.push_str("use std::sync::LazyLock;\n");
-    code.push_str("use crate::expressions::{ExpressionEvaluator, parse_expression};\n");
-    code.push_str("use crate::processor_registry::ProcessorContext;\n");
-    code.push_str("use crate::types::TagValue;\n\n");
+    // Add imports based on what will be generated
+    if !data.patterns_data.conditional_tags.is_empty() {
+        code.push_str("use std::collections::HashMap;\n");
+        code.push_str("use std::sync::LazyLock;\n");
+    }
+    if !data.patterns_data.patterns.is_empty() || !data.patterns_data.conditional_tags.is_empty() {
+        code.push_str("use crate::expressions::ExpressionEvaluator;\n");
+        code.push_str("use crate::processor_registry::ProcessorContext;\n");
+    }
+    code.push_str("\n");
     
     // Generate model pattern matcher if we have patterns
     if !data.patterns_data.patterns.is_empty() {
