@@ -55,7 +55,13 @@ impl OlympusRawHandler {
 
     /// Process Olympus-specific sections from maker notes
     /// ExifTool: Olympus.pm dual processing modes (binary data vs IFD)
-    fn process_olympus_sections(&self, reader: &mut ExifReader, data: &[u8]) -> Result<()> {
+    fn process_olympus_sections(
+        &self,
+        reader: &mut ExifReader,
+        data: &[u8],
+        base_offset: u64,
+        data_pos: u64,
+    ) -> Result<()> {
         // Get the currently extracted tags from TIFF IFD processing
         // Clone the tags to avoid borrowing issues
         let extracted_tags: Vec<(u16, TagValue)> = reader
@@ -69,21 +75,41 @@ impl OlympusRawHandler {
             let tag_id = section_type.tag_id();
             if let Some((_, tag_value)) = extracted_tags.iter().find(|(id, _)| *id == tag_id) {
                 match section_type {
-                    OlympusDataType::Equipment => {
-                        self.process_equipment_section(reader, tag_value, data)?
-                    }
-                    OlympusDataType::CameraSettings => {
-                        self.process_camera_settings_section(reader, tag_value, data)?
-                    }
-                    OlympusDataType::FocusInfo => {
-                        self.process_focus_info_section(reader, tag_value, data)?
-                    }
-                    OlympusDataType::RawDevelopment => {
-                        self.process_raw_development_section(reader, tag_value, data)?
-                    }
-                    OlympusDataType::ImageProcessing => {
-                        self.process_image_processing_section(reader, tag_value, data)?
-                    }
+                    OlympusDataType::Equipment => self.process_equipment_section(
+                        reader,
+                        tag_value,
+                        data,
+                        base_offset,
+                        data_pos,
+                    )?,
+                    OlympusDataType::CameraSettings => self.process_camera_settings_section(
+                        reader,
+                        tag_value,
+                        data,
+                        base_offset,
+                        data_pos,
+                    )?,
+                    OlympusDataType::FocusInfo => self.process_focus_info_section(
+                        reader,
+                        tag_value,
+                        data,
+                        base_offset,
+                        data_pos,
+                    )?,
+                    OlympusDataType::RawDevelopment => self.process_raw_development_section(
+                        reader,
+                        tag_value,
+                        data,
+                        base_offset,
+                        data_pos,
+                    )?,
+                    OlympusDataType::ImageProcessing => self.process_image_processing_section(
+                        reader,
+                        tag_value,
+                        data,
+                        base_offset,
+                        data_pos,
+                    )?,
                     _ => {
                         // Basic section processing for unknown sections
                         tracing::debug!(
@@ -107,23 +133,30 @@ impl OlympusRawHandler {
         reader: &mut ExifReader,
         tag_value: &TagValue,
         data: &[u8],
+        base_offset: u64,
+        data_pos: u64,
     ) -> Result<()> {
         // ExifTool: Equipment section is processed as an IFD
         // lib/Image/ExifTool/Olympus.pm:1587-1686 Equipment table
 
         match tag_value {
             TagValue::U32(offset) => {
-                // Equipment section is at the offset specified by the tag
+                // Equipment section offset is relative to MakerNotes data
+                // ExifTool: SubDirectory => { Start => '$val' } means offset relative to current data context
+                // The current reader context contains the correct base and data position for MakerNotes
                 let dir_info = DirectoryInfo {
                     name: "Olympus:Equipment".to_string(),
                     dir_start: *offset as usize,
-                    dir_len: 0,  // Will be calculated by IFD processing
-                    base: 0,     // Use same base as parent
-                    data_pos: 0, // No additional data position offset
+                    dir_len: 0,         // Will be calculated by IFD processing
+                    base: base_offset,  // Use MakerNotes base
+                    data_pos: data_pos, // Use MakerNotes data position
                     allow_reprocess: false,
                 };
 
-                tracing::debug!("Processing Olympus Equipment IFD at offset {:#x}", offset);
+                tracing::debug!(
+                    "Processing Olympus Equipment IFD at offset {:#x} (base: {:#x}, data_pos: {:#x})", 
+                    offset, base_offset, data_pos
+                );
 
                 // Process the Equipment IFD to extract camera and lens info
                 reader.process_subdirectory(&dir_info)?;
@@ -151,6 +184,8 @@ impl OlympusRawHandler {
         reader: &mut ExifReader,
         tag_value: &TagValue,
         data: &[u8],
+        base_offset: u64,
+        data_pos: u64,
     ) -> Result<()> {
         // ExifTool: CameraSettings section processing
         // For now, just log that we found this section
@@ -165,6 +200,8 @@ impl OlympusRawHandler {
         reader: &mut ExifReader,
         tag_value: &TagValue,
         data: &[u8],
+        base_offset: u64,
+        data_pos: u64,
     ) -> Result<()> {
         // ExifTool: FocusInfo section processing
         // For now, just log that we found this section
@@ -179,6 +216,8 @@ impl OlympusRawHandler {
         reader: &mut ExifReader,
         tag_value: &TagValue,
         data: &[u8],
+        base_offset: u64,
+        data_pos: u64,
     ) -> Result<()> {
         // ExifTool: RawDevelopment section processing
         // For now, just log that we found this section
@@ -193,6 +232,8 @@ impl OlympusRawHandler {
         reader: &mut ExifReader,
         tag_value: &TagValue,
         data: &[u8],
+        base_offset: u64,
+        data_pos: u64,
     ) -> Result<()> {
         // ExifTool: ImageProcessing section processing
         // For now, just log that we found this section
@@ -229,7 +270,8 @@ impl RawFormatHandler for OlympusRawHandler {
 
         // Step 3: Apply Olympus-specific section processing to extracted maker note entries
         // ExifTool: Olympus.pm applies additional processing for sections like Equipment (0x2010)
-        self.process_olympus_sections(reader, data)?;
+        // For ORF files, use standard TIFF base and data position
+        self.process_olympus_sections(reader, data, reader.get_base(), 0)?;
 
         Ok(())
     }

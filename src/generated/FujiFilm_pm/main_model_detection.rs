@@ -59,7 +59,7 @@ impl FujiFilmModelDetection {
         CONDITIONAL_TAG_RESOLVER
             .get(tag_id)?
             .iter()
-            .find(|condition| self.evaluate_condition(condition.condition, context))
+            .find(|condition| self.evaluate_condition(&condition.condition, context))
             .map(|condition| condition.name)
     }
 

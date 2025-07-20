@@ -14,6 +14,92 @@ use tracing::{debug, trace, warn};
 use super::ExifReader;
 
 impl ExifReader {
+    /// Process MakerNotes with manufacturer signature detection and offset adjustment
+    /// ExifTool: MakerNotes.pm manufacturer-specific processing
+    fn process_maker_notes_with_signature_detection(
+        &mut self,
+        entry: &IfdEntry,
+        _byte_order: ByteOrder,
+        ifd_name: &str,
+    ) -> Result<()> {
+        use crate::implementations::olympus::{detect_olympus_signature, is_olympus_makernote};
+
+        let offset = entry.value_or_offset as usize;
+        let size = entry.count as usize;
+
+        // Store the original MakerNotes offset for subdirectory calculations
+        // ExifTool: Subdirectory offsets are relative to this position
+        self.maker_notes_original_offset = Some(offset);
+
+        // Extract manufacturer from Make tag for signature detection
+        let make = self
+            .extracted_tags
+            .get(&0x010F) // Make tag
+            .and_then(|v| v.as_string())
+            .unwrap_or_default();
+
+        debug!(
+            "Processing UNDEFINED subdirectory tag {:#x} (MakerNotes) from {}: offset={:#x}, size={}",
+            entry.tag_id, ifd_name, offset, size
+        );
+
+        // Get MakerNotes data for signature detection
+        if offset + size > self.data.len() {
+            return Err(ExifError::ParseError(format!(
+                "MakerNotes data at offset {:#x} + size {} exceeds file size {}",
+                offset,
+                size,
+                self.data.len()
+            )));
+        }
+
+        let maker_notes_data = self.data[offset..offset + size].to_vec();
+        let mut adjusted_offset = offset;
+        let mut _adjusted_base = 0i64;
+
+        // Detect Olympus signature and apply offset adjustments
+        if let Some(signature) = detect_olympus_signature(&make, &maker_notes_data) {
+            let data_offset = signature.data_offset();
+            let base_offset = signature.base_offset();
+
+            adjusted_offset = offset + data_offset;
+            _adjusted_base = base_offset as i64;
+
+            debug!(
+                "Detected Olympus signature: {:?}, data_offset: {}, base_offset: {}, adjusted_offset: {:#x}",
+                signature, data_offset, base_offset, adjusted_offset
+            );
+        } else if is_olympus_makernote(&make) {
+            // Fallback for Olympus cameras without proper signature
+            debug!("Olympus camera detected via Make field but no signature found, using default offset");
+        }
+
+        // Validate adjusted offset
+        if adjusted_offset >= self.data.len() {
+            return Err(ExifError::ParseError(format!(
+                "Adjusted MakerNotes offset {:#x} exceeds file size {}",
+                adjusted_offset,
+                self.data.len()
+            )));
+        }
+
+        // Process MakerNotes as subdirectory with adjusted offset
+        let tag_name = "MakerNotes";
+        debug!(
+            "Processing SubDirectory: {} -> {} at offset {:#x}",
+            format!("Tag_{:x}", entry.tag_id),
+            tag_name,
+            adjusted_offset
+        );
+
+        self.process_subdirectory_tag(entry.tag_id, adjusted_offset as u32, tag_name, Some(size))?;
+
+        // Store the MakerNotes tag for completeness
+        let tag_value = TagValue::Binary(maker_notes_data);
+        self.extracted_tags.insert(entry.tag_id, tag_value);
+
+        Ok(())
+    }
     /// Process a subdirectory with recursion prevention
     /// ExifTool: ProcessDirectory with PROCESSED tracking
     pub(crate) fn process_subdirectory(&mut self, dir_info: &DirectoryInfo) -> Result<()> {
@@ -110,7 +196,7 @@ impl ExifReader {
                 break; // Graceful degradation
             }
 
-            match self.parse_ifd_entry(entry_offset, byte_order, ifd_name, index) {
+            match self.parse_ifd_entry(entry_offset, byte_order, ifd_name, index, ifd_offset) {
                 Ok(()) => {
                     debug!("Successfully processed {} entry {}", ifd_name, index);
                 } // Successfully parsed
@@ -141,6 +227,7 @@ impl ExifReader {
         byte_order: ByteOrder,
         ifd_name: &str,
         _index: usize,
+        ifd_offset: usize,
     ) -> Result<()> {
         // Check if we're processing Olympus MakerNotes for FixFormat support
         // ExifTool: lib/Image/ExifTool/Olympus.pm dual-path processing
@@ -297,7 +384,16 @@ impl ExifReader {
                 );
                 if self.is_subdirectory_tag(entry.tag_id) {
                     debug!("UNDEFINED tag {:#x} is a subdirectory tag", entry.tag_id);
-                    // For subdirectory UNDEFINED tags, the data starts at the offset
+
+                    // Special handling for MakerNotes - detect manufacturer signature and adjust offset
+                    if entry.tag_id == 0x927C {
+                        // MakerNotes
+                        return self.process_maker_notes_with_signature_detection(
+                            &entry, byte_order, ifd_name,
+                        );
+                    }
+
+                    // For other subdirectory UNDEFINED tags, the data starts at the offset
                     // ExifTool: MakerNotes and other subdirectories stored as UNDEFINED
                     let offset = entry.value_or_offset as usize;
                     let size = entry.count as usize;
@@ -361,7 +457,50 @@ impl ExifReader {
                         entry.tag_id
                     );
                     let tag_name = self.get_tag_name(entry.tag_id, ifd_name);
-                    self.process_subdirectory_tag(entry.tag_id, value, &tag_name, None)?;
+
+                    // CRITICAL: Olympus SubDirectory Offset Calculation
+                    // ================================================
+                    // When processing subdirectories within MakerNotes that have manufacturer signatures,
+                    // the subdirectory offsets are relative to the ORIGINAL MakerNotes position in the file,
+                    // NOT the adjusted position after the signature header.
+                    //
+                    // Example for Olympus ORF:
+                    // - MakerNotes tag at file offset: 0xdf4
+                    // - Olympus signature ("OLYMPUS\0"): 12 bytes
+                    // - MakerNotes TIFF data starts at: 0xdf4 + 12 = 0xe00
+                    // - Equipment subdirectory offset in IFD: 0x72
+                    // - WRONG: 0xe00 + 0x72 = 0xe72 (points to middle of data)
+                    // - RIGHT: 0xdf4 + 0x72 = 0xe66 (points to IFD start)
+                    //
+                    // ExifTool: lib/Image/ExifTool/Olympus.pm lines 1157-1168
+                    // "Olympus really screwed up the format... the count is 2 bytes short"
+                    let subdirectory_offset = if ifd_name == "MakerNotes"
+                        && self.maker_notes_original_offset.is_some()
+                    {
+                        // Use the original MakerNotes position for offset calculation
+                        let original_offset = self.maker_notes_original_offset.unwrap();
+                        debug!(
+                            "Adjusting subdirectory offset using original MakerNotes position: {:#x} + {:#x} = {:#x}",
+                            original_offset, value, original_offset + value as usize
+                        );
+                        (original_offset + value as usize) as u32
+                    } else if ifd_name == "MakerNotes" {
+                        // Fallback if we don't have the original offset
+                        debug!(
+                            "Adjusting subdirectory offset for MakerNotes context: {:#x} + {:#x} = {:#x}",
+                            ifd_offset, value, ifd_offset + value as usize
+                        );
+                        (ifd_offset + value as usize) as u32
+                    } else {
+                        value
+                    };
+
+                    self.process_subdirectory_tag(
+                        entry.tag_id,
+                        subdirectory_offset,
+                        &tag_name,
+                        None,
+                    )?;
                 } else {
                     debug!(
                         "IFD tag {:#x} is not a subdirectory tag, storing as regular tag",
