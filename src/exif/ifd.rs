@@ -103,8 +103,11 @@ impl ExifReader {
     /// Process a subdirectory with recursion prevention
     /// ExifTool: ProcessDirectory with PROCESSED tracking
     pub(crate) fn process_subdirectory(&mut self, dir_info: &DirectoryInfo) -> Result<()> {
-        debug!("process_subdirectory called for directory: {}", dir_info.name);
-        
+        debug!(
+            "process_subdirectory called for directory: {}",
+            dir_info.name
+        );
+
         // Calculate unique address for recursion prevention
         // ExifTool: $addr = $$dirInfo{DirStart} + $$dirInfo{DataPos} + ($$dirInfo{Base}||0) + $$self{BASE}
         let addr = dir_info.dir_start as u64 + dir_info.data_pos + dir_info.base + self.base;
