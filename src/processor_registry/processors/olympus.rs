@@ -22,12 +22,31 @@ pub struct OlympusEquipmentProcessor;
 
 impl BinaryDataProcessor for OlympusEquipmentProcessor {
     fn can_process(&self, context: &ProcessorContext) -> ProcessorCapability {
+        // Debug logging to understand selection logic
+        debug!(
+            "OlympusEquipmentProcessor::can_process - manufacturer: {:?}, table: {}",
+            context.manufacturer, context.table_name
+        );
+
+        let is_olympus = context.is_manufacturer("OLYMPUS")
+            || context.is_manufacturer("OLYMPUS IMAGING CORP.")
+            || context.is_manufacturer("OLYMPUS CORPORATION");
+        let is_equipment = context.table_name.contains("Equipment");
+
+        debug!(
+            "OlympusEquipmentProcessor::can_process - is_olympus: {}, is_equipment: {}",
+            is_olympus, is_equipment
+        );
+
         // Perfect match if Olympus manufacturer and Equipment table
-        if context.is_manufacturer("OLYMPUS") && context.table_name.contains("Equipment") {
+        if is_olympus && is_equipment {
+            debug!("OlympusEquipmentProcessor::can_process - returning Perfect");
             ProcessorCapability::Perfect
-        } else if context.is_manufacturer("OLYMPUS") {
+        } else if is_olympus {
+            debug!("OlympusEquipmentProcessor::can_process - returning Good");
             ProcessorCapability::Good
         } else {
+            debug!("OlympusEquipmentProcessor::can_process - returning Incompatible");
             ProcessorCapability::Incompatible
         }
     }
@@ -118,9 +137,16 @@ pub struct OlympusCameraSettingsProcessor;
 
 impl BinaryDataProcessor for OlympusCameraSettingsProcessor {
     fn can_process(&self, context: &ProcessorContext) -> ProcessorCapability {
-        if context.is_manufacturer("OLYMPUS") && context.table_name.contains("CameraSettings") {
+        if (context.is_manufacturer("OLYMPUS")
+            || context.is_manufacturer("OLYMPUS IMAGING CORP.")
+            || context.is_manufacturer("OLYMPUS CORPORATION"))
+            && context.table_name.contains("CameraSettings")
+        {
             ProcessorCapability::Perfect
-        } else if context.is_manufacturer("OLYMPUS") {
+        } else if context.is_manufacturer("OLYMPUS")
+            || context.is_manufacturer("OLYMPUS IMAGING CORP.")
+            || context.is_manufacturer("OLYMPUS CORPORATION")
+        {
             ProcessorCapability::Good
         } else {
             ProcessorCapability::Incompatible
@@ -160,9 +186,16 @@ pub struct OlympusFocusInfoProcessor;
 
 impl BinaryDataProcessor for OlympusFocusInfoProcessor {
     fn can_process(&self, context: &ProcessorContext) -> ProcessorCapability {
-        if context.is_manufacturer("OLYMPUS") && context.table_name.contains("FocusInfo") {
+        if (context.is_manufacturer("OLYMPUS")
+            || context.is_manufacturer("OLYMPUS IMAGING CORP.")
+            || context.is_manufacturer("OLYMPUS CORPORATION"))
+            && context.table_name.contains("FocusInfo")
+        {
             ProcessorCapability::Perfect
-        } else if context.is_manufacturer("OLYMPUS") {
+        } else if context.is_manufacturer("OLYMPUS")
+            || context.is_manufacturer("OLYMPUS IMAGING CORP.")
+            || context.is_manufacturer("OLYMPUS CORPORATION")
+        {
             ProcessorCapability::Good
         } else {
             ProcessorCapability::Incompatible
