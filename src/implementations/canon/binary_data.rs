@@ -33,17 +33,13 @@ pub fn create_camera_settings_table() -> HashMap<u32, CanonCameraSettingsTag> {
     let mut table = HashMap::new();
 
     // ExifTool: Canon.pm:2172-2178 tag 1 MacroMode
+    // Use generated lookup function instead of manual table
     table.insert(
         1,
         CanonCameraSettingsTag {
             index: 1,
             name: "MacroMode".to_string(),
-            print_conv: {
-                let mut conv = HashMap::new();
-                conv.insert(1i16, "Macro".to_string());
-                conv.insert(2i16, "Normal".to_string());
-                Some(conv)
-            },
+            print_conv: None, // Use generated lookup in apply_camera_settings_print_conv
         },
     );
 
@@ -65,76 +61,46 @@ pub fn create_camera_settings_table() -> HashMap<u32, CanonCameraSettingsTag> {
     );
 
     // ExifTool: Canon.pm:2192-2195 tag 3 Quality
+    // Use generated lookup function instead of manual table
     table.insert(
         3,
         CanonCameraSettingsTag {
             index: 3,
             name: "Quality".to_string(),
-            print_conv: {
-                // Note: Quality uses %canonQuality hash reference
-                // TODO: Implement canonQuality lookup table
-                None // Placeholder for now
-            },
+            print_conv: None, // Use generated lookup in apply_camera_settings_print_conv
         },
     );
 
     // ExifTool: Canon.pm:2196-2209 tag 4 CanonFlashMode
+    // Use generated lookup function instead of manual table
     table.insert(
         4,
         CanonCameraSettingsTag {
             index: 4,
             name: "CanonFlashMode".to_string(),
-            print_conv: {
-                let mut conv = HashMap::new();
-                conv.insert(-1i16, "n/a".to_string()); // PH, EOS M MOV video
-                conv.insert(0i16, "Off".to_string());
-                conv.insert(1i16, "Auto".to_string());
-                conv.insert(2i16, "On".to_string());
-                conv.insert(3i16, "Red-eye reduction".to_string());
-                conv.insert(4i16, "Slow-sync".to_string());
-                conv.insert(5i16, "Red-eye reduction (Auto)".to_string());
-                conv.insert(6i16, "Red-eye reduction (On)".to_string());
-                conv.insert(16i16, "External flash".to_string()); // not set in D30 or 300D
-                Some(conv)
-            },
+            print_conv: None, // Use generated lookup in apply_camera_settings_print_conv
         },
     );
 
     // ExifTool: Canon.pm:2210-2227 tag 5 ContinuousDrive
+    // Use generated lookup function instead of manual table
     table.insert(
         5,
         CanonCameraSettingsTag {
             index: 5,
             name: "ContinuousDrive".to_string(),
-            print_conv: {
-                let mut conv = HashMap::new();
-                conv.insert(0i16, "Single".to_string());
-                conv.insert(1i16, "Continuous".to_string());
-                conv.insert(2i16, "Movie".to_string()); // PH
-                conv.insert(3i16, "Continuous, Speed Priority".to_string()); // PH
-                Some(conv)
-            },
+            print_conv: None, // Use generated lookup in apply_camera_settings_print_conv
         },
     );
 
     // ExifTool: Canon.pm:2228-2240 tag 7 FocusMode
+    // Use generated lookup function instead of manual table
     table.insert(
         7,
         CanonCameraSettingsTag {
             index: 7,
             name: "FocusMode".to_string(),
-            print_conv: {
-                let mut conv = HashMap::new();
-                conv.insert(0i16, "One-shot AF".to_string());
-                conv.insert(1i16, "AI Servo AF".to_string());
-                conv.insert(2i16, "AI Focus AF".to_string());
-                conv.insert(3i16, "Manual Focus (3)".to_string());
-                conv.insert(4i16, "Single".to_string());
-                conv.insert(5i16, "Continuous".to_string());
-                conv.insert(6i16, "Manual Focus (6)".to_string());
-                conv.insert(16i16, "Pan Focus".to_string()); // PH
-                Some(conv)
-            },
+            print_conv: None, // Use generated lookup in apply_camera_settings_print_conv
         },
     );
 
