@@ -1,45 +1,45 @@
-//! Enhanced condition evaluation system for processor dispatch
+//! ExifTool expression evaluation system
 //!
-//! This module provides sophisticated condition evaluation capabilities that
-//! enable complex processor selection logic based on context, data patterns,
-//! and metadata. It extends the existing conditions system with processor-specific
-//! evaluation logic.
+//! This module provides sophisticated expression evaluation capabilities that
+//! enable complex logic based on context, data patterns, and metadata.
+//! It supports parsing and evaluating ExifTool-style expressions throughout
+//! the application.
 
 use crate::types::{ExifError, Result, TagValue};
 use regex::Regex;
 use std::collections::HashMap;
 use tracing::trace;
 
-use super::ProcessorContext;
+use crate::processor_registry::ProcessorContext;
 
 // Module organization
 pub mod parser;
 pub mod types;
 
 // Re-export key types
-pub use parser::parse_condition;
-pub use types::{Condition, FloatEvaluator, IntegerEvaluator, StringEvaluator, TagEvaluator};
+pub use parser::parse_expression;
+pub use types::{Expression, FloatEvaluator, IntegerEvaluator, StringEvaluator, TagEvaluator};
 
-/// Enhanced condition evaluator for processor dispatch
+/// Enhanced expression evaluator for ExifTool expressions
 ///
-/// This evaluator extends the basic condition system with processor-specific
-/// evaluation capabilities, including data pattern matching, context evaluation,
-/// and complex condition expressions.
+/// This evaluator provides comprehensive expression evaluation capabilities,
+/// including data pattern matching, context evaluation, and complex expressions.
+/// Used throughout the application for conditional logic.
 ///
 /// ## ExifTool Reference
 ///
 /// ExifTool uses various condition patterns in SubDirectory definitions:
 /// ```perl
 /// {
-///     Condition => '$$valPt =~ /^0204/',
+///     Expression => '$$valPt =~ /^0204/',
 ///     SubDirectory => { ProcessProc => \&ProcessNikonEncrypted }
 /// },
 /// {
-///     Condition => '$$self{Model} =~ /EOS R5/',
+///     Expression => '$$self{Model} =~ /EOS R5/',
 ///     SubDirectory => { ProcessProc => \&ProcessCanonSerialDataMkII }
 /// }
 /// ```
-pub struct ConditionEvaluator {
+pub struct ExpressionEvaluator {
     /// Cache for compiled regex patterns
     regex_cache: HashMap<String, Regex>,
 
@@ -47,7 +47,7 @@ pub struct ConditionEvaluator {
     tag_evaluators: HashMap<String, Box<dyn TagEvaluator>>,
 }
 
-impl ConditionEvaluator {
+impl ExpressionEvaluator {
     /// Create a new condition evaluator
     pub fn new() -> Self {
         let mut evaluator = Self {
@@ -82,7 +82,7 @@ impl ConditionEvaluator {
             context.table_name
         );
 
-        let condition = parse_condition(condition_expr)?;
+        let condition = parse_expression(condition_expr)?;
         self.evaluate_condition(&condition, context)
     }
 
@@ -97,7 +97,7 @@ impl ConditionEvaluator {
             data.len()
         );
 
-        let condition = parse_condition(condition_expr)?;
+        let condition = parse_expression(condition_expr)?;
         self.evaluate_data_condition_parsed(data, &condition)
     }
 
@@ -105,20 +105,29 @@ impl ConditionEvaluator {
     pub fn evaluate_data_condition_parsed(
         &mut self,
         data: &[u8],
-        condition: &Condition,
+        condition: &Expression,
     ) -> Result<bool> {
         match condition {
-            Condition::DataPattern(pattern) => {
-                let regex = self.get_or_compile_regex(pattern)?;
+            Expression::DataPattern(pattern) => {
+                // Handle special null byte patterns by converting them first
+                let actual_pattern = if pattern.contains("\\0") {
+                    pattern.replace("\\0", "00")
+                } else {
+                    pattern.clone()
+                };
+
+                let regex = self.get_or_compile_regex(&actual_pattern)?;
 
                 // Try multiple data representations for pattern matching
-                // 1. Raw binary as string
-                let data_str = String::from_utf8_lossy(data);
-                if regex.is_match(&data_str) {
-                    return Ok(true);
+                // 1. Raw binary as string (for non-null patterns)
+                if !pattern.contains("\\0") {
+                    let data_str = String::from_utf8_lossy(data);
+                    if regex.is_match(&data_str) {
+                        return Ok(true);
+                    }
                 }
 
-                // 2. Hex representation for patterns like "^0204"
+                // 2. Hex representation for patterns like "^0204" and null bytes
                 let hex_str = hex_string_from_bytes(data);
                 if regex.is_match(&hex_str) {
                     return Ok(true);
@@ -136,14 +145,14 @@ impl ConditionEvaluator {
                 Ok(false)
             }
 
-            Condition::RegexMatch(field_name, pattern) if field_name == "valPt" => {
+            Expression::RegexMatch(field_name, pattern) if field_name == "valPt" => {
                 // Handle $$valPt conditions that aren't explicitly DataPattern
                 let regex = self.get_or_compile_regex(pattern)?;
                 let data_str = String::from_utf8_lossy(data);
                 Ok(regex.is_match(&data_str))
             }
 
-            Condition::And(conditions) => {
+            Expression::And(conditions) => {
                 for cond in conditions {
                     if !self.evaluate_data_condition_parsed(data, cond)? {
                         return Ok(false);
@@ -152,7 +161,7 @@ impl ConditionEvaluator {
                 Ok(true)
             }
 
-            Condition::Or(conditions) => {
+            Expression::Or(conditions) => {
                 for cond in conditions {
                     if self.evaluate_data_condition_parsed(data, cond)? {
                         return Ok(true);
@@ -161,7 +170,7 @@ impl ConditionEvaluator {
                 Ok(false)
             }
 
-            Condition::Not(inner_condition) => {
+            Expression::Not(inner_condition) => {
                 Ok(!self.evaluate_data_condition_parsed(data, inner_condition)?)
             }
 
@@ -177,13 +186,13 @@ impl ConditionEvaluator {
     /// Evaluate a structured condition against context
     fn evaluate_condition(
         &mut self,
-        condition: &Condition,
+        condition: &Expression,
         context: &ProcessorContext,
     ) -> Result<bool> {
         match condition {
-            Condition::Exists(field_name) => Ok(self.field_exists(context, field_name)),
+            Expression::Exists(field_name) => Ok(self.field_exists(context, field_name)),
 
-            Condition::Equals(field_name, expected_value) => {
+            Expression::Equals(field_name, expected_value) => {
                 if let Some(actual_value) = self.get_field_value(context, field_name) {
                     Ok(self.values_equal(&actual_value, expected_value))
                 } else {
@@ -191,7 +200,7 @@ impl ConditionEvaluator {
                 }
             }
 
-            Condition::RegexMatch(field_name, pattern) => {
+            Expression::RegexMatch(field_name, pattern) => {
                 if let Some(field_value) = self.get_field_value(context, field_name) {
                     let value_str = field_value.as_string().unwrap_or_default();
                     let regex = self.get_or_compile_regex(pattern)?;
@@ -201,7 +210,7 @@ impl ConditionEvaluator {
                 }
             }
 
-            Condition::And(conditions) => {
+            Expression::And(conditions) => {
                 for cond in conditions {
                     if !self.evaluate_condition(cond, context)? {
                         return Ok(false);
@@ -210,7 +219,7 @@ impl ConditionEvaluator {
                 Ok(true)
             }
 
-            Condition::Or(conditions) => {
+            Expression::Or(conditions) => {
                 for cond in conditions {
                     if self.evaluate_condition(cond, context)? {
                         return Ok(true);
@@ -219,11 +228,11 @@ impl ConditionEvaluator {
                 Ok(false)
             }
 
-            Condition::Not(inner_condition) => {
+            Expression::Not(inner_condition) => {
                 Ok(!self.evaluate_condition(inner_condition, context)?)
             }
 
-            Condition::GreaterThan(field_name, expected_value) => {
+            Expression::GreaterThan(field_name, expected_value) => {
                 if let Some(actual_value) = self.get_field_value(context, field_name) {
                     Ok(self.compare_values(&actual_value, expected_value) > 0)
                 } else {
@@ -231,7 +240,7 @@ impl ConditionEvaluator {
                 }
             }
 
-            Condition::LessThan(field_name, expected_value) => {
+            Expression::LessThan(field_name, expected_value) => {
                 if let Some(actual_value) = self.get_field_value(context, field_name) {
                     Ok(self.compare_values(&actual_value, expected_value) < 0)
                 } else {
@@ -239,7 +248,7 @@ impl ConditionEvaluator {
                 }
             }
 
-            Condition::GreaterThanOrEqual(field_name, expected_value) => {
+            Expression::GreaterThanOrEqual(field_name, expected_value) => {
                 if let Some(actual_value) = self.get_field_value(context, field_name) {
                     Ok(self.compare_values(&actual_value, expected_value) >= 0)
                 } else {
@@ -247,7 +256,7 @@ impl ConditionEvaluator {
                 }
             }
 
-            Condition::LessThanOrEqual(field_name, expected_value) => {
+            Expression::LessThanOrEqual(field_name, expected_value) => {
                 if let Some(actual_value) = self.get_field_value(context, field_name) {
                     Ok(self.compare_values(&actual_value, expected_value) <= 0)
                 } else {
@@ -255,7 +264,7 @@ impl ConditionEvaluator {
                 }
             }
 
-            Condition::DataPattern(_pattern) => {
+            Expression::DataPattern(_pattern) => {
                 // Data pattern conditions require binary data, which isn't available in context
                 // This should be evaluated separately using evaluate_data_condition
                 Err(ExifError::ParseError(
@@ -465,7 +474,7 @@ impl ConditionEvaluator {
     }
 }
 
-impl Default for ConditionEvaluator {
+impl Default for ExpressionEvaluator {
     fn default() -> Self {
         Self::new()
     }

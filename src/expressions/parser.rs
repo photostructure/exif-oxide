@@ -1,33 +1,32 @@
-//! Condition expression parser for ExifTool-style conditions
+//! ExifTool expression parser
 //!
-//! This module provides parsing functionality to convert string expressions
-//! into structured Condition enums. The parser supports ExifTool's condition
+//! This module provides parsing functionality to convert ExifTool string expressions
+//! into structured Expression enums. The parser supports ExifTool's expression
 //! syntax including regex matching, logical operators, comparisons, and more.
 
 use crate::types::{ExifError, Result, TagValue};
 
-use super::types::Condition;
+use super::types::Expression;
 
-/// Parse a condition expression into a structured condition
-/// MILESTONE-14.5 Phase 2 - Full ExifTool condition parsing implementation
-/// Supports comprehensive ExifTool condition syntax including data patterns,
+/// Parse an ExifTool expression into a structured Expression
+/// Supports comprehensive ExifTool expression syntax including data patterns,
 /// logical operators, numeric comparisons, and complex expressions
-pub fn parse_condition(expr: &str) -> Result<Condition> {
+pub fn parse_expression(expr: &str) -> Result<Expression> {
     let expr = expr.trim();
 
     // Handle parentheses for grouping
     if expr.starts_with('(') && expr.ends_with(')') {
-        return parse_condition(&expr[1..expr.len() - 1]);
+        return parse_expression(&expr[1..expr.len() - 1]);
     }
 
     // Handle logical NOT operator
     if let Some(stripped) = expr.strip_prefix("not ") {
-        let inner_condition = parse_condition(stripped)?;
-        return Ok(Condition::Not(Box::new(inner_condition)));
+        let inner_expression = parse_expression(stripped)?;
+        return Ok(Expression::Not(Box::new(inner_expression)));
     }
     if let Some(stripped) = expr.strip_prefix("!") {
-        let inner_condition = parse_condition(stripped)?;
-        return Ok(Condition::Not(Box::new(inner_condition)));
+        let inner_expression = parse_expression(stripped)?;
+        return Ok(Expression::Not(Box::new(inner_expression)));
     }
 
     // Handle logical operators (and, or) with proper precedence
@@ -35,17 +34,17 @@ pub fn parse_condition(expr: &str) -> Result<Condition> {
     if let Some(or_index) = find_operator_outside_parens(expr, " or ") {
         let left_expr = &expr[..or_index];
         let right_expr = &expr[or_index + 4..]; // " or " is 4 chars
-        let left_condition = parse_condition(left_expr)?;
-        let right_condition = parse_condition(right_expr)?;
-        return Ok(Condition::Or(vec![left_condition, right_condition]));
+        let left_condition = parse_expression(left_expr)?;
+        let right_condition = parse_expression(right_expr)?;
+        return Ok(Expression::Or(vec![left_condition, right_condition]));
     }
 
     if let Some(and_index) = find_operator_outside_parens(expr, " and ") {
         let left_expr = &expr[..and_index];
         let right_expr = &expr[and_index + 5..]; // " and " is 5 chars
-        let left_condition = parse_condition(left_expr)?;
-        let right_condition = parse_condition(right_expr)?;
-        return Ok(Condition::And(vec![left_condition, right_condition]));
+        let left_condition = parse_expression(left_expr)?;
+        let right_condition = parse_expression(right_expr)?;
+        return Ok(Expression::And(vec![left_condition, right_condition]));
     }
 
     // Handle exists() function
@@ -55,7 +54,7 @@ pub fn parse_condition(expr: &str) -> Result<Condition> {
             .trim_matches('$')
             .trim_matches('"')
             .trim_matches('\'');
-        return Ok(Condition::Exists(tag_name.to_string()));
+        return Ok(Expression::Exists(tag_name.to_string()));
     }
 
     // Handle data pattern matching ($$valPt =~ /pattern/)
@@ -134,12 +133,12 @@ fn find_operator_outside_parens(expr: &str, operator: &str) -> Option<usize> {
 }
 
 /// Parse data pattern condition ($$valPt =~ /pattern/)
-fn parse_data_pattern_condition(expr: &str) -> Result<Condition> {
+fn parse_data_pattern_condition(expr: &str) -> Result<Expression> {
     if let Some(pattern_start) = expr.find('/') {
         if let Some(pattern_end) = expr.rfind('/') {
             if pattern_start < pattern_end {
                 let pattern = &expr[pattern_start + 1..pattern_end];
-                return Ok(Condition::DataPattern(pattern.to_string()));
+                return Ok(Expression::DataPattern(pattern.to_string()));
             }
         }
     }
@@ -149,7 +148,7 @@ fn parse_data_pattern_condition(expr: &str) -> Result<Condition> {
 }
 
 /// Parse regex condition (field =~ /pattern/ or field !~ /pattern/)
-fn parse_regex_condition(expr: &str) -> Result<Condition> {
+fn parse_regex_condition(expr: &str) -> Result<Expression> {
     let is_negative = expr.contains("!~");
     let operator = if is_negative { "!~" } else { "=~" };
 
@@ -157,13 +156,21 @@ fn parse_regex_condition(expr: &str) -> Result<Condition> {
         let var_part = expr[..op_pos].trim();
         let pattern_part = expr[op_pos + operator.len()..].trim();
 
-        let var_name = var_part.trim_start_matches('$');
+        // Handle ExifTool's $$self{...} syntax
+        let var_name = if var_part.starts_with("$$self{") && var_part.ends_with('}') {
+            // Extract field name from $$self{fieldName} -> fieldName
+            let field_name = &var_part[7..var_part.len() - 1]; // Remove "$$self{" and "}"
+            field_name.to_lowercase() // Convert to lowercase for consistency
+        } else {
+            // Standard variable reference like $model, $count
+            var_part.trim_start_matches('$').to_string()
+        };
         let pattern_str = pattern_part.trim_matches('/');
 
-        let condition = Condition::RegexMatch(var_name.to_string(), pattern_str.to_string());
+        let condition = Expression::RegexMatch(var_name.to_string(), pattern_str.to_string());
 
         if is_negative {
-            Ok(Condition::Not(Box::new(condition)))
+            Ok(Expression::Not(Box::new(condition)))
         } else {
             Ok(condition)
         }
@@ -186,7 +193,7 @@ fn find_comparison_operator(expr: &str) -> Option<String> {
 }
 
 /// Parse numeric comparison condition
-fn parse_numeric_comparison(expr: &str, operator: &str) -> Result<Condition> {
+fn parse_numeric_comparison(expr: &str, operator: &str) -> Result<Expression> {
     if let Some(op_pos) = expr.find(operator) {
         let var_part = expr[..op_pos].trim();
         let value_part = expr[op_pos + operator.len()..].trim();
@@ -195,10 +202,10 @@ fn parse_numeric_comparison(expr: &str, operator: &str) -> Result<Condition> {
         let value = parse_value(value_part)?;
 
         match operator {
-            ">" => Ok(Condition::GreaterThan(var_name.to_string(), value)),
-            ">=" => Ok(Condition::GreaterThanOrEqual(var_name.to_string(), value)),
-            "<" => Ok(Condition::LessThan(var_name.to_string(), value)),
-            "<=" => Ok(Condition::LessThanOrEqual(var_name.to_string(), value)),
+            ">" => Ok(Expression::GreaterThan(var_name.to_string(), value)),
+            ">=" => Ok(Expression::GreaterThanOrEqual(var_name.to_string(), value)),
+            "<" => Ok(Expression::LessThan(var_name.to_string(), value)),
+            "<=" => Ok(Expression::LessThanOrEqual(var_name.to_string(), value)),
             _ => Err(ExifError::ParseError(format!(
                 "Unknown comparison operator: {operator}"
             ))),
@@ -211,7 +218,7 @@ fn parse_numeric_comparison(expr: &str, operator: &str) -> Result<Condition> {
 }
 
 /// Parse equality/inequality condition
-fn parse_equality_condition(expr: &str) -> Result<Condition> {
+fn parse_equality_condition(expr: &str) -> Result<Expression> {
     let (operator, is_negative) = if expr.contains("!=") {
         ("!=", true)
     } else if expr.contains(" ne ") {
@@ -233,10 +240,10 @@ fn parse_equality_condition(expr: &str) -> Result<Condition> {
         let var_name = var_part.trim_start_matches('$');
         let value = parse_value(value_part)?;
 
-        let condition = Condition::Equals(var_name.to_string(), value);
+        let condition = Expression::Equals(var_name.to_string(), value);
 
         if is_negative {
-            Ok(Condition::Not(Box::new(condition)))
+            Ok(Expression::Not(Box::new(condition)))
         } else {
             Ok(condition)
         }
@@ -253,7 +260,7 @@ fn is_hex_number_condition(expr: &str) -> bool {
 }
 
 /// Parse hex number condition
-fn parse_hex_condition(expr: &str) -> Result<Condition> {
+fn parse_hex_condition(expr: &str) -> Result<Expression> {
     // This handles cases like "$tagID == 0x001d"
     if expr.contains("==") {
         return parse_equality_condition(expr);

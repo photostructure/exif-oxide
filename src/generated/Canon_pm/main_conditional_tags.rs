@@ -614,13 +614,13 @@ static BINARY_PATTERNS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> =
     || {
         let mut map = HashMap::new();
         map.insert(
-            "35",
+            "39",
             vec![ConditionalEntry {
-                condition: "$$valPt =~ /^\\x08\\0\\0\\0/",
-                name: "Categories",
+                condition: "$$valPt =~ /^\\x0a\\0/",
+                name: "ContrastInfo",
                 subdirectory: false,
-                writable: true,
-                format: Some("int32u"),
+                writable: false,
+                format: None,
             }],
         );
         map.insert("16405", vec![
@@ -640,13 +640,13 @@ static BINARY_PATTERNS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> =
         },
     ]);
         map.insert(
-            "39",
+            "35",
             vec![ConditionalEntry {
-                condition: "$$valPt =~ /^\\x0a\\0/",
-                name: "ContrastInfo",
+                condition: "$$valPt =~ /^\\x08\\0\\0\\0/",
+                name: "Categories",
                 subdirectory: false,
-                writable: false,
-                format: None,
+                writable: true,
+                format: Some("int32u"),
             }],
         );
         map

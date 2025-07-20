@@ -165,7 +165,10 @@ impl ExifReader {
 
         // Look up tag definition in appropriate table based on IFD type and file format
         // ExifTool: Different IFDs use different tag tables, and RAW formats have specific tables
-        let tag_def = self.get_tag_definition(entry.tag_id, ifd_name);
+        let tag_def_owned = self.get_tag_definition_with_entry(&entry, ifd_name);
+        let tag_def = tag_def_owned
+            .as_ref()
+            .map(|td| Box::leak(Box::new(td.clone())) as &'static _);
 
         // Milestone 3: Support for common numeric formats with PrintConv
         // ExifTool: lib/Image/ExifTool/Exif.pm:6390-6570 value extraction
@@ -392,16 +395,123 @@ impl ExifReader {
         self.parse_ifd(ifd_offset, ifd_name)
     }
 
-    /// Get tag definition based on file type and IFD context
+    /// Get tag definition with full entry context for conditional resolution
+    /// ExifTool: Uses format-specific tag tables with conditional logic
+    fn get_tag_definition_with_entry(
+        &self,
+        entry: &crate::tiff_types::IfdEntry,
+        _ifd_name: &str,
+    ) -> Option<crate::generated::tags::TagDef> {
+        // ✅ Phase 2: Runtime Integration - Conditional Tag Resolution
+        // Try conditional resolution first for manufacturer-specific tags
+        if let Some(resolved_tag) = self.try_conditional_tag_resolution_with_entry(entry) {
+            // Convert resolved_tag to TagDef for use in parsing pipeline
+            tracing::debug!(
+                "Conditional tag resolved: {} -> {}",
+                entry.tag_id,
+                resolved_tag.name
+            );
+
+            // Create dynamic TagDef from resolved conditional tag
+            return Some(crate::generated::tags::TagDef {
+                id: entry.tag_id as u32,
+                name: Box::leak(resolved_tag.name.into_boxed_str()),
+                format: self.map_format_to_tag_format(&resolved_tag.format),
+                groups: &["Canon"],
+                writable: resolved_tag.writable,
+                description: None,
+                print_conv_ref: None,
+                value_conv_ref: None,
+                notes: None,
+            });
+        }
+
+        // Standard EXIF tag lookup
+        // ExifTool: Standard EXIF tag tables
+        crate::generated::TAG_BY_ID
+            .get(&(entry.tag_id as u32))
+            .copied()
+            .cloned()
+    }
+
+    /// Get tag definition based on file type and IFD context (legacy method)
     /// ExifTool: Uses format-specific tag tables (e.g., PanasonicRaw::Main for RW2 files)
     fn get_tag_definition(
         &self,
         tag_id: u16,
-        _ifd_name: &str,
-    ) -> Option<&'static crate::generated::tags::TagDef> {
-        // Standard EXIF tag lookup
-        // ExifTool: Standard EXIF tag tables
-        crate::generated::TAG_BY_ID.get(&(tag_id as u32)).copied()
+        ifd_name: &str,
+    ) -> Option<crate::generated::tags::TagDef> {
+        // Create a minimal entry for compatibility
+        let minimal_entry = crate::tiff_types::IfdEntry {
+            tag_id,
+            format: crate::tiff_types::TiffFormat::Undefined,
+            count: 0,
+            value_or_offset: 0,
+        };
+        self.get_tag_definition_with_entry(&minimal_entry, ifd_name)
+    }
+
+    /// Map resolved tag format string to TagFormat enum
+    fn map_format_to_tag_format(
+        &self,
+        format: &Option<String>,
+    ) -> crate::generated::tags::TagFormat {
+        match format.as_deref() {
+            Some("int8u") => crate::generated::tags::TagFormat::U8,
+            Some("int16u") => crate::generated::tags::TagFormat::U16,
+            Some("int32u") => crate::generated::tags::TagFormat::U32,
+            Some("int8s") => crate::generated::tags::TagFormat::I8,
+            Some("int16s") => crate::generated::tags::TagFormat::I16,
+            Some("int32s") => crate::generated::tags::TagFormat::I32,
+            Some("rational64u") => crate::generated::tags::TagFormat::RationalU,
+            Some("rational64s") => crate::generated::tags::TagFormat::RationalS,
+            Some("string") => crate::generated::tags::TagFormat::String,
+            Some("float") => crate::generated::tags::TagFormat::Float,
+            Some("double") => crate::generated::tags::TagFormat::Double,
+            _ => crate::generated::tags::TagFormat::Undef,
+        }
+    }
+
+    /// Try resolving tag using conditional tag resolution with full entry context
+    fn try_conditional_tag_resolution_with_entry(
+        &self,
+        entry: &crate::tiff_types::IfdEntry,
+    ) -> Option<crate::generated::Canon_pm::main_conditional_tags::ResolvedTag> {
+        // Only attempt conditional resolution for Canon cameras
+        let make = self.extracted_tags.get(&0x010F)?.as_string()?;
+        if !make.to_lowercase().contains("canon") {
+            return None;
+        }
+
+        // Build conditional context from available EXIF data and entry
+        let context = self.build_conditional_context_with_entry(entry)?;
+
+        // Use the generated conditional tag resolver
+        let conditional_tags =
+            crate::generated::Canon_pm::main_conditional_tags::CanonConditionalTags::new();
+        conditional_tags.resolve_tag(&entry.tag_id.to_string(), &context)
+    }
+
+    /// Build ConditionalContext from current EXIF parsing state with full entry context
+    fn build_conditional_context_with_entry(
+        &self,
+        entry: &crate::tiff_types::IfdEntry,
+    ) -> Option<crate::generated::Canon_pm::main_conditional_tags::ConditionalContext> {
+        Some(
+            crate::generated::Canon_pm::main_conditional_tags::ConditionalContext {
+                make: self
+                    .extracted_tags
+                    .get(&0x010F)
+                    .and_then(|v| v.as_string().map(|s| s.to_string())),
+                model: self
+                    .extracted_tags
+                    .get(&0x0110)
+                    .and_then(|v| v.as_string().map(|s| s.to_string())),
+                count: Some(entry.count),
+                format: Some(format!("{:?}", entry.format)), // Convert TiffFormat to string
+                binary_data: None, // TODO: Extract binary value data when available
+            },
+        )
     }
 
     /// Get tag name based on file type and IFD context
