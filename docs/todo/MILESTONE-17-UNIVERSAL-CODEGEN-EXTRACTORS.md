@@ -40,13 +40,65 @@ All 5 extractors generate working Rust code that compiles successfully, but **ze
 **CRITICAL MISSING WORK**: The generated code exists but is never called during actual EXIF parsing.
 
 **Required Runtime Integration Work**:
-1. **Conditional Tag Resolution**: Wire `CanonConditionalTags::resolve_tag()` into tag parsing pipeline
-2. **ProcessBinaryData Integration**: Use generated tables in binary data processors  
-3. **Model Detection Integration**: Use generated patterns in manufacturer detection
-4. **Simple Table Integration**: Already exists for some tables, needs expansion
-5. **Context Creation**: Build `ConditionalContext` with model, count, format, binary data during parsing
+1. **🚨 PRIORITY: Expression System Integration**: Ensure all conditional tags and expression consumers use unified `src/expressions/` system
+2. **Conditional Tag Resolution**: Wire `CanonConditionalTags::resolve_tag()` into tag parsing pipeline
+3. **ProcessBinaryData Integration**: Use generated tables in binary data processors  
+4. **Model Detection Integration**: Use generated patterns in manufacturer detection
+5. **Simple Table Integration**: Already exists for some tables, needs expansion
+6. **Context Creation**: Build `ConditionalContext` with model, count, format, binary data during parsing
 
 ## 🔍 **DETAILED RUNTIME INTEGRATION GUIDE**
+
+### **🚨 STEP 0: Expression System Integration (PRIORITY)**
+
+**Task**: Consolidate Expression Parsing Across All Consumers
+
+**Context**: We just completed a sophisticated expression parsing system (`src/expressions/`) for conditional tags, but need to ensure ALL relevant consumers use this unified system.
+
+#### **Current State Assessment Needed:**
+
+**Existing Expression Consumers to Audit:**
+1. **✅ Conditional Tags System** (Just implemented)
+   - `src/generated/Canon_pm/main_conditional_tags.rs` - Uses new system
+   - `src/expressions/` - New unified expression parser
+
+2. **❓ ProcessorRegistry Conditions** (Needs audit)
+   - `src/processor_registry/` - May have old condition evaluation
+   - Check for any duplicate/inconsistent expression parsing
+
+3. **❓ Binary Data Processing** (Needs audit)  
+   - ProcessBinaryData tables with conditional logic
+   - Format expressions, DataMember dependencies
+   - Ensure uses unified expression system
+
+4. **❓ Generated Code Templates** (Needs audit)
+   - Look for any generated expression evaluation code
+   - Ensure all point to unified `src/expressions/` system
+
+#### **Integration Tasks:**
+- [ ] **Audit all expression/condition evaluation code** throughout codebase
+- [ ] **Identify duplicate expression parsing logic** (outside of `src/expressions/`)
+- [ ] **Migrate any legacy expression evaluation** to unified system
+- [ ] **Update generated code templates** to use unified expression parsing
+- [ ] **Add integration tests** ensuring all consumers use same expression syntax
+- [ ] **Document expression syntax** and ensure consistency across all generated code
+
+#### **Success Criteria:**
+- [ ] Single source of truth for expression parsing: `src/expressions/`
+- [ ] No duplicate expression evaluation logic anywhere in codebase  
+- [ ] All generated code uses unified expression system
+- [ ] All manual expression evaluation migrated to unified system
+- [ ] Comprehensive tests covering all expression consumers
+- [ ] Documentation clearly states expression syntax standards
+
+#### **Why This is Critical:**
+- **Consistency**: All ExifTool expressions should be parsed identically
+- **Maintainability**: Single system to update/debug/enhance
+- **Performance**: Shared regex caching and evaluation optimizations
+- **Correctness**: Unified handling of ExifTool's complex expression syntax
+- **Future-proofing**: ProcessBinaryData and other extractors will need expression evaluation
+
+**⚠️ This should be completed BEFORE implementing additional ProcessBinaryData extractor work.**
 
 ### **Step 1: Find Current Tag Resolution Logic**
 
