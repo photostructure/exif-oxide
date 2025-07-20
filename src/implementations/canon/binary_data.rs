@@ -213,6 +213,346 @@ pub fn extract_camera_settings(
     Ok(results)
 }
 
+/// Extract Canon FocalLength binary data
+/// ExifTool: lib/Image/ExifTool/Canon.pm:2637-2713 %Canon::FocalLength
+/// Table parameters:
+/// - FORMAT => 'int16u' (unsigned 16-bit integers)
+/// - FIRST_ENTRY => 0 (0-indexed)
+/// - GROUPS => { 0 => 'MakerNotes', 2 => 'Image' }
+pub fn extract_focal_length(
+    data: &[u8],
+    offset: usize,
+    size: usize,
+    byte_order: ByteOrder,
+) -> Result<HashMap<String, TagValue>> {
+    let mut results = HashMap::new();
+
+    // ExifTool: Canon.pm:2640 FORMAT => 'int16u'
+    let _format_size = 2; // int16u = 2 bytes
+
+    debug!(
+        "Extracting Canon FocalLength: offset={:#x}, size={}, format=int16u",
+        offset, size
+    );
+
+    // Use generated PrintConv lookups from focallength_inline.rs
+    use crate::generated::Canon_pm::focallength_inline::*;
+
+    // Extract FocalType (index 0)
+    // ExifTool: Canon.pm:2643 Name => 'FocalType'
+    if size >= 2 {
+        let focal_type = byte_order.read_u16(data, offset)?;
+
+        // Apply PrintConv using generated lookup
+        let final_value = if let Some(converted) = lookup_focal_length__focal_type(focal_type as u8)
+        {
+            TagValue::String(converted.to_string())
+        } else {
+            TagValue::U16(focal_type)
+        };
+
+        debug!(
+            "Extracted Canon FocalType = {:?} (raw: {})",
+            final_value, focal_type
+        );
+        results.insert("MakerNotes:FocalType".to_string(), final_value);
+    }
+
+    // Extract FocalLength (index 1)
+    // ExifTool: Canon.pm:2654 Name => 'FocalLength'
+    // ValueConv => '$val[1] && $val[1] =~ /^\d+$/ ? $val[1] / $val[18] : undef'
+    // Note: This needs FocalUnits (index 18) for proper conversion
+    if size >= 4 {
+        let focal_length = byte_order.read_u16(data, offset + 2)?;
+
+        debug!("Extracted Canon FocalLength raw value = {}", focal_length);
+
+        // Store raw value for now - proper conversion needs FocalUnits (index 18)
+        // TODO: Implement full ValueConv with FocalUnits when available
+        results.insert(
+            "MakerNotes:FocalLength".to_string(),
+            TagValue::U16(focal_length),
+        );
+    }
+
+    // Extract FocalPlaneXSize (index 2)
+    // ExifTool: Canon.pm:2660 Name => 'FocalPlaneXSize'
+    // Conditional - only valid for some camera models
+    if size >= 6 {
+        let focal_plane_x_size = byte_order.read_u16(data, offset + 4)?;
+
+        debug!(
+            "Extracted Canon FocalPlaneXSize raw value = {}",
+            focal_plane_x_size
+        );
+        results.insert(
+            "MakerNotes:FocalPlaneXSize".to_string(),
+            TagValue::U16(focal_plane_x_size),
+        );
+    }
+
+    // Extract FocalPlaneYSize (index 3)
+    // ExifTool: Canon.pm:2671 Name => 'FocalPlaneYSize'
+    if size >= 8 {
+        let focal_plane_y_size = byte_order.read_u16(data, offset + 6)?;
+
+        debug!(
+            "Extracted Canon FocalPlaneYSize raw value = {}",
+            focal_plane_y_size
+        );
+        results.insert(
+            "MakerNotes:FocalPlaneYSize".to_string(),
+            TagValue::U16(focal_plane_y_size),
+        );
+    }
+
+    Ok(results)
+}
+
+/// Extract Canon ShotInfo binary data
+/// ExifTool: lib/Image/ExifTool/Canon.pm:2715-2996 %Canon::ShotInfo
+/// Table parameters:
+/// - FORMAT => 'int16s' (signed 16-bit integers)
+/// - FIRST_ENTRY => 1 (1-indexed)
+/// - GROUPS => { 0 => 'MakerNotes', 2 => 'Camera' }
+/// - DATAMEMBER => [ 19 ] (FocusDistanceUpper)
+pub fn extract_shot_info(
+    data: &[u8],
+    offset: usize,
+    size: usize,
+    byte_order: ByteOrder,
+) -> Result<HashMap<String, TagValue>> {
+    let mut results = HashMap::new();
+
+    // ExifTool: Canon.pm:2719 FORMAT => 'int16s'
+    let format_size = 2; // int16s = 2 bytes
+
+    debug!(
+        "Extracting Canon ShotInfo: offset={:#x}, size={}, format=int16s",
+        offset, size
+    );
+
+    // Use generated PrintConv lookups from shotinfo_inline.rs
+    use crate::generated::Canon_pm::shotinfo_inline::*;
+
+    // Extract AutoISO (index 1)
+    // ExifTool: Canon.pm:2724 Name => 'AutoISO'
+    // ValueConv => 'exp($val/32*log(2))*100'
+    if size >= 2 {
+        let auto_iso_raw = byte_order.read_u16(data, offset)? as i16;
+
+        // Apply ValueConv: exp($val/32*log(2))*100
+        let auto_iso = (2.0_f64).powf(auto_iso_raw as f64 / 32.0) * 100.0;
+
+        debug!(
+            "Extracted Canon AutoISO = {} (raw: {})",
+            auto_iso, auto_iso_raw
+        );
+        results.insert("MakerNotes:AutoISO".to_string(), TagValue::F64(auto_iso));
+    }
+
+    // Extract BaseISO (index 2)
+    // ExifTool: Canon.pm:2729 Name => 'BaseISO'
+    // ValueConv => 'exp($val/32*log(2))*100/32'
+    if size >= 4 {
+        let base_iso_raw = byte_order.read_u16(data, offset + 2)? as i16;
+
+        // Apply ValueConv: exp($val/32*log(2))*100/32
+        let base_iso = (2.0_f64).powf(base_iso_raw as f64 / 32.0) * 100.0 / 32.0;
+
+        debug!(
+            "Extracted Canon BaseISO = {} (raw: {})",
+            base_iso, base_iso_raw
+        );
+        results.insert("MakerNotes:BaseISO".to_string(), TagValue::F64(base_iso));
+    }
+
+    // Extract MeasuredEV (index 3)
+    // ExifTool: Canon.pm:2734 Name => 'MeasuredEV'
+    // ValueConv => '$val / 32'
+    if size >= 6 {
+        let measured_ev_raw = byte_order.read_u16(data, offset + 4)? as i16;
+        let measured_ev = measured_ev_raw as f64 / 32.0;
+
+        debug!(
+            "Extracted Canon MeasuredEV = {} (raw: {})",
+            measured_ev, measured_ev_raw
+        );
+        results.insert(
+            "MakerNotes:MeasuredEV".to_string(),
+            TagValue::F64(measured_ev),
+        );
+    }
+
+    // Extract TargetAperture (index 4)
+    // ExifTool: Canon.pm:2739 Name => 'TargetAperture'
+    // ValueConv => 'exp(Canon::CanonEv($val)*log(2)/2)'
+    if size >= 8 {
+        let target_aperture_raw = byte_order.read_u16(data, offset + 6)? as i16;
+
+        // Apply Canon EV conversion then aperture calculation
+        // Canon::CanonEv just returns $val/32 for simple values
+        let ev = target_aperture_raw as f64 / 32.0;
+        let target_aperture = (2.0_f64).powf(ev / 2.0);
+
+        debug!(
+            "Extracted Canon TargetAperture = {} (raw: {})",
+            target_aperture, target_aperture_raw
+        );
+        results.insert(
+            "MakerNotes:TargetAperture".to_string(),
+            TagValue::F64(target_aperture),
+        );
+    }
+
+    // Extract WhiteBalance (index 7)
+    // ExifTool: Canon.pm:2753 Name => 'WhiteBalance'
+    // FIRST_ENTRY => 1, so actual offset is (7-1)*2 = 12 bytes
+    if size >= 14 {
+        let wb_offset = offset + (7 - 1) * format_size;
+        let white_balance = byte_order.read_u16(data, wb_offset)? as i16;
+
+        // Apply PrintConv using generated lookup
+        let final_value =
+            if let Some(converted) = lookup_shot_info__white_balance(white_balance as u8) {
+                TagValue::String(converted.to_string())
+            } else {
+                TagValue::I16(white_balance)
+            };
+
+        debug!(
+            "Extracted Canon WhiteBalance = {:?} (raw: {})",
+            final_value, white_balance
+        );
+        results.insert("MakerNotes:WhiteBalance".to_string(), final_value);
+    }
+
+    // Extract AFPointsInFocus (index 14)
+    // ExifTool: Canon.pm:2815 Name => 'AFPointsInFocus'
+    // FIRST_ENTRY => 1, so actual offset is (14-1)*2 = 26 bytes
+    if size >= 28 {
+        let af_offset = offset + (14 - 1) * format_size;
+        let af_points = byte_order.read_u16(data, af_offset)? as i16;
+
+        // Apply PrintConv using generated lookup
+        let final_value =
+            if let Some(converted) = lookup_shot_info__a_f_points_in_focus(af_points as u16) {
+                TagValue::String(converted.to_string())
+            } else {
+                TagValue::I16(af_points)
+            };
+
+        debug!(
+            "Extracted Canon AFPointsInFocus = {:?} (raw: {})",
+            final_value, af_points
+        );
+        results.insert("MakerNotes:AFPointsInFocus".to_string(), final_value);
+    }
+
+    // Extract AutoExposureBracketing (index 16)
+    // ExifTool: Canon.pm:2847 Name => 'AutoExposureBracketing'
+    // FIRST_ENTRY => 1, so actual offset is (16-1)*2 = 30 bytes
+    if size >= 32 {
+        let aeb_offset = offset + (16 - 1) * format_size;
+        let aeb_value = byte_order.read_u16(data, aeb_offset)? as i16;
+
+        // Apply PrintConv using generated lookup
+        let final_value =
+            if let Some(converted) = lookup_shot_info__auto_exposure_bracketing(aeb_value) {
+                TagValue::String(converted.to_string())
+            } else {
+                TagValue::I16(aeb_value)
+            };
+
+        debug!(
+            "Extracted Canon AutoExposureBracketing = {:?} (raw: {})",
+            final_value, aeb_value
+        );
+        results.insert("MakerNotes:AutoExposureBracketing".to_string(), final_value);
+    }
+
+    // Extract CameraType (index 26)
+    // ExifTool: Canon.pm:2938 Name => 'CameraType'
+    // FIRST_ENTRY => 1, so actual offset is (26-1)*2 = 50 bytes
+    if size >= 52 {
+        let camera_type_offset = offset + (26 - 1) * format_size;
+        let camera_type = byte_order.read_u16(data, camera_type_offset)? as i16;
+
+        // Apply PrintConv using generated lookup
+        let final_value = if let Some(converted) = lookup_shot_info__camera_type(camera_type as u8)
+        {
+            TagValue::String(converted.to_string())
+        } else {
+            TagValue::I16(camera_type)
+        };
+
+        debug!(
+            "Extracted Canon CameraType = {:?} (raw: {})",
+            final_value, camera_type
+        );
+        results.insert("MakerNotes:CameraType".to_string(), final_value);
+    }
+
+    Ok(results)
+}
+
+/// Extract Canon Panorama data from binary data
+/// ExifTool: Canon.pm:2999 %Canon::Panorama
+/// FORMAT => 'int16s', FIRST_ENTRY => 0
+pub fn extract_panorama(
+    data: &[u8],
+    offset: usize,
+    size: usize,
+    byte_order: ByteOrder,
+) -> Result<HashMap<String, TagValue>> {
+    debug!(
+        "Extracting Canon Panorama data: offset={:#x}, size={}",
+        offset, size
+    );
+
+    let mut panorama = HashMap::new();
+
+    // Canon Panorama format: int16s (signed 16-bit), starting at index 0
+    // ExifTool: Canon.pm:3001 FORMAT => 'int16s', FIRST_ENTRY => 0
+
+    // Tag 2: PanoramaFrameNumber
+    // ExifTool: Canon.pm:3006
+    if let Ok(frame_number) = read_int16s_at_index(data, offset, 2, byte_order) {
+        panorama.insert("MakerNotes:PanoramaFrameNumber".to_string(), TagValue::I16(frame_number));
+        debug!("PanoramaFrameNumber: {}", frame_number);
+    }
+
+    // Tag 5: PanoramaDirection with PrintConv
+    // ExifTool: Canon.pm:3009-3018
+    if let Ok(direction_raw) = read_int16s_at_index(data, offset, 5, byte_order) {
+        let direction_value = match direction_raw {
+            0 => TagValue::String("Left to Right".to_string()),
+            1 => TagValue::String("Right to Left".to_string()),
+            2 => TagValue::String("Bottom to Top".to_string()),
+            3 => TagValue::String("Top to Bottom".to_string()),
+            4 => TagValue::String("2x2 Matrix (Clockwise)".to_string()),
+            _ => TagValue::I16(direction_raw), // Keep raw value for unknown
+        };
+        debug!("PanoramaDirection: {:?} (raw: {})", direction_value, direction_raw);
+        panorama.insert("MakerNotes:PanoramaDirection".to_string(), direction_value);
+    }
+
+    debug!("Extracted {} Canon Panorama tags", panorama.len());
+    Ok(panorama)
+}
+
+/// Read signed 16-bit integer at specific index in Canon binary data
+/// ExifTool: Canon.pm ProcessBinaryData with FORMAT => 'int16s'
+fn read_int16s_at_index(data: &[u8], offset: usize, index: usize, byte_order: ByteOrder) -> Result<i16> {
+    let position = offset + (index * 2); // int16s = 2 bytes per entry
+    if position + 2 <= data.len() {
+        let raw_value = byte_order.read_u16(data, position)?;
+        Ok(raw_value as i16) // Convert to signed
+    } else {
+        Err(ExifError::ParseError(format!("Cannot read int16s at index {} - beyond data bounds", index)))
+    }
+}
+
 /// Create Canon AF Info binary data table with variable-length arrays
 /// ExifTool: lib/Image/ExifTool/Canon.pm:4440+ %Canon::AFInfo table
 /// Reference: third-party/exiftool/lib/Image/ExifTool/Canon.pm:4440-4500+ AFInfo table

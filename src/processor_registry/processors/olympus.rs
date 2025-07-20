@@ -28,9 +28,12 @@ impl BinaryDataProcessor for OlympusEquipmentProcessor {
             context.manufacturer, context.table_name
         );
 
-        let is_olympus = context.is_manufacturer("OLYMPUS")
-            || context.is_manufacturer("OLYMPUS IMAGING CORP.")
-            || context.is_manufacturer("OLYMPUS CORPORATION");
+        // ExifTool: More flexible Olympus detection - any Make starting with "OLYMPUS"
+        let is_olympus = context
+            .manufacturer
+            .as_ref()
+            .map(|m| m.starts_with("OLYMPUS") || m == "OM Digital Solutions")
+            .unwrap_or(false);
         let is_equipment = context.table_name.contains("Equipment");
 
         debug!(
