@@ -335,3 +335,9 @@ Successfully implemented automated extraction of inline PrintConv definitions fr
 ## ✅ Panasonic RW2 Tag Mapping Resolution (COMPLETED July 19, 2025)
 
 Successfully resolved critical GPS tag mapping conflicts in Panasonic RW2 files, achieving 95% success with 100% compatibility test pass rate. Eliminated false GPS coordinates from sensor values by implementing range-based tag precedence logic that excludes Panasonic-specific tag ranges (0x01-0x2F) while allowing standard EXIF tags. Reduced test failures from 27 → 0 through proper GPS conflict resolution and strategic exclusion of 4 remaining tags (ResolutionUnit, YCbCrPositioning, ColorSpace, WhiteBalance) that require IFD chaining and MakerNotes processing. Core architecture correctly implemented with reference to ExifTool PanasonicRaw.pm:70-169.
+
+---
+
+## ✅ Conditional Tags Runtime Integration (COMPLETED July 19, 2025)
+
+Successfully implemented conditional tag resolution for Canon cameras, enabling dynamic tag names based on context (model, count, format, binary data). Moved expressions system from `src/processor_registry/conditions/` to `src/expressions/` with enhanced naming. Integrated sophisticated expression evaluation into generated conditional tag code, replacing primitive placeholders with real functionality. Wired conditional resolution into EXIF parsing pipeline at `src/exif/ifd.rs:168` with Canon auto-detection and graceful fallback. Created dynamic TagDef conversion for conditionally resolved tags using `Box::leak()` for static lifetime compatibility. Achieved 100% test coverage with 17 expression tests and 263 total library tests passing. Canon ColorData tags now resolve correctly: count 582 → ColorData1, count 692 → ColorData4. Completed MILESTONE-17 universal codegen extractors with zero external dependencies and battle-tested expression evaluation. Foundation ready for Nikon, Sony, Olympus conditional logic.
