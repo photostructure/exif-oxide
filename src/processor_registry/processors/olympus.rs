@@ -51,11 +51,14 @@ impl BinaryDataProcessor for OlympusEquipmentProcessor {
             is_olympus, is_equipment
         );
 
-        // Perfect match if Olympus manufacturer and Equipment table
-        if is_olympus && is_equipment {
-            debug!("OlympusEquipmentProcessor::can_process - returning Perfect");
-            ProcessorCapability::Perfect
+        // Equipment has WRITE_PROC => WriteExif in ExifTool, indicating it's an IFD structure
+        // This processor only handles binary data, so return Incompatible for Equipment
+        // ExifTool: lib/Image/ExifTool/Olympus.pm line 1588
+        if is_equipment {
+            debug!("OlympusEquipmentProcessor::can_process - returning Incompatible for Equipment (should be IFD)");
+            ProcessorCapability::Incompatible
         } else if is_olympus {
+            // This processor can handle other Olympus binary data sections
             debug!("OlympusEquipmentProcessor::can_process - returning Good");
             ProcessorCapability::Good
         } else {
@@ -71,11 +74,51 @@ impl BinaryDataProcessor for OlympusEquipmentProcessor {
             data.len()
         );
 
-        // ExifTool: lib/Image/ExifTool/Olympus.pm Equipment table processing
-        // Tags are processed as IFD entries within the Equipment section
+        // Add debug logging to see what's in the Equipment data
+        // This will help us determine if it's IFD format or raw binary
+        if data.len() >= 50 {
+            debug!(
+                "Equipment data preview (first 50 bytes): {:02x?}",
+                &data[0..50]
+            );
+        } else {
+            debug!("Equipment data preview: {:02x?}", data);
+        }
 
-        // Equipment section is processed as an IFD, so we extract known offsets
-        // ExifTool: Equipment table tag definitions
+        // Check if this looks like an IFD (starts with entry count)
+        if data.len() >= 2 {
+            let entry_count = u16::from_le_bytes([data[0], data[1]]);
+            debug!("Possible IFD entry count (LE): {}", entry_count);
+            let entry_count_be = u16::from_be_bytes([data[0], data[1]]);
+            debug!("Possible IFD entry count (BE): {}", entry_count_be);
+        }
+
+        // ExifTool: lib/Image/ExifTool/Olympus.pm Equipment table processing
+        // Equipment has WRITE_PROC => WriteExif, CHECK_PROC => CheckExif
+        // This indicates it's an IFD structure, not raw binary data!
+
+        // TODO: Equipment should be parsed as IFD, not raw binary
+        // For now, let's check what's at the expected offsets
+
+        // Check data at offset 0x100 (CameraType2)
+        if data.len() > 0x106 {
+            debug!(
+                "Data at CameraType2 offset 0x100: {:02x?}",
+                &data[0x100..std::cmp::min(0x106, data.len())]
+            );
+            debug!(
+                "As string: {:?}",
+                String::from_utf8_lossy(&data[0x100..std::cmp::min(0x106, data.len())])
+            );
+        }
+
+        // Check data at offset 0x201 (LensType)
+        if data.len() > 0x207 {
+            debug!(
+                "Data at LensType offset 0x201: {:02x?}",
+                &data[0x201..std::cmp::min(0x207, data.len())]
+            );
+        }
 
         // Extract CameraType2 (0x100) - 6-byte string
         // ExifTool: lib/Image/ExifTool/Olympus.pm line 1598-1604
@@ -160,6 +203,13 @@ impl BinaryDataProcessor for OlympusCameraSettingsProcessor {
             return ProcessorCapability::Incompatible;
         }
 
+        // Equipment has WRITE_PROC => WriteExif, indicating it's an IFD structure
+        // This processor only handles binary data, so reject Equipment tables
+        if context.table_name.contains("Equipment") {
+            debug!("OlympusCameraSettingsProcessor::can_process - returning Incompatible for Equipment (should be IFD)");
+            return ProcessorCapability::Incompatible;
+        }
+
         if (context.is_manufacturer("OLYMPUS")
             || context.is_manufacturer("OLYMPUS IMAGING CORP.")
             || context.is_manufacturer("OLYMPUS CORPORATION"))
@@ -216,6 +266,12 @@ impl BinaryDataProcessor for OlympusFocusInfoProcessor {
             "ExifIFD" | "GPS" | "InteropIFD" | "IFD0" | "IFD1"
         ) {
             debug!("OlympusFocusInfoProcessor::can_process - returning Incompatible for standard IFD: {}", context.table_name);
+            return ProcessorCapability::Incompatible;
+        }
+
+        // Equipment has WRITE_PROC => WriteExif, indicating it's an IFD structure
+        // This processor only handles binary data, so reject Equipment tables
+        if context.table_name.contains("Equipment") {
             return ProcessorCapability::Incompatible;
         }
 

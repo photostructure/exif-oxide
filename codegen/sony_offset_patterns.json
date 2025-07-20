@@ -1,0 +1,1087 @@
+{
+   "manufacturer" : "Sony",
+   "offset_patterns" : {
+      "base_types" : [
+         {
+            "name" : "base",
+            "pattern" : "$base",
+            "usage_count" : null
+         },
+         {
+            "name" : "valuePtr",
+            "pattern" : "$valuePtr",
+            "usage_count" : null
+         }
+      ],
+      "idc_patterns" : [],
+      "model_conditions" : [
+         {
+            "operator" : "=~",
+            "pattern" : "^DSLR-A(850|900",
+            "raw_pattern" : "/^DSLR-A(850|900",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^DSLR-A(230|290|330|380|390",
+            "raw_pattern" : "/^DSLR-A(230|290|330|380|390",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^NEX-5N$/',",
+            "raw_pattern" : "/^NEX-5N$/',",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(SLT-A(65|77",
+            "raw_pattern" : "/^(SLT-A(65|77",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(SLT-A(37|57",
+            "raw_pattern" : "/^(SLT-A(37|57",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-(HX10V|HX20V|HX30V|HX200V|TX66|TX200V|TX300V|WX50|WX70|WX100|WX150",
+            "raw_pattern" : "/^(DSC-(HX10V|HX20V|HX30V|HX200V|TX66|TX200V|TX300V|WX50|WX70|WX100|WX150",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(SLT-A99V?|HV|SLT-A58|ILCE-(3000|3500",
+            "raw_pattern" : "/^(SLT-A99V?|HV|SLT-A58|ILCE-(3000|3500",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-(HX300|HX50|HX50V|TX30|WX60|WX80|WX200|WX300",
+            "raw_pattern" : "/^(DSC-(HX300|HX50|HX50V|TX30|WX60|WX80|WX200|WX300",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-(RX100M2|QX10|QX100",
+            "raw_pattern" : "/^(DSC-(RX100M2|QX10|QX100",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-(QX30|RX10|RX100M3|HX60V|HX350|HX400V|WX220|WX350",
+            "raw_pattern" : "/^(DSC-(QX30|RX10|RX100M3|HX60V|HX350|HX400V|WX220|WX350",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-(RX0|RX1RM2|RX10M2|RX10M3|RX100M4|RX100M5|HX80|HX90V?|WX500",
+            "raw_pattern" : "/^(DSC-(RX0|RX1RM2|RX10M2|RX10M3|RX100M4|RX100M5|HX80|HX90V?|WX500",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(6100|6400|6600|7C|7M3|7RM3A?|7RM4A?|9|9M2",
+            "raw_pattern" : "/^(ILCE-(6100|6400|6600|7C|7M3|7RM3A?|7RM4A?|9|9M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^DSC-",
+            "raw_pattern" : "/^DSC-/",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^DSC-(RX10M4|RX100M6|RX100M7|RX100M5A|HX95|HX99|RX0M2",
+            "raw_pattern" : "/^DSC-(RX10M4|RX100M6|RX100M7|RX100M5A|HX95|HX99|RX0M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(SLT-|HV",
+            "raw_pattern" : "/^(SLT-|HV",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(NEX-|ILCE-|ILME-|ZV-|DSC-(RX10M4|RX100M6|RX100M7|RX100M5A|HX95|HX99|RX0M2",
+            "raw_pattern" : "/^(NEX-|ILCE-|ILME-|ZV-|DSC-(RX10M4|RX100M6|RX100M7|RX100M5A|HX95|HX99|RX0M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^ILCA-/',",
+            "raw_pattern" : "/^ILCA-/',",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-|ILME-",
+            "raw_pattern" : "/^(ILCE-|ILME-",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^ILCA-(68|77M2",
+            "raw_pattern" : "/^ILCA-(68|77M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^ILCA-99M2/ and defined $$self{AFAreaILCA} and $$self{AFAreaILCA} != 8",
+            "raw_pattern" : "/^ILCA-99M2/ and defined $$self{AFAreaILCA} and $$self{AFAreaILCA} != 8",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^ILCA-/ and defined $$self{AFAreaILCA} and $$self{AFAreaILCA} == 8",
+            "raw_pattern" : "/^ILCA-/ and defined $$self{AFAreaILCA} and $$self{AFAreaILCA} == 8",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(NEX-|ILCE-|ILME-|ZV-|DSC-RX",
+            "raw_pattern" : "/^(NEX-|ILCE-|ILME-|ZV-|DSC-RX",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(ILCA-|DSC-|ZV-",
+            "raw_pattern" : "/^(ILCA-|DSC-|ZV-",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(5100|6000|7M2",
+            "raw_pattern" : "/^(ILCE-(5100|6000|7M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^ILCE-7RM2/',",
+            "raw_pattern" : "/^ILCE-7RM2/',",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(DSC-|Stellar|ILCE-(1|6100|6300|6400|6500|6600|6700|7C|7M3|7M4|7RM2|7RM3A?|7RM4A?|7RM5|7SM2|7SM3|9|9M2",
+            "raw_pattern" : "/^(DSC-|Stellar|ILCE-(1|6100|6300|6400|6500|6600|6700|7C|7M3|7M4|7RM2|7RM3A?|7RM4A?|7RM5|7SM2|7SM3|9|9M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(6100|6300|6400|6500|6600|7C|7M3|7RM2|7RM3A?|7RM4A?|7SM2|9|9M2",
+            "raw_pattern" : "/^(ILCE-(6100|6300|6400|6500|6600|7C|7M3|7RM2|7RM3A?|7RM4A?|7SM2|9|9M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(1\\b|7M4|7RM5|7SM3",
+            "raw_pattern" : "/^(ILCE-(1\\b|7M4|7RM5|7SM3",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(6700|7CM2|7CR",
+            "raw_pattern" : "/^(ILCE-(6700|7CM2|7CR",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-1M2",
+            "raw_pattern" : "/^(ILCE-1M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(SLT-|HV|ILCA-",
+            "raw_pattern" : "/^(SLT-|HV|ILCA-",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(NEX-|ILCE-|ILME-|Lunar|ZV-E10|ZV-E10M2|ZV-E1",
+            "raw_pattern" : "/^(NEX-|ILCE-|ILME-|Lunar|ZV-E10|ZV-E10M2|ZV-E1",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(SLT-|HV|ILCA-",
+            "raw_pattern" : "/^(SLT-|HV|ILCA-",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(NEX-|ILCE-|Lunar",
+            "raw_pattern" : "/^(NEX-|ILCE-|Lunar",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "DSLR-A100\\b",
+            "raw_pattern" : "/DSLR-A100\\b/",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-|Stellar",
+            "raw_pattern" : "/^(DSC-|Stellar",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^NEX-5C/',",
+            "raw_pattern" : "/^NEX-5C/',",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^DSLR-(A450|A500|A550",
+            "raw_pattern" : "/^DSLR-(A450|A500|A550",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSLR-A(450|500|550",
+            "raw_pattern" : "/^(DSLR-A(450|500|550",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^DSLR-A(450|500|550",
+            "raw_pattern" : "/^DSLR-A(450|500|550",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(SLT-|DSLR-A(560|580",
+            "raw_pattern" : "/^(SLT-|DSLR-A(560|580",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^DSLR-A(700|850|900",
+            "raw_pattern" : "/^DSLR-A(700|850|900",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^DSLR-A(700|850|900",
+            "raw_pattern" : "/^DSLR-A(700|850|900",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^DSLR-A(230|290|330|380|390|850|900",
+            "raw_pattern" : "/^DSLR-A(230|290|330|380|390|850|900",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^DSLR-A(200|230|290|300|330|350|380|390|700|850|900",
+            "raw_pattern" : "/^DSLR-A(200|230|290|300|330|350|380|390|700|850|900",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^DSLR-(A450|A500|A550",
+            "raw_pattern" : "/^DSLR-(A450|A500|A550",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(NEX-|DSLR-(A450|A500|A550",
+            "raw_pattern" : "/^(NEX-|DSLR-(A450|A500|A550",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSLR-(A450|A500|A550",
+            "raw_pattern" : "/^(DSLR-(A450|A500|A550",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^DSLR-A(450|500|550",
+            "raw_pattern" : "/^DSLR-A(450|500|550",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^NEX-(3|5",
+            "raw_pattern" : "/^NEX-(3|5",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^SLT-A(33|55V",
+            "raw_pattern" : "/^SLT-A(33|55V",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^DSLR-A(560|580",
+            "raw_pattern" : "/^DSLR-A(560|580",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(SLT-A35|NEX-C3",
+            "raw_pattern" : "/^(SLT-A35|NEX-C3",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^NEX-(3|5|5C",
+            "raw_pattern" : "/^NEX-(3|5|5C",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^NEX-(3|5|5C",
+            "raw_pattern" : "/^NEX-(3|5|5C",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^NEX-",
+            "raw_pattern" : "/^NEX-/",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(NEX-(3|5|5C|C3|VG10|VG10E",
+            "raw_pattern" : "/^(NEX-(3|5|5C|C3|VG10|VG10E",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^SLT-/',",
+            "raw_pattern" : "/^SLT-/',",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^DSLR-/',",
+            "raw_pattern" : "/^DSLR-/',",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(NEX-(3|5|5C|C3|VG10|VG10E",
+            "raw_pattern" : "/^(NEX-(3|5|5C|C3|VG10|VG10E",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(SLT-(A99|A99V",
+            "raw_pattern" : "/^(SLT-(A99|A99V",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-(RX1|RX1R",
+            "raw_pattern" : "/^(DSC-(RX1|RX1R",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(SLT-A58|ILCE-(3000|3500",
+            "raw_pattern" : "/^(SLT-A58|ILCE-(3000|3500",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(DSC-|Stellar",
+            "raw_pattern" : "/^(DSC-|Stellar",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^DSC-/',",
+            "raw_pattern" : "/^DSC-/',",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(DSC-RX100|Stellar",
+            "raw_pattern" : "/^(DSC-RX100|Stellar",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-RX100|Stellar",
+            "raw_pattern" : "/^(DSC-RX100|Stellar",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^DSC-/ ? undef : $val',",
+            "raw_pattern" : "/^DSC-/ ? undef : $val',",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(ILCA-99M2|ILCE-6500|DSC-(RX0|RX100M5",
+            "raw_pattern" : "/^(ILCA-99M2|ILCE-6500|DSC-(RX0|RX100M5",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCA-99M2|ILCE-6500|DSC-(RX0|RX100M5",
+            "raw_pattern" : "/^(ILCA-99M2|ILCE-6500|DSC-(RX0|RX100M5",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(NEX-|Lunar|ILCE-",
+            "raw_pattern" : "/^(NEX-|Lunar|ILCE-",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(7(R|S|M2",
+            "raw_pattern" : "/^(ILCE-(7(R|S|M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(SLT-A(65|77",
+            "raw_pattern" : "/^(SLT-A(65|77",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(Lunar|NEX-(5N|7|VG20E",
+            "raw_pattern" : "/^(Lunar|NEX-(5N|7|VG20E",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(SLT-A99|HV|ILCE-7",
+            "raw_pattern" : "/^(SLT-A99|HV|ILCE-7",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(SLT-A(37|57|65|77",
+            "raw_pattern" : "/^(SLT-A(37|57|65|77",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(SLT-A(37|57|65|77",
+            "raw_pattern" : "/^(SLT-A(37|57|65|77",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(SLT-A(58|99V?",
+            "raw_pattern" : "/^(SLT-A(58|99V?",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(5100|QX1",
+            "raw_pattern" : "/^(ILCE-(5100|QX1",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(5100|7S|7M2|QX1",
+            "raw_pattern" : "/^(ILCE-(5100|7S|7M2|QX1",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(NEX-(5R|5T|6|VG30E|VG900",
+            "raw_pattern" : "/^(NEX-(5R|5T|6|VG30E|VG900",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(3000|3500|5000|6000|7|7R",
+            "raw_pattern" : "/^(ILCE-(3000|3500|5000|6000|7|7R",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(7S|7M2|5100|QX1",
+            "raw_pattern" : "/^(ILCE-(7S|7M2|5100|QX1",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(Lunar|NEX-(F3|5N|7|VG20E",
+            "raw_pattern" : "/^(Lunar|NEX-(F3|5N|7|VG20E",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-RX100M3|ILCA-(68|77M2",
+            "raw_pattern" : "/^(DSC-RX100M3|ILCA-(68|77M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-RX10|SLT-A(58|99V?",
+            "raw_pattern" : "/^(DSC-RX10|SLT-A(58|99V?",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCA-",
+            "raw_pattern" : "/^(ILCA-",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(ILCE-6400",
+            "raw_pattern" : "/^(ILCE-6400",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(6100|6400|6600|7C|7RM4A?|9M2",
+            "raw_pattern" : "/^(ILCE-(6100|6400|6600|7C|7RM4A?|9M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(7M3|7RM3A?",
+            "raw_pattern" : "/^(ILCE-(7M3|7RM3A?",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(ILCA-99M2|ILCE-(6100|6400|6600|7C|7M3|7RM3A?|7RM4A?|9M2",
+            "raw_pattern" : "/^(ILCA-99M2|ILCE-(6100|6400|6600|7C|7M3|7RM3A?|7RM4A?|9M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(ILCA-99M2|ILCE-(6100|6400|6600|7C|7M3|7RM3A?|7RM4A?|9|9M2",
+            "raw_pattern" : "/^(ILCA-99M2|ILCE-(6100|6400|6600|7C|7M3|7RM3A?|7RM4A?|9|9M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(ILCE-(6100|6400|6600|7C|7M3|7RM3A?|7RM4A?|9M2",
+            "raw_pattern" : "/^(ILCE-(6100|6400|6600|7C|7M3|7RM3A?|7RM4A?|9M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-7|ILCE-9|ILCA-99",
+            "raw_pattern" : "/^(ILCE-7|ILCE-9|ILCA-99",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(7RM2|7SM2",
+            "raw_pattern" : "/^(ILCE-(7RM2|7SM2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(6300|6500",
+            "raw_pattern" : "/^(ILCE-(6300|6500",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^ILCE-(7RM4A?|7C|9M2",
+            "raw_pattern" : "/^ILCE-(7RM4A?|7C|9M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(7M3|7RM3A?|9",
+            "raw_pattern" : "/^(ILCE-(7M3|7RM3A?|9",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(6100|6400|6600|7M3|7RM3A?|9",
+            "raw_pattern" : "/^(ILCE-(6100|6400|6600|7M3|7RM3A?|9",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCA-99M2",
+            "raw_pattern" : "/^(ILCA-99M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(7M4|7RM5|7SM3",
+            "raw_pattern" : "/^(ILCE-(7M4|7RM5|7SM3",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-1",
+            "raw_pattern" : "/^(ILCE-1",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(1M2|6700|7CM2|7CR",
+            "raw_pattern" : "/^(ILCE-(1M2|6700|7CM2|7CR",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(ZV-E10M2",
+            "raw_pattern" : "/^(ZV-E10M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(SLT-(A65|A77",
+            "raw_pattern" : "/^(SLT-(A65|A77",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(SLT-|HV|NEX-|Lunar|DSC-RX|Stellar",
+            "raw_pattern" : "/^(SLT-|HV|NEX-|Lunar|DSC-RX|Stellar",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCA-(68|77M2|99M2",
+            "raw_pattern" : "/^(ILCA-(68|77M2|99M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(ILCE-(1|1M2|6700|7CM2|7CR|7M4|7RM5|7SM3|9M3",
+            "raw_pattern" : "/^(ILCE-(1|1M2|6700|7CM2|7CR|7M4|7RM5|7SM3|9M3",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(ILCE-(1|6700|7CM2|7CR|7M4|7RM5|7SM3|9M3",
+            "raw_pattern" : "/^(ILCE-(1|6700|7CM2|7CR|7M4|7RM5|7SM3|9M3",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-(HX350|HX400V|HX60V|HX80|HX90|HX90V|QX30|RX10|RX10M2|RX10M3|RX100M3|RX100M4",
+            "raw_pattern" : "/^(DSC-(HX350|HX400V|HX60V|HX80|HX90|HX90V|QX30|RX10|RX10M2|RX10M3|RX100M3|RX100M4",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-(HX95|HX99|RX0|RX0M2|RX10M4|RX100M5|RX100M5A|RX100M6",
+            "raw_pattern" : "/^(DSC-(HX95|HX99|RX0|RX0M2|RX10M4|RX100M5|RX100M5A|RX100M6",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-RX100M7|ZV-(1|1F|1M2",
+            "raw_pattern" : "/^(DSC-RX100M7|ZV-(1|1F|1M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^ZV-1M2",
+            "raw_pattern" : "/^ZV-1M2/",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^ZV-1M2/', Format => 'int8u[5]', SubDirectory => { TagTable => 'Image::ExifTool::Sony::ISOInfo' } },",
+            "raw_pattern" : "/^ZV-1M2/', Format => 'int8u[5]', SubDirectory => { TagTable => 'Image::ExifTool::Sony::ISOInfo' } },",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "DSC/ ? 100 : 10",
+            "raw_pattern" : "/DSC/ ? 100 : 10",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^SLT-/',",
+            "raw_pattern" : "/^SLT-/',",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(DSC-|ZV-",
+            "raw_pattern" : "/^(DSC-|ZV-",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(ILCA-|ILCE-(7RM2|7M3|7RM3A?|7RM4A?|7SM2|6100|6300|6400|6500|6600|7C|9|9M2",
+            "raw_pattern" : "/^(ILCA-|ILCE-(7RM2|7M3|7RM3A?|7RM4A?|7SM2|6100|6300|6400|6500|6600|7C|9|9M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCA-(68|77M2",
+            "raw_pattern" : "/^(ILCA-(68|77M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-(RX100M5|RX100M5A|RX100M6|RX100M7|RX10M4|HX99",
+            "raw_pattern" : "/^(DSC-(RX100M5|RX100M5A|RX100M6|RX100M7|RX10M4|HX99",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-7M2",
+            "raw_pattern" : "/^(ILCE-7M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCA-99M2|ILCE-(6100|6400|6500|6600|7C|7M3|7RM3A?|7RM4A?|9|9M2",
+            "raw_pattern" : "/^(ILCA-99M2|ILCE-(6100|6400|6500|6600|7C|7M3|7RM3A?|7RM4A?|9|9M2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(6300|7RM2|7SM2",
+            "raw_pattern" : "/^(ILCE-(6300|7RM2|7SM2",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCA-99M2|ILCE-6500",
+            "raw_pattern" : "/^(ILCA-99M2|ILCE-6500",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(ILCE-(7|7R",
+            "raw_pattern" : "/^(ILCE-(7|7R",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^ILCA-/',",
+            "raw_pattern" : "/^ILCA-/',",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(6300|6500|7M3|7RM2|7RM3A?|7SM2|9",
+            "raw_pattern" : "/^(ILCE-(6300|6500|7M3|7RM2|7RM3A?|7SM2|9",
+            "type" : "regex"
+         },
+         {
+            "operator" : "!~",
+            "pattern" : "^(DSC-",
+            "raw_pattern" : "/^(DSC-",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(DSC-",
+            "raw_pattern" : "/^(DSC-",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(1|7SM3",
+            "raw_pattern" : "/^(ILCE-(1|7SM3",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-7M4",
+            "raw_pattern" : "/^(ILCE-7M4",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(1M2|6700|7CM2|7CR|7RM5",
+            "raw_pattern" : "/^(ILCE-(1M2|6700|7CM2|7CR|7RM5",
+            "type" : "regex"
+         },
+         {
+            "operator" : "=~",
+            "pattern" : "^(ILCE-(1M2|7CM2|7CR|7RM5",
+            "raw_pattern" : "/^(ILCE-(1M2|7CM2|7CR|7RM5",
+            "type" : "regex"
+         }
+      ],
+      "offset_calculations" : [
+         {
+            "base_type" : "simple_variable",
+            "base_variable" : "$offset",
+            "components" : [],
+            "context" : "dir_start",
+            "operation" : "variable_assignment",
+            "raw_expression" : "$offset"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "context" : "dir_start",
+            "operation" : "complex_expression",
+            "raw_expression" : "Get32u($valPt"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "context" : "dir_start",
+            "operation" : "complex_expression",
+            "raw_expression" : "0"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "context" : "dir_start",
+            "operation" : "complex_expression",
+            "raw_expression" : "$offset - $dPos"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "$$et{TrailerStart}+pos($buff)-5 and $raf->Seek($pos,0) and\n            $raf->Read($buff,$hdLen) == $hdLen)\n        {\n            $et->Warn('Error reading HiddenData',1)"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "$$dirInfo{DirStart} || 0"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "$sorted[$i]"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "$offset[$i]"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "Get16u($dataPt, 0)"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "$$dirInfo{DirStart}"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "$dataPos + ($$dirInfo{DirStart}||0) + $base"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "shift @offsets"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "Get32u(\\$val,0)"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "Get8u(\\$val,4)"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "Get8u(\\$val,5)"
+         },
+         {
+            "base_type" : "direct_read",
+            "components" : [],
+            "offset" : "0",
+            "operation" : "get16u_valpt",
+            "raw_expression" : "Get16u($valPt, 0)"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "Get16u($dataPt, $start + 12)"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "Get16u($dataPt, $start + 16)"
+         },
+         {
+            "base_type" : "variable_read",
+            "components" : [],
+            "offset_variable" : "$start",
+            "operation" : "get16u_variable",
+            "raw_expression" : "Get16u($dataPt, $start)"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "Get16u($dataPt, $start + 2)"
+         },
+         {
+            "base_type" : "variable_read",
+            "components" : [],
+            "offset_variable" : "$entry",
+            "operation" : "get16u_variable",
+            "raw_expression" : "Get16u($dataPt, $entry)"
+         },
+         {
+            "base_type" : "entry_direct",
+            "components" : [],
+            "entry_offset" : "2",
+            "operation" : "get16u_entry",
+            "raw_expression" : "Get16u($dataPt, $entry + 2)"
+         },
+         {
+            "base_type" : "direct_read",
+            "components" : [],
+            "offset" : "0",
+            "operation" : "get32u_valpt",
+            "raw_expression" : "Get32u($valPt, 0)"
+         },
+         {
+            "base_type" : "variable_read",
+            "components" : [],
+            "offset_variable" : "$pos",
+            "operation" : "get16u_variable",
+            "raw_expression" : "Get16u($dataPt, $pos)"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "Get16u($dataPt, $pos+2)"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "Get16u($dataPt, $$dirInfo{DirStart})"
+         },
+         {
+            "base_type" : "variable_read",
+            "components" : [],
+            "offset_variable" : "$dirEnd",
+            "operation" : "get32u_variable",
+            "raw_expression" : "Get32u($dataPt, $dirEnd)"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "Get16u($outfile, 0)"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "Get16u($outfile, $entry)"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "Get16u($outfile, $entry + 2)"
+         },
+         {
+            "base_type" : "complex",
+            "components" : [],
+            "operation" : "complex_expression",
+            "raw_expression" : "Get32u($outfile, $entry+8)"
+         },
+         {
+            "base_type" : "entry_hash",
+            "components" : [],
+            "context" : "set_offset",
+            "offset" : "8",
+            "operation" : "entry_hash_offset",
+            "raw_expression" : "$entry{0xc634} + 8",
+            "tag_id" : "0xc634"
+         },
+         {
+            "base_type" : "entry_hash",
+            "components" : [],
+            "context" : "set_offset",
+            "offset" : "8",
+            "operation" : "entry_hash_offset",
+            "raw_expression" : "$entry{0x14a} + 8",
+            "tag_id" : "0x14a"
+         },
+         {
+            "base_type" : "entry_hash",
+            "components" : [],
+            "context" : "set_offset",
+            "offset" : "8",
+            "operation" : "entry_hash_offset",
+            "raw_expression" : "$entry{0x201} + 8",
+            "tag_id" : "0x201"
+         },
+         {
+            "base_type" : "entry_hash",
+            "components" : [],
+            "context" : "set_offset",
+            "offset" : "8",
+            "operation" : "entry_hash_offset",
+            "raw_expression" : "$entry{0x202} + 8",
+            "tag_id" : "0x202"
+         },
+         {
+            "base_type" : "variable_offset",
+            "base_variable" : "$entry",
+            "components" : [],
+            "constant" : "8",
+            "context" : "set_offset",
+            "operation" : "variable_plus_constant",
+            "raw_expression" : "$entry + 8"
+         },
+         {
+            "base_type" : "simple_variable",
+            "base_variable" : "$valuePtr",
+            "components" : [],
+            "context" : "set_offset",
+            "operation" : "variable_assignment",
+            "raw_expression" : "$valuePtr"
+         },
+         {
+            "base_offset" : "4",
+            "base_type" : "array_calculation",
+            "base_variable" : "$start",
+            "components" : [],
+            "context" : "array_offset",
+            "element_size" : "4",
+            "index_variable" : "$i",
+            "operation" : "array_offset",
+            "raw_expression" : "$start + 4 + $i * 4"
+         }
+      ]
+   },
+   "source" : {
+      "extracted_at" : "Sun Jul 20 22:24:15 2025 GMT",
+      "function_pattern" : "ProcessSony|Process.*Binary|SetARW",
+      "module" : "Sony.pm"
+   }
+}
