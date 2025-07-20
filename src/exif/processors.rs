@@ -98,7 +98,7 @@ impl ExifReader {
         parameters: &HashMap<String, String>,
     ) -> Result<()> {
         debug!(
-            "dispatch_processor_with_params called for directory: {}", 
+            "dispatch_processor_with_params called for directory: {}",
             dir_info.name
         );
         debug!(
@@ -233,26 +233,68 @@ impl ExifReader {
             "process_subdirectory_tag called for tag_id: 0x{:04x}, offset: 0x{:x}, tag_name: {}",
             tag_id, offset, tag_name
         );
-        
+
         let subdir_name = match tag_id {
-            0x8769 => "ExifIFD",
-            0x8825 => "GPS",
-            0xA005 => "InteropIFD",
-            0x927C => "MakerNotes",
+            0x8769 => {
+                debug!("Matched ExifIFD for tag 0x{:04x}", tag_id);
+                "ExifIFD"
+            }
+            0x8825 => {
+                debug!("Matched GPS for tag 0x{:04x}", tag_id);
+                "GPS"
+            }
+            0xA005 => {
+                debug!("Matched InteropIFD for tag 0x{:04x}", tag_id);
+                "InteropIFD"
+            }
+            0x927C => {
+                debug!("Matched MakerNotes for tag 0x{:04x}", tag_id);
+                "MakerNotes"
+            }
 
             // Olympus subdirectory tags - only when in Olympus context
             // ExifTool: lib/Image/ExifTool/Olympus.pm subdirectory definitions
-            0x2010 => "Olympus:Equipment",
-            0x2020 => "Olympus:CameraSettings",
-            0x2030 => "Olympus:RawDevelopment",
-            0x2031 => "Olympus:RawDev2",
-            0x2040 => "Olympus:ImageProcessing",
-            0x2050 => "Olympus:FocusInfo",
-            0x3000 => "Olympus:RawInfo",
-            0x4000 => "Olympus:MainInfo",
-            0x5000 => "Olympus:UnknownInfo",
+            0x2010 => {
+                debug!("Matched Olympus:Equipment for tag 0x{:04x}", tag_id);
+                "Olympus:Equipment"
+            }
+            0x2020 => {
+                debug!("Matched Olympus:CameraSettings for tag 0x{:04x}", tag_id);
+                "Olympus:CameraSettings"
+            }
+            0x2030 => {
+                debug!("Matched Olympus:RawDevelopment for tag 0x{:04x}", tag_id);
+                "Olympus:RawDevelopment"
+            }
+            0x2031 => {
+                debug!("Matched Olympus:RawDev2 for tag 0x{:04x}", tag_id);
+                "Olympus:RawDev2"
+            }
+            0x2040 => {
+                debug!("Matched Olympus:ImageProcessing for tag 0x{:04x}", tag_id);
+                "Olympus:ImageProcessing"
+            }
+            0x2050 => {
+                debug!("Matched Olympus:FocusInfo for tag 0x{:04x}", tag_id);
+                "Olympus:FocusInfo"
+            }
+            0x3000 => {
+                debug!("Matched Olympus:RawInfo for tag 0x{:04x}", tag_id);
+                "Olympus:RawInfo"
+            }
+            0x4000 => {
+                debug!("Matched Olympus:MainInfo for tag 0x{:04x}", tag_id);
+                "Olympus:MainInfo"
+            }
+            0x5000 => {
+                debug!("Matched Olympus:UnknownInfo for tag 0x{:04x}", tag_id);
+                "Olympus:UnknownInfo"
+            }
 
-            _ => return Ok(()), // Unknown subdirectory
+            _ => {
+                debug!("Unknown subdirectory tag 0x{:04x}, returning early", tag_id);
+                return Ok(());
+            }
         };
 
         // Validate offset bounds
@@ -393,7 +435,7 @@ impl ExifReader {
     /// ExifTool: SubDirectory tags like ExifIFD (0x8769), GPS (0x8825)
     // TODO: Replace magic numbers with named constants (e.g. EXIF_IFD_TAG = 0x8769) for better readability
     pub(crate) fn is_subdirectory_tag(&self, tag_id: u16) -> bool {
-        match tag_id {
+        let result = match tag_id {
             0x8769 => true, // ExifIFD - Camera settings subdirectory
             0x8825 => true, // GPS - GPS information subdirectory
             0xA005 => true, // InteropIFD - Interoperability subdirectory
@@ -411,12 +453,37 @@ impl ExifReader {
             0x4000 | // MainInfo - Main Olympus tag table
             0x5000   // UnknownInfo - Unknown/experimental data
             => {
-                // Only treat as subdirectory if we're processing Olympus MakerNotes
-                self.is_olympus_subdirectory_context()
+                // ExifTool: Olympus.pm lines 1169-1189 - these are always subdirectories
+                // when found in MakerNotes, regardless of Make tag availability
+                let in_makernotes = self.path.last() == Some(&"MakerNotes".to_string());
+                if in_makernotes {
+                    debug!(
+                        "is_subdirectory_tag for Olympus tag 0x{:04x} in MakerNotes - always true", 
+                        tag_id
+                    );
+                    true
+                } else {
+                    // Only treat as subdirectory if we're processing Olympus files
+                    let is_olympus_context = self.is_olympus_subdirectory_context();
+                    debug!(
+                        "is_subdirectory_tag for Olympus tag 0x{:04x} - olympus_context: {}", 
+                        tag_id, is_olympus_context
+                    );
+                    is_olympus_context
+                }
             },
 
             _ => false,
+        };
+
+        if tag_id == 0x2010 {
+            debug!(
+                "is_subdirectory_tag for Equipment tag 0x2010 - returning: {}",
+                result
+            );
         }
+
+        result
     }
 
     /// Check if we're currently in Olympus MakerNotes context for subdirectory processing
@@ -425,9 +492,15 @@ impl ExifReader {
         // Check if the Make field indicates this is an Olympus camera
         if let Some(make_tag) = self.extracted_tags.get(&0x010F) {
             if let Some(make_str) = make_tag.as_string() {
-                return olympus::is_olympus_makernote(make_str);
+                let is_olympus = olympus::is_olympus_makernote(make_str);
+                debug!(
+                    "is_olympus_subdirectory_context - Make: '{}', is_olympus: {}",
+                    make_str, is_olympus
+                );
+                return is_olympus;
             }
         }
+        debug!("is_olympus_subdirectory_context - No Make tag found, returning false");
         false
     }
 
