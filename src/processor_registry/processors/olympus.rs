@@ -28,6 +28,16 @@ impl BinaryDataProcessor for OlympusEquipmentProcessor {
             context.manufacturer, context.table_name
         );
 
+        // ExifTool: Standard IFD directories must use standard IFD parsing, not manufacturer processors
+        // Following Trust ExifTool: ExifIFD, GPS, InteropIFD use standard TIFF processing
+        if matches!(
+            context.table_name.as_str(),
+            "ExifIFD" | "GPS" | "InteropIFD" | "IFD0" | "IFD1"
+        ) {
+            debug!("OlympusEquipmentProcessor::can_process - returning Incompatible for standard IFD: {}", context.table_name);
+            return ProcessorCapability::Incompatible;
+        }
+
         // ExifTool: More flexible Olympus detection - any Make starting with "OLYMPUS"
         let is_olympus = context
             .manufacturer
@@ -140,6 +150,16 @@ pub struct OlympusCameraSettingsProcessor;
 
 impl BinaryDataProcessor for OlympusCameraSettingsProcessor {
     fn can_process(&self, context: &ProcessorContext) -> ProcessorCapability {
+        // ExifTool: Standard IFD directories must use standard IFD parsing, not manufacturer processors
+        // Following Trust ExifTool: ExifIFD, GPS, InteropIFD use standard TIFF processing
+        if matches!(
+            context.table_name.as_str(),
+            "ExifIFD" | "GPS" | "InteropIFD" | "IFD0" | "IFD1"
+        ) {
+            debug!("OlympusCameraSettingsProcessor::can_process - returning Incompatible for standard IFD: {}", context.table_name);
+            return ProcessorCapability::Incompatible;
+        }
+
         if (context.is_manufacturer("OLYMPUS")
             || context.is_manufacturer("OLYMPUS IMAGING CORP.")
             || context.is_manufacturer("OLYMPUS CORPORATION"))
@@ -189,6 +209,16 @@ pub struct OlympusFocusInfoProcessor;
 
 impl BinaryDataProcessor for OlympusFocusInfoProcessor {
     fn can_process(&self, context: &ProcessorContext) -> ProcessorCapability {
+        // ExifTool: Standard IFD directories must use standard IFD parsing, not manufacturer processors
+        // Following Trust ExifTool: ExifIFD, GPS, InteropIFD use standard TIFF processing
+        if matches!(
+            context.table_name.as_str(),
+            "ExifIFD" | "GPS" | "InteropIFD" | "IFD0" | "IFD1"
+        ) {
+            debug!("OlympusFocusInfoProcessor::can_process - returning Incompatible for standard IFD: {}", context.table_name);
+            return ProcessorCapability::Incompatible;
+        }
+
         if (context.is_manufacturer("OLYMPUS")
             || context.is_manufacturer("OLYMPUS IMAGING CORP.")
             || context.is_manufacturer("OLYMPUS CORPORATION"))
