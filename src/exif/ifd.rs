@@ -282,13 +282,22 @@ impl ExifReader {
                 }
             }
             TiffFormat::Byte => {
-                let value = value_extraction::extract_byte_value(&self.data, &entry)?;
-                let tag_value = TagValue::U8(value);
+                // Handle both single byte and byte arrays
+                let tag_value = if entry.count == 1 {
+                    let value = value_extraction::extract_byte_value(&self.data, &entry)?;
+                    TagValue::U8(value)
+                } else {
+                    // Handle byte arrays (count > 1)
+                    let values = value_extraction::extract_byte_array_value(&self.data, &entry)?;
+                    TagValue::U8Array(values)
+                };
+                
                 let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
                 trace!(
-                    "Extracted BYTE tag {:#x} from {}: {:?}",
+                    "Extracted BYTE tag {:#x} from {} (count: {}): {:?}",
                     entry.tag_id,
                     ifd_name,
+                    entry.count,
                     final_value
                 );
                 let source_info = self.create_tag_source_info(ifd_name);

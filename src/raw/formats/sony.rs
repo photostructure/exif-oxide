@@ -524,6 +524,75 @@ impl SonyRawHandler {
     pub fn get_idc_corruption(&self) -> IDCCorruption {
         self.idc_corruption.clone()
     }
+
+    /// Apply IDC offset recovery for corrupted offsets
+    /// ExifTool: Sony.pm SetARW() offset adjustments
+    fn recover_idc_offset(&self, tag: u16, offset: u64, corruption: &IDCCorruption) -> u64 {
+        match corruption {
+            IDCCorruption::None => offset,
+            IDCCorruption::A100SubIFDCorruption => {
+                // A100 IDC corruption: tag 0x14a changed from raw data to SubIFD
+                // ExifTool: Sony.pm lines 11243-11261
+                match tag {
+                    0x014a => {
+                        // Force offset to 0x2000 for small values (likely corrupted)
+                        if offset < 0x10000 {
+                            debug!("A100 IDC corruption: fixing tag 0x14a offset {} -> 0x2000", offset);
+                            0x2000
+                        } else {
+                            offset
+                        }
+                    }
+                    _ => offset,
+                }
+            }
+            IDCCorruption::GeneralCorruption => {
+                // General IDC corruption recovery
+                // ExifTool: Sony.pm IDC offset adjustments
+                match tag {
+                    0x7200 => offset.saturating_sub(0x10), // Encryption key offset
+                    0x7201 => offset + 0x2000,              // Lens info offset
+                    _ => offset,
+                }
+            }
+        }
+    }
+
+    /// Calculate offset based on Sony-specific patterns
+    /// Uses generated offset patterns from Sony.pm
+    pub fn calculate_offset(&self, _reader: &ExifReader, tag_id: u16, base_offset: u64) -> Result<u64> {
+        // Import generated offset patterns - will be used when full implementation is added
+        use crate::generated::Sony_pm::offset_patterns::{OFFSET_CALCULATION_TYPES, OFFSET_EXAMPLES};
+        let _ = (OFFSET_CALCULATION_TYPES.len(), OFFSET_EXAMPLES.len()); // Suppress unused warnings for now
+        
+        // Check if this is a model-specific offset calculation
+        if let Some(model) = &self.camera_model {
+            // TODO: Use SONY_MODEL_CONDITIONS to check for model-specific offset patterns
+            debug!("Calculating offset for tag 0x{:04x} on model {}", tag_id, model);
+        }
+        
+        // For now, return a simple offset calculation
+        // TODO: Implement full offset calculation based on extracted patterns
+        let offset = match tag_id {
+            // FileFormat tag - direct offset read
+            0xb000 => base_offset,
+            
+            // SubIFD tags often need offset adjustments  
+            0x0114 | 0x0115 => {
+                // Example of Get16u pattern: read 16-bit offset from entry + 2
+                // This would be replaced with actual offset calculation logic
+                base_offset + 2
+            }
+            
+            // Default case
+            _ => base_offset,
+        };
+        
+        // Apply IDC recovery if corruption detected
+        let final_offset = self.recover_idc_offset(tag_id, offset, &self.idc_corruption);
+        
+        Ok(final_offset)
+    }
 }
 
 impl Default for SonyRawHandler {
