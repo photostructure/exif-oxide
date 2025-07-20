@@ -633,16 +633,6 @@ static BINARY_PATTERNS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> =
         },
     ]);
         map.insert(
-            "35",
-            vec![ConditionalEntry {
-                condition: "$$valPt =~ /^\\x08\\0\\0\\0/",
-                name: "Categories",
-                subdirectory: false,
-                writable: true,
-                format: Some("int32u"),
-            }],
-        );
-        map.insert(
             "39",
             vec![ConditionalEntry {
                 condition: "$$valPt =~ /^\\x0a\\0/",
@@ -650,6 +640,16 @@ static BINARY_PATTERNS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> =
                 subdirectory: false,
                 writable: false,
                 format: None,
+            }],
+        );
+        map.insert(
+            "35",
+            vec![ConditionalEntry {
+                condition: "$$valPt =~ /^\\x08\\0\\0\\0/",
+                name: "Categories",
+                subdirectory: false,
+                writable: true,
+                format: Some("int32u"),
             }],
         );
         map

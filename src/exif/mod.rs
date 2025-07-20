@@ -303,24 +303,22 @@ impl ExifReader {
             // Get the enhanced source info for this tag
             let source_info = self.tag_sources.get(&tag_id);
 
-            // Use namespace from TagSourceInfo or default to EXIF
-            let group_name = if let Some(source_info) = source_info {
-                &source_info.namespace
-            } else {
-                "EXIF" // Default fallback
-            };
-
-            // Look up tag name and definition
-            let (base_tag_name, tag_def) = if tag_id >= 0xC000 {
+            // Look up tag name and group, handling synthetic tags properly
+            let (group_name, base_tag_name, tag_def) = if tag_id >= 0xC000 {
                 // Check synthetic tag names mapping first for Canon binary data tags
                 if let Some(synthetic_name) = self.synthetic_tag_names.get(&tag_id) {
-                    // Return just the tag name part (after the group prefix)
-                    let name = synthetic_name
-                        .split(':')
-                        .next_back()
-                        .unwrap_or(synthetic_name)
-                        .to_string();
-                    (name, None)
+                    // Parse the full "Group:TagName" format from synthetic_tag_names
+                    if let Some((group_part, name_part)) = synthetic_name.split_once(':') {
+                        (group_part, name_part.to_string(), None)
+                    } else {
+                        // No group prefix, use source info or default
+                        let group = if let Some(source_info) = source_info {
+                            source_info.namespace.as_str()
+                        } else {
+                            "EXIF"
+                        };
+                        (group, synthetic_name.clone(), None)
+                    }
                 } else {
                     // Canon-specific synthetic tag IDs - try conditional resolution first
                     // For binary data, pass count as data length for count-based conditions
@@ -331,102 +329,131 @@ impl ExifReader {
                     if let Some(conditional_name) =
                         self.resolve_conditional_tag_name(tag_id, count, None, None)
                     {
-                        (conditional_name, None)
+                        let group = if let Some(source_info) = source_info {
+                            source_info.namespace.as_str()
+                        } else {
+                            "EXIF"
+                        };
+                        (group, conditional_name, None)
                     } else {
                         // Fall back to static Canon tag names
                         let canon_tag_name = canon::get_canon_tag_name(tag_id)
                             .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
-                        (canon_tag_name, None)
+                        let group = if let Some(source_info) = source_info {
+                            source_info.namespace.as_str()
+                        } else {
+                            "EXIF"
+                        };
+                        (group, canon_tag_name, None)
                     }
                 }
             } else {
-                // Check if this tag should be looked up in the global table based on source context
-                // ExifTool: lib/Image/ExifTool/Exif.pm:6375 uses context-specific tag tables
-                // to prevent maker note tags from being interpreted as GPS/EXIF tags
-                let should_lookup_global = source_info.is_none_or(|info| {
-                    // Only lookup in global table if the source IFD matches the tag's expected context
-                    // ExifTool: Different IFDs use different tag tables (GPS.pm:119-126 vs Canon.pm:1216-1220)
-                    // This prevents tag ID conflicts like 0x6 = GPSAltitude vs CanonImageType
-                    match info.ifd_name.as_str() {
-                        name if name.starts_with("Canon") => false, // Canon maker notes - don't lookup GPS/EXIF tags
-                        name if name.starts_with("Nikon") => false, // Nikon maker notes - don't lookup GPS/EXIF tags
-                        name if name.starts_with("Olympus") => false, // Olympus maker notes - don't lookup GPS/EXIF tags
-                        "MakerNotes" => false, // Generic maker notes - don't lookup GPS/EXIF tags
-                        "KyoceraRaw" => false, // Kyocera RAW - don't lookup GPS/EXIF tags
-                        "IFD0" if self.original_file_type.as_deref() == Some("RW2") => {
-                            // TODO: HANDOFF TASK - Complete tag precedence fix
-                            // See: docs/milestones/HANDOFF-panasonic-rw2-tag-mapping-completion.md
-                            // For Panasonic RW2, only exclude Panasonic-specific tag ranges
-                            // ExifTool: PanasonicRaw.pm Main table covers 0x01-0x2F range
-                            // Allow standard EXIF tags (Make=0x10F, Model=0x110, ColorSpace=0xA001, etc.)
-                            !(0x01..=0x2F).contains(&tag_id) // Allow standard EXIF tags, exclude Panasonic-specific
+                // Use namespace from TagSourceInfo or default to EXIF for regular tags
+                let group = if let Some(source_info) = source_info {
+                    source_info.namespace.as_str()
+                } else {
+                    "EXIF" // Default fallback
+                };
+                let (name, def) = {
+                    // Check if this tag should be looked up in the global table based on source context
+                    // ExifTool: lib/Image/ExifTool/Exif.pm:6375 uses context-specific tag tables
+                    // to prevent maker note tags from being interpreted as GPS/EXIF tags
+                    let should_lookup_global = source_info.is_none_or(|info| {
+                        // Only lookup in global table if the source IFD matches the tag's expected context
+                        // ExifTool: Different IFDs use different tag tables (GPS.pm:119-126 vs Canon.pm:1216-1220)
+                        // This prevents tag ID conflicts like 0x6 = GPSAltitude vs CanonImageType
+                        match info.ifd_name.as_str() {
+                            name if name.starts_with("Canon") => false, // Canon maker notes - don't lookup GPS/EXIF tags
+                            name if name.starts_with("Nikon") => false, // Nikon maker notes - don't lookup GPS/EXIF tags
+                            name if name.starts_with("Olympus") => false, // Olympus maker notes - don't lookup GPS/EXIF tags
+                            "MakerNotes" => false, // Generic maker notes - don't lookup GPS/EXIF tags
+                            "KyoceraRaw" => false, // Kyocera RAW - don't lookup GPS/EXIF tags
+                            "IFD0" if self.original_file_type.as_deref() == Some("RW2") => {
+                                // TODO: HANDOFF TASK - Complete tag precedence fix
+                                // See: docs/milestones/HANDOFF-panasonic-rw2-tag-mapping-completion.md
+                                // For Panasonic RW2, only exclude Panasonic-specific tag ranges
+                                // ExifTool: PanasonicRaw.pm Main table covers 0x01-0x2F range
+                                // Allow standard EXIF tags (Make=0x10F, Model=0x110, ColorSpace=0xA001, etc.)
+                                !(0x01..=0x2F).contains(&tag_id) // Allow standard EXIF tags, exclude Panasonic-specific
+                            }
+                            _ => true, // Standard IFDs (IFD0, ExifIFD, GPS, etc.) - lookup in global table
                         }
-                        _ => true, // Standard IFDs (IFD0, ExifIFD, GPS, etc.) - lookup in global table
-                    }
-                });
+                    });
 
-                if should_lookup_global {
-                    // Regular EXIF tags - try conditional resolution first for Canon tags
-                    // For binary data, pass count as data length for count-based conditions
-                    let count = match raw_value {
-                        TagValue::Binary(data) => Some(data.len() as u32),
-                        _ => None,
-                    };
-                    if let Some(conditional_name) =
-                        self.resolve_conditional_tag_name(tag_id, count, None, None)
-                    {
-                        (conditional_name, None)
-                    } else {
-                        // Fall back to standard tag lookup in unified table
-                        // ExifTool: lib/Image/ExifTool/ExifTool.pm:9026 $$tagTablePtr{$tagID}
-                        let tag_def = TAG_BY_ID.get(&(tag_id as u32)).copied();
-                        let name = tag_def
-                            .map(|def| def.name.to_string())
-                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                    if should_lookup_global {
+                        // Regular EXIF tags - try conditional resolution first for Canon tags
+                        // For binary data, pass count as data length for count-based conditions
+                        let count = match raw_value {
+                            TagValue::Binary(data) => Some(data.len() as u32),
+                            _ => None,
+                        };
+                        if let Some(conditional_name) =
+                            self.resolve_conditional_tag_name(tag_id, count, None, None)
+                        {
+                            (conditional_name, None)
+                        } else {
+                            // Fall back to standard tag lookup in unified table
+                            // ExifTool: lib/Image/ExifTool/ExifTool.pm:9026 $$tagTablePtr{$tagID}
+                            let tag_def = TAG_BY_ID.get(&(tag_id as u32)).copied();
+                            let name = tag_def
+                                .map(|def| def.name.to_string())
+                                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
 
-                        // Debug logging for ColorSpace and WhiteBalance
-                        if tag_id == 0xa001 || tag_id == 0xa403 {
-                            debug!(
+                            // Debug logging for ColorSpace and WhiteBalance
+                            if tag_id == 0xa001 || tag_id == 0xa403 {
+                                debug!(
                                 "Processing tag 0x{:04x} ({}) with value {:?}, tag_def found: {}",
                                 tag_id,
                                 name,
                                 raw_value,
                                 tag_def.is_some()
                             );
-                        }
+                            }
 
-                        (name, tag_def)
-                    }
-                } else {
-                    // Maker note tags - don't lookup in global table to avoid conflicts
-                    // ExifTool: lib/Image/ExifTool/Exif.pm:6190-6191 inMakerNotes context detection
-
-                    // Check for RAW format-specific tags
-                    if let Some(source_info) = source_info {
-                        if source_info.ifd_name == "KyoceraRaw" {
-                            // Use Kyocera-specific tag name lookup
-                            let kyocera_tag_name = crate::raw::get_kyocera_tag_name(tag_id)
-                                .map(|name| name.to_string())
-                                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
-                            (kyocera_tag_name, None)
-                        } else if source_info.ifd_name == "IFD0"
-                            && self.original_file_type.as_deref() == Some("RW2")
-                        {
-                            // Use Panasonic RW2-specific tag name lookup
-                            // ExifTool: PanasonicRaw.pm Main table for RW2 IFD0
-                            let panasonic_tag_name =
-                                crate::raw::formats::panasonic::get_panasonic_tag_name(tag_id)
-                                    .map(|name| name.to_string())
-                                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
-                            (panasonic_tag_name, None)
-                        } else {
-                            // Other maker note tags
-                            (format!("Tag_{tag_id:04X}"), None)
+                            (name, tag_def)
                         }
                     } else {
-                        (format!("Tag_{tag_id:04X}"), None)
+                        // Maker note tags - don't lookup in global table to avoid conflicts
+                        // ExifTool: lib/Image/ExifTool/Exif.pm:6190-6191 inMakerNotes context detection
+
+                        // Check for RAW format-specific tags
+                        if let Some(source_info) = source_info {
+                            if source_info.ifd_name == "KyoceraRaw" {
+                                // Use Kyocera-specific tag name lookup
+                                let kyocera_tag_name = crate::raw::get_kyocera_tag_name(tag_id)
+                                    .map(|name| name.to_string())
+                                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                (kyocera_tag_name, None)
+                            } else if source_info.ifd_name == "IFD0"
+                                && self.original_file_type.as_deref() == Some("RW2")
+                            {
+                                // Use Panasonic RW2-specific tag name lookup
+                                // ExifTool: PanasonicRaw.pm Main table for RW2 IFD0
+                                let panasonic_tag_name =
+                                    crate::raw::formats::panasonic::get_panasonic_tag_name(tag_id)
+                                        .map(|name| name.to_string())
+                                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                (panasonic_tag_name, None)
+                            } else {
+                                // Check for Canon maker note tags first
+                                if source_info.ifd_name.starts_with("Canon")
+                                    || source_info.ifd_name == "MakerNotes"
+                                {
+                                    // Use Canon-specific tag name lookup for Canon maker note tags
+                                    let canon_tag_name = canon::get_canon_tag_name(tag_id)
+                                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                    (canon_tag_name, None)
+                                } else {
+                                    // Other maker note tags
+                                    (format!("Tag_{tag_id:04X}"), None)
+                                }
+                            }
+                        } else {
+                            (format!("Tag_{tag_id:04X}"), None)
+                        }
                     }
-                }
+                };
+                (group, name, def)
             };
 
             // Apply conversions to get both value and print
