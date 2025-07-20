@@ -403,13 +403,13 @@ impl DispatchRule for OlympusDispatchRule {
         // Olympus-specific processor selection logic based on ExifTool Olympus.pm
         match context.table_name.as_str() {
             "Equipment" | "Olympus:Equipment" => {
-                // Select Olympus Equipment processor
-                candidates
-                    .iter()
-                    .find(|(key, _, _)| {
-                        key.namespace == "Olympus" && key.processor_name == "Equipment"
-                    })
-                    .map(|(key, processor, _)| (key.clone(), processor.clone()))
+                // Equipment has WRITE_PROC => WriteExif in ExifTool, indicating it's an IFD structure
+                // Return None to let it fall back to standard IFD parsing
+                // ExifTool: lib/Image/ExifTool/Olympus.pm line 1588
+                debug!(
+                    "Olympus dispatch rule: Equipment should use standard IFD parsing, returning None"
+                );
+                None
             }
             "CameraSettings" | "Olympus:CameraSettings" => {
                 // Select Olympus CameraSettings processor

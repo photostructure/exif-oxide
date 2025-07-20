@@ -135,10 +135,26 @@ sub extract_offset_patterns_from_source {
     }
     
     # Extract offset calculation patterns - look for actual Sony offset patterns
-    # Look for Get32u patterns which are the main offset calculations in Sony.pm
-    while ($source_code =~ /\$offset\s*=\s*([^;]+);/g) {
+    
+    # Look for DirStart/DirLen assignments (common in Sony.pm)
+    while ($source_code =~ /DirStart\s*=>\s*([^,}]+)/g) {
         my $calculation = $1;
-        $calculation =~ s/^\s+|\s+$//g;  # Trim whitespace
+        $calculation =~ s/^\s+|\s+$//g;
+        
+        unless ($seen_calculations{$calculation}) {
+            my $calc_data = parse_offset_calculation($calculation);
+            if ($calc_data) {
+                $calc_data->{context} = 'dir_start';
+                push @offset_calculations, $calc_data;
+                $seen_calculations{$calculation} = 1;
+            }
+        }
+    }
+    
+    # Look for offset variable assignments
+    while ($source_code =~ /\$(?:offset|addr|ptr|pos|start)\s*=\s*([^;]+);/g) {
+        my $calculation = $1;
+        $calculation =~ s/^\s+|\s+$//g;
         
         # Skip simple variable assignments
         next if $calculation =~ /^\$\w+$/;
@@ -152,8 +168,8 @@ sub extract_offset_patterns_from_source {
         }
     }
     
-    # Also look for inline offset calculations in Get32u calls
-    while ($source_code =~ /(Get32u\s*\([^)]+\)\s*\+[^;,\n)]+)/g) {
+    # Look for Get32u/Get16u/Get8u patterns anywhere in expressions
+    while ($source_code =~ /(Get(?:32u|16u|8u)\s*\([^)]+\)(?:\s*[\+\-\*]\s*[^;,\n)]+)?)/g) {
         my $calculation = $1;
         $calculation =~ s/^\s+|\s+$//g;
         
@@ -166,15 +182,44 @@ sub extract_offset_patterns_from_source {
         }
     }
     
-    # Look for conditional offset patterns in Sony.pm
-    while ($source_code =~ /if\s*\([^)]*\$\$self\{Model\}[^)]*\)\s*\{[^}]*\$offset\s*=\s*([^;]+);/gs) {
+    # Look for Set32u/Set16u patterns (offset writing)
+    while ($source_code =~ /(Set(?:32u|16u)\s*\([^)]+,\s*[^)]+,\s*([^)]+)\))/g) {
+        my $full_expr = $1;
+        my $offset_expr = $2;
+        $offset_expr =~ s/^\s+|\s+$//g;
+        
+        unless ($seen_calculations{$offset_expr}) {
+            my $calc_data = parse_offset_calculation($offset_expr);
+            if ($calc_data) {
+                $calc_data->{context} = 'set_offset';
+                push @offset_calculations, $calc_data;
+                $seen_calculations{$offset_expr} = 1;
+            }
+        }
+    }
+    
+    # Look for array offset calculations like $start + 4 + $i * 4
+    while ($source_code =~ /(\$\w+\s*\+\s*\d+\s*\+\s*\$\w+\s*\*\s*\d+)/g) {
         my $calculation = $1;
-        $calculation =~ s/^\s+|\s+$//g;
         
         unless ($seen_calculations{$calculation}) {
             my $calc_data = parse_offset_calculation($calculation);
             if ($calc_data) {
-                $calc_data->{context} = 'model_conditional';
+                $calc_data->{context} = 'array_offset';
+                push @offset_calculations, $calc_data;
+                $seen_calculations{$calculation} = 1;
+            }
+        }
+    }
+    
+    # Look for entry-based offsets like $entry{0xc634} + 8
+    while ($source_code =~ /(\$entry\{0x[0-9a-fA-F]+\}\s*\+\s*\d+)/g) {
+        my $calculation = $1;
+        
+        unless ($seen_calculations{$calculation}) {
+            my $calc_data = parse_offset_calculation($calculation);
+            if ($calc_data) {
+                $calc_data->{context} = 'entry_offset';
                 push @offset_calculations, $calc_data;
                 $seen_calculations{$calculation} = 1;
             }
@@ -231,25 +276,70 @@ sub parse_offset_calculation {
         operation => 'unknown',
     };
     
-    # Pattern: Get32u($dataPt, $entry + N) + $base
-    if ($calculation =~ /Get32u\s*\(\s*\$dataPt\s*,\s*\$entry\s*\+\s*(\d+)\s*\)\s*\+\s*(\$\w+)/) {
-        $calc_data->{operation} = 'get32u_entry_offset';
-        $calc_data->{entry_offset} = $1;
-        $calc_data->{base_variable} = $2;
+    # Pattern: Get32u/Get16u/Get8u($dataPt, $entry + N) + $base
+    if ($calculation =~ /Get(32u|16u|8u)\s*\(\s*\$dataPt\s*,\s*\$entry\s*\+\s*(\d+)\s*\)\s*\+\s*(\$\w+)/) {
+        $calc_data->{operation} = lc("get$1_entry_offset");
+        $calc_data->{entry_offset} = $2;
+        $calc_data->{base_variable} = $3;
         $calc_data->{base_type} = 'entry_plus_base';
         return $calc_data;
     }
     
-    # Pattern: Get32u($dataPt, $valuePtr) + $base
-    if ($calculation =~ /Get32u\s*\(\s*\$dataPt\s*,\s*\$valuePtr\s*\)\s*\+\s*(\$\w+)/) {
-        $calc_data->{operation} = 'get32u_valueptr';
-        $calc_data->{base_variable} = $1;
+    # Pattern: Get32u/Get16u/Get8u($dataPt, $valuePtr) + $base
+    if ($calculation =~ /Get(32u|16u|8u)\s*\(\s*\$dataPt\s*,\s*\$valuePtr\s*\)\s*\+\s*(\$\w+)/) {
+        $calc_data->{operation} = lc("get$1_valueptr");
+        $calc_data->{base_variable} = $2;
         $calc_data->{base_type} = 'valueptr_plus_base';
         return $calc_data;
     }
     
+    # Pattern: Get32u/Get16u/Get8u($valPt, N) - direct offset read
+    if ($calculation =~ /Get(32u|16u|8u)\s*\(\s*\$valPt\s*,\s*(\d+)\s*\)/) {
+        $calc_data->{operation} = lc("get$1_valpt");
+        $calc_data->{offset} = $2;
+        $calc_data->{base_type} = 'direct_read';
+        return $calc_data;
+    }
+    
+    # Pattern: Get32u/Get16u/Get8u($dataPt, N) + constant
+    if ($calculation =~ /Get(32u|16u|8u)\s*\(\s*\$dataPt\s*,\s*(\d+)\s*\)\s*\+\s*(0x[0-9a-fA-F]+|\d+)/) {
+        $calc_data->{operation} = lc("get$1_fixed_offset");
+        $calc_data->{data_offset} = $2;
+        $calc_data->{constant} = $3;
+        $calc_data->{base_type} = 'fixed_offset';
+        return $calc_data;
+    }
+    
+    # Pattern: Get16u($dataPt, $entry + N) - without additional base
+    if ($calculation =~ /Get(32u|16u|8u)\s*\(\s*\$dataPt\s*,\s*\$entry\s*\+\s*(\d+)\s*\)/) {
+        $calc_data->{operation} = lc("get$1_entry");
+        $calc_data->{entry_offset} = $2;
+        $calc_data->{base_type} = 'entry_direct';
+        return $calc_data;
+    }
+    
+    # Pattern: $start + 4 + $i * 4 (array offset)
+    if ($calculation =~ /(\$\w+)\s*\+\s*(\d+)\s*\+\s*(\$\w+)\s*\*\s*(\d+)/) {
+        $calc_data->{operation} = 'array_offset';
+        $calc_data->{base_variable} = $1;
+        $calc_data->{base_offset} = $2;
+        $calc_data->{index_variable} = $3;
+        $calc_data->{element_size} = $4;
+        $calc_data->{base_type} = 'array_calculation';
+        return $calc_data;
+    }
+    
+    # Pattern: $entry{0xc634} + 8 (entry hash offset)
+    if ($calculation =~ /\$entry\{(0x[0-9a-fA-F]+)\}\s*\+\s*(\d+)/) {
+        $calc_data->{operation} = 'entry_hash_offset';
+        $calc_data->{tag_id} = $1;
+        $calc_data->{offset} = $2;
+        $calc_data->{base_type} = 'entry_hash';
+        return $calc_data;
+    }
+    
     # Pattern: $value + constant
-    if ($calculation =~ /(\$\w+)\s*\+\s*(0x[0-9a-fA-F]+|\d+)/) {
+    if ($calculation =~ /^(\$\w+)\s*\+\s*(0x[0-9a-fA-F]+|\d+)$/) {
         $calc_data->{operation} = 'variable_plus_constant';
         $calc_data->{base_variable} = $1;
         $calc_data->{constant} = $2;
@@ -257,12 +347,11 @@ sub parse_offset_calculation {
         return $calc_data;
     }
     
-    # Pattern: Get32u($dataPt, N) + constant
-    if ($calculation =~ /Get32u\s*\(\s*\$dataPt\s*,\s*(\d+)\s*\)\s*\+\s*(0x[0-9a-fA-F]+|\d+)/) {
-        $calc_data->{operation} = 'get32u_fixed_offset';
-        $calc_data->{data_offset} = $1;
-        $calc_data->{constant} = $2;
-        $calc_data->{base_type} = 'fixed_offset';
+    # Pattern: simple Get32u/Get16u/Get8u($dataPt, $offset)
+    if ($calculation =~ /Get(32u|16u|8u)\s*\(\s*\$dataPt\s*,\s*(\$\w+)\s*\)/) {
+        $calc_data->{operation} = lc("get$1_variable");
+        $calc_data->{offset_variable} = $2;
+        $calc_data->{base_type} = 'variable_read';
         return $calc_data;
     }
     

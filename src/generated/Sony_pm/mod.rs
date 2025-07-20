@@ -17,6 +17,7 @@ pub mod sonyexposureprogram;
 pub mod tag2010e_inline;
 pub mod tag2010g_inline;
 pub mod whitebalancesetting;
+pub mod offset_patterns;
 
 // Re-export all lookup functions and constants
 pub use afpoints79::*;
@@ -33,3 +34,4 @@ pub use sonyexposureprogram::*;
 pub use tag2010e_inline::*;
 pub use tag2010g_inline::*;
 pub use whitebalancesetting::*;
+pub use offset_patterns::*;

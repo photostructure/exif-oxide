@@ -56,9 +56,16 @@ impl ExifReader {
             "GPS" => Some("GPS".to_string()),
             "ExifIFD" | "InteropIFD" => Some("Exif".to_string()),
             "MakerNotes" => {
-                // Trust ExifTool: MakerNotes are parsed as standard TIFF IFDs first
-                // to discover subdirectory tags like Equipment (0x2010), CameraSettings (0x2020), etc.
-                Some("Exif".to_string())
+                // For MakerNotes, we need manufacturer-specific processing
+                // Try to detect the manufacturer from Make tag
+                if let Some(processor) = self.detect_makernote_processor() {
+                    debug!("Detected manufacturer-specific processor for MakerNotes: {}", processor);
+                    Some(processor)
+                } else {
+                    // Fall back to standard EXIF processing if manufacturer not detected
+                    debug!("No manufacturer detected for MakerNotes, using standard EXIF processing");
+                    Some("Exif".to_string())
+                }
             }
             // Manufacturer-specific subdirectories use manufacturer processors
             _ if dir_name.starts_with("Olympus:")
@@ -401,7 +408,7 @@ impl ExifReader {
     /// Detect manufacturer-specific MakerNote processor
     /// ExifTool: lib/Image/ExifTool/MakerNotes.pm conditional dispatch system
     /// Phase 5: Simplified to return processor name string
-    fn detect_makernote_processor(&self) -> Option<String> {
+    pub(crate) fn detect_makernote_processor(&self) -> Option<String> {
         // Extract Make and Model from current tags for detection
         let make = self
             .extracted_tags
