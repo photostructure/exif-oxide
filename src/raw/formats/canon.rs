@@ -16,9 +16,6 @@
 //! - Offset schemes for different camera generations (4/6/16/28 bytes)
 
 use crate::exif::ExifReader;
-use crate::implementations::canon::{
-    detect_offset_scheme as detect_canon_offset_scheme, CanonOffsetScheme,
-};
 use crate::raw::RawFormatHandler;
 use crate::types::Result;
 use tracing::debug;
@@ -63,10 +60,6 @@ pub use crate::generated::Canon_pm::tag_structure::CanonDataType;
 pub struct CanonRawHandler {
     /// Detected Canon format (determined from file extension/magic)
     format: CanonFormat,
-
-    /// Canon offset management system
-    /// ExifTool: Canon.pm offset scheme detection and calculation
-    offset_manager: CanonOffsetManager,
 }
 
 impl Default for CanonRawHandler {
@@ -82,17 +75,13 @@ impl CanonRawHandler {
         debug!("Creating Canon RAW handler (format auto-detected)");
         Self {
             format: CanonFormat::CR2, // Default, will be detected during processing
-            offset_manager: CanonOffsetManager::new(),
         }
     }
 
     /// Create new Canon RAW handler with specific format
     pub fn new_with_format(format: CanonFormat) -> Self {
         debug!("Creating Canon RAW handler for format: {}", format.name());
-        Self {
-            format,
-            offset_manager: CanonOffsetManager::new(),
-        }
+        Self { format }
     }
 
     /// Process Canon RAW file
@@ -172,50 +161,6 @@ impl CanonRawHandler {
         debug!("Defaulting to CR2 format");
         self.format = CanonFormat::CR2;
         Ok(())
-    }
-
-    /// Detect and configure Canon offset scheme for camera model
-    /// ExifTool: Canon.pm model-based offset scheme detection and configuration
-    pub fn configure_offset_scheme(&mut self, camera_model: &str) -> CanonOffsetConfig {
-        debug!(
-            "Configuring Canon offset scheme for camera: {}",
-            camera_model
-        );
-
-        let config = self.offset_manager.detect_offset_scheme(camera_model);
-
-        debug!(
-            "Canon offset configuration: scheme={}, base={:?}, endianness={:?}",
-            config.pointer_size.name(),
-            config.base_offset,
-            config.endianness
-        );
-
-        config
-    }
-
-    /// Calculate Canon data offset using offset manager
-    /// ExifTool: Canon.pm offset calculation for data access
-    pub fn calculate_data_offset(
-        &self,
-        config: &CanonOffsetConfig,
-        base_address: u64,
-        data: &[u8],
-    ) -> Result<u64> {
-        self.offset_manager
-            .calculate_offset(config, base_address, data)
-    }
-
-    /// Validate Canon offset configuration
-    /// ExifTool: Canon.pm offset validation and bounds checking
-    pub fn validate_offset_config(
-        &self,
-        config: &CanonOffsetConfig,
-        offset: u64,
-        data_size: usize,
-    ) -> bool {
-        self.offset_manager
-            .validate_offset(config, offset, data_size)
     }
 }
 

@@ -149,7 +149,7 @@ impl OlympusRawHandler {
                     dir_start: *offset as usize,
                     dir_len: 0,         // Will be calculated by IFD processing
                     base: base_offset,  // Use MakerNotes base
-                    data_pos: data_pos, // Use MakerNotes data position
+                    data_pos, // Use MakerNotes data position
                     allow_reprocess: false,
                 };
 
