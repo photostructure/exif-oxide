@@ -597,68 +597,159 @@ impl OffsetContext {
 
 ---
 
-## 🚨 **URGENT ENGINEER HANDOFF (July 20, 2025)**
+## 🚨 **CRITICAL ENGINEER HANDOFF (January 20, 2025)**
 
-### **Current Status**: 99.8% Complete - Equipment Tag Naming Issue Identified and Partially Fixed
+### **Current Status**: 99.5% Complete - Equipment Tag Processing Fixed But Name Resolution Still Pending
 
-**What Just Happened**: The milestone was essentially complete with working signature detection and Equipment subdirectory processing, but Equipment tags were showing as `Tag_XXXX` instead of proper names like `CameraType2`, `SerialNumber`, `LensType`.
+**Critical Issue**: Equipment tags are being extracted but show as generic `Tag_XXXX` instead of proper names (`CameraType2`, `SerialNumber`, `LensType`). The infrastructure is all working - we just need the Equipment tags to resolve to their proper names.
 
-### **ROOT CAUSE DISCOVERED**: Olympus Dispatch Rule Issue
+### **ROOT CAUSE ANALYSIS - UPDATED**
 
-**The Problem**: The OlympusDispatchRule in `src/processor_registry/dispatch.rs` is **ignoring** the Olympus:Equipment table instead of processing it. Debug logs show:
+After extensive debugging, we've identified a complex issue with how subdirectory tags are processed:
 
+1. **Dispatch Rule**: Fixed - now correctly recognizes `Olympus:Equipment` tables
+2. **Processor Selection**: Working - `OlympusEquipmentProcessor` has correct capability detection
+3. **Subdirectory Detection**: The issue is that Equipment tag 0x2010 is NOT being recognized as a subdirectory tag
+
+**The Core Problem**: The `is_subdirectory_tag()` function in `src/exif/processors.rs` only treats Olympus tags (0x2010-0x5000) as subdirectories when in "Olympus context". However, when parsing the MakerNotes IFD, the Make tag hasn't been stored yet, so `is_olympus_subdirectory_context()` returns false.
+
+### **WHAT THE NEXT ENGINEER NEEDS TO DO**
+
+**Priority 1: Fix Subdirectory Tag Detection** (1 hour)
+
+The Equipment tag (0x2010) is being stored as a regular tag instead of being processed as a subdirectory. The fix requires ensuring Olympus subdirectory tags are recognized during MakerNotes parsing.
+
+**Option A - Quick Fix**: 
+```rust
+// In src/exif/processors.rs::is_subdirectory_tag()
+// Always treat Olympus subdirectory tags as subdirectories when in MakerNotes
+0x2010 | 0x2020 | 0x2030 | 0x2031 | 0x2040 | 0x2050 | 0x3000 | 0x4000 | 0x5000 => {
+    // Check if we're in MakerNotes IFD
+    if self.path.last() == Some(&"MakerNotes".to_string()) {
+        true  // Always process as subdirectory in MakerNotes
+    } else {
+        self.is_olympus_subdirectory_context()
+    }
+}
 ```
-Olympus dispatch rule processing table: Olympus:Equipment for manufacturer: Some("OLYMPUS IMAGING CORP.")
-Olympus dispatch rule ignoring non-Olympus table: Olympus:Equipment
-Selected processor EXIF::BinaryData for directory Olympus:Equipment
+
+**Option B - Better Fix**:
+Check if we're in an Olympus MakerNotes by examining the signature detection that already happened:
+```rust
+// Add a field to track if we're in Olympus MakerNotes
+// Set this when detect_olympus_signature() succeeds
+// Use it in is_subdirectory_tag() instead of checking Make tag
 ```
 
-**Key Issue**: The dispatch rule logic incorrectly identifies `Olympus:Equipment` as a "non-Olympus table" and falls back to generic `EXIF::BinaryData` processor instead of using an Olympus-specific processor that knows about Equipment tag names.
+**Priority 2: Verify Equipment Processing** (30 min)
 
-### **WHAT THE NEXT ENGINEER NEEDS TO DO (30 minutes max)**
-
-**Priority 1**: Fix the OlympusDispatchRule logic in `src/processor_registry/dispatch.rs`
-
-1. **Find the bug** in `OlympusDispatchRule::select_processor()` around line 170-220
-2. **Expected Issue**: Logic that checks if table name is "Olympus-specific" is incorrectly rejecting `Olympus:Equipment`
-3. **Fix**: Ensure tables starting with `"Olympus:"` are recognized as Olympus tables
-4. **Result**: Equipment tags should then resolve to proper names via existing tag lookup systems
-
-**Priority 2**: Test the fix works
+Once subdirectory detection is fixed:
 
 ```bash
-# Should show CameraType2, SerialNumber, LensType
-cargo run -- test-images/olympus/test.orf | grep -E "(CameraType|SerialNumber|LensType)"
+# Should show Equipment being processed as subdirectory
+RUST_LOG=debug cargo run -- test-images/olympus/test.orf 2>&1 | grep -E "(process_subdirectory_tag.*0x2010|Equipment)"
 
-# Should show Olympus processor being selected, not EXIF::BinaryData  
-RUST_LOG=debug cargo run -- test-images/olympus/test.orf 2>&1 | grep "Selected processor.*Olympus"
+# Should show OlympusEquipmentProcessor being selected
+RUST_LOG=debug cargo run -- test-images/olympus/test.orf 2>&1 | grep "OlympusEquipmentProcessor"
+
+# Final test - should show proper tag names
+cargo run -- test-images/olympus/test.orf | grep -E "(CameraType|SerialNumber|LensType)"
 ```
 
-### **CRITICAL FILES TO STUDY**
+### **CRITICAL CODE TO STUDY**
 
-1. **`src/processor_registry/dispatch.rs:170-220`** - OlympusDispatchRule::select_processor()
-   - **Bug Location**: Logic that determines if a table is "Olympus-specific"
-   - **Expected Fix**: Tables starting with "Olympus:" should be handled by Olympus processors
+1. **`src/exif/processors.rs:437-473`** - `is_subdirectory_tag()` and `is_olympus_subdirectory_context()`
+   - **Issue**: Returns false for Olympus tags because Make tag isn't available yet
+   - **Fix Needed**: Alternative way to detect Olympus context during MakerNotes parsing
 
-2. **Debug Evidence**: The processor selection is working for manufacturer detection but failing at table-specific dispatch
-   - Line: `"Olympus dispatch rule ignoring non-Olympus table: Olympus:Equipment"`
-   - This should NOT happen - Equipment IS an Olympus table
+2. **`src/exif/ifd.rs:455-505`** - IFD format tag processing
+   - This is where `is_subdirectory_tag()` is called
+   - If it returns false, tag is stored as regular tag instead of processed as subdirectory
 
-3. **Reference Implementation**: Look at how CanonDispatchRule or NikonDispatchRule handle their manufacturer-specific tables for patterns
+3. **`src/processor_registry/processors/olympus.rs`** - OlympusEquipmentProcessor
+   - Already implemented and working correctly
+   - Extracts CameraType2, SerialNumber, LensType from Equipment data
 
-### **WHAT I ALREADY FIXED (Don't Redo)**
+4. **`src/implementations/olympus/equipment_tags.rs`** - Tag name mappings
+   - Already has correct mappings for Equipment tags
 
-✅ **Equipment Tag Lookup Function**: Created `src/implementations/olympus/equipment_tags.rs` with proper tag ID to name mappings  
-✅ **Tag Name Resolution**: Extended `src/exif/ifd.rs::get_tag_name()` to handle "Olympus:Equipment" namespace  
-✅ **Signature Detection**: Fully working - Equipment subdirectory is being found and processed (25 entries)  
-✅ **Offset Calculation**: Equipment IFD parsing at correct offset (0xe66)  
-✅ **Subdirectory Processing**: Tag 0x2010 correctly identified as "Olympus:Equipment"  
+### **DEBUGGING EVIDENCE**
 
-### **THE REMAINING BUG IS SIMPLE**
+```
+# Current behavior - Equipment tag stored as regular tag:
+Tag 0x2010 from MakerNotes -> MakerNotes:Tag_2010: U32(114)
 
-The Equipment subdirectory is being processed correctly, but the wrong processor is being selected. Instead of an Olympus-specific processor that knows about tag names, it's using a generic EXIF processor that shows `Tag_XXXX`.
+# Expected behavior - Equipment processed as subdirectory:
+Processing SubDirectory: Tag_2010 -> Olympus:Equipment at offset 0xe66
+Selected processor Olympus::Equipment for directory Olympus:Equipment
+```
 
-**Quick Diagnosis**: In `OlympusDispatchRule::select_processor()`, find where it checks if a table name is "Olympus-specific" and fix the logic to recognize `"Olympus:Equipment"` as an Olympus table.
+### **WHAT'S ALREADY WORKING**
+
+✅ **Olympus Signature Detection**: `detect_olympus_signature()` correctly identifies "OLYMPUS\0" header  
+✅ **Offset Calculations**: Equipment IFD found at correct offset (0xe66)  
+✅ **Dispatch Rules**: Fixed to recognize `Olympus:` prefixed tables  
+✅ **OlympusEquipmentProcessor**: Implemented with correct tag extraction logic  
+✅ **Manufacturer Detection**: Processors correctly identify "OLYMPUS IMAGING CORP."  
+✅ **Equipment Tag Mappings**: `equipment_tags.rs` has all needed tag definitions  
+
+### **SUCCESS CRITERIA**
+
+1. Equipment tag 0x2010 must be processed as subdirectory, not stored as regular tag
+2. OlympusEquipmentProcessor must be selected for Olympus:Equipment directory
+3. Final JSON output must show:
+   ```json
+   "MakerNotes:CameraType2": "E-M1",
+   "MakerNotes:SerialNumber": "BHP242330", 
+   "MakerNotes:LensType": "Olympus M.Zuiko Digital ED 12-40mm F2.8 Pro"
+   ```
+
+### **TRIBAL KNOWLEDGE**
+
+1. **Order of Operations**: The Make tag (0x010F) is extracted from IFD0, but MakerNotes are processed from ExifIFD before we return to IFD0. This means `is_olympus_subdirectory_context()` can't rely on the Make tag during MakerNotes parsing.
+
+2. **Path Context**: The `self.path` vector tracks the current directory hierarchy. When in MakerNotes, it contains `["IFD0", "ExifIFD", "MakerNotes"]`.
+
+3. **Debug Tip**: If you see `Tag_2010: U32(114)` in the output, the Equipment tag was stored as a regular tag. If you see `Processing SubDirectory... Olympus:Equipment`, it's being processed correctly.
+
+4. **Processor Registry**: The registry is working correctly - the issue is that it's never called for Equipment because the tag isn't recognized as a subdirectory.
+
+### **FUTURE REFACTORING OPPORTUNITIES**
+
+1. **Context Tracking**: Add explicit manufacturer context tracking that persists across IFD processing
+   ```rust
+   struct ManufacturerContext {
+       detected_make: Option<String>,
+       makernotes_type: Option<MakerNotesType>,
+       signature_info: Option<SignatureInfo>,
+   }
+   ```
+
+2. **Subdirectory Detection**: Move from hardcoded tag IDs to a registry-based approach
+   ```rust
+   trait SubdirectoryDetector {
+       fn is_subdirectory(&self, tag_id: u16, context: &ProcessingContext) -> bool;
+   }
+   ```
+
+3. **Simplified Tag Processing**: Unify the handling of IFD and UNDEFINED format subdirectories
+
+4. **Generated Code Integration**: Replace hardcoded Olympus tag IDs (0x2010, etc.) with generated constants from `OlympusDataType` enum
+
+### **REMAINING TODO ITEMS**
+
+1. ⏳ Fix subdirectory detection for Olympus tags during MakerNotes parsing
+2. ⏳ Verify Equipment tags show proper names in output
+3. ⏳ Replace hardcoded Olympus tag IDs with generated OlympusDataType enum
+4. ⏳ Add ORF extension to compatibility testing system
+5. ⏳ Run make precommit to ensure no regressions
+6. ⏳ Update milestone documentation with completion status
+
+### **TIME ESTIMATE**
+
+- 1-2 hours to fix subdirectory detection and verify Equipment tag names
+- 30 minutes for remaining cleanup tasks
+- Total: ~2.5 hours to complete milestone
 
 ### **SUCCESS CRITERIA (5 minutes to verify)**
 
