@@ -402,7 +402,7 @@ impl DispatchRule for OlympusDispatchRule {
 
         // Olympus-specific processor selection logic based on ExifTool Olympus.pm
         match context.table_name.as_str() {
-            "Equipment" => {
+            "Equipment" | "Olympus:Equipment" => {
                 // Select Olympus Equipment processor
                 candidates
                     .iter()
@@ -411,7 +411,7 @@ impl DispatchRule for OlympusDispatchRule {
                     })
                     .map(|(key, processor, _)| (key.clone(), processor.clone()))
             }
-            "CameraSettings" => {
+            "CameraSettings" | "Olympus:CameraSettings" => {
                 // Select Olympus CameraSettings processor
                 candidates
                     .iter()
@@ -420,7 +420,7 @@ impl DispatchRule for OlympusDispatchRule {
                     })
                     .map(|(key, processor, _)| (key.clone(), processor.clone()))
             }
-            "FocusInfo" => {
+            "FocusInfo" | "Olympus:FocusInfo" => {
                 // Select Olympus FocusInfo processor
                 candidates
                     .iter()
@@ -430,11 +430,15 @@ impl DispatchRule for OlympusDispatchRule {
                     .map(|(key, processor, _)| (key.clone(), processor.clone()))
             }
             _ => {
-                // Only handle Olympus-specific tables (those starting with "Olympus::")
+                // Only handle Olympus-specific tables (those starting with "Olympus:" or "Olympus::")
                 // Standard EXIF directories (ExifIFD, GPS, etc.) should use standard processors
                 // ExifTool Olympus.pm shows standard directories are processed by EXIF processor
-                if context.table_name.starts_with("Olympus::") {
+                if context.table_name.starts_with("Olympus:") {
                     // Default to any Olympus processor for Olympus-specific tables
+                    debug!(
+                        "Olympus dispatch rule selecting default Olympus processor for table: {}",
+                        context.table_name
+                    );
                     candidates
                         .iter()
                         .find(|(key, _, _)| key.namespace == "Olympus")

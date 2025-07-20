@@ -98,6 +98,10 @@ impl ExifReader {
         parameters: &HashMap<String, String>,
     ) -> Result<()> {
         debug!(
+            "dispatch_processor_with_params called for directory: {}", 
+            dir_info.name
+        );
+        debug!(
             "Dispatching processor for directory {} using processor registry",
             dir_info.name,
         );
@@ -225,6 +229,11 @@ impl ExifReader {
         tag_name: &str,
         size: Option<usize>,
     ) -> Result<()> {
+        debug!(
+            "process_subdirectory_tag called for tag_id: 0x{:04x}, offset: 0x{:x}, tag_name: {}",
+            tag_id, offset, tag_name
+        );
+        
         let subdir_name = match tag_id {
             0x8769 => "ExifIFD",
             0x8825 => "GPS",
