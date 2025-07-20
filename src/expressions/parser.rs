@@ -5,6 +5,8 @@
 //! syntax including regex matching, logical operators, comparisons, and more.
 
 use crate::types::{ExifError, Result, TagValue};
+use regex::Regex;
+use std::sync::LazyLock;
 
 use super::types::Expression;
 
@@ -81,6 +83,11 @@ pub fn parse_expression(expr: &str) -> Result<Expression> {
     // Handle hexadecimal number patterns (0x1234, 0X1234)
     if is_hex_number_condition(expr) {
         return parse_hex_condition(expr);
+    }
+
+    // Handle mathematical expressions ($val{N} and complex math)
+    if expr.contains("$val{") {
+        return parse_mathematical_expression(expr);
     }
 
     Err(ExifError::ParseError(format!(
@@ -299,4 +306,55 @@ fn parse_value(value_str: &str) -> Result<TagValue> {
 
     // Default to string
     Ok(value_str.into())
+}
+
+/// Parse mathematical expressions like $val{N} and int(($val{N}+const)/divisor)
+fn parse_mathematical_expression(expr: &str) -> Result<Expression> {
+    // Pattern for ceiling division: int(($val{N}+CONST)/DIVISOR)
+    static CEILING_DIV_REGEX: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"^int\(\(\$val\{(\d+)\}\+(\d+)\)/(\d+)\)$").unwrap());
+
+    // Pattern for simple $val{N} reference
+    static VAL_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^\$val\{(\d+)\}$").unwrap());
+
+    let expr = expr.trim();
+
+    // Try complex ceiling division first
+    if let Some(captures) = CEILING_DIV_REGEX.captures(expr) {
+        let val_index: u32 = captures.get(1).unwrap().as_str().parse().map_err(|_| {
+            ExifError::ParseError("Invalid value index in ceiling division".to_string())
+        })?;
+        let addend: usize =
+            captures.get(2).unwrap().as_str().parse().map_err(|_| {
+                ExifError::ParseError("Invalid addend in ceiling division".to_string())
+            })?;
+        let divisor: usize = captures.get(3).unwrap().as_str().parse().map_err(|_| {
+            ExifError::ParseError("Invalid divisor in ceiling division".to_string())
+        })?;
+
+        if divisor == 0 {
+            return Err(ExifError::ParseError(
+                "Division by zero in expression".to_string(),
+            ));
+        }
+
+        return Ok(Expression::CeilingDivision {
+            val_index,
+            addend,
+            divisor,
+        });
+    }
+
+    // Try simple $val{N} reference
+    if let Some(captures) = VAL_REGEX.captures(expr) {
+        let val_index: u32 = captures.get(1).unwrap().as_str().parse().map_err(|_| {
+            ExifError::ParseError("Invalid value index in $val reference".to_string())
+        })?;
+
+        return Ok(Expression::ValueReference(val_index));
+    }
+
+    Err(ExifError::ParseError(format!(
+        "Unsupported mathematical expression: {expr}"
+    )))
 }

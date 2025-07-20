@@ -93,9 +93,10 @@ my $output = {
     },
     metadata => {
         description => "Boolean set from $hash_name",
-        entry_count => scalar(@entries),
         key_type => "String",
-        constant_name => "BOOLEAN_SET"  # Will be overridden by config
+        constant_name => "BOOLEAN_SET",  # Will be overridden by config
+        # DO NOT ADD entry_count HERE!
+        # Rust calculates this from entries.len() - adding it creates inconsistencies
     },
     entries => \@entries
 };

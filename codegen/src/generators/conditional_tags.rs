@@ -78,7 +78,9 @@ pub fn generate_conditional_tags(data: &ConditionalTagsExtraction) -> Result<Str
     // Add imports
     code.push_str("use std::collections::HashMap;\n");
     code.push_str("use std::sync::LazyLock;\n");
-    code.push_str("use regex::Regex;\n\n");
+    code.push_str("use crate::expressions::{ExpressionEvaluator, parse_expression};\n");
+    code.push_str("use crate::processor_registry::ProcessorContext;\n");
+    code.push_str("use crate::types::TagValue;\n\n");
 
     // Generate context structure for condition evaluation
     code.push_str(&generate_evaluation_context()?);
@@ -203,107 +205,55 @@ pub fn generate_conditional_tags(data: &ConditionalTagsExtraction) -> Result<Str
         code.push_str("    }\n\n");
     }
 
-    // Evaluation helper methods
-    code.push_str("    /// Evaluate a general condition\n");
+    // Unified expression evaluation using the shared system
+    code.push_str("    /// Evaluate a condition using the unified expression system\n");
     code.push_str("    fn evaluate_condition(&self, condition: &str, context: &ConditionalContext) -> bool {\n");
-    code.push_str("        // Model conditions\n");
-    code.push_str("        if condition.contains(\"$$self{Model}\") {\n");
-    code.push_str("            if let Some(model) = &context.model {\n");
-    code.push_str("                return self.evaluate_model_condition(condition, model);\n");
-    code.push_str("            }\n");
-    code.push_str("        }\n\n");
-    code.push_str("        // Count conditions\n");
-    code.push_str("        if condition.contains(\"$count\") {\n");
-    code.push_str("            return self.evaluate_count_condition(condition, context.count);\n");
-    code.push_str("        }\n\n");
-    code.push_str("        // Format conditions\n");
-    code.push_str("        if condition.contains(\"$format\") {\n");
-    code.push_str("            if let Some(format) = &context.format {\n");
-    code.push_str("                return self.evaluate_format_condition(condition, format);\n");
-    code.push_str("            }\n");
-    code.push_str("        }\n\n");
-    code.push_str("        false\n");
-    code.push_str("    }\n\n");
-
-    code.push_str("    /// Evaluate model-specific conditions\n");
-    code.push_str(
-        "    fn evaluate_model_condition(&self, condition: &str, model: &str) -> bool {\n",
-    );
-    code.push_str("        // Simple regex matching for now - can be enhanced\n");
-    code.push_str("        if condition.contains(\"=~\") {\n");
-    code.push_str("            // Extract regex pattern and evaluate\n");
-    code.push_str("            // TODO: Implement full regex pattern evaluation\n");
-    code.push_str("            return model.contains(\"EOS\"); // Simplified for demo\n");
+    code.push_str("        let mut evaluator = ExpressionEvaluator::new();\n");
+    code.push_str("        \n");
+    code.push_str("        // Build ProcessorContext from ConditionalContext\n");
+    code.push_str("        let mut processor_context = ProcessorContext::default();\n");
+    code.push_str("        if let Some(model) = &context.model {\n");
+    code.push_str("            processor_context = processor_context.with_model(model.clone());\n");
     code.push_str("        }\n");
+    code.push_str("        if let Some(make) = &context.make {\n");
+    code.push_str("            processor_context = processor_context.with_manufacturer(make.clone());\n");
+    code.push_str("        }\n");
+    code.push_str("        \n");
+    code.push_str("        // Add conditional context values to processor context\n");
+    code.push_str("        if let Some(count) = context.count {\n");
+    code.push_str("            processor_context.parent_tags.insert(\"count\".to_string(), TagValue::U32(count));\n");
+    code.push_str("        }\n");
+    code.push_str("        if let Some(format) = &context.format {\n");
+    code.push_str("            processor_context.parent_tags.insert(\"format\".to_string(), TagValue::String(format.clone()));\n");
+    code.push_str("        }\n");
+    code.push_str("        \n");
+    code.push_str("        // Try context-based evaluation first\n");
+    code.push_str("        if let Ok(result) = evaluator.evaluate_context_condition(&processor_context, condition) {\n");
+    code.push_str("            return result;\n");
+    code.push_str("        }\n");
+    code.push_str("        \n");
     code.push_str("        false\n");
     code.push_str("    }\n\n");
-
-    code.push_str("    /// Evaluate count-based conditions\n");
-    code.push_str(
-        "    fn evaluate_count_condition(&self, condition: &str, count: Option<u32>) -> bool {\n",
-    );
+    
+    code.push_str("    /// Evaluate count-based conditions using unified system\n");
+    code.push_str("    fn evaluate_count_condition(&self, condition: &str, count: Option<u32>) -> bool {\n");
+    code.push_str("        let mut evaluator = ExpressionEvaluator::new();\n");
+    code.push_str("        let mut processor_context = ProcessorContext::default();\n");
+    code.push_str("        \n");
     code.push_str("        if let Some(count_val) = count {\n");
-    code.push_str("            // Parse simple count conditions like '$count == 582'\n");
-    code.push_str("            if let Some(expected) = extract_count_value(condition) {\n");
-    code.push_str("                return count_val == expected;\n");
-    code.push_str("            }\n");
+    code.push_str("            processor_context.parent_tags.insert(\"count\".to_string(), TagValue::U32(count_val));\n");
     code.push_str("        }\n");
-    code.push_str("        false\n");
+    code.push_str("        \n");
+    code.push_str("        evaluator.evaluate_context_condition(&processor_context, condition).unwrap_or(false)\n");
     code.push_str("    }\n\n");
-
-    code.push_str("    /// Evaluate format-based conditions\n");
-    code.push_str(
-        "    fn evaluate_format_condition(&self, condition: &str, format: &str) -> bool {\n",
-    );
-    code.push_str("        if condition.contains(\"eq\") {\n");
-    code.push_str(
-        "            if let Some(expected_format) = extract_quoted_string(condition) {\n",
-    );
-    code.push_str("                return format == expected_format;\n");
-    code.push_str("            }\n");
-    code.push_str("        }\n");
-    code.push_str("        false\n");
-    code.push_str("    }\n\n");
-
-    code.push_str("    /// Evaluate binary pattern conditions\n");
-    code.push_str(
-        "    fn evaluate_binary_pattern(&self, condition: &str, binary_data: &[u8]) -> bool {\n",
-    );
-    code.push_str("        // Simple binary pattern matching\n");
-    code.push_str("        if condition.contains(\"$$valPt =~ /^\\\\0/\") {\n");
-    code.push_str("            return !binary_data.is_empty() && binary_data[0] == 0;\n");
-    code.push_str("        }\n");
-    code.push_str("        // TODO: Implement full binary pattern evaluation\n");
-    code.push_str("        false\n");
+    
+    code.push_str("    /// Evaluate binary pattern conditions using unified system\n");
+    code.push_str("    fn evaluate_binary_pattern(&self, condition: &str, binary_data: &[u8]) -> bool {\n");
+    code.push_str("        let mut evaluator = ExpressionEvaluator::new();\n");
+    code.push_str("        evaluator.evaluate_data_condition(binary_data, condition).unwrap_or(false)\n");
     code.push_str("    }\n");
 
     code.push_str("}\n\n");
-
-    // Helper functions
-    code.push_str("/// Extract count value from condition string\n");
-    code.push_str("fn extract_count_value(condition: &str) -> Option<u32> {\n");
-    code.push_str("    // Simple parser for conditions like '$count == 582'\n");
-    code.push_str("    if let Some(start) = condition.find(\"== \") {\n");
-    code.push_str("        let number_part = &condition[start + 3..];\n");
-    code.push_str("        if let Some(end) = number_part.find(|c: char| !c.is_ascii_digit()) {\n");
-    code.push_str("            number_part[..end].parse().ok()\n");
-    code.push_str("        } else {\n");
-    code.push_str("            number_part.parse().ok()\n");
-    code.push_str("        }\n");
-    code.push_str("    } else {\n");
-    code.push_str("        None\n");
-    code.push_str("    }\n");
-    code.push_str("}\n\n");
-
-    code.push_str("/// Extract quoted string from condition\n");
-    code.push_str("fn extract_quoted_string(condition: &str) -> Option<String> {\n");
-    code.push_str("    if let Some(start) = condition.find('\"') {\n");
-    code.push_str("        if let Some(end) = condition[start + 1..].find('\"') {\n");
-    code.push_str("            return Some(condition[start + 1..start + 1 + end].to_string());\n");
-    code.push_str("        }\n");
-    code.push_str("    }\n");
-    code.push_str("    None\n");
-    code.push_str("}\n");
 
     Ok(code)
 }
