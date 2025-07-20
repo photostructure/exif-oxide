@@ -9,8 +9,8 @@ pub mod kyocera;
 pub mod minolta;
 pub mod olympus;
 pub mod panasonic;
+pub mod sony;
 
 // Future format modules will be added here:
 // pub mod nikon;
-// pub mod sony;
 // pub mod fujifilm;

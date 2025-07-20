@@ -73,9 +73,15 @@ impl RawProcessor {
             Box::new(super::formats::canon::CanonRawHandler::new()),
         );
 
+        // Register Sony handler
+        // ExifTool: Sony.pm module registration
+        handlers.insert(
+            RawFormat::Sony,
+            Box::new(super::formats::sony::SonyRawHandler::new()),
+        );
+
         // Future handlers will be registered here:
         // handlers.insert(RawFormat::Nikon, Box::new(NikonRawHandler::new()));
-        // handlers.insert(RawFormat::Sony, Box::new(SonyRawHandler::new()));
 
         Self { handlers }
     }

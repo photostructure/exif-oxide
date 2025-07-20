@@ -20,8 +20,8 @@ pub mod tiff_footer;
 // Re-export commonly used binary_data functions for easier access
 pub use binary_data::{
     create_canon_camera_settings_table, extract_binary_data_tags, extract_binary_value,
-    extract_camera_settings, extract_focal_length, extract_shot_info,
-    find_canon_camera_settings_tag,
+    extract_camera_settings, extract_focal_length, extract_my_colors, extract_panorama,
+    extract_shot_info, find_canon_camera_settings_tag,
 };
 // Re-export offset scheme functions
 pub use offset_schemes::{detect_canon_signature, detect_offset_scheme, CanonOffsetScheme};
@@ -117,12 +117,9 @@ fn process_canon_binary_data_with_existing_processors(
                 // Apply generated PrintConv lookup tables to camera settings
                 for (tag_name, tag_value) in camera_settings {
                     let converted_value = apply_camera_settings_print_conv(&tag_name, &tag_value);
-                    let full_tag_name = format!("MakerNotes:{tag_name}");
+                    // Note: tag_name already includes "MakerNotes:" prefix from extract_camera_settings()
 
-                    debug!(
-                        "Canon CameraSettings: {} = {:?}",
-                        full_tag_name, converted_value
-                    );
+                    debug!("Canon CameraSettings: {} = {:?}", tag_name, converted_value);
 
                     // Generate a synthetic tag ID for Canon CameraSettings tags
                     // Using high range (0xC000+) to avoid conflicts with standard tags
@@ -136,7 +133,7 @@ fn process_canon_binary_data_with_existing_processors(
                     let synthetic_id = 0xC000 + ((hash as u16) & 0x0FFF);
 
                     // Collect tag to store later
-                    tags_to_store.push((synthetic_id, converted_value, full_tag_name));
+                    tags_to_store.push((synthetic_id, converted_value, tag_name));
                 }
             }
             Err(e) => {
@@ -153,7 +150,13 @@ fn process_canon_binary_data_with_existing_processors(
         .unwrap_or("");
 
     // Process other Canon binary data tags using similar approach
-    let mut other_tags = process_other_canon_binary_tags_with_reader(exif_reader, data, dir_start, byte_order, model)?;
+    let mut other_tags = process_other_canon_binary_tags_with_reader(
+        exif_reader,
+        data,
+        dir_start,
+        byte_order,
+        model,
+    )?;
     tags_to_store.append(&mut other_tags);
 
     // Now store all collected tags (after all borrows are released)
@@ -183,7 +186,7 @@ fn find_canon_tag_data_with_full_access<'a>(
     tag_id: u16,
 ) -> Option<&'a [u8]> {
     use crate::tiff_types::ByteOrder;
-    
+
     debug!(
         "Searching for Canon tag {:#x} with proper offset handling (maker note at {:#x})",
         tag_id, maker_note_offset
@@ -212,7 +215,7 @@ fn find_canon_tag_data_with_full_access<'a>(
     // Search through IFD entries for the requested tag
     for i in 0..num_entries {
         let entry_offset = 2 + (i as usize * 12);
-        
+
         if entry_offset + 12 > maker_note_data.len() {
             debug!("Entry {} beyond maker note data bounds", i);
             break;
@@ -294,7 +297,10 @@ fn find_canon_tag_data_with_full_access<'a>(
                 let data_end = absolute_offset + data_size;
 
                 if data_end <= full_data.len() {
-                    debug!("Reading Canon tag {:#x} data from absolute offset {:#x}", tag_id, absolute_offset);
+                    debug!(
+                        "Reading Canon tag {:#x} data from absolute offset {:#x}",
+                        tag_id, absolute_offset
+                    );
                     return Some(&full_data[absolute_offset..data_end]);
                 } else {
                     debug!("Tag {:#x} data extends beyond full file data (offset={:#x}, size={}, file_size={})", 
@@ -468,12 +474,9 @@ fn process_other_canon_binary_tags_with_reader(
 
     // Process Canon AFInfo2 (tag 0x0026) with proper offset handling
     // ExifTool: Canon.pm:4477 %Canon::AFInfo2
-    if let Some(af_info2_data) = find_canon_tag_data_with_full_access(
-        full_data, 
-        maker_note_data, 
-        maker_note_offset, 
-        0x0026
-    ) {
+    if let Some(af_info2_data) =
+        find_canon_tag_data_with_full_access(full_data, maker_note_data, maker_note_offset, 0x0026)
+    {
         debug!("Processing Canon AFInfo2 using serial data processor with proper offsets");
 
         match af_info::process_serial_data(
@@ -620,11 +623,13 @@ fn process_other_canon_binary_tags(
         // AFInfo2 data might use different byte order than maker note IFD
         let afinfo2_byte_order = if af_info2_data.len() >= 2 {
             // Test both byte orders to see which gives reasonable values
-            let le_val = ByteOrder::LittleEndian.read_u16(af_info2_data, 0).unwrap_or(0);
+            let le_val = ByteOrder::LittleEndian
+                .read_u16(af_info2_data, 0)
+                .unwrap_or(0);
             let be_val = ByteOrder::BigEndian.read_u16(af_info2_data, 0).unwrap_or(0);
-            
+
             debug!("AFInfo2 first value: LE={}, BE={}", le_val, be_val);
-            
+
             // AFInfoSize should be around 96 (0x60), not 31482 (0x7AFA)
             // Use big-endian if it gives a more reasonable value
             if be_val < 200 && le_val > 30000 {
@@ -666,10 +671,57 @@ fn process_other_canon_binary_tags(
         }
     }
 
-    // TODO: Process additional Canon binary data tags as needed:
-    // - Panorama (0x0005)
-    // - MyColors (0x001d)
-    // using existing Canon binary data processors and generated lookup tables
+    // Process Canon Panorama (tag 0x0005)
+    // ExifTool: Canon.pm:2999 %Canon::Panorama with ProcessBinaryData
+    if let Some(panorama_data) = find_canon_tag_data(data, 0x0005) {
+        debug!("Processing Canon Panorama using existing Canon processor");
+
+        match extract_panorama(panorama_data, 0, panorama_data.len(), byte_order) {
+            Ok(panorama_info) => {
+                debug!("Extracted {} Canon Panorama tags", panorama_info.len());
+                for (tag_name, tag_value) in panorama_info {
+                    debug!("Canon Panorama: {} = {:?}", tag_name, tag_value);
+
+                    // Generate synthetic ID for this tag
+                    let mut hasher = DefaultHasher::new();
+                    tag_name.hash(&mut hasher);
+                    let hash = hasher.finish();
+                    let synthetic_id = 0xC000 + ((hash as u16) & 0x0FFF);
+
+                    tags_to_store.push((synthetic_id, tag_value, tag_name));
+                }
+            }
+            Err(e) => {
+                debug!("Failed to extract Canon Panorama: {}", e);
+            }
+        }
+    }
+
+    // Process Canon MyColors (tag 0x001d)
+    // ExifTool: Canon.pm:3131 %Canon::MyColors with ProcessBinaryData and validation
+    if let Some(my_colors_data) = find_canon_tag_data(data, 0x001d) {
+        debug!("Processing Canon MyColors using existing Canon processor");
+
+        match extract_my_colors(my_colors_data, 0, my_colors_data.len(), byte_order) {
+            Ok(my_colors_info) => {
+                debug!("Extracted {} Canon MyColors tags", my_colors_info.len());
+                for (tag_name, tag_value) in my_colors_info {
+                    debug!("Canon MyColors: {} = {:?}", tag_name, tag_value);
+
+                    // Generate synthetic ID for this tag
+                    let mut hasher = DefaultHasher::new();
+                    tag_name.hash(&mut hasher);
+                    let hash = hasher.finish();
+                    let synthetic_id = 0xC000 + ((hash as u16) & 0x0FFF);
+
+                    tags_to_store.push((synthetic_id, tag_value, tag_name));
+                }
+            }
+            Err(e) => {
+                debug!("Failed to extract Canon MyColors: {}", e);
+            }
+        }
+    }
 
     Ok(tags_to_store)
 }

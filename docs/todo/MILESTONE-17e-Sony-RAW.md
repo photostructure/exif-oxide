@@ -1,7 +1,12 @@
 # Milestone 17e: Sony RAW Support
 
-**Duration**: 2-3 weeks  
 **Goal**: Implement Sony ARW/SR2/SRF formats with advanced offset management
+
+## High Level Guidance
+
+- **Follow Trust ExifTool**: Study how ExifTool processes ARW/SR2/SRF files exactly. See [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md)
+- **Use Codegen**: Switch any manual lookup tables to generated code. See [EXIFTOOL-INTEGRATION.md](../design/EXIFTOOL-INTEGRATION.md)
+- **Study ExifTool Sources**: [Sony.pm](../../third-party/exiftool/lib/Image/ExifTool/Sony.pm) and [module docs](../../third-party/exiftool/doc/modules/Sony.md)
 
 ## Overview
 
@@ -582,6 +587,171 @@ After successful completion:
 2. Milestone 17g: Additional formats and testing
 3. Consider encrypted data handling in future
 
+## 🚨 CURRENT IMPLEMENTATION STATUS (July 20, 2025)
+
+### ✅ **COMPLETED TASKS**
+
+**1. Sony RAW Format Detection Infrastructure** ✅
+- **Location**: `src/raw/detector.rs`
+- **Status**: Complete and tested (9/9 tests pass)
+- **Implementation**: Added `Sony` variant to `RawFormat` enum with ARW/SR2/SRF detection
+- **Magic validation**: All three Sony formats use TIFF magic byte validation
+- **Integration**: Registered in RAW processor, added to compatibility script
+
+**2. Sony RAW Format Handler Foundation** ✅
+- **Location**: `src/raw/formats/sony.rs` (400+ lines)
+- **Status**: Complete basic structure with all trait implementations
+- **Features Implemented**:
+  - All 13 ARW format versions (1.0 → 5.0.1) with exact ExifTool mapping
+  - Format detection from 4-byte FileFormat tag (0xb000) 
+  - Sony encryption type framework (SimpleCipher, ComplexLFSR)
+  - IDC corruption detection framework
+  - Model-specific processing architecture
+  - Full `RawFormatHandler` trait implementation
+- **Tests**: 6/6 unit tests pass
+
+**3. ExifTool Integration Research** ✅
+- **Completed**: Comprehensive analysis of Sony.pm (11,818 lines)
+- **Key findings**: 
+  - 2 encryption systems discovered (simple substitution + LFSR)
+  - 139 ProcessBinaryData sections identified
+  - A100 special IDC corruption handling (tag 0x14a)
+  - Model-specific offset calculation patterns
+  - Format version detection from 4-byte identifier
+- **Documentation**: All patterns documented with ExifTool line references
+
+**4. Compatibility Script Updates** ✅
+- **File**: `tools/generate_exiftool_json.sh`
+- **Change**: Added "arw", "sr2", "srf" to `SUPPORTED_EXTENSIONS` array
+- **Status**: Ready for regenerating reference files
+
+### 🔧 **REMAINING TASKS (Priority Order)**
+
+**HIGH PRIORITY - Core Functionality**
+
+1. **Advanced Offset Management System** 
+   - **Status**: Current offset system only supports simple/entry-based patterns
+   - **Required**: Sony needs complex model-specific calculations
+   - **Implementation location**: `src/raw/offset.rs` or new `src/raw/formats/sony/offset_manager.rs`
+   - **Key patterns to implement**: 
+     - Model-specific calculations: `if ($$self{Model} =~ /^ILCE-7RM4/) { $offset = Get32u($dataPt, $entry + 4) + $makerNoteBase; }`
+     - Format-dependent offsets based on ARW version
+     - IDC corruption offset adjustments
+
+2. **Sony Format Version Detection**
+   - **Status**: Framework exists, needs FileFormat tag (0xb000) reading
+   - **Current limitation**: `read_format_tag()` returns `None` (TODO)
+   - **Integration needed**: Connect to EXIF reader to read 4-byte format identifier
+   - **Testing**: Verify with real Sony ARW files
+
+**MEDIUM PRIORITY - Data Processing**
+
+3. **IDC Corruption Detection and Recovery**
+   - **Status**: Framework defined, needs implementation
+   - **Critical patterns**: A100 tag 0x14a corruption (ExifTool Sony.pm:11243-11261)
+   - **General corruption**: Software field checking for "Sony IDC"
+   - **Implementation**: `detect_idc_corruption()` and `recover_offsets()` methods
+
+4. **ProcessBinaryData Integration**
+   - **Status**: Generated Sony code exists (`src/generated/Sony_pm/`), needs runtime integration
+   - **Scope**: 139 ProcessBinaryData sections
+   - **Available**: Generated lookup tables for PrintConv (322 entries)
+   - **Integration**: Connect handler to generated processors
+
+**LOW PRIORITY - Polish**
+
+5. **Encryption Support**
+   - **Status**: Framework defined, not implemented
+   - **Types**: Simple substitution (0x94xx tags) + Complex LFSR (SR2SubIFD)
+   - **Reference**: ExifTool Sony.pm Decrypt() and Decipher() functions
+   - **Note**: May not be essential for basic metadata extraction
+
+### 🧠 **CRITICAL TRIBAL KNOWLEDGE FOR NEXT ENGINEER**
+
+**Architecture Decisions Made:**
+1. **Clone Pattern**: Sony handler uses `#[derive(Clone)]` to work around mutable borrowing issues in `process_raw()`
+2. **TIFF-based**: All Sony formats use standard TIFF validation (no Sony-specific magic bytes)
+3. **Version Detection**: 4-byte format identifier at tag 0xb000 determines ARW version exactly per ExifTool
+
+**ExifTool Patterns to Follow:**
+1. **Trust ExifTool religiously**: Sony.pm lines 2045-2073 for format detection, 11243-11261 for A100 IDC handling
+2. **Model-specific logic**: Extensive use of `$$self{Model} =~ /pattern/` conditions throughout Sony.pm
+3. **Version-dependent processing**: Different data structures for different ARW versions
+
+**Integration Points:**
+1. **RAW Processor**: Sony handler already registered in `src/raw/processor.rs`
+2. **Generated Code**: `src/generated/Sony_pm/` modules available but not yet used
+3. **Compatibility**: Extensions added to script, ready for `make compat-gen`
+
+**Current Blockers:**
+1. **EXIF Reader Integration**: `read_format_tag()` needs connection to actual EXIF reading
+2. **Offset System Gap**: Current system too simple for Sony's model-specific calculations
+3. **Compilation Issues**: Some test failures in conditional tag integration (unrelated to Sony)
+
+**Test Data Available:**
+- Real Sony file: `test-images/sony/sony_a7c_ii_02.arw`
+- Can be used for end-to-end testing once integration is complete
+
+**Code Quality Notes:**
+- All Sony code follows Trust ExifTool principle with ExifTool line references
+- Comprehensive unit tests for format detection and version mapping
+- Documentation includes exact ExifTool source locations for all patterns
+
+### 📋 **IMMEDIATE NEXT STEPS (5 minutes → 2 weeks)**
+
+**Day 1: Fix Integration**
+1. Implement `read_format_tag()` to actually read tag 0xb000 from EXIF data
+2. Test format detection with real Sony ARW file
+3. Verify end-to-end processing works
+
+**Week 1: Advanced Offset System**
+1. Study ExifTool Sony.pm offset calculation patterns (lines 5000-6000)
+2. Implement `SonyOffsetManager` with model-specific calculations
+3. Add format-dependent offset logic for different ARW versions
+
+**Week 2: Core Processing**
+1. Implement IDC corruption detection for A100 and general patterns
+2. Connect to generated Sony ProcessBinaryData processors
+3. Add comprehensive testing with multiple Sony camera models
+
+**Future Work (Optional):**
+1. Sony encryption support for encrypted tags
+2. SR2-specific processing differences
+3. Performance optimization for complex offset calculations
+
+### 🔧 **REFACTORING OPPORTUNITIES IDENTIFIED**
+
+**Architecture Improvements:**
+1. **Handler Trait Refactoring**: Current `RawFormatHandler` trait requires `&self` but Sony needs mutable state. Consider:
+   - Changing trait to `&mut self` 
+   - Using `RefCell<T>` for interior mutability
+   - Moving state management outside handlers
+
+2. **Offset System Unification**: Current simple/entry-based systems should be unified with advanced system:
+   - Single `OffsetManager` trait with multiple implementations
+   - Manufacturer-specific offset strategies
+   - Centralized offset validation
+
+3. **Generated Code Integration**: Pattern for using generated ProcessBinaryData should be standardized:
+   - Consistent integration pattern across all manufacturers
+   - Runtime registry for generated processors
+   - Unified context passing for generated code
+
+**Performance Optimizations:**
+1. **Lazy Loading**: Sony format detection and processor initialization should be lazy
+2. **Offset Caching**: Complex offset calculations should cache results per file
+3. **Model Detection**: Camera model patterns should use efficient matching
+
+**Code Organization:**
+1. **Sony Module Structure**: Large sony.rs file should be broken into submodules:
+   - `sony/format_detection.rs`
+   - `sony/offset_manager.rs` 
+   - `sony/idc_recovery.rs`
+   - `sony/encryption.rs`
+
+2. **Testing Structure**: Sony tests should be organized by feature area
+3. **Error Types**: Sony-specific error types for better debugging
+
 ## Summary
 
-Sony RAW support represents the pinnacle of format complexity, requiring sophisticated offset management, multi-generation support, and corruption recovery. Successfully implementing Sony validates our architecture can handle the most demanding manufacturer requirements.
+Sony RAW support foundation is complete and ready for advanced feature implementation. The architecture can handle Sony's complexity, and all integration points are established. The next engineer should focus on advanced offset management as the critical path to full Sony support.

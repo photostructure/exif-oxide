@@ -194,32 +194,45 @@ impl ExifReader {
             // Get the enhanced source info for this tag
             let source_info = self.tag_sources.get(&tag_id);
 
-            // Use namespace from TagSourceInfo or default to EXIF
-            let group_name = if let Some(source_info) = source_info {
-                &source_info.namespace
-            } else {
-                "EXIF" // Default fallback
-            };
-
             // Look up tag name using format-specific tables when appropriate
-            let base_tag_name = if tag_id >= 0xC000 {
+            let (group_name, base_tag_name) = if tag_id >= 0xC000 {
                 // Check synthetic tag names mapping first for Canon binary data tags
                 if let Some(synthetic_name) = self.synthetic_tag_names.get(&tag_id) {
-                    // Return just the tag name part (after the group prefix)
-                    synthetic_name
-                        .split(':')
-                        .next_back()
-                        .unwrap_or(synthetic_name)
-                        .to_string()
+                    // Parse the full "Group:TagName" format from synthetic_tag_names
+                    if let Some((group_part, name_part)) = synthetic_name.split_once(':') {
+                        (group_part.to_string(), name_part.to_string())
+                    } else {
+                        // No group prefix, use source info or default
+                        let group = if let Some(source_info) = source_info {
+                            source_info.namespace.clone()
+                        } else {
+                            "EXIF".to_string()
+                        };
+                        (group, synthetic_name.clone())
+                    }
                 } else {
                     // Fall back to static Canon names for other synthetic IDs
-                    canon::get_canon_tag_name(tag_id).unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                    let canon_name = canon::get_canon_tag_name(tag_id)
+                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                    let group = if let Some(source_info) = source_info {
+                        source_info.namespace.clone()
+                    } else {
+                        "EXIF".to_string()
+                    };
+                    (group, canon_name)
                 }
             } else {
+                // Use namespace from TagSourceInfo or default to EXIF for non-synthetic tags
+                let group = if let Some(source_info) = source_info {
+                    source_info.namespace.clone()
+                } else {
+                    "EXIF".to_string()
+                };
+
                 // Check for RAW format-specific tag names
                 // ExifTool: Uses format-specific tag tables (e.g., PanasonicRaw::Main for RW2 files)
-                if let Some(file_type) = &self.original_file_type {
-                    if file_type == "RW2" && group_name == "EXIF" {
+                let tag_name = if let Some(file_type) = &self.original_file_type {
+                    if file_type == "RW2" && group == "EXIF" {
                         // Use Panasonic-specific tag definitions for RW2 files
                         // ExifTool: PanasonicRaw.pm %Image::ExifTool::PanasonicRaw::Main hash
                         if let Some(panasonic_name) =
@@ -246,7 +259,9 @@ impl ExifReader {
                         .get(&(tag_id as u32))
                         .map(|tag_def| tag_def.name.to_string())
                         .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
-                }
+                };
+
+                (group, tag_name)
             };
 
             // Format with group prefix

@@ -29,11 +29,14 @@ pub enum RawFormat {
     /// ExifTool: lib/Image/ExifTool/Canon.pm - Complex format with 169 ProcessBinaryData sections
     Canon,
 
+    /// Sony RAW format (ARW, SR2, SRF)
+    /// ExifTool: lib/Image/ExifTool/Sony.pm - Complex format with encryption, IDC corruption handling, and 139 ProcessBinaryData sections
+    Sony,
+
     /// Unknown or unsupported RAW format
     Unknown,
     // Future formats will be added here as we implement them:
     // Nikon,     // NEF, NRW formats
-    // Sony,      // ARW, SR2, SRF formats
     // Fujifilm,  // RAF format
 }
 
@@ -46,6 +49,7 @@ impl RawFormat {
             RawFormat::Panasonic => "Panasonic",
             RawFormat::Olympus => "Olympus",
             RawFormat::Canon => "Canon",
+            RawFormat::Sony => "Sony",
             RawFormat::Unknown => "Unknown",
         }
     }
@@ -90,9 +94,17 @@ pub fn detect_raw_format(detection_result: &FileTypeDetectionResult) -> RawForma
         return RawFormat::Kyocera;
     }
 
+    // Check for Sony RAW formats
+    // ExifTool: Sony.pm - ARW (Advanced Raw), SR2 (Sony Raw 2), SRF (Sony Raw Format)
+    if detection_result.file_type == "ARW"
+        || detection_result.file_type == "SR2"
+        || detection_result.file_type == "SRF"
+    {
+        return RawFormat::Sony;
+    }
+
     // Future format detection will be added here:
     // if detection_result.file_type == "NEF" || detection_result.file_type == "NRW" { return RawFormat::Nikon; }
-    // if detection_result.file_type == "ARW" { return RawFormat::Sony; }
     // if detection_result.file_type == "RAF" { return RawFormat::Fujifilm; }
 
     RawFormat::Unknown
@@ -163,6 +175,57 @@ pub fn validate_olympus_orf_magic(data: &[u8]) -> bool {
     is_tiff_be || is_tiff_le
 }
 
+/// Validate Sony ARW magic bytes
+/// ExifTool: Sony.pm - ARW files are TIFF-based with Sony-specific maker notes
+/// ARW files use standard TIFF structure with Sony maker note processing
+pub fn validate_sony_arw_magic(data: &[u8]) -> bool {
+    // Need at least 8 bytes for TIFF header
+    if data.len() < 8 {
+        return false;
+    }
+
+    // Check for TIFF magic bytes (big-endian or little-endian)
+    // ExifTool: Uses standard TIFF processing for ARW files
+    let is_tiff_be = data.starts_with(b"MM\x00\x2A"); // Big-endian TIFF
+    let is_tiff_le = data.starts_with(b"II\x2A\x00"); // Little-endian TIFF
+
+    is_tiff_be || is_tiff_le
+}
+
+/// Validate Sony SR2 magic bytes
+/// ExifTool: Sony.pm - SR2 files are also TIFF-based format
+/// SR2 (Sony Raw 2) files follow TIFF structure with Sony-specific processing
+pub fn validate_sony_sr2_magic(data: &[u8]) -> bool {
+    // Need at least 8 bytes for TIFF header
+    if data.len() < 8 {
+        return false;
+    }
+
+    // Check for TIFF magic bytes (big-endian or little-endian)
+    // ExifTool: Uses standard TIFF processing for SR2 files
+    let is_tiff_be = data.starts_with(b"MM\x00\x2A"); // Big-endian TIFF
+    let is_tiff_le = data.starts_with(b"II\x2A\x00"); // Little-endian TIFF
+
+    is_tiff_be || is_tiff_le
+}
+
+/// Validate Sony SRF magic bytes
+/// ExifTool: Sony.pm - SRF files are Sony Raw Format, also TIFF-based
+/// SRF files follow the same TIFF structure as other Sony formats
+pub fn validate_sony_srf_magic(data: &[u8]) -> bool {
+    // Need at least 8 bytes for TIFF header
+    if data.len() < 8 {
+        return false;
+    }
+
+    // Check for TIFF magic bytes (big-endian or little-endian)
+    // ExifTool: Uses standard TIFF processing for SRF files
+    let is_tiff_be = data.starts_with(b"MM\x00\x2A"); // Big-endian TIFF
+    let is_tiff_le = data.starts_with(b"II\x2A\x00"); // Little-endian TIFF
+
+    is_tiff_be || is_tiff_le
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -174,6 +237,7 @@ mod tests {
         assert_eq!(RawFormat::Panasonic.name(), "Panasonic");
         assert_eq!(RawFormat::Olympus.name(), "Olympus");
         assert_eq!(RawFormat::Canon.name(), "Canon");
+        assert_eq!(RawFormat::Sony.name(), "Sony");
         assert_eq!(RawFormat::Unknown.name(), "Unknown");
     }
 
@@ -254,6 +318,63 @@ mod tests {
     }
 
     #[test]
+    fn test_sony_arw_magic_validation() {
+        // Test valid TIFF big-endian magic
+        let tiff_be_data = b"MM\x00\x2A\x00\x00\x00\x08";
+        assert!(validate_sony_arw_magic(tiff_be_data));
+
+        // Test valid TIFF little-endian magic
+        let tiff_le_data = b"II\x2A\x00\x08\x00\x00\x00";
+        assert!(validate_sony_arw_magic(tiff_le_data));
+
+        // Test invalid magic
+        let invalid_data = b"XX\x2A\x00\x08\x00\x00\x00";
+        assert!(!validate_sony_arw_magic(invalid_data));
+
+        // Test insufficient data
+        let short_data = b"MM\x00";
+        assert!(!validate_sony_arw_magic(short_data));
+    }
+
+    #[test]
+    fn test_sony_sr2_magic_validation() {
+        // Test valid TIFF big-endian magic
+        let tiff_be_data = b"MM\x00\x2A\x00\x00\x00\x08";
+        assert!(validate_sony_sr2_magic(tiff_be_data));
+
+        // Test valid TIFF little-endian magic
+        let tiff_le_data = b"II\x2A\x00\x08\x00\x00\x00";
+        assert!(validate_sony_sr2_magic(tiff_le_data));
+
+        // Test invalid magic
+        let invalid_data = b"XX\x2A\x00\x08\x00\x00\x00";
+        assert!(!validate_sony_sr2_magic(invalid_data));
+
+        // Test insufficient data
+        let short_data = b"MM\x00";
+        assert!(!validate_sony_sr2_magic(short_data));
+    }
+
+    #[test]
+    fn test_sony_srf_magic_validation() {
+        // Test valid TIFF big-endian magic
+        let tiff_be_data = b"MM\x00\x2A\x00\x00\x00\x08";
+        assert!(validate_sony_srf_magic(tiff_be_data));
+
+        // Test valid TIFF little-endian magic
+        let tiff_le_data = b"II\x2A\x00\x08\x00\x00\x00";
+        assert!(validate_sony_srf_magic(tiff_le_data));
+
+        // Test invalid magic
+        let invalid_data = b"XX\x2A\x00\x08\x00\x00\x00";
+        assert!(!validate_sony_srf_magic(invalid_data));
+
+        // Test insufficient data
+        let short_data = b"MM\x00";
+        assert!(!validate_sony_srf_magic(short_data));
+    }
+
+    #[test]
     fn test_detect_raw_format() {
         // Test Minolta MRW detection
         let mrw_result = FileTypeDetectionResult {
@@ -317,6 +438,33 @@ mod tests {
             description: "Canon RAW image".to_string(),
         };
         assert_eq!(detect_raw_format(&cr3_result), RawFormat::Canon);
+
+        // Test Sony ARW detection
+        let arw_result = FileTypeDetectionResult {
+            file_type: "ARW".to_string(),
+            format: "ARW".to_string(),
+            mime_type: "image/x-sony-arw".to_string(),
+            description: "Sony RAW image".to_string(),
+        };
+        assert_eq!(detect_raw_format(&arw_result), RawFormat::Sony);
+
+        // Test Sony SR2 detection
+        let sr2_result = FileTypeDetectionResult {
+            file_type: "SR2".to_string(),
+            format: "SR2".to_string(),
+            mime_type: "image/x-sony-sr2".to_string(),
+            description: "Sony RAW image".to_string(),
+        };
+        assert_eq!(detect_raw_format(&sr2_result), RawFormat::Sony);
+
+        // Test Sony SRF detection
+        let srf_result = FileTypeDetectionResult {
+            file_type: "SRF".to_string(),
+            format: "SRF".to_string(),
+            mime_type: "image/x-sony-srf".to_string(),
+            description: "Sony RAW image".to_string(),
+        };
+        assert_eq!(detect_raw_format(&srf_result), RawFormat::Sony);
 
         // Test Kyocera detection
         let kyocera_result = FileTypeDetectionResult {

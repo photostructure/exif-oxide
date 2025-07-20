@@ -512,28 +512,37 @@ pub fn extract_panorama(
 
     let mut panorama = HashMap::new();
 
+    // Use generated PrintConv lookups from panorama_inline.rs
+    use crate::generated::Canon_pm::panorama_inline::*;
+
     // Canon Panorama format: int16s (signed 16-bit), starting at index 0
     // ExifTool: Canon.pm:3001 FORMAT => 'int16s', FIRST_ENTRY => 0
 
     // Tag 2: PanoramaFrameNumber
     // ExifTool: Canon.pm:3006
     if let Ok(frame_number) = read_int16s_at_index(data, offset, 2, byte_order) {
-        panorama.insert("MakerNotes:PanoramaFrameNumber".to_string(), TagValue::I16(frame_number));
+        panorama.insert(
+            "MakerNotes:PanoramaFrameNumber".to_string(),
+            TagValue::I16(frame_number),
+        );
         debug!("PanoramaFrameNumber: {}", frame_number);
     }
 
-    // Tag 5: PanoramaDirection with PrintConv
+    // Tag 5: PanoramaDirection with PrintConv using generated lookup
     // ExifTool: Canon.pm:3009-3018
     if let Ok(direction_raw) = read_int16s_at_index(data, offset, 5, byte_order) {
-        let direction_value = match direction_raw {
-            0 => TagValue::String("Left to Right".to_string()),
-            1 => TagValue::String("Right to Left".to_string()),
-            2 => TagValue::String("Bottom to Top".to_string()),
-            3 => TagValue::String("Top to Bottom".to_string()),
-            4 => TagValue::String("2x2 Matrix (Clockwise)".to_string()),
-            _ => TagValue::I16(direction_raw), // Keep raw value for unknown
-        };
-        debug!("PanoramaDirection: {:?} (raw: {})", direction_value, direction_raw);
+        // Apply PrintConv using generated lookup table
+        let direction_value =
+            if let Some(converted) = lookup_panorama__panorama_direction(direction_raw as u8) {
+                TagValue::String(converted.to_string())
+            } else {
+                TagValue::I16(direction_raw) // Keep raw value for unknown
+            };
+
+        debug!(
+            "PanoramaDirection: {:?} (raw: {})",
+            direction_value, direction_raw
+        );
         panorama.insert("MakerNotes:PanoramaDirection".to_string(), direction_value);
     }
 
@@ -541,15 +550,103 @@ pub fn extract_panorama(
     Ok(panorama)
 }
 
+/// Extract Canon MyColors data from binary data
+/// ExifTool: Canon.pm:3131 %Canon::MyColors
+/// FORMAT => 'int16u', FIRST_ENTRY => 0, with validation
+pub fn extract_my_colors(
+    data: &[u8],
+    offset: usize,
+    size: usize,
+    byte_order: ByteOrder,
+) -> Result<HashMap<String, TagValue>> {
+    debug!(
+        "Extracting Canon MyColors data: offset={:#x}, size={}",
+        offset, size
+    );
+
+    let mut my_colors = HashMap::new();
+
+    // Use generated PrintConv lookups from mycolors_inline.rs
+    use crate::generated::Canon_pm::mycolors_inline::*;
+
+    // Canon MyColors format: int16u (unsigned 16-bit), starting at index 0
+    // ExifTool: Canon.pm:3133 FORMAT => 'int16u', FIRST_ENTRY => 0
+
+    // ExifTool validation: first 16-bit value is the length of the data in bytes
+    // ExifTool: Canon.pm:3125-3129 Validate function
+    if size >= 2 {
+        let declared_size = byte_order.read_u16(data, offset)? as usize;
+        debug!(
+            "MyColors declared size: {} bytes, actual size: {} bytes",
+            declared_size, size
+        );
+
+        if declared_size != size {
+            debug!(
+                "MyColors size mismatch - declared: {}, actual: {}",
+                declared_size, size
+            );
+            // Continue processing anyway, following ExifTool's approach
+        }
+    }
+
+    // Tag 0x02: MyColorMode
+    // ExifTool: Canon.pm:3137-3153
+    if let Ok(my_color_mode) = read_int16u_at_index(data, offset, 0x02, byte_order) {
+        // Apply PrintConv using generated lookup table
+        let color_mode_value =
+            if let Some(converted) = lookup_my_colors__my_color_mode(my_color_mode as u8) {
+                TagValue::String(converted.to_string())
+            } else {
+                TagValue::U16(my_color_mode) // Keep raw value for unknown
+            };
+
+        debug!(
+            "MyColorMode: {:?} (raw: {})",
+            color_mode_value, my_color_mode
+        );
+        my_colors.insert("MakerNotes:MyColorMode".to_string(), color_mode_value);
+    }
+
+    debug!("Extracted {} Canon MyColors tags", my_colors.len());
+    Ok(my_colors)
+}
+
 /// Read signed 16-bit integer at specific index in Canon binary data
 /// ExifTool: Canon.pm ProcessBinaryData with FORMAT => 'int16s'
-fn read_int16s_at_index(data: &[u8], offset: usize, index: usize, byte_order: ByteOrder) -> Result<i16> {
+fn read_int16s_at_index(
+    data: &[u8],
+    offset: usize,
+    index: usize,
+    byte_order: ByteOrder,
+) -> Result<i16> {
     let position = offset + (index * 2); // int16s = 2 bytes per entry
     if position + 2 <= data.len() {
         let raw_value = byte_order.read_u16(data, position)?;
         Ok(raw_value as i16) // Convert to signed
     } else {
-        Err(ExifError::ParseError(format!("Cannot read int16s at index {} - beyond data bounds", index)))
+        Err(ExifError::ParseError(format!(
+            "Cannot read int16s at index {index} - beyond data bounds"
+        )))
+    }
+}
+
+/// Read unsigned 16-bit integer at specific index in Canon binary data
+/// ExifTool: Canon.pm ProcessBinaryData with FORMAT => 'int16u'
+fn read_int16u_at_index(
+    data: &[u8],
+    offset: usize,
+    index: usize,
+    byte_order: ByteOrder,
+) -> Result<u16> {
+    let position = offset + (index * 2); // int16u = 2 bytes per entry
+    if position + 2 <= data.len() {
+        let raw_value = byte_order.read_u16(data, position)?;
+        Ok(raw_value) // Already unsigned
+    } else {
+        Err(ExifError::ParseError(format!(
+            "Cannot read int16u at index {index} - beyond data bounds"
+        )))
     }
 }
 
