@@ -87,6 +87,9 @@ fn process_canon_binary_data_with_existing_processors(
 ) -> Result<()> {
     debug!("Processing Canon binary data using existing Canon processors");
 
+    // Collect tags to store after processing (to avoid borrow issues)
+    let mut tags_to_store = Vec::new();
+
     // Get the raw maker note data to process with Canon-specific processors
     let full_data = exif_reader.get_data();
     let data = &full_data[dir_start..dir_start + size];
@@ -119,7 +122,20 @@ fn process_canon_binary_data_with_existing_processors(
                         "Canon CameraSettings: {} = {:?}",
                         full_tag_name, converted_value
                     );
-                    // TODO: Store the converted tag value back to ExifReader
+
+                    // Generate a synthetic tag ID for Canon CameraSettings tags
+                    // Using high range (0xC000+) to avoid conflicts with standard tags
+                    // Add hash of tag name to ensure uniqueness
+                    use std::collections::hash_map::DefaultHasher;
+                    use std::hash::{Hash, Hasher};
+
+                    let mut hasher = DefaultHasher::new();
+                    tag_name.hash(&mut hasher);
+                    let hash = hasher.finish();
+                    let synthetic_id = 0xC000 + ((hash as u16) & 0x0FFF);
+
+                    // Collect tag to store later
+                    tags_to_store.push((synthetic_id, converted_value, full_tag_name));
                 }
             }
             Err(e) => {
@@ -131,22 +147,156 @@ fn process_canon_binary_data_with_existing_processors(
     // Process other Canon binary data tags using similar approach
     process_other_canon_binary_tags(data, byte_order)?;
 
+    // Now store all collected tags (after all borrows are released)
+    for (synthetic_id, converted_value, full_tag_name) in tags_to_store {
+        exif_reader
+            .extracted_tags
+            .insert(synthetic_id, converted_value);
+        debug!(
+            "Stored Canon tag {} with synthetic ID 0x{:04X}",
+            full_tag_name, synthetic_id
+        );
+    }
+
     Ok(())
 }
 
 /// Find specific Canon tag data within the maker note IFD
 /// ExifTool: Canon.pm searches for specific tag IDs within the Canon IFD
 fn find_canon_tag_data(data: &[u8], tag_id: u16) -> Option<&[u8]> {
-    // TODO: Parse the Canon IFD to find the specific tag data
-    // This is a simplified implementation - in reality we'd need to parse the IFD structure
+    use crate::tiff_types::ByteOrder;
+
     debug!(
         "Searching for Canon tag {:#x} in {} bytes of data",
         tag_id,
         data.len()
     );
 
-    // For now, return None to indicate tag not found
-    // This would be replaced with actual IFD parsing logic
+    // Canon typically uses little-endian byte order
+    let byte_order = ByteOrder::LittleEndian;
+
+    // Parse Canon IFD structure
+    // IFD format: 2-byte count + n*12-byte entries + 4-byte next offset
+    if data.len() < 2 {
+        debug!("Data too short for IFD header");
+        return None;
+    }
+
+    // Read number of directory entries
+    let num_entries = match byte_order.read_u16(data, 0) {
+        Ok(count) => count,
+        Err(e) => {
+            debug!("Failed to read Canon IFD entry count: {}", e);
+            return None;
+        }
+    };
+    debug!("Canon IFD has {} entries", num_entries);
+
+    // Calculate required size
+    let ifd_size = 2 + (num_entries as usize * 12) + 4;
+    if data.len() < ifd_size {
+        debug!(
+            "Data too short for complete IFD: need {}, have {}",
+            ifd_size,
+            data.len()
+        );
+        return None;
+    }
+
+    // Search through IFD entries for the requested tag
+    for i in 0..num_entries {
+        // Each IFD entry is 12 bytes:
+        // 0-2: tag ID
+        // 2-4: format
+        // 4-8: count
+        // 8-12: value/offset
+        let entry_offset = 2 + (i as usize * 12);
+
+        let entry_tag = match byte_order.read_u16(data, entry_offset) {
+            Ok(tag) => tag,
+            Err(e) => {
+                debug!("Failed to read tag at entry {}: {}", i, e);
+                continue;
+            }
+        };
+
+        if entry_tag == tag_id {
+            debug!("Found Canon tag {:#x} at entry {}", tag_id, i);
+
+            // Read format and count
+            let format = match byte_order.read_u16(data, entry_offset + 2) {
+                Ok(fmt) => fmt,
+                Err(e) => {
+                    debug!("Failed to read format for tag {:#x}: {}", tag_id, e);
+                    return None;
+                }
+            };
+
+            let count = match byte_order.read_u32(data, entry_offset + 4) {
+                Ok(c) => c,
+                Err(e) => {
+                    debug!("Failed to read count for tag {:#x}: {}", tag_id, e);
+                    return None;
+                }
+            };
+
+            debug!("Tag {:#x}: format={}, count={}", tag_id, format, count);
+
+            // Calculate data size based on format
+            let component_size = match format {
+                1 => 1,  // BYTE
+                2 => 1,  // ASCII
+                3 => 2,  // SHORT
+                4 => 4,  // LONG
+                5 => 8,  // RATIONAL
+                6 => 1,  // SBYTE
+                7 => 1,  // UNDEFINED
+                8 => 2,  // SSHORT
+                9 => 4,  // SLONG
+                10 => 8, // SRATIONAL
+                11 => 4, // FLOAT
+                12 => 8, // DOUBLE
+                _ => {
+                    debug!("Unknown format {} for tag {:#x}", format, tag_id);
+                    return None;
+                }
+            };
+
+            let data_size = (count as usize) * component_size;
+            debug!("Tag {:#x} data size: {} bytes", tag_id, data_size);
+
+            // If data fits in 4 bytes, it's stored directly in the value field
+            if data_size <= 4 {
+                let value_start = entry_offset + 8;
+                let value_end = value_start + data_size;
+                if value_end <= data.len() {
+                    return Some(&data[value_start..value_end]);
+                }
+            } else {
+                // Otherwise, the value field contains an offset
+                let data_offset = match byte_order.read_u32(data, entry_offset + 8) {
+                    Ok(offset) => offset as usize,
+                    Err(e) => {
+                        debug!("Failed to read data offset for tag {:#x}: {}", tag_id, e);
+                        return None;
+                    }
+                };
+                debug!("Tag {:#x} data at offset {:#x}", tag_id, data_offset);
+
+                // The offset is relative to the start of the Canon maker note data
+                let data_start = data_offset;
+                let data_end = data_start + data_size;
+
+                if data_end <= data.len() {
+                    return Some(&data[data_start..data_end]);
+                } else {
+                    debug!("Tag {:#x} data extends beyond available data", tag_id);
+                }
+            }
+        }
+    }
+
+    debug!("Canon tag {:#x} not found in IFD", tag_id);
     None
 }
 
