@@ -1,0 +1,23 @@
+{
+  "SourceFile": "third-party/exiftool/t/images/CanonRaw.cr2",
+  "File:FileSize": 8724,
+  "File:FileName": "CanonRaw.cr2",
+  "File:Directory": "third-party/exiftool/t/images",
+  "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileType": "CR2",
+  "File:FileTypeExtension": "cr2",
+  "File:MIMEType": "image/x-canon-cr2",
+  "EXIF:Make": "Canon",
+  "EXIF:Model": "Canon EOS 350D DIGITAL",
+  "EXIF:Orientation": "Horizontal (normal)",
+  "EXIF:ResolutionUnit": "inches",
+  "EXIF:ExposureTime": "1/15",
+  "EXIF:FNumber": 8.0,
+  "EXIF:ExposureProgram": "Aperture-priority AE",
+  "EXIF:ISO": 400,
+  "EXIF:DateTimeOriginal": "2005:08:03 18:59:18",
+  "EXIF:CreateDate": "2005:08:03 18:59:18",
+  "EXIF:MeteringMode": "Average",
+  "EXIF:Flash": "Off, Did not fire",
+  "EXIF:FocalLength": "55.0 mm"
+}

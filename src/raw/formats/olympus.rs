@@ -147,9 +147,9 @@ impl OlympusRawHandler {
                 let dir_info = DirectoryInfo {
                     name: "Olympus:Equipment".to_string(),
                     dir_start: *offset as usize,
-                    dir_len: 0,         // Will be calculated by IFD processing
-                    base: base_offset,  // Use MakerNotes base
-                    data_pos, // Use MakerNotes data position
+                    dir_len: 0,        // Will be calculated by IFD processing
+                    base: base_offset, // Use MakerNotes base
+                    data_pos,          // Use MakerNotes data position
                     allow_reprocess: false,
                 };
 

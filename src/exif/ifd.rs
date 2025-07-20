@@ -656,6 +656,19 @@ impl ExifReader {
     /// Get tag name based on file type and IFD context
     /// ExifTool: Uses format-specific tag tables (e.g., PanasonicRaw::Main for RW2 files)  
     fn get_tag_name(&self, tag_id: u16, ifd_name: &str) -> String {
+        // Handle Olympus subdirectory-specific tags
+        // ExifTool: lib/Image/ExifTool/Olympus.pm subdirectory tag tables
+        if ifd_name == "Olympus:Equipment" {
+            // Use Olympus Equipment-specific tag definitions
+            // ExifTool: Olympus.pm %Image::ExifTool::Olympus::Equipment hash
+            if let Some(equipment_name) =
+                crate::implementations::olympus::get_equipment_tag_name(tag_id)
+            {
+                return equipment_name.to_string();
+            }
+            // Fall through to standard lookup if not a known Equipment tag
+        }
+
         // For RAW formats, use format-specific tag tables for main IFD
         // ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main table for RW2 IFD0
         if let Some(file_type) = &self.original_file_type {

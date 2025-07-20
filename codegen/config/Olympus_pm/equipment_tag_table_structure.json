@@ -1,0 +1,10 @@
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Olympus.pm",
+  "description": "Olympus Equipment tag table structure for enum generation",
+  "table": "Equipment",
+  "output": {
+    "enum_name": "OlympusEquipmentDataType",
+    "include_metadata": true,
+    "generate_methods": ["tag_id", "from_tag_id", "name", "groups"]
+  }
+}
