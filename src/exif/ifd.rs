@@ -58,7 +58,7 @@ impl ExifReader {
         let mut _adjusted_base = 0i64;
 
         // Detect Olympus signature and apply offset adjustments
-        if let Some(signature) = detect_olympus_signature(&make, &maker_notes_data) {
+        if let Some(signature) = detect_olympus_signature(make, &maker_notes_data) {
             let data_offset = signature.data_offset();
             let base_offset = signature.base_offset();
 
@@ -69,7 +69,7 @@ impl ExifReader {
                 "Detected Olympus signature: {:?}, data_offset: {}, base_offset: {}, adjusted_offset: {:#x}",
                 signature, data_offset, base_offset, adjusted_offset
             );
-        } else if is_olympus_makernote(&make) {
+        } else if is_olympus_makernote(make) {
             // Fallback for Olympus cameras without proper signature
             debug!("Olympus camera detected via Make field but no signature found, using default offset");
         }
