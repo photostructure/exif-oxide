@@ -71,6 +71,9 @@ pub struct ExifReader {
     pub(crate) original_file_type: Option<String>,
     /// Overridden file type based on content (e.g., "NRW")
     pub(crate) overridden_file_type: Option<String>,
+    /// Mapping from synthetic tag IDs to their original tag names
+    /// Used for Canon binary data tags that use synthetic IDs in the 0xC000 range
+    pub(crate) synthetic_tag_names: HashMap<u16, String>,
 }
 
 impl ExifReader {
@@ -97,6 +100,7 @@ impl ExifReader {
             composite_tags: HashMap::new(),
             original_file_type: None,
             overridden_file_type: None,
+            synthetic_tag_names: HashMap::new(),
         }
     }
 
@@ -199,8 +203,18 @@ impl ExifReader {
 
             // Look up tag name using format-specific tables when appropriate
             let base_tag_name = if tag_id >= 0xC000 {
-                // Only check Canon names for synthetic Canon tag IDs
-                canon::get_canon_tag_name(tag_id).unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                // Check synthetic tag names mapping first for Canon binary data tags
+                if let Some(synthetic_name) = self.synthetic_tag_names.get(&tag_id) {
+                    // Return just the tag name part (after the group prefix)
+                    synthetic_name
+                        .split(':')
+                        .next_back()
+                        .unwrap_or(synthetic_name)
+                        .to_string()
+                } else {
+                    // Fall back to static Canon names for other synthetic IDs
+                    canon::get_canon_tag_name(tag_id).unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                }
             } else {
                 // Check for RAW format-specific tag names
                 // ExifTool: Uses format-specific tag tables (e.g., PanasonicRaw::Main for RW2 files)
@@ -283,21 +297,32 @@ impl ExifReader {
 
             // Look up tag name and definition
             let (base_tag_name, tag_def) = if tag_id >= 0xC000 {
-                // Canon-specific synthetic tag IDs - try conditional resolution first
-                // For binary data, pass count as data length for count-based conditions
-                let count = match raw_value {
-                    TagValue::Binary(data) => Some(data.len() as u32),
-                    _ => None,
-                };
-                if let Some(conditional_name) =
-                    self.resolve_conditional_tag_name(tag_id, count, None, None)
-                {
-                    (conditional_name, None)
+                // Check synthetic tag names mapping first for Canon binary data tags
+                if let Some(synthetic_name) = self.synthetic_tag_names.get(&tag_id) {
+                    // Return just the tag name part (after the group prefix)
+                    let name = synthetic_name
+                        .split(':')
+                        .next_back()
+                        .unwrap_or(synthetic_name)
+                        .to_string();
+                    (name, None)
                 } else {
-                    // Fall back to static Canon tag names
-                    let canon_tag_name = canon::get_canon_tag_name(tag_id)
-                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
-                    (canon_tag_name, None)
+                    // Canon-specific synthetic tag IDs - try conditional resolution first
+                    // For binary data, pass count as data length for count-based conditions
+                    let count = match raw_value {
+                        TagValue::Binary(data) => Some(data.len() as u32),
+                        _ => None,
+                    };
+                    if let Some(conditional_name) =
+                        self.resolve_conditional_tag_name(tag_id, count, None, None)
+                    {
+                        (conditional_name, None)
+                    } else {
+                        // Fall back to static Canon tag names
+                        let canon_tag_name = canon::get_canon_tag_name(tag_id)
+                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                        (canon_tag_name, None)
+                    }
                 }
             } else {
                 // Check if this tag should be looked up in the global table based on source context

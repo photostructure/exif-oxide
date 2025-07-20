@@ -20,7 +20,8 @@ pub mod tiff_footer;
 // Re-export commonly used binary_data functions for easier access
 pub use binary_data::{
     create_canon_camera_settings_table, extract_binary_data_tags, extract_binary_value,
-    extract_camera_settings, find_canon_camera_settings_tag,
+    extract_camera_settings, extract_focal_length, extract_shot_info,
+    find_canon_camera_settings_tag,
 };
 // Re-export offset scheme functions
 pub use offset_schemes::{detect_canon_signature, detect_offset_scheme, CanonOffsetScheme};
@@ -144,14 +145,26 @@ fn process_canon_binary_data_with_existing_processors(
         }
     }
 
+    // Get model for conditional processing
+    let model = exif_reader
+        .extracted_tags
+        .get(&0x0110) // Model tag
+        .and_then(|tag| tag.as_string())
+        .unwrap_or("");
+
     // Process other Canon binary data tags using similar approach
-    process_other_canon_binary_tags(data, byte_order)?;
+    let mut other_tags = process_other_canon_binary_tags_with_reader(exif_reader, data, dir_start, byte_order, model)?;
+    tags_to_store.append(&mut other_tags);
 
     // Now store all collected tags (after all borrows are released)
     for (synthetic_id, converted_value, full_tag_name) in tags_to_store {
         exif_reader
             .extracted_tags
             .insert(synthetic_id, converted_value);
+        // Store the mapping from synthetic ID to tag name
+        exif_reader
+            .synthetic_tag_names
+            .insert(synthetic_id, full_tag_name.clone());
         debug!(
             "Stored Canon tag {} with synthetic ID 0x{:04X}",
             full_tag_name, synthetic_id
@@ -159,6 +172,140 @@ fn process_canon_binary_data_with_existing_processors(
     }
 
     Ok(())
+}
+
+/// Find specific Canon tag data with proper offset handling
+/// ExifTool: Canon.pm handles maker note offsets properly
+fn find_canon_tag_data_with_full_access<'a>(
+    full_data: &'a [u8],
+    maker_note_data: &'a [u8],
+    maker_note_offset: usize,
+    tag_id: u16,
+) -> Option<&'a [u8]> {
+    use crate::tiff_types::ByteOrder;
+    
+    debug!(
+        "Searching for Canon tag {:#x} with proper offset handling (maker note at {:#x})",
+        tag_id, maker_note_offset
+    );
+
+    // Canon typically uses little-endian byte order
+    let byte_order = ByteOrder::LittleEndian;
+
+    // Parse Canon IFD structure in maker note data
+    if maker_note_data.len() < 2 {
+        debug!("Maker note data too short for IFD header");
+        return None;
+    }
+
+    // Read number of directory entries
+    let num_entries = match byte_order.read_u16(maker_note_data, 0) {
+        Ok(count) => count,
+        Err(e) => {
+            debug!("Failed to read Canon IFD entry count: {}", e);
+            return None;
+        }
+    };
+
+    debug!("Canon IFD has {} entries", num_entries);
+
+    // Search through IFD entries for the requested tag
+    for i in 0..num_entries {
+        let entry_offset = 2 + (i as usize * 12);
+        
+        if entry_offset + 12 > maker_note_data.len() {
+            debug!("Entry {} beyond maker note data bounds", i);
+            break;
+        }
+
+        let entry_tag = match byte_order.read_u16(maker_note_data, entry_offset) {
+            Ok(tag) => tag,
+            Err(e) => {
+                debug!("Failed to read tag at entry {}: {}", i, e);
+                continue;
+            }
+        };
+
+        if entry_tag == tag_id {
+            debug!("Found Canon tag {:#x} at entry {}", tag_id, i);
+
+            let format = match byte_order.read_u16(maker_note_data, entry_offset + 2) {
+                Ok(f) => f,
+                Err(e) => {
+                    debug!("Failed to read format for tag {:#x}: {}", tag_id, e);
+                    return None;
+                }
+            };
+
+            let count = match byte_order.read_u32(maker_note_data, entry_offset + 4) {
+                Ok(c) => c,
+                Err(e) => {
+                    debug!("Failed to read count for tag {:#x}: {}", tag_id, e);
+                    return None;
+                }
+            };
+
+            debug!("Tag {:#x}: format={}, count={}", tag_id, format, count);
+
+            // Calculate data size based on format
+            let component_size = match format {
+                1 => 1,  // BYTE
+                2 => 1,  // ASCII
+                3 => 2,  // SHORT
+                4 => 4,  // LONG
+                5 => 8,  // RATIONAL
+                6 => 1,  // SBYTE
+                7 => 1,  // UNDEFINED
+                8 => 2,  // SSHORT
+                9 => 4,  // SLONG
+                10 => 8, // SRATIONAL
+                11 => 4, // FLOAT
+                12 => 8, // DOUBLE
+                _ => {
+                    debug!("Unknown format {} for tag {:#x}", format, tag_id);
+                    return None;
+                }
+            };
+
+            let data_size = count as usize * component_size;
+
+            // If data fits in 4 bytes, it's stored directly in the value field
+            if data_size <= 4 {
+                let value_start = entry_offset + 8;
+                let value_end = value_start + data_size;
+                if value_end <= maker_note_data.len() {
+                    return Some(&maker_note_data[value_start..value_end]);
+                }
+            } else {
+                // Otherwise, the value field contains an offset
+                let data_offset = match byte_order.read_u32(maker_note_data, entry_offset + 8) {
+                    Ok(offset) => offset as usize,
+                    Err(e) => {
+                        debug!("Failed to read data offset for tag {:#x}: {}", tag_id, e);
+                        return None;
+                    }
+                };
+
+                debug!("Tag {:#x} data at offset {:#x}", tag_id, data_offset);
+
+                // CRITICAL FIX: Canon offsets are relative to TIFF header base
+                // The offset is relative to the ExifReader's base, not the maker note
+                let absolute_offset = data_offset;
+                let data_end = absolute_offset + data_size;
+
+                if data_end <= full_data.len() {
+                    debug!("Reading Canon tag {:#x} data from absolute offset {:#x}", tag_id, absolute_offset);
+                    return Some(&full_data[absolute_offset..data_end]);
+                } else {
+                    debug!("Tag {:#x} data extends beyond full file data (offset={:#x}, size={}, file_size={})", 
+                           tag_id, absolute_offset, data_size, full_data.len());
+                }
+            }
+        }
+    }
+
+    debug!("Canon tag {:#x} not found in IFD", tag_id);
+    None
 }
 
 /// Find specific Canon tag data within the maker note IFD
@@ -302,13 +449,229 @@ fn find_canon_tag_data(data: &[u8], tag_id: u16) -> Option<&[u8]> {
 
 /// Process other Canon binary data tags using existing Canon processors
 /// ExifTool: Canon.pm processes various Canon subdirectories
-fn process_other_canon_binary_tags(_data: &[u8], _byte_order: ByteOrder) -> Result<()> {
+/// Returns Vec of (synthetic_id, tag_value, full_tag_name) tuples for storage
+fn process_other_canon_binary_tags_with_reader(
+    exif_reader: &crate::exif::ExifReader,
+    maker_note_data: &[u8],
+    maker_note_offset: usize,
+    byte_order: ByteOrder,
+    model: &str,
+) -> Result<Vec<(u16, crate::TagValue, String)>> {
+    debug!("Processing other Canon binary data tags with proper offset handling");
+
+    let mut tags_to_store = Vec::new();
+    let full_data = exif_reader.get_data();
+
+    // Generate synthetic IDs using hash function
+    use std::collections::hash_map::DefaultHasher;
+    use std::hash::{Hash, Hasher};
+
+    // Process Canon AFInfo2 (tag 0x0026) with proper offset handling
+    // ExifTool: Canon.pm:4477 %Canon::AFInfo2
+    if let Some(af_info2_data) = find_canon_tag_data_with_full_access(
+        full_data, 
+        maker_note_data, 
+        maker_note_offset, 
+        0x0026
+    ) {
+        debug!("Processing Canon AFInfo2 using serial data processor with proper offsets");
+
+        match af_info::process_serial_data(
+            af_info2_data,
+            0,
+            af_info2_data.len(),
+            byte_order,
+            &af_info::create_af_info2_table(),
+            model,
+        ) {
+            Ok(af_info2) => {
+                debug!("Extracted {} Canon AFInfo2 tags", af_info2.len());
+                for (tag_name, tag_value) in af_info2 {
+                    debug!("Canon AFInfo2: {} = {:?}", tag_name, tag_value);
+
+                    // Generate synthetic ID for this tag
+                    let mut hasher = DefaultHasher::new();
+                    tag_name.hash(&mut hasher);
+                    let hash = hasher.finish();
+                    let synthetic_id = 0xC000 + ((hash as u16) & 0x0FFF);
+
+                    tags_to_store.push((synthetic_id, tag_value, tag_name));
+                }
+            }
+            Err(e) => {
+                debug!("Failed to extract Canon AFInfo2: {}", e);
+            }
+        }
+    }
+
+    Ok(tags_to_store)
+}
+
+/// Legacy function for backward compatibility
+/// Process other Canon binary data tags using existing Canon processors
+/// ExifTool: Canon.pm processes various Canon subdirectories
+/// Returns Vec of (synthetic_id, tag_value, full_tag_name) tuples for storage
+fn process_other_canon_binary_tags(
+    data: &[u8],
+    byte_order: ByteOrder,
+    model: &str,
+) -> Result<Vec<(u16, crate::TagValue, String)>> {
     debug!("Processing other Canon binary data tags");
 
-    // TODO: Process Canon ShotInfo, FocalLength, AFInfo, etc.
+    let mut tags_to_store = Vec::new();
+
+    // Generate synthetic IDs using hash function
+    use std::collections::hash_map::DefaultHasher;
+    use std::hash::{Hash, Hasher};
+
+    // Process Canon FocalLength (tag 0x0002)
+    // ExifTool: Canon.pm:2637 %Canon::FocalLength
+    if let Some(focal_length_data) = find_canon_tag_data(data, 0x0002) {
+        debug!("Processing Canon FocalLength using existing Canon processor");
+
+        match extract_focal_length(focal_length_data, 0, focal_length_data.len(), byte_order) {
+            Ok(focal_info) => {
+                debug!("Extracted {} Canon FocalLength tags", focal_info.len());
+                for (tag_name, tag_value) in focal_info {
+                    debug!("Canon FocalLength: {} = {:?}", tag_name, tag_value);
+
+                    // Generate synthetic ID for this tag
+                    let mut hasher = DefaultHasher::new();
+                    tag_name.hash(&mut hasher);
+                    let hash = hasher.finish();
+                    let synthetic_id = 0xC000 + ((hash as u16) & 0x0FFF);
+
+                    tags_to_store.push((synthetic_id, tag_value, tag_name));
+                }
+            }
+            Err(e) => {
+                debug!("Failed to extract Canon FocalLength: {}", e);
+            }
+        }
+    }
+
+    // Process Canon ShotInfo (tag 0x0004)
+    // ExifTool: Canon.pm:2715 %Canon::ShotInfo
+    if let Some(shot_info_data) = find_canon_tag_data(data, 0x0004) {
+        debug!("Processing Canon ShotInfo using existing Canon processor");
+
+        match extract_shot_info(shot_info_data, 0, shot_info_data.len(), byte_order) {
+            Ok(shot_info) => {
+                debug!("Extracted {} Canon ShotInfo tags", shot_info.len());
+                for (tag_name, tag_value) in shot_info {
+                    debug!("Canon ShotInfo: {} = {:?}", tag_name, tag_value);
+
+                    // Generate synthetic ID for this tag
+                    let mut hasher = DefaultHasher::new();
+                    tag_name.hash(&mut hasher);
+                    let hash = hasher.finish();
+                    let synthetic_id = 0xC000 + ((hash as u16) & 0x0FFF);
+
+                    tags_to_store.push((synthetic_id, tag_value, tag_name));
+                }
+            }
+            Err(e) => {
+                debug!("Failed to extract Canon ShotInfo: {}", e);
+            }
+        }
+    }
+
+    // Process Canon AFInfo (tag 0x0012)
+    // ExifTool: Canon.pm:4440 %Canon::AFInfo
+    if let Some(af_info_data) = find_canon_tag_data(data, 0x0012) {
+        debug!("Processing Canon AFInfo using serial data processor");
+
+        // Use model passed from parent function
+
+        match af_info::process_serial_data(
+            af_info_data,
+            0,
+            af_info_data.len(),
+            byte_order,
+            &af_info::create_af_info_table(),
+            model,
+        ) {
+            Ok(af_info) => {
+                debug!("Extracted {} Canon AFInfo tags", af_info.len());
+                for (tag_name, tag_value) in af_info {
+                    debug!("Canon AFInfo: {} = {:?}", tag_name, tag_value);
+
+                    // Generate synthetic ID for this tag
+                    let mut hasher = DefaultHasher::new();
+                    tag_name.hash(&mut hasher);
+                    let hash = hasher.finish();
+                    let synthetic_id = 0xC000 + ((hash as u16) & 0x0FFF);
+
+                    tags_to_store.push((synthetic_id, tag_value, tag_name));
+                }
+            }
+            Err(e) => {
+                debug!("Failed to extract Canon AFInfo: {}", e);
+            }
+        }
+    }
+
+    // Process Canon AFInfo2 (tag 0x0026)
+    // ExifTool: Canon.pm:4477 %Canon::AFInfo2
+    if let Some(af_info2_data) = find_canon_tag_data(data, 0x0026) {
+        debug!("Processing Canon AFInfo2 using serial data processor");
+
+        // CRITICAL FIX: Test byte order to determine correct reading
+        // AFInfo2 data might use different byte order than maker note IFD
+        let afinfo2_byte_order = if af_info2_data.len() >= 2 {
+            // Test both byte orders to see which gives reasonable values
+            let le_val = ByteOrder::LittleEndian.read_u16(af_info2_data, 0).unwrap_or(0);
+            let be_val = ByteOrder::BigEndian.read_u16(af_info2_data, 0).unwrap_or(0);
+            
+            debug!("AFInfo2 first value: LE={}, BE={}", le_val, be_val);
+            
+            // AFInfoSize should be around 96 (0x60), not 31482 (0x7AFA)
+            // Use big-endian if it gives a more reasonable value
+            if be_val < 200 && le_val > 30000 {
+                debug!("Using big-endian byte order for AFInfo2");
+                ByteOrder::BigEndian
+            } else {
+                debug!("Using little-endian byte order for AFInfo2");
+                byte_order
+            }
+        } else {
+            byte_order
+        };
+
+        match af_info::process_serial_data(
+            af_info2_data,
+            0,
+            af_info2_data.len(),
+            afinfo2_byte_order,
+            &af_info::create_af_info2_table(),
+            model,
+        ) {
+            Ok(af_info2) => {
+                debug!("Extracted {} Canon AFInfo2 tags", af_info2.len());
+                for (tag_name, tag_value) in af_info2 {
+                    debug!("Canon AFInfo2: {} = {:?}", tag_name, tag_value);
+
+                    // Generate synthetic ID for this tag
+                    let mut hasher = DefaultHasher::new();
+                    tag_name.hash(&mut hasher);
+                    let hash = hasher.finish();
+                    let synthetic_id = 0xC000 + ((hash as u16) & 0x0FFF);
+
+                    tags_to_store.push((synthetic_id, tag_value, tag_name));
+                }
+            }
+            Err(e) => {
+                debug!("Failed to extract Canon AFInfo2: {}", e);
+            }
+        }
+    }
+
+    // TODO: Process additional Canon binary data tags as needed:
+    // - Panorama (0x0005)
+    // - MyColors (0x001d)
     // using existing Canon binary data processors and generated lookup tables
 
-    Ok(())
+    Ok(tags_to_store)
 }
 
 /// Apply Canon CameraSettings PrintConv using generated lookup tables  

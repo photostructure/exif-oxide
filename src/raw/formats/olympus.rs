@@ -257,7 +257,7 @@ impl RawFormatHandler for OlympusRawHandler {
         // Step 2: Process the main IFD using existing TIFF infrastructure
         // ExifTool: Olympus.pm processes TIFF IFDs first, then applies special handling
         let dir_info = DirectoryInfo {
-            name: "Olympus".to_string(),
+            name: "IFD0".to_string(), // Use standard TIFF IFD name for proper processing
             dir_start: header.ifd0_offset as usize,
             dir_len: 0,  // Will be calculated by IFD processing
             base: 0,     // Standard TIFF base
