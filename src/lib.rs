@@ -21,9 +21,9 @@
 //! excluded from published crates to keep package size manageable.
 
 pub mod composite_tags;
-pub mod conditions;
 pub mod examples;
 pub mod exif;
+pub mod expressions;
 pub mod file_detection;
 pub mod file_types;
 pub mod formats;
