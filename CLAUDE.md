@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with exif-oxide.
 
+Today's date is July 20, 2025.
+
 ## Project Overview
 
 As much as possible, exif-oxide is a _translation_ of [ExifTool](https://exiftool.org/) from perl to Rust.
@@ -237,22 +239,47 @@ We use `tracing`, and there's lots of examples in `src/main.rs`.
 
 ### Comparing with ExifTool
 
-Use `scripts/compare-with-exiftool.sh` to compare exif-oxide output with ExifTool's JSON output:
+Two tools are available for comparing exif-oxide output with ExifTool:
+
+#### 1. Rust-based comparison tool (recommended)
+
+The `compare-with-exiftool` binary uses the same value normalization logic as our compatibility tests:
 
 ```bash
-./scripts/compare-with-exiftool.sh <image-file>
+# Build the tool
+cargo build --bin compare-with-exiftool
+
+# Compare all tags
+cargo run --bin compare-with-exiftool image.jpg
+
+# Compare only File: group tags
+cargo run --bin compare-with-exiftool image.jpg File:
+
+# Compare only EXIF: group tags
+cargo run --bin compare-with-exiftool image.jpg EXIF:
 ```
 
-This script:
-- Runs both ExifTool and exif-oxide on the same file
-- Sorts the JSON outputs for minimal diffs
-- Shows a unified diff highlighting differences
-- Reports tag counts from both tools
+This tool:
+- Normalizes values using the same logic as our test suite (e.g., "25 MB" → "26214400")
+- Shows only actual differences, not formatting variations
+- Groups differences into: tags only in ExifTool, tags only in exif-oxide, and tags with different values
+- Handles ExifTool's inconsistent formatting across different modules
 
-Set `DEBUG=1` to keep the raw outputs for debugging:
+#### 2. Shell script (simple diff)
+
+The `scripts/compare-with-exiftool.sh` script provides a basic JSON diff:
+
 ```bash
-DEBUG=1 ./scripts/compare-with-exiftool.sh <image-file>
+# Compare all tags
+./scripts/compare-with-exiftool.sh image.jpg
+
+# Compare only specific group tags
+./scripts/compare-with-exiftool.sh image.jpg File:
 ```
+
+Environment variables:
+- `DEBUG=1` - Keep the raw outputs for debugging
+- `DIFF_CONTEXT=3` - Show more context lines in diff (default is 0 for minimal diff)
 
 ### Git commit messages
 

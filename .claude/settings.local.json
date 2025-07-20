@@ -65,7 +65,13 @@
       "Bash(RUST_LOG=debug cargo run -- test-images/olympus/test.orf)",
       "Bash(RUST_LOG=debug cargo run -- test-images/canon/Canon_T3i.CR2)",
       "Bash(RUST_LOG=debug target/release/exif-oxide:*)",
-      "Bash(target/release/exif-oxide:*)"
+      "Bash(target/release/exif-oxide:*)",
+      "Bash(./scripts/compare-with-exiftool.sh:*)",
+      "Bash(./scripts/compare-with-exiftool.sh:*)",
+      "Bash(./target/release/exif-oxide:*)",
+      "Bash(./scripts/compare-with-exiftool.sh:*)",
+      "Bash(RUST_LOG=debug ./target/release/exif-oxide test-images/canon/Canon_T3i.CR2)",
+      "Bash(RUST_LOG=debug cargo run --release -- test-images/canon/Canon_T3i.CR2)"
     ],
     "deny": []
   }
