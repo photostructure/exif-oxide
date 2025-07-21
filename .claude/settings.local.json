@@ -76,7 +76,9 @@
       "Bash(RUST_LOG=debug cargo run -- test-images/canon/Canon_T3i.jpg)",
       "Bash(RUST_LOG=debug cargo run -- test-images/sony/sony_a7c_ii_02.arw)",
       "Bash(/dev/null)",
-      "Bash(__NEW_LINE__ echo -e \"\\nexif-oxide (optimized) on all test images:\")"
+      "Bash(__NEW_LINE__ echo -e \"\\nexif-oxide (optimized) on all test images:\")",
+      "Bash(RUST_LOG=debug cargo run --bin exif-oxide -- test-images/sony/sony_a7c_ii_02.arv)",
+      "Bash(RUST_LOG=debug cargo run --bin exif-oxide -- test-images/sony/sony_a7c_ii_02.arw)"
     ],
     "deny": []
   }
