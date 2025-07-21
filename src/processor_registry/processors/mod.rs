@@ -20,9 +20,11 @@ pub mod canon;
 pub mod fujifilm;
 pub mod nikon;
 pub mod olympus;
+pub mod sony;
 
 // Re-export processor implementations
 pub use canon::*;
 pub use fujifilm::*;
 pub use nikon::*;
 pub use olympus::*;
+pub use sony::*;

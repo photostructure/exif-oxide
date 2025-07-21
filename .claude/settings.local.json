@@ -73,7 +73,8 @@
       "Bash(RUST_LOG=debug ./target/release/exif-oxide test-images/canon/Canon_T3i.CR2)",
       "Bash(RUST_LOG=debug cargo run --release -- test-images/canon/Canon_T3i.CR2)",
       "Bash(RUST_LOG=debug cargo run -- /mnt/2tb/home/mrm/src/exif-oxide/test-images/olympus/test.orf)",
-      "Bash(RUST_LOG=debug cargo run -- test-images/canon/Canon_T3i.jpg)"
+      "Bash(RUST_LOG=debug cargo run -- test-images/canon/Canon_T3i.jpg)",
+      "Bash(RUST_LOG=debug cargo run -- test-images/sony/sony_a7c_ii_02.arw)"
     ],
     "deny": []
   }

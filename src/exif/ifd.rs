@@ -291,7 +291,7 @@ impl ExifReader {
                     let values = value_extraction::extract_byte_array_value(&self.data, &entry)?;
                     TagValue::U8Array(values)
                 };
-                
+
                 let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
                 trace!(
                     "Extracted BYTE tag {:#x} from {} (count: {}): {:?}",
