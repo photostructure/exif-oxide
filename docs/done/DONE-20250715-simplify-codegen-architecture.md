@@ -188,7 +188,7 @@ simple_table.pl Canon.pm canonWhiteBalance → canon_white_balance.json
 
 - `codegen/config/Canon_pm/simple_table.json` - Example config to modify
 - `codegen/config/Nikon_pm/simple_table.json` - Another example
-- `docs/design/EXIFTOOL-INTEGRATION.md` - Current codegen design
+- `docs/CODEGEN.md` - Current codegen design
 
 ### 3. **Example Generated Output**
 
@@ -604,7 +604,7 @@ The architecture is now **exactly** what was requested in the handoff! 🚀
 
 2. **Updated documentation** ✅
    - Updated ARCHITECTURE.md with simplified build pipeline diagram
-   - Updated EXIFTOOL-INTEGRATION.md with new architecture details
+   - Updated CODEGEN.md with new architecture details
    - Both documents now reflect the Rust-orchestrated codegen system
 
 3. **Resolved make precommit issues** ✅
@@ -646,7 +646,7 @@ The codegen architecture simplification is **fully functional**. All major archi
 
 4. **Updated documentation** ✅
    - ARCHITECTURE.md reflects simplified pipeline
-   - EXIFTOOL-INTEGRATION.md documents new architecture
+   - CODEGEN.md documents new architecture
 
 ## 📊 Current Test Status
 

@@ -110,7 +110,7 @@ Many Canon tables use string keys instead of numeric ones, particularly for lens
 1. **Add More Manufacturers**: Create `inline_printconv.json` configs for Nikon, Sony, Olympus, Fujifilm
 2. **Replace Manual Lookups**: Update existing manual PrintConv implementations to use generated tables
 3. **Integration Testing**: Add tests comparing generated output with ExifTool
-4. **Documentation**: Update `docs/design/EXIFTOOL-INTEGRATION.md` with inline PrintConv extraction details
+4. **Documentation**: Update `docs/CODEGEN.md` with inline PrintConv extraction details
 
 ## Validation Results
 

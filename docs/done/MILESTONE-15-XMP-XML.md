@@ -644,7 +644,7 @@ make codegen-simple-tables
 
 - [XMP.md](../../third-party/exiftool/doc/modules/XMP.md) - ExifTool XMP architecture
 - [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md) - When to deviate from ExifTool implementation
-- [EXIFTOOL-INTEGRATION.md](../design/EXIFTOOL-INTEGRATION.md) - Unified code generation and implementation guide
+- [CODEGEN.md](../CODEGEN.md) - Unified code generation and implementation guide
 
 ### Missing Documentation to Create
 

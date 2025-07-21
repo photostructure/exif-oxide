@@ -12,7 +12,7 @@
 ## High level guidance
 
 - **Follow Trust ExifTool**: Study how ExifTool processes CR2 files exactly. See [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md)
-- **Use Codegen**: Switch any manual lookup tables to generated code. See [EXIFTOOL-INTEGRATION.md](../design/EXIFTOOL-INTEGRATION.md)
+- **Use Codegen**: Switch any manual lookup tables to generated code. See [CODEGEN.md](../CODEGEN.md)
 - **Study ExifTool Sources**: [Canon.pm](../../third-party/exiftool/lib/Image/ExifTool/Canon.pm) and [module docs](../../third-party/exiftool/doc/modules/Canon.md)
 
 ## Overview

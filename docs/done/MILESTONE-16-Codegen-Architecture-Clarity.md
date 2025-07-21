@@ -165,7 +165,7 @@ codegen/src/generators/
 
 3. **Documentation and Examples**
 
-   - Update EXIFTOOL-INTEGRATION.md with new architecture
+   - Update CODEGEN.md with new architecture
    - Add examples for each generator type
    - Document migration path for future tables
 
@@ -213,7 +213,7 @@ codegen/src/generators/
 
 #### **Documentation & Testing**
 
-- [ ] EXIFTOOL-INTEGRATION.md updated with new architecture
+- [ ] CODEGEN.md updated with new architecture
 - [ ] All tests still pass (maintain 97.6% or better)
 - [ ] Parallel build execution working
 - [ ] Documentation clearly explains "extract" system
@@ -278,7 +278,7 @@ pub fn generate_boolean_set(config: &BooleanSetConfig, keys: &[String]) -> Resul
 
 ## Related Documentation
 
-- [EXIFTOOL-INTEGRATION.md](../design/EXIFTOOL-INTEGRATION.md) - Integration patterns
+- [CODEGEN.md](../CODEGEN.md) - Integration patterns
 - [MODULAR_ARCHITECTURE.md](../../codegen/MODULAR_ARCHITECTURE.md) - Current codegen structure
 - [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md) - Core principles for implementation
 - [ENGINEER-GUIDE.md](../ENGINEER-GUIDE.md) - Developer onboarding guide
@@ -410,7 +410,7 @@ All tasks in Phase 4 have been successfully completed:
 
 5. **Documentation Updates**:
 
-   - [x] Update EXIFTOOL-INTEGRATION.md (completed - 4 references updated)
+   - [x] Update CODEGEN.md (completed - 4 references updated)
    - [x] Update CLAUDE.md (no references found)
    - [x] All references to simple_tables replaced with extract
 
@@ -540,7 +540,7 @@ use crate::generated::canon::white_balance::lookup_canon_white_balance;
 
 **Documentation Updates:**
 
-1. **EXIFTOOL-INTEGRATION.md**
+1. **CODEGEN.md**
 
    - Replace all "simple tables" references with "extract"
    - Document the three modular generator types
@@ -636,7 +636,7 @@ The following cleanup tasks were completed:
 - Removed duplicate `codegen/generated/simple_tables/` directory with old data
 - Updated remaining references in extractors and documentation
 - Fixed one comment reference in `codegen/src/schemas/input.rs`
-- Updated `EXIFTOOL-INTEGRATION.md` to use "extract" naming
+- Updated `CODEGEN.md` to use "extract" naming
 - Updated module.rs to use direct module exports instead of nested structure
 
 The milestone is now fully complete with a clean, modular architecture that new engineers can understand immediately.

@@ -80,7 +80,7 @@ ExifTool Source → [Rust Orchestration] → Perl Extractors → JSON → Genera
 
 ### Key Components
 
-1. **ExifTool Integration** ([design/EXIFTOOL-INTEGRATION.md](design/EXIFTOOL-INTEGRATION.md))
+1. **ExifTool Integration** ([CODEGEN.md](CODEGEN.md))
 
    - Code generation for tag tables and lookups
    - Manual implementation patterns
@@ -180,7 +180,7 @@ Binary data uses streaming references:
 ### Design Documents
 
 - [API Design](design/API-DESIGN.md) - Public API structure
-- [ExifTool Integration](design/EXIFTOOL-INTEGRATION.md) - Unified code generation and implementation guide
+- [ExifTool Integration](CODEGEN.md) - Unified code generation and implementation guide
 
 ### Guides
 

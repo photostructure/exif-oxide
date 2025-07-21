@@ -260,7 +260,7 @@ impl TemplateContext {
 
 **Architecture Understanding**:
 - `docs/ARCHITECTURE.md` - Core system overview
-- `docs/design/EXIFTOOL-INTEGRATION.md` - Integration patterns
+- `docs/CODEGEN.md` - Integration patterns
 - `docs/TRUST-EXIFTOOL.md` - Fundamental design principle
 
 **Implementation Guides**:

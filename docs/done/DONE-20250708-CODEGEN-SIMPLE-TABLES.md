@@ -124,7 +124,7 @@ All tests passing with 100% coverage of generated code.
 
 ## 🔗 **Related Documentation**
 
-- **[EXIFTOOL-INTEGRATION.md](../design/EXIFTOOL-INTEGRATION.md)**: Unified code generation and implementation guide
+- **[CODEGEN.md](../CODEGEN.md)**: Unified code generation and implementation guide
 - **[TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md)**: Fundamental principle driving this work
 
 ## 🏆 **Impact**

@@ -266,5 +266,5 @@ pub fn select_camera_info_table(model: &str) -> &'static str {
 ## Related Documentation
 
 - [PROCESSOR-PROC-DISPATCH.md](../PROCESSOR-PROC-DISPATCH.md) - Detailed dispatch design
-- [EXIFTOOL-INTEGRATION.md](../design/EXIFTOOL-INTEGRATION.md) - Unified code generation and implementation guide
+- [CODEGEN.md](../CODEGEN.md) - Unified code generation and implementation guide
 - [STATE-MANAGEMENT.md](../STATE-MANAGEMENT.md) - Access to model and other state

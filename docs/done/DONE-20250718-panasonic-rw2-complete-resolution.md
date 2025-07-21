@@ -257,7 +257,7 @@ diff exiftool_tags.txt our_tags.txt
 ### Required Reading
 - **Trust ExifTool**: `docs/TRUST-EXIFTOOL.md` (critical for all decisions)
 - **Architecture**: `docs/ARCHITECTURE.md` - High-level system overview
-- **ExifTool Integration**: `docs/design/EXIFTOOL-INTEGRATION.md` - Code generation guide
+- **ExifTool Integration**: `docs/CODEGEN.md` - Code generation guide
 
 ### ExifTool Source Study
 - **PanasonicRaw Module**: `third-party/exiftool/lib/Image/ExifTool/PanasonicRaw.pm`
