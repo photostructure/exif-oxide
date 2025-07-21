@@ -97,7 +97,7 @@ To maintain a manageable scope:
 
 - We are initially targeting support for tags with >80% frequency or marked `mainstream: true` in TagMetadata.json
 - This reduces scope from ExifTool's 15,000+ tags to approximately 500-1000
-- See [TagMetadata.json](third-party/exiftool/doc/TagMetadata.json) for tag popularity data
+- See [TagMetadata.json](docs/tag-metadata.json) for tag popularity data
 
 ### 4. Look for easy codegen wins
 
