@@ -69,6 +69,10 @@ pub fn process_canon_makernotes(
     // This extracts the basic Canon tag structure (tag IDs and data)
     exif_reader.process_subdirectory(&dir_info)?;
 
+    // Apply Canon-specific PrintConv processing to main Canon table tags
+    // ExifTool: Canon.pm Main table PrintConv entries need manual application
+    apply_canon_main_table_print_conv(exif_reader)?;
+
     // CRITICAL: Now process specific Canon binary data tags using existing Canon processors
     // ExifTool: Canon.pm processes each Canon tag through specific SubDirectory processors
 
@@ -472,6 +476,90 @@ fn process_other_canon_binary_tags_with_reader(
     use std::collections::hash_map::DefaultHasher;
     use std::hash::{Hash, Hasher};
 
+    // Process Canon FocalLength (tag 0x0002) with proper offset handling
+    // ExifTool: Canon.pm:2637 %Canon::FocalLength
+    if let Some(focal_length_data) =
+        find_canon_tag_data_with_full_access(full_data, maker_note_data, maker_note_offset, 0x0002)
+    {
+        debug!("Processing Canon FocalLength using existing Canon processor with proper offsets");
+
+        match extract_focal_length(focal_length_data, 0, focal_length_data.len(), byte_order) {
+            Ok(focal_info) => {
+                debug!("Extracted {} Canon FocalLength tags", focal_info.len());
+                for (tag_name, tag_value) in focal_info {
+                    debug!("Canon FocalLength: {} = {:?}", tag_name, tag_value);
+
+                    // Generate synthetic ID for this tag
+                    let mut hasher = DefaultHasher::new();
+                    tag_name.hash(&mut hasher);
+                    let hash = hasher.finish();
+                    let synthetic_id = 0xC000 + ((hash as u16) & 0x0FFF);
+
+                    tags_to_store.push((synthetic_id, tag_value, tag_name));
+                }
+            }
+            Err(e) => {
+                debug!("Failed to extract Canon FocalLength: {}", e);
+            }
+        }
+    }
+
+    // Process Canon ShotInfo (tag 0x0004) with proper offset handling
+    // ExifTool: Canon.pm:2715 %Canon::ShotInfo
+    if let Some(shot_info_data) =
+        find_canon_tag_data_with_full_access(full_data, maker_note_data, maker_note_offset, 0x0004)
+    {
+        debug!("Processing Canon ShotInfo using existing Canon processor with proper offsets");
+
+        match extract_shot_info(shot_info_data, 0, shot_info_data.len(), byte_order) {
+            Ok(shot_info) => {
+                debug!("Extracted {} Canon ShotInfo tags", shot_info.len());
+                for (tag_name, tag_value) in shot_info {
+                    debug!("Canon ShotInfo: {} = {:?}", tag_name, tag_value);
+
+                    // Generate synthetic ID for this tag
+                    let mut hasher = DefaultHasher::new();
+                    tag_name.hash(&mut hasher);
+                    let hash = hasher.finish();
+                    let synthetic_id = 0xC000 + ((hash as u16) & 0x0FFF);
+
+                    tags_to_store.push((synthetic_id, tag_value, tag_name));
+                }
+            }
+            Err(e) => {
+                debug!("Failed to extract Canon ShotInfo: {}", e);
+            }
+        }
+    }
+
+    // Process Canon Panorama (tag 0x0005) with proper offset handling
+    // ExifTool: Canon.pm:2999 %Canon::Panorama with ProcessBinaryData
+    if let Some(panorama_data) =
+        find_canon_tag_data_with_full_access(full_data, maker_note_data, maker_note_offset, 0x0005)
+    {
+        debug!("Processing Canon Panorama using existing Canon processor with proper offsets");
+
+        match extract_panorama(panorama_data, 0, panorama_data.len(), byte_order) {
+            Ok(panorama_info) => {
+                debug!("Extracted {} Canon Panorama tags", panorama_info.len());
+                for (tag_name, tag_value) in panorama_info {
+                    debug!("Canon Panorama: {} = {:?}", tag_name, tag_value);
+
+                    // Generate synthetic ID for this tag
+                    let mut hasher = DefaultHasher::new();
+                    tag_name.hash(&mut hasher);
+                    let hash = hasher.finish();
+                    let synthetic_id = 0xC000 + ((hash as u16) & 0x0FFF);
+
+                    tags_to_store.push((synthetic_id, tag_value, tag_name));
+                }
+            }
+            Err(e) => {
+                debug!("Failed to extract Canon Panorama: {}", e);
+            }
+        }
+    }
+
     // Process Canon AFInfo2 (tag 0x0026) with proper offset handling
     // ExifTool: Canon.pm:4477 %Canon::AFInfo2
     if let Some(af_info2_data) =
@@ -724,6 +812,57 @@ fn process_other_canon_binary_tags(
     }
 
     Ok(tags_to_store)
+}
+
+/// Apply Canon-specific PrintConv processing to main Canon table tags
+/// ExifTool: Canon.pm Main table PrintConv entries for human-readable output
+fn apply_canon_main_table_print_conv(exif_reader: &mut crate::exif::ExifReader) -> Result<()> {
+    use crate::generated::Canon_pm::canonmodelid::lookup_canon_model_id;
+    use crate::types::TagValue;
+
+    debug!("Applying Canon main table PrintConv processing");
+
+    // Create a list of tag IDs that need Canon-specific PrintConv processing
+    let mut tags_to_update = Vec::new();
+
+    // Find Canon tags that need PrintConv processing
+    for (&tag_id, tag_value) in &exif_reader.extracted_tags {
+        // Only process tags that have Canon source info (MakerNotes namespace)
+        if let Some(source_info) = exif_reader.tag_sources.get(&tag_id) {
+            if source_info.namespace == "MakerNotes" && source_info.ifd_name.starts_with("Canon") {
+                match tag_id {
+                    0x10 => {
+                        // CanonModelID - apply generated lookup table
+                        // ExifTool: Canon.pm CanonModelID PrintConv
+                        if let TagValue::U32(model_id) = tag_value {
+                            if let Some(model_name) = lookup_canon_model_id(*model_id) {
+                                debug!("Canon CanonModelID: {} -> {}", model_id, model_name);
+                                tags_to_update
+                                    .push((tag_id, TagValue::String(model_name.to_string())));
+                            } else {
+                                debug!("Canon CanonModelID: {} (unknown model)", model_id);
+                                tags_to_update.push((
+                                    tag_id,
+                                    TagValue::String(format!("Unknown model ({model_id})")),
+                                ));
+                            }
+                        }
+                    }
+                    _ => {
+                        // Other Canon tags can be added here as needed
+                    }
+                }
+            }
+        }
+    }
+
+    // Apply the PrintConv updates
+    for (tag_id, new_value) in tags_to_update {
+        exif_reader.extracted_tags.insert(tag_id, new_value);
+    }
+
+    debug!("Canon main table PrintConv processing completed");
+    Ok(())
 }
 
 /// Apply Canon CameraSettings PrintConv using generated lookup tables  

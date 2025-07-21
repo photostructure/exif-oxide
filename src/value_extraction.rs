@@ -125,19 +125,71 @@ pub fn extract_byte_array_value(data: &[u8], entry: &IfdEntry) -> Result<Vec<u8>
     } else if entry.is_inline() {
         // Should not happen - more than 4 bytes can't fit inline
         return Err(ExifError::ParseError(format!(
-            "BYTE array with count {} cannot be stored inline",
-            count
+            "BYTE array with count {count} cannot be stored inline"
         )));
     } else {
         // Value stored at offset
         let offset = entry.value_or_offset as usize;
         if offset + count > data.len() {
             return Err(ExifError::ParseError(format!(
-                "BYTE array offset {:#x} + count {} beyond data bounds",
-                offset, count
+                "BYTE array offset {offset:#x} + count {count} beyond data bounds"
             )));
         }
         Ok(data[offset..offset + count].to_vec())
+    }
+}
+
+/// Extract SHORT array value from IFD entry (SHORT format with count > 1)
+/// ExifTool: lib/Image/ExifTool/Exif.pm:6372-6398 value extraction
+/// This handles SHORT format with count > 1 (arrays of unsigned 16-bit integers)
+/// Critical for Canon binary data extraction (CameraSettings, ShotInfo, etc.)
+pub fn extract_short_array_value(
+    data: &[u8],
+    entry: &IfdEntry,
+    byte_order: ByteOrder,
+) -> Result<Vec<u16>> {
+    let count = entry.count as usize;
+    let mut values = Vec::with_capacity(count);
+
+    if entry.is_inline() && count <= 2 {
+        // Value stored inline - up to 2 SHORT values can fit in 4 bytes
+        // ExifTool: lib/Image/ExifTool/Exif.pm:6372 inline value handling
+        let bytes = entry.value_or_offset.to_le_bytes();
+
+        // Convert bytes based on IFD byte order (not necessarily LE)
+        for i in 0..count {
+            let offset = i * 2;
+            let value = match byte_order {
+                ByteOrder::LittleEndian => u16::from_le_bytes([bytes[offset], bytes[offset + 1]]),
+                ByteOrder::BigEndian => u16::from_be_bytes([bytes[offset], bytes[offset + 1]]),
+            };
+            values.push(value);
+        }
+        Ok(values)
+    } else if entry.is_inline() {
+        // Should not happen - more than 2 SHORT values can't fit inline
+        return Err(ExifError::ParseError(format!(
+            "SHORT array with count {count} cannot be stored inline"
+        )));
+    } else {
+        // Value stored at offset
+        let offset = entry.value_or_offset as usize;
+        let total_size = count * 2; // 2 bytes per SHORT
+
+        if offset + total_size > data.len() {
+            return Err(ExifError::ParseError(format!(
+                "SHORT array offset {offset:#x} + size {total_size} beyond data bounds"
+            )));
+        }
+
+        // Read each SHORT value with proper byte order
+        for i in 0..count {
+            let value_offset = offset + (i * 2);
+            let value = byte_order.read_u16(data, value_offset)?;
+            values.push(value);
+        }
+
+        Ok(values)
     }
 }
 

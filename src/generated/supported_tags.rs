@@ -259,7 +259,6 @@ pub fn tag_counts_by_group() -> &'static [(&'static str, usize)] {
 /// Get a summary of supported tag statistics
 pub fn supported_tag_summary() -> String {
     format!(
-        "Supported tags: {} standard, {} composite, {} total",
-        SUPPORTED_TAG_COUNT, SUPPORTED_COMPOSITE_TAG_COUNT, TOTAL_SUPPORTED_TAG_COUNT
+        "Supported tags: {SUPPORTED_TAG_COUNT} standard, {SUPPORTED_COMPOSITE_TAG_COUNT} composite, {TOTAL_SUPPORTED_TAG_COUNT} total"
     )
 }

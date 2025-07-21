@@ -66,7 +66,7 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
         }
     }
 
-    fn process_data(&self, data: &[u8], context: &ProcessorContext) -> Result<ProcessorResult> {
+    fn process_data(&self, data: &[u8], _context: &ProcessorContext) -> Result<ProcessorResult> {
         let mut result = ProcessorResult::new();
         debug!(
             "Processing Sony CameraInfo section with {} bytes",
@@ -133,7 +133,7 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
         }
 
         // Add context for debugging
-        if let Some(manufacturer) = &context.manufacturer {
+        if let Some(manufacturer) = &_context.manufacturer {
             debug!(
                 "Sony CameraInfo processing for manufacturer: {}",
                 manufacturer
@@ -433,6 +433,399 @@ impl BinaryDataProcessor for SonyTag2010Processor {
     }
 }
 
+/// Sony CameraSettings processor
+///
+/// Processes Sony CameraSettings section (tag 0x0114) following ExifTool's exact logic.
+/// ExifTool: lib/Image/ExifTool/Sony.pm CameraSettings table (lines 4135-4627)
+/// This covers A200/A300/A350/A700/A850/A900 models with 280 or 364 byte data.
+pub struct SonyCameraSettingsProcessor;
+
+impl BinaryDataProcessor for SonyCameraSettingsProcessor {
+    fn can_process(&self, context: &ProcessorContext) -> ProcessorCapability {
+        debug!(
+            "SonyCameraSettingsProcessor::can_process - manufacturer: {:?}, table: {}",
+            context.manufacturer, context.table_name
+        );
+
+        // Standard IFD check
+        if matches!(
+            context.table_name.as_str(),
+            "ExifIFD" | "GPS" | "InteropIFD" | "IFD0" | "IFD1"
+        ) {
+            return ProcessorCapability::Incompatible;
+        }
+
+        let is_sony = context
+            .manufacturer
+            .as_ref()
+            .map(|m| m.starts_with("SONY") || m.contains("Sony"))
+            .unwrap_or(false);
+        let is_camera_settings = context.table_name == "CameraSettings"
+            || context.table_name == "Sony:CameraSettings"
+            || context.table_name.contains("0x0114");
+
+        if is_sony && is_camera_settings {
+            ProcessorCapability::Perfect
+        } else if is_sony {
+            ProcessorCapability::Good
+        } else {
+            ProcessorCapability::Incompatible
+        }
+    }
+
+    fn process_data(&self, data: &[u8], _context: &ProcessorContext) -> Result<ProcessorResult> {
+        let mut result = ProcessorResult::new();
+        debug!(
+            "Processing Sony CameraSettings section with {} bytes",
+            data.len()
+        );
+
+        // ExifTool: lib/Image/ExifTool/Sony.pm CameraSettings table
+        // Lines 4135-4627 - ProcessBinaryData with int16u BigEndian
+        // Valid counts: 280 bytes (140 int16u) or 364 bytes (182 int16u)
+
+        // Validate data size
+        if data.len() != 280 && data.len() != 364 {
+            result.add_warning(format!(
+                "Unexpected CameraSettings data size: {} bytes (expected 280 or 364)",
+                data.len()
+            ));
+            return Ok(result);
+        }
+
+        // Helper to read BigEndian int16u at offset
+        let read_u16 = |offset: usize| -> Option<u16> {
+            if offset + 1 < data.len() {
+                Some(u16::from_be_bytes([data[offset], data[offset + 1]]))
+            } else {
+                None
+            }
+        };
+
+        // DriveMode (offset 0x04, int16u)
+        // ExifTool: Sony.pm lines 4176-4183
+        if let Some(drive_mode) = read_u16(0x04) {
+            // Note: CameraSettings uses different drive mode values than CameraSettings2
+            let drive_mode_desc = match drive_mode {
+                1 => "Single Frame",
+                2 => "Continuous High",
+                4 => "Self-timer 10 sec",
+                5 => "Self-timer 2 sec",
+                6 => "Continuous Bracketing",
+                _ => "Unknown",
+            };
+            result.extracted_tags.insert(
+                "DriveMode".to_string(),
+                TagValue::String(drive_mode_desc.to_string()),
+            );
+            debug!("Extracted DriveMode: {} -> {}", drive_mode, drive_mode_desc);
+        }
+
+        // WhiteBalanceSetting (offset 0x05, int16u)
+        // ExifTool: Sony.pm line 4184
+        if let Some(wb_setting) = read_u16(0x05) {
+            if let Some(wb_desc) = Sony_pm::lookup_sony_white_balance_setting(wb_setting) {
+                result.extracted_tags.insert(
+                    "WhiteBalanceSetting".to_string(),
+                    TagValue::String(wb_desc.to_string()),
+                );
+                debug!(
+                    "Extracted WhiteBalanceSetting: {} -> {}",
+                    wb_setting, wb_desc
+                );
+            }
+        }
+
+        // FlashMode (offset 0x13, int16u)
+        // ExifTool: Sony.pm lines 4238-4244
+        if let Some(flash_mode) = read_u16(0x13) {
+            let flash_mode_desc = match flash_mode {
+                0 => "Autoflash",
+                2 => "Rear Sync",
+                3 => "Wireless",
+                4 => "Fill-flash",
+                5 => "Flash Off",
+                6 => "Slow Sync",
+                _ => "Unknown",
+            };
+            result.extracted_tags.insert(
+                "FlashMode".to_string(),
+                TagValue::String(flash_mode_desc.to_string()),
+            );
+            debug!("Extracted FlashMode: {} -> {}", flash_mode, flash_mode_desc);
+        }
+
+        // MeteringMode (offset 0x15, int16u)
+        // ExifTool: Sony.pm lines 4249-4253
+        if let Some(metering_mode) = read_u16(0x15) {
+            let metering_desc = match metering_mode {
+                1 => "Multi-segment",
+                2 => "Center-weighted Average",
+                4 => "Spot",
+                _ => "Unknown",
+            };
+            result.extracted_tags.insert(
+                "MeteringMode".to_string(),
+                TagValue::String(metering_desc.to_string()),
+            );
+            debug!(
+                "Extracted MeteringMode: {} -> {}",
+                metering_mode, metering_desc
+            );
+        }
+
+        // ISOSetting (offset 0x16, int16u)
+        // ExifTool: Sony.pm line 4254
+        if let Some(iso_setting) = read_u16(0x16) {
+            result
+                .extracted_tags
+                .insert("ISOSetting".to_string(), TagValue::U16(iso_setting));
+            debug!("Extracted ISOSetting: {}", iso_setting);
+        }
+
+        // FocusMode (offset 0x4d, int16u)
+        // ExifTool: Sony.pm lines 4383-4389
+        if let Some(focus_mode) = read_u16(0x4d) {
+            let focus_desc = match focus_mode {
+                0 => "Manual",
+                1 => "AF-S",
+                2 => "AF-C",
+                3 => "AF-A",
+                4 => "DMF",
+                _ => "Unknown",
+            };
+            result.extracted_tags.insert(
+                "FocusMode".to_string(),
+                TagValue::String(focus_desc.to_string()),
+            );
+            debug!("Extracted FocusMode: {} -> {}", focus_mode, focus_desc);
+        }
+
+        // SonyImageSize (offset 0x54, int16u)
+        // ExifTool: Sony.pm lines 4406-4411
+        if let Some(image_size) = read_u16(0x54) {
+            let size_desc = match image_size {
+                0 => "Standard",
+                1 => "Medium",
+                2 => "Small",
+                3 => "Large",
+                _ => "Unknown",
+            };
+            result.extracted_tags.insert(
+                "SonyImageSize".to_string(),
+                TagValue::String(size_desc.to_string()),
+            );
+            debug!("Extracted SonyImageSize: {} -> {}", image_size, size_desc);
+        }
+
+        // Quality (offset 0x56, int16u)
+        // ExifTool: Sony.pm lines 4418-4424
+        if let Some(quality) = read_u16(0x56) {
+            let quality_desc = match quality {
+                0 => "Normal",
+                1 => "Fine",
+                2 => "Extra Fine",
+                3 => "Standard",
+                4 => "RAW",
+                5 => "RAW + JPEG",
+                _ => "Unknown",
+            };
+            result.extracted_tags.insert(
+                "Quality".to_string(),
+                TagValue::String(quality_desc.to_string()),
+            );
+            debug!("Extracted Quality: {} -> {}", quality, quality_desc);
+        }
+
+        if result.extracted_tags.is_empty() {
+            result.add_warning("No Sony CameraSettings tags extracted".to_string());
+        } else {
+            debug!(
+                "Sony CameraSettings processor extracted {} tags",
+                result.extracted_tags.len()
+            );
+        }
+
+        Ok(result)
+    }
+
+    fn get_metadata(&self) -> ProcessorMetadata {
+        ProcessorMetadata::new(
+            "Sony CameraSettings Processor".to_string(),
+            "Processes Sony CameraSettings section (tag 0x0114) using ExifTool logic".to_string(),
+        )
+        .with_manufacturer("Sony".to_string())
+    }
+}
+
+/// Sony ShotInfo processor
+///
+/// Processes Sony ShotInfo section (tag 0x3000) following ExifTool's exact logic.
+/// ExifTool: lib/Image/ExifTool/Sony.pm ShotInfo table (lines 6027+)
+/// This includes face detection data and shot metadata.
+pub struct SonyShotInfoProcessor;
+
+impl BinaryDataProcessor for SonyShotInfoProcessor {
+    fn can_process(&self, context: &ProcessorContext) -> ProcessorCapability {
+        debug!(
+            "SonyShotInfoProcessor::can_process - manufacturer: {:?}, table: {}",
+            context.manufacturer, context.table_name
+        );
+
+        // Standard IFD check
+        if matches!(
+            context.table_name.as_str(),
+            "ExifIFD" | "GPS" | "InteropIFD" | "IFD0" | "IFD1"
+        ) {
+            return ProcessorCapability::Incompatible;
+        }
+
+        let is_sony = context
+            .manufacturer
+            .as_ref()
+            .map(|m| m.starts_with("SONY") || m.contains("Sony"))
+            .unwrap_or(false);
+        let is_shot_info = context.table_name == "ShotInfo"
+            || context.table_name == "Sony:ShotInfo"
+            || context.table_name.contains("0x3000");
+
+        if is_sony && is_shot_info {
+            ProcessorCapability::Perfect
+        } else if is_sony {
+            ProcessorCapability::Good
+        } else {
+            ProcessorCapability::Incompatible
+        }
+    }
+
+    fn process_data(&self, data: &[u8], _context: &ProcessorContext) -> Result<ProcessorResult> {
+        let mut result = ProcessorResult::new();
+        debug!("Processing Sony ShotInfo section with {} bytes", data.len());
+
+        // ExifTool: lib/Image/ExifTool/Sony.pm ShotInfo table
+        // Lines 6027+ - ProcessBinaryData with LittleEndian
+        // First 2 bytes should be 'II' for LittleEndian
+
+        // Validate byte order marker
+        if data.len() < 2 || &data[0..2] != b"II" {
+            result
+                .add_warning("ShotInfo data does not start with expected 'II' marker".to_string());
+            return Ok(result);
+        }
+
+        // Helper to read LittleEndian int16u at offset
+        let read_u16 = |offset: usize| -> Option<u16> {
+            if offset + 1 < data.len() {
+                Some(u16::from_le_bytes([data[offset], data[offset + 1]]))
+            } else {
+                None
+            }
+        };
+
+        // FaceInfoOffset (offset 0x02, int16u)
+        // ExifTool: Sony.pm line 6034
+        if let Some(face_info_offset) = read_u16(0x02) {
+            result.extracted_tags.insert(
+                "FaceInfoOffset".to_string(),
+                TagValue::U16(face_info_offset),
+            );
+            debug!("Extracted FaceInfoOffset: {}", face_info_offset);
+        }
+
+        // SonyDateTime (offset 0x06, string[20])
+        // ExifTool: Sony.pm line 6038
+        if data.len() >= 0x06 + 20 {
+            // Extract null-terminated string or full 20 bytes
+            let datetime_bytes = &data[0x06..0x06 + 20];
+            let datetime_end = datetime_bytes.iter().position(|&b| b == 0).unwrap_or(20);
+            if let Ok(datetime_str) = std::str::from_utf8(&datetime_bytes[..datetime_end]) {
+                result.extracted_tags.insert(
+                    "SonyDateTime".to_string(),
+                    TagValue::String(datetime_str.to_string()),
+                );
+                debug!("Extracted SonyDateTime: {}", datetime_str);
+            }
+        }
+
+        // SonyImageHeight (offset 0x1a, int16u)
+        // ExifTool: Sony.pm line 6065
+        if let Some(height) = read_u16(0x1a) {
+            result
+                .extracted_tags
+                .insert("SonyImageHeight".to_string(), TagValue::U16(height));
+            debug!("Extracted SonyImageHeight: {}", height);
+        }
+
+        // SonyImageWidth (offset 0x1c, int16u)
+        // ExifTool: Sony.pm line 6066
+        if let Some(width) = read_u16(0x1c) {
+            result
+                .extracted_tags
+                .insert("SonyImageWidth".to_string(), TagValue::U16(width));
+            debug!("Extracted SonyImageWidth: {}", width);
+        }
+
+        // FacesDetected (offset 0x30, int16u)
+        // ExifTool: Sony.pm line 6087
+        if let Some(faces_detected) = read_u16(0x30) {
+            result
+                .extracted_tags
+                .insert("FacesDetected".to_string(), TagValue::U16(faces_detected));
+            debug!("Extracted FacesDetected: {}", faces_detected);
+        }
+
+        // FaceInfoLength (offset 0x32, int16u)
+        // ExifTool: Sony.pm line 6098
+        if let Some(face_info_length) = read_u16(0x32) {
+            result.extracted_tags.insert(
+                "FaceInfoLength".to_string(),
+                TagValue::U16(face_info_length),
+            );
+            debug!("Extracted FaceInfoLength: {}", face_info_length);
+        }
+
+        // MetaVersion (offset 0x34, string[16])
+        // ExifTool: Sony.pm line 6108
+        if data.len() >= 0x34 + 16 {
+            let meta_version_bytes = &data[0x34..0x34 + 16];
+            let version_end = meta_version_bytes
+                .iter()
+                .position(|&b| b == 0)
+                .unwrap_or(16);
+            if let Ok(version_str) = std::str::from_utf8(&meta_version_bytes[..version_end]) {
+                result.extracted_tags.insert(
+                    "MetaVersion".to_string(),
+                    TagValue::String(version_str.to_string()),
+                );
+                debug!("Extracted MetaVersion: {}", version_str);
+            }
+        }
+
+        // Note: FaceInfo1 (0x48) and FaceInfo2 (0x5e) are subdirectories
+        // that would require additional processing based on the face detection data
+        // ExifTool: Sony.pm lines 6122-6131 and 6138-6144
+
+        if result.extracted_tags.is_empty() {
+            result.add_warning("No Sony ShotInfo tags extracted".to_string());
+        } else {
+            debug!(
+                "Sony ShotInfo processor extracted {} tags",
+                result.extracted_tags.len()
+            );
+        }
+
+        Ok(result)
+    }
+
+    fn get_metadata(&self) -> ProcessorMetadata {
+        ProcessorMetadata::new(
+            "Sony ShotInfo Processor".to_string(),
+            "Processes Sony ShotInfo section (tag 0x3000) using ExifTool logic".to_string(),
+        )
+        .with_manufacturer("Sony".to_string())
+    }
+}
+
 /// Sony general processor for unspecified binary data
 ///
 /// Catches Sony binary data that doesn't match specific processors.
@@ -461,11 +854,11 @@ impl BinaryDataProcessor for SonyGeneralProcessor {
         }
     }
 
-    fn process_data(&self, data: &[u8], context: &ProcessorContext) -> Result<ProcessorResult> {
+    fn process_data(&self, data: &[u8], _context: &ProcessorContext) -> Result<ProcessorResult> {
         let mut result = ProcessorResult::new();
         debug!(
             "Processing Sony general binary data '{}' with {} bytes",
-            context.table_name,
+            _context.table_name,
             data.len()
         );
 
@@ -473,14 +866,14 @@ impl BinaryDataProcessor for SonyGeneralProcessor {
         if data.len() >= 10 {
             debug!(
                 "Sony binary data '{}' header: {:02x?}",
-                context.table_name,
+                _context.table_name,
                 &data[0..10]
             );
         }
 
         result.add_warning(format!(
             "Sony binary data '{}' processed by general handler - specific processor not implemented",
-            context.table_name
+            _context.table_name
         ));
 
         Ok(result)

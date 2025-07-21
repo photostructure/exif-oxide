@@ -304,30 +304,53 @@ impl ExifReader {
                 self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
             }
             TiffFormat::Short => {
-                let value = value_extraction::extract_short_value(&self.data, &entry, byte_order)?;
-                let tag_value = TagValue::U16(value);
-                let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
+                // Handle both single and array SHORT values
+                // Critical for Canon binary data (CameraSettings, ShotInfo, etc.)
+                if entry.count == 1 {
+                    let value =
+                        value_extraction::extract_short_value(&self.data, &entry, byte_order)?;
+                    let tag_value = TagValue::U16(value);
+                    let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
 
-                trace!(
-                    "Extracted SHORT tag {:#x} from {}: {:?}",
-                    entry.tag_id,
-                    ifd_name,
-                    final_value
-                );
+                    trace!(
+                        "Extracted SHORT tag {:#x} from {}: {:?}",
+                        entry.tag_id,
+                        ifd_name,
+                        final_value
+                    );
 
-                let source_info = self.create_tag_source_info(ifd_name);
-                self.store_tag_with_precedence(entry.tag_id, final_value.clone(), source_info);
+                    let source_info = self.create_tag_source_info(ifd_name);
+                    self.store_tag_with_precedence(entry.tag_id, final_value.clone(), source_info);
 
-                // Check for NEF -> NRW conversion
-                // ExifTool Exif.pm:1139-1140 - recognize NRW from JPEG-compressed thumbnail in IFD0
-                if entry.tag_id == 0x0103 && ifd_name == "IFD0" {
-                    if let TagValue::U16(compression) = final_value {
-                        if compression == 6 && self.original_file_type.as_deref() == Some("NEF") {
-                            // Override file type from NEF to NRW
-                            debug!("Detected NRW format: IFD0 Compression=6 in NEF file");
-                            self.overridden_file_type = Some("NRW".to_string());
+                    // Check for NEF -> NRW conversion
+                    // ExifTool Exif.pm:1139-1140 - recognize NRW from JPEG-compressed thumbnail in IFD0
+                    if entry.tag_id == 0x0103 && ifd_name == "IFD0" {
+                        if let TagValue::U16(compression) = final_value {
+                            if compression == 6 && self.original_file_type.as_deref() == Some("NEF")
+                            {
+                                // Override file type from NEF to NRW
+                                debug!("Detected NRW format: IFD0 Compression=6 in NEF file");
+                                self.overridden_file_type = Some("NRW".to_string());
+                            }
                         }
                     }
+                } else {
+                    // Multiple SHORT values - use array extraction
+                    let values = value_extraction::extract_short_array_value(
+                        &self.data, &entry, byte_order,
+                    )?;
+                    let tag_value = TagValue::U16Array(values);
+                    let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
+
+                    trace!(
+                        "Extracted SHORT array tag {:#x} from {} with {} values",
+                        entry.tag_id,
+                        ifd_name,
+                        entry.count
+                    );
+
+                    let source_info = self.create_tag_source_info(ifd_name);
+                    self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
                 }
             }
             TiffFormat::Long => {

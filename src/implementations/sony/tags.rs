@@ -29,27 +29,27 @@ pub fn get_sony_tag_name(tag_id: u16) -> Option<String> {
         0x0115 => Some("WhiteBalance".to_string()),
         0x0116 => Some("ExtraInfo".to_string()),
         0x0e00 => Some("PrintIM".to_string()),
-        
+
         // MultiBurst mode tags (F88 and similar models)
         0x1000 => Some("MultiBurstMode".to_string()),
         0x1001 => Some("MultiBurstImageWidth".to_string()),
         0x1002 => Some("MultiBurstImageHeight".to_string()),
-        
+
         // Camera-specific ProcessBinaryData tags
-        0x2010 => Some("Tag2010".to_string()),  // Camera settings
+        0x2010 => Some("Tag2010".to_string()), // Camera settings
         0x2020 => Some("CameraSettings".to_string()),
         0x2030 => Some("MoreSettings".to_string()),
         0x3000 => Some("ShotInfo".to_string()),
         0x7303 => Some("ColorReproduction".to_string()),
         0x7200 => Some("EncryptionKey".to_string()),
         0x7201 => Some("LensInfo".to_string()),
-        
+
         // Encrypted 0x94xx tags requiring ProcessEnciphered
         0x9003 => Some("WhiteBalanceSetting".to_string()),
-        0x9050 => Some("Tag9050".to_string()),  // Encrypted metadata
+        0x9050 => Some("Tag9050".to_string()), // Encrypted metadata
         0x9204 => Some("ISOSetting".to_string()),
-        0x940e => Some("AFInfo".to_string()),   // Autofocus information
-        
+        0x940e => Some("AFInfo".to_string()), // Autofocus information
+
         // FileFormat tag (ARW version detection)
         // ExifTool: Sony.pm lines 2045-2073
         0xb000 => Some("FileFormat".to_string()),
@@ -66,15 +66,15 @@ pub fn get_sony_tag_name(tag_id: u16) -> Option<String> {
         0xb029 => Some("ColorMode".to_string()),
         0xb02a => Some("FullImageSize".to_string()),
         0xb02b => Some("PreviewImageSize".to_string()),
-        
+
         // SR2 format tags
         0x7000 => Some("SonyImageSize".to_string()),
         0x7001 => Some("SonyQuality".to_string()),
-        
+
         // Common maker note tags that appear as raw numbers
-        0x014a => Some("AFPointSelected".to_string()),  // A100 special case
-        0x927c => Some("Tag927C".to_string()),  // Common binary tag
-        
+        0x014a => Some("AFPointSelected".to_string()), // A100 special case
+        0x927c => Some("Tag927C".to_string()),         // Common binary tag
+
         // Default case - no mapping available
         _ => None,
     }
@@ -119,7 +119,7 @@ mod tests {
         assert_eq!(get_sony_tag_name(0x9050), Some("Tag9050".to_string()));
         assert_eq!(get_sony_tag_name(0x940e), Some("AFInfo".to_string()));
         assert_eq!(get_sony_tag_name(0x0115), Some("WhiteBalance".to_string()));
-        
+
         // Test unknown tag
         assert_eq!(get_sony_tag_name(0xffff), None);
     }
@@ -127,15 +127,15 @@ mod tests {
     #[test]
     fn test_sony_tag_detection() {
         // Test Sony tag ID detection
-        assert!(is_sony_tag(0xb000));  // FileFormat
-        assert!(is_sony_tag(0x0010));  // CameraInfo
-        assert!(is_sony_tag(0x9400));  // Encrypted range
-        assert!(is_sony_tag(0x940e));  // AFInfo
-        assert!(is_sony_tag(0x2010));  // ProcessBinaryData
-        
+        assert!(is_sony_tag(0xb000)); // FileFormat
+        assert!(is_sony_tag(0x0010)); // CameraInfo
+        assert!(is_sony_tag(0x9400)); // Encrypted range
+        assert!(is_sony_tag(0x940e)); // AFInfo
+        assert!(is_sony_tag(0x2010)); // ProcessBinaryData
+
         // Test non-Sony tags
-        assert!(!is_sony_tag(0x0001));  // Standard EXIF
-        assert!(!is_sony_tag(0x8000));  // Outside Sony ranges
+        assert!(!is_sony_tag(0x0001)); // Standard EXIF
+        assert!(!is_sony_tag(0x8000)); // Outside Sony ranges
     }
 
     #[test]

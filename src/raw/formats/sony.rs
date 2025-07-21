@@ -561,6 +561,135 @@ impl SonyRawHandler {
         }
     }
 
+    /// Process Sony ProcessBinaryData sections using the processor registry
+    /// ExifTool: Sony.pm has 139 ProcessBinaryData sections
+    fn process_sony_binary_data(&self, reader: &mut ExifReader) -> Result<()> {
+        use crate::formats::FileFormat;
+        use crate::processor_registry::{get_global_registry, ProcessorContext};
+        use crate::types::TagValue;
+
+        debug!("Processing Sony ProcessBinaryData sections");
+
+        // Tags that contain ProcessBinaryData
+        // ExifTool: Sony.pm various SubDirectory entries with ProcessProc => \&ProcessBinaryData
+        let binary_data_tags = [
+            (0x0010, "CameraInfo"),     // Sony CameraInfo
+            (0x0114, "CameraSettings"), // Sony CameraSettings (multiple versions)
+            (0x0115, "MoreInfo"),       // Contains MoreSettings
+            (0x2010, "Tag2010"),        // Encrypted tag
+            (0x3000, "ShotInfo"),       // Sony ShotInfo
+            (0x9050, "Tag9050"),        // Sony encrypted focus info
+            (0x940e, "AFInfo"),         // Sony AFInfo (autofocus)
+        ];
+
+        // Get manufacturer info for context
+        let manufacturer = reader
+            .extracted_tags
+            .get(&0x010F)
+            .and_then(|v| v.as_string())
+            .unwrap_or("SONY")
+            .to_string();
+
+        let model = reader
+            .extracted_tags
+            .get(&0x0110)
+            .and_then(|v| v.as_string())
+            .map(|s| s.to_string());
+
+        // Process each binary data tag
+        for &(tag_id, table_name) in &binary_data_tags {
+            if let Some(tag_value) = reader.extracted_tags.get(&tag_id) {
+                debug!(
+                    "Found Sony ProcessBinaryData tag 0x{:04x} ({})",
+                    tag_id, table_name
+                );
+
+                // Extract offset and size from tag value
+                // For SubIFD tags, the value contains the offset
+                let (offset, size) = match tag_value {
+                    TagValue::U32(offset) => (*offset as usize, 0), // Size unknown
+                    TagValue::U8Array(data) => {
+                        // For inline data, offset is 0 and size is data length
+                        (0, data.len())
+                    }
+                    _ => {
+                        debug!(
+                            "Unexpected tag value type for ProcessBinaryData tag 0x{:04x}",
+                            tag_id
+                        );
+                        continue;
+                    }
+                };
+
+                // Read the binary data
+                // TODO: This is simplified - need proper offset calculation and size determination
+                let binary_data = if offset > 0 && offset < reader.data.len() {
+                    // For now, read a reasonable chunk (this needs refinement based on actual data structure)
+                    let read_size = if size > 0 {
+                        size
+                    } else {
+                        1024.min(reader.data.len() - offset)
+                    };
+                    &reader.data[offset..offset + read_size]
+                } else if let TagValue::U8Array(data) = tag_value {
+                    // Inline data
+                    data
+                } else {
+                    debug!(
+                        "Cannot read binary data for tag 0x{:04x}: invalid offset {}",
+                        tag_id, offset
+                    );
+                    continue;
+                };
+
+                // Create processor context
+                let mut context =
+                    ProcessorContext::new(FileFormat::SonyRaw, table_name.to_string())
+                        .with_manufacturer(manufacturer.clone())
+                        .with_tag_id(tag_id);
+
+                if let Some(model) = &model {
+                    context = context.with_model(model.clone());
+                }
+
+                // Use byte order from TIFF header
+                if let Some(header) = &reader.header {
+                    context = context.with_byte_order(header.byte_order);
+                }
+
+                // Get the processor registry and process the data
+                let registry = get_global_registry();
+
+                match registry.process_data(binary_data, &context) {
+                    Ok(result) => {
+                        debug!(
+                            "{} processor extracted {} tags",
+                            table_name,
+                            result.extracted_tags.len()
+                        );
+
+                        // Add extracted tags to the reader
+                        // Note: These use synthetic tag IDs assigned by the processor
+                        for (tag_name, tag_value) in result.extracted_tags {
+                            // The processors return string tag names, we need to look up the ID
+                            if let Some(tag_id) = reader.resolve_tag_name_to_id(&tag_name) {
+                                debug!("Adding extracted tag: {} (0x{:04x})", tag_name, tag_id);
+                                reader.extracted_tags.insert(tag_id, tag_value);
+                            } else {
+                                debug!("Unknown tag name from processor: {}", tag_name);
+                            }
+                        }
+                    }
+                    Err(e) => {
+                        debug!("Failed to process {} data: {:?}", table_name, e);
+                    }
+                }
+            }
+        }
+
+        Ok(())
+    }
+
     /// Calculate offset based on Sony-specific patterns
     /// Uses generated offset patterns from Sony.pm
     pub fn calculate_offset(
@@ -635,9 +764,9 @@ impl RawFormatHandler for SonyRawHandler {
             debug!("Sony IDC corruption detected: {:?}", corruption);
         }
 
-        // Step 3: Process Sony-specific data structures
-        // TODO: Implement Sony ProcessBinaryData sections
-        // This will require integration with the generated Sony code from codegen
+        // Step 3: Process Sony-specific data structures using ProcessBinaryData
+        // This connects to the Sony processors in the global registry
+        handler.process_sony_binary_data(reader)?;
 
         // Step 4: Handle encryption if present
         // TODO: Implement Sony encryption detection and decryption
@@ -672,6 +801,13 @@ impl RawFormatHandler for SonyRawHandler {
 
         is_tiff_be || is_tiff_le
     }
+}
+
+/// Get Sony tag name for Sony tag IDs
+/// Used by the EXIF module to resolve Sony-specific tag names
+/// Delegates to the implementation module for tag name mapping
+pub fn get_sony_tag_name(tag_id: u16) -> Option<String> {
+    crate::implementations::sony::get_sony_tag_name(tag_id)
 }
 
 #[cfg(test)]
@@ -784,11 +920,4 @@ mod tests {
         let format = SonyFormat::detect_from_bytes(&empty_bytes);
         assert_eq!(format, None);
     }
-}
-
-/// Get Sony tag name for Sony tag IDs
-/// Used by the EXIF module to resolve Sony-specific tag names
-/// Delegates to the implementation module for tag name mapping
-pub fn get_sony_tag_name(tag_id: u16) -> Option<String> {
-    crate::implementations::sony::get_sony_tag_name(tag_id)
 }
