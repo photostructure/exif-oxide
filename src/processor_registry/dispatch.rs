@@ -387,7 +387,7 @@ impl DispatchRule for SonyDispatchRule {
             || (context
                 .manufacturer
                 .as_ref()
-                .map_or(false, |m| m.starts_with("SONY")))
+                .is_some_and(|m| m.starts_with("SONY")))
     }
 
     fn select_processor(
@@ -424,6 +424,30 @@ impl DispatchRule for SonyDispatchRule {
                     .find(|(key, _, _)| {
                         key.namespace == "Sony" && key.processor_name == "CameraInfo"
                     })
+                    .map(|(key, processor, _)| (key.clone(), processor.clone()))
+            }
+
+            "CameraSettings" | "Sony:CameraSettings" => {
+                // Select Sony CameraSettings processor
+                // ExifTool: Sony.pm CameraSettings table (lines 4135-4627)
+                // This handles tag 0x0114 ProcessBinaryData
+                debug!("Sony dispatch: selecting CameraSettings processor");
+                candidates
+                    .iter()
+                    .find(|(key, _, _)| {
+                        key.namespace == "Sony" && key.processor_name == "CameraSettings"
+                    })
+                    .map(|(key, processor, _)| (key.clone(), processor.clone()))
+            }
+
+            "ShotInfo" | "Sony:ShotInfo" => {
+                // Select Sony ShotInfo processor
+                // ExifTool: Sony.pm ShotInfo table (lines 6027+)
+                // This handles tag 0x3000 ProcessBinaryData
+                debug!("Sony dispatch: selecting ShotInfo processor");
+                candidates
+                    .iter()
+                    .find(|(key, _, _)| key.namespace == "Sony" && key.processor_name == "ShotInfo")
                     .map(|(key, processor, _)| (key.clone(), processor.clone()))
             }
 
@@ -582,6 +606,12 @@ impl DispatchRule for OlympusDispatchRule {
                         key.namespace == "Olympus" && key.processor_name == "FocusInfo"
                     })
                     .map(|(key, processor, _)| (key.clone(), processor.clone()))
+            }
+            "MakerNotes" => {
+                // For Olympus MakerNotes, use standard IFD parsing to discover subdirectories like Equipment (0x2010)
+                // ExifTool: Olympus.pm MakerNotes are processed as standard IFD to find subdirectory tags
+                debug!("Olympus dispatch rule: MakerNotes should use standard IFD parsing to discover Equipment, returning None");
+                None
             }
             _ => {
                 // Only handle Olympus-specific tables (those starting with "Olympus:" or "Olympus::")

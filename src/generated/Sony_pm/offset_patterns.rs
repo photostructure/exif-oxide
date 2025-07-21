@@ -147,15 +147,15 @@ pub static SONY_MODEL_CONDITIONS: LazyLock<Vec<(&str, &str, &str)>> = LazyLock::
 /// Summary of offset calculation patterns found
 pub static OFFSET_CALCULATION_TYPES: LazyLock<Vec<&str>> = LazyLock::new(|| {
     vec![
-        "variable_assignment",  // e.g., $offset
-        "get16u_valpt",  // e.g., Get16u($valPt, 0)
-        "get16u_variable",  // e.g., Get16u($dataPt, $start)
-        "get16u_entry",  // e.g., Get16u($dataPt, $entry + 2)
-        "get32u_valpt",  // e.g., Get32u($valPt, 0)
-        "get32u_variable",  // e.g., Get32u($dataPt, $dirEnd)
-        "entry_hash_offset",  // e.g., $entry{0xc634} + 8
-        "variable_plus_constant",  // e.g., $entry + 8
-        "array_offset",  // e.g., $start + 4 + $i * 4
+        "variable_assignment",    // e.g., $offset
+        "get16u_valpt",           // e.g., Get16u($valPt, 0)
+        "get16u_variable",        // e.g., Get16u($dataPt, $start)
+        "get16u_entry",           // e.g., Get16u($dataPt, $entry + 2)
+        "get32u_valpt",           // e.g., Get32u($valPt, 0)
+        "get32u_variable",        // e.g., Get32u($dataPt, $dirEnd)
+        "entry_hash_offset",      // e.g., $entry{0xc634} + 8
+        "variable_plus_constant", // e.g., $entry + 8
+        "array_offset",           // e.g., $start + 4 + $i * 4
     ]
 });
 

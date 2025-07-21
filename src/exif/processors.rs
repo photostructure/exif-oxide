@@ -451,9 +451,12 @@ impl ExifReader {
         }
 
         // ExifTool: lib/Image/ExifTool/MakerNotes.pm:515-533 Olympus detection
+        // For Olympus MakerNotes, use standard IFD parsing to discover subdirectories like Equipment (0x2010)
+        // ExifTool: Olympus MakerNotes are processed as standard IFD first to find subdirectory tags
         if olympus::is_olympus_makernote(make) {
             debug!("Detected Olympus MakerNote (Make field: {})", make);
-            return Some("Olympus::Main".to_string());
+            debug!("Using standard IFD parsing for Olympus MakerNotes to discover Equipment subdirectory");
+            return Some("Exif".to_string()); // Use standard IFD parsing
         }
 
         // Return None to fall back to EXIF processor when no manufacturer detected
@@ -654,7 +657,7 @@ impl ExifReader {
 
     /// Resolve tag name to tag ID using generated tag tables
     /// This bridges the gap between processor string-based tag names and ExifReader's u16 tag IDs
-    fn resolve_tag_name_to_id(&mut self, tag_name: &str) -> Option<u16> {
+    pub(crate) fn resolve_tag_name_to_id(&mut self, tag_name: &str) -> Option<u16> {
         use crate::generated::TAG_BY_NAME;
 
         // 1. Direct lookup in generated tables
@@ -705,17 +708,30 @@ impl ExifReader {
     fn is_manufacturer_specific_tag(&self, tag_name: &str) -> bool {
         // Sony-specific binary data tag names
         let sony_tags = [
-            "AFType", "AFAreaMode", "AFPointsInFocus", 
-            "AFPointSelected", "FocusMode", "FocusStatus",
-            "CameraType", "CameraType2", "ISOSetting", "WhiteBalanceSetting"
+            "AFType",
+            "AFAreaMode",
+            "AFPointsInFocus",
+            "AFPointSelected",
+            "FocusMode",
+            "FocusStatus",
+            "CameraType",
+            "CameraType2",
+            "ISOSetting",
+            "WhiteBalanceSetting",
         ];
-        
+
         // Canon-specific binary data tag names (for completeness)
         let canon_tags = [
-            "AFPointSelected", "AFAreaMode", "DriveMode", "WhiteBalance",
-            "ImageQuality", "FlashMode", "ContinuousDrive", "FocusMode"
+            "AFPointSelected",
+            "AFAreaMode",
+            "DriveMode",
+            "WhiteBalance",
+            "ImageQuality",
+            "FlashMode",
+            "ContinuousDrive",
+            "FocusMode",
         ];
-        
+
         sony_tags.contains(&tag_name) || canon_tags.contains(&tag_name)
     }
 
@@ -727,10 +743,10 @@ impl ExifReader {
         use std::hash::{Hash, Hasher};
         tag_name.hash(&mut hasher);
         let synthetic_id = (hasher.finish() % 0x2FFF) as u16 + 0xC000;
-        
+
         // Store the tag name mapping for output generation
         self.store_tag_name_mapping(synthetic_id, tag_name);
-        
+
         // Store the tag source info with manufacturer namespace
         let namespace = if self.is_sony_tag(tag_name) {
             "Sony"
@@ -739,24 +755,34 @@ impl ExifReader {
         } else {
             "MakerNotes"
         };
-        
+
         let source_info = crate::types::TagSourceInfo::new(
             namespace.to_string(),
             "MakerNotes".to_string(),
-            format!("{}::BinaryData", namespace),
+            format!("{namespace}::BinaryData"),
         );
         self.tag_sources.insert(synthetic_id, source_info);
-        
-        debug!("Assigned synthetic tag ID 0x{:04X} to '{}' with namespace '{}'", synthetic_id, tag_name, namespace);
+
+        debug!(
+            "Assigned synthetic tag ID 0x{:04X} to '{}' with namespace '{}'",
+            synthetic_id, tag_name, namespace
+        );
         Some(synthetic_id)
     }
 
     /// Check if tag name is Sony-specific
     fn is_sony_tag(&self, tag_name: &str) -> bool {
         let sony_tags = [
-            "AFType", "AFAreaMode", "AFPointsInFocus", 
-            "AFPointSelected", "FocusMode", "FocusStatus",
-            "CameraType", "CameraType2", "ISOSetting", "WhiteBalanceSetting"
+            "AFType",
+            "AFAreaMode",
+            "AFPointsInFocus",
+            "AFPointSelected",
+            "FocusMode",
+            "FocusStatus",
+            "CameraType",
+            "CameraType2",
+            "ISOSetting",
+            "WhiteBalanceSetting",
         ];
         sony_tags.contains(&tag_name)
     }
@@ -764,8 +790,14 @@ impl ExifReader {
     /// Check if tag name is Canon-specific
     fn is_canon_tag(&self, tag_name: &str) -> bool {
         let canon_tags = [
-            "AFPointSelected", "AFAreaMode", "DriveMode", "WhiteBalance",
-            "ImageQuality", "FlashMode", "ContinuousDrive", "FocusMode"
+            "AFPointSelected",
+            "AFAreaMode",
+            "DriveMode",
+            "WhiteBalance",
+            "ImageQuality",
+            "FlashMode",
+            "ContinuousDrive",
+            "FocusMode",
         ];
         canon_tags.contains(&tag_name)
     }
@@ -806,12 +838,16 @@ impl ExifReader {
         } else {
             "MakerNotes"
         };
-        
+
         // Store in the format "Group:TagName" expected by synthetic tag resolution
-        let full_tag_name = format!("{}:{}", namespace, tag_name);
-        self.synthetic_tag_names.insert(tag_id, full_tag_name.clone());
-        
-        debug!("Mapping synthetic ID 0x{:04X} -> '{}'", tag_id, full_tag_name);
+        let full_tag_name = format!("{namespace}:{tag_name}");
+        self.synthetic_tag_names
+            .insert(tag_id, full_tag_name.clone());
+
+        debug!(
+            "Mapping synthetic ID 0x{:04X} -> '{}'",
+            tag_id, full_tag_name
+        );
     }
 
     // Phase 5: Trait-based processor system integrated with fallback compatibility
