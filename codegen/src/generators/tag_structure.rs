@@ -238,7 +238,55 @@ pub fn generate_tag_structure(data: &TagStructureData) -> Result<String> {
     
     code.push_str("}\n");
     
+    // Generate subdirectory tag lookup function if this is not a Main table
+    if data.source.table != "Main" {
+        code.push_str("\n");
+        generate_subdirectory_lookup_function(&mut code, data)?;
+    }
+    
     Ok(code)
+}
+
+/// Generate lookup function for subdirectory table tag name resolution
+/// This generates functions like get_equipment_tag_name(tag_id: u16) -> Option<&'static str>
+fn generate_subdirectory_lookup_function(code: &mut String, data: &TagStructureData) -> Result<()> {
+    let table_name_lower = data.source.table.to_lowercase();
+    let lookup_fn_name = format!("get_{}_tag_name", table_name_lower);
+    
+    // Add function documentation
+    code.push_str(&format!(
+        "/// Get tag name for {} subdirectory\n",
+        data.source.table
+    ));
+    code.push_str(&format!(
+        "/// ExifTool: {} %{}::{} table\n",
+        data.source.module, data.manufacturer, data.source.table
+    ));
+    code.push_str(&format!(
+        "pub fn {}(tag_id: u16) -> Option<&'static str> {{\n",
+        lookup_fn_name
+    ));
+    code.push_str("    match tag_id {\n");
+    
+    // Generate match arms for each tag
+    for tag in &data.tags {
+        code.push_str(&format!(
+            "        {} => Some(\"{}\"),\n",
+            format_tag_id_as_hex(tag.tag_id_decimal),
+            escape_string(&tag.name)
+        ));
+    }
+    
+    code.push_str("        _ => None,\n");
+    code.push_str("    }\n");
+    code.push_str("}\n");
+    
+    Ok(())
+}
+
+/// Format tag ID as hexadecimal for match patterns
+fn format_tag_id_as_hex(tag_id_decimal: u16) -> String {
+    format!("0x{:04x}", tag_id_decimal)
 }
 
 /// Create a valid Rust variant name from a tag name

@@ -8,7 +8,6 @@ pub mod afpoints135;
 pub mod afpoints153;
 pub mod isoautoshuttertimez9;
 pub mod nikonlensids;
-pub mod tag_structure;
 
 // Re-export all lookup functions and constants
 pub use afpoints105::*;
@@ -16,4 +15,3 @@ pub use afpoints135::*;
 pub use afpoints153::*;
 pub use isoautoshuttertimez9::*;
 pub use nikonlensids::*;
-pub use tag_structure::*;

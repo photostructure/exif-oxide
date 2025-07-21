@@ -13,7 +13,6 @@ pub mod focusinfo_inline;
 pub mod isosetting2010;
 pub mod main_inline;
 pub mod moresettings_inline;
-pub mod offset_patterns;
 pub mod sonyexposureprogram;
 pub mod tag2010e_inline;
 pub mod tag2010g_inline;
