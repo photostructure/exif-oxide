@@ -314,4 +314,4 @@ pub fn write_metadata<W: Write + Seek>(
 ## Related Documentation
 
 - [STATE-MANAGEMENT.md](../STATE-MANAGEMENT.md) - How state is managed during processing
-- [EXIFTOOL-INTEGRATION.md](EXIFTOOL-INTEGRATION.md) - Code generation and manual implementation system
+- [CODEGEN.md](CODEGEN.md) - Code generation and manual implementation system

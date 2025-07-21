@@ -44,7 +44,7 @@ Before starting work on exif-oxide, familiarize yourself with:
 #### Design Documents
 
 - [API-DESIGN.md](docs/design/API-DESIGN.md) - Public API structure and TagEntry design
-- [EXIFTOOL-INTEGRATION.md](docs/design/EXIFTOOL-INTEGRATION.md) - Unified code generation and implementation guide
+- [CODEGEN.md](docs/CODEGEN.md) - Unified code generation and implementation guide
 - [PRINTCONV-DESIGN-DECISIONS.md](docs/design/PRINTCONV-DESIGN-DECISIONS.md) - PrintConv implementation decisions
 
 #### Guides
@@ -105,7 +105,7 @@ To maintain a manageable scope:
 
 ExifTool releases new versions monthly. The more our code can be generated automatically from ExifTool source, the better.
 
-**CRITICAL**: If you ever see any simple, static mapping in our code, **immediately look for where that came from in the ExifTool source, and ask the user to rewrite it with the codegen infrastructure**. See [EXIFTOOL-INTEGRATION.md](docs/design/EXIFTOOL-INTEGRATION.md) "Simple Table Extraction Framework" for details.
+**CRITICAL**: If you ever see any simple, static mapping in our code, **immediately look for where that came from in the ExifTool source, and ask the user to rewrite it with the codegen infrastructure**. See [CODEGEN.md](docs/CODEGEN.md) "Simple Table Extraction Framework" for details.
 
 #### Simple Table Detection
 
@@ -158,7 +158,7 @@ fn canon_white_balance_print_conv(value: &TagValue) -> Result<String> {
 4. **Regenerate codegen** - `make codegen`
 5. **Replace manual code** - Use generated lookup functions
 
-See [EXIFTOOL-INTEGRATION.md](docs/design/EXIFTOOL-INTEGRATION.md#3-adding-simple-extraction-types) for the complete HOWTO guide.
+See [CODEGEN.md](docs/CODEGEN.md) for more details.
 
 #### Red Flags
 
@@ -206,7 +206,7 @@ Be vigilant for manually-maintained lookup tables and hash mappings that could b
 
 1. Check if it came from ExifTool source (usually a `%hashName = (...)` pattern)
 2. Suggest converting it to use the codegen infrastructure
-3. See [EXIFTOOL-INTEGRATION.md](docs/design/EXIFTOOL-INTEGRATION.md) for the simple table extraction framework
+3. See [CODEGEN.md](docs/CODEGEN.md) for the ExifTool code extraction framework
 
 This is critical for maintainability as ExifTool releases monthly updates.
 
