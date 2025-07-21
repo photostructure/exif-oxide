@@ -30,7 +30,6 @@ pub use focusinfo_inline::*;
 pub use isosetting2010::*;
 pub use main_inline::*;
 pub use moresettings_inline::*;
-pub use offset_patterns::*;
 pub use sonyexposureprogram::*;
 pub use tag2010e_inline::*;
 pub use tag2010g_inline::*;

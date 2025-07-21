@@ -218,7 +218,7 @@ impl ExifReader {
                     } else {
                         "EXIF".to_string()
                     };
-                    
+
                     let tag_name = if let Some(source_info) = source_info {
                         match source_info.namespace.as_str() {
                             "Canon" => canon::get_canon_tag_name(tag_id)
@@ -232,7 +232,7 @@ impl ExifReader {
                         canon::get_canon_tag_name(tag_id)
                             .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
                     };
-                    
+
                     (group, tag_name)
                 }
             } else {
@@ -357,7 +357,7 @@ impl ExifReader {
                         } else {
                             "EXIF"
                         };
-                        
+
                         let tag_name = if let Some(source_info) = source_info {
                             match source_info.namespace.as_str() {
                                 "Canon" => canon::get_canon_tag_name(tag_id)
@@ -371,7 +371,7 @@ impl ExifReader {
                             canon::get_canon_tag_name(tag_id)
                                 .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
                         };
-                        
+
                         (group, tag_name, None)
                     }
                 }

@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with exif-oxide.
 
-Today's date is July 20, 2025.
+Today's date is July 21, 2025.
 
 ## Project Overview
 
@@ -73,11 +73,9 @@ Before starting work on exif-oxide, familiarize yourself with:
 
 ### 0. Ask the user clarifying questions
 
-If you have any clarifying questions for any aspects that are odd, nebulous,
-confusing, inadequately specific, or otherwise unclear, **please ask the user**.
+If you have any clarifying questions for any aspects that are odd, nebulous, confusing, inadequately specific, or otherwise unclear, **please ask the user**.
 
-The user assumes every task will need at least a couple clarifying questions
-before starting work!
+The user assumes every task will need at least a couple clarifying questions before starting work!
 
 ### 1. Trust ExifTool
 
@@ -170,7 +168,7 @@ If you see ANY of these, immediately suggest codegen extraction:
 - TODO comments about "add more lens types when we have time"
 - Version-specific model lists that need manual updates
 
-**Remember**: Every manually maintained lookup table is a maintenance burden that grows with each ExifTool release. The simple table extraction framework can automate hundreds of these tables with zero ongoing maintenance cost.
+**Remember**: Manually translated lookup tables are a minefield of bugs -- they're difficult to compare with the source material, frequently contain subtle translation mistakes, and are a substantial maintenance burden that grows with each ExifTool release. The codegen system automates hundreds of perl-encoded tables with zero ongoing maintenance costs.
 
 ### 5. When a task is complete
 

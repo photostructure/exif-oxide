@@ -125,6 +125,16 @@ static PROCESSOR_REGISTRY: LazyLock<ProcessorRegistry> = LazyLock::new(|| {
     );
 
     registry.register_processor(
+        ProcessorKey::new("Sony".to_string(), "CameraSettings".to_string()),
+        SonyCameraSettingsProcessor,
+    );
+
+    registry.register_processor(
+        ProcessorKey::new("Sony".to_string(), "ShotInfo".to_string()),
+        SonyShotInfoProcessor,
+    );
+
+    registry.register_processor(
         ProcessorKey::new("Sony".to_string(), "Tag9050".to_string()),
         SonyTag9050Processor,
     );
