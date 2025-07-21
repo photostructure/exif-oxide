@@ -31,7 +31,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
 # Load tag metadata for frequency filtering
-my $metadata_file = "$Bin/../../third-party/exiftool/doc/TagMetadata.json";
+my $metadata_file = "$Bin/../../docs/tag-metadata.json";
 my $metadata = load_tag_metadata($metadata_file);
 
 # Track conversion references
