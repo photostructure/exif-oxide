@@ -369,6 +369,160 @@ impl NikonDispatchRule {
     }
 }
 
+/// Sony-specific dispatch rules
+///
+/// Implements Sony's processor selection logic for CameraInfo, Tag9050, AFInfo,
+/// Tag2010 and other Sony-specific sections with encryption support.
+///
+/// ## ExifTool Reference
+///
+/// Based on Sony.pm dispatch patterns and ProcessEnciphered conditions for
+/// 0x94xx encrypted tags and 139 ProcessBinaryData sections.
+pub struct SonyDispatchRule;
+
+impl DispatchRule for SonyDispatchRule {
+    fn applies_to(&self, context: &ProcessorContext) -> bool {
+        context.is_manufacturer("SONY")
+            || context.is_manufacturer("Sony")
+            || (context
+                .manufacturer
+                .as_ref()
+                .map_or(false, |m| m.starts_with("SONY")))
+    }
+
+    fn select_processor(
+        &self,
+        candidates: &[(
+            ProcessorKey,
+            Arc<dyn BinaryDataProcessor>,
+            ProcessorCapability,
+        )],
+        context: &ProcessorContext,
+    ) -> Option<(ProcessorKey, Arc<dyn BinaryDataProcessor>)> {
+        debug!(
+            "Sony dispatch rule processing table: {} for manufacturer: {:?}",
+            context.table_name, context.manufacturer
+        );
+
+        // Sony-specific processor selection logic based on ExifTool Sony.pm
+        match context.table_name.as_str() {
+            "MakerNotes" => {
+                // Select Sony AFInfo processor for general MakerNotes processing
+                // ExifTool: Sony.pm processes MakerNotes for Sony cameras
+                debug!("Sony dispatch: selecting AFInfo processor for MakerNotes");
+                candidates
+                    .iter()
+                    .find(|(key, _, _)| key.namespace == "Sony" && key.processor_name == "AFInfo")
+                    .map(|(key, processor, _)| (key.clone(), processor.clone()))
+            }
+
+            "CameraInfo" | "Sony:CameraInfo" => {
+                // Select Sony CameraInfo processor
+                // ExifTool: Sony.pm CameraInfo table (lines 2660-2810)
+                candidates
+                    .iter()
+                    .find(|(key, _, _)| {
+                        key.namespace == "Sony" && key.processor_name == "CameraInfo"
+                    })
+                    .map(|(key, processor, _)| (key.clone(), processor.clone()))
+            }
+
+            table_name if table_name.contains("Tag9050") || table_name == "Sony:Tag9050" => {
+                // Select Sony Tag9050 processor for encrypted metadata
+                // ExifTool: Sony.pm Tag9050 series (lines 7492-8270)
+                debug!("Sony dispatch: selecting Tag9050 processor for encrypted data");
+                candidates
+                    .iter()
+                    .find(|(key, _, _)| key.namespace == "Sony" && key.processor_name == "Tag9050")
+                    .map(|(key, processor, _)| (key.clone(), processor.clone()))
+            }
+
+            "AFInfo" | "Sony:AFInfo" => {
+                // Select Sony AFInfo processor
+                // ExifTool: Sony.pm AFInfo table (lines 9363-9658)
+                candidates
+                    .iter()
+                    .find(|(key, _, _)| key.namespace == "Sony" && key.processor_name == "AFInfo")
+                    .map(|(key, processor, _)| (key.clone(), processor.clone()))
+            }
+
+            table_name if table_name.contains("Tag2010") || table_name == "Sony:Tag2010" => {
+                // Select Sony Tag2010 processor for encrypted settings
+                // ExifTool: Sony.pm Tag2010 series (lines 6376-7317)
+                debug!("Sony dispatch: selecting Tag2010 processor for encrypted settings");
+                candidates
+                    .iter()
+                    .find(|(key, _, _)| key.namespace == "Sony" && key.processor_name == "Tag2010")
+                    .map(|(key, processor, _)| (key.clone(), processor.clone()))
+            }
+
+            _ => {
+                // Check for encrypted 0x94xx tags that need special handling
+                // ExifTool: Sony.pm ProcessEnciphered for tags 0x9400-0x9500
+                if context.table_name.starts_with("Sony:") || self.might_be_encrypted_tag(context) {
+                    debug!(
+                        "Sony dispatch: checking for encrypted data in table: {}",
+                        context.table_name
+                    );
+
+                    // Try Tag9050 processor for encrypted tags first
+                    if let Some(tag9050_processor) = candidates
+                        .iter()
+                        .find(|(key, _, _)| {
+                            key.namespace == "Sony" && key.processor_name == "Tag9050"
+                        })
+                        .map(|(key, processor, _)| (key.clone(), processor.clone()))
+                    {
+                        return Some(tag9050_processor);
+                    }
+
+                    // Fall back to general Sony processor
+                    candidates
+                        .iter()
+                        .find(|(key, _, _)| {
+                            key.namespace == "Sony" && key.processor_name == "General"
+                        })
+                        .map(|(key, processor, _)| (key.clone(), processor.clone()))
+                } else {
+                    // Not a Sony-specific table - let standard processor handle it
+                    debug!(
+                        "Sony dispatch rule ignoring non-Sony table: {}",
+                        context.table_name
+                    );
+                    None
+                }
+            }
+        }
+    }
+
+    fn description(&self) -> &str {
+        "Sony manufacturer-specific processor dispatch with encryption detection"
+    }
+
+    fn priority(&self) -> u8 {
+        80 // High priority for manufacturer-specific rules
+    }
+}
+
+impl SonyDispatchRule {
+    /// Check if the table might contain encrypted Sony data
+    /// ExifTool: Sony.pm ProcessEnciphered for 0x94xx tags
+    fn might_be_encrypted_tag(&self, context: &ProcessorContext) -> bool {
+        // Check for 0x94xx tag patterns that Sony encrypts
+        context.table_name.contains("9400")
+            || context.table_name.contains("9401")
+            || context.table_name.contains("9402")
+            || context.table_name.contains("9403")
+            || context.table_name.contains("9404")
+            || context.table_name.contains("9405")
+            || context.table_name.contains("940e")
+            || context.table_name.contains("2010")
+            || context.table_name.contains("9050")
+            || context.parameters.contains_key("Enciphered")
+            || context.parameters.contains_key("ProcessEnciphered")
+    }
+}
+
 /// Olympus-specific dispatch rules
 ///
 /// Implements Olympus's processor selection logic for Equipment, CameraSettings,

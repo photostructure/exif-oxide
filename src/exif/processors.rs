@@ -59,11 +59,16 @@ impl ExifReader {
                 // For MakerNotes, we need manufacturer-specific processing
                 // Try to detect the manufacturer from Make tag
                 if let Some(processor) = self.detect_makernote_processor() {
-                    debug!("Detected manufacturer-specific processor for MakerNotes: {}", processor);
+                    debug!(
+                        "Detected manufacturer-specific processor for MakerNotes: {}",
+                        processor
+                    );
                     Some(processor)
                 } else {
                     // Fall back to standard EXIF processing if manufacturer not detected
-                    debug!("No manufacturer detected for MakerNotes, using standard EXIF processing");
+                    debug!(
+                        "No manufacturer detected for MakerNotes, using standard EXIF processing"
+                    );
                     Some("Exif".to_string())
                 }
             }
@@ -649,7 +654,7 @@ impl ExifReader {
 
     /// Resolve tag name to tag ID using generated tag tables
     /// This bridges the gap between processor string-based tag names and ExifReader's u16 tag IDs
-    fn resolve_tag_name_to_id(&self, tag_name: &str) -> Option<u16> {
+    fn resolve_tag_name_to_id(&mut self, tag_name: &str) -> Option<u16> {
         use crate::generated::TAG_BY_NAME;
 
         // 1. Direct lookup in generated tables
@@ -676,7 +681,15 @@ impl ExifReader {
             return Some(tag_id);
         }
 
-        // 5. Handle ExifTool-style group names (e.g., "MakerNotes:SelfTimer" -> "SelfTimer", "EXIF:Make" -> "Make")
+        // 5. Handle manufacturer-specific binary data tag names
+        // These come from ProcessBinaryData processors (Sony, Canon, etc.)
+        if self.is_manufacturer_specific_tag(tag_name) {
+            if let Some(synthetic_id) = self.assign_synthetic_tag_id(tag_name) {
+                return Some(synthetic_id);
+            }
+        }
+
+        // 6. Handle ExifTool-style group names (e.g., "MakerNotes:SelfTimer" -> "SelfTimer", "EXIF:Make" -> "Make")
         if tag_name.contains(':') {
             let simple_name = tag_name.split(':').next_back().unwrap_or(tag_name);
             if let Some(tag_def) = TAG_BY_NAME.get(simple_name) {
@@ -686,6 +699,75 @@ impl ExifReader {
 
         debug!("Failed to resolve tag name: '{}'", tag_name);
         None
+    }
+
+    /// Check if a tag name is manufacturer-specific (comes from ProcessBinaryData)
+    fn is_manufacturer_specific_tag(&self, tag_name: &str) -> bool {
+        // Sony-specific binary data tag names
+        let sony_tags = [
+            "AFType", "AFAreaMode", "AFPointsInFocus", 
+            "AFPointSelected", "FocusMode", "FocusStatus",
+            "CameraType", "CameraType2", "ISOSetting", "WhiteBalanceSetting"
+        ];
+        
+        // Canon-specific binary data tag names (for completeness)
+        let canon_tags = [
+            "AFPointSelected", "AFAreaMode", "DriveMode", "WhiteBalance",
+            "ImageQuality", "FlashMode", "ContinuousDrive", "FocusMode"
+        ];
+        
+        sony_tags.contains(&tag_name) || canon_tags.contains(&tag_name)
+    }
+
+    /// Assign synthetic tag ID for manufacturer-specific tags
+    fn assign_synthetic_tag_id(&mut self, tag_name: &str) -> Option<u16> {
+        // Generate a synthetic tag ID in the 0xC000-0xEFFF range for binary data tags
+        // This matches the range expected by the synthetic tag name resolution logic
+        let mut hasher = std::collections::hash_map::DefaultHasher::new();
+        use std::hash::{Hash, Hasher};
+        tag_name.hash(&mut hasher);
+        let synthetic_id = (hasher.finish() % 0x2FFF) as u16 + 0xC000;
+        
+        // Store the tag name mapping for output generation
+        self.store_tag_name_mapping(synthetic_id, tag_name);
+        
+        // Store the tag source info with manufacturer namespace
+        let namespace = if self.is_sony_tag(tag_name) {
+            "Sony"
+        } else if self.is_canon_tag(tag_name) {
+            "Canon"
+        } else {
+            "MakerNotes"
+        };
+        
+        let source_info = crate::types::TagSourceInfo::new(
+            namespace.to_string(),
+            "MakerNotes".to_string(),
+            format!("{}::BinaryData", namespace),
+        );
+        self.tag_sources.insert(synthetic_id, source_info);
+        
+        debug!("Assigned synthetic tag ID 0x{:04X} to '{}' with namespace '{}'", synthetic_id, tag_name, namespace);
+        Some(synthetic_id)
+    }
+
+    /// Check if tag name is Sony-specific
+    fn is_sony_tag(&self, tag_name: &str) -> bool {
+        let sony_tags = [
+            "AFType", "AFAreaMode", "AFPointsInFocus", 
+            "AFPointSelected", "FocusMode", "FocusStatus",
+            "CameraType", "CameraType2", "ISOSetting", "WhiteBalanceSetting"
+        ];
+        sony_tags.contains(&tag_name)
+    }
+
+    /// Check if tag name is Canon-specific
+    fn is_canon_tag(&self, tag_name: &str) -> bool {
+        let canon_tags = [
+            "AFPointSelected", "AFAreaMode", "DriveMode", "WhiteBalance",
+            "ImageQuality", "FlashMode", "ContinuousDrive", "FocusMode"
+        ];
+        canon_tags.contains(&tag_name)
     }
 
     /// Parse hex tag names in the format "Tag_XXXX" to tag IDs
@@ -716,9 +798,20 @@ impl ExifReader {
     /// Store tag name mapping for synthetic IDs
     /// This allows us to reconstruct the original tag names during output generation
     fn store_tag_name_mapping(&mut self, tag_id: u16, tag_name: &str) {
-        // TODO: Implement tag name mapping storage
-        // For now, just log it - this would be stored in ExifReader state
-        debug!("Mapping synthetic ID 0x{:04X} -> '{}'", tag_id, tag_name);
+        // Determine the namespace for this tag
+        let namespace = if self.is_sony_tag(tag_name) {
+            "Sony"
+        } else if self.is_canon_tag(tag_name) {
+            "Canon"
+        } else {
+            "MakerNotes"
+        };
+        
+        // Store in the format "Group:TagName" expected by synthetic tag resolution
+        let full_tag_name = format!("{}:{}", namespace, tag_name);
+        self.synthetic_tag_names.insert(tag_id, full_tag_name.clone());
+        
+        debug!("Mapping synthetic ID 0x{:04X} -> '{}'", tag_id, full_tag_name);
     }
 
     // Phase 5: Trait-based processor system integrated with fallback compatibility

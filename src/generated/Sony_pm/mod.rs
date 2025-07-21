@@ -13,11 +13,11 @@ pub mod focusinfo_inline;
 pub mod isosetting2010;
 pub mod main_inline;
 pub mod moresettings_inline;
+pub mod offset_patterns;
 pub mod sonyexposureprogram;
 pub mod tag2010e_inline;
 pub mod tag2010g_inline;
 pub mod whitebalancesetting;
-pub mod offset_patterns;
 
 // Re-export all lookup functions and constants
 pub use afpoints79::*;
@@ -30,8 +30,8 @@ pub use focusinfo_inline::*;
 pub use isosetting2010::*;
 pub use main_inline::*;
 pub use moresettings_inline::*;
+pub use offset_patterns::*;
 pub use sonyexposureprogram::*;
 pub use tag2010e_inline::*;
 pub use tag2010g_inline::*;
 pub use whitebalancesetting::*;
-pub use offset_patterns::*;

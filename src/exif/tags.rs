@@ -65,6 +65,16 @@ impl ExifReader {
             "ExifIFD" => "EXIF", // ExifIFD tags belong to EXIF group (Group0) in ExifTool
             "InteropIFD" => "EXIF",
             "MakerNotes" => "MakerNotes",
+            // Manufacturer-specific MakerNotes IFDs should use MakerNotes namespace
+            // ExifTool: Canon.pm, Nikon.pm, Sony.pm, etc. all use MakerNotes group
+            name if name.starts_with("Canon") => "MakerNotes",
+            name if name.starts_with("Nikon") => "MakerNotes", 
+            name if name.starts_with("Sony") => "MakerNotes",
+            name if name.starts_with("Olympus") => "MakerNotes",
+            name if name.starts_with("Panasonic") => "MakerNotes",
+            name if name.starts_with("Fujifilm") => "MakerNotes",
+            // RAW format-specific IFDs (maintain existing behavior)
+            "KyoceraRaw" => "EXIF", // Kyocera RAW uses EXIF group 
             _ => "EXIF", // Default to EXIF for unknown IFDs
         };
 
