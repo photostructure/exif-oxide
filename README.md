@@ -1,31 +1,36 @@
 # exif-oxide: Rust translation of ExifTool
 
-High-performance Rust implementation of ExifTool's metadata extraction, translating ExifTool's battle-tested logic to provide a single binary solution with up to 50x performance improvements.
+High-performance Rust implementation of ExifTool's metadata extraction, translating ExifTool's battle-tested logic to provide a single binary solution with 10-100x faster performance.
 
 ## Why exif-oxide?
 
-ExifTool is the industry standard for metadata extraction, but modern antivirus software often flags Perl interpreters as suspicious, causing significant performance degradation and false-positive security warnings. `exif-oxide` provides a single, native binary that eliminates these antivirus conflicts while delivering up to 50x performance improvements over child process approaches.
+ExifTool is the industry standard for metadata extraction, but modern antivirus software often flags Perl interpreters as suspicious, causing significant performance degradation and false-positive security warnings.
+
+`exif-oxide` provides a single, native binary that eliminates these antivirus conflicts while delivering 10x faster batch processing and 30-100x faster single-file operations.
 
 ## Current Status
 
 ### ✅ **Working Now**
+
 - **JPEG metadata extraction** - Complete EXIF, XMP, GPS, and maker notes
 - **Multiple RAW formats** - Kyocera, Minolta MRW, Panasonic RW2/RWL (100% compatibility achieved)
 - **File type detection** - 122 formats with 100% ExifTool-compatible MIME types
 - **Canon cameras** - Full maker note support with ProcessBinaryData
-- **Sony cameras** - Complete maker note integration with human-readable tag names  
+- **Sony cameras** - Complete maker note integration with human-readable tag names
 - **Nikon cameras** - Maker note support with encryption detection and lens database
 - **GPS coordinates** - Decimal degree conversion and composite tags
 - **Composite tags** - Advanced calculations like ShutterSpeed
 - **CLI compatibility** - JSON output with -TagName# numeric mode
 
-### 🚧 **In Progress** 
+### 🚧 **In Progress**
+
 - **Olympus ORF** - 90% complete, resolving tag ID conflicts
 - **Canon CR2/CR3** - Implementing SHORT array extraction for binary data
 - **Sony ARW** - Tag naming complete, expanding ProcessBinaryData coverage
 - **Video metadata** - MP4, MOV, and other video formats (Milestone 18)
 
 ### 📋 **Planned**
+
 - **Write support** - Tag modification and file updates (Milestones 21-22)
 - **Binary data extraction** - Thumbnails and embedded images (Milestone 19)
 - **Error classification** - Detailed error reporting (Milestone 20)
@@ -34,7 +39,7 @@ ExifTool is the industry standard for metadata extraction, but modern antivirus 
 
 - **Trust ExifTool**: Translate ExifTool's logic exactly—no "improvements" or novel parsing
 - **Mainstream focus**: Support 500-1000 most common tags (>80% frequency) vs ExifTool's 15,000+
-- **Performance**: Up to 50x faster than ExifTool through native compilation
+- **Performance**: 8-15x faster batch processing, 30x faster single-file operations
 - **Compatibility**: Maintain behavioral compatibility with ExifTool output
 - **Maintainability**: Use code generation to track ExifTool's monthly updates
 
@@ -87,12 +92,14 @@ Dual-licensed under commercial license and GNU Affero General Public License v3.
 ### Quick Start
 
 1. Clone with submodules:
+
    ```bash
    git clone --recursive https://github.com/photostructure/exif-oxide
    cd exif-oxide
    ```
 
 2. Build and test:
+
    ```bash
    make precommit  # Build, test, and lint
    ```
@@ -112,7 +119,7 @@ Dual-licensed under commercial license and GNU Affero General Public License v3.
 ### Essential Reading
 
 - [ENGINEER-GUIDE.md](docs/ENGINEER-GUIDE.md) - Start here for new contributors
-- [ARCHITECTURE.md](docs/ARCHITECTURE.md) - System design and philosophy  
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md) - System design and philosophy
 - [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md) - **Critical**: Our #1 development rule
 - [MILESTONES.md](docs/MILESTONES.md) - Current development roadmap
 - [SECURITY.md](SECURITY.md) - Security policy and vulnerability reporting
@@ -124,7 +131,7 @@ ExifTool tag names are preserved exactly. Group-prefixed output matches `exiftoo
 ```json
 {
   "EXIF:Make": "Canon",
-  "EXIF:Model": "Canon EOS T3i", 
+  "EXIF:Model": "Canon EOS T3i",
   "GPS:GPSLatitude": 40.7589,
   "Composite:ShutterSpeed": "1/60"
 }
