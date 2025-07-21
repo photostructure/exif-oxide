@@ -22,6 +22,11 @@ generate-rust:
 	git -C ../third-party/exiftool checkout -- lib/Image/*.pm lib/Image/ExifTool/*.pm ; \
 	sync ; \
 	echo "  ✓ ExifTool modules reverted to original state" ; \
+	if [ $$ret -eq 0 ]; then \
+		echo "🎨 Formatting generated code..." ; \
+		cd .. && cargo fmt -- src/generated/**/*.rs ; \
+		echo "  ✓ Generated code formatted" ; \
+	fi ; \
 	exit $$ret
 
 # Clean generated files
