@@ -831,7 +831,7 @@ This foundation validates that the Canon-proven architecture scales to significa
 - [ENCRYPTION.md](../../third-party/exiftool/doc/concepts/ENCRYPTION.md) - ExifTool encryption concepts
 - [LENS_DATABASE.md](../../third-party/exiftool/doc/concepts/LENS_DATABASE.md) - Lens identification system
 - [STATE-MANAGEMENT.md](../STATE-MANAGEMENT.md) - Managing encryption keys and model state
-- [EXIFTOOL-INTEGRATION.md](../design/EXIFTOOL-INTEGRATION.md) - Unified code generation and implementation guide
+- [CODEGEN.md](../CODEGEN.md) - Unified code generation and implementation guide
 
 ## Phase 2 Status Summary
 

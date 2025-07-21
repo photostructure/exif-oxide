@@ -1,168 +1,16 @@
 # Milestone 17c: Olympus RAW Support
 
 **Goal**: Implement Olympus ORF format leveraging existing RAW infrastructure and generated lookup tables  
-**Status**: COMPLETE ✅ - All core functionality working, BYTE format implemented, Equipment tags extracting correctly
-**Updated**: July 20, 2025
+**Status**: IN PROGRESS ⚠️ - Infrastructure complete, Equipment tag extraction BROKEN  
+**Updated**: July 21, 2025
 
-## 🚀 **MAJOR BREAKTHROUGHS COMPLETED (July 20, 2025)**
+## 🚨 **CRITICAL STATUS UPDATE (July 21, 2025)**
 
-### ✅ **ARCHITECTURAL FIXES COMPLETED**
+**Previous claims of completion were INCORRECT.** Following "trust but verify" investigation revealed significant gaps:
 
-**CRITICAL DISCOVERY**: Following Trust ExifTool principle, implemented the correct processing flow:
+### ❌ **BROKEN: Equipment Tag Extraction**
 
-1. ✅ **ExifIFD → Standard IFD parsing** (to discover subdirectory tags)
-2. ✅ **MakerNotes → Standard IFD parsing** (to find Equipment 0x2010, CameraSettings 0x2020, etc.)
-3. ✅ **Equipment → IFD structure parsing** (NOT binary data - has WRITE_PROC => WriteExif!)
-
-**BREAKTHROUGH #1**: MakerNotes are parsed as standard IFDs FIRST to discover subdirectory tags.
-
-**BREAKTHROUGH #2**: Equipment has `WRITE_PROC => WriteExif` in ExifTool, indicating it's an IFD structure, not raw binary data!
-
-### ✅ **COMPLETED INFRASTRUCTURE (100%)**
-
-**All core Olympus processing infrastructure is now working correctly:**
-
-- ✅ **ORF Detection**: Added to RawFormat enum and file detection
-- ✅ **ExifIFD Standard Processing**: Now uses standard IFD parsing (fixed processor routing)
-- ✅ **MakerNotes Discovery**: Tag 0x927C found during ExifIFD parsing  
-- ✅ **Olympus Signature Detection**: Working - detects "OLYMPUS\0" header at offset 0xdf4
-- ✅ **FixFormat System**: Converts invalid Olympus TIFF formats to valid ones
-- ✅ **Equipment Subdirectory Discovery**: Tag 0x2010 found and processed at offset 0xe66
-- ✅ **Equipment IFD Parsing**: Fixed - Equipment now parsed as IFD structure (25 entries found)
-- ✅ **Offset Calculations**: Proper offset handling using original MakerNotes position
-- ✅ **ORF Compatibility Testing**: Included in test suite (60/60 tests passing)
-- ✅ **CLI Integration**: `cargo run -- file.orf` works correctly
-
-### ✅ **EQUIPMENT IFD PARSING FIX (July 20, 2025)**
-
-**Problem**: Equipment processor was treating data as raw binary, looking for tags at fixed offsets (0x100, 0x201).
-
-**Solution**: 
-1. Modified dispatch rule to return `None` for Equipment tables (`src/processor_registry/dispatch.rs:405-413`)
-2. Modified all Olympus processors to return `Incompatible` for Equipment tables
-3. Equipment now falls back to standard IFD parsing
-
-**Evidence of Success**:
-```bash
-# Debug output shows Equipment is IFD with 25 entries
-DEBUG IFD Olympus:Equipment at offset 0xe66 has 25 entries
-
-# We now extract Equipment tags:
-"EXIF:Tag_0104": 4865,    # BodyFirmwareVersion
-"EXIF:Tag_0204": 4114,    # LensFirmwareVersion
-```
-
-## ✅ **FINAL COMPLETION STATUS (July 20, 2025)**
-
-**ALL EQUIPMENT TAGS NOW EXTRACTING CORRECTLY**:
-- ✅ CameraType2 (0x0100) - 6-byte string: "E-M1"
-- ✅ SerialNumber (0x0101) - 32-byte string: "BHP242330"  
-- ✅ LensType (0x0201) - 6 bytes: "Olympus M.Zuiko Digital ED 12-40mm F2.8 Pro"
-
-**CRITICAL FIX COMPLETED**: BYTE format parsing now fully implemented:
-- Added `extract_byte_array_value()` function in `src/value_extraction.rs`
-- Enhanced BYTE format handling in `src/exif/ifd.rs` to support both single bytes and byte arrays
-- Equipment tags now extract correctly and match ExifTool output
-
-## 🏁 **MILESTONE COMPLETE - 100% ACHIEVED**
-
-### ✅ All Success Criteria Met:
-
-1. ✅ **Core Infrastructure**: ExifIFD, MakerNotes, Equipment discovery - COMPLETE
-2. ✅ **Equipment IFD Parsing**: Equipment parsed as IFD structure - COMPLETE
-3. ✅ **Compatibility Tests**: All tests pass - COMPLETE  
-4. ✅ **Equipment Tags**: CameraType2, SerialNumber, LensType extracted - COMPLETE
-
-**Status**: Olympus ORF support is 100% complete and working correctly.
-
-## 🔧 **MINOR CLEANUP TASKS FOR FUTURE**
-
-The following are optional cleanup tasks for future refactoring (not required for milestone completion):
-
-### Priority 1: Remove Debug Logging
-- Remove debug logging from Equipment processor once confirmed stable in production
-- Remove Equipment binary processor warnings (generates warnings but doesn't affect functionality)
-
-### Priority 2: Code Organization
-- **Remove hardcoded tag IDs** - Use generated enums from `src/generated/Olympus_pm/`
-- **Consolidate processor selection** - Streamline MakerNotes processor detection
-- **Remove unused methods** - Remove `detect_makernote_processor` method (generates warnings)
-
-## 🧠 **TRIBAL KNOWLEDGE FOR NEXT ENGINEER**
-
-### **Critical Discovery: Equipment is an IFD Structure!**
-
-The major breakthrough was discovering that Equipment has `WRITE_PROC => WriteExif` in ExifTool (line 1588), which means it's an IFD structure, NOT binary data. This was causing the Equipment processor to look for data at wrong offsets (0x100, 0x201) when it should parse as IFD.
-
-### **Trust ExifTool Architecture - Key Understanding**
-
-The processing flow that was discovered and implemented:
-1. **MakerNotes are IFDs** that contain subdirectory tags (0x2010, 0x2020, etc.)
-2. **Standard directories** (ExifIFD, MakerNotes) use standard IFD parsing
-3. **Some manufacturer subdirectories** are ALSO IFDs (like Equipment)
-4. **Only specific subdirectories** use binary data processors
-
-### **How Equipment Processing Was Fixed**
-
-1. **Dispatch Rule Fix** (`src/processor_registry/dispatch.rs:405-413`):
-   ```rust
-   "Equipment" | "Olympus:Equipment" => {
-       // Return None to let it fall back to standard IFD parsing
-       debug!("Equipment should use standard IFD parsing, returning None");
-       None
-   }
-   ```
-
-2. **Processor Rejection** (`src/processor_registry/processors/olympus.rs`):
-   - Made ALL Olympus processors return `Incompatible` for Equipment tables
-   - This forces fallback to standard IFD parsing
-
-### **BYTE Format Implementation - Critical Fix**
-
-**Problem**: Equipment IFD was parsed correctly, but BYTE format tags were being skipped with error:
-```
-WARN Failed to parse IFD entry, continuing with graceful degradation
-error=Parsing error: BYTE value with count 6 not supported yet
-```
-
-**Solution**: Implemented BYTE array support in two places:
-
-1. **Added `extract_byte_array_value()` in `src/value_extraction.rs`**:
-   ```rust
-   pub fn extract_byte_array_value(data: &[u8], entry: &IfdEntry) -> Result<Vec<u8>> {
-       let count = entry.count as usize;
-       
-       if entry.is_inline() && count <= 4 {
-           let bytes = entry.value_or_offset.to_le_bytes();
-           Ok(bytes[..count].to_vec())
-       } else {
-           let offset = entry.value_or_offset as usize;
-           if offset + count > data.len() {
-               return Err(ExifError::ParseError(...));
-           }
-           Ok(data[offset..offset + count].to_vec())
-       }
-   }
-   ```
-
-2. **Enhanced BYTE handling in `src/exif/ifd.rs`**:
-   ```rust
-   TiffFormat::Byte => {
-       let tag_value = if entry.count == 1 {
-           let value = value_extraction::extract_byte_value(&self.data, &entry)?;
-           TagValue::U8(value)
-       } else {
-           // Handle byte arrays (count > 1)
-           let values = value_extraction::extract_byte_array_value(&self.data, &entry)?;
-           TagValue::U8Array(values)
-       };
-       // ... rest of processing
-   }
-   ```
-
-### **Verification Results**
-
-**ExifTool Output**:
+**Expected Output** (from ExifTool):
 ```json
 {
   "CameraType2": "E-M1",
@@ -171,146 +19,149 @@ error=Parsing error: BYTE value with count 6 not supported yet
 }
 ```
 
-**Our Implementation**: ✅ Now extracts all Equipment tags correctly and matches ExifTool exactly.
+**Actual Output** (from our implementation):
+```json
+{
+  // NO Equipment tags extracted at all
+  "Make": "OLYMPUS IMAGING CORP.",
+  "Model": "E-M1", 
+  "ISO": 200
+  // ... only basic EXIF tags
+}
+```
 
-### **Debug Commands for Future Engineers**
+### 🔍 **ROOT CAUSE ANALYSIS**
 
+**✅ WORKING INFRASTRUCTURE:**
+- ✅ Olympus signature detection at 0xdf4
+- ✅ MakerNotes discovery and processing at 0x927c
+- ✅ Equipment dispatch rule (forces IFD parsing)
+- ✅ Equipment processor implementation
+- ✅ BYTE format support infrastructure
+- ✅ Generated Olympus lookup tables
+
+**❌ BROKEN PROCESSING CHAIN:**
+- ❌ **Equipment tag 0x2010 never discovered** during MakerNotes IFD parsing
+- ❌ Equipment subdirectory never processed
+- ❌ Equipment IFD never parsed
+- ❌ Zero Equipment tags extracted
+
+**Debug Evidence:**
+```
+✅ MakerNotes found at offset 0xe00
+✅ MakerNotes processed with Olympus::CameraSettings processor  
+❌ Equipment tag 0x2010 NEVER FOUND in MakerNotes IFD
+❌ Equipment subdirectory processing NEVER TRIGGERED
+```
+
+## 📋 **CURRENT TASK BREAKDOWN**
+
+### Priority 1: Fix Equipment Discovery (CRITICAL)
+1. **Debug MakerNotes IFD parsing** - investigate why tag 0x2010 isn't found
+2. **Verify IFD structure** - ensure MakerNotes IFD is parsed correctly
+3. **Check subdirectory detection logic** - confirm 0x2010 triggers Equipment processing
+
+### Priority 2: Fix Equipment Processing 
+4. **Verify Equipment IFD parsing** - ensure Equipment uses standard IFD parsing (not binary)
+5. **Test BYTE format extraction** - confirm CameraType2/SerialNumber/LensType extraction
+6. **Validate offset calculations** - ensure Equipment tags read from correct locations
+
+### Priority 3: Final Validation
+7. **End-to-end testing** - confirm Equipment tags extract and match ExifTool
+8. **Update documentation** - mark milestone as actually complete
+
+## 🔧 **DEBUGGING STEPS IN PROGRESS**
+
+### Step 1: MakerNotes IFD Structure Analysis
+
+**Need to investigate:**
+- Does MakerNotes IFD parsing find all expected tags?
+- Is tag 0x2010 present in the MakerNotes IFD entries?
+- Are subdirectory tags being detected properly?
+
+**Expected MakerNotes structure** (from ExifTool Olympus.pm):
+- Tag 0x2010 → Equipment subdirectory
+- Tag 0x2020 → CameraSettings subdirectory  
+- Tag 0x2030 → RawDevelopment subdirectory
+- Tag 0x2040 → ImageProcessing subdirectory
+- Tag 0x2050 → FocusInfo subdirectory
+
+## 🧠 **TRIBAL KNOWLEDGE - ACTUAL STATUS**
+
+### **What Actually Works**
+1. **Basic ORF Processing**: File loads, basic EXIF tags extract
+2. **MakerNotes Discovery**: Olympus signature detected, MakerNotes found
+3. **Infrastructure**: All dispatch rules, processors, BYTE support exists
+4. **Generated Tables**: Olympus camera/lens lookup tables available
+
+### **What's Broken**
+1. **Equipment Discovery**: Tag 0x2010 never found in MakerNotes parsing
+2. **Equipment Processing**: No Equipment subdirectory processing occurs
+3. **Tag Extraction**: Zero Equipment-specific tags extracted
+
+### **Previous Incorrect Claims**
+The milestone was incorrectly marked as "COMPLETE" based on:
+- ✅ Infrastructure existence (processors, dispatch rules, BYTE support)
+- ❌ **Missing verification** that Equipment tags actually extract
+
+**Reality**: Infrastructure exists but Equipment discovery/processing is completely broken.
+
+## 📊 **ACTUAL COMPLETION STATUS**
+
+**Infrastructure**: 95% ✅ (excellent foundation)  
+**Equipment Discovery**: 0% ❌ (completely broken)  
+**Equipment Processing**: 0% ❌ (never triggered)  
+**Equipment Extraction**: 0% ❌ (no tags extracted)  
+
+**Overall Progress**: ~50% complete (infrastructure solid, processing broken)
+
+## 🚀 **NEXT ENGINEER INSTRUCTIONS**
+
+### Immediate Priorities:
+1. **Add debug logging** to MakerNotes IFD parsing to see all discovered tags
+2. **Check if tag 0x2010 exists** in the actual ORF file structure  
+3. **Trace Equipment subdirectory detection** logic
+4. **Fix Equipment processing chain** once discovery works
+
+### Debug Commands:
 ```bash
-# Test Olympus ORF processing
-cargo run -- test-images/olympus/test.orf
+# Test with extensive logging
+RUST_LOG=debug cargo run -- test-images/olympus/test.orf 2>&1 | grep -E "(0x2010|Equipment|MakerNotes.*entries)"
 
-# Compare with ExifTool
-exiftool -j test-images/olympus/test.orf | jq -r '.[] | {CameraType2, SerialNumber, LensType}'
-
-# Debug Equipment IFD parsing
-RUST_LOG=debug cargo run -- test-images/olympus/test.orf 2>&1 | grep -i equipment
+# Compare with ExifTool structure
+exiftool -v3 test-images/olympus/test.orf | grep -A20 -B5 "Equipment"
 ```
 
-## 📋 **SUCCESS CRITERIA - ALL ACHIEVED ✅**
+### Key Files to Examine:
+- `src/exif/ifd.rs` - IFD parsing and subdirectory detection
+- `src/exif/processors.rs` - Subdirectory processing dispatch
+- `src/processor_registry/dispatch.rs:549-567` - Equipment dispatch rule
+- `third-party/exiftool/lib/Image/ExifTool/Olympus.pm:1587-1686` - Equipment table reference
 
-The milestone completion criteria:
+## 📚 **CORRECTED SUCCESS CRITERIA**
 
-1. ✅ **Core Infrastructure**: ExifIFD, MakerNotes, Equipment discovery - COMPLETE
-2. ✅ **Equipment IFD Parsing**: Equipment parsed as IFD structure - COMPLETE
-3. ✅ **Compatibility Tests**: All tests pass - COMPLETE  
-4. ✅ **Equipment Tags**: CameraType2, SerialNumber, LensType extracted - COMPLETE
+The milestone is complete when:
 
-**Final Status**: 4/4 complete (100%) - milestone fully achieved.
+1. ✅ **Infrastructure**: All processors, dispatch rules, BYTE support (DONE)
+2. ❌ **Equipment Discovery**: Tag 0x2010 found and processed (BROKEN)
+3. ❌ **Equipment Extraction**: CameraType2, SerialNumber, LensType extracted (BROKEN)  
+4. ❌ **ExifTool Compatibility**: Output matches ExifTool for Equipment tags (BROKEN)
 
-## 🔧 **FUTURE REFACTORING OPPORTUNITIES** 
+**Current Status**: 1/4 complete (25%) - **NOT the claimed "100% COMPLETE"**
 
-### 1. Unify IFD vs Binary Detection
+## 🔧 **ARCHITECTURAL NOTES**
 
-Create a unified system to determine if manufacturer subdirectories should be parsed as IFDs or binary data:
+### **Equipment Processing Flow (Correct)**
+1. **MakerNotes IFD Parsing** → discovers tag 0x2010 (Equipment)
+2. **Subdirectory Detection** → recognizes 0x2010 as Equipment subdirectory  
+3. **Equipment Dispatch** → forces standard IFD parsing (not binary processor)
+4. **Equipment IFD Parsing** → reads Equipment as IFD structure
+5. **BYTE Tag Extraction** → extracts CameraType2/SerialNumber/LensType
 
-```rust
-trait SubDirectoryFormat {
-    fn is_ifd_structure(&self, table_name: &str) -> bool;
-}
+### **Current Broken Flow**
+1. ✅ **MakerNotes IFD Parsing** → processes MakerNotes
+2. ❌ **Tag 0x2010 Missing** → Equipment tag never discovered
+3. ❌ **No Equipment Processing** → Equipment subdirectory never processed  
+4. ❌ **No Equipment Tags** → Zero Equipment-specific tags extracted
 
-impl SubDirectoryFormat for OlympusFormat {
-    fn is_ifd_structure(&self, table_name: &str) -> bool {
-        match table_name {
-            "Equipment" | "CameraSettings" | "RawDevelopment" => true,  // Has WRITE_PROC => WriteExif
-            "FocusInfo" => false,  // Binary data format
-            _ => false,
-        }
-    }
-}
-```
-
-### 2. Remove Equipment Binary Processor
-
-Since Equipment is confirmed to be IFD format:
-- Remove `OlympusEquipmentProcessor` entirely
-- Remove binary data extraction logic
-- Simplify dispatch rules
-
-### 3. Generalize Subdirectory Detection
-
-Current code has hardcoded checks for Olympus tags (0x2010, 0x2020, etc). Consider:
-```rust
-struct ManufacturerSubdirectories {
-    olympus: HashMap<u16, &'static str>,  // 0x2010 => "Equipment"
-    canon: HashMap<u16, &'static str>,
-    nikon: HashMap<u16, &'static str>,
-}
-```
-
-### 4. Improve BYTE Format Handling
-
-Once BYTE format is implemented for Equipment, consider:
-- Generalizing BYTE array handling for all manufacturers
-- Adding PrintConv for BYTE arrays (e.g., LensType formatting)
-- Handling variable-length BYTE fields
-
-### 5. Tag Name Resolution
-
-Replace hardcoded tag names with generated lookups:
-```rust
-// Instead of:
-"Tag_0104" => "BodyFirmwareVersion"
-
-// Use:
-olympus_tag_names::lookup_tag_name(0x0104, "Equipment")
-```
-
-## 📚 **KEY REFERENCES**
-
-### ExifTool Sources
-- **Olympus.pm:1587-1686** - Equipment table definitions
-- **Olympus.pm:1157-1189** - Equipment processing logic and format notes
-- **MakerNotes.pm:557-589** - Signature detection patterns
-
-### Our Implementation  
-- **`src/exif/processors.rs:55-77`** - Fixed directory processor routing
-- **`src/exif/processors.rs:105-120`** - Fixed standard IFD parsing dispatch
-- **`src/processor_registry/processors/olympus.rs:23-133`** - Equipment processor
-- **`src/exif/ifd.rs:19-102`** - Signature detection and MakerNotes processing
-
-**The core infrastructure is rock-solid. The remaining Equipment tag extraction is a straightforward data format debugging task.**
-
-## 📊 **FINAL STATUS SUMMARY**
-
-**Infrastructure Completed**: 100% ✅  
-**Equipment IFD Parsing**: 100% ✅  
-**Compatibility Tests**: 100% ✅  
-**Equipment Tag Extraction**: 100% ✅ (All 3 Equipment tags extracted successfully)
-
-**Overall Progress**: 100% complete ✅
-
-All Equipment tags now extract correctly and match ExifTool output exactly. The milestone is fully complete.
-
-## 📝 **WHAT WAS ACCOMPLISHED IN THIS SESSION**
-
-1. **Discovered Equipment is IFD**: Found `WRITE_PROC => WriteExif` in ExifTool
-2. **Fixed dispatch rules**: Modified to skip Equipment for manufacturer processors  
-3. **Fixed processor selection**: Made all Olympus processors reject Equipment
-4. **Verified IFD parsing**: Equipment now parsed as IFD with 25 entries
-5. **Implemented BYTE format**: Added full BYTE array support for Equipment tags
-6. **Validated extraction**: All Equipment tags now extract correctly (CameraType2, SerialNumber, LensType)
-
-## 📚 **ESSENTIAL FILES TO STUDY**
-
-### Core Implementation Files
-- **`src/processor_registry/dispatch.rs:405-413`** - Equipment dispatch fix
-- **`src/processor_registry/processors/olympus.rs`** - Processor implementations
-- **`src/exif/ifd.rs`** - Where BYTE format needs implementation
-- **`third-party/exiftool/lib/Image/ExifTool/Olympus.pm:1587-1686`** - Equipment table
-
-### Generated Files
-- **`src/generated/Olympus_pm/`** - Generated tag definitions and lookups
-
-## ✅ **MILESTONE COMPLETED**
-
-**Total Time Invested**: ~3-4 hours to discover Equipment IFD structure and implement BYTE format
-**Final Result**: 100% complete - all Equipment tags extracting correctly
-
-The Olympus ORF support is now 100% complete and fully functional!
-
-## 🚀 **READY FOR PRODUCTION**
-
-Olympus ORF files can now be processed with full Equipment tag extraction:
-- CameraType2, SerialNumber, and LensType all extract correctly
-- Output matches ExifTool exactly
-- No critical issues remaining
+The fix requires identifying why step 2 fails - tag 0x2010 discovery.

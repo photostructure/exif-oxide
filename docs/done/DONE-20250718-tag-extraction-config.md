@@ -210,7 +210,7 @@ Create two new config types:
    - Check filtering works correctly
 
 8. **Update documentation**
-   - Update EXIFTOOL-INTEGRATION.md
+   - Update CODEGEN.md
    - Add examples to codegen README
    - Document new config format
 

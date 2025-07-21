@@ -60,7 +60,7 @@ After the 15-minute foundation, pick your path based on your task:
 ### 🏗️ **I'm working on core architecture**
 
 → Read [guides/CORE-ARCHITECTURE.md](guides/CORE-ARCHITECTURE.md) (state management & offset calculations)
-→ Study [design/EXIFTOOL-INTEGRATION.md](design/EXIFTOOL-INTEGRATION.md) (code generation system)
+→ Study [CODEGEN.md](CODEGEN.md) (code generation system)
 
 ### 📷 **I'm adding manufacturer support**
 
@@ -98,7 +98,7 @@ Keep these in mind throughout development:
 ### Design Documents
 
 - [design/API-DESIGN.md](design/API-DESIGN.md) - Public API structure
-- [design/EXIFTOOL-INTEGRATION.md](design/EXIFTOOL-INTEGRATION.md) - Code generation system
+- [CODEGEN.md](CODEGEN.md) - Code generation system
 - [design/PRINTCONV-DESIGN-DECISIONS.md](design/PRINTCONV-DESIGN-DECISIONS.md) - Why we diverge from ExifTool's JSON output
 
 ### Development Guides

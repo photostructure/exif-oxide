@@ -766,7 +766,7 @@ When reviewing or writing code, be vigilant for manually-maintained lookup table
 - **Red flag**: Any match statement or HashMap with >5 static entries mapping to strings
 - **Red flag**: Hardcoded camera/lens names, white balance modes, or other manufacturer settings
 - **Action**: Check if it came from ExifTool source (usually `%hashName = (...)`)
-- **Solution**: Use the simple table extraction framework (see [EXIFTOOL-INTEGRATION.md](../design/EXIFTOOL-INTEGRATION.md))
+- **Solution**: Use the simple table extraction framework (see [CODEGEN.md](../CODEGEN.md))
 
 Remember: Every manually-ported lookup table becomes a maintenance burden with monthly ExifTool updates.
 

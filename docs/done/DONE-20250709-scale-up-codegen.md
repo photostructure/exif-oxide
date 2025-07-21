@@ -268,7 +268,7 @@ extract-all: extract-canon extract-nikon extract-exiftool
 
 ### Required Knowledge
 
-- Current codegen extraction system: [EXIFTOOL-INTEGRATION.md](../design/EXIFTOOL-INTEGRATION.md)
+- Current codegen extraction system: [CODEGEN.md](../CODEGEN.md)
 - ExifTool integration patterns: [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md)
 - Build system: `codegen/Makefile` and `codegen/src/main.rs`
 - JSON schema validation tools
@@ -374,7 +374,7 @@ Benefits:
 
 ### Essential Reading
 
-- [EXIFTOOL-INTEGRATION.md](../design/EXIFTOOL-INTEGRATION.md) - Current codegen system
+- [CODEGEN.md](../CODEGEN.md) - Current codegen system
 - [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md) - ExifTool integration principles
 - [MILESTONE-18-RAW-Codegen-Extraction.md](MILESTONE-18-RAW-Codegen-Extraction.md) - Scale-up requirements
 
@@ -500,7 +500,7 @@ pub fn lookup_nikon_lens_ids(key: &str) -> Option<&'static str>
 #### Must Read First:
 1. **This milestone doc** - You're reading it!
 2. `docs/TRUST-EXIFTOOL.md` - Critical principle: always copy ExifTool exactly
-3. `docs/design/EXIFTOOL-INTEGRATION.md` - How codegen fits into the system
+3. `docs/CODEGEN.md` - How codegen fits into the system
 
 #### Core Implementation Files:
 1. `codegen/src/generators/macro_based.rs` - Main generator (needs lifetime fix)

@@ -5,7 +5,7 @@
 ## High Level Guidance
 
 - **Follow Trust ExifTool**: Study how ExifTool processes ARW/SR2/SRF files exactly. See [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md)
-- **Use Codegen**: Switch any manual lookup tables to generated code. See [EXIFTOOL-INTEGRATION.md](../design/EXIFTOOL-INTEGRATION.md)
+- **Use Codegen**: Switch any manual lookup tables to generated code. See [CODEGEN.md](../CODEGEN.md)
 - **Study ExifTool Sources**: [Sony.pm](../../third-party/exiftool/lib/Image/ExifTool/Sony.pm) and [module docs](../../third-party/exiftool/doc/modules/Sony.md)
 
 ## Overview
