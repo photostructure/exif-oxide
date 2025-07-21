@@ -879,9 +879,12 @@ fn apply_camera_settings_print_conv(
         tag_name
     );
 
+    // Strip MakerNotes: prefix if present for matching
+    let clean_tag_name = tag_name.strip_prefix("MakerNotes:").unwrap_or(tag_name);
+
     // Apply generated lookup tables based on the tag name
     // ExifTool: Canon.pm CameraSettings table PrintConv entries
-    match tag_name {
+    match clean_tag_name {
         "MacroMode" => {
             if let Some(value) = tag_value.as_u8() {
                 if let Some(macro_mode) = lookup_camera_settings__macro_mode(value) {
@@ -897,6 +900,11 @@ fn apply_camera_settings_print_conv(
                     return crate::types::TagValue::String(quality.to_string());
                 }
             }
+        }
+        "FocusMode" => {
+            // TODO: Add FocusMode lookup when Canon-specific lookup is generated
+            // For now, return the raw value as string
+            return crate::types::TagValue::String(format!("FocusMode {}", tag_value));
         }
         "CanonFlashMode" => {
             // CanonFlashMode might use the same lookup as FlashMode, or need a different one

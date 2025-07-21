@@ -699,7 +699,9 @@ impl ExifReader {
             // Use Olympus Equipment-specific tag definitions
             // ExifTool: Olympus.pm %Image::ExifTool::Olympus::Equipment hash
             if let Some(equipment_name) =
-                crate::implementations::olympus::get_equipment_tag_name(tag_id)
+                crate::generated::Olympus_pm::equipment_tag_structure::get_equipment_tag_name(
+                    tag_id,
+                )
             {
                 return equipment_name.to_string();
             }

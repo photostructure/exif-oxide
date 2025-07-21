@@ -92,32 +92,63 @@ pub fn process_config_directory(
         }
     }
     
-    // Check for tag_table_structure.json configuration
-    let tag_structure_config = config_dir.join("tag_table_structure.json");
-    if tag_structure_config.exists() {
-        let config_content = fs::read_to_string(&tag_structure_config)?;
-        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
+    // Check for all tag table structure configurations  
+    // Process Main table first, then subdirectory tables
+    if let Ok(entries) = fs::read_dir(&config_dir) {
+        let mut config_files: Vec<_> = entries
+            .filter_map(Result::ok)
+            .filter(|entry| {
+                let file_name = entry.file_name();
+                let file_name_str = file_name.to_string_lossy();
+                file_name_str.ends_with("_tag_table_structure.json") || file_name_str == "tag_table_structure.json"
+            })
+            .collect();
         
-        // Extract table name from config
-        if let Some(table_name) = config_json["table"].as_str() {
-            // Look for the corresponding extracted tag structure JSON file
-            let extract_dir = Path::new("generated/extract");
-            let module_base = module_name.trim_end_matches("_pm");
-            let structure_file = format!("{}_tag_structure.json", module_base.to_lowercase());
-            let structure_path = extract_dir.join(&structure_file);
+        // Sort to prioritize Main table first
+        config_files.sort_by(|a, b| {
+            let a_name = a.file_name();
+            let b_name = b.file_name(); 
+            let a_str = a_name.to_string_lossy();
+            let b_str = b_name.to_string_lossy();
             
-            if structure_path.exists() {
-                let structure_content = fs::read_to_string(&structure_path)?;
-                let structure_data: crate::generators::tag_structure::TagStructureData = 
-                    serde_json::from_str(&structure_content)?;
+            // Main table (tag_table_structure.json) comes first
+            if a_str == "tag_table_structure.json" {
+                std::cmp::Ordering::Less
+            } else if b_str == "tag_table_structure.json" {
+                std::cmp::Ordering::Greater
+            } else {
+                a_str.cmp(&b_str)
+            }
+        });
+
+        for entry in config_files {
+            let tag_structure_config = entry.path();
+            let config_content = fs::read_to_string(&tag_structure_config)?;
+            let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
+            
+            // Extract table name from config
+            if let Some(table_name) = config_json["table"].as_str() {
+                // Look for the corresponding extracted tag structure JSON file
+                let extract_dir = Path::new("generated/extract");
+                let module_base = module_name.trim_end_matches("_pm");
+                let structure_file = format!("{}_{}_tag_structure.json", 
+                                             module_base.to_lowercase(), 
+                                             table_name.to_lowercase());
+                let structure_path = extract_dir.join(&structure_file);
                 
-                // Generate file for this tag structure
-                let file_name = generate_tag_structure_file(
-                    &structure_data,
-                    &module_output_dir
-                )?;
-                generated_files.push(file_name);
-                has_content = true;
+                if structure_path.exists() {
+                    let structure_content = fs::read_to_string(&structure_path)?;
+                    let structure_data: crate::generators::tag_structure::TagStructureData = 
+                        serde_json::from_str(&structure_content)?;
+                    
+                    // Generate file for this tag structure
+                    let file_name = generate_tag_structure_file(
+                        &structure_data,
+                        &module_output_dir
+                    )?;
+                    generated_files.push(file_name);
+                    has_content = true;
+                }
             }
         }
     }
@@ -405,8 +436,13 @@ fn generate_tag_structure_file(
 ) -> Result<String> {
     let structure_code = crate::generators::tag_structure::generate_tag_structure(structure_data)?;
     
-    // Create filename from manufacturer name
-    let file_name = "tag_structure";
+    // Create filename based on table name
+    let file_name = if structure_data.source.table == "Main" {
+        "tag_structure".to_string()
+    } else {
+        // For subdirectory tables, use a different filename
+        format!("{}_tag_structure", structure_data.source.table.to_lowercase())
+    };
     let file_path = output_dir.join(format!("{}.rs", file_name));
     
     let mut content = String::new();
@@ -417,7 +453,7 @@ fn generate_tag_structure_file(
     fs::write(&file_path, content)?;
     println!("  ✓ Generated {}", file_path.display());
     
-    Ok(file_name.to_string())
+    Ok(file_name)
 }
 
 fn generate_process_binary_data_file(

@@ -11,8 +11,7 @@
 //! - lib/Image/ExifTool/MakerNotes.pm:515-533 - Olympus MakerNote detection patterns
 //! - lib/Image/ExifTool/Olympus.pm - Olympus tag tables and processing
 
-mod equipment_tags;
-pub use equipment_tags::get_equipment_tag_name;
+// Equipment tag lookup now handled by generated code
 
 use tracing::trace;
 
