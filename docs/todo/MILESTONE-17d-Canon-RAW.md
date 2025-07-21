@@ -1,12 +1,13 @@
 # Milestone 17d: Canon RAW Support
 
 **Goal**: Implement Canon RAW formats (CR2 required, CRW/CR3 optional)  
-**Status**: 96% Complete - Core infrastructure working, synthetic tag output FIXED, tag name resolution FIXED, 9 Canon tags extracting with proper names
+**Status**: 8.2% Complete - Basic binary data extraction working, 19 Canon tags extracting, major infrastructure gaps identified
 
-## 🎉 Major Progress Update (2025-07-20)
+## 🔍 Reality Check Update (2025-07-20)
 
-**BREAKTHROUGH #1**: Fixed critical synthetic tag output bug! Canon tags now appear in JSON output with proper names.
-**BREAKTHROUGH #2**: Identified root cause of missing binary data tags - MakerNotes were being processed as generic EXIF instead of Canon-specific!
+**ACTUAL STATUS**: Previous documentation was significantly outdated. Current implementation extracts **19 out of 232 Canon MakerNotes tags** (8.2% coverage) compared to ExifTool's complete extraction.
+
+**WORKING INFRASTRUCTURE**: The foundation is more solid than docs suggested - MakerNotes processor dispatch, binary data extraction, and synthetic tag generation all function correctly.
 
 ## High level guidance
 
@@ -24,155 +25,201 @@ Canon RAW support with comprehensive maker note processing. The infrastructure i
 - 84 Canon data types with generated lookup tables
 - Complex offset schemes and validation requirements
 
-## 🔥 CRITICAL DISCOVERY (Just Found!)
+## 🔍 ACTUAL IMPLEMENTATION STATUS (July 20, 2025)
 
-### The Root Cause of Missing Binary Data Tags
+### What's Actually Working (Better Than Expected)
 
-**Problem**: Canon binary data tags (MacroMode, FocusMode, etc.) are implemented but not appearing in output
-**Root Cause Found**: MakerNotes are being processed with generic "Exif" processor instead of "Canon::Main"
+**✅ MakerNotes Processor Dispatch**: 
+- Canon detection correctly identifies "Canon::Main" processor
+- Fallback system properly routes to `canon::process_canon_makernotes()`
+- Binary data extraction infrastructure is functional
 
-**Evidence**:
-```
-// In src/exif/processors.rs:58-61
-"MakerNotes" => {
-    // Trust ExifTool: MakerNotes are parsed as standard TIFF IFDs first
-    Some("Exif".to_string())  // ← THIS IS THE PROBLEM!
-}
-```
+**✅ Binary Data Processing (Partially Working)**:
+- Canon CameraSettings extraction: 6 tags (FocusMode, CanonFlashMode, Quality)
+- Canon AFInfo processing: 13 tags (AFAreaXPositions, AFImageHeight, etc.)
+- Synthetic tag ID generation and storage working correctly
+- Generated lookup table integration functioning
 
-**The Fix Applied**:
-```rust
-"MakerNotes" => {
-    // For MakerNotes, we need manufacturer-specific processing
-    if let Some(processor) = self.detect_makernote_processor() {
-        debug!("Detected manufacturer-specific processor for MakerNotes: {}", processor);
-        Some(processor)  // Returns "Canon::Main" for Canon cameras
-    } else {
-        Some("Exif".to_string())
-    }
-}
-```
+**✅ Core Architecture**:
+- Canon IFD parsing with proper offset handling
+- TIFF-based maker note processing
+- PrintConv application system operational
 
-**Why This Matters**: 
-- Generic EXIF processing can't handle Canon's ProcessBinaryData sections
-- Canon::Main processor knows how to extract CameraSettings, ShotInfo, etc.
-- This explains why only main table tags (9) were extracted, not binary data tags
+## 🎯 CRITICAL GAP ANALYSIS: 19/232 Tags (8.2% Coverage)
 
-## 🎯 Current Status (Session Accomplishments)
+### Missing Main Canon Table Tags
 
-### ✅ Just Fixed Critical Issues (96% Complete)
+**ExifTool's Canon::Main table** contains the primary Canon tags that should be extracted directly from the Canon IFD structure. Our implementation is missing most of these:
 
-1. **FIXED: Synthetic Tag Output Bug** ✅
-   - **Issue**: Canon tags were stored correctly but not appearing in JSON output
-   - **Root Cause**: In `get_all_tag_entries()`, synthetic tag group extraction was broken
-   - **Fix Applied**: Modified `/src/exif/mod.rs` lines 306-350 to properly parse "Group:TagName" format
-   - **Result**: Canon tags now appear in output (was 0, now 9 tags)
+**Missing Core Canon Tags** (examples from ExifTool):
+- `CanonImageType` - Camera model and basic identification
+- `CanonFirmwareVersion` - Firmware version string  
+- `CanonModelID` - Numeric model identifier
+- `ColorSpace` - Color space information
+- `InternalSerialNumber` - Camera serial number
+- Many more main table entries
 
-2. **FIXED: Canon Tag Name Resolution** ✅
-   - **Issue**: Canon main table tags showing as `Tag_XXXX` instead of proper names
-   - **Root Cause**: Canon-specific tag names not being resolved for maker note tags
-   - **Fix Applied**: Modified `/src/exif/mod.rs` lines 437-448 to check for Canon maker notes
-   - **Result**: Now getting proper names like "CanonImageType", "CanonFirmwareVersion", etc.
+**Currently Extracted Main Tags** (only 3):
+- `CanonFlashMode`, `CanonImageWidth`, `CanonImageHeight`
 
-3. **COMPLETED: Replace Manual Lookup Tables** ✅
-   - **Changes**: Modified `/src/implementations/canon/binary_data.rs` to remove manual HashMap lookups
-   - **Added**: Import for `lookup_canon_quality` and updated `apply_camera_settings_print_conv()`
-   - **Result**: All manual lookups replaced with generated functions, code builds and runs
+### Missing ProcessBinaryData Sections
 
-4. **IDENTIFIED: MakerNotes Processor Selection Bug** ✅
-   - **Issue**: MakerNotes were hardcoded to use generic "Exif" processor
-   - **Root Cause**: `/src/exif/processors.rs:58-61` always returned "Exif" for MakerNotes
-   - **Fix Applied**: Modified to call `detect_makernote_processor()` which returns "Canon::Main"
-   - **Impact**: This should enable Canon binary data extraction!
+**ExifTool Canon.pm Analysis** reveals 7 major ProcessBinaryData sections. We have partial implementation of 2/7:
 
-### ✅ Previously Completed Infrastructure
+**✅ Currently Working** (2/7 sections):
+1. **CameraSettings (0x0001)**: 6 tags extracted
+2. **AFInfo (0x0012)**: 13 tags extracted  
 
-1. **Canon IFD Parsing** - `find_canon_tag_data()` correctly extracts Canon maker note tags
-2. **Binary Data Processing** - 5 of 7 ProcessBinaryData sections implemented:
-   - CameraSettings (0x0001) - 6 tags extracted
-   - FocalLength (0x0002) - 4 tags extracted  
-   - ShotInfo (0x0004) - 8 tags extracted
-   - AFInfo (0x0012) - ProcessSerialData with variable arrays
-   - AFInfo2 (0x0026) - ProcessSerialData with proper offset handling
-   - Panorama (0x0005) - 2 tags extracted with generated lookups
-   - MyColors (0x001d) - 1 tag extracted with validation
+**❌ Missing Critical Sections** (5/7 sections):
+3. **FocalLength (0x0002)**: Lens focal length data - code exists but not integrated
+4. **ShotInfo (0x0004)**: Shot-specific settings - code exists but not integrated  
+5. **Panorama (0x0005)**: Panorama settings - code exists but not integrated
+6. **ColorData1-12**: Color processing parameters (model-dependent)
+7. **Additional binary data sections**: Model-specific camera info, AF configurations
 
-3. **Generated Code Integration** - Using lookup tables from `src/generated/Canon_pm/*_inline.rs`
-4. **Tag Naming** - Fixed duplicate prefix issue (`MakerNotes:MakerNotes:` → `MakerNotes:`)
-5. **Offset Management** - Absolute vs relative offset handling working correctly
-6. **PrintConv System** - Generated lookup tables applied successfully
+## 🔧 ARCHITECTURAL INSIGHTS FOR FUTURE ENGINEERS
 
-### 🔧 Remaining Work
+### The Two-Phase Processing System (CRITICAL UNDERSTANDING)
 
-1. **Complete MakerNotes Processor Dispatch** (HIGHEST PRIORITY)
-   - **Status**: Fix applied but needs testing
-   - **Issue**: Canon::Main processor exists in fallback but not in new registry
-   - **Current Flow**: MakerNotes → detect "Canon::Main" → no registry entry → fallback_to_existing_processing()
-   - **Next Step**: Test if fix enables binary data extraction OR implement Canon::Main in processor registry
-
-2. **Add Missing Canon Coverage** (223 tags remaining)
-   - **Current**: 9 Canon tags extracted (main table tags only)
-   - **Target**: 232 total Canon tags like ExifTool
-   - **Examples We're Getting**: CanonImageType, CanonFirmwareVersion, CanonModelID, SerialInfo, LensModel
-   - **Examples Still Missing**: MacroMode, FocusMode, WhiteBalance, ISO settings, AFInfo details, etc.
-
-## 🚨 What the Next Engineer Should Do
-
-### 1. **Test the MakerNotes Processor Fix** (IMMEDIATE PRIORITY)
-**What Was Just Fixed**: MakerNotes were using generic "Exif" processor instead of Canon-specific
-**The Change**: Modified `src/exif/processors.rs:58-69` to detect manufacturer
-
-**Testing Steps**:
-```bash
-# Build and test
-cargo build --release
-RUST_LOG=debug ./target/release/exif-oxide test-images/canon/Canon_T3i.CR2 2>&1 | grep -E "(Detected Canon|Canon::Main|binary data|MacroMode)"
-
-# Look for these key indicators:
-# 1. "Detected manufacturer-specific processor for MakerNotes: Canon::Main"
-# 2. "Processing Canon binary data"
-# 3. Binary data tags in output (MacroMode, FocusMode, etc.)
-```
-
-**If It Works**: You should see 100+ Canon tags instead of just 9!
-**If It Doesn't**: The fallback system might need the Canon::Main processor registered
-
-### 2. **Add Missing Canon Main Table Tags**
-**Current**: Only 9 main table tags extracted
-**Target**: 232 total Canon tags like ExifTool
-
-**Implementation Plan**:
-1. Study `third-party/exiftool/lib/Image/ExifTool/Canon.pm` %Canon::Main table
-2. Add more tag definitions to `src/implementations/canon/tags.rs`
-3. Consider if some need special processing (subdirectories, binary data, etc.)
-
-### 3. **Verify PrintConv Application**
-**Status**: Generated lookups integrated but need to verify they're being applied
-**Test**: Check if CanonModelID shows "EOS Rebel T3i / 600D / Kiss X5" instead of "2147484294"
-**Location**: `src/implementations/canon/mod.rs:731` - `apply_camera_settings_print_conv()`
-
-## 🏗️ Architecture Understanding
-
-### The Two-Phase Processing System
+**Current Architecture** uses a transition approach with new registry + fallback:
 
 **Phase 1: New Processor Registry**
 - Modern trait-based system in `src/processor_registry/`
 - Has specific processors like "Canon::SerialData", "Canon::CameraSettings"
-- BUT no "Canon::Main" processor registered!
+- **CRITICAL**: No "Canon::Main" processor is registered in the new system!
 
-**Phase 2: Fallback System**
-- When registry lookup fails, falls back to `fallback_to_existing_processing()`
-- Directly calls manufacturer functions like `canon::process_canon_makernotes()`
-- This is where Canon processing actually happens currently
+**Phase 2: Fallback System** 
+- When registry lookup fails for "Canon::Main", falls back to `fallback_to_existing_processing()`
+- Directly calls `canon::process_canon_makernotes()` function
+- **This is where Canon processing actually happens currently**
 
-**The Flow**:
+**The Processing Flow**:
 1. IFD parser encounters tag 0x927C (MakerNotes)
-2. Calls `select_processor()` which now detects "Canon::Main"
+2. `select_processor()` correctly detects "Canon::Main" 
 3. Registry lookup fails (no Canon::Main registered)
 4. Falls back to `fallback_to_existing_processing()`
-5. Calls `canon::process_canon_makernotes()` directly
+5. Calls `canon::process_canon_makernotes()` directly ✅
 
-**Why This Matters**: The system is transitional - new registry + old fallback coexist
+**KEY INSIGHT**: The fallback system is working correctly - Canon processing happens in the legacy pathway, not the new registry.
+
+### What's Actually Missing (Root Cause Analysis)
+
+**Not a Processor Dispatch Problem**: MakerNotes detection and routing works correctly.
+
+**Real Problem #1: Main Canon Table Processing**  
+- Canon::Main table in ExifTool contains ~50+ direct tag definitions
+- Our `process_canon_makernotes()` focuses only on binary data tags
+- Missing: Direct extraction of main table entries (CanonImageType, CanonFirmwareVersion, etc.)
+
+**Real Problem #2: Binary Data Integration Gap**
+- We have extraction code for 5 binary data sections in `src/implementations/canon/binary_data.rs`
+- Only 2 sections (CameraSettings, AFInfo) are called from the main coordinator  
+- Missing: Integration calls for FocalLength, ShotInfo, Panorama sections
+
+**Real Problem #3: Conditional Processing**
+- ExifTool uses model-specific processing for many Canon tags
+- ColorData sections vary by camera model
+- Our implementation lacks model-dependent tag extraction
+
+## 🚨 NEXT ENGINEER ROADMAP (Prioritized by Impact)
+
+### Priority 1: Add Missing Main Canon Table Tags (Highest ROI)
+
+**Goal**: Extract the ~50 main Canon table tags that should be straightforward to implement.
+
+**ExifTool Reference**: Canon.pm `%Image::ExifTool::Canon::Main` table contains direct tag definitions like:
+- `0x6` → CanonImageType 
+- `0x7` → CanonFirmwareVersion
+- `0x8` → FileNumber  
+- `0x9` → OwnerName
+- `0x10` → CanonModelID
+- Many more...
+
+**Implementation Strategy**:
+1. **Study** `third-party/exiftool/lib/Image/ExifTool/Canon.pm` Canon::Main table (starts around line 1500)
+2. **Extend** `process_canon_makernotes()` in `src/implementations/canon/mod.rs` to extract main table tags
+3. **Add** direct tag value extraction before binary data processing
+4. **Use** existing tag name lookup system for proper naming
+
+**Expected Outcome**: Should jump from 19 tags to ~70 tags (300% improvement)
+
+### Priority 2: Enable Missing Binary Data Sections (Medium Effort, High Impact)
+
+**Goal**: Activate the already-written binary data extraction code.
+
+**Current Status**: Code exists in `src/implementations/canon/binary_data.rs` for:
+- `extract_focal_length()` - ready but not called
+- `extract_shot_info()` - ready but not called  
+- `extract_panorama()` - ready but not called
+
+**Implementation Strategy**:
+1. **Modify** `process_other_canon_binary_tags_with_reader()` in canon/mod.rs
+2. **Add** calls to existing binary data extractors  
+3. **Test** integration with synthetic tag generation
+
+**Expected Outcome**: Should reach ~100+ tags (additional 50+ tags)
+
+### Priority 3: Model-Specific ColorData Processing (Advanced)
+
+**Goal**: Implement camera model-dependent tag extraction.
+
+**ExifTool Pattern**: ColorData sections vary by camera model:
+- ColorData1 for older models
+- ColorData2, ColorData3, etc. for newer models
+- Conditional processing based on camera model string
+
+**Implementation Strategy**:  
+1. **Study** ExifTool's model detection patterns
+2. **Implement** model-based conditional extraction
+3. **Add** ColorData binary data processors
+
+**Expected Outcome**: Should reach ~150+ tags
+
+## 🧠 NOVEL RESEARCH FINDINGS FOR FUTURE ENGINEERS
+
+### Canon Main Table Structure Discovery
+
+**Key Finding**: ExifTool's Canon::Main table structure is simpler than initially thought. Most tags are direct value extractions, not complex binary data.
+
+**Canon::Main Tag Categories** (from ExifTool analysis):
+1. **Direct Value Tags** (~40 tags): Simple value extraction (strings, numbers)
+   - Examples: CanonImageType, CanonFirmwareVersion, FileNumber, OwnerName
+   - Implementation: Standard IFD tag extraction, no special processing needed
+
+2. **SubDirectory Tags** (~7 tags): Point to binary data sections  
+   - Examples: CanonCameraSettings, CanonShotInfo, CanonFocalLength
+   - Implementation: Already working via binary data extractors
+
+3. **Conditional/Model Tags** (~5 tags): Model-dependent processing
+   - Examples: ColorData variants, CameraInfo blocks
+   - Implementation: Requires model detection logic
+
+**CRITICAL INSIGHT**: The 213 missing tags are mostly from category 1 (direct values) and subcategories of category 2 (binary data details). The core binary data extraction framework is already functional.
+
+### Binary Data Integration Pattern Discovery
+
+**Current Implementation Gap**: `process_canon_makernotes()` only calls 2 of 5 available binary data extractors.
+
+**Available but Unused Extractors** in `src/implementations/canon/binary_data.rs`:
+- `extract_focal_length()` - lens focal length information
+- `extract_shot_info()` - shot-specific settings  
+- `extract_panorama()` - panorama mode settings
+- `extract_my_colors()` - color processing settings
+
+**Integration Pattern**: Each extractor returns `Vec<(tag_name, tag_value)>` and follows the same integration pattern as CameraSettings.
+
+### Offset Management Research
+
+**CRITICAL DISCOVERY**: Canon uses **absolute file offsets** for maker note data, not relative offsets.
+
+**Implementation Evidence** in `find_canon_tag_data_with_full_access()`:
+```rust
+// CRITICAL FIX: Canon offsets are relative to TIFF header base
+// The offset is relative to the ExifReader's base, not the maker note
+let absolute_offset = data_offset;
+```
+
+**Why This Matters**: Previous offset calculation bugs have been resolved. The current offset handling is correct for Canon files.
 
 ## 🧠 Critical Tribal Knowledge
 
@@ -289,20 +336,34 @@ From analysis of ExifTool Canon.pm source:
 }
 ```
 
-## ✅ Success Criteria
+## ✅ SUCCESS CRITERIA (Updated for Reality)
 
-1. **Tag Count**: Match ExifTool's ~232 Canon MakerNotes tags (currently 9/232)
-2. **Core Tags**: All ProcessBinaryData sections extracting tags correctly 
-3. **Generated Code**: ✅ DONE - No manual lookup tables, all using generated functions
-4. **Validation**: `compare-with-exiftool` shows matching tag counts and values
-5. **Performance**: `make precommit` passes without errors
+### Completion Targets
+1. **Tag Count**: Match ExifTool's 232 Canon MakerNotes tags (currently 19/232 = 8.2%)
+2. **Main Table Coverage**: Extract direct Canon table tags (should reach ~70 tags easily)
+3. **Binary Data Coverage**: Enable all 5 existing binary data extractors (should reach ~120 tags)
+4. **Model-Dependent Tags**: Implement ColorData and CameraInfo processing (final ~112 tags)
+5. **Generated Code**: ✅ **ALREADY COMPLETE** - Using generated lookup functions
+6. **Validation**: Output matches ExifTool format and tag naming conventions
 
-## 🎯 Completion Estimate
+### Revised Completion Estimates
 
-- **Binary Data Fix**: 2-3 hours (enable ProcessBinaryData tag extraction)
-- **Missing Tags**: 3-4 hours (add remaining main table tags)
-- **PrintConv Verification**: 1 hour (ensure lookups applied correctly)
-- **Total Remaining**: 6-8 hours
+**Phase 1: Main Table Tags** (Highest ROI)
+- **Effort**: 4-6 hours
+- **Outcome**: 19 → 70 tags (51 new tags)
+- **Difficulty**: Low - mostly standard IFD parsing
+
+**Phase 2: Binary Data Integration** (Medium ROI) 
+- **Effort**: 3-4 hours  
+- **Outcome**: 70 → 120 tags (50 new tags)
+- **Difficulty**: Medium - integration work, code already exists
+
+**Phase 3: Model-Dependent Processing** (Advanced)
+- **Effort**: 8-12 hours
+- **Outcome**: 120 → 232 tags (112 new tags) 
+- **Difficulty**: High - requires ExifTool conditional logic analysis
+
+**Total Remaining**: 15-22 hours (revised from original 6-8 hour estimate)
 
 **Next Milestone**: 17e - Sony ARW (advanced offset management patterns)
 
@@ -346,20 +407,42 @@ From analysis of ExifTool Canon.pm source:
 - **Proposed**: Table-driven approach using generated metadata
 - **Benefit**: Automatic PrintConv application without manual maintenance
 
-## 🔄 Handoff Notes
+## 🔄 REALISTIC HANDOFF NOTES (July 20, 2025)
 
-The Canon implementation now has **excellent foundations** after fixing the critical synthetic tag output bug. Canon tags are now appearing in JSON output with proper names. The main remaining work is enabling the already-implemented binary data processing and adding coverage for the remaining ~223 Canon tags.
+### 📊 **ACTUAL STATUS SUMMARY**
+- **Current**: 19/232 Canon MakerNotes tags extracted (8.2% coverage)
+- **Architecture**: Solid foundation - MakerNotes processing, binary data extraction, and synthetic tagging all work correctly
+- **Previous Docs**: Were significantly outdated claiming "96% complete" and "9 tags" - both false
 
-**Major Win**: The synthetic tag output bug is FIXED! Canon tags now appear with proper names like "CanonImageType" instead of "Tag_XXXX".
+### 🎯 **IMMEDIATE WIN OPPORTUNITIES**
 
-**Start Here**: 
-1. Debug why binary data tags (MacroMode, FocusMode, etc.) aren't appearing despite being extracted in debug logs
-2. The infrastructure is all there - it's likely just a small issue preventing the binary data tags from reaching the output
+**Start Here for Fastest Progress**:
+1. **Phase 1**: Add main Canon table tag extraction (4-6 hours → 300% improvement to 70 tags)
+2. **Phase 2**: Enable existing binary data extractors (3-4 hours → 50 more tags)
 
-**Critical Next Step**: Test the MakerNotes processor fix immediately! This should unlock Canon binary data processing.
+**Why These Are Easy Wins**:
+- Main table tags need standard IFD parsing (code patterns already exist)
+- Binary data extractors already written, just need integration calls
+- No architecture changes required
 
-**Files Modified This Session**:
-- `src/exif/processors.rs` - Fixed MakerNotes processor selection (THE KEY FIX!)
-- `docs/todo/MILESTONE-17d-Canon-RAW.md` - Updated with research and progress
+### 🔧 **CRITICAL RESEARCH FINDINGS**
 
-**Deleted**: `docs/handoff/HANDOFF-20250120-canon-raw-implementation.md` (was stale)
+**Architecture Discovery**: Two-phase processing (registry + fallback) works correctly - Canon processing happens in fallback system via `canon::process_canon_makernotes()`.
+
+**Root Cause**: Missing tags are **not** a processor dispatch problem. They're missing because:
+1. Main Canon table direct value extraction not implemented
+2. Only 2/5 binary data extractors are called from coordinator
+3. Model-dependent ColorData processing not implemented
+
+**Key Files to Modify**:
+- `src/implementations/canon/mod.rs` - Main coordinator (add main table + binary data calls)
+- `src/implementations/canon/binary_data.rs` - Extractors already exist
+- ExifTool reference: `third-party/exiftool/lib/Image/ExifTool/Canon.pm` Canon::Main table
+
+### 🚨 **DON'T WASTE TIME ON**
+- Processor registry fixes (fallback works fine)
+- Synthetic tag output debugging (already working)  
+- Offset management issues (already resolved)
+- Generated lookup table integration (already complete)
+
+The foundation is solid. Focus on **coverage expansion**, not architecture fixes.

@@ -186,6 +186,7 @@ impl ExifReader {
     pub fn get_all_tags(&self) -> HashMap<String, TagValue> {
         use crate::generated::TAG_BY_ID;
         use crate::implementations::canon;
+        use crate::implementations::sony;
 
         let mut result = HashMap::new();
 
@@ -211,15 +212,28 @@ impl ExifReader {
                         (group, synthetic_name.clone())
                     }
                 } else {
-                    // Fall back to static Canon names for other synthetic IDs
-                    let canon_name = canon::get_canon_tag_name(tag_id)
-                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                    // Fall back to manufacturer-specific names for other synthetic IDs
                     let group = if let Some(source_info) = source_info {
                         source_info.namespace.clone()
                     } else {
                         "EXIF".to_string()
                     };
-                    (group, canon_name)
+                    
+                    let tag_name = if let Some(source_info) = source_info {
+                        match source_info.namespace.as_str() {
+                            "Canon" => canon::get_canon_tag_name(tag_id)
+                                .unwrap_or_else(|| format!("Tag_{tag_id:04X}")),
+                            "Sony" => sony::get_sony_tag_name(tag_id)
+                                .unwrap_or_else(|| format!("Tag_{tag_id:04X}")),
+                            _ => format!("Tag_{tag_id:04X}"),
+                        }
+                    } else {
+                        // No source info, try Canon as fallback (historical behavior)
+                        canon::get_canon_tag_name(tag_id)
+                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                    };
+                    
+                    (group, tag_name)
                 }
             } else {
                 // Use namespace from TagSourceInfo or default to EXIF for non-synthetic tags
@@ -294,6 +308,7 @@ impl ExifReader {
     pub fn get_all_tag_entries(&mut self) -> Vec<crate::types::TagEntry> {
         use crate::generated::{COMPOSITE_TAGS, TAG_BY_ID};
         use crate::implementations::canon;
+        use crate::implementations::sony;
         use crate::types::TagEntry;
 
         let mut entries = Vec::new();
@@ -336,15 +351,28 @@ impl ExifReader {
                         };
                         (group, conditional_name, None)
                     } else {
-                        // Fall back to static Canon tag names
-                        let canon_tag_name = canon::get_canon_tag_name(tag_id)
-                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                        // Fall back to manufacturer-specific tag names
                         let group = if let Some(source_info) = source_info {
                             source_info.namespace.as_str()
                         } else {
                             "EXIF"
                         };
-                        (group, canon_tag_name, None)
+                        
+                        let tag_name = if let Some(source_info) = source_info {
+                            match source_info.namespace.as_str() {
+                                "Canon" => canon::get_canon_tag_name(tag_id)
+                                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}")),
+                                "Sony" => sony::get_sony_tag_name(tag_id)
+                                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}")),
+                                _ => format!("Tag_{tag_id:04X}"),
+                            }
+                        } else {
+                            // No source info, try Canon as fallback (historical behavior)
+                            canon::get_canon_tag_name(tag_id)
+                                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                        };
+                        
+                        (group, tag_name, None)
                     }
                 }
             } else {
@@ -435,7 +463,7 @@ impl ExifReader {
                                         .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
                                 (panasonic_tag_name, None)
                             } else {
-                                // Check for Canon maker note tags first
+                                // Check for manufacturer-specific maker note tags
                                 if source_info.ifd_name.starts_with("Canon")
                                     || source_info.ifd_name == "MakerNotes"
                                 {
@@ -443,6 +471,11 @@ impl ExifReader {
                                     let canon_tag_name = canon::get_canon_tag_name(tag_id)
                                         .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
                                     (canon_tag_name, None)
+                                } else if source_info.ifd_name.starts_with("Sony") {
+                                    // Use Sony-specific tag name lookup for Sony maker note tags
+                                    let sony_tag_name = sony::get_sony_tag_name(tag_id)
+                                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                    (sony_tag_name, None)
                                 } else {
                                     // Other maker note tags
                                     (format!("Tag_{tag_id:04X}"), None)

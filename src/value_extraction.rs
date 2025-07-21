@@ -116,7 +116,7 @@ pub fn extract_byte_value(data: &[u8], entry: &IfdEntry) -> Result<u8> {
 /// This handles BYTE format with count > 1 (arrays of unsigned 8-bit integers)
 pub fn extract_byte_array_value(data: &[u8], entry: &IfdEntry) -> Result<Vec<u8>> {
     let count = entry.count as usize;
-    
+
     if entry.is_inline() && count <= 4 {
         // Value stored inline - extract bytes from value_or_offset
         // ExifTool: lib/Image/ExifTool/Exif.pm:6372 inline value handling

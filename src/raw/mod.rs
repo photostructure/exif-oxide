@@ -49,6 +49,7 @@ pub use formats::kyocera::get_kyocera_tag_name;
 pub use formats::minolta::get_minolta_tag_name;
 pub use formats::olympus::get_olympus_tag_name;
 pub use formats::panasonic::get_panasonic_tag_name;
+pub use formats::sony::get_sony_tag_name;
 
 pub mod utils {
     //! RAW processing utilities and helper functions

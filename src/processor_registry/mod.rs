@@ -118,10 +118,37 @@ static PROCESSOR_REGISTRY: LazyLock<ProcessorRegistry> = LazyLock::new(|| {
         FujiFilmFFMVProcessor::new(),
     );
 
+    // Register Sony processors - Critical for Sony RAW ProcessBinaryData integration
+    registry.register_processor(
+        ProcessorKey::new("Sony".to_string(), "CameraInfo".to_string()),
+        SonyCameraInfoProcessor,
+    );
+
+    registry.register_processor(
+        ProcessorKey::new("Sony".to_string(), "Tag9050".to_string()),
+        SonyTag9050Processor,
+    );
+
+    registry.register_processor(
+        ProcessorKey::new("Sony".to_string(), "AFInfo".to_string()),
+        SonyAFInfoProcessor,
+    );
+
+    registry.register_processor(
+        ProcessorKey::new("Sony".to_string(), "Tag2010".to_string()),
+        SonyTag2010Processor,
+    );
+
+    registry.register_processor(
+        ProcessorKey::new("Sony".to_string(), "General".to_string()),
+        SonyGeneralProcessor,
+    );
+
     // Add dispatch rules for sophisticated processor selection
     registry.add_dispatch_rule(CanonDispatchRule);
     registry.add_dispatch_rule(NikonDispatchRule);
     registry.add_dispatch_rule(OlympusDispatchRule);
+    registry.add_dispatch_rule(SonyDispatchRule);
     registry.add_dispatch_rule(FormatDispatchRule);
     registry.add_dispatch_rule(TableDispatchRule);
 
