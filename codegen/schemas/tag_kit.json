@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tag Kit Extraction Schema",
+  "description": "Schema for unified tag definitions including PrintConv implementations",
+  "type": "object",
+  "required": ["source", "metadata", "tag_kits"],
+  "properties": {
+    "source": {
+      "type": "object",
+      "required": ["module", "table", "extracted_at"],
+      "properties": {
+        "module": {
+          "type": "string",
+          "description": "Source module filename"
+        },
+        "table": {
+          "type": "string", 
+          "description": "Tag table name within module"
+        },
+        "extracted_at": {
+          "type": "string",
+          "description": "Extraction timestamp"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["total_tags_scanned", "tag_kits_extracted"],
+      "properties": {
+        "total_tags_scanned": {
+          "type": "integer"
+        },
+        "tag_kits_extracted": {
+          "type": "integer"
+        },
+        "skipped_complex": {
+          "type": "integer",
+          "description": "Number of tags skipped due to complex PrintConv"
+        }
+      }
+    },
+    "tag_kits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tag_id", "name", "format", "groups", "print_conv_type"],
+        "properties": {
+          "tag_id": {
+            "type": "string",
+            "description": "Tag ID (hex or decimal)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Tag name"
+          },
+          "format": {
+            "type": "string",
+            "description": "Tag format (int16u, string, etc.)"
+          },
+          "groups": {
+            "type": "object",
+            "description": "Group hierarchy"
+          },
+          "writable": {
+            "type": ["boolean", "string"],
+            "description": "Whether tag is writable"
+          },
+          "print_conv_type": {
+            "type": "string",
+            "enum": ["None", "Simple", "Expression", "Manual"],
+            "description": "Type of PrintConv implementation"
+          },
+          "print_conv_data": {
+            "oneOf": [
+              {
+                "type": "object",
+                "description": "Simple hash lookup (for Simple type)",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "string",
+                "description": "Expression string (for Expression type)"
+              },
+              {
+                "type": "string",
+                "description": "Function name (for Manual type)"
+              },
+              {
+                "type": "null",
+                "description": "No data (for None type)"
+              }
+            ]
+          },
+          "value_conv": {
+            "type": "string",
+            "description": "ValueConv expression if present"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Tag notes from ExifTool"
+          }
+        }
+      }
+    }
+  }
+}

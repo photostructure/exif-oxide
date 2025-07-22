@@ -138,6 +138,9 @@
 
 ## Prerequisites
 
+- **Tag Kit Migration**: Complete [tag kit migration and retrofit](20250122-tag-kit-migration-and-retrofit.md) for EXIF module
+  - This ensures we're using the modern tag extraction system
+  - Eliminates potential tag ID/PrintConv mismatches
 - Verify RATIONAL type extraction working correctly
 - Ensure all standard EXIF IFDs are being processed
 

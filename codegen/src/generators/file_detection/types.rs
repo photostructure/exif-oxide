@@ -43,8 +43,8 @@ pub struct FileTypeStats {
 
 /// Generate file type lookup table from file_type_lookup.json
 pub fn generate_file_type_lookup(json_dir: &Path, output_dir: &str) -> Result<()> {
-    // Look for file_type_lookup.json
-    let file_type_lookup_path = json_dir.join("file_type_lookup.json");
+    // Look for file_type_lookup.json in the file_types subdirectory
+    let file_type_lookup_path = json_dir.join("file_types").join("file_type_lookup.json");
 
     if !file_type_lookup_path.exists() {
         println!("    ⚠️  file_type_lookup.json not found, skipping file type lookups");

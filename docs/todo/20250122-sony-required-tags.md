@@ -115,6 +115,9 @@
 
 ## Prerequisites
 
+- **Tag Kit Migration**: Complete [tag kit migration and retrofit](20250122-tag-kit-migration-and-retrofit.md) for Sony module
+  - Sony already has inline_printconv config that needs migration
+  - This ensures consistent tag extraction approach
 - Complete encryption/decryption for all Sony formats
   - Simple substitution cipher for 0x94xx tags (Decipher function)
   - LFSR-based encryption for SR2SubIFD (Decrypt function)
