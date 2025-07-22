@@ -1,70 +1,64 @@
-# Milestone 17e: Sony RAW Support
+# Technical Project Plan: Sony RAW Support Implementation
 
-**Goal**: Implement Sony ARW/SR2/SRF formats with advanced offset management
+**Goal**: Complete Sony RAW support focusing on required tags and ProcessBinaryData expansion
 
-## High Level Guidance
+## Project Overview
 
-- **Follow Trust ExifTool**: Study how ExifTool processes ARW/SR2/SRF files exactly. See [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md)
-- **Use Codegen**: Switch any manual lookup tables to generated code. See [CODEGEN.md](../CODEGEN.md)
-- **Study ExifTool Sources**: [Sony.pm](../../third-party/exiftool/lib/Image/ExifTool/Sony.pm) and [module docs](../../third-party/exiftool/doc/modules/Sony.md)
+- **Primary Goal**: Implement 3 required Sony-specific tags (SonyExposureTime, SonyFNumber, SonyISO) from tag-metadata.json
+- **Secondary Goal**: Expand ProcessBinaryData coverage from 7 to 139 sections for full Sony metadata extraction
+- **Problem**: PhotoStructure requires comprehensive Sony tag extraction, including encrypted MakerNotes data
 
-## Overview
+## Background & Context
 
-Sony RAW support introduces the most sophisticated offset management requirements:
+Sony RAW implementation has **BREAKTHROUGH foundation already complete** but needs expansion:
+- Infrastructure: ✅ Complete (924-line handler, 7 processors, tag naming system)
+- Required Tags: 🔧 Only 3 Sony-specific tags missing from tag-metadata.json requirements  
+- ProcessBinaryData: 🔧 132 of 139 sections need implementation (95% remaining)
+- Encryption: 🔧 Framework exists, needs Decipher/Decrypt implementation
 
-- 11,818 lines in ExifTool Sony.pm
-- Multiple format generations (ARW v1.0, v2.0, v2.1, v2.3, v2.3.1, v2.3.2, v2.3.5)
-- Complex offset calculations with format-specific rules
-- Sony IDC (Image Data Converter) corruption handling
-- 139 ProcessBinaryData entries
+**Why this matters**: PhotoStructure needs proper Sony tag extraction for photo management. Current implementation extracts 79 tags but missing the 3 required Sony-specific ones.
 
-This milestone implements the advanced offset management system needed for Sony and other complex manufacturers.
+## Technical Foundation
 
-## 🔧 **INTEGRATION WITH UNIVERSAL CODEGEN EXTRACTORS**
+**Key Files**:
+- `src/raw/formats/sony.rs` - Main Sony handler (924+ lines) - ✅ **COMPLETE**
+- `src/processor_registry/processors/sony.rs` - Sony processors (850+ lines) - 7 of 139 implemented
+- `src/implementations/sony/tags.rs` - Sony tag naming system - ✅ **COMPLETE**  
+- `src/generated/Sony_pm/` - Generated lookup tables (15 modules) - ✅ **AVAILABLE**
+- `third-party/exiftool/lib/Image/ExifTool/Sony.pm` - ExifTool source (11,818 lines)
 
-**Future Migration Target**: Sony implementation will leverage generated code via [MILESTONE-17-UNIVERSAL-CODEGEN-EXTRACTORS.md](MILESTONE-17-UNIVERSAL-CODEGEN-EXTRACTORS.md).
+**Documentation**:
+- [Sony.md](../../third-party/exiftool/doc/modules/Sony.md) - Sony module overview
+- [20250122-sony-required-tags.md](20250122-sony-required-tags.md) - Required tags detailed analysis  
+- [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md) - Implementation principles
 
-**Generated Code for Sony Implementation**:
+**APIs & Systems**:
+- ProcessBinaryData integration via global processor registry - ✅ **WORKING**
+- Generated offset patterns (38 calculations + 144 model conditions) - ✅ **AVAILABLE**
+- Sony encryption framework (SimpleCipher, ComplexLFSR) - 🔧 **NEEDS IMPLEMENTATION**
+- Tag naming system with "Sony:" namespace - ✅ **COMPLETE**
 
-**SonyDataType Enum** → `crate::generated::sony::tag_structure::SonyDataType`
-- Auto-generated from Sony.pm Main table (100+ tag definitions)
-- Handles all ARW format versions and model variations
-- Eliminates manual maintenance of Sony's complex tag structure
+## Work Completed
 
-**139 ProcessBinaryData Sections** → `crate::generated::sony::binary_data::*`
-- Each of Sony's 139 ProcessBinaryData tables becomes a generated processor
-- Automatic handling of format version differences (ARW v1.0 → v2.3.5)
-- Generated validation logic for IDC corruption detection
+**Foundation (✅ COMPLETE)**:
+- Sony RAW handler with all 13 ARW format versions (1.0 → 5.0.1)  
+- Format detection from FileFormat tag (0xb000)
+- IDC corruption detection and recovery (general + A100-specific)
+- ProcessBinaryData integration system connecting RAW handler to processor registry
+- Tag naming system: Sony tags display as "Sony:AFType" not "EXIF:Tag_927C"
+- Generated code integration: 322 Sony PrintConv lookup tables connected
 
-**Sony Model Detection** → `crate::generated::sony::model_patterns::*`
-- Automatic generation of Sony camera model detection patterns
-- ARW format version detection based on model/firmware combinations
-- Offset scheme selection logic generated from ExifTool patterns
+**Current Capabilities (✅ WORKING)**:
+- Successfully processes Sony A7C II ARW files extracting 79 total tags
+- 3 Sony-specific tags working: AFType, AFAreaMode, AFPointsInFocus
+- All 6 Sony unit tests passing  
+- Compatibility script updated for ARW/SR2/SRF extensions
 
-**Benefits for Sony Implementation**:
-- **80% reduction** in manual code for Sony's complex tag structures
-- **Automatic compatibility** with Sony's 7+ ARW format versions
-- **Future-proof** against new Sony camera releases
-- **Perfect ExifTool alignment** for Sony's sophisticated processing logic
-
-**Implementation Priority**: Sony milestone will benefit significantly from universal extractors, making it simpler to implement despite Sony's complexity.
-
-## Background
-
-**Sony Complexity Sources**:
-
-- **Format Evolution**: 7+ ARW versions with different structures
-- **Offset Variations**: Different calculation methods per model/version
-- **IDC Corruption**: Sony's software corrupts certain metadata
-- **Encrypted Data**: Some models encrypt lens information
-- **Multi-Format**: ARW, SR2, SRF with shared/different structures
-
-**Why Advanced Offset Management**:
-
-- Simple offsets (like Nikon) won't work for Sony
-- Offsets calculated from IFD entries, not fixed positions
-- Circular dependencies between offset calculations
-- Model-specific offset validation required
+**Architecture Decisions**:
+- Processor dispatch via manufacturer + table name routing
+- Synthetic tag IDs (0xC000+ range) for ProcessBinaryData tags
+- Clone-based workaround for handler trait mutability requirements  
+- Codegen approach proven successful with offset pattern extraction
 
 ## Implementation Strategy
 
@@ -409,10 +403,11 @@ impl SonyRawHandler {
 
 ```bash
 # Generate Sony PrintConv tables
-make codegen  
+make codegen
 ```
 
 **Available Generated Tables** (from `codegen/config/Sony_pm/inline_printconv.json`):
+
 - **Main** (62 entries): Quality, white balance, flash modes
 - **CameraSettings3** (48 entries): Full camera control for newer models
 - **CameraSettings/CameraSettings2** (33+28 entries): Drive modes, focus, creative styles
@@ -592,6 +587,7 @@ After successful completion:
 ### ✅ **COMPLETED TASKS**
 
 **1. Sony RAW Format Detection Infrastructure** ✅
+
 - **Location**: `src/raw/detector.rs`
 - **Status**: Complete and tested (9/9 tests pass)
 - **Implementation**: Added `Sony` variant to `RawFormat` enum with ARW/SR2/SRF detection
@@ -599,11 +595,12 @@ After successful completion:
 - **Integration**: Registered in RAW processor, added to compatibility script
 
 **2. Sony RAW Format Handler Foundation** ✅
+
 - **Location**: `src/raw/formats/sony.rs` (775+ lines)
 - **Status**: Complete basic structure with all trait implementations
 - **Features Implemented**:
   - All 13 ARW format versions (1.0 → 5.0.1) with exact ExifTool mapping
-  - Format detection from 4-byte FileFormat tag (0xb000) 
+  - Format detection from 4-byte FileFormat tag (0xb000)
   - Sony encryption type framework (SimpleCipher, ComplexLFSR)
   - IDC corruption detection framework
   - Model-specific processing architecture
@@ -611,8 +608,9 @@ After successful completion:
 - **Tests**: 6/6 unit tests pass
 
 **3. ExifTool Integration Research** ✅
+
 - **Completed**: Comprehensive analysis of Sony.pm (11,818 lines)
-- **Key findings**: 
+- **Key findings**:
   - 2 encryption systems discovered (simple substitution + LFSR)
   - 139 ProcessBinaryData sections identified
   - A100 special IDC corruption handling (tag 0x14a)
@@ -621,11 +619,13 @@ After successful completion:
 - **Documentation**: All patterns documented with ExifTool line references
 
 **4. Compatibility Script Updates** ✅
+
 - **File**: `tools/generate_exiftool_json.sh`
 - **Change**: Added "arw", "sr2", "srf" to `SUPPORTED_EXTENSIONS` array
 - **Status**: Ready for regenerating reference files
 
 **5. 🎯 CODEGEN BREAKTHROUGH: Sony Offset Pattern Extractor** ✅
+
 - **Location**: `codegen/extractors/offset_patterns.pl` (created)
 - **Status**: Complete - extracts 38 offset calculation patterns and 144 model conditions
 - **Achievement**: Proved feasibility of codegen approach vs manual implementation
@@ -633,6 +633,7 @@ After successful completion:
 - **Integration**: Connected to Sony handler's `calculate_offset()` method
 
 **6. 🔧 EXIF Reader Integration for FileFormat Tag** ✅
+
 - **Location**: `src/raw/formats/sony.rs` line 266-310
 - **Implementation**: Complete `read_format_tag()` method that reads tag 0xb000
 - **Features**:
@@ -643,6 +644,7 @@ After successful completion:
 - **Testing**: Successfully detects ARW 4.0.1 format from real files
 
 **7. 🛡️ IDC Corruption Detection and Recovery** ✅
+
 - **Location**: `src/raw/formats/sony.rs` lines 314-423
 - **Features Implemented**:
   - General IDC detection via Software tag (0x0131) containing "Sony IDC"
@@ -655,18 +657,20 @@ After successful completion:
 - **Testing**: All 6 Sony tests pass with new functionality
 
 **8. 📊 ProcessBinaryData Integration with Generated Code** ✅
+
 - **Location**: `src/raw/formats/sony.rs` lines 425-487, 541-544
-- **Implementation**: 
+- **Implementation**:
   - Connected to 322 generated Sony PrintConv lookup tables
   - `apply_print_conv_to_extracted_tags()` method for tag transformation
   - Integrated lookups for common tags:
     - White Balance Setting (0x9003)
-    - ISO Setting (0x9204) 
+    - ISO Setting (0x9204)
     - Exposure Program (0x8822)
   - Added to main `process_raw()` workflow as Step 5
 - **Verification**: Successfully compiles and processes real ARW files
 
 **9. 🎯 SONY PROCESSBINARYDATA PROCESSORS IMPLEMENTED** ✅ **MAJOR BREAKTHROUGH**
+
 - **Location**: `src/processor_registry/processors/sony.rs` (850+ lines)
 - **Processors Created**:
   - `SonyCameraInfoProcessor` - Sony CameraInfo binary data (tag 0x0010)
@@ -680,8 +684,9 @@ After successful completion:
 - **Testing**: Successfully extracts AFType, AFAreaMode, AFPointsInFocus from real ARW files (CameraSettings/ShotInfo need handler integration)
 
 **10. 🎛️ Sony Dispatch Rule Implementation** ✅ **CRITICAL INTEGRATION**
+
 - **Location**: `src/processor_registry/dispatch.rs` (145+ lines added)
-- **Features**: 
+- **Features**:
   - Sony-specific processor selection with encryption detection
   - Identifies 0x94xx encrypted tags requiring special handling
   - Model-specific processor routing based on Sony.pm patterns
@@ -690,16 +695,18 @@ After successful completion:
 - **Testing**: Successfully routes Sony MakerNotes to Sony processors
 
 **11. 📐 Offset Calculation Method Integrated** ✅
+
 - **Location**: `src/raw/formats/sony.rs` lines 564-608
 - **Implementation**: Complete `calculate_offset()` method in SonyRawHandler
 - **Features**:
   - Imports generated offset patterns (144 model conditions + 38 calculation types)
-  - Model-specific offset calculation framework  
+  - Model-specific offset calculation framework
   - IDC corruption recovery integration
   - Ready for full implementation with extracted patterns
 - **Integration**: Connected to ProcessBinaryData processors
 
 **12. 🏷️ SONY TAG NAMING SYSTEM** ✅ **BREAKTHROUGH COMPLETED (July 21, 2025)**
+
 - **Location**: `src/implementations/sony/tags.rs` (133 lines), `src/exif/processors.rs` (synthetic tag system)
 - **Implementation Status**: **COMPLETE AND WORKING**
 - **Features Implemented**:
@@ -713,15 +720,16 @@ After successful completion:
   - `src/implementations/sony/mod.rs` - Sony module exports
   - `src/exif/processors.rs` - Extended synthetic tag ID system (lines 684-815)
   - `src/exif/mod.rs` - Sony namespace detection in tag resolution
-- **Verified Output**: 
+- **Verified Output**:
   ```json
   "Sony:AFType": "Unknown",
-  "Sony:AFAreaMode": "Wide", 
+  "Sony:AFAreaMode": "Wide",
   "Sony:AFPointsInFocus": [0, 2, 10, 11, 12, 14, ...]
   ```
 - **ExifTool References**: Based on Sony.pm Main table tags and ProcessBinaryData tag structures
 
 **13. 🔧 SONY DISPATCH RULE FIXED** ✅ **CRITICAL INTEGRATION COMPLETED**
+
 - **Location**: `src/processor_registry/dispatch.rs` lines 409-454
 - **Issue Resolved**: Sony dispatch rule was ignoring "MakerNotes" table, preventing Sony tag processing
 - **Fix**: Added "MakerNotes" case to Sony dispatch rule routing to Sony::AFInfo processor
@@ -731,19 +739,20 @@ After successful completion:
 - **Result**: Sony processors now correctly process MakerNotes, CameraSettings, and ShotInfo data
 - **Testing**: Verified with real ARW file - Sony tags now appear in final output with proper names
 
-### 🔧 **REMAINING TASKS (Priority Order)** 
+### 🔧 **REMAINING TASKS (Priority Order)**
 
 **🎉 TAG NAME MAPPING COMPLETED!** Sony tags now show human-readable names with correct namespace!
 
 **📊 PROCESSBINARYDATA EXPANSION - HIGH PRIORITY (1-2 days)**
 
 1. **Complete ProcessBinaryData Coverage** ⭐ **CRITICAL FOR FULL SONY SUPPORT**
+
    - **Status**: 5 processors implemented, need remaining 134 of Sony's 139 sections
    - **Available**: Generated Sony code in 15 modules under `src/generated/Sony_pm/`
    - **Architecture**: Follow pattern established in existing Sony processors
    - **Priority sections to add**:
      - CameraSettings (0x2020) - camera configuration data
-     - MoreSettings (0x2030) - extended camera settings  
+     - MoreSettings (0x2030) - extended camera settings
      - ShotInfo (0x3000) - shooting information
      - ColorReproduction (0x7303) - color settings
    - **Key insight**: Each tag points to a binary data block with specific structure
@@ -758,7 +767,7 @@ After successful completion:
 
 3. **Sony Encryption Support**
    - **Status**: Framework defined, encryption detected but not decrypted
-   - **Types**: 
+   - **Types**:
      - Simple substitution cipher (0x94xx tags) - `Decipher()` in Sony.pm
      - Complex LFSR (SR2SubIFD) - `Decrypt()` in Sony.pm
    - **Reference**: ExifTool Sony.pm lines 11341-11379 (Decrypt/Decipher functions)
@@ -770,7 +779,7 @@ After successful completion:
    - **Status**: Basic tests pass, ProcessBinaryData working
    - **Tasks**:
      - Add ARW version detection tests with real files
-     - Test IDC corruption recovery with corrupted samples  
+     - Test IDC corruption recovery with corrupted samples
      - Verify PrintConv output matches ExifTool
      - Test all processor types with real data
    - **Test files**: `test-images/sony/` directory has sample ARW
@@ -780,14 +789,16 @@ After successful completion:
 **🎉 BREAKTHROUGH: SONY PROCESSBINARYDATA SYSTEM IS WORKING!**
 
 **Architecture Decisions Made:**
+
 1. **ProcessBinaryData Integration**: Sony processors successfully integrated into processor registry
 2. **Dispatch System**: Sony dispatch rule correctly routes MakerNotes, CameraSettings, ShotInfo to Sony processors
 3. **Generated Code**: Successfully connected to 322 Sony PrintConv lookup tables
 4. **Testing Verified**: Real ARW file (Sony A7C II) successfully processes with Sony processors
 
 **What's Working Now:**
+
 1. ✅ **Sony Processor Registration**: All 5 Sony processors registered in global registry
-2. ✅ **Sony Dispatch Rule**: Successfully routes Sony MakerNotes to Sony processors  
+2. ✅ **Sony Dispatch Rule**: Successfully routes Sony MakerNotes to Sony processors
 3. ✅ **Real-World Testing**: Sony AFInfo processor extracts AFType, AFAreaMode, AFPointsInFocus
 4. ✅ **Generated Code Integration**: 322 Sony PrintConv tables available and connected
 5. ✅ **Offset Pattern Extraction**: 38 patterns + 144 model conditions generated
@@ -797,13 +808,14 @@ After successful completion:
 9. ✅ **NAMESPACE DETECTION**: Correct Sony vs Canon vs EXIF namespace assignment
 
 **Verified Debug Output from Real ARW File:**
+
 ```bash
 # Processor selection and execution working perfectly:
 Sony dispatch rule processing table: MakerNotes for manufacturer: Some("SONY")
 Selected processor: Sony::AFInfo (capability: Good)
 Processing Sony AFInfo section with 38252 bytes
 Extracted AFType: 112 -> Unknown
-Extracted AFAreaMode: 0 -> Wide  
+Extracted AFAreaMode: 0 -> Wide
 Extracted AFPointsInFocus: 22 points
 Sony AFInfo processor extracted 3 tags
 
@@ -813,11 +825,15 @@ Mapping synthetic ID 0xC5B2 -> 'Sony:AFPointsInFocus'
 ```
 
 **Final JSON Output Verification:**
+
 ```json
 {
   "Sony:AFType": "Unknown",
-  "Sony:AFAreaMode": "Wide", 
-  "Sony:AFPointsInFocus": [0, 2, 10, 11, 12, 14, 22, 23, 24, 27, 30, 31, 34, 35, 36, 38, 46, 47, 48, 50, 58, 59]
+  "Sony:AFAreaMode": "Wide",
+  "Sony:AFPointsInFocus": [
+    0, 2, 10, 11, 12, 14, 22, 23, 24, 27, 30, 31, 34, 35, 36, 38, 46, 47, 48,
+    50, 58, 59
+  ]
 }
 ```
 
@@ -832,17 +848,20 @@ The ProcessBinaryData system is now fully working with human-readable tag names!
 6. **NEW: ShotInfoProcessor** - Extracts face detection and shot metadata
 
 **Key Files to Study:**
+
 1. **`codegen/extractors/process_binary_data.pl`** - Existing extractor for binary data tables
 2. **`src/implementations/olympus/binary_data.rs`** - Example of ProcessBinaryData in action
 3. **`third-party/exiftool/lib/Image/ExifTool/Sony.pm`** - Search for "ProcessBinaryData" to find all 139 tables
 
 **Critical ExifTool Patterns Completed:**
+
 1. **Model Conditions**: ✅ 144 patterns extracted and available
 2. **Offset Calculations**: ✅ 38 patterns extracted including Get32u/Get16u/array offsets
 3. **Base Variables**: ✅ Identified in offset patterns
 4. **IDC Corruption**: ✅ Fully implemented with A100 special handling
 
 **Debug Commands for Next Engineer:**
+
 ```bash
 # View generated offset patterns
 cat src/generated/Sony_pm/offset_patterns.rs
@@ -866,12 +885,14 @@ diff -u exiftool_output.json our_output.json | grep -E "(CameraSettings|ShotInfo
 ```
 
 **Integration Points:**
+
 1. **RAW Processor**: Sony handler already registered in `src/raw/processor.rs`
 2. **Generated Code**: `src/generated/Sony_pm/` modules available for PrintConv integration
 3. **Compatibility**: Extensions added to script, ready for `make compat-gen`
 4. **Expression Evaluation**: Connect extractor output to `src/expressions/parser.rs`
 
 **Current Blockers Resolved/Remaining:**
+
 1. ✅ **Offset System Approach**: COMPLETE - Codegen strategy successful
 2. ✅ **Offset Pattern Extraction**: COMPLETE - 38 patterns extracted and generated
 3. ✅ **EXIF Reader Integration**: `read_format_tag()` fully implemented and tested
@@ -883,11 +904,13 @@ diff -u exiftool_output.json our_output.json | grep -E "(CameraSettings|ShotInfo
 9. 🔧 **Binary Data Reading**: Need to implement actual file seeking and binary data parsing
 
 **Test Data Available:**
+
 - Real Sony file: `test-images/sony/sony_a7c_ii_02.arw`
 - Current test output: Shows successful basic processing with many MakerNotes tags extracted
 - Can be used for end-to-end testing once integration is complete
 
 **Code Quality Principles Established:**
+
 - All Sony code follows Trust ExifTool principle with ExifTool line references
 - Comprehensive unit tests for format detection and version mapping (6/6 passing)
 - Documentation includes exact ExifTool source locations for all patterns
@@ -900,6 +923,7 @@ diff -u exiftool_output.json our_output.json | grep -E "(CameraSettings|ShotInfo
 The offset extraction is COMPLETE. Now we need to use those offsets to actually read binary data:
 
 **Step 1: Understand ProcessBinaryData Flow**
+
 ```bash
 # Find all ProcessBinaryData tables in Sony.pm
 grep -n "ProcessBinaryData" third-party/exiftool/lib/Image/ExifTool/Sony.pm | wc -l
@@ -913,6 +937,7 @@ ls codegen/generated/extract/sony_binary_data.json 2>/dev/null || echo "Need to 
 ```
 
 **Step 2: Connect Binary Data to Offset Calculations**
+
 ```rust
 // In sony.rs, extend process_raw() to handle binary data tags:
 match tag_id {
@@ -929,6 +954,7 @@ match tag_id {
 ```
 
 **Step 3: Use Existing ProcessBinaryData Infrastructure**
+
 1. Check `src/implementations/olympus/binary_data.rs` for pattern
 2. Use `codegen/extractors/process_binary_data.pl` to extract Sony tables
 3. Generate Sony-specific binary data processors
@@ -944,20 +970,24 @@ With PrintConv integration done, expand to full ProcessBinaryData:
 **🧪 VALIDATION & TESTING (Ongoing)**
 
 Essential tests to add:
+
 - FileFormat tag reading with mock EXIF data
-- IDC corruption detection with crafted test cases  
+- IDC corruption detection with crafted test cases
 - Offset pattern matching once extractor is complete
 - End-to-end ARW processing with PrintConv verification
 
 ### 🔧 **REFACTORING OPPORTUNITIES IDENTIFIED**
 
 **Architecture Improvements:**
+
 1. **Handler Trait Refactoring**: Current `RawFormatHandler` trait requires `&self` but Sony needs mutable state. Options:
+
    - ✅ **Current Workaround**: Sony handler uses `#[derive(Clone)]` for `self.clone()` in `process_raw()`
    - **Future**: Consider changing trait to `&mut self` or `RefCell<T>` for interior mutability
    - **Alternative**: Move state management outside handlers into context objects
 
 2. **Codegen-Based Offset System**: Replace manual offset system with generated code:
+
    - ✅ **Proven Feasible**: `codegen/extractors/offset_patterns.pl` successfully extracts conditions
    - **Next Step**: Generate `src/generated/Sony_pm/offset_patterns.rs` with model-specific rules
    - **Integration**: Use `src/expressions/` for condition evaluation (already supports `$$self{Model}` patterns)
@@ -968,15 +998,18 @@ Essential tests to add:
    - **Benefits**: 139 Sony ProcessBinaryData sections can be automatically processed
 
 **Performance Optimizations:**
+
 1. **Lazy Loading**: Sony format detection and processor initialization should be lazy
 2. **Expression Caching**: Cache compiled regex patterns in `src/expressions/` for model conditions
 3. **Offset Caching**: Complex offset calculations should cache results per file
 4. **Model Detection**: Use efficient pattern matching for 133+ model conditions
 
 **Code Organization Opportunities:**
+
 1. **Sony Module Structure**: Current 400+ line `sony.rs` could be broken into focused submodules:
+
    - `sony/format_detection.rs` - ARW version detection logic
-   - `sony/offset_manager.rs` - Generated offset calculation patterns  
+   - `sony/offset_manager.rs` - Generated offset calculation patterns
    - `sony/idc_recovery.rs` - A100 and general IDC corruption handling
    - `sony/encryption.rs` - Simple cipher and LFSR decryption
 
@@ -984,6 +1017,7 @@ Essential tests to add:
 3. **Error Types**: Sony-specific error types for better debugging of complex offset failures
 
 **Codegen Infrastructure Improvements:**
+
 1. **Universal Offset Extractor**: Current `offset_patterns.pl` could be generalized for other manufacturers
 2. **Expression Generator**: Auto-generate condition evaluation code from extracted patterns
 3. **Test Generation**: Generate test cases from extracted model conditions to ensure coverage
@@ -991,7 +1025,9 @@ Essential tests to add:
 ## 🔨 **REFACTORING OPPORTUNITIES IDENTIFIED**
 
 ### 1. **ProcessBinaryData Offset Reading**
+
 Current implementation in `process_sony_binary_data()` has simplified offset/size calculation:
+
 ```rust
 let (offset, size) = match tag_value {
     TagValue::U32(offset) => (*offset as usize, 0), // Size unknown
@@ -999,23 +1035,31 @@ let (offset, size) = match tag_value {
     _ => continue,
 };
 ```
+
 **Future Improvement**: Implement proper IFD entry parsing to extract both offset AND count fields.
 
 ### 2. **Unified ProcessBinaryData Handler**
+
 Currently each manufacturer has separate binary data handling. Consider:
+
 - Creating a trait `ManufacturerBinaryDataHandler`
 - Moving common patterns (offset reading, context creation) to shared code
 - Only manufacturer-specific logic in implementations
 
 ### 3. **Binary Data Size Determination**
+
 The current "read 1024 bytes" approach is crude:
+
 ```rust
 let read_size = if size > 0 { size } else { 1024.min(reader.data.len() - offset) };
 ```
+
 **Better Approach**: Parse the binary data structure header to determine actual size.
 
 ### 4. **Processor Registration Automation**
+
 Currently processors are manually registered in multiple places:
+
 - `src/processor_registry/mod.rs`
 - `src/processor_registry/processors/sony.rs`
 - Dispatch rules
@@ -1023,12 +1067,16 @@ Currently processors are manually registered in multiple places:
 **Consider**: Auto-registration via procedural macros or build script.
 
 ### 5. **Tag Name Resolution Performance**
+
 The `resolve_tag_name_to_id()` method does multiple string operations per tag. For high-volume processing:
+
 - Pre-compute manufacturer tag mappings at startup
 - Use a two-level HashMap: manufacturer -> tag_name -> tag_id
 
 ### 6. **Error Handling Consistency**
+
 Mix of Result/Option handling and debug! logging. Standardize on:
+
 - Result for operations that can fail
 - Structured errors with context
 - Warnings collection for non-fatal issues
@@ -1038,8 +1086,9 @@ Mix of Result/Option handling and debug! logging. Standardize on:
 **🎉 MAJOR PROGRESS ACHIEVED**: Sony RAW implementation has made BREAKTHROUGH progress with offset extraction completed:
 
 **✅ Completed in This Session (July 20-21, 2025)**:
+
 1. **Offset Pattern Extractor** - CRITICAL BREAKTHROUGH: Now extracts 38 actual offset calculations
-2. **Generated Offset Code** - `src/generated/Sony_pm/offset_patterns.rs` with 144 model conditions + offset patterns  
+2. **Generated Offset Code** - `src/generated/Sony_pm/offset_patterns.rs` with 144 model conditions + offset patterns
 3. **Sony Handler Integration** - `calculate_offset()` method ready to use generated patterns
 4. **IDC Corruption Recovery** - Full implementation with A100 special handling
 5. **🎉 SONY TAG NAMING SYSTEM** - BREAKTHROUGH: Human-readable Sony tag names working
@@ -1048,6 +1097,7 @@ Mix of Result/Option handling and debug! logging. Standardize on:
 8. **🎉 PROCESSBINARYDATA INTEGRATION** - `process_sony_binary_data()` fully connects RAW handler to processors
 
 **📊 Implementation Status**:
+
 - **Foundation**: ✅ Complete (handler, detection, basic processing)
 - **Format Detection**: ✅ All 13 ARW versions mapped
 - **IDC Recovery**: ✅ Implemented with offset correction
@@ -1058,17 +1108,20 @@ Mix of Result/Option handling and debug! logging. Standardize on:
 - **ProcessBinaryData**: 🔧 **NEXT CRITICAL STEP** - 139 sections need binary data reading
 
 **🎯 Critical Next Step**: Implement ProcessBinaryData integration
+
 - **Impact**: Will unlock the remaining ~290 Sony tags currently missing
 - **Time**: 1-2 days to implement binary data reading and processing
 - **Benefit**: Complete Sony RAW support with full ExifTool compatibility
 
 **Key Files for Success**:
+
 - `src/generated/Sony_pm/offset_patterns.rs` - Generated offset calculations ready to use
-- `src/raw/formats/sony.rs` - Has all foundation, needs ProcessBinaryData integration  
+- `src/raw/formats/sony.rs` - Has all foundation, needs ProcessBinaryData integration
 - `codegen/extractors/process_binary_data.pl` - Use to extract Sony's 139 binary data tables
 - `src/implementations/olympus/binary_data.rs` - Pattern to follow for binary data processing
 
 **Major Achievement**: Sony RAW implementation achieved TWO critical milestones:
+
 1. **Tag Naming System**: Sony tags now display correctly as `"Sony:AFType": "Unknown"` instead of `"EXIF:Tag_927C"`
 2. **ProcessBinaryData Integration**: The RAW handler now successfully connects to the processor registry
 
@@ -1077,6 +1130,7 @@ Combined with the completed offset extraction codegen approach, this provides th
 ### 🎯 **CRITICAL UPDATE: PROCESSBINARYDATA INTEGRATION COMPLETE (July 21, 2025 Evening)**
 
 **Major Progress**: The Sony RAW handler now has full ProcessBinaryData integration! The `process_sony_binary_data()` method in `src/raw/formats/sony.rs` successfully:
+
 - Identifies ProcessBinaryData tags (0x0010, 0x0114, 0x0115, 0x2010, 0x3000, 0x9050, 0x940e)
 - Reads binary data from the correct offsets
 - Creates appropriate ProcessorContext with manufacturer/model info
@@ -1092,12 +1146,14 @@ Combined with the completed offset extraction codegen approach, this provides th
 **Key Insight**: The infrastructure is COMPLETE. The Sony RAW handler can now process any ProcessBinaryData section. The remaining task is to add more processors for Sony's remaining 132 ProcessBinaryData sections (7 of 139 implemented).
 
 **Study These Working Examples**:
+
 1. `src/processor_registry/processors/sony.rs` - 7 working Sony processors (AFInfo, CameraInfo, CameraSettings, ShotInfo, Tag9050, Tag2010, General)
 2. `src/processor_registry/dispatch.rs` - Sony dispatch rule routing MakerNotes, CameraSettings, ShotInfo
 3. `src/exif/processors.rs` - Synthetic tag ID system for manufacturer tags
 4. `src/implementations/sony/tags.rs` - Sony tag name mapping system
 
 **Success Pattern**: Follow the established Sony processor pattern (see CameraSettings and ShotInfo for examples). Each processor:
+
 1. Implements `BinaryDataProcessor` trait
 2. Checks manufacturer in `can_process()`
 3. Validates data format (byte order, size)
@@ -1106,6 +1162,7 @@ Combined with the completed offset extraction codegen approach, this provides th
 6. Gets registered in `mod.rs` and dispatch rules
 
 **Common Gotchas Addressed:**
+
 - Tag 0x0114 has multiple processors based on data size (280/364 for CameraSettings, 332 for CameraSettings2, 1536/2048 for CameraSettings3)
 - ShotInfo (0x3000) starts with 'II' byte order marker that must be validated
 - Some tags like 0x7303 are NOT ProcessBinaryData tables - check ExifTool source carefully
@@ -1116,7 +1173,9 @@ Combined with the completed offset extraction codegen approach, this provides th
 ## 🔧 **KEY CODE CHANGES AND INSIGHTS (July 21, 2025)**
 
 ### 1. **ProcessBinaryData Integration Pattern**
+
 The key breakthrough was implementing `process_sony_binary_data()` in `src/raw/formats/sony.rs` (lines 566-670):
+
 ```rust
 // Tags that contain ProcessBinaryData
 let binary_data_tags = [
@@ -1129,15 +1188,18 @@ let binary_data_tags = [
     (0x940e, "AFInfo"),
 ];
 ```
+
 This method bridges the gap between Sony's SubIFD tags and the processor registry.
 
 ### 2. **Critical Bug Fixes**
+
 - **Borrow Checker Issue**: Fixed by cloning manufacturer/model strings to avoid lifetime conflicts
 - **Missing Module**: Added `offset_patterns` to `src/generated/Sony_pm/mod.rs`
 - **Private Method**: Made `resolve_tag_name_to_id` public(crate) in ExifReader
 - **Wrong Field Name**: Changed `reader.buffer` to `reader.data` (the actual field name)
 
 ### 3. **Architecture Insights**
+
 - **Two Processing Paths**: Sony data flows through either:
   1. Standard EXIF path (extracts MakerNotes, dispatches to AFInfo processor)
   2. RAW processing path (would invoke full ProcessBinaryData integration)
@@ -1145,21 +1207,27 @@ This method bridges the gap between Sony's SubIFD tags and the processor registr
 - **Synthetic Tag IDs**: Sony binary data tags get assigned IDs in 0xC000+ range
 
 ### 4. **What's Working vs What's Not**
+
 **Working**:
+
 - AFInfo processor extracts AFType, AFAreaMode, AFPointsInFocus from MakerNotes
 - Tag naming system shows "Sony:AFType" instead of "EXIF:Tag_927C"
 - Dispatch rules correctly route Sony MakerNotes to Sony processors
 
 **Not Working (Yet)**:
+
 - CameraSettings (0x0114) and ShotInfo (0x3000) aren't being processed because they're SubIFDs not present in the EXIF path
 - FileFormat (0xb000) display requires RAW processing pipeline
 - Encryption detection/decryption not implemented
 
 ### 5. **Testing Approach**
+
 Current testing uses `test-images/sony/sony_a7c_ii_02.arw` through the EXIF extraction path:
+
 ```bash
 RUST_LOG=debug cargo run -- test-images/sony/sony_a7c_ii_02.arw
 ```
+
 To test the full RAW processing with ProcessBinaryData, the file would need to be processed through the RAW format detector and handler pipeline.
 
 ## 📋 **FINAL RECOMMENDATIONS FOR NEXT ENGINEER**
@@ -1169,16 +1237,19 @@ To test the full RAW processing with ProcessBinaryData, the file would need to b
 **Priority Tasks**:
 
 1. **Add MoreSettings Processor** (Quick Win - 2 hours)
-   - Lives inside MoreInfo (0x0115) 
+
+   - Lives inside MoreInfo (0x0115)
    - Contains ~30 tags: PictureEffect, HDRSetting, MultiBurstMode, etc.
    - Follow the ShotInfo processor pattern
 
 2. **Expand CameraSettings Coverage** (High Value - 4 hours)
+
    - CameraSettings2 (332 bytes) - different structure than CameraSettings
    - CameraSettings3 (1536/2048 bytes) - newest cameras
    - Each has different tag offsets - check Sony.pm
 
 3. **Fix Binary Data Size Detection** (Important - 2 hours)
+
    - Current code hardcodes 1024 bytes - this is wrong
    - Parse IFD entry properly to get count field
    - Prevents reading past data boundaries
@@ -1189,6 +1260,7 @@ To test the full RAW processing with ProcessBinaryData, the file would need to b
    - Just a substitution cipher - not complex
 
 **Helpful Debug Commands**:
+
 ```bash
 # See all Sony processing
 RUST_LOG=debug cargo run -- test-images/sony/sony_a7c_ii_02.arw 2>&1 | grep Sony

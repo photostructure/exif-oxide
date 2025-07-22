@@ -1,7 +1,11 @@
 # Milestone 17c: Olympus RAW Support
 
-**Goal**: Implement Olympus ORF format leveraging existing RAW infrastructure and generated lookup tables  
+**Goal**: Implement Olympus ORF format leveraging existing RAW infrastructure and generated lookup tables
 **Status**: IN PROGRESS ⚠️ - 85% complete, tag conflict and codegen integration remaining  
+
+## Research task needed:
+
+We want support the `required` tags in @docs/tag-metadata.json -- that should drive our prioritization here. Please research what exactly that entails with respect to Olympus. 
 
 ## 🚨 CRITICAL STATUS UPDATE (July 21, 2025 - Final Session)
 
