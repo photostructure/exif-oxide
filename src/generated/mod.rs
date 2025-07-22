@@ -33,29 +33,24 @@ pub mod Sony_pm;
 pub mod XMP_pm;
 pub mod composite_tags;
 pub mod conversion_refs;
-pub mod exif_tag_kit;
 pub mod file_types;
 pub mod supported_tags;
 pub mod tags;
 
 // Re-export commonly used types and functions
-pub use composite_tags::{
-    lookup_composite_tag, CompositeTagDef, COMPOSITE_TAGS, COMPOSITE_TAG_LOOKUP,
-};
-pub use conversion_refs::PRINT_CONV_REFS as REQUIRED_PRINT_CONV;
-pub use conversion_refs::VALUE_CONV_REFS as REQUIRED_VALUE_CONV;
-pub use conversion_refs::{
-    has_print_conv_ref, has_value_conv_ref, PRINT_CONV_REFS, VALUE_CONV_REFS,
-};
-pub use supported_tags::{
-    supported_tag_summary, tag_counts_by_group, SUPPORTED_COMPOSITE_TAG_COUNT,
-    SUPPORTED_COMPOSITE_TAG_NAMES, SUPPORTED_TAG_COUNT, SUPPORTED_TAG_NAMES,
-    TOTAL_SUPPORTED_TAG_COUNT,
-};
+pub use tags::{TagDef, TagFormat, TAG_TABLE, TAG_LOOKUP, lookup_tag_by_id, lookup_tag_by_name};
 pub use tags::TAG_LOOKUP as TAG_BY_ID;
 pub use tags::TAG_NAME_LOOKUP as TAG_BY_NAME;
 pub use tags::TAG_TABLE as EXIF_MAIN_TAGS;
-pub use tags::{lookup_tag_by_id, lookup_tag_by_name, TagDef, TagFormat, TAG_LOOKUP, TAG_TABLE};
+pub use composite_tags::{CompositeTagDef, COMPOSITE_TAGS, COMPOSITE_TAG_LOOKUP, lookup_composite_tag};
+pub use conversion_refs::{PRINT_CONV_REFS, VALUE_CONV_REFS, has_print_conv_ref, has_value_conv_ref};
+pub use conversion_refs::PRINT_CONV_REFS as REQUIRED_PRINT_CONV;
+pub use conversion_refs::VALUE_CONV_REFS as REQUIRED_VALUE_CONV;
+pub use supported_tags::{
+    SUPPORTED_TAG_COUNT, SUPPORTED_COMPOSITE_TAG_COUNT, TOTAL_SUPPORTED_TAG_COUNT,
+    SUPPORTED_TAG_NAMES, SUPPORTED_COMPOSITE_TAG_NAMES,
+    tag_counts_by_group, supported_tag_summary
+};
 
 /// Initialize all lazy static data structures
 /// This can be called during startup to avoid lazy initialization costs later

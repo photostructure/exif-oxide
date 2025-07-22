@@ -12,7 +12,9 @@ mod common;
 mod config;
 mod discovery;
 mod extraction;
+mod extractors;
 mod file_operations;
+mod generated;
 mod generators;
 mod patching;
 mod schemas;
@@ -24,7 +26,7 @@ use discovery::{discover_and_process_modules, update_generated_mod_file};
 use extraction::extract_all_simple_tables;
 use table_processor::process_tag_tables_modular;
 use file_operations::{create_directories, file_exists, read_utf8_with_fallback, write_file_atomic};
-use generators::{generate_conversion_refs, generate_mod_file, tag_kit, tag_kit_modular};
+use generators::{generate_conversion_refs, generate_mod_file};
 use validation::validate_all_configs;
 
 
@@ -73,9 +75,7 @@ fn main() -> Result<()> {
     println!("\n📋 Processing modular tag tables...");
     process_tag_tables_modular(&extract_dir, output_dir)?;
 
-    // Process tag kit files
-    println!("\n🔧 Processing tag kit files...");
-    process_tag_kit_files(&extract_dir, output_dir)?;
+    // Tag kit processing is now integrated into the module-based system
 
     // The old extract.json processing has been removed.
     // All extraction is now handled by the new modular configuration system below.
@@ -161,44 +161,4 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-/// Process tag kit files and generate code
-fn process_tag_kit_files(extract_dir: &Path, output_dir: &str) -> Result<()> {
-    // Look for tag kit JSON files in the tag_kits subdirectory
-    let tag_kits_dir = extract_dir.join("tag_kits");
-    
-    if !tag_kits_dir.exists() {
-        println!("  No tag kits directory found, skipping");
-        return Ok(());
-    }
-    
-    let entries = fs::read_dir(&tag_kits_dir)?;
-    
-    for entry in entries {
-        let entry = entry?;
-        let path = entry.path();
-        
-        if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("json") {
-            if let Some(filename) = path.file_name().and_then(|n| n.to_str()) {
-                // Extract module name from filename
-                // e.g., "exif_tag_kit_main.json" -> "exif"
-                let parts: Vec<&str> = filename.split('_').collect();
-                if parts.len() >= 3 {
-                    let module_name = parts[0];
-                    
-                    println!("  Processing tag kit: {}", filename);
-                    
-                    // Read and parse the JSON
-                    let json_content = fs::read_to_string(&path)?;
-                    let extraction: schemas::tag_kit::TagKitExtraction = serde_json::from_str(&json_content)?;
-                    
-                    // Generate the tag kit code
-                    // Use modular generator for better file size management
-                    tag_kit_modular::generate_modular_tag_kit(&extraction, output_dir, module_name)?;
-                }
-            }
-        }
-    }
-    
-    Ok(())
-}
 
