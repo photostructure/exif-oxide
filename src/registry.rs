@@ -177,10 +177,50 @@ pub fn register_value_conv(name: impl Into<String>, func: ValueConvFn) {
     registry.register_value_conv(name, func);
 }
 
-/// Apply PrintConv globally
+/// Apply PrintConv globally with tag kit integration
 pub fn apply_print_conv(name: &str, value: &TagValue) -> TagValue {
+    apply_print_conv_with_tag_id(None, name, value)
+}
+
+/// Apply PrintConv globally with tag ID for tag kit integration
+pub fn apply_print_conv_with_tag_id(tag_id: Option<u32>, name: &str, value: &TagValue) -> TagValue {
+    // First try tag kit if tag ID is available
+    if let Some(id) = tag_id {
+        // Check if we have an EXIF tag kit for this tag
+        if let Some(tag_kit_result) = try_tag_kit_print_conv(id, value) {
+            return tag_kit_result;
+        }
+    }
+    
+    // Fall back to manual registry lookup by function name
     let mut registry = GLOBAL_REGISTRY.write().unwrap();
     registry.apply_print_conv(name, value)
+}
+
+/// Try to apply PrintConv using tag kit system
+fn try_tag_kit_print_conv(tag_id: u32, value: &TagValue) -> Option<TagValue> {
+    // For now, try EXIF tag kit (we can extend this to other modules later)
+    use crate::generated::Exif_pm::tag_kit;
+    use crate::expressions::ExpressionEvaluator;
+    
+    // Create temporary containers for errors/warnings
+    // TODO: These should be passed through the API to collect for the user
+    let mut expression_evaluator = ExpressionEvaluator::new();
+    let mut errors = Vec::new(); 
+    let mut warnings = Vec::new();
+    
+    let result = tag_kit::apply_print_conv(tag_id, value, &mut expression_evaluator, &mut errors, &mut warnings);
+    
+    // Check if tag kit actually handled this tag (didn't just return the original value)
+    if result != *value {
+        Some(result)
+    } else if tag_kit::TAG_KITS.get(&tag_id).is_some() {
+        // Tag kit contains this tag but couldn't convert it (e.g., None PrintConv)
+        Some(result)
+    } else {
+        // Tag kit doesn't know about this tag
+        None
+    }
 }
 
 /// Apply ValueConv globally  

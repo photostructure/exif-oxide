@@ -14,8 +14,10 @@ pub fn generate_modular_tag_kit(
     output_dir: &str,
     module_name: &str,
 ) -> Result<()> {
-    // Create output directory for tag kit modules
-    let tag_kit_dir = format!("{}/{}_tag_kit", output_dir, module_name.to_lowercase());
+    // Create output directory for tag kit modules 
+    // Replace any hyphens with underscores for valid Rust module names
+    let sanitized_module_name = module_name.to_lowercase().replace('-', "_");
+    let tag_kit_dir = format!("{}/{}_tag_kit", output_dir, sanitized_module_name);
     fs::create_dir_all(&tag_kit_dir)?;
     
     // Split tag kits by category
@@ -53,7 +55,7 @@ pub fn generate_modular_tag_kit(
     }
     
     // Generate mod.rs that combines all modules
-    let mod_code = generate_mod_file(&generated_modules, module_name, &extraction)?;
+    let mod_code = generate_mod_file(&generated_modules, &sanitized_module_name, &extraction)?;
     fs::write(format!("{}/mod.rs", tag_kit_dir), mod_code)?;
     
     // Summary

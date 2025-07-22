@@ -18,6 +18,12 @@ use warnings;
 use FindBin qw($Bin);
 use lib "$Bin/../lib";
 use lib "$Bin/../../third-party/exiftool/lib";
+use Carp;
+
+# Check required environment variables
+unless ($ENV{CODEGEN_DIR} && $ENV{REPO_ROOT}) {
+    croak "Error: Required environment variables CODEGEN_DIR and REPO_ROOT must be set by the calling Rust code";
+}
 
 use ExifToolExtract qw(
     load_module_from_file

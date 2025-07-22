@@ -34,19 +34,7 @@ pub static COMPOSITE_TAGS: &[CompositeTagDef] = &[
         name: "BlueBalance",
         table: "Composite",
         require: &[],
-        desire: &[
-            "WB_RGGBLevels",
-            "WB_RGBGLevels",
-            "WB_RBGGLevels",
-            "WB_GRBGLevels",
-            "WB_GRGBLevels",
-            "WB_GBRGLevels",
-            "WB_RGBLevels",
-            "WB_GRBLevels",
-            "WB_RBLevels",
-            "WBBlueLevel",
-            "WBGreenLevel",
-        ],
+        desire: &["WB_RGGBLevels", "WB_RGBGLevels", "WB_RBGGLevels", "WB_GRBGLevels", "WB_GRGBLevels", "WB_GBRGLevels", "WB_RGBLevels", "WB_GRBLevels", "WB_RBLevels", "WBBlueLevel", "WBGreenLevel"],
         print_conv_ref: Some("bluebalance_print_conv"),
         value_conv_ref: Some("bluebalance_value_conv"),
         description: None,
@@ -136,22 +124,19 @@ pub static COMPOSITE_TAGS: &[CompositeTagDef] = &[
         name: "LensID",
         table: "Composite",
         require: &["LensType"],
-        desire: &[
-            "FocalLength",
-            "MaxAperture",
-            "MaxApertureValue",
-            "MinFocalLength",
-            "MaxFocalLength",
-            "LensModel",
-            "LensFocalRange",
-            "LensSpec",
-            "LensType2",
-            "LensType3",
-            "LensFocalLength",
-            "RFLensType",
-        ],
+        desire: &["FocalLength", "MaxAperture", "MaxApertureValue", "MinFocalLength", "MaxFocalLength", "LensModel", "LensFocalRange", "LensSpec", "LensType2", "LensType3", "LensFocalLength", "RFLensType"],
         print_conv_ref: Some("lensid_print_conv"),
         value_conv_ref: Some("lensid_value_conv"),
+        description: None,
+        writable: false,
+    },
+    CompositeTagDef {
+        name: "2",
+        table: "Composite",
+        require: &[],
+        desire: &["LensModel", "Lens", "XMP-aux:LensID", "Make"],
+        print_conv_ref: Some("2_print_conv"),
+        value_conv_ref: Some("2_value_conv"),
         description: None,
         writable: false,
     },
@@ -189,11 +174,7 @@ pub static COMPOSITE_TAGS: &[CompositeTagDef] = &[
         name: "PreviewImage",
         table: "Composite",
         require: &["PreviewImageStart", "PreviewImageLength"],
-        desire: &[
-            "PreviewImageValid",
-            "PreviewImageStart (1)",
-            "PreviewImageLength (1)",
-        ],
+        desire: &["PreviewImageValid", "PreviewImageStart (1)", "PreviewImageLength (1)"],
         print_conv_ref: None,
         value_conv_ref: None,
         description: None,
@@ -210,22 +191,20 @@ pub static COMPOSITE_TAGS: &[CompositeTagDef] = &[
         writable: false,
     },
     CompositeTagDef {
+        name: "PreviewJXL",
+        table: "Composite",
+        require: &["PreviewJXLStart", "PreviewJXLLength"],
+        desire: &["PreviewJXLStart (1)", "PreviewJXLLength (1)"],
+        print_conv_ref: None,
+        value_conv_ref: None,
+        description: None,
+        writable: false,
+    },
+    CompositeTagDef {
         name: "RedBalance",
         table: "Composite",
         require: &[],
-        desire: &[
-            "WB_RGGBLevels",
-            "WB_RGBGLevels",
-            "WB_RBGGLevels",
-            "WB_GRBGLevels",
-            "WB_GRGBLevels",
-            "WB_GBRGLevels",
-            "WB_RGBLevels",
-            "WB_GRBLevels",
-            "WB_RBLevels",
-            "WBRedLevel",
-            "WBGreenLevel",
-        ],
+        desire: &["WB_RGGBLevels", "WB_RGBGLevels", "WB_RBGGLevels", "WB_GRBGLevels", "WB_GRGBLevels", "WB_GBRGLevels", "WB_RGBLevels", "WB_GRBLevels", "WB_RBLevels", "WBRedLevel", "WBGreenLevel"],
         print_conv_ref: Some("redbalance_print_conv"),
         value_conv_ref: Some("redbalance_value_conv"),
         description: None,
@@ -235,24 +214,7 @@ pub static COMPOSITE_TAGS: &[CompositeTagDef] = &[
         name: "ScaleFactor35efl",
         table: "Composite",
         require: &[],
-        desire: &[
-            "FocalLength",
-            "FocalLengthIn35mmFormat",
-            "Composite:DigitalZoom",
-            "FocalPlaneDiagonal",
-            "SensorSize",
-            "FocalPlaneXSize",
-            "FocalPlaneYSize",
-            "FocalPlaneResolutionUnit",
-            "FocalPlaneXResolution",
-            "FocalPlaneYResolution",
-            "ExifImageWidth",
-            "ExifImageHeight",
-            "CanonImageWidth",
-            "CanonImageHeight",
-            "ImageWidth",
-            "ImageHeight",
-        ],
+        desire: &["FocalLength", "FocalLengthIn35mmFormat", "Composite:DigitalZoom", "FocalPlaneDiagonal", "SensorSize", "FocalPlaneXSize", "FocalPlaneYSize", "FocalPlaneResolutionUnit", "FocalPlaneXResolution", "FocalPlaneYResolution", "ExifImageWidth", "ExifImageHeight", "CanonImageWidth", "CanonImageHeight", "ImageWidth", "ImageHeight"],
         print_conv_ref: Some("scalefactor35efl_print_conv"),
         value_conv_ref: Some("scalefactor35efl_value_conv"),
         description: Some("Scale Factor To 35 mm Equivalent"),
@@ -311,18 +273,7 @@ pub static COMPOSITE_TAGS: &[CompositeTagDef] = &[
     CompositeTagDef {
         name: "ThumbnailTIFF",
         table: "Composite",
-        require: &[
-            "SubfileType",
-            "Compression",
-            "ImageWidth",
-            "ImageHeight",
-            "BitsPerSample",
-            "PhotometricInterpretation",
-            "StripOffsets",
-            "SamplesPerPixel",
-            "RowsPerStrip",
-            "StripByteCounts",
-        ],
+        require: &["SubfileType", "Compression", "ImageWidth", "ImageHeight", "BitsPerSample", "PhotometricInterpretation", "StripOffsets", "SamplesPerPixel", "RowsPerStrip", "StripByteCounts"],
         desire: &["PlanarConfiguration", "Orientation"],
         print_conv_ref: None,
         value_conv_ref: None,
@@ -333,12 +284,7 @@ pub static COMPOSITE_TAGS: &[CompositeTagDef] = &[
         name: "GPSAltitude",
         table: "Composite",
         require: &[],
-        desire: &[
-            "GPS:GPSAltitude",
-            "GPS:GPSAltitudeRef",
-            "XMP:GPSAltitude",
-            "XMP:GPSAltitudeRef",
-        ],
+        desire: &["GPS:GPSAltitude", "GPS:GPSAltitudeRef", "XMP:GPSAltitude", "XMP:GPSAltitudeRef"],
         print_conv_ref: Some("gpsaltitude_print_conv"),
         value_conv_ref: Some("gpsaltitude_value_conv"),
         description: None,
@@ -397,14 +343,13 @@ pub static COMPOSITE_TAGS: &[CompositeTagDef] = &[
 ];
 
 /// Fast lookup of composite tags by name
-pub static COMPOSITE_TAG_LOOKUP: LazyLock<HashMap<&'static str, &'static CompositeTagDef>> =
-    LazyLock::new(|| {
-        let mut map = HashMap::new();
-        for tag in COMPOSITE_TAGS {
-            map.insert(tag.name, tag);
-        }
-        map
-    });
+pub static COMPOSITE_TAG_LOOKUP: LazyLock<HashMap<&'static str, &'static CompositeTagDef>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    for tag in COMPOSITE_TAGS {
+        map.insert(tag.name, tag);
+    }
+    map
+});
 
 /// Look up a composite tag by name
 pub fn lookup_composite_tag(name: &str) -> Option<&'static CompositeTagDef> {

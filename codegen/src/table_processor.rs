@@ -147,6 +147,12 @@ pub fn process_tag_tables_modular(extract_dir: &Path, output_dir: &str) -> Resul
                 println!("  📊 Processing {}", filename);
                 let json_data = read_utf8_with_fallback(&file_path)?;
                 
+                // Skip empty files
+                if json_data.trim().is_empty() {
+                    println!("    ⚠️  Skipping empty file: {}", filename);
+                    continue;
+                }
+                
                 // Parse the modular tag definition format
                 let tag_data: serde_json::Value = serde_json::from_str(&json_data)
                     .with_context(|| format!("Failed to parse {}", filename))?;
@@ -195,6 +201,12 @@ pub fn process_tag_tables_modular(extract_dir: &Path, output_dir: &str) -> Resul
                 let filename = file_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
                 println!("  🔗 Processing {}", filename);
                 let json_data = read_utf8_with_fallback(&file_path)?;
+                
+                // Skip empty files
+                if json_data.trim().is_empty() {
+                    println!("    ⚠️  Skipping empty file: {}", filename);
+                    continue;
+                }
                 
                 // Parse the modular composite tag format
                 let composite_data: serde_json::Value = serde_json::from_str(&json_data)
