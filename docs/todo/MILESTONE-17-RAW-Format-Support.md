@@ -89,12 +89,14 @@ Each sub-milestone must meet these criteria:
 **When adding support for a new RAW format, you MUST update the compatibility script:**
 
 1. **Add the new file extension** to `tools/generate_exiftool_json.sh`:
+
    ```bash
    # Line 24: Add your new extension to the array
    SUPPORTED_EXTENSIONS=("jpg" "jpeg" "orf" "nef" "cr3" "arw" "rw2" "...")
    ```
 
 2. **Regenerate reference JSON files**:
+
    ```bash
    make compat-gen
    ```

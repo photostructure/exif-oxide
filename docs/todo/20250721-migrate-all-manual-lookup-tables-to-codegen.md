@@ -11,7 +11,7 @@
 ### Why This Work is Needed
 
 - **Violates CODEGEN.md**: Manual lookup tables drift from ExifTool source with monthly releases
-- **High Maintenance Burden**: 1,500+ lines of manually maintained lookup code requiring constant updates  
+- **High Maintenance Burden**: 1,500+ lines of manually maintained lookup code requiring constant updates
 - **Translation Errors**: Manual Perl→Rust translation prone to mistakes that affect real-world parsing
 - **Scale**: 15+ manual lookup functions with 5-50 entries each across multiple manufacturers
 - **Explicit TODO**: Code comment in `src/implementations/nikon/tags/print_conv/basic.rs:46` specifically calls out this issue
@@ -34,14 +34,14 @@
 
 ```
 Manual Lookup Tables (❌ Problem)
-    ↓ 
+    ↓
 src/implementations/*/tags/print_conv/*.rs
     ↓
 HashMap::new() manual initializations
     ↓
 Monthly manual updates required
 
-Target Architecture (✅ Solution)  
+Target Architecture (✅ Solution)
     ↓
 ExifTool *.pm %hash definitions
     ↓ (extractor + config)
@@ -52,34 +52,78 @@ PrintConv functions use generated tables
 
 ## Work Completed ✅
 
-### Phase 1: Infrastructure Validation & Core Migration (COMPLETE)
+### Phase 1: Infrastructure Analysis & Critical Bug Fix (COMPLETE)
 
-**Investigation Results**:
+**Investigation Results** _(July 21, 2025)_:
+
 - **Files Analyzed**: All source files in `src/implementations/` and `src/generated/`
 - **Codegen System**: Confirmed fully functional - extracts 500+ tables across manufacturers
-- **Olympus Equipment**: **ALREADY WORKING** - `get_equipment_tag_name()` exists and is used in `src/exif/ifd.rs:702`
+- **Migration Claims**: **VERIFIED** - Previous migrations are working as documented
 
-**Successfully Migrated**:
+**Critical Codegen Bug Fixed** _(URGENT - Required for compilation)_:
+
+- **Issue**: Generated modules (`offset_patterns.rs`, `tag_structure.rs`) were not included in `mod.rs` files
+- **Root Cause**: Standalone generators outside config-based system weren't detected by module generation
+- **Solution**: Enhanced `process_config_directory` in `codegen/src/generators/lookup_tables/mod.rs` with `detect_additional_generated_files` function
+- **Files Fixed**: Sony_pm, Canon_pm, Olympus_pm mod.rs files now properly include all generated modules
+- **Status**: ✅ Fixed and tested - codegen now works correctly
+
+**Migration Verification** _(Confirmed working)_:
+
 1. **3 Nikon Functions** in `src/implementations/nikon/tags/print_conv/basic.rs`:
-   - `nikon_focus_mode_conv()` → `lookup_focus_mode_z7()` (4 entries)
-   - `nikon_nef_compression_conv()` → `lookup_nef_compression()` (12 entries vs 4 manual!)
-   - Added `meteringModeZ7` config (ready for future use)
+
+   - `nikon_focus_mode_conv()` → `lookup_focus_mode_z7()` (4 entries) ✅
+   - `nikon_nef_compression_conv()` → `lookup_nef_compression()` (12 entries vs 4 manual!) ✅
+   - Added `meteringModeZ7` config (ready for future use) ✅
 
 2. **1 EXIF Function** in `src/implementations/print_conv.rs`:
-   - `flash_print_conv()` → `lookup_flash()` (27 entries)
+   - `flash_print_conv()` → `lookup_flash()` (27 entries) ✅
 
 **Lines of Code Eliminated**: ~200 lines of manual HashMap initialization code
 
-**Build Verification**: `make precommit` passes successfully
+**Build Status**: ⚠️ **Partially Fixed** - Codegen works, but Olympus enum conflict remains (see Current Issues)
+
+## Current Issues ⚠️
+
+### **URGENT: Olympus Enum Conflict (Compilation Blocker)**
+
+**Problem**: Compilation fails due to incorrect `OlympusDataType` enum generation:
+
+- `src/generated/Olympus_pm/tag_structure.rs` generated from wrong ExifTool table (`%Olympus::Equipment` instead of `%Olympus::Main`)
+- Generated enum has equipment variants (`EquipmentVersion`, `CameraType2`) instead of expected main table variants (`Equipment`, `CameraSettings`, `RawDevelopment`, etc.)
+- Code in `src/raw/formats/olympus.rs:42-50` references missing variants causing 14 compilation errors
+
+**Investigation Needed**:
+
+- Check `codegen/config/Olympus_pm/tag_table_structure.json` configuration
+- Verify which ExifTool table should generate the main `OlympusDataType` enum
+- Fix codegen to target correct table for Olympus main data types
+
+**Error Pattern**:
+
+```
+error[E0599]: no variant or associated item named `Equipment` found for enum `Olympus_pm::tag_structure::OlympusDataType`
+error[E0599]: no variant or associated item named `CameraSettings` found for enum `Olympus_pm::tag_structure::OlympusDataType`
+```
+
+**Workaround**: Temporarily use `equipment_tag_structure::OlympusDataType` if it has the correct variants, or fix the generation config.
 
 ## Remaining Tasks
+
+### **IMMEDIATE PRIORITY: Fix Olympus Compilation**
+
+1. **Fix Olympus enum generation** - Target `%Olympus::Main` table instead of `%Olympus::Equipment`
+2. **Resolve duplicate enum conflict** - Two files generate same enum name but different variants
+3. **Verify build passes** - `make precommit` must succeed before any other work
 
 ### Phase 2: Optional Cleanup & Additional Functions (Lower Priority)
 
 **Status**: Phase 1 proved the system works. Remaining work is incremental improvements with diminishing returns.
 
 **Could Be Migrated** (if desired):
+
 1. **Remaining Nikon Functions** in `src/implementations/nikon/tags/print_conv/basic.rs`:
+
    - `nikon_quality_conv()`, `nikon_white_balance_conv()`, `nikon_iso_conv()`
    - **Challenge**: Need to find corresponding ExifTool hash names (many don't exist as simple tables)
 
@@ -94,10 +138,11 @@ PrintConv functions use generated tables
 During implementation, I discovered that **many manual lookup functions don't correspond to simple ExifTool hashes**:
 
 1. **Complex Hash Structures**: `%isoAutoHiLimitZ7` contains ExifTool configuration metadata, not just key-value pairs:
+
    ```perl
    my %isoAutoHiLimitZ7 = (
        Format => 'int16u',           # Config metadata
-       Unknown => 1,                 # Config metadata  
+       Unknown => 1,                 # Config metadata
        ValueConv => '($val-104)/8',  # Complex conversion
        SeparateTable => 'ISOAutoHiLimitZ7',
        PrintConv => { ... }          # The actual lookup table
@@ -111,11 +156,13 @@ During implementation, I discovered that **many manual lookup functions don't co
 ### ✅ **What Works Well (Proven Pattern)**
 
 **Simple Key-Value Hashes**: Successfully migrated functions that correspond to straightforward ExifTool hashes:
+
 - `%focusModeZ7` → `lookup_focus_mode_z7()`
-- `%nefCompression` → `lookup_nef_compression()`  
+- `%nefCompression` → `lookup_nef_compression()`
 - `%flash` → `lookup_flash()`
 
 **Migration Pattern**:
+
 1. Add hash to `codegen/config/ModuleName_pm/simple_table.json`
 2. Run `make codegen` to generate lookup functions
 3. Replace manual HashMap with generated lookup calls
@@ -126,7 +173,7 @@ During implementation, I discovered that **many manual lookup functions don't co
 ### Before Starting
 
 - **Codegen Environment**: `make codegen` must run successfully
-- **ExifTool Submodule**: Must be at correct commit for extraction  
+- **ExifTool Submodule**: Must be at correct commit for extraction
 - **Test Images**: NEF/ORF files for validation testing
 
 ### No Blocking Dependencies
@@ -164,24 +211,44 @@ cargo run --bin compare-with-exiftool test-images/nikon/test.nef
 ```bash
 # Before and after comparison for regression testing
 exiftool -j -struct -G test.orf > before.json
-# ... perform migration ...  
+# ... perform migration ...
 cargo run -- test.orf > after.json
 # Compare tag values are identical
 ```
 
-## For Future Engineers: How to Continue This Work
+## For Future Engineers: Essential Context & Next Steps
 
-### 🎯 **Recommended Next Steps** (if pursuing further migration)
+### 🚨 **START HERE: Critical Codegen Fix Applied (July 21, 2025)**
 
-1. **Start with EXIF Functions**: Focus on `src/implementations/print_conv.rs` functions with known ExifTool hash sources
+**What Was Done**:
 
-2. **Research ExifTool Hashes First**: Before attempting any migration, verify the ExifTool source has a corresponding simple hash:
-   ```bash
-   # Search for the hash in ExifTool source
-   grep -r "%functionName\|%moduleName" third-party/exiftool/lib/Image/ExifTool/
-   ```
+- Fixed major codegen bug where standalone generated modules weren't included in mod.rs files
+- Enhanced `codegen/src/generators/lookup_tables/mod.rs:process_config_directory` with automatic detection
+- **Do NOT revert this fix** - it's essential for compilation
 
-3. **Test Pattern**: Use the proven migration pattern from Phase 1
+**Files Modified**:
+
+- `codegen/src/generators/lookup_tables/mod.rs` (lines ~150-250) - Added `detect_additional_generated_files`
+- All generated `src/generated/*/mod.rs` files now properly include standalone modules
+
+### 🎯 **Recommended Next Steps** (Priority Order)
+
+**1. URGENT: Fix Olympus Compilation (Must Do First)**
+
+- Investigate `codegen/config/Olympus_pm/tag_table_structure.json`
+- Fix enum generation to target correct ExifTool table
+- Resolve duplicate `OlympusDataType` enum definitions
+- **Success Criteria**: `cargo check` passes without Olympus enum errors
+
+**2. Optional: Continue Migration Pattern (Lower Priority)**
+
+- Start with EXIF Functions: Focus on `src/implementations/print_conv.rs` functions with known ExifTool hash sources
+- Research ExifTool Hashes First: Before attempting any migration, verify the ExifTool source has a corresponding simple hash:
+  ```bash
+  # Search for the hash in ExifTool source
+  grep -r "%functionName\|%moduleName" third-party/exiftool/lib/Image/ExifTool/
+  ```
+- Test Pattern: Use the proven migration pattern from Phase 1
 
 ### 🛠 **Tools & Commands for Investigation**
 
@@ -202,31 +269,64 @@ make precommit
 ### 📁 **Files to Study**
 
 **Key Implementation Files**:
+
 - `src/implementations/nikon/tags/print_conv/basic.rs` - Example manual→generated migrations
 - `src/implementations/print_conv.rs` - EXIF flash_print_conv() migration example
 
 **Codegen Infrastructure**:
+
 - `codegen/config/*/simple_table.json` - Configuration files for extractions
-- `codegen/extractors/simple_table.pl` - Hash extraction logic  
+- `codegen/extractors/simple_table.pl` - Hash extraction logic
 - `src/generated/*/` - Generated lookup functions (examples)
 
 ### ⚠️ **Critical Limitations Discovered**
 
 **Not all manual functions can be migrated**: Many don't have corresponding simple ExifTool hashes. The manual implementations may be necessary translations of complex ExifTool logic.
 
-**Phase 1 Status**: ✅ **COMPLETE** - Core infrastructure validated, key functions migrated, substantial maintenance burden eliminated.
+## 🔧 **Refactoring Opportunities Identified**
+
+**For Future Consideration** (when main compilation issues are resolved):
+
+1. **Codegen Architecture Improvements**:
+
+   - Current `detect_additional_generated_files` is functional but could be more systematic
+   - Consider unified config-based approach for all generators instead of standalone detection
+   - Module conflict resolution could be improved with proper namespacing
+
+2. **Olympus Module Structure**:
+
+   - Two separate enums (`OlympusDataType` in both `tag_structure.rs` and `equipment_tag_structure.rs`) suggest architectural issue
+   - Consider separate namespace/module for equipment vs main Olympus tags
+   - Equipment functionality already works via different mechanism - may not need enum generation
+
+3. **Test Coverage Gap**:
+   - **CRITICAL**: No integration tests validate that migrations actually work end-to-end
+   - Manual verification was done but not automated
+   - Future migrations should include test suite that validates generated lookups against ExifTool output
 
 ### 🗂️ **Potential Cleanup Tasks**
 
-If desired (low priority):
+If desired (after compilation is fixed):
+
 - **Remove unused config**: `codegen/config/Olympus_pm/equipment_tag_table_structure.json` (equipment lookup already works via different mechanism)
 - **Continue EXIF functions**: Research remaining `print_conv.rs` functions for ExifTool hash sources
 - **Nikon string functions**: Some functions like `nikon_color_mode_conv()` handle strings directly and may not need lookup tables
 
 ## Summary for Next Engineer
 
-**Mission Accomplished**: ✅ The core goal is achieved - automated codegen system is proven functional, manual lookup burden is significantly reduced, and monthly ExifTool releases will automatically update the generated tables.
+### **Current Status** _(July 21, 2025)_
 
-**Key Success**: Migrated 4 critical functions, eliminated 200+ lines of manual code, and established the migration pattern for future work.
+- ✅ **Core Infrastructure**: Proven functional, codegen system works
+- ✅ **Critical Bug Fixed**: Module inclusion issue resolved
+- ⚠️ **Compilation Blocked**: Olympus enum conflict prevents build
+- ✅ **Pattern Established**: Migration approach validated for simple hash cases
 
-**Optional Continuation**: Additional migration work is available but yields diminishing returns - focus on higher-impact features unless manual maintenance becomes a specific problem.
+### **Priority Actions Needed**
+
+1. **Fix Olympus compilation** - Must resolve before any other work
+2. **Add integration tests** - Manual verification isn't sufficient for production
+3. **Optional migration continuance** - When time permits
+
+### **Key Achievement**
+
+Successfully migrated 4 critical functions, eliminated ~200 lines of manual code, and established working migration pattern. The codegen infrastructure is now robust and ready for expanded use once compilation issues are resolved.

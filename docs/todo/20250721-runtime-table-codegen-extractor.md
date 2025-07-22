@@ -26,11 +26,13 @@
 ### ExifTool Source Patterns
 
 **ProcessBinaryData Tables**: `third-party/exiftool/lib/Image/ExifTool/Canon.pm`
+
 - Lines 2172-2400: Camera settings table definitions
 - Lines 2640-2800: AF info table structures
 - Lines 2719-2900: My colors processing tables
 
 **Key Characteristics**:
+
 - Perl hashes with complex value structures: `{ Name => 'TagName', PrintConv => { 0 => 'Off' } }`
 - Conditional expressions: `Condition => '$self->{Model} =~ /EOS/'`
 - Format specifications: `Format => 'int16s'`
@@ -39,6 +41,7 @@
 ### Current Codegen Infrastructure
 
 **Available Extractors**:
+
 - `simple_table.pl` - Static LazyLock tables ✅
 - `process_binary_data.pl` - Table structure extraction ✅
 - `conditional_tags.pl` - Conditional logic ✅
@@ -50,8 +53,9 @@
 ### Analysis Phase ✅
 
 **Pattern Identification**:
+
 - **15+ runtime HashMap patterns** in Canon binary data processing
-- **Dynamic table creation** in AF info processing  
+- **Dynamic table creation** in AF info processing
 - **Category-based grouping** in Nikon lens database
 - **Parameter mapping** in encryption contexts
 
@@ -62,11 +66,13 @@
 ### Phase 1: Research & Design (High Confidence)
 
 1. **Analyze ExifTool ProcessBinaryData structures** in Canon.pm and Nikon.pm
+
    - Map Perl hash patterns to Rust HashMap initialization
    - Identify conditional logic patterns
    - Document format specifications and data member usage
 
 2. **Design `runtime_table.pl` extractor**
+
    - Extract ProcessBinaryData table definitions from ExifTool
    - Parse complex value structures with PrintConv, Condition, Format
    - Generate JSON intermediate representation
@@ -79,6 +85,7 @@
 ### Phase 2: Implementation (Requires Research)
 
 4. **Implement Rust code generation** for runtime HashMap patterns
+
    - Generate `create_*_table()` functions that build HashMaps at runtime
    - Preserve conditional logic and dynamic value computation
    - Maintain compatibility with existing ProcessBinaryData architecture
@@ -91,6 +98,7 @@
 ### Phase 3: Migration (Requires Implementation Design)
 
 6. **Migrate Canon binary data tables** using new extractor
+
    - Replace manual HashMap initialization with generated functions
    - Validate binary data processing compatibility
    - Test with real Canon image files
@@ -146,6 +154,7 @@ cargo run --bin compare-with-exiftool test-images/canon/test.cr2
 ## Success Criteria & Quality Gates
 
 **Definition of Done**:
+
 - [ ] `runtime_table.pl` extractor successfully extracts Canon ProcessBinaryData tables
 - [ ] Generated code compiles and produces functionally equivalent runtime HashMaps
 - [ ] Binary data processing produces identical results to manual implementation
@@ -153,6 +162,7 @@ cargo run --bin compare-with-exiftool test-images/canon/test.cr2
 - [ ] Documentation updated with new extraction patterns
 
 **Quality Gates**:
+
 - Code review focusing on ExifTool translation accuracy
 - Binary compatibility testing with representative Canon files
 - Performance validation (generated tables should not degrade processing speed)
@@ -162,17 +172,20 @@ cargo run --bin compare-with-exiftool test-images/canon/test.cr2
 ### ExifTool ProcessBinaryData Complexity
 
 **Complex Value Structures**: ExifTool tables contain nested Perl structures that need careful parsing:
+
 ```perl
 # Example from Canon.pm
 1 => { Name => 'MacroMode', PrintConv => { 1 => 'Macro', 2 => 'Normal' } }
 ```
 
 **Conditional Logic**: Tables include model-specific conditions that affect table creation:
+
 ```perl
 Condition => '$self->{Model} =~ /EOS/'
 ```
 
 **Format Dependencies**: Binary data format affects value interpretation:
+
 ```perl
 Format => 'int16s'  # Signed 16-bit integers
 ```
