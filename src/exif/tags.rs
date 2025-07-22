@@ -112,7 +112,8 @@ impl ExifReader {
         // Apply PrintConv second (if present) to get display value
         let print = if let Some(tag_def) = tag_def {
             if let Some(print_conv_ref) = tag_def.print_conv_ref {
-                registry::apply_print_conv(print_conv_ref, &value)
+                // Use new tag kit integration - pass both tag ID and function name
+                registry::apply_print_conv_with_tag_id(Some(tag_def.id as u32), print_conv_ref, &value)
             } else {
                 value.clone()
             }

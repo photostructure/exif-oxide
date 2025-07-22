@@ -6,16 +6,13 @@ use anyhow::{Context, Result};
 use serde_json::Value;
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 use tracing::debug;
 
 use crate::patching;
-use crate::extractors::{ExtractDirs, find_extractor, run_extractor};
+use crate::extractors::{find_extractor, Extractor};
 
 // Constants for path navigation
 const REPO_ROOT_FROM_CODEGEN: &str = "..";
-const CODEGEN_FROM_EXTRACT: &str = "../..";
-const REPO_ROOT_FROM_EXTRACT: &str = "../../..";
 
 #[derive(Debug)]
 pub struct ModuleConfig {
@@ -24,41 +21,17 @@ pub struct ModuleConfig {
     pub module_name: String,
 }
 
-#[derive(Debug)]
-enum SpecialExtractor {
-    FileTypeLookup,
-    RegexPatterns,
-    BooleanSet,
-    InlinePrintConv,
-    TagDefinitions,
-    CompositeTags,
-    TagTableStructure,
-    ProcessBinaryData,
-    ModelDetection,
-    ConditionalTags,
-    RuntimeTable,
-    TagKit,
-}
-
-#[derive(Debug)]
-struct ExtractorConfig<'a> {
-    script_name: &'a str,
-    output_file: Option<&'a str>,
-    hash_args: Vec<String>,
-}
-
 /// Extract all simple tables using Rust orchestration (replaces Makefile targets)
 pub fn extract_all_simple_tables() -> Result<()> {
     println!("\n📊 Extracting all tables and data...");
     
-    // Create type-specific directories using the extractors module
     let extract_base = Path::new("generated/extract");
-    let extract_dirs = ExtractDirs::new(extract_base)?;
+    fs::create_dir_all(extract_base)?;
     
     let configs = discover_module_configs()?;
     
     for config in configs {
-        process_module_config(&config, &extract_dirs)?;
+        process_module_config(&config, extract_base)?;
     }
     
     println!("  ✓ Simple table extraction complete");
@@ -135,7 +108,6 @@ fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig
     Ok(configs)
 }
 
-
 fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
     debug!("Reading config file: {}", config_path.display());
     let config_content = match fs::read_to_string(&config_path) {
@@ -159,7 +131,8 @@ fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
         .unwrap_or("");
     
     let hash_names: Vec<String> = match config_type {
-        "tag_definitions.json" | "composite_tags.json" | "tag_table_structure.json" | "process_binary_data.json" | "model_detection.json" | "conditional_tags.json" => {
+        "tag_definitions.json" | "composite_tags.json" | "tag_table_structure.json" | 
+        "process_binary_data.json" | "model_detection.json" | "conditional_tags.json" => {
             // For tag definitions, composite tags, and tag table structure, we use the table name from config root
             let table = config["table"].as_str()
                 .ok_or_else(|| anyhow::anyhow!("Missing 'table' field in {}", config_path.display()))?;
@@ -229,479 +202,27 @@ fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
     }))
 }
 
-fn process_module_config(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+fn process_module_config(config: &ModuleConfig, extract_base: &Path) -> Result<()> {
     println!("  📷 Processing {} tables...", config.module_name);
     
-    // Resolve source path relative to repo root (one level up from codegen/)
-    let repo_root = Path::new(REPO_ROOT_FROM_CODEGEN);
-    let module_path = repo_root.join(&config.source_path);
+    // Find the appropriate extractor
+    let extractor = find_extractor(&config.module_name)
+        .ok_or_else(|| anyhow::anyhow!("No extractor found for config type: {}", config.module_name))?;
     
-    // Only patch if we're extracting hashes (not for inline_printconv, tag_definitions, composite_tags, or tag_table_structure)
-    if !matches!(config.module_name.as_str(), "inline_printconv" | "tag_definitions" | "composite_tags" | "tag_table_structure" | "process_binary_data" | "model_detection" | "conditional_tags" | "runtime_table" | "tag_kit") {
+    // Get absolute paths
+    let current_dir = std::env::current_dir()?;
+    let repo_root = current_dir.parent()
+        .ok_or_else(|| anyhow::anyhow!("Could not find repo root"))?;
+    let module_path = repo_root.join(&config.source_path).canonicalize()
+        .with_context(|| format!("Failed to canonicalize module path: {}", config.source_path))?;
+    
+    // Only patch if the extractor requires it
+    if extractor.requires_patching() {
         patching::patch_module(&module_path, &config.hash_names)?;
     }
     
-    // Check if this config needs a special extractor based on the config filename
-    match needs_special_extractor_by_name(&config.module_name) {
-        Some(SpecialExtractor::FileTypeLookup) => {
-            run_file_type_lookup_extractor(config, extract_dirs)?;
-        }
-        Some(SpecialExtractor::RegexPatterns) => {
-            run_regex_patterns_extractor(config, extract_dirs)?;
-        }
-        Some(SpecialExtractor::BooleanSet) => {
-            run_boolean_set_extractor(config, extract_dirs)?;
-        }
-        Some(SpecialExtractor::InlinePrintConv) => {
-            run_inline_printconv_extractor(config, extract_dirs)?;
-        }
-        Some(SpecialExtractor::TagDefinitions) => {
-            run_tag_definitions_extractor(config, extract_dirs)?;
-        }
-        Some(SpecialExtractor::CompositeTags) => {
-            run_composite_tags_extractor_new(config, extract_dirs)?;
-        }
-        Some(SpecialExtractor::TagTableStructure) => {
-            run_tag_table_structure_extractor(config, extract_dirs)?;
-        }
-        Some(SpecialExtractor::ProcessBinaryData) => {
-            run_process_binary_data_extractor(config, extract_dirs)?;
-        }
-        Some(SpecialExtractor::ModelDetection) => {
-            run_model_detection_extractor(config, extract_dirs)?;
-        }
-        Some(SpecialExtractor::ConditionalTags) => {
-            run_conditional_tags_extractor(config, extract_dirs)?;
-        }
-        Some(SpecialExtractor::RuntimeTable) => {
-            run_runtime_table_extractor(config, extract_dirs)?;
-        }
-        Some(SpecialExtractor::TagKit) => {
-            run_tag_kit_extractor(config, extract_dirs)?;
-        }
-        None => {
-            run_extraction_script(config, extract_dirs)?;
-        }
-    }
-    
-    Ok(())
-}
-
-
-fn run_extraction_script(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
-    let extract_dir = &extract_dirs.simple_tables;
-    let hash_names_with_percent: Vec<String> = config.hash_names.iter()
-        .map(|name| format!("%{}", name))
-        .collect();
-    
-    let extractor_config = ExtractorConfig {
-        script_name: "simple_table.pl",
-        output_file: None,
-        hash_args: hash_names_with_percent,
-    };
-    
-    run_extractor(config, extract_dir, extractor_config)
-}
-
-fn setup_perl_environment(cmd: &mut Command) {
-    let perl5lib = format!(
-        "{}:{}",
-        std::env::var("HOME").unwrap_or_default() + "/perl5/lib/perl5",
-        "../lib:../../third-party/exiftool/lib"
-    );
-    cmd.env("PERL5LIB", perl5lib);
-}
-
-/// Common extraction function that handles all extractor types
-fn run_extractor(config: &ModuleConfig, extract_dir: &Path, extractor_config: ExtractorConfig) -> Result<()> {
-    let source_path_for_perl = format!("{}/{}", REPO_ROOT_FROM_EXTRACT, config.source_path);
-    
-    let mut cmd = Command::new("perl");
-    cmd.arg(format!("{}/extractors/{}", CODEGEN_FROM_EXTRACT, extractor_config.script_name))
-       .arg(&source_path_for_perl)
-       .args(&extractor_config.hash_args)
-       .current_dir(extract_dir);
-    
-    setup_perl_environment(&mut cmd);
-    
-    println!("    Running: perl {} {} {}", 
-        extractor_config.script_name,
-        source_path_for_perl, 
-        extractor_config.hash_args.join(" ")
-    );
-    
-    // Redirect output to file if specified
-    if let Some(output_file) = extractor_config.output_file {
-        let output_path = extract_dir.join(output_file);
-        cmd.stdout(fs::File::create(&output_path)?);
-    }
-    
-    execute_extraction_command(cmd, &config.module_name, extractor_config.script_name)?;
-    
-    if let Some(output_file) = extractor_config.output_file {
-        println!("    Created {}", output_file);
-    }
-    
-    Ok(())
-}
-
-fn execute_extraction_command(mut cmd: Command, module_name: &str, script_name: &str) -> Result<()> {
-    let output = cmd.output()
-        .with_context(|| format!("Failed to execute {} for {}", script_name, module_name))?;
-    
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        return Err(anyhow::anyhow!("{} failed for {}: {}", script_name, module_name, stderr));
-    }
-    
-    // Print any output from the script
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    
-    if !stderr.is_empty() {
-        print!("{}", stderr);
-    }
-    if !stdout.is_empty() {
-        print!("{}", stdout);
-    }
-    
-    Ok(())
-}
-
-
-fn needs_special_extractor_by_name(config_name: &str) -> Option<SpecialExtractor> {
-    match config_name {
-        "file_type_lookup" => Some(SpecialExtractor::FileTypeLookup),
-        "regex_patterns" => Some(SpecialExtractor::RegexPatterns),
-        "boolean_set" => Some(SpecialExtractor::BooleanSet),
-        "inline_printconv" => Some(SpecialExtractor::InlinePrintConv),
-        "tag_definitions" => Some(SpecialExtractor::TagDefinitions),
-        "composite_tags" => Some(SpecialExtractor::CompositeTags),
-        "tag_table_structure" => Some(SpecialExtractor::TagTableStructure),
-        "process_binary_data" => Some(SpecialExtractor::ProcessBinaryData),
-        "model_detection" => Some(SpecialExtractor::ModelDetection),
-        "conditional_tags" => Some(SpecialExtractor::ConditionalTags),
-        "runtime_table" => Some(SpecialExtractor::RuntimeTable),
-        "tag_kit" => Some(SpecialExtractor::TagKit),
-        _ => None,
-    }
-}
-
-fn run_file_type_lookup_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
-    let extract_dir = &extract_dirs.file_types;
-    let extractor_config = ExtractorConfig {
-        script_name: "file_type_lookup.pl",
-        output_file: Some("file_type_lookup.json"),
-        hash_args: vec!["%fileTypeLookup".to_string()],
-    };
-    
-    run_extractor(config, extract_dir, extractor_config)
-}
-
-fn run_regex_patterns_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
-    let extract_dir = &extract_dirs.file_types;
-    // Get hash names from config, adding % prefix as needed
-    let hash_names_with_percent: Vec<String> = config.hash_names.iter()
-        .map(|name| format!("%{}", name))
-        .collect();
-    
-    if hash_names_with_percent.is_empty() {
-        return Err(anyhow::anyhow!("No hash names specified in regex_patterns config"));
-    }
-    
-    let extractor_config = ExtractorConfig {
-        script_name: "regex_patterns.pl",
-        output_file: Some("regex_patterns.json"),
-        hash_args: vec![hash_names_with_percent[0].clone()], // regex_patterns.pl expects single hash name
-    };
-    
-    run_extractor(config, extract_dir, extractor_config)
-}
-
-fn run_boolean_set_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
-    let extract_dir = &extract_dirs.boolean_sets;
-    // Extract each boolean set separately since they need individual output files
-    for hash_name in &config.hash_names {
-        let hash_name_with_percent = format!("%{}", hash_name);
-        let output_file = format!("boolean_set_{}.json", hash_name);
-        
-        let extractor_config = ExtractorConfig {
-            script_name: "boolean_set.pl",
-            output_file: Some(&output_file),
-            hash_args: vec![hash_name_with_percent],
-        };
-        
-        run_extractor(config, extract_dir, extractor_config)?;
-    }
-    
-    Ok(())
-}
-
-fn run_inline_printconv_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
-    let extract_dir = &extract_dirs.inline_printconv;
-    // For inline PrintConv, we need to pass table names from the config
-    // The config should specify which tables to extract from
-    let tables = config.hash_names.clone(); // These are actually table names for inline_printconv
-    
-    if tables.is_empty() {
-        return Err(anyhow::anyhow!("No tables specified in inline_printconv config"));
-    }
-    
-    // Extract each table's inline PrintConv definitions
-    for table_name in &tables {
-        let extractor_config = ExtractorConfig {
-            script_name: "inline_printconv.pl",
-            output_file: None, // Output file will be created by the script
-            hash_args: vec![table_name.clone()],
-        };
-        
-        run_extractor(config, extract_dir, extractor_config)?;
-    }
-    
-    Ok(())
-}
-
-
-fn run_tag_definitions_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
-    let extract_dir = &extract_dirs.tag_definitions;
-    // Read the config file to get filter settings
-    let config_path = format!("config/{}_pm/tag_definitions.json", 
-        config.source_path.split('/').last()
-            .and_then(|name| name.strip_suffix(".pm"))
-            .unwrap_or("Unknown"));
-    
-    let config_content = std::fs::read_to_string(&config_path)
-        .with_context(|| format!("Failed to read config file: {}", config_path))?;
-    let config_json: serde_json::Value = serde_json::from_str(&config_content)
-        .with_context(|| format!("Failed to parse config file: {}", config_path))?;
-    
-    // Extract filter settings
-    let mut args = vec![];
-    if let Some(filters) = config_json.get("filters").and_then(|f| f.as_object()) {
-        if let Some(threshold) = filters.get("frequency_threshold").and_then(|t| t.as_f64()) {
-            args.push("--frequency-threshold".to_string());
-            args.push(threshold.to_string());
-        }
-        if let Some(true) = filters.get("include_mainstream").and_then(|m| m.as_bool()) {
-            args.push("--include-mainstream".to_string());
-        }
-        if let Some(groups) = filters.get("groups").and_then(|g| g.as_array()) {
-            let group_strs: Vec<String> = groups.iter()
-                .filter_map(|g| g.as_str())
-                .map(|s| s.to_string())
-                .collect();
-            if !group_strs.is_empty() {
-                args.push("--groups".to_string());
-                args.push(group_strs.join(","));
-            }
-        }
-    }
-    
-    // Generate output filename
-    let table_name = &config.hash_names[0]; // table name is stored in hash_names for these configs
-    let module_name = config.source_path.split('/').last()
-        .and_then(|name| name.strip_suffix(".pm"))
-        .unwrap_or("unknown");
-    let output_file = format!("{}_tag_definitions.json", module_name.to_lowercase());
-    
-    let extractor_config = ExtractorConfig {
-        script_name: "tag_definitions.pl",
-        output_file: Some(&output_file),
-        hash_args: vec![table_name.clone()],
-    };
-    
-    let mut final_args = extractor_config.hash_args.clone();
-    final_args.extend(args);
-    
-    let modified_config = ExtractorConfig {
-        hash_args: final_args,
-        ..extractor_config
-    };
-    
-    run_extractor(config, extract_dir, modified_config)
-}
-
-fn run_composite_tags_extractor_new(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
-    let extract_dir = &extract_dirs.composite_tags;
-    // Read the config file to get filter settings
-    let config_path = format!("config/{}_pm/composite_tags.json", 
-        config.source_path.split('/').last()
-            .and_then(|name| name.strip_suffix(".pm"))
-            .unwrap_or("Unknown"));
-    
-    let config_content = std::fs::read_to_string(&config_path)
-        .with_context(|| format!("Failed to read config file: {}", config_path))?;
-    let config_json: serde_json::Value = serde_json::from_str(&config_content)
-        .with_context(|| format!("Failed to parse config file: {}", config_path))?;
-    
-    // Extract filter settings
-    let mut args = vec![];
-    if let Some(filters) = config_json.get("filters").and_then(|f| f.as_object()) {
-        if let Some(threshold) = filters.get("frequency_threshold").and_then(|t| t.as_f64()) {
-            args.push("--frequency-threshold".to_string());
-            args.push(threshold.to_string());
-        }
-        if let Some(true) = filters.get("include_mainstream").and_then(|m| m.as_bool()) {
-            args.push("--include-mainstream".to_string());
-        }
-    }
-    
-    // Generate output filename
-    let table_name = &config.hash_names[0]; // table name is stored in hash_names for these configs
-    let module_name = config.source_path.split('/').last()
-        .and_then(|name| name.strip_suffix(".pm"))
-        .unwrap_or("unknown");
-    let output_file = format!("{}_composite_tags.json", module_name.to_lowercase());
-    
-    let extractor_config = ExtractorConfig {
-        script_name: "composite_tags.pl",
-        output_file: Some(&output_file),
-        hash_args: vec![table_name.clone()],
-    };
-    
-    let mut final_args = extractor_config.hash_args.clone();
-    final_args.extend(args);
-    
-    let modified_config = ExtractorConfig {
-        hash_args: final_args,
-        ..extractor_config
-    };
-    
-    run_extractor(config, extract_dir, modified_config)
-}
-
-fn run_tag_table_structure_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
-    let extract_dir = &extract_dirs.tag_structures;
-    // For tag table structure, we need to pass the table name
-    // The config should have the table name stored in hash_names
-    let table_name = config.hash_names.get(0)
-        .ok_or_else(|| anyhow::anyhow!("No table name specified in tag_table_structure config"))?;
-    
-    // Generate output filename based on module and table
-    let module_name = config.source_path.split('/').last()
-        .and_then(|name| name.strip_suffix(".pm"))
-        .unwrap_or("unknown");
-    let output_file = format!("{}_tag_structure.json", module_name.to_lowercase());
-    
-    let extractor_config = ExtractorConfig {
-        script_name: "tag_table_structure.pl",
-        output_file: Some(&output_file),
-        hash_args: vec![table_name.clone()],
-    };
-    
-    run_extractor(config, extract_dir, extractor_config)
-}
-
-fn run_process_binary_data_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
-    let extract_dir = &extract_dirs.binary_data;
-    // For ProcessBinaryData, we need to pass the table name
-    // The config should have the table name stored in hash_names
-    let table_name = config.hash_names.get(0)
-        .ok_or_else(|| anyhow::anyhow!("No table name specified in process_binary_data config"))?;
-    
-    // Generate output filename based on module and table
-    let module_name = config.source_path.split('/').last()
-        .and_then(|name| name.strip_suffix(".pm"))
-        .unwrap_or("unknown");
-    let output_file = format!("{}_binary_data.json", module_name.to_lowercase());
-    
-    let extractor_config = ExtractorConfig {
-        script_name: "process_binary_data.pl",
-        output_file: Some(&output_file),
-        hash_args: vec![table_name.clone()],
-    };
-    
-    run_extractor(config, extract_dir, extractor_config)
-}
-
-fn run_model_detection_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
-    let extract_dir = &extract_dirs.model_detection;
-    // For ModelDetection, we need to pass the table name
-    // The config should have the table name stored in hash_names
-    let table_name = config.hash_names.get(0)
-        .ok_or_else(|| anyhow::anyhow!("No table name specified in model_detection config"))?;
-    
-    // Generate output filename based on module and table
-    let module_name = config.source_path.split('/').last()
-        .and_then(|name| name.strip_suffix(".pm"))
-        .unwrap_or("unknown");
-    let output_file = format!("{}_model_detection.json", module_name.to_lowercase());
-    
-    let extractor_config = ExtractorConfig {
-        script_name: "model_detection.pl",
-        output_file: Some(&output_file),
-        hash_args: vec![table_name.clone()],
-    };
-    
-    run_extractor(config, extract_dir, extractor_config)
-}
-
-fn run_conditional_tags_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
-    let extract_dir = &extract_dirs.conditional_tags;
-    // For ConditionalTags, we need to pass the table name
-    // The config should have the table name stored in hash_names
-    let table_name = config.hash_names.get(0)
-        .ok_or_else(|| anyhow::anyhow!("No table name specified in conditional_tags config"))?;
-    
-    // Generate output filename based on module and table
-    let module_name = config.source_path.split('/').last()
-        .and_then(|name| name.strip_suffix(".pm"))
-        .unwrap_or("unknown");
-    let output_file = format!("{}_conditional_tags.json", module_name.to_lowercase());
-    
-    let extractor_config = ExtractorConfig {
-        script_name: "conditional_tags.pl",
-        output_file: Some(&output_file),
-        hash_args: vec![table_name.clone()],
-    };
-    
-    run_extractor(config, extract_dir, extractor_config)
-}
-
-fn run_tag_kit_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
-    let extract_dir = &extract_dirs.tag_kits;
-    // For TagKit, we need to pass the table name
-    // The config should have the table name stored in hash_names
-    let table_name = config.hash_names.get(0)
-        .ok_or_else(|| anyhow::anyhow!("No table name specified in tag_kit config"))?;
-    
-    // Generate output filename based on module and table
-    let module_name = config.source_path.split('/').last()
-        .and_then(|name| name.strip_suffix(".pm"))
-        .unwrap_or("unknown");
-    let output_file = format!("{}_tag_kit_{}.json", module_name.to_lowercase(), table_name.to_lowercase());
-    
-    let extractor_config = ExtractorConfig {
-        script_name: "tag_kit.pl",
-        output_file: Some(&output_file),
-        hash_args: vec![table_name.clone()],
-    };
-    
-    run_extractor(config, extract_dir, extractor_config)
-}
-
-fn run_runtime_table_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
-    let extract_dir = &extract_dirs.runtime_tables;
-    // For RuntimeTable, we need to pass each table name individually
-    // The config has the table names stored in hash_names (already trimmed of % prefix)
-    
-    let module_name = config.source_path.split('/').last()
-        .and_then(|name| name.strip_suffix(".pm"))
-        .unwrap_or("unknown");
-    
-    // Process each table separately since each table generates its own JSON
-    for table_name in &config.hash_names {
-        let output_file = format!("{}_runtime_table_{}.json", module_name.to_lowercase(), table_name.to_lowercase());
-        
-        let extractor_config = ExtractorConfig {
-            script_name: "runtime_table.pl",
-            output_file: Some(&output_file),
-            hash_args: vec![table_name.clone()],
-        };
-        
-        println!("    Extracting runtime table: {} from {}", table_name, module_name);
-        run_extractor(config, extract_dir, extractor_config)?;
-    }
+    // Execute the extraction
+    extractor.extract(config, extract_base, &module_path)?;
     
     Ok(())
 }
