@@ -78,7 +78,8 @@
       "Bash(/dev/null)",
       "Bash(__NEW_LINE__ echo -e \"\\nexif-oxide (optimized) on all test images:\")",
       "Bash(RUST_LOG=debug cargo run --bin exif-oxide -- test-images/sony/sony_a7c_ii_02.arv)",
-      "Bash(RUST_LOG=debug cargo run --bin exif-oxide -- test-images/sony/sony_a7c_ii_02.arw)"
+      "Bash(RUST_LOG=debug cargo run --bin exif-oxide -- test-images/sony/sony_a7c_ii_02.arw)",
+      "Bash(target/debug/compare-with-exiftool:*)"
     ],
     "deny": []
   }

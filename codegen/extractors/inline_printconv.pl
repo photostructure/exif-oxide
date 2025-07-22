@@ -5,6 +5,12 @@
 #
 # Description:  Extract inline PrintConv tables from ExifTool tag definitions
 #
+# ⚠️ DEPRECATED: Use tag_kit.pl instead for complete tag extraction with PrintConvs
+#
+# This extractor is being replaced by the tag kit system which provides complete
+# tag definitions including PrintConv data in a single unified structure.
+# See EXTRACTOR-GUIDE.md for more information.
+#
 # Usage:        perl inline_printconv.pl <module_path> <table_name>
 #
 # Example:      perl inline_printconv.pl ../third-party/exiftool/lib/Image/ExifTool/Canon.pm CameraSettings

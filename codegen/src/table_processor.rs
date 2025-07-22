@@ -124,7 +124,7 @@ pub fn process_tag_tables(
 
 /// Process tag tables from modular extracted files
 /// 
-/// This function scans the extract directory for tag definition and composite tag files
+/// This function scans the type-specific directories for tag definition and composite tag files
 /// organized by source module (e.g., exif_tag_definitions.json, gps_composite_tags.json)
 /// and generates the unified tag table code.
 pub fn process_tag_tables_modular(extract_dir: &Path, output_dir: &str) -> Result<()> {
@@ -135,46 +135,47 @@ pub fn process_tag_tables_modular(extract_dir: &Path, output_dir: &str) -> Resul
         value_conv: Vec::new(),
     };
 
-    // Scan for tag definition files
-    let tag_def_pattern = [
-        "exif_tag_definitions.json",
-        "gps_tag_definitions.json",
-    ];
-    
-    for pattern in &tag_def_pattern {
-        let file_path = extract_dir.join(pattern);
-        if file_path.exists() {
-            println!("  📊 Processing {}", pattern);
-            let json_data = read_utf8_with_fallback(&file_path)?;
+    // Scan for tag definition files in the tag_definitions directory
+    let tag_defs_dir = extract_dir.join("tag_definitions");
+    if tag_defs_dir.exists() {
+        for entry in fs::read_dir(&tag_defs_dir)? {
+            let entry = entry?;
+            let file_path = entry.path();
             
-            // Parse the modular tag definition format
-            let tag_data: serde_json::Value = serde_json::from_str(&json_data)
-                .with_context(|| format!("Failed to parse {}", pattern))?;
-            
-            // Extract tags from the modular format
-            if let Some(tags) = tag_data["tags"].as_array() {
-                for tag_val in tags {
-                    let tag = extract_tag_from_json(tag_val)?;
-                    all_tags.push(tag);
+            if file_path.extension().and_then(|s| s.to_str()) == Some("json") {
+                let filename = file_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+                println!("  📊 Processing {}", filename);
+                let json_data = read_utf8_with_fallback(&file_path)?;
+                
+                // Parse the modular tag definition format
+                let tag_data: serde_json::Value = serde_json::from_str(&json_data)
+                    .with_context(|| format!("Failed to parse {}", filename))?;
+                
+                // Extract tags from the modular format
+                if let Some(tags) = tag_data["tags"].as_array() {
+                    for tag_val in tags {
+                        let tag = extract_tag_from_json(tag_val)?;
+                        all_tags.push(tag);
+                    }
                 }
-            }
-            
-            // Collect conversion references
-            if let Some(conv_refs) = tag_data["conversion_refs"].as_object() {
-                if let Some(print_conv) = conv_refs["print_conv"].as_array() {
-                    for pc in print_conv {
-                        if let Some(pc_str) = pc.as_str() {
-                            if !all_conversion_refs.print_conv.contains(&pc_str.to_string()) {
-                                all_conversion_refs.print_conv.push(pc_str.to_string());
+                
+                // Collect conversion references
+                if let Some(conv_refs) = tag_data["conversion_refs"].as_object() {
+                    if let Some(print_conv) = conv_refs["print_conv"].as_array() {
+                        for pc in print_conv {
+                            if let Some(pc_str) = pc.as_str() {
+                                if !all_conversion_refs.print_conv.contains(&pc_str.to_string()) {
+                                    all_conversion_refs.print_conv.push(pc_str.to_string());
+                                }
                             }
                         }
                     }
-                }
-                if let Some(value_conv) = conv_refs["value_conv"].as_array() {
-                    for vc in value_conv {
-                        if let Some(vc_str) = vc.as_str() {
-                            if !all_conversion_refs.value_conv.contains(&vc_str.to_string()) {
-                                all_conversion_refs.value_conv.push(vc_str.to_string());
+                    if let Some(value_conv) = conv_refs["value_conv"].as_array() {
+                        for vc in value_conv {
+                            if let Some(vc_str) = vc.as_str() {
+                                if !all_conversion_refs.value_conv.contains(&vc_str.to_string()) {
+                                    all_conversion_refs.value_conv.push(vc_str.to_string());
+                                }
                             }
                         }
                     }
@@ -183,47 +184,47 @@ pub fn process_tag_tables_modular(extract_dir: &Path, output_dir: &str) -> Resul
         }
     }
 
-    // Scan for composite tag files
-    let composite_patterns = [
-        "exiftool_composite_tags.json",
-        "exif_composite_tags.json",
-        "gps_composite_tags.json",
-    ];
-    
-    for pattern in &composite_patterns {
-        let file_path = extract_dir.join(pattern);
-        if file_path.exists() {
-            println!("  🔗 Processing {}", pattern);
-            let json_data = read_utf8_with_fallback(&file_path)?;
+    // Scan for composite tag files in the composite_tags directory
+    let composite_tags_dir = extract_dir.join("composite_tags");
+    if composite_tags_dir.exists() {
+        for entry in fs::read_dir(&composite_tags_dir)? {
+            let entry = entry?;
+            let file_path = entry.path();
             
-            // Parse the modular composite tag format
-            let composite_data: serde_json::Value = serde_json::from_str(&json_data)
-                .with_context(|| format!("Failed to parse {}", pattern))?;
-            
-            // Extract composite tags from the modular format
-            if let Some(composites) = composite_data["composite_tags"].as_array() {
-                for comp_val in composites {
-                    let composite = extract_composite_from_json(comp_val)?;
-                    all_composites.push(composite);
+            if file_path.extension().and_then(|s| s.to_str()) == Some("json") {
+                let filename = file_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+                println!("  🔗 Processing {}", filename);
+                let json_data = read_utf8_with_fallback(&file_path)?;
+                
+                // Parse the modular composite tag format
+                let composite_data: serde_json::Value = serde_json::from_str(&json_data)
+                    .with_context(|| format!("Failed to parse {}", filename))?;
+                
+                // Extract composite tags from the modular format
+                if let Some(composites) = composite_data["composite_tags"].as_array() {
+                    for comp_val in composites {
+                        let composite = extract_composite_from_json(comp_val)?;
+                        all_composites.push(composite);
+                    }
                 }
-            }
-            
-            // Collect conversion references from composite tags too
-            if let Some(conv_refs) = composite_data["conversion_refs"].as_object() {
-                if let Some(print_conv) = conv_refs["print_conv"].as_array() {
-                    for pc in print_conv {
-                        if let Some(pc_str) = pc.as_str() {
-                            if !all_conversion_refs.print_conv.contains(&pc_str.to_string()) {
-                                all_conversion_refs.print_conv.push(pc_str.to_string());
+                
+                // Collect conversion references from composite tags too
+                if let Some(conv_refs) = composite_data["conversion_refs"].as_object() {
+                    if let Some(print_conv) = conv_refs["print_conv"].as_array() {
+                        for pc in print_conv {
+                            if let Some(pc_str) = pc.as_str() {
+                                if !all_conversion_refs.print_conv.contains(&pc_str.to_string()) {
+                                    all_conversion_refs.print_conv.push(pc_str.to_string());
+                                }
                             }
                         }
                     }
-                }
-                if let Some(value_conv) = conv_refs["value_conv"].as_array() {
-                    for vc in value_conv {
-                        if let Some(vc_str) = vc.as_str() {
-                            if !all_conversion_refs.value_conv.contains(&vc_str.to_string()) {
-                                all_conversion_refs.value_conv.push(vc_str.to_string());
+                    if let Some(value_conv) = conv_refs["value_conv"].as_array() {
+                        for vc in value_conv {
+                            if let Some(vc_str) = vc.as_str() {
+                                if !all_conversion_refs.value_conv.contains(&vc_str.to_string()) {
+                                    all_conversion_refs.value_conv.push(vc_str.to_string());
+                                }
                             }
                         }
                     }

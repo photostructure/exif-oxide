@@ -219,6 +219,8 @@ Major sections requiring binary data extraction:
 - Robust ProcessBinaryData framework (exists) ✓
 - Runtime table extraction capability (needs enhancement for Nikon)
 - Test images from multiple Nikon models with known metadata
+- **Tag Kit Migration**: Complete [tag kit migration and retrofit](20250122-tag-kit-migration-and-retrofit.md) for Nikon module
+  - Currently no Nikon inline_printconv config exists, but when adding PrintConvs, use tag kit system
 
 ## Testing Strategy
 

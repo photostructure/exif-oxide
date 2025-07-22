@@ -4,21 +4,18 @@ Please create or update a Technical Project Plan that will allow a new engineer 
 
 These are also referred to as "technical design", "milestone", or "handoff" documents.
 
+## File location
+
 The doc should live in `${projectRoot}/docs/todo/${YYYYMMDD}-${short kebob-cased descriptive name}.md`
 
-Be respectful of the next engineer's time:
+## Goals
 
-- keep each section actionable and focused
-- aim for bullet points or short paragraphs rather than lengthy prose
-- avoid duplication between sections
-- and aim for less than 500 lines.
+- An excellent technical project plan provides the context necessary for a new engineer to be successful at the tasks described.
+- Each section described below should only be included if you think it will help the engineer succeed. If the section doesn't apply, skip it.
+- If there is content that you wanted to share with the implementation team and it doesn't fit into any of these sections, add a new section with an appropriate header.
+- Be respectful of the next engineer's time: keep each section actionable and focused. Link to relevant external docs and source. Aim for bullet points or short paragraphs rather than lengthy prose. Avoid duplication between sections. Aim for less than 500 lines total -- if it takes more than that, consider splitting the task into separate TPPs.
 
 ## Document structure
-
-This is general guidance
-
-- if a section doesn't apply, omit it
-- if there is content that doesn't fit in any of these sections, add a new section!
 
 ### Project Overview
 

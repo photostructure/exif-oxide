@@ -330,6 +330,89 @@ The system supports three extraction patterns:
 - **Binary Safety**: Proper handling of non-UTF-8 bytes in patterns
 - **Minimal Dependencies**: Uses std::sync::LazyLock, no external crates for core functionality
 
+### Extractor Selection Guide
+
+The codegen system includes multiple specialized extractors, each serving a specific purpose. Following the "one-trick pony" principle, each extractor excels at one type of extraction.
+
+#### Tag-Related Extractors
+
+**Primary Extractor (Use This)**:
+- **`tag_kit.pl`** - Extracts complete tag definitions with embedded PrintConv implementations
+  - Purpose: Create self-contained "tag kits" with everything needed to process a tag
+  - Target: Any ExifTool tag table (EXIF, GPS, manufacturer-specific)
+  - Output: Tag ID, name, format, groups, AND PrintConv data together
+  - Benefit: Eliminates tag ID/PrintConv mismatch bugs
+
+**Deprecated Extractors (Being Replaced by Tag Kit)**:
+- **`inline_printconv.pl`** - ⚠️ DEPRECATED - Extracts PrintConv hashes from tag definitions
+  - Being replaced: Tag kit extracts the same data as part of complete bundles
+- **`tag_tables.pl`** - ⚠️ DEPRECATED - Hardcoded to extract only EXIF/GPS tags
+  - Being replaced: Tag kit is config-driven and works with any module
+- **`tag_definitions.pl`** - ⚠️ DEPRECATED - Extracts tags with frequency filtering
+  - Being replaced: Tag kit provides complete bundles instead of function references
+
+#### Lookup Table Extractors
+
+- **`simple_table.pl`** - Extracts standalone key-value lookup tables
+  - Purpose: Static lookups not associated with specific tags
+  - Example: Canon white balance names, Nikon lens IDs
+  - When to use: Manufacturer-specific lookup tables referenced by multiple tags
+
+- **`boolean_set.pl`** - Extracts boolean membership sets
+  - Purpose: Fast membership testing (hash keys mapping to 1)
+  - Example: `if ($isDatChunk{$chunk})`
+  - When to use: ExifTool sets used for existence checks
+
+#### Binary Data Extractors
+
+- **`process_binary_data.pl`** - Extracts ProcessBinaryData table structures
+  - Purpose: Binary data parsing table definitions
+  - Target: Tables with `%binaryDataAttrs`
+  - Output: Offset, format, and tag information for binary parsing
+
+- **`runtime_table.pl`** - Generates runtime HashMap creation code
+  - Purpose: Tables requiring runtime context (camera model, firmware)
+  - Target: ProcessBinaryData tables with conditional logic
+  - Output: Functions that create HashMaps at runtime
+
+#### Specialized Extractors
+
+- **`composite_tags.pl`** - Extracts composite tag definitions
+  - Purpose: Tags calculated from other tags
+  - Features: Dependencies, expressions, requirements
+
+- **`conditional_tags.pl`** - Extracts complex conditional tag arrays
+  - Purpose: Model/firmware-specific tag variations
+  - Features: Condition parsing, count/format detection
+
+- **`file_type_lookup.pl`** - Extracts file type detection structures
+  - Purpose: File format identification
+  - Output: Discriminated unions with aliases
+
+- **`regex_patterns.pl`** - Extracts magic number patterns
+  - Purpose: Binary file signature detection
+  - Features: Non-UTF-8 byte handling
+
+- **`model_detection.pl`** - Extracts camera model patterns
+  - Purpose: Model-specific behavior detection
+
+- **`offset_patterns.pl`** - Extracts offset calculation patterns
+  - Purpose: Sony-specific complex offset schemes
+
+- **`tag_table_structure.pl`** - Extracts manufacturer table structures
+  - Purpose: Generate Rust enums for manufacturer tables
+
+#### Quick Decision Guide
+
+1. **Extracting tags with their PrintConvs?** → Use `tag_kit.pl`
+2. **Extracting standalone lookup tables?** → Use `simple_table.pl`
+3. **Extracting binary data structures?** → Use `process_binary_data.pl`
+4. **Need runtime HashMap creation?** → Use `runtime_table.pl`
+5. **Extracting boolean sets?** → Use `boolean_set.pl`
+6. **Extracting composite tags?** → Use `composite_tags.pl`
+
+For detailed extractor comparisons and examples, see [EXTRACTOR-GUIDE.md](../reference/EXTRACTOR-GUIDE.md).
+
 ### Non-UTF-8 Data Handling
 
 The code generation system properly handles non-UTF-8 bytes found in ExifTool's binary patterns:

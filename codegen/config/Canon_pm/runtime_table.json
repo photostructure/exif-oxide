@@ -1,0 +1,16 @@
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
+  "description": "Canon ProcessBinaryData tables requiring runtime evaluation",
+  "tables": [
+    {
+      "table_name": "%CameraSettings",
+      "function_name": "create_canon_camera_settings_table",
+      "processing_mode": "runtime_conditions",
+      "format_handling": "dynamic",
+      "model_conditions": true,
+      "data_member_deps": false,
+      "complex_printconv": true,
+      "description": "Canon camera settings binary data table with model-specific conditional logic"
+    }
+  ]
+}
