@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Runtime Table Configuration",
+  "description": "Configuration for runtime-evaluated ProcessBinaryData table extraction",
+  "type": "object",
+  "properties": {
+    "source": {
+      "type": "string",
+      "description": "Path to ExifTool source file (relative to repository root, e.g., 'third-party/exiftool/lib/Image/ExifTool/Canon.pm')"
+    },
+    "description": {
+      "type": "string",
+      "description": "Overview of what these runtime tables contain"
+    },
+    "tables": {
+      "type": "array",
+      "description": "List of ProcessBinaryData tables to extract",
+      "items": {
+        "type": "object",
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "pattern": "^%\\w+$",
+            "description": "ExifTool ProcessBinaryData table name (e.g., %Image::ExifTool::Canon::CameraSettings)"
+          },
+          "function_name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "description": "Generated Rust function name (e.g., create_canon_camera_settings_table)"
+          },
+          "processing_mode": {
+            "type": "string",
+            "enum": ["runtime_conditions", "static_fallback", "hybrid"],
+            "default": "runtime_conditions",
+            "description": "How to handle conditional logic and runtime dependencies"
+          },
+          "format_handling": {
+            "type": "string", 
+            "enum": ["dynamic", "static", "inferred"],
+            "default": "dynamic",
+            "description": "How to handle variable format specifications"
+          },
+          "model_conditions": {
+            "type": "boolean",
+            "default": true,
+            "description": "Extract model-specific conditional logic from Condition fields"
+          },
+          "data_member_deps": {
+            "type": "boolean", 
+            "default": true,
+            "description": "Extract DataMember dependencies for variable-length processing"
+          },
+          "complex_printconv": {
+            "type": "boolean",
+            "default": true,
+            "description": "Extract complex PrintConv expressions (not just simple hash lookups)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Documentation for this specific table"
+          }
+        },
+        "required": ["table_name", "function_name"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["source", "tables"],
+  "additionalProperties": false
+}

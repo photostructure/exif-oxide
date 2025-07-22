@@ -185,3 +185,112 @@ pub struct TableEntry {
     #[serde(default)]
     pub description: Option<String>,
 }
+
+/// JSON structure from runtime_table.pl
+#[derive(Debug, Deserialize)]
+pub struct RuntimeTablesData {
+    pub source: TableSource,
+    pub extracted_at: String,
+    pub extraction_config: String,
+    pub tables: HashMap<String, ExtractedRuntimeTable>,
+}
+
+/// Extracted runtime table data from runtime_table.pl
+#[derive(Debug, Clone, Deserialize)]
+pub struct ExtractedRuntimeTable {
+    pub metadata: RuntimeTableMetadata,
+    pub table_structure: ProcessBinaryDataStructure,
+    pub tag_definitions: HashMap<String, RuntimeTagDefinition>,
+}
+
+/// Runtime table metadata
+#[derive(Debug, Clone, Deserialize)]
+pub struct RuntimeTableMetadata {
+    pub function_name: String,
+    pub table_name: String,
+    pub processing_mode: String,
+    pub format_handling: String,
+    pub has_model_conditions: bool,
+    pub has_data_member_deps: bool,
+    pub has_complex_printconv: bool,
+    pub description: String,
+}
+
+/// ProcessBinaryData table structure
+#[derive(Debug, Clone, Deserialize)]
+pub struct ProcessBinaryDataStructure {
+    pub format: Option<String>,
+    pub first_entry: Option<u32>,
+    pub groups: Option<Value>,
+    pub data_member: Option<Vec<u32>>,
+    pub writable: Option<bool>,
+}
+
+/// Runtime tag definition with conditional logic
+#[derive(Debug, Clone, Deserialize)]
+pub struct RuntimeTagDefinition {
+    pub name: String,
+    pub offset: String,  // Can be numeric or fractional like "1.5"
+    pub format: Option<FormatSpec>,
+    pub condition: Option<ConditionSpec>,
+    pub print_conv: Option<PrintConvSpec>,
+    pub value_conv: Option<ValueConvSpec>,
+    pub groups: Option<Value>,
+    pub notes: Option<String>,
+}
+
+/// Format specification for binary data
+#[derive(Debug, Clone, Deserialize)]
+pub struct FormatSpec {
+    pub base_type: String,  // int16u, int8s, string, etc.
+    pub array_size: Option<String>,  // "$val{0}", "int(($val{0}+15)/16)"
+    pub is_variable: bool,
+}
+
+/// Condition specification for model-dependent tags
+#[derive(Debug, Clone, Deserialize)]
+pub struct ConditionSpec {
+    pub expression: String,  // "$$self{Model} =~ /EOS/"
+    pub condition_type: ConditionType,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ConditionType {
+    ModelRegex,
+    ModelExact, 
+    ValueComparison,
+    Expression,
+}
+
+/// PrintConv specification for value formatting
+#[derive(Debug, Clone, Deserialize)]
+pub struct PrintConvSpec {
+    pub conversion_type: PrintConvType,
+    pub data: Value,  // Can be hash table, expression string, or function reference
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum PrintConvType {
+    SimpleHash,        // { 0 => "Off", 1 => "On" }
+    PerlExpression,    // q{ return ... }
+    FunctionRef,       // \&SomeFunction
+    BitwiseOperation,  // Complex bitwise formatting
+}
+
+/// ValueConv specification for value conversion
+#[derive(Debug, Clone, Deserialize)]
+pub struct ValueConvSpec {
+    pub conversion_type: ValueConvType,
+    pub expression: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ValueConvType {
+    Mathematical,  // exp($val/32*log(2))*100
+    Division,      // $val / ($$self{FocalUnits} || 1)
+    FunctionCall,  // Image::ExifTool::Canon::CameraISO($val)
+    Conditional,   // $val == 0x7fff ? undef : $val
+}

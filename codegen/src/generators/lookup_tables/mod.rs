@@ -7,6 +7,7 @@
 
 pub mod standard;
 pub mod inline_printconv;
+pub mod runtime;
 
 use anyhow::Result;
 use std::collections::HashMap;
@@ -16,6 +17,19 @@ use crate::schemas::{ExtractedTable, input::TableConfig};
 use crate::generators::data_sets;
 use crate::common::utils::{module_to_source_path, module_dir_to_source_path};
 use tracing::{debug, info};
+
+/// Get the extract subdirectory for a given config type
+fn get_extract_subdir(config_type: &str) -> &'static str {
+    match config_type {
+        "tag_table_structure" => "tag_structures",
+        "process_binary_data" => "binary_data",
+        "model_detection" => "model_detection",
+        "conditional_tags" => "conditional_tags",
+        "runtime_table" => "runtime_tables",
+        "inline_printconv" => "inline_printconv",
+        _ => "simple_tables",
+    }
+}
 
 /// Process configuration files from a directory and generate modular structure
 pub fn process_config_directory(
@@ -129,7 +143,7 @@ pub fn process_config_directory(
             // Extract table name from config
             if let Some(table_name) = config_json["table"].as_str() {
                 // Look for the corresponding extracted tag structure JSON file
-                let extract_dir = Path::new("generated/extract");
+                let extract_dir = Path::new("generated/extract").join("tag_structures");
                 let module_base = module_name.trim_end_matches("_pm");
                 let structure_file = format!("{}_{}_tag_structure.json", 
                                              module_base.to_lowercase(), 
@@ -162,7 +176,7 @@ pub fn process_config_directory(
         // Extract table name from config
         if let Some(table_name) = config_json["table"].as_str() {
             // Look for the corresponding extracted binary data JSON file
-            let extract_dir = Path::new("generated/extract");
+            let extract_dir = Path::new("generated/extract").join("binary_data");
             let module_base = module_name.trim_end_matches("_pm");
             let binary_data_file = format!("{}_binary_data.json", module_base.to_lowercase());
             let binary_data_path = extract_dir.join(&binary_data_file);
@@ -192,7 +206,7 @@ pub fn process_config_directory(
         // Extract table name from config
         if let Some(table_name) = config_json["table"].as_str() {
             // Look for the corresponding extracted model detection JSON file
-            let extract_dir = Path::new("generated/extract");
+            let extract_dir = Path::new("generated/extract").join("model_detection");
             let module_base = module_name.trim_end_matches("_pm");
             let model_detection_file = format!("{}_model_detection.json", module_base.to_lowercase());
             let model_detection_path = extract_dir.join(&model_detection_file);
@@ -222,7 +236,7 @@ pub fn process_config_directory(
         // Extract table name from config
         if let Some(table_name) = config_json["table"].as_str() {
             // Look for the corresponding extracted conditional tags JSON file
-            let extract_dir = Path::new("generated/extract");
+            let extract_dir = Path::new("generated/extract").join("conditional_tags");
             let module_base = module_name.trim_end_matches("_pm");
             let conditional_tags_file = format!("{}_conditional_tags.json", module_base.to_lowercase());
             let conditional_tags_path = extract_dir.join(&conditional_tags_file);
@@ -243,6 +257,45 @@ pub fn process_config_directory(
         }
     }
     
+    // Check for runtime_table.json configuration
+    let runtime_table_config = config_dir.join("runtime_table.json");
+    if runtime_table_config.exists() {
+        let config_content = fs::read_to_string(&runtime_table_config)?;
+        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
+        
+        // Extract each table from the tables array
+        if let Some(tables) = config_json["tables"].as_array() {
+            for table_config in tables {
+                if let Some(table_name) = table_config["table_name"].as_str() {
+                    let clean_table_name = table_name.trim_start_matches('%');
+                    
+                    // Look for the corresponding extracted runtime table JSON file
+                    let extract_dir = Path::new("generated/extract").join("runtime_tables");
+                    let module_base = module_name.trim_end_matches("_pm");
+                    let runtime_table_file = format!("{}_runtime_table_{}.json", 
+                                                   module_base.to_lowercase(), 
+                                                   clean_table_name.to_lowercase());
+                    let runtime_table_path = extract_dir.join(&runtime_table_file);
+                    
+                    if runtime_table_path.exists() {
+                        let runtime_table_content = fs::read_to_string(&runtime_table_path)?;
+                        let runtime_table_data: crate::schemas::input::RuntimeTablesData = 
+                            serde_json::from_str(&runtime_table_content)?;
+                        
+                        // Generate file for this RuntimeTable
+                        let file_name = generate_runtime_table_file(
+                            &runtime_table_data,
+                            &module_output_dir,
+                            &table_config
+                        )?;
+                        generated_files.push(file_name);
+                        has_content = true;
+                    }
+                }
+            }
+        }
+    }
+    
     // Check for inline_printconv.json configuration - create individual files
     let inline_printconv_config = config_dir.join("inline_printconv.json");
     if inline_printconv_config.exists() {
@@ -254,7 +307,7 @@ pub fn process_config_directory(
                 let table_name = table_config["table_name"].as_str().unwrap_or("");
                 
                 // Look for the corresponding extracted inline printconv JSON file
-                let extract_dir = Path::new("generated/extract");
+                let extract_dir = Path::new("generated/extract").join("inline_printconv");
                 let inline_file_name = format!("inline_printconv__{}.json", 
                     convert_table_name_to_snake_case(table_name)
                 );
@@ -275,6 +328,16 @@ pub fn process_config_directory(
                     has_content = true;
                 }
             }
+        }
+    }
+    
+    // Check for additional standalone generated files that might exist in the output directory
+    // These are files generated by standalone generators outside the config-based system
+    let additional_files = detect_additional_generated_files(&module_output_dir, module_name)?;
+    for file_name in additional_files {
+        if !generated_files.contains(&file_name) {
+            generated_files.push(file_name);
+            has_content = true;
         }
     }
     
@@ -415,7 +478,11 @@ fn generate_inline_printconv_file(
     content.push_str(&format!("//! Inline PrintConv tables for {} table\n", table_name));
     
     // Convert module filename to relative path for display
-    let module_path = module_to_source_path(&inline_data.source.module);
+    let module_path = if let Some(ref source) = inline_data.source {
+        module_to_source_path(&source.module)
+    } else {
+        "unknown module".to_string()
+    };
     
     content.push_str(&format!("//! \n//! Auto-generated from {} (table: {})\n", module_path, table_name));
     content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
@@ -542,5 +609,89 @@ fn convert_table_name_to_snake_case(table_name: &str) -> String {
     }
     
     result
+}
+
+/// Detect additional generated files that exist in the output directory
+/// These are files created by standalone generators outside the config-based system
+fn detect_additional_generated_files(output_dir: &Path, _module_name: &str) -> Result<Vec<String>> {
+    let mut additional_files = Vec::new();
+    
+    // List of known standalone generated file patterns
+    let standalone_patterns = [
+        "offset_patterns",     // Sony offset patterns
+        "tag_structure",       // Canon/Olympus tag structures
+    ];
+    
+    // Check if the output directory exists
+    if !output_dir.exists() {
+        return Ok(additional_files);
+    }
+    
+    // Collect all .rs files first
+    let entries: Result<Vec<_>, _> = std::fs::read_dir(output_dir)?
+        .collect();
+    let entries = entries?;
+    
+    let rs_files: Vec<String> = entries
+        .iter()
+        .filter_map(|entry| {
+            let path = entry.path();
+            if path.is_file() && path.extension().map_or(false, |ext| ext == "rs") {
+                path.file_stem().and_then(|s| s.to_str()).map(|s| s.to_string())
+            } else {
+                None
+            }
+        })
+        .collect();
+    
+    // Check for potential conflicts in tag_structure files for Olympus
+    let has_conflicting_olympus_structs = rs_files.contains(&"tag_structure".to_string()) && 
+                                         rs_files.contains(&"equipment_tag_structure".to_string());
+    
+    // Now check for standalone patterns
+    for file_stem in &rs_files {
+        for pattern in &standalone_patterns {
+            if file_stem == pattern || file_stem.ends_with(&format!("_{}", pattern)) {
+                // Special case: detect Olympus naming conflicts
+                if file_stem == "tag_structure" && has_conflicting_olympus_structs {
+                    println!("  ⚠ Including tag_structure.rs but detected naming conflict with equipment_tag_structure.rs");
+                    println!("      Both define OlympusDataType enum - this may cause compilation errors");
+                }
+                
+                additional_files.push(file_stem.clone());
+                println!("  ✓ Detected standalone generated file: {}.rs", file_stem);
+                break;
+            }
+        }
+    }
+    
+    // Sort for deterministic output
+    additional_files.sort();
+    Ok(additional_files)
+}
+
+fn generate_runtime_table_file(
+    runtime_data: &crate::schemas::input::RuntimeTablesData,
+    output_dir: &Path,
+    table_config: &serde_json::Value,
+) -> Result<String> {
+    let runtime_code = runtime::generate_runtime_table(runtime_data, table_config)?;
+    
+    // Extract table name for filename
+    let table_name = table_config["table_name"].as_str()
+        .unwrap_or("unknown")
+        .trim_start_matches('%')
+        .to_lowercase();
+    let function_name = table_config["function_name"].as_str()
+        .unwrap_or("create_table")
+        .to_lowercase();
+    
+    let filename = format!("{}_runtime.rs", function_name);
+    let output_path = output_dir.join(&filename);
+    
+    fs::write(&output_path, runtime_code)?;
+    println!("  📋 Generated runtime table file: {}", filename);
+    
+    Ok(filename.replace(".rs", ""))
 }
 

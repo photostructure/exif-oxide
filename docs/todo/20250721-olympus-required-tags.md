@@ -124,6 +124,9 @@ extracted_tags: HashMap<(String, u16), TagValue>  // (namespace, tag_id)
 
 - Complete namespace-aware tag storage implementation
 - Fix codegen processing order (Main table before subdirectories)
+- **Tag Kit Migration**: Complete [tag kit migration and retrofit](20250122-tag-kit-migration-and-retrofit.md) for Olympus module
+  - Olympus has inline_printconv config that needs migration
+  - Ensures consistent extraction approach across all modules
 
 ## Testing Strategy
 

@@ -96,47 +96,22 @@ pub fn gpslongituderef_print_conv(val: &TagValue) -> TagValue {
 }
 
 /// EXIF Flash PrintConv
-/// ExifTool: lib/Image/ExifTool/Exif.pm:164-197, tag definition lines 2379-2386
+/// ExifTool: lib/Image/ExifTool/Exif.pm:164-197, %flash hash
+/// Generated lookup: src/generated/Exif_pm/flash.rs
 /// NOTE: This is NOT a bitmask conversion - ExifTool uses direct hash lookup for specific combined values
 pub fn flash_print_conv(val: &TagValue) -> TagValue {
-    TagValue::string(match val.as_u16() {
-        Some(0x00) => "No Flash".to_string(),
-        Some(0x01) => "Fired".to_string(),
-        Some(0x05) => "Fired, Return not detected".to_string(),
-        Some(0x07) => "Fired, Return detected".to_string(),
-        Some(0x08) => "On, Did not fire".to_string(),
-        Some(0x09) => "On, Fired".to_string(),
-        Some(0x0d) => "On, Return not detected".to_string(),
-        Some(0x0f) => "On, Return detected".to_string(),
-        Some(0x10) => "Off, Did not fire".to_string(),
-        Some(0x14) => "Off, Did not fire, Return not detected".to_string(),
-        Some(0x18) => "Auto, Did not fire".to_string(),
-        Some(0x19) => "Auto, Fired".to_string(),
-        Some(0x1d) => "Auto, Fired, Return not detected".to_string(),
-        Some(0x1f) => "Auto, Fired, Return detected".to_string(),
-        Some(0x20) => "No flash function".to_string(),
-        Some(0x30) => "Off, No flash function".to_string(),
-        Some(0x41) => "Fired, Red-eye reduction".to_string(),
-        Some(0x45) => "Fired, Red-eye reduction, Return not detected".to_string(),
-        Some(0x47) => "Fired, Red-eye reduction, Return detected".to_string(),
-        Some(0x49) => "On, Red-eye reduction".to_string(),
-        Some(0x4d) => "On, Red-eye reduction, Return not detected".to_string(),
-        Some(0x4f) => "On, Red-eye reduction, Return detected".to_string(),
-        Some(0x50) => "Off, Red-eye reduction".to_string(),
-        Some(0x58) => "Auto, Did not fire, Red-eye reduction".to_string(),
-        Some(0x59) => "Auto, Fired, Red-eye reduction".to_string(),
-        Some(0x5d) => "Auto, Fired, Red-eye reduction, Return not detected".to_string(),
-        Some(0x5f) => "Auto, Fired, Red-eye reduction, Return detected".to_string(),
-        // Unknown values shown in parentheses (ExifTool format)
-        // TODO: Standardize hex formatting - some functions use decimal, others need hex (0x1a vs 26)
-        _ => {
-            if let Some(num) = val.as_u16() {
-                format!("Unknown ({num})")
+    use crate::generated::Exif_pm::lookup_flash;
+
+    match val.as_u16() {
+        Some(flash_val) => {
+            if let Some(description) = lookup_flash(flash_val) {
+                TagValue::string(description.to_string())
             } else {
-                format!("Unknown ({val})")
+                TagValue::string(format!("Unknown ({flash_val})"))
             }
         }
-    })
+        None => TagValue::string(format!("Unknown ({val})")),
+    }
 }
 
 /// EXIF ColorSpace PrintConv

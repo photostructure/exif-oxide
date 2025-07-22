@@ -7,6 +7,12 @@
       "constant_name": "ORIENTATION",
       "key_type": "u8",
       "description": "EXIF Orientation tag PrintConv values"
+    },
+    {
+      "hash_name": "%flash",
+      "constant_name": "FLASH",
+      "key_type": "u16",
+      "description": "EXIF Flash tag PrintConv values"
     }
   ]
 }

@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with exif-oxide.
 
-Today's date is July 21, 2025.
+Today's date is July 22, 2025.
 
 ## Project Overview
 
@@ -169,6 +169,18 @@ If you see ANY of these, immediately suggest codegen extraction:
 - Version-specific model lists that need manual updates
 
 **Remember**: Manually translated lookup tables are a minefield of bugs -- they're difficult to compare with the source material, frequently contain subtle translation mistakes, and are a substantial maintenance burden that grows with each ExifTool release. The codegen system automates hundreds of perl-encoded tables with zero ongoing maintenance costs.
+
+### Choosing the Right Extractor
+
+When working with the codegen system, use the right extractor for each task:
+
+1. **Extracting tags with PrintConvs?** → Use `tag_kit.pl` (the unified tag extraction system)
+2. **Extracting standalone lookups?** → Use `simple_table.pl` (for manufacturer lookup tables)
+3. **Extracting binary data tables?** → Use `process_binary_data.pl` or `runtime_table.pl`
+
+**Important**: We're migrating to the tag kit system for all tag-related extraction. If you see configs for `inline_printconv.pl`, `tag_tables.pl`, or `tag_definitions.pl`, suggest converting them to tag kit instead.
+
+See [EXTRACTOR-GUIDE.md](docs/reference/EXTRACTOR-GUIDE.md) for detailed extractor comparisons and [CODEGEN.md](docs/CODEGEN.md) for the complete extractor selection guide.
 
 ### 5. When a task is complete
 

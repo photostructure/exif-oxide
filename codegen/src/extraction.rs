@@ -5,11 +5,12 @@
 use anyhow::{Context, Result};
 use serde_json::Value;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use tracing::debug;
 
 use crate::patching;
+use crate::extractors::{ExtractDirs, find_extractor, run_extractor};
 
 // Constants for path navigation
 const REPO_ROOT_FROM_CODEGEN: &str = "..";
@@ -35,6 +36,8 @@ enum SpecialExtractor {
     ProcessBinaryData,
     ModelDetection,
     ConditionalTags,
+    RuntimeTable,
+    TagKit,
 }
 
 #[derive(Debug)]
@@ -46,15 +49,16 @@ struct ExtractorConfig<'a> {
 
 /// Extract all simple tables using Rust orchestration (replaces Makefile targets)
 pub fn extract_all_simple_tables() -> Result<()> {
-    println!("\n📊 Extracting simple lookup tables...");
+    println!("\n📊 Extracting all tables and data...");
     
-    let extract_dir = Path::new("generated/extract");
-    fs::create_dir_all(extract_dir)?;
+    // Create type-specific directories using the extractors module
+    let extract_base = Path::new("generated/extract");
+    let extract_dirs = ExtractDirs::new(extract_base)?;
     
     let configs = discover_module_configs()?;
     
     for config in configs {
-        process_module_config(&config, extract_dir)?;
+        process_module_config(&config, &extract_dirs)?;
     }
     
     println!("  ✓ Simple table extraction complete");
@@ -114,7 +118,9 @@ fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig
         "tag_table_structure.json",
         "process_binary_data.json",
         "model_detection.json",
-        "conditional_tags.json"
+        "conditional_tags.json",
+        "runtime_table.json",
+        "tag_kit.json"
     ];
     
     for config_file in &config_files {
@@ -158,6 +164,26 @@ fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
             let table = config["table"].as_str()
                 .ok_or_else(|| anyhow::anyhow!("Missing 'table' field in {}", config_path.display()))?;
             vec![table.to_string()]
+        },
+        "tag_kit.json" => {
+            // For tag kits, we extract table names from the tables array
+            let tables = config["tables"].as_array()
+                .ok_or_else(|| anyhow::anyhow!("Missing 'tables' field in {}", config_path.display()))?;
+            
+            tables.iter()
+                .filter_map(|table| table["table_name"].as_str())
+                .map(|name| name.to_string())
+                .collect()
+        },
+        "runtime_table.json" => {
+            // For runtime tables, we extract table names from the tables array
+            let tables = config["tables"].as_array()
+                .ok_or_else(|| anyhow::anyhow!("Missing 'tables' field in {}", config_path.display()))?;
+            
+            tables.iter()
+                .filter_map(|table| table["table_name"].as_str())
+                .map(|name| name.trim_start_matches('%').to_string())
+                .collect()
         },
         _ => {
             // For other configs, we need the tables array
@@ -211,44 +237,50 @@ fn process_module_config(config: &ModuleConfig, extract_dir: &Path) -> Result<()
     let module_path = repo_root.join(&config.source_path);
     
     // Only patch if we're extracting hashes (not for inline_printconv, tag_definitions, composite_tags, or tag_table_structure)
-    if !matches!(config.module_name.as_str(), "inline_printconv" | "tag_definitions" | "composite_tags" | "tag_table_structure" | "process_binary_data" | "model_detection" | "conditional_tags") {
+    if !matches!(config.module_name.as_str(), "inline_printconv" | "tag_definitions" | "composite_tags" | "tag_table_structure" | "process_binary_data" | "model_detection" | "conditional_tags" | "runtime_table" | "tag_kit") {
         patching::patch_module(&module_path, &config.hash_names)?;
     }
     
     // Check if this config needs a special extractor based on the config filename
     match needs_special_extractor_by_name(&config.module_name) {
         Some(SpecialExtractor::FileTypeLookup) => {
-            run_file_type_lookup_extractor(config, extract_dir)?;
+            run_file_type_lookup_extractor(config, extract_dirs)?;
         }
         Some(SpecialExtractor::RegexPatterns) => {
-            run_regex_patterns_extractor(config, extract_dir)?;
+            run_regex_patterns_extractor(config, extract_dirs)?;
         }
         Some(SpecialExtractor::BooleanSet) => {
-            run_boolean_set_extractor(config, extract_dir)?;
+            run_boolean_set_extractor(config, extract_dirs)?;
         }
         Some(SpecialExtractor::InlinePrintConv) => {
-            run_inline_printconv_extractor(config, extract_dir)?;
+            run_inline_printconv_extractor(config, extract_dirs)?;
         }
         Some(SpecialExtractor::TagDefinitions) => {
-            run_tag_definitions_extractor(config, extract_dir)?;
+            run_tag_definitions_extractor(config, extract_dirs)?;
         }
         Some(SpecialExtractor::CompositeTags) => {
-            run_composite_tags_extractor_new(config, extract_dir)?;
+            run_composite_tags_extractor_new(config, extract_dirs)?;
         }
         Some(SpecialExtractor::TagTableStructure) => {
-            run_tag_table_structure_extractor(config, extract_dir)?;
+            run_tag_table_structure_extractor(config, extract_dirs)?;
         }
         Some(SpecialExtractor::ProcessBinaryData) => {
-            run_process_binary_data_extractor(config, extract_dir)?;
+            run_process_binary_data_extractor(config, extract_dirs)?;
         }
         Some(SpecialExtractor::ModelDetection) => {
-            run_model_detection_extractor(config, extract_dir)?;
+            run_model_detection_extractor(config, extract_dirs)?;
         }
         Some(SpecialExtractor::ConditionalTags) => {
-            run_conditional_tags_extractor(config, extract_dir)?;
+            run_conditional_tags_extractor(config, extract_dirs)?;
+        }
+        Some(SpecialExtractor::RuntimeTable) => {
+            run_runtime_table_extractor(config, extract_dirs)?;
+        }
+        Some(SpecialExtractor::TagKit) => {
+            run_tag_kit_extractor(config, extract_dirs)?;
         }
         None => {
-            run_extraction_script(config, extract_dir)?;
+            run_extraction_script(config, extract_dirs)?;
         }
     }
     
@@ -256,7 +288,8 @@ fn process_module_config(config: &ModuleConfig, extract_dir: &Path) -> Result<()
 }
 
 
-fn run_extraction_script(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+fn run_extraction_script(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
+    let extract_dir = &extract_dirs.simple_tables;
     let hash_names_with_percent: Vec<String> = config.hash_names.iter()
         .map(|name| format!("%{}", name))
         .collect();
@@ -348,11 +381,14 @@ fn needs_special_extractor_by_name(config_name: &str) -> Option<SpecialExtractor
         "process_binary_data" => Some(SpecialExtractor::ProcessBinaryData),
         "model_detection" => Some(SpecialExtractor::ModelDetection),
         "conditional_tags" => Some(SpecialExtractor::ConditionalTags),
+        "runtime_table" => Some(SpecialExtractor::RuntimeTable),
+        "tag_kit" => Some(SpecialExtractor::TagKit),
         _ => None,
     }
 }
 
-fn run_file_type_lookup_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+fn run_file_type_lookup_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
+    let extract_dir = &extract_dirs.file_types;
     let extractor_config = ExtractorConfig {
         script_name: "file_type_lookup.pl",
         output_file: Some("file_type_lookup.json"),
@@ -362,7 +398,8 @@ fn run_file_type_lookup_extractor(config: &ModuleConfig, extract_dir: &Path) -> 
     run_extractor(config, extract_dir, extractor_config)
 }
 
-fn run_regex_patterns_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+fn run_regex_patterns_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
+    let extract_dir = &extract_dirs.file_types;
     // Get hash names from config, adding % prefix as needed
     let hash_names_with_percent: Vec<String> = config.hash_names.iter()
         .map(|name| format!("%{}", name))
@@ -381,7 +418,8 @@ fn run_regex_patterns_extractor(config: &ModuleConfig, extract_dir: &Path) -> Re
     run_extractor(config, extract_dir, extractor_config)
 }
 
-fn run_boolean_set_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+fn run_boolean_set_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
+    let extract_dir = &extract_dirs.boolean_sets;
     // Extract each boolean set separately since they need individual output files
     for hash_name in &config.hash_names {
         let hash_name_with_percent = format!("%{}", hash_name);
@@ -399,7 +437,8 @@ fn run_boolean_set_extractor(config: &ModuleConfig, extract_dir: &Path) -> Resul
     Ok(())
 }
 
-fn run_inline_printconv_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+fn run_inline_printconv_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
+    let extract_dir = &extract_dirs.inline_printconv;
     // For inline PrintConv, we need to pass table names from the config
     // The config should specify which tables to extract from
     let tables = config.hash_names.clone(); // These are actually table names for inline_printconv
@@ -423,7 +462,8 @@ fn run_inline_printconv_extractor(config: &ModuleConfig, extract_dir: &Path) -> 
 }
 
 
-fn run_tag_definitions_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+fn run_tag_definitions_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
+    let extract_dir = &extract_dirs.tag_definitions;
     // Read the config file to get filter settings
     let config_path = format!("config/{}_pm/tag_definitions.json", 
         config.source_path.split('/').last()
@@ -481,7 +521,8 @@ fn run_tag_definitions_extractor(config: &ModuleConfig, extract_dir: &Path) -> R
     run_extractor(config, extract_dir, modified_config)
 }
 
-fn run_composite_tags_extractor_new(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+fn run_composite_tags_extractor_new(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
+    let extract_dir = &extract_dirs.composite_tags;
     // Read the config file to get filter settings
     let config_path = format!("config/{}_pm/composite_tags.json", 
         config.source_path.split('/').last()
@@ -529,7 +570,8 @@ fn run_composite_tags_extractor_new(config: &ModuleConfig, extract_dir: &Path) -
     run_extractor(config, extract_dir, modified_config)
 }
 
-fn run_tag_table_structure_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+fn run_tag_table_structure_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
+    let extract_dir = &extract_dirs.tag_structures;
     // For tag table structure, we need to pass the table name
     // The config should have the table name stored in hash_names
     let table_name = config.hash_names.get(0)
@@ -550,7 +592,8 @@ fn run_tag_table_structure_extractor(config: &ModuleConfig, extract_dir: &Path) 
     run_extractor(config, extract_dir, extractor_config)
 }
 
-fn run_process_binary_data_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+fn run_process_binary_data_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
+    let extract_dir = &extract_dirs.binary_data;
     // For ProcessBinaryData, we need to pass the table name
     // The config should have the table name stored in hash_names
     let table_name = config.hash_names.get(0)
@@ -571,7 +614,8 @@ fn run_process_binary_data_extractor(config: &ModuleConfig, extract_dir: &Path) 
     run_extractor(config, extract_dir, extractor_config)
 }
 
-fn run_model_detection_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+fn run_model_detection_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
+    let extract_dir = &extract_dirs.model_detection;
     // For ModelDetection, we need to pass the table name
     // The config should have the table name stored in hash_names
     let table_name = config.hash_names.get(0)
@@ -592,7 +636,8 @@ fn run_model_detection_extractor(config: &ModuleConfig, extract_dir: &Path) -> R
     run_extractor(config, extract_dir, extractor_config)
 }
 
-fn run_conditional_tags_extractor(config: &ModuleConfig, extract_dir: &Path) -> Result<()> {
+fn run_conditional_tags_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
+    let extract_dir = &extract_dirs.conditional_tags;
     // For ConditionalTags, we need to pass the table name
     // The config should have the table name stored in hash_names
     let table_name = config.hash_names.get(0)
@@ -611,4 +656,52 @@ fn run_conditional_tags_extractor(config: &ModuleConfig, extract_dir: &Path) -> 
     };
     
     run_extractor(config, extract_dir, extractor_config)
+}
+
+fn run_tag_kit_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
+    let extract_dir = &extract_dirs.tag_kits;
+    // For TagKit, we need to pass the table name
+    // The config should have the table name stored in hash_names
+    let table_name = config.hash_names.get(0)
+        .ok_or_else(|| anyhow::anyhow!("No table name specified in tag_kit config"))?;
+    
+    // Generate output filename based on module and table
+    let module_name = config.source_path.split('/').last()
+        .and_then(|name| name.strip_suffix(".pm"))
+        .unwrap_or("unknown");
+    let output_file = format!("{}_tag_kit_{}.json", module_name.to_lowercase(), table_name.to_lowercase());
+    
+    let extractor_config = ExtractorConfig {
+        script_name: "tag_kit.pl",
+        output_file: Some(&output_file),
+        hash_args: vec![table_name.clone()],
+    };
+    
+    run_extractor(config, extract_dir, extractor_config)
+}
+
+fn run_runtime_table_extractor(config: &ModuleConfig, extract_dirs: &ExtractDirs) -> Result<()> {
+    let extract_dir = &extract_dirs.runtime_tables;
+    // For RuntimeTable, we need to pass each table name individually
+    // The config has the table names stored in hash_names (already trimmed of % prefix)
+    
+    let module_name = config.source_path.split('/').last()
+        .and_then(|name| name.strip_suffix(".pm"))
+        .unwrap_or("unknown");
+    
+    // Process each table separately since each table generates its own JSON
+    for table_name in &config.hash_names {
+        let output_file = format!("{}_runtime_table_{}.json", module_name.to_lowercase(), table_name.to_lowercase());
+        
+        let extractor_config = ExtractorConfig {
+            script_name: "runtime_table.pl",
+            output_file: Some(&output_file),
+            hash_args: vec![table_name.clone()],
+        };
+        
+        println!("    Extracting runtime table: {} from {}", table_name, module_name);
+        run_extractor(config, extract_dir, extractor_config)?;
+    }
+    
+    Ok(())
 }

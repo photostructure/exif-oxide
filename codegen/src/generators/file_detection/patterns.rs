@@ -193,8 +193,8 @@ fn escape_pattern_for_rust(pattern: &str) -> String {
 
 /// Generate magic number patterns from magic_number.json
 pub fn generate_magic_patterns(json_dir: &Path, output_dir: &str) -> Result<()> {
-    // Look for regex_patterns.json in the extract directory
-    let regex_patterns_path = json_dir.join("regex_patterns.json");
+    // Look for regex_patterns.json in the file_types subdirectory
+    let regex_patterns_path = json_dir.join("file_types").join("regex_patterns.json");
 
     if !regex_patterns_path.exists() {
         println!("    ⚠️  regex_patterns.json not found, skipping magic patterns");

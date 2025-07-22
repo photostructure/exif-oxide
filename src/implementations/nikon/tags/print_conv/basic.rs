@@ -209,33 +209,27 @@ pub fn nikon_sharpness_conv(value: &crate::types::TagValue) -> Result<String, St
 
 /// PrintConv function for Nikon FocusMode tag
 /// ExifTool: Nikon.pm lines 1004-1009 %focusModeZ7
+/// Generated lookup: src/generated/Nikon_pm/focusmodez7.rs
 pub fn nikon_focus_mode_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: focusModeZ7 hash mapping (lines 1004-1009)
+    use crate::generated::Nikon_pm::lookup_focus_mode_z7;
+
+    // Handle string values first (some cameras store focus mode as strings)
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
+
+    // Convert TagValue to u8 for lookup
     let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        crate::types::TagValue::String(s) => {
-            // ExifTool: Some cameras store focus mode as strings
-            return Ok(s.clone());
-        }
+        crate::types::TagValue::I32(v) => *v as u8,
+        crate::types::TagValue::I16(v) => *v as u8,
+        crate::types::TagValue::U32(v) => *v as u8,
+        crate::types::TagValue::U16(v) => *v as u8,
+        crate::types::TagValue::U8(v) => *v,
         _ => return Ok(format!("Unknown ({value})")),
     };
 
-    // ExifTool: %focusModeZ7 hash (lines 1004-1009)
-    let focus_mode_map: HashMap<i32, &str> = [
-        (0, "Manual"),
-        (1, "AF-S"),
-        (2, "AF-C"),
-        (4, "AF-F"), // ExifTool comment: full frame
-    ]
-    .iter()
-    .cloned()
-    .collect();
-
-    Ok(focus_mode_map.get(&val).unwrap_or(&"Unknown").to_string())
+    // Use generated lookup table
+    Ok(lookup_focus_mode_z7(val).unwrap_or("Unknown").to_string())
 }
 
 /// PrintConv function for Nikon FlashSetting tag
@@ -414,36 +408,28 @@ pub fn nikon_scene_mode_conv(value: &crate::types::TagValue) -> Result<String, S
 }
 
 /// PrintConv function for Nikon NEFCompression tag
-/// ExifTool: Nikon.pm - NEF (RAW) compression modes
+/// ExifTool: Nikon.pm %nefCompression hash
+/// Generated lookup: src/generated/Nikon_pm/nefcompression.rs
 pub fn nikon_nef_compression_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: NEF compression values
+    use crate::generated::Nikon_pm::lookup_nef_compression;
+
+    // Handle string values first
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
+
+    // Convert TagValue to u8 for lookup
     let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        crate::types::TagValue::String(s) => {
-            return Ok(s.clone());
-        }
+        crate::types::TagValue::I32(v) => *v as u8,
+        crate::types::TagValue::I16(v) => *v as u8,
+        crate::types::TagValue::U32(v) => *v as u8,
+        crate::types::TagValue::U16(v) => *v as u8,
+        crate::types::TagValue::U8(v) => *v,
         _ => return Ok(format!("Unknown ({value})")),
     };
 
-    // ExifTool: NEF compression mapping
-    let nef_compression_map: HashMap<i32, &str> = [
-        (1, "Lossy (type 1)"),
-        (2, "Uncompressed"),
-        (3, "Lossless"),
-        (4, "Lossy (type 2)"),
-    ]
-    .iter()
-    .cloned()
-    .collect();
-
-    Ok(nef_compression_map
-        .get(&val)
-        .unwrap_or(&"Unknown")
-        .to_string())
+    // Use generated lookup table (12 entries vs 4 manual entries)
+    Ok(lookup_nef_compression(val).unwrap_or("Unknown").to_string())
 }
 
 #[cfg(test)]

@@ -120,11 +120,13 @@ pub fn load_extracted_tables_with_config(
     
     let mut all_extracted_tables = HashMap::new();
     
-    if !extract_dir.exists() {
+    // Only load from the simple_tables subdirectory
+    let simple_tables_dir = extract_dir.join("simple_tables");
+    if !simple_tables_dir.exists() {
         return Ok(all_extracted_tables);
     }
     
-    for entry in read_directory(extract_dir)? {
+    for entry in read_directory(&simple_tables_dir)? {
         let entry = entry?;
         let path = entry.path();
         

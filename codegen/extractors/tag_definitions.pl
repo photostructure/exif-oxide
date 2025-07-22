@@ -5,6 +5,13 @@
 #
 # Description:  Extract tag definitions from ExifTool tag tables (config-driven)
 #
+# ⚠️ DEPRECATED: Use tag_kit.pl for complete tag extraction with embedded PrintConvs
+#
+# This extractor generates print_conv_ref (function name references) which creates
+# a dependency on the manual registry. The tag kit system embeds everything needed
+# to process a tag in one place, eliminating potential mismatches between tag IDs
+# and their processing functions. See EXTRACTOR-GUIDE.md for more information.
+#
 # Usage:        perl tag_definitions.pl <module_path> <table_name> [--frequency-threshold <value>] [--include-mainstream] [--groups <group1,group2>]
 #
 # Example:      perl tag_definitions.pl ../third-party/exiftool/lib/Image/ExifTool/Exif.pm Main --frequency-threshold 0.8 --include-mainstream --groups EXIF,ExifIFD

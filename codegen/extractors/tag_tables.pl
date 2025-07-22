@@ -5,6 +5,12 @@
 #
 # Description:  Extract EXIF and GPS tag definitions from ExifTool
 #
+# ⚠️ DEPRECATED: Use tag_kit.pl instead for flexible, config-driven tag extraction
+#
+# This extractor is hardcoded to only extract EXIF and GPS tags. The tag kit
+# system is config-driven and can extract from any ExifTool module while also
+# including PrintConv implementations. See EXTRACTOR-GUIDE.md for more information.
+#
 # Usage:        perl tag_tables.pl > ../generated/tag_tables.json
 #
 # Notes:        This script extracts only tag definitions (EXIF/GPS),

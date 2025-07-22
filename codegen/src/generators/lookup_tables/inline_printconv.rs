@@ -9,8 +9,10 @@ use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct InlinePrintConvData {
-    pub source: InlinePrintConvSource,
-    pub metadata: InlinePrintConvMetadata,
+    #[serde(default)]
+    pub source: Option<InlinePrintConvSource>,
+    #[serde(default)]
+    pub metadata: Option<InlinePrintConvMetadata>,
     pub inline_printconvs: Vec<InlinePrintConvEntry>,
 }
 

@@ -31,6 +31,24 @@
       "constant_name": "ISO_AUTO_SHUTTER_TIME_Z9",
       "key_type": "String",
       "description": "Z9 ISO auto shutter time mappings"
+    },
+    {
+      "hash_name": "%focusModeZ7",
+      "constant_name": "FOCUS_MODE_Z7",
+      "key_type": "u8",
+      "description": "Nikon Z7/Z8/Z9 focus mode settings"
+    },
+    {
+      "hash_name": "%nefCompression",
+      "constant_name": "NEF_COMPRESSION",
+      "key_type": "u8",
+      "description": "Nikon NEF (RAW) compression modes"
+    },
+    {
+      "hash_name": "%meteringModeZ7",
+      "constant_name": "METERING_MODE_Z7", 
+      "key_type": "u8",
+      "description": "Nikon Z7/Z8/Z9 metering mode settings"
     }
   ]
 }
