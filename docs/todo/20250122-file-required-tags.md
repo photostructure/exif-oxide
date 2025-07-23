@@ -11,8 +11,14 @@
 - Critical for file management and tracking
 - Platform-specific implementations needed (Windows/macOS/Linux)
 
+
 ## Technical Foundation
 
+Study the entirety of the documentation, and study referenced relevant source code.
+
+- [CLAUDE.md](CLAUDE.md)
+- [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md) -- follow their dimension extraction algorithm **precisely**.
+- [CODEGEN.md](docs/CODEGEN.md) -- if there's any tabular data, or perl code that you think we could automatically extract and use, **strongly** prefer that to any manual porting effort.
 - **Key files**:
   - `src/file_metadata.rs` - File system metadata extraction
   - Standard library `std::fs` module
@@ -30,34 +36,40 @@
 - **FilePermissions** - Unix permissions or Windows attributes - freq 1.000
 - **ExifByteOrder** - Byte order of EXIF data (II/MM) - freq 0.990
 
-### Image Dimensions (2 tags)
-- **ImageWidth** - Image width from file analysis - freq 1.000
-- **ImageHeight** - Image height from file analysis - freq 1.000
-
 ### Timestamps (4 tags)
 - **FileModifyDate** - Last modification time - freq 1.000
 - **FileAccessDate** - Last access time - freq 1.000
 - **FileCreateDate** - Creation time (platform-specific) - freq 0.000
-- **FileInodeChangeDate** - Inode change time (Unix only) - freq 1.000
 
-### Special (1 tag)
-- **ImageDataMD5** - MD5 hash of image data (excluding metadata) - freq 0.000
+```
+$ exiftool test-images/sony/sony_a7c_ii_02.jpg  -File:\* -G -j -struct
+[{
+  "SourceFile": "test-images/sony/sony_a7c_ii_02.jpg",
+  "File:FileName": "sony_a7c_ii_02.jpg",
+  "File:Directory": "test-images/sony",
+  "File:FileSize": "25 MB",
+  "File:FileModifyDate": "2025:07:22 17:52:59-07:00",
+  "File:FileAccessDate": "2025:07:22 17:53:10-07:00",
+  "File:FileInodeChangeDate": "2025:07:22 17:52:59-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
+  "File:FileType": "JPEG",
+  "File:FileTypeExtension": "jpg",
+  "File:MIMEType": "image/jpeg",
+  "File:ExifByteOrder": "Little-endian (Intel, II)",
+  "File:ImageWidth": 7008,
+  "File:ImageHeight": 4672,
+  "File:EncodingProcess": "Baseline DCT, Huffman coding",
+  "File:BitsPerSample": 8,
+  "File:ColorComponents": 3,
+  "File:YCbCrSubSampling": "YCbCr4:2:2 (2 1)"
+}]
+```
 
-## Work Completed
+(we're handling ImageWidth, ImageHeight, EncodingProcess,BitsPerSample, ColorComponents,and YCbCrSubSampling in a parallel session)
 
-- ✅ Basic file metadata extraction exists
-- ✅ FileType detection via magic numbers
-- ✅ Some timestamps already extracted
-
-## Remaining Tasks
+##  Tasks
 
 ### High Priority - Core Implementation
-
-1. **Image Dimensions from File**
-   - Extract width/height without full EXIF parse
-   - Read from JPEG SOF markers
-   - Handle RAW format dimensions
-   - Must work even if EXIF corrupted
 
 2. **Complete Timestamp Extraction**
    - Handle platform differences for creation time
@@ -85,13 +97,6 @@
    - Handle Unicode in paths
    - Relative vs absolute paths
 
-### Low Priority - Performance
-
-1. **ImageDataMD5 Calculation**
-   - Extract only image data (skip metadata)
-   - Cache results if possible
-   - Make optional for performance
-
 ## Prerequisites
 
 - Verify file type detection is working
@@ -107,7 +112,7 @@
 
 ## Success Criteria
 
-- All 15 file tags extracting correctly
+- All referenced file tags extracting correctly
 - Cross-platform compatibility
 - Consistent timestamp formatting
 - Proper error handling for missing data
@@ -122,17 +127,12 @@
 - **macOS**: Has birth time which is true creation time
 
 ### Platform Differences
-- **FilePermissions**: Unix uses octal + symbolic (e.g., "-rw-r--r--"), Windows uses attributes
+- **FilePermissions**: Unix uses octal + symbolic (e.g., "-rw-r--r--"), Windows uses attributes -- FOLLOW THE ExifTool SOURCE!
 - **Path Separators**: Normalize to forward slashes for consistency
-- **Unicode**: Windows paths may have different encoding than Unix
-
-### Image Dimensions
-- **JPEG**: Read from SOF0/SOF2 markers, not EXIF
-- **RAW**: May need format-specific parsing
-- **Orientation**: File dimensions are pre-rotation values
+- **Unicode**: Windows paths may have different encoding than Unix, but we should normalize everything to UTF-8
 
 ### MIME Types
-- RAW formats lack standard MIME types:
+- RAW formats lack standard MIME types -- MATCH WHAT EXIFTOOL SAYS
   - ORF: "image/x-olympus-orf"
   - CR2: "image/x-canon-cr2"
   - NEF: "image/x-nikon-nef"
@@ -140,6 +140,5 @@
 
 ### Special Cases
 - **ExifByteOrder**: "II" = Little-endian (Intel), "MM" = Big-endian (Motorola)
-- **ImageDataMD5**: Expensive operation, requires stripping all metadata
 - **FileSize**: Report actual bytes, not "human readable" format
 - **FileName**: Just the base name, not the full path

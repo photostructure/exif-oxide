@@ -143,12 +143,15 @@ pub fn process_config_directory(
             // Extract table name from config
             if let Some(table_name) = config_json["table"].as_str() {
                 // Look for the corresponding extracted tag structure JSON file
-                let extract_dir = Path::new("generated/extract").join("tag_structures");
+                // Use the new standardized filename pattern: module__tag_structure__table.json
                 let module_base = module_name.trim_end_matches("_pm");
-                let structure_file = format!("{}_{}_tag_structure.json", 
-                                             module_base.to_lowercase(), 
-                                             table_name.to_lowercase());
-                let structure_path = extract_dir.join(&structure_file);
+                let structure_filename = format!("{}__tag_structure__{}.json", 
+                                               module_base.to_lowercase(), 
+                                               table_name.to_lowercase());
+                
+                // Tag structure files are stored separately, not in extracted_tables
+                let extract_dir = std::env::current_dir()?.join("generated/extract/tag_structures");
+                let structure_path = extract_dir.join(&structure_filename);
                 
                 if structure_path.exists() {
                     let structure_content = fs::read_to_string(&structure_path)?;
@@ -162,6 +165,8 @@ pub fn process_config_directory(
                     )?;
                     generated_files.push(file_name);
                     has_content = true;
+                } else {
+                    println!("    ⚠ Tag structure file not found: {}", structure_path.display());
                 }
             }
         }

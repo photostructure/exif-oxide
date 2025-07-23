@@ -1,1362 +1,533 @@
 # Technical Project Plan: Unified Tag Definition Codegen (Tag Kit System)
 
-**UPDATED**: July 22, 2025 (evening) - ARCHITECTURAL FIX COMPLETED + RUNTIME INTEGRATION IN PROGRESS
+**UPDATED**: January 22, 2025 - TAG KIT GENERATION COMPLETE, RUNTIME INTEGRATION NEEDS COMPILATION FIXES
 
-## 🚀 Quick Start for Next Engineer
+## Project Overview
 
-**MAJOR BREAKTHROUGH**: The extraction pipeline is now fully operational! The trait-based refactor succeeded and `make codegen` completes successfully.
+**High-level goal**: Automate PrintConv generation for 414 EXIF tags by implementing a unified tag definition system that extracts tag metadata and PrintConv logic together, eliminating manual maintenance and tag ID/function mismatches.
 
-**Current Status**:
-1. ✅ **COMPLETED**: Trait-based extractor system (extracts all data properly)
-2. ✅ **COMPLETED**: Fixed fundamental stdout capture bug (no more empty JSON files) 
-3. ✅ **COMPLETED**: Boolean set patching (PNG and other modules extract correctly)
-4. ✅ **COMPLETED**: Tag kit infrastructure (414 EXIF tags ready with integration tests)
-5. ✅ **COMPLETED**: Rust identifier naming (hyphens → underscores) - Tag kit now generates with proper names
-6. ✅ **COMPLETED**: ARCHITECTURAL FIX - Tag kit now generates to module-based location
-7. ✅ **COMPLETED**: File type lookup filename mismatch fix
-8. 🚧 **IN PROGRESS**: Wire tag kit into runtime (API changes made, needs testing & validation)
+**Problem statement**: ExifTool has 15,000+ tags with monthly releases. Our current manual approach to translating PrintConv functions creates maintenance burden, introduces bugs from tag ID mismatches, and can't keep pace with ExifTool updates.
 
-**Your Immediate Tasks** (in order):
-1. ✅ **COMPLETED**: CRITICAL ARCHITECTURAL FIX - Move tag kit to module-based generation 
-2. ✅ **COMPLETED**: MINOR - Fix file type lookup generation filename mismatch
-3. 🚧 **IN PROGRESS**: Complete runtime integration testing and validation (THE breakthrough moment)
-4. ❌ **PENDING**: Test with real images and validate ExifTool parity
-5. ❌ **PENDING**: Address compilation errors and integrate with existing test suite
+## Background & Context
 
-## 🎯 CURRENT STATUS: ARCHITECTURAL FIX COMPLETE, RUNTIME INTEGRATION 80% DONE
+**Why this work is needed**: 
+- Manual PrintConv implementations are error-prone and create tag ID/function mismatches
+- ExifTool releases monthly updates that we can't manually track
+- 414 EXIF tags are ready for automation, representing a major maintenance win
+- Tag kit approach embeds PrintConv directly with tag definition, eliminating lookup errors
 
-### 🛠️ WHAT WAS JUST COMPLETED (July 22, Evening Session)
+**Related docs**:
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md) - High-level system overview
+- [CODEGEN.md](docs/CODEGEN.md) - Code generation framework
+- [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md) - Core principle: trust ExifTool implementation exactly
 
-#### ✅ MAJOR ARCHITECTURAL FIX - Tag Kit Module Integration
-**Problem Solved**: Tag kit was using a standalone generation system instead of integrating with the consistent module-based pattern used by all other extractors.
+## Technical Foundation
 
-**Solution Implemented**:
-- **Added tag kit support to module-based system** in `codegen/src/generators/lookup_tables/mod.rs` 
-- **Tag kit now generates to**: `src/generated/Exif_pm/tag_kit/` (12 modular category files)
-- **Removed standalone processing** from `codegen/src/main.rs` 
-- **Pattern now consistent**: All extractors use `process_config_directory()` → generate to `ModuleName_pm/` directories
+**Key systems**:
+- **Extraction pipeline**: `codegen/extractors/` - Trait-based system for parsing ExifTool source
+- **Generation system**: `codegen/src/generators/` - Converts extracted data to Rust code
+- **Runtime registry**: `src/registry.rs` - Applies PrintConv functions to tag values
+- **Expression evaluator**: `src/expressions/` - Handles complex PrintConv expressions
 
-**Evidence**: `make codegen` now generates tag kit to `src/generated/Exif_pm/tag_kit/` with:
-- `mod.rs` - Main module with `apply_print_conv()` function and `TAG_KITS` static map
-- `core.rs` (375 tags), `camera.rs` (87 tags), `color.rs` (200 tags), etc.
-- Total: 414 EXIF tags with embedded PrintConvs
+**Critical files**:
+- `codegen/extractors/tag_kit.pl` - Extracts unified tag definitions with PrintConvs
+- `codegen/src/generators/tag_kit_modular.rs` - Generates modular Rust code 
+- `src/generated/Exif_pm/tag_kit/` - Generated tag kit modules (12 category files)
+- `tests/tag_kit_integration.rs` - Integration tests proving 100% parity
 
-#### ✅ MINOR FIX - File Type Lookup Filename Mismatch  
-**Problem Solved**: Generator looked for `file_type_lookup.json` but extractor generated `exiftool_file_type_lookup.json`
+## Work Completed
 
-**Solution**: Updated `codegen/src/generators/file_detection/types.rs` line 47 to use correct filename.
+### ✅ Tag Kit Infrastructure (Complete)
+- **Extractor**: `tag_kit.pl` extracts tag ID, name, format, groups, and PrintConv together
+- **Schema**: Supports Simple hash, Expression, and Manual PrintConv types  
+- **Generator**: Creates modular Rust code with embedded PrintConv lookup tables
+- **Integration tests**: Prove 100% parity with manual implementations
 
-#### 🚧 RUNTIME INTEGRATION - API Changes Made, Needs Testing
-**Problem**: Tag kit exists but runtime system doesn't use it yet.
+### ✅ Architectural Fix (Complete - July 22)
+**Problem Solved**: Tag kit was using standalone generation system instead of module-based pattern.
 
-**Solution In Progress**:
-1. **Modified `src/registry.rs`** to add tag kit integration:
-   - Added `apply_print_conv_with_tag_id()` function that tries tag kit first, then falls back to manual registry
-   - Added `try_tag_kit_print_conv()` helper that calls `tag_kit::apply_print_conv()`
+**Solution**: 
+- Added tag kit support to module-based system in `codegen/src/generators/lookup_tables/mod.rs`
+- Tag kit now generates to `src/generated/Exif_pm/tag_kit/` (12 modular category files)
+- Removed duplicate standalone processing from `codegen/src/main.rs`
+- All extractors now use consistent `process_config_directory()` pattern
+
+### ✅ Extraction Pipeline Overhaul (Complete - July 22)  
+- **Trait-based architecture**: Replaced 700+ lines of repetitive code with clean `Extractor` trait
+- **Fixed stdout capture bug**: Perl scripts now properly write JSON to files (was major blocker)
+- **Boolean set patching**: Added `requires_patching() -> true` override for ExifTool module patching
+- **Directory organization**: Type-specific extraction directories for maintainability
+
+### ✅ Generated Code Structure (Complete)
+- **Total**: 414 EXIF tags with embedded PrintConvs
+- **Categories**: core(375), camera(87), color(200), document(120), datetime(175), gps(25), thumbnail(25), exif_specific(718), interop(83), windows_xp(115), other(3245)
+- **API**: `tag_kit::apply_print_conv(tag_id, value, evaluator, errors, warnings)`
+- **Integration**: Tests in `tests/tag_kit_integration.rs` validate ResolutionUnit, Orientation, YCbCrPositioning
+
+### ✅ Runtime Integration (Implemented but NOT TESTED - July 22)
+**API Changes Made**:
+- **Modified `src/registry.rs`**: Added `apply_print_conv_with_tag_id()` function that tries tag kit first, falls back to manual registry
+- **Modified `src/exif/tags.rs`**: Updated call to pass tag ID: `apply_print_conv_with_tag_id(Some(tag_def.id as u32), print_conv_ref, &value)`
+- **Integration pattern**: Tag kit lookup by ID, manual registry lookup by function name
+
+**⚠️ CRITICAL**: While the code is written and tag kits are generated, NO INTEGRATION TESTS have validated this actually works!
+
+## Current State & Critical Issues (January 23, 2025)
+
+### 🟡 Tag Structure Generation - PARTIAL SUCCESS
+The tag structure generator is now properly wired up and generating types:
+- ✅ Tag structure extractor runs successfully via trait-based system
+- ✅ `CanonDataType`, `OlympusDataType`, `NikonDataType` enums are generated
+- ✅ Files created at `src/generated/{Canon,Olympus,Nikon}_pm/tag_structure.rs`
+- 🔴 **CRITICAL BUG**: Duplicate module declarations in generated `mod.rs` files
+- 🔴 **Import issues**: Code using these types needs import updates
+
+### 🔴 Duplicate Module Declaration Bug
+**Root Cause Found**: Multiple tag_structure configs generate to same filename:
+- `Olympus_pm/tag_table_structure.json` → generates `tag_structure.rs`  
+- `Olympus_pm/equipment_tag_table_structure.json` → ALSO generates `tag_structure.rs`
+- Both files get added to `generated_files` list → duplicate `pub mod tag_structure;`
+
+**Impact**: Compilation fails with "tag_structure is defined multiple times"
+
+### 🔴 Remaining Compilation Blockers
+1. **Import Updates Needed**:
+   ```rust
+   // Current (broken):
+   use OlympusDataType;
    
-2. **Modified `src/exif/tags.rs`** to pass tag IDs:
-   - Updated call to use `apply_print_conv_with_tag_id(Some(tag_def.id as u32), print_conv_ref, &value)`
+   // Should be:
+   use crate::generated::Olympus_pm::OlympusDataType;
+   ```
 
-### 🚧 WHAT THE NEXT ENGINEER NEEDS TO COMPLETE
+2. **Missing Types Still**:
+   - `FujiFilmFFMVTable` - No process_binary_data extraction/generation yet
+   - `ConditionalContext` types - Conditional tags extractor exists but not wired
+   - Various binary data table types
 
-#### IMMEDIATE CRITICAL TASKS (1-2 hours)
+### 🟡 Module Generation Issues (Lower Priority)
+1. **Empty Module Directories**:
+   - `FujiFilm_pm`, `GPS_pm`, `PNG_pm` have configs but generate empty directories
+   - Extraction runs successfully but no matching generators process the data
+   - This is OK - just means those modules don't have simple tables yet
 
-1. **Fix Compilation Errors** (30 minutes)
-   - Run `cargo check` and address any import/module issues
-   - Main concern: Missing expression evaluator import, potential module visibility issues
-   - **Key files to check**: `src/registry.rs`, `src/exif/tags.rs`
-   - **Possible fixes needed**: Add imports, adjust visibility modifiers
+## Remaining Tasks  
 
-2. **Validate Runtime Integration** (30-60 minutes)
-   - **TEST**: Create simple test to verify tag kit integration works
-   - **VALIDATE**: Tags like ResolutionUnit (0x0128/296), Orientation (0x0112/274) use tag kit instead of manual functions
-   - **VERIFY**: Fallback to manual registry still works for tags not in tag kit
-   - **CHECK**: Integration tests in `tests/tag_kit_integration.rs` still pass
+### 1. **URGENT: Fix Duplicate Module Declaration** (30 min)
+**The Bug**: `equipment_tag_table_structure.json` and `tag_table_structure.json` both generate `tag_structure.rs`
 
-#### VERIFICATION & TESTING (1-2 hours)
+**Solution Path**:
+1. Check `generate_tag_structure_file()` at line 530 in `lookup_tables/mod.rs`
+2. The function uses table name to generate filename:
+   - Main table → `tag_structure.rs`
+   - Other tables → `{table_name}_tag_structure.rs`
+3. But Equipment table config has `"table": "Equipment"` which should generate `equipment_tag_structure.rs`
+4. Debug why both are generating to same filename
 
-3. **Test With Real Images** (THE BREAKTHROUGH MOMENT)
-   - **Command**: `cargo run -- test-image.jpg`
-   - **Expected**: ResolutionUnit, Orientation, YCbCrPositioning show tag kit PrintConvs working
-   - **Compare**: `./scripts/compare-with-exiftool.sh test-image.jpg EXIF:`
-   - **Success criteria**: Same values as ExifTool, just different formatting
+**Quick Fix Alternative**: Remove `equipment_tag_table_structure.json` temporarily
 
-4. **Full Integration Validation**
-   - **Command**: `make precommit` (includes linting, formatting, all tests)
-   - **Expected**: All tests pass, no regressions introduced
-   - **Critical**: Ensure `cargo test tag_kit_integration` still passes
+### 2. **Fix Import Paths** (1 hour)  
+**Files to Update**:
+- `src/raw/formats/olympus.rs` - Add `use crate::generated::Olympus_pm::OlympusDataType;`
+- `src/raw/formats/canon.rs` - Add `use crate::generated::Canon_pm::CanonDataType;`
+- Remove stub imports if present
 
-### 🔧 CRITICAL DEBUGGING TIPS FOR NEXT ENGINEER
+### 3. **Generate Remaining Types** (2-3 hours)
+**FujiFilmFFMVTable and Binary Data Types**:
+- Check if `process_binary_data.pl` extractor exists and is wired up
+- May need to create configs in `FujiFilm_pm/process_binary_data.json`
+- Generator likely exists but needs to be connected
 
-#### If Compilation Fails
-1. **Missing ExpressionEvaluator**: Add `use crate::expressions::ExpressionEvaluator;` to `src/registry.rs`
-2. **Module visibility**: May need to make tag_kit module public in `src/generated/Exif_pm/mod.rs`
-3. **Import issues**: Check that all generated modules properly export their functions
+**ConditionalContext Types**:
+- `conditional_tags.pl` extractor exists in stubs.rs
+- Need generator to create the context structs
+- Check milestone-17 reference for how this was done
 
-#### If Runtime Integration Fails
-1. **Debug the `try_tag_kit_print_conv()` function** - add println! debugging
-2. **Verify tag kit actually contains expected tags**: Check `tag_kit::TAG_KITS.get(&tag_id)` 
-3. **Test fallback logic**: Make sure manual registry still works for unknown tags
-
-#### If Tag Kit API Changes Needed
-- Current API: `tag_kit::apply_print_conv(tag_id, value, evaluator, errors, warnings)`
-- May need to handle error/warning collection better
-- Consider whether evaluator should be globally managed vs. passed through
-
-### 🎯 SUCCESS CRITERIA (MUST BE MET)
-
-**Evidence Required for "COMPLETE"**:
-1. ✅ `make codegen` generates tag kit to `src/generated/Exif_pm/tag_kit/` (ACHIEVED)
-2. ✅ `cargo check` passes without errors (NEEDS VERIFICATION)
-3. ✅ Tags like ResolutionUnit use tag kit instead of manual registry (NEEDS TESTING)
-4. ✅ ExifTool parity maintained: `compare-with-exiftool` shows same values (NEEDS VALIDATION)
-5. ✅ All integration tests pass: `cargo test tag_kit_integration` (NEEDS VERIFICATION)
-6. ✅ No regressions: `make precommit` passes (NEEDS VERIFICATION)
-
-**The Big Win**: 414 EXIF tags instantly get automated PrintConvs when runtime integration works!
-
-### 📚 KEY RESEARCH FINDINGS FOR NEXT ENGINEER
-
-#### Architectural Insights Discovered
-1. **Two Generation Systems Existed**: 
-   - Module-based (used by simple_table.pl, boolean_set.pl) → generates to `ModuleName_pm/file.rs`
-   - Standalone (used only by tag_kit) → generates to separate directories
-   - **Solution**: Integrated tag kit into module-based system for consistency
-
-2. **Tag Kit vs Manual Registry**:
-   - **Tag Kit**: Works by tag ID, embeds PrintConv data, eliminates ID/function mismatches
-   - **Manual Registry**: Works by function name, requires separate implementation
-   - **Integration**: Use tag ID to try tag kit first, fall back to function name for manual registry
-
-3. **Modular Structure Is Essential**:
-   - Single 6805-line file → 12 category modules (largest: other.rs at 3245 lines)
-   - Categories: core(375), camera(87), color(200), document(120), datetime(175), gps(25), thumbnail(25), exif_specific(718), interop(83), windows_xp(115), other(3245)
-
-#### Code Generation Pipeline Understanding
-- **Extraction**: `perl extractors/tag_kit.pl` → `exif_tag_kit.json` (414 tags)
-- **Generation**: `generate_tag_kit_module()` → `src/generated/Exif_pm/tag_kit/` (12 files)
-- **Runtime**: `tag_kit::apply_print_conv(tag_id, ...)` called by `registry::apply_print_conv_with_tag_id()`
-
-### 🚀 FUTURE REFACTORING OPPORTUNITIES IDENTIFIED
-
-#### Code Quality Improvements
-1. **Generated Code Optimization**:
-   - Many unused imports in generated category modules (`TagValue`, `LazyLock` not always used)
-   - Excessive `mut` warnings in generated code
-   - Could optimize PrintConv table generation (many identical tables like "Off/On")
-
-2. **API Design Improvements**:
-   - Error/warning collection should be passed through API vs. created locally
-   - Consider global ExpressionEvaluator management
-   - TAG_KITS static map could use more efficient lookup (phf crate)
-
-3. **Runtime Integration Enhancements**:
-   - Support for GPS, Canon, Nikon, Sony tag kits (currently only EXIF)
-   - Better error handling propagation  
-   - Performance optimization for tag kit vs. manual registry decision
-
-#### Architecture Simplifications
-1. **Unified Generation System**: All extractors now use module-based pattern
-2. **Config Consolidation**: Consider single `module_config.json` with sections vs. 10+ files per module  
-3. **Testing Infrastructure**: Automated comparison between tag kit and manual implementations
-
-### 🔍 CRITICAL FILES MODIFIED
-
-**Key Changes Made**:
-- `codegen/src/generators/lookup_tables/mod.rs`: Added tag kit integration to module system (lines 299-323, added functions at end)
-- `codegen/src/main.rs`: Removed standalone tag kit processing (lines 78-80)  
-- `codegen/src/generators/file_detection/types.rs`: Fixed filename mismatch (line 47)
-- `src/registry.rs`: Added tag kit integration API (lines 181-224)
-- `src/exif/tags.rs`: Updated call site to pass tag ID (line 116)
-
-**Generated Structure** (validate exists):
-```
-src/generated/Exif_pm/tag_kit/
-├── mod.rs           # Main API with apply_print_conv() and TAG_KITS
-├── core.rs          # 375 core EXIF tags  
-├── camera.rs        # 87 camera-specific tags
-├── color.rs         # 200 color-related tags
-├── [8 more category files]
-```
-
-### 🎭 TESTING STRATEGY FOR VALIDATION
-
-#### Unit Tests
+### 2. **Test With Real Images** (1 hour) - THE BREAKTHROUGH MOMENT
+**Commands**:
 ```bash
-# Test tag kit generation works
-make codegen && ls src/generated/Exif_pm/tag_kit/
+# Test with real image
+cargo run -- test-image.jpg
 
-# Test compilation
-cargo check
+# Compare with ExifTool  
+./scripts/compare-with-exiftool.sh test-image.jpg EXIF:
 
-# Test existing integration  
-cargo test tag_kit_integration
-```
-
-#### Integration Tests
-```bash
-# Test with real image (THE MOMENT OF TRUTH)
+# Verify specific tags use tag kit
 cargo run -- test-image.jpg | jq '.tags[] | select(.name == "ResolutionUnit" or .name == "Orientation")'
-
-# Compare with ExifTool
-./scripts/compare-with-exiftool.sh test-image.jpg EXIF: | grep -E "ResolutionUnit|Orientation"
 ```
 
-#### Success Evidence
+**Success criteria**: 
 - ResolutionUnit shows "inches"/"cm" (from tag kit) not function name
 - Orientation shows "Rotate 180" (from tag kit) not numeric
-- No difference in ExifTool comparison for supported tags
-- Fallback still works for unsupported tags
+- No value differences vs ExifTool (formatting differences OK)
 
-## 🚨 CRITICAL ISSUE DISCOVERED: Architectural Inconsistency **[RESOLVED]**
-
-**THE TAG KIT IS GENERATING TO THE WRONG PLACE!** 
-
-**What we discovered**:
-- **Tag kit currently generates**: `src/generated/exif_tag_kit/` (separate directory with 12 files)
-- **Tag kit SHOULD generate**: `src/generated/Exif_pm/tag_kit.rs` (single file in module directory)
-- **Current pattern for other modules**: `src/generated/Canon_pm/canonwhitebalance.rs`, `src/generated/Exif_pm/orientation.rs`
-
-**Root cause**: Tag kit uses separate modular generation system instead of integrating with the module-based system that other extractors use.
-
-## 📋 CRITICAL ARCHITECTURAL FIX NEEDED
-
-**The Problem**: Two incompatible generation systems exist:
-
-### System 1: Module-Based Generation (GOOD - used by simple tables, etc.)
-- **Location**: `codegen/src/generators/lookup_tables/mod.rs` function `process_config_directory()`
-- **Flow**: Discovery → process_config_directory() → generates to `src/generated/Exif_pm/orientation.rs`
-- **Pattern**: One function per file, integrates with module system
-- **Used by**: Simple tables, boolean sets, inline PrintConvs
-
-### System 2: Standalone Modular Generation (PROBLEMATIC - used by tag kit)
-- **Location**: `codegen/src/main.rs` function `process_tag_kit_files()`
-- **Flow**: Separate processing → generates to `src/generated/exif_tag_kit/` (12 files)
-- **Pattern**: Category-based splitting, creates own directory structure
-- **Used by**: Tag kit only
-
-**SOLUTION REQUIRED**: Integrate tag kit into System 1 (module-based generation)
-
-## 🛠️ DETAILED IMPLEMENTATION GUIDE FOR NEXT ENGINEER
-
-### What Was Completed (July 22, Late Night Session)
-
-1. ✅ **Fixed extraction naming**: Updated `TagKitExtractor` and `FileTypeLookupExtractor` to use `sanitize_module_name()` from base trait
-2. ✅ **Added module name sanitization**: Added `sanitize_module_name()` to base `Extractor` trait in `codegen/src/extractors/mod.rs`
-3. ✅ **Clean file generation**: Tag kit now generates `exif_tag_kit.json` (not `third-party_exiftool_lib_image_exiftool_exif_tag_kit.json`)
-4. ✅ **Code generation works**: Tag kit generates to `src/generated/exif_tag_kit/` with clean names
-5. ✅ **Compilation passes**: Both codegen and main crate compile without errors
-
-### CRITICAL ISSUE: Wrong Generation Location
-
-**Current Flow (WRONG)**:
-```
-codegen/src/main.rs:process_tag_kit_files() 
-  → finds exif_tag_kit.json 
-  → calls tag_kit_modular::generate_modular_tag_kit()
-  → generates src/generated/exif_tag_kit/ directory
-```
-
-**Desired Flow (CORRECT)**:
-```  
-codegen/src/discovery.rs:process_all_modules()
-  → finds Exif_pm/ config directory
-  → calls lookup_tables::process_config_directory()
-  → processes tag_kit.json config
-  → generates src/generated/Exif_pm/tag_kit.rs
-```
-
-### EXACT STEPS TO FIX THIS
-
-#### Step 1: Add Tag Kit Support to Module System (2-3 hours)
-
-**File to modify**: `codegen/src/generators/lookup_tables/mod.rs`
-
-**Location**: In `process_config_directory()` function around line 50-80
-
-**Add this block** after the boolean_set processing:
-
-```rust
-// Check for tag_kit.json configuration 
-let tag_kit_config = config_dir.join("tag_kit.json");
-if tag_kit_config.exists() {
-    let config_content = fs::read_to_string(&tag_kit_config)?;
-    let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
-    
-    // Look for extracted tag kit JSON file
-    let extract_dir = Path::new("generated/extract").join("tag_kits");
-    let module_base = module_name.trim_end_matches("_pm");
-    let tag_kit_file = format!("{}_tag_kit.json", module_base.to_lowercase());
-    let tag_kit_path = extract_dir.join(&tag_kit_file);
-    
-    if tag_kit_path.exists() {
-        let tag_kit_content = fs::read_to_string(&tag_kit_path)?;
-        let tag_kit_data: crate::schemas::tag_kit::TagKitExtraction = 
-            serde_json::from_str(&tag_kit_content)?;
-        
-        // Generate single tag_kit.rs file in module directory
-        let file_name = generate_tag_kit_file(&tag_kit_data, &module_output_dir)?;
-        generated_files.push(file_name);
-        has_content = true;
-    }
-}
-```
-
-**Create new function** `generate_tag_kit_file()` in the same file:
-
-```rust
-fn generate_tag_kit_file(
-    tag_kit_data: &crate::schemas::tag_kit::TagKitExtraction,
-    output_dir: &Path,
-) -> Result<String> {
-    // Use the existing tag_kit generator but output to single file
-    let tag_kit_code = crate::generators::tag_kit::generate_tag_kit(
-        tag_kit_data,
-        "tag_kit"
-    )?;
-    
-    let filename = "tag_kit.rs";
-    let output_path = output_dir.join(filename);
-    
-    fs::write(&output_path, tag_kit_code)?;
-    println!("  🏷️  Generated tag kit file: {}", filename);
-    
-    Ok("tag_kit".to_string())
-}
-```
-
-#### Step 2: Remove Duplicate Tag Kit Processing (30 minutes)
-
-**File to modify**: `codegen/src/main.rs`
-
-**Remove the entire `process_tag_kit_files()` call** around line 80:
-```rust
-// REMOVE THIS:
-process_tag_kit_files(&extract_dir, output_dir)?;
-```
-
-**Remove the function definition** `process_tag_kit_files()` entirely (lines 167-210).
-
-#### Step 3: Clean Up Generated Directory (5 minutes)
-
+### 3. **Full Validation** (30 min)
 ```bash
-rm -rf src/generated/exif_tag_kit/
+make precommit  # All tests, linting, formatting
 ```
 
-#### Step 4: Test the Fix
-
-```bash
-make codegen && cargo check
-```
-
-**Expected result**: `src/generated/Exif_pm/tag_kit.rs` should exist and compile.
-
-### FILE TYPE LOOKUP FIX (Minor Issue)
-
-**Current**: File type generates `exiftool_file_type_lookup.json` but generator looks for `file_type_lookup.json`
-
-**Fix needed**: Update `codegen/src/generators/file_detection/types.rs` line 47:
-```rust
-// CHANGE:
-let file_type_lookup_path = json_dir.join("file_types").join("file_type_lookup.json");
-// TO:
-let file_type_lookup_path = json_dir.join("file_types").join("exiftool_file_type_lookup.json");
-```
-
-**OR** make file types follow the module pattern like everything else.
-
-## 🎉 MAJOR BREAKTHROUGH: What Was Just Completed (July 22, 11pm)
-
-**THE BIG WIN**: Fixed the fundamental extraction pipeline bug that was causing empty JSON files!
-
-### 1. **ROOT CAUSE DISCOVERED**: Stdout Capture Bug
-- **Problem**: `run_perl_extractor()` was printing Perl script JSON output to console instead of writing to files
-- **Evidence**: GPS tag extraction showed 32 tags found but created 0-byte file
-- **Root cause**: Missing file write in `codegen/src/extractors/mod.rs:run_perl_extractor()`
-- **Fix**: Added stdout capture and file writing with proper filename handling
-
-### 2. **Boolean Set Patching Bug**
-- **Problem**: `BooleanSetExtractor` didn't override `requires_patching()` → defaults to `false`
-- **Evidence**: PNG `%isDatChunk` extraction failed with "Hash not found or empty"
-- **Root cause**: ExifTool boolean sets use `my` scope, need patching to `our` scope
-- **Fix**: Added `requires_patching() -> true` override in `BooleanSetExtractor`
-
-### 3. **Trait-Based Extraction Architecture** 
-- **Achievement**: Replaced 700+ lines of repetitive extraction code with clean trait system
-- **Key files**: `codegen/src/extractors/mod.rs` (trait definition), individual extractor implementations
-- **Pattern**: Each extractor implements `Extractor` trait with `extract()`, `build_args()`, `output_filename()` methods
-- **Special cases**: `InlinePrintConvExtractor` and `BooleanSetExtractor` override `extract()` for one-at-a-time processing
-
-### 4. **Pipeline Now Fully Functional**
-- **Evidence**: `make codegen` extracts GPS tags (438 lines), PNG boolean sets, all other data types
-- **Directory structure**: Proper separation under `generated/extract/{type}/` subdirectories  
-- **Path handling**: Absolute paths via environment variables (`CODEGEN_DIR`, `REPO_ROOT`)
-- **Multi-config support**: Each module can have 10+ different config types
-
-### 5. **What's Proven Working**
-✅ Simple table extraction (Canon white balance, Nikon lens IDs, etc.)  
-✅ Boolean set extraction (PNG chunk types, file type sets)  
-✅ Tag definitions extraction (GPS, EXIF main tables with 32+ tags each)  
-✅ Inline PrintConv extraction (manufacturer-specific table processing)  
-✅ Composite tags extraction (computed tags from multiple sources)  
-✅ Runtime table extraction (model-conditional binary data tables)  
-✅ Tag kit extraction (complete tag bundles with embedded PrintConvs)
-
-## ⚠️ REMAINING WORK: Two Small Issues + The Big Integration
-
-### A. **EASY FIX**: Rust Naming Issues (30 minutes)
-
-**Problem**: Generated code contains hyphens in identifiers (invalid Rust syntax):
-```rust
-// ERROR: Invalid Rust syntax
-pub mod third-party_tag_kit;  // Should be third_party_tag_kit
-pub static THIRD-PARTY_TAG_KITS: LazyLock<...> = ...;  // Should be THIRD_PARTY_TAG_KITS
-```
-
-**Evidence**: The tag kit files ARE generated, but in wrong directory:
-- Generated: `src/generated/third-party_tag_kit/` (INVALID - has hyphens)
-- Should be: `src/generated/exif_tag_kit/` (or `third_party_tag_kit/`)
-
-**Where to Look**:
-- `codegen/src/generators/tag_kit_modular.rs` - Module name generation  
-- `codegen/src/generators/tag_kit_split.rs` - Category-based splitting logic
-- Look for string sanitization functions that should replace `-` with `_`
-- Test: `make codegen && cargo check` should pass
-
-**CRITICAL**: The tag kit code IS being generated (12 files in the directory), it just has invalid Rust names.
-
-### B. **MISSING FILE**: `file_type_lookup.rs` Not Generated
-
-**Problem**: Error shows `file_type_lookup.rs does not exist` but file type extraction worked.
-**Likely cause**: File type generator not wired into main generation pipeline.
-**Where to Look**: `codegen/src/main.rs` - file type generation logic around line 87-88
-
-### C. **THE BIG TASK**: Wire Tag Kit into Runtime
-
-**Current State**: 
-- Tag kit generates perfect Rust code with 414 EXIF tags
-- Integration tests prove 100% parity with manual implementations  
-- `cargo test tag_kit_integration` passes completely
-- Runtime code has NO IDEA the tag kit exists
-
-**What You Need to Do**:
-1. Update `src/registry.rs` to check tag kits before manual implementations
-2. Pattern: `if let Some(result) = exif_tag_kit::apply_print_conv(tag_id, value, ...) { return result; }`
-3. Handle errors/warnings as arrays (per user requirements)
-
-**Key Files to Study**:
-- `src/registry.rs` - Current PrintConv function registry  
-- `src/implementations/print_conv.rs` - Manual implementations to replace  
-- `src/generated/exif_tag_kit/mod.rs` - The tag kit API (`apply_print_conv` function)  
-- `tests/tag_kit_integration.rs` - Working examples of how to call tag kit
-
-## 🔍 CRITICAL RESEARCH FINDINGS: What We Learned
-
-### The Extraction Pipeline Architecture
-
-**The Problem We Solved**: The original approach had 700+ lines of repetitive extraction logic scattered across multiple functions. Each extraction type (simple tables, boolean sets, etc.) had its own hardcoded function.
-
-**The Solution**: Trait-based architecture where each extractor type implements the `Extractor` trait:
-
-```rust
-pub trait Extractor: Send + Sync {
-    fn name(&self) -> &'static str;                    // For logging
-    fn script_name(&self) -> &'static str;             // Perl script to run
-    fn output_subdir(&self) -> &'static str;           // Where to save files
-    fn requires_patching(&self) -> bool { false }      // Whether to patch ExifTool
-    fn handles_config(&self, config_type: &str) -> bool;  // Config file matching
-    fn build_args(&self, config: &ModuleConfig, module_path: &Path) -> Vec<String>;  // Script args
-    fn output_filename(&self, config: &ModuleConfig, hash_name: Option<&str>) -> String;  // Output file
-    fn extract(&self, config: &ModuleConfig, base_dir: &Path, module_path: &Path) -> Result<()>;  // Do work
-}
-```
-
-### The Two Extraction Patterns
-
-**Pattern 1: Multi-Item Extraction** (default `extract()` implementation)
-- Processes all items in one Perl script call
-- Examples: `SimpleTableExtractor`, `TagKitExtractor`, `RuntimeTableExtractor`
-- Args: `[module_path, %hash1, %hash2, %hash3, ...]`
-
-**Pattern 2: One-at-a-Time Extraction** (custom `extract()` override)  
-- Calls Perl script separately for each item
-- Examples: `InlinePrintConvExtractor`, `BooleanSetExtractor`
-- Args per call: `[module_path, table_name]`
-- **WHY**: Perl scripts expect single table argument, not multiple
-
-### The Stdout Capture Bug (CRITICAL LEARNING)
-
-**What We Discovered**: Perl extraction scripts write JSON to stdout, but the Rust framework wasn't capturing it into files!
-
-**The Smoking Gun**: 
-```bash
-# This showed JSON going to console instead of files:
-cd codegen && perl extractors/tag_definitions.pl ../third-party/exiftool/lib/Image/ExifTool/GPS.pm Main
-# Output: 438 lines of JSON to stdout
-# Result: 0-byte GPS tag definitions file
-```
-
-**The Fix**: Modified `run_perl_extractor()` in `codegen/src/extractors/mod.rs` to:
-1. Capture stdout from Perl scripts
-2. Write stdout to appropriate JSON file using `extractor.output_filename()`  
-3. Stop printing JSON to console
-
-### ExifTool Patching Requirements
-
-**Key Discovery**: Not all extractors need ExifTool module patching.
-
-**Extractors Needing Patching**:
-- `SimpleTableExtractor` - Converts `my %hash` → `our %hash`
-- `BooleanSetExtractor` - Same patching needed (THIS WAS THE BUG!)
-
-**Extractors NOT Needing Patching**:  
-- `RuntimeTableExtractor` - Works with existing package variables
-- `TagKitExtractor` - Accesses tag tables directly
-- `InlinePrintConvExtractor` - Processes inline data structures
-
-### Module Configuration Patterns
-
-**Discovery**: Each ExifTool module can have 10+ different extraction types:
-
-```
-Canon_pm/
-├── simple_table.json      # Static lookup tables (%canonWhiteBalance, etc.)
-├── tag_kit.json          # Complete tag bundles with PrintConvs  
-├── runtime_table.json    # Model-conditional binary data tables
-├── inline_printconv.json # Named PrintConv hash extraction
-├── boolean_set.json      # Membership testing sets
-├── tag_definitions.json  # Basic tag metadata
-├── composite_tags.json   # Computed tags
-├── process_binary_data.json  # Binary data parsing rules
-├── model_detection.json  # Camera model patterns
-└── ... (more as needed)
-```
-
-**Critical Pattern**: The `source` field in config files should NOT include `../` prefixes. The extraction framework adds the repo root automatically.
-
-## 📋 VALIDATION CHECKLIST: How to Test Your Changes
-
-### A. Fix Naming Issues
-```bash
-# 1. Fix the naming in generators
-# 2. Test compilation
-make codegen && cargo check
-# Should pass without "expected one of ';' or '{', found '-'" errors
-```
-
-### B. Wire Tag Kit Into Runtime  
-```bash
-# 1. Update src/registry.rs to use tag kit
-# 2. Test with a real image
-cargo run -- test-image.jpg
-# Look for ResolutionUnit, Orientation, YCbCrPositioning using tag kit instead of manual functions
-
-# 3. Run integration tests
-cargo test tag_kit_integration
-# Should still pass (proves tag kit API works)
-
-# 4. Compare with ExifTool
-./scripts/compare-with-exiftool.sh test-image.jpg EXIF:
-# Should show minimal differences (only formatting, not values)
-```
-
-### C. Full Pipeline Validation
-```bash
-# 1. Full clean build
-make clean && make codegen && make precommit
-# Should complete without errors
-
-# 2. Test edge cases
-cargo test
-# All tests should pass, including new tag kit integration tests
-```
-
-## 🚨 CRITICAL SUCCESS CRITERIA
-
-**You MUST achieve these before marking anything as complete:**
-
-1. **❌ Tag kit generates to `src/generated/Exif_pm/tag_kit.rs` (not separate directory)**
-2. **❌ `make codegen` completes without compilation errors after architectural fix**
-3. **❌ Tag kit wired into runtime - real images show tag kit PrintConvs working**  
-4. **❌ Integration tests pass - proves tag kit API still works after location change**
-5. **❌ ExifTool parity maintained - compare-with-exiftool shows same values**
-6. **❌ All existing tests pass - no regressions introduced**
-
-**EVIDENCE REQUIRED**: 
-- File `src/generated/Exif_pm/tag_kit.rs` exists and compiles
-- ResolutionUnit, Orientation, and YCbCrPositioning tags use generated tag kit instead of manual implementations
-- `cargo test tag_kit_integration` passes with new location
-
-## 🎯 IMMEDIATE TODO LIST (IN ORDER)
-
-### 1. **ARCHITECTURAL FIX: Move tag kit to module system** (2-3 hours) - CRITICAL BLOCKER
-
-**The Problem**: Tag kit generates to wrong location due to architectural inconsistency
-- **Current**: `src/generated/exif_tag_kit/` (separate directory)
-- **Needed**: `src/generated/Exif_pm/tag_kit.rs` (in module directory like other files)
-
-**Exact implementation steps provided above in "DETAILED IMPLEMENTATION GUIDE"**
-
-### 2. **Fix file type lookup generation** (30 min)  
-   - File generates `exiftool_file_type_lookup.json` but generator looks for `file_type_lookup.json`
-   - Update `codegen/src/generators/file_detection/types.rs` line 47
-   - Or integrate file types into module system like everything else
-
-### 3. **Wire tag kit into runtime** (2-4 hours - THE BIG WIN)
-   - **BLOCKED until Step 1 complete** - need correct import path
-   - Study `src/registry.rs` - how PrintConv functions are currently called
-   - Update imports to use `src/generated/Exif_pm/tag_kit::apply_print_conv`
-   - Add tag kit check before manual registry lookup
-   - Handle errors/warnings as Vec<String>
-
-### 4. **Test and validate** (1 hour)
-   - Test with real images
-   - Run all integration tests  
-   - Compare with ExifTool output
-   - Ensure no regressions
-
-### 5. **Clean up** (30 min)
-   - Remove manual implementations covered by tag kit  
-   - Update documentation
-
-## 🔮 FUTURE REFACTORING OPPORTUNITIES
-
-### Major Architectural Improvements Identified (July 22 Session)
-
-1. **PRIORITY: Unify Generation Systems** - Currently have two systems:
-   - Module-based (good): `discovery.rs` → `process_config_directory()` → `Exif_pm/file.rs`
-   - Standalone (bad): `main.rs` → custom generators → `separate_directory/`
-   - **Solution**: Integrate all extraction types into module-based system
-   - **Impact**: Consistent paths, easier maintenance, follows single pattern
-
-2. **File Type System Refactor** - Currently inconsistent:
-   - Uses separate `file_types/` directory instead of `ExifTool_pm/` module directory
-   - Generator looks for different filename than extractor produces
-   - **Solution**: Move to module-based generation like everything else
-
-3. **Extractor Naming Consistency** - Achieved with base trait approach:
-   - ✅ Added `sanitize_module_name()` to base `Extractor` trait
-   - ✅ All extractors now use consistent naming
-   - **Future**: Could add more shared utilities to base trait
-
-### Code Quality Improvements Observed
-
-4. **Empty File Handling** - Should be centralized in `read_utf8_with_fallback()` rather than duplicated in multiple processors
-
-5. **Error Handling Pattern** - `table_processor.rs` has duplicate empty file checking that could use a helper function
-
-6. **Configuration Validation** - Each extractor validates its config independently; could use a centralized validation trait
-
-7. **Path Handling** - The absolute path calculation pattern is repeated in multiple extractors; could be extracted to a utility function
-
-8. **Testing Infrastructure** - Integration tests are manual; could be automated with a test harness that compares tag kit vs manual implementations
-
-### Performance & Maintenance Improvements
-
-9. **Generated File Cleanup Automation** - Could add detection/cleanup of old generated files with incorrect naming patterns
-
-10. **Config File Consolidation** - Consider single `module_config.json` with sections instead of 10+ separate files per module
-
-### Architecture Improvements Considered
-
-1. **Extractor Registry** - Currently uses hardcoded list; could use trait object discovery or macro-based registration
-
-2. **Parallel Extraction** - Each extractor runs sequentially; could run multiple extractors concurrently for better performance  
-
-3. **Incremental Generation** - Currently regenerates everything; could detect changes and only regenerate affected modules
-
-4. **Schema Evolution** - JSON schemas are static; could support versioning for gradual migration
-
-5. **Configuration DSL** - Current JSON configs are verbose; could develop a more concise DSL for common patterns
-
-## 🏁 FINAL STATUS SUMMARY
-
-**MAJOR BREAKTHROUGH ACHIEVED**: The extraction pipeline that has been problematic for months is now fully operational.
-
-### ✅ What's Complete and Working
-- **Trait-based extractor system**: Clean, extensible architecture replacing 700+ lines of repetitive code
-- **All extraction types working**: Simple tables, boolean sets, tag definitions, inline PrintConvs, composite tags, runtime tables, tag kits
-- **Critical bugs fixed**: Stdout capture bug (empty JSON files), boolean set patching bug  
-- **Tag kit infrastructure**: 414 EXIF tags extracted with embedded PrintConvs, integration tests prove 100% parity
-- **Directory organization**: Proper separation of extraction types under `generated/extract/{type}/`
-- **Path handling**: Absolute paths eliminate the relative path calculation errors
-
-### ⚠️ What Needs Minor Fixes  
-- **Naming issues**: Replace hyphens with underscores in generated Rust identifiers (30 minutes)
-- **Missing file**: Wire file type generation into main pipeline (15 minutes)
-
-### ❌ What's the Big Missing Piece
-- **Runtime integration**: Tag kit exists but isn't used by the runtime system yet
-- **THE BREAKTHROUGH MOMENT**: When you wire `src/registry.rs` to use tag kit, 414 tags will instantly get automated PrintConvs
-
-### Evidence of Success
-```bash
-# This now works (was broken for months):
-make codegen
-# ✅ Extraction phase: All JSON files created with proper data
-# ✅ Generation phase: All Rust modules generated  
-# ⚠️  Compilation: Fails only on naming issues (easy fix)
-
-# This proves the tag kit works:
-cargo test tag_kit_integration  # ✅ Passes
-```
-
-### Key Files Created/Fixed
-- `codegen/src/extractors/mod.rs` - Fixed stdout capture, added filename parameter to `run_perl_extractor()`
-- `codegen/src/extractors/boolean_set.rs` - Added `requires_patching() -> true`
-- `codegen/src/extractors/inline_printconv.rs` - Updated to pass output filename
-- Generated extraction data in `codegen/generated/extract/` - All properly populated now
-- **`src/generated/third-party_tag_kit/`** - 12 tag kit files generated (just has invalid hyphens in name)
-
-### Tribal Knowledge for Next Engineer
-
-#### Key Discoveries from Late Night Session (July 22, 2025)
-
-1. **Two incompatible generation systems exist** - this is the root of many issues
-   - Module-based system (good): Used by simple tables, generates to `Exif_pm/orientation.rs`  
-   - Standalone system (problematic): Used only by tag kit, generates to `exif_tag_kit/`
-
-2. **Naming system works perfectly** - the `sanitize_module_name()` fix was successful
-   - All extractors now generate clean filenames like `exif_tag_kit.json`
-   - Base trait approach is elegant and consistent
-
-3. **The extraction pipeline is robust** - trait-based system handles all edge cases
-   - stdout capture working
-   - boolean set patching working  
-   - multi-item vs one-at-a-time extraction patterns working
-
-4. **Legacy cleanup was important** - found many old files with long names from deleted/changed extractors
-
-#### Critical Insights for Architecture
-
-1. **Module consistency is essential** - everything should follow the `src/generated/ModuleName_pm/` pattern
-2. **Single responsibility generators work better** - each generator should have one clear purpose
-3. **The config-driven approach scales** - discovery → process_config_directory → generate pattern is solid
-4. **File type system also inconsistent** - should be moved to module system
-
-#### Don't Repeat These Mistakes
-
-1. **Don't create separate generation systems** - integrate with existing module system
-2. **Don't use path-based naming** - use the sanitize_module_name() approach
-3. **Don't forget to clean up old generated files** - they cause confusion
-4. **Don't assume filename patterns** - trace through the actual flow
-
-**YOU'RE ONE ARCHITECTURAL FIX AWAY FROM A MAJOR MILESTONE**: Automated PrintConvs for 414 EXIF tags!
-
-### Phase 1: COMPLETED - Tag Kit Infrastructure
-
-1. **Created tag kit extractor** (`codegen/extractors/tag_kit.pl`) ✅
-   - Extracts tag ID, name, format, groups, and PrintConv together
-   - Successfully classifies PrintConv types: Simple hash, Expression, or Manual
-   - Outputs unified JSON structure (`tag_kit_main.json`)
-   - Based on existing `tag_definitions.pl` but adds PrintConv extraction
-   - **Issue fixed**: Had to remove debug stderr output that was corrupting JSON
-
-2. **Created tag kit schema** (`codegen/schemas/tag_kit.json`) ✅
-   - Defines structure for tag kit extraction data
-   - Supports all three PrintConv types with appropriate data fields
-
-3. **Implemented generator** (`codegen/src/generators/tag_kit.rs`) ✅
-   - Generates `TagKitDef` structs with embedded PrintConv
-   - Creates static lookup tables for Simple PrintConvs (e.g., `PRINT_CONV_55`)
-   - Generates runtime dispatcher (`apply_print_conv`) for different PrintConv types
-   - Added whitespace trimming for notes field per user request
-   - Successfully generates 414 tags from EXIF Main table
-
-4. **Integrated into codegen pipeline** ✅
-   - Added tag kit extraction to `codegen/src/extraction.rs`
-   - Added `process_tag_kit_files` to `codegen/src/main.rs`
-   - Created config at `codegen/config/Exif_pm/tag_kit.json`
-   - **Path issue fixed**: Config source path shouldn't include `../` prefix
-
-### Phase 2: COMPLETED - Integration Testing & Modular Generation
-
-5. **Extracted EXIF basic tags** ✅
-   - ResolutionUnit (0x0128/296) - Successfully extracted with 3 entries
-   - All other basic tags present in the 414 extracted tags
-   - GPS tags also extracted (GPSAltitude shows Expression type)
-
-6. **Created integration tests** ✅ (July 22, 2025)
-   - Tests in `tests/tag_kit_integration.rs` prove 100% parity
-   - ResolutionUnit, Orientation, YCbCrPositioning all tested
-   - Tests pass with both single-file and modular generation
-   - **Key insight**: ExpressionEvaluator required, not ConditionEvaluator
-
-7. **Implemented modular generation** ✅ (July 22, 2025)
-   - Created `tag_kit_modular.rs` and `tag_kit_split.rs` generators
-   - Split 6805-line file into 11 category modules
-   - Categories: core (375), camera (87), color (200), document (120), datetime (175), gps (25), thumbnail (25), exif_specific (718), interop (83), windows_xp (115), other (3245)
-   - All files except "other" are under 1000 lines
-   - Fixed compilation issues: removed I8 variant, added HashMap import
-
-### Phase 3: NOT STARTED - Runtime Integration
-
-8. **Wire into runtime** ❌ CRITICAL NEXT STEP
-   - Update `src/registry.rs` to check tag kits before manual registry
-   - This enables production use of 414 automated tags
-   - Must handle errors/warnings as arrays per user requirements
-
-### Key Code Artifacts Created
-
-- **Extractor**: `codegen/extractors/tag_kit.pl` - Extracts tags with inline PrintConvs
-- **Schema**: `codegen/schemas/tag_kit.json` and `codegen/schemas/tag_kit.rs` - Data structures
-- **Generators**: 
-  - `codegen/src/generators/tag_kit.rs` - Original single-file generator
-  - `codegen/src/generators/tag_kit_modular.rs` - Splits into category modules (NEW)
-  - `codegen/src/generators/tag_kit_split.rs` - Category logic (NEW)
-- **Config**: `codegen/config/Exif_pm/tag_kit.json`
-- **Generated**: 
-  - `src/generated/exif_tag_kit/` - Modular structure with 11 files
-  - Old single file removed to avoid module conflict
-- **Tests**: `tests/tag_kit_integration.rs` - Proves parity with manual implementations
-
-### Example Generated Code
-
-```rust
-// ResolutionUnit lookup table
-static PRINT_CONV_55: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "None");
-    map.insert("2".to_string(), "inches");
-    map.insert("3".to_string(), "cm");
-    map
-});
-
-// ResolutionUnit tag definition
-map.insert(296, TagKitDef {
-    id: 296,
-    name: "ResolutionUnit",
-    format: "int16u",
-    groups: { ... },
-    writable: true,
-    notes: Some("the value 1 is not standard EXIF"),
-    print_conv: PrintConvType::Simple(&PRINT_CONV_55),
-    value_conv: None,
-});
-```
-
-## Recent Discoveries & Insights
-
-### 1. Runtime Table Extraction Working!
-- Successfully extracted Canon CameraSettings table (`canon_runtime_table_camerasettings.json`)
-- The runtime table extractor (`runtime_table.pl`) outputs different JSON structure
-- These tables need model-conditional logic and can't be statically generated
-- Example: Canon's binary data tables vary by camera model
-
-### 2. Directory Organization is Essential
-- Different extractors produce incompatible JSON structures
-- Filename pattern matching is fragile and error-prone
-- Type-specific directories make the system more maintainable
-- Proposed structure implemented in code but not tested:
-  ```
-  generated/extract/
-  ├── simple_tables/      # Basic lookup tables
-  ├── tag_definitions/    # Tag metadata
-  ├── runtime_tables/     # ProcessBinaryData runtime tables
-  ├── tag_kits/          # Unified tag definitions
-  └── ... (9 other types)
-  ```
-
-### 3. Config File Proliferation
-- Each module can have up to 10+ different config files
-- `inline_tables.json` was added for inline PrintConv tables
-- System is getting complex but remains manageable with good organization
-
-## Remaining Tasks
-
-### CRITICAL NEXT STEP: Complete Directory Restructuring (45 min)
-
-1. **Fix the compilation errors** (15 min)
-   - See fix instructions above
-   - Main issue: `ExtractDirs` struct needs to be moved
-   - Simple mechanical fixes, no logic changes needed
-
-2. **Test the new structure** (15 min)
-   - Run `make clean && make codegen`
-   - Verify directories are created
-   - Check files end up in correct subdirectories
-
-3. **Update Makefile clean target** (15 min)
-   - Add `rm -rf codegen/generated/extract/*/` to clean subdirectories
-   - Keep the directory structure, just empty the contents
-
-### Then: Wire into Runtime
-
-1. **Wire tag kit into runtime** ❌ HIGHEST PRIORITY
-   - Update `src/registry.rs` to check tag kits before manual registry
-   - The integration tests already prove parity - we're ready!
-   - Key files to study:
-     - `src/registry.rs` - Current PrintConv function registry
-     - `src/implementations/print_conv.rs` - Manual implementations to replace
-     - `src/generated/exif_tag_kit/mod.rs` - The new tag kit API
-   - Implementation approach:
-     ```rust
-     // In registry.rs or wherever PrintConv is applied
-     if let Some(result) = exif_tag_kit::apply_print_conv(tag_id, value, evaluator, errors, warnings) {
-         return result;
-     }
-     // Fall back to manual registry
-     ```
-   - Must handle errors/warnings as arrays per user requirements
-
-2. **Remove manual implementations** (After runtime wiring)
-   - Start with the 3 tested tags: ResolutionUnit, Orientation, YCbCrPositioning
-   - Gradually remove others covered by tag kit
-   - Keep complex manual implementations (the 37 "Manual" type)
-
-### Phase 3: Expression Support (Medium Priority)
-
-4. **Implement expression evaluator integration**
-   - GPS tags already extracted with Expression type
-   - GPSAltitude: `$val =~ /^(inf|undef)$/ ? $val : "$val m"`
-   - Hook into existing `src/expressions/` system
-   - Start with simple regex + ternary patterns
-
-5. **Add more GPS tag configs**
-   - Create `codegen/config/GPS_pm/tag_kit.json`
-   - Extract GPS Main table
-   - Many GPS tags have complex PrintConvs needing expressions
-
-### Phase 4: Expand Coverage
-
-6. **Add manufacturer modules**
-   - Canon, Nikon, Sony, Olympus all use inline PrintConvs
-   - Each needs its own tag_kit.json config
-   - Potentially thousands more tags to automate
-
-7. **Manual PrintConv registry integration**
-   - For the 37 "Manual" type PrintConvs identified
-   - Connect to existing registry system
-   - Document which functions map to which Manual references
+## For the Next Engineer - Quick Start
+
+### What Just Happened
+I was fixing the tag kit integration compilation issues when we discovered:
+1. The previous engineer's "stub" approach in `src/stubs.rs` was wrong-headed
+2. The proper tag_structure generator already existed but had wiring issues
+3. Fixed the tag_structure extraction to read files from disk (not from ExtractedTable)
+4. Tag structures now generate successfully BUT cause duplicate module declarations
+
+### Your First Priority: Fix the Duplicate Module Bug
+1. Run `make codegen` and observe the duplicate in `src/generated/Olympus_pm/mod.rs`
+2. The bug: Both configs generate `tag_structure.rs` when Equipment should generate `equipment_tag_structure.rs`
+3. Fix location: `codegen/src/generators/lookup_tables/mod.rs:530` in `generate_tag_structure_file()`
+4. After fixing, regenerate and compilation errors should reduce significantly
+
+### DON'T DO THESE THINGS
+- **NEVER manually edit files in `src/generated/`** - they're regenerated on every build
+- Don't try to fix the stub approach - proper codegen is the way
+- Don't remove the `equipment_tag_table_structure.json` - fix the naming instead
 
 ## Prerequisites
 
-- Understanding of current inline_printconv extraction (exists but has structural mismatch)
-- Familiarity with ExifTool tag table structure
-- Access to expression evaluation system (`src/expressions/`)
-- Read [EXIFTOOL-GUIDE.md](../guides/EXIFTOOL-GUIDE.md) sections on tag tables and PrintConv
-
-### Development Environment Setup
-
-```bash
-# Verify you can run extractors
-cd codegen
-perl extractors/simple_table.pl ../third-party/exiftool/lib/Image/ExifTool/Exif.pm %orientation
-
-# Verify expression system works
-cargo test -p exif-oxide expressions::tests
-```
+- Understanding of ExifTool tag table structure and PrintConv system  
+- Familiarity with current `src/registry.rs` PrintConv application flow
+- Knowledge of the trait-based extractor system (not SpecialExtractor enum)
+- Access to test images for validation
 
 ## Testing Strategy
 
-### Unit Tests
-
-```rust
-#[test]
-fn test_resolution_unit_printconv() {
-    let tag_def = EXIF_TAGS.get(&0x0128).unwrap();
-    assert_eq!(apply_print_conv(&tag_def, &TagValue::U16(2)), 
-               TagValue::String("inches".to_string()));
-}
-```
-
-### Integration Tests
-
-- Generate test comparing our output with `exiftool -j` for test images
-- Verify all extracted PrintConvs produce identical output to ExifTool
-
-### Validation Script
-
+### Step-by-Step Validation
 ```bash
-# Compare generated PrintConvs with ExifTool
-cargo run --bin validate-printconvs test-images/*.jpg
+# 1. First get it to compile (current blocker)
+make codegen
+cargo check  # Should fail with duplicate module error
+
+# 2. After fixing duplicate module bug
+cargo check  # Should only have import errors
+
+# 3. After fixing imports
+cargo check  # Should pass!
+
+# 4. Then test tag kit integration
+cargo test tag_kit_integration
+
+# 5. Real image testing (THE MOMENT OF TRUTH)
+cargo run -- test-image.jpg | jq '.tags[] | select(.name == "ResolutionUnit")'
+# Should show "inches" not "resolution_unit_print_conv"
+
+# 6. Full validation
+make precommit
+./scripts/compare-with-exiftool.sh test-image.jpg EXIF:
 ```
 
 ## Success Criteria & Quality Gates
 
-- **Zero offset errors**: Tag IDs and PrintConvs extracted together, eliminating manual matching
-- **ExifTool parity**: Generated PrintConvs produce identical output to ExifTool
-- **PR reviewability**: Generated code clearly shows tag ID with its PrintConv
-- **All EXIF basic tags**: Successfully migrate the 6 identified tags
-- **GPS proof-of-concept**: At least one expression-based PrintConv working
+**Evidence required for "COMPLETE"**:
+1. ✅ `make codegen` generates tag kit to `src/generated/Exif_pm/tag_kit/` (ACHIEVED)
+2. ✅ Tag structure types generate to `src/generated/{Canon,Olympus,Nikon}_pm/tag_structure.rs` (ACHIEVED)
+3. 🟡 `cargo check` passes without errors (IN PROGRESS - duplicate module bug found)
+4. ❌ Tags like ResolutionUnit use tag kit instead of manual registry (BLOCKED - needs compilation)
+5. ❌ ExifTool parity maintained: same values, acceptable formatting differences (BLOCKED)
+6. ❌ All integration tests pass: `cargo test tag_kit_integration` (BLOCKED)
+7. ❌ No regressions: `make precommit` passes (BLOCKED)
+
+**Current Status**: Tag generation works but compilation blocked by fixable module naming bug
+
+**The Potential Win**: 414 EXIF tags will get automated PrintConvs when runtime integration is validated!
+
+## What Was Verified (Without Full Compilation)
+
+### ✅ Tag Kit Generation Working
+- ResolutionUnit (ID 296) has PrintConv: 2→"inches", 3→"cm"  
+- Orientation (ID 274) has PrintConv: 1→"Horizontal (normal)", 6→"Rotate 90 CW"
+- All 414 EXIF tags generated in proper categories
+
+### ✅ Runtime Integration Code Written
+- `src/registry.rs`: `apply_print_conv_with_tag_id()` implementation exists
+- `src/exif/tags.rs`: Calls new API with tag IDs
+- `src/generated/Exif_pm/tag_kit/mod.rs`: `apply_print_conv()` function exists
+
+### ❌ NOT VERIFIED
+- Whether tag kit is actually called at runtime
+- Whether PrintConv values are returned correctly
+- Whether fallback to manual registry works
+- Performance impact of tag kit lookup
 
 ## Gotchas & Tribal Knowledge
 
-### PrintConv Complexity Levels
+### Critical Architectural Insights
+1. **Two Generation Systems Existed**: 
+   - Module-based (good): `process_config_directory()` → `src/generated/ModuleName_pm/file.rs`
+   - Standalone (problematic): Custom processing → separate directories
+   - **Fix Applied**: Integrated tag kit into module-based system
 
-1. **Simple hashes**: Direct key→value mappings (most EXIF tags) - WORKING ✅
-2. **Expressions**: Perl code we can translate (`sprintf`, simple conditionals) - EXTRACTED, NOT EVALUATED YET
-3. **Complex**: References external hashes, complex logic → manual registry - IDENTIFIED AS "Manual" TYPE
+2. **Tag Kit vs Manual Registry**:
+   - **Tag Kit**: Lookup by tag ID, embeds PrintConv data, eliminates ID/function mismatches
+   - **Manual Registry**: Lookup by function name, requires separate implementation
+   - **Integration**: Try tag kit by ID first, fall back to function name lookup
 
-### Issues Encountered and Fixed
+3. **Stdout Capture Bug Was Critical**: 
+   - Perl extraction scripts write JSON to stdout but weren't being captured to files
+   - Fixed in `run_perl_extractor()` - major breakthrough that enabled all extraction
 
-1. **Path calculation bug**: Config files shouldn't include `../` prefix since extraction adds `REPO_ROOT_FROM_EXTRACT`
-2. **JSON corruption**: Perl stderr output was being included in JSON output - fixed by commenting out debug prints
-3. **Binary file issue**: Generated file shows as binary in grep due to non-ASCII characters in some tag data
-4. **Whitespace in notes**: ExifTool notes often have extra whitespace - now trimmed in generator
-5. **TagValue::I8 doesn't exist** (July 22): Generator included I8 variant but TagValue enum only has I16/I32
-6. **Module conflict** (July 22): Both `exif_tag_kit.rs` file and `exif_tag_kit/` directory existed - removed single file
-7. **Missing imports** (July 22): HashMap import was accidentally removed when updating schemas
-8. **Test compilation** (July 22): apply_print_conv takes ExpressionEvaluator, not ConditionEvaluator
+### Runtime Integration Details
+**Current API**: `tag_kit::apply_print_conv(tag_id, value, evaluator, errors, warnings)`
+- `tag_id`: u32 tag identifier  
+- `value`: `&TagValue` to convert
+- `evaluator`: `&ExpressionEvaluator` for expression-based PrintConvs
+- `errors`, `warnings`: `&mut Vec<String>` for error collection
 
-### Why "Tag Kit" Name?
-
-- Considered "unified tag definitions" but that was too verbose
-- "Tag kit" conveys that each tag comes with its complete "kit" of processing tools
-- Easier to discuss: "tag kit extractor", "tag kit generator", etc.
+**Integration Points**:
+- `src/registry.rs:apply_print_conv_with_tag_id()` - Main integration function
+- `src/exif/tags.rs` - Updated to pass tag IDs
+- Fallback pattern: Tag kit lookup → Manual registry → Default formatting
 
 ### Generated Code Structure
-
 ```
-PRINT_CONV_N lookup tables (Simple PrintConvs)
-    ↓
-EXIF_TAG_KITS main map (all tags)
-    ↓
-apply_print_conv() dispatcher function
-```
-
-### Key String Conversions
-
-The tag kit system stores numeric keys as strings in HashMaps:
-- `map.insert("296".to_string(), ...)` not `map.insert(296, ...)`
-- This allows uniform handling of string and numeric PrintConv keys
-- The dispatcher converts TagValue to string for lookups
-
-### Expression Translation Examples
-
-```perl
-# GPS Altitude (already extracted)
-'$val =~ /^(inf|undef)$/ ? $val : "$val m"'
-
-# Needs translation to expression DSL or Rust code
-# Consider: Can we use existing expressions/ system?
+src/generated/Exif_pm/tag_kit/
+├── mod.rs           # Main API with apply_print_conv() and TAG_KITS map
+├── core.rs          # 375 core EXIF tags  
+├── camera.rs        # 87 camera-specific tags
+├── color.rs         # 200 color-related tags
+└── [8 more category files]
 ```
 
-### Integration Path (CRITICAL)
-
-1. **DO NOT replace manual implementations yet**
-2. **First create comprehensive integration tests**
-3. **Verify 100% parity with manual implementations**
-4. **Only then start migration**
-
-### Debugging Tips
-
-- **Extractor issues**: Add `print STDERR` but remember to remove before running!
-- **Generated code issues**: Check `codegen/generated/extract/exif_tag_kit_main.json`
-- **Binary file grep**: Use `strings file | grep pattern` instead of direct grep
-- **Finding specific tags**: Search for `map.insert(296,` for ResolutionUnit
-- **Module size check**: `wc -l src/generated/exif_tag_kit/*.rs | sort -n`
-
-### Research Findings (July 22, 2025)
-
-1. **Duplicate extraction systems**: 
-   - `inline_printconv` extractor already handles named PrintConvs
-   - Tag kit handles both named and anonymous inline PrintConvs
-   - Both systems extract from the same ExifTool tables
-   - Recommendation: Deprecate inline_printconv for modules with tag kit support
-
-2. **Tag categorization patterns**:
-   - Core image properties: IDs 254-400
-   - Camera/device info: IDs 271-272, 305-306, 315-316
-   - EXIF specific: IDs 33434-37500
-   - Windows XP: IDs 18246-18249, 40091-40095
-   - GPS tags would be in GPS IFD, not Main table
-
-3. **PrintConv reference system**:
-   - `tags.rs` generates `print_conv_ref: Some("function_name")`
-   - This requires runtime lookup in registry
-   - Tag kit embeds the actual implementation - no lookup needed
-   - This is the key benefit: eliminates tag ID/function mismatches
-
-### File Sizes
-
-- Generated `exif_tag_kit.rs`: 186KB, 6805 lines
-- Contains 414 tags, 74 lookup tables
-- This is just from EXIF Main table - expect 10x more with all modules
-
-### Example Extraction Output
-
-```json
-{
-  "tag_id": "0x0128",
-  "name": "ResolutionUnit",
-  "format": "int16u",
-  "groups": { "0": "IFD0", "1": "IFD", "2": "Image" },
-  "print_conv_type": "Simple",
-  "print_conv_data": {
-    "1": "None",
-    "2": "inches",
-    "3": "cm"
-  }
-}
-```
-
-### Future Extensibility
-
-This approach scales to manufacturer modules (Canon, Nikon) where tag definitions also contain inline PrintConvs, potentially eliminating entire categories of manual implementation.
-
-## Refactoring Opportunities Noticed
-
-### 1. Trait-Based Extractor System ✅ COMPLETED (July 22 Evening)
-- Successfully implemented `codegen/src/extractors/` module with `Extractor` trait
-- Eliminated 700+ lines of repetitive code in `extraction.rs`
-- Each extractor type now implements the trait with clean separation
-- Benefits achieved: Type safety, easier testing, extensibility, no path counting
-- Special implementations for `inline_printconv` and `boolean_set` that process one item at a time
-
-### 2. Consolidate Config Loading
-- Currently each generator looks for its own files
-- Could have a central "extraction manifest" that lists what was extracted
-- Would eliminate the need to check file existence everywhere
-- Make the system more robust to missing files
-
-### 3. Merge Duplicate Extractors
-- `tag_kit.pl` can replace `tag_definitions.pl`, `inline_printconv.pl`
-- These older extractors only get partial data
-- Tag kit gets everything in one unified structure
-- Would simplify the extraction pipeline significantly
-
-### 4. Better Error Handling for Heterogeneous JSON
-- Current approach tries to parse and catches errors
-- Could peek at JSON structure first to determine type
-- Would give better error messages
-- Prevent attempting to parse incompatible formats
-
-### 5. Config File Consolidation
-- 10+ config files per module is getting unwieldy
-- Could have one `module_config.json` with sections
-- Would make it easier to see all extractions for a module
-- Reduce file system clutter
-
-## Success Criteria
-
-✅ **Completed**:
-- Tag kit infrastructure extracts 414 EXIF tags with PrintConvs
-- Integration tests prove 100% parity with manual implementations
-- Modular generation splits large files into manageable chunks
-- Runtime table extraction works for Canon CameraSettings
-- Trait-based extractor system replaces repetitive code
-- Extraction pipeline successfully creates organized directories
-- Absolute path handling eliminates relative path issues
-
-⚠️ **Partially Complete** (Extraction works, full generation not verified):
-- Simple table extraction ✅
-- Inline PrintConv extraction ✅ (custom implementation for one-at-a-time)
-- Boolean set extraction ✅ (custom implementation for one-at-a-time)
-- Tag definitions extraction ✅
-- Full codegen pipeline ❓ (extraction works but generation phase not fully tested)
-
-❌ **Not Yet Complete**:
-- Tag kit wired into runtime for production use (CRITICAL PATH)
-- Manual implementations removed after validation
-- Full ExifTool parity for supported tags
-- Environment variable checks in all Perl scripts (only in simple_table.pl)
-
-## Potential Refactorings & Future Work
-
-### Code Quality Improvements
-
-1. **PRIORITY: Reduce generated file size for easier debugging** ✅ DONE (July 22)
-   - Original file was 186KB/6805 lines
-   - Split into 11 category modules: largest is 3245 lines
-   - Could further split "other" category if needed
-   - Consider more compact representations:
-     - Combine similar PrintConv tables (e.g., many On/Off tables)
-     - Use arrays instead of HashMaps for sequential numeric keys
-     - Use const arrays for small lookups instead of LazyLock<HashMap>
-
-2. **Tag kit generator optimization**
-   - Current approach generates individual PRINT_CONV_N tables - wasteful
-   - Consider using phf (perfect hash function) crate for compile-time optimized lookups
-   - String keys in HashMap could be numeric types with proper conversion
-   - Many PrintConv tables are identical (e.g., multiple 0=Off, 1=On tables)
-   - Could deduplicate by content hash
-
-3. **Expression system integration**
-   - The expressions module exists but isn't wired to tag kits yet
-   - Need to design clean API for expression evaluation in PrintConv context
-   - Consider caching compiled expressions
-   - GPS tags are ready: GPSAltitude has `$val =~ /^(inf|undef)$/ ? $val : "$val m"`
-
-4. **Error/Warning collection**
-   - User requested arrays for errors/warnings rather than ExifTool's approach
-   - apply_print_conv already takes &mut Vec<String> for both
-   - Need to propagate these through the runtime stack
-   - Consider structured error types instead of strings
-
-5. **Additional refactorings noticed** (July 22):
-   - Remove unused imports in generated category modules (LazyLock, TagValue not always used)
-   - Fix excessive `mut` warnings in generated code
-   - Consider generating only needed imports per module
-   - The "groups" HashMap is always empty - extractor needs enhancement
-   - Module organization could follow existing tags/ pattern more closely
-
-### Architectural Considerations
-
-1. **Module organization**
-   - Generated tag kits could be split by group like existing tags (core, camera, gps, etc.)
-   - Would reduce file size and improve compilation times
-   - Need to maintain lookup efficiency
-
-2. **Registry unification**
-   - Currently have separate manual registry and tag kit system
-   - Could unify into single dispatch mechanism
-   - Would simplify runtime tag processing
-
-3. **Incremental migration strategy**
-   - Consider feature flag to toggle between manual and tag kit implementations
-   - Allows gradual rollout and easy rollback
-   - Enables A/B testing in production
-
-### Performance Optimizations
-
-1. **Lazy evaluation of PrintConvs**
-   - Not all tags need PrintConv applied
-   - Could defer evaluation until actually requested
-   - Significant savings for large EXIF blocks
-
-2. **Compile-time generation**
-   - Some PrintConv mappings could be const evaluated
-   - Explore const fn capabilities for simple lookups
-   - Reduce runtime initialization cost
-
-## Final Tasks: Codebase Retrofit & Documentation Update
-
-### DO NOT PROCEED WITHOUT INTEGRATION TESTS
-
-Before ANY production use:
-1. Create comprehensive test suite comparing tag kit vs manual implementations
-2. Test with real-world images from various camera manufacturers
-3. Benchmark performance to ensure no regression
-4. Get code review on integration approach
-
-### Retrofit Plan (After Testing)
-
-1. **Phase 1**: Wire tag kit as fallback (manual first, tag kit if missing)
-2. **Phase 2**: Switch specific tags to tag kit after individual validation
-3. **Phase 3**: Remove manual implementations only after extended production use
-4. **Phase 4**: Expand to manufacturer modules (Canon, Nikon, etc.)
-
-### Success Metrics
-
-- Zero behavioral differences vs manual implementations
-- Performance within 5% of manual approach
-- Reduced code size (generated replaces manual)
-- Improved maintainability (monthly ExifTool updates automated)
-
-## Known Issues & Debugging Tips (July 22 Evening)
-
-### Current Pipeline Status
-
-1. **Extraction Phase**: ✅ Working
-   - Simple tables extract successfully
-   - Inline PrintConvs extract (with custom one-at-a-time implementation)
-   - Tag definitions extract
-   - Directory structure created properly
-
-2. **Generation Phase**: ❓ Not fully tested
-   - The pipeline fails after boolean_set extraction
-   - Need to run full `make codegen` to completion
-   - May need to add env checks to more Perl scripts
-
-3. **Runtime Integration**: ❌ Not started
-   - Tag kit is ready but not wired in
-   - Integration tests pass but production code doesn't use it yet
-
-### Common Errors & Solutions
-
-1. **"Module file not found" error**
-   - Cause: Relative path issues when Perl scripts run from subdirectories
-   - Solution: Already fixed with absolute paths, but watch for regressions
-
-2. **"Can't open perl script" error**
-   - Cause: Wrong path to extractor script
-   - Solution: Check that `CODEGEN_FROM_EXTRACT_SUBDIR` constant is correct
-
-3. **"Usage:" errors from Perl scripts**
-   - Cause: Wrong number of arguments (e.g., inline_printconv expects one table at a time)
-   - Solution: Check if extractor needs custom `extract()` implementation
-
-4. **Environment variable errors**
-   - Cause: Perl script expects CODEGEN_DIR and REPO_ROOT but not provided
-   - Solution: Already set in `run_perl_extractor()`, but need to add checks to all scripts
-
-### Testing Commands
-
-```bash
-# Test just extraction phase
-cd codegen && cargo run --release
-
-# Test full pipeline
-cd .. && make codegen
-
-# Check extraction output
-ls -la codegen/generated/extract/*/
-
-# Test specific extractor
-cd codegen && cargo test extractors::tests::test_simple_table
-
-# Run tag kit integration tests
-cargo test tag_kit_integration
-```
-
-### Key Insights from Today's Work
-
-1. **Perl scripts are picky about arguments** - Some expect one item, others expect many
-2. **Directory structure matters** - Scripts execute from subdirectories, not codegen root
-3. **Absolute paths save headaches** - No more counting "../" levels
-4. **Trait-based design wins** - Much cleaner than 700 lines of repetitive functions
-5. **Special cases need special handling** - inline_printconv and boolean_set proved this
-
-## Tribal Knowledge & Gotchas
-
-### The Great Directory Restructuring of July 22
-- **Original Plan**: Add ExtractDirs struct to handle different JSON structures
-- **What Actually Happened**: Realized the whole approach was wrong - implemented trait-based system instead
-- **Result**: Much cleaner architecture that eliminates the need for ExtractDirs entirely
-- **Lesson**: Sometimes the best fix is to step back and redesign
-
-### Why Runtime Tables Matter
-- Canon CameraSettings changes based on camera model
-- Can't be statically generated like simple lookup tables
-- Need to generate functions that create HashMaps at runtime
-- This pattern appears in many manufacturer modules
-
-### The Tag Kit Revolution
-- Eliminates the #1 source of bugs: tag ID/PrintConv mismatches
-- Integration tests prove it works perfectly
-- Just needs to be wired into runtime
-- Will replace 90% of manual PrintConv implementations
-
-### Config File Explosion
-- Started with just `simple_table.json`
-- Now have 10+ config types per module
-- Each serves a specific purpose
-- Directory structure makes this manageable
-
-## CRITICAL TODO: Retrofit Existing Generators
-
-**The next engineer MUST search for and update ALL existing tag-related generators to use tag kits:**
-
-1. **Search for existing PrintConv implementations**:
+### Debugging Tips  
+- **Duplicate modules**: Check generated `mod.rs` files for duplicate `pub mod` declarations
+- **Find what generates what**: `grep -r "tag_structure" codegen/src/generators/`
+- **Debug file generation**: Add println! in `generate_tag_structure_file()` to see filenames
+- **Missing types**: Check `cargo check` output for exactly which types are missing
+- **Import paths**: Generated types are at `crate::generated::ModuleName_pm::TypeName`
+
+### Common Gotchas
+- **Multiple configs same output**: Like Olympus having both Main and Equipment tag structures
+- **Extraction vs Generation naming**: Extractors use full paths, generators use short names
+- **Module directories**: Only `_pm` suffix directories are processed by codegen
+
+### Key Files Modified
+- `codegen/src/generators/lookup_tables/mod.rs` - Added tag kit integration (lines 299-323)
+- `codegen/src/main.rs` - Removed standalone tag kit processing  
+- `src/registry.rs` - Added tag kit integration API (lines 181-224)
+- `src/exif/tags.rs` - Updated to pass tag ID (line 116)
+
+## Critical Code & Documentation to Study
+
+### Must-Read Documentation
+1. **[CODEGEN.md](../CODEGEN.md)** - Understand the extraction/generation pipeline, especially:
+   - Section on "Tag Kit System: The Future of Tag Extraction" 
+   - "Extractor Selection Guide" - why tag_kit.pl is the unified solution
+   - Module-based vs standalone generation systems
+   - Section 4.3.8 on tag_structure.pl extractor
+
+2. **[EXTRACTOR-GUIDE.md](../reference/EXTRACTOR-GUIDE.md)** - Detailed extractor comparisons:
+   - Why tag_kit.pl replaces inline_printconv.pl, tag_tables.pl, tag_definitions.pl
+   - The "one-trick pony" principle for extractors
+
+3. **[TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md)** - The prime directive
+
+### Key Source Files to Understand
+
+1. **`codegen/src/generators/lookup_tables/mod.rs`** (lines 299-323)
+   - The tag kit integration into module-based system
+   - Lines 180-280: Module file naming pattern logic
+   - Critical fix that made everything work
+
+2. **`src/registry.rs`** (lines 181-224)
+   - `apply_print_conv_with_tag_id()` - the new API
+   - `try_tag_kit_print_conv()` - tag kit integration logic
+
+3. **`src/generated/Exif_pm/tag_kit/mod.rs`**
+   - Generated main API with `apply_print_conv()` function
+   - TAG_KITS HashMap structure
+
+4. **`codegen/extractors/tag_kit.pl`**
+   - How unified tag extraction works
+   - Supports Simple, Expression, and Manual PrintConv types
+
+5. **`codegen/src/generators/tag_structure.rs`**
+   - Tag structure enum generator (exists but not wired up)
+   - Should generate CanonDataType, OlympusDataType enums
+
+6. **`src/stubs.rs`** (NEW)
+   - Temporary stub types created to work around missing codegen
+   - Shows exactly what types need to be generated
+
+## Research Revelations & Lessons Learned
+
+### 1. The Stdout Capture Bug (Major Blocker Solved)
+**Problem**: Perl extractors wrote JSON to stdout but Rust wasn't capturing it to files.
+**Solution**: Fixed in `run_perl_extractor()` by properly capturing stdout.
+**Impact**: This single fix unblocked the entire extraction pipeline!
+
+### 2. Module-Based vs Standalone Generation
+**Discovery**: The codebase had two parallel generation systems causing confusion.
+**Resolution**: Integrated tag kit into the module-based system for consistency.
+**Learning**: Always use `process_config_directory()` pattern for new extractors.
+
+### 3. Tag ID vs Function Name Lookup
+**Insight**: Manual registry uses function names (error-prone), tag kit uses IDs (reliable).
+**Design**: Tag kit tries ID lookup first, falls back to function name for compatibility.
+**Benefit**: Eliminates entire class of ID/function mismatch bugs.
+
+### 4. Semantic Grouping Success
+**Approach**: Split 414 tags into 12 semantic categories (core, camera, gps, etc).
+**Result**: Better organization, smaller files, improved IDE performance.
+**Pattern**: Can apply same approach to other large generated files.
+
+### 5. Codegen Philosophy Clash
+**Issue**: User questioned why we're making stubs instead of using codegen.
+**Learning**: The project heavily favors codegen over manual stubs.
+**Principle**: "We've been doing codegen for 2 weeks now and never resorted to stubs"
+**Action**: Always prefer fixing/extending codegen over manual workarounds.
+
+### 6. Trait-Based Extractor System (NEW DISCOVERY)
+**Old Way**: SpecialExtractor enum with match statements in extraction.rs
+**New Way**: Trait-based system where extractors implement `Extractor` trait
+**Location**: `codegen/src/extractors/mod.rs` - much cleaner architecture
+**Tag Structure**: Implemented as stub in `extractors/stubs.rs:61`
+
+### 7. Tag Structure File Storage Pattern
+**Discovery**: Tag structures aren't stored in `ExtractedTable` HashMap
+**Pattern**: Written directly to `codegen/generated/extract/tag_structures/*.json`
+**Fix Applied**: Read from disk instead of HashMap in `lookup_tables/mod.rs:152-160`
+
+## Issues & Tasks Already Addressed
+
+### ✅ Completed Infrastructure Work
+1. **Extraction Pipeline Overhaul**: Replaced 700+ lines with clean trait-based system
+2. **Tag Kit Extractor**: Fully functional, extracts all EXIF tags with PrintConvs
+3. **Module Integration**: Tag kit properly integrated into codegen pipeline
+4. **Runtime API**: New `apply_print_conv_with_tag_id()` function implemented
+
+### ⚠️ Attempted But Blocked
+1. **Full Compilation**: Too many missing types/modules to fix in limited time
+2. **Integration Testing**: Cannot run without successful compilation
+3. **Real Image Testing**: Blocked by compilation errors
+
+## Refactoring Opportunities Identified
+
+### 1. Type Stub Generation
+Create a `codegen/src/generators/type_stubs.rs` that generates placeholder types for:
+- `CanonDataType`, `OlympusDataType` enums
+- `ConditionalContext` structs
+- Binary data table types
+
+### 2. Module Dependency Graph
+The codebase needs better module organization to avoid circular dependencies:
+- Raw format handlers depend on generated types
+- Generated types depend on extraction configs
+- Consider inverting dependencies or using traits
+
+### 3. Test Infrastructure Improvements
+- Create minimal test binary that only loads tag kit module
+- Add unit tests directly to generated tag kit files
+- Mock the ExpressionEvaluator for isolated testing
+
+### 4. Error Collection Pattern
+Current tag kit API uses `&mut Vec<String>` for errors/warnings.
+Consider a proper error collection type with severity levels.
+
+### 5. Performance Considerations
+- Tag kit uses runtime HashMap lookups - could use `phf` for compile-time perfect hashing
+- Consider lazy initialization only for actually-used tag categories
+- Profile the two-level lookup (ID → tag kit → PrintConv)
+
+## Next Engineer's Action Plan
+
+### IMMEDIATE: Fix the Duplicate Module Bug (30 min)
+1. **Debug the issue**:
    ```bash
-   grep -r "print_conv" codegen/src/generators/
-   grep -r "PrintConv" codegen/config/
+   cd /home/mrm/src/exif-oxide
+   make codegen
+   grep -n "pub mod tag_structure" src/generated/Olympus_pm/mod.rs
+   # Will show duplicate declarations
    ```
 
-2. **Generators that likely need updates**:
-   - `inline_printconv.rs` - Could be deprecated in favor of tag kits
-   - `tags.rs` - Should reference tag kit PrintConvs instead of manual registry
-   - Any manufacturer-specific generators (Canon, Nikon, etc.)
+2. **Find root cause** in `codegen/src/generators/lookup_tables/mod.rs:530`:
+   ```rust
+   fn generate_tag_structure_file(...) {
+       // Check why Equipment table generates "tag_structure" not "equipment_tag_structure"
+       let file_name = if structure_data.source.table == "Main" {
+           "tag_structure".to_string()
+       } else {
+           // This should create "equipment_tag_structure" for Equipment table
+           format!("{}_tag_structure", structure_data.source.table.to_lowercase())
+       };
+   ```
 
-3. **Config files to check**:
-   - All `inline_printconv.json` configs - these extract named PrintConvs
-   - Consider if these should migrate to tag kit approach
-   - Update documentation to prefer tag kit extraction
+3. **Verify fix**:
+   ```bash
+   rm -rf src/generated/  # Clean generated files
+   make codegen
+   ls src/generated/Olympus_pm/  # Should have both tag_structure.rs AND equipment_tag_structure.rs
+   ```
 
-4. **Integration points**:
-   - Ensure generated tags reference tag kit PrintConvs
-   - Update function name mappings to use tag kit lookups
-   - Remove duplicate PrintConv extraction where possible
+### THEN: Fix Import Paths (30 min)
+1. **Update Olympus imports**:
+   ```rust
+   // In src/raw/formats/olympus.rs
+   use crate::generated::Olympus_pm::OlympusDataType;
+   ```
 
-This consolidation is essential to avoid maintaining two parallel systems!
+2. **Update Canon imports**:
+   ```rust
+   // In src/raw/formats/canon.rs (if needed)
+   use crate::generated::Canon_pm::CanonDataType;
+   ```
+
+3. **Remove stub imports**: Delete any `use crate::stubs::*` lines
+
+### FINALLY: Complete Missing Types (2 hours)
+- Check what's still missing with `cargo check`
+- Focus on tag kit testing once compilation works
+- Don't get distracted by FujiFilm/ConditionalContext unless blocking tag kit
+
+### Critical Testing Commands
+```bash
+# After compilation fixes
+cargo run -- test-image.jpg | jq '.tags[] | select(.name == "ResolutionUnit")'
+# Should show: { "name": "ResolutionUnit", "value": "inches" } NOT "resolution_unit_print_conv"
+
+# Compare with ExifTool
+./scripts/compare-with-exiftool.sh test-image.jpg EXIF:
+```
+
+## The Bottom Line
+
+The tag kit system is **architecturally complete** but **not validated**. The code generation works perfectly, producing 414 EXIF tags with embedded PrintConvs. The runtime integration is written but untested due to compilation blockers. 
+
+**Success is very close** - probably just 1-2 days of focused work to:
+1. Fix compilation (stub types or proper generation)
+2. Run integration tests
+3. Validate with real images
+
+The hardest architectural work is done. What remains is mechanical: make it compile, then test it works.
+
+## Key Decisions for Next Engineer
+
+1. **Stubs vs Codegen**: User strongly prefers proper codegen over stubs. The infrastructure exists, just needs wiring.
+
+2. **Testing Priority**: Once compiled, the most critical test is verifying ResolutionUnit and Orientation tags show human-readable values from tag kit, not function names.
+
+3. **Success Metric**: When `cargo run -- image.jpg | jq '.tags[] | select(.name == "ResolutionUnit")'` shows `"value": "inches"` instead of `"value": "resolution_unit_print_conv"`, you've succeeded.
+
+4. **Time Estimate**: 
+   - Stub completion: 2-3 hours to first test
+   - Proper codegen: 4-6 hours but cleaner long-term
+   - Full validation: 1-2 hours after compilation
+
+## Handoff Summary
+
+**What Works**:
+- Tag kit extraction and generation ✅
+- Tag structure extraction ✅  
+- Tag structure generation (with naming bug) 🟡
+- Runtime integration code written (untested) ⚠️
+
+**What's Broken**:
+- Duplicate module declarations in Olympus
+- Import paths need updating
+- Several missing type definitions
+
+**Time Estimate**: 2-3 hours to full tag kit validation
+
+**Remember**: This will eliminate 414 manual PrintConv implementations and enable automatic updates with each ExifTool release!

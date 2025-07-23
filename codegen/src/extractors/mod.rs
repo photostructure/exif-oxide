@@ -45,6 +45,25 @@ pub trait Extractor: Send + Sync {
         }
     }
     
+    /// Generate a standardized filename using the pattern: module__type__name.json
+    /// Example: olympus__tag_structure__equipment.json
+    fn standardized_filename(&self, config: &ModuleConfig, table_or_hash_name: Option<&str>) -> String {
+        let module = self.sanitize_module_name(config);
+        let config_type = self.config_type_name();
+        
+        if let Some(name) = table_or_hash_name {
+            format!("{}__{}__{}.json", module, config_type, name.to_lowercase())
+        } else {
+            format!("{}__{}.json", module, config_type)
+        }
+    }
+    
+    /// Get the config type name for filename generation (e.g., "tag_structure", "simple_table")
+    fn config_type_name(&self) -> &'static str {
+        // Default implementation - extractors should override if needed
+        self.output_subdir()
+    }
+    
     /// Execute the extraction
     fn extract(&self, config: &ModuleConfig, base_dir: &Path, module_path: &Path) -> Result<()> {
         let output_dir = base_dir.join(self.output_subdir());
@@ -136,6 +155,7 @@ mod runtime_table;
 mod file_type;
 mod inline_printconv;
 mod boolean_set;
+mod tag_table_structure;
 mod stubs;
 
 pub use simple_table::SimpleTableExtractor;
@@ -144,9 +164,10 @@ pub use runtime_table::RuntimeTableExtractor;
 pub use file_type::FileTypeLookupExtractor;
 pub use inline_printconv::InlinePrintConvExtractor;
 pub use boolean_set::BooleanSetExtractor;
+pub use tag_table_structure::TagTableStructureExtractor;
 pub use stubs::{
     TagDefinitionsExtractor,
-    CompositeTagsExtractor, TagTableStructureExtractor, ProcessBinaryDataExtractor,
+    CompositeTagsExtractor, ProcessBinaryDataExtractor,
     ModelDetectionExtractor, ConditionalTagsExtractor, RegexPatternsExtractor,
 };
 
