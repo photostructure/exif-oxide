@@ -7,7 +7,9 @@
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
   "File:MIMEType": "image/jpeg",
+  "EXIF:ImageWidth": 720,
   "EXIF:Model": "P2_USB_IR",
+  "EXIF:ImageHeight": 960,
   "EXIF:Make": "Infisense",
   "EXIF:Orientation": "Horizontal (normal)"
 }

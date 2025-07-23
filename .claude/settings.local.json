@@ -82,7 +82,9 @@
       "Bash(target/debug/compare-with-exiftool:*)",
       "Bash(for dir in FujiFilm_pm GPS_pm PNG_pm)",
       "Bash(do echo \"=== $dir ===\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(./exiftool -j -struct -G ../../test-images/minolta/DiMAGE_7.jpg)",
+      "Bash(echo $?)"
     ],
     "deny": []
   }

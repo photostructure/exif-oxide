@@ -77,9 +77,7 @@ fn test_fujifilm_ffmv_processor_uses_table_for_extraction() {
 
 #[test]
 fn test_processbinarydata_table_api() {
-    // TODO: Re-enable when FujiFilm binary data is generated
-    // use exif_oxide::generated::FujiFilm_pm::ffmv_binary_data::FujiFilmFFMVTable;
-    use exif_oxide::stubs::FujiFilmFFMVTable;
+    use exif_oxide::generated::FujiFilm_pm::ffmv_binary_data::FujiFilmFFMVTable;
 
     let table = FujiFilmFFMVTable::new();
 

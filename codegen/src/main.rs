@@ -106,8 +106,7 @@ fn main() -> Result<()> {
 
     if !content.contains("pub mod file_type_lookup;") {
         // Add module declarations
-        content.push_str("pub mod file_type_lookup;\n");
-        content.push_str("pub mod magic_number_patterns;\n\n");
+        content.push_str("pub mod file_type_lookup;\n\n");
         updated = true;
     }
 
@@ -115,13 +114,15 @@ fn main() -> Result<()> {
     if !content.contains("pub use file_type_lookup::") {
         content.push_str("// Re-export commonly used items\n");
         content.push_str("pub use file_type_lookup::{lookup_file_type_by_extension, FILE_TYPE_EXTENSIONS};\n");
-        content.push_str("pub use magic_number_patterns::{detect_file_type_by_magic, MAGIC_NUMBER_PATTERNS};\n");
+        content.push_str("\n");
+        content.push_str("// Import regex patterns from their source-based location (ExifTool.pm)\n");
+        content.push_str("pub use crate::generated::ExifTool_pm::regex_patterns::{detect_file_type_by_regex, REGEX_PATTERNS};\n");
         updated = true;
     }
 
     if updated || !file_exists(Path::new(&file_types_mod_path)) {
         write_file_atomic(Path::new(&file_types_mod_path), &content)?;
-        println!("  ✓ Created/updated file_types mod.rs with file_type_lookup and magic_number_patterns modules");
+        println!("  ✓ Created/updated file_types mod.rs with file_type_lookup and regex_patterns re-exports");
     } else {
         println!("  ✓ file_types mod.rs already contains all necessary declarations");
     }

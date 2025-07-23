@@ -450,6 +450,15 @@ impl ExifReader {
             return Some("Sony::Main".to_string());
         }
 
+        // ExifTool: lib/Image/ExifTool/MakerNotes.pm:486-494 Minolta detection
+        // MakerNoteMinolta condition: $$self{Make}=~/^(Konica Minolta|Minolta)/i
+        if make.to_lowercase().starts_with("minolta")
+            || make.to_lowercase().starts_with("konica minolta")
+        {
+            debug!("Detected Minolta MakerNote (Make field: {})", make);
+            return Some("Minolta::Main".to_string());
+        }
+
         // ExifTool: lib/Image/ExifTool/MakerNotes.pm:515-533 Olympus detection
         // For Olympus MakerNotes, use standard IFD parsing to discover subdirectories like Equipment (0x2010)
         // ExifTool: Olympus MakerNotes are processed as standard IFD first to find subdirectory tags
@@ -643,6 +652,13 @@ impl ExifReader {
                     canon::process_canon_makernotes(self, dir_info.dir_start, dir_info.dir_len)
                 } else if nikon::detect_nikon_signature(make) {
                     nikon::process_nikon_makernotes(self, dir_info.dir_start)
+                } else if make.to_lowercase().starts_with("minolta")
+                    || make.to_lowercase().starts_with("konica minolta")
+                {
+                    debug!("Processing Minolta MakerNotes using standard IFD parsing");
+                    // ExifTool: Minolta MakerNotes are processed as standard IFD
+                    // ExifTool: lib/Image/ExifTool/MakerNotes.pm:486-494 MakerNoteMinolta
+                    self.process_exif_ifd(dir_info.dir_start, &dir_info.name)
                 } else {
                     // Fall back to standard EXIF processing
                     self.process_exif_ifd(dir_info.dir_start, &dir_info.name)

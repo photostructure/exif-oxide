@@ -4,10 +4,11 @@
 //! DO NOT EDIT MANUALLY - changes will be overwritten.
 
 use super::{PrintConvType, TagKitDef};
+use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_57: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "None");
     map.insert("2".to_string(), "Horizontal differencing");
@@ -96,7 +97,7 @@ pub fn get_camera_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_1),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_57),
                 value_conv: None,
             },
         ),

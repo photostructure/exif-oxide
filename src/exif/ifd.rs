@@ -39,8 +39,8 @@ impl ExifReader {
             .unwrap_or_default();
 
         debug!(
-            "Processing UNDEFINED subdirectory tag {:#x} (MakerNotes) from {}: offset={:#x}, size={}",
-            entry.tag_id, ifd_name, offset, size
+            "Processing UNDEFINED subdirectory tag {:#x} (MakerNotes) from {}: offset={:#x}, size={}, make='{}'",
+            entry.tag_id, ifd_name, offset, size, make
         );
 
         // Get MakerNotes data for signature detection
@@ -92,11 +92,15 @@ impl ExifReader {
             adjusted_offset
         );
 
+        debug!(
+            "About to call process_subdirectory_tag for MakerNotes with make='{}'",
+            make
+        );
         self.process_subdirectory_tag(entry.tag_id, adjusted_offset as u32, tag_name, Some(size))?;
+        debug!("Completed process_subdirectory_tag for MakerNotes");
 
-        // Store the MakerNotes tag for completeness
-        let tag_value = TagValue::Binary(maker_notes_data);
-        self.extracted_tags.insert(entry.tag_id, tag_value);
+        // Don't store raw binary MakerNotes data - the subdirectory processing should have extracted the manufacturer-specific tags
+        // ExifTool: MakerNotes are processed as subdirectories, not stored as raw binary data
 
         Ok(())
     }
@@ -667,6 +671,7 @@ impl ExifReader {
 
     /// Build ConditionalContext from current EXIF parsing state with full entry context
     /// TODO: Re-enable when conditional tags are generated
+    #[allow(dead_code)]
     fn build_conditional_context_with_entry(
         &self,
         _entry: &crate::tiff_types::IfdEntry,

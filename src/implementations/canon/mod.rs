@@ -602,6 +602,7 @@ fn process_other_canon_binary_tags_with_reader(
 /// Process other Canon binary data tags using existing Canon processors
 /// ExifTool: Canon.pm processes various Canon subdirectories
 /// Returns Vec of (synthetic_id, tag_value, full_tag_name) tuples for storage
+#[allow(dead_code)]
 fn process_other_canon_binary_tags(
     data: &[u8],
     byte_order: ByteOrder,

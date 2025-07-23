@@ -7,9 +7,12 @@
   "File:FileType": "MRW",
   "File:FileTypeExtension": "mrw",
   "File:MIMEType": "image/x-minolta-mrw",
+  "EXIF:ImageWidth": 3264,
+  "EXIF:ImageHeight": 2448,
   "EXIF:Make": "Konica Minolta Camera, Inc.",
   "EXIF:Model": "DiMAGE A2",
   "EXIF:Orientation": "Horizontal (normal)",
+  "EXIF:ISO": 64,
   "EXIF:DateTimeOriginal": "2004:11:18 23:14:58",
   "EXIF:CreateDate": "2004:11:18 23:14:58"
 }

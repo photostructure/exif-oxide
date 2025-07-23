@@ -7,9 +7,12 @@
   "File:FileType": "ORF",
   "File:FileTypeExtension": "orf",
   "File:MIMEType": "image/x-olympus-orf",
+  "EXIF:ImageWidth": 4640,
+  "EXIF:ImageHeight": 3472,
   "EXIF:Make": "OLYMPUS IMAGING CORP.",
   "EXIF:Model": "E-M1",
   "EXIF:Orientation": "Horizontal (normal)",
+  "EXIF:ISO": 200,
   "EXIF:DateTimeOriginal": "2014:07:19 12:05:19",
   "EXIF:CreateDate": "2014:07:19 12:05:19"
 }

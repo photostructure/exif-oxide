@@ -347,3 +347,9 @@ Successfully implemented conditional tag resolution for Canon cameras, enabling 
 ## ✅ Codegen Template Cleanup (COMPLETED July 19, 2025)
 
 Fixed final lint issues in codegen template system to achieve 95% → 100% completion of template architecture. Resolved unused import warnings by implementing smart conditional import generation - only imports modules that are actually used in generated code. Fixed `parse_expression` unused import in conditional_tags.rs, removed unused HashMap/LazyLock imports from individual tag files while maintaining needed imports in mod.rs. Verified runtime integration status: generated classes exist but are not yet wired into runtime code (awaiting future integration work). Eliminated all template-related lint errors, ensuring clean builds for template-generated code. Foundation now ready for seamless runtime integration.
+
+---
+
+## ✅ File System Required Tags Implementation (COMPLETED July 22, 2025)
+
+Successfully implemented all 15 file system metadata tags required by PhotoStructure with exact ExifTool compatibility. Added FileAccessDate, FileCreateDate/FileInodeChangeDate (platform-specific), FilePermissions (Unix rwx format), and ExifByteOrder detection from TIFF headers. Updated FileSize to return raw bytes as string. Used conditional compilation for OS differences, created format_unix_permissions() helper following ExifTool.pm:1486-1517, and implemented proper date formatting (YYYY:MM:DD HH:MM:SS±TZ:TZ). All tags added to supported_tags.json for validation. Core file metadata extraction now complete with 100% ExifTool compatibility.

@@ -22,6 +22,14 @@ exclude = [
 # Allow explicit 'static lifetimes in generated code
 # This is good practice for public APIs where lifetime guarantees matter
 redundant_static_lifetimes = "allow"
+# Allow Vec parameters in generated code API - changing would break compatibility
+ptr_arg = "allow"
+# Allow new without Default in generated code
+new_without_default = "allow"
+# Allow needless borrows in generated code
+needless_borrow = "allow"
+# Allow uninlined format args in generated code for clarity
+uninlined_format_args = "allow"
 
 [dependencies]
 byteorder = "1.5" # Efficient endian handling

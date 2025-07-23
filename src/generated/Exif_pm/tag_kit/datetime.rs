@@ -4,7 +4,9 @@
 //! DO NOT EDIT MANUALLY - changes will be overwritten.
 
 use super::{PrintConvType, TagKitDef};
+use crate::types::TagValue;
 use std::collections::HashMap;
+use std::sync::LazyLock;
 
 /// Get tag definitions for datetime category
 pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {

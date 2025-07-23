@@ -39,12 +39,10 @@ impl Extractor for TagKitExtractor {
     }
     
     fn output_filename(&self, config: &ModuleConfig, hash_name: Option<&str>) -> String {
-        let module_name = self.sanitize_module_name(config);
-            
-        if let Some(table) = hash_name {
-            format!("{}_tag_kit_{}.json", module_name, table.to_lowercase())
-        } else {
-            format!("{}_tag_kit.json", module_name)
-        }
+        self.standardized_filename(config, hash_name)
+    }
+    
+    fn config_type_name(&self) -> &'static str {
+        "tag_kit"
     }
 }

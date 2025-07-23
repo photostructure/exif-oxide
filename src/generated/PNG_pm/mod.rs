@@ -1,6 +1,13 @@
-//! PNG module placeholder
+//! Generated lookup tables from PNG.pm
 //!
-//! This module is a placeholder until proper PNG extraction is implemented.
-//! The config exists but extraction naming patterns need to be fixed in codegen.
+//! Auto-generated from third-party/exiftool/lib/Image/ExifTool/PNG.pm
+//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
-// Placeholder to satisfy module system
+pub mod isdatchunk;
+pub mod istxtchunk;
+pub mod noleapfrog;
+
+// Re-export all lookup functions and constants
+pub use isdatchunk::*;
+pub use istxtchunk::*;
+pub use noleapfrog::*;
