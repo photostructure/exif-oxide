@@ -15,6 +15,7 @@ pub mod olympuslenstypes;
 pub mod rawdevelopment2_inline;
 pub mod rawdevelopment_inline;
 pub mod rawinfo_inline;
+pub mod tag_kit;
 pub mod tag_structure;
 
 // Re-export all lookup functions and constants
@@ -30,4 +31,5 @@ pub use olympuslenstypes::*;
 pub use rawdevelopment2_inline::*;
 pub use rawdevelopment_inline::*;
 pub use rawinfo_inline::*;
+pub use tag_kit::*;
 pub use tag_structure::*;

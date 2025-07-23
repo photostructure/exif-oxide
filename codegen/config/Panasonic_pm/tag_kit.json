@@ -1,0 +1,11 @@
+{
+  "extractor": "tag_kit.pl",
+  "source": "third-party/exiftool/lib/Image/ExifTool/Panasonic.pm",
+  "description": "Panasonic tag definitions with embedded PrintConv implementations",
+  "tables": [
+    {
+      "table_name": "Main",
+      "description": "Panasonic main tag table - core camera settings and modes"
+    }
+  ]
+}

@@ -5,7 +5,9 @@
 
 pub mod prd_inline;
 pub mod rif_inline;
+pub mod tag_kit;
 
 // Re-export all lookup functions and constants
 pub use prd_inline::*;
 pub use rif_inline::*;
+pub use tag_kit::*;
