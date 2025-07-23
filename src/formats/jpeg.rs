@@ -165,7 +165,7 @@ fn parse_sof_data(marker: u8, segment_data: &[u8]) -> Result<SofData> {
         if hmin > 0 && vmin > 0 {
             let hs = hmax / hmin;
             let vs = vmax / vmin;
-            Some(format!("{} {}", hs, vs))
+            Some(format!("{hs} {vs}"))
         } else {
             None
         }
@@ -714,7 +714,12 @@ mod tests {
     fn test_jpeg_segment_from_marker() {
         assert_eq!(JpegSegment::from_marker(0xD8), JpegSegment::Soi);
         assert_eq!(JpegSegment::from_marker(0xE1), JpegSegment::App(1));
-        assert_eq!(JpegSegment::from_marker(0xC0), JpegSegment::Sof);
+        assert_eq!(JpegSegment::from_marker(0xC0), JpegSegment::Sof(0xC0));
+        assert_eq!(JpegSegment::from_marker(0xC1), JpegSegment::Sof(0xC1));
+        assert_eq!(JpegSegment::from_marker(0xC2), JpegSegment::Sof(0xC2));
+        assert_eq!(JpegSegment::from_marker(0xC4), JpegSegment::Dht); // DHT, not SOF
+        assert_eq!(JpegSegment::from_marker(0xC8), JpegSegment::Other(0xC8)); // JPGA, not SOF
+        assert_eq!(JpegSegment::from_marker(0xCC), JpegSegment::Other(0xCC)); // DAC, not SOF
         assert_eq!(JpegSegment::from_marker(0xDA), JpegSegment::Sos);
         assert_eq!(JpegSegment::from_marker(0xD9), JpegSegment::Eoi);
     }
@@ -730,6 +735,8 @@ mod tests {
     fn test_jpeg_segment_marker_byte() {
         assert_eq!(JpegSegment::Soi.marker_byte(), 0xD8);
         assert_eq!(JpegSegment::App(1).marker_byte(), 0xE1);
+        assert_eq!(JpegSegment::Sof(0xC0).marker_byte(), 0xC0);
+        assert_eq!(JpegSegment::Sof(0xC2).marker_byte(), 0xC2);
         assert_eq!(JpegSegment::Eoi.marker_byte(), 0xD9);
     }
 

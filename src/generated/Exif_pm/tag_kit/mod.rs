@@ -4,7 +4,7 @@
 //! DO NOT EDIT MANUALLY - changes will be overwritten.
 //!
 //! Generated from: Exif.pm table: Main
-//! Extracted at: Wed Jul 23 02:13:31 2025 GMT
+//! Extracted at: Wed Jul 23 02:41:35 2025 GMT
 
 pub mod camera;
 pub mod color;
@@ -47,28 +47,13 @@ pub enum PrintConvType {
 pub static TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
     let mut map = HashMap::new();
 
-    // exif_specific tags
-    for (id, tag_def) in exif_specific::get_exif_specific_tags() {
+    // interop tags
+    for (id, tag_def) in interop::get_interop_tags() {
         map.insert(id, tag_def);
     }
 
-    // document tags
-    for (id, tag_def) in document::get_document_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // core tags
-    for (id, tag_def) in core::get_core_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // windows_xp tags
-    for (id, tag_def) in windows_xp::get_windows_xp_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // color tags
-    for (id, tag_def) in color::get_color_tags() {
+    // camera tags
+    for (id, tag_def) in camera::get_camera_tags() {
         map.insert(id, tag_def);
     }
 
@@ -77,13 +62,13 @@ pub static TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
         map.insert(id, tag_def);
     }
 
-    // thumbnail tags
-    for (id, tag_def) in thumbnail::get_thumbnail_tags() {
+    // exif_specific tags
+    for (id, tag_def) in exif_specific::get_exif_specific_tags() {
         map.insert(id, tag_def);
     }
 
-    // interop tags
-    for (id, tag_def) in interop::get_interop_tags() {
+    // core tags
+    for (id, tag_def) in core::get_core_tags() {
         map.insert(id, tag_def);
     }
 
@@ -92,13 +77,28 @@ pub static TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
         map.insert(id, tag_def);
     }
 
+    // color tags
+    for (id, tag_def) in color::get_color_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // document tags
+    for (id, tag_def) in document::get_document_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // windows_xp tags
+    for (id, tag_def) in windows_xp::get_windows_xp_tags() {
+        map.insert(id, tag_def);
+    }
+
     // datetime tags
     for (id, tag_def) in datetime::get_datetime_tags() {
         map.insert(id, tag_def);
     }
 
-    // camera tags
-    for (id, tag_def) in camera::get_camera_tags() {
+    // thumbnail tags
+    for (id, tag_def) in thumbnail::get_thumbnail_tags() {
         map.insert(id, tag_def);
     }
 
@@ -131,7 +131,7 @@ pub fn apply_print_conv(
                 if let Some(result) = lookup.get(&key) {
                     TagValue::String(result.to_string())
                 } else {
-                    TagValue::String(format!("Unknown ({})", value))
+                    TagValue::String(format!("Unknown ({value})"))
                 }
             }
             PrintConvType::Expression(expr) => {
