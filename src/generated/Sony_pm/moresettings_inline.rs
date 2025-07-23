@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for MoreSettings table
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Sony.pm (table: MoreSettings)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -22,8 +22,9 @@ static MORE_SETTINGS_DRIVE_MODE2_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_DRIVE_MODE2: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MORE_SETTINGS_DRIVE_MODE2_DATA.iter().cloned().collect());
+pub static MORE_SETTINGS_DRIVE_MODE2: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_DRIVE_MODE2_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__drive_mode2(key: u8) -> Option<&'static str> {
@@ -39,8 +40,9 @@ static MORE_SETTINGS_FLASH_ACTION2_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_FLASH_ACTION2: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MORE_SETTINGS_FLASH_ACTION2_DATA.iter().cloned().collect());
+pub static MORE_SETTINGS_FLASH_ACTION2: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_FLASH_ACTION2_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__flash_action2(key: u8) -> Option<&'static str> {
@@ -48,17 +50,16 @@ pub fn lookup_more_settings__flash_action2(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (3 entries)
-static MORE_SETTINGS_FLASH_ACTION_EXTERNAL_DATA: &[(u8, &'static str)] =
-    &[(121, "Fired"), (122, "Fired"), (136, "Did not fire")];
+static MORE_SETTINGS_FLASH_ACTION_EXTERNAL_DATA: &[(u8, &'static str)] = &[
+    (121, "Fired"),
+    (122, "Fired"),
+    (136, "Did not fire"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_FLASH_ACTION_EXTERNAL: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        MORE_SETTINGS_FLASH_ACTION_EXTERNAL_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static MORE_SETTINGS_FLASH_ACTION_EXTERNAL: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_FLASH_ACTION_EXTERNAL_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__flash_action_external(key: u8) -> Option<&'static str> {
@@ -66,17 +67,16 @@ pub fn lookup_more_settings__flash_action_external(key: u8) -> Option<&'static s
 }
 
 /// Raw data (3 entries)
-static MORE_SETTINGS_FLASH_ACTION_EXTERNAL_124_DATA: &[(u8, &'static str)] =
-    &[(136, "Did not fire"), (167, "Fired"), (182, "Fired, HSS")];
+static MORE_SETTINGS_FLASH_ACTION_EXTERNAL_124_DATA: &[(u8, &'static str)] = &[
+    (136, "Did not fire"),
+    (167, "Fired"),
+    (182, "Fired, HSS"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_FLASH_ACTION_EXTERNAL_124: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        MORE_SETTINGS_FLASH_ACTION_EXTERNAL_124_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static MORE_SETTINGS_FLASH_ACTION_EXTERNAL_124: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_FLASH_ACTION_EXTERNAL_124_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__flash_action_external_124(key: u8) -> Option<&'static str> {
@@ -139,13 +139,9 @@ static MORE_SETTINGS_WHITE_BALANCE_SETTING_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_WHITE_BALANCE_SETTING: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        MORE_SETTINGS_WHITE_BALANCE_SETTING_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static MORE_SETTINGS_WHITE_BALANCE_SETTING: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_WHITE_BALANCE_SETTING_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__white_balance_setting(key: u8) -> Option<&'static str> {
@@ -153,11 +149,15 @@ pub fn lookup_more_settings__white_balance_setting(key: u8) -> Option<&'static s
 }
 
 /// Raw data (2 entries)
-static MORE_SETTINGS_FLASH_STATUS_DATA: &[(u8, &'static str)] = &[(0, "None"), (2, "External")];
+static MORE_SETTINGS_FLASH_STATUS_DATA: &[(u8, &'static str)] = &[
+    (0, "None"),
+    (2, "External"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_FLASH_STATUS: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MORE_SETTINGS_FLASH_STATUS_DATA.iter().cloned().collect());
+pub static MORE_SETTINGS_FLASH_STATUS: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_FLASH_STATUS_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__flash_status(key: u8) -> Option<&'static str> {
@@ -165,17 +165,16 @@ pub fn lookup_more_settings__flash_status(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (3 entries)
-static MORE_SETTINGS_FLASH_STATUS_134_DATA: &[(u8, &'static str)] =
-    &[(0, "None"), (1, "Built-in"), (2, "External")];
+static MORE_SETTINGS_FLASH_STATUS_134_DATA: &[(u8, &'static str)] = &[
+    (0, "None"),
+    (1, "Built-in"),
+    (2, "External"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_FLASH_STATUS_134: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        MORE_SETTINGS_FLASH_STATUS_134_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static MORE_SETTINGS_FLASH_STATUS_134: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_FLASH_STATUS_134_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__flash_status_134(key: u8) -> Option<&'static str> {
@@ -193,8 +192,9 @@ static MORE_SETTINGS_FLASH_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_FLASH_MODE: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MORE_SETTINGS_FLASH_MODE_DATA.iter().cloned().collect());
+pub static MORE_SETTINGS_FLASH_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_FLASH_MODE_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__flash_mode(key: u8) -> Option<&'static str> {
@@ -202,37 +202,32 @@ pub fn lookup_more_settings__flash_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static MORE_SETTINGS_LONG_EXPOSURE_NOISE_REDUCTION_DATA: &[(u8, &'static str)] =
-    &[(1, "Off"), (16, "On")];
+static MORE_SETTINGS_LONG_EXPOSURE_NOISE_REDUCTION_DATA: &[(u8, &'static str)] = &[
+    (1, "Off"),
+    (16, "On"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_LONG_EXPOSURE_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        MORE_SETTINGS_LONG_EXPOSURE_NOISE_REDUCTION_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static MORE_SETTINGS_LONG_EXPOSURE_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_LONG_EXPOSURE_NOISE_REDUCTION_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__long_exposure_noise_reduction(key: u8) -> Option<&'static str> {
-    MORE_SETTINGS_LONG_EXPOSURE_NOISE_REDUCTION
-        .get(&key)
-        .copied()
+    MORE_SETTINGS_LONG_EXPOSURE_NOISE_REDUCTION.get(&key).copied()
 }
 
 /// Raw data (3 entries)
-static MORE_SETTINGS_HIGH_I_S_O_NOISE_REDUCTION_DATA: &[(u8, &'static str)] =
-    &[(16, "Low"), (17, "High"), (19, "Auto")];
+static MORE_SETTINGS_HIGH_I_S_O_NOISE_REDUCTION_DATA: &[(u8, &'static str)] = &[
+    (16, "Low"),
+    (17, "High"),
+    (19, "Auto"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_HIGH_I_S_O_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        MORE_SETTINGS_HIGH_I_S_O_NOISE_REDUCTION_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static MORE_SETTINGS_HIGH_I_S_O_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_HIGH_I_S_O_NOISE_REDUCTION_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__high_i_s_o_noise_reduction(key: u8) -> Option<&'static str> {
@@ -249,8 +244,9 @@ static MORE_SETTINGS_FOCUS_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_FOCUS_MODE: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MORE_SETTINGS_FOCUS_MODE_DATA.iter().cloned().collect());
+pub static MORE_SETTINGS_FOCUS_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_FOCUS_MODE_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__focus_mode(key: u8) -> Option<&'static str> {
@@ -294,13 +290,9 @@ static MORE_SETTINGS_EXPOSURE_PROGRAM_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_EXPOSURE_PROGRAM: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        MORE_SETTINGS_EXPOSURE_PROGRAM_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static MORE_SETTINGS_EXPOSURE_PROGRAM: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_EXPOSURE_PROGRAM_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__exposure_program(key: u8) -> Option<&'static str> {
@@ -308,17 +300,17 @@ pub fn lookup_more_settings__exposure_program(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (4 entries)
-static MORE_SETTINGS_MULTI_FRAME_NOISE_REDUCTION_DATA: &[(u8, &'static str)] =
-    &[(0, "n/a"), (1, "Off"), (16, "On"), (255, "None")];
+static MORE_SETTINGS_MULTI_FRAME_NOISE_REDUCTION_DATA: &[(u8, &'static str)] = &[
+    (0, "n/a"),
+    (1, "Off"),
+    (16, "On"),
+    (255, "None"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_MULTI_FRAME_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        MORE_SETTINGS_MULTI_FRAME_NOISE_REDUCTION_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static MORE_SETTINGS_MULTI_FRAME_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_MULTI_FRAME_NOISE_REDUCTION_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__multi_frame_noise_reduction(key: u8) -> Option<&'static str> {
@@ -326,12 +318,16 @@ pub fn lookup_more_settings__multi_frame_noise_reduction(key: u8) -> Option<&'st
 }
 
 /// Raw data (3 entries)
-static MORE_SETTINGS_H_D_R_SETTING_DATA: &[(u8, &'static str)] =
-    &[(1, "Off"), (16, "On (Auto)"), (17, "On (Manual)")];
+static MORE_SETTINGS_H_D_R_SETTING_DATA: &[(u8, &'static str)] = &[
+    (1, "Off"),
+    (16, "On (Auto)"),
+    (17, "On (Manual)"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_H_D_R_SETTING: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MORE_SETTINGS_H_D_R_SETTING_DATA.iter().cloned().collect());
+pub static MORE_SETTINGS_H_D_R_SETTING: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_H_D_R_SETTING_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__h_d_r_setting(key: u8) -> Option<&'static str> {
@@ -352,8 +348,9 @@ static MORE_SETTINGS_H_D_R_LEVEL_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_H_D_R_LEVEL: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MORE_SETTINGS_H_D_R_LEVEL_DATA.iter().cloned().collect());
+pub static MORE_SETTINGS_H_D_R_LEVEL: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_H_D_R_LEVEL_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__h_d_r_level(key: u8) -> Option<&'static str> {
@@ -368,8 +365,9 @@ static MORE_SETTINGS_VIEWING_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_VIEWING_MODE: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MORE_SETTINGS_VIEWING_MODE_DATA.iter().cloned().collect());
+pub static MORE_SETTINGS_VIEWING_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_VIEWING_MODE_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__viewing_mode(key: u8) -> Option<&'static str> {
@@ -377,11 +375,15 @@ pub fn lookup_more_settings__viewing_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static MORE_SETTINGS_FACE_DETECTION_DATA: &[(u8, &'static str)] = &[(1, "Off"), (16, "On")];
+static MORE_SETTINGS_FACE_DETECTION_DATA: &[(u8, &'static str)] = &[
+    (1, "Off"),
+    (16, "On"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_FACE_DETECTION: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MORE_SETTINGS_FACE_DETECTION_DATA.iter().cloned().collect());
+pub static MORE_SETTINGS_FACE_DETECTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_FACE_DETECTION_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__face_detection(key: u8) -> Option<&'static str> {
@@ -396,8 +398,9 @@ static MORE_SETTINGS_METERING_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_METERING_MODE: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MORE_SETTINGS_METERING_MODE_DATA.iter().cloned().collect());
+pub static MORE_SETTINGS_METERING_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_METERING_MODE_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__metering_mode(key: u8) -> Option<&'static str> {
@@ -405,23 +408,20 @@ pub fn lookup_more_settings__metering_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (3 entries)
-static MORE_SETTINGS_DYNAMIC_RANGE_OPTIMIZER_SETTING_DATA: &[(u8, &'static str)] =
-    &[(1, "Off"), (16, "On (Auto)"), (17, "On (Manual)")];
+static MORE_SETTINGS_DYNAMIC_RANGE_OPTIMIZER_SETTING_DATA: &[(u8, &'static str)] = &[
+    (1, "Off"),
+    (16, "On (Auto)"),
+    (17, "On (Manual)"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_DYNAMIC_RANGE_OPTIMIZER_SETTING: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        MORE_SETTINGS_DYNAMIC_RANGE_OPTIMIZER_SETTING_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static MORE_SETTINGS_DYNAMIC_RANGE_OPTIMIZER_SETTING: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_DYNAMIC_RANGE_OPTIMIZER_SETTING_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__dynamic_range_optimizer_setting(key: u8) -> Option<&'static str> {
-    MORE_SETTINGS_DYNAMIC_RANGE_OPTIMIZER_SETTING
-        .get(&key)
-        .copied()
+    MORE_SETTINGS_DYNAMIC_RANGE_OPTIMIZER_SETTING.get(&key).copied()
 }
 
 /// Raw data (4 entries)
@@ -433,8 +433,9 @@ static MORE_SETTINGS_ORIENTATION2_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_ORIENTATION2: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MORE_SETTINGS_ORIENTATION2_DATA.iter().cloned().collect());
+pub static MORE_SETTINGS_ORIENTATION2: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_ORIENTATION2_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__orientation2(key: u8) -> Option<&'static str> {
@@ -442,12 +443,15 @@ pub fn lookup_more_settings__orientation2(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static MORE_SETTINGS_FLASH_ACTION_DATA: &[(u8, &'static str)] =
-    &[(0, "Did not fire"), (1, "Fired")];
+static MORE_SETTINGS_FLASH_ACTION_DATA: &[(u8, &'static str)] = &[
+    (0, "Did not fire"),
+    (1, "Fired"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_FLASH_ACTION: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MORE_SETTINGS_FLASH_ACTION_DATA.iter().cloned().collect());
+pub static MORE_SETTINGS_FLASH_ACTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_FLASH_ACTION_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__flash_action(key: u8) -> Option<&'static str> {
@@ -455,11 +459,15 @@ pub fn lookup_more_settings__flash_action(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static MORE_SETTINGS_FOCUS_MODE2_DATA: &[(u8, &'static str)] = &[(0, "AF"), (1, "MF")];
+static MORE_SETTINGS_FOCUS_MODE2_DATA: &[(u8, &'static str)] = &[
+    (0, "AF"),
+    (1, "MF"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_FOCUS_MODE2: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MORE_SETTINGS_FOCUS_MODE2_DATA.iter().cloned().collect());
+pub static MORE_SETTINGS_FOCUS_MODE2: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_FOCUS_MODE2_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__focus_mode2(key: u8) -> Option<&'static str> {
@@ -467,11 +475,15 @@ pub fn lookup_more_settings__focus_mode2(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static MORE_SETTINGS_COLOR_SPACE_DATA: &[(u8, &'static str)] = &[(1, "sRGB"), (2, "Adobe RGB")];
+static MORE_SETTINGS_COLOR_SPACE_DATA: &[(u8, &'static str)] = &[
+    (1, "sRGB"),
+    (2, "Adobe RGB"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_COLOR_SPACE: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MORE_SETTINGS_COLOR_SPACE_DATA.iter().cloned().collect());
+pub static MORE_SETTINGS_COLOR_SPACE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_COLOR_SPACE_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__color_space(key: u8) -> Option<&'static str> {
@@ -489,13 +501,9 @@ static MORE_SETTINGS_CREATIVE_STYLE_SETTING_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MORE_SETTINGS_CREATIVE_STYLE_SETTING: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        MORE_SETTINGS_CREATIVE_STYLE_SETTING_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static MORE_SETTINGS_CREATIVE_STYLE_SETTING: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MORE_SETTINGS_CREATIVE_STYLE_SETTING_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_more_settings__creative_style_setting(key: u8) -> Option<&'static str> {

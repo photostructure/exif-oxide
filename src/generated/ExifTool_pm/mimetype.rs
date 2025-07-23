@@ -1,5 +1,5 @@
 //! MIME type mappings for file types
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/ExifTool.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -46,19 +46,10 @@ static MIME_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("DNG", "image/x-adobe-dng"),
     ("DOC", "application/msword"),
     ("DOCM", "application/vnd.ms-word.document.macroEnabled.12"),
-    (
-        "DOCX",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ),
+    ("DOCX", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
     ("DOT", "application/msword"),
-    (
-        "DOTM",
-        "application/vnd.ms-word.template.macroEnabledTemplate",
-    ),
-    (
-        "DOTX",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
-    ),
+    ("DOTM", "application/vnd.ms-word.template.macroEnabledTemplate"),
+    ("DOTX", "application/vnd.openxmlformats-officedocument.wordprocessingml.template"),
     ("DPX", "image/x-dpx"),
     ("DR4", "application/octet-stream"),
     ("DS2", "audio/x-ds2"),
@@ -173,41 +164,17 @@ static MIME_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("PMP", "image/x-sony-pmp"),
     ("PNG", "image/png"),
     ("POT", "application/vnd.ms-powerpoint"),
-    (
-        "POTM",
-        "application/vnd.ms-powerpoint.template.macroEnabled.12",
-    ),
-    (
-        "POTX",
-        "application/vnd.openxmlformats-officedocument.presentationml.template",
-    ),
-    (
-        "PPAM",
-        "application/vnd.ms-powerpoint.addin.macroEnabled.12",
-    ),
-    (
-        "PPAX",
-        "application/vnd.openxmlformats-officedocument.presentationml.addin",
-    ),
+    ("POTM", "application/vnd.ms-powerpoint.template.macroEnabled.12"),
+    ("POTX", "application/vnd.openxmlformats-officedocument.presentationml.template"),
+    ("PPAM", "application/vnd.ms-powerpoint.addin.macroEnabled.12"),
+    ("PPAX", "application/vnd.openxmlformats-officedocument.presentationml.addin"),
     ("PPM", "image/x-portable-pixmap"),
     ("PPS", "application/vnd.ms-powerpoint"),
-    (
-        "PPSM",
-        "application/vnd.ms-powerpoint.slideshow.macroEnabled.12",
-    ),
-    (
-        "PPSX",
-        "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
-    ),
+    ("PPSM", "application/vnd.ms-powerpoint.slideshow.macroEnabled.12"),
+    ("PPSX", "application/vnd.openxmlformats-officedocument.presentationml.slideshow"),
     ("PPT", "application/vnd.ms-powerpoint"),
-    (
-        "PPTM",
-        "application/vnd.ms-powerpoint.presentation.macroEnabled.12",
-    ),
-    (
-        "PPTX",
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    ),
+    ("PPTM", "application/vnd.ms-powerpoint.presentation.macroEnabled.12"),
+    ("PPTX", "application/vnd.openxmlformats-officedocument.presentationml.presentation"),
     ("PS", "application/postscript"),
     ("PSD", "application/vnd.adobe.photoshop"),
     ("PSP", "image/x-paintshoppro"),
@@ -257,29 +224,21 @@ static MIME_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("XLA", "application/vnd.ms-excel"),
     ("XLAM", "application/vnd.ms-excel.addin.macroEnabled.12"),
     ("XLS", "application/vnd.ms-excel"),
-    (
-        "XLSB",
-        "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
-    ),
+    ("XLSB", "application/vnd.ms-excel.sheet.binary.macroEnabled.12"),
     ("XLSM", "application/vnd.ms-excel.sheet.macroEnabled.12"),
-    (
-        "XLSX",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    ),
+    ("XLSX", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
     ("XLT", "application/vnd.ms-excel"),
     ("XLTM", "application/vnd.ms-excel.template.macroEnabled.12"),
-    (
-        "XLTX",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.template",
-    ),
+    ("XLTX", "application/vnd.openxmlformats-officedocument.spreadsheetml.template"),
     ("XML", "application/xml"),
     ("XMP", "application/rdf+xml"),
     ("ZIP", "application/zip"),
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MIME_TYPES: LazyLock<HashMap<&'static str, &'static str>> =
-    LazyLock::new(|| MIME_TYPES_DATA.iter().copied().collect());
+pub static MIME_TYPES: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
+    MIME_TYPES_DATA.iter().copied().collect()
+});
 
 /// Look up value by key
 pub fn lookup_mime_types(key: &str) -> Option<&'static str> {

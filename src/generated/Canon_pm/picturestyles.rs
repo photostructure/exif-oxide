@@ -1,5 +1,5 @@
 //! Picture style mode names
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Canon.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -35,8 +35,9 @@ static PICTURE_STYLES_DATA: &[(u16, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static PICTURE_STYLES: LazyLock<HashMap<u16, &'static str>> =
-    LazyLock::new(|| PICTURE_STYLES_DATA.iter().cloned().collect());
+pub static PICTURE_STYLES: LazyLock<HashMap<u16, &'static str>> = LazyLock::new(|| {
+    PICTURE_STYLES_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_picture_styles(key: u16) -> Option<&'static str> {

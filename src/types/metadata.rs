@@ -400,6 +400,17 @@ impl TagSourceInfo {
             "MakerNotes" => "MakerNotes".to_string(),
             "IFD1" => "IFD1".to_string(),
             "KyoceraRaw" => "KyoceraRaw".to_string(),
+            // Canon MakerNote subdirectory processing
+            // ExifTool: MakerNotes.pm MakerNoteCanon -> Canon.pm Main table
+            // The directory name becomes Group1 per ExifTool's SetGroup logic
+            name if name.starts_with("Canon") => "Canon".to_string(),
+            // Other manufacturer MakerNote subdirectories follow the same pattern
+            name if name.starts_with("Nikon") => "Nikon".to_string(),
+            name if name.starts_with("Sony") => "Sony".to_string(),
+            name if name.starts_with("Olympus") => "Olympus".to_string(),
+            name if name.starts_with("Panasonic") => "Panasonic".to_string(),
+            name if name.starts_with("Pentax") => "Pentax".to_string(),
+            name if name.starts_with("Fujifilm") => "Fujifilm".to_string(),
             // Default to IFD0 for main IFD and unknown IFDs
             _ => "IFD0".to_string(),
         }

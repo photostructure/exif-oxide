@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for ImageProcessing table
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Olympus.pm (table: ImageProcessing)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -7,16 +7,14 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (1 entries)
-static IMAGE_PROCESSING_NOISE_REDUCTION2_DATA: &[(u8, &'static str)] = &[(0, "(none)")];
+static IMAGE_PROCESSING_NOISE_REDUCTION2_DATA: &[(u8, &'static str)] = &[
+    (0, "(none)"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static IMAGE_PROCESSING_NOISE_REDUCTION2: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        IMAGE_PROCESSING_NOISE_REDUCTION2_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static IMAGE_PROCESSING_NOISE_REDUCTION2: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    IMAGE_PROCESSING_NOISE_REDUCTION2_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_image_processing__noise_reduction2(key: u8) -> Option<&'static str> {
@@ -24,17 +22,15 @@ pub fn lookup_image_processing__noise_reduction2(key: u8) -> Option<&'static str
 }
 
 /// Raw data (2 entries)
-static IMAGE_PROCESSING_DISTORTION_CORRECTION2_DATA: &[(u8, &'static str)] =
-    &[(0, "Off"), (1, "On")];
+static IMAGE_PROCESSING_DISTORTION_CORRECTION2_DATA: &[(u8, &'static str)] = &[
+    (0, "Off"),
+    (1, "On"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static IMAGE_PROCESSING_DISTORTION_CORRECTION2: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        IMAGE_PROCESSING_DISTORTION_CORRECTION2_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static IMAGE_PROCESSING_DISTORTION_CORRECTION2: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    IMAGE_PROCESSING_DISTORTION_CORRECTION2_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_image_processing__distortion_correction2(key: u8) -> Option<&'static str> {
@@ -42,17 +38,15 @@ pub fn lookup_image_processing__distortion_correction2(key: u8) -> Option<&'stat
 }
 
 /// Raw data (2 entries)
-static IMAGE_PROCESSING_SHADING_COMPENSATION2_DATA: &[(u8, &'static str)] =
-    &[(0, "Off"), (1, "On")];
+static IMAGE_PROCESSING_SHADING_COMPENSATION2_DATA: &[(u8, &'static str)] = &[
+    (0, "Off"),
+    (1, "On"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static IMAGE_PROCESSING_SHADING_COMPENSATION2: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        IMAGE_PROCESSING_SHADING_COMPENSATION2_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static IMAGE_PROCESSING_SHADING_COMPENSATION2: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    IMAGE_PROCESSING_SHADING_COMPENSATION2_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_image_processing__shading_compensation2(key: u8) -> Option<&'static str> {
@@ -78,8 +72,9 @@ static IMAGE_PROCESSING_ASPECT_RATIO_DATA: &[(&'static str, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static IMAGE_PROCESSING_ASPECT_RATIO: LazyLock<HashMap<&'static str, &'static str>> =
-    LazyLock::new(|| IMAGE_PROCESSING_ASPECT_RATIO_DATA.iter().cloned().collect());
+pub static IMAGE_PROCESSING_ASPECT_RATIO: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
+    IMAGE_PROCESSING_ASPECT_RATIO_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_image_processing__aspect_ratio(key: &str) -> Option<&'static str> {
@@ -87,17 +82,15 @@ pub fn lookup_image_processing__aspect_ratio(key: &str) -> Option<&'static str> 
 }
 
 /// Raw data (2 entries)
-static IMAGE_PROCESSING_KEYSTONE_COMPENSATION_DATA: &[(&'static str, &'static str)] =
-    &[("0 0", "Off"), ("0 1", "On")];
+static IMAGE_PROCESSING_KEYSTONE_COMPENSATION_DATA: &[(&'static str, &'static str)] = &[
+    ("0 0", "Off"),
+    ("0 1", "On"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static IMAGE_PROCESSING_KEYSTONE_COMPENSATION: LazyLock<HashMap<&'static str, &'static str>> =
-    LazyLock::new(|| {
-        IMAGE_PROCESSING_KEYSTONE_COMPENSATION_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static IMAGE_PROCESSING_KEYSTONE_COMPENSATION: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
+    IMAGE_PROCESSING_KEYSTONE_COMPENSATION_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_image_processing__keystone_compensation(key: &str) -> Option<&'static str> {
@@ -105,17 +98,15 @@ pub fn lookup_image_processing__keystone_compensation(key: &str) -> Option<&'sta
 }
 
 /// Raw data (2 entries)
-static IMAGE_PROCESSING_KEYSTONE_DIRECTION_DATA: &[(u8, &'static str)] =
-    &[(0, "Vertical"), (1, "Horizontal")];
+static IMAGE_PROCESSING_KEYSTONE_DIRECTION_DATA: &[(u8, &'static str)] = &[
+    (0, "Vertical"),
+    (1, "Horizontal"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static IMAGE_PROCESSING_KEYSTONE_DIRECTION: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        IMAGE_PROCESSING_KEYSTONE_DIRECTION_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static IMAGE_PROCESSING_KEYSTONE_DIRECTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    IMAGE_PROCESSING_KEYSTONE_DIRECTION_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_image_processing__keystone_direction(key: u8) -> Option<&'static str> {

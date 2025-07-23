@@ -1,5 +1,5 @@
 //! Sony ISO setting values to actual ISO numbers
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Sony.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -54,8 +54,9 @@ static SONY_ISO_SETTING_2010_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static SONY_ISO_SETTING_2010: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| SONY_ISO_SETTING_2010_DATA.iter().cloned().collect());
+pub static SONY_ISO_SETTING_2010: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    SONY_ISO_SETTING_2010_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_sony_iso_setting_2010(key: u8) -> Option<&'static str> {

@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for ModifiedInfo table
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Canon.pm (table: ModifiedInfo)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -7,17 +7,16 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (3 entries)
-static MODIFIED_INFO_MODIFIED_TONE_CURVE_DATA: &[(u8, &'static str)] =
-    &[(0, "Standard"), (1, "Manual"), (2, "Custom")];
+static MODIFIED_INFO_MODIFIED_TONE_CURVE_DATA: &[(u8, &'static str)] = &[
+    (0, "Standard"),
+    (1, "Manual"),
+    (2, "Custom"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static MODIFIED_INFO_MODIFIED_TONE_CURVE: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        MODIFIED_INFO_MODIFIED_TONE_CURVE_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static MODIFIED_INFO_MODIFIED_TONE_CURVE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MODIFIED_INFO_MODIFIED_TONE_CURVE_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_modified_info__modified_tone_curve(key: u8) -> Option<&'static str> {
@@ -53,13 +52,9 @@ static MODIFIED_INFO_MODIFIED_PICTURE_STYLE_DATA: &[(i32, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MODIFIED_INFO_MODIFIED_PICTURE_STYLE: LazyLock<HashMap<i32, &'static str>> =
-    LazyLock::new(|| {
-        MODIFIED_INFO_MODIFIED_PICTURE_STYLE_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static MODIFIED_INFO_MODIFIED_PICTURE_STYLE: LazyLock<HashMap<i32, &'static str>> = LazyLock::new(|| {
+    MODIFIED_INFO_MODIFIED_PICTURE_STYLE_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_modified_info__modified_picture_style(key: i32) -> Option<&'static str> {
@@ -77,13 +72,9 @@ static MODIFIED_INFO_MODIFIED_SHARPNESS_FREQ_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MODIFIED_INFO_MODIFIED_SHARPNESS_FREQ: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        MODIFIED_INFO_MODIFIED_SHARPNESS_FREQ_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static MODIFIED_INFO_MODIFIED_SHARPNESS_FREQ: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MODIFIED_INFO_MODIFIED_SHARPNESS_FREQ_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_modified_info__modified_sharpness_freq(key: u8) -> Option<&'static str> {
@@ -117,13 +108,9 @@ static MODIFIED_INFO_MODIFIED_WHITE_BALANCE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MODIFIED_INFO_MODIFIED_WHITE_BALANCE: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        MODIFIED_INFO_MODIFIED_WHITE_BALANCE_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static MODIFIED_INFO_MODIFIED_WHITE_BALANCE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MODIFIED_INFO_MODIFIED_WHITE_BALANCE_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_modified_info__modified_white_balance(key: u8) -> Option<&'static str> {

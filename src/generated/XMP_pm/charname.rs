@@ -1,5 +1,5 @@
 //! XML character to entity name mappings
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/XMP.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -16,8 +16,9 @@ static XML_CHAR_NAMES_DATA: &[(&'static str, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static XML_CHAR_NAMES: LazyLock<HashMap<&'static str, &'static str>> =
-    LazyLock::new(|| XML_CHAR_NAMES_DATA.iter().copied().collect());
+pub static XML_CHAR_NAMES: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
+    XML_CHAR_NAMES_DATA.iter().copied().collect()
+});
 
 /// Look up value by key
 pub fn lookup_xml_char_names(key: &str) -> Option<&'static str> {

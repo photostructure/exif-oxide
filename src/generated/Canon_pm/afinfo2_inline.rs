@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for AFInfo2 table
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Canon.pm (table: AFInfo2)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -31,8 +31,9 @@ static A_F_INFO2_A_F_AREA_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static A_F_INFO2_A_F_AREA_MODE: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| A_F_INFO2_A_F_AREA_MODE_DATA.iter().cloned().collect());
+pub static A_F_INFO2_A_F_AREA_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    A_F_INFO2_A_F_AREA_MODE_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_a_f_info2__a_f_area_mode(key: u8) -> Option<&'static str> {
