@@ -15,8 +15,9 @@ pub enum JpegSegment {
     Soi,
     /// Application segments 0-15 (APP0-APP15)
     App(u8),
-    /// Start of Frame (0xC0)
-    Sof,
+    /// Start of Frame segments (0xC0-0xCF except 0xC4, 0xC8, 0xCC)
+    /// Contains the SOF marker value (0xC0-0xCF)
+    Sof(u8),
     /// Define Huffman Table (0xC4)
     Dht,
     /// Start of Scan (0xDA)
@@ -32,8 +33,17 @@ impl JpegSegment {
         match marker {
             0xD8 => Self::Soi,
             0xE0..=0xEF => Self::App(marker - 0xE0),
-            0xC0 => Self::Sof,
-            0xC4 => Self::Dht,
+            // SOF markers: 0xC0-0xCF except 0xC4 (DHT), 0xC8 (JPGA), 0xCC (DAC)
+            // ExifTool: lib/Image/ExifTool.pm:7317-7319
+            0xC0..=0xCF => {
+                if marker == 0xC4 {
+                    Self::Dht
+                } else if marker == 0xC8 || marker == 0xCC {
+                    Self::Other(marker) // JPGA and DAC are not SOF
+                } else {
+                    Self::Sof(marker)
+                }
+            }
             0xDA => Self::Sos,
             0xD9 => Self::Eoi,
             _ => Self::Other(marker),
@@ -52,7 +62,7 @@ impl JpegSegment {
         match self {
             Self::Soi => 0xD8,
             Self::App(app_num) => 0xE0 + app_num,
-            Self::Sof => 0xC0,
+            Self::Sof(marker) => *marker,
             Self::Dht => 0xC4,
             Self::Sos => 0xDA,
             Self::Eoi => 0xD9,
@@ -69,6 +79,18 @@ pub struct JpegSegmentInfo {
     pub length: u16,
     pub has_exif: bool,
     pub has_xmp: bool,
+}
+
+/// SOF (Start of Frame) data extracted from JPEG
+/// ExifTool: lib/Image/ExifTool.pm:7321-7336
+#[derive(Debug)]
+pub struct SofData {
+    pub encoding_process: u8,              // marker - 0xc0
+    pub bits_per_sample: u8,               // precision from SOF
+    pub image_height: u16,                 // height from SOF
+    pub image_width: u16,                  // width from SOF
+    pub color_components: u8,              // number of color components
+    pub ycbcr_subsampling: Option<String>, // calculated from component data
 }
 
 /// Extended XMP segment data
@@ -88,6 +110,77 @@ pub struct ExtendedXmpInfo {
     pub chunk_offset: u32,
     pub segment_offset: u64, // File offset to start of XMP data chunk
     pub chunk_length: u16,   // Length of this chunk
+}
+
+/// Parse SOF (Start of Frame) segment data
+/// ExifTool: lib/Image/ExifTool.pm:7321-7336
+fn parse_sof_data(marker: u8, segment_data: &[u8]) -> Result<SofData> {
+    // Minimum SOF data is 6 bytes (precision, height, width, components)
+    if segment_data.len() < 6 {
+        return Err(ExifError::ParseError("SOF segment too short".to_string()));
+    }
+
+    // ExifTool: my ($p, $h, $w, $n) = unpack('Cn2C', $$segDataPt);
+    let bits_per_sample = segment_data[0]; // 'C' = unsigned char
+    let image_height = u16::from_be_bytes([segment_data[1], segment_data[2]]); // 'n' = big-endian u16
+    let image_width = u16::from_be_bytes([segment_data[3], segment_data[4]]); // 'n' = big-endian u16
+    let color_components = segment_data[5]; // 'C' = unsigned char
+
+    // Calculate EncodingProcess (marker - 0xc0)
+    // ExifTool: lib/Image/ExifTool.pm:7322
+    let encoding_process = marker.wrapping_sub(0xc0);
+
+    // Calculate YCbCrSubSampling if we have 3 components and enough data
+    // ExifTool: lib/Image/ExifTool.pm:7327-7336
+    let ycbcr_subsampling = if color_components == 3 && segment_data.len() >= 6 + 3 * 3 {
+        let mut hmin = 255u8;
+        let mut hmax = 0u8;
+        let mut vmin = 255u8;
+        let mut vmax = 0u8;
+
+        // Process each component starting at offset 6
+        for i in 0..3 {
+            let component_offset = 6 + i * 3 + 1; // Skip component ID byte
+            if component_offset < segment_data.len() {
+                let sampling = segment_data[component_offset];
+                let h = sampling >> 4;
+                let v = sampling & 0x0f;
+
+                if h < hmin {
+                    hmin = h;
+                }
+                if h > hmax {
+                    hmax = h;
+                }
+                if v < vmin {
+                    vmin = v;
+                }
+                if v > vmax {
+                    vmax = v;
+                }
+            }
+        }
+
+        // Calculate subsampling as per ExifTool
+        if hmin > 0 && vmin > 0 {
+            let hs = hmax / hmin;
+            let vs = vmax / vmin;
+            Some(format!("{} {}", hs, vs))
+        } else {
+            None
+        }
+    } else {
+        None
+    };
+
+    Ok(SofData {
+        encoding_process,
+        bits_per_sample,
+        image_height,
+        image_width,
+        color_components,
+        ycbcr_subsampling,
+    })
 }
 
 /// Scan JPEG file for all APP1 segments containing EXIF or XMP data

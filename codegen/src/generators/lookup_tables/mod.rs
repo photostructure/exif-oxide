@@ -155,8 +155,15 @@ pub fn process_config_directory(
                 
                 if structure_path.exists() {
                     let structure_content = fs::read_to_string(&structure_path)?;
-                    let structure_data: crate::generators::tag_structure::TagStructureData = 
+                    let mut structure_data: crate::generators::tag_structure::TagStructureData = 
                         serde_json::from_str(&structure_content)?;
+                    
+                    // Apply output configuration if present
+                    if let Some(output_config) = config_json["output"].as_object() {
+                        if let Some(enum_name) = output_config["enum_name"].as_str() {
+                            structure_data.metadata.enum_name = enum_name.to_string();
+                        }
+                    }
                     
                     // Generate file for this tag structure
                     let file_name = generate_tag_structure_file(

@@ -75,18 +75,14 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         print: TagValue::String(directory),
     });
 
-    // Handle file size - use U32 if it fits, otherwise F64 for large files
-    let file_size_value = if file_size <= u32::MAX as u64 {
-        TagValue::U32(file_size as u32)
-    } else {
-        TagValue::F64(file_size as f64)
-    };
+    // FileSize - return raw bytes as per user requirement
+    // Store as string for the numeric value (ExifTool compatibility)
     tag_entries.push(TagEntry {
         group: "File".to_string(),
         group1: "File".to_string(),
         name: "FileSize".to_string(),
-        value: file_size_value,
-        print: TagValue::string(file_size.to_string()),
+        value: TagValue::String(file_size.to_string()),
+        print: TagValue::String(file_size.to_string()),
     });
 
     // Format file modification time to match ExifTool format: "YYYY:MM:DD HH:MM:SS±TZ:TZ"
@@ -103,6 +99,80 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
             value: TagValue::String(formatted.clone()),
             print: TagValue::String(formatted),
         });
+    }
+
+    // Add FileAccessDate - ExifTool.pm:1427
+    if let Ok(accessed) = file_metadata.accessed() {
+        use chrono::{DateTime, Local};
+        let datetime: DateTime<Local> = accessed.into();
+        let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
+        tag_entries.push(TagEntry {
+            group: "File".to_string(),
+            group1: "File".to_string(),
+            name: "FileAccessDate".to_string(),
+            value: TagValue::String(formatted.clone()),
+            print: TagValue::String(formatted),
+        });
+    }
+
+    // Add FileCreateDate (Windows/macOS) or FileInodeChangeDate (Unix)
+    // ExifTool.pm:1437 and 1463
+    #[cfg(any(target_os = "windows", target_os = "macos"))]
+    {
+        if let Ok(created) = file_metadata.created() {
+            use chrono::{DateTime, Local};
+            let datetime: DateTime<Local> = created.into();
+            let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
+            tag_entries.push(TagEntry {
+                group: "File".to_string(),
+                group1: "File".to_string(),
+                name: "FileCreateDate".to_string(),
+                value: TagValue::String(formatted.clone()),
+                print: TagValue::String(formatted),
+            });
+        }
+    }
+
+    #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+    {
+        // On Unix systems, use ctime as FileInodeChangeDate
+        // This represents when the inode was last changed
+        // Note: std::fs::Metadata doesn't expose ctime directly, so we use created() as fallback
+        if let Ok(created) = file_metadata.created() {
+            use chrono::{DateTime, Local};
+            let datetime: DateTime<Local> = created.into();
+            let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
+            tag_entries.push(TagEntry {
+                group: "File".to_string(),
+                group1: "File".to_string(),
+                name: "FileInodeChangeDate".to_string(),
+                value: TagValue::String(formatted.clone()),
+                print: TagValue::String(formatted),
+            });
+        }
+    }
+
+    // Add FilePermissions - ExifTool.pm:1473-1517
+    // Format as Unix permissions string like "-rw-rw-r--"
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let mode = file_metadata.permissions().mode();
+        let permissions_str = format_unix_permissions(mode);
+        tag_entries.push(TagEntry {
+            group: "File".to_string(),
+            group1: "File".to_string(),
+            name: "FilePermissions".to_string(),
+            value: TagValue::String(permissions_str.clone()),
+            print: TagValue::String(permissions_str),
+        });
+    }
+
+    #[cfg(not(unix))]
+    {
+        // On non-Unix systems (like Windows), ExifTool shows different attributes
+        // For now, we'll skip this as it requires Win32API::File
+        // TODO: Implement Windows file attributes when Win32 API is available
     }
 
     // Add FileType and FileTypeExtension using ExifTool-compatible values
@@ -185,6 +255,9 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                         tags.insert(key, value);
                     }
 
+                    // Add ExifByteOrder tag if EXIF data was present
+                    add_exif_byte_order_tag(&exif_reader, &mut tag_entries);
+
                     // Add RAW processing warnings as tags for debugging
                     if show_warnings {
                         for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
@@ -239,6 +312,9 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                             for (key, value) in exif_tags {
                                 tags.insert(key, value);
                             }
+
+                            // Add ExifByteOrder tag
+                            add_exif_byte_order_tag(&exif_reader, &mut tag_entries);
 
                             // Add EXIF processing warnings as tags for debugging
                             if show_warnings {
@@ -365,6 +441,9 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                         tags.insert(key, value);
                     }
 
+                    // Add ExifByteOrder tag
+                    add_exif_byte_order_tag(&exif_reader, &mut tag_entries);
+
                     // Add EXIF processing warnings as tags for debugging
                     if show_warnings {
                         for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
@@ -482,6 +561,9 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     for (key, value) in raw_tags {
                         tags.insert(key, value);
                     }
+
+                    // Add ExifByteOrder tag if EXIF data was present
+                    add_exif_byte_order_tag(&exif_reader, &mut tag_entries);
                     // Add RAW processing warnings as tags for debugging
                     if show_warnings {
                         for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
@@ -531,6 +613,9 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                             tags.insert(key, value);
                         }
 
+                        // Add ExifByteOrder tag
+                        add_exif_byte_order_tag(&exif_reader, &mut tag_entries);
+
                         // Add EXIF processing warnings as tags for debugging
                         if show_warnings {
                             for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
@@ -567,6 +652,9 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                         for (key, value) in raw_tags {
                             tags.insert(key, value);
                         }
+
+                        // Add ExifByteOrder tag if EXIF data was present
+                        add_exif_byte_order_tag(&exif_reader, &mut tag_entries);
 
                         if show_warnings {
                             for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
@@ -654,6 +742,62 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
     exif_data.missing_implementations = missing_implementations;
 
     Ok(exif_data)
+}
+
+/// Add ExifByteOrder tag based on TIFF header information
+/// ExifTool.pm:1795-1805 - ExifByteOrder tag
+fn add_exif_byte_order_tag(exif_reader: &ExifReader, tag_entries: &mut Vec<TagEntry>) {
+    if let Some(header) = &exif_reader.header {
+        use crate::tiff_types::ByteOrder;
+
+        let byte_order_str = match header.byte_order {
+            ByteOrder::LittleEndian => "Little-endian (Intel, II)",
+            ByteOrder::BigEndian => "Big-endian (Motorola, MM)",
+        };
+
+        tag_entries.push(TagEntry {
+            group: "File".to_string(),
+            group1: "File".to_string(),
+            name: "ExifByteOrder".to_string(),
+            value: TagValue::String(byte_order_str.to_string()),
+            print: TagValue::String(byte_order_str.to_string()),
+        });
+    }
+}
+
+/// Format Unix file permissions to match ExifTool's format
+/// ExifTool.pm:1486-1517 - Converts octal mode to rwx string
+#[cfg(unix)]
+fn format_unix_permissions(mode: u32) -> String {
+    let file_type = match mode & 0o170000 {
+        0o010000 => 'p', // FIFO
+        0o020000 => 'c', // character special file
+        0o040000 => 'd', // directory
+        0o060000 => 'b', // block special file
+        0o120000 => 'l', // sym link
+        0o140000 => 's', // socket link
+        _ => '-',        // regular file
+    };
+
+    let mut permissions = String::with_capacity(10);
+    permissions.push(file_type);
+
+    // Owner permissions
+    permissions.push(if mode & 0o400 != 0 { 'r' } else { '-' });
+    permissions.push(if mode & 0o200 != 0 { 'w' } else { '-' });
+    permissions.push(if mode & 0o100 != 0 { 'x' } else { '-' });
+
+    // Group permissions
+    permissions.push(if mode & 0o040 != 0 { 'r' } else { '-' });
+    permissions.push(if mode & 0o020 != 0 { 'w' } else { '-' });
+    permissions.push(if mode & 0o010 != 0 { 'x' } else { '-' });
+
+    // Other permissions
+    permissions.push(if mode & 0o004 != 0 { 'r' } else { '-' });
+    permissions.push(if mode & 0o002 != 0 { 'w' } else { '-' });
+    permissions.push(if mode & 0o001 != 0 { 'x' } else { '-' });
+
+    permissions
 }
 
 #[cfg(test)]
