@@ -1,5 +1,5 @@
 //! Sony white balance settings with fine-tune adjustments
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Sony.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -62,9 +62,8 @@ static SONY_WHITE_BALANCE_SETTING_DATA: &[(u16, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static SONY_WHITE_BALANCE_SETTING: LazyLock<HashMap<u16, &'static str>> = LazyLock::new(|| {
-    SONY_WHITE_BALANCE_SETTING_DATA.iter().cloned().collect()
-});
+pub static SONY_WHITE_BALANCE_SETTING: LazyLock<HashMap<u16, &'static str>> =
+    LazyLock::new(|| SONY_WHITE_BALANCE_SETTING_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_sony_white_balance_setting(key: u16) -> Option<&'static str> {

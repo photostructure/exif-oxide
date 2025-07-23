@@ -294,4 +294,3 @@ pub static TIME_TAGS: &[TagDef] = &[
         notes: Some(" UTC time of GPS fix.  When writing, date is stripped off if present, and time is adjusted to UTC if it includes a timezone "),
     },
 ];
-

@@ -1,5 +1,5 @@
 //! Image quality setting names
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Canon.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -20,9 +20,8 @@ static CANON_QUALITY_DATA: &[(i16, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CANON_QUALITY: LazyLock<HashMap<i16, &'static str>> = LazyLock::new(|| {
-    CANON_QUALITY_DATA.iter().cloned().collect()
-});
+pub static CANON_QUALITY: LazyLock<HashMap<i16, &'static str>> =
+    LazyLock::new(|| CANON_QUALITY_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_canon_quality(key: i16) -> Option<&'static str> {

@@ -1,5 +1,5 @@
 //! Olympus art filter modes
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Olympus.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -53,9 +53,8 @@ static OLYMPUS_FILTERS_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static OLYMPUS_FILTERS: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    OLYMPUS_FILTERS_DATA.iter().cloned().collect()
-});
+pub static OLYMPUS_FILTERS: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| OLYMPUS_FILTERS_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_olympus_filters(key: u8) -> Option<&'static str> {

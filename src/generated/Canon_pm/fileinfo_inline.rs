@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for FileInfo table
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Canon.pm (table: FileInfo)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -16,9 +16,8 @@ static FILE_INFO_FILTER_EFFECT_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static FILE_INFO_FILTER_EFFECT: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    FILE_INFO_FILTER_EFFECT_DATA.iter().cloned().collect()
-});
+pub static FILE_INFO_FILTER_EFFECT: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| FILE_INFO_FILTER_EFFECT_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_file_info__filter_effect(key: u8) -> Option<&'static str> {
@@ -35,9 +34,8 @@ static FILE_INFO_TONING_EFFECT_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static FILE_INFO_TONING_EFFECT: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    FILE_INFO_TONING_EFFECT_DATA.iter().cloned().collect()
-});
+pub static FILE_INFO_TONING_EFFECT: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| FILE_INFO_TONING_EFFECT_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_file_info__toning_effect(key: u8) -> Option<&'static str> {
@@ -45,15 +43,11 @@ pub fn lookup_file_info__toning_effect(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static FILE_INFO_LIVE_VIEW_SHOOTING_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On"),
-];
+static FILE_INFO_LIVE_VIEW_SHOOTING_DATA: &[(u8, &'static str)] = &[(0, "Off"), (1, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static FILE_INFO_LIVE_VIEW_SHOOTING: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    FILE_INFO_LIVE_VIEW_SHOOTING_DATA.iter().cloned().collect()
-});
+pub static FILE_INFO_LIVE_VIEW_SHOOTING: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| FILE_INFO_LIVE_VIEW_SHOOTING_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_file_info__live_view_shooting(key: u8) -> Option<&'static str> {
@@ -68,9 +62,8 @@ static FILE_INFO_SHUTTER_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static FILE_INFO_SHUTTER_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    FILE_INFO_SHUTTER_MODE_DATA.iter().cloned().collect()
-});
+pub static FILE_INFO_SHUTTER_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| FILE_INFO_SHUTTER_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_file_info__shutter_mode(key: u8) -> Option<&'static str> {
@@ -78,15 +71,11 @@ pub fn lookup_file_info__shutter_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static FILE_INFO_FLASH_EXPOSURE_LOCK_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On"),
-];
+static FILE_INFO_FLASH_EXPOSURE_LOCK_DATA: &[(u8, &'static str)] = &[(0, "Off"), (1, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static FILE_INFO_FLASH_EXPOSURE_LOCK: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    FILE_INFO_FLASH_EXPOSURE_LOCK_DATA.iter().cloned().collect()
-});
+pub static FILE_INFO_FLASH_EXPOSURE_LOCK: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| FILE_INFO_FLASH_EXPOSURE_LOCK_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_file_info__flash_exposure_lock(key: u8) -> Option<&'static str> {
@@ -94,18 +83,12 @@ pub fn lookup_file_info__flash_exposure_lock(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (5 entries)
-static FILE_INFO_BRACKET_MODE_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "AEB"),
-    (2, "FEB"),
-    (3, "ISO"),
-    (4, "WB"),
-];
+static FILE_INFO_BRACKET_MODE_DATA: &[(u8, &'static str)] =
+    &[(0, "Off"), (1, "AEB"), (2, "FEB"), (3, "ISO"), (4, "WB")];
 
 /// Lookup table (lazy-initialized)
-pub static FILE_INFO_BRACKET_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    FILE_INFO_BRACKET_MODE_DATA.iter().cloned().collect()
-});
+pub static FILE_INFO_BRACKET_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| FILE_INFO_BRACKET_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_file_info__bracket_mode(key: u8) -> Option<&'static str> {
@@ -113,15 +96,11 @@ pub fn lookup_file_info__bracket_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static FILE_INFO_ANTI_FLICKER_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On"),
-];
+static FILE_INFO_ANTI_FLICKER_DATA: &[(u8, &'static str)] = &[(0, "Off"), (1, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static FILE_INFO_ANTI_FLICKER: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    FILE_INFO_ANTI_FLICKER_DATA.iter().cloned().collect()
-});
+pub static FILE_INFO_ANTI_FLICKER: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| FILE_INFO_ANTI_FLICKER_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_file_info__anti_flicker(key: u8) -> Option<&'static str> {
@@ -142,9 +121,8 @@ static FILE_INFO_RAW_JPG_QUALITY_DATA: &[(i16, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static FILE_INFO_RAW_JPG_QUALITY: LazyLock<HashMap<i16, &'static str>> = LazyLock::new(|| {
-    FILE_INFO_RAW_JPG_QUALITY_DATA.iter().cloned().collect()
-});
+pub static FILE_INFO_RAW_JPG_QUALITY: LazyLock<HashMap<i16, &'static str>> =
+    LazyLock::new(|| FILE_INFO_RAW_JPG_QUALITY_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_file_info__raw_jpg_quality(key: i16) -> Option<&'static str> {
@@ -227,9 +205,8 @@ static FILE_INFO_R_F_LENS_TYPE_DATA: &[(u16, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static FILE_INFO_R_F_LENS_TYPE: LazyLock<HashMap<u16, &'static str>> = LazyLock::new(|| {
-    FILE_INFO_R_F_LENS_TYPE_DATA.iter().cloned().collect()
-});
+pub static FILE_INFO_R_F_LENS_TYPE: LazyLock<HashMap<u16, &'static str>> =
+    LazyLock::new(|| FILE_INFO_R_F_LENS_TYPE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_file_info__r_f_lens_type(key: u16) -> Option<&'static str> {
@@ -260,9 +237,8 @@ static FILE_INFO_RAW_JPG_SIZE_DATA: &[(i16, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static FILE_INFO_RAW_JPG_SIZE: LazyLock<HashMap<i16, &'static str>> = LazyLock::new(|| {
-    FILE_INFO_RAW_JPG_SIZE_DATA.iter().cloned().collect()
-});
+pub static FILE_INFO_RAW_JPG_SIZE: LazyLock<HashMap<i16, &'static str>> =
+    LazyLock::new(|| FILE_INFO_RAW_JPG_SIZE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_file_info__raw_jpg_size(key: i16) -> Option<&'static str> {
@@ -270,17 +246,17 @@ pub fn lookup_file_info__raw_jpg_size(key: i16) -> Option<&'static str> {
 }
 
 /// Raw data (4 entries)
-static FILE_INFO_LONG_EXPOSURE_NOISE_REDUCTION2_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On (1D)"),
-    (3, "On"),
-    (4, "Auto"),
-];
+static FILE_INFO_LONG_EXPOSURE_NOISE_REDUCTION2_DATA: &[(u8, &'static str)] =
+    &[(0, "Off"), (1, "On (1D)"), (3, "On"), (4, "Auto")];
 
 /// Lookup table (lazy-initialized)
-pub static FILE_INFO_LONG_EXPOSURE_NOISE_REDUCTION2: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    FILE_INFO_LONG_EXPOSURE_NOISE_REDUCTION2_DATA.iter().cloned().collect()
-});
+pub static FILE_INFO_LONG_EXPOSURE_NOISE_REDUCTION2: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        FILE_INFO_LONG_EXPOSURE_NOISE_REDUCTION2_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_file_info__long_exposure_noise_reduction2(key: u8) -> Option<&'static str> {
@@ -288,16 +264,12 @@ pub fn lookup_file_info__long_exposure_noise_reduction2(key: u8) -> Option<&'sta
 }
 
 /// Raw data (3 entries)
-static FILE_INFO_W_B_BRACKET_MODE_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On (shift AB)"),
-    (2, "On (shift GM)"),
-];
+static FILE_INFO_W_B_BRACKET_MODE_DATA: &[(u8, &'static str)] =
+    &[(0, "Off"), (1, "On (shift AB)"), (2, "On (shift GM)")];
 
 /// Lookup table (lazy-initialized)
-pub static FILE_INFO_W_B_BRACKET_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    FILE_INFO_W_B_BRACKET_MODE_DATA.iter().cloned().collect()
-});
+pub static FILE_INFO_W_B_BRACKET_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| FILE_INFO_W_B_BRACKET_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_file_info__w_b_bracket_mode(key: u8) -> Option<&'static str> {

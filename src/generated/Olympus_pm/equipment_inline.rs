@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for Equipment table
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Olympus.pm (table: Equipment)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -314,9 +314,8 @@ static EQUIPMENT_CAMERA_TYPE2_DATA: &[(&'static str, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static EQUIPMENT_CAMERA_TYPE2: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
-    EQUIPMENT_CAMERA_TYPE2_DATA.iter().cloned().collect()
-});
+pub static EQUIPMENT_CAMERA_TYPE2: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| EQUIPMENT_CAMERA_TYPE2_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_equipment__camera_type2(key: &str) -> Option<&'static str> {
@@ -332,9 +331,8 @@ static EQUIPMENT_FLASH_TYPE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static EQUIPMENT_FLASH_TYPE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    EQUIPMENT_FLASH_TYPE_DATA.iter().cloned().collect()
-});
+pub static EQUIPMENT_FLASH_TYPE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| EQUIPMENT_FLASH_TYPE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_equipment__flash_type(key: u8) -> Option<&'static str> {
@@ -358,9 +356,8 @@ static EQUIPMENT_FLASH_MODEL_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static EQUIPMENT_FLASH_MODEL: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    EQUIPMENT_FLASH_MODEL_DATA.iter().cloned().collect()
-});
+pub static EQUIPMENT_FLASH_MODEL: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| EQUIPMENT_FLASH_MODEL_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_equipment__flash_model(key: u8) -> Option<&'static str> {
@@ -376,7 +373,10 @@ static EQUIPMENT_LENS_TYPE_DATA: &[(&'static str, &'static str)] = &[
     ("0 02 00", "Olympus Zuiko Digital ED 150mm F2.0"),
     ("0 02 10", "Olympus M.Zuiko Digital 17mm F2.8 Pancake"),
     ("0 03 00", "Olympus Zuiko Digital ED 300mm F2.8"),
-    ("0 03 10", "Olympus M.Zuiko Digital ED 14-150mm F4.0-5.6 [II]"),
+    (
+        "0 03 10",
+        "Olympus M.Zuiko Digital ED 14-150mm F4.0-5.6 [II]",
+    ),
     ("0 04 10", "Olympus M.Zuiko Digital ED 9-18mm F4.0-5.6"),
     ("0 05 00", "Olympus Zuiko Digital 14-54mm F2.8-3.5"),
     ("0 05 01", "Olympus Zuiko Digital Pro ED 90-250mm F2.8"),
@@ -423,14 +423,20 @@ static EQUIPMENT_LENS_TYPE_DATA: &[(&'static str, &'static str)] = &[
     ("0 32 00", "Olympus Zuiko Digital ED 14-35mm F2.0 SWD"),
     ("0 32 10", "Olympus M.Zuiko Digital ED 12-200mm F3.5-6.3"),
     ("0 33 00", "Olympus Zuiko Digital 25mm F2.8"),
-    ("0 33 10", "Olympus M.Zuiko Digital 150-400mm F4.5 TC1.25x IS Pro"),
+    (
+        "0 33 10",
+        "Olympus M.Zuiko Digital 150-400mm F4.5 TC1.25x IS Pro",
+    ),
     ("0 34 00", "Olympus Zuiko Digital ED 9-18mm F4.0-5.6"),
     ("0 34 10", "Olympus M.Zuiko Digital ED 12-45mm F4.0 Pro"),
     ("0 35 00", "Olympus Zuiko Digital 14-54mm F2.8-3.5 II"),
     ("0 35 10", "Olympus M.Zuiko 100-400mm F5.0-6.3"),
     ("0 36 10", "Olympus M.Zuiko Digital ED 8-25mm F4 Pro"),
     ("0 37 10", "Olympus M.Zuiko Digital ED 40-150mm F4.0 Pro"),
-    ("0 39 10", "Olympus M.Zuiko Digital ED 90mm F3.5 Macro IS Pro"),
+    (
+        "0 39 10",
+        "Olympus M.Zuiko Digital ED 90mm F3.5 Macro IS Pro",
+    ),
     ("0 40 10", "Olympus M.Zuiko Digital ED 150-600mm F5.0-6.3"),
     ("1 01 00", "Sigma 18-50mm F3.5-5.6 DC"),
     ("1 01 10", "Sigma 30mm F2.8 EX DN"),
@@ -460,9 +466,15 @@ static EQUIPMENT_LENS_TYPE_DATA: &[(&'static str, &'static str)] = &[
     ("2 01 10", "Lumix G Vario 14-45mm F3.5-5.6 Asph. Mega OIS"),
     ("2 02 00", "Leica D Summilux 25mm F1.4 Asph."),
     ("2 02 10", "Lumix G Vario 45-200mm F4.0-5.6 Mega OIS"),
-    ("2 03 00", "Leica D Vario Elmar 14-50mm F3.8-5.6 Asph. Mega OIS"),
+    (
+        "2 03 00",
+        "Leica D Vario Elmar 14-50mm F3.8-5.6 Asph. Mega OIS",
+    ),
     ("2 03 01", "Leica D Vario Elmar 14-50mm F3.8-5.6 Asph."),
-    ("2 03 10", "Lumix G Vario HD 14-140mm F4.0-5.8 Asph. Mega OIS"),
+    (
+        "2 03 10",
+        "Lumix G Vario HD 14-140mm F4.0-5.8 Asph. Mega OIS",
+    ),
     ("2 04 00", "Leica D Vario Elmar 14-150mm F3.5-5.6"),
     ("2 04 10", "Lumix G Vario 7-14mm F4.0 Asph."),
     ("2 05 10", "Lumix G 20mm F1.7 Asph."),
@@ -473,12 +485,21 @@ static EQUIPMENT_LENS_TYPE_DATA: &[(&'static str, &'static str)] = &[
     ("2 10 10", "Lumix G 14mm F2.5 Asph."),
     ("2 11 10", "Lumix G 12.5mm F12 3D"),
     ("2 12 10", "Leica DG Summilux 25mm F1.4 Asph."),
-    ("2 13 10", "Lumix G X Vario PZ 45-175mm F4.0-5.6 Asph. Power OIS"),
-    ("2 14 10", "Lumix G X Vario PZ 14-42mm F3.5-5.6 Asph. Power OIS"),
+    (
+        "2 13 10",
+        "Lumix G X Vario PZ 45-175mm F4.0-5.6 Asph. Power OIS",
+    ),
+    (
+        "2 14 10",
+        "Lumix G X Vario PZ 14-42mm F3.5-5.6 Asph. Power OIS",
+    ),
     ("2 15 10", "Lumix G X Vario 12-35mm F2.8 Asph. Power OIS"),
     ("2 16 10", "Lumix G Vario 45-150mm F4.0-5.6 Asph. Mega OIS"),
     ("2 17 10", "Lumix G X Vario 35-100mm F2.8 Power OIS"),
-    ("2 18 10", "Lumix G Vario 14-42mm F3.5-5.6 II Asph. Mega OIS"),
+    (
+        "2 18 10",
+        "Lumix G Vario 14-42mm F3.5-5.6 II Asph. Mega OIS",
+    ),
     ("2 19 10", "Lumix G Vario 14-140mm F3.5-5.6 Asph. Power OIS"),
     ("2 20 10", "Lumix G Vario 12-32mm F3.5-5.6 Asph. Mega OIS"),
     ("2 21 10", "Leica DG Nocticron 42.5mm F1.2 Asph. Power OIS"),
@@ -487,17 +508,26 @@ static EQUIPMENT_LENS_TYPE_DATA: &[(&'static str, &'static str)] = &[
     ("2 24 10", "Lumix G Macro 30mm F2.8 Asph. Mega OIS"),
     ("2 25 10", "Lumix G 42.5mm F1.7 Asph. Power OIS"),
     ("2 26 10", "Lumix G 25mm F1.7 Asph."),
-    ("2 27 10", "Leica DG Vario-Elmar 100-400mm F4.0-6.3 Asph. Power OIS"),
+    (
+        "2 27 10",
+        "Leica DG Vario-Elmar 100-400mm F4.0-6.3 Asph. Power OIS",
+    ),
     ("2 28 10", "Lumix G Vario 12-60mm F3.5-5.6 Asph. Power OIS"),
     ("2 29 10", "Leica DG Summilux 12mm F1.4 Asph."),
-    ("2 30 10", "Leica DG Vario-Elmarit 12-60mm F2.8-4 Asph. Power OIS"),
+    (
+        "2 30 10",
+        "Leica DG Vario-Elmarit 12-60mm F2.8-4 Asph. Power OIS",
+    ),
     ("2 31 10", "Lumix G Vario 45-200mm F4.0-5.6 II"),
     ("2 32 10", "Lumix G Vario 100-300mm F4.0-5.6 II"),
     ("2 33 10", "Lumix G X Vario 12-35mm F2.8 II Asph. Power OIS"),
     ("2 34 10", "Lumix G Vario 35-100mm F2.8 II"),
     ("2 35 10", "Leica DG Vario-Elmarit 8-18mm F2.8-4 Asph."),
     ("2 36 10", "Leica DG Elmarit 200mm F2.8 Power OIS"),
-    ("2 37 10", "Leica DG Vario-Elmarit 50-200mm F2.8-4 Asph. Power OIS"),
+    (
+        "2 37 10",
+        "Leica DG Vario-Elmarit 50-200mm F2.8-4 Asph. Power OIS",
+    ),
     ("2 38 10", "Leica DG Vario-Summilux 10-25mm F1.7 Asph."),
     ("2 39 10", "Leica DG Summilux 25mm F1.4 II Asph."),
     ("2 40 10", "Leica DG Vario-Summilux 25-50mm F1.7 Asph."),
@@ -510,9 +540,8 @@ static EQUIPMENT_LENS_TYPE_DATA: &[(&'static str, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static EQUIPMENT_LENS_TYPE: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
-    EQUIPMENT_LENS_TYPE_DATA.iter().cloned().collect()
-});
+pub static EQUIPMENT_LENS_TYPE: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| EQUIPMENT_LENS_TYPE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_equipment__lens_type(key: &str) -> Option<&'static str> {
@@ -528,9 +557,8 @@ static EQUIPMENT_EXTENDER_DATA: &[(&'static str, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static EQUIPMENT_EXTENDER: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
-    EQUIPMENT_EXTENDER_DATA.iter().cloned().collect()
-});
+pub static EQUIPMENT_EXTENDER: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| EQUIPMENT_EXTENDER_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_equipment__extender(key: &str) -> Option<&'static str> {

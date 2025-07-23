@@ -1,5 +1,5 @@
 //! EXIF Flash tag PrintConv values
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Exif.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -38,9 +38,8 @@ static FLASH_DATA: &[(u16, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static FLASH: LazyLock<HashMap<u16, &'static str>> = LazyLock::new(|| {
-    FLASH_DATA.iter().cloned().collect()
-});
+pub static FLASH: LazyLock<HashMap<u16, &'static str>> =
+    LazyLock::new(|| FLASH_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_flash(key: u16) -> Option<&'static str> {

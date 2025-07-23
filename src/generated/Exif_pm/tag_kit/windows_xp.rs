@@ -6,10 +6,10 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
+use super::{PrintConvType, TagKitDef};
+use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
-use crate::types::TagValue;
-use super::{TagKitDef, PrintConvType};
 
 /// Get tag definitions for windows_xp category
 pub fn get_windows_xp_tags() -> Vec<(u32, TagKitDef)> {

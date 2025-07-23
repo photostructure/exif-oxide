@@ -56,7 +56,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         .to_string();
     tag_entries.push(TagEntry {
         group: "File".to_string(),
-        group1: "System".to_string(),
+        group1: "File".to_string(),
         name: "FileName".to_string(),
         value: TagValue::String(filename.clone()),
         print: TagValue::String(filename),
@@ -69,7 +69,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         .to_string();
     tag_entries.push(TagEntry {
         group: "File".to_string(),
-        group1: "System".to_string(),
+        group1: "File".to_string(),
         name: "Directory".to_string(),
         value: TagValue::String(directory.clone()),
         print: TagValue::String(directory),
@@ -79,7 +79,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
     // Store as string for the numeric value (ExifTool compatibility)
     tag_entries.push(TagEntry {
         group: "File".to_string(),
-        group1: "System".to_string(),
+        group1: "File".to_string(),
         name: "FileSize".to_string(),
         value: TagValue::String(file_size.to_string()),
         print: TagValue::String(file_size.to_string()),
@@ -94,7 +94,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
         tag_entries.push(TagEntry {
             group: "File".to_string(),
-            group1: "System".to_string(),
+            group1: "File".to_string(),
             name: "FileModifyDate".to_string(),
             value: TagValue::String(formatted.clone()),
             print: TagValue::String(formatted),
@@ -108,7 +108,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
         tag_entries.push(TagEntry {
             group: "File".to_string(),
-            group1: "System".to_string(),
+            group1: "File".to_string(),
             name: "FileAccessDate".to_string(),
             value: TagValue::String(formatted.clone()),
             print: TagValue::String(formatted),
@@ -125,7 +125,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
             let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
             tag_entries.push(TagEntry {
                 group: "File".to_string(),
-                group1: "System".to_string(),
+                group1: "File".to_string(),
                 name: "FileCreateDate".to_string(),
                 value: TagValue::String(formatted.clone()),
                 print: TagValue::String(formatted),
@@ -144,7 +144,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
             let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
             tag_entries.push(TagEntry {
                 group: "File".to_string(),
-                group1: "System".to_string(),
+                group1: "File".to_string(),
                 name: "FileInodeChangeDate".to_string(),
                 value: TagValue::String(formatted.clone()),
                 print: TagValue::String(formatted),
@@ -161,7 +161,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         let permissions_str = format_unix_permissions(mode);
         tag_entries.push(TagEntry {
             group: "File".to_string(),
-            group1: "System".to_string(),
+            group1: "File".to_string(),
             name: "FilePermissions".to_string(),
             value: TagValue::String(permissions_str.clone()),
             print: TagValue::String(permissions_str),
@@ -468,6 +468,16 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
 
             match exif_reader.parse_exif_data(&tiff_data) {
                 Ok(()) => {
+                    // Extract TIFF dimensions for TIFF-based RAW files (ARW, CR2, etc.)
+                    // This extracts ImageWidth/ImageHeight from TIFF IFD0 tags 0x0100/0x0101
+                    // ExifTool: lib/Image/ExifTool/Exif.pm:460-473 (ImageWidth/ImageHeight tags)
+                    if matches!(detection_result.file_type.as_str(), "ARW" | "CR2" | "NEF" | "NRW") {
+                        if let Err(e) = crate::raw::utils::extract_tiff_dimensions(&mut exif_reader, &tiff_data) {
+                            // Log error but don't fail processing
+                            tracing::debug!("Failed to extract TIFF dimensions: {}", e);
+                        }
+                    }
+
                     // Check if file type was overridden during processing
                     if let Some(new_file_type) = exif_reader.get_overridden_file_type() {
                         // Update file type tags with the overridden value
@@ -819,7 +829,7 @@ fn add_exif_byte_order_tag(exif_reader: &ExifReader, tag_entries: &mut Vec<TagEn
 
         tag_entries.push(TagEntry {
             group: "File".to_string(),
-            group1: "System".to_string(),
+            group1: "File".to_string(),
             name: "ExifByteOrder".to_string(),
             value: TagValue::String(byte_order_str.to_string()),
             print: TagValue::String(byte_order_str.to_string()),

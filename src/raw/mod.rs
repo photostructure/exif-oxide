@@ -112,7 +112,10 @@ pub mod utils {
     /// Extract TIFF dimension tags (ImageWidth/ImageHeight) from IFD0 for TIFF-based RAW files
     /// ExifTool: lib/Image/ExifTool/Exif.pm:351-473 (tags 0x0100, 0x0101)
     /// Used by both Sony ARW and Canon CR2 files which are TIFF-based
-    pub fn extract_tiff_dimensions(reader: &mut crate::exif::ExifReader, data: &[u8]) -> crate::types::Result<()> {
+    pub fn extract_tiff_dimensions(
+        reader: &mut crate::exif::ExifReader,
+        data: &[u8],
+    ) -> crate::types::Result<()> {
         use crate::types::TagValue;
         use tracing::debug;
 
@@ -150,8 +153,11 @@ pub mod utils {
             }
         };
 
-        debug!("RAW TIFF format: {} endian, IFD0 at offset 0x{:x}", 
-            if is_little_endian { "little" } else { "big" }, ifd0_offset);
+        debug!(
+            "RAW TIFF format: {} endian, IFD0 at offset 0x{:x}",
+            if is_little_endian { "little" } else { "big" },
+            ifd0_offset
+        );
 
         // Validate IFD0 offset
         if ifd0_offset >= data.len() || ifd0_offset + 2 > data.len() {
@@ -202,65 +208,89 @@ pub mod utils {
             };
 
             let count = if is_little_endian {
-                u32::from_le_bytes([data[entry_offset + 4], data[entry_offset + 5], 
-                                   data[entry_offset + 6], data[entry_offset + 7]])
+                u32::from_le_bytes([
+                    data[entry_offset + 4],
+                    data[entry_offset + 5],
+                    data[entry_offset + 6],
+                    data[entry_offset + 7],
+                ])
             } else {
-                u32::from_be_bytes([data[entry_offset + 4], data[entry_offset + 5], 
-                                   data[entry_offset + 6], data[entry_offset + 7]])
+                u32::from_be_bytes([
+                    data[entry_offset + 4],
+                    data[entry_offset + 5],
+                    data[entry_offset + 6],
+                    data[entry_offset + 7],
+                ])
             };
 
             match tag_id {
                 0x0100 => {
                     // ImageWidth - ExifTool: Exif.pm:460
                     debug!("Found ImageWidth tag: type={}, count={}", data_type, count);
-                    
+
                     // Read value based on data type and count
                     if count == 1 {
                         let value = if is_little_endian {
-                            u32::from_le_bytes([data[entry_offset + 8], data[entry_offset + 9], 
-                                               data[entry_offset + 10], data[entry_offset + 11]])
+                            u32::from_le_bytes([
+                                data[entry_offset + 8],
+                                data[entry_offset + 9],
+                                data[entry_offset + 10],
+                                data[entry_offset + 11],
+                            ])
                         } else {
-                            u32::from_be_bytes([data[entry_offset + 8], data[entry_offset + 9], 
-                                               data[entry_offset + 10], data[entry_offset + 11]])
+                            u32::from_be_bytes([
+                                data[entry_offset + 8],
+                                data[entry_offset + 9],
+                                data[entry_offset + 10],
+                                data[entry_offset + 11],
+                            ])
                         };
 
                         // Handle different data types (SHORT=3, LONG=4)
                         image_width = match data_type {
                             3 => Some(value & 0xFFFF), // SHORT (16-bit)
-                            4 => Some(value),           // LONG (32-bit)
+                            4 => Some(value),          // LONG (32-bit)
                             _ => {
                                 debug!("Unexpected ImageWidth data type: {}", data_type);
                                 Some(value)
                             }
                         };
-                        
+
                         debug!("ImageWidth = {}", image_width.unwrap());
                     }
                 }
                 0x0101 => {
                     // ImageHeight (called ImageLength by EXIF spec) - ExifTool: Exif.pm:473
                     debug!("Found ImageHeight tag: type={}, count={}", data_type, count);
-                    
+
                     // Read value based on data type and count
                     if count == 1 {
                         let value = if is_little_endian {
-                            u32::from_le_bytes([data[entry_offset + 8], data[entry_offset + 9], 
-                                               data[entry_offset + 10], data[entry_offset + 11]])
+                            u32::from_le_bytes([
+                                data[entry_offset + 8],
+                                data[entry_offset + 9],
+                                data[entry_offset + 10],
+                                data[entry_offset + 11],
+                            ])
                         } else {
-                            u32::from_be_bytes([data[entry_offset + 8], data[entry_offset + 9], 
-                                               data[entry_offset + 10], data[entry_offset + 11]])
+                            u32::from_be_bytes([
+                                data[entry_offset + 8],
+                                data[entry_offset + 9],
+                                data[entry_offset + 10],
+                                data[entry_offset + 11],
+                            ])
                         };
 
                         // Handle different data types (SHORT=3, LONG=4)
                         image_height = match data_type {
                             3 => Some(value & 0xFFFF), // SHORT (16-bit)
-                            4 => Some(value),           // LONG (32-bit)
+                            4 => Some(value),          // LONG (32-bit)
                             _ => {
                                 debug!("Unexpected ImageHeight data type: {}", data_type);
                                 Some(value)
                             }
                         };
-                        
+
                         debug!("ImageHeight = {}", image_height.unwrap());
                     }
                 }
@@ -280,13 +310,17 @@ pub mod utils {
         // Here we add them as standard EXIF tags following ExifTool's approach
         if let Some(width) = image_width {
             // Add ImageWidth tag (0x0100) - ExifTool: Exif.pm:460
-            reader.extracted_tags.insert(0x0100, TagValue::String(width.to_string()));
+            reader
+                .extracted_tags
+                .insert(0x0100, TagValue::String(width.to_string()));
             debug!("Added EXIF:ImageWidth (0x0100) = {}", width);
         }
 
         if let Some(height) = image_height {
             // Add ImageHeight tag (0x0101) - ExifTool: Exif.pm:473
-            reader.extracted_tags.insert(0x0101, TagValue::String(height.to_string()));
+            reader
+                .extracted_tags
+                .insert(0x0101, TagValue::String(height.to_string()));
             debug!("Added EXIF:ImageHeight (0x0101) = {}", height);
         }
 

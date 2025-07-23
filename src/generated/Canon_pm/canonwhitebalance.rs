@@ -1,5 +1,5 @@
 //! White balance mode names
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Canon.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -33,9 +33,8 @@ static CANON_WHITE_BALANCE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CANON_WHITE_BALANCE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CANON_WHITE_BALANCE_DATA.iter().cloned().collect()
-});
+pub static CANON_WHITE_BALANCE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CANON_WHITE_BALANCE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_canon_white_balance(key: u8) -> Option<&'static str> {

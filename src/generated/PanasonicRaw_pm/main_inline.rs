@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for Main table
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Olympus.pm (table: Main)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -51,9 +51,8 @@ static MAIN_SCENE_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_SCENE_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    MAIN_SCENE_MODE_DATA.iter().cloned().collect()
-});
+pub static MAIN_SCENE_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| MAIN_SCENE_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__scene_mode(key: u8) -> Option<&'static str> {
@@ -61,15 +60,11 @@ pub fn lookup_main__scene_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static MAIN_FLASH_MODE_DATA: &[(u8, &'static str)] = &[
-    (2, "On"),
-    (3, "Off"),
-];
+static MAIN_FLASH_MODE_DATA: &[(u8, &'static str)] = &[(2, "On"), (3, "Off")];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_FLASH_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    MAIN_FLASH_MODE_DATA.iter().cloned().collect()
-});
+pub static MAIN_FLASH_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| MAIN_FLASH_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__flash_mode(key: u8) -> Option<&'static str> {
@@ -85,9 +80,8 @@ static MAIN_FLASH_DEVICE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_FLASH_DEVICE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    MAIN_FLASH_DEVICE_DATA.iter().cloned().collect()
-});
+pub static MAIN_FLASH_DEVICE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| MAIN_FLASH_DEVICE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__flash_device(key: u8) -> Option<&'static str> {
@@ -95,15 +89,11 @@ pub fn lookup_main__flash_device(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static MAIN_FOCUS_RANGE_DATA: &[(u8, &'static str)] = &[
-    (0, "Normal"),
-    (1, "Macro"),
-];
+static MAIN_FOCUS_RANGE_DATA: &[(u8, &'static str)] = &[(0, "Normal"), (1, "Macro")];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_FOCUS_RANGE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    MAIN_FOCUS_RANGE_DATA.iter().cloned().collect()
-});
+pub static MAIN_FOCUS_RANGE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| MAIN_FOCUS_RANGE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__focus_range(key: u8) -> Option<&'static str> {
@@ -111,15 +101,11 @@ pub fn lookup_main__focus_range(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static MAIN_FOCUS_MODE_DATA: &[(u8, &'static str)] = &[
-    (0, "Auto"),
-    (1, "Manual"),
-];
+static MAIN_FOCUS_MODE_DATA: &[(u8, &'static str)] = &[(0, "Auto"), (1, "Manual")];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_FOCUS_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    MAIN_FOCUS_MODE_DATA.iter().cloned().collect()
-});
+pub static MAIN_FOCUS_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| MAIN_FOCUS_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__focus_mode(key: u8) -> Option<&'static str> {
@@ -127,16 +113,11 @@ pub fn lookup_main__focus_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (3 entries)
-static MAIN_SHARPNESS_DATA: &[(u8, &'static str)] = &[
-    (0, "Normal"),
-    (1, "Hard"),
-    (2, "Soft"),
-];
+static MAIN_SHARPNESS_DATA: &[(u8, &'static str)] = &[(0, "Normal"), (1, "Hard"), (2, "Soft")];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_SHARPNESS: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    MAIN_SHARPNESS_DATA.iter().cloned().collect()
-});
+pub static MAIN_SHARPNESS: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| MAIN_SHARPNESS_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__sharpness(key: u8) -> Option<&'static str> {
@@ -160,9 +141,8 @@ static MAIN_W_B_MODE_DATA: &[(&'static str, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_W_B_MODE: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
-    MAIN_W_B_MODE_DATA.iter().cloned().collect()
-});
+pub static MAIN_W_B_MODE: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| MAIN_W_B_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__w_b_mode(key: &str) -> Option<&'static str> {
@@ -170,15 +150,11 @@ pub fn lookup_main__w_b_mode(key: &str) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static MAIN_EXTERNAL_FLASH_BOUNCE_DATA: &[(u8, &'static str)] = &[
-    (0, "No"),
-    (1, "Yes"),
-];
+static MAIN_EXTERNAL_FLASH_BOUNCE_DATA: &[(u8, &'static str)] = &[(0, "No"), (1, "Yes")];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_EXTERNAL_FLASH_BOUNCE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    MAIN_EXTERNAL_FLASH_BOUNCE_DATA.iter().cloned().collect()
-});
+pub static MAIN_EXTERNAL_FLASH_BOUNCE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| MAIN_EXTERNAL_FLASH_BOUNCE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__external_flash_bounce(key: u8) -> Option<&'static str> {
@@ -186,16 +162,11 @@ pub fn lookup_main__external_flash_bounce(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (3 entries)
-static MAIN_CONTRAST_DATA: &[(u8, &'static str)] = &[
-    (0, "High"),
-    (1, "Normal"),
-    (2, "Low"),
-];
+static MAIN_CONTRAST_DATA: &[(u8, &'static str)] = &[(0, "High"), (1, "Normal"), (2, "Low")];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_CONTRAST: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    MAIN_CONTRAST_DATA.iter().cloned().collect()
-});
+pub static MAIN_CONTRAST: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| MAIN_CONTRAST_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__contrast(key: u8) -> Option<&'static str> {
@@ -203,15 +174,11 @@ pub fn lookup_main__contrast(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static MAIN_PREVIEW_IMAGE_VALID_DATA: &[(u8, &'static str)] = &[
-    (0, "No"),
-    (1, "Yes"),
-];
+static MAIN_PREVIEW_IMAGE_VALID_DATA: &[(u8, &'static str)] = &[(0, "No"), (1, "Yes")];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_PREVIEW_IMAGE_VALID: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    MAIN_PREVIEW_IMAGE_VALID_DATA.iter().cloned().collect()
-});
+pub static MAIN_PREVIEW_IMAGE_VALID: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| MAIN_PREVIEW_IMAGE_VALID_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__preview_image_valid(key: u8) -> Option<&'static str> {
@@ -219,15 +186,11 @@ pub fn lookup_main__preview_image_valid(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static MAIN_C_C_D_SCAN_MODE_DATA: &[(u8, &'static str)] = &[
-    (0, "Interlaced"),
-    (1, "Progressive"),
-];
+static MAIN_C_C_D_SCAN_MODE_DATA: &[(u8, &'static str)] = &[(0, "Interlaced"), (1, "Progressive")];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_C_C_D_SCAN_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    MAIN_C_C_D_SCAN_MODE_DATA.iter().cloned().collect()
-});
+pub static MAIN_C_C_D_SCAN_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| MAIN_C_C_D_SCAN_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__c_c_d_scan_mode(key: u8) -> Option<&'static str> {
@@ -235,15 +198,11 @@ pub fn lookup_main__c_c_d_scan_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static MAIN_NOISE_REDUCTION_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On"),
-];
+static MAIN_NOISE_REDUCTION_DATA: &[(u8, &'static str)] = &[(0, "Off"), (1, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    MAIN_NOISE_REDUCTION_DATA.iter().cloned().collect()
-});
+pub static MAIN_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| MAIN_NOISE_REDUCTION_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__noise_reduction(key: u8) -> Option<&'static str> {
@@ -251,16 +210,11 @@ pub fn lookup_main__noise_reduction(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (3 entries)
-static MAIN_MACRO_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On"),
-    (2, "Super Macro"),
-];
+static MAIN_MACRO_DATA: &[(u8, &'static str)] = &[(0, "Off"), (1, "On"), (2, "Super Macro")];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_MACRO: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    MAIN_MACRO_DATA.iter().cloned().collect()
-});
+pub static MAIN_MACRO: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| MAIN_MACRO_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__macro(key: u8) -> Option<&'static str> {
@@ -268,16 +222,11 @@ pub fn lookup_main__macro(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (3 entries)
-static MAIN_B_W_MODE_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On"),
-    (6, "(none)"),
-];
+static MAIN_B_W_MODE_DATA: &[(u8, &'static str)] = &[(0, "Off"), (1, "On"), (6, "(none)")];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_B_W_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    MAIN_B_W_MODE_DATA.iter().cloned().collect()
-});
+pub static MAIN_B_W_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| MAIN_B_W_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__b_w_mode(key: u8) -> Option<&'static str> {
@@ -592,9 +541,8 @@ static MAIN_CAMERA_TYPE_DATA: &[(&'static str, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_CAMERA_TYPE: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
-    MAIN_CAMERA_TYPE_DATA.iter().cloned().collect()
-});
+pub static MAIN_CAMERA_TYPE: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| MAIN_CAMERA_TYPE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__camera_type(key: &str) -> Option<&'static str> {
@@ -602,16 +550,12 @@ pub fn lookup_main__camera_type(key: &str) -> Option<&'static str> {
 }
 
 /// Raw data (3 entries)
-static MAIN_ONE_TOUCH_W_B_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On"),
-    (2, "On (Preset)"),
-];
+static MAIN_ONE_TOUCH_W_B_DATA: &[(u8, &'static str)] =
+    &[(0, "Off"), (1, "On"), (2, "On (Preset)")];
 
 /// Lookup table (lazy-initialized)
-pub static MAIN_ONE_TOUCH_W_B: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    MAIN_ONE_TOUCH_W_B_DATA.iter().cloned().collect()
-});
+pub static MAIN_ONE_TOUCH_W_B: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| MAIN_ONE_TOUCH_W_B_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_main__one_touch_w_b(key: u8) -> Option<&'static str> {

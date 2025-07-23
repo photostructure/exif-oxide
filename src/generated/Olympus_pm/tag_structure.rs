@@ -269,7 +269,6 @@ pub enum OlympusDataType {
 
     /// 0x5000: UnknownInfo
     UnknownInfo,
-
 }
 
 impl OlympusDataType {
@@ -651,11 +650,12 @@ impl OlympusDataType {
 
     /// Check if this tag has a subdirectory
     pub fn has_subdirectory(&self) -> bool {
-        matches!(self,
-            OlympusDataType::MinoltaCameraSettingsOld |
-            OlympusDataType::MinoltaCameraSettings |
-            OlympusDataType::TextInfo |
-            OlympusDataType::PrintIM
+        matches!(
+            self,
+            OlympusDataType::MinoltaCameraSettingsOld
+                | OlympusDataType::MinoltaCameraSettings
+                | OlympusDataType::TextInfo
+                | OlympusDataType::PrintIM
         )
     }
 

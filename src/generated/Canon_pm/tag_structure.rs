@@ -501,50 +501,51 @@ impl CanonDataType {
 
     /// Check if this tag has a subdirectory
     pub fn has_subdirectory(&self) -> bool {
-        matches!(self,
-            CanonDataType::CameraSettings |
-            CanonDataType::FocalLength |
-            CanonDataType::ShotInfo |
-            CanonDataType::Panorama |
-            CanonDataType::UnknownD30 |
-            CanonDataType::MovieInfo |
-            CanonDataType::AFInfo |
-            CanonDataType::MyColors |
-            CanonDataType::FaceDetect1 |
-            CanonDataType::FaceDetect2 |
-            CanonDataType::AFInfo2 |
-            CanonDataType::ContrastInfo |
-            CanonDataType::WBInfo |
-            CanonDataType::FaceDetect3 |
-            CanonDataType::TimeInfo |
-            CanonDataType::AFInfo3 |
-            CanonDataType::CustomFunctions1D2 |
-            CanonDataType::PersonalFunctions |
-            CanonDataType::PersonalFunctionValues |
-            CanonDataType::FileInfo |
-            CanonDataType::CropInfo |
-            CanonDataType::CustomFunctions2 |
-            CanonDataType::AspectInfo |
-            CanonDataType::ProcessingInfo |
-            CanonDataType::ColorBalance |
-            CanonDataType::MeasuredColor |
-            CanonDataType::Flags |
-            CanonDataType::ModifiedInfo |
-            CanonDataType::PreviewImageInfo |
-            CanonDataType::SensorInfo |
-            CanonDataType::ColorInfo |
-            CanonDataType::AFMicroAdj |
-            CanonDataType::VignettingCorr2 |
-            CanonDataType::LightingOpt |
-            CanonDataType::LensInfo |
-            CanonDataType::AmbienceInfo |
-            CanonDataType::MultiExp |
-            CanonDataType::FilterInfo |
-            CanonDataType::HDRInfo |
-            CanonDataType::LogInfo |
-            CanonDataType::AFConfig |
-            CanonDataType::RawBurstModeRoll |
-            CanonDataType::LevelInfo
+        matches!(
+            self,
+            CanonDataType::CameraSettings
+                | CanonDataType::FocalLength
+                | CanonDataType::ShotInfo
+                | CanonDataType::Panorama
+                | CanonDataType::UnknownD30
+                | CanonDataType::MovieInfo
+                | CanonDataType::AFInfo
+                | CanonDataType::MyColors
+                | CanonDataType::FaceDetect1
+                | CanonDataType::FaceDetect2
+                | CanonDataType::AFInfo2
+                | CanonDataType::ContrastInfo
+                | CanonDataType::WBInfo
+                | CanonDataType::FaceDetect3
+                | CanonDataType::TimeInfo
+                | CanonDataType::AFInfo3
+                | CanonDataType::CustomFunctions1D2
+                | CanonDataType::PersonalFunctions
+                | CanonDataType::PersonalFunctionValues
+                | CanonDataType::FileInfo
+                | CanonDataType::CropInfo
+                | CanonDataType::CustomFunctions2
+                | CanonDataType::AspectInfo
+                | CanonDataType::ProcessingInfo
+                | CanonDataType::ColorBalance
+                | CanonDataType::MeasuredColor
+                | CanonDataType::Flags
+                | CanonDataType::ModifiedInfo
+                | CanonDataType::PreviewImageInfo
+                | CanonDataType::SensorInfo
+                | CanonDataType::ColorInfo
+                | CanonDataType::AFMicroAdj
+                | CanonDataType::VignettingCorr2
+                | CanonDataType::LightingOpt
+                | CanonDataType::LensInfo
+                | CanonDataType::AmbienceInfo
+                | CanonDataType::MultiExp
+                | CanonDataType::FilterInfo
+                | CanonDataType::HDRInfo
+                | CanonDataType::LogInfo
+                | CanonDataType::AFConfig
+                | CanonDataType::RawBurstModeRoll
+                | CanonDataType::LevelInfo
         )
     }
 

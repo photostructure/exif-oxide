@@ -1,5 +1,5 @@
 //! Operating systems that use PC-style file paths
-//! 
+//!
 //! Auto-generated from ExifTool source
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 

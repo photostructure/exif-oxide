@@ -1,5 +1,5 @@
 //! File types that can be created from scratch (XMP, ICC, MIE, VRD, etc.)
-//! 
+//!
 //! Auto-generated from ExifTool source
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 

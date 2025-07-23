@@ -561,7 +561,6 @@ impl SonyRawHandler {
         }
     }
 
-
     /// Process Sony ProcessBinaryData sections using the processor registry
     /// ExifTool: Sony.pm has 139 ProcessBinaryData sections
     fn process_sony_binary_data(&self, reader: &mut ExifReader) -> Result<()> {
@@ -749,7 +748,10 @@ impl RawFormatHandler for SonyRawHandler {
     /// Process Sony RAW format data and extract metadata
     /// ExifTool: Sony.pm ProcessSony() main entry point
     fn process_raw(&self, reader: &mut ExifReader, data: &[u8]) -> Result<()> {
-        debug!("SonyRawHandler::process_raw called with {} bytes", data.len());
+        debug!(
+            "SonyRawHandler::process_raw called with {} bytes",
+            data.len()
+        );
 
         // TODO: Create mutable copy of handler for state management
         // This is a temporary approach until we refactor the handler architecture

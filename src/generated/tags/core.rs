@@ -8456,4 +8456,3 @@ pub static CORE_TAGS: &[TagDef] = &[
         notes: None,
     },
 ];
-

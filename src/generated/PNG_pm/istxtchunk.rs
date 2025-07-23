@@ -1,5 +1,5 @@
 //! PNG chunks containing text metadata (tEXt, zTXt, iTXt, eXIf)
-//! 
+//!
 //! Auto-generated from ExifTool source
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 

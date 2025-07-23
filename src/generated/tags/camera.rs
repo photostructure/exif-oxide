@@ -778,4 +778,3 @@ pub static CAMERA_TAGS: &[TagDef] = &[
         notes: None,
     },
 ];
-

@@ -1,5 +1,5 @@
 //! PNG chunks that shouldn't be moved across during editing
-//! 
+//!
 //! Auto-generated from ExifTool source
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 

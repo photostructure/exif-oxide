@@ -42,13 +42,14 @@ pub static TAG_LOOKUP: LazyLock<HashMap<u32, &'static TagDef>> = LazyLock::new(|
 });
 
 /// Unified lookup map from tag name to tag definition
-pub static TAG_NAME_LOOKUP: LazyLock<HashMap<&'static str, &'static TagDef>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    for tag in ALL_TAGS.iter() {
-        map.insert(tag.name, *tag);
-    }
-    map
-});
+pub static TAG_NAME_LOOKUP: LazyLock<HashMap<&'static str, &'static TagDef>> =
+    LazyLock::new(|| {
+        let mut map = HashMap::new();
+        for tag in ALL_TAGS.iter() {
+            map.insert(tag.name, *tag);
+        }
+        map
+    });
 
 /// Look up a tag definition by its ID
 pub fn lookup_tag_by_id(id: u32) -> Option<&'static TagDef> {
@@ -61,6 +62,5 @@ pub fn lookup_tag_by_name(name: &str) -> Option<&'static TagDef> {
 }
 
 /// Backward compatibility alias for the combined tag table
-pub static TAG_TABLE: LazyLock<Vec<TagDef>> = LazyLock::new(|| {
-    ALL_TAGS.iter().map(|tag| (*tag).clone()).collect()
-});
+pub static TAG_TABLE: LazyLock<Vec<TagDef>> =
+    LazyLock::new(|| ALL_TAGS.iter().map(|tag| (*tag).clone()).collect());

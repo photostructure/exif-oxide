@@ -6,12 +6,12 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
+use super::{PrintConvType, TagKitDef};
+use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
-use crate::types::TagValue;
-use super::{TagKitDef, PrintConvType};
 
-static PRINT_CONV_50: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_15: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Byte");
     map.insert("1".to_string(), "Word");
@@ -21,21 +21,21 @@ static PRINT_CONV_50: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_51: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_16: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Unspecified Image Color");
     map.insert("1".to_string(), "Specified Image Color");
     map
 });
 
-static PRINT_CONV_52: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_17: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Unspecified Background Color");
     map.insert("1".to_string(), "Specified Background Color");
     map
 });
 
-static PRINT_CONV_53: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_18: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "CT");
     map.insert("1".to_string(), "Line Art");
@@ -43,7 +43,7 @@ static PRINT_CONV_53: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_54: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_19: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Not Defined");
     map.insert("1".to_string(), "Manual");
@@ -58,20 +58,26 @@ static PRINT_CONV_54: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_55: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_20: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Unknown");
     map.insert("1".to_string(), "Standard Output Sensitivity");
     map.insert("2".to_string(), "Recommended Exposure Index");
     map.insert("3".to_string(), "ISO Speed");
-    map.insert("4".to_string(), "Standard Output Sensitivity and Recommended Exposure Index");
+    map.insert(
+        "4".to_string(),
+        "Standard Output Sensitivity and Recommended Exposure Index",
+    );
     map.insert("5".to_string(), "Standard Output Sensitivity and ISO Speed");
     map.insert("6".to_string(), "Recommended Exposure Index and ISO Speed");
-    map.insert("7".to_string(), "Standard Output Sensitivity, Recommended Exposure Index and ISO Speed");
+    map.insert(
+        "7".to_string(),
+        "Standard Output Sensitivity, Recommended Exposure Index and ISO Speed",
+    );
     map
 });
 
-static PRINT_CONV_56: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_21: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Unknown");
     map.insert("1".to_string(), "Average");
@@ -84,7 +90,7 @@ static PRINT_CONV_56: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_57: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_22: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Unknown");
     map.insert("1".to_string(), "Daylight");
@@ -111,7 +117,7 @@ static PRINT_CONV_57: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_58: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_23: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "None");
     map.insert("2".to_string(), "inches");
@@ -121,7 +127,7 @@ static PRINT_CONV_58: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_59: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_24: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("C".to_string(), "Confidential");
     map.insert("R".to_string(), "Restricted");
@@ -131,7 +137,7 @@ static PRINT_CONV_59: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_60: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_25: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Monochrome area");
     map.insert("2".to_string(), "One-chip color area");
@@ -214,7 +220,7 @@ pub fn get_exif_specific_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_50),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_15),
             value_conv: None,
         }),
         (34023, TagKitDef {
@@ -224,7 +230,7 @@ pub fn get_exif_specific_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_51),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_16),
             value_conv: None,
         }),
         (34024, TagKitDef {
@@ -234,7 +240,7 @@ pub fn get_exif_specific_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_52),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_17),
             value_conv: None,
         }),
         (34030, TagKitDef {
@@ -244,7 +250,7 @@ pub fn get_exif_specific_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_53),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_18),
             value_conv: None,
         }),
         (34118, TagKitDef {
@@ -394,7 +400,7 @@ pub fn get_exif_specific_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("the value of 9 is not standard EXIF, but is used by some Canon models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_54),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_19),
             value_conv: None,
         }),
         (34852, TagKitDef {
@@ -434,7 +440,7 @@ pub fn get_exif_specific_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("applies to EXIF:ISO tag"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_55),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_20),
             value_conv: None,
         }),
         (34865, TagKitDef {
@@ -604,7 +610,7 @@ pub fn get_exif_specific_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_56),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_21),
             value_conv: None,
         }),
         (37384, TagKitDef {
@@ -614,7 +620,7 @@ pub fn get_exif_specific_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_57),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_22),
             value_conv: None,
         }),
         (37385, TagKitDef {
@@ -654,7 +660,7 @@ pub fn get_exif_specific_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_58),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_23),
             value_conv: None,
         }),
         (37393, TagKitDef {
@@ -674,7 +680,7 @@ pub fn get_exif_specific_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_59),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_24),
             value_conv: None,
         }),
         (37395, TagKitDef {
@@ -714,7 +720,7 @@ pub fn get_exif_specific_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_60),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_25),
             value_conv: None,
         }),
     ]

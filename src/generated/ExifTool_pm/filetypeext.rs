@@ -1,5 +1,5 @@
 //! Canonical file extensions for file types
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/ExifTool.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -20,9 +20,8 @@ static FILE_TYPE_EXTENSIONS_DATA: &[(&'static str, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static FILE_TYPE_EXTENSIONS: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
-    FILE_TYPE_EXTENSIONS_DATA.iter().copied().collect()
-});
+pub static FILE_TYPE_EXTENSIONS: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| FILE_TYPE_EXTENSIONS_DATA.iter().copied().collect());
 
 /// Look up value by key
 pub fn lookup_file_type_extensions(key: &str) -> Option<&'static str> {

@@ -1,5 +1,5 @@
 //! Z9 ISO auto shutter time mappings
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Nikon.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -61,9 +61,8 @@ static ISO_AUTO_SHUTTER_TIME_Z9_DATA: &[(&'static str, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static ISO_AUTO_SHUTTER_TIME_Z9: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
-    ISO_AUTO_SHUTTER_TIME_Z9_DATA.iter().copied().collect()
-});
+pub static ISO_AUTO_SHUTTER_TIME_Z9: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| ISO_AUTO_SHUTTER_TIME_Z9_DATA.iter().copied().collect());
 
 /// Look up value by key
 pub fn lookup_iso_auto_shutter_time_z9(key: &str) -> Option<&'static str> {

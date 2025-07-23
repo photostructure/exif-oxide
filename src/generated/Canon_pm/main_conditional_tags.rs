@@ -3,11 +3,11 @@
 
 //! Canon conditional tag definitions from Main table
 //! ExifTool: Canon.pm %Canon::Main
-use std::collections::HashMap;
-use std::sync::LazyLock;
 use crate::expressions::ExpressionEvaluator;
 use crate::processor_registry::ProcessorContext;
 use crate::types::TagValue;
+use std::collections::HashMap;
+use std::sync::LazyLock;
 
 /// Context for evaluating conditional tag conditions
 #[derive(Debug, Clone)]
@@ -39,25 +39,29 @@ pub struct ConditionalEntry {
 }
 
 /// Conditional array resolution mapping
-static CONDITIONAL_ARRAYS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("12", vec![
-        ConditionalEntry {
-            condition: "$$self{Model} =~ /EOS D30\\b/",
-            name: "SerialNumber",
-            subdirectory: false,
-            writable: true,
-            format: None,
-        },
-        ConditionalEntry {
-            condition: "$$self{Model} =~ /EOS-1D/",
-            name: "SerialNumber",
-            subdirectory: false,
-            writable: true,
-            format: None,
-        },
-    ]);
-    map.insert("13", vec![
+static CONDITIONAL_ARRAYS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> = LazyLock::new(
+    || {
+        let mut map = HashMap::new();
+        map.insert(
+            "12",
+            vec![
+                ConditionalEntry {
+                    condition: "$$self{Model} =~ /EOS D30\\b/",
+                    name: "SerialNumber",
+                    subdirectory: false,
+                    writable: true,
+                    format: None,
+                },
+                ConditionalEntry {
+                    condition: "$$self{Model} =~ /EOS-1D/",
+                    name: "SerialNumber",
+                    subdirectory: false,
+                    writable: true,
+                    format: None,
+                },
+            ],
+        );
+        map.insert("13", vec![
         ConditionalEntry {
             condition: "($$self{CameraInfoCount} = $count) and $$self{Model} =~ /\\b1DS?$/",
             name: "CanonCameraInfo1D",
@@ -297,81 +301,85 @@ static CONDITIONAL_ARRAYS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>
             format: None,
         },
     ]);
-    map.insert("15", vec![
-        ConditionalEntry {
-            condition: "$$self{Model} =~ /EOS-1D/",
-            name: "CustomFunctions1D",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-        ConditionalEntry {
-            condition: "$$self{Model} =~ /EOS 5D/",
-            name: "CustomFunctions5D",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-        ConditionalEntry {
-            condition: "$$self{Model} =~ /EOS 10D/",
-            name: "CustomFunctions10D",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-        ConditionalEntry {
-            condition: "$$self{Model} =~ /EOS 20D/",
-            name: "CustomFunctions20D",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-        ConditionalEntry {
-            condition: "$$self{Model} =~ /EOS 30D/",
-            name: "CustomFunctions30D",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-        ConditionalEntry {
-            condition: "$$self{Model} =~ /\\b(350D|REBEL XT|Kiss Digital N)\\b/",
-            name: "CustomFunctions350D",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-        ConditionalEntry {
-            condition: "$$self{Model} =~ /\\b(400D|REBEL XTi|Kiss Digital X|K236)\\b/",
-            name: "CustomFunctions400D",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-        ConditionalEntry {
-            condition: "$$self{Model} =~ /EOS D30\\b/",
-            name: "CustomFunctionsD30",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-        ConditionalEntry {
-            condition: "$$self{Model} =~ /EOS D60\\b/",
-            name: "CustomFunctionsD60",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-    ]);
-    map.insert("150", vec![
-        ConditionalEntry {
-            condition: "$$self{Model} =~ /EOS 5D/",
-            name: "SerialInfo",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-    ]);
-    map.insert("16385", vec![
+        map.insert(
+            "15",
+            vec![
+                ConditionalEntry {
+                    condition: "$$self{Model} =~ /EOS-1D/",
+                    name: "CustomFunctions1D",
+                    subdirectory: true,
+                    writable: false,
+                    format: None,
+                },
+                ConditionalEntry {
+                    condition: "$$self{Model} =~ /EOS 5D/",
+                    name: "CustomFunctions5D",
+                    subdirectory: true,
+                    writable: false,
+                    format: None,
+                },
+                ConditionalEntry {
+                    condition: "$$self{Model} =~ /EOS 10D/",
+                    name: "CustomFunctions10D",
+                    subdirectory: true,
+                    writable: false,
+                    format: None,
+                },
+                ConditionalEntry {
+                    condition: "$$self{Model} =~ /EOS 20D/",
+                    name: "CustomFunctions20D",
+                    subdirectory: true,
+                    writable: false,
+                    format: None,
+                },
+                ConditionalEntry {
+                    condition: "$$self{Model} =~ /EOS 30D/",
+                    name: "CustomFunctions30D",
+                    subdirectory: true,
+                    writable: false,
+                    format: None,
+                },
+                ConditionalEntry {
+                    condition: "$$self{Model} =~ /\\b(350D|REBEL XT|Kiss Digital N)\\b/",
+                    name: "CustomFunctions350D",
+                    subdirectory: true,
+                    writable: false,
+                    format: None,
+                },
+                ConditionalEntry {
+                    condition: "$$self{Model} =~ /\\b(400D|REBEL XTi|Kiss Digital X|K236)\\b/",
+                    name: "CustomFunctions400D",
+                    subdirectory: true,
+                    writable: false,
+                    format: None,
+                },
+                ConditionalEntry {
+                    condition: "$$self{Model} =~ /EOS D30\\b/",
+                    name: "CustomFunctionsD30",
+                    subdirectory: true,
+                    writable: false,
+                    format: None,
+                },
+                ConditionalEntry {
+                    condition: "$$self{Model} =~ /EOS D60\\b/",
+                    name: "CustomFunctionsD60",
+                    subdirectory: true,
+                    writable: false,
+                    format: None,
+                },
+            ],
+        );
+        map.insert(
+            "150",
+            vec![ConditionalEntry {
+                condition: "$$self{Model} =~ /EOS 5D/",
+                name: "SerialInfo",
+                subdirectory: true,
+                writable: false,
+                format: None,
+            }],
+        );
+        map.insert("16385", vec![
         ConditionalEntry {
             condition: "$count == 582",
             name: "ColorData1",
@@ -457,7 +465,7 @@ static CONDITIONAL_ARRAYS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>
             format: None,
         },
     ]);
-    map.insert("16405", vec![
+        map.insert("16405", vec![
         ConditionalEntry {
             condition: "$$valPt =~ /^\\0/ and $$valPt !~ /^(\\0\\0\\0\\0|\\x00\\x40\\xdc\\x05)/",
             name: "VignettingCorr",
@@ -480,29 +488,25 @@ static CONDITIONAL_ARRAYS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>
             format: None,
         },
     ]);
-    map
-});
+        map
+    },
+);
 
 /// Count-based condition resolution mapping
-static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("13", vec![
-        ConditionalEntry {
-            condition: "$format eq \"int32u\" and ($count == 138 or $count == 148)",
-            name: "CanonCameraInfoPowerShot",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-        ConditionalEntry {
-            condition: "\n                $format eq \"int32u\" and ($count == 156 or $count == 162 or\n                $count == 167 or $count == 171 or $count == 264)\n            ",
-            name: "CanonCameraInfoPowerShot2",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-    ]);
-    map.insert("16385", vec![
+static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> = LazyLock::new(
+    || {
+        let mut map = HashMap::new();
+        map.insert(
+            "56",
+            vec![ConditionalEntry {
+                condition: "$count == 76",
+                name: "BatteryType",
+                subdirectory: false,
+                writable: true,
+                format: None,
+            }],
+        );
+        map.insert("16385", vec![
         ConditionalEntry {
             condition: "$count == 582",
             name: "ColorData1",
@@ -588,40 +592,51 @@ static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> 
             format: None,
         },
     ]);
-    map.insert("56", vec![
+        map.insert("13", vec![
         ConditionalEntry {
-            condition: "$count == 76",
-            name: "BatteryType",
-            subdirectory: false,
-            writable: true,
+            condition: "$format eq \"int32u\" and ($count == 138 or $count == 148)",
+            name: "CanonCameraInfoPowerShot",
+            subdirectory: true,
+            writable: false,
             format: None,
         },
-    ]);
-    map
-});
-
-/// Binary pattern condition resolution mapping
-static BINARY_PATTERNS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("39", vec![
         ConditionalEntry {
-            condition: "$$valPt =~ /^\\x0a\\0/",
-            name: "ContrastInfo",
-            subdirectory: false,
+            condition: "\n                $format eq \"int32u\" and ($count == 156 or $count == 162 or\n                $count == 167 or $count == 171 or $count == 264)\n            ",
+            name: "CanonCameraInfoPowerShot2",
+            subdirectory: true,
             writable: false,
             format: None,
         },
     ]);
-    map.insert("35", vec![
-        ConditionalEntry {
-            condition: "$$valPt =~ /^\\x08\\0\\0\\0/",
-            name: "Categories",
-            subdirectory: false,
-            writable: true,
-            format: Some("int32u"),
-        },
-    ]);
-    map.insert("16405", vec![
+        map
+    },
+);
+
+/// Binary pattern condition resolution mapping
+static BINARY_PATTERNS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> = LazyLock::new(
+    || {
+        let mut map = HashMap::new();
+        map.insert(
+            "39",
+            vec![ConditionalEntry {
+                condition: "$$valPt =~ /^\\x0a\\0/",
+                name: "ContrastInfo",
+                subdirectory: false,
+                writable: false,
+                format: None,
+            }],
+        );
+        map.insert(
+            "35",
+            vec![ConditionalEntry {
+                condition: "$$valPt =~ /^\\x08\\0\\0\\0/",
+                name: "Categories",
+                subdirectory: false,
+                writable: true,
+                format: Some("int32u"),
+            }],
+        );
+        map.insert("16405", vec![
         ConditionalEntry {
             condition: "$$valPt =~ /^\\0/ and $$valPt !~ /^(\\0\\0\\0\\0|\\x00\\x40\\xdc\\x05)/",
             name: "VignettingCorr",
@@ -637,8 +652,9 @@ static BINARY_PATTERNS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> =
             format: None,
         },
     ]);
-    map
-});
+        map
+    },
+);
 
 /// Canon conditional tag resolution engine
 /// Arrays: 6, Count: 15, Binary: 4, Format: 2, Dependencies: 45
@@ -672,8 +688,13 @@ impl CanonConditionalTags {
     }
 
     /// Resolve using conditional arrays
-    fn resolve_conditional_array(&self, tag_id: &str, context: &ConditionalContext) -> Option<ResolvedTag> {
-        CONDITIONAL_ARRAYS.get(tag_id)?
+    fn resolve_conditional_array(
+        &self,
+        tag_id: &str,
+        context: &ConditionalContext,
+    ) -> Option<ResolvedTag> {
+        CONDITIONAL_ARRAYS
+            .get(tag_id)?
             .iter()
             .find(|entry| self.evaluate_condition(&entry.condition, context))
             .map(|entry| ResolvedTag {
@@ -685,8 +706,13 @@ impl CanonConditionalTags {
     }
 
     /// Resolve using count conditions
-    fn resolve_count_condition(&self, tag_id: &str, context: &ConditionalContext) -> Option<ResolvedTag> {
-        COUNT_CONDITIONS.get(tag_id)?
+    fn resolve_count_condition(
+        &self,
+        tag_id: &str,
+        context: &ConditionalContext,
+    ) -> Option<ResolvedTag> {
+        COUNT_CONDITIONS
+            .get(tag_id)?
             .iter()
             .find(|entry| self.evaluate_count_condition(&entry.condition, context.count))
             .map(|entry| ResolvedTag {
@@ -698,9 +724,14 @@ impl CanonConditionalTags {
     }
 
     /// Resolve using binary pattern matching
-    fn resolve_binary_pattern(&self, tag_id: &str, context: &ConditionalContext) -> Option<ResolvedTag> {
+    fn resolve_binary_pattern(
+        &self,
+        tag_id: &str,
+        context: &ConditionalContext,
+    ) -> Option<ResolvedTag> {
         if let Some(binary_data) = &context.binary_data {
-            BINARY_PATTERNS.get(tag_id)?
+            BINARY_PATTERNS
+                .get(tag_id)?
                 .iter()
                 .find(|entry| self.evaluate_binary_pattern(&entry.condition, binary_data))
                 .map(|entry| ResolvedTag {
@@ -717,7 +748,7 @@ impl CanonConditionalTags {
     /// Evaluate a condition using the unified expression system
     fn evaluate_condition(&self, condition: &str, context: &ConditionalContext) -> bool {
         let mut evaluator = ExpressionEvaluator::new();
-        
+
         // Build ProcessorContext from ConditionalContext
         let mut processor_context = ProcessorContext::default();
         if let Some(model) = &context.model {
@@ -726,20 +757,24 @@ impl CanonConditionalTags {
         if let Some(make) = &context.make {
             processor_context = processor_context.with_manufacturer(make.clone());
         }
-        
+
         // Add conditional context values to processor context
         if let Some(count) = context.count {
-            processor_context.parent_tags.insert("count".to_string(), TagValue::U32(count));
+            processor_context
+                .parent_tags
+                .insert("count".to_string(), TagValue::U32(count));
         }
         if let Some(format) = &context.format {
-            processor_context.parent_tags.insert("format".to_string(), TagValue::String(format.clone()));
+            processor_context
+                .parent_tags
+                .insert("format".to_string(), TagValue::String(format.clone()));
         }
-        
+
         // Try context-based evaluation first
         if let Ok(result) = evaluator.evaluate_context_condition(&processor_context, condition) {
             return result;
         }
-        
+
         false
     }
 
@@ -747,18 +782,23 @@ impl CanonConditionalTags {
     fn evaluate_count_condition(&self, condition: &str, count: Option<u32>) -> bool {
         let mut evaluator = ExpressionEvaluator::new();
         let mut processor_context = ProcessorContext::default();
-        
+
         if let Some(count_val) = count {
-            processor_context.parent_tags.insert("count".to_string(), TagValue::U32(count_val));
+            processor_context
+                .parent_tags
+                .insert("count".to_string(), TagValue::U32(count_val));
         }
-        
-        evaluator.evaluate_context_condition(&processor_context, condition).unwrap_or(false)
+
+        evaluator
+            .evaluate_context_condition(&processor_context, condition)
+            .unwrap_or(false)
     }
 
     /// Evaluate binary pattern conditions using unified system
     fn evaluate_binary_pattern(&self, condition: &str, binary_data: &[u8]) -> bool {
         let mut evaluator = ExpressionEvaluator::new();
-        evaluator.evaluate_data_condition(binary_data, condition).unwrap_or(false)
+        evaluator
+            .evaluate_data_condition(binary_data, condition)
+            .unwrap_or(false)
     }
 }
-
