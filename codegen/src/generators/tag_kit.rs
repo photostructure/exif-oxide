@@ -27,9 +27,9 @@ pub fn generate_tag_kit(
     code.push_str(&extraction.source.module);
     code.push_str(" table: ");
     code.push_str(&extraction.source.table);
-    code.push_str("\n//! Extracted at: ");
-    code.push_str(&extraction.source.extracted_at);
     code.push_str("\n\n");
+    // NOTE: Do NOT add extraction timestamps here - they create spurious git diffs
+    // that make it impossible to track real changes to generated code
     
     // Imports
     code.push_str("use std::collections::HashMap;\n");

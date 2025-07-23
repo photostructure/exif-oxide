@@ -1002,7 +1002,9 @@ fn generate_tag_kit_mod_file(
     code.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten.\n");
     code.push_str("//!\n");
     code.push_str(&format!("//! Generated from: {} table: {}\n", tag_kit_data.source.module, tag_kit_data.source.table));
-    code.push_str(&format!("//! Extracted at: {}\n\n", tag_kit_data.source.extracted_at));
+    code.push_str("//!\n\n");
+    // NOTE: Do NOT add extraction timestamps here - they create spurious git diffs
+    // that make it impossible to track real changes to generated code
     
     // Module declarations
     for module in category_modules {
@@ -1210,7 +1212,7 @@ fn generate_regex_patterns_file(
             ) {
                 // Convert pattern string to bytes - escape special characters for Rust byte literal
                 let escaped_pattern = escape_pattern_to_bytes(pattern_str);
-                code.push_str(&format!("    map.insert(\"{}\", &{});\n", 
+                code.push_str(&format!("    map.insert(\"{}\", &{} as &[u8]);\n", 
                     file_type,
                     escaped_pattern
                 ));
