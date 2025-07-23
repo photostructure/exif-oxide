@@ -175,72 +175,64 @@ pub fn parse_png_ihdr(data: &[u8]) -> Result<IhdrData> {
 ///
 /// ExifTool reference: PNG.pm:100-102 (GROUPS => { 2 => 'Image' })
 pub fn create_png_tag_entries(ihdr: &IhdrData) -> Vec<TagEntry> {
-    let mut entries = Vec::new();
-
-    // PNG:ImageWidth - ExifTool PNG.pm:391-394
-    entries.push(TagEntry {
-        group: "PNG".to_string(),
-        group1: "PNG".to_string(),
-        name: "ImageWidth".to_string(),
-        value: TagValue::U32(ihdr.width),
-        print: TagValue::U32(ihdr.width),
-    });
-
-    // PNG:ImageHeight - ExifTool PNG.pm:395-398
-    entries.push(TagEntry {
-        group: "PNG".to_string(),
-        group1: "PNG".to_string(),
-        name: "ImageHeight".to_string(),
-        value: TagValue::U32(ihdr.height),
-        print: TagValue::U32(ihdr.height),
-    });
-
-    // PNG:BitDepth - ExifTool PNG.pm:399
-    entries.push(TagEntry {
-        group: "PNG".to_string(),
-        group1: "PNG".to_string(),
-        name: "BitDepth".to_string(),
-        value: TagValue::U8(ihdr.bit_depth),
-        print: TagValue::U8(ihdr.bit_depth),
-    });
-
-    // PNG:ColorType - ExifTool PNG.pm:400-410 (with PrintConv)
-    entries.push(TagEntry {
-        group: "PNG".to_string(),
-        group1: "PNG".to_string(),
-        name: "ColorType".to_string(),
-        value: TagValue::String(ihdr.color_type.to_string()),
-        print: TagValue::String(ihdr.color_type_description().to_string()),
-    });
-
-    // PNG:Compression - ExifTool PNG.pm:411-414 (with PrintConv)
-    entries.push(TagEntry {
-        group: "PNG".to_string(),
-        group1: "PNG".to_string(),
-        name: "Compression".to_string(),
-        value: TagValue::String(ihdr.compression.to_string()),
-        print: TagValue::String(ihdr.compression_description().to_string()),
-    });
-
-    // PNG:Filter - ExifTool PNG.pm:415-418 (with PrintConv)
-    entries.push(TagEntry {
-        group: "PNG".to_string(),
-        group1: "PNG".to_string(),
-        name: "Filter".to_string(),
-        value: TagValue::String(ihdr.filter.to_string()),
-        print: TagValue::String(ihdr.filter_description().to_string()),
-    });
-
-    // PNG:Interlace - ExifTool PNG.pm:419-422 (with PrintConv)
-    entries.push(TagEntry {
-        group: "PNG".to_string(),
-        group1: "PNG".to_string(),
-        name: "Interlace".to_string(),
-        value: TagValue::String(ihdr.interlace.to_string()),
-        print: TagValue::String(ihdr.interlace_description().to_string()),
-    });
-
-    entries
+    vec![
+        // PNG:ImageWidth - ExifTool PNG.pm:391-394
+        TagEntry {
+            group: "PNG".to_string(),
+            group1: "PNG".to_string(),
+            name: "ImageWidth".to_string(),
+            value: TagValue::U32(ihdr.width),
+            print: TagValue::U32(ihdr.width),
+        },
+        // PNG:ImageHeight - ExifTool PNG.pm:395-398
+        TagEntry {
+            group: "PNG".to_string(),
+            group1: "PNG".to_string(),
+            name: "ImageHeight".to_string(),
+            value: TagValue::U32(ihdr.height),
+            print: TagValue::U32(ihdr.height),
+        },
+        // PNG:BitDepth - ExifTool PNG.pm:399
+        TagEntry {
+            group: "PNG".to_string(),
+            group1: "PNG".to_string(),
+            name: "BitDepth".to_string(),
+            value: TagValue::U8(ihdr.bit_depth),
+            print: TagValue::U8(ihdr.bit_depth),
+        },
+        // PNG:ColorType - ExifTool PNG.pm:400-410 (with PrintConv)
+        TagEntry {
+            group: "PNG".to_string(),
+            group1: "PNG".to_string(),
+            name: "ColorType".to_string(),
+            value: TagValue::String(ihdr.color_type.to_string()),
+            print: TagValue::String(ihdr.color_type_description().to_string()),
+        },
+        // PNG:Compression - ExifTool PNG.pm:411-414 (with PrintConv)
+        TagEntry {
+            group: "PNG".to_string(),
+            group1: "PNG".to_string(),
+            name: "Compression".to_string(),
+            value: TagValue::String(ihdr.compression.to_string()),
+            print: TagValue::String(ihdr.compression_description().to_string()),
+        },
+        // PNG:Filter - ExifTool PNG.pm:415-418 (with PrintConv)
+        TagEntry {
+            group: "PNG".to_string(),
+            group1: "PNG".to_string(),
+            name: "Filter".to_string(),
+            value: TagValue::String(ihdr.filter.to_string()),
+            print: TagValue::String(ihdr.filter_description().to_string()),
+        },
+        // PNG:Interlace - ExifTool PNG.pm:419-422 (with PrintConv)
+        TagEntry {
+            group: "PNG".to_string(),
+            group1: "PNG".to_string(),
+            name: "Interlace".to_string(),
+            value: TagValue::String(ihdr.interlace.to_string()),
+            print: TagValue::String(ihdr.interlace_description().to_string()),
+        },
+    ]
 }
 
 #[cfg(test)]

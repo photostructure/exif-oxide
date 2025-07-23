@@ -4,12 +4,15 @@
 //! metadata from each according to format-specific requirements.
 
 mod detection;
+mod gif;
 mod jpeg;
+mod png;
 mod tiff;
 
 pub use detection::{
     detect_file_format, detect_file_format_from_path, get_format_properties, FileFormat,
 };
+pub use gif::{create_gif_tag_entries, parse_gif_screen_descriptor, ScreenDescriptor};
 pub use jpeg::{
     extract_jpeg_exif, extract_jpeg_xmp, scan_jpeg_segments, JpegSegment, JpegSegmentInfo, SofData,
 };
@@ -471,8 +474,13 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     // Extract TIFF dimensions for TIFF-based RAW files (ARW, CR2, etc.)
                     // This extracts ImageWidth/ImageHeight from TIFF IFD0 tags 0x0100/0x0101
                     // ExifTool: lib/Image/ExifTool/Exif.pm:460-473 (ImageWidth/ImageHeight tags)
-                    if matches!(detection_result.file_type.as_str(), "ARW" | "CR2" | "NEF" | "NRW") {
-                        if let Err(e) = crate::raw::utils::extract_tiff_dimensions(&mut exif_reader, &tiff_data) {
+                    if matches!(
+                        detection_result.file_type.as_str(),
+                        "ARW" | "CR2" | "NEF" | "NRW"
+                    ) {
+                        if let Err(e) =
+                            crate::raw::utils::extract_tiff_dimensions(&mut exif_reader, &tiff_data)
+                        {
                             // Log error but don't fail processing
                             tracing::debug!("Failed to extract TIFF dimensions: {}", e);
                         }
@@ -746,6 +754,89 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                             )),
                         );
                     }
+                }
+            }
+        }
+        "PNG" => {
+            // PNG format processing - extract dimensions from IHDR chunk
+            // Reset reader to start of file
+            reader.seek(SeekFrom::Start(0))?;
+
+            // Read entire PNG file for IHDR processing
+            let mut png_data = Vec::new();
+            reader.read_to_end(&mut png_data)?;
+
+            // Parse PNG IHDR chunk to extract dimensions and metadata
+            match png::parse_png_ihdr(&png_data) {
+                Ok(ihdr) => {
+                    // Create PNG tag entries using ExifTool-compatible structure
+                    // PNG tags are assigned to "PNG" group (not "File" group like JPEG)
+                    let mut png_tag_entries = png::create_png_tag_entries(&ihdr);
+
+                    // Append PNG tag entries to our collection
+                    tag_entries.append(&mut png_tag_entries);
+
+                    // Add PNG processing status
+                    tags.insert(
+                        "System:PngDetectionStatus".to_string(),
+                        TagValue::String(format!(
+                            "PNG IHDR processed: {}x{} {} {}",
+                            ihdr.width,
+                            ihdr.height,
+                            ihdr.color_type_description(),
+                            ihdr.bit_depth
+                        )),
+                    );
+                }
+                Err(e) => {
+                    // Failed to parse PNG IHDR - add error information
+                    tags.insert(
+                        "Warning:PngParseError".to_string(),
+                        TagValue::string(format!("Failed to parse PNG IHDR: {e}")),
+                    );
+                }
+            }
+        }
+        "GIF" => {
+            // GIF format processing - extract dimensions from Logical Screen Descriptor
+            // Reset reader to start of file
+            reader.seek(SeekFrom::Start(0))?;
+
+            // Read entire GIF file for screen descriptor processing
+            let mut gif_data = Vec::new();
+            reader.read_to_end(&mut gif_data)?;
+
+            // Parse GIF Logical Screen Descriptor to extract dimensions and metadata
+            match gif::parse_gif_screen_descriptor(&gif_data) {
+                Ok(screen_desc) => {
+                    // Create GIF tag entries using ExifTool-compatible structure
+                    // GIF tags are assigned to "GIF" group (following ExifTool.pm:GIF.pm)
+                    let mut gif_tag_entries = gif::create_gif_tag_entries(&screen_desc);
+
+                    // Append GIF tag entries to our collection
+                    tag_entries.append(&mut gif_tag_entries);
+
+                    // Add GIF processing status
+                    tags.insert(
+                        "System:GifDetectionStatus".to_string(),
+                        TagValue::String(format!(
+                            "GIF screen descriptor processed: {}x{} {} colors",
+                            screen_desc.image_width,
+                            screen_desc.image_height,
+                            if screen_desc.has_color_map() {
+                                format!("{}", 2_u32.pow(screen_desc.bits_per_pixel() as u32))
+                            } else {
+                                "no color map".to_string()
+                            }
+                        )),
+                    );
+                }
+                Err(e) => {
+                    // Failed to parse GIF screen descriptor - add error information
+                    tags.insert(
+                        "Warning:GifParseError".to_string(),
+                        TagValue::string(format!("Failed to parse GIF screen descriptor: {e}")),
+                    );
                 }
             }
         }

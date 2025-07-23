@@ -1,0 +1,17 @@
+{
+  "SourceFile": "third-party/exiftool/t/images/PNG.png",
+  "File:FileSize": 572,
+  "File:FileName": "PNG.png",
+  "File:Directory": "third-party/exiftool/t/images",
+  "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileType": "PNG",
+  "File:FileTypeExtension": "png",
+  "File:MIMEType": "image/png",
+  "PNG:ImageWidth": 16,
+  "PNG:ImageHeight": 16,
+  "PNG:BitDepth": 1,
+  "PNG:ColorType": "Grayscale",
+  "PNG:Compression": "Deflate/Inflate",
+  "PNG:Filter": "Adaptive",
+  "PNG:Interlace": "Noninterlaced"
+}
