@@ -89,7 +89,16 @@
       "Bash(find /home/mrm/src/exif-oxide/codegen/config -name \"tag_kit.json\" -exec ls -la {} ;)",
       "Bash(find /home/mrm/src/exif-oxide/third-party/exiftool -name \"Sony*\")",
       "Bash(find /home/mrm/src/exif-oxide/third-party/exiftool -name \"*.arw\" -o -name \"*ARW*\" -o -name \"Sony*\")",
-      "Bash(RUST_LOG=debug cargo run -- third-party/exiftool/t/images/Canon.jpg)"
+      "Bash(RUST_LOG=debug cargo run -- third-party/exiftool/t/images/Canon.jpg)",
+      "Bash(RUST_LOG=debug cargo test test_key_exif_ifd_tag_grouping --features integration-tests --test enhanced_exiftool_group_compatibility_tests -- --nocapture)",
+      "Bash(RUST_LOG=debug cargo test test_color_space_validation -- --nocapture)",
+      "Bash(command -v:*)",
+      "Bash(optipng:*)",
+      "Bash(RUST_LOG=debug cargo test --features test-helpers,integration-tests --test exif_ifd_validation_tests test_color_space_validation -- --nocapture)",
+      "Bash(pngquant:*)",
+      "Bash(git lfs:*)",
+      "Bash(ffmpeg:*)",
+      "Bash(./tools/generate_exiftool_json.sh:*)"
     ],
     "deny": []
   }

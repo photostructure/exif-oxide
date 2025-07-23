@@ -1,0 +1,14 @@
+{
+  "SourceFile": "third-party/exiftool/t/images/ExifTool.tif",
+  "File:FileSize": 4864,
+  "File:FileName": "ExifTool.tif",
+  "File:Directory": "third-party/exiftool/t/images",
+  "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileType": "TIFF",
+  "File:FileTypeExtension": "tif",
+  "File:MIMEType": "image/tiff",
+  "EXIF:ImageWidth": 160,
+  "EXIF:ImageHeight": 120,
+  "EXIF:Make": "Canon",
+  "EXIF:Model": "Canon EOS DIGITAL REBEL"
+}

@@ -496,16 +496,6 @@ static CONDITIONAL_ARRAYS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>
 static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> = LazyLock::new(
     || {
         let mut map = HashMap::new();
-        map.insert(
-            "56",
-            vec![ConditionalEntry {
-                condition: "$count == 76",
-                name: "BatteryType",
-                subdirectory: false,
-                writable: true,
-                format: None,
-            }],
-        );
         map.insert("13", vec![
         ConditionalEntry {
             condition: "$format eq \"int32u\" and ($count == 138 or $count == 148)",
@@ -608,6 +598,16 @@ static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> 
             format: None,
         },
     ]);
+        map.insert(
+            "56",
+            vec![ConditionalEntry {
+                condition: "$count == 76",
+                name: "BatteryType",
+                subdirectory: false,
+                writable: true,
+                format: None,
+            }],
+        );
         map
     },
 );
@@ -617,16 +617,6 @@ static BINARY_PATTERNS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> =
     || {
         let mut map = HashMap::new();
         map.insert(
-            "39",
-            vec![ConditionalEntry {
-                condition: "$$valPt =~ /^\\x0a\\0/",
-                name: "ContrastInfo",
-                subdirectory: false,
-                writable: false,
-                format: None,
-            }],
-        );
-        map.insert(
             "35",
             vec![ConditionalEntry {
                 condition: "$$valPt =~ /^\\x08\\0\\0\\0/",
@@ -634,6 +624,16 @@ static BINARY_PATTERNS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> =
                 subdirectory: false,
                 writable: true,
                 format: Some("int32u"),
+            }],
+        );
+        map.insert(
+            "39",
+            vec![ConditionalEntry {
+                condition: "$$valPt =~ /^\\x0a\\0/",
+                name: "ContrastInfo",
+                subdirectory: false,
+                writable: false,
+                format: None,
             }],
         );
         map.insert("16405", vec![
