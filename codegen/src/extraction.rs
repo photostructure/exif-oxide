@@ -89,7 +89,8 @@ fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig
         "inline_printconv.json",
         "tag_definitions.json",
         "composite_tags.json",
-        "*_tag_table_structure.json",  // Matches tag_table_structure.json AND equipment_tag_table_structure.json
+        "tag_table_structure.json",    // Exact match for Main table configs
+        "*_tag_table_structure.json",  // Matches equipment_tag_table_structure.json and other variants
         "process_binary_data.json",
         "model_detection.json",
         "conditional_tags.json",
@@ -146,7 +147,7 @@ fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
         .unwrap_or("");
     
     let hash_names: Vec<String> = match config_type {
-        "tag_definitions.json" | "composite_tags.json" | 
+        "tag_definitions.json" | "composite_tags.json" | "tag_table_structure.json" |
         "process_binary_data.json" | "model_detection.json" | "conditional_tags.json" => {
             // For tag definitions, composite tags, and tag table structure, we use the table name from config root
             let table = config["table"].as_str()
