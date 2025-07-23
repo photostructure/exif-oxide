@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for MyColors table
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Canon.pm (table: MyColors)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -25,8 +25,9 @@ static MY_COLORS_MY_COLOR_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static MY_COLORS_MY_COLOR_MODE: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| MY_COLORS_MY_COLOR_MODE_DATA.iter().cloned().collect());
+pub static MY_COLORS_MY_COLOR_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    MY_COLORS_MY_COLOR_MODE_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_my_colors__my_color_mode(key: u8) -> Option<&'static str> {

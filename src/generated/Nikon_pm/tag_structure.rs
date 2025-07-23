@@ -623,30 +623,29 @@ impl NikonDataType {
 
     /// Check if this tag has a subdirectory
     pub fn has_subdirectory(&self) -> bool {
-        matches!(
-            self,
-            NikonDataType::PreviewIFD
-                | NikonDataType::VRInfo
-                | NikonDataType::FaceDetect
-                | NikonDataType::WorldTime
-                | NikonDataType::ISOInfo
-                | NikonDataType::DistortInfo
-                | NikonDataType::UnknownInfo
-                | NikonDataType::UnknownInfo2
-                | NikonDataType::LocationInfo
-                | NikonDataType::Settings
-                | NikonDataType::MakerNotes0x51
-                | NikonDataType::MakerNotes0x56
-                | NikonDataType::AFTune
-                | NikonDataType::RetouchInfo
-                | NikonDataType::PictureControlData2
-                | NikonDataType::BarometerInfo
-                | NikonDataType::PrintIM
-                | NikonDataType::CaptureData
-                | NikonDataType::CaptureOffsets
-                | NikonDataType::ScanIFD
-                | NikonDataType::ICCProfile
-                | NikonDataType::CaptureOutput
+        matches!(self,
+            NikonDataType::PreviewIFD |
+            NikonDataType::VRInfo |
+            NikonDataType::FaceDetect |
+            NikonDataType::WorldTime |
+            NikonDataType::ISOInfo |
+            NikonDataType::DistortInfo |
+            NikonDataType::UnknownInfo |
+            NikonDataType::UnknownInfo2 |
+            NikonDataType::LocationInfo |
+            NikonDataType::Settings |
+            NikonDataType::MakerNotes0x51 |
+            NikonDataType::MakerNotes0x56 |
+            NikonDataType::AFTune |
+            NikonDataType::RetouchInfo |
+            NikonDataType::PictureControlData2 |
+            NikonDataType::BarometerInfo |
+            NikonDataType::PrintIM |
+            NikonDataType::CaptureData |
+            NikonDataType::CaptureOffsets |
+            NikonDataType::ScanIFD |
+            NikonDataType::ICCProfile |
+            NikonDataType::CaptureOutput
         )
     }
 

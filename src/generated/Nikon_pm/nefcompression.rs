@@ -1,5 +1,5 @@
 //! Nikon NEF (RAW) compression modes
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Nikon.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -23,8 +23,9 @@ static NEF_COMPRESSION_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static NEF_COMPRESSION: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| NEF_COMPRESSION_DATA.iter().cloned().collect());
+pub static NEF_COMPRESSION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    NEF_COMPRESSION_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_nef_compression(key: u8) -> Option<&'static str> {

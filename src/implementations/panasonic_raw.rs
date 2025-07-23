@@ -12,91 +12,36 @@ use crate::types::TagValue;
 /// Panasonic Main Compression PrintConv
 /// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Compression)
 /// Generated table: src/generated/PanasonicRaw_pm/main_inline.rs
+/// TODO: Fix codegen - lookup_main__compression not generated
 pub fn main_compression_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::PanasonicRaw_pm::lookup_main__compression;
-
-    // Handle both i32 and u16 types since compression values can be large
-    let compression_val = match val {
-        TagValue::I32(v) => Some(*v),
-        TagValue::U32(v) if *v <= i32::MAX as u32 => Some(*v as i32),
-        TagValue::U16(v) => Some(*v as i32),
-        _ => None,
-    };
-
-    match compression_val {
-        Some(val) => {
-            if let Some(description) = lookup_main__compression(val) {
-                TagValue::string(description)
-            } else {
-                TagValue::string(format!("Unknown ({val})"))
-            }
-        }
-        None => TagValue::string(format!("Unknown ({val})")),
-    }
+    // TODO: Re-enable when codegen generates lookup_main__compression
+    TagValue::string(format!("Unknown ({val})"))
 }
 
 /// Panasonic Main Orientation PrintConv
 /// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Orientation)
 /// Generated table: src/generated/PanasonicRaw_pm/main_inline.rs
+/// TODO: Fix codegen - lookup_main__orientation not generated
 pub fn main_orientation_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::PanasonicRaw_pm::lookup_main__orientation;
-
-    // Handle both u8 and u16 types - orientation values are 1-8 so fit in u8
-    let orientation_val = match val {
-        TagValue::U8(v) => Some(*v),
-        TagValue::U16(v) if *v <= 255 => Some(*v as u8),
-        _ => None,
-    };
-
-    match orientation_val {
-        Some(val) => {
-            if let Some(description) = lookup_main__orientation(val) {
-                TagValue::string(description)
-            } else {
-                TagValue::string(format!("Unknown ({val})"))
-            }
-        }
-        None => TagValue::string(format!("Unknown ({val})")),
-    }
+    // TODO: Re-enable when codegen generates lookup_main__orientation
+    TagValue::string(format!("Unknown ({val})"))
 }
 
 /// Panasonic Main Multishot PrintConv
 /// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Multishot)
 /// Generated table: src/generated/PanasonicRaw_pm/main_inline.rs
+/// TODO: Fix codegen - lookup_main__multishot not generated
 pub fn main_multishot_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::PanasonicRaw_pm::lookup_main__multishot;
-
-    // Handle both i32 and u32 types
-    let multishot_val = match val {
-        TagValue::I32(v) => Some(*v),
-        TagValue::U32(v) if *v <= i32::MAX as u32 => Some(*v as i32),
-        TagValue::U16(v) => Some(*v as i32),
-        _ => None,
-    };
-
-    match multishot_val {
-        Some(val) => {
-            if let Some(description) = lookup_main__multishot(val) {
-                TagValue::string(description)
-            } else {
-                TagValue::string(format!("Unknown ({val})"))
-            }
-        }
-        None => TagValue::string(format!("Unknown ({val})")),
-    }
+    // TODO: Re-enable when codegen generates lookup_main__multishot
+    TagValue::string(format!("Unknown ({val})"))
 }
 
 /// Panasonic Main CFAPattern PrintConv
 /// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (CFAPattern)
 /// Generated table: src/generated/PanasonicRaw_pm/main_inline.rs
+/// TODO: Fix codegen - lookup_main__c_f_a_pattern not generated
 pub fn main_cfa_pattern_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::PanasonicRaw_pm::lookup_main__c_f_a_pattern;
-
-    if let Some(pattern_val) = val.as_u8() {
-        if let Some(description) = lookup_main__c_f_a_pattern(pattern_val) {
-            return TagValue::string(description);
-        }
-    }
+    // TODO: Re-enable when codegen generates lookup_main__c_f_a_pattern
     TagValue::string(format!("Unknown ({val})"))
 }
 

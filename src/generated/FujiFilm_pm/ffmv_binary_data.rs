@@ -11,7 +11,7 @@ use std::sync::LazyLock;
 /// Total tags: 1
 #[derive(Debug, Clone)]
 pub struct FujiFilmFFMVTable {
-    pub first_entry: i32,                     // 0
+    pub first_entry: i32, // 0
     pub groups: (&'static str, &'static str), // ("MakerNotes", "Camera")
 }
 

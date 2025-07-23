@@ -5,7 +5,7 @@
 use std::collections::HashMap;
 
 /// Category for a tag based on its ID and semantic meaning
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum TagCategory {
     /// Core image properties (dimensions, format, etc) - IDs 254-400
     Core,

@@ -4,6 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with ex
 
 Today's date is July 22, 2025.
 
+## 🚨 CRITICAL: ALWAYS USE ABSOLUTE PATHS 🚨
+
+**NEVER use `cd ..` or `cd ../..` - there have been devastating mistakes due to directory confusion.**
+
+**ALWAYS:**
+1. Run `pwd` first to check your current directory
+2. Use absolute paths: `cd /home/mrm/src/exif-oxide` or `cd /home/mrm/src/exif-oxide/codegen`
+3. When in doubt, ask the user to confirm the intended directory
+
 ## Project Overview
 
 As much as possible, exif-oxide is a _translation_ of [ExifTool](https://exiftool.org/) from perl to Rust.
@@ -14,9 +23,10 @@ releases. New parsers, file types, and bugfixes accompany every new release.
 If our codebase is manually ported over, examining thousands of lines of diff to
 keep up to date with releases will become sisyphean and untenable.
 
-The current hypothesis involves a balance of manually-written components that
-are stitched together by a code generator that reads and parses ExifTool's
-largely tabular codebase. This is discussed in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+This project attempts to balance manually-written components that are stitch
+together code from our automated [docs/CODEGEN.md](docs/CODEGEN.md) ExifTool
+perl-to-rust code generation system. This is discussed in
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## ⚠️ CRITICAL: Trust ExifTool
 

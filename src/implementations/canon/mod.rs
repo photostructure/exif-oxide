@@ -172,8 +172,19 @@ fn process_canon_binary_data_with_existing_processors(
         exif_reader
             .synthetic_tag_names
             .insert(synthetic_id, full_tag_name.clone());
+        
+        // CRITICAL: Store TagSourceInfo for synthetic Canon tags so they get proper Group1 assignment
+        // Without this, Canon MakerNote tags default to Group1="IFD0" instead of Group1="Canon"
+        use crate::types::TagSourceInfo;
+        let canon_source_info = TagSourceInfo::new(
+            "Canon".to_string(),    // namespace: Canon for maker note tags
+            "Canon".to_string(),    // ifd_name: Canon so get_group1() returns "Canon"
+            "Canon::BinaryData".to_string(),  // processor: Canon binary data processor
+        );
+        exif_reader.tag_sources.insert(synthetic_id, canon_source_info);
+        
         debug!(
-            "Stored Canon tag {} with synthetic ID 0x{:04X}",
+            "Stored Canon tag {} with synthetic ID 0x{:04X} and TagSourceInfo with ifd_name='Canon'",
             full_tag_name, synthetic_id
         );
     }

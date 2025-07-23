@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for RawInfo table
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Olympus.pm (table: RawInfo)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -23,8 +23,9 @@ static RAW_INFO_LIGHT_SOURCE_DATA: &[(u16, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static RAW_INFO_LIGHT_SOURCE: LazyLock<HashMap<u16, &'static str>> =
-    LazyLock::new(|| RAW_INFO_LIGHT_SOURCE_DATA.iter().cloned().collect());
+pub static RAW_INFO_LIGHT_SOURCE: LazyLock<HashMap<u16, &'static str>> = LazyLock::new(|| {
+    RAW_INFO_LIGHT_SOURCE_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_raw_info__light_source(key: u16) -> Option<&'static str> {

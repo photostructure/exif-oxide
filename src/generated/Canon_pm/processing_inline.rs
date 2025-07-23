@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for Processing table
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Canon.pm (table: Processing)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -7,12 +7,16 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (3 entries)
-static PROCESSING_TONE_CURVE_DATA: &[(u8, &'static str)] =
-    &[(0, "Standard"), (1, "Manual"), (2, "Custom")];
+static PROCESSING_TONE_CURVE_DATA: &[(u8, &'static str)] = &[
+    (0, "Standard"),
+    (1, "Manual"),
+    (2, "Custom"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static PROCESSING_TONE_CURVE: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| PROCESSING_TONE_CURVE_DATA.iter().cloned().collect());
+pub static PROCESSING_TONE_CURVE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    PROCESSING_TONE_CURVE_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_processing__tone_curve(key: u8) -> Option<&'static str> {
@@ -48,8 +52,9 @@ static PROCESSING_PICTURE_STYLE_DATA: &[(i32, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static PROCESSING_PICTURE_STYLE: LazyLock<HashMap<i32, &'static str>> =
-    LazyLock::new(|| PROCESSING_PICTURE_STYLE_DATA.iter().cloned().collect());
+pub static PROCESSING_PICTURE_STYLE: LazyLock<HashMap<i32, &'static str>> = LazyLock::new(|| {
+    PROCESSING_PICTURE_STYLE_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_processing__picture_style(key: i32) -> Option<&'static str> {
@@ -67,13 +72,9 @@ static PROCESSING_SHARPNESS_FREQUENCY_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static PROCESSING_SHARPNESS_FREQUENCY: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| {
-        PROCESSING_SHARPNESS_FREQUENCY_DATA
-            .iter()
-            .cloned()
-            .collect()
-    });
+pub static PROCESSING_SHARPNESS_FREQUENCY: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    PROCESSING_SHARPNESS_FREQUENCY_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_processing__sharpness_frequency(key: u8) -> Option<&'static str> {
@@ -107,8 +108,9 @@ static PROCESSING_WHITE_BALANCE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static PROCESSING_WHITE_BALANCE: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| PROCESSING_WHITE_BALANCE_DATA.iter().cloned().collect());
+pub static PROCESSING_WHITE_BALANCE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    PROCESSING_WHITE_BALANCE_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_processing__white_balance(key: u8) -> Option<&'static str> {

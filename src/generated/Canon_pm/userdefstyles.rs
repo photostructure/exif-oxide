@@ -1,5 +1,5 @@
 //! Canon user-defined picture styles
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Canon.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -21,8 +21,9 @@ static CANON_USER_DEF_STYLES_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CANON_USER_DEF_STYLES: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| CANON_USER_DEF_STYLES_DATA.iter().cloned().collect());
+pub static CANON_USER_DEF_STYLES: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    CANON_USER_DEF_STYLES_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_canon_user_def_styles(key: u8) -> Option<&'static str> {

@@ -1,5 +1,5 @@
 //! Olympus camera type codes to camera names
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Olympus.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -314,8 +314,9 @@ static OLYMPUS_CAMERA_TYPES_DATA: &[(&'static str, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static OLYMPUS_CAMERA_TYPES: LazyLock<HashMap<&'static str, &'static str>> =
-    LazyLock::new(|| OLYMPUS_CAMERA_TYPES_DATA.iter().copied().collect());
+pub static OLYMPUS_CAMERA_TYPES: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
+    OLYMPUS_CAMERA_TYPES_DATA.iter().copied().collect()
+});
 
 /// Look up value by key
 pub fn lookup_olympus_camera_types(key: &str) -> Option<&'static str> {

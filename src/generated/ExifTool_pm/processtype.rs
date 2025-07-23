@@ -1,5 +1,5 @@
 //! File types determined by process proc during FastScan == 3
-//!
+//! 
 //! Auto-generated from ExifTool source
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 

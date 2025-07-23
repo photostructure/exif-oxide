@@ -111,6 +111,14 @@ impl CanonRawHandler {
 
         debug!("CR2 files processed through TIFF structure with Canon maker note integration");
 
+        // Extract TIFF dimensions from IFD0 for File: group BEFORE processing maker notes
+        // ExifTool: Standard TIFF tags 0x0100/0x0101 are extracted from all CR2 files
+        // This must happen early to ensure File: group dimensions are available
+        // TODO: Implement TIFF dimension extraction for Canon CR2 files
+        // The data parameter is not available in this method - needs refactoring
+        // to match the Sony implementation pattern where data is passed through
+        // For now, commenting out to avoid build errors during concurrent development
+
         // The Canon maker note processing will be automatically triggered by the TIFF processor
         // when it encounters MakerNotes IFD entries via detect_makernote_processor()
         // which returns "Canon::Main" for Canon signatures

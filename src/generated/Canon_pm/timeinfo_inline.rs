@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for TimeInfo table
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Canon.pm (table: TimeInfo)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -46,8 +46,9 @@ static TIME_INFO_TIME_ZONE_CITY_DATA: &[(u16, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static TIME_INFO_TIME_ZONE_CITY: LazyLock<HashMap<u16, &'static str>> =
-    LazyLock::new(|| TIME_INFO_TIME_ZONE_CITY_DATA.iter().cloned().collect());
+pub static TIME_INFO_TIME_ZONE_CITY: LazyLock<HashMap<u16, &'static str>> = LazyLock::new(|| {
+    TIME_INFO_TIME_ZONE_CITY_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_time_info__time_zone_city(key: u16) -> Option<&'static str> {
@@ -55,11 +56,15 @@ pub fn lookup_time_info__time_zone_city(key: u16) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static TIME_INFO_DAYLIGHT_SAVINGS_DATA: &[(u8, &'static str)] = &[(0, "Off"), (60, "On")];
+static TIME_INFO_DAYLIGHT_SAVINGS_DATA: &[(u8, &'static str)] = &[
+    (0, "Off"),
+    (60, "On"),
+];
 
 /// Lookup table (lazy-initialized)
-pub static TIME_INFO_DAYLIGHT_SAVINGS: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| TIME_INFO_DAYLIGHT_SAVINGS_DATA.iter().cloned().collect());
+pub static TIME_INFO_DAYLIGHT_SAVINGS: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    TIME_INFO_DAYLIGHT_SAVINGS_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_time_info__daylight_savings(key: u8) -> Option<&'static str> {
