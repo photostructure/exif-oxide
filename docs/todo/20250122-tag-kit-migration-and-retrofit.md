@@ -1,8 +1,5 @@
 # Technical Project Plan: Tag Kit Migration and Runtime Retrofit
 
-**Created**: July 22, 2025  
-**Status**: In Progress
-
 ## Project Overview
 
 **Goal**: Complete the tag kit system migration by:
@@ -29,15 +26,15 @@
 - Integration tests pass with 100% parity
 - Modular generation splits into manageable files
 - Deprecation notices added to old extractors
+- Tag kit wired into runtime
 
 ❌ **Not Complete**:
 - 7 inline_printconv configs need migration
-- Tag kit not wired into runtime
 - Manual implementations still in use
 
 ### Related Documentation
 
-- [Unified Tag Definition Codegen](20250122-unified-tag-definition-codegen.md) - Tag kit implementation details
+- ["Tag kit" Codegen](docs/done/DONE-20250122-tag-kit-codegen.md) - Tag kit implementation details
 - [EXTRACTOR-GUIDE.md](../reference/EXTRACTOR-GUIDE.md) - Extractor comparisons
 - [CODEGEN.md](../CODEGEN.md) - Codegen system overview
 

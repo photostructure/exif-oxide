@@ -4,6 +4,22 @@
 
 - **Goal**: Ensure all image dimension tags required by PhotoStructure are properly extracted across all supported formats
 
+### 🎯 **Current Progress Status** (July 23, 2025)
+
+**✅ Core Web Formats Completed (3/6)**:
+- ✅ **JPEG** - Full dimension extraction from SOF markers
+- ✅ **PNG** - Full dimension extraction from IHDR chunks
+- ✅ **GIF** - Full dimension extraction from Logical Screen Descriptor
+- 🔲 **TIFF** - Should work with existing TIFF processing  
+- 🔲 **SVG** - Requires XML parsing
+- 🔲 **WebP** - RIFF-based format
+
+**✅ RAW Formats Completed (2/30+)**:
+- ✅ **Canon CR2** - TIFF-based extraction
+- ✅ **Sony ARW** - Enhanced SubIFD support
+
+**📊 Overall Status**: Strong foundation established with core web image support (JPEG + PNG) and major RAW formats (Canon + Sony). Ready for next phase expansion.
+
 ## Background & Context
 
 PhotoStructure requires reliable image dimensions for proper display and organization. These dimensions must be extracted directly from file structure (not just EXIF) to work even with corrupted metadata.
@@ -21,11 +37,11 @@ Study the entirety of the documentation, and study referenced relevant source co
   - `src/formats/jpeg.rs` - JPEG SOF parsing (✅ COMPLETED)
   - `src/raw/` - RAW format processing
 
-## Required File System Tags
+## Required File System Tags (PhotoStructure Integration Requirements)
 
 ### Core Media Properties (CRITICAL)
-- **ImageWidth** ✅ JPEG complete, needs RAW/TIFF/PNG/WebP/Video
-- **ImageHeight** ✅ JPEG complete, needs RAW/TIFF/PNG/WebP/Video
+- **ImageWidth** ✅ JPEG complete, ✅ PNG complete, ✅ GIF complete, ✅ RAW complete (Sony ARW, Canon CR2), needs remaining PhotoStructure formats below
+- **ImageHeight** ✅ JPEG complete, ✅ PNG complete, ✅ GIF complete, ✅ RAW complete (Sony ARW, Canon CR2), needs remaining PhotoStructure formats below
 
 ### Extended Properties (HIGH VALUE)
 - **BitsPerSample** ✅ JPEG complete, needs RAW/TIFF/PNG/WebP/Video
@@ -33,7 +49,67 @@ Study the entirety of the documentation, and study referenced relevant source co
 - **YCbCrSubSampling** ✅ JPEG complete, needs RAW when applicable
 - **EncodingProcess** ✅ JPEG complete, needs RAW when applicable
 
-## ✅ COMPLETED: JPEG Implementation
+## PhotoStructure Format Requirements
+
+All formats below require ImageWidth/ImageHeight extraction for PhotoStructure integration:
+
+### **SharpImageFiletypes** (Standard Web Images)
+- ✅ **JPEG** (`image/jpeg`: jpg, jpeg, jpe, jfif, jfi) - COMPLETED
+- ✅ **PNG** (`image/png`: png) - COMPLETED (July 23, 2025)
+- ✅ **GIF** (`image/gif`: gif) - COMPLETED (July 23, 2025)
+- 🔲 **SVG** (`image/svg+xml`: svg) - XML parsing required
+- 🔲 **TIFF** (`image/tiff`: tif, tiff) - Should work with existing TIFF processing
+- 🔲 **WebP** (`image/webp`: webp) - RIFF-based format
+
+### **HeifFiletypes** (Modern Efficient Formats)
+- 🔲 **AVIF** (`image/avif`: avif) - HEIF container
+- 🔲 **HEIC** (`image/heic`: heic) - Apple's HEIF variant
+- 🔲 **HEIF** (`image/heif`: heif) - High Efficiency Image Format
+
+### **RawImageFiletypes** (Camera RAW Formats)
+#### ✅ **COMPLETED** (2/30+ formats)
+- ✅ **Canon CR2** (`image/x-canon-cr2`: cr2) - COMPLETED
+- ✅ **Sony ARW** (`image/x-sony-arw`: arw) - COMPLETED
+
+#### 🔲 **HIGH PRIORITY** (Common formats)
+- 🔲 **Adobe DNG** (`image/x-adobe-dng`: dng) - Universal RAW standard
+- 🔲 **Canon CR3** (`image/x-canon-cr3`: cr3) - Modern Canon RAW
+- 🔲 **Nikon NEF** (`image/x-nikon-nef`: nef) - Major manufacturer
+- 🔲 **Fuji RAF** (`image/x-fuji-raf`: raf) - Popular mirrorless
+- 🔲 **Olympus ORF** (`image/x-olympus-orf`: orf) - Micro Four Thirds
+- 🔲 **Panasonic RW2** (`image/x-panasonic-rw2`: rw2) - Micro Four Thirds
+
+#### 🔲 **MEDIUM PRIORITY** (Less common)
+- 🔲 **Canon CRW** (`image/x-canon-crw`: crw) - Legacy Canon
+- 🔲 **Epson ERF** (`image/x-epson-erf`: erf) 
+- 🔲 **Hasselblad 3FR** (`image/x-hasselblad-3fr`: 3fr) - Medium format
+- 🔲 **Kodak formats** (`image/x-kodak-dcr`: dcr, `image/x-kodak-k25`: k25, `image/x-kodak-kdc`: kdc)
+- 🔲 **Mamiya MEF** (`image/x-mamiya-mef`: mef) - Medium format
+- 🔲 **Minolta MRW** (`image/x-minolta-mrw`: mrw)
+- 🔲 **Nikon NRW** (`image/x-nikon-nrw`: nrw) - Compact RAW
+- 🔲 **Panasonic RWL** (`image/x-panasonic-raw`: rwl) 
+- 🔲 **Pentax PEF** (`image/x-pentax-pef`: pef, dng)
+- 🔲 **Samsung SRW** (`image/x-samsung-srw`: srw)
+- 🔲 **Sigma X3F** (`image/x-sigma-x3f`: x3f) - Foveon sensor
+- 🔲 **Sony SR2/SRF** (`image/x-sony-sr2`: sr2, `image/x-sony-srf`: srf) - Legacy Sony
+- 🔲 **Generic RAW** (`image/x-raw`: raw) - LEICA and Panasonic
+
+### **VideoFiletypes** (Video Containers)
+- 🔲 **MP4** (`video/mp4`: mp4, insv) - Most common
+- 🔲 **QuickTime MOV** (`video/quicktime`: mov, qt) - Apple format
+- 🔲 **AVI** (`video/x-msvideo`: avi) - Legacy Windows
+- 🔲 **MKV** (`video/mkv`: mkv) - Open container
+- 🔲 **WebM** (`video/webm`: webm) - Web standard
+- 🔲 **MPEG** (`video/mpeg`: m2v, mpeg, mpg) - Legacy standard
+- 🔲 **3GPP** (`video/3gpp`: 3gp, 3gpp, `video/3gpp2`: 3g2) - Mobile
+- 🔲 **M2TS** (`video/mp2t`: mts, ts) - Broadcast
+- 🔲 **M4V** (`video/x-m4v`: m4v) - iTunes format
+- 🔲 **WMV** (`video/x-ms-wmv`: wmv, `video/x-ms-asf`: asf) - Microsoft
+- 🔲 **MNG** (`video/x-mng`: mng) - Animated PNG
+
+## ✅ COMPLETED: Core Image Format Support
+
+### JPEG Implementation ✅ **COMPLETED**
 
 Successfully implemented all dimension tags for JPEG files by parsing SOF (Start of Frame) markers:
 
@@ -43,61 +119,121 @@ Successfully implemented all dimension tags for JPEG files by parsing SOF (Start
 - **Binary Format**: `unpack('Cn2C', data)` - precision, height, width, components
 - **Testing**: Verified with Nikon Z8 (8256×5504) and Canon T3i (5184×3456)
 
-## Remaining Tasks
+### PNG Implementation ✅ **COMPLETED** (July 23, 2025)
 
-### High Priority - RAW Format Support
+Successfully implemented PNG dimension extraction by parsing IHDR chunks:
 
-RAW formats store dimensions in TIFF-like structures but locations vary by manufacturer:
+- **Location**: `src/formats/png.rs` - `parse_png_ihdr()` and `create_png_tag_entries()`
+- **Method**: Extract from PNG IHDR chunk (first chunk after PNG signature)
+- **ExifTool Reference**: `lib/Image/ExifTool/PNG.pm:387-423` (ImageHeader table)
+- **Binary Format**: Width(u32be), Height(u32be), BitDepth(u8), ColorType(u8), etc.
+- **Tags Extracted**: PNG:ImageWidth, PNG:ImageHeight, PNG:BitDepth, PNG:ColorType, PNG:Compression, PNG:Filter, PNG:Interlace  
+- **Testing**: Verified with 3 PNG files including `test-images/example.png` (1130×726 Palette)
+- **Integration**: Added PNG case to `src/formats/mod.rs:758` format dispatch
+- **Group Assignment**: PNG tags use "PNG" group (not "File" group like JPEG)
+- **Compatibility**: Added PNG support to test infrastructure and `config/supported_tags.json`
 
-#### 1. **Sony ARW** (Priority: HIGH - PhotoStructure common) - IN PROGRESS
-   - **STATUS**: 90% complete - shared utility created, processing path identified, needs final integration
-   - **Key Discovery**: ARW files are processed through TIFF branch in formats/mod.rs, NOT RAW branch
-   - **Implementation Created**: `raw::utils::extract_tiff_dimensions()` shared utility (src/raw/mod.rs:112-298)
-   - **Expected Output**: EXIF:ImageWidth=7040, EXIF:ImageHeight=4688 (from TIFF IFD0 tags 0x0100/0x0101)
-   - **Test File**: `test-images/sony/sony_a7c_ii_02.arw`
-   - **REMAINING TASK**: Add `crate::raw::utils::extract_tiff_dimensions(&mut exif_reader, &tiff_data)?;` 
-     call in formats/mod.rs TIFF branch (line ~469) after successful `exif_reader.parse_exif_data(&tiff_data)`
-   - **Verification**: Output should match ExifTool: `exiftool -j -G test-images/sony/sony_a7c_ii_02.arw | grep ImageWidth`
+### GIF Implementation ✅ **COMPLETED** (July 23, 2025)
 
-#### 2. **Canon CR2** (Priority: HIGH - PhotoStructure common) - PARALLEL DEVELOPMENT
-   - **STATUS**: Being worked on in concurrent session - shared utility ready
-   - **Implementation Available**: Same `raw::utils::extract_tiff_dimensions()` utility can be used
-   - **Architecture Issue**: Canon handler in src/raw/formats/canon.rs needs `data` parameter access
-   - **Integration Point**: Canon can use same TIFF branch integration as Sony ARW
-   - **Note**: Current Canon implementation attempts to call dimension extraction but lacks data parameter
+Successfully implemented GIF dimension extraction by parsing Logical Screen Descriptor:
 
-#### 3. **Nikon NEF** (Priority: MEDIUM)
-   - **Research needed**: NEF structure and dimension storage
-   - **Likely location**: TIFF IFD tags or Nikon MakerNotes
-   - **ExifTool reference**: `lib/Image/ExifTool/Nikon.pm`
-   - **Test with**: Any NEF files in test-images
+- **Location**: `src/formats/gif.rs` - `parse_gif_screen_descriptor()` and `create_gif_tag_entries()`
+- **Method**: Extract from GIF Logical Screen Descriptor (7 bytes after 6-byte signature)
+- **ExifTool Reference**: `lib/Image/ExifTool/GIF.pm:105-138` (Screen table)
+- **Binary Format**: Width(u16le), Height(u16le), Flags(u8), Background(u8), PixelAspectRatio(u8)
+- **Tags Extracted**: GIF:ImageWidth, GIF:ImageHeight, GIF:HasColorMap, GIF:ColorResolutionDepth, GIF:BitsPerPixel, GIF:BackgroundColor, GIF:PixelAspectRatio
+- **Testing**: Verified with `test-images/example.gif` (663×475 animated GIF with 256-color palette)
+- **Integration**: Added GIF case to `src/formats/mod.rs:800` format dispatch  
+- **Group Assignment**: GIF tags use "GIF" group (following ExifTool's group assignment)
+- **ExifTool Compliance**: Matches ExifTool output exactly for all extracted tags (dimensions as numbers)
 
-#### 4. **Other RAW formats** (Priority: MEDIUM)
-   - ORF (Olympus), RW2 (Panasonic), MRW (Minolta), RWL
-   - Follow same pattern: research ExifTool source, find dimension storage, extract
+## ✅ COMPLETED: RAW Format Implementation (July 23, 2025)
 
-### Medium Priority - Additional Formats
+Successfully implemented dimension extraction for major RAW formats using shared TIFF utility:
 
-#### 5. **TIFF Files** (Priority: MEDIUM)
-   - **Method**: Extract from TIFF IFD tags 0x0100 (ImageWidth) and 0x0101 (ImageLength)
-   - **Location**: Should work in existing TIFF processing in `src/formats/mod.rs`
-   - **Implementation**: Likely just needs to extract these specific tags to File group
+- **Location**: `src/raw/mod.rs::utils::extract_tiff_dimensions()` (lines 112-474)
+- **Method**: Extract from TIFF IFD0 tags 0x0100 (ImageWidth) and 0x0101 (ImageHeight) with SubIFD fallback
+- **Architecture**: Shared utility called from both RAW handlers and TIFF branch for comprehensive coverage
+- **Sony ARW**: Enhanced with SubIFD support (tag 0x014a) to handle Sony's non-standard dimension storage
+- **Canon CR2**: Uses standard TIFF IFD0 tags, works through shared utility
+- **Integration**: Integrated in `formats/mod.rs` TIFF branch for ARW/CR2/NEF/NRW formats
+- **Testing**: Verified Sony A7C II (7040×4688) and Canon T3i (5184×3456) match ExifTool exactly
+- **ExifTool Compliance**: Uses identical algorithm to ExifTool's Exif.pm:460-473 implementation
 
-#### 6. **PNG Files** (Priority: MEDIUM)
+## Implementation Roadmap
+
+### **Phase 1: Core Web Image Formats** (IMMEDIATE PRIORITY)
+
+These formats are essential for web-based photo management and should be implemented first:
+
+#### 1. **PNG** ✅ **COMPLETED** (July 23, 2025)
+   - **STATUS**: ✅ **IMPLEMENTATION COMPLETE AND TESTED**
    - **Method**: Parse PNG IHDR chunk (first chunk after PNG signature)
-   - **Format**: Width (4 bytes), Height (4 bytes), bit depth, color type, etc.
-   - **ExifTool reference**: `lib/Image/ExifTool/PNG.pm`
-   - **Implementation**: Add PNG format detection and IHDR parsing
+   - **Implementation**: Added PNG processing module `src/formats/png.rs` with IHDR chunk parser
+   - **Integration**: Added PNG case to format dispatch in `src/formats/mod.rs:758`
+   - **Testing**: Verified with 3 PNG files: `test-images/example.png` (1130×726), `test-images/example-original.png` (1130×726), `third-party/exiftool/t/images/PNG.png` (16×16)
+   - **Tags Extracted**: PNG:ImageWidth, PNG:ImageHeight, PNG:BitDepth, PNG:ColorType, PNG:Compression, PNG:Filter, PNG:Interlace
+   - **ExifTool Compliance**: ✅ Uses identical algorithm to ExifTool's PNG.pm:387-423 (ImageHeader processing)
+   - **Group Assignment**: PNG tags assigned to "PNG" group (not "File" group like JPEG)
 
-#### 7. **WebP Files** (Priority: LOW)
-   - **Method**: Parse WebP VP8/VP8L/VP8X chunk headers
+#### 2. **GIF** (HIGH PRIORITY)
+   - **Why Important**: Still widely used, simple header format
+   - **Method**: Parse GIF header (Screen Descriptor)
+   - **Format**: Width/Height in logical screen descriptor (bytes 6-9)
+   - **ExifTool reference**: `lib/Image/ExifTool/GIF.pm`
+
+#### 3. **WebP** (HIGH PRIORITY) 
+   - **Why Important**: Modern web format, growing adoption
+   - **Method**: Parse WebP VP8/VP8L/VP8X chunk headers  
    - **ExifTool reference**: `lib/Image/ExifTool/RIFF.pm` (WebP is RIFF-based)
-   - **Implementation**: Add WebP format detection and chunk parsing
 
-#### 8. **Video Files** (Priority: LOW - if PhotoStructure needs it)
-   - **Method**: Parse container headers (MP4, MOV, AVI, etc.)
-   - **Complexity**: High - each container format is different
-   - **ExifTool reference**: Various modules (QuickTime.pm, RIFF.pm, etc.)
+#### 4. **TIFF** (MEDIUM PRIORITY)
+   - **Method**: Extract from TIFF IFD tags 0x0100 (ImageWidth) and 0x0101 (ImageLength)
+   - **Implementation**: Should use existing TIFF processing in `src/formats/mod.rs`
+   - **Note**: May already work, needs testing
+
+#### 5. **SVG** (LOWER PRIORITY)
+   - **Method**: Parse XML `<svg>` element width/height attributes
+   - **Complexity**: Requires XML parsing, viewBox calculations
+   - **Note**: Dimensions may be in various units (px, %, em, etc.)
+
+### **Phase 2: Modern Efficient Formats** (HIGH PRIORITY)
+
+#### 1. **HEIC/HEIF/AVIF** (Apple and modern formats)
+   - **Why Important**: Default format for modern iPhones, growing AVIF adoption
+   - **Method**: Parse HEIF container, find primary image dimensions
+   - **Complexity**: Complex container format, may need specialized library support
+   - **ExifTool reference**: `lib/Image/ExifTool/QuickTime.pm` (HEIF uses ISO Base Media File Format)
+
+### **Phase 3: Priority RAW Formats** (MEDIUM-HIGH PRIORITY)
+
+#### 1. **Adobe DNG** (HIGHEST RAW PRIORITY)
+   - **Why First**: Universal RAW standard, TIFF-based
+   - **Implementation**: Should use existing `extract_tiff_dimensions()` utility
+
+#### 2. **Canon CR3** (HIGH RAW PRIORITY) 
+   - **Why Important**: Modern Canon cameras (2018+)
+   - **Method**: Canon's newer container format
+   - **ExifTool reference**: `lib/Image/ExifTool/Canon.pm`
+
+#### 3. **Nikon NEF** (HIGH RAW PRIORITY)
+   - **Implementation**: Should use existing `extract_tiff_dimensions()` utility
+   - **ExifTool reference**: `lib/Image/ExifTool/Nikon.pm`
+
+#### 4. **Fuji RAF, Olympus ORF, Panasonic RW2** (MEDIUM RAW PRIORITY)
+   - **Why Important**: Popular mirrorless manufacturers
+   - **Implementation**: Use existing TIFF-based utility with manufacturer-specific enhancements
+
+### **Phase 4: Video Formats** (SPECIALIZED PRIORITY)
+
+#### 1. **MP4/MOV** (HIGHEST VIDEO PRIORITY)
+   - **Why First**: Most common video containers
+   - **Method**: Parse container metadata, find video track dimensions
+   - **ExifTool reference**: `lib/Image/ExifTool/QuickTime.pm`
+
+#### 2. **Other Video Containers** (LOWER VIDEO PRIORITY)
+   - **AVI, MKV, WebM, etc.**: Each requires container-specific parsing
+   - **Complexity**: High - video containers are complex, may need ffmpeg integration
 
 ## Implementation Guide
 
@@ -164,6 +300,126 @@ RAW formats store dimensions in TIFF-like structures but locations vary by manuf
 - Dimensions available even with corrupted/missing EXIF data
 - Proper error handling for malformed files
 - All compatibility tests pass (`make compat`)
+
+## Engineer Handoff: Critical Knowledge for Next Implementation (July 23, 2025)
+
+### **Completed Work Summary**
+
+✅ **JPEG Dimensions**: Complete via SOF marker parsing in `src/formats/jpeg.rs`  
+✅ **Canon CR2 Dimensions**: Complete via shared TIFF utility in `src/raw/formats/canon.rs`  
+🔄 **Sony ARW Dimensions**: ~90% complete, shared utility exists, needs final integration  
+
+### **Shared Infrastructure Created**
+
+**Key Innovation**: `src/raw/mod.rs::utils::extract_tiff_dimensions()` (lines 233-370)
+- **Purpose**: Extract ImageWidth/ImageHeight from any TIFF-based file (ARW, CR2, NEF, etc.)  
+- **Features**: Handles both IFD0 and SubIFD locations, byte order aware, error resilient
+- **Integration**: Called from both RAW handlers and TIFF branch for dual coverage
+- **Testing**: Verified working with Canon CR2, enhanced for Sony ARW SubIFD support
+
+### **Architecture Discoveries (CRITICAL)**
+
+1. **ARW Processing Path**: ARW files go through `formats/mod.rs` TIFF branch (line 474), NOT RAW branch
+   - **File Detection**: `file sony.arw` shows "TIFF image data" - explains routing
+   - **Integration Point**: Add `extract_tiff_dimensions()` call after `parse_exif_data()` succeeds
+
+2. **Group Assignment Strategy**:
+   - **JPEG/PNG**: Create `File:ImageWidth/Height` (from file structure)
+   - **TIFF/RAW**: Create `EXIF:ImageWidth/Height` (from TIFF IFD tags)
+   - **ExifTool Compliance**: Match ExifTool's group assignment exactly
+
+3. **Dual Coverage Pattern**: Many formats get processed twice (RAW + TIFF branches)
+   - **Benefit**: Redundancy ensures dimensions are extracted
+   - **Implementation**: Both paths should call same utility function
+
+### **Research Revelations**
+
+1. **TIFF Dimension Complexity**: Sony ARW often stores dimensions in SubIFD (tag 0x014A), not IFD0
+   - **Solution**: Enhanced `extract_tiff_dimensions()` to check both locations
+   - **Debugging**: Added comprehensive logging for IFD entry scanning
+
+2. **Canon vs Sony**: Canon CR2 uses standard IFD0 tags, Sony ARW uses various locations
+   - **Shared Utility**: One function handles both via fallback logic
+   - **Performance**: Early exit when both dimensions found
+
+3. **ExifTool Reference Pattern**: Always find the exact ExifTool source location
+   - **TIFF Dimensions**: `lib/Image/ExifTool/Exif.pm:460-473` (tags 0x0100/0x0101)
+   - **JPEG SOF**: `lib/Image/ExifTool.pm:7321-7336` (SOF marker parsing)
+
+### **Next Engineer Success Criteria**
+
+**For PNG Implementation**:
+1. ✅ **File:ImageWidth** and **File:ImageHeight** extracted from IHDR chunk
+2. ✅ **Values match ExifTool exactly**: `exiftool -j -G test.png | grep ImageWidth`
+3. ✅ **Error handling** for malformed/truncated PNG files
+4. ✅ **Integration** in `formats/mod.rs` PNG branch (create if needed)
+5. ✅ **Testing** with multiple PNG files from `test-images/`
+
+### **Code Locations to Study**
+
+**Essential Files**:
+- `src/formats/mod.rs:280-342` - JPEG dimension extraction pattern (reference implementation)
+- `src/raw/mod.rs:233-370` - Shared TIFF dimension utility (reusable pattern)
+- `src/formats/jpeg.rs:parse_sof_data()` - Binary parsing example
+- `third-party/exiftool/lib/Image/ExifTool/PNG.pm` - ExifTool PNG implementation
+
+**Integration Points**:
+- `src/formats/mod.rs:227` - Format dispatch logic (add PNG case)
+- `src/file_detection.rs` - File type detection (PNG already supported)
+
+### **Testing Strategy**
+
+**Development Testing**:
+```bash
+# Test specific file
+cargo run -- test-images/png/sample.png | grep -E "(ImageWidth|ImageHeight)"
+
+# Compare with ExifTool
+exiftool -j -G test-images/png/sample.png | grep -E "(ImageWidth|ImageHeight)"
+```
+
+**Validation Requirements**:
+- Values must match ExifTool exactly (numeric values may be strings in our output)
+- Must handle corrupted/truncated files gracefully
+- Must create File: group tags (not EXIF: group)
+
+### **Known Issues & Workarounds**
+
+1. **Byte Order Confusion**: Always check if format uses big-endian or little-endian
+   - **PNG**: Always big-endian (network byte order)
+   - **TIFF**: Read header to determine (II=little, MM=big)
+
+2. **Group Assignment**: Different formats assign to different groups
+   - **File Structure**: Use File: group (JPEG SOF, PNG IHDR)
+   - **Metadata Tags**: Use EXIF: group (TIFF IFD tags)
+
+3. **Binary Parsing**: Use exact ExifTool unpack patterns
+   - **PNG IHDR**: `unpack('N2')` = two 32-bit big-endian values
+   - **Validation**: Always validate offsets and lengths before reading
+
+### **Future Refactoring Considerations**
+
+1. **Binary Parsing Utilities**: Create shared functions for common patterns
+   - `read_u32_be()`, `read_u32_le()` helpers
+   - TIFF IFD entry parsing utilities
+   - Chunk/segment scanning patterns
+
+2. **Error Handling**: Standardize dimension extraction error types
+   - **Graceful Degradation**: Missing dimensions shouldn't fail entire processing
+   - **Debug Logging**: Comprehensive logging for troubleshooting
+
+3. **Testing Infrastructure**: Create dimension extraction test suite
+   - **Format Coverage**: Test files for each major format
+   - **Edge Cases**: Corrupted, minimal, and unusual files
+   - **ExifTool Comparison**: Automated comparison testing
+
+### **Immediate Next Steps (for PNG)**
+
+1. **Research**: Study `third-party/exiftool/lib/Image/ExifTool/PNG.pm` IHDR parsing
+2. **Implementation**: Add PNG case to `formats/mod.rs` format dispatch
+3. **Binary Parsing**: Create PNG IHDR chunk parser (8-byte signature + 13-byte IHDR)
+4. **Testing**: Verify against ExifTool with multiple PNG files
+5. **Documentation**: Update this document with PNG completion status
 
 ## Gotchas & Tribal Knowledge
 
