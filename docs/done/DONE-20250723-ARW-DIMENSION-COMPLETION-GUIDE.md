@@ -1,8 +1,10 @@
 # ARW Dimension Extraction - Completion Guide
 
-## Status: 90% Complete - Final Integration Required
+## Status: ✅ COMPLETED (July 23, 2025)
 
-This document provides everything needed to complete Sony ARW dimension extraction implementation.
+This document provided everything needed to complete Sony ARW dimension extraction implementation.
+
+**COMPLETION SUMMARY**: Successfully implemented ARW dimension extraction with SubIFD support. Implementation extracts correct dimensions (7040×4688) matching ExifTool exactly. All tests pass.
 
 ## Critical Discovery
 
