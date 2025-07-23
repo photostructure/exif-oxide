@@ -1,0 +1,47 @@
+{
+  "extractor": "tag_kit.pl",
+  "source": "third-party/exiftool/lib/Image/ExifTool/Sony.pm",
+  "description": "Sony tag definitions with embedded PrintConv implementations",
+  "tables": [
+    {
+      "table_name": "Main",
+      "description": "Sony main tag table - quality, white balance, flash modes (62 PrintConv entries)"
+    },
+    {
+      "table_name": "CameraSettings3",
+      "description": "Sony camera settings for newer models - full camera control (48 PrintConv entries)"
+    },
+    {
+      "table_name": "CameraSettings",
+      "description": "Sony camera settings - drive modes, focus, creative styles (33 PrintConv entries)"
+    },
+    {
+      "table_name": "CameraSettings2", 
+      "description": "Sony camera settings for A230/A290/A330/A380/A390 series (28 PrintConv entries)"
+    },
+    {
+      "table_name": "MoreSettings",
+      "description": "Sony extended camera configuration options (28 PrintConv entries)"
+    },
+    {
+      "table_name": "FocusInfo",
+      "description": "Sony autofocus system settings and status (9 PrintConv entries)"
+    },
+    {
+      "table_name": "CameraInfo3",
+      "description": "Sony camera information for specific model ranges (7 PrintConv entries)"
+    },
+    {
+      "table_name": "ExtraInfo3",
+      "description": "Sony additional metadata fields (7 PrintConv entries)"
+    },
+    {
+      "table_name": "Tag2010e",
+      "description": "Sony format-specific tag definitions (6 PrintConv entries)"
+    },
+    {
+      "table_name": "Tag2010g",
+      "description": "Sony additional specialized tags (5 PrintConv entries)"
+    }
+  ]
+}
