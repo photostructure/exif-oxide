@@ -312,7 +312,7 @@ impl FileTypeDetector {
 
         // If no direct match, check if this file type has a format that has magic patterns
         // ExifTool uses the format (MOV, TIFF, etc.) for magic pattern matching
-        if let Some((formats, _desc)) = resolve_file_type(file_type) {
+        if let Some((_formats, _desc)) = resolve_file_type(file_type) {
             // Try magic pattern for the primary format
             // TODO: Uncomment when matches_magic_number is generated
             // if matches_magic_number(formats[0], buffer) {
