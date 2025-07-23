@@ -250,4 +250,3 @@ pub static SPECIAL_TAGS: &[TagDef] = &[
         notes: Some("used in some Kodak KDC images"),
     },
 ];
-

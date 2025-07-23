@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for Tag2010g table
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Sony.pm (table: Tag2010g)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -34,9 +34,8 @@ static TAG2010G_RELEASE_MODE2_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_RELEASE_MODE2: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_RELEASE_MODE2_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_RELEASE_MODE2: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| TAG2010G_RELEASE_MODE2_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_tag2010g__release_mode2(key: u8) -> Option<&'static str> {
@@ -55,9 +54,8 @@ static TAG2010G_RELEASE_MODE3_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_RELEASE_MODE3: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_RELEASE_MODE3_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_RELEASE_MODE3: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| TAG2010G_RELEASE_MODE3_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_tag2010g__release_mode3(key: u8) -> Option<&'static str> {
@@ -92,9 +90,8 @@ static TAG2010G_RELEASE_MODE2_528_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_RELEASE_MODE2_528: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_RELEASE_MODE2_528_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_RELEASE_MODE2_528: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| TAG2010G_RELEASE_MODE2_528_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_tag2010g__release_mode2_528(key: u8) -> Option<&'static str> {
@@ -102,16 +99,12 @@ pub fn lookup_tag2010g__release_mode2_528(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (3 entries)
-static TAG2010G_SELF_TIMER_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "Self-timer 10 s"),
-    (2, "Self-timer 2 s"),
-];
+static TAG2010G_SELF_TIMER_DATA: &[(u8, &'static str)] =
+    &[(0, "Off"), (1, "Self-timer 10 s"), (2, "Self-timer 2 s")];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_SELF_TIMER: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_SELF_TIMER_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_SELF_TIMER: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| TAG2010G_SELF_TIMER_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_tag2010g__self_timer(key: u8) -> Option<&'static str> {
@@ -129,9 +122,8 @@ static TAG2010G_FLASH_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_FLASH_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_FLASH_MODE_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_FLASH_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| TAG2010G_FLASH_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_tag2010g__flash_mode(key: u8) -> Option<&'static str> {
@@ -151,9 +143,13 @@ static TAG2010G_DYNAMIC_RANGE_OPTIMIZER_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_DYNAMIC_RANGE_OPTIMIZER: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_DYNAMIC_RANGE_OPTIMIZER_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_DYNAMIC_RANGE_OPTIMIZER: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        TAG2010G_DYNAMIC_RANGE_OPTIMIZER_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_tag2010g__dynamic_range_optimizer(key: u8) -> Option<&'static str> {
@@ -173,9 +169,8 @@ static TAG2010G_H_D_R_SETTING_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_H_D_R_SETTING: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_H_D_R_SETTING_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_H_D_R_SETTING: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| TAG2010G_H_D_R_SETTING_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_tag2010g__h_d_r_setting(key: u8) -> Option<&'static str> {
@@ -201,9 +196,8 @@ static TAG2010G_PICTURE_EFFECT2_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_PICTURE_EFFECT2: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_PICTURE_EFFECT2_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_PICTURE_EFFECT2: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| TAG2010G_PICTURE_EFFECT2_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_tag2010g__picture_effect2(key: u8) -> Option<&'static str> {
@@ -211,16 +205,12 @@ pub fn lookup_tag2010g__picture_effect2(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (3 entries)
-static TAG2010G_QUALITY2_DATA: &[(u8, &'static str)] = &[
-    (0, "JPEG"),
-    (1, "RAW"),
-    (2, "RAW + JPEG"),
-];
+static TAG2010G_QUALITY2_DATA: &[(u8, &'static str)] =
+    &[(0, "JPEG"), (1, "RAW"), (2, "RAW + JPEG")];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_QUALITY2: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_QUALITY2_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_QUALITY2: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| TAG2010G_QUALITY2_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_tag2010g__quality2(key: u8) -> Option<&'static str> {
@@ -237,9 +227,8 @@ static TAG2010G_METERING_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_METERING_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_METERING_MODE_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_METERING_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| TAG2010G_METERING_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_tag2010g__metering_mode(key: u8) -> Option<&'static str> {
@@ -284,9 +273,8 @@ static TAG2010G_EXPOSURE_PROGRAM_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_EXPOSURE_PROGRAM: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_EXPOSURE_PROGRAM_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_EXPOSURE_PROGRAM: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| TAG2010G_EXPOSURE_PROGRAM_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_tag2010g__exposure_program(key: u8) -> Option<&'static str> {
@@ -294,16 +282,12 @@ pub fn lookup_tag2010g__exposure_program(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (3 entries)
-static TAG2010G_LENS_FORMAT_DATA: &[(u8, &'static str)] = &[
-    (0, "Unknown"),
-    (1, "APS-C"),
-    (2, "Full-frame"),
-];
+static TAG2010G_LENS_FORMAT_DATA: &[(u8, &'static str)] =
+    &[(0, "Unknown"), (1, "APS-C"), (2, "Full-frame")];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_LENS_FORMAT: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_LENS_FORMAT_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_LENS_FORMAT: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| TAG2010G_LENS_FORMAT_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_tag2010g__lens_format(key: u8) -> Option<&'static str> {
@@ -311,16 +295,12 @@ pub fn lookup_tag2010g__lens_format(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (3 entries)
-static TAG2010G_LENS_MOUNT_DATA: &[(u8, &'static str)] = &[
-    (0, "Unknown"),
-    (1, "A-mount"),
-    (2, "E-mount"),
-];
+static TAG2010G_LENS_MOUNT_DATA: &[(u8, &'static str)] =
+    &[(0, "Unknown"), (1, "A-mount"), (2, "E-mount")];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_LENS_MOUNT: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_LENS_MOUNT_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_LENS_MOUNT: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| TAG2010G_LENS_MOUNT_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_tag2010g__lens_mount(key: u8) -> Option<&'static str> {
@@ -443,21 +423,48 @@ static TAG2010G_LENS_TYPE2_DATA: &[(&'static str, &'static str)] = &[
     ("33072", "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter"),
     ("33073", "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter"),
     ("33076", "Sony FE 100mm F2.8 STF GM OSS (macro mode)"),
-    ("33077", "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter"),
-    ("33078", "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter"),
+    (
+        "33077",
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
+    ),
+    (
+        "33078",
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
+    ),
     ("33079", "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter"),
     ("33080", "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter"),
-    ("33081", "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter"),
-    ("33082", "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter"),
+    (
+        "33081",
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
+    ),
+    (
+        "33082",
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
+    ),
     ("33083", "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter"),
     ("33084", "Sony FE 600mm F4 GM OSS + 2X Teleconverter"),
-    ("33085", "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter"),
-    ("33086", "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter"),
-    ("33087", "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter"),
-    ("33088", "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter"),
+    (
+        "33085",
+        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
+    ),
+    (
+        "33086",
+        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
+    ),
+    (
+        "33087",
+        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
+    ),
+    (
+        "33088",
+        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
+    ),
     ("33089", "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter"),
     ("33090", "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter"),
-    ("33091", "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter"),
+    (
+        "33091",
+        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
+    ),
     ("33092", "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter"),
     ("44", "Metabones Canon EF Smart Adapter"),
     ("49201", "Zeiss Touit 12mm F2.8"),
@@ -490,12 +497,18 @@ static TAG2010G_LENS_TYPE2_DATA: &[(&'static str, &'static str)] = &[
     ("49470", "Tamron 28-75mm F2.8 Di III VXD G2"),
     ("49471", "Tamron 50-400mm F4.5-6.3 Di III VC VXD"),
     ("49472", "Tamron 20-40mm F2.8 Di III VXD"),
-    ("49473", "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens"),
+    (
+        "49473",
+        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
+    ),
     ("49473.1", "Tokina atx-m 85mm F1.8 FE"),
     ("49473.2", "Viltrox 23mm F1.4 E"),
     ("49473.3", "Viltrox 56mm F1.4 E"),
     ("49473.4", "Viltrox 85mm F1.8 II FE"),
-    ("49474", "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens"),
+    (
+        "49474",
+        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
+    ),
     ("49474.1", "Viltrox 13mm F1.4 E"),
     ("49474.10", "Viltrox 20mm F2.8 FE"),
     ("49474.2", "Viltrox 16mm F1.8 FE"),
@@ -514,7 +527,10 @@ static TAG2010G_LENS_TYPE2_DATA: &[(&'static str, &'static str)] = &[
     ("49714", "Tokina atx-m 11-18mm F2.8 E"),
     ("50480", "Sigma 30mm F1.4 DC DN | C"),
     ("50481", "Sigma 50mm F1.4 DG HSM | A"),
-    ("50482", "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11"),
+    (
+        "50482",
+        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
+    ),
     ("50483", "Sigma 18-35mm F1.8 DC HSM | A + MC-11"),
     ("50484", "Sigma 24-35mm F2 DG HSM | A + MC-11"),
     ("50485", "Sigma 24mm F1.4 DG HSM | A + MC-11"),
@@ -604,13 +620,15 @@ static TAG2010G_LENS_TYPE2_DATA: &[(&'static str, &'static str)] = &[
     ("61569", "LAOWA FFII 10mm F2.8 C&D Dreamer"),
     ("61761", "Viltrox 28mm F4.5 FE"),
     ("7", "Sony LA-EA5 Adapter"),
-    ("78", "Metabones Canon EF Smart Adapter Mark III or Other Adapter"),
+    (
+        "78",
+        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
+    ),
 ];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_LENS_TYPE2: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
-    TAG2010G_LENS_TYPE2_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_LENS_TYPE2: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| TAG2010G_LENS_TYPE2_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_tag2010g__lens_type2(key: &str) -> Option<&'static str> {
@@ -618,15 +636,17 @@ pub fn lookup_tag2010g__lens_type2(key: &str) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static TAG2010G_DISTORTION_CORR_PARAMS_PRESENT_DATA: &[(u8, &'static str)] = &[
-    (0, "No"),
-    (1, "Yes"),
-];
+static TAG2010G_DISTORTION_CORR_PARAMS_PRESENT_DATA: &[(u8, &'static str)] =
+    &[(0, "No"), (1, "Yes")];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_DISTORTION_CORR_PARAMS_PRESENT: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_DISTORTION_CORR_PARAMS_PRESENT_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_DISTORTION_CORR_PARAMS_PRESENT: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        TAG2010G_DISTORTION_CORR_PARAMS_PRESENT_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_tag2010g__distortion_corr_params_present(key: u8) -> Option<&'static str> {
@@ -634,15 +654,17 @@ pub fn lookup_tag2010g__distortion_corr_params_present(key: u8) -> Option<&'stat
 }
 
 /// Raw data (2 entries)
-static TAG2010G_DISTORTION_CORR_PARAMS_NUMBER_DATA: &[(u8, &'static str)] = &[
-    (11, "11 (APS-C)"),
-    (16, "16 (Full-frame)"),
-];
+static TAG2010G_DISTORTION_CORR_PARAMS_NUMBER_DATA: &[(u8, &'static str)] =
+    &[(11, "11 (APS-C)"), (16, "16 (Full-frame)")];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_DISTORTION_CORR_PARAMS_NUMBER: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_DISTORTION_CORR_PARAMS_NUMBER_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_DISTORTION_CORR_PARAMS_NUMBER: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        TAG2010G_DISTORTION_CORR_PARAMS_NUMBER_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_tag2010g__distortion_corr_params_number(key: u8) -> Option<&'static str> {
@@ -659,9 +681,8 @@ static TAG2010G_ASPECT_RATIO_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_ASPECT_RATIO: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_ASPECT_RATIO_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_ASPECT_RATIO: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| TAG2010G_ASPECT_RATIO_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_tag2010g__aspect_ratio(key: u8) -> Option<&'static str> {
@@ -681,9 +702,13 @@ static TAG2010G_DYNAMIC_RANGE_OPTIMIZER_80_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static TAG2010G_DYNAMIC_RANGE_OPTIMIZER_80: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    TAG2010G_DYNAMIC_RANGE_OPTIMIZER_80_DATA.iter().cloned().collect()
-});
+pub static TAG2010G_DYNAMIC_RANGE_OPTIMIZER_80: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        TAG2010G_DYNAMIC_RANGE_OPTIMIZER_80_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_tag2010g__dynamic_range_optimizer_80(key: u8) -> Option<&'static str> {

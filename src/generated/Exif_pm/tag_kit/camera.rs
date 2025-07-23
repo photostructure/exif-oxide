@@ -6,12 +6,12 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
+use super::{PrintConvType, TagKitDef};
+use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
-use crate::types::TagValue;
-use super::{TagKitDef, PrintConvType};
 
-static PRINT_CONV_49: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_9: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "None");
     map.insert("2".to_string(), "Horizontal differencing");
@@ -26,65 +26,83 @@ static PRINT_CONV_49: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
 /// Get tag definitions for camera category
 pub fn get_camera_tags() -> Vec<(u32, TagKitDef)> {
     vec![
-        (271, TagKitDef {
-            id: 271,
-            name: "Make",
-            format: "string",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-        }),
-        (272, TagKitDef {
-            id: 272,
-            name: "Model",
-            format: "string",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-        }),
-        (305, TagKitDef {
-            id: 305,
-            name: "Software",
-            format: "string",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-        }),
-        (315, TagKitDef {
-            id: 315,
-            name: "Artist",
-            format: "string",
-            groups: HashMap::new(),
-            writable: true,
-            notes: Some("becomes a list-type tag when the MWG module is loaded"),
-            print_conv: PrintConvType::None,
-            value_conv: None,
-        }),
-        (316, TagKitDef {
-            id: 316,
-            name: "HostComputer",
-            format: "string",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-        }),
-        (317, TagKitDef {
-            id: 317,
-            name: "Predictor",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_49),
-            value_conv: None,
-        }),
+        (
+            271,
+            TagKitDef {
+                id: 271,
+                name: "Make",
+                format: "string",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            272,
+            TagKitDef {
+                id: 272,
+                name: "Model",
+                format: "string",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            305,
+            TagKitDef {
+                id: 305,
+                name: "Software",
+                format: "string",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            315,
+            TagKitDef {
+                id: 315,
+                name: "Artist",
+                format: "string",
+                groups: HashMap::new(),
+                writable: true,
+                notes: Some("becomes a list-type tag when the MWG module is loaded"),
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            316,
+            TagKitDef {
+                id: 316,
+                name: "HostComputer",
+                format: "string",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            317,
+            TagKitDef {
+                id: 317,
+                name: "Predictor",
+                format: "int16u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_9),
+                value_conv: None,
+            },
+        ),
     ]
 }

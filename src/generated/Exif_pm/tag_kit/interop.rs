@@ -6,12 +6,12 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
+use super::{PrintConvType, TagKitDef};
+use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
-use crate::types::TagValue;
-use super::{TagKitDef, PrintConvType};
 
-static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_26: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("R03".to_string(), "R03 - DCF option file (Adobe RGB)");
     map.insert("R98".to_string(), "R98 - DCF basic file (sRGB)");
@@ -22,65 +22,83 @@ static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
 /// Get tag definitions for interop category
 pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
     vec![
-        (1, TagKitDef {
-            id: 1,
-            name: "InteropIndex",
-            format: "string",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_0),
-            value_conv: None,
-        }),
-        (2, TagKitDef {
-            id: 2,
-            name: "InteropVersion",
-            format: "undef",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-        }),
-        (4096, TagKitDef {
-            id: 4096,
-            name: "RelatedImageFileFormat",
-            format: "string",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-        }),
-        (40965, TagKitDef {
-            id: 40965,
-            name: "InteropOffset",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-        }),
-        (4097, TagKitDef {
-            id: 4097,
-            name: "RelatedImageWidth",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-        }),
-        (4098, TagKitDef {
-            id: 4098,
-            name: "RelatedImageHeight",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: Some("called RelatedImageLength by the DCF spec."),
-            print_conv: PrintConvType::None,
-            value_conv: None,
-        }),
+        (
+            1,
+            TagKitDef {
+                id: 1,
+                name: "InteropIndex",
+                format: "string",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_26),
+                value_conv: None,
+            },
+        ),
+        (
+            2,
+            TagKitDef {
+                id: 2,
+                name: "InteropVersion",
+                format: "undef",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            4096,
+            TagKitDef {
+                id: 4096,
+                name: "RelatedImageFileFormat",
+                format: "string",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            40965,
+            TagKitDef {
+                id: 40965,
+                name: "InteropOffset",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            4097,
+            TagKitDef {
+                id: 4097,
+                name: "RelatedImageWidth",
+                format: "int16u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            4098,
+            TagKitDef {
+                id: 4098,
+                name: "RelatedImageHeight",
+                format: "int16u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: Some("called RelatedImageLength by the DCF spec."),
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
     ]
 }

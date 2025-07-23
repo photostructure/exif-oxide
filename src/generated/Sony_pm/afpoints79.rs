@@ -1,5 +1,5 @@
 //! Sony 79-point AF system point mappings
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Sony.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -90,9 +90,8 @@ static SONY_AF_POINTS_79_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static SONY_AF_POINTS_79: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    SONY_AF_POINTS_79_DATA.iter().cloned().collect()
-});
+pub static SONY_AF_POINTS_79: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| SONY_AF_POINTS_79_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_sony_af_points_79(key: u8) -> Option<&'static str> {

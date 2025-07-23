@@ -84,7 +84,12 @@
       "Bash(do echo \"=== $dir ===\")",
       "Bash(done)",
       "Bash(./exiftool -j -struct -G ../../test-images/minolta/DiMAGE_7.jpg)",
-      "Bash(echo $?)"
+      "Bash(echo $?)",
+      "Bash(grep -i \"tag_kit.*PanasonicRaw\" /home/mrm/src/exif-oxide/codegen/generated/extract/*.log)",
+      "Bash(find /home/mrm/src/exif-oxide/codegen/config -name \"tag_kit.json\" -exec ls -la {} ;)",
+      "Bash(find /home/mrm/src/exif-oxide/third-party/exiftool -name \"Sony*\")",
+      "Bash(find /home/mrm/src/exif-oxide/third-party/exiftool -name \"*.arw\" -o -name \"*ARW*\" -o -name \"Sony*\")",
+      "Bash(RUST_LOG=debug cargo run -- third-party/exiftool/t/images/Canon.jpg)"
     ],
     "deny": []
   }

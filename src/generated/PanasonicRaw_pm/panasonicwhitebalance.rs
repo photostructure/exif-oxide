@@ -1,5 +1,5 @@
 //! Panasonic white balance settings
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/PanasonicRaw.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -26,9 +26,8 @@ static PANASONIC_WHITE_BALANCE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static PANASONIC_WHITE_BALANCE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    PANASONIC_WHITE_BALANCE_DATA.iter().cloned().collect()
-});
+pub static PANASONIC_WHITE_BALANCE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| PANASONIC_WHITE_BALANCE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_panasonic_white_balance(key: u8) -> Option<&'static str> {

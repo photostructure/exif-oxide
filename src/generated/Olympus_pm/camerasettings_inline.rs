@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for CameraSettings table
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Olympus.pm (table: CameraSettings)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -7,14 +7,11 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (1 entries)
-static CAMERA_SETTINGS_FLASH_MODE_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-];
+static CAMERA_SETTINGS_FLASH_MODE_DATA: &[(u8, &'static str)] = &[(0, "Off")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_FLASH_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_FLASH_MODE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_FLASH_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS_FLASH_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings__flash_mode(key: u8) -> Option<&'static str> {
@@ -39,9 +36,13 @@ static CAMERA_SETTINGS_FLASH_REMOTE_CONTROL_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_FLASH_REMOTE_CONTROL: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_FLASH_REMOTE_CONTROL_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_FLASH_REMOTE_CONTROL: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_FLASH_REMOTE_CONTROL_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__flash_remote_control(key: u8) -> Option<&'static str> {
@@ -76,9 +77,13 @@ static CAMERA_SETTINGS_WHITE_BALANCE2_DATA: &[(u16, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_WHITE_BALANCE2: LazyLock<HashMap<u16, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_WHITE_BALANCE2_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_WHITE_BALANCE2: LazyLock<HashMap<u16, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_WHITE_BALANCE2_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__white_balance2(key: u16) -> Option<&'static str> {
@@ -95,9 +100,13 @@ static CAMERA_SETTINGS_MODIFIED_SATURATION_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_MODIFIED_SATURATION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_MODIFIED_SATURATION_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_MODIFIED_SATURATION: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_MODIFIED_SATURATION_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__modified_saturation(key: u8) -> Option<&'static str> {
@@ -105,16 +114,12 @@ pub fn lookup_camera_settings__modified_saturation(key: u8) -> Option<&'static s
 }
 
 /// Raw data (3 entries)
-static CAMERA_SETTINGS_COLOR_SPACE_DATA: &[(u8, &'static str)] = &[
-    (0, "sRGB"),
-    (1, "Adobe RGB"),
-    (2, "Pro Photo RGB"),
-];
+static CAMERA_SETTINGS_COLOR_SPACE_DATA: &[(u8, &'static str)] =
+    &[(0, "sRGB"), (1, "Adobe RGB"), (2, "Pro Photo RGB")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_COLOR_SPACE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_COLOR_SPACE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_COLOR_SPACE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS_COLOR_SPACE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings__color_space(key: u8) -> Option<&'static str> {
@@ -188,9 +193,8 @@ static CAMERA_SETTINGS_SCENE_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_SCENE_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_SCENE_MODE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_SCENE_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS_SCENE_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings__scene_mode(key: u8) -> Option<&'static str> {
@@ -198,14 +202,16 @@ pub fn lookup_camera_settings__scene_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (1 entries)
-static CAMERA_SETTINGS_NOISE_REDUCTION_DATA: &[(u8, &'static str)] = &[
-    (0, "(none)"),
-];
+static CAMERA_SETTINGS_NOISE_REDUCTION_DATA: &[(u8, &'static str)] = &[(0, "(none)")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_NOISE_REDUCTION_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_NOISE_REDUCTION_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__noise_reduction(key: u8) -> Option<&'static str> {
@@ -213,15 +219,16 @@ pub fn lookup_camera_settings__noise_reduction(key: u8) -> Option<&'static str> 
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS_DISTORTION_CORRECTION_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On"),
-];
+static CAMERA_SETTINGS_DISTORTION_CORRECTION_DATA: &[(u8, &'static str)] = &[(0, "Off"), (1, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_DISTORTION_CORRECTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_DISTORTION_CORRECTION_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_DISTORTION_CORRECTION: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_DISTORTION_CORRECTION_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__distortion_correction(key: u8) -> Option<&'static str> {
@@ -229,15 +236,16 @@ pub fn lookup_camera_settings__distortion_correction(key: u8) -> Option<&'static
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS_SHADING_COMPENSATION_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On"),
-];
+static CAMERA_SETTINGS_SHADING_COMPENSATION_DATA: &[(u8, &'static str)] = &[(0, "Off"), (1, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_SHADING_COMPENSATION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_SHADING_COMPENSATION_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_SHADING_COMPENSATION: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_SHADING_COMPENSATION_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__shading_compensation(key: u8) -> Option<&'static str> {
@@ -255,9 +263,13 @@ static CAMERA_SETTINGS_PICTURE_MODE_B_W_FILTER_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_PICTURE_MODE_B_W_FILTER: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_PICTURE_MODE_B_W_FILTER_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_PICTURE_MODE_B_W_FILTER: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_PICTURE_MODE_B_W_FILTER_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__picture_mode_b_w_filter(key: u8) -> Option<&'static str> {
@@ -275,9 +287,13 @@ static CAMERA_SETTINGS_PICTURE_MODE_TONE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_PICTURE_MODE_TONE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_PICTURE_MODE_TONE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_PICTURE_MODE_TONE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_PICTURE_MODE_TONE_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__picture_mode_tone(key: u8) -> Option<&'static str> {
@@ -294,9 +310,8 @@ static CAMERA_SETTINGS_NOISE_FILTER_DATA: &[(&'static str, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_NOISE_FILTER: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_NOISE_FILTER_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_NOISE_FILTER: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS_NOISE_FILTER_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings__noise_filter(key: &str) -> Option<&'static str> {
@@ -312,9 +327,13 @@ static CAMERA_SETTINGS_PICTURE_MODE_EFFECT_DATA: &[(&'static str, &'static str)]
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_PICTURE_MODE_EFFECT: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_PICTURE_MODE_EFFECT_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_PICTURE_MODE_EFFECT: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_PICTURE_MODE_EFFECT_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__picture_mode_effect(key: &str) -> Option<&'static str> {
@@ -322,17 +341,17 @@ pub fn lookup_camera_settings__picture_mode_effect(key: &str) -> Option<&'static
 }
 
 /// Raw data (4 entries)
-static CAMERA_SETTINGS_FILM_GRAIN_EFFECT_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "Low"),
-    (2, "Medium"),
-    (3, "High"),
-];
+static CAMERA_SETTINGS_FILM_GRAIN_EFFECT_DATA: &[(u8, &'static str)] =
+    &[(0, "Off"), (1, "Low"), (2, "Medium"), (3, "High")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_FILM_GRAIN_EFFECT: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_FILM_GRAIN_EFFECT_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_FILM_GRAIN_EFFECT: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_FILM_GRAIN_EFFECT_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__film_grain_effect(key: u8) -> Option<&'static str> {
@@ -350,9 +369,13 @@ static CAMERA_SETTINGS_MONOCHROME_COLOR_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_MONOCHROME_COLOR: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_MONOCHROME_COLOR_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_MONOCHROME_COLOR: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_MONOCHROME_COLOR_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__monochrome_color(key: u8) -> Option<&'static str> {
@@ -360,18 +383,17 @@ pub fn lookup_camera_settings__monochrome_color(key: u8) -> Option<&'static str>
 }
 
 /// Raw data (5 entries)
-static CAMERA_SETTINGS_IMAGE_QUALITY2_DATA: &[(u8, &'static str)] = &[
-    (1, "SQ"),
-    (2, "HQ"),
-    (3, "SHQ"),
-    (4, "RAW"),
-    (5, "SQ (5)"),
-];
+static CAMERA_SETTINGS_IMAGE_QUALITY2_DATA: &[(u8, &'static str)] =
+    &[(1, "SQ"), (2, "HQ"), (3, "SHQ"), (4, "RAW"), (5, "SQ (5)")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_IMAGE_QUALITY2: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_IMAGE_QUALITY2_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_IMAGE_QUALITY2: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_IMAGE_QUALITY2_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__image_quality2(key: u8) -> Option<&'static str> {
@@ -388,9 +410,13 @@ static CAMERA_SETTINGS_IMAGE_STABILIZATION_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_IMAGE_STABILIZATION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_IMAGE_STABILIZATION_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_IMAGE_STABILIZATION: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_IMAGE_STABILIZATION_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__image_stabilization(key: u8) -> Option<&'static str> {
@@ -398,15 +424,16 @@ pub fn lookup_camera_settings__image_stabilization(key: u8) -> Option<&'static s
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS_EXTENDED_W_B_DETECT_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On"),
-];
+static CAMERA_SETTINGS_EXTENDED_W_B_DETECT_DATA: &[(u8, &'static str)] = &[(0, "Off"), (1, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_EXTENDED_W_B_DETECT: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_EXTENDED_W_B_DETECT_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_EXTENDED_W_B_DETECT: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_EXTENDED_W_B_DETECT_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__extended_w_b_detect(key: u8) -> Option<&'static str> {
@@ -414,15 +441,16 @@ pub fn lookup_camera_settings__extended_w_b_detect(key: u8) -> Option<&'static s
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS_PREVIEW_IMAGE_VALID_DATA: &[(u8, &'static str)] = &[
-    (0, "No"),
-    (1, "Yes"),
-];
+static CAMERA_SETTINGS_PREVIEW_IMAGE_VALID_DATA: &[(u8, &'static str)] = &[(0, "No"), (1, "Yes")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_PREVIEW_IMAGE_VALID: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_PREVIEW_IMAGE_VALID_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_PREVIEW_IMAGE_VALID: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS_PREVIEW_IMAGE_VALID_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings__preview_image_valid(key: u8) -> Option<&'static str> {
@@ -439,9 +467,8 @@ static CAMERA_SETTINGS_EXPOSURE_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_EXPOSURE_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_EXPOSURE_MODE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_EXPOSURE_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS_EXPOSURE_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings__exposure_mode(key: u8) -> Option<&'static str> {
@@ -449,15 +476,11 @@ pub fn lookup_camera_settings__exposure_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS_A_E_LOCK_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On"),
-];
+static CAMERA_SETTINGS_A_E_LOCK_DATA: &[(u8, &'static str)] = &[(0, "Off"), (1, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_A_E_LOCK: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_A_E_LOCK_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_A_E_LOCK: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS_A_E_LOCK_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings__a_e_lock(key: u8) -> Option<&'static str> {
@@ -475,9 +498,8 @@ static CAMERA_SETTINGS_METERING_MODE_DATA: &[(u16, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_METERING_MODE: LazyLock<HashMap<u16, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_METERING_MODE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_METERING_MODE: LazyLock<HashMap<u16, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS_METERING_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings__metering_mode(key: u16) -> Option<&'static str> {
@@ -485,15 +507,11 @@ pub fn lookup_camera_settings__metering_mode(key: u16) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS_N_D_FILTER_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On"),
-];
+static CAMERA_SETTINGS_N_D_FILTER_DATA: &[(u8, &'static str)] = &[(0, "Off"), (1, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_N_D_FILTER: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_N_D_FILTER_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_N_D_FILTER: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS_N_D_FILTER_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings__n_d_filter(key: u8) -> Option<&'static str> {
@@ -501,16 +519,12 @@ pub fn lookup_camera_settings__n_d_filter(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (3 entries)
-static CAMERA_SETTINGS_MACRO_MODE_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On"),
-    (2, "Super Macro"),
-];
+static CAMERA_SETTINGS_MACRO_MODE_DATA: &[(u8, &'static str)] =
+    &[(0, "Off"), (1, "On"), (2, "Super Macro")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_MACRO_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_MACRO_MODE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_MACRO_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS_MACRO_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings__macro_mode(key: u8) -> Option<&'static str> {
@@ -518,15 +532,11 @@ pub fn lookup_camera_settings__macro_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS_A_F_SEARCH_DATA: &[(u8, &'static str)] = &[
-    (0, "Not Ready"),
-    (1, "Ready"),
-];
+static CAMERA_SETTINGS_A_F_SEARCH_DATA: &[(u8, &'static str)] = &[(0, "Not Ready"), (1, "Ready")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_A_F_SEARCH: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_A_F_SEARCH_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_A_F_SEARCH: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS_A_F_SEARCH_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings__a_f_search(key: u8) -> Option<&'static str> {
@@ -534,15 +544,11 @@ pub fn lookup_camera_settings__a_f_search(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS_A_F_FINE_TUNE_DATA: &[(u8, &'static str)] = &[
-    (0, "Off"),
-    (1, "On"),
-];
+static CAMERA_SETTINGS_A_F_FINE_TUNE_DATA: &[(u8, &'static str)] = &[(0, "Off"), (1, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS_A_F_FINE_TUNE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS_A_F_FINE_TUNE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS_A_F_FINE_TUNE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS_A_F_FINE_TUNE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings__a_f_fine_tune(key: u8) -> Option<&'static str> {

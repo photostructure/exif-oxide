@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for CameraInfo3 table
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Sony.pm (table: CameraInfo3)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -21,9 +21,13 @@ static CAMERA_INFO3_A_F_POINT_SELECTED_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_INFO3_A_F_POINT_SELECTED: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_INFO3_A_F_POINT_SELECTED_DATA.iter().cloned().collect()
-});
+pub static CAMERA_INFO3_A_F_POINT_SELECTED: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_INFO3_A_F_POINT_SELECTED_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_info3__a_f_point_selected(key: u8) -> Option<&'static str> {
@@ -31,17 +35,12 @@ pub fn lookup_camera_info3__a_f_point_selected(key: u8) -> Option<&'static str> 
 }
 
 /// Raw data (4 entries)
-static CAMERA_INFO3_FOCUS_MODE_DATA: &[(u8, &'static str)] = &[
-    (0, "Manual"),
-    (1, "AF-S"),
-    (2, "AF-C"),
-    (3, "AF-A"),
-];
+static CAMERA_INFO3_FOCUS_MODE_DATA: &[(u8, &'static str)] =
+    &[(0, "Manual"), (1, "AF-S"), (2, "AF-C"), (3, "AF-A")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_INFO3_FOCUS_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_INFO3_FOCUS_MODE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_INFO3_FOCUS_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_INFO3_FOCUS_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_info3__focus_mode(key: u8) -> Option<&'static str> {
@@ -61,9 +60,8 @@ static CAMERA_INFO3_A_F_POINT_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_INFO3_A_F_POINT: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_INFO3_A_F_POINT_DATA.iter().cloned().collect()
-});
+pub static CAMERA_INFO3_A_F_POINT: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_INFO3_A_F_POINT_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_info3__a_f_point(key: u8) -> Option<&'static str> {
@@ -80,9 +78,8 @@ static CAMERA_INFO3_FOCUS_STATUS_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_INFO3_FOCUS_STATUS: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_INFO3_FOCUS_STATUS_DATA.iter().cloned().collect()
-});
+pub static CAMERA_INFO3_FOCUS_STATUS: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_INFO3_FOCUS_STATUS_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_info3__focus_status(key: u8) -> Option<&'static str> {
@@ -110,9 +107,13 @@ static CAMERA_INFO3_A_F_POINT_SELECTED_28_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_INFO3_A_F_POINT_SELECTED_28: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_INFO3_A_F_POINT_SELECTED_28_DATA.iter().cloned().collect()
-});
+pub static CAMERA_INFO3_A_F_POINT_SELECTED_28: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_INFO3_A_F_POINT_SELECTED_28_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_info3__a_f_point_selected_28(key: u8) -> Option<&'static str> {
@@ -143,9 +144,8 @@ static CAMERA_INFO3_A_F_POINT_32_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_INFO3_A_F_POINT_32: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_INFO3_A_F_POINT_32_DATA.iter().cloned().collect()
-});
+pub static CAMERA_INFO3_A_F_POINT_32: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_INFO3_A_F_POINT_32_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_info3__a_f_point_32(key: u8) -> Option<&'static str> {
