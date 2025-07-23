@@ -761,6 +761,42 @@ make check-extractors   # Check Perl script syntax
 - **Incremental Updates**: Only regenerate changed components
 - **Fast Iteration**: Simple table changes rebuild in seconds
 
+## Anti-Patterns: What NOT to Do
+
+### ⚠️ NEVER Add Extraction Timestamps
+
+**Problem**: Generators must not include runtime timestamps in generated code comments.
+
+**Why This is Prohibited**: 
+- Timestamps change on every codegen run, even when the actual extracted data is unchanged
+- Creates spurious git diffs that hide real changes to generated code  
+- Makes it impossible to use `git diff` to track meaningful changes
+- Wastes developer time reviewing meaningless timestamp-only diffs
+
+**Examples of Banned Patterns**:
+
+```rust
+// ❌ BANNED - Creates spurious git diffs
+//! Extracted at: Wed Jul 23 17:15:51 2025 GMT
+
+// ❌ BANNED - Same problem with different format  
+//! Generated on: 2025-07-23 17:15:51 UTC
+
+// ❌ BANNED - Any volatile timestamp
+code.push_str(&format!("//! Timestamp: {}", source.extracted_at));
+```
+
+**Correct Approach**:
+
+```rust
+// ✅ GOOD - Useful source information without volatile data
+//! Generated from: Canon.pm table: canonWhiteBalance
+//! 
+//! DO NOT EDIT MANUALLY - changes will be overwritten.
+```
+
+**Message for Engineers of Tomorrow**: This anti-pattern has been removed multiple times because engineers assume timestamps are "helpful metadata." They are not. They actively harm the development workflow by making `git diff` unreliable for tracking real changes. Any PR that adds extraction timestamps will be rejected.
+
 ## Current Capabilities
 
 - **50+ Conversion Functions**: Core EXIF, GPS, and manufacturer PrintConv/ValueConv

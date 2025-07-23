@@ -185,7 +185,7 @@ mod tests {
         assert!(supported.contains(&RawFormat::Panasonic));
         assert!(supported.contains(&RawFormat::Olympus));
         assert!(supported.contains(&RawFormat::Canon));
-        assert_eq!(supported.len(), 5); // Should have exactly 5 supported formats
+        assert_eq!(supported.len(), 6); // Should have exactly 6 supported formats
     }
 
     #[test]

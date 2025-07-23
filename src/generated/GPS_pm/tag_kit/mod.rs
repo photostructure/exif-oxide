@@ -4,7 +4,7 @@
 //! DO NOT EDIT MANUALLY - changes will be overwritten.
 //!
 //! Generated from: GPS.pm table: Main
-//! Extracted at: Wed Jul 23 16:59:50 2025 GMT
+//!
 
 pub mod gps;
 
