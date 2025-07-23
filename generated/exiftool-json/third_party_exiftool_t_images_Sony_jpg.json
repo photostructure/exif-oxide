@@ -10,17 +10,6 @@
   "EXIF:Make": "SONY",
   "EXIF:Model": "DSC-F828",
   "EXIF:Orientation": "Horizontal (normal)",
-  "EXIF:ResolutionUnit": "inches",
-  "EXIF:YCbCrPositioning": "Co-sited",
-  "EXIF:ExposureTime": "1/250",
-  "EXIF:FNumber": 7.1,
-  "EXIF:ExposureProgram": "Program AE",
-  "EXIF:ISO": 64,
   "EXIF:DateTimeOriginal": "2003:12:18 13:51:33",
-  "EXIF:CreateDate": "2003:12:18 13:51:33",
-  "EXIF:MeteringMode": "Multi-segment",
-  "EXIF:Flash": "Off, Did not fire",
-  "EXIF:FocalLength": "12.5 mm",
-  "EXIF:ColorSpace": "sRGB",
-  "EXIF:WhiteBalance": "Auto"
+  "EXIF:CreateDate": "2003:12:18 13:51:33"
 }

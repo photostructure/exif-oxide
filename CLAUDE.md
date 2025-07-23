@@ -85,11 +85,13 @@ The Trust ExifTool principle is the fundamental law of the exif-oxide project: w
 
 Whenever possible, our rust code should include a comment pointing back to the ExifTool source code, function or variable name, and line number range.
 
+Or better: use CODEGEN!
+
 ### 2. Only `perl` can parse `perl`
 
 WE CANNOT INTERPRET PERL CODE IN RUST.
 
-The perl interpreter is the only competent perl parsing! There are too many gotchas and surprising perl-isms--any perl parser we make in rust or regex is a bad idea, be brittle, lead us to ruin, and haunt us in the future.
+The perl interpreter is the only competent perl parser! There are too many gotchas and surprising perl-isms--any perl parser we make in rust needs to be super conservative and strict with its allowed inputs.
 
 ### 3. Incremental improvements with a focus on common, mainstream tags
 
@@ -104,6 +106,10 @@ To maintain a manageable scope:
 ExifTool releases new versions monthly. The more our code can be generated automatically from ExifTool source, the better.
 
 **CRITICAL**: If you ever see any simple, static mapping in our code, **immediately look for where that came from in the ExifTool source, and ask the user to rewrite it with the codegen infrastructure**. See [CODEGEN.md](docs/CODEGEN.md) "Simple Table Extraction Framework" for details.
+
+### 5. DO NOT EDIT THE FILES THAT SAY DO NOT EDIT
+
+Everything in `src/generated` **is generated code** -- if you edit the file directly, the next time `make codegen` is run, your edit will be deleted.
 
 #### Simple Table Detection
 

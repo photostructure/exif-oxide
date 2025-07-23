@@ -10,15 +10,6 @@
   "EXIF:Make": "Konica Minolta Camera, Inc.",
   "EXIF:Model": "DiMAGE A2",
   "EXIF:Orientation": "Horizontal (normal)",
-  "EXIF:ExposureTime": "1/5",
-  "EXIF:FNumber": 2.8,
-  "EXIF:ExposureProgram": "Manual",
-  "EXIF:ISO": 64,
   "EXIF:DateTimeOriginal": "2004:11:18 23:14:58",
-  "EXIF:CreateDate": "2004:11:18 23:14:58",
-  "EXIF:MeteringMode": "Unknown",
-  "EXIF:Flash": "Off, Did not fire",
-  "EXIF:FocalLength": "7.2 mm",
-  "EXIF:ColorSpace": "sRGB",
-  "EXIF:WhiteBalance": "Auto"
+  "EXIF:CreateDate": "2004:11:18 23:14:58"
 }

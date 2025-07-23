@@ -33,20 +33,14 @@ fn test_resolution_unit_tag_kit_parity() {
         assert_eq!(
             manual_result.to_string(),
             tag_kit_result.to_string(),
-            "ResolutionUnit mismatch for value {}: manual='{}', tag_kit='{}'",
-            value,
-            manual_result,
-            tag_kit_result
+            "ResolutionUnit mismatch for value {value}: manual='{manual_result}', tag_kit='{tag_kit_result}'"
         );
 
         // Both should match expected
         assert_eq!(
             manual_result.to_string(),
             expected,
-            "ResolutionUnit unexpected result for value {}: got '{}', expected '{}'",
-            value,
-            manual_result,
-            expected
+            "ResolutionUnit unexpected result for value {value}: got '{manual_result}', expected '{expected}'"
         );
     }
 }
@@ -77,20 +71,14 @@ fn test_ycbcr_positioning_tag_kit_parity() {
         assert_eq!(
             manual_result.to_string(),
             tag_kit_result.to_string(),
-            "YCbCrPositioning mismatch for value {}: manual='{}', tag_kit='{}'",
-            value,
-            manual_result,
-            tag_kit_result
+            "YCbCrPositioning mismatch for value {value}: manual='{manual_result}', tag_kit='{tag_kit_result}'"
         );
 
         // Both should match expected
         assert_eq!(
             manual_result.to_string(),
             expected,
-            "YCbCrPositioning unexpected result for value {}: got '{}', expected '{}'",
-            value,
-            manual_result,
-            expected
+            "YCbCrPositioning unexpected result for value {value}: got '{manual_result}', expected '{expected}'"
         );
     }
 }
@@ -127,10 +115,7 @@ fn test_orientation_tag_kit_parity() {
         assert_eq!(
             manual_result.to_string(),
             tag_kit_result.to_string(),
-            "Orientation mismatch for value {}: manual='{}', tag_kit='{}'",
-            value,
-            manual_result,
-            tag_kit_result
+            "Orientation mismatch for value {value}: manual='{manual_result}', tag_kit='{tag_kit_result}'"
         );
     }
 }
@@ -147,8 +132,7 @@ fn test_tag_kit_lookup_exists() {
     for tag_id in expected_tags {
         assert!(
             EXIF_TAG_KITS.contains_key(&tag_id),
-            "Tag {} not found in EXIF_TAG_KITS",
-            tag_id
+            "Tag {tag_id} not found in EXIF_TAG_KITS"
         );
 
         let tag_def = &EXIF_TAG_KITS[&tag_id];

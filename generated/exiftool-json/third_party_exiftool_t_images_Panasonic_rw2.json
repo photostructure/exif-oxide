@@ -7,20 +7,9 @@
   "File:FileType": "RW2",
   "File:FileTypeExtension": "rw2",
   "File:MIMEType": "image/x-panasonic-rw2",
-  "EXIF:ISO": 80,
-  "EXIF:ResolutionUnit": "inches",
-  "EXIF:YCbCrPositioning": "Co-sited",
-  "EXIF:ColorSpace": "sRGB",
-  "EXIF:WhiteBalance": "Auto",
   "EXIF:Make": "Panasonic",
   "EXIF:Model": "DMC-LX3",
   "EXIF:Orientation": "Horizontal (normal)",
-  "EXIF:ExposureTime": "1/250",
-  "EXIF:FNumber": 4.0,
-  "EXIF:ExposureProgram": "Aperture-priority AE",
   "EXIF:DateTimeOriginal": "2008:08:06 15:21:56",
-  "EXIF:CreateDate": "2008:08:06 15:21:56",
-  "EXIF:MeteringMode": "Multi-segment",
-  "EXIF:Flash": "Off, Did not fire",
-  "EXIF:FocalLength": "5.1 mm"
+  "EXIF:CreateDate": "2008:08:06 15:21:56"
 }

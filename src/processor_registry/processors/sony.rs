@@ -323,8 +323,8 @@ impl BinaryDataProcessor for SonyAFInfoProcessor {
         // ExifTool: Sony.pm lines 9379-9382
         if data.len() >= 0x40 {
             let mut af_points_in_focus = Vec::new();
-            for i in 0x04..0x40 {
-                if data[i] != 0 {
+            for (i, &byte) in data.iter().enumerate().skip(0x04).take(0x40 - 0x04) {
+                if byte != 0 {
                     af_points_in_focus.push((i - 0x04) as u8);
                 }
             }

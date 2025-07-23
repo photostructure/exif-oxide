@@ -10,19 +10,9 @@
   "EXIF:Make": "NIKON CORPORATION",
   "EXIF:Model": "NIKON D70",
   "EXIF:Orientation": "Horizontal (normal)",
-  "EXIF:ResolutionUnit": "inches",
-  "EXIF:YCbCrPositioning": "Co-sited",
-  "EXIF:ExposureTime": "1/60",
-  "EXIF:FNumber": 5.0,
-  "EXIF:ExposureProgram": "Aperture-priority AE",
   "EXIF:DateTimeOriginal": "2005:01:14 08:57:59",
   "EXIF:CreateDate": "2005:01:14 08:57:59",
-  "EXIF:MeteringMode": "Multi-segment",
-  "EXIF:Flash": "Auto, Fired, Return detected",
-  "EXIF:FocalLength": "56.0 mm",
   "EXIF:SubSecTime": 20,
   "EXIF:SubSecTimeOriginal": 20,
-  "EXIF:SubSecTimeDigitized": 20,
-  "EXIF:ColorSpace": "Uncalibrated",
-  "EXIF:WhiteBalance": "Auto"
+  "EXIF:SubSecTimeDigitized": 20
 }

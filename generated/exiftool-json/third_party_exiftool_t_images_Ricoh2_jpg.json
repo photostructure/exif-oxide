@@ -1,8 +1,5 @@
 {
   "SourceFile": "third-party/exiftool/t/images/Ricoh2.jpg",
-  "EXIF:GPSLatitude": 42.034575,
-  "EXIF:GPSLongitude": 0.507502777777778,
-  "EXIF:GPSAltitude": 117,
   "File:FileSize": 3187,
   "File:FileName": "Ricoh2.jpg",
   "File:Directory": "third-party/exiftool/t/images",
@@ -13,17 +10,6 @@
   "EXIF:Make": "RICOH",
   "EXIF:Model": "Caplio Pro G3",
   "EXIF:Orientation": "Horizontal (normal)",
-  "EXIF:ResolutionUnit": "inches",
-  "EXIF:YCbCrPositioning": "Co-sited",
-  "EXIF:ExposureTime": "1/1740",
-  "EXIF:FNumber": 5.5,
-  "EXIF:ExposureProgram": "Program AE",
-  "EXIF:ISO": 125,
   "EXIF:DateTimeOriginal": "2006:05:26 11:48:48",
-  "EXIF:CreateDate": "2006:05:26 11:48:48",
-  "EXIF:MeteringMode": "Spot",
-  "EXIF:Flash": "Auto, Did not fire",
-  "EXIF:FocalLength": "5.7 mm",
-  "EXIF:ColorSpace": "sRGB",
-  "EXIF:WhiteBalance": "Auto"
+  "EXIF:CreateDate": "2006:05:26 11:48:48"
 }

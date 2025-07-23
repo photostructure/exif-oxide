@@ -183,11 +183,12 @@ fn parse_sof_data(marker: u8, segment_data: &[u8]) -> Result<SofData> {
     })
 }
 
-/// Scan JPEG file for all APP1 segments containing EXIF or XMP data
+/// Scan JPEG file for all APP1 segments containing EXIF or XMP data,
+/// and also extract image dimensions from SOF markers
 ///
-/// Returns information about the first APP1 segment found, prioritizing EXIF over XMP.
-/// This scans all APP1 segments to handle files with multiple APP1 segments (both EXIF and XMP).
-pub fn scan_jpeg_segments<R: Read + Seek>(mut reader: R) -> Result<Option<JpegSegmentInfo>> {
+/// Returns information about the first APP1 segment found, prioritizing EXIF over XMP,
+/// and optionally SOF data if found.
+pub fn scan_jpeg_segments<R: Read + Seek>(mut reader: R) -> Result<(Option<JpegSegmentInfo>, Option<SofData>)> {
     // Verify JPEG magic bytes
     let mut magic = [0u8; 2];
     reader.read_exact(&mut magic)?;
@@ -200,6 +201,7 @@ pub fn scan_jpeg_segments<R: Read + Seek>(mut reader: R) -> Result<Option<JpegSe
     let mut current_pos = 2u64; // After SOI marker
     let mut found_exif: Option<JpegSegmentInfo> = None;
     let mut found_xmp: Option<JpegSegmentInfo> = None;
+    let mut sof_data: Option<SofData> = None;
 
     loop {
         // Read segment marker
@@ -284,6 +286,32 @@ pub fn scan_jpeg_segments<R: Read + Seek>(mut reader: R) -> Result<Option<JpegSe
                 reader.seek(SeekFrom::Current(segment_data_length as i64))?;
                 current_pos += segment_data_length;
             }
+            JpegSegment::Sof(marker) => {
+                // Read segment length
+                let mut length_bytes = [0u8; 2];
+                reader.read_exact(&mut length_bytes)?;
+                let length = u16::from_be_bytes(length_bytes);
+                current_pos += 2;
+
+                // Read SOF data if we haven't found one yet
+                // ExifTool: lib/Image/ExifTool.pm:7320-7336
+                if sof_data.is_none() && length >= 8 {  // Minimum SOF size
+                    let mut sof_segment_data = vec![0u8; (length - 2) as usize];
+                    if reader.read_exact(&mut sof_segment_data).is_ok() {
+                        if let Ok(sof) = parse_sof_data(marker, &sof_segment_data) {
+                            sof_data = Some(sof);
+                        }
+                        current_pos += (length - 2) as u64;
+                    } else {
+                        break;
+                    }
+                } else {
+                    // Skip if already have SOF data or too short
+                    let segment_data_length = length.saturating_sub(2) as u64;
+                    reader.seek(SeekFrom::Current(segment_data_length as i64))?;
+                    current_pos += segment_data_length;
+                }
+            }
             _ => {
                 // Other segments - skip them
                 let mut length_bytes = [0u8; 2];
@@ -300,7 +328,7 @@ pub fn scan_jpeg_segments<R: Read + Seek>(mut reader: R) -> Result<Option<JpegSe
     }
 
     // Prioritize EXIF over XMP (following ExifTool behavior)
-    Ok(found_exif.or(found_xmp))
+    Ok((found_exif.or(found_xmp), sof_data))
 }
 
 /// Result of scanning JPEG for XMP segments
@@ -689,7 +717,7 @@ pub fn extract_jpeg_xmp<R: Read + Seek>(mut reader: R) -> Result<Vec<u8>> {
 pub fn extract_jpeg_exif<R: Read + Seek>(mut reader: R) -> Result<Vec<u8>> {
     // Scan for EXIF segment
     reader.seek(SeekFrom::Start(0))?;
-    let segment_info = scan_jpeg_segments(&mut reader)?;
+    let (segment_info, _sof_data) = scan_jpeg_segments(&mut reader)?;
 
     match segment_info {
         Some(info) if info.has_exif => {
@@ -753,8 +781,9 @@ mod tests {
         // Minimal JPEG: SOI + EOI
         let minimal_jpeg = [0xFF, 0xD8, 0xFF, 0xD9];
         let cursor = Cursor::new(minimal_jpeg);
-        let result = scan_jpeg_segments(cursor).unwrap();
-        assert!(result.is_none()); // No EXIF data
+        let (segment_info, sof_data) = scan_jpeg_segments(cursor).unwrap();
+        assert!(segment_info.is_none()); // No EXIF data
+        assert!(sof_data.is_none()); // No SOF data
     }
 
     #[test]
@@ -771,10 +800,11 @@ mod tests {
         ];
 
         let cursor = Cursor::new(&jpeg_data);
-        let result = scan_jpeg_segments(cursor).unwrap();
-        assert!(result.is_some());
+        let (segment_info_opt, sof_data) = scan_jpeg_segments(cursor).unwrap();
+        assert!(segment_info_opt.is_some());
+        assert!(sof_data.is_none()); // No SOF in this test
 
-        let segment_info = result.unwrap();
+        let segment_info = segment_info_opt.unwrap();
         assert!(segment_info.has_exif);
         assert!(!segment_info.has_xmp);
         assert_eq!(segment_info.offset, 12); // After SOI(2) + APP1 marker(2) + length(2) + "Exif\0\0"(6) = 12
@@ -805,10 +835,11 @@ mod tests {
         jpeg_data.extend_from_slice(&[0xFF, 0xD9]);
 
         let cursor = Cursor::new(&jpeg_data);
-        let result = scan_jpeg_segments(cursor).unwrap();
-        assert!(result.is_some());
+        let (segment_info_opt, sof_data) = scan_jpeg_segments(cursor).unwrap();
+        assert!(segment_info_opt.is_some());
+        assert!(sof_data.is_none()); // No SOF in this test
 
-        let segment_info = result.unwrap();
+        let segment_info = segment_info_opt.unwrap();
         assert!(!segment_info.has_exif);
         assert!(segment_info.has_xmp);
         // Offset should be after SOI(2) + APP1 marker(2) + length(2) + XMP identifier(29) = 35

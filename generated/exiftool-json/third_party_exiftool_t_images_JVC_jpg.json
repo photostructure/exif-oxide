@@ -10,14 +10,6 @@
   "EXIF:Make": "JVC",
   "EXIF:Model": "GR-DV500",
   "EXIF:Orientation": "Horizontal (normal)",
-  "EXIF:ResolutionUnit": "inches",
-  "EXIF:YCbCrPositioning": "Co-sited",
-  "EXIF:ExposureTime": "1/25",
-  "EXIF:FNumber": 11.0,
   "EXIF:DateTimeOriginal": "2004:06:26 12:36:46",
-  "EXIF:CreateDate": "2004:06:26 12:36:46",
-  "EXIF:MeteringMode": "Center-weighted average",
-  "EXIF:Flash": "Off, Did not fire",
-  "EXIF:FocalLength": "8.4 mm",
-  "EXIF:ColorSpace": "sRGB"
+  "EXIF:CreateDate": "2004:06:26 12:36:46"
 }

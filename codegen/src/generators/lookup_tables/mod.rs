@@ -190,7 +190,7 @@ pub fn process_config_directory(
             // Look for the corresponding extracted binary data JSON file
             let extract_dir = Path::new("generated/extract").join("binary_data");
             let module_base = module_name.trim_end_matches("_pm");
-            let binary_data_file = format!("{}_binary_data.json", module_base.to_lowercase());
+            let binary_data_file = format!("{}__process_binary_data.json", module_base.to_lowercase());
             let binary_data_path = extract_dir.join(&binary_data_file);
             
             if binary_data_path.exists() {
@@ -220,7 +220,7 @@ pub fn process_config_directory(
             // Look for the corresponding extracted model detection JSON file
             let extract_dir = Path::new("generated/extract").join("model_detection");
             let module_base = module_name.trim_end_matches("_pm");
-            let model_detection_file = format!("{}_model_detection.json", module_base.to_lowercase());
+            let model_detection_file = format!("{}__model_detection.json", module_base.to_lowercase());
             let model_detection_path = extract_dir.join(&model_detection_file);
             
             if model_detection_path.exists() {
@@ -250,7 +250,7 @@ pub fn process_config_directory(
             // Look for the corresponding extracted conditional tags JSON file
             let extract_dir = Path::new("generated/extract").join("conditional_tags");
             let module_base = module_name.trim_end_matches("_pm");
-            let conditional_tags_file = format!("{}_conditional_tags.json", module_base.to_lowercase());
+            let conditional_tags_file = format!("{}__conditional_tags.json", module_base.to_lowercase());
             let conditional_tags_path = extract_dir.join(&conditional_tags_file);
             
             if conditional_tags_path.exists() {
@@ -284,7 +284,7 @@ pub fn process_config_directory(
                     // Look for the corresponding extracted runtime table JSON file
                     let extract_dir = Path::new("generated/extract").join("runtime_tables");
                     let module_base = module_name.trim_end_matches("_pm");
-                    let runtime_table_file = format!("{}_runtime_table_{}.json", 
+                    let runtime_table_file = format!("{}__runtime_table__{}.json", 
                                                    module_base.to_lowercase(), 
                                                    clean_table_name.to_lowercase());
                     let runtime_table_path = extract_dir.join(&runtime_table_file);
@@ -317,7 +317,7 @@ pub fn process_config_directory(
         // Look for extracted tag kit JSON file
         let extract_dir = Path::new("generated/extract").join("tag_kits");
         let module_base = module_name.trim_end_matches("_pm");
-        let tag_kit_file = format!("{}_tag_kit.json", module_base.to_lowercase());
+        let tag_kit_file = format!("{}__tag_kit.json", module_base.to_lowercase());
         let tag_kit_path = extract_dir.join(&tag_kit_file);
         
         if tag_kit_path.exists() {
@@ -703,6 +703,24 @@ fn detect_additional_generated_files(output_dir: &Path, _module_name: &str) -> R
         }
     }
     
+    // Check for subdirectories that contain mod.rs files
+    for entry in entries.iter() {
+        let path = entry.path();
+        if path.is_dir() {
+            // Check if this directory contains a mod.rs file
+            let mod_file = path.join("mod.rs");
+            if mod_file.exists() {
+                if let Some(dir_name) = path.file_name() {
+                    let name = dir_name.to_string_lossy().to_string();
+                    if !additional_files.contains(&name) {
+                        additional_files.push(name.clone());
+                        println!("  ✓ Detected generated subdirectory: {}/", name);
+                    }
+                }
+            }
+        }
+    }
+    
     // Sort for deterministic output
     additional_files.sort();
     Ok(additional_files)
@@ -1000,6 +1018,7 @@ fn generate_tag_kit_mod_file(
     
     // Apply PrintConv function
     code.push_str("/// Apply PrintConv for a tag from this module\n");
+    code.push_str("#[allow(clippy::ptr_arg)]\n");
     code.push_str("pub fn apply_print_conv(\n");
     code.push_str("    tag_id: u32,\n");
     code.push_str("    value: &TagValue,\n");

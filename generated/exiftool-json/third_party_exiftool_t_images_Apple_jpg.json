@@ -1,8 +1,5 @@
 {
   "SourceFile": "third-party/exiftool/t/images/Apple.jpg",
-  "EXIF:GPSLatitude": 53.3828472222222,
-  "EXIF:GPSLongitude": 1.45667777777778,
-  "EXIF:GPSAltitude": 72.36649215,
   "File:FileSize": 2355,
   "File:FileName": "Apple.jpg",
   "File:Directory": "third-party/exiftool/t/images",
@@ -13,22 +10,8 @@
   "EXIF:Make": "Apple",
   "EXIF:Model": "iPhone 7",
   "EXIF:Orientation": "Horizontal (normal)",
-  "EXIF:ResolutionUnit": "inches",
-  "EXIF:YCbCrPositioning": "Centered",
-  "EXIF:ExposureTime": "1/20",
-  "EXIF:FNumber": 1.8,
-  "EXIF:ExposureProgram": "Program AE",
-  "EXIF:ISO": 40,
   "EXIF:DateTimeOriginal": "2016:09:28 18:18:05",
   "EXIF:CreateDate": "2016:09:28 18:18:05",
-  "EXIF:MeteringMode": "Multi-segment",
-  "EXIF:Flash": "Off, Did not fire",
-  "EXIF:FocalLength": "4.0 mm",
   "EXIF:SubSecTimeOriginal": 813,
-  "EXIF:SubSecTimeDigitized": 813,
-  "EXIF:ColorSpace": "Uncalibrated",
-  "EXIF:WhiteBalance": "Auto",
-  "EXIF:LensInfo": "3.99mm f/1.8",
-  "EXIF:LensMake": "Apple",
-  "EXIF:LensModel": "iPhone 7 back camera 3.99mm f/1.8"
+  "EXIF:SubSecTimeDigitized": 813
 }

@@ -1,8 +1,5 @@
 {
   "SourceFile": "third-party/exiftool/t/images/GoPro.jpg",
-  "EXIF:GPSLatitude": 40.6584191999722,
-  "EXIF:GPSLongitude": 73.9933542999722,
-  "EXIF:GPSAltitude": 3.983,
   "File:FileSize": 4601,
   "File:FileName": "GoPro.jpg",
   "File:Directory": "third-party/exiftool/t/images",
@@ -13,17 +10,6 @@
   "EXIF:Make": "GoPro",
   "EXIF:Model": "HERO6 Black",
   "EXIF:Orientation": "Horizontal (normal)",
-  "EXIF:ResolutionUnit": "inches",
-  "EXIF:YCbCrPositioning": "Centered",
-  "EXIF:ExposureTime": "1/1205",
-  "EXIF:FNumber": 2.8,
-  "EXIF:ExposureProgram": "Program AE",
-  "EXIF:ISO": 100,
   "EXIF:DateTimeOriginal": "2017:10:03 10:58:29",
-  "EXIF:CreateDate": "2017:10:03 10:58:29",
-  "EXIF:MeteringMode": "Average",
-  "EXIF:Flash": "No flash function",
-  "EXIF:FocalLength": "3.0 mm",
-  "EXIF:ColorSpace": "Unknown (0)",
-  "EXIF:WhiteBalance": "Auto"
+  "EXIF:CreateDate": "2017:10:03 10:58:29"
 }
