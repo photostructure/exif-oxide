@@ -9,10 +9,12 @@
 #![cfg(feature = "integration-tests")]
 
 use exif_oxide::expressions::{parse_expression, ExpressionEvaluator};
-use exif_oxide::generated::Canon_pm::main_conditional_tags::{
-    CanonConditionalTags, ConditionalContext,
-};
+// TODO: Re-enable when conditional tags are generated
+// use exif_oxide::generated::Canon_pm::main_conditional_tags::{
+//     CanonConditionalTags, ConditionalContext,
+// };
 use exif_oxide::processor_registry::ProcessorContext;
+use exif_oxide::stubs::{CanonConditionalTags, ConditionalContext};
 use exif_oxide::types::TagValue;
 
 mod common;

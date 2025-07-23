@@ -4,14 +4,10 @@
 //! DO NOT EDIT MANUALLY - changes will be overwritten.
 
 use super::{PrintConvType, TagKitDef};
-use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_11: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map
-});
+static PRINT_CONV_73: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| HashMap::new());
 
 /// Get tag definitions for document category
 pub fn get_document_tags() -> Vec<(u32, TagKitDef)> {
@@ -103,7 +99,7 @@ pub fn get_document_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_11),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_73),
                 value_conv: None,
             },
         ),

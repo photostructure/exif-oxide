@@ -72,8 +72,8 @@ impl BinaryDataProcessor for FujiFilmFFMVProcessor {
             let table_offset = offset as u16;
 
             // Look up tag name and format from generated table
-            if let Some(tag_name) = self.table.get_tag_name(table_offset) {
-                if let Some(format) = self.table.get_format(table_offset) {
+            if let Some(tag_name) = self.table.get_tag_name(table_offset.into()) {
+                if let Some(format) = self.table.get_format(table_offset.into()) {
                     // Extract value based on format specification
                     if let Some(tag_value) = extract_value_by_format(data, offset, format) {
                         result.add_tag(tag_name.to_string(), tag_value);
