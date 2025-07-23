@@ -1,6 +1,9 @@
-//! GPS module placeholder
+//! Generated lookup tables from GPS.pm
 //!
-//! This module is a placeholder until proper GPS extraction is implemented.
-//! The config exists but extraction naming patterns need to be fixed in codegen.
+//! Auto-generated from third-party/exiftool/lib/Image/ExifTool/GPS.pm
+//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
-// Placeholder to satisfy module system
+pub mod tag_kit;
+
+// Re-export all lookup functions and constants
+pub use tag_kit::*;

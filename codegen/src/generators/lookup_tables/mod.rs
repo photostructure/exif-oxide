@@ -87,18 +87,28 @@ pub fn process_config_directory(
         if let Some(tables) = config_json["tables"].as_array() {
             for table_config in tables {
                 let hash_name = table_config["hash_name"].as_str().unwrap_or("");
-                if let Some(extracted_table) = extracted_tables.get(hash_name) {
-                    // Update the extracted table's metadata with config values
-                    let mut updated_table = extracted_table.clone();
-                    if let Some(constant_name) = table_config["constant_name"].as_str() {
-                        updated_table.metadata.constant_name = constant_name.to_string();
-                    }
-                    if let Some(description) = table_config["description"].as_str() {
-                        updated_table.metadata.description = description.to_string();
-                    }
+                
+                // Look for extracted boolean set file using standardized naming
+                let extract_dir = Path::new("generated/extract").join("boolean_sets");
+                let module_base = module_name.trim_end_matches("_pm").to_lowercase();
+                let boolean_set_file = format!("{}__boolean_set__{}.json", 
+                    module_base, 
+                    hash_name.trim_start_matches('%').to_lowercase()
+                );
+                let boolean_set_path = extract_dir.join(&boolean_set_file);
+                
+                if boolean_set_path.exists() {
+                    // Load the extracted boolean set data
+                    let boolean_set_content = fs::read_to_string(&boolean_set_path)?;
+                    let boolean_set_data: serde_json::Value = serde_json::from_str(&boolean_set_content)?;
                     
-                    // Generate individual file for this boolean set
-                    let file_name = generate_boolean_set_file(hash_name, &updated_table, &module_output_dir)?;
+                    // Generate individual file for this boolean set directly from JSON
+                    let file_name = generate_boolean_set_file_from_json(
+                        hash_name, 
+                        &boolean_set_data,
+                        table_config,
+                        &module_output_dir
+                    )?;
                     generated_files.push(file_name);
                     has_content = true;
                 }
@@ -360,6 +370,36 @@ pub fn process_config_directory(
                     let file_name = generate_inline_printconv_file(
                         &inline_data, 
                         table_name,
+                        &module_output_dir
+                    )?;
+                    generated_files.push(file_name);
+                    has_content = true;
+                }
+            }
+        }
+    }
+    
+    // Check for regex_patterns.json configuration - create magic number patterns file
+    let regex_patterns_config = config_dir.join("regex_patterns.json");
+    if regex_patterns_config.exists() {
+        let config_content = fs::read_to_string(&regex_patterns_config)?;
+        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
+        
+        if let Some(tables) = config_json["tables"].as_array() {
+            for table_config in tables {
+                let hash_name = table_config["hash_name"].as_str().unwrap_or("");
+                
+                // Look for extracted regex patterns file using standardized naming
+                let extract_dir = Path::new("generated/extract").join("file_types");
+                let module_base = module_name.trim_end_matches("_pm").to_lowercase();
+                let regex_file = format!("{}__regex_patterns.json", module_base);
+                let regex_path = extract_dir.join(&regex_file);
+                
+                if regex_path.exists() {
+                    // Generate regex_patterns.rs file
+                    let file_name = generate_regex_patterns_file(
+                        &regex_path,
+                        table_config,
                         &module_output_dir
                     )?;
                     generated_files.push(file_name);
@@ -1069,3 +1109,176 @@ fn generate_tag_kit_mod_file(
     Ok(code)
 }
 
+/// Generate individual file for a boolean set from JSON data
+fn generate_boolean_set_file_from_json(
+    hash_name: &str,
+    boolean_set_data: &serde_json::Value,
+    table_config: &serde_json::Value,
+    output_dir: &Path,
+) -> Result<String> {
+    let mut code = String::new();
+    
+    // Get config values
+    let constant_name = table_config["constant_name"].as_str().unwrap_or("BOOLEAN_SET");
+    let description = table_config["description"].as_str().unwrap_or("Boolean set");
+    let key_type = table_config["key_type"].as_str().unwrap_or("String");
+    
+    // Generate HashMap
+    code.push_str("use std::collections::HashMap;\n");
+    code.push_str("use std::sync::LazyLock;\n\n");
+    
+    code.push_str(&format!("/// {}\n", description));
+    code.push_str(&format!("pub static {}: LazyLock<HashMap<{}, bool>> = LazyLock::new(|| {{\n", constant_name, key_type));
+    code.push_str("    let mut map = HashMap::new();\n");
+    
+    // Add entries
+    if let Some(entries) = boolean_set_data["entries"].as_array() {
+        for entry in entries {
+            if let Some(key) = entry["key"].as_str() {
+                if key_type == "String" {
+                    code.push_str(&format!("    map.insert(\"{}\".to_string(), true);\n", 
+                        crate::common::escape_string(key)));
+                } else {
+                    code.push_str(&format!("    map.insert(\"{}\", true);\n", 
+                        crate::common::escape_string(key)));
+                }
+            }
+        }
+    }
+    
+    code.push_str("    map\n");
+    code.push_str("});\n\n");
+    
+    // Generate lookup function
+    let function_name = format!("lookup_{}", hash_name.trim_start_matches('%').to_lowercase());
+    code.push_str(&format!("/// Check if key exists in {}\n", description));
+    code.push_str(&format!("pub fn {}(key: &{}) -> bool {{\n", function_name, key_type));
+    code.push_str(&format!("    {}.contains_key(key)\n", constant_name));
+    code.push_str("}\n");
+    
+    // Create descriptive filename from hash name
+    let file_name = hash_name_to_filename(hash_name);
+    let file_path = output_dir.join(format!("{}.rs", file_name));
+    
+    let mut content = String::new();
+    content.push_str(&format!("//! {}\n", description));
+    content.push_str("//! \n//! Auto-generated from ExifTool source\n");
+    content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
+    content.push_str(&code);
+    
+    fs::write(&file_path, content)?;
+    println!("  ✓ Generated {}", file_path.display());
+    
+    Ok(file_name)
+}
+
+/// Generate regex_patterns.rs file from extracted regex patterns JSON
+fn generate_regex_patterns_file(
+    regex_file_path: &Path,
+    table_config: &serde_json::Value,
+    output_dir: &Path,
+) -> Result<String> {
+    let regex_content = fs::read_to_string(regex_file_path)?;
+    let regex_data: serde_json::Value = serde_json::from_str(&regex_content)?;
+    
+    let mut code = String::new();
+    
+    // Get config values
+    let constant_name = table_config["constant_name"].as_str().unwrap_or("REGEX_PATTERNS");
+    let description = table_config["description"].as_str().unwrap_or("Regex patterns");
+    
+    // Header
+    code.push_str("//! Regex patterns for file type detection\n");
+    code.push_str("//!\n");
+    code.push_str("//! This file is automatically generated by codegen.\n");
+    code.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten.\n\n");
+    
+    code.push_str("use std::collections::HashMap;\n");
+    code.push_str("use std::sync::LazyLock;\n\n");
+    
+    // Generate the regex patterns map
+    code.push_str(&format!("/// {}\n", description));
+    code.push_str(&format!("pub static {}: LazyLock<HashMap<&'static str, &'static [u8]>> = LazyLock::new(|| {{\n", constant_name));
+    code.push_str("    let mut map = HashMap::new();\n");
+    
+    // Add entries from magic_patterns array (keeping original field name from extraction)
+    if let Some(patterns) = regex_data["magic_patterns"].as_array() {
+        for pattern in patterns {
+            if let (Some(file_type), Some(pattern_str)) = (
+                pattern["file_type"].as_str(),
+                pattern["pattern"].as_str()
+            ) {
+                // Convert pattern string to bytes - escape special characters for Rust byte literal
+                let escaped_pattern = escape_pattern_to_bytes(pattern_str);
+                code.push_str(&format!("    map.insert(\"{}\", &{});\n", 
+                    file_type,
+                    escaped_pattern
+                ));
+            }
+        }
+    }
+    
+    code.push_str("    map\n");
+    code.push_str("});\n\n");
+    
+    // Generate lookup function
+    code.push_str("/// Detect file type by regex pattern\n");
+    code.push_str("pub fn detect_file_type_by_regex(data: &[u8]) -> Option<&'static str> {\n");
+    code.push_str("    for (file_type, pattern) in REGEX_PATTERNS.iter() {\n");
+    code.push_str("        if data.starts_with(pattern) {\n");
+    code.push_str("            return Some(file_type);\n");
+    code.push_str("        }\n");
+    code.push_str("    }\n");
+    code.push_str("    None\n");
+    code.push_str("}\n");
+    
+    // Write to file
+    let file_name = "regex_patterns.rs";
+    let file_path = output_dir.join(file_name);
+    fs::write(&file_path, code)?;
+    
+    println!("  ✓ Generated {}", file_path.display());
+    
+    Ok(file_name.replace(".rs", ""))
+}
+
+/// Convert pattern string with escape sequences to byte array literal
+fn escape_pattern_to_bytes(pattern: &str) -> String {
+    let mut result = String::from("[");
+    let mut chars = pattern.chars().peekable();
+    let mut first = true;
+    
+    while let Some(ch) = chars.next() {
+        if !first {
+            result.push_str(", ");
+        }
+        first = false;
+        
+        if ch == '\\' {
+            if let Some(&next_ch) = chars.peek() {
+                if next_ch == 'x' {
+                    // Hex escape sequence like \xff
+                    chars.next(); // consume 'x'
+                    let hex1 = chars.next().unwrap_or('0');
+                    let hex2 = chars.next().unwrap_or('0');
+                    let hex_str = format!("{}{}", hex1, hex2);
+                    if let Ok(byte_val) = u8::from_str_radix(&hex_str, 16) {
+                        result.push_str(&format!("0x{:02x}u8", byte_val));
+                    } else {
+                        result.push_str("0x00u8");
+                    }
+                } else {
+                    // Other escape sequences, treat as literal
+                    result.push_str(&format!("0x{:02x}u8", ch as u8));
+                }
+            } else {
+                result.push_str(&format!("0x{:02x}u8", ch as u8));
+            }
+        } else {
+            result.push_str(&format!("0x{:02x}u8", ch as u8));
+        }
+    }
+    
+    result.push(']');
+    result
+}

@@ -188,7 +188,9 @@ fn parse_sof_data(marker: u8, segment_data: &[u8]) -> Result<SofData> {
 ///
 /// Returns information about the first APP1 segment found, prioritizing EXIF over XMP,
 /// and optionally SOF data if found.
-pub fn scan_jpeg_segments<R: Read + Seek>(mut reader: R) -> Result<(Option<JpegSegmentInfo>, Option<SofData>)> {
+pub fn scan_jpeg_segments<R: Read + Seek>(
+    mut reader: R,
+) -> Result<(Option<JpegSegmentInfo>, Option<SofData>)> {
     // Verify JPEG magic bytes
     let mut magic = [0u8; 2];
     reader.read_exact(&mut magic)?;
@@ -295,7 +297,8 @@ pub fn scan_jpeg_segments<R: Read + Seek>(mut reader: R) -> Result<(Option<JpegS
 
                 // Read SOF data if we haven't found one yet
                 // ExifTool: lib/Image/ExifTool.pm:7320-7336
-                if sof_data.is_none() && length >= 8 {  // Minimum SOF size
+                if sof_data.is_none() && length >= 8 {
+                    // Minimum SOF size
                     let mut sof_segment_data = vec![0u8; (length - 2) as usize];
                     if reader.read_exact(&mut sof_segment_data).is_ok() {
                         if let Ok(sof) = parse_sof_data(marker, &sof_segment_data) {
