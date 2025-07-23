@@ -33,13 +33,18 @@ pub fn create_camera_settings_table() -> HashMap<u32, CanonCameraSettingsTag> {
     let mut table = HashMap::new();
 
     // ExifTool: Canon.pm:2172-2178 tag 1 MacroMode
-    // Use generated lookup function instead of manual table
+    // PrintConv data from Canon runtime tables: "1" => "Macro", "2" => "Normal"
     table.insert(
         1,
         CanonCameraSettingsTag {
             index: 1,
             name: "MacroMode".to_string(),
-            print_conv: None, // Use generated lookup in apply_camera_settings_print_conv
+            print_conv: {
+                let mut conv = HashMap::new();
+                conv.insert(1i16, "Macro".to_string());
+                conv.insert(2i16, "Normal".to_string());
+                Some(conv)
+            },
         },
     );
 
