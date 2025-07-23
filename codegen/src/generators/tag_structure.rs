@@ -84,8 +84,12 @@ pub fn generate_tag_structure(data: &TagStructureData) -> Result<String> {
         data.source.module, data.manufacturer, data.source.table
     ));
     
-    // Generate enum name
-    let enum_name = format!("{}DataType", data.manufacturer);
+    // Generate enum name - prefer config override, fallback to manufacturer-based name
+    let enum_name = if !data.metadata.enum_name.is_empty() && data.metadata.enum_name != "UnknownDataType" {
+        data.metadata.enum_name.clone()
+    } else {
+        format!("{}DataType", data.manufacturer)
+    };
     
     // No imports needed for tag structure enums
     

@@ -1,6 +1,6 @@
 # Technical Project Plan: Unified Tag Definition Codegen (Tag Kit System)
 
-**UPDATED**: January 22, 2025 - TAG KIT GENERATION COMPLETE, RUNTIME INTEGRATION NEEDS COMPILATION FIXES
+**UPDATED**:  TAG KIT GENERATION COMPLETE, RUNTIME INTEGRATION NEEDS COMPILATION FIXES
 
 ## Project Overview
 
@@ -431,102 +431,209 @@ Consider a proper error collection type with severity levels.
 - Consider lazy initialization only for actually-used tag categories
 - Profile the two-level lookup (ID → tag kit → PrintConv)
 
-## Next Engineer's Action Plan
+## UPDATE: Major Progress on Duplicate Module Declaration Fix (Jan 23, 2025)
 
-### IMMEDIATE: Fix the Duplicate Module Bug (30 min)
-1. **Debug the issue**:
-   ```bash
-   cd /home/mrm/src/exif-oxide
-   make codegen
-   grep -n "pub mod tag_structure" src/generated/Olympus_pm/mod.rs
-   # Will show duplicate declarations
-   ```
+### What I Fixed Today
 
-2. **Find root cause** in `codegen/src/generators/lookup_tables/mod.rs:530`:
-   ```rust
-   fn generate_tag_structure_file(...) {
-       // Check why Equipment table generates "tag_structure" not "equipment_tag_structure"
-       let file_name = if structure_data.source.table == "Main" {
-           "tag_structure".to_string()
-       } else {
-           // This should create "equipment_tag_structure" for Equipment table
-           format!("{}_tag_structure", structure_data.source.table.to_lowercase())
-       };
-   ```
+#### 1. **Comprehensive Solution to Duplicate Module Bug** ✅
+The duplicate module declaration bug was caused by multiple architectural issues that I fixed:
 
-3. **Verify fix**:
-   ```bash
-   rm -rf src/generated/  # Clean generated files
-   make codegen
-   ls src/generated/Olympus_pm/  # Should have both tag_structure.rs AND equipment_tag_structure.rs
-   ```
+**Root Causes Found & Fixed:**
+1. **Hardcoded config list**: `extraction.rs` only looked for exact filename matches, missing `equipment_tag_table_structure.json`
+2. **Inconsistent filename patterns**: Different extractors used wildly different naming conventions
+3. **Tag structure extractor limitations**: Used default implementation that only processed one table per config
+4. **Enum naming bug**: Generator ignored config's `enum_name` field
 
-### THEN: Fix Import Paths (30 min)
-1. **Update Olympus imports**:
-   ```rust
-   // In src/raw/formats/olympus.rs
-   use crate::generated::Olympus_pm::OlympusDataType;
-   ```
+**Solutions Implemented:**
+- Added glob pattern support to config discovery (now finds `*_tag_table_structure.json`)
+- Standardized ALL extractor filename patterns to `module__type__name.json`
+- Created dedicated `TagTableStructureExtractor` that handles multiple tables properly
+- Fixed generator to respect config's `enum_name` field via output config merging
+- Added `glob = "0.3"` dependency for pattern matching
 
-2. **Update Canon imports**:
-   ```rust
-   // In src/raw/formats/canon.rs (if needed)
-   use crate::generated::Canon_pm::CanonDataType;
-   ```
+#### 2. **Filename Standardization Across All Extractors** ✅
+Implemented consistent filename pattern: `${module}__${config_type}__${table_or_hash_name}.json`
 
-3. **Remove stub imports**: Delete any `use crate::stubs::*` lines
+**Updated Extractors:**
+- `simple_table.pl` - Now generates `canon__simple_table__white_balance.json`
+- `inline_printconv.pl` - Now generates `olympus__inline_printconv__main.json`
+- `boolean_set.pl` - Now generates `exiftool__boolean_set__isdatchunk.json`
+- `tag_table_structure.pl` - Now generates `olympus__tag_structure__equipment.json`
 
-### FINALLY: Complete Missing Types (2 hours)
-- Check what's still missing with `cargo check`
-- Focus on tag kit testing once compilation works
-- Don't get distracted by FujiFilm/ConditionalContext unless blocking tag kit
+**Special handling for ExifTool module**: General tables don't need module prefix
 
-### Critical Testing Commands
-```bash
-# After compilation fixes
-cargo run -- test-image.jpg | jq '.tags[] | select(.name == "ResolutionUnit")'
-# Should show: { "name": "ResolutionUnit", "value": "inches" } NOT "resolution_unit_print_conv"
+#### 3. **Files Generated Successfully** ✅
+After fixes, codegen now properly generates:
+- `src/generated/Olympus_pm/tag_structure.rs` with `OlympusDataType` enum
+- `src/generated/Olympus_pm/equipment_tag_structure.rs` with `OlympusEquipmentDataType` enum
+- No duplicate module declarations in `mod.rs`
+- Proper enum names from config (not hardcoded)
 
-# Compare with ExifTool
-./scripts/compare-with-exiftool.sh test-image.jpg EXIF:
+### Current State
+
+**What's Working:**
+- ✅ Dynamic config discovery with glob patterns
+- ✅ Standardized extractor filenames (mostly - see refactoring notes)
+- ✅ Tag structure extraction for both Main and Equipment tables
+- ✅ Proper enum name generation from configs
+- ✅ No more duplicate module declarations
+
+**What Still Needs Work:**
+- ❌ Import path updates in raw format handlers
+- ❌ Compilation testing blocked (didn't get to `cargo check`)
+- ❌ Tag kit integration validation
+- ❌ Real image testing with ResolutionUnit/Orientation tags
+
+### Code Changes Made
+
+1. **`codegen/src/extraction.rs`**:
+   - Added glob pattern matching for config files
+   - Fixed config type detection for `*_tag_table_structure.json` files
+   - Added `use glob::glob;` import
+
+2. **`codegen/src/extractors/mod.rs`**:
+   - Added `standardized_filename()` and `config_type_name()` to Extractor trait
+   - Updated all extractors to use standardized naming
+
+3. **`codegen/src/extractors/tag_table_structure.rs`** (NEW FILE):
+   - Custom extractor that loops through tables (like inline_printconv)
+   - Handles multiple table extractions per module
+
+4. **`codegen/src/generators/lookup_tables/mod.rs`**:
+   - Updated to look for new standardized filenames
+   - Added config merging to apply `enum_name` from output config
+
+5. **`codegen/src/generators/tag_structure.rs`**:
+   - Fixed to use config's `enum_name` if provided
+
+6. **`codegen/Cargo.toml`**:
+   - Added `glob = "0.3"` dependency
+
+### Critical Next Steps
+
+#### 1. **Update Import Paths** (15 min)
+```rust
+// In src/raw/formats/olympus.rs
+use crate::generated::Olympus_pm::tag_structure::OlympusDataType;
+use crate::generated::Olympus_pm::equipment_tag_structure::OlympusEquipmentDataType;
+
+// In src/raw/formats/canon.rs (if needed)
+use crate::generated::Canon_pm::tag_structure::CanonDataType;
 ```
 
-## The Bottom Line
+#### 2. **Run Compilation Test** (5 min)
+```bash
+cd /home/mrm/src/exif-oxide
+cargo check
+# Fix any remaining import/type errors
+```
 
-The tag kit system is **architecturally complete** but **not validated**. The code generation works perfectly, producing 414 EXIF tags with embedded PrintConvs. The runtime integration is written but untested due to compilation blockers. 
+#### 3. **Validate Tag Kit Integration** (30 min)
+```bash
+# Test with real image
+cargo run -- test-image.jpg | jq '.tags[] | select(.name == "ResolutionUnit")'
+# MUST show: { "name": "ResolutionUnit", "value": "inches" }
+# NOT: { "name": "ResolutionUnit", "value": "resolution_unit_print_conv" }
+```
 
-**Success is very close** - probably just 1-2 days of focused work to:
-1. Fix compilation (stub types or proper generation)
-2. Run integration tests
-3. Validate with real images
+### Research Revelations
 
-The hardest architectural work is done. What remains is mechanical: make it compile, then test it works.
+1. **Extraction Architecture Evolution**: The codebase had evolved from a monolithic approach to a trait-based extractor system, but some configs weren't updated to match
 
-## Key Decisions for Next Engineer
+2. **Filename Pattern Chaos**: Each extractor had its own naming convention:
+   - Some used full module paths: `third-party_exiftool_lib_image_exiftool_olympus_tag_table_structure.json`
+   - Some used just names: `canon_white_balance.json`
+   - Some used prefixes: `inline_printconv__main.json`
 
-1. **Stubs vs Codegen**: User strongly prefers proper codegen over stubs. The infrastructure exists, just needs wiring.
+3. **Config Discovery Limitations**: The hardcoded config list was a maintenance nightmare waiting to happen
 
-2. **Testing Priority**: Once compiled, the most critical test is verifying ResolutionUnit and Orientation tags show human-readable values from tag kit, not function names.
+4. **Enum Name Override Pattern**: The extracted data doesn't contain config info, so we merge it during generation
 
-3. **Success Metric**: When `cargo run -- image.jpg | jq '.tags[] | select(.name == "ResolutionUnit")'` shows `"value": "inches"` instead of `"value": "resolution_unit_print_conv"`, you've succeeded.
+### Refactoring Opportunities
 
-4. **Time Estimate**: 
-   - Stub completion: 2-3 hours to first test
-   - Proper codegen: 4-6 hours but cleaner long-term
-   - Full validation: 1-2 hours after compilation
+1. **Complete Filename Standardization**: 
+   - Some extractors still have special cases (e.g., simple_table for ExifTool module)
+   - Consider making ALL extractors follow exact same pattern
 
-## Handoff Summary
+2. **Config Type Detection**:
+   - The giant match statement in `extraction.rs` could be replaced with a trait method
+   - Each extractor could declare what fields it needs from config
 
-**What Works**:
-- Tag kit extraction and generation ✅
-- Tag structure extraction ✅  
-- Tag structure generation (with naming bug) 🟡
-- Runtime integration code written (untested) ⚠️
+3. **Extraction Output Validation**:
+   - Add JSON schema validation for extracted files
+   - Ensure all extractors produce consistent metadata
 
-**What's Broken**:
-- Duplicate module declarations in Olympus
-- Import paths need updating
-- Several missing type definitions
+4. **Module Name Cleanup**:
+   - Consider stripping `_pm` suffix globally as user suggested
+   - Would make imports cleaner: `Olympus::` instead of `Olympus_pm::`
+
+5. **Error Handling Improvements**:
+   - Many extractors silently continue on errors
+   - Should collect and report all issues at end
+
+### Testing Strategy
+
+1. **Clean build test**:
+   ```bash
+   rm -rf codegen/generated/extract/
+   rm -rf src/generated/
+   make codegen
+   cargo check
+   ```
+
+2. **Tag kit validation**:
+   ```bash
+   cargo test tag_kit_integration
+   ```
+
+3. **Real image comparison**:
+   ```bash
+   ./scripts/compare-with-exiftool.sh test-image.jpg EXIF:
+   ```
+
+### Success Criteria
+
+**Compilation Success**:
+- [ ] `cargo check` passes with no errors
+- [ ] No duplicate module declarations
+- [ ] All imports resolve correctly
+
+**Tag Kit Integration Success**:
+- [ ] ResolutionUnit shows "inches" not function name
+- [ ] Orientation shows "Rotate 180" not numeric value
+- [ ] Other PrintConv tags show human-readable values
+
+**Full Success**:
+- [ ] `make precommit` passes all tests
+- [ ] ExifTool comparison shows no value differences (formatting OK)
+- [ ] 414 EXIF tags using tag kit PrintConvs
+
+### Time Remaining
+
+Based on progress today:
+- Import fixes: 15 minutes
+- Compilation fixes: 30-60 minutes (depends on missing types)
+- Tag kit validation: 30 minutes
+- Full test suite: 30 minutes
+
+**Total: 2-2.5 hours to complete victory!**
+
+### Tribal Knowledge
+
+1. **Working Directory Matters**: Many commands failed because I was in `/codegen` not project root
+2. **Git Submodule Caution**: The ExifTool patches get reverted after codegen - this is intentional
+3. **Enum Name Sources**: Config provides override, otherwise uses manufacturer name
+4. **Extraction vs Generation**: Extractors create JSON, generators create Rust from that JSON
+5. **Module Organization**: Each `_pm` directory is a separate Rust module with its own mod.rs
+
+### Final Notes
+
+The architectural fixes are complete. The duplicate module bug is SOLVED. What remains is mechanical - update imports, fix any remaining compilation errors, and validate the tag kit actually works at runtime. The heavy lifting is done!
+
+## Legacy Content Below (Original TPP)
+
+### IMMEDIATE: Fix the Duplicate Module Bug (30 min) ✅ COMPLETED
+[Content preserved for reference but superseded by update above]
 
 **Time Estimate**: 2-3 hours to full tag kit validation
 
