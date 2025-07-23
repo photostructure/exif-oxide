@@ -330,3 +330,62 @@ If desired (after compilation is fixed):
 ### **Key Achievement**
 
 Successfully migrated 4 critical functions, eliminated ~200 lines of manual code, and established working migration pattern. The codegen infrastructure is now robust and ready for expanded use once compilation issues are resolved.
+
+---
+
+## ADDENDUM: New High-Priority Manual Lookup Tasks (July 23, 2025)
+
+### **Additional TODOs Identified from Codebase Analysis**
+
+After completion of the unified tag kit system, systematic analysis revealed additional high-impact manual lookup tables ready for codegen migration:
+
+### **Priority 1: Quick Wins (15-30 min each)**
+
+1. **Nikon WhiteBalance Manual HashMap** (`src/implementations/nikon/tags/print_conv/basic.rs:46`)
+   - **Status**: TODO comment with complete instructions provided
+   - **ExifTool Source**: Need to locate corresponding hash in `Nikon.pm`
+   - **Manual HashMap**: 10 entries (Auto, Preset, Daylight, etc.)
+   - **Action**: Add to `codegen/config/Nikon_pm/simple_table.json` as instructed in TODO comment
+
+2. **Canon FocusMode Lookup** (`src/implementations/canon/mod.rs:919`)
+   - **Status**: TODO comment indicates missing lookup function
+   - **Current**: Returns placeholder `"FocusMode {tag_value}"`
+   - **Action**: Find `%canonFocusMode` hash in Canon.pm and add to simple_table config
+
+3. **File Type Lookup Module Re-enabling** (`src/file_detection/mimetypes_validation.rs:12`)
+   - **Status**: Generated config exists (`ExifTool_pm/file_type_lookup.json`) but not used
+   - **Current**: Functions commented out waiting for generated module
+   - **Action**: Verify generated module exists and uncomment usage
+
+### **Priority 2: Investigation Required (1-2 hours)**
+
+4. **Conditional Tags Generation** (`src/exif/ifd.rs:656,673`)
+   - **Status**: TODO comments about re-enabling when conditional tags generated
+   - **Investigation**: Check if conditional tag configs exist and why not working
+
+5. **Magic Number Pattern Generation** (`src/file_detection.rs:317`, `tests/pattern_test.rs:24,34`)
+   - **Status**: Commented out waiting for magic number pattern generation
+   - **Investigation**: Check if pattern extraction is configured
+
+### **Migration Pattern (Proven)**
+
+Based on successful tag kit work, the pattern for these migrations is:
+
+1. **Find ExifTool source** - Usually a `%hashName = (...)` pattern
+2. **Verify it's a simple table** - Only numbers/strings, no Perl expressions  
+3. **Add to module config** - `codegen/config/ModuleName_pm/simple_table.json`
+4. **Run codegen** - `make codegen`
+5. **Update implementation** - Replace manual HashMap with generated lookup
+6. **Test** - `make precommit` and verify functionality
+
+### **Expected Impact**
+
+- **Nikon WhiteBalance**: Eliminate 10-entry manual HashMap 
+- **Canon FocusMode**: Fix placeholder output with proper values
+- **File Type Lookup**: Enable 343 file type lookups for mimetypes validation
+- **Conditional Tags**: Enable dynamic tag resolution (if infrastructure ready)
+- **Magic Patterns**: Enable pattern-based file detection tests
+
+### **Recommendation**
+
+Start with **Nikon WhiteBalance** as it has complete implementation instructions in the TODO comment and represents the simplest possible migration following the exact pattern established in the tag kit work.
