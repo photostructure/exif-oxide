@@ -699,10 +699,11 @@ impl SonyRawHandler {
         base_offset: u64,
     ) -> Result<u64> {
         // Import generated offset patterns - will be used when full implementation is added
-        use crate::generated::Sony_pm::offset_patterns::{
-            OFFSET_CALCULATION_TYPES, OFFSET_EXAMPLES,
-        };
-        let _ = (OFFSET_CALCULATION_TYPES.len(), OFFSET_EXAMPLES.len()); // Suppress unused warnings for now
+        // TODO: Generate Sony offset patterns
+        // use crate::generated::Sony_pm::offset_patterns::{
+        //     OFFSET_CALCULATION_TYPES, OFFSET_EXAMPLES,
+        // };
+        // let _ = (OFFSET_CALCULATION_TYPES.len(), OFFSET_EXAMPLES.len()); // Suppress unused warnings for now
 
         // Check if this is a model-specific offset calculation
         if let Some(model) = &self.camera_model {

@@ -41,15 +41,24 @@ impl Extractor for SimpleTableExtractor {
     }
     
     fn output_filename(&self, config: &ModuleConfig, hash_name: Option<&str>) -> String {
+        // For simple tables, we'll use just the hash name if it's a standalone table
+        // This maintains compatibility with existing code that expects "canon_white_balance.json"
         if let Some(hash) = hash_name {
-            format!("{}_{}.json", 
-                config.source_path.replace('/', "_").replace(".pm", "").to_lowercase(),
-                hash.to_lowercase()
-            )
+            // Check if this is a module-specific table or a general one
+            let module_name = self.sanitize_module_name(config);
+            if module_name == "exiftool" {
+                // General ExifTool tables don't need module prefix
+                format!("{}.json", hash.to_lowercase())
+            } else {
+                // Module-specific tables use standardized format
+                self.standardized_filename(config, Some(hash))
+            }
         } else {
-            format!("{}_tables.json",
-                config.source_path.replace('/', "_").replace(".pm", "").to_lowercase()
-            )
+            self.standardized_filename(config, None)
         }
+    }
+    
+    fn config_type_name(&self) -> &'static str {
+        "simple_table"
     }
 }

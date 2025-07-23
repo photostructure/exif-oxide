@@ -4,7 +4,7 @@
 //! DO NOT EDIT MANUALLY - changes will be overwritten.
 //!
 //! Generated from: Exif.pm table: Main
-//! Extracted at: Tue Jul 22 19:44:26 2025 GMT
+//! Extracted at: Wed Jul 23 02:01:54 2025 GMT
 
 pub mod camera;
 pub mod color;
@@ -47,26 +47,6 @@ pub enum PrintConvType {
 pub static TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
     let mut map = HashMap::new();
 
-    // gps tags
-    for (id, tag_def) in gps::get_gps_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // datetime tags
-    for (id, tag_def) in datetime::get_datetime_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // exif_specific tags
-    for (id, tag_def) in exif_specific::get_exif_specific_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // other tags
-    for (id, tag_def) in other::get_other_tags() {
-        map.insert(id, tag_def);
-    }
-
     // core tags
     for (id, tag_def) in core::get_core_tags() {
         map.insert(id, tag_def);
@@ -77,13 +57,8 @@ pub static TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
         map.insert(id, tag_def);
     }
 
-    // document tags
-    for (id, tag_def) in document::get_document_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // interop tags
-    for (id, tag_def) in interop::get_interop_tags() {
+    // thumbnail tags
+    for (id, tag_def) in thumbnail::get_thumbnail_tags() {
         map.insert(id, tag_def);
     }
 
@@ -92,13 +67,38 @@ pub static TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
         map.insert(id, tag_def);
     }
 
-    // thumbnail tags
-    for (id, tag_def) in thumbnail::get_thumbnail_tags() {
+    // exif_specific tags
+    for (id, tag_def) in exif_specific::get_exif_specific_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // gps tags
+    for (id, tag_def) in gps::get_gps_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // datetime tags
+    for (id, tag_def) in datetime::get_datetime_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // other tags
+    for (id, tag_def) in other::get_other_tags() {
         map.insert(id, tag_def);
     }
 
     // color tags
     for (id, tag_def) in color::get_color_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // document tags
+    for (id, tag_def) in document::get_document_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // interop tags
+    for (id, tag_def) in interop::get_interop_tags() {
         map.insert(id, tag_def);
     }
 

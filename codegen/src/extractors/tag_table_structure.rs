@@ -1,29 +1,29 @@
-//! Inline PrintConv extractor implementation
+//! Tag table structure extractor implementation
 //!
-//! This extractor handles tables one at a time, unlike most others.
+//! This extractor handles tables one at a time to support multiple table structures per module.
 
 use super::{Extractor, run_perl_extractor};
 use crate::extraction::ModuleConfig;
 use std::path::Path;
 use anyhow::Result;
 
-pub struct InlinePrintConvExtractor;
+pub struct TagTableStructureExtractor;
 
-impl Extractor for InlinePrintConvExtractor {
+impl Extractor for TagTableStructureExtractor {
     fn name(&self) -> &'static str {
-        "Inline PrintConv"
+        "Tag Table Structure"
     }
     
     fn script_name(&self) -> &'static str {
-        "inline_printconv.pl"
+        "tag_table_structure.pl"
     }
     
     fn output_subdir(&self) -> &'static str {
-        "inline_printconv"
+        "tag_structures"
     }
     
     fn handles_config(&self, config_type: &str) -> bool {
-        config_type == "inline_printconv"
+        config_type == "tag_table_structure" || config_type.ends_with("_tag_table_structure")
     }
     
     fn build_args(&self, _config: &ModuleConfig, _module_path: &Path) -> Vec<String> {
@@ -36,7 +36,7 @@ impl Extractor for InlinePrintConvExtractor {
     }
     
     fn config_type_name(&self) -> &'static str {
-        "inline_printconv"
+        "tag_structure"
     }
     
     // Override extract to handle one table at a time
@@ -44,7 +44,7 @@ impl Extractor for InlinePrintConvExtractor {
         let output_dir = base_dir.join(self.output_subdir());
         std::fs::create_dir_all(&output_dir)?;
         
-        // Process each table separately
+        // Process each table separately (config.hash_names contains table names like ["Main"] or ["Equipment"])
         for table_name in &config.hash_names {
             let args = vec![
                 module_path.to_string_lossy().to_string(),
