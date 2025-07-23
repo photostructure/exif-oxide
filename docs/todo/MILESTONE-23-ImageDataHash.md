@@ -1,491 +1,307 @@
-# Milestone 23: ImageDataHash
+# MILESTONE-23: ImageDataHash Implementation
 
 **Duration**: 2-3 weeks  
 **Goal**: Implement cryptographic hashing of image/media content for integrity verification
 
-## Overview
+## Project Overview
 
-ImageDataHash provides cryptographic fingerprinting of the actual image/media content within files, excluding metadata. This enables content integrity verification, duplicate detection, and forensic analysis workflows by creating unique hashes that represent visual/audio content independent of metadata changes.
+### High-Level Goal
+Implement ExifTool-compatible ImageDataHash functionality that generates cryptographic fingerprints of media content (excluding metadata) for integrity verification, duplicate detection, and forensic analysis.
 
-## Background: ExifTool's ImageDataHash Feature
+### Problem Statement
+- Need to verify media content integrity independent of metadata changes
+- Require duplicate detection across files with different metadata
+- Support forensic workflows that track visual/audio content modifications
 
-**Content-Only Hashing**:
-- **Includes**: Main image data, video/audio streams
-- **Excludes**: JpgFromRaw, OtherImage, ThumbnailImage, PreviewImage, all metadata (EXIF, XMP, IPTC, etc.)
+## Background & Context
 
-**Supported Algorithms**: MD5 (default), SHA256, SHA512
+### Why This Work is Needed
+- **Content Authentication**: Verify image/video hasn't been visually altered
+- **Duplicate Detection**: Find identical media with different metadata
+- **Forensic Analysis**: Track content through processing pipelines
+- **Digital Asset Management**: Content-based cataloging
 
-**Use Cases**:
-- Content integrity verification (detect visual changes vs metadata-only changes)
-- Duplicate detection across different metadata sets
-- Forensic analysis and authenticity verification
-- Digital asset management content tracking
+### ExifTool Implementation References
+- **Core hash function**: `lib/Image/ExifTool/Writer.pl:7085` - ImageDataHash()
+- **TIFF/EXIF handler**: `lib/Image/ExifTool/WriteExif.pl` - AddImageDataHash()
+- **Video processing**: `lib/Image/ExifTool/QuickTimeStream.pl` - ProcessSamples()
+- **Hash initialization**: `lib/Image/ExifTool.pm:4327-4340`
 
-## Implementation Strategy
+## Technical Foundation
 
-### Phase 1: Core Hashing Infrastructure (Week 1)
+### Key ExifTool Patterns
 
-**Hash Engine Foundation**:
-```rust
-use md5::Md5;
-use sha2::{Sha256, Sha512};
-use digest::{Digest, DynDigest};
-
-pub struct ImageDataHasher {
-    algorithm: HashAlgorithm,
-    enabled_formats: HashSet<FileType>,
-    chunk_size: usize, // Default 64KB for streaming
-}
-
-#[derive(Debug, Clone, Copy)]
-pub enum HashAlgorithm {
-    MD5,
-    SHA256, 
-    SHA512,
-}
-
-#[derive(Debug, Clone)]
-pub struct ImageDataHash {
-    pub algorithm: HashAlgorithm,
-    pub hash_value: String,      // Hex-encoded hash
-    pub bytes_hashed: u64,
-    pub data_sources: Vec<String>, // e.g., ["MainImage", "JpgFromRaw"]
-}
-
-impl ImageDataHasher {
-    pub fn new(algorithm: HashAlgorithm) -> Self {
-        Self {
-            algorithm,
-            enabled_formats: Self::get_supported_formats(),
-            chunk_size: 64 * 1024, // 64KB chunks
-        }
-    }
-    
-    pub fn hash_file_content(&mut self, reader: &ExifReader) -> Result<Option<ImageDataHash>> {
-        let file_type = reader.get_file_type();
-        
-        if !self.enabled_formats.contains(&file_type) {
-            return Ok(None);
-        }
-        
-        let mut hasher = self.create_hasher();
-        let mut total_bytes = 0u64;
-        let mut data_sources = Vec::new();
-        
-        // Format-specific content extraction
-        match file_type {
-            FileType::JPEG => {
-                total_bytes += self.hash_jpeg_content(reader, &mut hasher, &mut data_sources)?;
-            },
-            FileType::PNG => {
-                total_bytes += self.hash_png_content(reader, &mut hasher, &mut data_sources)?;
-            },
-            FileType::TIFF => {
-                total_bytes += self.hash_tiff_content(reader, &mut hasher, &mut data_sources)?;
-            },
-            FileType::MP4 | FileType::QuickTime => {
-                total_bytes += self.hash_video_content(reader, &mut hasher, &mut data_sources)?;
-            },
-            _ => return Ok(None),
-        }
-        
-        if total_bytes == 0 {
-            return Ok(None);
-        }
-        
-        let hash_bytes = hasher.finalize();
-        let hash_value = hex::encode(hash_bytes);
-        
-        Ok(Some(ImageDataHash {
-            algorithm: self.algorithm,
-            hash_value,
-            bytes_hashed: total_bytes,
-            data_sources,
-        }))
-    }
-    
-    fn create_hasher(&self) -> Box<dyn DynDigest> {
-        match self.algorithm {
-            HashAlgorithm::MD5 => Box::new(Md5::new()),
-            HashAlgorithm::SHA256 => Box::new(Sha256::new()),
-            HashAlgorithm::SHA512 => Box::new(Sha512::new()),
-        }
+**Hash Initialization** (`ExifTool.pm:4327`):
+```perl
+if ($$req{imagedatahash} and not $$self{ImageDataHash}) {
+    my $imageHashType = $self->Options('ImageHashType');
+    if ($imageHashType =~ /^SHA(256|512)$/i) {
+        $$self{ImageDataHash} = Digest::SHA->new($1);
+    } elsif (require Digest::MD5) {
+        $$self{ImageDataHash} = Digest::MD5->new;
     }
 }
 ```
 
-### Phase 2: Format-Specific Implementations (Week 1-2)
+**Format-Specific Data Identification**:
+- `%isImageData` hashes identify content chunks per format
+- `IsImageData => 1` tag property marks TIFF/EXIF image offsets
+- Format-specific handlers for each file type
 
-**JPEG Content Hashing**:
+**Empty Hash Constants** (ignored by ExifTool):
+- MD5: `d41d8cd98f00b204e9800998ecf8427e`
+- SHA256: `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- SHA512: `cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e`
+
+### Codegen Opportunities
+
+**1. Format-Specific isImageData Tables**:
+```perl
+# From Jpeg2000.pm
+my %isImageData = ( jp2c=>1, jbrd=>1, jxlp=>1, jxlc=>1 );
+
+# From QuickTime.pm  
+my %isImageData = ( av01=>1, avc1=>1, hvc1=>1, lhv1=>1, hvt1=>1 );
+
+# From RIFF.pm
+my %isImageData = (
+    LIST_movi => 1,  # AVI video
+    data => 1,       # WAV audio
+    'VP8 '=>1, VP8L=>1, ANIM=>1, ANMF=>1, ALPH=>1, # WebP
+);
+```
+
+**2. EXIF Tags with IsImageData Property**:
+- Extract from `Exif.pm` tags with `IsImageData => 1`
+- Generate offset/size pair mappings
+- Examples: StripOffsets, TileOffsets, JpgFromRawStart
+
+**3. Empty Hash Constant Table**:
+- Generate lookup for the three empty hash values
+- Map by algorithm type for quick detection
+
+## Work Completed
+
+### Research Findings
+
+**Format-Specific Patterns Discovered**:
+
+- **JPEG**: 
+  - Hash SOS (Start of Scan) segments  
+  - Include JpgFromRaw if present
+  - Include OtherImage (non-thumbnail/preview)
+  - JP2 format uses SOD marker
+
+- **PNG**:
+  - Hash all IDAT chunks (image data)
+  - Include critical chunks: PLTE, tRNS, gAMA, cHRM, sRGB, sBIT
+  - Skip metadata chunks: tEXt, zTXt, iTXt, eXIf, iCCP
+
+- **TIFF/EXIF**:
+  - Use AddImageDataHash() pattern with offset/size pairs
+  - Handle StripOffsets/StripByteCounts
+  - Handle TileOffsets/TileByteCounts  
+  - Special cases: JpgFromRaw, OtherImage
+
+- **Video (MOV/MP4)**:
+  - Hash 'mdat' atoms containing media data
+  - Process based on handler type ('vide', 'soun')
+  - Use stco/co64 chunk offset tables
+
+- **RIFF-based**:
+  - AVI: LIST_movi chunks
+  - WAV: data chunks
+  - WebP: VP8/VP8L/ANIM/ANMF/ALPH chunks
+
+### Implementation Patterns Identified
+
+1. **64KB Chunked Processing**: Prevents memory issues with large files
+2. **Lazy Hash Object Creation**: Only when specifically requested
+3. **Format Dispatch**: Each format has specific data identification
+4. **Offset/Size Pairing**: Critical for TIFF formats
+5. **Handler-Based Processing**: Video uses handler type for dispatch
+
+## Remaining Tasks
+
+### High Confidence Implementation Tasks
+
+**1. Core Hash Infrastructure** ✅
 ```rust
+// Implement chunked hash computation matching ExifTool
 impl ImageDataHasher {
-    fn hash_jpeg_content(
-        &self,
-        reader: &ExifReader,
-        hasher: &mut Box<dyn DynDigest>,
-        data_sources: &mut Vec<String>,
-    ) -> Result<u64> {
-        
-        let mut total_bytes = 0u64;
-        
-        // Hash main JPEG data (SOS segments)
-        if let Some(main_image_data) = reader.get_main_image_data()? {
-            total_bytes += self.hash_data_stream(hasher, main_image_data)?;
-            data_sources.push("MainImage".to_string());
-        }
-        
-        // Hash JpgFromRaw (for RAW files with embedded JPEG)
-        if let Some(jpg_from_raw) = reader.get_binary_tag("JpgFromRaw")? {
-            total_bytes += self.hash_data_stream(hasher, jpg_from_raw)?;
-            data_sources.push("JpgFromRaw".to_string());
-        }
-        
-        // Hash OtherImage segments (but skip thumbnails/previews)
-        for other_image in reader.get_other_images()? {
-            if !other_image.is_thumbnail && !other_image.is_preview {
-                total_bytes += self.hash_data_stream(hasher, other_image.data)?;
-                data_sources.push(format!("OtherImage{}", other_image.index));
-            }
-        }
-        
-        Ok(total_bytes)
-    }
-    
-    fn hash_data_stream(
-        &self,
-        hasher: &mut Box<dyn DynDigest>,
-        mut data_reader: Box<dyn Read>,
-    ) -> Result<u64> {
-        
-        let mut buffer = vec![0u8; self.chunk_size];
-        let mut total_bytes = 0u64;
-        
+    fn hash_data_stream(&self, reader: impl Read, hasher: &mut dyn Digest) -> Result<u64> {
+        let mut buffer = vec![0u8; 65536]; // 64KB chunks like ExifTool
+        let mut total = 0u64;
         loop {
-            let bytes_read = data_reader.read(&mut buffer)?;
-            if bytes_read == 0 {
-                break;
-            }
-            
-            hasher.update(&buffer[..bytes_read]);
-            total_bytes += bytes_read as u64;
+            let n = reader.read(&mut buffer)?;
+            if n == 0 { break; }
+            hasher.update(&buffer[..n]);
+            total += n as u64;
         }
-        
-        Ok(total_bytes)
+        Ok(total)
     }
 }
 ```
 
-**PNG Content Hashing**:
+**2. Format-Specific Handlers** ✅
+- Implement discovered patterns for each format
+- Use generated isImageData lookups
+- Follow ExifTool's exact data selection
+
+**3. Empty Hash Detection** ✅
 ```rust
-impl ImageDataHasher {
-    fn hash_png_content(
-        &self,
-        reader: &ExifReader,
-        hasher: &mut Box<dyn DynDigest>,
-        data_sources: &mut Vec<String>,
-    ) -> Result<u64> {
-        
-        let mut total_bytes = 0u64;
-        
-        // PNG stores image data in IDAT chunks
-        // Must hash all IDAT chunks while skipping metadata chunks
-        let png_chunks = reader.get_png_chunks()?;
-        
-        for chunk in png_chunks {
-            match chunk.chunk_type.as_str() {
-                "IDAT" => {
-                    // This is image data - include in hash
-                    hasher.update(&chunk.data);
-                    total_bytes += chunk.data.len() as u64;
-                },
-                // Skip metadata chunks
-                "tEXt" | "zTXt" | "iTXt" | "eXIf" | "iCCP" => {
-                    // Skip these - they're metadata
-                },
-                // Include other critical chunks that affect image rendering
-                "PLTE" | "tRNS" | "gAMA" | "cHRM" | "sRGB" | "sBIT" => {
-                    hasher.update(&chunk.data);
-                    total_bytes += chunk.data.len() as u64;
-                },
-                _ => {
-                    // Unknown chunk - be conservative and include it
-                    // unless it's clearly metadata (lowercase first letter = ancillary)
-                    if chunk.chunk_type.chars().next().unwrap().is_uppercase() {
-                        hasher.update(&chunk.data);
-                        total_bytes += chunk.data.len() as u64;
-                    }
-                }
-            }
-        }
-        
-        if total_bytes > 0 {
-            data_sources.push("MainImage".to_string());
-        }
-        
-        Ok(total_bytes)
-    }
+// Use generated constant table
+fn is_empty_hash(hash: &str, algorithm: HashAlgorithm) -> bool {
+    EMPTY_HASHES.get(&algorithm).map_or(false, |empty| empty == hash)
 }
 ```
 
-**Video Content Hashing (QuickTime/MP4)**:
-```rust
-impl ImageDataHasher {
-    fn hash_video_content(
-        &self,
-        reader: &ExifReader,
-        hasher: &mut Box<dyn DynDigest>,
-        data_sources: &mut Vec<String>,
-    ) -> Result<u64> {
-        
-        let mut total_bytes = 0u64;
-        
-        // For video files, hash the media data (mdat) atoms
-        // These contain the actual audio/video streams
-        let atoms = reader.get_quicktime_atoms()?;
-        
-        for atom in atoms {
-            match atom.atom_type.as_str() {
-                "mdat" => {
-                    // Media data - this is what we want to hash
-                    let mut media_reader = atom.get_data_reader()?;
-                    total_bytes += self.hash_data_stream(hasher, media_reader)?;
-                    data_sources.push("MediaData".to_string());
-                },
-                "ftyp" | "moov" | "meta" | "udta" => {
-                    // Skip metadata atoms
-                },
-                _ => {
-                    // For unknown atoms, check if they might contain media data
-                    // This is conservative - include unknown atoms that might be media
-                    if atom.size > 1024 { // Likely to be media if large
-                        let mut atom_reader = atom.get_data_reader()?;
-                        total_bytes += self.hash_data_stream(hasher, atom_reader)?;
-                        data_sources.push(format!("Atom_{}", atom.atom_type));
-                    }
-                }
-            }
-        }
-        
-        Ok(total_bytes)
-    }
+**4. TIFF/EXIF Implementation** ✅
+- Port AddImageDataHash logic from WriteExif.pl
+- Handle OffsetPair relationships
+- Process multiple strips/tiles
+
+### Tasks Requiring Additional Research
+
+**1. HEIC/AVIF Support** 🔍
+- Uses `isImageData{$type}` check in QuickTime.pm
+- Need to understand 'av01' box structure
+- Research extent-based data assembly
+
+**2. CR3 Format Handling** 🔍
+- References A100DataOffset special case
+- Need to understand Canon's CR3 structure
+- May require processor_registry integration
+
+**3. Video Fragment Processing** 🔍
+- Parse stco/co64/stsc/stts tables
+- Handle fragmented MP4 (fMP4)
+- Understand sample-to-chunk mapping
+
+**4. Panasonic RAW Handling** 🔍
+- Research NotRealPair hack (size=999999999)
+- Understand EOF data storage pattern
+
+## Prerequisites
+
+### Codegen Infrastructure Updates
+
+**1. Create isImageData Extractor**:
+```json
+// codegen/config/Jpeg2000_pm/isImageData.json
+{
+  "description": "JP2/JXL image data box types",
+  "hash_name": "%isImageData",
+  "key_type": "string",
+  "value_type": "bool"
 }
 ```
 
-### Phase 3: Integration and Storage (Week 2)
+**2. Create IsImageData Tag Extractor**:
+- New extractor to find tags with `IsImageData => 1`
+- Extract OffsetPair relationships
+- Generate tag ID to property mappings
 
-**ExifReader Integration**:
-```rust
-impl ExifReader {
-    /// Calculate hash of image/media content (excluding metadata)
-    pub fn calculate_image_data_hash(&self, algorithm: HashAlgorithm) -> Result<Option<ImageDataHash>> {
-        let mut hasher = ImageDataHasher::new(algorithm);
-        hasher.hash_file_content(self)
-    }
-    
-    /// Get image data hash if already calculated or calculate it
-    pub fn get_or_calculate_image_hash(&mut self, algorithm: HashAlgorithm) -> Result<Option<ImageDataHash>> {
-        // Check if hash was already calculated and stored
-        if let Some(existing_hash) = self.get_stored_image_hash(algorithm)? {
-            return Ok(Some(existing_hash));
-        }
-        
-        // Calculate new hash
-        let hash = self.calculate_image_data_hash(algorithm)?;
-        
-        // Store for future reference (optional)
-        if let Some(ref hash_value) = hash {
-            self.store_image_hash(hash_value)?;
-        }
-        
-        Ok(hash)
-    }
-    
-    fn store_image_hash(&mut self, hash: &ImageDataHash) -> Result<()> {
-        // Store in XMP if XMP support is available
-        let algorithm_name = match hash.algorithm {
-            HashAlgorithm::MD5 => "MD5",
-            HashAlgorithm::SHA256 => "SHA256", 
-            HashAlgorithm::SHA512 => "SHA512",
-        };
-        
-        // Store as ExifTool-compatible XMP tags
-        self.set_tag_value("XMP-et:OriginalImageHash", TagValue::String(hash.hash_value.clone()))?;
-        self.set_tag_value("XMP-et:OriginalImageHashType", TagValue::String(algorithm_name.to_string()))?;
-        
-        Ok(())
-    }
-}
-```
+**3. Empty Hash Constants Generator**:
+- Extract the three hash values from ExifTool.pm
+- Generate by algorithm type
 
-**CLI Integration**:
-```rust
-// CLI support for image data hashing
-#[derive(Parser)]
-pub struct HashArgs {
-    /// Calculate image data hash
-    #[arg(long = "image-hash")]
-    pub image_hash: bool,
-    
-    /// Hash algorithm (MD5, SHA256, SHA512)
-    #[arg(long = "hash-type", default_value = "MD5")]
-    pub hash_algorithm: String,
-    
-    /// Store hash in XMP metadata
-    #[arg(long = "store-hash")]
-    pub store_hash: bool,
-}
+### Existing Dependencies
+- ✅ Binary data extraction (from previous milestones)
+- ✅ Format parsing infrastructure
+- ✅ Streaming I/O patterns
 
-pub fn handle_image_hash(args: &HashArgs, file_path: &Path) -> Result<()> {
-    let mut reader = ExifReader::from_file(file_path)?;
-    
-    if args.image_hash {
-        let algorithm = match args.hash_algorithm.to_uppercase().as_str() {
-            "MD5" => HashAlgorithm::MD5,
-            "SHA256" => HashAlgorithm::SHA256,
-            "SHA512" => HashAlgorithm::SHA512,
-            _ => return Err(ExifError::UnsupportedHashAlgorithm(args.hash_algorithm.clone())),
-        };
-        
-        if let Some(hash) = reader.calculate_image_data_hash(algorithm)? {
-            println!("ImageDataHash: {}", hash.hash_value);
-            println!("Algorithm: {:?}", hash.algorithm);
-            println!("Bytes Hashed: {}", hash.bytes_hashed);
-            println!("Data Sources: {}", hash.data_sources.join(", "));
-            
-            if args.store_hash {
-                reader.store_image_hash(&hash)?;
-                println!("Hash stored in XMP metadata");
-            }
-        } else {
-            println!("No image data found for hashing");
-        }
-    }
-    
-    Ok(())
-}
-```
+## Testing Strategy
 
-### Phase 4: Testing and Validation (Week 3)
+### Unit Tests
+- Hash consistency across metadata changes
+- Algorithm selection (MD5/SHA256/SHA512)
+- Empty hash detection
+- Chunked processing with various sizes
 
-**Hash Validation Tests**:
-```rust
-#[cfg(test)]
-mod tests {
-    use super::*;
-    
-    #[test]
-    fn test_jpeg_hash_consistency() {
-        // Test that identical JPEG content produces identical hashes
-        // regardless of metadata differences
-        
-        let original_file = "tests/fixtures/test_image.jpg";
-        let modified_metadata_file = "tests/fixtures/test_image_modified_metadata.jpg";
-        
-        let hash1 = ExifReader::from_file(original_file)?
-            .calculate_image_data_hash(HashAlgorithm::MD5)?
-            .unwrap();
-            
-        let hash2 = ExifReader::from_file(modified_metadata_file)?
-            .calculate_image_data_hash(HashAlgorithm::MD5)?
-            .unwrap();
-        
-        assert_eq!(hash1.hash_value, hash2.hash_value);
-    }
-    
-    #[test] 
-    fn test_hash_algorithm_differences() {
-        // Test that different algorithms produce different hashes
-        let file = "tests/fixtures/test_image.jpg";
-        let reader = ExifReader::from_file(file)?;
-        
-        let md5_hash = reader.calculate_image_data_hash(HashAlgorithm::MD5)?.unwrap();
-        let sha256_hash = reader.calculate_image_data_hash(HashAlgorithm::SHA256)?.unwrap();
-        
-        assert_ne!(md5_hash.hash_value, sha256_hash.hash_value);
-        assert_eq!(md5_hash.bytes_hashed, sha256_hash.bytes_hashed);
-    }
-    
-    #[test]
-    fn test_video_hash_calculation() {
-        // Test video content hashing
-        let video_file = "tests/fixtures/test_video.mp4";
-        let hash = ExifReader::from_file(video_file)?
-            .calculate_image_data_hash(HashAlgorithm::SHA256)?
-            .unwrap();
-        
-        assert!(hash.bytes_hashed > 0);
-        assert!(hash.data_sources.contains(&"MediaData".to_string()));
-    }
-}
-```
+### Integration Tests
+- Compare with `exiftool -ImageDataHash` output
+- Test each supported format
+- Large file handling (>4GB videos)
+- Corrupted file handling
 
-## Success Criteria
+### Format-Specific Test Cases
+- JPEG with embedded thumbnails
+- PNG with ancillary chunks
+- TIFF with multiple strips
+- Video with multiple streams
+- HEIC with multiple images
+
+## Success Criteria & Quality Gates
 
 ### Core Requirements
-- [ ] **Multi-Format Support**: Hash calculation for JPEG, PNG, TIFF, MP4/MOV
-- [ ] **Multiple Algorithms**: MD5, SHA256, SHA512 support
-- [ ] **Content-Only Hashing**: Exclude metadata, include only image/media data
-- [ ] **Streaming Processing**: Handle large files efficiently with chunked processing
-- [ ] **XMP Storage**: Store calculated hashes in XMP metadata tags
+- ✅ Hash values match ExifTool exactly
+- ✅ Support MD5, SHA256, SHA512
+- ✅ Handle all mainstream formats
+- ✅ 64KB streaming prevents memory issues
 
-### Validation Tests
-- Verify identical content produces identical hashes across different metadata
-- Test large file processing without memory issues
-- Validate hash values match ExifTool output for same files
-- Test with various image formats and video files
+### Performance Targets
+- Within 2x of ExifTool speed
+- Memory usage <100MB for any file size
+- Linear time complexity with file size
 
-## Implementation Boundaries
+### Compatibility Requirements
+- Identical hash values to ExifTool
+- Handle same edge cases
+- Support same format variants
 
-### Goals (Milestone 23)
-- Content integrity verification through cryptographic hashing
-- Support for mainstream image and video formats
-- Integration with existing metadata processing pipeline
-- CLI and API support for hash calculation
+## Gotchas & Tribal Knowledge
 
-### Non-Goals (Future Enhancements)
-- **Perceptual hashing**: Only cryptographic hashes, not visual similarity
-- **All format support**: Focus on common formats, add others based on demand
-- **Performance optimization**: Basic streaming approach, optimize later if needed
-- **Hash comparison tools**: Only calculation, not duplicate detection workflows
+### ExifTool Implementation Quirks
 
-## Dependencies and Prerequisites
+**1. Camera-Specific Workarounds**:
+- A200 stores StripOffsets in wrong byte order (requires swap)
+- JpgFromRaw location varies: SubIFD (NEF/NRW), IFD2 (PEF)
+- Some cameras use NotRealPair (data to EOF)
 
-### Milestone Prerequisites
-- **Core format support**: JPEG, PNG, TIFF, video format parsing infrastructure
-- **Binary data extraction**: Ability to access raw image/media data
+**2. Format-Specific Edge Cases**:
+- JPEG in TIFF: Check for SOD marker in JP2
+- PNG: Uppercase first letter = critical chunk
+- Video: Must check handler type before processing
 
-### Technical Dependencies
-- **Rust crypto crates**: `md5`, `sha2`, `hex` for hash calculation
-- **Streaming I/O**: Efficient processing of large media files
-- **Format parsers**: Understanding of format-specific data structures
+**3. Processing Order Critical**:
+- Must process offset/size pairs atomically
+- Video requires chunk offset table parsing first
+- TIFF strips must be processed in order
 
-## Risk Mitigation
+### Implementation Warnings
 
-### Algorithm Performance Risk
-- **Risk**: Hash calculation on large video files could be slow
-- **Mitigation**: Chunked processing with configurable chunk sizes
-- **Monitoring**: Provide progress feedback for large operations
+**1. Never Hardcode Data Identification**:
+- MUST use codegen for isImageData tables
+- Manual maintenance will drift from ExifTool
+- New formats added monthly to ExifTool
 
-### Format-Specific Complexity Risk
-- **Risk**: Each format requires custom implementation for data extraction
-- **Mitigation**: Start with common formats, add others incrementally
-- **Strategy**: Reuse existing format parsing infrastructure
+**2. Hash Object Lifecycle**:
+- Create only when requested
+- Check ImageDataHash option first
+- Destroy after file processing
 
-### Memory Usage Risk
-- **Risk**: Large files could cause memory issues during processing
-- **Mitigation**: Streaming approach processes data in small chunks
-- **Validation**: Test with multi-gigabyte video files
+**3. Error Handling Patterns**:
+- Seek errors are warnings, not fatal
+- Continue processing other data on errors
+- Report total bytes hashed even with errors
 
-## Related Documentation
+### Performance Considerations
+- 64KB chunk size is optimal (ExifTool tested)
+- Avoid reading entire file into memory
+- Skip hash if not requested (lazy init)
 
-### Required Reading
-- **ExifTool ImageHashType**: Feature documentation and use cases
-- **Format specifications**: Understanding data vs metadata sections in each format
-- **Cryptographic hash standards**: MD5, SHA256, SHA512 specifications
+## Implementation Notes
 
-### Implementation References
-- **Format parsers**: Existing JPEG, PNG, TIFF, video parsing infrastructure
-- **Binary data handling**: Streaming data access patterns
-- **XMP integration**: Metadata storage and retrieval patterns
+### Key Files to Study
+- `Writer.pl:7085-7108` - Core ImageDataHash function
+- `WriteExif.pl:AddImageDataHash` - TIFF/EXIF pattern
+- `QuickTimeStream.pl:ProcessSamples` - Video handling
+- Format modules for `%isImageData` definitions
 
-This milestone adds specialized forensic and integrity verification capabilities to exif-oxide, enabling professional workflows that require content authentication and duplicate detection independent of metadata variations.
+### Testing Resources
+- ExifTool test suite has hash test cases
+- Use `exiftool -v3 -ImageDataHash` to see processing
+- Compare with `-j` output for exact values
+
+This implementation adds forensic-grade content verification to exif-oxide, matching ExifTool's trusted behavior while leveraging Rust's performance and safety.
