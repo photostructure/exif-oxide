@@ -4,10 +4,10 @@
 //! FujiFilm model detection patterns from Main table
 //! ExifTool: FujiFilm.pm %FujiFilm::Main
 
-use std::collections::HashMap;
-use std::sync::LazyLock;
 use crate::expressions::ExpressionEvaluator;
 use crate::processor_registry::ProcessorContext;
+use std::collections::HashMap;
+use std::sync::LazyLock;
 
 #[derive(Debug, Clone)]
 pub struct ConditionalTagEntry {
@@ -16,22 +16,25 @@ pub struct ConditionalTagEntry {
 }
 
 /// Conditional tag resolution mapping
-static CONDITIONAL_TAG_RESOLVER: LazyLock<HashMap<&'static str, Vec<ConditionalTagEntry>>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("4352", vec![
-        ConditionalTagEntry {
-            condition: "$$self{Model} eq \"X-T3\"",
-            name: "AutoBracketing",
-        },
-    ]);
-    map.insert("4868", vec![
-        ConditionalTagEntry {
-            condition: "$$self{Make} =~ /^GENERAL IMAGING/",
-            name: "GEImageSize",
-        },
-    ]);
-    map
-});
+static CONDITIONAL_TAG_RESOLVER: LazyLock<HashMap<&'static str, Vec<ConditionalTagEntry>>> =
+    LazyLock::new(|| {
+        let mut map = HashMap::new();
+        map.insert(
+            "4352",
+            vec![ConditionalTagEntry {
+                condition: "$$self{Model} eq \"X-T3\"",
+                name: "AutoBracketing",
+            }],
+        );
+        map.insert(
+            "4868",
+            vec![ConditionalTagEntry {
+                condition: "$$self{Make} =~ /^GENERAL IMAGING/",
+                name: "GEImageSize",
+            }],
+        );
+        map
+    });
 
 /// FujiFilm model detection and conditional tag resolution
 /// Patterns: 0, Conditional tags: 2
@@ -48,8 +51,13 @@ impl FujiFilmModelDetection {
     }
 
     /// Resolve conditional tag based on model and other conditions
-    pub fn resolve_conditional_tag(&self, tag_id: &str, context: &ConditionalContext) -> Option<&'static str> {
-        CONDITIONAL_TAG_RESOLVER.get(tag_id)?
+    pub fn resolve_conditional_tag(
+        &self,
+        tag_id: &str,
+        context: &ConditionalContext,
+    ) -> Option<&'static str> {
+        CONDITIONAL_TAG_RESOLVER
+            .get(tag_id)?
             .iter()
             .find(|condition| self.evaluate_condition(&condition.condition, context))
             .map(|condition| condition.name)
@@ -58,7 +66,7 @@ impl FujiFilmModelDetection {
     /// Evaluate a condition using the unified expression system
     fn evaluate_condition(&self, condition: &str, context: &ConditionalContext) -> bool {
         let mut evaluator = ExpressionEvaluator::new();
-        
+
         // Build ProcessorContext from ConditionalContext
         let mut processor_context = ProcessorContext::default();
         if let Some(model) = &context.model {
@@ -67,9 +75,11 @@ impl FujiFilmModelDetection {
         if let Some(make) = &context.make {
             processor_context = processor_context.with_manufacturer(make.clone());
         }
-        
+
         // Try context-based evaluation
-        evaluator.evaluate_context_condition(&processor_context, condition).unwrap_or(false)
+        evaluator
+            .evaluate_context_condition(&processor_context, condition)
+            .unwrap_or(false)
     }
 }
 
@@ -81,4 +91,3 @@ pub struct ConditionalContext {
     pub count: Option<u32>,
     pub format: Option<String>,
 }
-

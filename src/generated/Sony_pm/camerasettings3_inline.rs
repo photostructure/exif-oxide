@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for CameraSettings3 table
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Sony.pm (table: CameraSettings3)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -7,15 +7,11 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS3_ASPECT_RATIO_DATA: &[(u8, &'static str)] = &[
-    (4, "3:2"),
-    (8, "16:9"),
-];
+static CAMERA_SETTINGS3_ASPECT_RATIO_DATA: &[(u8, &'static str)] = &[(4, "3:2"), (8, "16:9")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_ASPECT_RATIO: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_ASPECT_RATIO_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_ASPECT_RATIO: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS3_ASPECT_RATIO_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings3__aspect_ratio(key: u8) -> Option<&'static str> {
@@ -138,21 +134,48 @@ static CAMERA_SETTINGS3_LENS_TYPE2_DATA: &[(&'static str, &'static str)] = &[
     ("33072", "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter"),
     ("33073", "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter"),
     ("33076", "Sony FE 100mm F2.8 STF GM OSS (macro mode)"),
-    ("33077", "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter"),
-    ("33078", "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter"),
+    (
+        "33077",
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
+    ),
+    (
+        "33078",
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
+    ),
     ("33079", "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter"),
     ("33080", "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter"),
-    ("33081", "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter"),
-    ("33082", "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter"),
+    (
+        "33081",
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
+    ),
+    (
+        "33082",
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
+    ),
     ("33083", "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter"),
     ("33084", "Sony FE 600mm F4 GM OSS + 2X Teleconverter"),
-    ("33085", "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter"),
-    ("33086", "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter"),
-    ("33087", "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter"),
-    ("33088", "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter"),
+    (
+        "33085",
+        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
+    ),
+    (
+        "33086",
+        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
+    ),
+    (
+        "33087",
+        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
+    ),
+    (
+        "33088",
+        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
+    ),
     ("33089", "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter"),
     ("33090", "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter"),
-    ("33091", "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter"),
+    (
+        "33091",
+        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
+    ),
     ("33092", "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter"),
     ("44", "Metabones Canon EF Smart Adapter"),
     ("49201", "Zeiss Touit 12mm F2.8"),
@@ -185,12 +208,18 @@ static CAMERA_SETTINGS3_LENS_TYPE2_DATA: &[(&'static str, &'static str)] = &[
     ("49470", "Tamron 28-75mm F2.8 Di III VXD G2"),
     ("49471", "Tamron 50-400mm F4.5-6.3 Di III VC VXD"),
     ("49472", "Tamron 20-40mm F2.8 Di III VXD"),
-    ("49473", "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens"),
+    (
+        "49473",
+        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
+    ),
     ("49473.1", "Tokina atx-m 85mm F1.8 FE"),
     ("49473.2", "Viltrox 23mm F1.4 E"),
     ("49473.3", "Viltrox 56mm F1.4 E"),
     ("49473.4", "Viltrox 85mm F1.8 II FE"),
-    ("49474", "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens"),
+    (
+        "49474",
+        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
+    ),
     ("49474.1", "Viltrox 13mm F1.4 E"),
     ("49474.10", "Viltrox 20mm F2.8 FE"),
     ("49474.2", "Viltrox 16mm F1.8 FE"),
@@ -209,7 +238,10 @@ static CAMERA_SETTINGS3_LENS_TYPE2_DATA: &[(&'static str, &'static str)] = &[
     ("49714", "Tokina atx-m 11-18mm F2.8 E"),
     ("50480", "Sigma 30mm F1.4 DC DN | C"),
     ("50481", "Sigma 50mm F1.4 DG HSM | A"),
-    ("50482", "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11"),
+    (
+        "50482",
+        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
+    ),
     ("50483", "Sigma 18-35mm F1.8 DC HSM | A + MC-11"),
     ("50484", "Sigma 24-35mm F2 DG HSM | A + MC-11"),
     ("50485", "Sigma 24mm F1.4 DG HSM | A + MC-11"),
@@ -299,13 +331,15 @@ static CAMERA_SETTINGS3_LENS_TYPE2_DATA: &[(&'static str, &'static str)] = &[
     ("61569", "LAOWA FFII 10mm F2.8 C&D Dreamer"),
     ("61761", "Viltrox 28mm F4.5 FE"),
     ("7", "Sony LA-EA5 Adapter"),
-    ("78", "Metabones Canon EF Smart Adapter Mark III or Other Adapter"),
+    (
+        "78",
+        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
+    ),
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_LENS_TYPE2: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_LENS_TYPE2_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_LENS_TYPE2: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS3_LENS_TYPE2_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings3__lens_type2(key: &str) -> Option<&'static str> {
@@ -313,17 +347,12 @@ pub fn lookup_camera_settings3__lens_type2(key: &str) -> Option<&'static str> {
 }
 
 /// Raw data (4 entries)
-static CAMERA_SETTINGS3_QUALITY_DATA: &[(u8, &'static str)] = &[
-    (2, "RAW"),
-    (4, "RAW + JPEG"),
-    (6, "Fine"),
-    (7, "Standard"),
-];
+static CAMERA_SETTINGS3_QUALITY_DATA: &[(u8, &'static str)] =
+    &[(2, "RAW"), (4, "RAW + JPEG"), (6, "Fine"), (7, "Standard")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_QUALITY: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_QUALITY_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_QUALITY: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS3_QUALITY_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings3__quality(key: u8) -> Option<&'static str> {
@@ -331,32 +360,36 @@ pub fn lookup_camera_settings3__quality(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (3 entries)
-static CAMERA_SETTINGS3_DYNAMIC_RANGE_OPTIMIZER_SETTING_DATA: &[(u8, &'static str)] = &[
-    (1, "Off"),
-    (16, "On (Auto)"),
-    (17, "On (Manual)"),
-];
+static CAMERA_SETTINGS3_DYNAMIC_RANGE_OPTIMIZER_SETTING_DATA: &[(u8, &'static str)] =
+    &[(1, "Off"), (16, "On (Auto)"), (17, "On (Manual)")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_DYNAMIC_RANGE_OPTIMIZER_SETTING: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_DYNAMIC_RANGE_OPTIMIZER_SETTING_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_DYNAMIC_RANGE_OPTIMIZER_SETTING: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_DYNAMIC_RANGE_OPTIMIZER_SETTING_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__dynamic_range_optimizer_setting(key: u8) -> Option<&'static str> {
-    CAMERA_SETTINGS3_DYNAMIC_RANGE_OPTIMIZER_SETTING.get(&key).copied()
+    CAMERA_SETTINGS3_DYNAMIC_RANGE_OPTIMIZER_SETTING
+        .get(&key)
+        .copied()
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS3_A_F_BUTTON_PRESSED_DATA: &[(u8, &'static str)] = &[
-    (1, "No"),
-    (16, "Yes"),
-];
+static CAMERA_SETTINGS3_A_F_BUTTON_PRESSED_DATA: &[(u8, &'static str)] = &[(1, "No"), (16, "Yes")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_A_F_BUTTON_PRESSED: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_A_F_BUTTON_PRESSED_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_A_F_BUTTON_PRESSED: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_A_F_BUTTON_PRESSED_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__a_f_button_pressed(key: u8) -> Option<&'static str> {
@@ -364,16 +397,17 @@ pub fn lookup_camera_settings3__a_f_button_pressed(key: u8) -> Option<&'static s
 }
 
 /// Raw data (3 entries)
-static CAMERA_SETTINGS3_LIVE_VIEW_METERING_DATA: &[(u8, &'static str)] = &[
-    (0, "n/a"),
-    (16, "40 Segment"),
-    (32, "1200-zone Evaluative"),
-];
+static CAMERA_SETTINGS3_LIVE_VIEW_METERING_DATA: &[(u8, &'static str)] =
+    &[(0, "n/a"), (16, "40 Segment"), (32, "1200-zone Evaluative")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_LIVE_VIEW_METERING: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_LIVE_VIEW_METERING_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_LIVE_VIEW_METERING: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_LIVE_VIEW_METERING_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__live_view_metering(key: u8) -> Option<&'static str> {
@@ -389,9 +423,13 @@ static CAMERA_SETTINGS3_VIEWING_MODE2_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_VIEWING_MODE2: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_VIEWING_MODE2_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_VIEWING_MODE2: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_VIEWING_MODE2_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__viewing_mode2(key: u8) -> Option<&'static str> {
@@ -399,15 +437,11 @@ pub fn lookup_camera_settings3__viewing_mode2(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS3_A_E_LOCK_DATA: &[(u8, &'static str)] = &[
-    (1, "On"),
-    (2, "Off"),
-];
+static CAMERA_SETTINGS3_A_E_LOCK_DATA: &[(u8, &'static str)] = &[(1, "On"), (2, "Off")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_A_E_LOCK: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_A_E_LOCK_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_A_E_LOCK: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS3_A_E_LOCK_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings3__a_e_lock(key: u8) -> Option<&'static str> {
@@ -415,15 +449,17 @@ pub fn lookup_camera_settings3__a_e_lock(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS3_FLASH_STATUS_BUILT_IN_DATA: &[(u8, &'static str)] = &[
-    (1, "Off"),
-    (2, "On"),
-];
+static CAMERA_SETTINGS3_FLASH_STATUS_BUILT_IN_DATA: &[(u8, &'static str)] =
+    &[(1, "Off"), (2, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_FLASH_STATUS_BUILT_IN: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_FLASH_STATUS_BUILT_IN_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_FLASH_STATUS_BUILT_IN: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_FLASH_STATUS_BUILT_IN_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__flash_status_built_in(key: u8) -> Option<&'static str> {
@@ -431,16 +467,17 @@ pub fn lookup_camera_settings3__flash_status_built_in(key: u8) -> Option<&'stati
 }
 
 /// Raw data (3 entries)
-static CAMERA_SETTINGS3_FLASH_STATUS_EXTERNAL_DATA: &[(u8, &'static str)] = &[
-    (1, "None"),
-    (2, "Off"),
-    (3, "On"),
-];
+static CAMERA_SETTINGS3_FLASH_STATUS_EXTERNAL_DATA: &[(u8, &'static str)] =
+    &[(1, "None"), (2, "Off"), (3, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_FLASH_STATUS_EXTERNAL: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_FLASH_STATUS_EXTERNAL_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_FLASH_STATUS_EXTERNAL: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_FLASH_STATUS_EXTERNAL_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__flash_status_external(key: u8) -> Option<&'static str> {
@@ -448,16 +485,17 @@ pub fn lookup_camera_settings3__flash_status_external(key: u8) -> Option<&'stati
 }
 
 /// Raw data (3 entries)
-static CAMERA_SETTINGS3_LIVE_VIEW_FOCUS_MODE_DATA: &[(u8, &'static str)] = &[
-    (0, "n/a"),
-    (1, "AF"),
-    (16, "Manual"),
-];
+static CAMERA_SETTINGS3_LIVE_VIEW_FOCUS_MODE_DATA: &[(u8, &'static str)] =
+    &[(0, "n/a"), (1, "AF"), (16, "Manual")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_LIVE_VIEW_FOCUS_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_LIVE_VIEW_FOCUS_MODE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_LIVE_VIEW_FOCUS_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_LIVE_VIEW_FOCUS_MODE_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__live_view_focus_mode(key: u8) -> Option<&'static str> {
@@ -465,15 +503,11 @@ pub fn lookup_camera_settings3__live_view_focus_mode(key: u8) -> Option<&'static
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS3_COLOR_SPACE_DATA: &[(u8, &'static str)] = &[
-    (1, "sRGB"),
-    (2, "Adobe RGB"),
-];
+static CAMERA_SETTINGS3_COLOR_SPACE_DATA: &[(u8, &'static str)] = &[(1, "sRGB"), (2, "Adobe RGB")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_COLOR_SPACE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_COLOR_SPACE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_COLOR_SPACE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS3_COLOR_SPACE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings3__color_space(key: u8) -> Option<&'static str> {
@@ -491,9 +525,13 @@ static CAMERA_SETTINGS3_CREATIVE_STYLE_SETTING_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_CREATIVE_STYLE_SETTING: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_CREATIVE_STYLE_SETTING_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_CREATIVE_STYLE_SETTING: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_CREATIVE_STYLE_SETTING_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__creative_style_setting(key: u8) -> Option<&'static str> {
@@ -501,16 +539,12 @@ pub fn lookup_camera_settings3__creative_style_setting(key: u8) -> Option<&'stat
 }
 
 /// Raw data (3 entries)
-static CAMERA_SETTINGS3_LENS_MOUNT_DATA: &[(u8, &'static str)] = &[
-    (1, "Unknown"),
-    (16, "A-mount"),
-    (17, "E-mount"),
-];
+static CAMERA_SETTINGS3_LENS_MOUNT_DATA: &[(u8, &'static str)] =
+    &[(1, "Unknown"), (16, "A-mount"), (17, "E-mount")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_LENS_MOUNT: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_LENS_MOUNT_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_LENS_MOUNT: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS3_LENS_MOUNT_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings3__lens_mount(key: u8) -> Option<&'static str> {
@@ -573,9 +607,13 @@ static CAMERA_SETTINGS3_WHITE_BALANCE_SETTING_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_WHITE_BALANCE_SETTING: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_WHITE_BALANCE_SETTING_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_WHITE_BALANCE_SETTING: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_WHITE_BALANCE_SETTING_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__white_balance_setting(key: u8) -> Option<&'static str> {
@@ -593,9 +631,8 @@ static CAMERA_SETTINGS3_FLASH_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_FLASH_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_FLASH_MODE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_FLASH_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS3_FLASH_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings3__flash_mode(key: u8) -> Option<&'static str> {
@@ -603,15 +640,17 @@ pub fn lookup_camera_settings3__flash_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS3_FLASH_CONTROL_DATA: &[(u8, &'static str)] = &[
-    (1, "ADI Flash"),
-    (2, "Pre-flash TTL"),
-];
+static CAMERA_SETTINGS3_FLASH_CONTROL_DATA: &[(u8, &'static str)] =
+    &[(1, "ADI Flash"), (2, "Pre-flash TTL")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_FLASH_CONTROL: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_FLASH_CONTROL_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_FLASH_CONTROL: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_FLASH_CONTROL_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__flash_control(key: u8) -> Option<&'static str> {
@@ -619,17 +658,17 @@ pub fn lookup_camera_settings3__flash_control(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (4 entries)
-static CAMERA_SETTINGS3_A_F_AREA_MODE_DATA: &[(u8, &'static str)] = &[
-    (1, "Wide"),
-    (2, "Spot"),
-    (3, "Local"),
-    (4, "Flexible"),
-];
+static CAMERA_SETTINGS3_A_F_AREA_MODE_DATA: &[(u8, &'static str)] =
+    &[(1, "Wide"), (2, "Spot"), (3, "Local"), (4, "Flexible")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_A_F_AREA_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_A_F_AREA_MODE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_A_F_AREA_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_A_F_AREA_MODE_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__a_f_area_mode(key: u8) -> Option<&'static str> {
@@ -637,36 +676,43 @@ pub fn lookup_camera_settings3__a_f_area_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS3_LONG_EXPOSURE_NOISE_REDUCTION_DATA: &[(u8, &'static str)] = &[
-    (1, "Off"),
-    (16, "On"),
-];
+static CAMERA_SETTINGS3_LONG_EXPOSURE_NOISE_REDUCTION_DATA: &[(u8, &'static str)] =
+    &[(1, "Off"), (16, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_LONG_EXPOSURE_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_LONG_EXPOSURE_NOISE_REDUCTION_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_LONG_EXPOSURE_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_LONG_EXPOSURE_NOISE_REDUCTION_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__long_exposure_noise_reduction(key: u8) -> Option<&'static str> {
-    CAMERA_SETTINGS3_LONG_EXPOSURE_NOISE_REDUCTION.get(&key).copied()
+    CAMERA_SETTINGS3_LONG_EXPOSURE_NOISE_REDUCTION
+        .get(&key)
+        .copied()
 }
 
 /// Raw data (3 entries)
-static CAMERA_SETTINGS3_HIGH_I_S_O_NOISE_REDUCTION_DATA: &[(u8, &'static str)] = &[
-    (16, "Low"),
-    (17, "High"),
-    (19, "Auto"),
-];
+static CAMERA_SETTINGS3_HIGH_I_S_O_NOISE_REDUCTION_DATA: &[(u8, &'static str)] =
+    &[(16, "Low"), (17, "High"), (19, "Auto")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_HIGH_I_S_O_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_HIGH_I_S_O_NOISE_REDUCTION_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_HIGH_I_S_O_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_HIGH_I_S_O_NOISE_REDUCTION_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__high_i_s_o_noise_reduction(key: u8) -> Option<&'static str> {
-    CAMERA_SETTINGS3_HIGH_I_S_O_NOISE_REDUCTION.get(&key).copied()
+    CAMERA_SETTINGS3_HIGH_I_S_O_NOISE_REDUCTION
+        .get(&key)
+        .copied()
 }
 
 /// Raw data (3 entries)
@@ -677,9 +723,13 @@ static CAMERA_SETTINGS3_SMILE_SHUTTER_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_SMILE_SHUTTER_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_SMILE_SHUTTER_MODE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_SMILE_SHUTTER_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_SMILE_SHUTTER_MODE_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__smile_shutter_mode(key: u8) -> Option<&'static str> {
@@ -702,9 +752,13 @@ static CAMERA_SETTINGS3_DRIVE_MODE_SETTING_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_DRIVE_MODE_SETTING: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_DRIVE_MODE_SETTING_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_DRIVE_MODE_SETTING: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_DRIVE_MODE_SETTING_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__drive_mode_setting(key: u8) -> Option<&'static str> {
@@ -712,15 +766,16 @@ pub fn lookup_camera_settings3__drive_mode_setting(key: u8) -> Option<&'static s
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS3_RED_EYE_REDUCTION_DATA: &[(u8, &'static str)] = &[
-    (1, "Off"),
-    (16, "On"),
-];
+static CAMERA_SETTINGS3_RED_EYE_REDUCTION_DATA: &[(u8, &'static str)] = &[(1, "Off"), (16, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_RED_EYE_REDUCTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_RED_EYE_REDUCTION_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_RED_EYE_REDUCTION: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_RED_EYE_REDUCTION_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__red_eye_reduction(key: u8) -> Option<&'static str> {
@@ -728,16 +783,17 @@ pub fn lookup_camera_settings3__red_eye_reduction(key: u8) -> Option<&'static st
 }
 
 /// Raw data (3 entries)
-static CAMERA_SETTINGS3_H_D_R_SETTING_DATA: &[(u8, &'static str)] = &[
-    (1, "Off"),
-    (16, "On (Auto)"),
-    (17, "On (Manual)"),
-];
+static CAMERA_SETTINGS3_H_D_R_SETTING_DATA: &[(u8, &'static str)] =
+    &[(1, "Off"), (16, "On (Auto)"), (17, "On (Manual)")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_H_D_R_SETTING: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_H_D_R_SETTING_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_H_D_R_SETTING: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_H_D_R_SETTING_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__h_d_r_setting(key: u8) -> Option<&'static str> {
@@ -758,9 +814,8 @@ static CAMERA_SETTINGS3_H_D_R_LEVEL_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_H_D_R_LEVEL: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_H_D_R_LEVEL_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_H_D_R_LEVEL: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS3_H_D_R_LEVEL_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings3__h_d_r_level(key: u8) -> Option<&'static str> {
@@ -775,9 +830,8 @@ static CAMERA_SETTINGS3_VIEWING_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_VIEWING_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_VIEWING_MODE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_VIEWING_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS3_VIEWING_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings3__viewing_mode(key: u8) -> Option<&'static str> {
@@ -785,15 +839,16 @@ pub fn lookup_camera_settings3__viewing_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS3_FACE_DETECTION_DATA: &[(u8, &'static str)] = &[
-    (1, "Off"),
-    (16, "On"),
-];
+static CAMERA_SETTINGS3_FACE_DETECTION_DATA: &[(u8, &'static str)] = &[(1, "Off"), (16, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_FACE_DETECTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_FACE_DETECTION_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_FACE_DETECTION: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_FACE_DETECTION_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__face_detection(key: u8) -> Option<&'static str> {
@@ -801,15 +856,16 @@ pub fn lookup_camera_settings3__face_detection(key: u8) -> Option<&'static str> 
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS3_SMILE_SHUTTER_DATA: &[(u8, &'static str)] = &[
-    (1, "Off"),
-    (16, "On"),
-];
+static CAMERA_SETTINGS3_SMILE_SHUTTER_DATA: &[(u8, &'static str)] = &[(1, "Off"), (16, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_SMILE_SHUTTER: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_SMILE_SHUTTER_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_SMILE_SHUTTER: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_SMILE_SHUTTER_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__smile_shutter(key: u8) -> Option<&'static str> {
@@ -853,9 +909,13 @@ static CAMERA_SETTINGS3_EXPOSURE_PROGRAM_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_EXPOSURE_PROGRAM: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_EXPOSURE_PROGRAM_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_EXPOSURE_PROGRAM: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_EXPOSURE_PROGRAM_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__exposure_program(key: u8) -> Option<&'static str> {
@@ -863,15 +923,17 @@ pub fn lookup_camera_settings3__exposure_program(key: u8) -> Option<&'static str
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS3_SWEEP_PANORAMA_SIZE_DATA: &[(u8, &'static str)] = &[
-    (1, "Standard"),
-    (2, "Wide"),
-];
+static CAMERA_SETTINGS3_SWEEP_PANORAMA_SIZE_DATA: &[(u8, &'static str)] =
+    &[(1, "Standard"), (2, "Wide")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_SWEEP_PANORAMA_SIZE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_SWEEP_PANORAMA_SIZE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_SWEEP_PANORAMA_SIZE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_SWEEP_PANORAMA_SIZE_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__sweep_panorama_size(key: u8) -> Option<&'static str> {
@@ -879,17 +941,17 @@ pub fn lookup_camera_settings3__sweep_panorama_size(key: u8) -> Option<&'static 
 }
 
 /// Raw data (4 entries)
-static CAMERA_SETTINGS3_SWEEP_PANORAMA_DIRECTION_DATA: &[(u8, &'static str)] = &[
-    (1, "Right"),
-    (2, "Left"),
-    (3, "Up"),
-    (4, "Down"),
-];
+static CAMERA_SETTINGS3_SWEEP_PANORAMA_DIRECTION_DATA: &[(u8, &'static str)] =
+    &[(1, "Right"), (2, "Left"), (3, "Up"), (4, "Down")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_SWEEP_PANORAMA_DIRECTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_SWEEP_PANORAMA_DIRECTION_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_SWEEP_PANORAMA_DIRECTION: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_SWEEP_PANORAMA_DIRECTION_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__sweep_panorama_direction(key: u8) -> Option<&'static str> {
@@ -918,9 +980,8 @@ static CAMERA_SETTINGS3_DRIVE_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_DRIVE_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_DRIVE_MODE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_DRIVE_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS3_DRIVE_MODE_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings3__drive_mode(key: u8) -> Option<&'static str> {
@@ -928,34 +989,37 @@ pub fn lookup_camera_settings3__drive_mode(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (4 entries)
-static CAMERA_SETTINGS3_MULTI_FRAME_NOISE_REDUCTION_DATA: &[(u8, &'static str)] = &[
-    (0, "n/a"),
-    (1, "Off"),
-    (16, "On"),
-    (255, "None"),
-];
+static CAMERA_SETTINGS3_MULTI_FRAME_NOISE_REDUCTION_DATA: &[(u8, &'static str)] =
+    &[(0, "n/a"), (1, "Off"), (16, "On"), (255, "None")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_MULTI_FRAME_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_MULTI_FRAME_NOISE_REDUCTION_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_MULTI_FRAME_NOISE_REDUCTION: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_MULTI_FRAME_NOISE_REDUCTION_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__multi_frame_noise_reduction(key: u8) -> Option<&'static str> {
-    CAMERA_SETTINGS3_MULTI_FRAME_NOISE_REDUCTION.get(&key).copied()
+    CAMERA_SETTINGS3_MULTI_FRAME_NOISE_REDUCTION
+        .get(&key)
+        .copied()
 }
 
 /// Raw data (3 entries)
-static CAMERA_SETTINGS3_LIVE_VIEW_A_F_SETTING_DATA: &[(u8, &'static str)] = &[
-    (0, "n/a"),
-    (1, "Phase-detect AF"),
-    (2, "Contrast AF"),
-];
+static CAMERA_SETTINGS3_LIVE_VIEW_A_F_SETTING_DATA: &[(u8, &'static str)] =
+    &[(0, "n/a"), (1, "Phase-detect AF"), (2, "Contrast AF")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_LIVE_VIEW_A_F_SETTING: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_LIVE_VIEW_A_F_SETTING_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_LIVE_VIEW_A_F_SETTING: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_LIVE_VIEW_A_F_SETTING_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__live_view_a_f_setting(key: u8) -> Option<&'static str> {
@@ -963,17 +1027,17 @@ pub fn lookup_camera_settings3__live_view_a_f_setting(key: u8) -> Option<&'stati
 }
 
 /// Raw data (4 entries)
-static CAMERA_SETTINGS3_PANORAMA_SIZE3_D_DATA: &[(u8, &'static str)] = &[
-    (0, "n/a"),
-    (1, "Standard"),
-    (2, "Wide"),
-    (3, "16:9"),
-];
+static CAMERA_SETTINGS3_PANORAMA_SIZE3_D_DATA: &[(u8, &'static str)] =
+    &[(0, "n/a"), (1, "Standard"), (2, "Wide"), (3, "16:9")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_PANORAMA_SIZE3_D: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_PANORAMA_SIZE3_D_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_PANORAMA_SIZE3_D: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_PANORAMA_SIZE3_D_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__panorama_size3_d(key: u8) -> Option<&'static str> {
@@ -990,9 +1054,13 @@ static CAMERA_SETTINGS3_FOCUS_MODE_SETTING_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_FOCUS_MODE_SETTING: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_FOCUS_MODE_SETTING_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_FOCUS_MODE_SETTING: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_FOCUS_MODE_SETTING_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__focus_mode_setting(key: u8) -> Option<&'static str> {
@@ -1000,15 +1068,17 @@ pub fn lookup_camera_settings3__focus_mode_setting(key: u8) -> Option<&'static s
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS3_A_F_BUTTON_PRESSED_643_DATA: &[(u8, &'static str)] = &[
-    (1, "No"),
-    (16, "Yes"),
-];
+static CAMERA_SETTINGS3_A_F_BUTTON_PRESSED_643_DATA: &[(u8, &'static str)] =
+    &[(1, "No"), (16, "Yes")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_A_F_BUTTON_PRESSED_643: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_A_F_BUTTON_PRESSED_643_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_A_F_BUTTON_PRESSED_643: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_A_F_BUTTON_PRESSED_643_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__a_f_button_pressed_643(key: u8) -> Option<&'static str> {
@@ -1016,16 +1086,17 @@ pub fn lookup_camera_settings3__a_f_button_pressed_643(key: u8) -> Option<&'stat
 }
 
 /// Raw data (3 entries)
-static CAMERA_SETTINGS3_LIVE_VIEW_METERING_644_DATA: &[(u8, &'static str)] = &[
-    (0, "n/a"),
-    (16, "40 Segment"),
-    (32, "1200-zone Evaluative"),
-];
+static CAMERA_SETTINGS3_LIVE_VIEW_METERING_644_DATA: &[(u8, &'static str)] =
+    &[(0, "n/a"), (16, "40 Segment"), (32, "1200-zone Evaluative")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_LIVE_VIEW_METERING_644: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_LIVE_VIEW_METERING_644_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_LIVE_VIEW_METERING_644: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_LIVE_VIEW_METERING_644_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__live_view_metering_644(key: u8) -> Option<&'static str> {
@@ -1041,9 +1112,13 @@ static CAMERA_SETTINGS3_VIEWING_MODE2_645_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_VIEWING_MODE2_645: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_VIEWING_MODE2_645_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_VIEWING_MODE2_645: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_VIEWING_MODE2_645_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__viewing_mode2_645(key: u8) -> Option<&'static str> {
@@ -1051,15 +1126,11 @@ pub fn lookup_camera_settings3__viewing_mode2_645(key: u8) -> Option<&'static st
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS3_A_E_LOCK_646_DATA: &[(u8, &'static str)] = &[
-    (1, "On"),
-    (2, "Off"),
-];
+static CAMERA_SETTINGS3_A_E_LOCK_646_DATA: &[(u8, &'static str)] = &[(1, "On"), (2, "Off")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_A_E_LOCK_646: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_A_E_LOCK_646_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_A_E_LOCK_646: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| CAMERA_SETTINGS3_A_E_LOCK_646_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_camera_settings3__a_e_lock_646(key: u8) -> Option<&'static str> {
@@ -1067,49 +1138,57 @@ pub fn lookup_camera_settings3__a_e_lock_646(key: u8) -> Option<&'static str> {
 }
 
 /// Raw data (2 entries)
-static CAMERA_SETTINGS3_FLASH_STATUS_BUILT_IN_647_DATA: &[(u8, &'static str)] = &[
-    (1, "Off"),
-    (2, "On"),
-];
+static CAMERA_SETTINGS3_FLASH_STATUS_BUILT_IN_647_DATA: &[(u8, &'static str)] =
+    &[(1, "Off"), (2, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_FLASH_STATUS_BUILT_IN_647: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_FLASH_STATUS_BUILT_IN_647_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_FLASH_STATUS_BUILT_IN_647: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_FLASH_STATUS_BUILT_IN_647_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__flash_status_built_in_647(key: u8) -> Option<&'static str> {
-    CAMERA_SETTINGS3_FLASH_STATUS_BUILT_IN_647.get(&key).copied()
+    CAMERA_SETTINGS3_FLASH_STATUS_BUILT_IN_647
+        .get(&key)
+        .copied()
 }
 
 /// Raw data (3 entries)
-static CAMERA_SETTINGS3_FLASH_STATUS_EXTERNAL_648_DATA: &[(u8, &'static str)] = &[
-    (1, "None"),
-    (2, "Off"),
-    (3, "On"),
-];
+static CAMERA_SETTINGS3_FLASH_STATUS_EXTERNAL_648_DATA: &[(u8, &'static str)] =
+    &[(1, "None"), (2, "Off"), (3, "On")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_FLASH_STATUS_EXTERNAL_648: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_FLASH_STATUS_EXTERNAL_648_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_FLASH_STATUS_EXTERNAL_648: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_FLASH_STATUS_EXTERNAL_648_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__flash_status_external_648(key: u8) -> Option<&'static str> {
-    CAMERA_SETTINGS3_FLASH_STATUS_EXTERNAL_648.get(&key).copied()
+    CAMERA_SETTINGS3_FLASH_STATUS_EXTERNAL_648
+        .get(&key)
+        .copied()
 }
 
 /// Raw data (3 entries)
-static CAMERA_SETTINGS3_LIVE_VIEW_FOCUS_MODE_651_DATA: &[(u8, &'static str)] = &[
-    (0, "n/a"),
-    (1, "AF"),
-    (16, "Manual"),
-];
+static CAMERA_SETTINGS3_LIVE_VIEW_FOCUS_MODE_651_DATA: &[(u8, &'static str)] =
+    &[(0, "n/a"), (1, "AF"), (16, "Manual")];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_LIVE_VIEW_FOCUS_MODE_651: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_LIVE_VIEW_FOCUS_MODE_651_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_LIVE_VIEW_FOCUS_MODE_651: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_LIVE_VIEW_FOCUS_MODE_651_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__live_view_focus_mode_651(key: u8) -> Option<&'static str> {
@@ -1124,9 +1203,13 @@ static CAMERA_SETTINGS3_METERING_MODE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_METERING_MODE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_METERING_MODE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_METERING_MODE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_METERING_MODE_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__metering_mode(key: u8) -> Option<&'static str> {
@@ -1144,9 +1227,13 @@ static CAMERA_SETTINGS3_SONY_IMAGE_SIZE_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CAMERA_SETTINGS3_SONY_IMAGE_SIZE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    CAMERA_SETTINGS3_SONY_IMAGE_SIZE_DATA.iter().cloned().collect()
-});
+pub static CAMERA_SETTINGS3_SONY_IMAGE_SIZE: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| {
+        CAMERA_SETTINGS3_SONY_IMAGE_SIZE_DATA
+            .iter()
+            .cloned()
+            .collect()
+    });
 
 /// Look up value by key
 pub fn lookup_camera_settings3__sony_image_size(key: u8) -> Option<&'static str> {

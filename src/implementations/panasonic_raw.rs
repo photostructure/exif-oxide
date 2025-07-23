@@ -1,48 +1,58 @@
 //! Panasonic RAW PrintConv implementations
 //!
 //! This module contains PrintConv functions for Panasonic RW2/RWL format tags.
-//! All implementations use generated lookup tables from ExifTool source code,
+//! All implementations use the tag kit system from generated code,
 //! following the Trust ExifTool principle exactly.
 //!
 //! ExifTool Reference: lib/Image/ExifTool/PanasonicRaw.pm
-//! Generated tables: src/generated/PanasonicRaw_pm/
+//! Generated tag kits: src/generated/PanasonicRaw_pm/tag_kit/
 
+use crate::expressions::ExpressionEvaluator;
+use crate::generated::PanasonicRaw_pm::tag_kit;
 use crate::types::TagValue;
 
 /// Panasonic Main Compression PrintConv
-/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Compression)
-/// Generated table: src/generated/PanasonicRaw_pm/main_inline.rs
-/// TODO: Fix codegen - lookup_main__compression not generated
+/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Compression, tag ID 11)
+/// Tag kit: src/generated/PanasonicRaw_pm/tag_kit/other.rs (PRINT_CONV_3)
 pub fn main_compression_print_conv(val: &TagValue) -> TagValue {
-    // TODO: Re-enable when codegen generates lookup_main__compression
-    TagValue::string(format!("Unknown ({val})"))
+    let mut evaluator = ExpressionEvaluator::new();
+    let mut errors = Vec::new();
+    let mut warnings = Vec::new();
+
+    tag_kit::apply_print_conv(11, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
-/// Panasonic Main Orientation PrintConv
-/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Orientation)
-/// Generated table: src/generated/PanasonicRaw_pm/main_inline.rs
-/// TODO: Fix codegen - lookup_main__orientation not generated
+/// Panasonic Main Orientation PrintConv  
+/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Orientation, tag ID 274)
+/// Tag kit: src/generated/PanasonicRaw_pm/tag_kit/core.rs (PRINT_CONV_0)
 pub fn main_orientation_print_conv(val: &TagValue) -> TagValue {
-    // TODO: Re-enable when codegen generates lookup_main__orientation
-    TagValue::string(format!("Unknown ({val})"))
+    let mut evaluator = ExpressionEvaluator::new();
+    let mut errors = Vec::new();
+    let mut warnings = Vec::new();
+
+    tag_kit::apply_print_conv(274, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Panasonic Main Multishot PrintConv
-/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Multishot)
-/// Generated table: src/generated/PanasonicRaw_pm/main_inline.rs
-/// TODO: Fix codegen - lookup_main__multishot not generated
+/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Multishot, tag ID 289)
+/// Tag kit: src/generated/PanasonicRaw_pm/tag_kit/document.rs (PRINT_CONV_1)
 pub fn main_multishot_print_conv(val: &TagValue) -> TagValue {
-    // TODO: Re-enable when codegen generates lookup_main__multishot
-    TagValue::string(format!("Unknown ({val})"))
+    let mut evaluator = ExpressionEvaluator::new();
+    let mut errors = Vec::new();
+    let mut warnings = Vec::new();
+
+    tag_kit::apply_print_conv(289, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Panasonic Main CFAPattern PrintConv
-/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (CFAPattern)
-/// Generated table: src/generated/PanasonicRaw_pm/main_inline.rs
-/// TODO: Fix codegen - lookup_main__c_f_a_pattern not generated
+/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (CFAPattern, tag ID 9)
+/// Tag kit: src/generated/PanasonicRaw_pm/tag_kit/interop.rs (PRINT_CONV_2)
 pub fn main_cfa_pattern_print_conv(val: &TagValue) -> TagValue {
-    // TODO: Re-enable when codegen generates lookup_main__c_f_a_pattern
-    TagValue::string(format!("Unknown ({val})"))
+    let mut evaluator = ExpressionEvaluator::new();
+    let mut errors = Vec::new();
+    let mut warnings = Vec::new();
+
+    tag_kit::apply_print_conv(9, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Apply PrintConv to Panasonic Main table tags
@@ -62,14 +72,14 @@ pub fn apply_main_print_conv(tag_name: &str, val: &TagValue) -> TagValue {
 /// Apply PrintConv to Panasonic RAW tags by tag ID
 ///
 /// This function maps Panasonic RAW tag IDs to their corresponding PrintConv functions.
-/// ExifTool: PanasonicRaw.pm tag ID to name mappings
+/// All tag IDs verified against ExifTool PanasonicRaw.pm and generated tag kits.
 pub fn apply_panasonic_raw_print_conv_by_tag_id(tag_id: u16, val: &TagValue) -> TagValue {
     match tag_id {
-        0x0103 => main_compression_print_conv(val), // Compression
-        0x0112 => main_orientation_print_conv(val), // Orientation
-        0x010F => main_multishot_print_conv(val),   // Multishot (if this tag exists)
-        0x829D => main_cfa_pattern_print_conv(val), // CFAPattern (ColorSpace in EXIF range)
-        _ => val.clone(),                           // No PrintConv for this tag ID
+        11 => main_compression_print_conv(val), // Compression (0x000B)
+        274 => main_orientation_print_conv(val), // Orientation (0x0112)
+        289 => main_multishot_print_conv(val),  // Multishot (0x0121)
+        9 => main_cfa_pattern_print_conv(val),  // CFAPattern (0x0009)
+        _ => val.clone(),                       // No PrintConv for this tag ID
     }
 }
 
@@ -170,24 +180,24 @@ mod tests {
 
     #[test]
     fn test_apply_panasonic_raw_print_conv_by_tag_id() {
-        // Test Compression by tag ID
-        let result = apply_panasonic_raw_print_conv_by_tag_id(0x0103, &TagValue::I32(34826));
+        // Test Compression by tag ID (0x000B = 11)
+        let result = apply_panasonic_raw_print_conv_by_tag_id(11, &TagValue::I32(34826));
         assert_eq!(result, TagValue::string("Panasonic RAW 2"));
 
-        // Test Orientation by tag ID
-        let result = apply_panasonic_raw_print_conv_by_tag_id(0x0112, &TagValue::U8(5));
+        // Test Orientation by tag ID (0x0112 = 274)
+        let result = apply_panasonic_raw_print_conv_by_tag_id(274, &TagValue::U8(5));
         assert_eq!(
             result,
             TagValue::string("Mirror horizontal and rotate 270 CW")
         );
 
-        // Test CFAPattern by tag ID
-        let result = apply_panasonic_raw_print_conv_by_tag_id(0x829D, &TagValue::U8(2));
+        // Test CFAPattern by tag ID (0x0009 = 9)
+        let result = apply_panasonic_raw_print_conv_by_tag_id(9, &TagValue::U8(2));
         assert_eq!(result, TagValue::string("[Green,Red][Blue,Green]"));
 
         // Test unknown tag ID - should return original value
         let original = TagValue::U8(42);
-        let result = apply_panasonic_raw_print_conv_by_tag_id(0x9999, &original);
+        let result = apply_panasonic_raw_print_conv_by_tag_id(9999, &original);
         assert_eq!(result, original);
     }
 }

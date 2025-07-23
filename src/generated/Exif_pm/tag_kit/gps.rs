@@ -6,15 +6,16 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
+use super::{PrintConvType, TagKitDef};
+use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
-use crate::types::TagValue;
-use super::{TagKitDef, PrintConvType};
 
 /// Get tag definitions for gps category
 pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
-    vec![
-        (34853, TagKitDef {
+    vec![(
+        34853,
+        TagKitDef {
             id: 34853,
             name: "GPSInfo",
             format: "unknown",
@@ -23,6 +24,6 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
-        }),
-    ]
+        },
+    )]
 }

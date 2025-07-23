@@ -1,5 +1,5 @@
 //! Sony exposure program modes
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Sony.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -25,9 +25,8 @@ static SONY_EXPOSURE_PROGRAM_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static SONY_EXPOSURE_PROGRAM: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    SONY_EXPOSURE_PROGRAM_DATA.iter().cloned().collect()
-});
+pub static SONY_EXPOSURE_PROGRAM: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| SONY_EXPOSURE_PROGRAM_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_sony_exposure_program(key: u8) -> Option<&'static str> {

@@ -111,13 +111,8 @@ impl CanonRawHandler {
 
         debug!("CR2 files processed through TIFF structure with Canon maker note integration");
 
-        // Extract TIFF dimensions from IFD0 for File: group BEFORE processing maker notes
-        // ExifTool: Standard TIFF tags 0x0100/0x0101 are extracted from all CR2 files
-        // This must happen early to ensure File: group dimensions are available
-        // TODO: Implement TIFF dimension extraction for Canon CR2 files
-        // The data parameter is not available in this method - needs refactoring
-        // to match the Sony implementation pattern where data is passed through
-        // For now, commenting out to avoid build errors during concurrent development
+        // Note: TIFF dimension extraction now happens in the RawFormatHandler implementation
+        // where the raw data is available via the process_raw method
 
         // The Canon maker note processing will be automatically triggered by the TIFF processor
         // when it encounters MakerNotes IFD entries via detect_makernote_processor()
@@ -218,17 +213,23 @@ impl CanonRawHandler {
 impl RawFormatHandler for CanonRawHandler {
     /// Process Canon RAW data
     /// ExifTool: Canon.pm main processing entry point
-    fn process_raw(&self, _reader: &mut ExifReader, _data: &[u8]) -> Result<()> {
+    fn process_raw(&self, reader: &mut ExifReader, data: &[u8]) -> Result<()> {
         debug!("Processing Canon RAW format: {}", self.format.name());
-
-        // For CR2 files (TIFF-based), the main TIFF processor will handle most of the work
-        // Canon-specific processing happens in the Canon maker note sections
-        // The existing Canon implementation in src/implementations/canon/ handles this
 
         match self.format {
             CanonFormat::CR2 => {
-                // CR2 files are processed by the main TIFF processor
-                // Canon maker notes are automatically routed to Canon implementation
+                debug!("Processing Canon CR2 format data ({} bytes)", data.len());
+
+                // Extract TIFF dimensions from IFD0 for File: group
+                // ExifTool: Standard TIFF tags 0x0100/0x0101 are extracted from all CR2 files
+                // This must happen early to ensure File: group dimensions are available
+                debug!("Extracting TIFF dimensions from Canon CR2 file");
+                crate::raw::utils::extract_tiff_dimensions(reader, data)?;
+                debug!("Canon CR2 TIFF dimension extraction completed");
+
+                // For CR2 files (TIFF-based), the main TIFF processor will handle most of the work
+                // Canon-specific processing happens in the Canon maker note sections
+                // The existing Canon implementation in src/implementations/canon/ handles this
                 debug!("CR2 processing delegated to TIFF processor with Canon maker notes");
                 Ok(())
             }

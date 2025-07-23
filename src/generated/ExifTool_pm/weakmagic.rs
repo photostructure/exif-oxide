@@ -1,5 +1,5 @@
 //! File types with weak magic number recognition (MP3)
-//! 
+//!
 //! Auto-generated from ExifTool source
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 

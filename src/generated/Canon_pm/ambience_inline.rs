@@ -1,5 +1,5 @@
 //! Inline PrintConv tables for Ambience table
-//! 
+//!
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Canon.pm (table: Ambience)
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -20,9 +20,8 @@ static AMBIENCE_AMBIENCE_SELECTION_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static AMBIENCE_AMBIENCE_SELECTION: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
-    AMBIENCE_AMBIENCE_SELECTION_DATA.iter().cloned().collect()
-});
+pub static AMBIENCE_AMBIENCE_SELECTION: LazyLock<HashMap<u8, &'static str>> =
+    LazyLock::new(|| AMBIENCE_AMBIENCE_SELECTION_DATA.iter().cloned().collect());
 
 /// Look up value by key
 pub fn lookup_ambience__ambience_selection(key: u8) -> Option<&'static str> {
