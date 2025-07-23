@@ -40,16 +40,11 @@ macro_rules! define_extractor {
             }
             
             fn output_filename(&self, config: &ModuleConfig, hash_name: Option<&str>) -> String {
-                let base = config.source_path
-                    .replace('/', "_")
-                    .replace(".pm", "")
-                    .to_lowercase();
-                    
-                if let Some(name) = hash_name {
-                    format!("{}_{}.json", base, name.to_lowercase())
-                } else {
-                    format!("{}_{}.json", base, $config_type)
-                }
+                self.standardized_filename(config, hash_name)
+            }
+            
+            fn config_type_name(&self) -> &'static str {
+                $config_type
             }
         }
     };
@@ -58,7 +53,6 @@ macro_rules! define_extractor {
 // Define remaining extractors using the macro
 define_extractor!(TagDefinitionsExtractor, "Tag Definitions", "tag_definitions.pl", "tag_definitions", "tag_definitions");
 define_extractor!(CompositeTagsExtractor, "Composite Tags", "composite_tags.pl", "composite_tags", "composite_tags");
-define_extractor!(TagTableStructureExtractor, "Tag Table Structure", "tag_table_structure.pl", "tag_structures", "tag_table_structure");
 define_extractor!(ProcessBinaryDataExtractor, "Process Binary Data", "process_binary_data.pl", "binary_data", "process_binary_data");
 define_extractor!(ModelDetectionExtractor, "Model Detection", "model_detection.pl", "model_detection", "model_detection");
 define_extractor!(ConditionalTagsExtractor, "Conditional Tags", "conditional_tags.pl", "conditional_tags", "conditional_tags");

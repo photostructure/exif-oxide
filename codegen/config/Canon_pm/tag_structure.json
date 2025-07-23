@@ -1,0 +1,6 @@
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
+  "description": "Canon tag table structure for generating CanonDataType enum",
+  "module_prefix": "Canon",
+  "table": "Main"
+}

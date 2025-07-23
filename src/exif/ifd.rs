@@ -649,45 +649,31 @@ impl ExifReader {
     }
 
     /// Try resolving tag using conditional tag resolution with full entry context
+    /// TODO: Re-enable when conditional tags are generated
     fn try_conditional_tag_resolution_with_entry(
         &self,
-        entry: &crate::tiff_types::IfdEntry,
-    ) -> Option<crate::generated::Canon_pm::main_conditional_tags::ResolvedTag> {
-        // Only attempt conditional resolution for Canon cameras
-        let make = self.extracted_tags.get(&0x010F)?.as_string()?;
-        if !make.to_lowercase().contains("canon") {
-            return None;
-        }
-
-        // Build conditional context from available EXIF data and entry
-        let context = self.build_conditional_context_with_entry(entry)?;
-
-        // Use the generated conditional tag resolver
-        let conditional_tags =
-            crate::generated::Canon_pm::main_conditional_tags::CanonConditionalTags::new();
-        conditional_tags.resolve_tag(&entry.tag_id.to_string(), &context)
+        _entry: &crate::tiff_types::IfdEntry,
+    ) -> Option<crate::stubs::ResolvedTag> {
+        // TODO: Generate conditional tags first
+        // let make = self.extracted_tags.get(&0x010F)?.as_string()?;
+        // if !make.to_lowercase().contains("canon") {
+        //     return None;
+        // }
+        // let context = self.build_conditional_context_with_entry(entry)?;
+        // let conditional_tags = crate::stubs::CanonConditionalTags::new();
+        // conditional_tags.resolve_tag(&entry.tag_id.to_string(), &context)
+        None
     }
 
     /// Build ConditionalContext from current EXIF parsing state with full entry context
+    /// TODO: Re-enable when conditional tags are generated
     fn build_conditional_context_with_entry(
         &self,
         entry: &crate::tiff_types::IfdEntry,
-    ) -> Option<crate::generated::Canon_pm::main_conditional_tags::ConditionalContext> {
-        Some(
-            crate::generated::Canon_pm::main_conditional_tags::ConditionalContext {
-                make: self
-                    .extracted_tags
-                    .get(&0x010F)
-                    .and_then(|v| v.as_string().map(|s| s.to_string())),
-                model: self
-                    .extracted_tags
-                    .get(&0x0110)
-                    .and_then(|v| v.as_string().map(|s| s.to_string())),
-                count: Some(entry.count),
-                format: Some(format!("{:?}", entry.format)), // Convert TiffFormat to string
-                binary_data: None, // TODO: Extract binary value data when available
-            },
-        )
+    ) -> Option<()> {
+        // Changed return type temporarily
+        // TODO: Generate conditional context first
+        None
     }
 
     /// Get tag name based on file type and IFD context
@@ -698,13 +684,14 @@ impl ExifReader {
         if ifd_name == "Olympus:Equipment" {
             // Use Olympus Equipment-specific tag definitions
             // ExifTool: Olympus.pm %Image::ExifTool::Olympus::Equipment hash
-            if let Some(equipment_name) =
-                crate::generated::Olympus_pm::equipment_tag_structure::get_equipment_tag_name(
-                    tag_id,
-                )
-            {
-                return equipment_name.to_string();
-            }
+            // TODO: Generate Olympus equipment tag structure
+            // if let Some(equipment_name) =
+            //     crate::generated::Olympus_pm::equipment_tag_structure::get_equipment_tag_name(
+            //         tag_id,
+            //     )
+            // {
+            //     return equipment_name.to_string();
+            // }
             // Fall through to standard lookup if not a known Equipment tag
         }
 

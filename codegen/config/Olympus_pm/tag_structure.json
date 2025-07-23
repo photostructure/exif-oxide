@@ -1,0 +1,6 @@
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Olympus.pm",
+  "description": "Olympus tag table structure for generating OlympusDataType enum",
+  "module_prefix": "Olympus",
+  "table": "Main"
+}

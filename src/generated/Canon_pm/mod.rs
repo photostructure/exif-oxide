@@ -24,6 +24,7 @@ pub mod picturestyles;
 pub mod processing_inline;
 pub mod psinfo_inline;
 pub mod shotinfo_inline;
+pub mod tag_structure;
 pub mod timeinfo_inline;
 pub mod userdefstyles;
 
@@ -49,5 +50,6 @@ pub use picturestyles::*;
 pub use processing_inline::*;
 pub use psinfo_inline::*;
 pub use shotinfo_inline::*;
+pub use tag_structure::*;
 pub use timeinfo_inline::*;
 pub use userdefstyles::*;

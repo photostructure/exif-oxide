@@ -53,7 +53,7 @@ impl CanonFormat {
 }
 
 // Use generated Canon tag structure from codegen
-pub use crate::generated::Canon_pm::tag_structure::CanonDataType;
+pub use crate::stubs::CanonDataType; // TODO: Replace with generated Canon tag structure
 
 /// Canon RAW Handler - main processor for Canon RAW formats
 /// ExifTool: Canon.pm ProcessCanon() main entry point

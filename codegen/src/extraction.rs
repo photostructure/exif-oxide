@@ -7,6 +7,7 @@ use serde_json::Value;
 use std::fs;
 use std::path::{Path, PathBuf};
 use tracing::debug;
+use glob::glob;
 
 use crate::patching;
 use crate::extractors::{find_extractor, Extractor};
@@ -79,8 +80,8 @@ fn should_skip_directory(path: &Path) -> bool {
 fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig>> {
     let mut configs = Vec::new();
     
-    // Look for all supported config files
-    let config_files = [
+    // Look for all supported config files using patterns
+    let config_patterns = [
         "simple_table.json",
         "file_type_lookup.json", 
         "regex_patterns.json",
@@ -88,7 +89,7 @@ fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig
         "inline_printconv.json",
         "tag_definitions.json",
         "composite_tags.json",
-        "tag_table_structure.json",
+        "*_tag_table_structure.json",  // Matches tag_table_structure.json AND equipment_tag_table_structure.json
         "process_binary_data.json",
         "model_detection.json",
         "conditional_tags.json",
@@ -96,11 +97,25 @@ fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig
         "tag_kit.json"
     ];
     
-    for config_file in &config_files {
-        let config_path = module_config_dir.join(config_file);
-        if config_path.exists() {
-            if let Some(config) = try_parse_single_config(&config_path)? {
-                configs.push(config);
+    // Process each pattern
+    for pattern in &config_patterns {
+        // For patterns with wildcards, use glob matching
+        if pattern.contains('*') {
+            let glob_pattern = module_config_dir.join(pattern).to_string_lossy().to_string();
+            if let Ok(paths) = glob::glob(&glob_pattern) {
+                for entry in paths.flatten() {
+                    if let Some(config) = try_parse_single_config(&entry)? {
+                        configs.push(config);
+                    }
+                }
+            }
+        } else {
+            // For exact filenames, use direct path
+            let config_path = module_config_dir.join(pattern);
+            if config_path.exists() {
+                if let Some(config) = try_parse_single_config(&config_path)? {
+                    configs.push(config);
+                }
             }
         }
     }
@@ -131,9 +146,15 @@ fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
         .unwrap_or("");
     
     let hash_names: Vec<String> = match config_type {
-        "tag_definitions.json" | "composite_tags.json" | "tag_table_structure.json" | 
+        "tag_definitions.json" | "composite_tags.json" | 
         "process_binary_data.json" | "model_detection.json" | "conditional_tags.json" => {
             // For tag definitions, composite tags, and tag table structure, we use the table name from config root
+            let table = config["table"].as_str()
+                .ok_or_else(|| anyhow::anyhow!("Missing 'table' field in {}", config_path.display()))?;
+            vec![table.to_string()]
+        },
+        config_name if config_name.ends_with("_tag_table_structure.json") => {
+            // For tag table structure configs (including equipment_tag_table_structure.json)
             let table = config["table"].as_str()
                 .ok_or_else(|| anyhow::anyhow!("Missing 'table' field in {}", config_path.display()))?;
             vec![table.to_string()]

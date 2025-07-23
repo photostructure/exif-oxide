@@ -18,10 +18,10 @@ mod tags;
 
 // Only re-export what needs to be public - most functionality is internal
 
-use crate::generated::Canon_pm::main_conditional_tags::{CanonConditionalTags, ConditionalContext};
-use crate::generated::FujiFilm_pm::main_model_detection::{
-    ConditionalContext as FujiFilmConditionalContext, FujiFilmModelDetection,
-};
+// use crate::generated::Canon_pm::main_conditional_tags::{CanonConditionalTags, ConditionalContext}; // TODO: Generate conditional tags
+// use crate::generated::FujiFilm_pm::main_model_detection::{
+//     ConditionalContext as FujiFilmConditionalContext, FujiFilmModelDetection,
+// }; // TODO: Generate FujiFilm model detection
 use crate::tiff_types::TiffHeader;
 use crate::types::{
     DataMemberValue, DirectoryInfo, ExifError, ProcessorDispatch, Result, TagSourceInfo, TagValue,
@@ -625,63 +625,30 @@ impl ExifReader {
     }
 
     /// Create ConditionalContext for conditional tag resolution
-    /// Builds context from current ExifReader state for manufacturer-specific conditional logic
+    /// TODO: Re-enable when ConditionalContext is available
     fn create_conditional_context(
         &self,
         count: Option<u32>,
         format: Option<String>,
         binary_data: Option<Vec<u8>>,
-    ) -> ConditionalContext {
-        // Extract manufacturer from already processed tags
-        let make = self
-            .extracted_tags
-            .get(&0x010F) // Make tag
-            .and_then(|v| v.as_string())
-            .map(|s| s.to_string());
-
-        // Extract model from already processed tags
-        let model = self
-            .extracted_tags
-            .get(&0x0110) // Model tag
-            .and_then(|v| v.as_string())
-            .map(|s| s.to_string());
-
-        ConditionalContext {
-            make,
-            model,
-            count,
-            format,
-            binary_data,
-        }
+    ) -> () { // Changed return type temporarily
+              // TODO: Re-enable when ConditionalContext struct is generated
+              // let make = self.extracted_tags.get(&0x010F).and_then(|v| v.as_string()).map(|s| s.to_string());
+              // let model = self.extracted_tags.get(&0x0110).and_then(|v| v.as_string()).map(|s| s.to_string());
+              // ConditionalContext { make, model, count, format, binary_data }
     }
 
     /// Create FujiFilm ConditionalContext for conditional tag resolution
-    /// Builds FujiFilm-specific context from current ExifReader state
+    /// TODO: Re-enable when FujiFilm ConditionalContext is available
     fn create_fujifilm_conditional_context(
         &self,
         count: Option<u32>,
         format: Option<String>,
-    ) -> FujiFilmConditionalContext {
-        // Extract manufacturer from already processed tags
-        let make = self
-            .extracted_tags
-            .get(&0x010F) // Make tag
-            .and_then(|v| v.as_string())
-            .map(|s| s.to_string());
-
-        // Extract model from already processed tags
-        let model = self
-            .extracted_tags
-            .get(&0x0110) // Model tag
-            .and_then(|v| v.as_string())
-            .map(|s| s.to_string());
-
-        FujiFilmConditionalContext {
-            make,
-            model,
-            count,
-            format,
-        }
+    ) -> () { // Changed return type temporarily
+              // TODO: Re-enable when FujiFilm ConditionalContext struct is generated
+              // let make = self.extracted_tags.get(&0x010F).and_then(|v| v.as_string()).map(|s| s.to_string());
+              // let model = self.extracted_tags.get(&0x0110).and_then(|v| v.as_string()).map(|s| s.to_string());
+              // FujiFilmConditionalContext { make, model, count, format }
     }
 
     /// Resolve conditional tag name using manufacturer-specific logic
@@ -697,7 +664,7 @@ impl ExifReader {
         if let Some(make) = self.extracted_tags.get(&0x010F).and_then(|v| v.as_string()) {
             if make.contains("Canon") {
                 let context = self.create_conditional_context(count, format, binary_data);
-                let canon_resolver = CanonConditionalTags::new();
+                let canon_resolver = crate::stubs::CanonConditionalTags::new();
 
                 if let Some(resolved) = canon_resolver.resolve_tag(&tag_id.to_string(), &context) {
                     trace!(
@@ -714,7 +681,7 @@ impl ExifReader {
                     .and_then(|v| v.as_string())
                     .unwrap_or("")
                     .to_string();
-                let fujifilm_resolver = FujiFilmModelDetection::new(model);
+                let fujifilm_resolver = crate::stubs::FujiFilmModelDetection::new(model);
 
                 if let Some(resolved_name) = fujifilm_resolver
                     .resolve_conditional_tag(&tag_id.to_string(), &fujifilm_context)

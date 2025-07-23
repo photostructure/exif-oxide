@@ -36,16 +36,11 @@ impl Extractor for BooleanSetExtractor {
     }
     
     fn output_filename(&self, config: &ModuleConfig, hash_name: Option<&str>) -> String {
-        let base = config.source_path
-            .replace('/', "_")
-            .replace(".pm", "")
-            .to_lowercase();
-            
-        if let Some(set_name) = hash_name {
-            format!("{}_{}.json", base, set_name.to_lowercase())
-        } else {
-            format!("{}_boolean_sets.json", base)
-        }
+        self.standardized_filename(config, hash_name)
+    }
+    
+    fn config_type_name(&self) -> &'static str {
+        "boolean_set"
     }
     
     // Override extract to handle one set at a time

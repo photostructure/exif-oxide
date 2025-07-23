@@ -16,14 +16,14 @@ use crate::types::{DirectoryInfo, Result, TagValue};
 use tracing;
 
 // Use generated Olympus tag structure enum
-pub use crate::generated::Olympus_pm::tag_structure::OlympusDataType;
+// pub use crate::generated::Olympus_pm::tag_structure::OlympusDataType; // TODO: Generate Olympus tag structure
 
 /// Olympus RAW format handler
 /// ExifTool: lib/Image/ExifTool/Olympus.pm - TIFF-based with dual processing modes
 pub struct OlympusRawHandler {
-    /// Core sections we process - now using generated enum instead of manual mappings
-    /// ExifTool: Olympus.pm sections 0x2010-0x5000 (9 core sections from generated enum)
-    supported_sections: [OlympusDataType; 9],
+    // Core sections we process
+    // ExifTool: Olympus.pm sections 0x2010-0x5000 (9 core sections from generated enum)
+    supported_sections: [crate::stubs::OlympusDataType; 9], // TODO: Replace with generated Olympus data type enum
 }
 
 impl Default for OlympusRawHandler {
@@ -38,6 +38,7 @@ impl OlympusRawHandler {
     pub fn new() -> Self {
         // Core data sections from generated enum - matches ExifTool exactly
         // ExifTool: Olympus.pm Main table structure (84 total variants from generated enum)
+        use crate::stubs::OlympusDataType;
         let supported_sections = [
             OlympusDataType::Equipment,       // 0x2010: Camera/lens hardware info
             OlympusDataType::CameraSettings,  // 0x2020: Core camera settings
