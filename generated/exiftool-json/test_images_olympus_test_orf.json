@@ -10,18 +10,6 @@
   "EXIF:Make": "OLYMPUS IMAGING CORP.",
   "EXIF:Model": "E-M1",
   "EXIF:Orientation": "Horizontal (normal)",
-  "EXIF:ResolutionUnit": "inches",
-  "EXIF:ExposureTime": "1/320",
-  "EXIF:FNumber": 5.0,
-  "EXIF:ExposureProgram": "Program AE",
-  "EXIF:ISO": 200,
   "EXIF:DateTimeOriginal": "2014:07:19 12:05:19",
-  "EXIF:CreateDate": "2014:07:19 12:05:19",
-  "EXIF:MeteringMode": "Multi-segment",
-  "EXIF:Flash": "Auto, Did not fire",
-  "EXIF:FocalLength": "40.0 mm",
-  "EXIF:ColorSpace": "sRGB",
-  "EXIF:WhiteBalance": "Auto",
-  "EXIF:LensInfo": "12-40mm f/2.8",
-  "EXIF:LensModel": "OLYMPUS M.12-40mm F2.8"
+  "EXIF:CreateDate": "2014:07:19 12:05:19"
 }

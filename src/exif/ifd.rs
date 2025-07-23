@@ -653,7 +653,7 @@ impl ExifReader {
     fn try_conditional_tag_resolution_with_entry(
         &self,
         _entry: &crate::tiff_types::IfdEntry,
-    ) -> Option<crate::stubs::ResolvedTag> {
+    ) -> Option<crate::generated::Canon_pm::main_conditional_tags::ResolvedTag> {
         // TODO: Generate conditional tags first
         // let make = self.extracted_tags.get(&0x010F)?.as_string()?;
         // if !make.to_lowercase().contains("canon") {
@@ -669,7 +669,7 @@ impl ExifReader {
     /// TODO: Re-enable when conditional tags are generated
     fn build_conditional_context_with_entry(
         &self,
-        entry: &crate::tiff_types::IfdEntry,
+        _entry: &crate::tiff_types::IfdEntry,
     ) -> Option<()> {
         // Changed return type temporarily
         // TODO: Generate conditional context first

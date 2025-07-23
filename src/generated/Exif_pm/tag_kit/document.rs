@@ -7,7 +7,7 @@ use super::{PrintConvType, TagKitDef};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_73: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| HashMap::new());
+static PRINT_CONV_73: LazyLock<HashMap<String, &'static str>> = LazyLock::new(HashMap::new);
 
 /// Get tag definitions for document category
 pub fn get_document_tags() -> Vec<(u32, TagKitDef)> {

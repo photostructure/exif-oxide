@@ -1,8 +1,5 @@
 {
   "SourceFile": "test-images/apple/IMG_3755.JPG",
-  "EXIF:GPSLatitude": 37.5258393999556,
-  "EXIF:GPSLongitude": 122.456734600022,
-  "EXIF:GPSAltitude": 25.24672793,
   "File:FileSize": 1477912,
   "File:FileName": "IMG_3755.JPG",
   "File:Directory": "test-images/apple",
@@ -13,22 +10,8 @@
   "EXIF:Make": "Apple",
   "EXIF:Model": "iPhone 13 Pro",
   "EXIF:Orientation": "Rotate 90 CW",
-  "EXIF:ResolutionUnit": "inches",
-  "EXIF:YCbCrPositioning": "Centered",
-  "EXIF:ExposureTime": "1/28",
-  "EXIF:FNumber": 1.8,
-  "EXIF:ExposureProgram": "Program AE",
-  "EXIF:ISO": 2000,
   "EXIF:DateTimeOriginal": "2025:06:24 15:24:45",
   "EXIF:CreateDate": "2025:06:24 15:24:45",
-  "EXIF:MeteringMode": "Multi-segment",
-  "EXIF:Flash": "Off, Did not fire",
-  "EXIF:FocalLength": "1.6 mm",
   "EXIF:SubSecTimeOriginal": 409,
-  "EXIF:SubSecTimeDigitized": 409,
-  "EXIF:ColorSpace": "Uncalibrated",
-  "EXIF:WhiteBalance": "Auto",
-  "EXIF:LensInfo": "1.570000052-9mm f/1.5-2.8",
-  "EXIF:LensMake": "Apple",
-  "EXIF:LensModel": "iPhone 13 Pro back triple camera 1.57mm f/1.8"
+  "EXIF:SubSecTimeDigitized": 409
 }

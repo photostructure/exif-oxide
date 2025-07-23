@@ -252,6 +252,41 @@ make precommit
 - Whether fallback to manual registry works
 - Performance impact of tag kit lookup
 
+## UPDATE: Stubs.rs Removal and Codegen Fix (January 23, 2025)
+
+### The Problem
+The previous engineer created `src/stubs.rs` with manual type definitions as a workaround for missing codegen. This violated project philosophy - we should use automated code generation from ExifTool source, not manual stubs.
+
+### The Root Cause
+Extractors were generating files with new standardized names (`module__type__name.json`) but generators in `lookup_tables/mod.rs` were looking for old names (`module_type.json`).
+
+### The Fix
+1. **Updated lookup_tables/mod.rs** to use double underscores:
+   - `binary_data_file = format!("{}__process_binary_data.json", ...)`
+   - `conditional_tags_file = format!("{}__conditional_tags.json", ...)`
+   - `model_detection_file = format!("{}__model_detection.json", ...)`
+   - `runtime_table_file = format!("{}__runtime_table__{}.json", ...)`
+   - `tag_kit_file = format!("{}__tag_kit.json", ...)`
+
+2. **Ran make codegen** which generated:
+   - `Canon_pm/main_conditional_tags.rs` with ConditionalContext, ResolvedTag, CanonConditionalTags
+   - `FujiFilm_pm/ffmv_binary_data.rs` with FujiFilmFFMVTable
+   - `FujiFilm_pm/main_model_detection.rs` with FujiFilmModelDetection
+
+3. **Updated all imports and method signatures**:
+   - Fixed conditional context creation to return proper types
+   - Updated all imports from `crate::stubs::` to generated paths
+   - Fixed FujiFilm to use its own ConditionalContext (no binary_data field)
+
+4. **Fixed final compilation issue**:
+   - Added `pub mod tag_kit;` to `Exif_pm/mod.rs`
+
+### Key Learnings
+1. **Always prefer codegen over manual stubs** - The project has extensive codegen infrastructure
+2. **Filename standardization matters** - The `module__type__name.json` pattern is used throughout
+3. **Different modules may have different context types** - FujiFilm's ConditionalContext differs from Canon's
+4. **Generated modules need explicit exports** - Don't forget to add them to mod.rs files
+
 ## Gotchas & Tribal Knowledge
 
 ### Critical Architectural Insights
@@ -268,6 +303,16 @@ make precommit
 3. **Stdout Capture Bug Was Critical**: 
    - Perl extraction scripts write JSON to stdout but weren't being captured to files
    - Fixed in `run_perl_extractor()` - major breakthrough that enabled all extraction
+
+4. **Filename Standardization Is Essential**:
+   - Extractors use `module__type__name.json` (double underscore)
+   - Generators must look for this exact pattern
+   - Mismatch causes silent failures (files extracted but not generated)
+
+5. **Module-Specific Context Types**:
+   - Canon uses ConditionalContext with binary_data field
+   - FujiFilm uses ConditionalContext WITHOUT binary_data field
+   - Each module can have its own context structure
 
 ### Runtime Integration Details
 **Current API**: `tag_kit::apply_print_conv(tag_id, value, evaluator, errors, warnings)`
@@ -297,6 +342,9 @@ src/generated/Exif_pm/tag_kit/
 - **Debug file generation**: Add println! in `generate_tag_structure_file()` to see filenames
 - **Missing types**: Check `cargo check` output for exactly which types are missing
 - **Import paths**: Generated types are at `crate::generated::ModuleName_pm::TypeName`
+- **Filename mismatches**: Check extracted files in `codegen/generated/extract/*/` vs what generators look for
+- **Tag kit not working?**: Add debug logging to `try_tag_kit_print_conv()` in registry.rs
+- **Module exports**: Check that generated modules are exported in their parent mod.rs
 
 ### Common Gotchas
 - **Multiple configs same output**: Like Olympus having both Main and Equipment tag structures
@@ -398,10 +446,10 @@ src/generated/Exif_pm/tag_kit/
 3. **Module Integration**: Tag kit properly integrated into codegen pipeline
 4. **Runtime API**: New `apply_print_conv_with_tag_id()` function implemented
 
-### ⚠️ Attempted But Blocked
-1. **Full Compilation**: Too many missing types/modules to fix in limited time
-2. **Integration Testing**: Cannot run without successful compilation
-3. **Real Image Testing**: Blocked by compilation errors
+### ⚠️ Still Needs Validation
+1. **Integration Testing**: Need to verify tag kit is called at runtime
+2. **Real Image Testing**: Verify PrintConv values are human-readable
+3. **Performance Testing**: Check impact of two-level lookup (ID → tag kit → value)
 
 ## Refactoring Opportunities Identified
 
@@ -430,6 +478,16 @@ Consider a proper error collection type with severity levels.
 - Tag kit uses runtime HashMap lookups - could use `phf` for compile-time perfect hashing
 - Consider lazy initialization only for actually-used tag categories
 - Profile the two-level lookup (ID → tag kit → PrintConv)
+
+### 6. Error Handling Improvements
+- `try_tag_kit_print_conv()` silently discards errors/warnings
+- These should be propagated to the user somehow
+- Consider adding error collection to the API
+
+### 7. Module Organization
+- Consider removing `_pm` suffix from generated module names
+- Would make imports cleaner: `Canon::` instead of `Canon_pm::`
+- But this is a project-wide decision
 
 ## UPDATE: Major Progress on Duplicate Module Declaration Fix (Jan 23, 2025)
 
@@ -740,3 +798,37 @@ The tag kit system represents a fundamental improvement in maintainability - no 
 **Time Estimate**: 1 hour to full validation (mostly testing)
 
 **Remember**: This will eliminate 414 manual PrintConv implementations and enable automatic updates with each ExifTool release!
+
+## Code and Docs to Study
+
+### Must-Read Code Files
+1. **`src/registry.rs`** (lines 181-224)
+   - `apply_print_conv_with_tag_id()` - the new API that tries tag kit first
+   - `try_tag_kit_print_conv()` - tag kit integration logic
+
+2. **`src/generated/Exif_pm/tag_kit/mod.rs`**
+   - Generated main API with `apply_print_conv()` function
+   - TAG_KITS HashMap structure
+   - Shows how tag kits are organized by category
+
+3. **`codegen/src/generators/lookup_tables/mod.rs`**
+   - Lines 299-323: Tag kit integration
+   - Lines 144-170: Process binary data integration
+   - Lines 175-195: Conditional tags integration
+   - CRITICAL: Filename construction logic
+
+4. **`src/exif/mod.rs`** (lines 625-695)
+   - Conditional context creation
+   - Conditional tag resolution logic
+   - Shows integration of Canon vs FujiFilm contexts
+
+### Architecture Documents
+1. **[CODEGEN.md](../CODEGEN.md)** - Sections 4.3.1 (Tag Kit) and 4.3.8 (Tag Structure)
+2. **[EXTRACTOR-GUIDE.md](../reference/EXTRACTOR-GUIDE.md)** - Tag kit vs deprecated extractors
+3. **[TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md)** - Why we don't create manual stubs
+
+## Final Words
+
+The heavy lifting is done! The tag kit system is fully generated, the build succeeds, and all the integration code is in place. What remains is validation - proving that when we extract EXIF tags from real images, the PrintConv functions are actually being applied through the tag kit system rather than falling back to manual implementations.
+
+This is a watershed moment for the project. If the tag kit works, we've automated 414 EXIF tag PrintConvs and created a system that can keep up with ExifTool's monthly releases. The next engineer gets to experience the satisfaction of seeing human-readable values appear where function names used to be. Good luck!

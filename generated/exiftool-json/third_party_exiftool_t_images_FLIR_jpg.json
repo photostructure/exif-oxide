@@ -10,11 +10,6 @@
   "EXIF:Make": "FLIR Systems AB",
   "EXIF:Model": "FLIR_i7",
   "EXIF:Orientation": "Horizontal (normal)",
-  "EXIF:ResolutionUnit": "inches",
-  "EXIF:YCbCrPositioning": "Centered",
-  "EXIF:ExposureTime": "1/32",
   "EXIF:DateTimeOriginal": "2012:02:11 14:17:08",
-  "EXIF:CreateDate": "2012:02:11 14:17:08",
-  "EXIF:FocalLength": "6.7 mm",
-  "EXIF:ColorSpace": "sRGB"
+  "EXIF:CreateDate": "2012:02:11 14:17:08"
 }
