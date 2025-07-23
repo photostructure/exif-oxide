@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with exif-oxide.
 
-Today's date is July 22, 2025.
+Today's date is July 23, 2025. 
 
 ## 🚨 CRITICAL: ALWAYS USE ABSOLUTE PATHS 🚨
 
@@ -310,3 +310,8 @@ Environment variables:
 ### Git commit messages
 
 All commit messages must follow the Conventional Commits specification (https://www.conventionalcommits.org/en/v1.0.0/). Use the format: `<type>[optional scope]: <description>` where type is `feat` (new features, MINOR version), `fix` (bug patches, PATCH version), or other types like `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`. Breaking changes are indicated with `!` after type/scope or with a `BREAKING CHANGE:` footer. The scope should reference the most significant file/module changed. Keep descriptions concise and avoid enumerating every change unless crucial for understanding.
+
+
+### Test images
+
+There are many test images in `third-party/exiftool/t/image/` -- but they've all had their image content stripped out, so they're all 8x8. Don't test things like dimensions with those files -- we need proper, original out-of-camera examples to test with. Those live in `test-images/${manufacturer name}`
