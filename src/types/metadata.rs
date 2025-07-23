@@ -263,9 +263,29 @@ impl ExifData {
     }
 
     /// Get tag by name (without group qualifier)
-    /// Returns the first matching tag found
+    /// Returns the highest priority matching tag found
+    /// ExifTool behavior: EXIF tags take precedence over MakerNotes tags
     pub fn get_tag_by_name(&self, tag_name: &str) -> Option<&TagEntry> {
-        self.tags.iter().find(|tag| tag.name == tag_name)
+        let matching_tags: Vec<&TagEntry> = self
+            .tags
+            .iter()
+            .filter(|tag| tag.name == tag_name)
+            .collect();
+
+        if matching_tags.is_empty() {
+            return None;
+        }
+
+        // If only one match, return it
+        if matching_tags.len() == 1 {
+            return Some(matching_tags[0]);
+        }
+
+        // Multiple matches - use priority-based selection
+        // ExifTool behavior: EXIF group takes precedence over MakerNotes group
+        matching_tags
+            .into_iter()
+            .max_by_key(|tag| SourcePriority::from_namespace(&tag.group))
     }
 }
 

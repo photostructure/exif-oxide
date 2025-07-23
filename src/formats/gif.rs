@@ -112,75 +112,70 @@ pub fn parse_gif_screen_descriptor(data: &[u8]) -> Result<ScreenDescriptor> {
 ///
 /// ExifTool reference: GIF.pm:105-138 (Screen table with GROUPS => { 2 => 'Image' })
 pub fn create_gif_tag_entries(screen_desc: &ScreenDescriptor) -> Vec<TagEntry> {
-    let mut entries = Vec::new();
-
-    // GIF:ImageWidth - ExifTool GIF.pm:109-112
-    entries.push(TagEntry {
-        group: "GIF".to_string(),
-        group1: "GIF".to_string(),
-        name: "ImageWidth".to_string(),
-        value: TagValue::U16(screen_desc.image_width),
-        print: TagValue::U16(screen_desc.image_width),
-    });
-
-    // GIF:ImageHeight - ExifTool GIF.pm:113-116
-    entries.push(TagEntry {
-        group: "GIF".to_string(),
-        group1: "GIF".to_string(),
-        name: "ImageHeight".to_string(),
-        value: TagValue::U16(screen_desc.image_height),
-        print: TagValue::U16(screen_desc.image_height),
-    });
-
-    // GIF:HasColorMap - ExifTool GIF.pm:117-121 (with PrintConv)
-    entries.push(TagEntry {
-        group: "GIF".to_string(),
-        group1: "GIF".to_string(),
-        name: "HasColorMap".to_string(),
-        value: TagValue::String(
-            if screen_desc.has_color_map() {
-                "1"
-            } else {
-                "0"
-            }
-            .to_string(),
-        ),
-        print: TagValue::String(
-            if screen_desc.has_color_map() {
-                "Yes"
-            } else {
-                "No"
-            }
-            .to_string(),
-        ),
-    });
-
-    // GIF:ColorResolutionDepth - ExifTool GIF.pm:122-126
-    entries.push(TagEntry {
-        group: "GIF".to_string(),
-        group1: "GIF".to_string(),
-        name: "ColorResolutionDepth".to_string(),
-        value: TagValue::String(screen_desc.color_resolution_depth().to_string()),
-        print: TagValue::String(screen_desc.color_resolution_depth().to_string()),
-    });
-
-    // GIF:BitsPerPixel - ExifTool GIF.pm:127-131
-    entries.push(TagEntry {
-        group: "GIF".to_string(),
-        group1: "GIF".to_string(),
-        name: "BitsPerPixel".to_string(),
-        value: TagValue::U8(screen_desc.bits_per_pixel()),
-        print: TagValue::U8(screen_desc.bits_per_pixel()),
-    });
-
-    // GIF:BackgroundColor - ExifTool GIF.pm:132
-    entries.push(TagEntry {
-        group: "GIF".to_string(),
-        group1: "GIF".to_string(),
-        name: "BackgroundColor".to_string(),
-        value: TagValue::String(screen_desc.background_color.to_string()),
-        print: TagValue::String(screen_desc.background_color.to_string()),
-    });
+    let mut entries = vec![
+        // GIF:ImageWidth - ExifTool GIF.pm:109-112
+        TagEntry {
+            group: "GIF".to_string(),
+            group1: "GIF".to_string(),
+            name: "ImageWidth".to_string(),
+            value: TagValue::U16(screen_desc.image_width),
+            print: TagValue::U16(screen_desc.image_width),
+        },
+        // GIF:ImageHeight - ExifTool GIF.pm:113-116
+        TagEntry {
+            group: "GIF".to_string(),
+            group1: "GIF".to_string(),
+            name: "ImageHeight".to_string(),
+            value: TagValue::U16(screen_desc.image_height),
+            print: TagValue::U16(screen_desc.image_height),
+        },
+        // GIF:HasColorMap - ExifTool GIF.pm:117-121 (with PrintConv)
+        TagEntry {
+            group: "GIF".to_string(),
+            group1: "GIF".to_string(),
+            name: "HasColorMap".to_string(),
+            value: TagValue::String(
+                if screen_desc.has_color_map() {
+                    "1"
+                } else {
+                    "0"
+                }
+                .to_string(),
+            ),
+            print: TagValue::String(
+                if screen_desc.has_color_map() {
+                    "Yes"
+                } else {
+                    "No"
+                }
+                .to_string(),
+            ),
+        },
+        // GIF:ColorResolutionDepth - ExifTool GIF.pm:122-126
+        TagEntry {
+            group: "GIF".to_string(),
+            group1: "GIF".to_string(),
+            name: "ColorResolutionDepth".to_string(),
+            value: TagValue::U8(screen_desc.color_resolution_depth()),
+            print: TagValue::U8(screen_desc.color_resolution_depth()),
+        },
+        // GIF:BitsPerPixel - ExifTool GIF.pm:127-131
+        TagEntry {
+            group: "GIF".to_string(),
+            group1: "GIF".to_string(),
+            name: "BitsPerPixel".to_string(),
+            value: TagValue::U8(screen_desc.bits_per_pixel()),
+            print: TagValue::U8(screen_desc.bits_per_pixel()),
+        },
+        // GIF:BackgroundColor - ExifTool GIF.pm:132
+        TagEntry {
+            group: "GIF".to_string(),
+            group1: "GIF".to_string(),
+            name: "BackgroundColor".to_string(),
+            value: TagValue::U8(screen_desc.background_color),
+            print: TagValue::U8(screen_desc.background_color),
+        },
+    ];
 
     // GIF:PixelAspectRatio - ExifTool GIF.pm:133-137 (with conversion)
     if let Some(aspect_ratio) = screen_desc.pixel_aspect_ratio_float() {
@@ -188,8 +183,8 @@ pub fn create_gif_tag_entries(screen_desc: &ScreenDescriptor) -> Vec<TagEntry> {
             group: "GIF".to_string(),
             group1: "GIF".to_string(),
             name: "PixelAspectRatio".to_string(),
-            value: TagValue::String(screen_desc.pixel_aspect_ratio.to_string()),
-            print: TagValue::String(format!("{:.3}", aspect_ratio)),
+            value: TagValue::F64(aspect_ratio as f64),
+            print: TagValue::F64(aspect_ratio as f64),
         });
     }
 

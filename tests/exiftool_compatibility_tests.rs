@@ -177,6 +177,12 @@ fn get_normalization_rules() -> HashMap<&'static str, NormalizationRule> {
     );
     rules.insert("EXIF:SubSecTimeOriginal", NormalizationRule::NumberToString);
 
+    // GIF PixelAspectRatio - clean unnecessary precision: 1.0 -> 1
+    rules.insert(
+        "GIF:PixelAspectRatio",
+        NormalizationRule::CleanNumericPrecision { max_places: 3 },
+    );
+
     rules
 }
 

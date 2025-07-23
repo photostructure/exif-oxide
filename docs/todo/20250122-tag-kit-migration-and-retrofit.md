@@ -27,10 +27,19 @@
 - Modular generation splits into manageable files
 - Deprecation notices added to old extractors
 - Tag kit wired into runtime
+- **All 7 inline_printconv configs migrated to tag_kit**:
+  - Canon (17 tables) → canon__tag_kit.json
+  - Sony (10 tables) → sony__tag_kit.json  
+  - Olympus (8 tables) → olympus__tag_kit.json
+  - Panasonic (1 table) → panasonic__tag_kit.json
+  - MinoltaRaw (2 tables) → minoltaraw__tag_kit.json
+  - Exif (1 table) → exif__tag_kit.json (already done)
+  - PanasonicRaw (1 table) → panasonicraw__tag_kit.json (already done)
+- **Fixed TagKitExtractor** to handle multiple tables per module
+- **Runtime integration verified** - all modules have tag_kit/ subdirectories
 
 ❌ **Not Complete**:
-- 7 inline_printconv configs need migration
-- Manual implementations still in use
+- Manual implementations still in use (to be removed after validation)
 
 ### Related Documentation
 
@@ -203,15 +212,15 @@ cargo run --bin compare-with-exiftool test.jpg
 ## Success Criteria & Quality Gates
 
 **Phase 1 Complete**:
-- [ ] All 7 inline_printconv configs migrated
-- [ ] Generated code includes all PrintConvs
-- [ ] Tests pass with new code
-- [ ] Old configs deleted
+- [x] All 7 inline_printconv configs migrated
+- [x] Generated code includes all PrintConvs
+- [x] Tests pass with new code
+- [ ] Old configs deleted (cleanup pending)
 
 **Phase 2 Complete**:
-- [ ] Tag kit wired into runtime
-- [ ] Metrics show tag kit being used
-- [ ] No regression in tag extraction
+- [x] Tag kit wired into runtime
+- [ ] Metrics show tag kit being used (needs verification)
+- [ ] No regression in tag extraction (validation pending)
 
 **Phase 3 Complete**:
 - [ ] All modules have tag kit configs

@@ -1,0 +1,17 @@
+{
+  "SourceFile": "test-images/example.png",
+  "File:FileSize": 131645,
+  "File:FileName": "example.png",
+  "File:Directory": "test-images",
+  "File:FileModifyDate": "2025:07:23 12:28:25-07:00",
+  "File:FileType": "PNG",
+  "File:FileTypeExtension": "png",
+  "File:MIMEType": "image/png",
+  "PNG:ImageWidth": 1130,
+  "PNG:ImageHeight": 726,
+  "PNG:BitDepth": 8,
+  "PNG:ColorType": "Palette",
+  "PNG:Compression": "Deflate/Inflate",
+  "PNG:Filter": "Adaptive",
+  "PNG:Interlace": "Noninterlaced"
+}

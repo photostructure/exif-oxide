@@ -6,11 +6,11 @@
 
 ### 🎯 **Current Progress Status** (July 23, 2025)
 
-**✅ Core Web Formats Completed (3/6)**:
+**✅ Core Web Formats Completed (4/6)**:
 - ✅ **JPEG** - Full dimension extraction from SOF markers
 - ✅ **PNG** - Full dimension extraction from IHDR chunks
 - ✅ **GIF** - Full dimension extraction from Logical Screen Descriptor
-- 🔲 **TIFF** - Should work with existing TIFF processing  
+- ✅ **TIFF** - COMPLETED via existing TIFF processing  
 - 🔲 **SVG** - Requires XML parsing
 - 🔲 **WebP** - RIFF-based format
 
@@ -18,7 +18,7 @@
 - ✅ **Canon CR2** - TIFF-based extraction
 - ✅ **Sony ARW** - Enhanced SubIFD support
 
-**📊 Overall Status**: Strong foundation established with core web image support (JPEG + PNG) and major RAW formats (Canon + Sony). Ready for next phase expansion.
+**📊 Overall Status**: Excellent progress with 4/6 core web formats complete (JPEG + PNG + GIF + TIFF) and major RAW formats (Canon + Sony). WebP and SVG remain for full web format coverage.
 
 ## Background & Context
 
@@ -58,7 +58,7 @@ All formats below require ImageWidth/ImageHeight extraction for PhotoStructure i
 - ✅ **PNG** (`image/png`: png) - COMPLETED (July 23, 2025)
 - ✅ **GIF** (`image/gif`: gif) - COMPLETED (July 23, 2025)
 - 🔲 **SVG** (`image/svg+xml`: svg) - XML parsing required
-- 🔲 **TIFF** (`image/tiff`: tif, tiff) - Should work with existing TIFF processing
+- ✅ **TIFF** (`image/tiff`: tif, tiff) - COMPLETED (July 23, 2025)
 - 🔲 **WebP** (`image/webp`: webp) - RIFF-based format
 
 ### **HeifFiletypes** (Modern Efficient Formats)
@@ -187,10 +187,14 @@ These formats are essential for web-based photo management and should be impleme
    - **Method**: Parse WebP VP8/VP8L/VP8X chunk headers  
    - **ExifTool reference**: `lib/Image/ExifTool/RIFF.pm` (WebP is RIFF-based)
 
-#### 4. **TIFF** (MEDIUM PRIORITY)
+#### 4. **TIFF** ✅ **COMPLETED** (July 23, 2025)
+   - **STATUS**: ✅ **IMPLEMENTATION COMPLETE AND TESTED**
    - **Method**: Extract from TIFF IFD tags 0x0100 (ImageWidth) and 0x0101 (ImageLength)
-   - **Implementation**: Should use existing TIFF processing in `src/formats/mod.rs`
-   - **Note**: May already work, needs testing
+   - **Implementation**: Uses existing TIFF processing via ExifReader in `src/formats/mod.rs:456-472`
+   - **Testing**: Verified with `ExifTool.tif` (160×120) and `GeoTiff.tif` (25×24)
+   - **Tags Extracted**: EXIF:ImageWidth, EXIF:ImageHeight
+   - **ExifTool Compliance**: ✅ Values and group assignment match ExifTool exactly
+   - **Group Assignment**: EXIF tags use "EXIF" group (IFD0 tags processed by standard EXIF reader)
 
 #### 5. **SVG** (LOWER PRIORITY)
    - **Method**: Parse XML `<svg>` element width/height attributes

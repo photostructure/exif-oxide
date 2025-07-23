@@ -109,6 +109,158 @@ pub mod utils {
         }
     }
 
+    /// Helper function to extract ImageWidth/ImageHeight from any IFD
+    /// Returns (width, height) if both found, None otherwise
+    fn extract_dimensions_from_ifd(
+        data: &[u8],
+        ifd_offset: usize,
+        is_little_endian: bool,
+    ) -> Option<(u32, u32)> {
+        use tracing::debug;
+
+        // Validate IFD offset
+        if ifd_offset >= data.len() || ifd_offset + 2 > data.len() {
+            debug!("Invalid IFD offset: 0x{:x}", ifd_offset);
+            return None;
+        }
+
+        // Read number of IFD entries
+        let entry_count = if is_little_endian {
+            u16::from_le_bytes([data[ifd_offset], data[ifd_offset + 1]])
+        } else {
+            u16::from_be_bytes([data[ifd_offset], data[ifd_offset + 1]])
+        } as usize;
+
+        debug!("IFD at 0x{:x} contains {} entries", ifd_offset, entry_count);
+
+        // Validate entry count
+        let entries_start = ifd_offset + 2;
+        let entries_end = entries_start + (entry_count * 12);
+        if entries_end > data.len() {
+            debug!("IFD entries extend beyond file end");
+            return None;
+        }
+
+        let mut width: Option<u32> = None;
+        let mut height: Option<u32> = None;
+
+        // Scan IFD entries for ImageWidth (0x0100) and ImageHeight (0x0101)
+        for i in 0..entry_count {
+            let entry_offset = entries_start + (i * 12);
+            if entry_offset + 12 > data.len() {
+                break;
+            }
+
+            // Read IFD entry: tag(2) + type(2) + count(4) + value/offset(4)
+            let tag_id = if is_little_endian {
+                u16::from_le_bytes([data[entry_offset], data[entry_offset + 1]])
+            } else {
+                u16::from_be_bytes([data[entry_offset], data[entry_offset + 1]])
+            };
+
+            let data_type = if is_little_endian {
+                u16::from_le_bytes([data[entry_offset + 2], data[entry_offset + 3]])
+            } else {
+                u16::from_be_bytes([data[entry_offset + 2], data[entry_offset + 3]])
+            };
+
+            let count = if is_little_endian {
+                u32::from_le_bytes([
+                    data[entry_offset + 4],
+                    data[entry_offset + 5],
+                    data[entry_offset + 6],
+                    data[entry_offset + 7],
+                ])
+            } else {
+                u32::from_be_bytes([
+                    data[entry_offset + 4],
+                    data[entry_offset + 5],
+                    data[entry_offset + 6],
+                    data[entry_offset + 7],
+                ])
+            };
+
+            match tag_id {
+                0x0100 => {
+                    // ImageWidth
+                    debug!(
+                        "Found ImageWidth in SubIFD: type={}, count={}",
+                        data_type, count
+                    );
+                    if count == 1 {
+                        let value = if is_little_endian {
+                            u32::from_le_bytes([
+                                data[entry_offset + 8],
+                                data[entry_offset + 9],
+                                data[entry_offset + 10],
+                                data[entry_offset + 11],
+                            ])
+                        } else {
+                            u32::from_be_bytes([
+                                data[entry_offset + 8],
+                                data[entry_offset + 9],
+                                data[entry_offset + 10],
+                                data[entry_offset + 11],
+                            ])
+                        };
+
+                        // Handle both SHORT (3) and LONG (4) types
+                        width = match data_type {
+                            3 => Some(value & 0xFFFF), // SHORT (16-bit)
+                            4 => Some(value),          // LONG (32-bit)
+                            _ => Some(value & 0xFFFF), // Default to 16-bit
+                        };
+                    }
+                }
+                0x0101 => {
+                    // ImageHeight
+                    debug!(
+                        "Found ImageHeight in SubIFD: type={}, count={}",
+                        data_type, count
+                    );
+                    if count == 1 {
+                        let value = if is_little_endian {
+                            u32::from_le_bytes([
+                                data[entry_offset + 8],
+                                data[entry_offset + 9],
+                                data[entry_offset + 10],
+                                data[entry_offset + 11],
+                            ])
+                        } else {
+                            u32::from_be_bytes([
+                                data[entry_offset + 8],
+                                data[entry_offset + 9],
+                                data[entry_offset + 10],
+                                data[entry_offset + 11],
+                            ])
+                        };
+
+                        // Handle both SHORT (3) and LONG (4) types
+                        height = match data_type {
+                            3 => Some(value & 0xFFFF), // SHORT (16-bit)
+                            4 => Some(value),          // LONG (32-bit)
+                            _ => Some(value & 0xFFFF), // Default to 16-bit
+                        };
+                    }
+                }
+                _ => {
+                    // Skip other tags
+                }
+            }
+
+            // Early exit if we found both dimensions
+            if width.is_some() && height.is_some() {
+                break;
+            }
+        }
+
+        if let (Some(w), Some(h)) = (width, height) {
+            Some((w, h))
+        } else {
+            None
+        }
+    }
+
     /// Extract TIFF dimension tags (ImageWidth/ImageHeight) from IFD0 for TIFF-based RAW files
     /// ExifTool: lib/Image/ExifTool/Exif.pm:351-473 (tags 0x0100, 0x0101)
     /// Used by both Sony ARW and Canon CR2 files which are TIFF-based
@@ -183,9 +335,11 @@ pub mod utils {
         }
 
         // Scan IFD0 entries for ImageWidth (0x0100) and ImageHeight (0x0101)
+        // For Sony ARW, these are often in SubIFD (tag 0x014a) rather than IFD0
         // ExifTool: Exif.pm tags 0x100 and 0x101 definitions
         let mut image_width: Option<u32> = None;
         let mut image_height: Option<u32> = None;
+        let mut sub_ifd_offset: Option<usize> = None;
 
         for i in 0..entry_count {
             let entry_offset = entries_start + (i * 12);
@@ -222,6 +376,12 @@ pub mod utils {
                     data[entry_offset + 7],
                 ])
             };
+
+            // Log all tags found in IFD0 for debugging
+            debug!(
+                "IFD0 entry {}: tag_id=0x{:04x}, type={}, count={}",
+                i, tag_id, data_type, count
+            );
 
             match tag_id {
                 0x0100 => {
@@ -294,14 +454,62 @@ pub mod utils {
                         debug!("ImageHeight = {}", image_height.unwrap());
                     }
                 }
+                0x014a => {
+                    // SubIFD pointer - Sony ARW stores dimensions here
+                    debug!("Found SubIFD tag: type={}, count={}", data_type, count);
+
+                    if count == 1 && data_type == 4 {
+                        // LONG pointer
+                        let offset = if is_little_endian {
+                            u32::from_le_bytes([
+                                data[entry_offset + 8],
+                                data[entry_offset + 9],
+                                data[entry_offset + 10],
+                                data[entry_offset + 11],
+                            ])
+                        } else {
+                            u32::from_be_bytes([
+                                data[entry_offset + 8],
+                                data[entry_offset + 9],
+                                data[entry_offset + 10],
+                                data[entry_offset + 11],
+                            ])
+                        } as usize;
+
+                        debug!("SubIFD pointer at offset 0x{:x}", offset);
+                        sub_ifd_offset = Some(offset);
+                    }
+                }
                 _ => {
-                    // Skip other tags - we only need dimensions
+                    // Skip other tags - we only need dimensions and SubIFD
                 }
             }
 
-            // Early exit if we found both dimensions
+            // Early exit if we found both dimensions (but still check for SubIFD)
             if image_width.is_some() && image_height.is_some() {
                 break;
+            }
+        }
+
+        // If dimensions not found in IFD0, check SubIFD (common for Sony ARW)
+        if (image_width.is_none() || image_height.is_none()) && sub_ifd_offset.is_some() {
+            let sub_offset = sub_ifd_offset.unwrap();
+            debug!(
+                "Checking SubIFD at offset 0x{:x} for dimensions",
+                sub_offset
+            );
+
+            if let Some((sub_width, sub_height)) =
+                extract_dimensions_from_ifd(data, sub_offset, is_little_endian)
+            {
+                if image_width.is_none() {
+                    image_width = Some(sub_width);
+                    debug!("Found ImageWidth in SubIFD: {}", sub_width);
+                }
+                if image_height.is_none() {
+                    image_height = Some(sub_height);
+                    debug!("Found ImageHeight in SubIFD: {}", sub_height);
+                }
             }
         }
 
@@ -310,17 +518,13 @@ pub mod utils {
         // Here we add them as standard EXIF tags following ExifTool's approach
         if let Some(width) = image_width {
             // Add ImageWidth tag (0x0100) - ExifTool: Exif.pm:460
-            reader
-                .extracted_tags
-                .insert(0x0100, TagValue::String(width.to_string()));
+            reader.extracted_tags.insert(0x0100, TagValue::U32(width));
             debug!("Added EXIF:ImageWidth (0x0100) = {}", width);
         }
 
         if let Some(height) = image_height {
             // Add ImageHeight tag (0x0101) - ExifTool: Exif.pm:473
-            reader
-                .extracted_tags
-                .insert(0x0101, TagValue::String(height.to_string()));
+            reader.extracted_tags.insert(0x0101, TagValue::U32(height));
             debug!("Added EXIF:ImageHeight (0x0101) = {}", height);
         }
 
