@@ -16,6 +16,7 @@ pub mod moresettings_inline;
 pub mod sonyexposureprogram;
 pub mod tag2010e_inline;
 pub mod tag2010g_inline;
+pub mod tag_kit;
 pub mod whitebalancesetting;
 
 // Re-export all lookup functions and constants
@@ -32,4 +33,5 @@ pub use moresettings_inline::*;
 pub use sonyexposureprogram::*;
 pub use tag2010e_inline::*;
 pub use tag2010g_inline::*;
+pub use tag_kit::*;
 pub use whitebalancesetting::*;
