@@ -10,8 +10,8 @@ ImageDataHash provides cryptographic fingerprinting of the actual image/media co
 ## Background: ExifTool's ImageDataHash Feature
 
 **Content-Only Hashing**:
-- **Includes**: Main image data, JpgFromRaw, OtherImage, video/audio streams
-- **Excludes**: ThumbnailImage, PreviewImage, all metadata (EXIF, XMP, IPTC, etc.)
+- **Includes**: Main image data, video/audio streams
+- **Excludes**: JpgFromRaw, OtherImage, ThumbnailImage, PreviewImage, all metadata (EXIF, XMP, IPTC, etc.)
 
 **Supported Algorithms**: MD5 (default), SHA256, SHA512
 

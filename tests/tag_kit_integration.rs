@@ -2,7 +2,7 @@
 //! Compares tag kit output with manual implementations to ensure parity
 
 use exif_oxide::expressions::ExpressionEvaluator;
-use exif_oxide::generated::exif_tag_kit::{apply_print_conv, EXIF_TAG_KITS};
+use exif_oxide::generated::Exif_pm::tag_kit::{apply_print_conv, TAG_KITS as EXIF_TAG_KITS};
 use exif_oxide::implementations::print_conv;
 use exif_oxide::types::TagValue;
 

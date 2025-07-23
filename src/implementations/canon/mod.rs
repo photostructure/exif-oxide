@@ -904,7 +904,7 @@ fn apply_camera_settings_print_conv(
         "FocusMode" => {
             // TODO: Add FocusMode lookup when Canon-specific lookup is generated
             // For now, return the raw value as string
-            return crate::types::TagValue::String(format!("FocusMode {}", tag_value));
+            return crate::types::TagValue::String(format!("FocusMode {tag_value}"));
         }
         "CanonFlashMode" => {
             // CanonFlashMode might use the same lookup as FlashMode, or need a different one
