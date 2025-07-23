@@ -280,7 +280,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         "JPEG" => {
             // Scan for EXIF data in JPEG segments and extract SOF data
             let (segment_info_opt, sof_data_opt) = scan_jpeg_segments(&mut reader)?;
-            
+
             // Process SOF data first to add dimension tags
             if let Some(sof) = sof_data_opt {
                 // Add ImageWidth from SOF
@@ -291,7 +291,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     value: TagValue::String(sof.image_width.to_string()),
                     print: TagValue::String(sof.image_width.to_string()),
                 });
-                
+
                 // Add ImageHeight from SOF
                 tag_entries.push(TagEntry {
                     group: "File".to_string(),
@@ -300,7 +300,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     value: TagValue::String(sof.image_height.to_string()),
                     print: TagValue::String(sof.image_height.to_string()),
                 });
-                
+
                 // Add BitsPerSample from SOF
                 tag_entries.push(TagEntry {
                     group: "File".to_string(),
@@ -309,7 +309,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     value: TagValue::String(sof.bits_per_sample.to_string()),
                     print: TagValue::String(sof.bits_per_sample.to_string()),
                 });
-                
+
                 // Add ColorComponents from SOF
                 tag_entries.push(TagEntry {
                     group: "File".to_string(),
@@ -318,7 +318,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     value: TagValue::String(sof.color_components.to_string()),
                     print: TagValue::String(sof.color_components.to_string()),
                 });
-                
+
                 // Add YCbCrSubSampling if available
                 if let Some(subsampling) = sof.ycbcr_subsampling {
                     tag_entries.push(TagEntry {
@@ -329,18 +329,18 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                         print: TagValue::String(subsampling),
                     });
                 }
-                
+
                 // Add EncodingProcess
                 // Note: ExifTool uses a PrintConv for this, but for now we'll use the raw value
                 tag_entries.push(TagEntry {
                     group: "File".to_string(),
-                    group1: "File".to_string(), 
+                    group1: "File".to_string(),
                     name: "EncodingProcess".to_string(),
                     value: TagValue::String(sof.encoding_process.to_string()),
                     print: TagValue::String(sof.encoding_process.to_string()),
                 });
             }
-            
+
             match segment_info_opt {
                 Some(segment_info) => {
                     let exif_status = format!(

@@ -5,7 +5,7 @@
     {
       "hash_name": "%magicNumber",
       "constant_name": "REGEX_PATTERNS",
-      "description": "Regex patterns for file type validation"
+      "description": "Regex patterns for file type detection"
     }
   ]
 }

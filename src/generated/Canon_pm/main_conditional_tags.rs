@@ -512,6 +512,16 @@ static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> 
             format: None,
         },
     ]);
+        map.insert(
+            "56",
+            vec![ConditionalEntry {
+                condition: "$count == 76",
+                name: "BatteryType",
+                subdirectory: false,
+                writable: true,
+                format: None,
+            }],
+        );
         map.insert("16385", vec![
         ConditionalEntry {
             condition: "$count == 582",
@@ -598,16 +608,6 @@ static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> 
             format: None,
         },
     ]);
-        map.insert(
-            "56",
-            vec![ConditionalEntry {
-                condition: "$count == 76",
-                name: "BatteryType",
-                subdirectory: false,
-                writable: true,
-                format: None,
-            }],
-        );
         map
     },
 );
@@ -661,12 +661,6 @@ static BINARY_PATTERNS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> =
 #[derive(Debug, Clone)]
 pub struct CanonConditionalTags {}
 
-impl Default for CanonConditionalTags {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl CanonConditionalTags {
     /// Create new conditional tag processor
     pub fn new() -> Self {
@@ -702,7 +696,7 @@ impl CanonConditionalTags {
         CONDITIONAL_ARRAYS
             .get(tag_id)?
             .iter()
-            .find(|entry| self.evaluate_condition(entry.condition, context))
+            .find(|entry| self.evaluate_condition(&entry.condition, context))
             .map(|entry| ResolvedTag {
                 name: entry.name.to_string(),
                 subdirectory: entry.subdirectory,
@@ -720,7 +714,7 @@ impl CanonConditionalTags {
         COUNT_CONDITIONS
             .get(tag_id)?
             .iter()
-            .find(|entry| self.evaluate_count_condition(entry.condition, context.count))
+            .find(|entry| self.evaluate_count_condition(&entry.condition, context.count))
             .map(|entry| ResolvedTag {
                 name: entry.name.to_string(),
                 subdirectory: entry.subdirectory,
@@ -739,7 +733,7 @@ impl CanonConditionalTags {
             BINARY_PATTERNS
                 .get(tag_id)?
                 .iter()
-                .find(|entry| self.evaluate_binary_pattern(entry.condition, binary_data))
+                .find(|entry| self.evaluate_binary_pattern(&entry.condition, binary_data))
                 .map(|entry| ResolvedTag {
                     name: entry.name.to_string(),
                     subdirectory: entry.subdirectory,

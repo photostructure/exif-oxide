@@ -117,6 +117,13 @@ fn test_orientation_tag_kit_parity() {
             tag_kit_result.to_string(),
             "Orientation mismatch for value {value}: manual='{manual_result}', tag_kit='{tag_kit_result}'"
         );
+
+        // Both should match expected
+        assert_eq!(
+            manual_result.to_string(),
+            expected,
+            "Orientation unexpected result for value {value}: got '{manual_result}', expected '{expected}'"
+        );
     }
 }
 
