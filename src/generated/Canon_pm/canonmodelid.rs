@@ -1,5 +1,5 @@
 //! Canon camera model identification
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Canon.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -16,47 +16,26 @@ static CANON_MODEL_ID_DATA: &[(u32, &'static str)] = &[
     (2065, "EOS M6 Mark II"),
     (2066, "EOS M200"),
     (16842752, "PowerShot A30"),
-    (
-        17039360,
-        "PowerShot S300 / Digital IXUS 300 / IXY Digital 300",
-    ),
+    (17039360, "PowerShot S300 / Digital IXUS 300 / IXY Digital 300"),
     (17170432, "PowerShot A20"),
     (17301504, "PowerShot A10"),
-    (
-        17367040,
-        "PowerShot S110 / Digital IXUS v / IXY Digital 200",
-    ),
+    (17367040, "PowerShot S110 / Digital IXUS v / IXY Digital 200"),
     (17825792, "PowerShot G2"),
     (17891328, "PowerShot S40"),
     (17956864, "PowerShot S30"),
     (18022400, "PowerShot A40"),
     (18087936, "EOS D30"),
     (18153472, "PowerShot A100"),
-    (
-        18219008,
-        "PowerShot S200 / Digital IXUS v2 / IXY Digital 200a",
-    ),
+    (18219008, "PowerShot S200 / Digital IXUS v2 / IXY Digital 200a"),
     (18284544, "PowerShot A200"),
-    (
-        18350080,
-        "PowerShot S330 / Digital IXUS 330 / IXY Digital 300a",
-    ),
+    (18350080, "PowerShot S330 / Digital IXUS 330 / IXY Digital 300a"),
     (18415616, "PowerShot G3"),
     (18939904, "PowerShot S45"),
-    (
-        19070976,
-        "PowerShot SD100 / Digital IXUS II / IXY Digital 30",
-    ),
-    (
-        19136512,
-        "PowerShot S230 / Digital IXUS v3 / IXY Digital 320",
-    ),
+    (19070976, "PowerShot SD100 / Digital IXUS II / IXY Digital 30"),
+    (19136512, "PowerShot S230 / Digital IXUS v3 / IXY Digital 320"),
     (19202048, "PowerShot A70"),
     (19267584, "PowerShot A60"),
-    (
-        19333120,
-        "PowerShot S400 / Digital IXUS 400 / IXY Digital 400",
-    ),
+    (19333120, "PowerShot S400 / Digital IXUS 400 / IXY Digital 400"),
     (19464192, "PowerShot G5"),
     (19922944, "PowerShot A300"),
     (19988480, "PowerShot S50"),
@@ -67,199 +46,94 @@ static CANON_MODEL_ID_DATA: &[(u32, &'static str)] = &[
     (20447232, "PowerShot S70"),
     (20512768, "PowerShot S60"),
     (20971520, "PowerShot G6"),
-    (
-        21037056,
-        "PowerShot S500 / Digital IXUS 500 / IXY Digital 500",
-    ),
+    (21037056, "PowerShot S500 / Digital IXUS 500 / IXY Digital 500"),
     (21102592, "PowerShot A75"),
-    (
-        21233664,
-        "PowerShot SD110 / Digital IXUS IIs / IXY Digital 30a",
-    ),
+    (21233664, "PowerShot SD110 / Digital IXUS IIs / IXY Digital 30a"),
     (21299200, "PowerShot A400"),
     (21430272, "PowerShot A310"),
     (21561344, "PowerShot A85"),
-    (
-        22151168,
-        "PowerShot S410 / Digital IXUS 430 / IXY Digital 450",
-    ),
+    (22151168, "PowerShot S410 / Digital IXUS 430 / IXY Digital 450"),
     (22216704, "PowerShot A95"),
-    (
-        22282240,
-        "PowerShot SD300 / Digital IXUS 40 / IXY Digital 50",
-    ),
-    (
-        22347776,
-        "PowerShot SD200 / Digital IXUS 30 / IXY Digital 40",
-    ),
+    (22282240, "PowerShot SD300 / Digital IXUS 40 / IXY Digital 50"),
+    (22347776, "PowerShot SD200 / Digital IXUS 30 / IXY Digital 40"),
     (22413312, "PowerShot A520"),
     (22478848, "PowerShot A510"),
-    (
-        22609920,
-        "PowerShot SD20 / Digital IXUS i5 / IXY Digital L2",
-    ),
+    (22609920, "PowerShot SD20 / Digital IXUS i5 / IXY Digital L2"),
     (23330816, "PowerShot S2 IS"),
-    (
-        23396352,
-        "PowerShot SD430 / Digital IXUS Wireless / IXY Digital Wireless",
-    ),
-    (
-        23461888,
-        "PowerShot SD500 / Digital IXUS 700 / IXY Digital 600",
-    ),
+    (23396352, "PowerShot SD430 / Digital IXUS Wireless / IXY Digital Wireless"),
+    (23461888, "PowerShot SD500 / Digital IXUS 700 / IXY Digital 600"),
     (23494656, "EOS D60"),
-    (
-        24117248,
-        "PowerShot SD30 / Digital IXUS i Zoom / IXY Digital L3",
-    ),
+    (24117248, "PowerShot SD30 / Digital IXUS i Zoom / IXY Digital L3"),
     (24379392, "PowerShot A430"),
     (24444928, "PowerShot A410"),
     (24510464, "PowerShot S80"),
     (24641536, "PowerShot A620"),
     (24707072, "PowerShot A610"),
-    (
-        25165824,
-        "PowerShot SD630 / Digital IXUS 65 / IXY Digital 80",
-    ),
-    (
-        25231360,
-        "PowerShot SD450 / Digital IXUS 55 / IXY Digital 60",
-    ),
+    (25165824, "PowerShot SD630 / Digital IXUS 65 / IXY Digital 80"),
+    (25231360, "PowerShot SD450 / Digital IXUS 55 / IXY Digital 60"),
     (25296896, "PowerShot TX1"),
-    (
-        25624576,
-        "PowerShot SD400 / Digital IXUS 50 / IXY Digital 55",
-    ),
+    (25624576, "PowerShot SD400 / Digital IXUS 50 / IXY Digital 55"),
     (25690112, "PowerShot A420"),
-    (
-        25755648,
-        "PowerShot SD900 / Digital IXUS 900 Ti / IXY Digital 1000",
-    ),
-    (
-        26214400,
-        "PowerShot SD550 / Digital IXUS 750 / IXY Digital 700",
-    ),
+    (25755648, "PowerShot SD900 / Digital IXUS 900 Ti / IXY Digital 1000"),
+    (26214400, "PowerShot SD550 / Digital IXUS 750 / IXY Digital 700"),
     (26345472, "PowerShot A700"),
-    (
-        26476544,
-        "PowerShot SD700 IS / Digital IXUS 800 IS / IXY Digital 800 IS",
-    ),
+    (26476544, "PowerShot SD700 IS / Digital IXUS 800 IS / IXY Digital 800 IS"),
     (26542080, "PowerShot S3 IS"),
     (26607616, "PowerShot A540"),
-    (
-        26673152,
-        "PowerShot SD600 / Digital IXUS 60 / IXY Digital 70",
-    ),
+    (26673152, "PowerShot SD600 / Digital IXUS 60 / IXY Digital 70"),
     (26738688, "PowerShot G7"),
     (26804224, "PowerShot A530"),
-    (
-        33554432,
-        "PowerShot SD800 IS / Digital IXUS 850 IS / IXY Digital 900 IS",
-    ),
-    (
-        33619968,
-        "PowerShot SD40 / Digital IXUS i7 / IXY Digital L4",
-    ),
+    (33554432, "PowerShot SD800 IS / Digital IXUS 850 IS / IXY Digital 900 IS"),
+    (33619968, "PowerShot SD40 / Digital IXUS i7 / IXY Digital L4"),
     (33685504, "PowerShot A710 IS"),
     (33751040, "PowerShot A640"),
     (33816576, "PowerShot A630"),
     (34144256, "PowerShot S5 IS"),
     (34603008, "PowerShot A460"),
-    (
-        34734080,
-        "PowerShot SD850 IS / Digital IXUS 950 IS / IXY Digital 810 IS",
-    ),
+    (34734080, "PowerShot SD850 IS / Digital IXUS 950 IS / IXY Digital 810 IS"),
     (34799616, "PowerShot A570 IS"),
     (34865152, "PowerShot A560"),
-    (
-        34930688,
-        "PowerShot SD750 / Digital IXUS 75 / IXY Digital 90",
-    ),
-    (
-        34996224,
-        "PowerShot SD1000 / Digital IXUS 70 / IXY Digital 10",
-    ),
+    (34930688, "PowerShot SD750 / Digital IXUS 75 / IXY Digital 90"),
+    (34996224, "PowerShot SD1000 / Digital IXUS 70 / IXY Digital 10"),
     (35127296, "PowerShot A550"),
     (35192832, "PowerShot A450"),
     (35848192, "PowerShot G9"),
     (35913728, "PowerShot A650 IS"),
     (36044800, "PowerShot A720 IS"),
     (36241408, "PowerShot SX100 IS"),
-    (
-        36700160,
-        "PowerShot SD950 IS / Digital IXUS 960 IS / IXY Digital 2000 IS",
-    ),
-    (
-        36765696,
-        "PowerShot SD870 IS / Digital IXUS 860 IS / IXY Digital 910 IS",
-    ),
-    (
-        36831232,
-        "PowerShot SD890 IS / Digital IXUS 970 IS / IXY Digital 820 IS",
-    ),
-    (
-        37093376,
-        "PowerShot SD790 IS / Digital IXUS 90 IS / IXY Digital 95 IS",
-    ),
-    (
-        37158912,
-        "PowerShot SD770 IS / Digital IXUS 85 IS / IXY Digital 25 IS",
-    ),
+    (36700160, "PowerShot SD950 IS / Digital IXUS 960 IS / IXY Digital 2000 IS"),
+    (36765696, "PowerShot SD870 IS / Digital IXUS 860 IS / IXY Digital 910 IS"),
+    (36831232, "PowerShot SD890 IS / Digital IXUS 970 IS / IXY Digital 820 IS"),
+    (37093376, "PowerShot SD790 IS / Digital IXUS 90 IS / IXY Digital 95 IS"),
+    (37158912, "PowerShot SD770 IS / Digital IXUS 85 IS / IXY Digital 25 IS"),
     (37224448, "PowerShot A590 IS"),
     (37289984, "PowerShot A580"),
     (37879808, "PowerShot A470"),
-    (
-        37945344,
-        "PowerShot SD1100 IS / Digital IXUS 80 IS / IXY Digital 20 IS",
-    ),
+    (37945344, "PowerShot SD1100 IS / Digital IXUS 80 IS / IXY Digital 20 IS"),
     (38141952, "PowerShot SX1 IS"),
     (38207488, "PowerShot SX10 IS"),
     (38273024, "PowerShot A1000 IS"),
     (38338560, "PowerShot G10"),
     (38862848, "PowerShot A2000 IS"),
     (38928384, "PowerShot SX110 IS"),
-    (
-        38993920,
-        "PowerShot SD990 IS / Digital IXUS 980 IS / IXY Digital 3000 IS",
-    ),
-    (
-        39059456,
-        "PowerShot SD880 IS / Digital IXUS 870 IS / IXY Digital 920 IS",
-    ),
+    (38993920, "PowerShot SD990 IS / Digital IXUS 980 IS / IXY Digital 3000 IS"),
+    (39059456, "PowerShot SD880 IS / Digital IXUS 870 IS / IXY Digital 920 IS"),
     (39124992, "PowerShot E1"),
     (39190528, "PowerShot D10"),
-    (
-        39256064,
-        "PowerShot SD960 IS / Digital IXUS 110 IS / IXY Digital 510 IS",
-    ),
+    (39256064, "PowerShot SD960 IS / Digital IXUS 110 IS / IXY Digital 510 IS"),
     (39321600, "PowerShot A2100 IS"),
     (39387136, "PowerShot A480"),
     (39845888, "PowerShot SX200 IS"),
-    (
-        39911424,
-        "PowerShot SD970 IS / Digital IXUS 990 IS / IXY Digital 830 IS",
-    ),
-    (
-        39976960,
-        "PowerShot SD780 IS / Digital IXUS 100 IS / IXY Digital 210 IS",
-    ),
+    (39911424, "PowerShot SD970 IS / Digital IXUS 990 IS / IXY Digital 830 IS"),
+    (39976960, "PowerShot SD780 IS / Digital IXUS 100 IS / IXY Digital 210 IS"),
     (40042496, "PowerShot A1100 IS"),
-    (
-        40108032,
-        "PowerShot SD1200 IS / Digital IXUS 95 IS / IXY Digital 110 IS",
-    ),
+    (40108032, "PowerShot SD1200 IS / Digital IXUS 95 IS / IXY Digital 110 IS"),
     (40894464, "PowerShot G11"),
     (40960000, "PowerShot SX120 IS"),
     (41025536, "PowerShot S90"),
     (41222144, "PowerShot SX20 IS"),
-    (
-        41287680,
-        "PowerShot SD980 IS / Digital IXUS 200 IS / IXY Digital 930 IS",
-    ),
-    (
-        41353216,
-        "PowerShot SD940 IS / Digital IXUS 120 IS / IXY Digital 220 IS",
-    ),
+    (41287680, "PowerShot SD980 IS / Digital IXUS 200 IS / IXY Digital 930 IS"),
+    (41353216, "PowerShot SD940 IS / Digital IXUS 120 IS / IXY Digital 220 IS"),
     (41943040, "PowerShot A495"),
     (42008576, "PowerShot A490"),
     (42074112, "PowerShot A3100/A3150 IS"),
@@ -320,10 +194,7 @@ static CANON_MODEL_ID_DATA: &[(u32, &'static str)] = &[
     (54788096, "PowerShot SX275 HS"),
     (54853632, "PowerShot A1400"),
     (54919168, "PowerShot ELPH 130 IS / IXUS 140 / IXY 110F"),
-    (
-        54984704,
-        "PowerShot ELPH 115/120 IS / IXUS 132/135 / IXY 90F/100F",
-    ),
+    (54984704, "PowerShot ELPH 115/120 IS / IXUS 132/135 / IXY 90F/100F"),
     (55115776, "PowerShot ELPH 330 HS / IXUS 255 HS / IXY 610F"),
     (55640064, "PowerShot A2500"),
     (55836672, "PowerShot G16"),
@@ -494,8 +365,9 @@ static CANON_MODEL_ID_DATA: &[(u32, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CANON_MODEL_ID: LazyLock<HashMap<u32, &'static str>> =
-    LazyLock::new(|| CANON_MODEL_ID_DATA.iter().cloned().collect());
+pub static CANON_MODEL_ID: LazyLock<HashMap<u32, &'static str>> = LazyLock::new(|| {
+    CANON_MODEL_ID_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_canon_model_id(key: u32) -> Option<&'static str> {

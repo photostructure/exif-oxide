@@ -49,19 +49,22 @@ Successfully implemented all dimension tags for JPEG files by parsing SOF (Start
 
 RAW formats store dimensions in TIFF-like structures but locations vary by manufacturer:
 
-#### 1. **Sony ARW** (Priority: HIGH - PhotoStructure common)
-   - **Research needed**: Where are dimensions stored in ARW TIFF structure?
-   - **Likely location**: Standard TIFF tags 0x0100 (ImageWidth) and 0x0101 (ImageLength) in IFD0
-   - **ExifTool reference**: `lib/Image/ExifTool/Sony.pm` 
-   - **Test with**: `test-images/sony/sony_a7c_ii_02.arw` (currently missing File:ImageWidth/Height)
-   - **Implementation**: Update RAW processor to extract from TIFF IFD tags
+#### 1. **Sony ARW** (Priority: HIGH - PhotoStructure common) - IN PROGRESS
+   - **STATUS**: 90% complete - shared utility created, processing path identified, needs final integration
+   - **Key Discovery**: ARW files are processed through TIFF branch in formats/mod.rs, NOT RAW branch
+   - **Implementation Created**: `raw::utils::extract_tiff_dimensions()` shared utility (src/raw/mod.rs:112-298)
+   - **Expected Output**: EXIF:ImageWidth=7040, EXIF:ImageHeight=4688 (from TIFF IFD0 tags 0x0100/0x0101)
+   - **Test File**: `test-images/sony/sony_a7c_ii_02.arw`
+   - **REMAINING TASK**: Add `crate::raw::utils::extract_tiff_dimensions(&mut exif_reader, &tiff_data)?;` 
+     call in formats/mod.rs TIFF branch (line ~469) after successful `exif_reader.parse_exif_data(&tiff_data)`
+   - **Verification**: Output should match ExifTool: `exiftool -j -G test-images/sony/sony_a7c_ii_02.arw | grep ImageWidth`
 
-#### 2. **Canon CR2** (Priority: HIGH - PhotoStructure common)
-   - **Research needed**: CR2 is TIFF-based, should use standard TIFF tags
-   - **Likely location**: TIFF IFD0 tags 0x0100/0x0101, may also be in Canon MakerNotes
-   - **ExifTool reference**: `lib/Image/ExifTool/Canon.pm`
-   - **Test with**: `test-images/canon/` CR2 files
-   - **Implementation**: Already processed as TIFF, may just need tag extraction
+#### 2. **Canon CR2** (Priority: HIGH - PhotoStructure common) - PARALLEL DEVELOPMENT
+   - **STATUS**: Being worked on in concurrent session - shared utility ready
+   - **Implementation Available**: Same `raw::utils::extract_tiff_dimensions()` utility can be used
+   - **Architecture Issue**: Canon handler in src/raw/formats/canon.rs needs `data` parameter access
+   - **Integration Point**: Canon can use same TIFF branch integration as Sony ARW
+   - **Note**: Current Canon implementation attempts to call dimension extraction but lacks data parameter
 
 #### 3. **Nikon NEF** (Priority: MEDIUM)
    - **Research needed**: NEF structure and dimension storage
@@ -172,10 +175,16 @@ RAW formats store dimensions in TIFF-like structures but locations vary by manuf
 - **Orientation**: File dimensions are ALWAYS pre-rotation values (raw sensor dimensions)
 
 ### RAW Format Specifics
-- **Sony ARW**: TIFF-based, dimensions likely in IFD0
-- **Canon CR2**: TIFF-based, uses standard TIFF tags
+- **Sony ARW**: TIFF-based, dimensions in IFD0 tags 0x0100/0x0101 - **CRITICAL: Processed via TIFF branch, not RAW**
+- **Canon CR2**: TIFF-based, uses standard TIFF tags - **Same processing path as ARW**
 - **Nikon NEF**: TIFF-based, may use Nikon-specific MakerNote tags
 - **All RAW**: May have multiple dimension sets (sensor, preview, thumbnail) - use largest
+
+### Architecture Discovery (CRITICAL)
+- **ARW Processing Path**: ARW files are detected as TIFF format and processed through formats/mod.rs TIFF branch (line 454), NOT through RAW processor
+- **File Detection**: `file test-images/sony/sony_a7c_ii_02.arw` shows "TIFF image data" - explains processing path
+- **Integration Point**: Dimension extraction must be added to TIFF branch, not RAW handlers
+- **Shared Utility**: `raw::utils::extract_tiff_dimensions()` works for both Sony ARW and Canon CR2
 
 ### TIFF Endianness
 - **"II"** = Little-endian (Intel byte order)

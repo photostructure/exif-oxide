@@ -100,7 +100,7 @@ pub static ORIENTATION: Lazy<HashMap<u8, &'static str>> = Lazy::new(|| {
 
 ### Run Tests
 ```bash
-cd /mnt/2tb/home/mrm/src/exif-oxide
+cd /home/mrm/src/exif-oxide
 cargo test simple_tables_integration
 cargo test --test "*" | grep -i canon
 cargo test --test "*" | grep -i orientation
@@ -157,7 +157,7 @@ make -f Makefile.modular clean && make -f Makefile.modular codegen
 
 ### Test Specific Module
 ```bash
-cd /mnt/2tb/home/mrm/src/exif-oxide
+cd /home/mrm/src/exif-oxide
 cargo test simple_tables_integration
 ```
 

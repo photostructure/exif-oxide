@@ -181,7 +181,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
     let mut file_type = detection_result.file_type.clone();
     tag_entries.push(TagEntry {
         group: "File".to_string(),
-        group1: "System".to_string(),
+        group1: "File".to_string(),
         name: "FileType".to_string(),
         value: TagValue::String(file_type.clone()),
         print: TagValue::String(file_type.clone()),
@@ -208,7 +208,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
 
     tag_entries.push(TagEntry {
         group: "File".to_string(),
-        group1: "System".to_string(),
+        group1: "File".to_string(),
         name: "FileTypeExtension".to_string(),
         value: TagValue::String(file_type_ext_raw),
         print: TagValue::String(file_type_ext_print),
@@ -217,7 +217,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
     let mime_type = detection_result.mime_type.clone();
     tag_entries.push(TagEntry {
         group: "File".to_string(),
-        group1: "System".to_string(),
+        group1: "File".to_string(),
         name: "MIMEType".to_string(),
         value: TagValue::String(mime_type.clone()),
         print: TagValue::String(mime_type),
@@ -286,7 +286,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                 // Add ImageWidth from SOF
                 tag_entries.push(TagEntry {
                     group: "File".to_string(),
-                    group1: "System".to_string(),
+                    group1: "File".to_string(),
                     name: "ImageWidth".to_string(),
                     value: TagValue::String(sof.image_width.to_string()),
                     print: TagValue::String(sof.image_width.to_string()),
@@ -295,7 +295,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                 // Add ImageHeight from SOF
                 tag_entries.push(TagEntry {
                     group: "File".to_string(),
-                    group1: "System".to_string(),
+                    group1: "File".to_string(),
                     name: "ImageHeight".to_string(),
                     value: TagValue::String(sof.image_height.to_string()),
                     print: TagValue::String(sof.image_height.to_string()),
@@ -304,7 +304,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                 // Add BitsPerSample from SOF
                 tag_entries.push(TagEntry {
                     group: "File".to_string(),
-                    group1: "System".to_string(),
+                    group1: "File".to_string(),
                     name: "BitsPerSample".to_string(),
                     value: TagValue::String(sof.bits_per_sample.to_string()),
                     print: TagValue::String(sof.bits_per_sample.to_string()),
@@ -313,7 +313,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                 // Add ColorComponents from SOF
                 tag_entries.push(TagEntry {
                     group: "File".to_string(),
-                    group1: "System".to_string(),
+                    group1: "File".to_string(),
                     name: "ColorComponents".to_string(),
                     value: TagValue::String(sof.color_components.to_string()),
                     print: TagValue::String(sof.color_components.to_string()),
@@ -323,7 +323,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                 if let Some(subsampling) = sof.ycbcr_subsampling {
                     tag_entries.push(TagEntry {
                         group: "File".to_string(),
-                        group1: "System".to_string(),
+                        group1: "File".to_string(),
                         name: "YCbCrSubSampling".to_string(),
                         value: TagValue::String(subsampling.clone()),
                         print: TagValue::String(subsampling),
@@ -334,7 +334,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                 // Note: ExifTool uses a PrintConv for this, but for now we'll use the raw value
                 tag_entries.push(TagEntry {
                     group: "File".to_string(),
-                    group1: "System".to_string(),
+                    group1: "File".to_string(),
                     name: "EncodingProcess".to_string(),
                     value: TagValue::String(sof.encoding_process.to_string()),
                     print: TagValue::String(sof.encoding_process.to_string()),

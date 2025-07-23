@@ -1,5 +1,5 @@
 //! Canon lens type identification database
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Canon.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -20,17 +20,11 @@ static CANON_LENS_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("103.2", "Rokinon AF 14mm f/2.8 EF"),
     ("106", "Rokinon SP / Samyang XP 35mm f/1.2"),
     ("11", "Canon EF 35mm f/2"),
-    (
-        "112",
-        "Sigma 28mm f/1.5 FF High-speed Prime or other Sigma Lens",
-    ),
+    ("112", "Sigma 28mm f/1.5 FF High-speed Prime or other Sigma Lens"),
     ("112.1", "Sigma 40mm f/1.5 FF High-speed Prime"),
     ("112.2", "Sigma 105mm f/1.5 FF High-speed Prime"),
     ("1136", "Sigma 24-70mm f/2.8 DG OS HSM | A"),
-    (
-        "117",
-        "Tamron 35-150mm f/2.8-4.0 Di VC OSD (A043) or other Tamron Lens",
-    ),
+    ("117", "Tamron 35-150mm f/2.8-4.0 Di VC OSD (A043) or other Tamron Lens"),
     ("117.1", "Tamron SP 35mm f/1.4 Di USD (F045)"),
     ("124", "Canon MP-E 65mm f/2.8 1-5x Macro Photo"),
     ("125", "Canon TS-E 24mm f/3.5L"),
@@ -100,23 +94,11 @@ static CANON_LENS_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("152.3", "Sigma 10-20mm f/4-5.6"),
     ("152.4", "Sigma 100-300mm f/4"),
     ("152.5", "Sigma 300-800mm f/5.6 APO EX DG HSM"),
-    (
-        "153",
-        "Canon EF 35-350mm f/3.5-5.6L USM or Sigma or Tamron Lens",
-    ),
+    ("153", "Canon EF 35-350mm f/3.5-5.6L USM or Sigma or Tamron Lens"),
     ("153.1", "Sigma 50-500mm f/4-6.3 APO HSM EX"),
-    (
-        "153.2",
-        "Tamron AF 28-300mm f/3.5-6.3 XR LD Aspherical [IF] Macro",
-    ),
-    (
-        "153.3",
-        "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical [IF] Macro (A14)",
-    ),
-    (
-        "153.4",
-        "Tamron 18-250mm f/3.5-6.3 Di II LD Aspherical [IF] Macro",
-    ),
+    ("153.2", "Tamron AF 28-300mm f/3.5-6.3 XR LD Aspherical [IF] Macro"),
+    ("153.3", "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical [IF] Macro (A14)"),
+    ("153.4", "Tamron 18-250mm f/3.5-6.3 Di II LD Aspherical [IF] Macro"),
     ("154", "Canon EF 20mm f/2.8 USM or Zeiss Lens"),
     ("154.1", "Zeiss Milvus 21mm f/2.8"),
     ("154.2", "Zeiss Milvus 15mm f/2.8 ZE"),
@@ -125,37 +107,22 @@ static CANON_LENS_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("155.1", "Sigma 14mm f/1.8 DG HSM | A"),
     ("156", "Canon EF 28-105mm f/3.5-4.5 USM or Tamron Lens"),
     ("156.1", "Tamron SP 70-300mm f/4-5.6 Di VC USD (A005)"),
-    (
-        "156.2",
-        "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF (176D)",
-    ),
+    ("156.2", "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF (176D)"),
     ("16", "Canon EF 35-135mm f/3.5-4.5"),
-    (
-        "160",
-        "Canon EF 20-35mm f/3.5-4.5 USM or Tamron or Tokina Lens",
-    ),
+    ("160", "Canon EF 20-35mm f/3.5-4.5 USM or Tamron or Tokina Lens"),
     ("160.1", "Tamron AF 19-35mm f/3.5-4.5"),
     ("160.2", "Tokina AT-X 124 AF Pro DX 12-24mm f/4"),
     ("160.3", "Tokina AT-X 107 AF DX 10-17mm f/3.5-4.5 Fisheye"),
     ("160.4", "Tokina AT-X 116 AF Pro DX 11-16mm f/2.8"),
-    (
-        "160.5",
-        "Tokina AT-X 11-20 F2.8 PRO DX Aspherical 11-20mm f/2.8",
-    ),
+    ("160.5", "Tokina AT-X 11-20 F2.8 PRO DX Aspherical 11-20mm f/2.8"),
     ("161", "Canon EF 28-70mm f/2.8L USM or Other Lens"),
     ("161.1", "Sigma 24-70mm f/2.8 EX"),
     ("161.2", "Sigma 28-70mm f/2.8 EX"),
     ("161.3", "Sigma 24-60mm f/2.8 EX DG"),
     ("161.4", "Tamron AF 17-50mm f/2.8 Di-II LD Aspherical"),
     ("161.5", "Tamron 90mm f/2.8"),
-    (
-        "161.6",
-        "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF (A05)",
-    ),
-    (
-        "161.7",
-        "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro",
-    ),
+    ("161.6", "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF (A05)"),
+    ("161.7", "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"),
     ("161.8", "Tokina AT-X 24-70mm f/2.8 PRO FX (IF)"),
     ("162", "Canon EF 200mm f/2.8L USM"),
     ("163", "Canon EF 300mm f/4L"),
@@ -216,15 +183,9 @@ static CANON_LENS_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("180.7", "Sigma 50mm f/1.5 FF High-Speed Prime | 017"),
     ("180.8", "Sigma 85mm f/1.5 FF High-Speed Prime | 017"),
     ("180.9", "Tokina Opera 50mm f/1.4 FF"),
-    (
-        "181",
-        "Canon EF 100-400mm f/4.5-5.6L IS USM + 1.4x or Sigma Lens",
-    ),
+    ("181", "Canon EF 100-400mm f/4.5-5.6L IS USM + 1.4x or Sigma Lens"),
     ("181.1", "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 1.4x"),
-    (
-        "182",
-        "Canon EF 100-400mm f/4.5-5.6L IS USM + 2x or Sigma Lens",
-    ),
+    ("182", "Canon EF 100-400mm f/4.5-5.6L IS USM + 2x or Sigma Lens"),
     ("182.1", "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 2x"),
     ("183", "Canon EF 100-400mm f/4.5-5.6L IS USM or Sigma Lens"),
     ("183.1", "Sigma 150mm f/2.8 EX DG OS HSM APO Macro"),
@@ -271,10 +232,7 @@ static CANON_LENS_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("212", "Canon EF 28-105mm f/4-5.6 USM"),
     ("213", "Canon EF 90-300mm f/4.5-5.6 USM or Tamron Lens"),
     ("213.1", "Tamron SP 150-600mm f/5-6.3 Di VC USD (A011)"),
-    (
-        "213.2",
-        "Tamron 16-300mm f/3.5-6.3 Di II VC PZD Macro (B016)",
-    ),
+    ("213.2", "Tamron 16-300mm f/3.5-6.3 Di II VC PZD Macro (B016)"),
     ("213.3", "Tamron SP 35mm f/1.8 Di VC USD (F012)"),
     ("213.4", "Tamron SP 45mm f/1.8 Di VC USD (F013)"),
     ("214", "Canon EF-S 18-55mm f/3.5-5.6 USM"),
@@ -347,10 +305,7 @@ static CANON_LENS_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("27", "Canon EF 35-80mm f/4-5.6"),
     ("28", "Canon EF 80-200mm f/4.5-5.6 or Tamron Lens"),
     ("28.1", "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF"),
-    (
-        "28.2",
-        "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro",
-    ),
+    ("28.2", "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"),
     ("28.3", "Tamron AF 70-300mm f/4-5.6 Di LD 1:2 Macro"),
     ("28.4", "Tamron AF Aspherical 28-200mm f/3.8-5.6"),
     ("29", "Canon EF 50mm f/1.8 II"),
@@ -367,14 +322,8 @@ static CANON_LENS_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("33.12", "Carl Zeiss Makro-Planar T* 50mm f/2 ZE"),
     ("33.13", "Carl Zeiss Makro-Planar T* 100mm f/2 ZE"),
     ("33.14", "Carl Zeiss Apo-Sonnar T* 135mm f/2 ZE"),
-    (
-        "33.2",
-        "Voigtlander Color Skopar 20mm f/3.5 SLII Aspherical",
-    ),
-    (
-        "33.3",
-        "Voigtlander APO-Lanthar 90mm f/3.5 SLII Close Focus",
-    ),
+    ("33.2", "Voigtlander Color Skopar 20mm f/3.5 SLII Aspherical"),
+    ("33.3", "Voigtlander APO-Lanthar 90mm f/3.5 SLII Close Focus"),
     ("33.4", "Carl Zeiss Distagon T* 15mm f/2.8 ZE"),
     ("33.5", "Carl Zeiss Distagon T* 18mm f/3.5 ZE"),
     ("33.6", "Carl Zeiss Distagon T* 21mm f/2.8 ZE"),
@@ -402,18 +351,9 @@ static CANON_LENS_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("36912", "Canon EF-S 18-135mm f/3.5-5.6 IS USM"),
     ("37", "Canon EF 35-80mm f/4-5.6 or Tamron Lens"),
     ("37.1", "Tamron 70-200mm f/2.8 Di LD IF Macro"),
-    (
-        "37.2",
-        "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro (A20)",
-    ),
-    (
-        "37.3",
-        "Tamron SP AF 17-50mm f/2.8 XR Di II VC LD Aspherical [IF]",
-    ),
-    (
-        "37.4",
-        "Tamron AF 18-270mm f/3.5-6.3 Di II VC LD Aspherical [IF] Macro",
-    ),
+    ("37.2", "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro (A20)"),
+    ("37.3", "Tamron SP AF 17-50mm f/2.8 XR Di II VC LD Aspherical [IF]"),
+    ("37.4", "Tamron AF 18-270mm f/3.5-6.3 Di II VC LD Aspherical [IF] Macro"),
     ("38", "Canon EF 80-200mm f/4.5-5.6 II"),
     ("39", "Canon EF 75-300mm f/4-5.6"),
     ("4", "Canon EF 35-105mm f/3.5-4.5 or Sigma Lens"),
@@ -440,10 +380,7 @@ static CANON_LENS_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("4159", "Canon EF-M 32mm f/1.4 STM"),
     ("4160", "Canon EF-S 35mm f/2.8 Macro IS STM"),
     ("42", "Canon EF 28-200mm f/3.5-5.6 or Tamron Lens"),
-    (
-        "42.1",
-        "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro (A20)",
-    ),
+    ("42.1", "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro (A20)"),
     ("4208", "Sigma 56mm f/1.4 DC DN | C or other Sigma Lens"),
     ("4208.1", "Sigma 30mm F1.4 DC DN | C"),
     ("43", "Canon EF 28-105mm f/4-5.6"),
@@ -466,10 +403,7 @@ static CANON_LENS_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("491.5", "Tamron 70-210mm f/4 Di VC USD (A034) + 1.4x"),
     ("491.6", "Tamron SP 24-70mm f/2.8 Di VC USD G2 (A032)"),
     ("492", "Canon EF 400mm f/2.8L IS II USM"),
-    (
-        "493",
-        "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM",
-    ),
+    ("493", "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM"),
     ("493.1", "Canon EF 24-105mm f/4L IS USM"),
     ("494", "Canon EF 600mm f/4L IS II USM"),
     ("495", "Canon EF 24-70mm f/2.8L II USM or Sigma Lens"),
@@ -569,29 +503,17 @@ static CANON_LENS_TYPES_DATA: &[(&'static str, &'static str)] = &[
     ("61494", "Canon CN-E 85mm T1.3 L F"),
     ("61495", "Canon CN-E 135mm T2.2 L F"),
     ("61496", "Canon CN-E 35mm T1.5 L F"),
-    (
-        "624",
-        "Sigma 70-200mm f/2.8 DG OS HSM | S or other Sigma Lens",
-    ),
+    ("624", "Sigma 70-200mm f/2.8 DG OS HSM | S or other Sigma Lens"),
     ("624.1", "Sigma 150-600mm f/5-6.3 | C"),
     ("63", "Irix 30mm F1.4 Dragonfly"),
     ("65535", "n/a"),
     ("7", "Canon EF 100-300mm f/5.6L"),
-    (
-        "747",
-        "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens",
-    ),
+    ("747", "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens"),
     ("747.1", "Tamron SP 150-600mm f/5-6.3 Di VC USD G2"),
-    (
-        "748",
-        "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x or Tamron Lens",
-    ),
+    ("748", "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x or Tamron Lens"),
     ("748.1", "Tamron 100-400mm f/4.5-6.3 Di VC USD A035E + 1.4x"),
     ("748.2", "Tamron 70-210mm f/4 Di VC USD (A034) + 2x"),
-    (
-        "749",
-        "Canon EF 100-400mm f/4.5-5.6L IS II USM + 2x or Tamron Lens",
-    ),
+    ("749", "Canon EF 100-400mm f/4.5-5.6L IS II USM + 2x or Tamron Lens"),
     ("749.1", "Tamron 100-400mm f/4.5-6.3 Di VC USD A035E + 2x"),
     ("750", "Canon EF 35mm f/1.4L II USM or Tamron Lens"),
     ("750.1", "Tamron SP 85mm f/1.8 Di VC USD (F016)"),
@@ -615,8 +537,9 @@ static CANON_LENS_TYPES_DATA: &[(&'static str, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static CANON_LENS_TYPES: LazyLock<HashMap<&'static str, &'static str>> =
-    LazyLock::new(|| CANON_LENS_TYPES_DATA.iter().copied().collect());
+pub static CANON_LENS_TYPES: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
+    CANON_LENS_TYPES_DATA.iter().copied().collect()
+});
 
 /// Look up value by key
 pub fn lookup_canon_lens_types(key: &str) -> Option<&'static str> {

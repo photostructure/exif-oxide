@@ -1,5 +1,5 @@
 //! PNG chunks containing image data (IDAT, JDAT, JDAA)
-//!
+//! 
 //! Auto-generated from ExifTool source
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 

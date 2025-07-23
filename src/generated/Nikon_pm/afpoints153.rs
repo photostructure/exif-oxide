@@ -1,5 +1,5 @@
 //! AF point indices for 153-point AF system
-//!
+//! 
 //! Auto-generated from third-party/exiftool/lib/Image/ExifTool/Nikon.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
@@ -164,8 +164,9 @@ static AF_POINTS_153_DATA: &[(u8, &'static str)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static AF_POINTS_153: LazyLock<HashMap<u8, &'static str>> =
-    LazyLock::new(|| AF_POINTS_153_DATA.iter().cloned().collect());
+pub static AF_POINTS_153: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    AF_POINTS_153_DATA.iter().cloned().collect()
+});
 
 /// Look up value by key
 pub fn lookup_af_points_153(key: u8) -> Option<&'static str> {

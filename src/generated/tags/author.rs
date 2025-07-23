@@ -74,3 +74,4 @@ pub static AUTHOR_TAGS: &[TagDef] = &[
         notes: Some("ignored by Windows Explorer if Artist exists"),
     },
 ];
+
