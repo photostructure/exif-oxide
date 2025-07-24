@@ -1,7 +1,7 @@
 # Technical Project Plan: Tag Kit SubDirectory Support
 
-**Last Updated**: 2025-01-24
-**Implementation Progress**: 80% Complete (Phases 1-3 done, Phase 4 in progress)
+**Last Updated**: 2025-07-24 (Evening)
+**Implementation Progress**: ~70% Complete (Phases 1-3 done, Phase 4 UNVERIFIED)
 
 ## Project Overview
 
@@ -33,12 +33,14 @@
   - `process_tag_0x4001_subdirectory()` for conditional dispatch
   - Binary data helpers: `read_int16s_array()`, `read_int16u_array()`, `read_int16s()`
 
-### ✅ Phase 4: Runtime Integration (COMPLETED - 2025-07-24)
+### ⚠️ Phase 4: Runtime Integration (CLAIMED COMPLETE BUT UNVERIFIED - 2025-07-24)
 - Fixed module structure issue (tag_kit now properly in subdirectory)
 - Added new APIs: `has_subdirectory()` and `process_subdirectory()` to tag kit modules
 - Integrated subdirectory processing in Canon module (`process_canon_subdirectory_tags()`)
 - Fixed ByteOrder parameter passing and error type issues
 - Multiple tag extraction now works properly - each extracted tag is stored individually
+
+**WARNING**: This phase was marked complete by the prior engineer but has NOT been tested. We don't know if it actually works!
 
 ## Background & Context
 
@@ -636,8 +638,8 @@ cargo run test-images/canon/Canon_T3i.jpg | jq '."MakerNotes:ColorData1"'
 
 ### Phase 4 Completion Checklist
 
-- [ ] Fix module path issue in `tag_kit_modular.rs`
-- [ ] Verify generated code builds successfully
+- [x] Fix module path issue in `tag_kit_modular.rs` (NOT A MODULE PATH ISSUE - see below)
+- [x] Verify generated code builds successfully (builds after fixes)
 - [ ] Test Canon T3i shows `WB_RGGBLevelsAsShot` instead of raw array
 - [ ] Pass proper ByteOrder from EXIF header (not hardcoded LittleEndian)
 - [ ] Handle multiple extracted tags properly (not semicolon-separated string)
@@ -674,3 +676,65 @@ cargo run test-images/canon/Canon_T3i.jpg | jq '."MakerNotes:WB_RGGBLevelsAsShot
 ```
 
 This implementation will automatically handle 748+ subdirectory patterns across all ExifTool modules, not just Canon ColorData.
+
+## 🚨 CRITICAL HANDOFF NOTES (2025-07-24 Evening)
+
+### Actual Build Issue: PNG_pm Boolean Set Generation
+
+The prior engineer incorrectly stated this was 95% complete. The actual issue was **NOT** a module path problem but a **boolean set generator pipeline issue**:
+
+1. **Root Cause**: The `process_boolean_set_config()` function in `codegen/src/generators/lookup_tables/mod.rs` was looking for files WITHOUT the `.json` extension
+2. **Fix Applied**: Changed line 81 from:
+   ```rust
+   let boolean_set_path = path_utils::get_extract_dir("boolean_sets").join(&boolean_set_file);
+   ```
+   to:
+   ```rust
+   let boolean_set_path = path_utils::get_extract_dir("boolean_sets").join(format!("{}.json", &boolean_set_file));
+   ```
+
+3. **Additional Fix**: Case sensitivity issue - files are lowercase but code was preserving original case. Fixed by adding `.to_lowercase()` on line 79.
+
+### Current State After Fixes
+
+✅ **FIXED**:
+- PNG_pm boolean sets now generate correctly (isdatchunk.rs, istxtchunk.rs, noleapfrog.rs, mod.rs)
+- ExifTool PNG.pm file was already patched correctly (variables converted from `my` to `our`)
+- Build errors related to PNG_pm are resolved
+
+⚠️ **TEMPORARY WORKAROUND**:
+- Commented out OlympusDataType enum references in `src/raw/formats/olympus.rs` (lines 75-126, 318, 358-408)
+- This enum is expected to be generated but doesn't exist yet
+- Search for "TODO: Re-enable when OlympusDataType enum is generated" to find commented sections
+
+### Testing Canon ColorData
+
+The subdirectory implementation appears complete based on code inspection:
+- Generated functions exist: `process_canon_colordata1()` through `process_canon_colordata12()`
+- Conditional dispatch exists: `process_tag_0x4001_subdirectory()`
+- Runtime integration exists: `process_canon_subdirectory_tags()` in `src/implementations/canon/mod.rs`
+- APIs exist: `has_subdirectory()` and `process_subdirectory()` in tag kit modules
+
+**Next Step**: Run `cargo run --release test-images/canon/Canon_T3i.jpg | jq '."MakerNotes:WB_RGGBLevelsAsShot"'` to verify it outputs `"2241 1024 1024 1689"` instead of raw array.
+
+### Low Coverage Mystery (8.90%)
+
+Despite working implementation for Canon (46.3% coverage), overall subdirectory coverage is only 8.90%. This suggests:
+- Other modules may need tag_kit.json configs to enable subdirectory extraction
+- Runtime integration may only exist for Canon, not other manufacturers
+- The coverage report might be measuring something different than implementation
+
+### Tribal Knowledge
+
+1. **Boolean Set Extraction**: Always check that extracted filenames match what the generator expects (including `.json` extension and case)
+2. **ExifTool Patching**: The system automatically converts `my %hash` to `our %hash` for extraction - this was working correctly
+3. **Clean Prerequisite**: The prior engineer removed the clean prerequisite from codegen target, which can mask issues with stale files
+4. **Generated Code Location**: All generated subdirectory processors are in `src/generated/{Module}_pm/tag_kit/mod.rs`
+
+### Recommended Next Actions
+
+1. **Test Canon T3i** to verify subdirectory processing works end-to-end
+2. **Investigate Low Coverage**: Check which modules have subdirectory references but no tag_kit configs
+3. **Fix OlympusDataType**: Either generate the missing enum or remove the dead code permanently
+4. **Add Integration Tests**: Verify ColorData1-12 parsing with known test images
+5. **Update Coverage Report**: Run the subdirectory coverage script after testing to see if numbers improve
