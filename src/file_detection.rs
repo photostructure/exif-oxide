@@ -14,7 +14,7 @@
 //! - Conflict resolution patterns
 //! - Error recovery mechanisms
 
-use crate::generated::ExifTool_pm::lookup_mime_types;
+use crate::generated::ExifTool_pm::{lookup_mime_types, lookup_weakmagic};
 use std::io::{Read, Seek};
 use std::path::Path;
 
@@ -23,8 +23,8 @@ use std::path::Path;
 const MAGIC_TEST_BUFFER_SIZE: usize = 1024;
 
 /// File types with weak magic numbers that defer to extension detection
-/// ExifTool.pm:1030 - only MP3 is marked as weak magic: my %weakMagic = ( MP3 => 1 );
-const WEAK_MAGIC_TYPES: &[&str] = &["MP3"];
+/// Now using generated lookup from ExifTool.pm:1030 %weakMagic hash
+/// See src/generated/ExifTool_pm/weakmagic.rs for the generated implementation
 
 // All magic number patterns are now generated from ExifTool.pm %magicNumber hash
 // See src/generated/file_types/magic_numbers.rs for the complete patterns
@@ -109,7 +109,8 @@ impl FileTypeDetector {
 
         for candidate in &candidates {
             // Check if this is a weak magic type that defers to extension
-            if WEAK_MAGIC_TYPES.contains(&candidate.as_str()) {
+            // ExifTool.pm:1030 - %weakMagic hash contains types with weak magic
+            if lookup_weakmagic(candidate) {
                 // Weak magic types are fallback only if no strong magic matches
                 // ExifTool.pm:2970 - "next if $weakMagic{$type} and defined $recognizedExt"
                 if matched_type.is_none() {
@@ -782,6 +783,7 @@ impl FileTypeDetector {
             "GIF" => Some("image/gif"),
             "BMP" => Some("image/bmp"),
             "WEBP" => Some("image/webp"),
+            "AVIF" => Some("image/avif"), // AV1 Image File Format - from ExifTool QuickTime.pm %mimeLookup
             "HEIC" => Some("image/heic"), // HEIC gets its own MIME type
             "HEIF" => Some("image/heif"), // High Efficiency Image Format (general)
             "JP2" => Some("image/jp2"),   // JPEG 2000 Part 1 (ISO/IEC 15444-1)

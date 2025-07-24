@@ -1,4 +1,5 @@
 //! Generator for the main module file that ties everything together
+use tracing::debug;
 
 use anyhow::Result;
 use std::fs;
@@ -110,7 +111,7 @@ pub fn generate_mod_file(output_dir: &str) -> Result<()> {
     // Write file
     let output_path = format!("{}/mod.rs", output_dir);
     fs::write(&output_path, code)?;
-    println!("  ✓ Generated {}", output_path);
+    debug!("  ✓ Generated {}", output_path);
 
     Ok(())
 }

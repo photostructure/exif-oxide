@@ -13,20 +13,16 @@ all: codegen
 # Main codegen pipeline (Rust now handles everything including patch cleanup)
 
 codegen: check-schemas check-extractors
-	flock --verbose --exclusive --timeout=30 .make.flock $(MAKE) -f Makefile.modular codegen-flocked
+	@flock --exclusive --timeout=30 .make.flock $(MAKE) --no-print-directory -f Makefile.modular codegen-flocked
 
-codegen-flocked: clean generate-rust
+codegen-flocked:  generate-rust
 
 generate-rust:
-	cargo run --release ; ret=$$? ; \
-	echo "🔄 Reverting ExifTool module patches..." ; \
-	git -C ../third-party/exiftool checkout -- lib/Image/*.pm lib/Image/ExifTool/*.pm ; \
+	@cargo run --release --quiet ; ret=$$? ; \
+	git -C ../third-party/exiftool checkout -- lib/Image/*.pm lib/Image/ExifTool/*.pm 2>/dev/null ; \
 	sync ; \
-	echo "  ✓ ExifTool modules reverted to original state" ; \
 	if [ $$ret -eq 0 ]; then \
-		echo "🎨 Formatting generated code..." ; \
-		cd .. && cargo fmt -- src/generated/**/*.rs ; \
-		echo "  ✓ Generated code formatted" ; \
+		cd .. && cargo fmt -- src/generated/**/*.rs 2>/dev/null ; \
 	fi ; \
 	exit $$ret
 
@@ -42,17 +38,15 @@ clean-extract:
 
 # Development helpers
 check-schemas:
-	@echo "🔍 Validating configuration schemas..."
-	@cargo run --release 2>/dev/null | grep -q "Schema validation" || echo "Note: Schema validation via Rust code generation"
+	@cargo run --release 2>/dev/null | grep -q "Schema validation" || echo "Note: Schema validation via Rust code generation" >/dev/null
 
 check-extractors:
-	@echo "Checking Perl extractor syntax..."
-	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/boolean_set.pl
-	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/composite_tags.pl
-	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/file_type_lookup.pl
-	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/regex_patterns.pl
-	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/simple_table.pl
-	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/tag_tables.pl
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/boolean_set.pl >/dev/null 2>&1
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/composite_tags.pl >/dev/null 2>&1
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/file_type_lookup.pl >/dev/null 2>&1
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/regex_patterns.pl >/dev/null 2>&1
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/simple_table.pl >/dev/null 2>&1
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/tag_tables.pl >/dev/null 2>&1
 
 # Run codegen tests
 test:

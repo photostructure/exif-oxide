@@ -4,6 +4,7 @@ use anyhow::Result;
 use std::{collections::HashMap, fs};
 use crate::schemas::GeneratedTag;
 use crate::common::escape_string;
+use tracing::debug;
 
 /// Group categorization for tags
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -99,7 +100,7 @@ pub fn generate_tag_table(tags: &[GeneratedTag], output_dir: &str) -> Result<()>
     generate_tags_mod_file(&grouped_tags, &tags_dir)?;
 
 
-    println!("  ✓ Generated modular tags structure with {} groups", grouped_tags.len());
+    debug!("  ✓ Generated modular tags structure with {} groups", grouped_tags.len());
     Ok(())
 }
 
@@ -148,7 +149,7 @@ fn generate_common_types(tags_dir: &str) -> Result<()> {
     let output_path = format!("{}/common.rs", tags_dir);
     fs::write(&output_path, code)?;
 
-    println!("  ✓ Generated {}", output_path);
+    debug!("  ✓ Generated {}", output_path);
     Ok(())
 }
 
@@ -178,7 +179,7 @@ fn generate_group_file(group: &TagGroup, tags: &[&GeneratedTag], tags_dir: &str)
     let output_path = format!("{}/{}.rs", tags_dir, group.filename());
     fs::write(&output_path, code)?;
 
-    println!("  ✓ Generated {}", output_path);
+    debug!("  ✓ Generated {}", output_path);
     Ok(())
 }
 
@@ -324,7 +325,7 @@ fn generate_tags_mod_file(grouped_tags: &HashMap<TagGroup, Vec<&GeneratedTag>>, 
     let output_path = format!("{}/mod.rs", tags_dir);
     fs::write(&output_path, code)?;
 
-    println!("  ✓ Generated {}", output_path);
+    debug!("  ✓ Generated {}", output_path);
     Ok(())
 }
 

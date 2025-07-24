@@ -6,7 +6,7 @@ use anyhow::{Context, Result};
 use serde_json::Value;
 use std::fs;
 use std::path::Path;
-use tracing::debug;
+use tracing::{debug, warn};
 
 use crate::patching;
 use crate::extractors::find_extractor;
@@ -22,7 +22,7 @@ pub struct ModuleConfig {
 
 /// Extract all simple tables using Rust orchestration (replaces Makefile targets)
 pub fn extract_all_simple_tables() -> Result<()> {
-    println!("\n📊 Extracting all tables and data...");
+    debug!("📊 Extracting all tables and data...");
     
     let extract_base = Path::new("generated/extract");
     fs::create_dir_all(extract_base)?;
@@ -33,7 +33,7 @@ pub fn extract_all_simple_tables() -> Result<()> {
         process_module_config(&config, extract_base)?;
     }
     
-    println!("  ✓ Simple table extraction complete");
+    debug!("  ✓ Simple table extraction complete");
     Ok(())
 }
 
@@ -84,7 +84,6 @@ fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig
         "file_type_lookup.json", 
         "regex_patterns.json",
         "boolean_set.json",
-        "inline_printconv.json",
         "tag_definitions.json",
         "composite_tags.json",
         "tag_table_structure.json",    // Exact match for Main table configs
@@ -127,7 +126,7 @@ fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
     let config_content = match fs::read_to_string(&config_path) {
         Ok(data) => data,
         Err(err) => {
-            eprintln!("Warning: UTF-8 error reading {}: {}", config_path.display(), err);
+            warn!("UTF-8 error reading {}: {}", config_path.display(), err);
             let bytes = fs::read(&config_path)
                 .with_context(|| format!("Failed to read bytes from {}", config_path.display()))?;
             String::from_utf8_lossy(&bytes).into_owned()
@@ -187,22 +186,11 @@ fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
                 return Ok(None);
             }
             
-            match config_type {
-                "inline_printconv.json" => {
-                    // For inline PrintConv, we extract table names
-                    tables.iter()
-                        .filter_map(|table| table["table_name"].as_str())
-                        .map(|name| name.to_string())
-                        .collect()
-                },
-                _ => {
-                    // For other configs, we extract hash names
-                    tables.iter()
-                        .filter_map(|table| table["hash_name"].as_str())
-                        .map(|name| name.trim_start_matches('%').to_string())
-                        .collect()
-                }
-            }
+            // Extract hash names from tables
+            tables.iter()
+                .filter_map(|table| table["hash_name"].as_str())
+                .map(|name| name.trim_start_matches('%').to_string())
+                .collect()
         }
     };
     
@@ -223,7 +211,7 @@ fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
 }
 
 fn process_module_config(config: &ModuleConfig, extract_base: &Path) -> Result<()> {
-    println!("  📷 Processing {} tables...", config.module_name);
+    debug!("  📷 Processing {} tables...", config.module_name);
     
     // Find the appropriate extractor
     let extractor = find_extractor(&config.module_name)

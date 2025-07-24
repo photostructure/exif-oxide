@@ -1,5 +1,8 @@
 {
   "SourceFile": "third-party/exiftool/t/images/Ricoh2.jpg",
+  "EXIF:GPSLatitude": 42.034575,
+  "EXIF:GPSLongitude": 0.507502777777778,
+  "EXIF:GPSAltitude": 117,
   "File:FileSize": 3187,
   "File:FileName": "Ricoh2.jpg",
   "File:Directory": "third-party/exiftool/t/images",

@@ -46,7 +46,7 @@ pub struct ItemInfo {
 pub struct ItemPropertyAssociation {
     pub item_id: u32,
     pub property_indices: Vec<u16>,
-    pub essential_flags: Vec<bool>,
+    // Note: essential_flags could be added here if needed for complete ExifTool compatibility
 }
 
 /// ISO Base Media File Format box structure
@@ -226,7 +226,7 @@ pub fn parse_ispe_box(ispe_data: &[u8]) -> Result<AvifImageProperties> {
 }
 
 /// Parse 'pitm' (Primary Item) box to extract primary item ID
-/// 
+///
 /// pitm box structure (ExifTool QuickTime.pm:3550-3557):
 /// - Version: 1 byte (0 = 16-bit item ID, 1+ = 32-bit item ID)
 /// - Flags: 3 bytes
@@ -252,7 +252,7 @@ pub fn parse_pitm_box(pitm_data: &[u8]) -> Result<PrimaryItemInfo> {
 
     // Check version (first byte after box header)
     let version = pitm_data[0];
-    
+
     let primary_item_id = if version == 0 {
         // Version 0: 16-bit item ID at offset 4 (after version/flags)
         // ExifTool: unpack("x4n", $val) - skip 4 bytes, read 16-bit big-endian
@@ -273,7 +273,11 @@ pub fn parse_pitm_box(pitm_data: &[u8]) -> Result<PrimaryItemInfo> {
         u32::from_be_bytes([pitm_data[4], pitm_data[5], pitm_data[6], pitm_data[7]])
     };
 
-    tracing::debug!("Found primary item ID: {} (version: {})", primary_item_id, version);
+    tracing::debug!(
+        "Found primary item ID: {} (version: {})",
+        primary_item_id,
+        version
+    );
 
     Ok(PrimaryItemInfo { primary_item_id })
 }
@@ -298,7 +302,7 @@ pub fn parse_iinf_box(iinf_data: &[u8]) -> Result<Vec<ItemInfo>> {
     }
 
     let version = iinf_data[0];
-    
+
     // Get entry count based on version
     let (entry_count, entries_start) = if version == 0 {
         // Version 0: 16-bit entry count at offset 4
@@ -334,7 +338,8 @@ pub fn parse_iinf_box(iinf_data: &[u8]) -> Result<Vec<ItemInfo>> {
                         Ok(item_info) => {
                             tracing::debug!(
                                 "Item {}: ID={}, type={:?}, name='{}'",
-                                i, item_info.item_id, 
+                                i,
+                                item_info.item_id,
                                 String::from_utf8_lossy(&item_info.item_type),
                                 item_info.item_name
                             );
@@ -373,13 +378,13 @@ fn parse_infe_box(infe_data: &[u8]) -> Result<ItemInfo> {
     }
 
     let version = infe_data[0];
-    
+
     let (item_id, item_type_offset) = if version == 0 || version == 1 {
         // Version 0/1: 16-bit item ID at offset 4
         let id = u16::from_be_bytes([infe_data[4], infe_data[5]]) as u32;
         (id, 8) // Skip version/flags (4) + item_id (2) + protection_index (2)
     } else {
-        // Version 2+: 32-bit item ID at offset 4  
+        // Version 2+: 32-bit item ID at offset 4
         if infe_data.len() < 14 {
             return Err(crate::types::ExifError::InvalidFormat(
                 "infe box too short for version 2+ item ID".to_string(),
@@ -395,7 +400,7 @@ fn parse_infe_box(infe_data: &[u8]) -> Result<ItemInfo> {
             "infe box too short for item type".to_string(),
         ));
     }
-    
+
     let mut item_type = [0u8; 4];
     item_type.copy_from_slice(&infe_data[item_type_offset..item_type_offset + 4]);
 
@@ -403,7 +408,10 @@ fn parse_infe_box(infe_data: &[u8]) -> Result<ItemInfo> {
     let name_start = item_type_offset + 4;
     let item_name = if name_start < infe_data.len() {
         let name_bytes = &infe_data[name_start..];
-        let null_pos = name_bytes.iter().position(|&b| b == 0).unwrap_or(name_bytes.len());
+        let null_pos = name_bytes
+            .iter()
+            .position(|&b| b == 0)
+            .unwrap_or(name_bytes.len());
         String::from_utf8_lossy(&name_bytes[..null_pos]).to_string()
     } else {
         String::new()
@@ -414,6 +422,305 @@ fn parse_infe_box(infe_data: &[u8]) -> Result<ItemInfo> {
         item_type,
         item_name,
     })
+}
+
+/// Parse 'ipma' (Item Property Association) box to link items with properties
+///
+/// ipma box structure (ExifTool QuickTime.pm:10320-10380):
+/// - Version/Flags: 4 bytes
+/// - Entry count: 4 bytes
+/// - For each entry:
+///   - Item ID: 2 or 4 bytes depending on version
+///   - Association count: 1 byte
+///   - Property associations: variable length
+///
+/// ExifTool reference: ParseItemPropAssoc function
+pub fn parse_ipma_box(ipma_data: &[u8]) -> Result<Vec<ItemPropertyAssociation>> {
+    if ipma_data.len() < 8 {
+        return Err(crate::types::ExifError::InvalidFormat(
+            "ipma box too short".to_string(),
+        ));
+    }
+
+    let version = ipma_data[0];
+    let flags = [ipma_data[1], ipma_data[2], ipma_data[3]];
+
+    // Entry count is always 32-bit
+    let entry_count = u32::from_be_bytes([ipma_data[4], ipma_data[5], ipma_data[6], ipma_data[7]]);
+
+    tracing::debug!(
+        "ipma box: version={}, flags={:?}, entry_count={}",
+        version,
+        flags,
+        entry_count
+    );
+
+    let mut associations = Vec::new();
+    let mut offset = 8;
+
+    for i in 0..entry_count {
+        if offset >= ipma_data.len() {
+            break;
+        }
+
+        // Parse item ID based on version
+        let (item_id, id_size) = if version == 0 {
+            // Version 0: 16-bit item ID
+            if offset + 2 > ipma_data.len() {
+                break;
+            }
+            let id = u16::from_be_bytes([ipma_data[offset], ipma_data[offset + 1]]) as u32;
+            (id, 2)
+        } else {
+            // Version 1+: 32-bit item ID
+            if offset + 4 > ipma_data.len() {
+                break;
+            }
+            let id = u32::from_be_bytes([
+                ipma_data[offset],
+                ipma_data[offset + 1],
+                ipma_data[offset + 2],
+                ipma_data[offset + 3],
+            ]);
+            (id, 4)
+        };
+
+        offset += id_size;
+
+        // Parse association count
+        if offset >= ipma_data.len() {
+            break;
+        }
+        let association_count = ipma_data[offset];
+        offset += 1;
+
+        tracing::debug!(
+            "Item {}: ID={}, association_count={}",
+            i,
+            item_id,
+            association_count
+        );
+
+        // Parse property associations
+        let mut property_indices = Vec::new();
+
+        for j in 0..association_count {
+            if offset >= ipma_data.len() {
+                break;
+            }
+
+            // Property index and essential flag
+            // If flags[0] & 1, property index is 15 bits + 1 essential bit
+            // Otherwise, property index is 7 bits + 1 essential bit
+            let (property_index, essential) = if flags[0] & 1 != 0 {
+                // 15-bit property index + 1 essential bit (2 bytes total)
+                if offset + 2 > ipma_data.len() {
+                    break;
+                }
+                let val = u16::from_be_bytes([ipma_data[offset], ipma_data[offset + 1]]);
+                let essential = (val & 0x8000) != 0; // Top bit is essential flag
+                let index = val & 0x7FFF; // Bottom 15 bits are property index
+                offset += 2;
+                (index, essential)
+            } else {
+                // 7-bit property index + 1 essential bit (1 byte total)
+                let val = ipma_data[offset];
+                let essential = (val & 0x80) != 0; // Top bit is essential flag
+                let index = (val & 0x7F) as u16; // Bottom 7 bits are property index
+                offset += 1;
+                (index, essential)
+            };
+
+            tracing::debug!(
+                "  Association {}: property_index={}, essential={}",
+                j,
+                property_index,
+                essential
+            );
+
+            property_indices.push(property_index);
+            // Note: essential flag is parsed but not stored - could be added if needed
+        }
+
+        associations.push(ItemPropertyAssociation {
+            item_id,
+            property_indices,
+        });
+    }
+
+    Ok(associations)
+}
+
+/// Extract HEIC/HEIF image dimensions using ExifTool's primary item detection
+///
+/// This function implements ExifTool's complete primary item detection logic:
+/// 1. Parse pitm box to get primary item ID (QuickTime.pm:3550-3557)
+/// 2. Parse iinf box to build item information map (QuickTime.pm:3730-3740)
+/// 3. Parse ipma box to associate items with properties (QuickTime.pm:10320-10380)
+/// 4. Find ispe boxes and determine which belong to primary item (QuickTime.pm:6450-6460)
+/// 5. Extract dimensions only from primary item's ispe box (DOC_NUM logic)
+///
+/// ExifTool reference: QuickTime.pm:2946-2959 (ispe processing with DOC_NUM check)
+pub fn extract_heic_dimensions_primary_item(data: &[u8]) -> Result<AvifImageProperties> {
+    // Find meta box
+    let meta_box = find_box_by_type(data, b"meta")?.ok_or_else(|| {
+        crate::types::ExifError::InvalidFormat("No meta box found in HEIC file".to_string())
+    })?;
+
+    // Note: meta box has a 4-byte version/flags header, so actual content starts at offset 4
+    let meta_content = if meta_box.data.len() >= 4 {
+        &meta_box.data[4..]
+    } else {
+        &meta_box.data[..]
+    };
+
+    // Step 1: Parse pitm box to get primary item ID
+    let pitm_box = find_box_by_type(meta_content, b"pitm")?.ok_or_else(|| {
+        crate::types::ExifError::InvalidFormat("No pitm box found in meta box".to_string())
+    })?;
+
+    let primary_item_info = parse_pitm_box(&pitm_box.data)?;
+    let primary_item_id = primary_item_info.primary_item_id;
+
+    tracing::debug!("Primary item ID: {}", primary_item_id);
+
+    // Step 2: Parse iinf box to build item information map
+    let iinf_box = find_box_by_type(meta_content, b"iinf")?.ok_or_else(|| {
+        crate::types::ExifError::InvalidFormat("No iinf box found in meta box".to_string())
+    })?;
+
+    let items = parse_iinf_box(&iinf_box.data)?;
+    tracing::debug!("Found {} items in iinf box", items.len());
+
+    // Step 3: Parse ipma box to associate items with properties
+    let ipma_box = find_box_by_type(meta_content, b"ipma")?.ok_or_else(|| {
+        crate::types::ExifError::InvalidFormat("No ipma box found in meta box".to_string())
+    })?;
+
+    let associations = parse_ipma_box(&ipma_box.data)?;
+    tracing::debug!(
+        "Found {} property associations in ipma box",
+        associations.len()
+    );
+
+    // Step 4: Find iprp/ipco container with properties
+    let iprp_box = find_box_by_type(meta_content, b"iprp")?.ok_or_else(|| {
+        crate::types::ExifError::InvalidFormat("No iprp box found in meta box".to_string())
+    })?;
+
+    let ipco_box = find_box_by_type(&iprp_box.data, b"ipco")?.ok_or_else(|| {
+        crate::types::ExifError::InvalidFormat("No ipco box found in iprp box".to_string())
+    })?;
+
+    // Step 5: Find all ispe boxes in ipco and map them to property indices
+    let mut ispe_boxes_with_indices = Vec::new();
+    let mut offset = 0;
+    let mut property_index = 1; // Properties are 1-indexed
+
+    while offset < ipco_box.data.len() {
+        match parse_box_header(&ipco_box.data, offset) {
+            Ok((property_box, next_offset)) => {
+                if &property_box.box_type == b"ispe" {
+                    tracing::debug!(
+                        "Found ispe box at property index {}, size: {} bytes",
+                        property_index,
+                        property_box.data.len()
+                    );
+                    ispe_boxes_with_indices.push((property_index, property_box));
+                }
+                property_index += 1;
+                offset = next_offset;
+            }
+            Err(_) => break,
+        }
+    }
+
+    if ispe_boxes_with_indices.is_empty() {
+        return Err(crate::types::ExifError::InvalidFormat(
+            "No ispe boxes found in ipco container".to_string(),
+        ));
+    }
+
+    // Step 6: Apply ExifTool's DOC_NUM logic to find primary item's ispe box
+    // Find the association for the primary item
+    let primary_association = associations
+        .iter()
+        .find(|assoc| assoc.item_id == primary_item_id)
+        .ok_or_else(|| {
+            crate::types::ExifError::InvalidFormat(format!(
+                "No property association found for primary item ID {}",
+                primary_item_id
+            ))
+        })?;
+
+    tracing::debug!(
+        "Primary item {} has {} associated properties: {:?}",
+        primary_item_id,
+        primary_association.property_indices.len(),
+        primary_association.property_indices
+    );
+
+    // Find the ispe box associated with the primary item
+    // ExifTool logic: only extract dimensions unless DOC_NUM is set (i.e., for primary document)
+    for &property_idx in &primary_association.property_indices {
+        if let Some((_, ispe_box)) = ispe_boxes_with_indices
+            .iter()
+            .find(|(idx, _)| *idx == property_idx as u32)
+        {
+            tracing::debug!(
+                "Found primary item's ispe box at property index {}",
+                property_idx
+            );
+
+            // Parse the primary item's ispe box for dimensions
+            match parse_ispe_box(&ispe_box.data) {
+                Ok(props) => {
+                    tracing::debug!(
+                        "Extracted primary image dimensions: {}x{} from property index {}",
+                        props.width,
+                        props.height,
+                        property_idx
+                    );
+                    return Ok(props);
+                }
+                Err(e) => {
+                    tracing::warn!(
+                        "Failed to parse primary item's ispe box at index {}: {}",
+                        property_idx,
+                        e
+                    );
+                }
+            }
+        }
+    }
+
+    // Fallback: if we can't find primary item's ispe box, try the first valid ispe box
+    // This matches ExifTool's behavior when primary item detection fails
+    tracing::warn!(
+        "Could not find ispe box for primary item {}, falling back to first ispe box",
+        primary_item_id
+    );
+
+    for (idx, ispe_box) in &ispe_boxes_with_indices {
+        match parse_ispe_box(&ispe_box.data) {
+            Ok(props) => {
+                tracing::debug!(
+                    "Fallback: extracted dimensions {}x{} from property index {}",
+                    props.width,
+                    props.height,
+                    idx
+                );
+                return Ok(props);
+            }
+            Err(e) => {
+                tracing::warn!("Failed to parse fallback ispe box at index {}: {}", idx, e);
+            }
+        }
+    }
+
+    Err(crate::types::ExifError::InvalidFormat(
+        "No valid ispe boxes found for dimension extraction".to_string(),
+    ))
 }
 
 /// Extract AVIF image dimensions from file data

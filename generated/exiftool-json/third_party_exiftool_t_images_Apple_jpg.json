@@ -1,5 +1,8 @@
 {
   "SourceFile": "third-party/exiftool/t/images/Apple.jpg",
+  "EXIF:GPSLatitude": 53.3828472222222,
+  "EXIF:GPSLongitude": 1.45667777777778,
+  "EXIF:GPSAltitude": 72.36649215,
   "File:FileSize": 2355,
   "File:FileName": "Apple.jpg",
   "File:Directory": "third-party/exiftool/t/images",
