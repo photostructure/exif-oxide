@@ -496,32 +496,6 @@ static CONDITIONAL_ARRAYS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>
 static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> = LazyLock::new(
     || {
         let mut map = HashMap::new();
-        map.insert("13", vec![
-        ConditionalEntry {
-            condition: "$format eq \"int32u\" and ($count == 138 or $count == 148)",
-            name: "CanonCameraInfoPowerShot",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-        ConditionalEntry {
-            condition: "\n                $format eq \"int32u\" and ($count == 156 or $count == 162 or\n                $count == 167 or $count == 171 or $count == 264)\n            ",
-            name: "CanonCameraInfoPowerShot2",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-    ]);
-        map.insert(
-            "56",
-            vec![ConditionalEntry {
-                condition: "$count == 76",
-                name: "BatteryType",
-                subdirectory: false,
-                writable: true,
-                format: None,
-            }],
-        );
         map.insert("16385", vec![
         ConditionalEntry {
             condition: "$count == 582",
@@ -608,6 +582,32 @@ static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> 
             format: None,
         },
     ]);
+        map.insert("13", vec![
+        ConditionalEntry {
+            condition: "$format eq \"int32u\" and ($count == 138 or $count == 148)",
+            name: "CanonCameraInfoPowerShot",
+            subdirectory: true,
+            writable: false,
+            format: None,
+        },
+        ConditionalEntry {
+            condition: "\n                $format eq \"int32u\" and ($count == 156 or $count == 162 or\n                $count == 167 or $count == 171 or $count == 264)\n            ",
+            name: "CanonCameraInfoPowerShot2",
+            subdirectory: true,
+            writable: false,
+            format: None,
+        },
+    ]);
+        map.insert(
+            "56",
+            vec![ConditionalEntry {
+                condition: "$count == 76",
+                name: "BatteryType",
+                subdirectory: false,
+                writable: true,
+                format: None,
+            }],
+        );
         map
     },
 );
@@ -616,6 +616,26 @@ static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> 
 static BINARY_PATTERNS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> = LazyLock::new(
     || {
         let mut map = HashMap::new();
+        map.insert(
+            "35",
+            vec![ConditionalEntry {
+                condition: "$$valPt =~ /^\\x08\\0\\0\\0/",
+                name: "Categories",
+                subdirectory: false,
+                writable: true,
+                format: Some("int32u"),
+            }],
+        );
+        map.insert(
+            "39",
+            vec![ConditionalEntry {
+                condition: "$$valPt =~ /^\\x0a\\0/",
+                name: "ContrastInfo",
+                subdirectory: false,
+                writable: false,
+                format: None,
+            }],
+        );
         map.insert("16405", vec![
         ConditionalEntry {
             condition: "$$valPt =~ /^\\0/ and $$valPt !~ /^(\\0\\0\\0\\0|\\x00\\x40\\xdc\\x05)/",
@@ -632,26 +652,6 @@ static BINARY_PATTERNS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> =
             format: None,
         },
     ]);
-        map.insert(
-            "39",
-            vec![ConditionalEntry {
-                condition: "$$valPt =~ /^\\x0a\\0/",
-                name: "ContrastInfo",
-                subdirectory: false,
-                writable: false,
-                format: None,
-            }],
-        );
-        map.insert(
-            "35",
-            vec![ConditionalEntry {
-                condition: "$$valPt =~ /^\\x08\\0\\0\\0/",
-                name: "Categories",
-                subdirectory: false,
-                writable: true,
-                format: Some("int32u"),
-            }],
-        );
         map
     },
 );
