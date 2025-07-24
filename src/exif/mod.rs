@@ -114,6 +114,11 @@ impl ExifReader {
         self.overridden_file_type.clone()
     }
 
+    /// Get the original file type from detection
+    pub fn get_original_file_type(&self) -> Option<String> {
+        self.original_file_type.clone()
+    }
+
     /// Parse EXIF data from JPEG APP1 segment after "Exif\0\0"
     /// ExifTool: lib/Image/ExifTool/Exif.pm:6172 ProcessExif entry point
     pub fn parse_exif_data(&mut self, exif_data: &[u8]) -> Result<()> {

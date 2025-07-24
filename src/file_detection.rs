@@ -14,7 +14,8 @@
 //! - Conflict resolution patterns
 //! - Error recovery mechanisms
 
-use crate::generated::ExifTool_pm::{lookup_mime_types, lookup_weakmagic};
+use crate::generated::ExifTool_pm::lookup_mime_types;
+// use crate::generated::ExifTool_pm::lookup_weakmagic;
 use std::io::{Read, Seek};
 use std::path::Path;
 
@@ -110,7 +111,8 @@ impl FileTypeDetector {
         for candidate in &candidates {
             // Check if this is a weak magic type that defers to extension
             // ExifTool.pm:1030 - %weakMagic hash contains types with weak magic
-            if lookup_weakmagic(candidate) {
+            // if lookup_weakmagic(candidate) {
+            if false { // TODO: Re-enable when lookup_weakmagic is generated
                 // Weak magic types are fallback only if no strong magic matches
                 // ExifTool.pm:2970 - "next if $weakMagic{$type} and defined $recognizedExt"
                 if matched_type.is_none() {

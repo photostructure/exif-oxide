@@ -486,6 +486,34 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                             // Log error but don't fail processing
                             tracing::debug!("Failed to extract TIFF dimensions: {}", e);
                         }
+                        
+                        // For RW2 files: Extract JPEG preview dimensions to create File:ImageWidth/ImageHeight tags
+                        // This must be done after TIFF processing to access the JpgFromRaw binary data
+                        if detection_result.file_type == "RW2" {
+                            tracing::debug!("Processing RW2 file: attempting to extract JPEG preview dimensions");
+                            if let Some(jpeg_preview_dimensions) = extract_rw2_jpeg_preview_dimensions(&exif_reader, &tiff_data) {
+                                // Create File:ImageWidth and File:ImageHeight tags from JPEG preview
+                                // ExifTool: File group tags come from embedded JPEG SOF data, not sensor borders
+                                tag_entries.push(TagEntry {
+                                    group: "File".to_string(),
+                                    group1: "File".to_string(),
+                                    name: "ImageWidth".to_string(),
+                                    value: TagValue::U16(jpeg_preview_dimensions.0),
+                                    print: TagValue::U16(jpeg_preview_dimensions.0),
+                                });
+                                tag_entries.push(TagEntry {
+                                    group: "File".to_string(),
+                                    group1: "File".to_string(),
+                                    name: "ImageHeight".to_string(),
+                                    value: TagValue::U16(jpeg_preview_dimensions.1),
+                                    print: TagValue::U16(jpeg_preview_dimensions.1),
+                                });
+                                tracing::debug!("Added File:ImageWidth/ImageHeight tags from JPEG preview: {}x{}", 
+                                              jpeg_preview_dimensions.0, jpeg_preview_dimensions.1);
+                            } else {
+                                tracing::debug!("Failed to extract JPEG preview dimensions from RW2 file");
+                            }
+                        }
                     }
 
                     // Check if file type was overridden during processing
@@ -622,6 +650,10 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         }
         "MRW" | "RW2" | "RWL" => {
             // RAW format processing (Milestone 17b: Minolta MRW and Panasonic RW2 support)
+            tracing::debug!(
+                "Processing RAW file with type: {}",
+                detection_result.file_type
+            );
             // Reset reader to start of file
             reader.seek(SeekFrom::Start(0))?;
             // Read entire file for RAW processing
@@ -642,6 +674,9 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     // For RW2 files: Extract JPEG preview dimensions to create File:ImageWidth/ImageHeight tags
                     // ExifTool creates File group tags from embedded JPEG preview (JpgFromRaw tag)
                     if detection_result.file_type == "RW2" {
+                        tracing::debug!(
+                            "Processing RW2 file: attempting to extract JPEG preview dimensions"
+                        );
                         if let Some(jpeg_preview_dimensions) =
                             extract_rw2_jpeg_preview_dimensions(&exif_reader, &raw_data)
                         {
@@ -1116,6 +1151,9 @@ fn extract_rw2_jpeg_preview_dimensions(
 ) -> Option<(u16, u16)> {
     use crate::types::TagValue;
     use std::io::Cursor;
+    use tracing::debug;
+
+    debug!("extract_rw2_jpeg_preview_dimensions: Looking for JpgFromRaw tag (0x002e)");
 
     // Get JpgFromRaw tag (0x002e) offset from ExifReader
     // This tag contains the offset to embedded JPEG data
@@ -1123,10 +1161,21 @@ fn extract_rw2_jpeg_preview_dimensions(
         Some(TagValue::Binary(binary_data)) => {
             // The binary data should contain the JPEG data directly
             // For RW2 files, ExifTool processes this as raw JPEG data
-            if let Ok((_segment_info, Some(sof))) =
+            debug!("Found JpgFromRaw binary data: {} bytes", binary_data.len());
+            if let Ok((_segment_info, sof_data)) =
                 crate::formats::jpeg::scan_jpeg_segments(&mut Cursor::new(binary_data))
             {
-                return Some((sof.image_width, sof.image_height));
+                if let Some(sof) = sof_data {
+                    debug!(
+                        "Found JPEG SOF dimensions: {}x{}",
+                        sof.image_width, sof.image_height
+                    );
+                    return Some((sof.image_width, sof.image_height));
+                } else {
+                    debug!("No SOF data found in JPEG");
+                }
+            } else {
+                debug!("Failed to parse JPEG segments");
             }
             return None;
         }

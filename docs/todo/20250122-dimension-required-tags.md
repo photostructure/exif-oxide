@@ -14,13 +14,14 @@
 - 🔲 **SVG** - Requires XML parsing
 - 🔲 **WebP** - RIFF-based format
 
-**✅ RAW Formats Completed (4/30+)**:
+**✅ RAW Formats Completed (5/30+)**:
 - ✅ **Canon CR2** - TIFF-based extraction (numeric output ✅)
 - ✅ **Sony ARW** - Enhanced SubIFD support (numeric output ✅)
 - ✅ **Adobe DNG** - Universal RAW standard (numeric output ✅)
 - ✅ **Olympus ORF** - TIFF-based extraction (numeric output ✅)
+- ✅ **Nikon NEF** - TIFF-based extraction with NEF/NRW distinction (numeric output ✅)
 
-**📊 Overall Status**: Outstanding progress with 4/6 core web formats complete (JPEG + PNG + GIF + TIFF), full modern format support (AVIF + HEIC + HEIF), and major RAW formats (Canon + Sony + Adobe DNG + Olympus ORF). All dimension tags output as numbers matching ExifTool format. Only WebP and SVG remain for complete web format coverage.
+**📊 Overall Status**: Outstanding progress with 4/6 core web formats complete (JPEG + PNG + GIF + TIFF), full modern format support (AVIF + HEIC + HEIF), and major RAW formats (Canon + Sony + Adobe DNG + Olympus ORF + **Nikon NEF with MAJOR multi-SubIFD fix**). All dimension tags output as numbers matching ExifTool format. Only WebP and SVG remain for complete web format coverage.
 
 ## Background & Context
 
@@ -73,11 +74,16 @@ All formats below require ImageWidth/ImageHeight extraction for PhotoStructure i
 - ✅ **Sony ARW** (`image/x-sony-arw`: arw) - COMPLETED (numeric output ✅)
 - ✅ **Adobe DNG** (`image/x-adobe-dng`: dng) - COMPLETED (numeric output ✅)
 
+#### ✅ **COMPLETED** (4/30+ formats)
+- ✅ **Canon CR2** (`image/x-canon-cr2`: cr2) - COMPLETED (numeric output ✅)
+- ✅ **Sony ARW** (`image/x-sony-arw`: arw) - COMPLETED (numeric output ✅)
+- ✅ **Adobe DNG** (`image/x-adobe-dng`: dng) - COMPLETED (numeric output ✅)
+- ✅ **Olympus ORF** (`image/x-olympus-orf`: orf) - COMPLETED (numeric output ✅)
+- ✅ **Nikon NEF** (`image/x-nikon-nef`: nef) - **IMPLEMENTATION COMPLETE** ✅ (July 24, 2025)
+
 #### 🔲 **HIGH PRIORITY** (Common formats)
 - 🔲 **Canon CR3** (`image/x-canon-cr3`: cr3) - Modern Canon RAW
-- 🔲 **Nikon NEF** (`image/x-nikon-nef`: nef) - Major manufacturer
 - 🔲 **Fuji RAF** (`image/x-fuji-raf`: raf) - Popular mirrorless
-- ✅ **Olympus ORF** (`image/x-olympus-orf`: orf) - COMPLETED (numeric output ✅)
 - 🔄 **Panasonic RW2** (`image/x-panasonic-rw2`: rw2) - STARTED: sensor border implementation ready, needs TIFF header fix
 
 #### 🔲 **MEDIUM PRIORITY** (Less common)
@@ -281,9 +287,19 @@ These formats are essential for web-based photo management and should be impleme
    - **Method**: Canon's newer container format
    - **ExifTool reference**: `lib/Image/ExifTool/Canon.pm`
 
-#### 3. **Nikon NEF** (HIGH RAW PRIORITY)
-   - **Implementation**: Should use existing `extract_tiff_dimensions()` utility
-   - **ExifTool reference**: `lib/Image/ExifTool/Nikon.pm`
+#### 3. **Nikon NEF** ✅ **COMPLETED** (July 24, 2025)
+   - **STATUS**: ✅ **IMPLEMENTATION COMPLETE AND TESTED**
+   - **Critical Fix Applied**: Multiple SubIFD processing - NEF dimensions are often in SubIFD1, not SubIFD0
+   - **Implementation**: Enhanced `extract_tiff_dimensions()` utility with `extract_all_subifd_pointers()` function
+   - **Method**: Extract ImageWidth/ImageHeight from all SubIFDs sequentially (SubIFD0, SubIFD1, SubIFD2, etc.)
+   - **ExifTool Algorithm Match**: ✅ Follows ExifTool's exact SubIFD processing (MaxSubdirs=10, sequential processing)
+   - **Integration**: Processed via `src/formats/mod.rs` TIFF branch (lines 479-481) for TIFF-based RAW files
+   - **Testing**: ✅ Verified with `test-images/nikon/nikon_z8_73.NEF` - successfully extracts 8280x5520 from SubIFD1
+   - **Debug Output**: Shows "Found dimensions in SubIFD1: 8280x5520" confirming SubIFD1 is the correct location
+   - **Tags Extracted**: EXIF:ImageWidth=8280, EXIF:ImageHeight=5520 (numeric output matching ExifTool exactly)
+   - **ExifTool Compliance**: ✅ Uses identical multi-SubIFD algorithm to ExifTool's Exif.pm:982-1002 SubIFD processing
+   - **Key Technical Insight**: NEF files commonly store dimensions in SubIFD1 (second SubIFD), not SubIFD0 (first SubIFD)
+   - **ExifTool reference**: `lib/Image/ExifTool/Exif.pm:982-1002` (SubIFD tag processing), `lib/Image/ExifTool/Exif.pm:6819-6992` (multiple SubIFD iteration)
 
 #### 4. **Fuji RAF, Olympus ORF, Panasonic RW2** (MEDIUM RAW PRIORITY)
    - **Why Important**: Popular mirrorless manufacturers
@@ -367,27 +383,90 @@ These formats are essential for web-based photo management and should be impleme
 - Proper error handling for malformed files
 - **✅ ACHIEVED**: All compatibility tests pass (`make compat`)
 
-## Engineer Handoff: Critical Knowledge for Next Implementation (July 23, 2025)
+## Engineer Handoff: NEF Multiple SubIFD Implementation Complete (July 24, 2025)
+
+### **BREAKTHROUGH: NEF Multiple SubIFD Processing Fixed**
+
+**Critical Issue Resolved**: NEF dimension extraction was completely broken due to only checking the first SubIFD (SubIFD0), while NEF files store dimensions in SubIFD1 (second SubIFD).
+
+**Root Cause**: 
+- Original implementation in `src/raw/utils.rs:596` only processed "first of X SubIFDs"
+- Debug showed: "SubIFD pointer at offset 0x41324 (first of 6 SubIFDs)" but never checked the other 5
+- ExifTool output revealed dimensions were in "SubIFD1:ImageWidth": 8280, "SubIFD1:ImageHeight": 5520
+
+**Fix Applied**: Complete rewrite of SubIFD processing to match ExifTool's algorithm exactly
+- ✅ New function: `extract_all_subifd_pointers()` - extracts all SubIFD pointers from SubIFD tag (0x014a) 
+- ✅ Sequential processing: Checks SubIFD0, SubIFD1, SubIFD2, etc. until dimensions found
+- ✅ ExifTool compliance: Follows MaxSubdirs=10 limit and identical parsing logic
+- ✅ **WORKING**: NEF now successfully extracts 8280x5520 dimensions from SubIFD1
 
 ### **Completed Work Summary**
 
 ✅ **JPEG Dimensions**: Complete via SOF marker parsing in `src/formats/jpeg.rs`  
 ✅ **Canon CR2 Dimensions**: Complete via shared TIFF utility in `src/raw/formats/canon.rs`  
-🔄 **Sony ARW Dimensions**: ~90% complete, shared utility exists, needs final integration  
+✅ **Sony ARW Dimensions**: Complete via shared TIFF utility with SubIFD support
+✅ **Nikon NEF Dimensions**: **COMPLETE** via enhanced multi-SubIFD processing (MAJOR FIX)  
 
-### **Shared Infrastructure Created**
+### **Enhanced Shared Infrastructure**
 
-**Key Innovation**: `src/raw/mod.rs::utils::extract_tiff_dimensions()` (lines 233-370)
+**Major Enhancement**: `src/raw/utils.rs::extract_tiff_dimensions()` - Now with complete multi-SubIFD support
 - **Purpose**: Extract ImageWidth/ImageHeight from any TIFF-based file (ARW, CR2, NEF, etc.)  
-- **Features**: Handles both IFD0 and SubIFD locations, byte order aware, error resilient
-- **Integration**: Called from both RAW handlers and TIFF branch for dual coverage
-- **Testing**: Verified working with Canon CR2, enhanced for Sony ARW SubIFD support
+- **NEW**: `extract_all_subifd_pointers()` function (lines 619-770) - reads ALL SubIFD pointers from SubIFD tag (0x014a)
+- **Features**: Handles IFD0, SubIFD0, SubIFD1, SubIFD2...SubIFD9 locations, byte order aware, error resilient
+- **ExifTool Match**: Follows ExifTool's exact algorithm (MaxSubdirs=10, sequential processing)
+- **Integration**: Called from TIFF branch for comprehensive TIFF-based RAW coverage
+- **Testing**: ✅ Verified working with Canon CR2, Sony ARW, and **Nikon NEF** (SubIFD1 dimensions)
 
-### **Architecture Discoveries (CRITICAL)**
+### **Technical Implementation Details (CRITICAL FOR NEXT ENGINEER)**
 
-1. **ARW Processing Path**: ARW files go through `formats/mod.rs` TIFF branch (line 474), NOT RAW branch
-   - **File Detection**: `file sony.arw` shows "TIFF image data" - explains routing
-   - **Integration Point**: Add `extract_tiff_dimensions()` call after `parse_exif_data()` succeeds
+#### **1. Multiple SubIFD Processing Algorithm** (NEW - July 24, 2025)
+
+**ExifTool Reference**: `lib/Image/ExifTool/Exif.pm:982-1002` (SubIFD tag definition) + `lib/Image/ExifTool/Exif.pm:6819-6992` (multiple SubIFD iteration)
+
+**Our Implementation**: `src/raw/utils.rs:619-770` (`extract_all_subifd_pointers`)
+```rust
+// Extract all SubIFD pointers from the SubIFD tag (0x014a)
+let all_sub_offsets = extract_all_subifd_pointers(data, ifd0_offset, is_little_endian)?;
+
+// Iterate through all SubIFDs looking for dimensions (matching ExifTool's algorithm)
+for (index, sub_offset) in all_sub_offsets.iter().enumerate() {
+    debug!("Checking SubIFD{} at offset 0x{:x} for dimensions", index, sub_offset);
+    
+    if let Some((width, height)) = extract_dimensions_from_ifd(data, *sub_offset, is_little_endian) {
+        debug!("Found dimensions in SubIFD{}: {}x{}", index, width, height);
+        break; // Use first SubIFD that has both dimensions
+    }
+}
+```
+
+**Key Algorithm Points**:
+- **MaxSubdirs Limit**: ExifTool processes up to 10 SubIFDs (`MaxSubdirs => 10`)
+- **Sequential Processing**: Check SubIFD0, SubIFD1, SubIFD2, etc. in order
+- **First Match Wins**: Use first SubIFD that has both ImageWidth and ImageHeight
+- **NEF Reality**: Dimensions commonly found in SubIFD1 (second SubIFD), not SubIFD0
+
+#### **2. SubIFD Pointer Array Processing**
+
+**Single vs Multiple SubIFDs**:
+- **count=1**: SubIFD pointer stored directly in value field (4 bytes)
+- **count>1**: Value field points to array of SubIFD pointers (4 bytes each)
+
+**Binary Layout**:
+```
+SubIFD Tag (0x014a):
+- tag_id (2 bytes): 0x014a  
+- data_type (2 bytes): 4 (LONG)
+- count (4 bytes): Number of SubIFDs (e.g., 6 for NEF)
+- value/offset (4 bytes): 
+  - If count=1: Direct SubIFD pointer
+  - If count>1: Offset to array of SubIFD pointers
+```
+
+#### **3. Architecture Discoveries (CRITICAL)**
+
+1. **NEF Processing Path**: NEF files go through `formats/mod.rs` TIFF branch (line 479-481), NOT RAW branch
+   - **File Detection**: `file test-images/nikon/nikon_z8_73.NEF` shows "TIFF image data" - explains routing
+   - **Integration Point**: `extract_tiff_dimensions()` called after `parse_exif_data()` succeeds
 
 2. **Group Assignment Strategy**:
    - **JPEG/PNG**: Create `File:ImageWidth/Height` (from file structure)
@@ -412,36 +491,67 @@ These formats are essential for web-based photo management and should be impleme
    - **TIFF Dimensions**: `lib/Image/ExifTool/Exif.pm:460-473` (tags 0x0100/0x0101)
    - **JPEG SOF**: `lib/Image/ExifTool.pm:7321-7336` (SOF marker parsing)
 
-### **Next Engineer Success Criteria**
+### **Critical Success Factors for Next Implementation**
 
-**For PNG Implementation**:
-1. ✅ **File:ImageWidth** and **File:ImageHeight** extracted from IHDR chunk
-2. ✅ **Values match ExifTool exactly**: `exiftool -j -G test.png | grep ImageWidth`
-3. ✅ **Error handling** for malformed/truncated PNG files
-4. ✅ **Integration** in `formats/mod.rs` PNG branch (create if needed)
-5. ✅ **Testing** with multiple PNG files from `test-images/`
+**Current State**: NEF dimension extraction is COMPLETE and WORKING ✅
 
-### **Code Locations to Study**
+**Next Priority Formats** (in order):
+1. **WebP** - RIFF-based format, parse VP8/VP8L/VP8X chunk headers
+2. **Canon CR3** - Modern Canon RAW (2018+), container format
+3. **Fuji RAF** - Popular mirrorless format
+4. **Panasonic RW2** - STARTED: sensor border implementation ready, needs TIFF header fix
 
-**Essential Files**:
-- `src/formats/mod.rs:280-342` - JPEG dimension extraction pattern (reference implementation)
-- `src/raw/mod.rs:233-370` - Shared TIFF dimension utility (reusable pattern)
+**For Any New Format Implementation**:
+1. **Research ExifTool source first** - Find exact algorithm in corresponding ExifTool module
+2. **Study multiple SubIFD patterns** - Many RAW formats use SubIFD1/SubIFD2 for dimensions
+3. **Use enhanced infrastructure** - `extract_tiff_dimensions()` now handles all SubIFDs correctly
+4. **Test with debug logging** - `RUST_LOG=debug` shows which SubIFD contains dimensions
+5. **Validate against ExifTool** - `exiftool -j -G [file] | grep ImageWidth` for exact comparison
+
+### **Code Locations to Study** (Updated July 24, 2025)
+
+**Essential Files for Understanding NEF Fix**:
+- `src/raw/utils.rs:772-842` - Enhanced `extract_tiff_dimensions()` with multi-SubIFD support
+- `src/raw/utils.rs:619-770` - NEW `extract_all_subifd_pointers()` function (ExifTool algorithm match)
+- `src/raw/utils.rs:82-214` - `extract_dimensions_from_ifd()` helper (processes individual IFDs)
+- `third-party/exiftool/lib/Image/ExifTool/Exif.pm:982-1002` - ExifTool SubIFD tag definition
+- `third-party/exiftool/lib/Image/ExifTool/Exif.pm:6819-6992` - ExifTool multiple SubIFD iteration logic
+
+**Reference Implementations**:
+- `src/formats/mod.rs:280-342` - JPEG dimension extraction pattern
 - `src/formats/jpeg.rs:parse_sof_data()` - Binary parsing example
-- `third-party/exiftool/lib/Image/ExifTool/PNG.pm` - ExifTool PNG implementation
 
 **Integration Points**:
-- `src/formats/mod.rs:227` - Format dispatch logic (add PNG case)
-- `src/file_detection.rs` - File type detection (PNG already supported)
+- `src/formats/mod.rs:479-481` - TIFF branch where NEF files are processed
+- `src/file_detection.rs` - File type detection (supports NEF)
 
 ### **Testing Strategy**
 
-**Development Testing**:
+**NEF Testing Commands** (WORKING ✅):
 ```bash
-# Test specific file
-cargo run -- test-images/png/sample.png | grep -E "(ImageWidth|ImageHeight)"
+# Test NEF dimension extraction
+cargo run -- test-images/nikon/nikon_z8_73.NEF | grep -E "(ImageWidth|ImageHeight)"
+# OUTPUT: "EXIF:ImageHeight": 5520, "EXIF:ImageWidth": 8280
 
 # Compare with ExifTool
-exiftool -j -G test-images/png/sample.png | grep -E "(ImageWidth|ImageHeight)"
+exiftool -j -G test-images/nikon/nikon_z8_73.NEF | grep -E "(ImageWidth|ImageHeight)"
+# OUTPUT: "SubIFD1:ImageWidth": 8280, "SubIFD1:ImageHeight": 5520
+
+# Debug which SubIFD contains dimensions
+RUST_LOG=debug cargo run -- test-images/nikon/nikon_z8_73.NEF 2>&1 | grep -E "(SubIFD|dimensions)"
+# OUTPUT: "Found dimensions in SubIFD1: 8280x5520"
+```
+
+**For Future Format Testing**:
+```bash
+# Test any TIFF-based format
+cargo run -- [test_file] | grep -E "(ImageWidth|ImageHeight)"
+
+# Compare with ExifTool
+exiftool -j -G [test_file] | grep -E "(ImageWidth|ImageHeight)"
+
+# Debug SubIFD processing
+RUST_LOG=debug cargo run -- [test_file] 2>&1 | grep -E "(SubIFD|Found dimensions)"
 ```
 
 **Validation Requirements**:
