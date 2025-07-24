@@ -1,0 +1,10 @@
+{
+  "description": "Complete Kyocera RAW tag definitions with embedded PrintConvs",
+  "source": "third-party/exiftool/lib/Image/ExifTool/KyoceraRaw.pm",
+  "tables": [
+    {
+      "table_name": "Main",
+      "description": "Kyocera RAW main tag table"
+    }
+  ]
+}
