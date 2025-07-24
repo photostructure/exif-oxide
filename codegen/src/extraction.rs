@@ -10,6 +10,8 @@ use tracing::{debug, warn};
 
 use crate::patching;
 use crate::extractors::find_extractor;
+use crate::config::load_extracted_tables_with_config;
+use crate::generators::lookup_tables;
 
 // Constants for path navigation
 
@@ -34,6 +36,75 @@ pub fn extract_all_simple_tables() -> Result<()> {
     }
     
     debug!("  ✓ Simple table extraction complete");
+    Ok(())
+}
+
+/// Extract and generate code for a single config file for debugging purposes
+pub fn extract_single_config(config_path: &str) -> Result<()> {
+    debug!("📊 Extracting and generating single config: {}", config_path);
+    
+    let extract_base = Path::new("generated/extract");
+    fs::create_dir_all(extract_base)?;
+    
+    let config_path = Path::new(config_path);
+    if !config_path.exists() {
+        return Err(anyhow::anyhow!("Config file not found: {}", config_path.display()));
+    }
+    
+    if let Some(config) = try_parse_single_config(config_path)? {
+        // Extract the data
+        process_module_config(&config, extract_base)?;
+        debug!("  ✓ Single config extraction complete");
+        
+        // Generate code for this specific config
+        process_single_config_generation(&config, extract_base)?;
+        debug!("  ✓ Single config generation complete");
+    } else {
+        return Err(anyhow::anyhow!("Failed to parse config file: {}", config_path.display()));
+    }
+    
+    Ok(())
+}
+
+/// Process code generation for a single config file
+fn process_single_config_generation(config: &ModuleConfig, extract_base: &Path) -> Result<()> {
+    debug!("🔧 Generating code for single config...");
+    
+    let output_dir = "../src/generated";
+    let config_dir = Path::new("config");
+    
+    // Load extracted tables for this specific config
+    let all_extracted_tables = load_extracted_tables_with_config(extract_base, config_dir)?;
+    
+    // Determine the module directory from the source path
+    // e.g., "third-party/exiftool/lib/Image/ExifTool/Canon.pm" -> "Canon_pm"
+    let module_name = config.source_path
+        .split('/')
+        .last()
+        .unwrap_or("unknown")
+        .replace(".pm", "_pm");
+    
+    debug!("  Looking for module directory: {}", module_name);
+    
+    // Find the module config directory
+    let module_config_dir = config_dir.join(&module_name);
+    if module_config_dir.exists() {
+        debug!("  Processing module config directory: {}", module_config_dir.display());
+        
+        // Use the lookup_tables processor to generate code for this module
+        lookup_tables::process_config_directory(
+            &module_config_dir,
+            &module_name,
+            &all_extracted_tables,
+            output_dir,
+        )?;
+        
+        debug!("  ✓ Generated code for module: {}", module_name);
+    } else {
+        debug!("  ⚠️  Module config directory not found: {}", module_config_dir.display());
+        debug!("      Expected: {}", module_config_dir.display());
+    }
+    
     Ok(())
 }
 
