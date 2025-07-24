@@ -15,7 +15,7 @@ all: codegen
 codegen: check-schemas check-extractors
 	@flock --exclusive --timeout=30 .make.flock $(MAKE) --no-print-directory -f Makefile.modular codegen-flocked
 
-codegen-flocked:  generate-rust
+codegen-flocked: clean generate-rust
 
 generate-rust:
 	@cargo run --release --quiet ; ret=$$? ; \

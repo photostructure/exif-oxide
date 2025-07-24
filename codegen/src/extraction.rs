@@ -80,7 +80,7 @@ fn process_single_config_generation(config: &ModuleConfig, extract_base: &Path) 
     // e.g., "third-party/exiftool/lib/Image/ExifTool/Canon.pm" -> "Canon_pm"
     let module_name = config.source_path
         .split('/')
-        .last()
+        .next_back()
         .unwrap_or("unknown")
         .replace(".pm", "_pm");
     

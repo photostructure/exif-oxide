@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with exif-oxide.
 
-Today's date is July 23, 2025. 
+Today's date is July 24, 2025. 
 
 ## 🚨 CRITICAL: ALWAYS USE ABSOLUTE PATHS 🚨
 

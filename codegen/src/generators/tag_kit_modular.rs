@@ -4,21 +4,20 @@
 
 use anyhow::Result;
 use std::fs;
+use std::collections::HashMap;
 use crate::common::escape_string;
-use crate::schemas::tag_kit::{TagKitExtraction, TagKit};
+use crate::schemas::tag_kit::{TagKitExtraction, TagKit, ExtractedTable};
 use super::tag_kit_split::split_tag_kits;
 
 /// Generate modular tag kit code from extracted data
-#[allow(dead_code)]
 pub fn generate_modular_tag_kit(
     extraction: &TagKitExtraction,
     output_dir: &str,
     module_name: &str,
 ) -> Result<()> {
     // Create output directory for tag kit modules 
-    // Replace any hyphens with underscores for valid Rust module names
-    let sanitized_module_name = module_name.to_lowercase().replace('-', "_");
-    let tag_kit_dir = format!("{output_dir}/{sanitized_module_name}_tag_kit");
+    // Create tag_kit subdirectory inside the output directory
+    let tag_kit_dir = format!("{output_dir}/tag_kit");
     fs::create_dir_all(&tag_kit_dir)?;
     
     // Split tag kits by category
@@ -27,6 +26,9 @@ pub fn generate_modular_tag_kit(
     // Keep track of all generated modules
     let mut generated_modules = Vec::new();
     let mut total_print_conv_count = 0;
+    
+    // Collect all subdirectory information
+    let subdirectory_info = collect_subdirectory_info(&extraction.tag_kits);
     
     // Generate a module for each category with tags
     for (category, tag_kits) in &categories {
@@ -55,8 +57,8 @@ pub fn generate_modular_tag_kit(
         );
     }
     
-    // Generate mod.rs that combines all modules
-    let mod_code = generate_mod_file(&generated_modules, &sanitized_module_name, extraction)?;
+    // Generate mod.rs that combines all modules and subdirectory processors
+    let mod_code = generate_mod_file(&generated_modules, &sanitized_module_name, extraction, &subdirectory_info)?;
     fs::write(format!("{tag_kit_dir}/mod.rs"), mod_code)?;
     
     // Summary
@@ -70,7 +72,6 @@ pub fn generate_modular_tag_kit(
 }
 
 /// Generate code for a single category module
-#[allow(dead_code)]
 fn generate_category_module(
     category_name: &str,
     tag_kits: &[&TagKit],
@@ -90,14 +91,20 @@ fn generate_category_module(
     code.push_str("use std::collections::HashMap;\n");
     code.push_str("use std::sync::LazyLock;\n");
     code.push_str("use crate::types::TagValue;\n");
-    code.push_str("use super::{TagKitDef, PrintConvType};\n\n");
+    code.push_str("use super::{TagKitDef, PrintConvType, SubDirectoryType};\n");
+    // Import subdirectory processor functions from parent module
+    code.push_str("use super::*;\n\n");
     
     // Generate PrintConv lookup tables for this category
     let mut local_print_conv_count = 0;
     for tag_kit in tag_kits {
+        tracing::debug!("Processing tag '{}' with print_conv_type='{}'", tag_kit.name, tag_kit.print_conv_type);
         if tag_kit.print_conv_type == "Simple" {
+            tracing::debug!("Found Simple PrintConv for tag '{}'", tag_kit.name);
             if let Some(print_conv_data) = &tag_kit.print_conv_data {
+                tracing::debug!("PrintConv data exists for tag '{}'", tag_kit.name);
                 if let Some(data_obj) = print_conv_data.as_object() {
+                    tracing::debug!("PrintConv data is an object with {} entries", data_obj.len());
                     let const_name = format!("PRINT_CONV_{}", *print_conv_counter);
                     *print_conv_counter += 1;
                     local_print_conv_count += 1;
@@ -106,11 +113,8 @@ fn generate_category_module(
                     code.push_str("    let mut map = HashMap::new();\n");
                     
                     for (key, value) in data_obj {
-                        if let Some(val_str) = value.as_str() {
-                            code.push_str(&format!("    map.insert(\"{}\".to_string(), \"{}\");\n", 
-                                escape_string(key), 
-                                escape_string(val_str)));
-                        }
+                        tracing::debug!("Processing PrintConv entry: key='{}', value={:?}", key, value);
+                        crate::generators::lookup_tables::generate_print_conv_entry(&mut code, key, value);
                     }
                     
                     code.push_str("    map\n");
@@ -197,6 +201,13 @@ fn generate_category_module(
             code.push_str("            value_conv: None,\n");
         }
         
+        // Add subdirectory field
+        if tag_kit.subdirectory.is_some() {
+            code.push_str(&format!("            subdirectory: Some(SubDirectoryType::Binary {{ processor: process_tag_{:#x}_subdirectory }}),\n", tag_id));
+        } else {
+            code.push_str("            subdirectory: None,\n");
+        }
+        
         code.push_str("        }),\n");
     }
     
@@ -207,11 +218,11 @@ fn generate_category_module(
 }
 
 /// Generate the mod.rs file that combines all category modules
-#[allow(dead_code)]
 fn generate_mod_file(
     modules: &[&str], 
     module_name: &str,
     extraction: &TagKitExtraction,
+    subdirectory_info: &HashMap<u32, SubDirectoryCollection>,
 ) -> Result<String> {
     let mut code = String::new();
     
@@ -238,7 +249,8 @@ fn generate_mod_file(
     // Common imports
     code.push_str("use std::collections::HashMap;\n");
     code.push_str("use std::sync::LazyLock;\n");
-    code.push_str("use crate::types::TagValue;\n");
+    code.push_str("use crate::types::{TagValue, Result};\n");
+    code.push_str("use crate::tiff_types::ByteOrder;\n");
     code.push_str("use crate::expressions::ExpressionEvaluator;\n\n");
     
     // Tag kit definition struct
@@ -252,6 +264,7 @@ fn generate_mod_file(
     code.push_str("    pub notes: Option<&'static str>,\n");
     code.push_str("    pub print_conv: PrintConvType,\n");
     code.push_str("    pub value_conv: Option<&'static str>,\n");
+    code.push_str("    pub subdirectory: Option<SubDirectoryType>,\n");
     code.push_str("}\n\n");
     
     // PrintConv type enum
@@ -261,6 +274,14 @@ fn generate_mod_file(
     code.push_str("    Simple(&'static HashMap<String, &'static str>),\n");
     code.push_str("    Expression(&'static str),\n");
     code.push_str("    Manual(&'static str),\n");
+    code.push_str("}\n\n");
+    
+    // SubDirectory type enum
+    code.push_str("#[derive(Debug, Clone)]\n");
+    code.push_str("pub enum SubDirectoryType {\n");
+    code.push_str("    Binary {\n");
+    code.push_str("        processor: fn(&[u8], crate::tiff_types::ByteOrder) -> crate::types::Result<Vec<(String, TagValue)>>,\n");
+    code.push_str("    },\n");
     code.push_str("}\n\n");
     
     // Combined tag map
@@ -282,16 +303,132 @@ fn generate_mod_file(
     code.push_str("    map\n");
     code.push_str("});\n\n");
     
+    // Generate binary data helper functions
+    code.push_str("// Helper functions for reading binary data\n");
+    code.push_str("fn read_int16s_array(data: &[u8], byte_order: ByteOrder, count: usize) -> Result<Vec<i16>> {\n");
+    code.push_str("    if data.len() < count * 2 {\n");
+    code.push_str("        return Err(crate::types::ExifError::InvalidData(\"Insufficient data for int16s array\".to_string()));\n");
+    code.push_str("    }\n");
+    code.push_str("    let mut values = Vec::with_capacity(count);\n");
+    code.push_str("    for i in 0..count {\n");
+    code.push_str("        let offset = i * 2;\n");
+    code.push_str("        let value = match byte_order {\n");
+    code.push_str("            ByteOrder::LittleEndian => i16::from_le_bytes([data[offset], data[offset + 1]]),\n");
+    code.push_str("            ByteOrder::BigEndian => i16::from_be_bytes([data[offset], data[offset + 1]]),\n");
+    code.push_str("        };\n");
+    code.push_str("        values.push(value);\n");
+    code.push_str("    }\n");
+    code.push_str("    Ok(values)\n");
+    code.push_str("}\n\n");
+    
+    code.push_str("fn read_int16u_array(data: &[u8], byte_order: ByteOrder, count: usize) -> Result<Vec<u16>> {\n");
+    code.push_str("    if data.len() < count * 2 {\n");
+    code.push_str("        return Err(crate::types::ExifError::InvalidData(\"Insufficient data for int16u array\".to_string()));\n");
+    code.push_str("    }\n");
+    code.push_str("    let mut values = Vec::with_capacity(count);\n");
+    code.push_str("    for i in 0..count {\n");
+    code.push_str("        let offset = i * 2;\n");
+    code.push_str("        let value = match byte_order {\n");
+    code.push_str("            ByteOrder::LittleEndian => u16::from_le_bytes([data[offset], data[offset + 1]]),\n");
+    code.push_str("            ByteOrder::BigEndian => u16::from_be_bytes([data[offset], data[offset + 1]]),\n");
+    code.push_str("        };\n");
+    code.push_str("        values.push(value);\n");
+    code.push_str("    }\n");
+    code.push_str("    Ok(values)\n");
+    code.push_str("}\n\n");
+    
+    code.push_str("fn read_int16s(data: &[u8], byte_order: ByteOrder) -> Result<i16> {\n");
+    code.push_str("    if data.len() < 2 {\n");
+    code.push_str("        return Err(crate::types::ExifError::InvalidData(\"Insufficient data for int16s\".to_string()));\n");
+    code.push_str("    }\n");
+    code.push_str("    Ok(match byte_order {\n");
+    code.push_str("        ByteOrder::LittleEndian => i16::from_le_bytes([data[0], data[1]]),\n");
+    code.push_str("        ByteOrder::BigEndian => i16::from_be_bytes([data[0], data[1]]),\n");
+    code.push_str("    })\n");
+    code.push_str("}\n\n");
+    
+    // Generate subdirectory processing functions
+    if !subdirectory_info.is_empty() {
+        code.push_str("// Subdirectory processing functions\n");
+        
+        // Generate binary data parsers for each unique subdirectory table
+        let mut generated_tables = std::collections::HashSet::new();
+        
+        for collection in subdirectory_info.values() {
+            for variant in &collection.variants {
+                if variant.is_binary_data {
+                    if let Some(extracted_table) = &variant.extracted_table {
+                        let table_fn_name = variant.table_name
+                            .replace("Image::ExifTool::", "")
+                            .replace("::", "_")
+                            .to_lowercase();
+                        
+                        if generated_tables.insert(table_fn_name.clone()) {
+                            generate_binary_parser(&mut code, &table_fn_name, extracted_table)?;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Generate conditional dispatch functions for tags with subdirectories
+        for (tag_id, collection) in subdirectory_info {
+            generate_subdirectory_dispatcher(&mut code, *tag_id, collection)?;
+        }
+    }
+    
     // Apply PrintConv function
     code.push_str("/// Apply PrintConv for a tag from this module\n");
     code.push_str("pub fn apply_print_conv(\n");
     code.push_str("    tag_id: u32,\n");
     code.push_str("    value: &TagValue,\n");
+    code.push_str("    byte_order: ByteOrder,\n");
     code.push_str("    _evaluator: &mut ExpressionEvaluator,\n");
     code.push_str("    _errors: &mut Vec<String>,\n");
     code.push_str("    warnings: &mut Vec<String>,\n");
     code.push_str(") -> TagValue {\n");
     code.push_str(&format!("    if let Some(tag_kit) = {const_name}.get(&tag_id) {{\n"));
+    code.push_str("        // Check if this tag has subdirectory processing\n");
+    code.push_str("        if let Some(SubDirectoryType::Binary { processor }) = &tag_kit.subdirectory {\n");
+    code.push_str("            // For subdirectory tags, we need to process the binary data\n");
+    code.push_str("            match value {\n");
+    code.push_str("                TagValue::U16Array(arr) => {\n");
+    code.push_str("                    // Convert U16 array to bytes\n");
+    code.push_str("                    let mut bytes = Vec::with_capacity(arr.len() * 2);\n");
+    code.push_str("                    for val in arr {\n");
+    code.push_str("                        bytes.extend_from_slice(&val.to_le_bytes());\n");
+    code.push_str("                    }\n");
+    code.push_str("                    // Process subdirectory and return first extracted tag for now\n");
+    code.push_str("                    // TODO: Handle multiple extracted tags properly\n");
+    code.push_str("                    if let Ok(extracted_tags) = processor(&bytes, byte_order) {\n");
+    code.push_str("                        if !extracted_tags.is_empty() {\n");
+    code.push_str("                            // For now, return a formatted string of all extracted tags\n");
+    code.push_str("                            let mut result_parts = Vec::new();\n");
+    code.push_str("                            for (name, val) in extracted_tags {\n");
+    code.push_str("                                result_parts.push(format!(\"{}: {}\", name, val));\n");
+    code.push_str("                            }\n");
+    code.push_str("                            return TagValue::String(result_parts.join(\"; \"));\n");
+    code.push_str("                        }\n");
+    code.push_str("                    }\n");
+    code.push_str("                }\n");
+    code.push_str("                TagValue::U8Array(arr) => {\n");
+    code.push_str("                    // Process U8 array directly\n");
+    code.push_str("                    if let Ok(extracted_tags) = processor(arr, byte_order) {\n");
+    code.push_str("                        if !extracted_tags.is_empty() {\n");
+    code.push_str("                            // For now, return a formatted string of all extracted tags\n");
+    code.push_str("                            let mut result_parts = Vec::new();\n");
+    code.push_str("                            for (name, val) in extracted_tags {\n");
+    code.push_str("                                result_parts.push(format!(\"{}: {}\", name, val));\n");
+    code.push_str("                            }\n");
+    code.push_str("                            return TagValue::String(result_parts.join(\"; \"));\n");
+    code.push_str("                        }\n");
+    code.push_str("                    }\n");
+    code.push_str("                }\n");
+    code.push_str("                _ => {} // Fall through to normal processing\n");
+    code.push_str("            }\n");
+    code.push_str("        }\n");
+    code.push_str("        \n");
+    code.push_str("        // Normal PrintConv processing\n");
     code.push_str("        match &tag_kit.print_conv {\n");
     code.push_str("            PrintConvType::None => value.clone(),\n");
     code.push_str("            PrintConvType::Simple(lookup) => {\n");
@@ -332,4 +469,183 @@ fn generate_mod_file(
     code.push_str("}\n");
     
     Ok(code)
+}
+
+/// Information about a subdirectory and all its variants
+#[derive(Debug)]
+struct SubDirectoryCollection {
+    tag_id: u32,
+    tag_name: String,
+    variants: Vec<SubDirectoryVariant>,
+}
+
+#[derive(Debug, Clone)]
+struct SubDirectoryVariant {
+    variant_id: String,
+    condition: Option<String>,
+    table_name: String,
+    is_binary_data: bool,
+    extracted_table: Option<ExtractedTable>,
+}
+
+/// Collect all subdirectory information from tag kits
+fn collect_subdirectory_info(tag_kits: &[TagKit]) -> HashMap<u32, SubDirectoryCollection> {
+    let mut subdirectory_map: HashMap<u32, SubDirectoryCollection> = HashMap::new();
+    
+    for tag_kit in tag_kits {
+        if let Some(subdirectory) = &tag_kit.subdirectory {
+            let tag_id = tag_kit.tag_id.parse::<u32>().unwrap_or(0);
+            
+            let variant = SubDirectoryVariant {
+                variant_id: tag_kit.variant_id.clone().unwrap_or_else(|| format!("{}_default", tag_id)),
+                condition: tag_kit.condition.clone(),
+                table_name: subdirectory.tag_table.clone(),
+                is_binary_data: subdirectory.is_binary_data.unwrap_or(false),
+                extracted_table: subdirectory.extracted_table.clone(),
+            };
+            
+            subdirectory_map
+                .entry(tag_id)
+                .and_modify(|collection| collection.variants.push(variant.clone()))
+                .or_insert_with(|| SubDirectoryCollection {
+                    tag_id,
+                    tag_name: tag_kit.name.clone(),
+                    variants: vec![variant],
+                });
+        }
+    }
+    
+    subdirectory_map
+}
+
+/// Generate a binary data parser function for a subdirectory table
+fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTable) -> Result<()> {
+    code.push_str(&format!("fn process_{}(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n", fn_name));
+    code.push_str("    let mut tags = Vec::new();\n");
+    
+    // Get the format size multiplier
+    let format_size = match table.format.as_deref() {
+        Some("int16s") | Some("int16u") => 2,
+        Some("int32s") | Some("int32u") => 4,
+        Some("int8s") | Some("int8u") => 1,
+        _ => 2, // Default to int16
+    };
+    
+    let first_entry = table.first_entry.unwrap_or(0);
+    
+    // Generate tag extraction code for each tag in the table
+    for tag in &table.tags {
+        let tag_offset = tag.tag_id.parse::<i32>().unwrap_or(0);
+        let byte_offset = ((tag_offset - first_entry) * format_size) as usize;
+        
+        code.push_str(&format!("    // {} at offset {}\n", tag.name, tag.tag_id));
+        
+        if let Some(format) = &tag.format {
+            if format.ends_with(']') {
+                // Array format like "int16s[4]"
+                if let Some(array_start) = format.find('[') {
+                    let base_format = &format[..array_start];
+                    let count_str = &format[array_start + 1..format.len() - 1];
+                    if let Ok(count) = count_str.parse::<usize>() {
+                        let total_size = match base_format {
+                            "int16s" | "int16u" => 2 * count,
+                            "int32s" | "int32u" => 4 * count,
+                            "int8s" | "int8u" => count,
+                            _ => 2 * count,
+                        };
+                        
+                        code.push_str(&format!("    if data.len() >= {} {{\n", byte_offset + total_size));
+                        
+                        match base_format {
+                            "int16s" => {
+                                code.push_str(&format!("        if let Ok(values) = read_int16s_array(&data[{}..{}], byte_order, {}) {{\n", 
+                                    byte_offset, byte_offset + total_size, count));
+                                code.push_str("            let value_str = values.iter().map(|v| v.to_string()).collect::<Vec<_>>().join(\" \");\n");
+                                code.push_str(&format!("            tags.push((\"{}\".to_string(), TagValue::String(value_str)));\n", tag.name));
+                                code.push_str("        }\n");
+                            }
+                            "int16u" => {
+                                code.push_str(&format!("        if let Ok(values) = read_int16u_array(&data[{}..{}], byte_order, {}) {{\n", 
+                                    byte_offset, byte_offset + total_size, count));
+                                code.push_str("            let value_str = values.iter().map(|v| v.to_string()).collect::<Vec<_>>().join(\" \");\n");
+                                code.push_str(&format!("            tags.push((\"{}\".to_string(), TagValue::String(value_str)));\n", tag.name));
+                                code.push_str("        }\n");
+                            }
+                            _ => {
+                                // For other formats, just store the raw offset for now
+                                code.push_str(&format!("        // TODO: Handle format {}\n", base_format));
+                            }
+                        }
+                        
+                        code.push_str("    }\n");
+                    }
+                }
+            } else {
+                // Single value format
+                let value_size = match format.as_str() {
+                    "int16s" | "int16u" => 2,
+                    "int32s" | "int32u" => 4,
+                    "int8s" | "int8u" => 1,
+                    _ => 2,
+                };
+                
+                code.push_str(&format!("    if data.len() >= {} {{\n", byte_offset + value_size));
+                
+                match format.as_str() {
+                    "int16s" => {
+                        code.push_str(&format!("        if let Ok(value) = read_int16s(&data[{}..{}], byte_order) {{\n", 
+                            byte_offset, byte_offset + value_size));
+                        code.push_str(&format!("            tags.push((\"{}\".to_string(), TagValue::I16(value)));\n", tag.name));
+                        code.push_str("        }\n");
+                    }
+                    _ => {
+                        // For other formats, just store the raw offset for now
+                        code.push_str(&format!("        // TODO: Handle format {}\n", format));
+                    }
+                }
+                
+                code.push_str("    }\n");
+            }
+        }
+        
+        code.push_str("    \n");
+    }
+    
+    code.push_str("    Ok(tags)\n");
+    code.push_str("}\n\n");
+    
+    Ok(())
+}
+
+/// Generate a conditional dispatch function for a tag with subdirectory variants
+fn generate_subdirectory_dispatcher(code: &mut String, tag_id: u32, collection: &SubDirectoryCollection) -> Result<()> {
+    code.push_str(&format!("pub fn process_tag_{:#x}_subdirectory(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n", tag_id));
+    
+    // Determine the format for count calculation (usually int16s for Canon)
+    let format_size = 2; // Default to int16s
+    code.push_str(&format!("    let count = data.len() / {};\n", format_size));
+    code.push_str("    \n");
+    code.push_str("    match count {\n");
+    
+    for variant in &collection.variants {
+        if let Some(condition) = &variant.condition {
+            // Extract count value from condition like "$count == 582"
+            if let Some(count_match) = condition.split("==").nth(1) {
+                if let Ok(count_val) = count_match.trim().parse::<usize>() {
+                    let table_fn_name = variant.table_name
+                        .replace("Image::ExifTool::", "")
+                        .replace("::", "_")
+                        .to_lowercase();
+                    
+                    code.push_str(&format!("        {} => process_{}(data, byte_order),\n", count_val, table_fn_name));
+                }
+            }
+        }
+    }
+    
+    code.push_str("        _ => Ok(vec![]), // Unknown variant\n");
+    code.push_str("    }\n");
+    code.push_str("}\n\n");
+    
+    Ok(())
 }

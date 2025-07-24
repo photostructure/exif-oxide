@@ -104,7 +104,13 @@
       "Bash(RUST_LOG=debug timeout 30 cargo run --release)",
       "Bash(RUST_LOG=debug timeout 10 ./target/release/generate_rust)",
       "Bash(for file in composite_tags.rs conversion_refs.rs module.rs)",
-      "Bash(do grep -q \"use tracing\" $file)"
+      "Bash(do grep -q \"use tracing\" $file)",
+      "Bash(RUST_LOG=debug make codegen)",
+      "Bash(RUST_LOG=debug cargo run -- config/KyoceraRaw_pm/tag_kit.json)",
+      "Bash(RUST_LOG=debug cargo run -- config/KyoceraRaw_pm/tag_kit.json)",
+      "Bash(RUST_LOG=debug cargo run --bin exif-oxide -- test-images/panasonic/panasonic_lumix_g9_ii_35.rw2)",
+      "Bash(RUST_LOG=debug cargo run -- test-images/nikon/nikon_z8_73.NEF)",
+      "Bash(RUST_LOG=debug cargo run)"
     ],
     "deny": []
   }

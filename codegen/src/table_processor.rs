@@ -361,7 +361,7 @@ mod tests {
         assert_eq!(generated_tags.len(), 1);
         assert_eq!(generated_tags[0].name, "ImageWidth");
         assert_eq!(generated_tags[0].id, 0x0100);
-        assert_eq!(generated_tags[0].writable, true);
+        assert!(generated_tags[0].writable);
     }
     
     #[test]

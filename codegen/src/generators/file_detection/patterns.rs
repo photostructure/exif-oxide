@@ -280,108 +280,6 @@ pub fn generate_magic_patterns(json_dir: &Path, output_dir: &str) -> Result<()> 
     Ok(())
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_bpg_pattern_utf8_handling() {
-        // This test ensures the BPG pattern with non-UTF-8 byte (0xfb) is handled correctly.
-        // The BPG (Better Portable Graphics) format has a magic number that includes
-        // a non-UTF-8 byte, which must be properly escaped when generating Rust code.
-
-        // Create test data with the problematic BPG pattern
-        let test_pattern = RegexPatternEntry {
-            key: "BPG".to_string(),
-            pattern: "BPG\u{fb}".to_string(), // This will be invalid UTF-8 in JSON
-            rust_compatible: 1,
-            compatibility_notes: "Contains non-UTF-8 byte that needs escaping".to_string(),
-            source_table: RegexPatternSource {
-                module: "ExifTool.pm".to_string(),
-                hash_name: "%magicNumber".to_string(),
-                description: "Magic number patterns".to_string(),
-            },
-        };
-
-        // The pattern should be escaped in the generated code
-        let data = RegexPatternsData {
-            extracted_at: "test".to_string(),
-            patterns: RegexPatterns {
-                file_extensions: vec![],
-                magic_numbers: vec![test_pattern],
-            },
-            compatibility_notes: "test".to_string(),
-        };
-
-        // Generate code to a temp directory
-        let temp_dir = std::env::temp_dir();
-        // TODO: This function doesn't exist yet
-        // let result = generate_magic_number_patterns_from_new_format(&data, &temp_dir);
-        let result: Result<()> = Ok(());
-
-        // Should succeed
-        assert!(
-            result.is_ok(),
-            "Failed to generate patterns with non-UTF-8 byte"
-        );
-
-        // Skip file verification since function doesn't exist
-        // TODO: Enable this when generate_magic_number_patterns_from_new_format is implemented
-        /*
-        // Read the generated file and verify the pattern is properly escaped
-        let generated_path = temp_dir.join("file_types").join("magic_number_patterns.rs");
-        assert!(
-            generated_path.exists(),
-            "Generated file does not exist at {:?}",
-            generated_path
-        );
-
-        let content = std::fs::read_to_string(&generated_path).unwrap();
-
-        // The pattern should be escaped as BPG\\xfb or BPG\xc3\xbb (UTF-8 encoding of \u{fb})
-        assert!(
-            content.contains(r#"map.insert("BPG", "BPG\\xfb");"#)
-                || content.contains(r#"map.insert("BPG", "BPG\xc3\xbb");"#)
-                || content.contains(r#"map.insert("BPG", "BPG\u{fb}");"#),
-            "BPG pattern not properly escaped in generated code"
-        );
-        */
-    }
-
-    #[test]
-    fn test_non_utf8_json_cleaning() {
-        // Test the actual JSON cleaning logic
-        // Create JSON with actual non-UTF-8 byte
-        let mut bad_json_bytes = Vec::new();
-        bad_json_bytes.extend_from_slice(b"{\"pattern\": \"BPG");
-        bad_json_bytes.push(0xfb); // Add the actual non-UTF-8 byte
-        bad_json_bytes.extend_from_slice(b"\", \"key\": \"BPG\"}");
-
-        let bad_pattern = b"\"BPG\xfb\"";
-        let good_pattern = b"\"BPG\\\\xfb\"";
-
-        let mut test_bytes = bad_json_bytes.clone();
-
-        // Find and replace the pattern
-        if let Some(pos) = test_bytes
-            .windows(bad_pattern.len())
-            .position(|window| window == bad_pattern)
-        {
-            test_bytes.splice(pos..pos + bad_pattern.len(), good_pattern.iter().cloned());
-        }
-
-        // Should now be valid UTF-8
-        let result = String::from_utf8(test_bytes);
-        assert!(result.is_ok(), "Failed to clean non-UTF-8 JSON");
-
-        let cleaned = result.unwrap();
-        assert!(
-            cleaned.contains(r#""BPG\\xfb""#),
-            "Pattern not properly escaped"
-        );
-    }
-}
-
 fn generate_magic_number_patterns_from_new_format(
     data: &MagicNumberData,
     output_dir: &Path,
@@ -498,4 +396,106 @@ fn generate_magic_number_patterns_from_new_format(
     fs::write(&output_path, code)?;
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_bpg_pattern_utf8_handling() {
+        // This test ensures the BPG pattern with non-UTF-8 byte (0xfb) is handled correctly.
+        // The BPG (Better Portable Graphics) format has a magic number that includes
+        // a non-UTF-8 byte, which must be properly escaped when generating Rust code.
+
+        // Create test data with the problematic BPG pattern
+        let test_pattern = RegexPatternEntry {
+            key: "BPG".to_string(),
+            pattern: "BPG\u{fb}".to_string(), // This will be invalid UTF-8 in JSON
+            rust_compatible: 1,
+            compatibility_notes: "Contains non-UTF-8 byte that needs escaping".to_string(),
+            source_table: RegexPatternSource {
+                module: "ExifTool.pm".to_string(),
+                hash_name: "%magicNumber".to_string(),
+                description: "Magic number patterns".to_string(),
+            },
+        };
+
+        // The pattern should be escaped in the generated code
+        let data = RegexPatternsData {
+            extracted_at: "test".to_string(),
+            patterns: RegexPatterns {
+                file_extensions: vec![],
+                magic_numbers: vec![test_pattern],
+            },
+            compatibility_notes: "test".to_string(),
+        };
+
+        // Generate code to a temp directory
+        let temp_dir = std::env::temp_dir();
+        // TODO: This function doesn't exist yet
+        // let result = generate_magic_number_patterns_from_new_format(&data, &temp_dir);
+        let result: Result<()> = Ok(());
+
+        // Should succeed
+        assert!(
+            result.is_ok(),
+            "Failed to generate patterns with non-UTF-8 byte"
+        );
+
+        // Skip file verification since function doesn't exist
+        // TODO: Enable this when generate_magic_number_patterns_from_new_format is implemented
+        /*
+        // Read the generated file and verify the pattern is properly escaped
+        let generated_path = temp_dir.join("file_types").join("magic_number_patterns.rs");
+        assert!(
+            generated_path.exists(),
+            "Generated file does not exist at {:?}",
+            generated_path
+        );
+
+        let content = std::fs::read_to_string(&generated_path).unwrap();
+
+        // The pattern should be escaped as BPG\\xfb or BPG\xc3\xbb (UTF-8 encoding of \u{fb})
+        assert!(
+            content.contains(r#"map.insert("BPG", "BPG\\xfb");"#)
+                || content.contains(r#"map.insert("BPG", "BPG\xc3\xbb");"#)
+                || content.contains(r#"map.insert("BPG", "BPG\u{fb}");"#),
+            "BPG pattern not properly escaped in generated code"
+        );
+        */
+    }
+
+    #[test]
+    fn test_non_utf8_json_cleaning() {
+        // Test the actual JSON cleaning logic
+        // Create JSON with actual non-UTF-8 byte
+        let mut bad_json_bytes = Vec::new();
+        bad_json_bytes.extend_from_slice(b"{\"pattern\": \"BPG");
+        bad_json_bytes.push(0xfb); // Add the actual non-UTF-8 byte
+        bad_json_bytes.extend_from_slice(b"\", \"key\": \"BPG\"}");
+
+        let bad_pattern = b"\"BPG\xfb\"";
+        let good_pattern = b"\"BPG\\\\xfb\"";
+
+        let mut test_bytes = bad_json_bytes.clone();
+
+        // Find and replace the pattern
+        if let Some(pos) = test_bytes
+            .windows(bad_pattern.len())
+            .position(|window| window == bad_pattern)
+        {
+            test_bytes.splice(pos..pos + bad_pattern.len(), good_pattern.iter().cloned());
+        }
+
+        // Should now be valid UTF-8
+        let result = String::from_utf8(test_bytes);
+        assert!(result.is_ok(), "Failed to clean non-UTF-8 JSON");
+
+        let cleaned = result.unwrap();
+        assert!(
+            cleaned.contains(r#""BPG\\xfb""#),
+            "Pattern not properly escaped"
+        );
+    }
 }

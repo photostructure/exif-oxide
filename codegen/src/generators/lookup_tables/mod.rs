@@ -9,27 +9,124 @@ pub mod standard;
 pub mod inline_printconv;
 pub mod runtime;
 
+mod file_generation;
+mod path_utils;
+mod config_processor;
+
 use anyhow::Result;
 use std::collections::HashMap;
 use std::path::Path;
 use std::fs;
 use crate::schemas::ExtractedTable;
 use crate::generators::data_sets;
-use crate::common::utils::{module_to_source_path, module_dir_to_source_path};
 use tracing::{debug, warn};
 
-/// Get the extract subdirectory for a given config type
-#[allow(dead_code)]
-fn get_extract_subdir(config_type: &str) -> &'static str {
-    match config_type {
-        "tag_table_structure" => "tag_structures",
-        "process_binary_data" => "binary_data",
-        "model_detection" => "model_detection",
-        "conditional_tags" => "conditional_tags",
-        "runtime_table" => "runtime_tables",
-        "inline_printconv" => "inline_printconv",
-        _ => "simple_tables",
+/// Generate a single print conv entry for a HashMap
+pub fn generate_print_conv_entry(code: &mut String, key: &str, value: &serde_json::Value) {
+    if let Some(val_str) = value.as_str() {
+        code.push_str(&format!("    map.insert(\"{}\".to_string(), \"{}\");\n", 
+            crate::common::escape_string(key), 
+            crate::common::escape_string(val_str)));
     }
+}
+
+/// Process simple_table.json configuration
+fn process_simple_table_config(
+    config_dir: &Path,
+    _module_name: &str,
+    extracted_tables: &HashMap<String, ExtractedTable>,
+    output_dir: &Path,
+) -> Result<Vec<String>> {
+    config_processor::process_config_if_exists(config_dir, "simple_table.json", |config| {
+        config_processor::process_tables_config(config, |table_config| {
+            let hash_name = table_config["hash_name"].as_str().unwrap_or("");
+            if let Some(extracted_table) = extracted_tables.get(hash_name) {
+                // Update the extracted table's metadata with config values
+                let mut updated_table = extracted_table.clone();
+                if let Some(constant_name) = table_config["constant_name"].as_str() {
+                    updated_table.metadata.constant_name = constant_name.to_string();
+                }
+                if let Some(key_type) = table_config["key_type"].as_str() {
+                    updated_table.metadata.key_type = key_type.to_string();
+                }
+                if let Some(description) = table_config["description"].as_str() {
+                    updated_table.metadata.description = description.to_string();
+                }
+                
+                // Generate individual file for this table
+                let file_name = generate_table_file(hash_name, &updated_table, output_dir)?;
+                Ok(Some(file_name))
+            } else {
+                Ok(None)
+            }
+        })
+    })
+}
+
+/// Process boolean_set.json configuration
+fn process_boolean_set_config(
+    config_dir: &Path,
+    module_name: &str,
+    output_dir: &Path,
+) -> Result<Vec<String>> {
+    config_processor::process_config_if_exists(config_dir, "boolean_set.json", |config| {
+        config_processor::process_tables_config(config, |table_config| {
+            let hash_name = table_config["hash_name"].as_str().unwrap_or("");
+            
+            // Look for extracted boolean set file
+            let boolean_set_file = path_utils::construct_extract_filename(
+                module_name,
+                &format!("boolean_set__{}", hash_name.trim_start_matches('%'))
+            );
+            let boolean_set_path = path_utils::get_extract_dir("boolean_sets").join(&boolean_set_file);
+            
+            if boolean_set_path.exists() {
+                // Load and generate
+                let boolean_set_data: serde_json::Value = config_processor::load_extracted_json(&boolean_set_path)?;
+                let file_name = generate_boolean_set_file_from_json(
+                    hash_name,
+                    &boolean_set_data,
+                    table_config,
+                    output_dir
+                )?;
+                Ok(Some(file_name))
+            } else {
+                Ok(None)
+            }
+        })
+    })
+}
+
+/// Process a single-extract configuration (process_binary_data, model_detection, etc.)
+fn process_single_extract_config<T, F>(
+    config_dir: &Path,
+    module_name: &str,
+    config_filename: &str,
+    extract_subdir: &str,
+    extract_pattern: &str,
+    output_dir: &Path,
+    generator: F,
+) -> Result<Vec<String>>
+where
+    T: serde::de::DeserializeOwned,
+    F: FnOnce(&T, &Path) -> Result<String>,
+{
+    config_processor::process_config_if_exists(config_dir, config_filename, |config| {
+        if let Some(_table_name) = config["table"].as_str() {
+            let extract_file = path_utils::construct_extract_filename(module_name, extract_pattern);
+            let extract_path = path_utils::get_extract_dir(extract_subdir).join(&extract_file);
+            
+            if extract_path.exists() {
+                let data: T = config_processor::load_extracted_json(&extract_path)?;
+                let file_name = generator(&data, output_dir)?;
+                Ok(vec![file_name])
+            } else {
+                Ok(vec![])
+            }
+        } else {
+            Ok(vec![])
+        }
+    })
 }
 
 /// Process configuration files from a directory and generate modular structure
@@ -48,74 +145,15 @@ pub fn process_config_directory(
     let module_output_dir = Path::new(output_dir).join(module_name);
     fs::create_dir_all(&module_output_dir)?;
     
-    // Check for simple_table.json configuration - create individual files
-    let simple_table_config = config_dir.join("simple_table.json");
-    if simple_table_config.exists() {
-        let config_content = fs::read_to_string(&simple_table_config)?;
-        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
-        
-        if let Some(tables) = config_json["tables"].as_array() {
-            for table_config in tables {
-                let hash_name = table_config["hash_name"].as_str().unwrap_or("");
-                if let Some(extracted_table) = extracted_tables.get(hash_name) {
-                    // Update the extracted table's metadata with config values
-                    let mut updated_table = extracted_table.clone();
-                    if let Some(constant_name) = table_config["constant_name"].as_str() {
-                        updated_table.metadata.constant_name = constant_name.to_string();
-                    }
-                    if let Some(key_type) = table_config["key_type"].as_str() {
-                        updated_table.metadata.key_type = key_type.to_string();
-                    }
-                    if let Some(description) = table_config["description"].as_str() {
-                        updated_table.metadata.description = description.to_string();
-                    }
-                    
-                    // Generate individual file for this table
-                    let file_name = generate_table_file(hash_name, &updated_table, &module_output_dir)?;
-                    generated_files.push(file_name);
-                    has_content = true;
-                }
-            }
-        }
-    }
+    // Process simple_table configuration
+    let simple_table_files = process_simple_table_config(config_dir, module_name, extracted_tables, &module_output_dir)?;
+    generated_files.extend(simple_table_files);
+    has_content |= !generated_files.is_empty();
     
-    // Check for boolean_set.json configuration - create individual files
-    let boolean_set_config = config_dir.join("boolean_set.json");
-    if boolean_set_config.exists() {
-        let config_content = fs::read_to_string(&boolean_set_config)?;
-        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
-        
-        if let Some(tables) = config_json["tables"].as_array() {
-            for table_config in tables {
-                let hash_name = table_config["hash_name"].as_str().unwrap_or("");
-                
-                // Look for extracted boolean set file using standardized naming
-                let extract_dir = Path::new("generated/extract").join("boolean_sets");
-                let module_base = module_name.trim_end_matches("_pm").to_lowercase();
-                let boolean_set_file = format!("{}__boolean_set__{}.json", 
-                    module_base, 
-                    hash_name.trim_start_matches('%').to_lowercase()
-                );
-                let boolean_set_path = extract_dir.join(&boolean_set_file);
-                
-                if boolean_set_path.exists() {
-                    // Load the extracted boolean set data
-                    let boolean_set_content = fs::read_to_string(&boolean_set_path)?;
-                    let boolean_set_data: serde_json::Value = serde_json::from_str(&boolean_set_content)?;
-                    
-                    // Generate individual file for this boolean set directly from JSON
-                    let file_name = generate_boolean_set_file_from_json(
-                        hash_name, 
-                        &boolean_set_data,
-                        table_config,
-                        &module_output_dir
-                    )?;
-                    generated_files.push(file_name);
-                    has_content = true;
-                }
-            }
-        }
-    }
+    // Process boolean_set configuration
+    let boolean_set_files = process_boolean_set_config(config_dir, module_name, &module_output_dir)?;
+    has_content |= !boolean_set_files.is_empty();
+    generated_files.extend(boolean_set_files);
     
     // Check for all tag table structure configurations  
     // Process Main table first, then subdirectory tables
@@ -155,13 +193,13 @@ pub fn process_config_directory(
             if let Some(table_name) = config_json["table"].as_str() {
                 // Look for the corresponding extracted tag structure JSON file
                 // Use the new standardized filename pattern: module__tag_structure__table.json
-                let module_base = module_name.trim_end_matches("_pm");
-                let structure_filename = format!("{}__tag_structure__{}.json", 
-                                               module_base.to_lowercase(), 
-                                               table_name.to_lowercase());
+                let structure_filename = path_utils::construct_extract_filename(
+                    module_name,
+                    &format!("tag_structure__{}", table_name.to_lowercase())
+                );
                 
                 // Tag structure files are stored separately, not in extracted_tables
-                let extract_dir = std::env::current_dir()?.join("generated/extract/tag_structures");
+                let extract_dir = std::env::current_dir()?.join(path_utils::get_extract_dir("tag_structures"));
                 let structure_path = extract_dir.join(&structure_filename);
                 
                 if structure_path.exists() {
@@ -190,225 +228,73 @@ pub fn process_config_directory(
         }
     }
     
-    // Check for process_binary_data.json configuration
-    let process_binary_data_config = config_dir.join("process_binary_data.json");
-    if process_binary_data_config.exists() {
-        let config_content = fs::read_to_string(&process_binary_data_config)?;
-        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
-        
-        // Extract table name from config
-        if let Some(_table_name) = config_json["table"].as_str() {
-            // Look for the corresponding extracted binary data JSON file
-            let extract_dir = Path::new("generated/extract").join("binary_data");
-            let module_base = module_name.trim_end_matches("_pm");
-            let binary_data_file = format!("{}__process_binary_data.json", module_base.to_lowercase());
-            let binary_data_path = extract_dir.join(&binary_data_file);
-            
-            if binary_data_path.exists() {
-                let binary_data_content = fs::read_to_string(&binary_data_path)?;
-                let binary_data_data: crate::generators::process_binary_data::ProcessBinaryDataExtraction = 
-                    serde_json::from_str(&binary_data_content)?;
-                
-                // Generate file for this ProcessBinaryData table
-                let file_name = generate_process_binary_data_file(
-                    &binary_data_data,
-                    &module_output_dir
-                )?;
-                generated_files.push(file_name);
-                has_content = true;
-            }
-        }
-    }
+    // Process process_binary_data configuration
+    let binary_data_files = process_single_extract_config::<
+        crate::generators::process_binary_data::ProcessBinaryDataExtraction,
+        _
+    >(
+        config_dir,
+        module_name,
+        "process_binary_data.json",
+        "binary_data",
+        "process_binary_data.json",
+        &module_output_dir,
+        generate_process_binary_data_file,
+    )?;
+    has_content |= !binary_data_files.is_empty();
+    generated_files.extend(binary_data_files);
     
-    // Check for model_detection.json configuration
-    let model_detection_config = config_dir.join("model_detection.json");
-    if model_detection_config.exists() {
-        let config_content = fs::read_to_string(&model_detection_config)?;
-        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
-        
-        // Extract table name from config
-        if let Some(_table_name) = config_json["table"].as_str() {
-            // Look for the corresponding extracted model detection JSON file
-            let extract_dir = Path::new("generated/extract").join("model_detection");
-            let module_base = module_name.trim_end_matches("_pm");
-            let model_detection_file = format!("{}__model_detection.json", module_base.to_lowercase());
-            let model_detection_path = extract_dir.join(&model_detection_file);
-            
-            if model_detection_path.exists() {
-                let model_detection_content = fs::read_to_string(&model_detection_path)?;
-                let model_detection_data: crate::generators::model_detection::ModelDetectionExtraction = 
-                    serde_json::from_str(&model_detection_content)?;
-                
-                // Generate file for this ModelDetection table
-                let file_name = generate_model_detection_file(
-                    &model_detection_data,
-                    &module_output_dir
-                )?;
-                generated_files.push(file_name);
-                has_content = true;
-            }
-        }
-    }
+    // Process model_detection configuration
+    let model_detection_files = process_single_extract_config::<
+        crate::generators::model_detection::ModelDetectionExtraction,
+        _
+    >(
+        config_dir,
+        module_name,
+        "model_detection.json",
+        "model_detection",
+        "model_detection.json",
+        &module_output_dir,
+        generate_model_detection_file,
+    )?;
+    has_content |= !model_detection_files.is_empty();
+    generated_files.extend(model_detection_files);
     
-    // Check for conditional_tags.json configuration
-    let conditional_tags_config = config_dir.join("conditional_tags.json");
-    if conditional_tags_config.exists() {
-        let config_content = fs::read_to_string(&conditional_tags_config)?;
-        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
-        
-        // Extract table name from config
-        if let Some(_table_name) = config_json["table"].as_str() {
-            // Look for the corresponding extracted conditional tags JSON file
-            let extract_dir = Path::new("generated/extract").join("conditional_tags");
-            let module_base = module_name.trim_end_matches("_pm");
-            let conditional_tags_file = format!("{}__conditional_tags.json", module_base.to_lowercase());
-            let conditional_tags_path = extract_dir.join(&conditional_tags_file);
-            
-            if conditional_tags_path.exists() {
-                let conditional_tags_content = fs::read_to_string(&conditional_tags_path)?;
-                let conditional_tags_data: crate::generators::conditional_tags::ConditionalTagsExtraction = 
-                    serde_json::from_str(&conditional_tags_content)?;
-                
-                // Generate file for this ConditionalTags table
-                let file_name = generate_conditional_tags_file(
-                    &conditional_tags_data,
-                    &module_output_dir
-                )?;
-                generated_files.push(file_name);
-                has_content = true;
-            }
-        }
-    }
+    // Process conditional_tags configuration
+    let conditional_tags_files = process_single_extract_config::<
+        crate::generators::conditional_tags::ConditionalTagsExtraction,
+        _
+    >(
+        config_dir,
+        module_name,
+        "conditional_tags.json",
+        "conditional_tags",
+        "conditional_tags.json",
+        &module_output_dir,
+        generate_conditional_tags_file,
+    )?;
+    has_content |= !conditional_tags_files.is_empty();
+    generated_files.extend(conditional_tags_files);
     
-    // Check for runtime_table.json configuration
-    let runtime_table_config = config_dir.join("runtime_table.json");
-    if runtime_table_config.exists() {
-        let config_content = fs::read_to_string(&runtime_table_config)?;
-        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
-        
-        // Extract each table from the tables array
-        if let Some(tables) = config_json["tables"].as_array() {
-            for table_config in tables {
-                if let Some(table_name) = table_config["table_name"].as_str() {
-                    let clean_table_name = table_name.trim_start_matches('%');
-                    
-                    // Look for the corresponding extracted runtime table JSON file
-                    let extract_dir = Path::new("generated/extract").join("runtime_tables");
-                    let module_base = module_name.trim_end_matches("_pm");
-                    let runtime_table_file = format!("{}__runtime_table__{}.json", 
-                                                   module_base.to_lowercase(), 
-                                                   clean_table_name.to_lowercase());
-                    let runtime_table_path = extract_dir.join(&runtime_table_file);
-                    
-                    if runtime_table_path.exists() {
-                        let runtime_table_content = fs::read_to_string(&runtime_table_path)?;
-                        let runtime_table_data: crate::schemas::input::RuntimeTablesData = 
-                            serde_json::from_str(&runtime_table_content)?;
-                        
-                        // Generate file for this RuntimeTable
-                        let file_name = generate_runtime_table_file(
-                            &runtime_table_data,
-                            &module_output_dir,
-                            table_config
-                        )?;
-                        generated_files.push(file_name);
-                        has_content = true;
-                    }
-                }
-            }
-        }
-    }
+    // Process runtime_table configuration
+    let runtime_table_files = process_runtime_table_config(config_dir, module_name, &module_output_dir)?;
+    has_content |= !runtime_table_files.is_empty();
+    generated_files.extend(runtime_table_files);
     
-    // Check for tag_kit.json configuration - create modular tag kit files
-    let tag_kit_config = config_dir.join("tag_kit.json");
-    if tag_kit_config.exists() {
-        let config_content = fs::read_to_string(&tag_kit_config)?;
-        let _config_json: serde_json::Value = serde_json::from_str(&config_content)?;
-        
-        // Look for extracted tag kit JSON file
-        let extract_dir = Path::new("generated/extract").join("tag_kits");
-        let module_base = module_name.trim_end_matches("_pm");
-        let tag_kit_file = format!("{}__tag_kit.json", module_base.to_lowercase());
-        let tag_kit_path = extract_dir.join(&tag_kit_file);
-        
-        if tag_kit_path.exists() {
-            let tag_kit_content = fs::read_to_string(&tag_kit_path)?;
-            let tag_kit_data: crate::schemas::tag_kit::TagKitExtraction = 
-                serde_json::from_str(&tag_kit_content)?;
-            
-            // Generate modular tag kit files in module directory
-            let generated_tag_kit_files = generate_tag_kit_module(&tag_kit_data, &module_output_dir)?;
-            for file_name in generated_tag_kit_files {
-                generated_files.push(file_name);
-            }
-            has_content = true;
-        }
-    }
+    // Process tag_kit configuration
+    let tag_kit_files = process_tag_kit_config(config_dir, module_name, &module_output_dir)?;
+    has_content |= !tag_kit_files.is_empty();
+    generated_files.extend(tag_kit_files);
     
-    // Check for inline_printconv.json configuration - create individual files
-    let inline_printconv_config = config_dir.join("inline_printconv.json");
-    if inline_printconv_config.exists() {
-        let config_content = fs::read_to_string(&inline_printconv_config)?;
-        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
-        
-        if let Some(tables) = config_json["tables"].as_array() {
-            for table_config in tables {
-                let table_name = table_config["table_name"].as_str().unwrap_or("");
-                
-                // Look for the corresponding extracted inline printconv JSON file
-                let extract_dir = Path::new("generated/extract").join("inline_printconv");
-                let inline_file_name = format!("inline_printconv__{}.json", 
-                    convert_table_name_to_snake_case(table_name)
-                );
-                let inline_file_path = extract_dir.join(&inline_file_name);
-                
-                if inline_file_path.exists() {
-                    let inline_data_content = fs::read_to_string(&inline_file_path)?;
-                    let inline_data: inline_printconv::InlinePrintConvData = 
-                        serde_json::from_str(&inline_data_content)?;
-                    
-                    // Generate file for this table's inline PrintConv entries
-                    let file_name = generate_inline_printconv_file(
-                        &inline_data, 
-                        table_name,
-                        &module_output_dir
-                    )?;
-                    generated_files.push(file_name);
-                    has_content = true;
-                }
-            }
-        }
-    }
+    // Process inline_printconv configuration
+    let inline_printconv_files = process_inline_printconv_config(config_dir, module_name, &module_output_dir)?;
+    has_content |= !inline_printconv_files.is_empty();
+    generated_files.extend(inline_printconv_files);
     
-    // Check for regex_patterns.json configuration - create magic number patterns file
-    let regex_patterns_config = config_dir.join("regex_patterns.json");
-    if regex_patterns_config.exists() {
-        let config_content = fs::read_to_string(&regex_patterns_config)?;
-        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
-        
-        if let Some(tables) = config_json["tables"].as_array() {
-            for table_config in tables {
-                let _hash_name = table_config["hash_name"].as_str().unwrap_or("");
-                
-                // Look for extracted regex patterns file using standardized naming
-                let extract_dir = Path::new("generated/extract").join("file_types");
-                let module_base = module_name.trim_end_matches("_pm").to_lowercase();
-                let regex_file = format!("{module_base}__regex_patterns.json");
-                let regex_path = extract_dir.join(&regex_file);
-                
-                if regex_path.exists() {
-                    // Generate regex_patterns.rs file
-                    let file_name = generate_regex_patterns_file(
-                        &regex_path,
-                        table_config,
-                        &module_output_dir
-                    )?;
-                    generated_files.push(file_name);
-                    has_content = true;
-                }
-            }
-        }
-    }
+    // Process regex_patterns configuration
+    let regex_patterns_files = process_regex_patterns_config(config_dir, module_name, &module_output_dir)?;
+    has_content |= !regex_patterns_files.is_empty();
+    generated_files.extend(regex_patterns_files);
     
     // Check for additional standalone generated files that might exist in the output directory
     // These are files generated by standalone generators outside the config-based system
@@ -422,7 +308,7 @@ pub fn process_config_directory(
     
     // Only generate mod.rs if we have content
     if has_content {
-        generate_module_mod_file(&generated_files, module_name, &module_output_dir)?;
+        file_generation::generate_module_mod_file(&generated_files, module_name, &module_output_dir)?;
     }
     
     Ok(())
@@ -435,27 +321,14 @@ fn generate_table_file(
     output_dir: &Path,
 ) -> Result<String> {
     let table_code = standard::generate_lookup_table(hash_name, extracted_table)?;
-    
-    // Create descriptive filename from hash name
-    let file_name = hash_name_to_filename(hash_name);
+    let file_name = path_utils::hash_name_to_filename(hash_name);
     let file_path = output_dir.join(format!("{file_name}.rs"));
     
-    let mut content = String::new();
-    content.push_str(&format!("//! {}\n", extracted_table.metadata.description));
-    
-    // Convert module filename to relative path for display
-    let module_path = module_to_source_path(&extracted_table.source.module);
-    
-    content.push_str(&format!("//! \n//! Auto-generated from {module_path}\n"));
-    content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
-    content.push_str("use std::collections::HashMap;\n");
-    content.push_str("use std::sync::LazyLock;\n\n");
-    content.push_str(&table_code);
-    
-    fs::write(&file_path, content)?;
-    debug!("  ✓ Generated {}", file_path.display());
-    
-    Ok(file_name)
+    file_generation::FileGenerator::new(&extracted_table.metadata.description)
+        .with_source_module(&extracted_table.source.module)
+        .with_standard_imports()
+        .with_content(table_code)
+        .write_to_file(&file_path)
 }
 
 /// Generate individual file for a boolean set
@@ -466,77 +339,17 @@ fn generate_boolean_set_file(
     output_dir: &Path,
 ) -> Result<String> {
     let table_code = data_sets::boolean::generate_boolean_set(hash_name, extracted_table)?;
-    
-    // Create descriptive filename from hash name
-    let file_name = hash_name_to_filename(hash_name);
+    let file_name = path_utils::hash_name_to_filename(hash_name);
     let file_path = output_dir.join(format!("{file_name}.rs"));
     
-    let mut content = String::new();
-    content.push_str(&format!("//! {}\n", extracted_table.metadata.description));
-    
-    // Convert module filename to relative path for display
-    let module_path = module_to_source_path(&extracted_table.source.module);
-    
-    content.push_str(&format!("//! \n//! Auto-generated from {module_path}\n"));
-    content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
-    content.push_str("use std::collections::HashSet;\n");
-    content.push_str("use std::sync::LazyLock;\n\n");
-    content.push_str(&table_code);
-    
-    fs::write(&file_path, content)?;
-    debug!("  ✓ Generated {}", file_path.display());
-    
-    Ok(file_name)
+    file_generation::FileGenerator::new(&extracted_table.metadata.description)
+        .with_source_module(&extracted_table.source.module)
+        .with_hashset_imports()
+        .with_content(table_code)
+        .write_to_file(&file_path)
 }
 
-/// Generate mod.rs file that re-exports all generated files
-fn generate_module_mod_file(
-    generated_files: &[String],
-    module_name: &str,
-    output_dir: &Path,
-) -> Result<()> {
-    let mut mod_content = String::new();
-    
-    // File header with source path
-    let source_path = module_dir_to_source_path(module_name);
-    mod_content.push_str(&format!("//! Generated lookup tables from {}\n", module_name.replace("_pm", ".pm")));
-    mod_content.push_str("//!\n");
-    mod_content.push_str(&format!("//! Auto-generated from {source_path}\n"));
-    mod_content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
-    
-    // Module declarations
-    for file_name in generated_files {
-        mod_content.push_str(&format!("pub mod {file_name};\n"));
-    }
-    mod_content.push('\n');
-    
-    // Re-export all lookup functions and constants
-    mod_content.push_str("// Re-export all lookup functions and constants\n");
-    for file_name in generated_files {
-        mod_content.push_str(&format!("pub use {file_name}::*;\n"));
-    }
-    
-    let mod_file_path = output_dir.join("mod.rs");
-    fs::write(&mod_file_path, mod_content)?;
-    
-    debug!("  ✓ Generated {}", mod_file_path.display());
-    Ok(())
-}
 
-/// Convert hash name to a valid Rust filename
-fn hash_name_to_filename(hash_name: &str) -> String {
-    hash_name
-        .trim_start_matches('%')
-        .chars()
-        .map(|c| {
-            if c.is_alphanumeric() {
-                c.to_ascii_lowercase()
-            } else {
-                '_'
-            }
-        })
-        .collect()
-}
 
 /// Generate file for inline PrintConv tables
 fn generate_inline_printconv_file(
@@ -545,35 +358,21 @@ fn generate_inline_printconv_file(
     output_dir: &Path,
 ) -> Result<String> {
     let table_code = inline_printconv::generate_inline_printconv_file(inline_data, table_name)?;
-    
-    // Create descriptive filename from table name
     let file_name = table_name
         .chars()
         .map(|c| if c.is_alphanumeric() { c.to_ascii_lowercase() } else { '_' })
         .collect::<String>() + "_inline";
-    
     let file_path = output_dir.join(format!("{file_name}.rs"));
     
-    let mut content = String::new();
-    content.push_str(&format!("//! Inline PrintConv tables for {table_name} table\n"));
+    let description = format!("Inline PrintConv tables for {table_name} table");
+    let module = inline_data.source.as_ref().map(|s| s.module.as_str()).unwrap_or("unknown module");
     
-    // Convert module filename to relative path for display
-    let module_path = if let Some(ref source) = inline_data.source {
-        module_to_source_path(&source.module)
-    } else {
-        "unknown module".to_string()
-    };
-    
-    content.push_str(&format!("//! \n//! Auto-generated from {module_path} (table: {table_name})\n"));
-    content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
-    content.push_str("use std::collections::HashMap;\n");
-    content.push_str("use std::sync::LazyLock;\n\n");
-    content.push_str(&table_code);
-    
-    fs::write(&file_path, content)?;
-    debug!("  ✓ Generated {}", file_path.display());
-    
-    Ok(file_name)
+    file_generation::FileGenerator::new(description)
+        .with_source_module(module)
+        .with_source_table(table_name)
+        .with_standard_imports()
+        .with_content(table_code)
+        .write_to_file(&file_path)
 }
 
 /// Generate individual file for a tag table structure
@@ -582,25 +381,16 @@ fn generate_tag_structure_file(
     output_dir: &Path,
 ) -> Result<String> {
     let structure_code = crate::generators::tag_structure::generate_tag_structure(structure_data)?;
-    
-    // Create filename based on table name
     let file_name = if structure_data.source.table == "Main" {
         "tag_structure".to_string()
     } else {
-        // For subdirectory tables, use a different filename
         format!("{}_tag_structure", structure_data.source.table.to_lowercase())
     };
     let file_path = output_dir.join(format!("{file_name}.rs"));
     
-    let mut content = String::new();
-    content.push_str("//! Auto-generated from ExifTool source\n");
-    content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
-    content.push_str(&structure_code);
-    
-    fs::write(&file_path, content)?;
-    debug!("  ✓ Generated {}", file_path.display());
-    
-    Ok(file_name)
+    file_generation::FileGenerator::new("Auto-generated from ExifTool source")
+        .with_content(structure_code)
+        .write_to_file(&file_path)
 }
 
 fn generate_process_binary_data_file(
@@ -608,21 +398,13 @@ fn generate_process_binary_data_file(
     output_dir: &Path,
 ) -> Result<String> {
     let binary_code = crate::generators::process_binary_data::generate_process_binary_data(binary_data)?;
-    
-    // Create filename from table name
     let table_name = &binary_data.table_data.table_name;
     let file_name = format!("{}_binary_data", table_name.to_lowercase());
     let file_path = output_dir.join(format!("{file_name}.rs"));
     
-    let mut content = String::new();
-    content.push_str("//! Auto-generated from ExifTool source\n");
-    content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
-    content.push_str(&binary_code);
-    
-    fs::write(&file_path, content)?;
-    debug!("  ✓ Generated {}", file_path.display());
-    
-    Ok(file_name.to_string())
+    file_generation::FileGenerator::new("Auto-generated from ExifTool source")
+        .with_content(binary_code)
+        .write_to_file(&file_path)
 }
 
 fn generate_model_detection_file(
@@ -630,21 +412,13 @@ fn generate_model_detection_file(
     output_dir: &Path,
 ) -> Result<String> {
     let model_code = crate::generators::model_detection::generate_model_detection(model_detection)?;
-    
-    // Create filename from table name
     let table_name = &model_detection.patterns_data.table_name;
     let file_name = format!("{}_model_detection", table_name.to_lowercase());
     let file_path = output_dir.join(format!("{file_name}.rs"));
     
-    let mut content = String::new();
-    content.push_str("//! Auto-generated from ExifTool source\n");
-    content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
-    content.push_str(&model_code);
-    
-    fs::write(&file_path, content)?;
-    debug!("  ✓ Generated {}", file_path.display());
-    
-    Ok(file_name.to_string())
+    file_generation::FileGenerator::new("Auto-generated from ExifTool source")
+        .with_content(model_code)
+        .write_to_file(&file_path)
 }
 
 fn generate_conditional_tags_file(
@@ -652,43 +426,150 @@ fn generate_conditional_tags_file(
     output_dir: &Path,
 ) -> Result<String> {
     let conditional_code = crate::generators::conditional_tags::generate_conditional_tags(conditional_tags)?;
-    
-    // Create filename from table name
     let table_name = &conditional_tags.conditional_data.table_name;
     let file_name = format!("{}_conditional_tags", table_name.to_lowercase());
     let file_path = output_dir.join(format!("{file_name}.rs"));
     
-    let mut content = String::new();
-    content.push_str("//! Auto-generated from ExifTool source\n");
-    content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
-    content.push_str(&conditional_code);
-    
-    fs::write(&file_path, content)?;
-    debug!("  ✓ Generated {}", file_path.display());
-    
-    Ok(file_name.to_string())
+    file_generation::FileGenerator::new("Auto-generated from ExifTool source")
+        .with_content(conditional_code)
+        .write_to_file(&file_path)
 }
 
-/// Convert table name to snake_case to match Perl transformation
-/// Replicates: s/([A-Z])/_\L$1/g; s/^_//; lc($filename)
-fn convert_table_name_to_snake_case(table_name: &str) -> String {
-    let mut result = String::new();
-    
-    for ch in table_name.chars() {
-        if ch.is_uppercase() {
-            result.push('_');
-            result.push(ch.to_ascii_lowercase());
-        } else {
-            result.push(ch);
+/// Process tag_kit configuration
+fn process_tag_kit_config(
+    config_dir: &Path,
+    module_name: &str,
+    module_output_dir: &Path,
+) -> Result<Vec<String>> {
+    config_processor::process_config_if_exists(
+        config_dir,
+        "tag_kit.json",
+        |_config_json| {
+            // Look for extracted tag kit JSON file
+            let tag_kit_file = path_utils::construct_extract_filename(module_name, "tag_kit.json");
+            let tag_kit_path = path_utils::get_extract_dir("tag_kits").join(&tag_kit_file);
+            
+            if tag_kit_path.exists() {
+                let tag_kit_data: crate::schemas::tag_kit::TagKitExtraction = 
+                    config_processor::load_extracted_json(&tag_kit_path)?;
+                
+                // Generate modular tag kit files in module directory
+                Ok(generate_tag_kit_module(&tag_kit_data, module_output_dir)?)
+            } else {
+                Ok(Vec::new())
+            }
         }
-    }
-    
-    // Remove leading underscore if present
-    if result.starts_with('_') {
-        result.remove(0);
-    }
-    
-    result
+    )
+}
+
+/// Process inline_printconv configuration
+fn process_inline_printconv_config(
+    config_dir: &Path,
+    _module_name: &str,
+    module_output_dir: &Path,
+) -> Result<Vec<String>> {
+    config_processor::process_config_if_exists(
+        config_dir,
+        "inline_printconv.json",
+        |config_json| {
+            config_processor::process_tables_config(config_json, |table_config| {
+                let table_name = table_config["table_name"].as_str().unwrap_or("");
+                
+                // Look for the corresponding extracted inline printconv JSON file
+                let inline_file_name = format!("inline_printconv__{}.json", 
+                    path_utils::convert_table_name_to_snake_case(table_name)
+                );
+                let inline_file_path = path_utils::get_extract_dir("inline_printconv").join(&inline_file_name);
+                
+                if inline_file_path.exists() {
+                    let inline_data: inline_printconv::InlinePrintConvData = 
+                        config_processor::load_extracted_json(&inline_file_path)?;
+                    
+                    // Generate file for this table's inline PrintConv entries
+                    Ok(Some(generate_inline_printconv_file(
+                        &inline_data, 
+                        table_name,
+                        module_output_dir
+                    )?))
+                } else {
+                    Ok(None)
+                }
+            })
+        }
+    )
+}
+
+/// Process regex_patterns configuration
+fn process_regex_patterns_config(
+    config_dir: &Path,
+    module_name: &str,
+    module_output_dir: &Path,
+) -> Result<Vec<String>> {
+    config_processor::process_config_if_exists(
+        config_dir,
+        "regex_patterns.json",
+        |config_json| {
+            config_processor::process_tables_config(config_json, |table_config| {
+                // Look for extracted regex patterns file using standardized naming
+                let module_base = path_utils::get_module_base(module_name);
+                let regex_file = format!("{module_base}__regex_patterns.json").to_lowercase();
+                let regex_path = path_utils::get_extract_dir("file_types").join(&regex_file);
+                
+                if regex_path.exists() {
+                    // Generate regex_patterns.rs file
+                    Ok(Some(generate_regex_patterns_file(
+                        &regex_path,
+                        table_config,
+                        module_output_dir
+                    )?))
+                } else {
+                    Ok(None)
+                }
+            })
+        }
+    )
+}
+
+/// Process runtime_table configuration
+fn process_runtime_table_config(
+    config_dir: &Path,
+    module_name: &str,
+    module_output_dir: &Path,
+) -> Result<Vec<String>> {
+    config_processor::process_config_if_exists(
+        config_dir,
+        "runtime_table.json",
+        |config_json| {
+            config_processor::process_tables_config(config_json, |table_config| {
+                if let Some(table_name) = table_config["table_name"].as_str() {
+                    let clean_table_name = table_name.trim_start_matches('%');
+                    
+                    // Look for the corresponding extracted runtime table JSON file
+                    let module_base = path_utils::get_module_base(module_name);
+                    let runtime_table_file = format!("{}__runtime_table__{}.json", 
+                                                   module_base.to_lowercase(), 
+                                                   clean_table_name.to_lowercase());
+                    let runtime_table_path = path_utils::get_extract_dir("runtime_tables").join(&runtime_table_file);
+                    
+                    if runtime_table_path.exists() {
+                        let runtime_table_data: crate::schemas::input::RuntimeTablesData = 
+                            config_processor::load_extracted_json(&runtime_table_path)?;
+                        
+                        // Generate file for this RuntimeTable
+                        Ok(Some(generate_runtime_table_file(
+                            &runtime_table_data,
+                            module_output_dir,
+                            table_config
+                        )?))
+                    } else {
+                        Ok(None)
+                    }
+                } else {
+                    Ok(None)
+                }
+            })
+        }
+    )
 }
 
 /// Detect additional generated files that exist in the output directory
@@ -799,62 +680,22 @@ fn generate_tag_kit_module(
     tag_kit_data: &crate::schemas::tag_kit::TagKitExtraction,
     module_output_dir: &Path,
 ) -> Result<Vec<String>> {
-    let mut generated_files = Vec::new();
+    // Get the module name from the output directory
+    let module_name = module_output_dir
+        .file_name()
+        .and_then(|s| s.to_str())
+        .unwrap_or("unknown");
     
-    // Create tag_kit subdirectory within the module 
-    let tag_kit_dir = module_output_dir.join("tag_kit");
-    fs::create_dir_all(&tag_kit_dir)?;
-    
-    // Use existing modular generation logic but output to module subdirectory
-    let categories = crate::generators::tag_kit_split::split_tag_kits(&tag_kit_data.tag_kits);
-    let mut total_print_conv_count = 0;
-    let mut category_modules = Vec::new();
-    
-    // Generate a module for each category with tags (sorted for deterministic order)
-    let mut sorted_categories: Vec<_> = categories.iter().collect();
-    sorted_categories.sort_by_key(|(category, _)| *category);
-    
-    for (category, tag_kits) in sorted_categories {
-        if tag_kits.is_empty() {
-            continue;
-        }
-        
-        let module_name_cat = category.module_name();
-        let (module_code, print_conv_count) = generate_tag_kit_category_module(
-            module_name_cat,
-            tag_kits,
-            &tag_kit_data.source,
-            &mut total_print_conv_count,
-        )?;
-        
-        // Write category module to tag_kit subdirectory
-        let category_file = format!("{module_name_cat}.rs");
-        let category_path = tag_kit_dir.join(&category_file);
-        fs::write(&category_path, module_code)?;
-        
-        category_modules.push(module_name_cat.to_string());
-        
-        debug!("  🏷️  Generated tag_kit/{} with {} tags, {} PrintConv tables",
-            module_name_cat,
-            tag_kits.len(),
-            print_conv_count
-        );
-    }
-    
-    // Generate mod.rs for tag_kit subdirectory
-    let tag_kit_mod_code = generate_tag_kit_mod_file(&category_modules, tag_kit_data)?;
-    let mod_path = tag_kit_dir.join("mod.rs");
-    fs::write(&mod_path, tag_kit_mod_code)?;
+    // Use the enhanced tag_kit_modular generator with subdirectory support
+    // Pass the module_output_dir directly so tag_kit is created inside it
+    crate::generators::tag_kit_modular::generate_modular_tag_kit(
+        tag_kit_data,
+        module_output_dir.to_str().unwrap(),
+        module_name,
+    )?;
     
     // Return "tag_kit" as the generated module name (for parent mod.rs)
-    generated_files.push("tag_kit".to_string());
-    
-    debug!("  🏷️  Generated modular tag_kit with {} tags split into {} categories", 
-        tag_kit_data.tag_kits.len(),
-        category_modules.len()
-    );
-    
-    Ok(generated_files)
+    Ok(vec!["tag_kit".to_string()])
 }
 
 /// Generate code for a single tag kit category module
@@ -1165,7 +1006,7 @@ fn generate_boolean_set_file_from_json(
     code.push_str("}\n");
     
     // Create descriptive filename from hash name
-    let file_name = hash_name_to_filename(hash_name);
+    let file_name = path_utils::hash_name_to_filename(hash_name);
     let file_path = output_dir.join(format!("{file_name}.rs"));
     
     let mut content = String::new();

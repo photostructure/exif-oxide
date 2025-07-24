@@ -74,7 +74,7 @@ pub fn should_skip_empty_json(json_content: &str) -> bool {
 mod tests {
     use super::*;
     use std::fs;
-    use tempfile::{tempdir, NamedTempFile};
+    use tempfile::tempdir;
 
     #[test]
     fn test_read_utf8_with_fallback() {
