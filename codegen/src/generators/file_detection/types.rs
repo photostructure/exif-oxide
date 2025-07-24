@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
+use tracing::{debug, warn};
 
 #[derive(Debug, Deserialize)]
 pub struct FileTypeLookupData {
@@ -47,7 +48,7 @@ pub fn generate_file_type_lookup(json_dir: &Path, output_dir: &str) -> Result<()
     let file_type_lookup_path = json_dir.join("file_types").join("exiftool_file_type_lookup.json");
 
     if !file_type_lookup_path.exists() {
-        println!("    ⚠️  exiftool_file_type_lookup.json not found, skipping file type lookups");
+        warn!("    ⚠️  exiftool_file_type_lookup.json not found, skipping file type lookups");
         return Ok(());
     }
 
@@ -57,7 +58,7 @@ pub fn generate_file_type_lookup(json_dir: &Path, output_dir: &str) -> Result<()
     // Generate file_type_lookup.rs directly in output_dir (not in subdirectory)
     generate_file_type_lookup_module(&data, Path::new(output_dir))?;
 
-    println!(
+    debug!(
         "    ✓ Generated file type lookup tables with {} total lookups",
         data.stats.total_lookups
     );

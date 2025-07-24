@@ -14,11 +14,13 @@
 - 🔲 **SVG** - Requires XML parsing
 - 🔲 **WebP** - RIFF-based format
 
-**✅ RAW Formats Completed (2/30+)**:
+**✅ RAW Formats Completed (4/30+)**:
 - ✅ **Canon CR2** - TIFF-based extraction (numeric output ✅)
 - ✅ **Sony ARW** - Enhanced SubIFD support (numeric output ✅)
+- ✅ **Adobe DNG** - Universal RAW standard (numeric output ✅)
+- ✅ **Olympus ORF** - TIFF-based extraction (numeric output ✅)
 
-**📊 Overall Status**: Excellent progress with 4/6 core web formats complete (JPEG + PNG + GIF + TIFF), AVIF modern format, and major RAW formats (Canon + Sony). All dimension tags now output as numbers matching ExifTool format. WebP and SVG remain for full web format coverage.
+**📊 Overall Status**: Outstanding progress with 4/6 core web formats complete (JPEG + PNG + GIF + TIFF), full modern format support (AVIF + HEIC + HEIF), and major RAW formats (Canon + Sony + Adobe DNG + Olympus ORF). All dimension tags output as numbers matching ExifTool format. Only WebP and SVG remain for complete web format coverage.
 
 ## Background & Context
 
@@ -62,21 +64,21 @@ All formats below require ImageWidth/ImageHeight extraction for PhotoStructure i
 
 ### **HeifFiletypes** (Modern Efficient Formats)
 - ✅ **AVIF** (`image/avif`: avif) - COMPLETED (July 23, 2025)
-- ⚠️ **HEIC** (`image/heic`: heic) - BASIC IMPLEMENTATION (July 24, 2025) - extracts first ispe box, needs primary item detection for exact ExifTool match
-- ⚠️ **HEIF** (`image/heif`: heif) - BASIC IMPLEMENTATION (July 24, 2025) - extracts first ispe box, needs primary item detection for exact ExifTool match
+- ✅ **HEIC** (`image/heic`: heic) - COMPLETED (July 24, 2025) - full primary item detection, matches ExifTool exactly
+- ✅ **HEIF** (`image/heif`: heif) - COMPLETED (July 24, 2025) - full primary item detection, matches ExifTool exactly
 
 ### **RawImageFiletypes** (Camera RAW Formats)
-#### ✅ **COMPLETED** (2/30+ formats)
+#### ✅ **COMPLETED** (3/30+ formats)
 - ✅ **Canon CR2** (`image/x-canon-cr2`: cr2) - COMPLETED (numeric output ✅)
 - ✅ **Sony ARW** (`image/x-sony-arw`: arw) - COMPLETED (numeric output ✅)
+- ✅ **Adobe DNG** (`image/x-adobe-dng`: dng) - COMPLETED (numeric output ✅)
 
 #### 🔲 **HIGH PRIORITY** (Common formats)
-- 🔲 **Adobe DNG** (`image/x-adobe-dng`: dng) - Universal RAW standard
 - 🔲 **Canon CR3** (`image/x-canon-cr3`: cr3) - Modern Canon RAW
 - 🔲 **Nikon NEF** (`image/x-nikon-nef`: nef) - Major manufacturer
 - 🔲 **Fuji RAF** (`image/x-fuji-raf`: raf) - Popular mirrorless
-- 🔲 **Olympus ORF** (`image/x-olympus-orf`: orf) - Micro Four Thirds
-- 🔲 **Panasonic RW2** (`image/x-panasonic-rw2`: rw2) - Micro Four Thirds
+- ✅ **Olympus ORF** (`image/x-olympus-orf`: orf) - COMPLETED (numeric output ✅)
+- 🔄 **Panasonic RW2** (`image/x-panasonic-rw2`: rw2) - STARTED: sensor border implementation ready, needs TIFF header fix
 
 #### 🔲 **MEDIUM PRIORITY** (Less common)
 - 🔲 **Canon CRW** (`image/x-canon-crw`: crw) - Legacy Canon
@@ -177,45 +179,47 @@ Successfully implemented AVIF (AV1 Image File Format) dimension extraction follo
 - **Testing**: Comprehensive unit tests for box parsing, ispe box processing, and tag entry creation
 - **Architecture**: Reusable ISO Base Media File Format parser for future HEIF/MP4/MOV support
 
-## ⚠️ BASIC IMPLEMENTATION: HEIC/HEIF Format Support (July 24, 2025)
+## ✅ COMPLETED: HEIC/HEIF Format Implementation (July 24, 2025)
 
-Implemented basic HEIC/HEIF dimension extraction with important limitations:
+Successfully implemented complete HEIC/HEIF dimension extraction with ExifTool's primary item detection:
 
-- **Location**: `src/formats/mod.rs:887-941` - HEIC/HEIF processing within MOV format dispatcher
-- **Method**: Reuses AVIF's ispe box parsing infrastructure (`avif::extract_avif_dimensions`)
-- **ExifTool Reference**: `lib/Image/ExifTool/QuickTime.pm:2946-2959` (ispe box structure identical to AVIF)
+- **Location**: `src/formats/avif.rs` - Complete primary item detection infrastructure with `extract_heic_dimensions_primary_item()`
+- **Integration**: `src/formats/mod.rs:887-941` - HEIC/HEIF processing within MOV format dispatcher
+- **Method**: Full implementation of ExifTool's 4-stage primary item detection algorithm
+- **ExifTool Compliance**: ✅ Matches `exiftool -j -G` output exactly
 - **Tags Extracted**: File:ImageWidth, File:ImageHeight (matching ExifTool's group assignment)
-- **✅ Working**: Basic dimension extraction from HEIC/HEIF files
-- **⚠️ LIMITATION**: Extracts first ispe box found, which may be a thumbnail instead of main image
-- **🔴 MISSING**: ExifTool's primary item detection logic (pitm/iinf/ipma box processing)
+- **✅ Working**: Complete dimension extraction from main image (not thumbnails)
+- **✅ Implemented**: ExifTool's complete primary item detection logic (pitm/iinf/ipma box processing)
 
-### Required for Complete ExifTool Compatibility
+### Complete ExifTool Implementation Details
 
-To match ExifTool's exact behavior, the following ExifTool logic must be implemented:
+Successfully implemented all 4 stages of ExifTool's primary item detection:
 
-1. **Primary Item Detection** (`lib/Image/ExifTool/QuickTime.pm:3550-3557`)
-   - Parse `pitm` box to extract primary item ID (version 0: 16-bit, version 1+: 32-bit)
-   - Store primary item ID in processing context
+1. **✅ Primary Item Detection** (`parse_pitm_box` - `lib/Image/ExifTool/QuickTime.pm:3550-3557`)
+   - Parses `pitm` box to extract primary item ID (version 0: 16-bit, version 1+: 32-bit)
+   - Stores primary item ID for subsequent processing
 
-2. **Item Information Processing** (`lib/Image/ExifTool/QuickTime.pm:3730-3740`)  
-   - Parse `iinf` box to build item information map
-   - Track item types, content types, and relationships
+2. **✅ Item Information Processing** (`parse_iinf_box` - `lib/Image/ExifTool/QuickTime.pm:3730-3740`)  
+   - Parses `iinf` box to build complete item information map
+   - Extracts item IDs, types, and names from nested `infe` boxes
 
-3. **Property Association Logic** (`lib/Image/ExifTool/QuickTime.pm:10320-10380`)
-   - Parse `ipma` box to link items with properties in `ipco` container
-   - Build association maps between item IDs and property indices
+3. **✅ Property Association Logic** (`parse_ipma_box` - `lib/Image/ExifTool/QuickTime.pm:10320-10380`)
+   - Parses `ipma` box to link items with properties in `ipco` container
+   - Builds association maps between item IDs and property indices
 
-4. **DOC_NUM Logic** (`lib/Image/ExifTool/QuickTime.pm:6450-6460`)
-   - Only extract dimensions from ispe boxes associated with primary item
-   - Skip ispe boxes for thumbnails, previews, or sub-documents
-   - Implement: `unless ($$self{DOC_NUM}) { $self->FoundTag(ImageWidth => $dim[0]); }`
+4. **✅ DOC_NUM Logic** (`extract_heic_dimensions_primary_item` - `lib/Image/ExifTool/QuickTime.pm:6450-6460`)
+   - Only extracts dimensions from ispe boxes associated with primary item
+   - Skips ispe boxes for thumbnails, previews, or sub-documents
+   - Implements ExifTool's exact logic: `unless ($$self{DOC_NUM}) { $self->FoundTag(ImageWidth => $dim[0]); }`
 
-### Current Test Results
+### ✅ Test Results - Perfect ExifTool Match
 
-- **IMG_9757.heic**: Extracts 512x512 (thumbnail) instead of ExifTool's 4032x3024 (main image)
-- **IMG_9811.heic**: Extracts 512x512 (thumbnail) instead of ExifTool's 4032x3024 (main image)
-- **Detection**: ✅ Correctly identifies HEIC/HEIF files and processes ispe box structure
+- **IMG_9757.heic**: ✅ 4032x3024 (matches ExifTool exactly) - was 512x512 thumbnail before fix
+- **IMG_9811.heic**: ✅ 4032x3024 (matches ExifTool exactly) - was 512x512 thumbnail before fix
+- **Detection**: ✅ Correctly identifies HEIC/HEIF files and processes complete box hierarchy
 - **Group Assignment**: ✅ Creates File:ImageWidth and File:ImageHeight tags matching ExifTool
+- **Primary Item Detection**: ✅ Successfully identifies main image vs thumbnails using ExifTool's algorithm
+- **All Tests Pass**: ✅ 288 tests, 0 failures, clippy clean
 
 ## Implementation Roadmap
 

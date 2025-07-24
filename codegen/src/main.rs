@@ -7,6 +7,8 @@ use anyhow::Result;
 use clap::{Arg, Command};
 use std::fs;
 use std::path::Path;
+use tracing::{info, debug};
+use tracing_subscriber::EnvFilter;
 
 mod common;
 mod config;
@@ -31,8 +33,14 @@ use validation::validate_all_configs;
 
 
 fn main() -> Result<()> {
-    // Initialize tracing
-    tracing_subscriber::fmt::init();
+    // Initialize tracing with default level of INFO to keep output quiet by default
+    // Set RUST_LOG=debug for verbose output
+    tracing_subscriber::fmt()
+        .with_env_filter(
+            EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| EnvFilter::new("info"))
+        )
+        .init();
     
     let matches = Command::new("exif-oxide-codegen")
         .version("0.1.0")
@@ -63,8 +71,8 @@ fn main() -> Result<()> {
     // Create output directory
     create_directories(Path::new(output_dir))?;
 
-    println!("🔧 exif-oxide Code Generation");
-    println!("=============================");
+    info!("🔧 exif-oxide Code Generation");
+    debug!("=============================");
     
     // Extract all tables using Rust orchestration (replaces Makefile extract-* targets)
     // This now includes tag definitions and composite tags via the config system
@@ -72,7 +80,7 @@ fn main() -> Result<()> {
 
     // Process modular tag tables
     let extract_dir = current_dir.join("generated").join("extract");
-    println!("\n📋 Processing modular tag tables...");
+    debug!("📋 Processing modular tag tables...");
     process_tag_tables_modular(&extract_dir, output_dir)?;
 
     // Tag kit processing is now integrated into the module-based system
@@ -81,13 +89,13 @@ fn main() -> Result<()> {
     // All extraction is now handled by the new modular configuration system below.
 
     // Generate file type detection code
-    println!("\n📁 Generating file type detection code...");
+    debug!("📁 Generating file type detection code...");
     let extract_dir = current_dir.join("generated").join("extract");
-    generators::file_detection::generate_file_detection_code(&extract_dir, &output_dir)?;
+    generators::file_detection::generate_file_detection_code(&extract_dir, output_dir)?;
 
     // Create or update file_types mod.rs to include generated modules
-    let file_types_mod_path = format!("{}/file_types/mod.rs", output_dir);
-    println!("\n📝 Creating/updating file_types mod.rs with generated modules...");
+    let file_types_mod_path = format!("{output_dir}/file_types/mod.rs");
+    debug!("📝 Creating/updating file_types mod.rs with generated modules...");
     
     // Create default content if file doesn't exist
     let mut content = if file_exists(Path::new(&file_types_mod_path)) {
@@ -117,7 +125,7 @@ fn main() -> Result<()> {
         content.push_str("    extensions_for_format, get_primary_format, lookup_file_type_by_extension,\n");
         content.push_str("    resolve_file_type, supports_format, FILE_TYPE_EXTENSIONS\n");
         content.push_str("};\n");
-        content.push_str("\n");
+        content.push('\n');
         content.push_str("// Import regex patterns from their source-based location (ExifTool.pm)\n");
         content.push_str("pub use crate::generated::ExifTool_pm::regex_patterns::{detect_file_type_by_regex, REGEX_PATTERNS};\n");
         updated = true;
@@ -125,13 +133,13 @@ fn main() -> Result<()> {
 
     if updated || !file_exists(Path::new(&file_types_mod_path)) {
         write_file_atomic(Path::new(&file_types_mod_path), &content)?;
-        println!("  ✓ Created/updated file_types mod.rs with file_type_lookup and regex_patterns re-exports");
+        debug!("  ✓ Created/updated file_types mod.rs with file_type_lookup and regex_patterns re-exports");
     } else {
-        println!("  ✓ file_types mod.rs already contains all necessary declarations");
+        debug!("  ✓ file_types mod.rs already contains all necessary declarations");
     }
 
     // NEW: Process using the new macro-based configuration system
-    println!("\n🔄 Processing new macro-based configuration...");
+    debug!("🔄 Processing new macro-based configuration...");
 
     let config_dir = current_dir.join("config");
     let schemas_dir = current_dir.join("schemas");
@@ -144,7 +152,7 @@ fn main() -> Result<()> {
         let extract_dir = current_dir.join("generated/extract");
         let all_extracted_tables = load_extracted_tables_with_config(&extract_dir, &config_dir)?;
 
-        println!("  Found {} extracted tables", all_extracted_tables.len());
+        debug!("  Found {} extracted tables", all_extracted_tables.len());
 
         // Auto-discover and process each module directory
         discover_and_process_modules(&config_dir, &all_extracted_tables, output_dir)?;
@@ -154,13 +162,13 @@ fn main() -> Result<()> {
         // Update the main mod.rs to include new modules
         update_generated_mod_file(output_dir)?;
     } else {
-        println!("  ⚠️  New config directory structure not found, using legacy generation only");
+        debug!("  ⚠️  New config directory structure not found, using legacy generation only");
     }
 
     // Generate module file
     generate_mod_file(output_dir)?;
 
-    println!("\n✅ Code generation complete!");
+    info!("✅ Code generation complete!");
 
     Ok(())
 }

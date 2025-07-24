@@ -1,4 +1,5 @@
 //! Generator for composite tag definitions
+use tracing::debug;
 
 use anyhow::Result;
 use std::fs;
@@ -100,7 +101,7 @@ pub fn generate_composite_tag_table(tags: &[GeneratedCompositeTag], output_dir: 
     // Write file
     let output_path = format!("{}/composite_tags.rs", output_dir);
     fs::write(&output_path, code)?;
-    println!("  ✓ Generated {}", output_path);
+    debug!("  ✓ Generated {}", output_path);
 
     Ok(())
 }

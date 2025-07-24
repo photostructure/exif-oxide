@@ -7,6 +7,7 @@ use anyhow::{Context, Result};
 use std::fs;
 use std::path::Path;
 use std::process::Command;
+use tracing::{debug, warn};
 
 use crate::extraction::ModuleConfig;
 
@@ -108,7 +109,7 @@ pub(super) fn run_perl_extractor(
     
     setup_perl_environment(&mut cmd);
     
-    println!("    Running: perl {} {}", script_name, args.join(" "));
+    debug!("    Running: perl {} {}", script_name, args.join(" "));
     
     let output = cmd.output()
         .with_context(|| format!("Failed to execute {} for {}", extractor_name, config.module_name))?;
@@ -118,12 +119,22 @@ pub(super) fn run_perl_extractor(
         return Err(anyhow::anyhow!("{} failed for {}: {}", extractor_name, config.module_name, stderr));
     }
     
-    // Print any output from the script
+    // Handle script output 
     let stdout = String::from_utf8_lossy(&output.stdout);
     let stderr = String::from_utf8_lossy(&output.stderr);
     
+    // Filter stderr - show only actual errors, not verbose progress messages
     if !stderr.is_empty() {
-        print!("{}", stderr);
+        // Split stderr into lines and filter out verbose progress messages
+        for line in stderr.lines() {
+            if line.contains("Error:") || line.contains("error:") || 
+               line.contains("Failed") || line.contains("Warning:") ||
+               line.contains("Execution of") || line.contains("aborted") {
+                warn!("Perl extractor: {}", line);
+            } else {
+                debug!("Perl extractor: {}", line);
+            }
+        }
     }
     
     // The Perl extractors write their JSON output to stdout
@@ -133,7 +144,7 @@ pub(super) fn run_perl_extractor(
         fs::write(&output_file, stdout.as_bytes())
             .with_context(|| format!("Failed to write output to {}", output_file.display()))?;
         
-        println!("Created {}", output_filename);
+        debug!("Created {}", output_filename);
     }
     
     Ok(())

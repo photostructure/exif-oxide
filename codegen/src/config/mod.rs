@@ -7,6 +7,7 @@ use anyhow::{Context, Result};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::path::Path;
+use tracing::{debug, warn};
 
 use crate::file_operations::{file_exists, read_utf8_with_fallback};
 use crate::schemas::{input::TableMetadata, ExtractedTable, TableEntry, TableSource};
@@ -136,7 +137,7 @@ pub fn load_extracted_tables_with_config(
             
             // Skip empty files
             if json_data.trim().is_empty() {
-                println!("  ⚠️  Skipping empty file: {}", path.display());
+                debug!("  ⚠️  Skipping empty file: {}", path.display());
                 continue;
             }
             
@@ -160,12 +161,12 @@ pub fn load_extracted_tables_with_config(
                         );
                         all_extracted_tables.insert(table.source.hash_name.clone(), table);
                     } else {
-                        eprintln!("Warning: Could not find config for {}: {}", path.display(), hash_name);
+                        warn!("Could not find config for {}: {}", path.display(), hash_name);
                     }
                 }
                 Err(e) => {
-                    eprintln!("Warning: Failed to parse {}: {}", path.display(), e);
-                    eprintln!("  First 200 chars of content: {}", &json_data.chars().take(200).collect::<String>());
+                    warn!("Failed to parse {}: {}", path.display(), e);
+                    debug!("  First 200 chars of content: {}", &json_data.chars().take(200).collect::<String>());
                 }
             }
         }

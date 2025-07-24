@@ -1,5 +1,7 @@
 {
   "SourceFile": "third-party/exiftool/t/images/GPS.jpg",
+  "EXIF:GPSLatitude": 54.9896666666667,
+  "EXIF:GPSLongitude": 1.91416666666667,
   "File:FileSize": 2133,
   "File:FileName": "GPS.jpg",
   "File:Directory": "third-party/exiftool/t/images",

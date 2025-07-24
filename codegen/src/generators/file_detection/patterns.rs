@@ -4,7 +4,7 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
-use tracing::{debug, info};
+use tracing::{debug, warn, info};
 
 #[derive(Debug, Deserialize)]
 pub struct RegexPatternsData {
@@ -196,7 +196,7 @@ pub fn generate_magic_patterns(json_dir: &Path, output_dir: &str) -> Result<()> 
     let regex_patterns_path = json_dir.join("file_types").join("regex_patterns.json");
 
     if !regex_patterns_path.exists() {
-        println!("    ⚠️  regex_patterns.json not found, skipping magic patterns");
+        warn!("    ⚠️  regex_patterns.json not found, skipping magic patterns");
         return Ok(());
     }
 
@@ -208,7 +208,7 @@ pub fn generate_magic_patterns(json_dir: &Path, output_dir: &str) -> Result<()> 
         Ok(s) => s,
         Err(_) => {
             // If UTF-8 conversion fails, we need to clean the data
-            println!("    ⚠️  regex_patterns.json contains non-UTF-8 bytes, cleaning...");
+            debug!("    ⚠️  regex_patterns.json contains non-UTF-8 bytes, cleaning...");
 
             // Read the file and clean problematic patterns
             let mut cleaned_bytes = json_bytes;
@@ -224,7 +224,7 @@ pub fn generate_magic_patterns(json_dir: &Path, output_dir: &str) -> Result<()> 
                 .position(|window| window == bad_pattern)
             {
                 cleaned_bytes.splice(pos..pos + bad_pattern.len(), good_pattern.iter().cloned());
-                println!("    ✓ Fixed BPG pattern with non-UTF-8 byte");
+                debug!("    ✓ Fixed BPG pattern with non-UTF-8 byte");
                 debug!("Replaced at position {}", pos);
             } else {
                 debug!("BPG pattern not found in raw form");
@@ -259,7 +259,7 @@ pub fn generate_magic_patterns(json_dir: &Path, output_dir: &str) -> Result<()> 
     // Generate magic_number_patterns.rs directly in output_dir
     generate_magic_number_patterns_from_new_format(&data, Path::new(output_dir))?;
 
-    println!(
+    debug!(
         "    ✓ Generated regex patterns with {} magic number patterns",
         data.magic_patterns.len()
     );
