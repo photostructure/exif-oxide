@@ -110,7 +110,8 @@
       "Bash(RUST_LOG=debug cargo run -- config/KyoceraRaw_pm/tag_kit.json)",
       "Bash(RUST_LOG=debug cargo run --bin exif-oxide -- test-images/panasonic/panasonic_lumix_g9_ii_35.rw2)",
       "Bash(RUST_LOG=debug cargo run -- test-images/nikon/nikon_z8_73.NEF)",
-      "Bash(RUST_LOG=debug cargo run)"
+      "Bash(RUST_LOG=debug cargo run)",
+      "Bash(RUST_LOG=debug cargo run -- config/PNG_pm/boolean_set.json)"
     ],
     "deny": []
   }
