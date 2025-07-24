@@ -13,10 +13,9 @@ use anyhow::Result;
 use std::collections::HashMap;
 use std::path::Path;
 use std::fs;
-use crate::schemas::{ExtractedTable, input::TableConfig};
+use crate::schemas::ExtractedTable;
 use crate::generators::data_sets;
 use crate::common::utils::{module_to_source_path, module_dir_to_source_path};
-use tracing::{debug, info};
 
 /// Get the extract subdirectory for a given config type
 fn get_extract_subdir(config_type: &str) -> &'static str {
@@ -196,7 +195,7 @@ pub fn process_config_directory(
         let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
         
         // Extract table name from config
-        if let Some(table_name) = config_json["table"].as_str() {
+        if let Some(_table_name) = config_json["table"].as_str() {
             // Look for the corresponding extracted binary data JSON file
             let extract_dir = Path::new("generated/extract").join("binary_data");
             let module_base = module_name.trim_end_matches("_pm");
@@ -226,7 +225,7 @@ pub fn process_config_directory(
         let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
         
         // Extract table name from config
-        if let Some(table_name) = config_json["table"].as_str() {
+        if let Some(_table_name) = config_json["table"].as_str() {
             // Look for the corresponding extracted model detection JSON file
             let extract_dir = Path::new("generated/extract").join("model_detection");
             let module_base = module_name.trim_end_matches("_pm");
@@ -256,7 +255,7 @@ pub fn process_config_directory(
         let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
         
         // Extract table name from config
-        if let Some(table_name) = config_json["table"].as_str() {
+        if let Some(_table_name) = config_json["table"].as_str() {
             // Look for the corresponding extracted conditional tags JSON file
             let extract_dir = Path::new("generated/extract").join("conditional_tags");
             let module_base = module_name.trim_end_matches("_pm");
@@ -322,7 +321,7 @@ pub fn process_config_directory(
     let tag_kit_config = config_dir.join("tag_kit.json");
     if tag_kit_config.exists() {
         let config_content = fs::read_to_string(&tag_kit_config)?;
-        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
+        let _config_json: serde_json::Value = serde_json::from_str(&config_content)?;
         
         // Look for extracted tag kit JSON file
         let extract_dir = Path::new("generated/extract").join("tag_kits");
@@ -387,7 +386,7 @@ pub fn process_config_directory(
         
         if let Some(tables) = config_json["tables"].as_array() {
             for table_config in tables {
-                let hash_name = table_config["hash_name"].as_str().unwrap_or("");
+                let _hash_name = table_config["hash_name"].as_str().unwrap_or("");
                 
                 // Look for extracted regex patterns file using standardized naming
                 let extract_dir = Path::new("generated/extract").join("file_types");
@@ -774,7 +773,7 @@ fn generate_runtime_table_file(
     let runtime_code = runtime::generate_runtime_table(runtime_data, table_config)?;
     
     // Extract table name for filename
-    let table_name = table_config["table_name"].as_str()
+    let _table_name = table_config["table_name"].as_str()
         .unwrap_or("unknown")
         .trim_start_matches('%')
         .to_lowercase();

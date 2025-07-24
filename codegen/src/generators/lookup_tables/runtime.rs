@@ -5,7 +5,6 @@
 
 use anyhow::Result;
 use serde_json::Value;
-use std::collections::HashMap;
 use crate::schemas::input::{RuntimeTablesData, ExtractedRuntimeTable, RuntimeTagDefinition, PrintConvSpec, ConditionSpec, FormatSpec};
 
 /// Generate runtime table creation function
@@ -82,7 +81,7 @@ fn generate_imports(code: &mut String, runtime_table: &ExtractedRuntimeTable) ->
 /// Generate helper functions for complex conversions
 fn generate_helper_functions(code: &mut String, runtime_table: &ExtractedRuntimeTable) -> Result<()> {
     // Generate PrintConv helper functions
-    for (offset, tag_def) in &runtime_table.tag_definitions {
+    for (_offset, tag_def) in &runtime_table.tag_definitions {
         if let Some(print_conv) = &tag_def.print_conv {
             generate_print_conv_function(code, tag_def, print_conv)?;
         }
@@ -192,7 +191,7 @@ fn generate_table_entry(
     code: &mut String,
     offset: &str,
     tag_def: &RuntimeTagDefinition,
-    runtime_table: &ExtractedRuntimeTable,
+    _runtime_table: &ExtractedRuntimeTable,
 ) -> Result<()> {
     // Parse offset (could be decimal, hex, or fractional)
     let offset_value = if offset.starts_with("0x") {
@@ -303,7 +302,7 @@ fn generate_notes_field(notes: &Option<String>) -> Result<String> {
 }
 
 /// Generate supporting types and enums if needed
-fn generate_supporting_types(code: &mut String, runtime_table: &ExtractedRuntimeTable) -> Result<()> {
+fn generate_supporting_types(_code: &mut String, _runtime_table: &ExtractedRuntimeTable) -> Result<()> {
     // For now, we use existing types from the core module
     // Future enhancement: Generate custom enums for specific tag values
     Ok(())

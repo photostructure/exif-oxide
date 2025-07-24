@@ -6,8 +6,9 @@
 use anyhow::{Context, Result};
 use crate::common::{normalize_format, parse_hex_id};
 use crate::schemas::{CompositeData, ExtractedData, GeneratedCompositeTag, GeneratedTag};
-use crate::file_operations::{file_exists, read_utf8_with_fallback};
-use crate::generators::{generate_composite_tag_table, generate_supported_tags, generate_tag_table, generate_conversion_refs};
+use crate::file_operations::read_utf8_with_fallback;
+use crate::generators::{generate_composite_tag_table, generate_supported_tags, generate_tag_table};
+use crate::generators::conversion_refs::generate_conversion_refs;
 use std::path::Path;
 use std::fs;
 

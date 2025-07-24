@@ -7,7 +7,6 @@ use anyhow::{Context, Result};
 use regex::Regex;
 use std::fs;
 use std::path::Path;
-use std::process::Command;
 
 /// Patch ExifTool module to convert my-scoped variables to package variables
 /// This operation is idempotent - safe to run multiple times

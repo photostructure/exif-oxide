@@ -76,8 +76,6 @@ impl TagCategory {
             318..=335 => TagCategory::Color,
             528..=535 => TagCategory::Color,
             
-            // Date/time (ModifyDate)
-            306 => TagCategory::DateTime,
             
             // Thumbnail/preview
             513..=514 => TagCategory::Thumbnail,

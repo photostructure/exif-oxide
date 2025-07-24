@@ -196,6 +196,37 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
     code.push_str("    \n");
     code.push_str("    extensions\n");
     code.push_str("}\n");
+    code.push_str("\n");
+
+    // Generate FILE_TYPE_EXTENSIONS constant (expected by src/file_detection.rs)
+    code.push_str("/// All known file type extensions\n");
+    code.push_str("pub static FILE_TYPE_EXTENSIONS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {\n");
+    code.push_str("    let mut extensions = Vec::new();\n");
+    code.push_str("    \n");
+    code.push_str("    // Add all known extensions from FILE_TYPE_FORMATS\n");
+    code.push_str("    for ext in FILE_TYPE_FORMATS.keys() {\n");
+    code.push_str("        extensions.push(*ext);\n");
+    code.push_str("    }\n");
+    code.push_str("    \n");
+    code.push_str("    // Add all extension aliases\n");
+    code.push_str("    for ext in EXTENSION_ALIASES.keys() {\n");
+    code.push_str("        extensions.push(*ext);\n");
+    code.push_str("    }\n");
+    code.push_str("    \n");
+    code.push_str("    extensions.sort();\n");
+    code.push_str("    extensions.dedup();\n");
+    code.push_str("    extensions\n");
+    code.push_str("});\n");
+    code.push_str("\n");
+
+    // Generate lookup_file_type_by_extension wrapper (expected by src/file_detection.rs)
+    code.push_str("/// Lookup file type by extension (wrapper around resolve_file_type)\n");
+    code.push_str("/// Returns the first format for compatibility with existing code\n");
+    code.push_str("pub fn lookup_file_type_by_extension(extension: &str) -> Option<String> {\n");
+    code.push_str("    resolve_file_type(extension)\n");
+    code.push_str("        .map(|(formats, _)| formats[0].to_string())\n");
+    code.push_str("}\n");
+    code.push_str("\n");
 
     // Write the file to file_types subdirectory
     let file_types_dir = output_dir.join("file_types");

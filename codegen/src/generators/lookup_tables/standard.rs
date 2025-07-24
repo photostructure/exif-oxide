@@ -5,9 +5,9 @@ use crate::schemas::ExtractedTable;
 use anyhow::Result;
 
 /// Generate code for a simple lookup table using static array + lazy HashMap pattern
-pub fn generate_lookup_table(hash_name: &str, table_data: &ExtractedTable) -> Result<String> {
+pub fn generate_lookup_table(_hash_name: &str, table_data: &ExtractedTable) -> Result<String> {
     let metadata = &table_data.metadata;
-    let source = &table_data.source;
+    let _source = &table_data.source;
     let mut code = String::new();
 
     let constant_name = &metadata.constant_name;

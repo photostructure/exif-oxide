@@ -6,7 +6,7 @@
 use anyhow::Result;
 use std::{fs, collections::HashMap};
 use crate::common::escape_string;
-use crate::schemas::tag_kit::{TagKitExtraction, TagKit};
+use crate::schemas::tag_kit::TagKitExtraction;
 
 /// Generate tag kit code from extracted data
 pub fn generate_tag_kit(
