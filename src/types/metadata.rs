@@ -4,6 +4,7 @@
 //! ExifData, and TagSourceInfo that represent extracted EXIF information.
 
 use crate::types::TagValue;
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -123,7 +124,7 @@ pub struct ExifData {
     /// Legacy field for backward compatibility - will be populated during serialization
     /// TODO: Remove this once all consumers are updated to use TagEntry
     #[serde(flatten)]
-    pub legacy_tags: HashMap<String, TagValue>,
+    pub legacy_tags: IndexMap<String, TagValue>,
 
     /// Any errors encountered during processing
     #[serde(skip_serializing_if = "Vec::is_empty")]
@@ -144,9 +145,38 @@ impl ExifData {
             source_file,
             exif_tool_version,
             tags: Vec::new(),
-            legacy_tags: HashMap::new(),
+            legacy_tags: IndexMap::new(),
             errors: Vec::new(),
             missing_implementations: None,
+        }
+    }
+
+    /// Get group priority for ExifTool-compatible ordering
+    /// Returns lower numbers for groups that should appear first
+    fn get_group_priority(tag_key: &str) -> u8 {
+        if tag_key == "SourceFile" {
+            return 0;
+        }
+        if tag_key == "ExifToolVersion" {
+            return 1;
+        }
+
+        // Extract group prefix from "Group:TagName" format
+        if let Some(group) = tag_key.split(':').next() {
+            match group {
+                "File" => 2,
+                "JFIF" | "APP" | "APP0" | "APP1" | "APP2" | "APP3" | "APP4" | "APP5" | "APP6"
+                | "APP7" | "APP8" | "APP9" | "APP10" | "APP11" | "APP12" | "APP13" | "APP14"
+                | "APP15" => 3,
+                "EXIF" => 4,
+                "MakerNotes" => 5,
+                "Composite" => 255, // Always last
+                // Other groups (XMP, IPTC, Photoshop, PrintIM, MPF, ICC_Profile, etc.)
+                _ => 50,
+            }
+        } else {
+            // Tags without group prefix get high priority (like SourceFile, ExifToolVersion)
+            10
         }
     }
 
@@ -169,9 +199,26 @@ impl ExifData {
             }
         }
 
-        for entry in &self.tags {
-            let key = format!("{}:{}", entry.group, entry.name);
+        // Create a sorted list of (tag_key, tag_entry) pairs for ordered insertion
+        let mut tag_pairs: Vec<(String, &TagEntry)> = self
+            .tags
+            .iter()
+            .map(|entry| (format!("{}:{}", entry.group, entry.name), entry))
+            .collect();
 
+        // Sort by group priority first, then alphabetically within group
+        tag_pairs.sort_by(|(key_a, _), (key_b, _)| {
+            let priority_a = Self::get_group_priority(key_a);
+            let priority_b = Self::get_group_priority(key_b);
+
+            match priority_a.cmp(&priority_b) {
+                std::cmp::Ordering::Equal => key_a.cmp(key_b), // Alphabetical within group
+                other => other,
+            }
+        });
+
+        // Insert tags in the sorted order
+        for (key, entry) in tag_pairs {
             // Determine whether to use value or print field
             let should_use_value = numeric_tags
                 .map(|set| set.contains(&entry.name))
