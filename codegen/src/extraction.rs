@@ -5,15 +5,13 @@
 use anyhow::{Context, Result};
 use serde_json::Value;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use tracing::debug;
-use glob::glob;
 
 use crate::patching;
-use crate::extractors::{find_extractor, Extractor};
+use crate::extractors::find_extractor;
 
 // Constants for path navigation
-const REPO_ROOT_FROM_CODEGEN: &str = "..";
 
 #[derive(Debug)]
 pub struct ModuleConfig {

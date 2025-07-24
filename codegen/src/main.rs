@@ -3,7 +3,7 @@
 //! This tool reads JSON output from Perl extractors and generates
 //! Rust code following the "runtime references, no stubs" architecture.
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use clap::{Arg, Command};
 use std::fs;
 use std::path::Path;
@@ -25,8 +25,8 @@ use config::load_extracted_tables_with_config;
 use discovery::{discover_and_process_modules, update_generated_mod_file};
 use extraction::extract_all_simple_tables;
 use table_processor::process_tag_tables_modular;
-use file_operations::{create_directories, file_exists, read_utf8_with_fallback, write_file_atomic};
-use generators::{generate_conversion_refs, generate_mod_file};
+use file_operations::{create_directories, file_exists, write_file_atomic};
+use generators::generate_mod_file;
 use validation::validate_all_configs;
 
 
@@ -55,7 +55,7 @@ fn main() -> Result<()> {
         .get_matches();
 
     let output_dir = matches.get_one::<String>("output").unwrap();
-    let tag_data_path = matches.get_one::<String>("tag-data").unwrap();
+    let _tag_data_path = matches.get_one::<String>("tag-data").unwrap();
 
     // We're running from the codegen directory
     let current_dir = std::env::current_dir()?;
@@ -113,7 +113,10 @@ fn main() -> Result<()> {
     // Add re-exports if not present
     if !content.contains("pub use file_type_lookup::") {
         content.push_str("// Re-export commonly used items\n");
-        content.push_str("pub use file_type_lookup::{lookup_file_type_by_extension, FILE_TYPE_EXTENSIONS};\n");
+        content.push_str("pub use file_type_lookup::{\n");
+        content.push_str("    extensions_for_format, get_primary_format, lookup_file_type_by_extension,\n");
+        content.push_str("    resolve_file_type, supports_format, FILE_TYPE_EXTENSIONS\n");
+        content.push_str("};\n");
         content.push_str("\n");
         content.push_str("// Import regex patterns from their source-based location (ExifTool.pm)\n");
         content.push_str("pub use crate::generated::ExifTool_pm::regex_patterns::{detect_file_type_by_regex, REGEX_PATTERNS};\n");

@@ -36,7 +36,7 @@ impl Extractor for FileTypeLookupExtractor {
         args
     }
     
-    fn output_filename(&self, config: &ModuleConfig, hash_name: Option<&str>) -> String {
+    fn output_filename(&self, config: &ModuleConfig, _hash_name: Option<&str>) -> String {
         let module_name = self.sanitize_module_name(config);
         format!("{}_file_type_lookup.json", module_name)
     }
