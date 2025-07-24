@@ -6,12 +6,13 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_9: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_52: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "None");
     map.insert("2".to_string(), "Horizontal differencing");
@@ -37,6 +38,7 @@ pub fn get_camera_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -50,6 +52,7 @@ pub fn get_camera_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -63,6 +66,7 @@ pub fn get_camera_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -76,6 +80,7 @@ pub fn get_camera_tags() -> Vec<(u32, TagKitDef)> {
                 notes: Some("becomes a list-type tag when the MWG module is loaded"),
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -89,6 +94,7 @@ pub fn get_camera_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -100,8 +106,9 @@ pub fn get_camera_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_9),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_52),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
     ]

@@ -73,6 +73,10 @@ pub fn process_canon_makernotes(
     // ExifTool: Canon.pm Main table PrintConv entries need manual application
     apply_canon_main_table_print_conv(exif_reader)?;
 
+    // Process Canon subdirectory tags (like ColorData)
+    // ExifTool: Canon.pm SubDirectory processing for tags like ColorData1-12
+    process_canon_subdirectory_tags(exif_reader)?;
+
     // CRITICAL: Now process specific Canon binary data tags using existing Canon processors
     // ExifTool: Canon.pm processes each Canon tag through specific SubDirectory processors
 
@@ -862,6 +866,16 @@ fn apply_canon_main_table_print_conv(exif_reader: &mut crate::exif::ExifReader) 
                             }
                         }
                     }
+                    0x4001 | 0x4002 | 0x4003 | 0x4004 | 0x4005 | 0x4008 | 0x4009 | 0x4010
+                    | 0x4011 | 0x4012 | 0x4013 | 0x4015 | 0x4016 | 0x4018 | 0x4019 | 0x4020
+                    | 0x4021 | 0x4024 | 0x4025 | 0x4028 => {
+                        // ColorData and other subdirectory tags
+                        // These are handled separately via subdirectory processing
+                        debug!(
+                            "Tag 0x{:04x} has subdirectory processing, skipping PrintConv",
+                            tag_id
+                        );
+                    }
                     _ => {
                         // Other Canon tags can be added here as needed
                     }
@@ -900,6 +914,86 @@ fn get_canon_camera_settings_tag_id(tag_name: &str) -> Option<u32> {
             None
         }
     }
+}
+
+/// Process Canon subdirectory tags (like ColorData) and expand them into individual tags
+/// ExifTool: Canon.pm SubDirectory processing for binary data expansion
+fn process_canon_subdirectory_tags(exif_reader: &mut crate::exif::ExifReader) -> Result<()> {
+    use crate::generated::Canon_pm::tag_kit;
+
+    debug!("Processing Canon subdirectory tags");
+
+    // Collect tags that have subdirectory processing
+    let mut subdirectory_tags = Vec::new();
+
+    for (&tag_id, tag_value) in &exif_reader.extracted_tags {
+        // Check if this is a Canon tag with subdirectory processing
+        if let Some(source_info) = exif_reader.tag_sources.get(&tag_id) {
+            if source_info.namespace == "MakerNotes" && source_info.ifd_name.starts_with("Canon") {
+                // Check if this tag has subdirectory processing
+                if tag_kit::has_subdirectory(tag_id as u32) {
+                    debug!(
+                        "Found Canon tag 0x{:04x} with subdirectory processing",
+                        tag_id
+                    );
+                    subdirectory_tags.push((tag_id, tag_value.clone(), source_info.clone()));
+                }
+            }
+        }
+    }
+
+    // Process each subdirectory tag
+    for (tag_id, tag_value, source_info) in subdirectory_tags {
+        debug!("Processing subdirectory for Canon tag 0x{:04x}", tag_id);
+
+        // Use the new subdirectory processing API
+        match tag_kit::process_subdirectory(tag_id as u32, &tag_value, ByteOrder::LittleEndian) {
+            Ok(extracted_tags) => {
+                debug!(
+                    "Extracted {} tags from subdirectory 0x{:04x}",
+                    extracted_tags.len(),
+                    tag_id
+                );
+
+                // Store each extracted tag
+                for (tag_name, value) in extracted_tags {
+                    // Generate a synthetic tag ID for the extracted tag
+                    // This ensures we don't overwrite existing tags
+                    let synthetic_id = 0x8000 | (tag_id & 0x7FFF);
+
+                    debug!(
+                        "Storing extracted tag '{}' from subdirectory 0x{:04x}",
+                        tag_name, tag_id
+                    );
+
+                    // Store the extracted tag with Canon namespace
+                    exif_reader.store_tag_with_precedence(
+                        synthetic_id,
+                        value,
+                        crate::types::TagSourceInfo::new(
+                            "MakerNotes".to_string(),
+                            format!("Canon:{}", tag_name),
+                            "Canon::SubDirectory".to_string(),
+                        ),
+                    );
+                }
+
+                // Remove the original array tag since we've expanded it
+                exif_reader.extracted_tags.remove(&tag_id);
+                exif_reader.tag_sources.remove(&tag_id);
+            }
+            Err(e) => {
+                debug!(
+                    "Failed to process subdirectory for tag 0x{:04x}: {}",
+                    tag_id, e
+                );
+                // Keep the original array data if subdirectory processing fails
+            }
+        }
+    }
+
+    debug!("Canon subdirectory processing completed");
+    Ok(())
 }
 
 /// Apply Canon CameraSettings PrintConv using unified tag kit system

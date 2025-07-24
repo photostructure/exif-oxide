@@ -6,12 +6,13 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("34316".to_string(), "Panasonic RAW 1");
     map.insert("34826".to_string(), "Panasonic RAW 2");
@@ -30,8 +31,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_3),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_1),
             value_conv: None,
+            subdirectory: None,
         }),
         (14, TagKitDef {
             id: 14,
@@ -42,6 +44,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (15, TagKitDef {
             id: 15,
@@ -52,6 +55,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (16, TagKitDef {
             id: 16,
@@ -62,6 +66,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (17, TagKitDef {
             id: 17,
@@ -72,6 +77,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("found in Digilux 2 RAW images"),
             print_conv: PrintConvType::None,
             value_conv: Some("$val / 256"),
+            subdirectory: None,
         }),
         (18, TagKitDef {
             id: 18,
@@ -82,6 +88,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: Some("$val / 256"),
+            subdirectory: None,
         }),
         (19, TagKitDef {
             id: 19,
@@ -92,6 +99,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x13_subdirectory }),
         }),
         (23, TagKitDef {
             id: 23,
@@ -102,6 +110,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (24, TagKitDef {
             id: 24,
@@ -112,6 +121,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: Some("$val / 256"),
+            subdirectory: None,
         }),
         (25, TagKitDef {
             id: 25,
@@ -122,6 +132,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: Some("$val / 256"),
+            subdirectory: None,
         }),
         (26, TagKitDef {
             id: 26,
@@ -132,6 +143,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: Some("$val / 256"),
+            subdirectory: None,
         }),
         (27, TagKitDef {
             id: 27,
@@ -142,6 +154,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("the camera's default noise reduction setup.  The first number is the number\n            of entries, then for each entry there are 4 numbers: an ISO speed, and\n            noise-reduction strengths the R, G and B channels"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (28, TagKitDef {
             id: 28,
@@ -152,6 +165,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (29, TagKitDef {
             id: 29,
@@ -162,6 +176,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (30, TagKitDef {
             id: 30,
@@ -172,6 +187,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (33432, TagKitDef {
             id: 33432,
@@ -182,6 +198,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (36, TagKitDef {
             id: 36,
@@ -192,6 +209,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (37, TagKitDef {
             id: 37,
@@ -202,6 +220,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (38, TagKitDef {
             id: 38,
@@ -212,6 +231,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (39, TagKitDef {
             id: 39,
@@ -222,6 +242,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x27_subdirectory }),
         }),
         (45, TagKitDef {
             id: 45,
@@ -232,6 +253,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (46, TagKitDef {
             id: 46,
@@ -242,6 +264,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("processed as an embedded document because it contains full EXIF"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x2e_subdirectory }),
         }),
         (47, TagKitDef {
             id: 47,
@@ -252,6 +275,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (48, TagKitDef {
             id: 48,
@@ -262,6 +286,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (49, TagKitDef {
             id: 49,
@@ -272,6 +297,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (50, TagKitDef {
             id: 50,
@@ -282,6 +308,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (55, TagKitDef {
             id: 55,
@@ -292,6 +319,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (700, TagKitDef {
             id: 700,
@@ -302,6 +330,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x2bc_subdirectory }),
         }),
     ]
 }

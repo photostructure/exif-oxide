@@ -112,7 +112,8 @@ impl FileTypeDetector {
             // Check if this is a weak magic type that defers to extension
             // ExifTool.pm:1030 - %weakMagic hash contains types with weak magic
             // if lookup_weakmagic(candidate) {
-            if false { // TODO: Re-enable when lookup_weakmagic is generated
+            if false {
+                // TODO: Re-enable when lookup_weakmagic is generated
                 // Weak magic types are fallback only if no strong magic matches
                 // ExifTool.pm:2970 - "next if $weakMagic{$type} and defined $recognizedExt"
                 if matched_type.is_none() {

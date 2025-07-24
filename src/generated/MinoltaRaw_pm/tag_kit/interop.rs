@@ -6,12 +6,13 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "None");
     map.insert("1".to_string(), "Portrait");
@@ -19,6 +20,57 @@ static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map.insert("3".to_string(), "Night Portrait");
     map.insert("4".to_string(), "Sunset");
     map.insert("5".to_string(), "Sports");
+    map
+});
+
+static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Natural color");
+    map.insert("1".to_string(), "Black & White");
+    map.insert("12".to_string(), "Portrait");
+    map.insert("13".to_string(), "Natural sRGB");
+    map.insert("132".to_string(), "Embed Adobe RGB");
+    map.insert("14".to_string(), "Natural+ sRGB");
+    map.insert("15".to_string(), "Landscape");
+    map.insert("16".to_string(), "Evening");
+    map.insert("17".to_string(), "Night Scene");
+    map.insert("18".to_string(), "Night Portrait");
+    map.insert("2".to_string(), "Vivid color");
+    map.insert("3".to_string(), "Solarization");
+    map.insert("4".to_string(), "Adobe RGB");
+    map.insert("5".to_string(), "Sepia");
+    map.insert("9".to_string(), "Natural");
+    map
+});
+
+static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Standard");
+    map.insert("1".to_string(), "Vivid");
+    map.insert("100".to_string(), "Neutral");
+    map.insert("101".to_string(), "Clear");
+    map.insert("102".to_string(), "Deep");
+    map.insert("103".to_string(), "Light");
+    map.insert("104".to_string(), "Night View");
+    map.insert("105".to_string(), "Autumn Leaves");
+    map.insert("12".to_string(), "Neutral");
+    map.insert("13".to_string(), "Clear");
+    map.insert("14".to_string(), "Deep");
+    map.insert("15".to_string(), "Light");
+    map.insert("16".to_string(), "Autumn Leaves");
+    map.insert("17".to_string(), "Sepia");
+    map.insert("18".to_string(), "FL");
+    map.insert("19".to_string(), "Vivid 2");
+    map.insert("2".to_string(), "Portrait");
+    map.insert("20".to_string(), "IN");
+    map.insert("21".to_string(), "SH");
+    map.insert("255".to_string(), "Off");
+    map.insert("3".to_string(), "Landscape");
+    map.insert("4".to_string(), "Sunset");
+    map.insert("4294967295".to_string(), "n/a");
+    map.insert("5".to_string(), "Night View/Portrait");
+    map.insert("6".to_string(), "B&W");
+    map.insert("7".to_string(), "Adobe RGB");
     map
 });
 
@@ -36,6 +88,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -49,6 +102,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -62,6 +116,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -75,6 +130,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -88,6 +144,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -101,6 +158,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::Manual("complex_expression_printconv"),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -112,8 +170,9 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_0),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_4),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -127,6 +186,35 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::Manual("complex_hash_printconv"),
                 value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            7,
+            TagKitDef {
+                id: 7,
+                name: "ColorMode",
+                format: "1",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_5),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            7,
+            TagKitDef {
+                id: 7,
+                name: "ColorMode",
+                format: "1",
+                groups: HashMap::new(),
+                writable: true,
+                notes: Some("Sony A100"),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_6),
+                value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -140,6 +228,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 notes: Some("these WB_RBLevels currently decoded only for the Sony A100"),
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
     ]

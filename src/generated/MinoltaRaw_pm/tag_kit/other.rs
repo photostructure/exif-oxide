@@ -6,26 +6,27 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("82".to_string(), "Padded");
     map.insert("89".to_string(), "Linear");
     map
 });
 
-static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "RGGB");
     map.insert("4".to_string(), "GBRG");
     map
 });
 
-static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO Setting Used");
     map.insert("1".to_string(), "High Key");
@@ -33,7 +34,7 @@ static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO Setting Used");
     map.insert("1".to_string(), "High Key");
@@ -55,6 +56,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -68,6 +70,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -81,6 +84,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -94,6 +98,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -107,6 +112,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -118,8 +124,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_1),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_0),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -131,8 +138,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_2),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_1),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -146,6 +154,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -159,6 +168,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -172,6 +182,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -185,6 +196,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -198,6 +210,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -211,6 +224,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -224,6 +238,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -237,6 +252,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -250,6 +266,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -263,6 +280,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: Some("Minolta models"),
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -274,8 +292,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: Some("Minolta models"),
-                print_conv: PrintConvType::Simple(&PRINT_CONV_3),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_2),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -289,6 +308,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -302,6 +322,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: Some("Minolta models"),
                 print_conv: PrintConvType::None,
                 value_conv: Some("$val * 100"),
+                subdirectory: None,
             },
         ),
         (
@@ -313,8 +334,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: Some("Sony models"),
-                print_conv: PrintConvType::Simple(&PRINT_CONV_4),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_3),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -328,6 +350,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: Some("A100"),
                 print_conv: PrintConvType::Manual("complex_expression_printconv"),
                 value_conv: Some("$val * 100"),
+                subdirectory: None,
             },
         ),
         (
@@ -341,6 +364,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: Some("A100"),
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -354,6 +378,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: Some("A200 and A700"),
                 print_conv: PrintConvType::Manual("complex_expression_printconv"),
                 value_conv: Some("$val * 100"),
+                subdirectory: None,
             },
         ),
         (
@@ -367,6 +392,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: Some("A200 and A700"),
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -380,6 +406,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 notes: Some("A100"),
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
     ]

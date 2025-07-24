@@ -6,111 +6,131 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
+use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
-use crate::types::TagValue;
-use super::{TagKitDef, PrintConvType};
 
 static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("10".to_string(), "50");
-    map.insert("11".to_string(), "64");
-    map.insert("12".to_string(), "80");
-    map.insert("13".to_string(), "100");
-    map.insert("14".to_string(), "125");
-    map.insert("15".to_string(), "160");
-    map.insert("16".to_string(), "200");
-    map.insert("17".to_string(), "250");
-    map.insert("18".to_string(), "320");
-    map.insert("19".to_string(), "400");
-    map.insert("7".to_string(), "25");
-    map.insert("8".to_string(), "32");
-    map.insert("9".to_string(), "40");
     map
 });
 
 /// Get tag definitions for other category
 pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
     vec![
-        (104, TagKitDef {
-            id: 104,
-            name: "MaxAperture",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("sprintf(\"%.2g\",$val)"),
-            value_conv: Some("2**($val/16)"),
-        }),
-        (112, TagKitDef {
-            id: 112,
-            name: "FocalLength",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("\"$val mm\""),
-            value_conv: None,
-        }),
-        (12, TagKitDef {
-            id: 12,
-            name: "Model",
-            format: "string[12]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-        }),
-        (124, TagKitDef {
-            id: 124,
-            name: "Lens",
-            format: "string[32]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-        }),
-        (25, TagKitDef {
-            id: 25,
-            name: "Make",
-            format: "string[7]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-        }),
-        (52, TagKitDef {
-            id: 52,
-            name: "ISO",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_0),
-            value_conv: None,
-        }),
-        (60, TagKitDef {
-            id: 60,
-            name: "WB_RGGBLevels",
-            format: "int32u[4]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-        }),
-        (88, TagKitDef {
-            id: 88,
-            name: "FNumber",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("sprintf(\"%.2g\",$val)"),
-            value_conv: Some("2**($val/16)"),
-        }),
+        (
+            104,
+            TagKitDef {
+                id: 104,
+                name: "MaxAperture",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Expression("sprintf(\"%.2g\",$val)"),
+                value_conv: Some("2**($val/16)"),
+                subdirectory: None,
+            },
+        ),
+        (
+            112,
+            TagKitDef {
+                id: 112,
+                name: "FocalLength",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Expression("\"$val mm\""),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            12,
+            TagKitDef {
+                id: 12,
+                name: "Model",
+                format: "string[12]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            124,
+            TagKitDef {
+                id: 124,
+                name: "Lens",
+                format: "string[32]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            25,
+            TagKitDef {
+                id: 25,
+                name: "Make",
+                format: "string[7]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            52,
+            TagKitDef {
+                id: 52,
+                name: "ISO",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_0),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            60,
+            TagKitDef {
+                id: 60,
+                name: "WB_RGGBLevels",
+                format: "int32u[4]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            88,
+            TagKitDef {
+                id: 88,
+                name: "FNumber",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Expression("sprintf(\"%.2g\",$val)"),
+                value_conv: Some("2**($val/16)"),
+                subdirectory: None,
+            },
+        ),
     ]
 }
