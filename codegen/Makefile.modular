@@ -11,10 +11,11 @@ EXTRACT_DIR := $(GENERATED_DIR)/extract
 all: codegen
 
 # Main codegen pipeline (Rust now handles everything including patch cleanup)
-codegen:
+
+codegen: check-schemas check-extractors
 	flock --verbose --exclusive --timeout=30 .make.flock $(MAKE) -f Makefile.modular codegen-flocked
 
-codegen-flocked: check-schemas check-extractors generate-rust
+codegen-flocked: clean generate-rust
 
 generate-rust:
 	cargo run --release ; ret=$$? ; \
