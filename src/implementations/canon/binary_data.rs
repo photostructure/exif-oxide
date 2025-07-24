@@ -206,21 +206,34 @@ pub fn extract_focal_length(
         offset, size
     );
 
-    // Use generated PrintConv lookups from focallength_inline.rs
-    use crate::generated::Canon_pm::focallength_inline::*;
+    // Use Canon tag kit system for PrintConv lookups
+    use crate::expressions::ExpressionEvaluator;
+    use crate::generated::Canon_pm::tag_kit;
 
     // Extract FocalType (index 0)
     // ExifTool: Canon.pm:2643 Name => 'FocalType'
     if size >= 2 {
         let focal_type = byte_order.read_u16(data, offset)?;
 
-        // Apply PrintConv using generated lookup
-        let final_value = if let Some(converted) = lookup_focal_length__focal_type(focal_type as u8)
-        {
-            TagValue::String(converted.to_string())
-        } else {
-            TagValue::U16(focal_type)
-        };
+        // Apply PrintConv using Canon tag kit system
+        // FocalType has tag ID 0 in Canon tag kit other.rs
+        let raw_value = TagValue::U16(focal_type);
+        let mut evaluator = ExpressionEvaluator::new();
+        let mut errors = Vec::new();
+        let mut warnings = Vec::new();
+
+        let final_value = tag_kit::apply_print_conv(
+            0, // FocalType tag ID
+            &raw_value,
+            &mut evaluator,
+            &mut errors,
+            &mut warnings,
+        );
+
+        // Log any warnings from tag kit processing
+        for warning in warnings {
+            debug!("Canon FocalType tag kit warning: {}", warning);
+        }
 
         debug!(
             "Extracted Canon FocalType = {:?} (raw: {})",

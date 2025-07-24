@@ -879,105 +879,75 @@ fn apply_canon_main_table_print_conv(exif_reader: &mut crate::exif::ExifReader) 
     Ok(())
 }
 
-/// Apply Canon CameraSettings PrintConv using generated lookup tables  
-/// ExifTool: Canon.pm CameraSettings PrintConv with lookup tables
+/// Map Canon CameraSettings tag names to their tag kit IDs
+/// ExifTool: Canon.pm CameraSettings table tag IDs extracted from tag kit
+fn get_canon_camera_settings_tag_id(tag_name: &str) -> Option<u32> {
+    // Strip MakerNotes: prefix if present for matching
+    let clean_tag_name = tag_name.strip_prefix("MakerNotes:").unwrap_or(tag_name);
+
+    // Map tag names to their tag kit IDs based on Canon tag kit interop.rs
+    // These IDs come from the generated Canon tag kit system
+    match clean_tag_name {
+        "MacroMode" => Some(1),       // TagKitDef { id: 1, name: "MacroMode", ... }
+        "Quality" => Some(3),         // TagKitDef { id: 3, name: "Quality", ... }
+        "CanonFlashMode" => Some(4),  // TagKitDef { id: 4, name: "CanonFlashMode", ... }
+        "ContinuousDrive" => Some(5), // TagKitDef { id: 5, name: "ContinuousDrive", ... }
+        "FocusMode" => Some(7),       // TagKitDef { id: 7, name: "FocusMode", ... }
+        "RecordMode" => Some(9),      // TagKitDef { id: 9, name: "RecordMode", ... }
+        "WhiteBalance" => Some(7), // TagKitDef { id: 7, name: "WhiteBalance", ... } (different context)
+        _ => {
+            debug!("Unknown Canon CameraSettings tag name: {}", clean_tag_name);
+            None
+        }
+    }
+}
+
+/// Apply Canon CameraSettings PrintConv using unified tag kit system
+/// ExifTool: Canon.pm CameraSettings PrintConv with tag kit lookup tables
 fn apply_camera_settings_print_conv(
     tag_name: &str,
     tag_value: &crate::types::TagValue,
 ) -> crate::types::TagValue {
-    use crate::generated::Canon_pm::camerasettings_inline::*;
-    use crate::generated::Canon_pm::canonquality::lookup_canon_quality;
+    use crate::expressions::ExpressionEvaluator;
+    use crate::generated::Canon_pm::tag_kit;
 
     debug!(
-        "Applying Canon CameraSettings PrintConv for tag: {}",
+        "Applying Canon CameraSettings PrintConv for tag: {} using tag kit system",
         tag_name
     );
 
-    // Strip MakerNotes: prefix if present for matching
-    let clean_tag_name = tag_name.strip_prefix("MakerNotes:").unwrap_or(tag_name);
+    // Get the tag kit ID for this tag name
+    if let Some(tag_id) = get_canon_camera_settings_tag_id(tag_name) {
+        // Use unified tag kit system for PrintConv
+        let mut evaluator = ExpressionEvaluator::new();
+        let mut errors = Vec::new();
+        let mut warnings = Vec::new();
 
-    // Apply generated lookup tables based on the tag name
-    // ExifTool: Canon.pm CameraSettings table PrintConv entries
-    match clean_tag_name {
-        "MacroMode" => {
-            if let Some(value) = tag_value.as_u8() {
-                if let Some(macro_mode) = lookup_camera_settings__macro_mode(value) {
-                    return crate::types::TagValue::String(macro_mode.to_string());
-                }
-            }
+        let result = tag_kit::apply_print_conv(
+            tag_id,
+            tag_value,
+            &mut evaluator,
+            &mut errors,
+            &mut warnings,
+        );
+
+        // Log any warnings from tag kit processing
+        for warning in warnings {
+            debug!("Canon tag kit warning: {}", warning);
         }
-        "Quality" => {
-            if let Some(value) = tag_value.as_u16() {
-                // Convert u16 to i16 for lookup function
-                let signed_value = value as i16;
-                if let Some(quality) = lookup_canon_quality(signed_value) {
-                    return crate::types::TagValue::String(quality.to_string());
-                }
-            }
+
+        // Log any errors from tag kit processing
+        for error in errors {
+            debug!("Canon tag kit error: {}", error);
         }
-        "FocusMode" => {
-            // TODO: Add FocusMode lookup when Canon-specific lookup is generated
-            // For now, return the raw value as string
-            return crate::types::TagValue::String(format!("FocusMode {tag_value}"));
-        }
-        "CanonFlashMode" => {
-            // CanonFlashMode might use the same lookup as FlashMode, or need a different one
-            if let Some(value) = tag_value.as_u8() {
-                if let Some(flash_mode) = lookup_camera_settings__flash_mode(value) {
-                    return crate::types::TagValue::String(flash_mode.to_string());
-                }
-            }
-        }
-        "FlashMode" => {
-            if let Some(value) = tag_value.as_u8() {
-                if let Some(flash_mode) = lookup_camera_settings__flash_mode(value) {
-                    return crate::types::TagValue::String(flash_mode.to_string());
-                }
-            }
-        }
-        "WhiteBalance2" => {
-            if let Some(value) = tag_value.as_u16() {
-                if let Some(white_balance) = lookup_camera_settings__white_balance2(value) {
-                    return crate::types::TagValue::String(white_balance.to_string());
-                }
-            }
-        }
-        "ColorSpace" => {
-            if let Some(value) = tag_value.as_u8() {
-                if let Some(color_space) = lookup_camera_settings__color_space(value) {
-                    return crate::types::TagValue::String(color_space.to_string());
-                }
-            }
-        }
-        "SceneMode" => {
-            if let Some(value) = tag_value.as_u8() {
-                if let Some(scene_mode) = lookup_camera_settings__scene_mode(value) {
-                    return crate::types::TagValue::String(scene_mode.to_string());
-                }
-            }
-        }
-        "ExposureMode" => {
-            if let Some(value) = tag_value.as_u8() {
-                if let Some(exposure_mode) = lookup_camera_settings__exposure_mode(value) {
-                    return crate::types::TagValue::String(exposure_mode.to_string());
-                }
-            }
-        }
-        "MeteringMode" => {
-            if let Some(value) = tag_value.as_u16() {
-                if let Some(metering_mode) = lookup_camera_settings__metering_mode(value) {
-                    return crate::types::TagValue::String(metering_mode.to_string());
-                }
-            }
-        }
-        _ => {
-            debug!(
-                "No PrintConv available for Canon CameraSettings tag: {}",
-                tag_name
-            );
-        }
+
+        return result;
     }
 
-    // Return original value if no lookup table matches
+    // Return original value if tag ID not found
+    debug!(
+        "No tag kit mapping available for Canon CameraSettings tag: {}",
+        tag_name
+    );
     tag_value.clone()
 }

@@ -11,72 +11,77 @@ use crate::types::TagValue;
 
 /// Minolta PRD StorageMethod PrintConv
 /// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm PRD hash (StorageMethod)
-/// Generated table: src/generated/MinoltaRaw_pm/prd_inline.rs
+/// Using MinoltaRaw tag kit system: StorageMethod has tag ID 18
 pub fn prd_storage_method_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::MinoltaRaw_pm::lookup_p_r_d__storage_method;
+    use crate::expressions::ExpressionEvaluator;
+    use crate::generated::MinoltaRaw_pm::tag_kit;
 
-    if let Some(method_val) = val.as_u8() {
-        if let Some(description) = lookup_p_r_d__storage_method(method_val) {
-            return TagValue::string(description);
-        }
-    }
-    TagValue::string(format!("Unknown ({val})"))
+    let mut evaluator = ExpressionEvaluator::new();
+    let mut errors = Vec::new();
+    let mut warnings = Vec::new();
+
+    // StorageMethod tag ID 18 from MinoltaRaw tag kit other.rs
+    tag_kit::apply_print_conv(18, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Minolta PRD BayerPattern PrintConv
 /// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm PRD hash (BayerPattern)
-/// Generated table: src/generated/MinoltaRaw_pm/prd_inline.rs
+/// Using MinoltaRaw tag kit system: BayerPattern has tag ID 23
 pub fn prd_bayer_pattern_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::MinoltaRaw_pm::lookup_p_r_d__bayer_pattern;
+    use crate::expressions::ExpressionEvaluator;
+    use crate::generated::MinoltaRaw_pm::tag_kit;
 
-    if let Some(pattern_val) = val.as_u8() {
-        if let Some(description) = lookup_p_r_d__bayer_pattern(pattern_val) {
-            return TagValue::string(description);
-        }
-    }
-    TagValue::string(format!("Unknown ({val})"))
+    let mut evaluator = ExpressionEvaluator::new();
+    let mut errors = Vec::new();
+    let mut warnings = Vec::new();
+
+    // BayerPattern tag ID 23 from MinoltaRaw tag kit other.rs
+    tag_kit::apply_print_conv(23, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Minolta RIF ProgramMode PrintConv
 /// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm RIF hash (ProgramMode)
-/// Generated table: src/generated/MinoltaRaw_pm/rif_inline.rs
+/// Using MinoltaRaw tag kit system: ProgramMode has tag ID 5
 pub fn rif_program_mode_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::MinoltaRaw_pm::lookup_r_i_f__program_mode;
+    use crate::expressions::ExpressionEvaluator;
+    use crate::generated::MinoltaRaw_pm::tag_kit;
 
-    if let Some(mode_val) = val.as_u8() {
-        if let Some(description) = lookup_r_i_f__program_mode(mode_val) {
-            return TagValue::string(description);
-        }
-    }
-    TagValue::string(format!("Unknown ({val})"))
+    let mut evaluator = ExpressionEvaluator::new();
+    let mut errors = Vec::new();
+    let mut warnings = Vec::new();
+
+    // ProgramMode tag ID 5 from MinoltaRaw tag kit interop.rs
+    tag_kit::apply_print_conv(5, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Minolta RIF ZoneMatching PrintConv
 /// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm RIF hash (ZoneMatching)
-/// Generated table: src/generated/MinoltaRaw_pm/rif_inline.rs
+/// Using MinoltaRaw tag kit system: ZoneMatching has tag ID 58
 pub fn rif_zone_matching_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::MinoltaRaw_pm::lookup_r_i_f__zone_matching;
+    use crate::expressions::ExpressionEvaluator;
+    use crate::generated::MinoltaRaw_pm::tag_kit;
 
-    if let Some(zone_val) = val.as_u8() {
-        if let Some(description) = lookup_r_i_f__zone_matching(zone_val) {
-            return TagValue::string(description);
-        }
-    }
-    TagValue::string(format!("Unknown ({val})"))
+    let mut evaluator = ExpressionEvaluator::new();
+    let mut errors = Vec::new();
+    let mut warnings = Vec::new();
+
+    // ZoneMatching tag ID 58 from MinoltaRaw tag kit other.rs
+    tag_kit::apply_print_conv(58, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Minolta RIF ZoneMatching74 PrintConv (for tag offset 74)
 /// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm RIF hash (ZoneMatching at offset 74)
-/// Generated table: src/generated/MinoltaRaw_pm/rif_inline.rs
+/// Using MinoltaRaw tag kit system: ZoneMatching74 has tag ID 74
 pub fn rif_zone_matching_74_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::MinoltaRaw_pm::lookup_r_i_f__zone_matching_74;
+    use crate::expressions::ExpressionEvaluator;
+    use crate::generated::MinoltaRaw_pm::tag_kit;
 
-    if let Some(zone_val) = val.as_u8() {
-        if let Some(description) = lookup_r_i_f__zone_matching_74(zone_val) {
-            return TagValue::string(description);
-        }
-    }
-    TagValue::string(format!("Unknown ({val})"))
+    let mut evaluator = ExpressionEvaluator::new();
+    let mut errors = Vec::new();
+    let mut warnings = Vec::new();
+
+    // ZoneMatching74 tag ID 74 from MinoltaRaw tag kit other.rs
+    tag_kit::apply_print_conv(74, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Apply PrintConv to Minolta PRD block tags
