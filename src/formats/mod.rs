@@ -486,12 +486,14 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                             // Log error but don't fail processing
                             tracing::debug!("Failed to extract TIFF dimensions: {}", e);
                         }
-                        
+
                         // For RW2 files: Extract JPEG preview dimensions to create File:ImageWidth/ImageHeight tags
                         // This must be done after TIFF processing to access the JpgFromRaw binary data
                         if detection_result.file_type == "RW2" {
                             tracing::debug!("Processing RW2 file: attempting to extract JPEG preview dimensions");
-                            if let Some(jpeg_preview_dimensions) = extract_rw2_jpeg_preview_dimensions(&exif_reader, &tiff_data) {
+                            if let Some(jpeg_preview_dimensions) =
+                                extract_rw2_jpeg_preview_dimensions(&exif_reader, &tiff_data)
+                            {
                                 // Create File:ImageWidth and File:ImageHeight tags from JPEG preview
                                 // ExifTool: File group tags come from embedded JPEG SOF data, not sensor borders
                                 tag_entries.push(TagEntry {
@@ -511,7 +513,9 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                                 tracing::debug!("Added File:ImageWidth/ImageHeight tags from JPEG preview: {}x{}", 
                                               jpeg_preview_dimensions.0, jpeg_preview_dimensions.1);
                             } else {
-                                tracing::debug!("Failed to extract JPEG preview dimensions from RW2 file");
+                                tracing::debug!(
+                                    "Failed to extract JPEG preview dimensions from RW2 file"
+                                );
                             }
                         }
                     }

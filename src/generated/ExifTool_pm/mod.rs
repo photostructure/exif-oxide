@@ -1,6 +1,6 @@
 //! Generated lookup tables from ExifTool.pm
 //!
-//! Auto-generated from third-party/exiftool/lib/Image/ExifTool.pm
+//! Auto-generated from third-party/exiftool/lib/Image/ExifTool/ExifTool.pm
 //! DO NOT EDIT MANUALLY - changes will be overwritten by codegen
 
 pub mod createtypes;

@@ -6,7 +6,8 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
@@ -73,6 +74,35 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::Manual("complex_expression_printconv"),
                 value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            22,
+            TagKitDef {
+                id: 22,
+                name: "ExposureTime",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                value_conv: Some("exp(-Image::ExifTool::Canon::CanonEv($val)*log(2))*1000/32"),
+                subdirectory: None,
+            },
+        ),
+        (
+            22,
+            TagKitDef {
+                id: 22,
+                name: "ExposureTime",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                value_conv: Some("exp(-Image::ExifTool::Canon::CanonEv($val)*log(2))"),
+                subdirectory: None,
             },
         ),
         (
@@ -86,6 +116,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: Some("$val / 10"),
+                subdirectory: None,
             },
         ),
         (
@@ -99,6 +130,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::Manual("complex_expression_printconv"),
                 value_conv: Some("exp(-Image::ExifTool::Canon::CanonEv($val)*log(2))"),
+                subdirectory: None,
             },
         ),
         (
@@ -112,6 +144,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::Manual("complex_expression_printconv"),
                 value_conv: Some("exp(4*log(2)*(1-Image::ExifTool::Canon::CanonEv($val-24)))"),
+                subdirectory: None,
             },
         ),
         (
@@ -125,6 +158,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 notes: Some("used only in postcard mode"),
                 print_conv: PrintConvType::Simple(&PRINT_CONV_0),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -138,6 +172,9 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: Some(SubDirectoryType::Binary {
+                    processor: process_tag_0x35_subdirectory,
+                }),
             },
         ),
         (
@@ -151,6 +188,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::Manual("complex_expression_printconv"),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -164,6 +202,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::Simple(&PRINT_CONV_1),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
     ]

@@ -6,12 +6,13 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_58: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Time Lapse");
@@ -20,7 +21,7 @@ static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_59: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off (0)");
     map.insert("1".to_string(), "Off");
@@ -33,7 +34,7 @@ static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_60: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Home");
     map.insert("2".to_string(), "Destination");
@@ -50,8 +51,9 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_0),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_58),
             value_conv: None,
+            subdirectory: None,
         }),
         (175, TagKitDef {
             id: 175,
@@ -62,6 +64,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (41, TagKitDef {
             id: 41,
@@ -72,6 +75,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("time in 1/100 s from when the camera was powered on to when the image is\n            written to memory card"),
             print_conv: PrintConvType::Manual("code_ref_printconv"),
             value_conv: Some("$val / 100"),
+            subdirectory: None,
         }),
         (46, TagKitDef {
             id: 46,
@@ -80,8 +84,9 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_1),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_59),
             value_conv: None,
+            subdirectory: None,
         }),
         (58, TagKitDef {
             id: 58,
@@ -90,8 +95,9 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_2),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_60),
             value_conv: None,
+            subdirectory: None,
         }),
         (8195, TagKitDef {
             id: 8195,
@@ -102,6 +108,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x2003_subdirectory }),
         }),
     ]
 }

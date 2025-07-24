@@ -638,7 +638,10 @@ fn extract_all_subifd_pointers(
 
     // Validate IFD offset
     if ifd0_offset >= data.len() || ifd0_offset + 2 > data.len() {
-        debug!("Invalid IFD0 offset for SubIFD extraction: 0x{:x}", ifd0_offset);
+        debug!(
+            "Invalid IFD0 offset for SubIFD extraction: 0x{:x}",
+            ifd0_offset
+        );
         return Ok(Vec::new());
     }
 
@@ -651,7 +654,7 @@ fn extract_all_subifd_pointers(
 
     let entries_start = ifd0_offset + 2;
     let entries_end = entries_start + (entry_count * 12);
-    
+
     if entries_end > data.len() {
         debug!("IFD0 entries extend beyond file end during SubIFD extraction");
         return Ok(Vec::new());
@@ -719,7 +722,7 @@ fn extract_all_subifd_pointers(
                             data[entry_offset + 11],
                         ])
                     } as usize;
-                    
+
                     if offset > 0 {
                         subifd_offsets.push(offset);
                     }
@@ -744,7 +747,7 @@ fn extract_all_subifd_pointers(
                     // Read all SubIFD pointers from array (each is 4 bytes)
                     for j in 0..max_subdirs {
                         let pointer_offset = array_offset + (j as usize * 4);
-                        
+
                         if pointer_offset + 4 <= data.len() {
                             let subifd_offset = if is_little_endian {
                                 u32::from_le_bytes([
@@ -766,13 +769,20 @@ fn extract_all_subifd_pointers(
                                 subifd_offsets.push(subifd_offset);
                             }
                         } else {
-                            debug!("SubIFD pointer {} at offset 0x{:x} out of bounds", j, pointer_offset);
+                            debug!(
+                                "SubIFD pointer {} at offset 0x{:x} out of bounds",
+                                j, pointer_offset
+                            );
                             break;
                         }
                     }
                 }
 
-                debug!("Extracted {} SubIFD pointers: {:?}", subifd_offsets.len(), subifd_offsets);
+                debug!(
+                    "Extracted {} SubIFD pointers: {:?}",
+                    subifd_offsets.len(),
+                    subifd_offsets
+                );
                 return Ok(subifd_offsets);
             }
         }
@@ -816,24 +826,33 @@ pub fn extract_tiff_dimensions(
     let (sub_width, sub_height) = if let Some(_first_sub_offset) = sub_ifd_offset {
         // Extract all SubIFD pointers from the SubIFD tag (0x014a)
         let all_sub_offsets = extract_all_subifd_pointers(data, ifd0_offset, is_little_endian)?;
-        
-        debug!("Found {} SubIFD pointers: {:?}", all_sub_offsets.len(), all_sub_offsets);
-        
+
+        debug!(
+            "Found {} SubIFD pointers: {:?}",
+            all_sub_offsets.len(),
+            all_sub_offsets
+        );
+
         // Iterate through all SubIFDs looking for dimensions (matching ExifTool's algorithm)
         let mut found_width = None;
         let mut found_height = None;
-        
+
         for (index, sub_offset) in all_sub_offsets.iter().enumerate() {
-            debug!("Checking SubIFD{} at offset 0x{:x} for dimensions", index, sub_offset);
-            
-            if let Some((width, height)) = extract_dimensions_from_ifd(data, *sub_offset, is_little_endian) {
+            debug!(
+                "Checking SubIFD{} at offset 0x{:x} for dimensions",
+                index, sub_offset
+            );
+
+            if let Some((width, height)) =
+                extract_dimensions_from_ifd(data, *sub_offset, is_little_endian)
+            {
                 debug!("Found dimensions in SubIFD{}: {}x{}", index, width, height);
                 found_width = Some(width);
                 found_height = Some(height);
                 break; // Use first SubIFD that has both dimensions
             }
         }
-        
+
         (found_width, found_height)
     } else {
         (None, None)
@@ -886,8 +905,9 @@ pub fn extract_tiff_dimensions(
     // because File:ImageWidth/ImageHeight comes from JPEG preview, not sensor borders
     // The sensor border dimensions become Composite:ImageWidth/ImageHeight instead
     let file_type = reader.get_original_file_type().unwrap_or_default();
-    let skip_exif_dimensions = file_type == "RW2" && sensor_borders.calculate_dimensions().is_some();
-    
+    let skip_exif_dimensions =
+        file_type == "RW2" && sensor_borders.calculate_dimensions().is_some();
+
     if !skip_exif_dimensions {
         if let Some(width) = image_width {
             // Add ImageWidth tag (0x0100) - ExifTool: Exif.pm:460

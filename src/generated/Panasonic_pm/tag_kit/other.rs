@@ -6,12 +6,13 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -21,7 +22,7 @@ static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -30,14 +31,14 @@ static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_9: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "Standard or Custom");
@@ -56,14 +57,14 @@ static PRINT_CONV_9: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_10: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_11: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Normal");
     map.insert("1".to_string(), "Rotate CW");
@@ -74,7 +75,7 @@ static PRINT_CONV_11: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Left to Right");
@@ -84,7 +85,42 @@ static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0 1".to_string(), "Spot Mode On");
+    map.insert("0 16".to_string(), "Spot Mode Off");
+    map
+});
+
+static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0 1".to_string(), "9-area");
+    map.insert("0 16".to_string(), "3-area (high speed)");
+    map.insert("0 225".to_string(), "225-area");
+    map.insert("0 23".to_string(), "23-area");
+    map.insert("0 49".to_string(), "49-area");
+    map.insert("1 0".to_string(), "Spot Focusing");
+    map.insert("1 1".to_string(), "5-area");
+    map.insert("128 0".to_string(), "Pinpoint focus");
+    map.insert("16".to_string(), "Normal?");
+    map.insert("16 0".to_string(), "1-area");
+    map.insert("16 16".to_string(), "1-area (high speed)");
+    map.insert("16 32".to_string(), "1-area +");
+    map.insert("17 0".to_string(), "Full Area");
+    map.insert("240 0".to_string(), "Tracking");
+    map.insert("32 0".to_string(), "Tracking");
+    map.insert("32 1".to_string(), "3-area (left)?");
+    map.insert("32 16".to_string(), "Zone");
+    map.insert("32 18".to_string(), "Zone (horizontal/vertical)");
+    map.insert("32 2".to_string(), "3-area (center)?");
+    map.insert("32 3".to_string(), "3-area (right)?");
+    map.insert("64 0".to_string(), "Face Detect");
+    map.insert("64 1".to_string(), "Face Detect (animal detect on)");
+    map.insert("64 2".to_string(), "Face Detect (animal detect off)");
+    map
+});
+
+static PRINT_CONV_9: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("100".to_string(), "1 EV");
@@ -96,7 +132,7 @@ static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_10: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Mechanical");
     map.insert("1".to_string(), "Electronic");
@@ -104,7 +140,7 @@ static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_15: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_11: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0 0".to_string(), "Off");
     map.insert("0 1".to_string(), "Expressive");
@@ -132,14 +168,14 @@ static PRINT_CONV_15: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_16: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_17: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Yellow");
@@ -149,14 +185,14 @@ static PRINT_CONV_17: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_18: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Off or 4K");
     map.insert("4".to_string(), "6K");
     map
 });
 
-static PRINT_CONV_19: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_15: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "n/a");
     map.insert("1".to_string(), "Off");
@@ -164,14 +200,14 @@ static PRINT_CONV_19: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_20: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_16: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_21: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_17: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Off");
     map.insert("1032".to_string(), "Focus Stacking");
@@ -186,41 +222,41 @@ static PRINT_CONV_21: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_22: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_18: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Auto");
     map
 });
 
-static PRINT_CONV_23: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_19: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No");
     map.insert("1".to_string(), "Yes");
     map
 });
 
-static PRINT_CONV_24: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_20: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0 0".to_string(), "Post Focus Auto Merging or None");
     map
 });
 
-static PRINT_CONV_25: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_21: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No");
     map.insert("1".to_string(), "4K or 6K");
     map
 });
 
-static PRINT_CONV_26: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_22: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Multi-aspect");
     map.insert("1".to_string(), "Standard");
     map
 });
 
-static PRINT_CONV_27: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_23: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -229,7 +265,7 @@ static PRINT_CONV_27: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_28: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_24: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "n/a");
     map.insert("1".to_string(), "Human Eye/Face/Body");
@@ -248,14 +284,14 @@ static PRINT_CONV_28: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_29: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_25: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_30: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_26: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("10".to_string(), "Dual IS Panning");
     map.insert("11".to_string(), "Dual2 IS");
@@ -270,7 +306,7 @@ static PRINT_CONV_30: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_31: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_27: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "On");
     map.insert("2".to_string(), "Off");
@@ -279,7 +315,7 @@ static PRINT_CONV_31: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_32: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_28: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Normal");
     map.insert("10".to_string(), "Spot");
@@ -364,7 +400,7 @@ static PRINT_CONV_32: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_33: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_29: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Yes");
     map.insert("2".to_string(), "No");
@@ -372,7 +408,7 @@ static PRINT_CONV_33: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_34: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_30: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Normal");
@@ -458,7 +494,7 @@ static PRINT_CONV_34: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_35: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_31: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Disabled");
     map.insert("1".to_string(), "No");
@@ -466,28 +502,28 @@ static PRINT_CONV_35: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_36: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_32: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "No");
     map.insert("2".to_string(), "Yes");
     map
 });
 
-static PRINT_CONV_37: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_33: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Off");
     map.insert("2".to_string(), "On");
     map
 });
 
-static PRINT_CONV_38: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_34: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Off");
     map.insert("2".to_string(), "On");
     map
 });
 
-static PRINT_CONV_39: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_35: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("-1 1".to_string(), "Slim Low");
     map.insert("-3 2".to_string(), "Slim High");
@@ -497,7 +533,7 @@ static PRINT_CONV_39: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_40: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_36: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Off");
     map.insert("2".to_string(), "Warm");
@@ -509,7 +545,7 @@ static PRINT_CONV_40: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_41: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_37: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
@@ -522,7 +558,86 @@ static PRINT_CONV_41: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_42: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_38: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Low");
+    map.insert("13".to_string(), "High Dynamic");
+    map.insert("2".to_string(), "High");
+    map.insert("24".to_string(), "Dynamic Range (film-like)");
+    map.insert("256".to_string(), "Low");
+    map.insert("272".to_string(), "Normal");
+    map.insert("288".to_string(), "High");
+    map.insert("46".to_string(), "Match Filter Effects Toy");
+    map.insert("5".to_string(), "Normal 2");
+    map.insert("55".to_string(), "Match Photo Style L. Monochrome");
+    map.insert("6".to_string(), "Medium Low");
+    map.insert("7".to_string(), "Medium High");
+    map
+});
+
+static PRINT_CONV_39: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "-2");
+    map.insert("1".to_string(), "-1");
+    map.insert("100".to_string(), "High Dynamic 2");
+    map.insert("101".to_string(), "Retro 2");
+    map.insert("102".to_string(), "High Key 2");
+    map.insert("103".to_string(), "Low Key 2");
+    map.insert("104".to_string(), "Toy Effect 2");
+    map.insert("107".to_string(), "Expressive 2");
+    map.insert("112".to_string(), "Sepia");
+    map.insert("117".to_string(), "Miniature");
+    map.insert("12".to_string(), "Smooth (Color Film) or Pure (My Color)");
+    map.insert("122".to_string(), "Dynamic Monochrome");
+    map.insert("127".to_string(), "Old Days");
+    map.insert("132".to_string(), "Dynamic Monochrome 2");
+    map.insert("135".to_string(), "Impressive Art 2");
+    map.insert("136".to_string(), "Cross Process 2");
+    map.insert("137".to_string(), "Toy Pop");
+    map.insert("138".to_string(), "Fantasy");
+    map.insert("17".to_string(), "Dynamic (B&W Film)");
+    map.insert("2".to_string(), "Normal");
+    map.insert("22".to_string(), "Smooth (B&W Film)");
+    map.insert("25".to_string(), "High Dynamic");
+    map.insert("256".to_string(), "Normal 3");
+    map.insert("26".to_string(), "Retro");
+    map.insert("27".to_string(), "Dynamic (Color Film)");
+    map.insert("272".to_string(), "Standard");
+    map.insert("28".to_string(), "Low Key");
+    map.insert("288".to_string(), "High");
+    map.insert("29".to_string(), "Toy Effect");
+    map.insert("3".to_string(), "+1");
+    map.insert(
+        "32".to_string(),
+        "Vibrant (Color Film) or Expressive (My Color)",
+    );
+    map.insert("33".to_string(), "Elegant (My Color)");
+    map.insert("37".to_string(), "Nostalgic (Color Film)");
+    map.insert("4".to_string(), "+2");
+    map.insert("41".to_string(), "Dynamic Art (My Color)");
+    map.insert("42".to_string(), "Retro (My Color)");
+    map.insert("45".to_string(), "Cinema");
+    map.insert("47".to_string(), "Dynamic Mono");
+    map.insert("5".to_string(), "Normal 2");
+    map.insert("50".to_string(), "Impressive Art");
+    map.insert("51".to_string(), "Cross Process");
+    map.insert("7".to_string(), "Nature (Color Film)");
+    map.insert("9".to_string(), "Expressive");
+    map
+});
+
+static PRINT_CONV_40: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "-2");
+    map.insert("2".to_string(), "+2");
+    map.insert("5".to_string(), "-1");
+    map.insert("6".to_string(), "+1");
+    map
+});
+
+static PRINT_CONV_41: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Standard");
     map.insert("1".to_string(), "Low (-1)");
@@ -539,7 +654,7 @@ static PRINT_CONV_42: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_43: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_42: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Horizontal (normal)");
     map.insert("3".to_string(), "Rotate 180");
@@ -548,7 +663,7 @@ static PRINT_CONV_43: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_44: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_43: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Fired");
     map.insert("2".to_string(), "Enabled but Not Used");
@@ -557,7 +672,7 @@ static PRINT_CONV_44: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_45: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_44: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Normal");
     map.insert("1".to_string(), "Natural");
@@ -565,14 +680,14 @@ static PRINT_CONV_45: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_46: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_45: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Standard");
     map.insert("2".to_string(), "Extended");
     map
 });
 
-static PRINT_CONV_47: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_46: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Off");
     map.insert("2".to_string(), "Wide");
@@ -581,7 +696,7 @@ static PRINT_CONV_47: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_48: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_47: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Full");
     map.insert("2".to_string(), "Medium");
@@ -593,6 +708,13 @@ static PRINT_CONV_48: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
+static PRINT_CONV_48: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Off");
+    map.insert("2".to_string(), "On");
+    map
+});
+
 static PRINT_CONV_49: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Off");
@@ -601,13 +723,6 @@ static PRINT_CONV_49: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
 });
 
 static PRINT_CONV_50: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Off");
-    map.insert("2".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_51: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "n/a");
     map.insert("1".to_string(), "Standard (color)");
@@ -622,7 +737,7 @@ static PRINT_CONV_51: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_52: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_51: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "n/a (Movie)");
     map.insert("2".to_string(), "High");
@@ -632,7 +747,7 @@ static PRINT_CONV_52: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_53: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_52: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No Bracket");
     map.insert("1".to_string(), "3 Images, Sequence 0/-/+");
@@ -644,7 +759,7 @@ static PRINT_CONV_53: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_54: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_53: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "n/a");
     map.insert("1".to_string(), "1st");
@@ -652,14 +767,14 @@ static PRINT_CONV_54: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_55: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_54: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Off");
     map.insert("2".to_string(), "On");
     map
 });
 
-static PRINT_CONV_56: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_55: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("-1 1".to_string(), "Slim Low");
     map.insert("-3 2".to_string(), "Slim High");
@@ -669,7 +784,7 @@ static PRINT_CONV_56: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_57: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_56: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -678,7 +793,7 @@ static PRINT_CONV_57: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_58: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_57: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No");
     map.insert("1".to_string(), "Yes (flash required but disabled)");
@@ -697,6 +812,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (102, TagKitDef {
             id: 102,
@@ -707,6 +823,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("or pet name"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (103, TagKitDef {
             id: 103,
@@ -717,6 +834,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (105, TagKitDef {
             id: 105,
@@ -727,6 +845,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (107, TagKitDef {
             id: 107,
@@ -737,6 +856,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (109, TagKitDef {
             id: 109,
@@ -747,6 +867,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("City/Town as stored by some models, or County/Township for others"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (111, TagKitDef {
             id: 111,
@@ -757,6 +878,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (112, TagKitDef {
             id: 112,
@@ -765,8 +887,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_6),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_0),
             value_conv: None,
+            subdirectory: None,
         }),
         (118, TagKitDef {
             id: 118,
@@ -777,6 +900,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("number of images in HDR or Live View Composite picture"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (119, TagKitDef {
             id: 119,
@@ -787,6 +911,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("images per second"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (121, TagKitDef {
             id: 121,
@@ -795,8 +920,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_7),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_1),
             value_conv: None,
+            subdirectory: None,
         }),
         (124, TagKitDef {
             id: 124,
@@ -805,8 +931,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_8),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_2),
             value_conv: None,
+            subdirectory: None,
         }),
         (128, TagKitDef {
             id: 128,
@@ -817,6 +944,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("City/Town/Village as stored by some models"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (134, TagKitDef {
             id: 134,
@@ -827,6 +955,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Expression("sprintf(\"%.1f kPa\",$val)"),
             value_conv: Some("$val / 10"),
+            subdirectory: None,
         }),
         (137, TagKitDef {
             id: 137,
@@ -835,8 +964,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_9),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_3),
             value_conv: None,
+            subdirectory: None,
         }),
         (138, TagKitDef {
             id: 138,
@@ -845,8 +975,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_10),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_4),
             value_conv: None,
+            subdirectory: None,
         }),
         (139, TagKitDef {
             id: 139,
@@ -857,6 +988,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("value is -9 for blue to +9 for amber.  Valid for Intelligent-Auto modes"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (140, TagKitDef {
             id: 140,
@@ -867,6 +999,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("positive is acceleration upwards"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (141, TagKitDef {
             id: 141,
@@ -877,6 +1010,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("positive is acceleration to the left"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (142, TagKitDef {
             id: 142,
@@ -887,6 +1021,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("positive is acceleration backwards"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (143, TagKitDef {
             id: 143,
@@ -895,8 +1030,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_11),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_5),
             value_conv: None,
+            subdirectory: None,
         }),
         (144, TagKitDef {
             id: 144,
@@ -907,6 +1043,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("converted to degrees of clockwise camera rotation"),
             print_conv: PrintConvType::None,
             value_conv: Some("$val / 10"),
+            subdirectory: None,
         }),
         (145, TagKitDef {
             id: 145,
@@ -917,6 +1054,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("converted to degrees of upward camera tilt"),
             print_conv: PrintConvType::None,
             value_conv: Some("-$val / 10"),
+            subdirectory: None,
         }),
         (146, TagKitDef {
             id: 146,
@@ -927,6 +1065,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("WB shift or style strength.  Valid for Creative-Control modes"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (147, TagKitDef {
             id: 147,
@@ -935,8 +1074,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_12),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_6),
             value_conv: None,
+            subdirectory: None,
         }),
         (148, TagKitDef {
             id: 148,
@@ -947,6 +1087,29 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
+        }),
+        (15, TagKitDef {
+            id: 15,
+            name: "AFAreaMode",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("DMC-FZ10"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_7),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (15, TagKitDef {
+            id: 15,
+            name: "AFAreaMode",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("other models"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_8),
+            value_conv: None,
+            subdirectory: None,
         }),
         (157, TagKitDef {
             id: 157,
@@ -957,6 +1120,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (158, TagKitDef {
             id: 158,
@@ -965,8 +1129,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_13),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_9),
             value_conv: None,
+            subdirectory: None,
         }),
         (159, TagKitDef {
             id: 159,
@@ -975,8 +1140,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_14),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_10),
             value_conv: None,
+            subdirectory: None,
         }),
         (161, TagKitDef {
             id: 161,
@@ -985,8 +1151,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_15),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_11),
             value_conv: None,
+            subdirectory: None,
         }),
         (163, TagKitDef {
             id: 163,
@@ -997,6 +1164,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (167, TagKitDef {
             id: 167,
@@ -1007,6 +1175,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("2-column by 432-row binary lookup table of unsigned short values for\n            converting to 16-bit output (1st column) from 14 bits (2nd column) with\n            camera contrast"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (171, TagKitDef {
             id: 171,
@@ -1015,8 +1184,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_16),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_12),
             value_conv: None,
+            subdirectory: None,
         }),
         (172, TagKitDef {
             id: 172,
@@ -1025,8 +1195,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_17),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_13),
             value_conv: None,
+            subdirectory: None,
         }),
         (173, TagKitDef {
             id: 173,
@@ -1037,6 +1208,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (179, TagKitDef {
             id: 179,
@@ -1045,8 +1217,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_18),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_14),
             value_conv: None,
+            subdirectory: None,
         }),
         (180, TagKitDef {
             id: 180,
@@ -1055,8 +1228,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_19),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_15),
             value_conv: None,
+            subdirectory: None,
         }),
         (185, TagKitDef {
             id: 185,
@@ -1065,8 +1239,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_20),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_16),
             value_conv: None,
+            subdirectory: None,
         }),
         (187, TagKitDef {
             id: 187,
@@ -1075,8 +1250,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_21),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_17),
             value_conv: None,
+            subdirectory: None,
         }),
         (188, TagKitDef {
             id: 188,
@@ -1085,8 +1261,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_22),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_18),
             value_conv: None,
+            subdirectory: None,
         }),
         (189, TagKitDef {
             id: 189,
@@ -1097,6 +1274,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("positive is further, negative is closer"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (190, TagKitDef {
             id: 190,
@@ -1105,8 +1283,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_23),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_19),
             value_conv: None,
+            subdirectory: None,
         }),
         (191, TagKitDef {
             id: 191,
@@ -1115,8 +1294,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_24),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_20),
             value_conv: None,
+            subdirectory: None,
         }),
         (193, TagKitDef {
             id: 193,
@@ -1125,8 +1305,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_25),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_21),
             value_conv: None,
+            subdirectory: None,
         }),
         (196, TagKitDef {
             id: 196,
@@ -1137,6 +1318,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (197, TagKitDef {
             id: 197,
@@ -1147,6 +1329,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: Some("$_=sprintf(\"%.4x\",$val); s/(..)(..)/$2 $1/; $_"),
+            subdirectory: None,
         }),
         (202, TagKitDef {
             id: 202,
@@ -1155,8 +1338,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_26),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_22),
             value_conv: None,
+            subdirectory: None,
         }),
         (209, TagKitDef {
             id: 209,
@@ -1167,6 +1351,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (210, TagKitDef {
             id: 210,
@@ -1175,8 +1360,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_27),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_23),
             value_conv: None,
+            subdirectory: None,
         }),
         (214, TagKitDef {
             id: 214,
@@ -1187,6 +1373,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (222, TagKitDef {
             id: 222,
@@ -1197,6 +1384,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("relative to size of image.  \"n/a\" for manual focus"),
             print_conv: PrintConvType::Expression("$val =~ /^4194303.999/ ? \"n/a\" : $val"),
             value_conv: None,
+            subdirectory: None,
         }),
         (228, TagKitDef {
             id: 228,
@@ -1207,6 +1395,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: Some("$_=sprintf(\"%.4x\",$val); s/(..)(..)/$2 $1/; $_"),
+            subdirectory: None,
         }),
         (232, TagKitDef {
             id: 232,
@@ -1217,6 +1406,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (233, TagKitDef {
             id: 233,
@@ -1225,8 +1415,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_28),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_24),
             value_conv: None,
+            subdirectory: None,
         }),
         (238, TagKitDef {
             id: 238,
@@ -1235,8 +1426,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_29),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_25),
             value_conv: None,
+            subdirectory: None,
         }),
         (26, TagKitDef {
             id: 26,
@@ -1245,8 +1437,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_30),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_26),
             value_conv: None,
+            subdirectory: None,
         }),
         (28, TagKitDef {
             id: 28,
@@ -1255,8 +1448,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_31),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_27),
             value_conv: None,
+            subdirectory: None,
         }),
         (31, TagKitDef {
             id: 31,
@@ -1265,8 +1459,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_32),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_28),
             value_conv: None,
+            subdirectory: None,
         }),
         (32, TagKitDef {
             id: 32,
@@ -1275,8 +1470,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_33),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_29),
             value_conv: None,
+            subdirectory: None,
         }),
         (32768, TagKitDef {
             id: 32768,
@@ -1287,6 +1483,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (32769, TagKitDef {
             id: 32769,
@@ -1295,8 +1492,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_34),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_30),
             value_conv: None,
+            subdirectory: None,
         }),
         (32770, TagKitDef {
             id: 32770,
@@ -1305,8 +1503,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_35),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_31),
             value_conv: None,
+            subdirectory: None,
         }),
         (32771, TagKitDef {
             id: 32771,
@@ -1315,8 +1514,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_36),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_32),
             value_conv: None,
+            subdirectory: None,
         }),
         (32772, TagKitDef {
             id: 32772,
@@ -1327,6 +1527,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (32773, TagKitDef {
             id: 32773,
@@ -1337,6 +1538,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (32774, TagKitDef {
             id: 32774,
@@ -1347,6 +1549,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (32776, TagKitDef {
             id: 32776,
@@ -1355,8 +1558,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_37),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_33),
             value_conv: None,
+            subdirectory: None,
         }),
         (32777, TagKitDef {
             id: 32777,
@@ -1365,8 +1569,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_38),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_34),
             value_conv: None,
+            subdirectory: None,
         }),
         (32784, TagKitDef {
             id: 32784,
@@ -1377,6 +1582,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("or pet age"),
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (32786, TagKitDef {
             id: 32786,
@@ -1385,8 +1591,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("decoded as two 16-bit signed integers"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_39),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_35),
             value_conv: None,
+            subdirectory: None,
         }),
         (33, TagKitDef {
             id: 33,
@@ -1397,6 +1604,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (35, TagKitDef {
             id: 35,
@@ -1407,6 +1615,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: Some("$val / 3"),
+            subdirectory: None,
         }),
         (3584, TagKitDef {
             id: 3584,
@@ -1417,6 +1626,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0xe00_subdirectory }),
         }),
         (36, TagKitDef {
             id: 36,
@@ -1427,6 +1637,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: Some("$val / 3"),
+            subdirectory: None,
         }),
         (37, TagKitDef {
             id: 37,
@@ -1437,6 +1648,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("this number is unique, and contains the date of manufacture, but is not the\n            same as the number printed on the camera body"),
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (38, TagKitDef {
             id: 38,
@@ -1447,6 +1659,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (39, TagKitDef {
             id: 39,
@@ -1457,6 +1670,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("only valid for older models"),
             print_conv: PrintConvType::Manual("complex_hash_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (40, TagKitDef {
             id: 40,
@@ -1465,8 +1679,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_40),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_36),
             value_conv: None,
+            subdirectory: None,
         }),
         (42, TagKitDef {
             id: 42,
@@ -1475,8 +1690,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("decoding may be different for some models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_41),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_37),
             value_conv: None,
+            subdirectory: None,
         }),
         (43, TagKitDef {
             id: 43,
@@ -1487,6 +1703,51 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
+        }),
+        (44, TagKitDef {
+            id: 44,
+            name: "ContrastMode",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("this decoding seems to work for some models such as the LC1, LX2, FZ7, FZ8,\n                FZ18 and FZ50, but may not be correct for other models such as the FX10, G1, L1,\n                L10 and LC80"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_38),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (44, TagKitDef {
+            id: 44,
+            name: "ContrastMode",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("these values are used by the G2, GF1, GF2, GF3, GF5 and GF6"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_39),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (44, TagKitDef {
+            id: 44,
+            name: "ContrastMode",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("these values are used by the TZ10 and ZS7"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_40),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (44, TagKitDef {
+            id: 44,
+            name: "ContrastMode",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
         }),
         (45, TagKitDef {
             id: 45,
@@ -1495,8 +1756,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("the encoding for this value is not consistent between models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_42),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_41),
             value_conv: None,
+            subdirectory: None,
         }),
         (48, TagKitDef {
             id: 48,
@@ -1505,8 +1767,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_43),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_42),
             value_conv: None,
+            subdirectory: None,
         }),
         (49, TagKitDef {
             id: 49,
@@ -1515,8 +1778,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_44),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_43),
             value_conv: None,
+            subdirectory: None,
         }),
         (50, TagKitDef {
             id: 50,
@@ -1525,8 +1789,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_45),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_44),
             value_conv: None,
+            subdirectory: None,
         }),
         (51, TagKitDef {
             id: 51,
@@ -1537,6 +1802,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("or pet age"),
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (52, TagKitDef {
             id: 52,
@@ -1545,8 +1811,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_46),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_45),
             value_conv: None,
+            subdirectory: None,
         }),
         (53, TagKitDef {
             id: 53,
@@ -1555,8 +1822,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_47),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_46),
             value_conv: None,
+            subdirectory: None,
         }),
         (54, TagKitDef {
             id: 54,
@@ -1567,6 +1835,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Expression("$val == 65535 ? \"n/a\" : $val"),
             value_conv: None,
+            subdirectory: None,
         }),
         (56, TagKitDef {
             id: 56,
@@ -1575,8 +1844,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_48),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_47),
             value_conv: None,
+            subdirectory: None,
         }),
         (57, TagKitDef {
             id: 57,
@@ -1587,6 +1857,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_hash_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (59, TagKitDef {
             id: 59,
@@ -1595,8 +1866,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_49),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_48),
             value_conv: None,
+            subdirectory: None,
         }),
         (60, TagKitDef {
             id: 60,
@@ -1607,6 +1879,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_hash_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (61, TagKitDef {
             id: 61,
@@ -1617,6 +1890,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("used together with SceneMode to derive Composite AdvancedSceneMode"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (62, TagKitDef {
             id: 62,
@@ -1625,8 +1899,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_50),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_49),
             value_conv: None,
+            subdirectory: None,
         }),
         (63, TagKitDef {
             id: 63,
@@ -1637,6 +1912,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (64, TagKitDef {
             id: 64,
@@ -1647,6 +1923,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_hash_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (65, TagKitDef {
             id: 65,
@@ -1657,6 +1934,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_hash_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (66, TagKitDef {
             id: 66,
@@ -1665,8 +1943,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_51),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_50),
             value_conv: None,
+            subdirectory: None,
         }),
         (67, TagKitDef {
             id: 67,
@@ -1675,8 +1954,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_52),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_51),
             value_conv: None,
+            subdirectory: None,
         }),
         (68, TagKitDef {
             id: 68,
@@ -1687,6 +1967,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (69, TagKitDef {
             id: 69,
@@ -1695,8 +1976,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_53),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_52),
             value_conv: None,
+            subdirectory: None,
         }),
         (70, TagKitDef {
             id: 70,
@@ -1707,6 +1989,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("positive is a shift toward blue"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (71, TagKitDef {
             id: 71,
@@ -1717,6 +2000,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("positive is a shift toward green"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (72, TagKitDef {
             id: 72,
@@ -1725,8 +2009,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_54),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_53),
             value_conv: None,
+            subdirectory: None,
         }),
         (73, TagKitDef {
             id: 73,
@@ -1735,8 +2020,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_55),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_54),
             value_conv: None,
+            subdirectory: None,
         }),
         (75, TagKitDef {
             id: 75,
@@ -1747,6 +2033,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (76, TagKitDef {
             id: 76,
@@ -1757,6 +2044,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (77, TagKitDef {
             id: 77,
@@ -1767,6 +2055,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("X Y coordinates of primary AF area center, in the range 0.0 to 1.0"),
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (78, TagKitDef {
             id: 78,
@@ -1777,6 +2066,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x4e_subdirectory }),
         }),
         (81, TagKitDef {
             id: 81,
@@ -1787,6 +2077,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: Some("$val=~s/ +$//; $val"),
+            subdirectory: None,
         }),
         (82, TagKitDef {
             id: 82,
@@ -1797,6 +2088,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: Some("$val=~s/ +$//; $val"),
+            subdirectory: None,
         }),
         (83, TagKitDef {
             id: 83,
@@ -1807,6 +2099,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: Some("$val=~s/ +$//; $val"),
+            subdirectory: None,
         }),
         (84, TagKitDef {
             id: 84,
@@ -1817,6 +2110,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: Some("$val=~s/ +$//; $val"),
+            subdirectory: None,
         }),
         (89, TagKitDef {
             id: 89,
@@ -1825,8 +2119,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("decoded as two 16-bit signed integers"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_56),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_55),
             value_conv: None,
+            subdirectory: None,
         }),
         (93, TagKitDef {
             id: 93,
@@ -1835,8 +2130,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("not valid for some models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_57),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_56),
             value_conv: None,
+            subdirectory: None,
         }),
         (96, TagKitDef {
             id: 96,
@@ -1847,6 +2143,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (97, TagKitDef {
             id: 97,
@@ -1857,6 +2154,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x61_subdirectory }),
         }),
         (98, TagKitDef {
             id: 98,
@@ -1865,8 +2163,9 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_58),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_57),
             value_conv: None,
+            subdirectory: None,
         }),
         (99, TagKitDef {
             id: 99,
@@ -1877,6 +2176,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
     ]
 }

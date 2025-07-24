@@ -220,7 +220,7 @@ fn try_tag_kit_print_conv(tag_id: u32, value: &TagValue) -> Option<TagValue> {
     // Check if tag kit actually handled this tag (didn't just return the original value)
     if result != *value {
         Some(result)
-    } else if tag_kit::TAG_KITS.get(&tag_id).is_some() {
+    } else if tag_kit::EXIF_PM_TAG_KITS.get(&tag_id).is_some() {
         // Tag kit contains this tag but couldn't convert it (e.g., None PrintConv)
         Some(result)
     } else {

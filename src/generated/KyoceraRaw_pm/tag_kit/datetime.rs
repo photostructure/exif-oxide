@@ -6,33 +6,42 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
+use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
-use crate::types::TagValue;
-use super::{TagKitDef, PrintConvType};
 
 /// Get tag definitions for datetime category
 pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
     vec![
-        (33, TagKitDef {
-            id: 33,
-            name: "DateTimeOriginal",
-            format: "string[20]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Manual("complex_expression_printconv"),
-            value_conv: None,
-        }),
-        (56, TagKitDef {
-            id: 56,
-            name: "ExposureTime",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Manual("complex_expression_printconv"),
-            value_conv: Some("2**($val / 8) / 16000"),
-        }),
+        (
+            33,
+            TagKitDef {
+                id: 33,
+                name: "DateTimeOriginal",
+                format: "string[20]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            56,
+            TagKitDef {
+                id: 56,
+                name: "ExposureTime",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                value_conv: Some("2**($val / 8) / 16000"),
+                subdirectory: None,
+            },
+        ),
     ]
 }

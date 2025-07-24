@@ -6,12 +6,13 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_54: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Full-resolution image");
     map.insert("1".to_string(), "Reduced-resolution image");
@@ -39,7 +40,7 @@ static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_55: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Full-resolution image");
     map.insert("2".to_string(), "Reduced-resolution image");
@@ -47,7 +48,7 @@ static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_56: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Uncompressed");
     map.insert("10".to_string(), "JBIG Color");
@@ -114,7 +115,7 @@ static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_57: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "WhiteIsZero");
     map.insert("1".to_string(), "BlackIsZero");
@@ -136,7 +137,7 @@ static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_58: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "No dithering or halftoning");
     map.insert("2".to_string(), "Ordered dither or halftone");
@@ -144,14 +145,14 @@ static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_59: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Normal");
     map.insert("2".to_string(), "Reversed");
     map
 });
 
-static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_60: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Horizontal (normal)");
     map.insert("2".to_string(), "Mirror horizontal");
@@ -164,14 +165,14 @@ static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_61: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Chunky");
     map.insert("2".to_string(), "Planar");
     map
 });
 
-static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_62: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "None");
     map.insert("2".to_string(), "inches");
@@ -182,278 +183,390 @@ static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
 /// Get tag definitions for core category
 pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
     vec![
-        (
-            254,
-            TagKitDef {
-                id: 254,
-                name: "SubfileType",
-                format: "int32u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: Some("called NewSubfileType by the TIFF specification"),
-                print_conv: PrintConvType::Simple(&PRINT_CONV_0),
-                value_conv: None,
-            },
-        ),
-        (
-            255,
-            TagKitDef {
-                id: 255,
-                name: "OldSubfileType",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: Some("called SubfileType by the TIFF specification"),
-                print_conv: PrintConvType::Simple(&PRINT_CONV_1),
-                value_conv: None,
-            },
-        ),
-        (
-            256,
-            TagKitDef {
-                id: 256,
-                name: "ImageWidth",
-                format: "int32u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            257,
-            TagKitDef {
-                id: 257,
-                name: "ImageHeight",
-                format: "int32u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: Some("called ImageLength by the EXIF spec."),
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            258,
-            TagKitDef {
-                id: 258,
-                name: "BitsPerSample",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            259,
-            TagKitDef {
-                id: 259,
-                name: "Compression",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_2),
-                value_conv: None,
-            },
-        ),
-        (
-            262,
-            TagKitDef {
-                id: 262,
-                name: "PhotometricInterpretation",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_3),
-                value_conv: None,
-            },
-        ),
-        (
-            263,
-            TagKitDef {
-                id: 263,
-                name: "Thresholding",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_4),
-                value_conv: None,
-            },
-        ),
-        (
-            264,
-            TagKitDef {
-                id: 264,
-                name: "CellWidth",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            265,
-            TagKitDef {
-                id: 265,
-                name: "CellLength",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            266,
-            TagKitDef {
-                id: 266,
-                name: "FillOrder",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_5),
-                value_conv: None,
-            },
-        ),
-        (
-            274,
-            TagKitDef {
-                id: 274,
-                name: "Orientation",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_6),
-                value_conv: None,
-            },
-        ),
-        (
-            277,
-            TagKitDef {
-                id: 277,
-                name: "SamplesPerPixel",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            278,
-            TagKitDef {
-                id: 278,
-                name: "RowsPerStrip",
-                format: "int32u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            280,
-            TagKitDef {
-                id: 280,
-                name: "MinSampleValue",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            281,
-            TagKitDef {
-                id: 281,
-                name: "MaxSampleValue",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            282,
-            TagKitDef {
-                id: 282,
-                name: "XResolution",
-                format: "rational64u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            283,
-            TagKitDef {
-                id: 283,
-                name: "YResolution",
-                format: "rational64u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            284,
-            TagKitDef {
-                id: 284,
-                name: "PlanarConfiguration",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_7),
-                value_conv: None,
-            },
-        ),
-        (
-            296,
-            TagKitDef {
-                id: 296,
-                name: "ResolutionUnit",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: Some("the value 1 is not standard EXIF"),
-                print_conv: PrintConvType::Simple(&PRINT_CONV_8),
-                value_conv: None,
-            },
-        ),
-        (
-            297,
-            TagKitDef {
-                id: 297,
-                name: "PageNumber",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
+        (254, TagKitDef {
+            id: 254,
+            name: "SubfileType",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("called NewSubfileType by the TIFF specification"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_54),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (255, TagKitDef {
+            id: 255,
+            name: "OldSubfileType",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("called SubfileType by the TIFF specification"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_55),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (256, TagKitDef {
+            id: 256,
+            name: "ImageWidth",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (257, TagKitDef {
+            id: 257,
+            name: "ImageHeight",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("called ImageLength by the EXIF spec."),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (258, TagKitDef {
+            id: 258,
+            name: "BitsPerSample",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (259, TagKitDef {
+            id: 259,
+            name: "Compression",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_56),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (262, TagKitDef {
+            id: 262,
+            name: "PhotometricInterpretation",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_57),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (263, TagKitDef {
+            id: 263,
+            name: "Thresholding",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_58),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (264, TagKitDef {
+            id: 264,
+            name: "CellWidth",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (265, TagKitDef {
+            id: 265,
+            name: "CellLength",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (266, TagKitDef {
+            id: 266,
+            name: "FillOrder",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_59),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (273, TagKitDef {
+            id: 273,
+            name: "StripOffsets",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val=join(\" \",unpack(\"N*\",pack(\"V*\",split(\" \",$val))));\\$val"),
+            subdirectory: None,
+        }),
+        (273, TagKitDef {
+            id: 273,
+            name: "OtherImageStart",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (273, TagKitDef {
+            id: 273,
+            name: "PreviewJXLStart",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (273, TagKitDef {
+            id: 273,
+            name: "StripOffsets",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("length($val) > 32 ? \\$val : $val"),
+            subdirectory: None,
+        }),
+        (273, TagKitDef {
+            id: 273,
+            name: "PreviewImageStart",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("called StripOffsets in most locations, but it is PreviewImageStart in IFD0\n                of CR2 images and various IFD's of DNG images except for SubIFD2 where it is\n                JpgFromRawStart"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (273, TagKitDef {
+            id: 273,
+            name: "PreviewImageStart",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (273, TagKitDef {
+            id: 273,
+            name: "JpgFromRawStart",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (274, TagKitDef {
+            id: 274,
+            name: "Orientation",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_60),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (277, TagKitDef {
+            id: 277,
+            name: "SamplesPerPixel",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (278, TagKitDef {
+            id: 278,
+            name: "RowsPerStrip",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (279, TagKitDef {
+            id: 279,
+            name: "StripByteCounts",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val=join(\" \",unpack(\"N*\",pack(\"V*\",split(\" \",$val))));\\$val"),
+            subdirectory: None,
+        }),
+        (279, TagKitDef {
+            id: 279,
+            name: "OtherImageLength",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (279, TagKitDef {
+            id: 279,
+            name: "PreviewJXLLength",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (279, TagKitDef {
+            id: 279,
+            name: "StripByteCounts",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("length($val) > 32 ? \\$val : $val"),
+            subdirectory: None,
+        }),
+        (279, TagKitDef {
+            id: 279,
+            name: "PreviewImageLength",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("called StripByteCounts in most locations, but it is PreviewImageLength in\n                IFD0 of CR2 images and various IFD's of DNG images except for SubIFD2 where\n                it is JpgFromRawLength"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (279, TagKitDef {
+            id: 279,
+            name: "PreviewImageLength",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (279, TagKitDef {
+            id: 279,
+            name: "JpgFromRawLength",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (280, TagKitDef {
+            id: 280,
+            name: "MinSampleValue",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (281, TagKitDef {
+            id: 281,
+            name: "MaxSampleValue",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (282, TagKitDef {
+            id: 282,
+            name: "XResolution",
+            format: "rational64u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (283, TagKitDef {
+            id: 283,
+            name: "YResolution",
+            format: "rational64u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (284, TagKitDef {
+            id: 284,
+            name: "PlanarConfiguration",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_61),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (296, TagKitDef {
+            id: 296,
+            name: "ResolutionUnit",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("the value 1 is not standard EXIF"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_62),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (297, TagKitDef {
+            id: 297,
+            name: "PageNumber",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
     ]
 }

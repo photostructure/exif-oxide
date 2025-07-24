@@ -6,7 +6,8 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
@@ -24,6 +25,7 @@ pub fn get_thumbnail_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("all zeros for full frame"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         },
     )]
 }

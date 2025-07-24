@@ -6,12 +6,13 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_10: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_48: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Clean");
     map.insert("1".to_string(), "Regenerated");
@@ -19,14 +20,14 @@ static PRINT_CONV_10: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_11: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_49: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "CMYK");
     map.insert("2".to_string(), "Not CMYK");
     map
 });
 
-static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_50: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1 1".to_string(), "YCbCr4:4:4 (1 1)");
     map.insert("1 2".to_string(), "YCbCr4:4:0 (1 2)");
@@ -39,7 +40,7 @@ static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_51: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Centered");
     map.insert("2".to_string(), "Co-sited");
@@ -60,6 +61,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -73,6 +75,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -86,6 +89,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -99,6 +103,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -112,6 +117,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -125,6 +131,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -138,6 +145,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -151,6 +159,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: Some("length($val) > 32 ? \\$val : $val"),
+                subdirectory: None,
             },
         ),
         (
@@ -164,6 +173,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: Some("length($val) > 32 ? \\$val : $val"),
+                subdirectory: None,
             },
         ),
         (
@@ -175,8 +185,39 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_10),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_48),
                 value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            330,
+            TagKitDef {
+                id: 330,
+                name: "SubIFD",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: Some(SubDirectoryType::Binary {
+                    processor: process_tag_0x14a_subdirectory,
+                }),
+            },
+        ),
+        (
+            330,
+            TagKitDef {
+                id: 330,
+                name: "A100DataOffset",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("the data offset in original Sony DSLR-A100 ARW images"),
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -188,8 +229,9 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_11),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_49),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -203,6 +245,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -214,8 +257,9 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_12),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_50),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -227,8 +271,9 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_13),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_51),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -242,6 +287,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
     ]

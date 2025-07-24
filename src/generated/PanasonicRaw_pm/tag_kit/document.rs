@@ -6,12 +6,13 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("65536".to_string(), "Pixel Shift");
@@ -32,6 +33,9 @@ pub fn get_document_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: Some(SubDirectoryType::Binary {
+                    processor: process_tag_0x120_subdirectory,
+                }),
             },
         ),
         (
@@ -43,8 +47,9 @@ pub fn get_document_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_1),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_3),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -58,6 +63,7 @@ pub fn get_document_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
     ]

@@ -6,7 +6,8 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
@@ -81,6 +82,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (1, TagKitDef {
             id: 1,
@@ -91,6 +93,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("tags 0x0001-0x0006 used for camera location according to MWG 2.0. ExifTool\n            will also accept a number when writing GPSLatitudeRef, positive for north\n            latitudes or negative for south, or a string containing N, North, S or South"),
             print_conv: PrintConvType::Manual("complex_hash_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (10, TagKitDef {
             id: 10,
@@ -101,6 +104,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_0),
             value_conv: None,
+            subdirectory: None,
         }),
         (11, TagKitDef {
             id: 11,
@@ -111,6 +115,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (12, TagKitDef {
             id: 12,
@@ -121,6 +126,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_1),
             value_conv: None,
+            subdirectory: None,
         }),
         (13, TagKitDef {
             id: 13,
@@ -131,6 +137,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (14, TagKitDef {
             id: 14,
@@ -141,6 +148,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_2),
             value_conv: None,
+            subdirectory: None,
         }),
         (15, TagKitDef {
             id: 15,
@@ -151,6 +159,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (16, TagKitDef {
             id: 16,
@@ -161,6 +170,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_3),
             value_conv: None,
+            subdirectory: None,
         }),
         (17, TagKitDef {
             id: 17,
@@ -171,6 +181,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (18, TagKitDef {
             id: 18,
@@ -181,6 +192,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (19, TagKitDef {
             id: 19,
@@ -191,6 +203,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("tags 0x0013-0x001a used for subject location according to MWG 2.0"),
             print_conv: PrintConvType::Manual("complex_hash_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (2, TagKitDef {
             id: 2,
@@ -201,6 +214,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: Some("Image::ExifTool::GPS::ToDegrees($val)"),
+            subdirectory: None,
         }),
         (20, TagKitDef {
             id: 20,
@@ -211,6 +225,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: Some("Image::ExifTool::GPS::ToDegrees($val)"),
+            subdirectory: None,
         }),
         (21, TagKitDef {
             id: 21,
@@ -221,6 +236,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_hash_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (22, TagKitDef {
             id: 22,
@@ -231,6 +247,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: Some("Image::ExifTool::GPS::ToDegrees($val)"),
+            subdirectory: None,
         }),
         (23, TagKitDef {
             id: 23,
@@ -241,6 +258,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_4),
             value_conv: None,
+            subdirectory: None,
         }),
         (24, TagKitDef {
             id: 24,
@@ -251,6 +269,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (25, TagKitDef {
             id: 25,
@@ -261,6 +280,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_5),
             value_conv: None,
+            subdirectory: None,
         }),
         (26, TagKitDef {
             id: 26,
@@ -271,6 +291,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (27, TagKitDef {
             id: 27,
@@ -281,6 +302,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("values of \"GPS\", \"CELLID\", \"WLAN\" or \"MANUAL\" by the EXIF spec."),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (28, TagKitDef {
             id: 28,
@@ -291,6 +313,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (29, TagKitDef {
             id: 29,
@@ -301,6 +324,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("when writing, time is stripped off if present, after adjusting date/time to\n            UTC if time includes a timezone.  Format is YYYY:mm:dd"),
             print_conv: PrintConvType::None,
             value_conv: Some("Image::ExifTool::Exif::ExifDate($val)"),
+            subdirectory: None,
         }),
         (3, TagKitDef {
             id: 3,
@@ -311,6 +335,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("ExifTool will also accept a number when writing this tag, positive for east\n            longitudes or negative for west, or a string containing E, East, W or West"),
             print_conv: PrintConvType::Manual("complex_hash_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (30, TagKitDef {
             id: 30,
@@ -321,6 +346,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_6),
             value_conv: None,
+            subdirectory: None,
         }),
         (31, TagKitDef {
             id: 31,
@@ -331,6 +357,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Expression("\"$val m\""),
             value_conv: None,
+            subdirectory: None,
         }),
         (4, TagKitDef {
             id: 4,
@@ -341,6 +368,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: Some("Image::ExifTool::GPS::ToDegrees($val)"),
+            subdirectory: None,
         }),
         (5, TagKitDef {
             id: 5,
@@ -351,6 +379,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("ExifTool will also accept number when writing this tag, with negative\n            numbers indicating below sea level"),
             print_conv: PrintConvType::Manual("complex_hash_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (6, TagKitDef {
             id: 6,
@@ -361,6 +390,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Expression("$val =~ /^(inf|undef)$/ ? $val : \"$val m\""),
             value_conv: None,
+            subdirectory: None,
         }),
         (7, TagKitDef {
             id: 7,
@@ -371,6 +401,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("UTC time of GPS fix.  When writing, date is stripped off if present, and\n            time is adjusted to UTC if it includes a timezone"),
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: Some("Image::ExifTool::GPS::ConvertTimeStamp($val)"),
+            subdirectory: None,
         }),
         (8, TagKitDef {
             id: 8,
@@ -381,6 +412,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (9, TagKitDef {
             id: 9,
@@ -391,6 +423,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_7),
             value_conv: None,
+            subdirectory: None,
         }),
     ]
 }

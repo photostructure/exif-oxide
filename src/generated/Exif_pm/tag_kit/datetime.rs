@@ -6,7 +6,8 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
@@ -23,6 +24,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (306, TagKitDef {
             id: 306,
@@ -33,6 +35,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("called DateTime by the EXIF spec."),
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (33434, TagKitDef {
             id: 33434,
@@ -43,6 +46,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (34858, TagKitDef {
             id: 34858,
@@ -53,6 +57,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("1 or 2 values: 1. The time zone offset of DateTimeOriginal from GMT in\n            hours, 2. If present, the time zone offset of ModifyDate"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (34859, TagKitDef {
             id: 34859,
@@ -63,6 +68,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (36867, TagKitDef {
             id: 36867,
@@ -73,6 +79,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("date/time when original image was taken"),
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (36868, TagKitDef {
             id: 36868,
@@ -83,6 +90,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("called DateTimeDigitized by the EXIF spec."),
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (36880, TagKitDef {
             id: 36880,
@@ -93,6 +101,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("time zone for ModifyDate"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (36881, TagKitDef {
             id: 36881,
@@ -103,6 +112,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("time zone for DateTimeOriginal"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (36882, TagKitDef {
             id: 36882,
@@ -113,6 +123,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("time zone for CreateDate"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (37520, TagKitDef {
             id: 37520,
@@ -123,6 +134,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("fractional seconds for ModifyDate"),
             print_conv: PrintConvType::None,
             value_conv: Some("$val=~s/ +$//; $val"),
+            subdirectory: None,
         }),
         (37521, TagKitDef {
             id: 37521,
@@ -133,6 +145,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("fractional seconds for DateTimeOriginal"),
             print_conv: PrintConvType::None,
             value_conv: Some("$val=~s/ +$//; $val"),
+            subdirectory: None,
         }),
         (37522, TagKitDef {
             id: 37522,
@@ -143,6 +156,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("fractional seconds for CreateDate"),
             print_conv: PrintConvType::None,
             value_conv: Some("$val=~s/ +$//; $val"),
+            subdirectory: None,
         }),
         (42082, TagKitDef {
             id: 42082,
@@ -153,6 +167,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("11 or more values: 1. Total exposure time period, 2. Total exposure of all\n            source images, 3. Total exposure of all used images, 4. Max exposure time of\n            source images, 5. Max exposure time of used images, 6. Min exposure time of\n            source images, 7. Min exposure of used images, 8. Number of sequences, 9.\n            Number of source images in sequence. 10-N. Exposure times of each source\n            image. Called SourceExposureTimesOfCompositeImage by the EXIF spec."),
             print_conv: PrintConvType::Manual("code_ref_printconv"),
             value_conv: None,
+            subdirectory: None,
         }),
         (50971, TagKitDef {
             id: 50971,
@@ -163,6 +178,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: Some("\n            require Image::ExifTool::XMP;\n            return Image::ExifTool::XMP::ConvertXMPDate($val);\n        "),
+            subdirectory: None,
         }),
         (51043, TagKitDef {
             id: 51043,
@@ -173,6 +189,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::Manual("complex_expression_printconv"),
             value_conv: Some("\n            my @a = split ' ', $val;\n            my @v;\n            push @v, join('.', map { sprintf('%.2x',$_) } splice(@a,0,8)) while @a >= 8;\n            join ' ', @v;\n        "),
+            subdirectory: None,
         }),
     ]
 }

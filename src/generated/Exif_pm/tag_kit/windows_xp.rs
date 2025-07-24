@@ -6,7 +6,8 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
@@ -23,6 +24,7 @@ pub fn get_windows_xp_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (18247, TagKitDef {
             id: 18247,
@@ -33,6 +35,7 @@ pub fn get_windows_xp_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: Some("$self->Decode($val,\"UCS2\",\"II\")"),
+            subdirectory: None,
         }),
         (18248, TagKitDef {
             id: 18248,
@@ -43,6 +46,7 @@ pub fn get_windows_xp_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x4748_subdirectory }),
         }),
         (18249, TagKitDef {
             id: 18249,
@@ -53,6 +57,7 @@ pub fn get_windows_xp_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (286, TagKitDef {
             id: 286,
@@ -63,6 +68,7 @@ pub fn get_windows_xp_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
         }),
         (40091, TagKitDef {
             id: 40091,
@@ -73,6 +79,7 @@ pub fn get_windows_xp_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("tags 0x9c9b-0x9c9f are used by Windows Explorer; special characters\n            in these values are converted to UTF-8 by default, or Windows Latin1\n            with the -L option.  XPTitle is ignored by Windows Explorer if\n            ImageDescription exists"),
             print_conv: PrintConvType::None,
             value_conv: Some("$self->Decode($val,\"UCS2\",\"II\")"),
+            subdirectory: None,
         }),
         (40092, TagKitDef {
             id: 40092,
@@ -83,6 +90,7 @@ pub fn get_windows_xp_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: Some("$self->Decode($val,\"UCS2\",\"II\")"),
+            subdirectory: None,
         }),
         (40093, TagKitDef {
             id: 40093,
@@ -93,6 +101,7 @@ pub fn get_windows_xp_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("ignored by Windows Explorer if Artist exists"),
             print_conv: PrintConvType::None,
             value_conv: Some("$self->Decode($val,\"UCS2\",\"II\")"),
+            subdirectory: None,
         }),
         (40094, TagKitDef {
             id: 40094,
@@ -103,6 +112,7 @@ pub fn get_windows_xp_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: Some("$self->Decode($val,\"UCS2\",\"II\")"),
+            subdirectory: None,
         }),
         (40095, TagKitDef {
             id: 40095,
@@ -113,6 +123,7 @@ pub fn get_windows_xp_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: Some("$self->Decode($val,\"UCS2\",\"II\")"),
+            subdirectory: None,
         }),
     ]
 }
