@@ -105,7 +105,7 @@ pub fn generate_tag_structure(data: &TagStructureData) -> Result<String> {
         data.tags.iter().filter(|t| t.has_subdirectory).count()
     ));
     code.push_str("#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]\n");
-    code.push_str(&format!("pub enum {} {{\n", enum_name));
+    code.push_str(&format!("pub enum {enum_name} {{\n"));
     
     // Generate enum variants and store mappings
     let mut seen_names = HashSet::new();
@@ -125,24 +125,24 @@ pub fn generate_tag_structure(data: &TagStructureData) -> Result<String> {
         }
         if tag.has_subdirectory {
             if let Some(table) = &tag.subdirectory_table {
-                code.push_str(&format!("    /// ExifTool: SubDirectory -> {}\n", table));
+                code.push_str(&format!("    /// ExifTool: SubDirectory -> {table}\n"));
             }
             if tag.process_binary_data {
                 code.push_str("    /// ExifTool: ProcessBinaryData\n");
             }
         }
         
-        code.push_str(&format!("    {},\n", variant_name));
+        code.push_str(&format!("    {variant_name},\n"));
         
         if tag.conditional {
-            code.push_str("\n");
+            code.push('\n');
         }
     }
     
     code.push_str("}\n\n");
     
     // Generate impl block
-    code.push_str(&format!("impl {} {{\n", enum_name));
+    code.push_str(&format!("impl {enum_name} {{\n"));
     
     // Generate tag_id method
     code.push_str("    /// Get tag ID for this data type\n");
@@ -162,8 +162,7 @@ pub fn generate_tag_structure(data: &TagStructureData) -> Result<String> {
     // Generate from_tag_id method
     code.push_str("    /// Get data type from tag ID\n");
     code.push_str(&format!(
-        "    pub fn from_tag_id(tag_id: u16) -> Option<{}> {{\n",
-        enum_name
+        "    pub fn from_tag_id(tag_id: u16) -> Option<{enum_name}> {{\n"
     ));
     code.push_str("        match tag_id {\n");
     
@@ -205,9 +204,9 @@ pub fn generate_tag_structure(data: &TagStructureData) -> Result<String> {
         code.push_str("        matches!(self,\n");
         for (i, (_, variant_name)) in subdirectory_tags.iter().enumerate() {
             if i == 0 {
-                code.push_str(&format!("            {}::{}", enum_name, variant_name));
+                code.push_str(&format!("            {enum_name}::{variant_name}"));
             } else {
-                code.push_str(&format!(" |\n            {}::{}", enum_name, variant_name));
+                code.push_str(&format!(" |\n            {enum_name}::{variant_name}"));
             }
         }
         code.push_str("\n        )\n");
@@ -224,7 +223,7 @@ pub fn generate_tag_structure(data: &TagStructureData) -> Result<String> {
     
     for (tag, variant_name) in &variant_mappings {
         let groups = if let Some(g) = &tag.groups {
-            let group0 = g.get(0).map(|s| s.as_str()).unwrap_or("MakerNotes");
+            let group0 = g.first().map(|s| s.as_str()).unwrap_or("MakerNotes");
             let group2 = g.get(2).map(|s| s.as_str()).unwrap_or("Camera");
             (group0, group2)
         } else {
@@ -244,7 +243,7 @@ pub fn generate_tag_structure(data: &TagStructureData) -> Result<String> {
     
     // Generate subdirectory tag lookup function if this is not a Main table
     if data.source.table != "Main" {
-        code.push_str("\n");
+        code.push('\n');
         generate_subdirectory_lookup_function(&mut code, data)?;
     }
     
@@ -255,7 +254,7 @@ pub fn generate_tag_structure(data: &TagStructureData) -> Result<String> {
 /// This generates functions like get_equipment_tag_name(tag_id: u16) -> Option<&'static str>
 fn generate_subdirectory_lookup_function(code: &mut String, data: &TagStructureData) -> Result<()> {
     let table_name_lower = data.source.table.to_lowercase();
-    let lookup_fn_name = format!("get_{}_tag_name", table_name_lower);
+    let lookup_fn_name = format!("get_{table_name_lower}_tag_name");
     
     // Add function documentation
     code.push_str(&format!(
@@ -267,8 +266,7 @@ fn generate_subdirectory_lookup_function(code: &mut String, data: &TagStructureD
         data.source.module, data.manufacturer, data.source.table
     ));
     code.push_str(&format!(
-        "pub fn {}(tag_id: u16) -> Option<&'static str> {{\n",
-        lookup_fn_name
+        "pub fn {lookup_fn_name}(tag_id: u16) -> Option<&'static str> {{\n"
     ));
     code.push_str("    match tag_id {\n");
     
@@ -290,7 +288,7 @@ fn generate_subdirectory_lookup_function(code: &mut String, data: &TagStructureD
 
 /// Format tag ID as hexadecimal for match patterns
 fn format_tag_id_as_hex(tag_id_decimal: u16) -> String {
-    format!("0x{:04x}", tag_id_decimal)
+    format!("0x{tag_id_decimal:04x}")
 }
 
 /// Create a valid Rust variant name from a tag name
@@ -333,7 +331,7 @@ fn create_variant_name(name: &str, seen_names: &mut HashSet<String>) -> String {
     let mut final_name = variant_name.clone();
     let mut counter = 2;
     while seen_names.contains(&final_name) {
-        final_name = format!("{}{}", variant_name, counter);
+        final_name = format!("{variant_name}{counter}");
         counter += 1;
     }
     

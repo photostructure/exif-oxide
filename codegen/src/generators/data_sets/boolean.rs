@@ -29,8 +29,7 @@ pub fn generate_boolean_set(
     
     if key_type != "String" {
         return Err(anyhow::anyhow!(
-            "boolean_set extraction only supports String key_type, got: {}",
-            key_type
+            "boolean_set extraction only supports String key_type, got: {key_type}"
         ));
     }
     
@@ -44,25 +43,25 @@ pub fn generate_boolean_set(
     let truthy_keys: Vec<String> = sorted_entries
         .iter()
         .filter_map(|entry| {
-            entry.key.as_ref().map(|k| k.clone())
+            entry.key.clone()
         })
         .collect();
     
     // Generate static data array
-    let data_name = format!("{}_DATA", constant_name);
+    let data_name = format!("{constant_name}_DATA");
+    let description_lower = metadata.description.to_lowercase();
+    let num_entries = truthy_keys.len();
     code.push_str(&format!(
-        "/// Static data for {} set ({} entries)\n",
-        metadata.description.to_lowercase(),
-        truthy_keys.len()
+        "/// Static data for {description_lower} set ({num_entries} entries)\n"
     ));
     code.push_str(&format!(
-        "static {}: &[&str] = &[\n",
-        data_name
+        "static {data_name}: &[&str] = &[\n"
     ));
     
     // Add entries to data array
     for key in &truthy_keys {
-        code.push_str(&format!("    \"{}\",\n", escape_string(key)));
+        let escaped_key = escape_string(key);
+        code.push_str(&format!("    \"{escaped_key}\",\n"));
     }
     
     code.push_str("];\n\n");
@@ -73,20 +72,18 @@ pub fn generate_boolean_set(
         metadata.description
     ));
     code.push_str(&format!(
-        "pub static {}: LazyLock<HashSet<&'static str>> =\n    LazyLock::new(|| {}.iter().copied().collect());\n\n",
-        constant_name,
-        data_name
+        "pub static {constant_name}: LazyLock<HashSet<&'static str>> =\n    LazyLock::new(|| {data_name}.iter().copied().collect());\n\n"
     ));
     
     // Generate check function
     let fn_name = constant_name.to_lowercase();
+    let description_lower = metadata.description.to_lowercase();
+    let fn_suffix = fn_name.strip_suffix("_types").unwrap_or(&fn_name);
     code.push_str(&format!(
-        "/// Check if a file type is in the {} set\npub fn is_{}(file_type: &str) -> bool {{\n",
-        metadata.description.to_lowercase(),
-        fn_name.strip_suffix("_types").unwrap_or(&fn_name)
+        "/// Check if a file type is in the {description_lower} set\npub fn is_{fn_suffix}(file_type: &str) -> bool {{\n"
     ));
     
-    code.push_str(&format!("    {}.contains(file_type)\n", constant_name));
+    code.push_str(&format!("    {constant_name}.contains(file_type)\n"));
     code.push_str("}\n");
     
     Ok(code)

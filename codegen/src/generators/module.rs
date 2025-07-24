@@ -27,7 +27,7 @@ pub fn generate_mod_file(output_dir: &str) -> Result<()> {
         if path.is_file() {
             if let Some(name) = path.file_stem() {
                 let name = name.to_string_lossy();
-                if name != "mod" && path.extension().map_or(false, |ext| ext == "rs") {
+                if name != "mod" && path.extension().is_some_and(|ext| ext == "rs") {
                     modules.push(name.to_string());
                 }
             }
@@ -48,10 +48,10 @@ pub fn generate_mod_file(output_dir: &str) -> Result<()> {
         if module.ends_with("_pm") {
             code.push_str("#[allow(non_snake_case)]\n");
         }
-        code.push_str(&format!("pub mod {};\n", module));
+        code.push_str(&format!("pub mod {module};\n"));
     }
     
-    code.push_str("\n");
+    code.push('\n');
     
     // Re-export commonly used items
     code.push_str("// Re-export commonly used types and functions\n");
@@ -86,7 +86,7 @@ pub fn generate_mod_file(output_dir: &str) -> Result<()> {
     // No need for re-exports since modules are already public
     // The flattened structure means users can access them directly
     
-    code.push_str("\n");
+    code.push('\n');
     
     // Add convenience functions
     code.push_str("/// Initialize all lazy static data structures\n");
@@ -109,7 +109,7 @@ pub fn generate_mod_file(output_dir: &str) -> Result<()> {
     code.push_str("}\n");
 
     // Write file
-    let output_path = format!("{}/mod.rs", output_dir);
+    let output_path = format!("{output_dir}/mod.rs");
     fs::write(&output_path, code)?;
     debug!("  ✓ Generated {}", output_path);
 

@@ -78,14 +78,14 @@ impl TagGroup {
 /// Generate EXIF tag table code in modular structure
 pub fn generate_tag_table(tags: &[GeneratedTag], output_dir: &str) -> Result<()> {
     // Create tags directory
-    let tags_dir = format!("{}/tags", output_dir);
+    let tags_dir = format!("{output_dir}/tags");
     fs::create_dir_all(&tags_dir)?;
 
     // Group tags by category
     let mut grouped_tags: HashMap<TagGroup, Vec<&GeneratedTag>> = HashMap::new();
     for tag in tags {
         let group = TagGroup::categorize_tag(tag);
-        grouped_tags.entry(group).or_insert_with(Vec::new).push(tag);
+        grouped_tags.entry(group).or_default().push(tag);
     }
 
     // Generate common types file
@@ -146,7 +146,7 @@ fn generate_common_types(tags_dir: &str) -> Result<()> {
     code.push_str("}\n");
 
     // Write to file
-    let output_path = format!("{}/common.rs", tags_dir);
+    let output_path = format!("{tags_dir}/common.rs");
     fs::write(&output_path, code)?;
 
     debug!("  ✓ Generated {}", output_path);
@@ -196,7 +196,7 @@ fn generate_tag_definition(tag: &GeneratedTag, code: &mut String) {
         if i > 0 {
             code.push_str(", ");
         }
-        code.push_str(&format!("\"{}\"", group));
+        code.push_str(&format!("\"{group}\""));
     }
     code.push_str("],\n");
 
@@ -213,13 +213,13 @@ fn generate_tag_definition(tag: &GeneratedTag, code: &mut String) {
     }
 
     if let Some(pc) = &tag.print_conv_ref {
-        code.push_str(&format!("        print_conv_ref: Some(\"{}\"),\n", pc));
+        code.push_str(&format!("        print_conv_ref: Some(\"{pc}\"),\n"));
     } else {
         code.push_str("        print_conv_ref: None,\n");
     }
 
     if let Some(vc) = &tag.value_conv_ref {
-        code.push_str(&format!("        value_conv_ref: Some(\"{}\"),\n", vc));
+        code.push_str(&format!("        value_conv_ref: Some(\"{vc}\"),\n"));
     } else {
         code.push_str("        value_conv_ref: None,\n");
     }
@@ -267,13 +267,13 @@ fn generate_tags_mod_file(grouped_tags: &HashMap<TagGroup, Vec<&GeneratedTag>>, 
     for group in &sorted_groups {
         code.push_str(&format!("pub mod {};\n", group.filename()));
     }
-    code.push_str("\n");
+    code.push('\n');
 
     // Re-export all tags
     for group in &sorted_groups {
         code.push_str(&format!("pub use {}::{};\n", group.filename(), group.constant_name()));
     }
-    code.push_str("\n");
+    code.push('\n');
 
     // Combined tag table
     code.push_str("/// Combined tag table from all groups\n");
@@ -322,7 +322,7 @@ fn generate_tags_mod_file(grouped_tags: &HashMap<TagGroup, Vec<&GeneratedTag>>, 
     code.push_str("});\n");
 
     // Write to file
-    let output_path = format!("{}/mod.rs", tags_dir);
+    let output_path = format!("{tags_dir}/mod.rs");
     fs::write(&output_path, code)?;
 
     debug!("  ✓ Generated {}", output_path);

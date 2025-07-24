@@ -18,6 +18,7 @@ pub enum TagCategory {
     /// Date/time related - IDs 306, 36867-36868, etc
     DateTime,
     /// GPS and location - Would be in GPS IFD, not main
+    #[allow(clippy::upper_case_acronyms)]
     GPS,
     /// Thumbnail and preview - IDs 513-514, etc
     Thumbnail,
@@ -122,13 +123,14 @@ pub fn split_tag_kits(tag_kits: &[crate::schemas::tag_kit::TagKit]) -> HashMap<T
     for tag_kit in tag_kits {
         let tag_id = tag_kit.tag_id.parse::<u32>().unwrap_or(0);
         let category = TagCategory::categorize(tag_id, &tag_kit.name);
-        categories.entry(category).or_insert_with(Vec::new).push(tag_kit);
+        categories.entry(category).or_default().push(tag_kit);
     }
     
     categories
 }
 
 /// Count PrintConv tables that will be generated for a set of tag kits
+#[allow(dead_code)]
 pub fn count_print_conv_tables(tag_kits: &[&crate::schemas::tag_kit::TagKit]) -> usize {
     tag_kits.iter()
         .filter(|tk| tk.print_conv_type == "Simple")

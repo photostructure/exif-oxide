@@ -74,14 +74,14 @@ fn generate_imports(code: &mut String, runtime_table: &ExtractedRuntimeTable) ->
     // Check if we need value conversion types  
     code.push_str("use crate::core::values::TagValue;\n");
     
-    code.push_str("\n");
+    code.push('\n');
     Ok(())
 }
 
 /// Generate helper functions for complex conversions
 fn generate_helper_functions(code: &mut String, runtime_table: &ExtractedRuntimeTable) -> Result<()> {
     // Generate PrintConv helper functions
-    for (_offset, tag_def) in &runtime_table.tag_definitions {
+    for tag_def in runtime_table.tag_definitions.values() {
         if let Some(print_conv) = &tag_def.print_conv {
             generate_print_conv_function(code, tag_def, print_conv)?;
         }
@@ -112,11 +112,11 @@ fn {}(value: &TagValue) -> String {{
                 for (key, val) in hash_map {
                     if let Value::String(val_str) = val {
                         if let Ok(key_num) = key.parse::<u32>() {
-                            code.push_str(&format!(r#"        TagValue::U32({}) => "{}".to_string(),
-"#, key_num, val_str));
+                            code.push_str(&format!(r#"        TagValue::U32({key_num}) => "{val_str}".to_string(),
+"#));
                         } else {
-                            code.push_str(&format!(r#"        TagValue::String(s) if s == "{}" => "{}".to_string(),
-"#, key, val_str));
+                            code.push_str(&format!(r#"        TagValue::String(s) if s == "{key}" => "{val_str}".to_string(),
+"#));
                         }
                     }
                 }
@@ -164,15 +164,15 @@ fn generate_table_creation_function(
         .unwrap_or("Runtime-generated ProcessBinaryData table");
     
     code.push_str(&format!(r#"
-/// {}
+/// {description}
 /// 
 /// Creates a runtime HashMap for ProcessBinaryData processing.
 /// This table is generated based on ExifTool's ProcessBinaryData structure
 /// and includes model-conditional logic and format specifications.
-pub fn {}() -> HashMap<u32, BinaryDataTag> {{
+pub fn {function_name}() -> HashMap<u32, BinaryDataTag> {{
     let mut table = HashMap::new();
     
-"#, description, function_name));
+"#));
     
     // Generate table entries
     for (offset, tag_def) in &runtime_table.tag_definitions {
@@ -194,9 +194,9 @@ fn generate_table_entry(
     _runtime_table: &ExtractedRuntimeTable,
 ) -> Result<()> {
     // Parse offset (could be decimal, hex, or fractional)
-    let offset_value = if offset.starts_with("0x") {
-        u32::from_str_radix(&offset[2..], 16)
-            .unwrap_or_else(|_| 0)
+    let offset_value = if let Some(stripped) = offset.strip_prefix("0x") {
+        u32::from_str_radix(stripped, 16)
+            .unwrap_or(0)
     } else if let Ok(val) = offset.parse::<f64>() {
         val as u32
     } else {
@@ -234,7 +234,7 @@ fn generate_table_entry(
         code.push_str("    }\n");
     }
     
-    code.push_str("\n");
+    code.push('\n');
     Ok(())
 }
 
@@ -286,7 +286,7 @@ fn generate_print_conv_ref(tag_def: &RuntimeTagDefinition) -> Result<String> {
     if tag_def.print_conv.is_some() {
         let function_name = format!("print_conv_{}", 
             tag_def.name.to_lowercase().replace(' ', "_"));
-        Ok(format!("Some({})", function_name))
+        Ok(format!("Some({function_name})"))
     } else {
         Ok("None".to_string())
     }
@@ -302,6 +302,7 @@ fn generate_notes_field(notes: &Option<String>) -> Result<String> {
 }
 
 /// Generate supporting types and enums if needed
+#[allow(clippy::ptr_arg)]
 fn generate_supporting_types(_code: &mut String, _runtime_table: &ExtractedRuntimeTable) -> Result<()> {
     // For now, we use existing types from the core module
     // Future enhancement: Generate custom enums for specific tag values

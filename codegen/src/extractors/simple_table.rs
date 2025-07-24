@@ -34,7 +34,7 @@ impl Extractor for SimpleTableExtractor {
         
         // Add hash names with % prefix
         for hash_name in &config.hash_names {
-            args.push(format!("%{}", hash_name));
+            args.push(format!("%{hash_name}"));
         }
         
         args

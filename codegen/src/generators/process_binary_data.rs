@@ -107,19 +107,19 @@ pub fn generate_process_binary_data(data: &ProcessBinaryDataExtraction) -> Resul
         data.table_data.tags.len()
     ));
     code.push_str("#[derive(Debug, Clone)]\n");
-    code.push_str(&format!("pub struct {} {{\n", struct_name));
+    code.push_str(&format!("pub struct {struct_name} {{\n"));
     
     // Add table header fields as struct members
     if let Some(format) = &data.table_data.header.format {
         code.push_str(&format!("    pub default_format: &'static str, // \"{}\"\n", escape_string(format)));
     }
     if let Some(first_entry) = data.table_data.header.first_entry {
-        code.push_str(&format!("    pub first_entry: i32, // {}\n", first_entry));
+        code.push_str(&format!("    pub first_entry: i32, // {first_entry}\n"));
     }
     if let Some(groups) = &data.table_data.header.groups {
         if groups.len() >= 2 {
             code.push_str(&format!("    pub groups: (&'static str, &'static str), // (\"{}\", \"{}\")\n", 
-                groups.get(0).unwrap_or(&"".to_string()),
+                groups.first().unwrap_or(&"".to_string()),
                 groups.get(1).unwrap_or(&"".to_string())
             ));
         }
@@ -179,7 +179,7 @@ pub fn generate_process_binary_data(data: &ProcessBinaryDataExtraction) -> Resul
     }
     
     // Generate lookup functions
-    code.push_str(&format!("impl {} {{\n", struct_name));
+    code.push_str(&format!("impl {struct_name} {{\n"));
     
     // New function
     code.push_str("    /// Create new table instance\n");
@@ -189,12 +189,12 @@ pub fn generate_process_binary_data(data: &ProcessBinaryDataExtraction) -> Resul
         code.push_str(&format!("            default_format: \"{}\",\n", escape_string(format)));
     }
     if let Some(first_entry) = data.table_data.header.first_entry {
-        code.push_str(&format!("            first_entry: {},\n", first_entry));
+        code.push_str(&format!("            first_entry: {first_entry},\n"));
     }
     if let Some(groups) = &data.table_data.header.groups {
         if groups.len() >= 2 {
             code.push_str(&format!("            groups: (\"{}\", \"{}\"),\n", 
-                groups.get(0).unwrap_or(&"".to_string()),
+                groups.first().unwrap_or(&"".to_string()),
                 groups.get(1).unwrap_or(&"".to_string())
             ));
         }
@@ -225,7 +225,7 @@ pub fn generate_process_binary_data(data: &ProcessBinaryDataExtraction) -> Resul
     code.push_str("}\n\n");
     
     // Generate Default implementation
-    code.push_str(&format!("impl Default for {} {{\n", struct_name));
+    code.push_str(&format!("impl Default for {struct_name} {{\n"));
     code.push_str("    fn default() -> Self {\n");
     code.push_str("        Self::new()\n");
     code.push_str("    }\n");

@@ -9,6 +9,7 @@ use tracing::{debug, warn};
 
 #[derive(Debug, Deserialize)]
 pub struct FileTypeLookupData {
+    #[allow(dead_code)]
     pub extracted_at: String,
     pub file_type_lookups: FileTypeLookups,
     pub stats: FileTypeStats,
@@ -19,6 +20,7 @@ pub struct FileTypeLookups {
     pub extensions: Vec<FileTypeLookupEntry>,
     pub mime_types: Vec<FileTypeLookupEntry>,
     pub descriptions: Vec<FileTypeLookupEntry>,
+    #[allow(dead_code)]
     pub magic_lookups: Vec<FileTypeLookupEntry>,
 }
 
@@ -39,6 +41,7 @@ pub struct FileTypeLookupSource {
 #[derive(Debug, Deserialize)]
 pub struct FileTypeStats {
     pub total_lookups: usize,
+    #[allow(dead_code)]
     pub by_type: HashMap<String, usize>,
 }
 
@@ -76,10 +79,10 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
         "//! Total lookups: {}\n",
         data.stats.total_lookups
     ));
-    code.push_str("\n");
+    code.push('\n');
     code.push_str("use std::collections::HashMap;\n");
     code.push_str("use std::sync::LazyLock;\n");
-    code.push_str("\n");
+    code.push('\n');
 
     // Generate extension aliases (simple string mappings)
     code.push_str("/// Extension aliases - maps extensions to their canonical forms\n");
@@ -100,7 +103,7 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
 
     code.push_str("    map\n");
     code.push_str("});\n");
-    code.push_str("\n");
+    code.push('\n');
 
     // Generate file type formats (complex mappings)
     code.push_str("/// File type formats - maps file types to their format descriptions\n");
@@ -125,7 +128,7 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
                     let format_list: Vec<String> = format_arr
                         .iter()
                         .filter_map(|v| v.as_str())
-                        .map(|s| format!("\"{}\"", s))
+                        .map(|s| format!("\"{s}\""))
                         .collect();
                     code.push_str(&format!(
                         "    map.insert(\"{}\", (vec![{}], \"{}\"));\n",
@@ -146,7 +149,7 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
 
     code.push_str("    map\n");
     code.push_str("});\n");
-    code.push_str("\n");
+    code.push('\n');
 
     // Generate public API functions
     code.push_str("/// Resolve file type from extension, following aliases\n");
@@ -168,14 +171,14 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
     code.push_str("    \n");
     code.push_str("    None\n");
     code.push_str("}\n");
-    code.push_str("\n");
+    code.push('\n');
 
     code.push_str("/// Get primary format for a file type\n");
     code.push_str("pub fn get_primary_format(file_type: &str) -> Option<String> {\n");
     code.push_str("    resolve_file_type(file_type)\n");
     code.push_str("        .map(|(formats, _)| formats[0].to_string())\n");
     code.push_str("}\n");
-    code.push_str("\n");
+    code.push('\n');
 
     code.push_str("/// Check if a file type supports a specific format\n");
     code.push_str("pub fn supports_format(file_type: &str, format: &str) -> bool {\n");
@@ -183,7 +186,7 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
     code.push_str("        .map(|(formats, _)| formats.contains(&format))\n");
     code.push_str("        .unwrap_or(false)\n");
     code.push_str("}\n");
-    code.push_str("\n");
+    code.push('\n');
 
     code.push_str("/// Get all extensions that support a specific format\n");
     code.push_str("pub fn extensions_for_format(target_format: &str) -> Vec<String> {\n");
@@ -197,7 +200,7 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
     code.push_str("    \n");
     code.push_str("    extensions\n");
     code.push_str("}\n");
-    code.push_str("\n");
+    code.push('\n');
 
     // Generate FILE_TYPE_EXTENSIONS constant (expected by src/file_detection.rs)
     code.push_str("/// All known file type extensions\n");
@@ -218,7 +221,7 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
     code.push_str("    extensions.dedup();\n");
     code.push_str("    extensions\n");
     code.push_str("});\n");
-    code.push_str("\n");
+    code.push('\n');
 
     // Generate lookup_file_type_by_extension wrapper (expected by src/file_detection.rs)
     code.push_str("/// Lookup file type by extension (wrapper around resolve_file_type)\n");
@@ -227,7 +230,7 @@ fn generate_file_type_lookup_module(data: &FileTypeLookupData, output_dir: &Path
     code.push_str("    resolve_file_type(extension)\n");
     code.push_str("        .map(|(formats, _)| formats[0].to_string())\n");
     code.push_str("}\n");
-    code.push_str("\n");
+    code.push('\n');
 
     // Write the file to file_types subdirectory
     let file_types_dir = output_dir.join("file_types");

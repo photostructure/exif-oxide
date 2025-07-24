@@ -57,14 +57,13 @@ pub fn generate_lookup_table(_hash_name: &str, table_data: &ExtractedTable) -> R
     });
 
     // Generate static data array
-    let data_name = format!("{}_DATA", constant_name);
+    let data_name = format!("{constant_name}_DATA");
     code.push_str(&format!(
         "/// Raw data ({} entries)\n",
         metadata.entry_count
     ));
     code.push_str(&format!(
-        "static {}: &[({}, {})] = &[\n",
-        data_name, key_rust_type, value_rust_type
+        "static {data_name}: &[({key_rust_type}, {value_rust_type})] = &[\n"
     ));
 
     // Add entries to data array
@@ -93,28 +92,25 @@ pub fn generate_lookup_table(_hash_name: &str, table_data: &ExtractedTable) -> R
                 format!("\"{}\"", escape_string(&value_string))
             };
 
-            code.push_str(&format!("    ({}, {}),\n", key_value, value_str));
+            code.push_str(&format!("    ({key_value}, {value_str}),\n"));
         }
     }
 
     code.push_str("];\n\n");
 
     // Generate lazy HashMap
+    code.push_str("/// Lookup table (lazy-initialized)\n");
     code.push_str(&format!(
-        "/// Lookup table (lazy-initialized)\n"
-    ));
-    code.push_str(&format!(
-        "pub static {}: LazyLock<HashMap<{}, {}>> = LazyLock::new(|| {{\n",
-        constant_name, key_rust_type, value_rust_type
+        "pub static {constant_name}: LazyLock<HashMap<{key_rust_type}, {value_rust_type}>> = LazyLock::new(|| {{\n"
     ));
 
     let collect_expr = if key_type == "String" {
-        format!("    {}.iter().copied().collect()", data_name)
+        format!("    {data_name}.iter().copied().collect()")
     } else {
-        format!("    {}.iter().cloned().collect()", data_name)
+        format!("    {data_name}.iter().cloned().collect()")
     };
 
-    code.push_str(&format!("{}\n", collect_expr));
+    code.push_str(&format!("{collect_expr}\n"));
     code.push_str("});\n\n");
 
     // Generate lookup function
@@ -126,15 +122,12 @@ pub fn generate_lookup_table(_hash_name: &str, table_data: &ExtractedTable) -> R
     };
 
     code.push_str(&format!(
-        "/// Look up value by key\npub fn lookup_{}(key: {}) -> Option<{}> {{\n",
-        fn_name,
-        fn_param_type,
-        value_rust_type
+        "/// Look up value by key\npub fn lookup_{fn_name}(key: {fn_param_type}) -> Option<{value_rust_type}> {{\n"
     ));
 
     let key_ref = if key_type == "String" { "key" } else { "&key" };
-    let return_expr = format!("{}.get({}).copied()", constant_name, key_ref);
-    code.push_str(&format!("    {}\n", return_expr));
+    let return_expr = format!("{constant_name}.get({key_ref}).copied()");
+    code.push_str(&format!("    {return_expr}\n"));
     code.push_str("}\n");
 
     Ok(code)

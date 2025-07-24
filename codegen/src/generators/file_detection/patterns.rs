@@ -8,14 +8,19 @@ use tracing::{debug, warn, info};
 
 #[derive(Debug, Deserialize)]
 pub struct RegexPatternsData {
+    #[allow(dead_code)]
     pub extracted_at: String,
+    #[allow(dead_code)]
     pub patterns: RegexPatterns,
+    #[allow(dead_code)]
     pub compatibility_notes: String,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct RegexPatterns {
+    #[allow(dead_code)]
     pub file_extensions: Vec<RegexPatternEntry>,
+    #[allow(dead_code)]
     pub magic_numbers: Vec<RegexPatternEntry>,
 }
 
@@ -37,8 +42,10 @@ pub struct RegexPatternSource {
 
 #[derive(Debug, Deserialize)]
 pub struct MagicNumberData {
+    #[allow(dead_code)]
     pub extracted_at: String,
     pub magic_patterns: Vec<MagicPatternEntry>,
+    #[allow(dead_code)]
     pub stats: MagicNumberStats,
 }
 
@@ -53,19 +60,24 @@ pub struct MagicPatternEntry {
     // Base64 encoding preserves the exact byte sequence without any
     // interpretation or escaping complications.
     #[serde(default)]
+    #[allow(dead_code)]
     pub pattern_base64: String,
+    #[allow(dead_code)]
     pub source: MagicPatternSource,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct MagicPatternSource {
+    #[allow(dead_code)]
     pub module: String,
+    #[allow(dead_code)]
     pub hash: String,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct MagicNumberStats {
     #[serde(deserialize_with = "string_or_number")]
+    #[allow(dead_code)]
     pub total_patterns: usize,
 }
 
@@ -107,6 +119,7 @@ where
 /// This handles non-UTF-8 bytes by converting them to \xNN escape sequences
 /// For bytes::Regex patterns, we need to escape ALL ASCII letters to their hex equivalents
 /// when they appear outside of escape sequences, to ensure proper byte matching
+#[allow(dead_code)]
 fn escape_pattern_for_rust(pattern: &str) -> String {
     let mut escaped = String::new();
     let bytes = pattern.as_bytes();
@@ -179,7 +192,7 @@ fn escape_pattern_for_rust(pattern: &str) -> String {
             b'\\' => escaped.push_str("\\\\"),
             // Non-ASCII or control characters
             0x00..=0x1F | 0x7F..=0xFF => {
-                escaped.push_str(&format!("\\x{:02x}", byte));
+                escaped.push_str(&format!("\\x{byte:02x}"));
             }
             // All other ASCII characters remain as-is
             _ => escaped.push(byte as char),
@@ -388,11 +401,11 @@ fn generate_magic_number_patterns_from_new_format(
     code.push_str(
         "//! to ensure hex escapes like \\x89 match raw bytes, not Unicode codepoints.\n",
     );
-    code.push_str("\n");
+    code.push('\n');
     code.push_str("use crate::file_types::lazy_regex::LazyRegexMap;\n");
     code.push_str("use std::sync::LazyLock;\n");
     code.push_str("use regex::bytes::Regex;\n");
-    code.push_str("\n");
+    code.push('\n');
 
     // Generate pattern storage - just the patterns as strings, not compiled
     code.push_str("/// Magic number patterns from ExifTool's %magicNumber hash\n");
@@ -429,7 +442,7 @@ fn generate_magic_number_patterns_from_new_format(
         let anchored_pattern = if converted_pattern.starts_with('^') {
             converted_pattern
         } else {
-            format!("^{}", converted_pattern)
+            format!("^{converted_pattern}")
         };
 
         // Escape the pattern for use in a Rust string literal
@@ -450,27 +463,27 @@ fn generate_magic_number_patterns_from_new_format(
     }
 
     code.push_str("];\n");
-    code.push_str("\n");
+    code.push('\n');
 
     // Create the lazy regex map
     code.push_str("/// Lazy-compiled regex patterns for magic number detection\n");
     code.push_str("static MAGIC_PATTERNS: LazyLock<LazyRegexMap> = LazyLock::new(|| {\n");
     code.push_str("    LazyRegexMap::new(PATTERN_DATA)\n");
     code.push_str("});\n");
-    code.push_str("\n");
+    code.push('\n');
 
     // Generate public API using the LazyRegexMap
     code.push_str("/// Test if a byte buffer matches a file type's magic number pattern\n");
     code.push_str("pub fn matches_magic_number(file_type: &str, buffer: &[u8]) -> bool {\n");
     code.push_str("    MAGIC_PATTERNS.matches(file_type, buffer)\n");
     code.push_str("}\n");
-    code.push_str("\n");
+    code.push('\n');
 
     code.push_str("/// Get all file types with magic number patterns\n");
     code.push_str("pub fn get_magic_file_types() -> Vec<&'static str> {\n");
     code.push_str("    MAGIC_PATTERNS.file_types()\n");
     code.push_str("}\n");
-    code.push_str("\n");
+    code.push('\n');
 
     code.push_str("/// Get compiled magic number regex for a file type\n");
     code.push_str("/// Uses the cached version if available, compiles and caches if not\n");

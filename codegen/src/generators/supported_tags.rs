@@ -20,13 +20,13 @@ pub fn generate_supported_tags(
     code.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten.\n\n");
 
     // Statistics constants
-    code.push_str(&format!("/// Total number of supported standard tags\n"));
+    code.push_str("/// Total number of supported standard tags\n");
     code.push_str(&format!("pub const SUPPORTED_TAG_COUNT: usize = {};\n\n", tags.len()));
     
-    code.push_str(&format!("/// Total number of supported composite tags\n"));
+    code.push_str("/// Total number of supported composite tags\n");
     code.push_str(&format!("pub const SUPPORTED_COMPOSITE_TAG_COUNT: usize = {};\n\n", composite_tags.len()));
     
-    code.push_str(&format!("/// Total number of all supported tags\n"));
+    code.push_str("/// Total number of all supported tags\n");
     code.push_str(&format!("pub const TOTAL_SUPPORTED_TAG_COUNT: usize = {};\n\n", 
         tags.len() + composite_tags.len()));
 
@@ -37,7 +37,7 @@ pub fn generate_supported_tags(
     let mut sorted_tags: Vec<_> = tags.iter().map(|t| &t.name).collect();
     sorted_tags.sort();
     for name in sorted_tags {
-        code.push_str(&format!("    \"{}\",\n", name));
+        code.push_str(&format!("    \"{name}\",\n"));
     }
     
     code.push_str("];\n\n");
@@ -49,7 +49,7 @@ pub fn generate_supported_tags(
     let mut sorted_composite: Vec<_> = composite_tags.iter().map(|t| &t.name).collect();
     sorted_composite.sort();
     for name in sorted_composite {
-        code.push_str(&format!("    \"{}\",\n", name));
+        code.push_str(&format!("    \"{name}\",\n"));
     }
     
     code.push_str("];\n\n");
@@ -69,7 +69,7 @@ pub fn generate_supported_tags(
     let mut sorted_groups: Vec<_> = group_counts.into_iter().collect();
     sorted_groups.sort_by_key(|(name, _)| *name);
     for (group, count) in sorted_groups {
-        code.push_str(&format!("        (\"{}\", {}),\n", group, count));
+        code.push_str(&format!("        (\"{group}\", {count}),\n"));
     }
     
     code.push_str("    ]\n");
@@ -87,7 +87,7 @@ pub fn generate_supported_tags(
     code.push_str("}\n");
 
     // Write file
-    let output_path = format!("{}/supported_tags.rs", output_dir);
+    let output_path = format!("{output_dir}/supported_tags.rs");
     fs::write(&output_path, code)?;
     debug!("  ✓ Generated {}", output_path);
 

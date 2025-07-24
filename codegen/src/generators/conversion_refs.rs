@@ -61,7 +61,7 @@ pub fn generate_conversion_refs(refs: &ConversionRefs, output_dir: &str) -> Resu
     code.push_str("}\n");
 
     // Write file
-    let output_path = format!("{}/conversion_refs.rs", output_dir);
+    let output_path = format!("{output_dir}/conversion_refs.rs");
     fs::write(&output_path, code)?;
     debug!("  ✓ Generated {}", output_path);
 

@@ -9,6 +9,7 @@ use crate::common::escape_string;
 use crate::schemas::tag_kit::TagKitExtraction;
 
 /// Generate tag kit code from extracted data
+#[allow(dead_code)]
 pub fn generate_tag_kit(
     module_name: &str,
     extraction: &TagKitExtraction,
@@ -65,11 +66,11 @@ pub fn generate_tag_kit(
         if tag_kit.print_conv_type == "Simple" {
             if let Some(data) = &tag_kit.print_conv_data {
                 if let Some(obj) = data.as_object() {
-                    let table_name = format!("PRINT_CONV_{}", idx);
+                    let table_name = format!("PRINT_CONV_{idx}");
                     simple_tables.insert(tag_kit.tag_id.clone(), table_name.clone());
                     
                     // Generate the lookup table
-                    code.push_str(&format!("static {}: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {{\n", table_name));
+                    code.push_str(&format!("static {table_name}: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {{\n"));
                     code.push_str("    let mut map = HashMap::new();\n");
                     
                     for (key, value) in obj {
@@ -88,7 +89,7 @@ pub fn generate_tag_kit(
     
     // Generate tag kits array
     let const_name = format!("{}_TAG_KITS", module_name.to_uppercase());
-    code.push_str(&format!("pub static {}: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {{\n", const_name));
+    code.push_str(&format!("pub static {const_name}: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {{\n"));
     code.push_str("    let mut map = HashMap::new();\n");
     
     for tag_kit in &extraction.tag_kits {
@@ -99,8 +100,8 @@ pub fn generate_tag_kit(
             tag_kit.tag_id.parse::<u32>()?
         };
         
-        code.push_str(&format!("    map.insert({}, TagKitDef {{\n", id));
-        code.push_str(&format!("        id: {},\n", id));
+        code.push_str(&format!("    map.insert({id}, TagKitDef {{\n"));
+        code.push_str(&format!("        id: {id},\n"));
         code.push_str(&format!("        name: \"{}\",\n", escape_string(&tag_kit.name)));
         code.push_str(&format!("        format: \"{}\",\n", escape_string(&tag_kit.format)));
         
@@ -120,7 +121,7 @@ pub fn generate_tag_kit(
             Some(serde_json::Value::String(_)) => true,
             _ => false,
         };
-        code.push_str(&format!("        writable: {},\n", writable));
+        code.push_str(&format!("        writable: {writable},\n"));
         
         // Notes
         if let Some(notes) = &tag_kit.notes {
@@ -141,7 +142,7 @@ pub fn generate_tag_kit(
             }
             "Simple" => {
                 if let Some(table_name) = simple_tables.get(&tag_kit.tag_id) {
-                    code.push_str(&format!("        print_conv: PrintConvType::Simple(&{}),\n", table_name));
+                    code.push_str(&format!("        print_conv: PrintConvType::Simple(&{table_name}),\n"));
                 } else {
                     code.push_str("        print_conv: PrintConvType::None,\n");
                 }
@@ -197,7 +198,7 @@ pub fn generate_tag_kit(
     code.push_str("    errors: &mut Vec<String>,\n");
     code.push_str("    warnings: &mut Vec<String>,\n");
     code.push_str(") -> TagValue {\n");
-    code.push_str(&format!("    if let Some(tag_kit) = {}.get(&tag_id) {{\n", const_name));
+    code.push_str(&format!("    if let Some(tag_kit) = {const_name}.get(&tag_id) {{\n"));
     code.push_str("        match &tag_kit.print_conv {\n");
     code.push_str("            PrintConvType::None => value.clone(),\n");
     code.push_str("            PrintConvType::Simple(lookup) => {\n");

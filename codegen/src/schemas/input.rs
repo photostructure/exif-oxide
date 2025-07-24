@@ -19,13 +19,17 @@ pub struct ExtractedData {
 /// Tag statistics
 #[derive(Debug, Deserialize)]
 pub struct TagStats {
+    #[allow(dead_code)]
     pub exif_count: usize,
+    #[allow(dead_code)]
     pub gps_count: usize,
+    #[allow(dead_code)]
     pub total_tags: usize,
 }
 
 /// Tag groups (EXIF, GPS, etc)
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct TagGroups {
     #[serde(default)]
     pub exif: Vec<ExtractedTag>,
@@ -42,6 +46,7 @@ pub struct ConversionRefs {
 
 /// Individual extracted tag from ExifTool
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct ExtractedTag {
     pub id: String,
     pub name: String,
@@ -65,6 +70,7 @@ pub struct ExtractedTag {
 
 /// Composite tag definition
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct ExtractedCompositeTag {
     pub name: String,
     pub table: String,
@@ -107,6 +113,7 @@ pub struct ExtractedTable {
 
 /// Table source information
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct TableSource {
     pub module: String,
     pub hash_name: String,
@@ -115,6 +122,7 @@ pub struct TableSource {
 
 /// Table metadata from extraction
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct TableMetadata {
     pub description: String,
     pub constant_name: String,
@@ -124,6 +132,7 @@ pub struct TableMetadata {
 
 /// Table configuration from module config files
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct TableConfig {
     pub module: String,
     pub output_file: String,
@@ -140,6 +149,7 @@ pub struct TableConfig {
 
 /// Composite tags JSON structure
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct CompositeData {
     pub extracted_at: String,
     pub exiftool_version: String,
@@ -151,6 +161,7 @@ pub struct CompositeData {
 
 /// Composite tag statistics
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct CompositeStats {
     pub total_composite_tags: usize,
     pub exif_table: usize,
@@ -160,6 +171,7 @@ pub struct CompositeStats {
 
 /// Individual table entry (polymorphic for different extraction types)
 #[derive(Debug, Deserialize, Clone)]
+#[allow(dead_code)]
 pub struct TableEntry {
     // Standard simple table fields
     #[serde(default)]
@@ -188,6 +200,7 @@ pub struct TableEntry {
 
 /// JSON structure from runtime_table.pl
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct RuntimeTablesData {
     pub source: TableSource,
     pub extracted_at: String,
@@ -197,6 +210,7 @@ pub struct RuntimeTablesData {
 
 /// Extracted runtime table data from runtime_table.pl
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct ExtractedRuntimeTable {
     pub metadata: RuntimeTableMetadata,
     pub table_structure: ProcessBinaryDataStructure,
@@ -205,6 +219,7 @@ pub struct ExtractedRuntimeTable {
 
 /// Runtime table metadata
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct RuntimeTableMetadata {
     pub function_name: String,
     pub table_name: String,
@@ -218,6 +233,7 @@ pub struct RuntimeTableMetadata {
 
 /// ProcessBinaryData table structure
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct ProcessBinaryDataStructure {
     pub format: Option<String>,
     pub first_entry: Option<u32>,
@@ -228,6 +244,7 @@ pub struct ProcessBinaryDataStructure {
 
 /// Runtime tag definition with conditional logic
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct RuntimeTagDefinition {
     pub name: String,
     pub offset: String,  // Can be numeric or fractional like "1.5"
@@ -241,6 +258,7 @@ pub struct RuntimeTagDefinition {
 
 /// Format specification for binary data
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct FormatSpec {
     pub base_type: String,  // int16u, int8s, string, etc.
     pub array_size: Option<String>,  // "$val{0}", "int(($val{0}+15)/16)"
@@ -249,6 +267,7 @@ pub struct FormatSpec {
 
 /// Condition specification for model-dependent tags
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct ConditionSpec {
     pub expression: String,  // "$$self{Model} =~ /EOS/"
     pub condition_type: ConditionType,
@@ -265,6 +284,7 @@ pub enum ConditionType {
 
 /// PrintConv specification for value formatting
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct PrintConvSpec {
     pub conversion_type: PrintConvType,
     pub data: Value,  // Can be hash table, expression string, or function reference
@@ -281,6 +301,7 @@ pub enum PrintConvType {
 
 /// ValueConv specification for value conversion
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct ValueConvSpec {
     pub conversion_type: ValueConvType,
     pub expression: String,

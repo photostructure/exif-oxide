@@ -47,7 +47,7 @@ impl Extractor for RuntimeTableExtractor {
         if let Some(table) = hash_name {
             format!("{}_runtime_table_{}.json", base_name, table.to_lowercase())
         } else {
-            format!("{}_runtime_tables.json", base_name)
+            format!("{base_name}_runtime_tables.json")
         }
     }
 }

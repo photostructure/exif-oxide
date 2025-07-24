@@ -123,7 +123,7 @@ pub fn validate_all_configs(config_root: &Path, schemas_dir: &Path) -> Result<()
         if module_config_dir.exists() {
             debug!("  Validating {}/", module);
             validate_config_directory(&module_config_dir, schemas_dir)
-                .with_context(|| format!("Validation failed for module {}", module))?;
+                .with_context(|| format!("Validation failed for module {module}"))?;
         }
     }
 

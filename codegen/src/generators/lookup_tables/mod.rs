@@ -19,6 +19,7 @@ use crate::common::utils::{module_to_source_path, module_dir_to_source_path};
 use tracing::{debug, warn};
 
 /// Get the extract subdirectory for a given config type
+#[allow(dead_code)]
 fn get_extract_subdir(config_type: &str) -> &'static str {
     match config_type {
         "tag_table_structure" => "tag_structures",
@@ -118,7 +119,7 @@ pub fn process_config_directory(
     
     // Check for all tag table structure configurations  
     // Process Main table first, then subdirectory tables
-    if let Ok(entries) = fs::read_dir(&config_dir) {
+    if let Ok(entries) = fs::read_dir(config_dir) {
         let mut config_files: Vec<_> = entries
             .filter_map(Result::ok)
             .filter(|entry| {
@@ -308,7 +309,7 @@ pub fn process_config_directory(
                         let file_name = generate_runtime_table_file(
                             &runtime_table_data,
                             &module_output_dir,
-                            &table_config
+                            table_config
                         )?;
                         generated_files.push(file_name);
                         has_content = true;
@@ -392,7 +393,7 @@ pub fn process_config_directory(
                 // Look for extracted regex patterns file using standardized naming
                 let extract_dir = Path::new("generated/extract").join("file_types");
                 let module_base = module_name.trim_end_matches("_pm").to_lowercase();
-                let regex_file = format!("{}__regex_patterns.json", module_base);
+                let regex_file = format!("{module_base}__regex_patterns.json");
                 let regex_path = extract_dir.join(&regex_file);
                 
                 if regex_path.exists() {
@@ -437,7 +438,7 @@ fn generate_table_file(
     
     // Create descriptive filename from hash name
     let file_name = hash_name_to_filename(hash_name);
-    let file_path = output_dir.join(format!("{}.rs", file_name));
+    let file_path = output_dir.join(format!("{file_name}.rs"));
     
     let mut content = String::new();
     content.push_str(&format!("//! {}\n", extracted_table.metadata.description));
@@ -445,7 +446,7 @@ fn generate_table_file(
     // Convert module filename to relative path for display
     let module_path = module_to_source_path(&extracted_table.source.module);
     
-    content.push_str(&format!("//! \n//! Auto-generated from {}\n", module_path));
+    content.push_str(&format!("//! \n//! Auto-generated from {module_path}\n"));
     content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
     content.push_str("use std::collections::HashMap;\n");
     content.push_str("use std::sync::LazyLock;\n\n");
@@ -458,6 +459,7 @@ fn generate_table_file(
 }
 
 /// Generate individual file for a boolean set
+#[allow(dead_code)]
 fn generate_boolean_set_file(
     hash_name: &str,
     extracted_table: &ExtractedTable,
@@ -467,7 +469,7 @@ fn generate_boolean_set_file(
     
     // Create descriptive filename from hash name
     let file_name = hash_name_to_filename(hash_name);
-    let file_path = output_dir.join(format!("{}.rs", file_name));
+    let file_path = output_dir.join(format!("{file_name}.rs"));
     
     let mut content = String::new();
     content.push_str(&format!("//! {}\n", extracted_table.metadata.description));
@@ -475,7 +477,7 @@ fn generate_boolean_set_file(
     // Convert module filename to relative path for display
     let module_path = module_to_source_path(&extracted_table.source.module);
     
-    content.push_str(&format!("//! \n//! Auto-generated from {}\n", module_path));
+    content.push_str(&format!("//! \n//! Auto-generated from {module_path}\n"));
     content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
     content.push_str("use std::collections::HashSet;\n");
     content.push_str("use std::sync::LazyLock;\n\n");
@@ -499,19 +501,19 @@ fn generate_module_mod_file(
     let source_path = module_dir_to_source_path(module_name);
     mod_content.push_str(&format!("//! Generated lookup tables from {}\n", module_name.replace("_pm", ".pm")));
     mod_content.push_str("//!\n");
-    mod_content.push_str(&format!("//! Auto-generated from {}\n", source_path));
+    mod_content.push_str(&format!("//! Auto-generated from {source_path}\n"));
     mod_content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
     
     // Module declarations
     for file_name in generated_files {
-        mod_content.push_str(&format!("pub mod {};\n", file_name));
+        mod_content.push_str(&format!("pub mod {file_name};\n"));
     }
-    mod_content.push_str("\n");
+    mod_content.push('\n');
     
     // Re-export all lookup functions and constants
     mod_content.push_str("// Re-export all lookup functions and constants\n");
     for file_name in generated_files {
-        mod_content.push_str(&format!("pub use {}::*;\n", file_name));
+        mod_content.push_str(&format!("pub use {file_name}::*;\n"));
     }
     
     let mod_file_path = output_dir.join("mod.rs");
@@ -550,10 +552,10 @@ fn generate_inline_printconv_file(
         .map(|c| if c.is_alphanumeric() { c.to_ascii_lowercase() } else { '_' })
         .collect::<String>() + "_inline";
     
-    let file_path = output_dir.join(format!("{}.rs", file_name));
+    let file_path = output_dir.join(format!("{file_name}.rs"));
     
     let mut content = String::new();
-    content.push_str(&format!("//! Inline PrintConv tables for {} table\n", table_name));
+    content.push_str(&format!("//! Inline PrintConv tables for {table_name} table\n"));
     
     // Convert module filename to relative path for display
     let module_path = if let Some(ref source) = inline_data.source {
@@ -562,7 +564,7 @@ fn generate_inline_printconv_file(
         "unknown module".to_string()
     };
     
-    content.push_str(&format!("//! \n//! Auto-generated from {} (table: {})\n", module_path, table_name));
+    content.push_str(&format!("//! \n//! Auto-generated from {module_path} (table: {table_name})\n"));
     content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
     content.push_str("use std::collections::HashMap;\n");
     content.push_str("use std::sync::LazyLock;\n\n");
@@ -588,7 +590,7 @@ fn generate_tag_structure_file(
         // For subdirectory tables, use a different filename
         format!("{}_tag_structure", structure_data.source.table.to_lowercase())
     };
-    let file_path = output_dir.join(format!("{}.rs", file_name));
+    let file_path = output_dir.join(format!("{file_name}.rs"));
     
     let mut content = String::new();
     content.push_str("//! Auto-generated from ExifTool source\n");
@@ -610,7 +612,7 @@ fn generate_process_binary_data_file(
     // Create filename from table name
     let table_name = &binary_data.table_data.table_name;
     let file_name = format!("{}_binary_data", table_name.to_lowercase());
-    let file_path = output_dir.join(format!("{}.rs", file_name));
+    let file_path = output_dir.join(format!("{file_name}.rs"));
     
     let mut content = String::new();
     content.push_str("//! Auto-generated from ExifTool source\n");
@@ -632,7 +634,7 @@ fn generate_model_detection_file(
     // Create filename from table name
     let table_name = &model_detection.patterns_data.table_name;
     let file_name = format!("{}_model_detection", table_name.to_lowercase());
-    let file_path = output_dir.join(format!("{}.rs", file_name));
+    let file_path = output_dir.join(format!("{file_name}.rs"));
     
     let mut content = String::new();
     content.push_str("//! Auto-generated from ExifTool source\n");
@@ -654,7 +656,7 @@ fn generate_conditional_tags_file(
     // Create filename from table name
     let table_name = &conditional_tags.conditional_data.table_name;
     let file_name = format!("{}_conditional_tags", table_name.to_lowercase());
-    let file_path = output_dir.join(format!("{}.rs", file_name));
+    let file_path = output_dir.join(format!("{file_name}.rs"));
     
     let mut content = String::new();
     content.push_str("//! Auto-generated from ExifTool source\n");
@@ -714,7 +716,7 @@ fn detect_additional_generated_files(output_dir: &Path, _module_name: &str) -> R
         .iter()
         .filter_map(|entry| {
             let path = entry.path();
-            if path.is_file() && path.extension().map_or(false, |ext| ext == "rs") {
+            if path.is_file() && path.extension().is_some_and(|ext| ext == "rs") {
                 path.file_stem().and_then(|s| s.to_str()).map(|s| s.to_string())
             } else {
                 None
@@ -729,7 +731,7 @@ fn detect_additional_generated_files(output_dir: &Path, _module_name: &str) -> R
     // Now check for standalone patterns
     for file_stem in &rs_files {
         for pattern in &standalone_patterns {
-            if file_stem == pattern || file_stem.ends_with(&format!("_{}", pattern)) {
+            if file_stem == pattern || file_stem.ends_with(&format!("_{pattern}")) {
                 // Special case: detect Olympus naming conflicts
                 if file_stem == "tag_structure" && has_conflicting_olympus_structs {
                     warn!("  ⚠ Including tag_structure.rs but detected naming conflict with equipment_tag_structure.rs");
@@ -782,7 +784,7 @@ fn generate_runtime_table_file(
         .unwrap_or("create_table")
         .to_lowercase();
     
-    let filename = format!("{}_runtime.rs", function_name);
+    let filename = format!("{function_name}_runtime.rs");
     let output_path = output_dir.join(&filename);
     
     fs::write(&output_path, runtime_code)?;
@@ -826,7 +828,7 @@ fn generate_tag_kit_module(
         )?;
         
         // Write category module to tag_kit subdirectory
-        let category_file = format!("{}.rs", module_name_cat);
+        let category_file = format!("{module_name_cat}.rs");
         let category_path = tag_kit_dir.join(&category_file);
         fs::write(&category_path, module_code)?;
         
@@ -888,7 +890,7 @@ fn generate_tag_kit_category_module(
                     *print_conv_counter += 1;
                     local_print_conv_count += 1;
                     
-                    code.push_str(&format!("static {}: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {{\n", const_name));
+                    code.push_str(&format!("static {const_name}: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {{\n"));
                     code.push_str("    let mut map = HashMap::new();\n");
                     
                     for (key, value) in data_obj {
@@ -907,8 +909,8 @@ fn generate_tag_kit_category_module(
     }
     
     // Generate tag definitions function
-    code.push_str(&format!("/// Get tag definitions for {} category\n", category_name));
-    code.push_str(&format!("pub fn get_{}_tags() -> Vec<(u32, TagKitDef)> {{\n", category_name));
+    code.push_str(&format!("/// Get tag definitions for {category_name} category\n"));
+    code.push_str(&format!("pub fn get_{category_name}_tags() -> Vec<(u32, TagKitDef)> {{\n"));
     code.push_str("    vec![\n");
     
     // Reset print conv counter for this category
@@ -917,8 +919,8 @@ fn generate_tag_kit_category_module(
     for tag_kit in tag_kits {
         let tag_id = tag_kit.tag_id.parse::<u32>().unwrap_or(0);
         
-        code.push_str(&format!("        ({}, TagKitDef {{\n", tag_id));
-        code.push_str(&format!("            id: {},\n", tag_id));
+        code.push_str(&format!("        ({tag_id}, TagKitDef {{\n"));
+        code.push_str(&format!("            id: {tag_id},\n"));
         code.push_str(&format!("            name: \"{}\",\n", crate::common::escape_string(&tag_kit.name)));
         code.push_str(&format!("            format: \"{}\",\n", crate::common::escape_string(&tag_kit.format)));
         
@@ -941,8 +943,7 @@ fn generate_tag_kit_category_module(
         match tag_kit.print_conv_type.as_str() {
             "Simple" => {
                 if tag_kit.print_conv_data.is_some() {
-                    code.push_str(&format!("            print_conv: PrintConvType::Simple(&PRINT_CONV_{}),\n", 
-                        category_print_conv_index));
+                    code.push_str(&format!("            print_conv: PrintConvType::Simple(&PRINT_CONV_{category_print_conv_index}),\n"));
                     category_print_conv_index += 1;
                 } else {
                     code.push_str("            print_conv: PrintConvType::None,\n");
@@ -1013,9 +1014,9 @@ fn generate_tag_kit_mod_file(
     
     // Module declarations
     for module in category_modules {
-        code.push_str(&format!("pub mod {};\n", module));
+        code.push_str(&format!("pub mod {module};\n"));
     }
-    code.push_str("\n");
+    code.push('\n');
     
     // Common imports
     code.push_str("use std::collections::HashMap;\n");
@@ -1053,8 +1054,8 @@ fn generate_tag_kit_mod_file(
     
     // Add tags from each module
     for module in category_modules {
-        code.push_str(&format!("    // {} tags\n", module));
-        code.push_str(&format!("    for (id, tag_def) in {}::get_{}_tags() {{\n", module, module));
+        code.push_str(&format!("    // {module} tags\n"));
+        code.push_str(&format!("    for (id, tag_def) in {module}::get_{module}_tags() {{\n"));
         code.push_str("        map.insert(id, tag_def);\n");
         code.push_str("    }\n");
         code.push_str("    \n");
@@ -1134,8 +1135,8 @@ fn generate_boolean_set_file_from_json(
     code.push_str("use std::collections::HashMap;\n");
     code.push_str("use std::sync::LazyLock;\n\n");
     
-    code.push_str(&format!("/// {}\n", description));
-    code.push_str(&format!("pub static {}: LazyLock<HashMap<{}, bool>> = LazyLock::new(|| {{\n", constant_name, key_type));
+    code.push_str(&format!("/// {description}\n"));
+    code.push_str(&format!("pub static {constant_name}: LazyLock<HashMap<{key_type}, bool>> = LazyLock::new(|| {{\n"));
     code.push_str("    let mut map = HashMap::new();\n");
     
     // Add entries
@@ -1158,17 +1159,17 @@ fn generate_boolean_set_file_from_json(
     
     // Generate lookup function
     let function_name = format!("lookup_{}", hash_name.trim_start_matches('%').to_lowercase());
-    code.push_str(&format!("/// Check if key exists in {}\n", description));
-    code.push_str(&format!("pub fn {}(key: &{}) -> bool {{\n", function_name, key_type));
-    code.push_str(&format!("    {}.contains_key(key)\n", constant_name));
+    code.push_str(&format!("/// Check if key exists in {description}\n"));
+    code.push_str(&format!("pub fn {function_name}(key: &{key_type}) -> bool {{\n"));
+    code.push_str(&format!("    {constant_name}.contains_key(key)\n"));
     code.push_str("}\n");
     
     // Create descriptive filename from hash name
     let file_name = hash_name_to_filename(hash_name);
-    let file_path = output_dir.join(format!("{}.rs", file_name));
+    let file_path = output_dir.join(format!("{file_name}.rs"));
     
     let mut content = String::new();
-    content.push_str(&format!("//! {}\n", description));
+    content.push_str(&format!("//! {description}\n"));
     content.push_str("//! \n//! Auto-generated from ExifTool source\n");
     content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten by codegen\n\n");
     content.push_str(&code);
@@ -1204,8 +1205,8 @@ fn generate_regex_patterns_file(
     code.push_str("use std::sync::LazyLock;\n\n");
     
     // Generate the regex patterns map
-    code.push_str(&format!("/// {}\n", description));
-    code.push_str(&format!("pub static {}: LazyLock<HashMap<&'static str, &'static [u8]>> = LazyLock::new(|| {{\n", constant_name));
+    code.push_str(&format!("/// {description}\n"));
+    code.push_str(&format!("pub static {constant_name}: LazyLock<HashMap<&'static str, &'static [u8]>> = LazyLock::new(|| {{\n"));
     code.push_str("    let mut map = HashMap::new();\n");
     
     // Add entries from magic_patterns array (keeping original field name from extraction)
@@ -1217,9 +1218,7 @@ fn generate_regex_patterns_file(
             ) {
                 // Convert pattern string to bytes - escape special characters for Rust byte literal
                 let escaped_pattern = escape_pattern_to_bytes(pattern_str);
-                code.push_str(&format!("    map.insert(\"{}\", &{} as &[u8]);\n", 
-                    file_type,
-                    escaped_pattern
+                code.push_str(&format!("    map.insert(\"{file_type}\", &{escaped_pattern} as &[u8]);\n"
                 ));
             }
         }
@@ -1268,9 +1267,9 @@ fn escape_pattern_to_bytes(pattern: &str) -> String {
                     chars.next(); // consume 'x'
                     let hex1 = chars.next().unwrap_or('0');
                     let hex2 = chars.next().unwrap_or('0');
-                    let hex_str = format!("{}{}", hex1, hex2);
+                    let hex_str = format!("{hex1}{hex2}");
                     if let Ok(byte_val) = u8::from_str_radix(&hex_str, 16) {
-                        result.push_str(&format!("0x{:02x}u8", byte_val));
+                        result.push_str(&format!("0x{byte_val:02x}u8"));
                     } else {
                         result.push_str("0x00u8");
                     }

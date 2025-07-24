@@ -4,6 +4,7 @@ use anyhow::{Context, Result};
 use std::path::{Path, PathBuf};
 
 /// Find the repository root by walking up from the given path until we find Cargo.toml
+#[allow(dead_code)]
 pub fn find_repo_root(start_path: &Path) -> Result<PathBuf> {
     let mut current_path = start_path.canonicalize()?;
     while !current_path.join("Cargo.toml").exists() {
@@ -19,7 +20,7 @@ pub fn find_repo_root(start_path: &Path) -> Result<PathBuf> {
 pub fn parse_hex_id(hex_str: &str) -> Result<u32> {
     let cleaned = hex_str.trim_start_matches("0x");
     u32::from_str_radix(cleaned, 16)
-        .with_context(|| format!("Failed to parse hex ID: {}", hex_str))
+        .with_context(|| format!("Failed to parse hex ID: {hex_str}"))
 }
 
 /// Convert ExifTool format names to our Rust enum variant names
@@ -52,11 +53,13 @@ pub fn escape_string(s: &str) -> String {
 }
 
 /// Escape a string for use in Rust code (alias for escape_string)
+#[allow(dead_code)]
 pub fn escape_rust_string(s: &str) -> String {
     escape_string(s)
 }
 
 /// Escape a regex pattern for use in Rust raw strings
+#[allow(dead_code)]
 pub fn escape_regex_for_rust(pattern: &str) -> String {
     // For raw strings, we just need to handle quotes carefully
     // Most regex patterns work fine in raw strings r"..."
@@ -81,11 +84,11 @@ pub fn module_to_source_path(module: &str) -> String {
     } else if module.starts_with("Image::ExifTool::") {
         // Perl module format: "Image::ExifTool::Canon" -> "third-party/exiftool/lib/Image/ExifTool/Canon.pm"
         let module_name = module.strip_prefix("Image::ExifTool::").unwrap();
-        format!("third-party/exiftool/lib/Image/ExifTool/{}.pm", module_name)
+        format!("third-party/exiftool/lib/Image/ExifTool/{module_name}.pm")
     } else {
         // Filename format: "Canon.pm" -> "third-party/exiftool/lib/Image/ExifTool/Canon.pm"
         let base_name = module.strip_suffix(".pm").unwrap_or(module);
-        format!("third-party/exiftool/lib/Image/ExifTool/{}.pm", base_name)
+        format!("third-party/exiftool/lib/Image/ExifTool/{base_name}.pm")
     }
 }
 
@@ -96,10 +99,10 @@ pub fn module_dir_to_source_path(module_dir: &str) -> String {
         if base_name == "ExifTool" {
             "third-party/exiftool/lib/Image/ExifTool.pm".to_string()
         } else {
-            format!("third-party/exiftool/lib/Image/ExifTool/{}.pm", base_name)
+            format!("third-party/exiftool/lib/Image/ExifTool/{base_name}.pm")
         }
     } else {
         // Fallback for non-standard naming
-        format!("third-party/exiftool/lib/Image/ExifTool/{}.pm", module_dir)
+        format!("third-party/exiftool/lib/Image/ExifTool/{module_dir}.pm")
     }
 }

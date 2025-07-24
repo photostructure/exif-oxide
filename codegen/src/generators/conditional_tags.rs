@@ -84,22 +84,22 @@ pub fn generate_conditional_tags(data: &ConditionalTagsExtraction) -> Result<Str
 
     // Generate context structure for condition evaluation
     code.push_str(&generate_evaluation_context()?);
-    code.push_str("\n");
+    code.push('\n');
 
     // Generate condition resolvers
     if !data.conditional_data.conditional_arrays.is_empty() {
         code.push_str(&generate_conditional_array_resolver(data)?);
-        code.push_str("\n");
+        code.push('\n');
     }
 
     if !data.conditional_data.count_conditions.is_empty() {
         code.push_str(&generate_count_condition_resolver(data)?);
-        code.push_str("\n");
+        code.push('\n');
     }
 
     if !data.conditional_data.binary_patterns.is_empty() {
         code.push_str(&generate_binary_pattern_resolver(data)?);
-        code.push_str("\n");
+        code.push('\n');
     }
 
     // Generate the main conditional tag processor
@@ -118,10 +118,10 @@ pub fn generate_conditional_tags(data: &ConditionalTagsExtraction) -> Result<Str
         data.conditional_data.cross_tag_dependencies.len()
     ));
     code.push_str("#[derive(Debug, Clone)]\n");
-    code.push_str(&format!("pub struct {} {{}}\n\n", struct_name));
+    code.push_str(&format!("pub struct {struct_name} {{}}\n\n"));
 
     // Generate implementation
-    code.push_str(&format!("impl {} {{\n", struct_name));
+    code.push_str(&format!("impl {struct_name} {{\n"));
 
     // Constructor
     code.push_str("    /// Create new conditional tag processor\n");
@@ -358,7 +358,7 @@ fn generate_count_condition_resolver(data: &ConditionalTagsExtraction) -> Result
     }
 
     for (tag_id, conditions) in grouped_conditions {
-        code.push_str(&format!("    map.insert(\"{}\", vec![\n", tag_id));
+        code.push_str(&format!("    map.insert(\"{tag_id}\", vec![\n"));
 
         for condition in conditions {
             code.push_str("        ConditionalEntry {\n");
@@ -413,7 +413,7 @@ fn generate_binary_pattern_resolver(data: &ConditionalTagsExtraction) -> Result<
     }
 
     for (tag_id, patterns) in grouped_patterns {
-        code.push_str(&format!("    map.insert(\"{}\", vec![\n", tag_id));
+        code.push_str(&format!("    map.insert(\"{tag_id}\", vec![\n"));
 
         for pattern in patterns {
             code.push_str("        ConditionalEntry {\n");

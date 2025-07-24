@@ -2,6 +2,7 @@
 
 /// Generated tag definition for Rust code
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct GeneratedTag {
     pub id: u32,
     pub name: String,
@@ -16,6 +17,7 @@ pub struct GeneratedTag {
 
 /// Generated composite tag definition for Rust code
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct GeneratedCompositeTag {
     pub name: String,
     pub table: String,
@@ -29,6 +31,7 @@ pub struct GeneratedCompositeTag {
 
 /// Format enum that will be generated in Rust code
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[allow(dead_code)]
 pub enum TagFormat {
     U8,
     U16,
@@ -46,6 +49,7 @@ pub enum TagFormat {
 
 /// Generated tag structure in Rust code
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct TagDef {
     pub id: u32,
     pub name: &'static str,
@@ -60,6 +64,7 @@ pub struct TagDef {
 
 /// Generated composite tag structure in Rust code
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct CompositeTagDef {
     pub name: &'static str,
     pub table: &'static str,
@@ -73,6 +78,7 @@ pub struct CompositeTagDef {
 
 /// File type entry for discriminated union
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub enum FileTypeEntry {
     /// Simple alias pointing to another file type
     Alias(String),
