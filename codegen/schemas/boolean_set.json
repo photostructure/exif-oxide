@@ -6,7 +6,8 @@
   "properties": {
     "source": {
       "type": "string",
-      "description": "Path to ExifTool source file relative to repo root"
+      "description": "Path to ExifTool source file relative to repo root",
+      "pattern": "^third-party/exiftool/"
     },
     "description": {
       "type": "string",
