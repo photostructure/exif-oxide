@@ -38,7 +38,9 @@ We're trying to match ExifTool output with these options: `exiftool -j -struct -
 
 ### 3. Use codegen if applicable
 
-- Use automated ExifTool heuristics extraction with our [CODEGEN](./design/CODEGEN.md) infrastructure, when applicable. Any simple tabular data, especially if it's "big" (15+ elements) should be automatically generated for us and we use that instead of manually porting (which may quickly drift from correctness due to the frequency of ExifTool releases).
+- Use automated ExifTool heuristics extraction with our [CODEGEN](CODEGEN.md) infrastructure, when applicable. Any simple tabular data, especially if it's "big" (15+ elements) should be automatically generated for us and we use that instead of manually porting (which may quickly drift from correctness due to the frequency of ExifTool releases).
+
+**🚨 CRITICAL**: Manual porting of ExifTool data is **BANNED**. We've had 100+ bugs from manual transcription errors. See [CODEGEN.md](CODEGEN.md#never-manual-port-exiftool-data) for why ALL ExifTool data must be extracted automatically.
 
 ### 4. Cite references
 
