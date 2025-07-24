@@ -470,13 +470,37 @@ impl ExifReader {
                         )?;
                     }
                 } else {
-                    // Regular UNDEFINED data - store as raw bytes for now
-                    // TODO: Implement specific UNDEFINED tag processing as needed
+                    // Regular UNDEFINED data - extract the binary data
                     let tag_name = self.get_tag_name(entry.tag_id, ifd_name);
-                    debug!(
-                        "UNDEFINED tag {:#x} ({}) not yet implemented (format 7, {} bytes)",
-                        entry.tag_id, tag_name, entry.count
-                    );
+
+                    // Special handling for JpgFromRaw tags (Panasonic RW2 embedded JPEG preview)
+                    if entry.tag_id == 0x002e || entry.tag_id == 0x0127 {
+                        // JpgFromRaw and JpgFromRaw2 - extract the embedded JPEG data
+                        // ExifTool: PanasonicRaw.pm tags 0x002e and 0x0127 contain JPEG data
+                        if let Ok(binary_data) =
+                            value_extraction::extract_byte_array_value(&self.data, &entry)
+                        {
+                            let tag_value = TagValue::Binary(binary_data);
+                            let source_info = self.create_tag_source_info(ifd_name);
+                            self.store_tag_with_precedence(entry.tag_id, tag_value, source_info);
+                            debug!(
+                                "Extracted UNDEFINED tag {:#x} ({}) as binary data ({} bytes)",
+                                entry.tag_id, tag_name, entry.count
+                            );
+                        } else {
+                            debug!(
+                                "Failed to extract binary data for UNDEFINED tag {:#x} ({})",
+                                entry.tag_id, tag_name
+                            );
+                        }
+                    } else {
+                        // Other UNDEFINED data - store as raw bytes for now
+                        // TODO: Implement specific UNDEFINED tag processing as needed
+                        debug!(
+                            "UNDEFINED tag {:#x} ({}) not yet implemented (format 7, {} bytes)",
+                            entry.tag_id, tag_name, entry.count
+                        );
+                    }
                 }
             }
             TiffFormat::Ifd => {
