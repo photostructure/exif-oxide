@@ -532,3 +532,28 @@ pub fn extensions_for_format(target_format: &str) -> Vec<String> {
 
     extensions
 }
+
+/// All known file type extensions
+pub static FILE_TYPE_EXTENSIONS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
+    let mut extensions = Vec::new();
+
+    // Add all known extensions from FILE_TYPE_FORMATS
+    for ext in FILE_TYPE_FORMATS.keys() {
+        extensions.push(*ext);
+    }
+
+    // Add all extension aliases
+    for ext in EXTENSION_ALIASES.keys() {
+        extensions.push(*ext);
+    }
+
+    extensions.sort();
+    extensions.dedup();
+    extensions
+});
+
+/// Lookup file type by extension (wrapper around resolve_file_type)
+/// Returns the first format for compatibility with existing code
+pub fn lookup_file_type_by_extension(extension: &str) -> Option<String> {
+    resolve_file_type(extension).map(|(formats, _)| formats[0].to_string())
+}

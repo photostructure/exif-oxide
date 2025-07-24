@@ -75,8 +75,8 @@ check-extractors:
 
 # Extract EXIF tags from ExifTool and regenerate Rust code
 codegen:
-	@echo "Running modular code generation (4 jobs)..."
-	$(MAKE) -C codegen -f Makefile.modular -j4 codegen
+	@echo "🔧 Running code generation..."
+	@$(MAKE) --no-print-directory -C codegen -f Makefile.modular -j4 codegen
 	
 # Extract all ExifTool algorithms and regenerate code  
 sync: codegen

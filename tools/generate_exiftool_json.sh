@@ -21,7 +21,7 @@ ALLOWED_GROUPS='["EXIF", "File", "System", "MakerNotes", "PNG", "GIF", "QuickTim
 
 # Supported file extensions for compatibility testing
 # Add new extensions here as support is added
-SUPPORTED_EXTENSIONS=("jpg" "jpeg" "orf" "raw" "mrw" "rw2" "cr2" "arw" "sr2" "srf" "png" "gif" "tif" "tiff" "avif")
+SUPPORTED_EXTENSIONS=("jpg" "jpeg" "orf" "raw" "mrw" "rw2" "cr2" "arw" "sr2" "srf" "png" "gif" "tif" "tiff" "avif" "dng")
 
 echo "Generating ExifTool reference snapshots for exif-oxide compatibility testing"
 echo "Project root: $PROJECT_ROOT"

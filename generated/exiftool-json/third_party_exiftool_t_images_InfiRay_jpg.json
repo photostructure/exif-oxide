@@ -1,5 +1,8 @@
 {
   "SourceFile": "third-party/exiftool/t/images/InfiRay.jpg",
+  "EXIF:GPSLatitude": "",
+  "EXIF:GPSLongitude": "",
+  "EXIF:GPSAltitude": "undef",
   "File:FileSize": 2207,
   "File:FileName": "InfiRay.jpg",
   "File:Directory": "third-party/exiftool/t/images",

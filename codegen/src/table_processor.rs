@@ -11,6 +11,7 @@ use crate::generators::{generate_composite_tag_table, generate_supported_tags, g
 use crate::generators::conversion_refs::generate_conversion_refs;
 use std::path::Path;
 use std::fs;
+use tracing::{debug, warn};
 
 /// Convert extracted tags to generated format
 ///
@@ -90,7 +91,7 @@ pub fn process_tag_tables(
 
     // Process main tag tables
     if file_exists(Path::new(tag_data_path)) {
-        println!("\n📋 Processing tag tables...");
+        debug!("📋 Processing tag tables...");
         let json_data = read_utf8_with_fallback(Path::new(tag_data_path))?;
 
         let extracted: ExtractedData = serde_json::from_str(&json_data)
@@ -104,7 +105,7 @@ pub fn process_tag_tables(
 
         // Process composite tags if available
         if file_exists(Path::new(composite_data_path)) {
-            println!("\n🔗 Processing composite tags...");
+            debug!("🔗 Processing composite tags...");
             let composite_json = read_utf8_with_fallback(Path::new(composite_data_path))?;
             let composite_data: CompositeData = serde_json::from_str(&composite_json)
                 .with_context(|| "Failed to parse composite tags JSON")?;
@@ -117,7 +118,7 @@ pub fn process_tag_tables(
             generate_supported_tags(&generated_tags, &[], output_dir)?;
         }
     } else {
-        println!("Tag data file not found!");
+        warn!("Tag data file not found!");
     }
 
     Ok(())
@@ -145,12 +146,12 @@ pub fn process_tag_tables_modular(extract_dir: &Path, output_dir: &str) -> Resul
             
             if file_path.extension().and_then(|s| s.to_str()) == Some("json") {
                 let filename = file_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
-                println!("  📊 Processing {}", filename);
+                debug!("  📊 Processing {}", filename);
                 let json_data = read_utf8_with_fallback(&file_path)?;
                 
                 // Skip empty files
                 if json_data.trim().is_empty() {
-                    println!("    ⚠️  Skipping empty file: {}", filename);
+                    warn!("    ⚠️  Skipping empty file: {}", filename);
                     continue;
                 }
                 
@@ -200,12 +201,12 @@ pub fn process_tag_tables_modular(extract_dir: &Path, output_dir: &str) -> Resul
             
             if file_path.extension().and_then(|s| s.to_str()) == Some("json") {
                 let filename = file_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
-                println!("  🔗 Processing {}", filename);
+                debug!("  🔗 Processing {}", filename);
                 let json_data = read_utf8_with_fallback(&file_path)?;
                 
                 // Skip empty files
                 if json_data.trim().is_empty() {
-                    println!("    ⚠️  Skipping empty file: {}", filename);
+                    warn!("    ⚠️  Skipping empty file: {}", filename);
                     continue;
                 }
                 
@@ -246,7 +247,7 @@ pub fn process_tag_tables_modular(extract_dir: &Path, output_dir: &str) -> Resul
         }
     }
 
-    println!("  ✅ Found {} tags and {} composite tags", all_tags.len(), all_composites.len());
+    debug!("  ✅ Found {} tags and {} composite tags", all_tags.len(), all_composites.len());
 
     // Generate code if we have any data
     if !all_tags.is_empty() || !all_composites.is_empty() {

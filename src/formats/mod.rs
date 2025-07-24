@@ -86,8 +86,8 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         group: "File".to_string(),
         group1: "System".to_string(),
         name: "FileSize".to_string(),
-        value: TagValue::String(file_size.to_string()),
-        print: TagValue::String(file_size.to_string()),
+        value: TagValue::U64(file_size),
+        print: TagValue::U64(file_size),
     });
 
     // Format file modification time to match ExifTool format: "YYYY:MM:DD HH:MM:SS±TZ:TZ"
@@ -293,8 +293,8 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     group: "File".to_string(),
                     group1: "File".to_string(),
                     name: "ImageWidth".to_string(),
-                    value: TagValue::U32(sof.image_width as u32),
-                    print: TagValue::String(sof.image_width.to_string()),
+                    value: TagValue::U16(sof.image_width),
+                    print: TagValue::U16(sof.image_width),
                 });
 
                 // Add ImageHeight from SOF
@@ -302,8 +302,8 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     group: "File".to_string(),
                     group1: "File".to_string(),
                     name: "ImageHeight".to_string(),
-                    value: TagValue::U32(sof.image_height as u32),
-                    print: TagValue::String(sof.image_height.to_string()),
+                    value: TagValue::U16(sof.image_height),
+                    print: TagValue::U16(sof.image_height),
                 });
 
                 // Add BitsPerSample from SOF
@@ -478,7 +478,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     // ExifTool: lib/Image/ExifTool/Exif.pm:460-473 (ImageWidth/ImageHeight tags)
                     if matches!(
                         detection_result.file_type.as_str(),
-                        "ARW" | "CR2" | "NEF" | "NRW"
+                        "ARW" | "CR2" | "NEF" | "NRW" | "DNG" | "ORF" | "RW2"
                     ) {
                         if let Err(e) =
                             crate::raw::utils::extract_tiff_dimensions(&mut exif_reader, &tiff_data)
@@ -894,18 +894,15 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     let mut file_data = Vec::new();
                     reader.read_to_end(&mut file_data)?;
 
-                    // LIMITATION: This is a simplified HEIC/HEIF implementation
-                    // ExifTool uses primary item detection (pitm/iinf/ipma boxes) to identify the main image
-                    // Our current implementation extracts the first ispe box found, which may be a thumbnail
-                    //
-                    // To fully match ExifTool's behavior, we need to implement:
+                    // Extract dimensions using ExifTool's primary item detection logic
+                    // Implements complete pitm/iinf/ipma box processing to identify the main image
                     // 1. Parse pitm box to get primary item ID (QuickTime.pm:3550-3557)
                     // 2. Parse iinf box to build item information map (QuickTime.pm:3730-3740)
                     // 3. Parse ipma box to associate items with properties (QuickTime.pm:10320-10380)
                     // 4. Use DOC_NUM logic to determine primary vs sub-document ispe boxes (QuickTime.pm:6450-6460)
                     //
                     // ExifTool reference: QuickTime.pm:2946-2959 (ispe processing with DOC_NUM check)
-                    match avif::extract_avif_dimensions(&file_data) {
+                    match avif::extract_heic_dimensions_primary_item(&file_data) {
                         Ok(props) => {
                             // Create File:ImageWidth and File:ImageHeight tag entries
                             // ExifTool creates File group tags for HEIC/HEIF dimensions

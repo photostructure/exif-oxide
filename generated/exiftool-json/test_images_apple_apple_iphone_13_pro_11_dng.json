@@ -1,0 +1,23 @@
+{
+  "SourceFile": "test-images/apple/apple_iphone_13_pro_11.dng",
+  "EXIF:GPSLatitude": 51.4831444333333,
+  "EXIF:GPSLongitude": 3.18537221666667,
+  "EXIF:GPSAltitude": 4.959316322,
+  "File:FileSize": 27795754,
+  "File:FileName": "apple_iphone_13_pro_11.dng",
+  "File:Directory": "test-images/apple",
+  "File:FileModifyDate": "2025:06:30 10:16:36-07:00",
+  "File:FileType": "DNG",
+  "File:FileTypeExtension": "dng",
+  "File:MIMEType": "image/x-adobe-dng",
+  "EXIF:Make": "Apple",
+  "EXIF:Model": "iPhone 13 Pro",
+  "EXIF:Orientation": "Horizontal (normal)",
+  "EXIF:ImageWidth": 4032,
+  "EXIF:ImageHeight": 3024,
+  "EXIF:ISO": 50,
+  "EXIF:DateTimeOriginal": "2021:10:11 16:01:28",
+  "EXIF:CreateDate": "2021:10:11 16:01:28",
+  "EXIF:SubSecTimeOriginal": 185,
+  "EXIF:SubSecTimeDigitized": 185
+}

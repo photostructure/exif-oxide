@@ -44,6 +44,8 @@ pub enum TagValue {
     U16(u16),
     /// Unsigned 32-bit integer
     U32(u32),
+    /// Unsigned 64-bit integer
+    U64(u64),
     /// Signed 16-bit integer
     I16(i16),
     /// Signed 32-bit integer
@@ -203,6 +205,7 @@ impl std::fmt::Display for TagValue {
             TagValue::U8(v) => write!(f, "{v}"),
             TagValue::U16(v) => write!(f, "{v}"),
             TagValue::U32(v) => write!(f, "{v}"),
+            TagValue::U64(v) => write!(f, "{v}"),
             TagValue::I16(v) => write!(f, "{v}"),
             TagValue::I32(v) => write!(f, "{v}"),
             TagValue::F64(v) => write!(f, "{v}"),

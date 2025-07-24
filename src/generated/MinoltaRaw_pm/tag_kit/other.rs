@@ -11,17 +11,33 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("82".to_string(), "Padded");
     map.insert("89".to_string(), "Linear");
     map
 });
 
-static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "RGGB");
     map.insert("4".to_string(), "GBRG");
+    map
+});
+
+static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "ISO Setting Used");
+    map.insert("1".to_string(), "High Key");
+    map.insert("2".to_string(), "Low Key");
+    map
+});
+
+static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "ISO Setting Used");
+    map.insert("1".to_string(), "High Key");
+    map.insert("2".to_string(), "Low Key");
     map
 });
 
@@ -102,7 +118,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_0),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_1),
                 value_conv: None,
             },
         ),
@@ -115,7 +131,254 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_1),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_2),
+                value_conv: None,
+            },
+        ),
+        (
+            12,
+            TagKitDef {
+                id: 12,
+                name: "WB_RBLevelsDaylight",
+                format: "int16u[2]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            16,
+            TagKitDef {
+                id: 16,
+                name: "WB_RBLevelsCloudy",
+                format: "int16u[2]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            20,
+            TagKitDef {
+                id: 20,
+                name: "WB_RBLevelsCoolWhiteF",
+                format: "int16u[2]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            24,
+            TagKitDef {
+                id: 24,
+                name: "WB_RBLevelsFlash",
+                format: "int16u[2]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            28,
+            TagKitDef {
+                id: 28,
+                name: "WB_RBLevelsCustom",
+                format: "int16u[2]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            32,
+            TagKitDef {
+                id: 32,
+                name: "WB_RBLevelsShade",
+                format: "int16u[2]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            36,
+            TagKitDef {
+                id: 36,
+                name: "WB_RBLevelsDaylightF",
+                format: "int16u[2]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            40,
+            TagKitDef {
+                id: 40,
+                name: "WB_RBLevelsDayWhiteF",
+                format: "int16u[2]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            44,
+            TagKitDef {
+                id: 44,
+                name: "WB_RBLevelsWhiteF",
+                format: "int16u[2]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            56,
+            TagKitDef {
+                id: 56,
+                name: "ColorFilter",
+                format: "int8s",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("Minolta models"),
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            58,
+            TagKitDef {
+                id: 58,
+                name: "ZoneMatching",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("Minolta models"),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_3),
+                value_conv: None,
+            },
+        ),
+        (
+            59,
+            TagKitDef {
+                id: 59,
+                name: "Hue",
+                format: "int8s",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            60,
+            TagKitDef {
+                id: 60,
+                name: "ColorTemperature",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("Minolta models"),
+                print_conv: PrintConvType::None,
+                value_conv: Some("$val * 100"),
+            },
+        ),
+        (
+            74,
+            TagKitDef {
+                id: 74,
+                name: "ZoneMatching",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("Sony models"),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_4),
+                value_conv: None,
+            },
+        ),
+        (
+            76,
+            TagKitDef {
+                id: 76,
+                name: "ColorTemperature",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("A100"),
+                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                value_conv: Some("$val * 100"),
+            },
+        ),
+        (
+            77,
+            TagKitDef {
+                id: 77,
+                name: "ColorFilter",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("A100"),
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            78,
+            TagKitDef {
+                id: 78,
+                name: "ColorTemperature",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("A200 and A700"),
+                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                value_conv: Some("$val * 100"),
+            },
+        ),
+        (
+            79,
+            TagKitDef {
+                id: 79,
+                name: "ColorFilter",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("A200 and A700"),
+                print_conv: PrintConvType::None,
+                value_conv: None,
+            },
+        ),
+        (
+            80,
+            TagKitDef {
+                id: 80,
+                name: "RawDataLength",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: Some("A100"),
+                print_conv: PrintConvType::None,
                 value_conv: None,
             },
         ),

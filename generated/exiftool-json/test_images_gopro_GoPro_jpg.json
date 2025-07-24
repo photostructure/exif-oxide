@@ -1,5 +1,8 @@
 {
   "SourceFile": "test-images/gopro/GoPro.jpg",
+  "EXIF:GPSLatitude": 40.6584191999722,
+  "EXIF:GPSLongitude": 73.9933542999722,
+  "EXIF:GPSAltitude": 3.983,
   "File:FileSize": 4601,
   "File:FileName": "GoPro.jpg",
   "File:Directory": "test-images/gopro",

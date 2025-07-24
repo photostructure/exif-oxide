@@ -316,8 +316,9 @@ pub fn extract_shot_info(
         offset, size
     );
 
-    // Use generated PrintConv lookups from shotinfo_inline.rs
-    use crate::generated::Canon_pm::shotinfo_inline::*;
+    // Use Canon tag kit system for PrintConv lookups
+    use crate::expressions::ExpressionEvaluator;
+    use crate::generated::Canon_pm::tag_kit;
 
     // Extract AutoISO (index 1)
     // ExifTool: Canon.pm:2724 Name => 'AutoISO'
@@ -396,13 +397,25 @@ pub fn extract_shot_info(
         let wb_offset = offset + (7 - 1) * format_size;
         let white_balance = byte_order.read_u16(data, wb_offset)? as i16;
 
-        // Apply PrintConv using generated lookup
-        let final_value =
-            if let Some(converted) = lookup_shot_info__white_balance(white_balance as u8) {
-                TagValue::String(converted.to_string())
-            } else {
-                TagValue::I16(white_balance)
-            };
+        // Apply PrintConv using Canon tag kit system
+        // WhiteBalance has tag ID 7 in Canon tag kit
+        let raw_value = TagValue::I16(white_balance);
+        let mut evaluator = ExpressionEvaluator::new();
+        let mut errors = Vec::new();
+        let mut warnings = Vec::new();
+
+        let final_value = tag_kit::apply_print_conv(
+            7, // WhiteBalance tag ID
+            &raw_value,
+            &mut evaluator,
+            &mut errors,
+            &mut warnings,
+        );
+
+        // Log any warnings from tag kit processing
+        for warning in warnings {
+            debug!("Canon WhiteBalance tag kit warning: {}", warning);
+        }
 
         debug!(
             "Extracted Canon WhiteBalance = {:?} (raw: {})",
@@ -418,13 +431,25 @@ pub fn extract_shot_info(
         let af_offset = offset + (14 - 1) * format_size;
         let af_points = byte_order.read_u16(data, af_offset)? as i16;
 
-        // Apply PrintConv using generated lookup
-        let final_value =
-            if let Some(converted) = lookup_shot_info__a_f_points_in_focus(af_points as u16) {
-                TagValue::String(converted.to_string())
-            } else {
-                TagValue::I16(af_points)
-            };
+        // Apply PrintConv using Canon tag kit system
+        // AFPointsInFocus has tag ID 14 in Canon tag kit
+        let raw_value = TagValue::I16(af_points);
+        let mut evaluator = ExpressionEvaluator::new();
+        let mut errors = Vec::new();
+        let mut warnings = Vec::new();
+
+        let final_value = tag_kit::apply_print_conv(
+            14, // AFPointsInFocus tag ID
+            &raw_value,
+            &mut evaluator,
+            &mut errors,
+            &mut warnings,
+        );
+
+        // Log any warnings from tag kit processing
+        for warning in warnings {
+            debug!("Canon AFPointsInFocus tag kit warning: {}", warning);
+        }
 
         debug!(
             "Extracted Canon AFPointsInFocus = {:?} (raw: {})",
@@ -440,13 +465,25 @@ pub fn extract_shot_info(
         let aeb_offset = offset + (16 - 1) * format_size;
         let aeb_value = byte_order.read_u16(data, aeb_offset)? as i16;
 
-        // Apply PrintConv using generated lookup
-        let final_value =
-            if let Some(converted) = lookup_shot_info__auto_exposure_bracketing(aeb_value) {
-                TagValue::String(converted.to_string())
-            } else {
-                TagValue::I16(aeb_value)
-            };
+        // Apply PrintConv using Canon tag kit system
+        // AutoExposureBracketing has tag ID 16 in Canon tag kit
+        let raw_value = TagValue::I16(aeb_value);
+        let mut evaluator = ExpressionEvaluator::new();
+        let mut errors = Vec::new();
+        let mut warnings = Vec::new();
+
+        let final_value = tag_kit::apply_print_conv(
+            16, // AutoExposureBracketing tag ID
+            &raw_value,
+            &mut evaluator,
+            &mut errors,
+            &mut warnings,
+        );
+
+        // Log any warnings from tag kit processing
+        for warning in warnings {
+            debug!("Canon AutoExposureBracketing tag kit warning: {}", warning);
+        }
 
         debug!(
             "Extracted Canon AutoExposureBracketing = {:?} (raw: {})",
@@ -462,13 +499,25 @@ pub fn extract_shot_info(
         let camera_type_offset = offset + (26 - 1) * format_size;
         let camera_type = byte_order.read_u16(data, camera_type_offset)? as i16;
 
-        // Apply PrintConv using generated lookup
-        let final_value = if let Some(converted) = lookup_shot_info__camera_type(camera_type as u8)
-        {
-            TagValue::String(converted.to_string())
-        } else {
-            TagValue::I16(camera_type)
-        };
+        // Apply PrintConv using Canon tag kit system
+        // CameraType has tag ID 26 in Canon tag kit
+        let raw_value = TagValue::I16(camera_type);
+        let mut evaluator = ExpressionEvaluator::new();
+        let mut errors = Vec::new();
+        let mut warnings = Vec::new();
+
+        let final_value = tag_kit::apply_print_conv(
+            26, // CameraType tag ID
+            &raw_value,
+            &mut evaluator,
+            &mut errors,
+            &mut warnings,
+        );
+
+        // Log any warnings from tag kit processing
+        for warning in warnings {
+            debug!("Canon CameraType tag kit warning: {}", warning);
+        }
 
         debug!(
             "Extracted Canon CameraType = {:?} (raw: {})",
@@ -496,8 +545,9 @@ pub fn extract_panorama(
 
     let mut panorama = HashMap::new();
 
-    // Use generated PrintConv lookups from panorama_inline.rs
-    use crate::generated::Canon_pm::panorama_inline::*;
+    // Use Canon tag kit system for PrintConv lookups
+    use crate::expressions::ExpressionEvaluator;
+    use crate::generated::Canon_pm::tag_kit;
 
     // Canon Panorama format: int16s (signed 16-bit), starting at index 0
     // ExifTool: Canon.pm:3001 FORMAT => 'int16s', FIRST_ENTRY => 0
@@ -515,13 +565,25 @@ pub fn extract_panorama(
     // Tag 5: PanoramaDirection with PrintConv using generated lookup
     // ExifTool: Canon.pm:3009-3018
     if let Ok(direction_raw) = read_int16s_at_index(data, offset, 5, byte_order) {
-        // Apply PrintConv using generated lookup table
-        let direction_value =
-            if let Some(converted) = lookup_panorama__panorama_direction(direction_raw as u8) {
-                TagValue::String(converted.to_string())
-            } else {
-                TagValue::I16(direction_raw) // Keep raw value for unknown
-            };
+        // Apply PrintConv using Canon tag kit system
+        // PanoramaDirection has tag ID 5 in Canon tag kit
+        let raw_value = TagValue::I16(direction_raw);
+        let mut evaluator = ExpressionEvaluator::new();
+        let mut errors = Vec::new();
+        let mut warnings = Vec::new();
+
+        let direction_value = tag_kit::apply_print_conv(
+            5, // PanoramaDirection tag ID
+            &raw_value,
+            &mut evaluator,
+            &mut errors,
+            &mut warnings,
+        );
+
+        // Log any warnings from tag kit processing
+        for warning in warnings {
+            debug!("Canon PanoramaDirection tag kit warning: {}", warning);
+        }
 
         debug!(
             "PanoramaDirection: {:?} (raw: {})",
@@ -550,8 +612,9 @@ pub fn extract_my_colors(
 
     let mut my_colors = HashMap::new();
 
-    // Use generated PrintConv lookups from mycolors_inline.rs
-    use crate::generated::Canon_pm::mycolors_inline::*;
+    // Use Canon tag kit system for PrintConv lookups
+    use crate::expressions::ExpressionEvaluator;
+    use crate::generated::Canon_pm::tag_kit;
 
     // Canon MyColors format: int16u (unsigned 16-bit), starting at index 0
     // ExifTool: Canon.pm:3133 FORMAT => 'int16u', FIRST_ENTRY => 0
@@ -577,13 +640,25 @@ pub fn extract_my_colors(
     // Tag 0x02: MyColorMode
     // ExifTool: Canon.pm:3137-3153
     if let Ok(my_color_mode) = read_int16u_at_index(data, offset, 0x02, byte_order) {
-        // Apply PrintConv using generated lookup table
-        let color_mode_value =
-            if let Some(converted) = lookup_my_colors__my_color_mode(my_color_mode as u8) {
-                TagValue::String(converted.to_string())
-            } else {
-                TagValue::U16(my_color_mode) // Keep raw value for unknown
-            };
+        // Apply PrintConv using Canon tag kit system
+        // MyColorMode has tag ID 2 in Canon tag kit
+        let raw_value = TagValue::U16(my_color_mode);
+        let mut evaluator = ExpressionEvaluator::new();
+        let mut errors = Vec::new();
+        let mut warnings = Vec::new();
+
+        let color_mode_value = tag_kit::apply_print_conv(
+            2, // MyColorMode tag ID
+            &raw_value,
+            &mut evaluator,
+            &mut errors,
+            &mut warnings,
+        );
+
+        // Log any warnings from tag kit processing
+        for warning in warnings {
+            debug!("Canon MyColorMode tag kit warning: {}", warning);
+        }
 
         debug!(
             "MyColorMode: {:?} (raw: {})",

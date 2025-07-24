@@ -80,56 +80,92 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
 
         // AFPointSelected (offset 0x1e, int16u)
         // ExifTool: Sony.pm line 2668-2684
+        // Using Sony tag kit system: AFPointSelected has tag ID 20
         if data.len() >= 0x20 {
             let af_point_raw = u16::from_le_bytes([data[0x1e], data[0x1f]]);
-            if let Some(af_point_desc) =
-                Sony_pm::lookup_camera_info3__a_f_point_selected(af_point_raw as u8)
-            {
-                result.extracted_tags.insert(
-                    "AFPointSelected".to_string(),
-                    TagValue::String(af_point_desc.to_string()),
-                );
-                debug!(
-                    "Extracted AFPointSelected: {} -> {}",
-                    af_point_raw, af_point_desc
-                );
-            }
+
+            use crate::expressions::ExpressionEvaluator;
+            use crate::generated::Sony_pm::tag_kit;
+
+            let mut evaluator = ExpressionEvaluator::new();
+            let mut errors = Vec::new();
+            let mut warnings = Vec::new();
+
+            // AFPointSelected tag ID 20 from Sony tag kit other.rs
+            let af_point_desc = tag_kit::apply_print_conv(
+                20,
+                &TagValue::U8(af_point_raw as u8),
+                &mut evaluator,
+                &mut errors,
+                &mut warnings,
+            );
+
+            result
+                .extracted_tags
+                .insert("AFPointSelected".to_string(), af_point_desc);
+            debug!(
+                "Extracted AFPointSelected: {} -> tag kit result",
+                af_point_raw
+            );
         }
 
         // FocusMode (offset 0x20, int16u)
         // ExifTool: Sony.pm line 2685-2688
+        // Using Sony tag kit system: FocusMode has tag ID 21
         if data.len() >= 0x22 {
             let focus_mode_raw = u16::from_le_bytes([data[0x20], data[0x21]]);
-            if let Some(focus_mode_desc) =
-                Sony_pm::lookup_camera_info3__focus_mode(focus_mode_raw as u8)
-            {
-                result.extracted_tags.insert(
-                    "FocusMode".to_string(),
-                    TagValue::String(focus_mode_desc.to_string()),
-                );
-                debug!(
-                    "Extracted FocusMode: {} -> {}",
-                    focus_mode_raw, focus_mode_desc
-                );
-            }
+
+            use crate::expressions::ExpressionEvaluator;
+            use crate::generated::Sony_pm::tag_kit;
+
+            let mut evaluator = ExpressionEvaluator::new();
+            let mut errors = Vec::new();
+            let mut warnings = Vec::new();
+
+            // FocusMode tag ID 21 from Sony tag kit other.rs
+            let focus_mode_desc = tag_kit::apply_print_conv(
+                21,
+                &TagValue::U8(focus_mode_raw as u8),
+                &mut evaluator,
+                &mut errors,
+                &mut warnings,
+            );
+
+            result
+                .extracted_tags
+                .insert("FocusMode".to_string(), focus_mode_desc);
+            debug!("Extracted FocusMode: {} -> tag kit result", focus_mode_raw);
         }
 
         // FocusStatus (offset 0x22, int16u)
         // ExifTool: Sony.pm line 2689-2695
+        // Using Sony tag kit system: FocusStatus has tag ID 25
         if data.len() >= 0x24 {
             let focus_status_raw = u16::from_le_bytes([data[0x22], data[0x23]]);
-            if let Some(focus_status_desc) =
-                Sony_pm::lookup_camera_info3__focus_status(focus_status_raw as u8)
-            {
-                result.extracted_tags.insert(
-                    "FocusStatus".to_string(),
-                    TagValue::String(focus_status_desc.to_string()),
-                );
-                debug!(
-                    "Extracted FocusStatus: {} -> {}",
-                    focus_status_raw, focus_status_desc
-                );
-            }
+
+            use crate::expressions::ExpressionEvaluator;
+            use crate::generated::Sony_pm::tag_kit;
+
+            let mut evaluator = ExpressionEvaluator::new();
+            let mut errors = Vec::new();
+            let mut warnings = Vec::new();
+
+            // FocusStatus tag ID 25 from Sony tag kit other.rs
+            let focus_status_desc = tag_kit::apply_print_conv(
+                25,
+                &TagValue::U8(focus_status_raw as u8),
+                &mut evaluator,
+                &mut errors,
+                &mut warnings,
+            );
+
+            result
+                .extracted_tags
+                .insert("FocusStatus".to_string(), focus_status_desc);
+            debug!(
+                "Extracted FocusStatus: {} -> tag kit result",
+                focus_status_raw
+            );
         }
 
         // Add context for debugging
@@ -524,7 +560,9 @@ impl BinaryDataProcessor for SonyCameraSettingsProcessor {
         // WhiteBalanceSetting (offset 0x05, int16u)
         // ExifTool: Sony.pm line 4184
         if let Some(wb_setting) = read_u16(0x05) {
-            if let Some(wb_desc) = Sony_pm::lookup_sony_white_balance_setting(wb_setting) {
+            if let Some(wb_desc) =
+                Sony_pm::whitebalancesetting::lookup_sony_white_balance_setting(wb_setting)
+            {
                 result.extracted_tags.insert(
                     "WhiteBalanceSetting".to_string(),
                     TagValue::String(wb_desc.to_string()),

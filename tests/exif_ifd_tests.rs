@@ -143,21 +143,26 @@ fn test_gps_group_assignment() {
     let exif_data = match extract_metadata(std::path::Path::new(gps_image), false, false) {
         Ok(data) => data,
         Err(_) => {
-            eprintln!("Skipping GPS test - test image not available: {}", gps_image);
+            eprintln!(
+                "Skipping GPS test - test image not available: {}",
+                gps_image
+            );
             return; // Skip if file not available
         }
     };
 
-    // Look for any GPS tags
+    // Look for actual GPS tags (not composite ones)
     let gps_tags: Vec<_> = exif_data
         .tags
         .iter()
-        .filter(|tag| tag.name.starts_with("GPS"))
+        .filter(|tag| tag.name.starts_with("GPS") && tag.group != "Composite")
         .collect();
 
     // Verify we found GPS tags (Apple iPhone image should have GPS data)
-    assert!(!gps_tags.is_empty(), 
-        "Expected to find GPS tags in Apple iPhone image, but found none");
+    assert!(
+        !gps_tags.is_empty(),
+        "Expected to find GPS tags in Apple iPhone image, but found none"
+    );
 
     // Verify group assignment for all GPS tags
     for tag in gps_tags {

@@ -8,6 +8,7 @@ use jsonschema::{Draft, JSONSchema};
 use serde_json::Value;
 use std::fs;
 use std::path::Path;
+use tracing::{debug, warn};
 
 /// Validate a configuration file against its schema
 pub fn validate_config(config_path: &Path, schema_path: &Path) -> Result<()> {
@@ -15,8 +16,8 @@ pub fn validate_config(config_path: &Path, schema_path: &Path) -> Result<()> {
     let schema_content = match fs::read_to_string(schema_path) {
         Ok(data) => data,
         Err(err) => {
-            eprintln!(
-                "Warning: UTF-8 error reading {}: {}",
+            warn!(
+                "UTF-8 error reading {}: {}",
                 schema_path.display(),
                 err
             );
@@ -38,8 +39,8 @@ pub fn validate_config(config_path: &Path, schema_path: &Path) -> Result<()> {
     let instance_content = match fs::read_to_string(config_path) {
         Ok(data) => data,
         Err(err) => {
-            eprintln!(
-                "Warning: UTF-8 error reading {}: {}",
+            warn!(
+                "UTF-8 error reading {}: {}",
                 config_path.display(),
                 err
             );
@@ -98,7 +99,7 @@ pub fn validate_config_directory(config_dir: &Path, schemas_dir: &Path) -> Resul
 
 /// Validate all module configurations
 pub fn validate_all_configs(config_root: &Path, schemas_dir: &Path) -> Result<()> {
-    println!("🔍 Validating configuration files...");
+    debug!("🔍 Validating configuration files...");
 
     // Auto-discover all module directories ending in _pm
     let mut modules = Vec::new();
@@ -120,12 +121,12 @@ pub fn validate_all_configs(config_root: &Path, schemas_dir: &Path) -> Result<()
     for module in &modules {
         let module_config_dir = config_root.join(module);
         if module_config_dir.exists() {
-            println!("  Validating {}/", module);
+            debug!("  Validating {}/", module);
             validate_config_directory(&module_config_dir, schemas_dir)
                 .with_context(|| format!("Validation failed for module {}", module))?;
         }
     }
 
-    println!("✅ All configurations valid!");
+    debug!("✅ All configurations valid!");
     Ok(())
 }

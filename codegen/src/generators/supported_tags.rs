@@ -3,6 +3,7 @@
 use anyhow::Result;
 use std::fs;
 use crate::schemas::{GeneratedTag, GeneratedCompositeTag};
+use tracing::debug;
 
 /// Generate supported tags summary
 pub fn generate_supported_tags(
@@ -88,7 +89,7 @@ pub fn generate_supported_tags(
     // Write file
     let output_path = format!("{}/supported_tags.rs", output_dir);
     fs::write(&output_path, code)?;
-    println!("  ✓ Generated {}", output_path);
+    debug!("  ✓ Generated {}", output_path);
 
     Ok(())
 }

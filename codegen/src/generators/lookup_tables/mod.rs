@@ -16,6 +16,7 @@ use std::fs;
 use crate::schemas::ExtractedTable;
 use crate::generators::data_sets;
 use crate::common::utils::{module_to_source_path, module_dir_to_source_path};
+use tracing::{debug, warn};
 
 /// Get the extract subdirectory for a given config type
 fn get_extract_subdir(config_type: &str) -> &'static str {
@@ -37,7 +38,7 @@ pub fn process_config_directory(
     extracted_tables: &HashMap<String, ExtractedTable>,
     output_dir: &str,
 ) -> Result<()> {
-    println!("    Processing config directory for module: {}", module_name);
+    debug!("    Processing config directory for module: {}", module_name);
     
     let mut generated_files = Vec::new();
     let mut has_content = false;
@@ -182,7 +183,7 @@ pub fn process_config_directory(
                     generated_files.push(file_name);
                     has_content = true;
                 } else {
-                    println!("    ⚠ Tag structure file not found: {}", structure_path.display());
+                    warn!("    ⚠ Tag structure file not found: {}", structure_path.display());
                 }
             }
         }
@@ -451,7 +452,7 @@ fn generate_table_file(
     content.push_str(&table_code);
     
     fs::write(&file_path, content)?;
-    println!("  ✓ Generated {}", file_path.display());
+    debug!("  ✓ Generated {}", file_path.display());
     
     Ok(file_name)
 }
@@ -481,7 +482,7 @@ fn generate_boolean_set_file(
     content.push_str(&table_code);
     
     fs::write(&file_path, content)?;
-    println!("  ✓ Generated {}", file_path.display());
+    debug!("  ✓ Generated {}", file_path.display());
     
     Ok(file_name)
 }
@@ -516,7 +517,7 @@ fn generate_module_mod_file(
     let mod_file_path = output_dir.join("mod.rs");
     fs::write(&mod_file_path, mod_content)?;
     
-    println!("  ✓ Generated {}", mod_file_path.display());
+    debug!("  ✓ Generated {}", mod_file_path.display());
     Ok(())
 }
 
@@ -568,7 +569,7 @@ fn generate_inline_printconv_file(
     content.push_str(&table_code);
     
     fs::write(&file_path, content)?;
-    println!("  ✓ Generated {}", file_path.display());
+    debug!("  ✓ Generated {}", file_path.display());
     
     Ok(file_name)
 }
@@ -595,7 +596,7 @@ fn generate_tag_structure_file(
     content.push_str(&structure_code);
     
     fs::write(&file_path, content)?;
-    println!("  ✓ Generated {}", file_path.display());
+    debug!("  ✓ Generated {}", file_path.display());
     
     Ok(file_name)
 }
@@ -617,7 +618,7 @@ fn generate_process_binary_data_file(
     content.push_str(&binary_code);
     
     fs::write(&file_path, content)?;
-    println!("  ✓ Generated {}", file_path.display());
+    debug!("  ✓ Generated {}", file_path.display());
     
     Ok(file_name.to_string())
 }
@@ -639,7 +640,7 @@ fn generate_model_detection_file(
     content.push_str(&model_code);
     
     fs::write(&file_path, content)?;
-    println!("  ✓ Generated {}", file_path.display());
+    debug!("  ✓ Generated {}", file_path.display());
     
     Ok(file_name.to_string())
 }
@@ -661,7 +662,7 @@ fn generate_conditional_tags_file(
     content.push_str(&conditional_code);
     
     fs::write(&file_path, content)?;
-    println!("  ✓ Generated {}", file_path.display());
+    debug!("  ✓ Generated {}", file_path.display());
     
     Ok(file_name.to_string())
 }
@@ -731,12 +732,12 @@ fn detect_additional_generated_files(output_dir: &Path, _module_name: &str) -> R
             if file_stem == pattern || file_stem.ends_with(&format!("_{}", pattern)) {
                 // Special case: detect Olympus naming conflicts
                 if file_stem == "tag_structure" && has_conflicting_olympus_structs {
-                    println!("  ⚠ Including tag_structure.rs but detected naming conflict with equipment_tag_structure.rs");
-                    println!("      Both define OlympusDataType enum - this may cause compilation errors");
+                    warn!("  ⚠ Including tag_structure.rs but detected naming conflict with equipment_tag_structure.rs");
+                    warn!("      Both define OlympusDataType enum - this may cause compilation errors");
                 }
                 
                 additional_files.push(file_stem.clone());
-                println!("  ✓ Detected standalone generated file: {}.rs", file_stem);
+                debug!("  ✓ Detected standalone generated file: {}.rs", file_stem);
                 break;
             }
         }
@@ -753,7 +754,7 @@ fn detect_additional_generated_files(output_dir: &Path, _module_name: &str) -> R
                     let name = dir_name.to_string_lossy().to_string();
                     if !additional_files.contains(&name) {
                         additional_files.push(name.clone());
-                        println!("  ✓ Detected generated subdirectory: {}/", name);
+                        debug!("  ✓ Detected generated subdirectory: {}/", name);
                     }
                 }
             }
@@ -785,7 +786,7 @@ fn generate_runtime_table_file(
     let output_path = output_dir.join(&filename);
     
     fs::write(&output_path, runtime_code)?;
-    println!("  📋 Generated runtime table file: {}", filename);
+    debug!("  📋 Generated runtime table file: {}", filename);
     
     Ok(filename.replace(".rs", ""))
 }
@@ -831,7 +832,7 @@ fn generate_tag_kit_module(
         
         category_modules.push(module_name_cat.to_string());
         
-        println!("  🏷️  Generated tag_kit/{} with {} tags, {} PrintConv tables",
+        debug!("  🏷️  Generated tag_kit/{} with {} tags, {} PrintConv tables",
             module_name_cat,
             tag_kits.len(),
             print_conv_count
@@ -846,7 +847,7 @@ fn generate_tag_kit_module(
     // Return "tag_kit" as the generated module name (for parent mod.rs)
     generated_files.push("tag_kit".to_string());
     
-    println!("  🏷️  Generated modular tag_kit with {} tags split into {} categories", 
+    debug!("  🏷️  Generated modular tag_kit with {} tags split into {} categories", 
         tag_kit_data.tag_kits.len(),
         category_modules.len()
     );
@@ -1173,7 +1174,7 @@ fn generate_boolean_set_file_from_json(
     content.push_str(&code);
     
     fs::write(&file_path, content)?;
-    println!("  ✓ Generated {}", file_path.display());
+    debug!("  ✓ Generated {}", file_path.display());
     
     Ok(file_name)
 }
@@ -1243,7 +1244,7 @@ fn generate_regex_patterns_file(
     let file_path = output_dir.join(file_name);
     fs::write(&file_path, code)?;
     
-    println!("  ✓ Generated {}", file_path.display());
+    debug!("  ✓ Generated {}", file_path.display());
     
     Ok(file_name.replace(".rs", ""))
 }

@@ -426,9 +426,13 @@ impl ExifReader {
                                 match (source_info.ifd_name.as_str(), tag_id) {
                                     // InteropIFD-specific tags
                                     // ExifTool: lib/Image/ExifTool/Exif.pm InteropIFD table
-                                    ("InteropIFD", 0x0001) => ("InteroperabilityIndex".to_string(), None),
-                                    ("InteropIFD", 0x0002) => ("InteroperabilityVersion".to_string(), None),
-                                    
+                                    ("InteropIFD", 0x0001) => {
+                                        ("InteroperabilityIndex".to_string(), None)
+                                    }
+                                    ("InteropIFD", 0x0002) => {
+                                        ("InteroperabilityVersion".to_string(), None)
+                                    }
+
                                     // GPS IFD tags use standard lookup (already correct in global table)
                                     ("GPS", _) => {
                                         let tag_def = TAG_BY_ID.get(&(tag_id as u32)).copied();
@@ -437,7 +441,7 @@ impl ExifReader {
                                             .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
                                         (name, tag_def)
                                     }
-                                    
+
                                     // All other contexts use global lookup
                                     _ => {
                                         let tag_def = TAG_BY_ID.get(&(tag_id as u32)).copied();
@@ -521,9 +525,15 @@ impl ExifReader {
             // Apply conversions to get both value and print
             let (value, print) = self.apply_conversions(raw_value, tag_def);
 
-            // Get group1 value using TagSourceInfo
+            // Get group1 value using TagSourceInfo with special handling for IFD pointer tags
             let group1_name = if let Some(source_info) = source_info {
-                source_info.get_group1()
+                // Special case: GPSInfo tag (0x8825) should have group1='GPS' even when in IFD0
+                // ExifTool: GPS IFD pointer tags belong to GPS group logically
+                if tag_id == 0x8825 {
+                    "GPS".to_string()
+                } else {
+                    source_info.get_group1()
+                }
             } else {
                 "IFD0".to_string() // Default fallback
             };

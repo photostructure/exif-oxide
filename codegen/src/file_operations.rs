@@ -7,6 +7,7 @@
 use anyhow::{Context, Result};
 use std::fs;
 use std::path::Path;
+use tracing::warn;
 
 /// Read a file as UTF-8 string, with fallback handling for non-UTF-8 content
 ///
@@ -16,7 +17,7 @@ pub fn read_utf8_with_fallback(path: &Path) -> Result<String> {
     match fs::read_to_string(path) {
         Ok(data) => Ok(data),
         Err(err) => {
-            eprintln!("Warning: UTF-8 error reading {}: {}", path.display(), err);
+            warn!("UTF-8 error reading {}: {}", path.display(), err);
             let bytes = fs::read(path)
                 .with_context(|| format!("Failed to read bytes from {}", path.display()))?;
             Ok(String::from_utf8_lossy(&bytes).into_owned())

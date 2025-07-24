@@ -7,6 +7,7 @@ use anyhow::{Context, Result};
 use regex::Regex;
 use std::fs;
 use std::path::Path;
+use tracing::debug;
 
 /// Patch ExifTool module to convert my-scoped variables to package variables
 /// This operation is idempotent - safe to run multiple times
@@ -15,7 +16,7 @@ pub fn patch_module(module_path: &Path, variables: &[String]) -> Result<()> {
         return Ok(());
     }
     
-    println!("  Patching {} for variables: {}", 
+    debug!("  Patching {} for variables: {}", 
         module_path.display(), 
         variables.join(", ")
     );
@@ -44,7 +45,7 @@ pub fn patch_module(module_path: &Path, variables: &[String]) -> Result<()> {
             let old_line = patched_line.clone();
             patched_line = pattern.replace(&patched_line, "${1}our${2}").to_string();
             if patched_line != old_line {
-                println!("    Converted 'my %{}' to 'our %{}'", var, var);
+                debug!("    Converted 'my %{}' to 'our %{}'", var, var);
                 any_changes = true;
             }
         }
@@ -63,16 +64,16 @@ pub fn patch_module(module_path: &Path, variables: &[String]) -> Result<()> {
         };
         
         // Use atomic write: write to unique temp file, then rename
-        let temp_path = module_path.with_extension(&format!("tmp.{}", std::process::id()));
+        let temp_path = module_path.with_extension(format!("tmp.{}", std::process::id()));
         fs::write(&temp_path, final_content)
             .with_context(|| format!("Failed to write temp file {}", temp_path.display()))?;
         
         fs::rename(&temp_path, module_path)
             .with_context(|| format!("Failed to rename {} to {}", temp_path.display(), module_path.display()))?;
         
-        println!("    Patched {}", module_path.display());
+        debug!("    Patched {}", module_path.display());
     } else {
-        println!("    No changes needed for {}", module_path.display());
+        debug!("    No changes needed for {}", module_path.display());
     }
     
     Ok(())

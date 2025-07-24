@@ -282,7 +282,7 @@ pub mod utils {
         // Read TIFF header to determine byte order and IFD0 offset
         let (is_little_endian, ifd0_offset) = match &data[0..4] {
             [0x49, 0x49, 0x2A, 0x00] => {
-                // Little-endian TIFF
+                // Little-endian TIFF (II*\0)
                 if data.len() < 8 {
                     debug!("RAW file too small for IFD0 offset");
                     return Ok(());
@@ -290,8 +290,19 @@ pub mod utils {
                 let ifd0_offset = u32::from_le_bytes([data[4], data[5], data[6], data[7]]) as usize;
                 (true, ifd0_offset)
             }
+            [0x49, 0x49, 0x55, 0x00] => {
+                // Panasonic RW2 format (IIU\0) - little-endian like standard TIFF
+                // ExifTool: PanasonicRaw.pm - RW2 uses TIFF structure but with different magic
+                if data.len() < 8 {
+                    debug!("RW2 file too small for IFD0 offset");
+                    return Ok(());
+                }
+                let ifd0_offset = u32::from_le_bytes([data[4], data[5], data[6], data[7]]) as usize;
+                debug!("Detected Panasonic RW2 format (IIU\\0)");
+                (true, ifd0_offset)
+            }
             [0x4D, 0x4D, 0x00, 0x2A] => {
-                // Big-endian TIFF
+                // Big-endian TIFF (MM\0*)
                 if data.len() < 8 {
                     debug!("RAW file too small for IFD0 offset");
                     return Ok(());
@@ -336,10 +347,17 @@ pub mod utils {
 
         // Scan IFD0 entries for ImageWidth (0x0100) and ImageHeight (0x0101)
         // For Sony ARW, these are often in SubIFD (tag 0x014a) rather than IFD0
-        // ExifTool: Exif.pm tags 0x100 and 0x101 definitions
+        // For Panasonic RW2, dimensions are calculated from sensor border tags (0x04-0x07)
+        // ExifTool: Exif.pm tags 0x100 and 0x101 definitions; PanasonicRaw.pm Composite tags
         let mut image_width: Option<u32> = None;
         let mut image_height: Option<u32> = None;
         let mut sub_ifd_offset: Option<usize> = None;
+
+        // Panasonic RW2 sensor border tags
+        let mut sensor_top_border: Option<u16> = None;
+        let mut sensor_left_border: Option<u16> = None;
+        let mut sensor_bottom_border: Option<u16> = None;
+        let mut sensor_right_border: Option<u16> = None;
 
         for i in 0..entry_count {
             let entry_offset = entries_start + (i * 12);
@@ -454,6 +472,78 @@ pub mod utils {
                         debug!("ImageHeight = {}", image_height.unwrap());
                     }
                 }
+                0x04 => {
+                    // SensorTopBorder - Panasonic RW2 (tag 0x04)
+                    // ExifTool: PanasonicRaw.pm:82
+                    debug!(
+                        "Found SensorTopBorder tag: type={}, count={}",
+                        data_type, count
+                    );
+                    if count == 1 && data_type == 3 {
+                        // Should be int16u type (3)
+                        let value = if is_little_endian {
+                            u16::from_le_bytes([data[entry_offset + 8], data[entry_offset + 9]])
+                        } else {
+                            u16::from_be_bytes([data[entry_offset + 8], data[entry_offset + 9]])
+                        };
+                        sensor_top_border = Some(value);
+                        debug!("SensorTopBorder = {}", value);
+                    }
+                }
+                0x05 => {
+                    // SensorLeftBorder - Panasonic RW2 (tag 0x05)
+                    // ExifTool: PanasonicRaw.pm:83
+                    debug!(
+                        "Found SensorLeftBorder tag: type={}, count={}",
+                        data_type, count
+                    );
+                    if count == 1 && data_type == 3 {
+                        // Should be int16u type (3)
+                        let value = if is_little_endian {
+                            u16::from_le_bytes([data[entry_offset + 8], data[entry_offset + 9]])
+                        } else {
+                            u16::from_be_bytes([data[entry_offset + 8], data[entry_offset + 9]])
+                        };
+                        sensor_left_border = Some(value);
+                        debug!("SensorLeftBorder = {}", value);
+                    }
+                }
+                0x06 => {
+                    // SensorBottomBorder - Panasonic RW2 (tag 0x06)
+                    // ExifTool: PanasonicRaw.pm:84
+                    debug!(
+                        "Found SensorBottomBorder tag: type={}, count={}",
+                        data_type, count
+                    );
+                    if count == 1 && data_type == 3 {
+                        // Should be int16u type (3)
+                        let value = if is_little_endian {
+                            u16::from_le_bytes([data[entry_offset + 8], data[entry_offset + 9]])
+                        } else {
+                            u16::from_be_bytes([data[entry_offset + 8], data[entry_offset + 9]])
+                        };
+                        sensor_bottom_border = Some(value);
+                        debug!("SensorBottomBorder = {}", value);
+                    }
+                }
+                0x07 => {
+                    // SensorRightBorder - Panasonic RW2 (tag 0x07)
+                    // ExifTool: PanasonicRaw.pm:85
+                    debug!(
+                        "Found SensorRightBorder tag: type={}, count={}",
+                        data_type, count
+                    );
+                    if count == 1 && data_type == 3 {
+                        // Should be int16u type (3)
+                        let value = if is_little_endian {
+                            u16::from_le_bytes([data[entry_offset + 8], data[entry_offset + 9]])
+                        } else {
+                            u16::from_be_bytes([data[entry_offset + 8], data[entry_offset + 9]])
+                        };
+                        sensor_right_border = Some(value);
+                        debug!("SensorRightBorder = {}", value);
+                    }
+                }
                 0x014a => {
                     // SubIFD pointer - Sony ARW stores dimensions here
                     debug!("Found SubIFD tag: type={}, count={}", data_type, count);
@@ -510,6 +600,34 @@ pub mod utils {
                     image_height = Some(sub_height);
                     debug!("Found ImageHeight in SubIFD: {}", sub_height);
                 }
+            }
+        }
+
+        // Calculate Panasonic RW2 dimensions from sensor border tags if available
+        // ExifTool: PanasonicRaw.pm:675-690 (Composite tags)
+        if sensor_left_border.is_some()
+            && sensor_right_border.is_some()
+            && sensor_top_border.is_some()
+            && sensor_bottom_border.is_some()
+        {
+            let left = sensor_left_border.unwrap() as u32;
+            let right = sensor_right_border.unwrap() as u32;
+            let top = sensor_top_border.unwrap() as u32;
+            let bottom = sensor_bottom_border.unwrap() as u32;
+
+            // Calculate dimensions: ImageWidth = RightBorder - LeftBorder, ImageHeight = BottomBorder - TopBorder
+            let panasonic_width = right - left;
+            let panasonic_height = bottom - top;
+
+            debug!("Calculated Panasonic RW2 dimensions: {}x{} (from borders: left={}, right={}, top={}, bottom={})", 
+                   panasonic_width, panasonic_height, left, right, top, bottom);
+
+            // Use Panasonic dimensions if standard TIFF dimensions not found
+            if image_width.is_none() {
+                image_width = Some(panasonic_width);
+            }
+            if image_height.is_none() {
+                image_height = Some(panasonic_height);
             }
         }
 

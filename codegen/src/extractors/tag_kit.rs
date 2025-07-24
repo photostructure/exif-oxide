@@ -4,6 +4,7 @@ use super::Extractor;
 use crate::extraction::ModuleConfig;
 use std::path::Path;
 use anyhow::Result;
+use tracing::debug;
 
 pub struct TagKitExtractor;
 
@@ -45,7 +46,7 @@ impl Extractor for TagKitExtractor {
     /// Custom extract implementation for tag_kit that calls the script once per table
     /// and then consolidates all tables into a single module file
     fn extract(&self, config: &ModuleConfig, base_dir: &Path, module_path: &Path) -> Result<()> {
-        println!("🔧 TagKitExtractor::extract called for module: {} with {} tables", 
+        debug!("🔧 TagKitExtractor::extract called for module: {} with {} tables", 
             config.module_name, config.hash_names.len());
         use super::run_perl_extractor;
         use std::fs;
@@ -60,7 +61,7 @@ impl Extractor for TagKitExtractor {
         
         // Call the script once per table (hash_name) and collect results
         for table_name in &config.hash_names {
-            println!("    Running: perl {} {} {}", 
+            debug!("    Running: perl {} {} {}", 
                 self.script_name(), 
                 module_path.display(), 
                 table_name
@@ -130,7 +131,7 @@ impl Extractor for TagKitExtractor {
             let consolidated_content = serde_json::to_string_pretty(&consolidated)?;
             fs::write(&consolidated_path, consolidated_content)?;
             
-            println!("  ✓ Consolidated {} tables into {}", config.hash_names.len(), consolidated_filename);
+            debug!("  ✓ Consolidated {} tables into {}", config.hash_names.len(), consolidated_filename);
         }
         
         Ok(())

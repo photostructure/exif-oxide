@@ -1,4 +1,5 @@
 //! Generator for conversion reference lists
+use tracing::debug;
 
 use anyhow::Result;
 use std::fs;
@@ -62,7 +63,7 @@ pub fn generate_conversion_refs(refs: &ConversionRefs, output_dir: &str) -> Resu
     // Write file
     let output_path = format!("{}/conversion_refs.rs", output_dir);
     fs::write(&output_path, code)?;
-    println!("  ✓ Generated {}", output_path);
+    debug!("  ✓ Generated {}", output_path);
 
     Ok(())
 }
