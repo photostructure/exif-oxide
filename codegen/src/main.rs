@@ -25,7 +25,7 @@ mod validation;
 
 use config::load_extracted_tables_with_config;
 use discovery::{discover_and_process_modules, update_generated_mod_file};
-use extraction::extract_all_simple_tables;
+use extraction::{extract_all_simple_tables, extract_single_config};
 use table_processor::process_tag_tables_modular;
 use file_operations::{create_directories, file_exists, write_file_atomic};
 use generators::generate_mod_file;
@@ -46,6 +46,13 @@ fn main() -> Result<()> {
         .version("0.1.0")
         .about("Generate Rust code from ExifTool extraction data")
         .arg(
+            Arg::new("config")
+                .help("Single config file to process (for debugging)")
+                .value_name("CONFIG_FILE")
+                .index(1)
+                .required(false),
+        )
+        .arg(
             Arg::new("output")
                 .short('o')
                 .long("output")
@@ -53,17 +60,15 @@ fn main() -> Result<()> {
                 .help("Output directory for generated code")
                 .default_value("../src/generated"),
         )
-        .arg(
-            Arg::new("tag-data")
-                .long("tag-data")
-                .value_name("FILE")
-                .help("Path to tag extraction JSON")
-                .default_value("generated/tag_tables.json"),
-        )
         .get_matches();
 
+    // Check if single config mode
+    if let Some(config_file) = matches.get_one::<String>("config") {
+        info!("🔧 Running single config extraction for: {}", config_file);
+        return extract_single_config(config_file);
+    }
+
     let output_dir = matches.get_one::<String>("output").unwrap();
-    let _tag_data_path = matches.get_one::<String>("tag-data").unwrap();
 
     // We're running from the codegen directory
     let current_dir = std::env::current_dir()?;
