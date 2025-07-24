@@ -138,10 +138,14 @@ fn test_main_ifd_group_assignment() {
 /// Test GPS tags get correct group1 assignment
 #[test]
 fn test_gps_group_assignment() {
-    // Canon T3i may not have GPS data, so use a GPS-enabled image or skip
-    let exif_data = match extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false) {
+    // Use Apple image which actually has GPS data (Canon T3i has none)
+    let gps_image = "test-images/apple/IMG_3755.JPG";
+    let exif_data = match extract_metadata(std::path::Path::new(gps_image), false, false) {
         Ok(data) => data,
-        Err(_) => return, // Skip if file not available
+        Err(_) => {
+            eprintln!("Skipping GPS test - test image not available: {}", gps_image);
+            return; // Skip if file not available
+        }
     };
 
     // Look for any GPS tags
@@ -151,7 +155,11 @@ fn test_gps_group_assignment() {
         .filter(|tag| tag.name.starts_with("GPS"))
         .collect();
 
-    // If GPS tags exist, verify group assignment
+    // Verify we found GPS tags (Apple iPhone image should have GPS data)
+    assert!(!gps_tags.is_empty(), 
+        "Expected to find GPS tags in Apple iPhone image, but found none");
+
+    // Verify group assignment for all GPS tags
     for tag in gps_tags {
         assert_eq!(
             tag.group1, "GPS",
