@@ -3,10 +3,10 @@
 //! This generator creates tag definitions split by category to keep file sizes manageable
 
 use anyhow::Result;
-use std::{collections::HashMap, fs, path::Path};
+use std::fs;
 use crate::common::escape_string;
 use crate::schemas::tag_kit::{TagKitExtraction, TagKit};
-use super::tag_kit_split::{split_tag_kits, TagCategory, count_print_conv_tables};
+use super::tag_kit_split::split_tag_kits;
 
 /// Generate modular tag kit code from extracted data
 pub fn generate_modular_tag_kit(

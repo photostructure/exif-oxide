@@ -28,7 +28,7 @@ impl Extractor for TagKitExtractor {
         config_type == "tag_kit"
     }
     
-    fn build_args(&self, config: &ModuleConfig, module_path: &Path) -> Vec<String> {
+    fn build_args(&self, _config: &ModuleConfig, module_path: &Path) -> Vec<String> {
         // This method is not used for tag_kit because we override extract()
         // to call the script once per table
         vec![module_path.to_string_lossy().to_string()]
