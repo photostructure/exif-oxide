@@ -26,6 +26,7 @@ use ExifToolExtract qw(
     validate_primitive_value
     format_json_output
 );
+use JSON;
 
 # Check arguments
 if (@ARGV != 2) {
@@ -66,59 +67,27 @@ for my $tag_id (sort keys %$table_ref) {
     next if $tag_id =~ /^[A-Z_]+$/;
     next if $tag_id eq 'Notes';
     
-    my $tag_info = $table_ref->{$tag_id};
+    my $tag_value = $table_ref->{$tag_id};
+    
+    # Handle conditional arrays (multiple tag definitions with conditions)
+    if (ref $tag_value eq 'ARRAY') {
+        # Process each conditional variant
+        for my $i (0 .. $#$tag_value) {
+            my $tag_info = $tag_value->[$i];
+            next unless ref $tag_info eq 'HASH';
+            
+            # Extract conditional tag with variant suffix
+            my $variant_id = "${tag_id}_variant_$i";
+            process_tag_info($tag_info, $variant_id, $tag_id, \@tag_kits, \$extracted_count, \$skipped_complex);
+        }
+        next;
+    }
     
     # Skip if not a hash reference
-    next unless ref $tag_info eq 'HASH';
+    next unless ref $tag_value eq 'HASH';
     
-    # Get basic tag information
-    my $tag_name = $tag_info->{Name} || "Tag$tag_id";
-    my $format = $tag_info->{Format} || $tag_info->{Writable} || 'unknown';
-    my $notes = $tag_info->{Notes} || '';
-    my $writable = $tag_info->{Writable};
-    
-    # Extract groups
-    my $groups = {};
-    if (exists $tag_info->{Groups}) {
-        $groups = $tag_info->{Groups};
-    }
-    
-    # Extract PrintConv
-    my ($print_conv_type, $print_conv_data) = extract_print_conv($tag_info->{PrintConv});
-    
-    # Extract ValueConv if present
-    my $value_conv = undef;
-    if (exists $tag_info->{ValueConv} && !ref($tag_info->{ValueConv})) {
-        $value_conv = $tag_info->{ValueConv};
-    }
-    
-    # Build tag kit
-    my $tag_kit = {
-        tag_id => $tag_id,
-        name => $tag_name,
-        format => $format,
-        groups => $groups,
-    };
-    
-    # Add optional fields
-    $tag_kit->{writable} = $writable if defined $writable;
-    $tag_kit->{notes} = $notes if $notes;
-    $tag_kit->{value_conv} = $value_conv if defined $value_conv;
-    
-    # Add PrintConv info
-    $tag_kit->{print_conv_type} = $print_conv_type;
-    if ($print_conv_type ne 'None') {
-        $tag_kit->{print_conv_data} = $print_conv_data;
-        $skipped_complex++ if $print_conv_type eq 'Manual';
-    }
-    
-    push @tag_kits, $tag_kit;
-    $extracted_count++;
-    
-    if ($print_conv_type ne 'None') {
-        # Comment out debug messages that interfere with stdout
-        # print STDERR "  Found tag kit for $tag_name (tag $tag_id): PrintConv type = $print_conv_type\n";
-    }
+    # Process single tag definition
+    process_tag_info($tag_value, $tag_id, $tag_id, \@tag_kits, \$extracted_count, \$skipped_complex);
 }
 
 # Output results
@@ -138,6 +107,8 @@ my $output = {
 
 # Write JSON to stdout (let the codegen system handle file output)
 print format_json_output($output);
+
+# Print summary to STDERR
 print STDERR "Extracted $extracted_count tag kits from $table_name\n";
 print STDERR "Skipped $skipped_complex complex PrintConvs requiring manual implementation\n" if $skipped_complex;
 
@@ -253,4 +224,207 @@ sub is_simple_expression {
     
     # Otherwise it's complex
     return 0;
+}
+
+#------------------------------------------------------------------------------
+# Process a single tag definition
+#------------------------------------------------------------------------------
+sub process_tag_info {
+    my ($tag_info, $variant_id, $original_tag_id, $tag_kits_ref, $extracted_count_ref, $skipped_complex_ref) = @_;
+    
+    # Get basic tag information
+    my $tag_name = $tag_info->{Name} || "Tag$original_tag_id";
+    my $format = $tag_info->{Format} || $tag_info->{Writable} || 'unknown';
+    # Ensure format is a string
+    $format = "$format" if defined $format;
+    my $notes = $tag_info->{Notes} || '';
+    my $writable = $tag_info->{Writable};
+    my $condition = $tag_info->{Condition};
+    
+    # Extract groups
+    my $groups = {};
+    if (exists $tag_info->{Groups}) {
+        $groups = $tag_info->{Groups};
+    }
+    
+    # Extract PrintConv
+    my ($print_conv_type, $print_conv_data) = extract_print_conv($tag_info->{PrintConv});
+    
+    # Extract ValueConv if present
+    my $value_conv = undef;
+    if (exists $tag_info->{ValueConv} && !ref($tag_info->{ValueConv})) {
+        $value_conv = $tag_info->{ValueConv};
+    }
+    
+    # Extract SubDirectory if present
+    my $subdirectory_info = undef;
+    if (exists $tag_info->{SubDirectory}) {
+        $subdirectory_info = extract_subdirectory($tag_info->{SubDirectory});
+    }
+    
+    # Build tag kit
+    my $tag_kit = {
+        tag_id => $original_tag_id,
+        variant_id => $variant_id,
+        name => $tag_name,
+        format => $format,
+        groups => $groups,
+    };
+    
+    # Add optional fields
+    $tag_kit->{writable} = $writable if defined $writable;
+    $tag_kit->{notes} = $notes if $notes;
+    $tag_kit->{value_conv} = $value_conv if defined $value_conv;
+    $tag_kit->{condition} = $condition if defined $condition;
+    
+    # Add SubDirectory info
+    if ($subdirectory_info) {
+        $tag_kit->{subdirectory} = $subdirectory_info;
+    }
+    
+    # Add PrintConv info
+    $tag_kit->{print_conv_type} = $print_conv_type;
+    if ($print_conv_type ne 'None') {
+        $tag_kit->{print_conv_data} = $print_conv_data;
+        $$skipped_complex_ref++ if $print_conv_type eq 'Manual';
+    }
+    
+    push @$tag_kits_ref, $tag_kit;
+    $$extracted_count_ref++;
+    
+    if ($print_conv_type ne 'None') {
+        # Comment out debug messages that interfere with stdout
+        # print STDERR "  Found tag kit for $tag_name (tag $original_tag_id): PrintConv type = $print_conv_type\n";
+    }
+}
+
+#------------------------------------------------------------------------------
+# Extract SubDirectory information
+#------------------------------------------------------------------------------
+sub extract_subdirectory {
+    my ($subdir) = @_;
+    
+    return undef unless $subdir;
+    
+    my $info = {
+        tag_table => $subdir->{TagTable} || 'Unknown',
+    };
+    
+    # Add optional fields (but skip CODE references)
+    if (exists $subdir->{Validate}) {
+        if (!ref($subdir->{Validate})) {
+            $info->{validate} = $subdir->{Validate};
+        } else {
+            $info->{has_validate_code} = JSON::true;
+        }
+    }
+    if (exists $subdir->{ProcessProc}) {
+        if (!ref($subdir->{ProcessProc})) {
+            $info->{process_proc} = $subdir->{ProcessProc};
+        } else {
+            $info->{has_process_proc_code} = JSON::true;
+        }
+    }
+    $info->{base} = $subdir->{Base} if exists $subdir->{Base};
+    $info->{byte_order} = $subdir->{ByteOrder} if exists $subdir->{ByteOrder};
+    
+    # Try to extract the referenced table
+    if (defined $subdir->{TagTable} && $subdir->{TagTable} ne 'Unknown') {
+        my $table_info = extract_subdirectory_table($subdir->{TagTable});
+        if ($table_info) {
+            $info->{extracted_table} = $table_info;
+            $info->{is_binary_data} = $table_info->{is_binary_data} || JSON::false;
+        }
+    }
+    
+    return $info;
+}
+
+#------------------------------------------------------------------------------
+# Extract a SubDirectory table
+#------------------------------------------------------------------------------
+sub extract_subdirectory_table {
+    my ($table_name) = @_;
+    
+    # Get the table reference
+    my $table_ref;
+    {
+        no strict 'refs';
+        $table_ref = \%{$table_name};
+        use strict 'refs';
+    }
+    
+    # Skip if table doesn't exist or is empty
+    return undef unless $table_ref && %$table_ref;
+    
+    my $table_info = {
+        table_name => $table_name,
+        is_binary_data => JSON::false,
+        tags => [],
+    };
+    
+    # Check if this is a binary data table
+    if (exists $table_ref->{PROCESS_PROC}) {
+        # Check if PROCESS_PROC points to ProcessBinaryData
+        my $proc = $table_ref->{PROCESS_PROC};
+        if (ref($proc) eq 'CODE') {
+            # Mark as binary data but don't store the CODE ref
+            $table_info->{is_binary_data} = JSON::true;
+            $table_info->{has_process_proc} = JSON::true;
+        }
+    }
+    
+    # Extract format and first_entry for binary data tables
+    if (exists $table_ref->{FORMAT}) {
+        $table_info->{format} = $table_ref->{FORMAT};
+        $table_info->{is_binary_data} = JSON::true;
+    }
+    if (exists $table_ref->{FIRST_ENTRY}) {
+        $table_info->{first_entry} = $table_ref->{FIRST_ENTRY};
+        $table_info->{is_binary_data} = JSON::true;
+    }
+    
+    # Extract groups
+    if (exists $table_ref->{GROUPS} && ref($table_ref->{GROUPS}) eq 'HASH') {
+        $table_info->{groups} = $table_ref->{GROUPS};
+    }
+    
+    # Extract tag definitions
+    for my $tag_id (sort keys %$table_ref) {
+        # Skip special keys
+        next if $tag_id =~ /^[A-Z_]+$/;
+        next if $tag_id eq 'Notes';
+        
+        my $tag_def = $table_ref->{$tag_id};
+        
+        # Skip non-hash entries
+        next unless ref $tag_def eq 'HASH';
+        
+        # Extract basic tag info
+        my $tag = {
+            tag_id => $tag_id,
+            name => $tag_def->{Name} || "Tag$tag_id",
+        };
+        
+        # Add optional fields (skip any CODE references)
+        if (exists $tag_def->{Format} && !ref($tag_def->{Format})) {
+            $tag->{format} = $tag_def->{Format};
+        }
+        if (exists $tag_def->{Count}) {
+            if (!ref($tag_def->{Count})) {
+                # Convert to string to ensure JSON compatibility
+                $tag->{count} = "$tag_def->{Count}";
+            }
+        }
+        
+        # Check for nested SubDirectory
+        if (exists $tag_def->{SubDirectory}) {
+            $tag->{has_subdirectory} = JSON::true;
+            # Don't recurse too deep - just mark that it exists
+        }
+        
+        push @{$table_info->{tags}}, $tag;
+    }
+    
+    return $table_info;
 }

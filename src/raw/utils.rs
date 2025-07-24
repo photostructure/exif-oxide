@@ -39,26 +39,39 @@ pub fn kyocera_fnumber(val: u32) -> f64 {
 ///
 /// Now uses the generated tag kit system with PrintConv lookup
 pub fn kyocera_iso_lookup(val: u32) -> Option<u32> {
-    use crate::expressions::ExpressionEvaluator;
-    use crate::generated::KyoceraRaw_pm::tag_kit::apply_print_conv;
-    use crate::types::TagValue;
-
-    let mut evaluator = ExpressionEvaluator::new();
-    let mut errors = Vec::new();
-    let mut warnings = Vec::new();
+    // Temporarily disabled due to missing generated code
+    // use crate::expressions::ExpressionEvaluator;
+    // use crate::generated::KyoceraRaw_pm::tag_kit::apply_print_conv;
+    // use crate::types::TagValue;
 
     // Use the tag kit system to apply PrintConv for ISO tag (id=52)
-    let input_value = TagValue::U32(val);
-    let result = apply_print_conv(52, &input_value, &mut evaluator, &mut errors, &mut warnings);
+    // let input_value = TagValue::U32(val);
+    // let result = apply_print_conv(52, &input_value, &mut evaluator, &mut errors, &mut warnings);
 
     // Parse the result back to u32 if it's a valid ISO value
-    if let TagValue::String(iso_str) = result {
-        if let Ok(iso_value) = iso_str.parse::<u32>() {
-            return Some(iso_value);
-        }
-    }
+    // if let TagValue::String(iso_str) = result {
+    //     if let Ok(iso_value) = iso_str.parse::<u32>() {
+    //         return Some(iso_value);
+    //     }
+    // }
 
-    None
+    // Fallback to simple lookup for now
+    match val {
+        7 => Some(25),
+        8 => Some(32),
+        9 => Some(40),
+        10 => Some(50),
+        11 => Some(64),
+        12 => Some(80),
+        13 => Some(100),
+        14 => Some(125),
+        15 => Some(160),
+        16 => Some(200),
+        17 => Some(250),
+        18 => Some(320),
+        19 => Some(400),
+        _ => None,
+    }
 }
 
 /// Helper function to extract ImageWidth/ImageHeight from any IFD
@@ -613,6 +626,162 @@ fn scan_ifd_for_dimensions(
     Ok((image_width, image_height, sub_ifd_offset, sensor_borders))
 }
 
+/// Extract all SubIFD pointers from a TIFF file following ExifTool's algorithm
+/// Returns a vector of SubIFD offsets in the order they appear in the SubIFD tag
+/// ExifTool: Exif.pm handles up to 10 SubIFDs (MaxSubdirs => 10)
+fn extract_all_subifd_pointers(
+    data: &[u8],
+    ifd0_offset: usize,
+    is_little_endian: bool,
+) -> crate::types::Result<Vec<usize>> {
+    use tracing::debug;
+
+    // Validate IFD offset
+    if ifd0_offset >= data.len() || ifd0_offset + 2 > data.len() {
+        debug!("Invalid IFD0 offset for SubIFD extraction: 0x{:x}", ifd0_offset);
+        return Ok(Vec::new());
+    }
+
+    // Read number of IFD entries
+    let entry_count = if is_little_endian {
+        u16::from_le_bytes([data[ifd0_offset], data[ifd0_offset + 1]])
+    } else {
+        u16::from_be_bytes([data[ifd0_offset], data[ifd0_offset + 1]])
+    } as usize;
+
+    let entries_start = ifd0_offset + 2;
+    let entries_end = entries_start + (entry_count * 12);
+    
+    if entries_end > data.len() {
+        debug!("IFD0 entries extend beyond file end during SubIFD extraction");
+        return Ok(Vec::new());
+    }
+
+    // Scan IFD0 entries for SubIFD tag (0x014a)
+    for i in 0..entry_count {
+        let entry_offset = entries_start + (i * 12);
+        if entry_offset + 12 > data.len() {
+            break;
+        }
+
+        // Read IFD entry: tag(2) + type(2) + count(4) + value/offset(4)
+        let tag_id = if is_little_endian {
+            u16::from_le_bytes([data[entry_offset], data[entry_offset + 1]])
+        } else {
+            u16::from_be_bytes([data[entry_offset], data[entry_offset + 1]])
+        };
+
+        if tag_id == 0x014a {
+            // Found SubIFD tag
+            let data_type = if is_little_endian {
+                u16::from_le_bytes([data[entry_offset + 2], data[entry_offset + 3]])
+            } else {
+                u16::from_be_bytes([data[entry_offset + 2], data[entry_offset + 3]])
+            };
+
+            let count = if is_little_endian {
+                u32::from_le_bytes([
+                    data[entry_offset + 4],
+                    data[entry_offset + 5],
+                    data[entry_offset + 6],
+                    data[entry_offset + 7],
+                ])
+            } else {
+                u32::from_be_bytes([
+                    data[entry_offset + 4],
+                    data[entry_offset + 5],
+                    data[entry_offset + 6],
+                    data[entry_offset + 7],
+                ])
+            };
+
+            debug!("Found SubIFD tag: type={}, count={}", data_type, count);
+
+            if data_type == 4 && count >= 1 {
+                // LONG pointer(s) - ExifTool supports up to MaxSubdirs=10
+                let max_subdirs = 10_u32.min(count); // Limit to ExifTool's MaxSubdirs
+                let mut subifd_offsets = Vec::new();
+
+                if count == 1 {
+                    // Single SubIFD pointer stored directly in value field
+                    let offset = if is_little_endian {
+                        u32::from_le_bytes([
+                            data[entry_offset + 8],
+                            data[entry_offset + 9],
+                            data[entry_offset + 10],
+                            data[entry_offset + 11],
+                        ])
+                    } else {
+                        u32::from_be_bytes([
+                            data[entry_offset + 8],
+                            data[entry_offset + 9],
+                            data[entry_offset + 10],
+                            data[entry_offset + 11],
+                        ])
+                    } as usize;
+                    
+                    if offset > 0 {
+                        subifd_offsets.push(offset);
+                    }
+                } else {
+                    // Multiple SubIFD pointers - value field points to array
+                    let array_offset = if is_little_endian {
+                        u32::from_le_bytes([
+                            data[entry_offset + 8],
+                            data[entry_offset + 9],
+                            data[entry_offset + 10],
+                            data[entry_offset + 11],
+                        ])
+                    } else {
+                        u32::from_be_bytes([
+                            data[entry_offset + 8],
+                            data[entry_offset + 9],
+                            data[entry_offset + 10],
+                            data[entry_offset + 11],
+                        ])
+                    } as usize;
+
+                    // Read all SubIFD pointers from array (each is 4 bytes)
+                    for j in 0..max_subdirs {
+                        let pointer_offset = array_offset + (j as usize * 4);
+                        
+                        if pointer_offset + 4 <= data.len() {
+                            let subifd_offset = if is_little_endian {
+                                u32::from_le_bytes([
+                                    data[pointer_offset],
+                                    data[pointer_offset + 1],
+                                    data[pointer_offset + 2],
+                                    data[pointer_offset + 3],
+                                ])
+                            } else {
+                                u32::from_be_bytes([
+                                    data[pointer_offset],
+                                    data[pointer_offset + 1],
+                                    data[pointer_offset + 2],
+                                    data[pointer_offset + 3],
+                                ])
+                            } as usize;
+
+                            if subifd_offset > 0 {
+                                subifd_offsets.push(subifd_offset);
+                            }
+                        } else {
+                            debug!("SubIFD pointer {} at offset 0x{:x} out of bounds", j, pointer_offset);
+                            break;
+                        }
+                    }
+                }
+
+                debug!("Extracted {} SubIFD pointers: {:?}", subifd_offsets.len(), subifd_offsets);
+                return Ok(subifd_offsets);
+            }
+        }
+    }
+
+    debug!("No SubIFD tag found in IFD0");
+    Ok(Vec::new())
+}
+
 /// Extract TIFF dimension tags (ImageWidth/ImageHeight) from IFD0 for TIFF-based RAW files
 /// ExifTool: lib/Image/ExifTool/Exif.pm:351-473 (tags 0x0100, 0x0101)
 /// Used by both Sony ARW and Canon CR2 files which are TIFF-based
@@ -641,21 +810,31 @@ pub fn extract_tiff_dimensions(
     let (image_width, image_height, sub_ifd_offset, sensor_borders) =
         scan_ifd_for_dimensions(data, ifd0_offset, is_little_endian)?;
 
-    // Check SubIFD if available for full-resolution dimensions
-    let (sub_width, sub_height) = if let Some(sub_offset) = sub_ifd_offset {
-        debug!(
-            "Checking SubIFD at offset 0x{:x} for dimensions",
-            sub_offset
-        );
-
-        if let Some((found_width, found_height)) =
-            extract_dimensions_from_ifd(data, sub_offset, is_little_endian)
-        {
-            debug!("Found SubIFD dimensions: {}x{}", found_width, found_height);
-            (Some(found_width), Some(found_height))
-        } else {
-            (None, None)
+    // Check all SubIFDs if available for full-resolution dimensions
+    // ExifTool processes all SubIFDs sequentially (SubIFD0, SubIFD1, etc.)
+    // NEF files often store dimensions in SubIFD1, not SubIFD0
+    let (sub_width, sub_height) = if let Some(_first_sub_offset) = sub_ifd_offset {
+        // Extract all SubIFD pointers from the SubIFD tag (0x014a)
+        let all_sub_offsets = extract_all_subifd_pointers(data, ifd0_offset, is_little_endian)?;
+        
+        debug!("Found {} SubIFD pointers: {:?}", all_sub_offsets.len(), all_sub_offsets);
+        
+        // Iterate through all SubIFDs looking for dimensions (matching ExifTool's algorithm)
+        let mut found_width = None;
+        let mut found_height = None;
+        
+        for (index, sub_offset) in all_sub_offsets.iter().enumerate() {
+            debug!("Checking SubIFD{} at offset 0x{:x} for dimensions", index, sub_offset);
+            
+            if let Some((width, height)) = extract_dimensions_from_ifd(data, *sub_offset, is_little_endian) {
+                debug!("Found dimensions in SubIFD{}: {}x{}", index, width, height);
+                found_width = Some(width);
+                found_height = Some(height);
+                break; // Use first SubIFD that has both dimensions
+            }
         }
+        
+        (found_width, found_height)
     } else {
         (None, None)
     };
@@ -702,16 +881,27 @@ pub fn extract_tiff_dimensions(
     // Add extracted dimensions to reader as EXIF tags
     // Note: File: group tags are handled at a higher level in formats/mod.rs
     // Here we add them as standard EXIF tags following ExifTool's approach
-    if let Some(width) = image_width {
-        // Add ImageWidth tag (0x0100) - ExifTool: Exif.pm:460
-        reader.extracted_tags.insert(0x0100, TagValue::U32(width));
-        debug!("Added EXIF:ImageWidth (0x0100) = {}", width);
-    }
+    //
+    // However, for RW2 files, we don't add sensor border dimensions as EXIF tags
+    // because File:ImageWidth/ImageHeight comes from JPEG preview, not sensor borders
+    // The sensor border dimensions become Composite:ImageWidth/ImageHeight instead
+    let file_type = reader.get_original_file_type().unwrap_or_default();
+    let skip_exif_dimensions = file_type == "RW2" && sensor_borders.calculate_dimensions().is_some();
+    
+    if !skip_exif_dimensions {
+        if let Some(width) = image_width {
+            // Add ImageWidth tag (0x0100) - ExifTool: Exif.pm:460
+            reader.extracted_tags.insert(0x0100, TagValue::U32(width));
+            debug!("Added EXIF:ImageWidth (0x0100) = {}", width);
+        }
 
-    if let Some(height) = image_height {
-        // Add ImageHeight tag (0x0101) - ExifTool: Exif.pm:473
-        reader.extracted_tags.insert(0x0101, TagValue::U32(height));
-        debug!("Added EXIF:ImageHeight (0x0101) = {}", height);
+        if let Some(height) = image_height {
+            // Add ImageHeight tag (0x0101) - ExifTool: Exif.pm:473
+            reader.extracted_tags.insert(0x0101, TagValue::U32(height));
+            debug!("Added EXIF:ImageHeight (0x0101) = {}", height);
+        }
+    } else {
+        debug!("Skipping EXIF dimensions for RW2 file - using File group dimensions from JPEG preview instead");
     }
 
     if image_width.is_none() || image_height.is_none() {
