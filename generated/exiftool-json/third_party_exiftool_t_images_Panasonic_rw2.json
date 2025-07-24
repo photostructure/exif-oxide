@@ -8,6 +8,8 @@
   "File:FileTypeExtension": "rw2",
   "File:MIMEType": "image/x-panasonic-rw2",
   "EXIF:ISO": 80,
+  "File:ImageWidth": 8,
+  "File:ImageHeight": 8,
   "EXIF:Make": "Panasonic",
   "EXIF:Model": "DMC-LX3",
   "EXIF:Orientation": "Horizontal (normal)",
