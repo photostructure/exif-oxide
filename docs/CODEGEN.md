@@ -476,6 +476,10 @@ make -j4 codegen         # Parallel execution (faster)
 # Development commands
 make check-schemas       # Validate all configuration files
 cd codegen && cargo run --release  # Run code generation directly
+
+# Single config debugging (extraction + generation)
+cd codegen && cargo run -- config/Canon_pm/simple_table.json    # Debug specific config
+cd codegen && RUST_LOG=debug cargo run -- config/Module_pm/config.json  # Verbose debug output
 ```
 
 #### Architecture Improvements
