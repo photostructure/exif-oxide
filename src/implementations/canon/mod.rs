@@ -947,7 +947,14 @@ fn process_canon_subdirectory_tags(exif_reader: &mut crate::exif::ExifReader) ->
         debug!("Processing subdirectory for Canon tag 0x{:04x}", tag_id);
 
         // Use the new subdirectory processing API
-        match tag_kit::process_subdirectory(tag_id as u32, &tag_value, ByteOrder::LittleEndian) {
+        // Get byte order from TIFF header
+        let byte_order = exif_reader
+            .header
+            .as_ref()
+            .map(|h| h.byte_order)
+            .unwrap_or(ByteOrder::LittleEndian);
+
+        match tag_kit::process_subdirectory(tag_id as u32, &tag_value, byte_order) {
             Ok(extracted_tags) => {
                 debug!(
                     "Extracted {} tags from subdirectory 0x{:04x}",

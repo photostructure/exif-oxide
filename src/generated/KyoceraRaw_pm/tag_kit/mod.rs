@@ -39,19 +39,22 @@ pub enum PrintConvType {
     Manual(&'static str),
 }
 
+/// Type alias for subdirectory processor function
+pub type SubDirectoryProcessor = fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>;
+
 #[derive(Debug, Clone)]
 pub enum SubDirectoryType {
-    Binary {
-        processor: fn(
-            &[u8],
-            crate::tiff_types::ByteOrder,
-        ) -> crate::types::Result<Vec<(String, TagValue)>>,
-    },
+    Binary { processor: SubDirectoryProcessor },
 }
 
 /// All tag kits for KyoceraRaw_pm
 pub static KYOCERARAW_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+
+    // datetime tags
+    for (id, tag_def) in datetime::get_datetime_tags() {
+        map.insert(id, tag_def);
+    }
 
     // interop tags
     for (id, tag_def) in interop::get_interop_tags() {
@@ -60,11 +63,6 @@ pub static KYOCERARAW_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock:
 
     // other tags
     for (id, tag_def) in other::get_other_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // datetime tags
-    for (id, tag_def) in datetime::get_datetime_tags() {
         map.insert(id, tag_def);
     }
 
@@ -188,12 +186,17 @@ pub fn process_subdirectory(
     value: &TagValue,
     byte_order: ByteOrder,
 ) -> Result<HashMap<String, TagValue>> {
+    use tracing::debug;
     let mut result = HashMap::new();
+
+    debug!("process_subdirectory called for tag_id: 0x{:04x}", tag_id);
 
     if let Some(tag_kit) = KYOCERARAW_PM_TAG_KITS.get(&tag_id) {
         if let Some(SubDirectoryType::Binary { processor }) = &tag_kit.subdirectory {
+            debug!("Found subdirectory processor for tag_id: 0x{:04x}", tag_id);
             let bytes = match value {
                 TagValue::U16Array(arr) => {
+                    debug!("Converting U16Array with {} elements to bytes", arr.len());
                     // Convert U16 array to bytes based on byte order
                     let mut bytes = Vec::with_capacity(arr.len() * 2);
                     for val in arr {
@@ -208,13 +211,27 @@ pub fn process_subdirectory(
                 _ => return Ok(result), // Not array data
             };
 
+            debug!("Calling processor with {} bytes", bytes.len());
             // Process subdirectory and collect all extracted tags
-            if let Ok(extracted_tags) = processor(&bytes, byte_order) {
-                for (name, value) in extracted_tags {
-                    result.insert(name, value);
+            match processor(&bytes, byte_order) {
+                Ok(extracted_tags) => {
+                    debug!("Processor returned {} tags", extracted_tags.len());
+                    for (name, value) in extracted_tags {
+                        result.insert(name, value);
+                    }
+                }
+                Err(e) => {
+                    debug!("Processor error: {:?}", e);
                 }
             }
+        } else {
+            debug!(
+                "No subdirectory processor found for tag_id: 0x{:04x}",
+                tag_id
+            );
         }
+    } else {
+        debug!("Tag not found in TAG_KITS: 0x{:04x}", tag_id);
     }
 
     Ok(result)

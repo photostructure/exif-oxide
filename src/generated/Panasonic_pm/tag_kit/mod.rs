@@ -39,14 +39,12 @@ pub enum PrintConvType {
     Manual(&'static str),
 }
 
+/// Type alias for subdirectory processor function
+pub type SubDirectoryProcessor = fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>;
+
 #[derive(Debug, Clone)]
 pub enum SubDirectoryType {
-    Binary {
-        processor: fn(
-            &[u8],
-            crate::tiff_types::ByteOrder,
-        ) -> crate::types::Result<Vec<(String, TagValue)>>,
-    },
+    Binary { processor: SubDirectoryProcessor },
 }
 
 /// All tag kits for Panasonic_pm
@@ -304,44 +302,60 @@ pub fn process_tag_0x4e_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4e_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x2003_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x61_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0xe00_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0xe00_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2003_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2003_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x61_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x61_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
 }
 
 /// Apply PrintConv for a tag from this module
@@ -412,12 +426,17 @@ pub fn process_subdirectory(
     value: &TagValue,
     byte_order: ByteOrder,
 ) -> Result<HashMap<String, TagValue>> {
+    use tracing::debug;
     let mut result = HashMap::new();
+
+    debug!("process_subdirectory called for tag_id: 0x{:04x}", tag_id);
 
     if let Some(tag_kit) = PANASONIC_PM_TAG_KITS.get(&tag_id) {
         if let Some(SubDirectoryType::Binary { processor }) = &tag_kit.subdirectory {
+            debug!("Found subdirectory processor for tag_id: 0x{:04x}", tag_id);
             let bytes = match value {
                 TagValue::U16Array(arr) => {
+                    debug!("Converting U16Array with {} elements to bytes", arr.len());
                     // Convert U16 array to bytes based on byte order
                     let mut bytes = Vec::with_capacity(arr.len() * 2);
                     for val in arr {
@@ -432,13 +451,27 @@ pub fn process_subdirectory(
                 _ => return Ok(result), // Not array data
             };
 
+            debug!("Calling processor with {} bytes", bytes.len());
             // Process subdirectory and collect all extracted tags
-            if let Ok(extracted_tags) = processor(&bytes, byte_order) {
-                for (name, value) in extracted_tags {
-                    result.insert(name, value);
+            match processor(&bytes, byte_order) {
+                Ok(extracted_tags) => {
+                    debug!("Processor returned {} tags", extracted_tags.len());
+                    for (name, value) in extracted_tags {
+                        result.insert(name, value);
+                    }
+                }
+                Err(e) => {
+                    debug!("Processor error: {:?}", e);
                 }
             }
+        } else {
+            debug!(
+                "No subdirectory processor found for tag_id: 0x{:04x}",
+                tag_id
+            );
         }
+    } else {
+        debug!("Tag not found in TAG_KITS: 0x{:04x}", tag_id);
     }
 
     Ok(result)

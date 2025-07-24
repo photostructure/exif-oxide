@@ -42,32 +42,25 @@ pub enum PrintConvType {
     Manual(&'static str),
 }
 
+/// Type alias for subdirectory processor function
+pub type SubDirectoryProcessor = fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>;
+
 #[derive(Debug, Clone)]
 pub enum SubDirectoryType {
-    Binary {
-        processor: fn(
-            &[u8],
-            crate::tiff_types::ByteOrder,
-        ) -> crate::types::Result<Vec<(String, TagValue)>>,
-    },
+    Binary { processor: SubDirectoryProcessor },
 }
 
 /// All tag kits for Sony_pm
 pub static SONY_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
     let mut map = HashMap::new();
 
-    // datetime tags
-    for (id, tag_def) in datetime::get_datetime_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // other tags
-    for (id, tag_def) in other::get_other_tags() {
-        map.insert(id, tag_def);
-    }
-
     // core tags
     for (id, tag_def) in core::get_core_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // exif_specific tags
+    for (id, tag_def) in exif_specific::get_exif_specific_tags() {
         map.insert(id, tag_def);
     }
 
@@ -81,8 +74,13 @@ pub static SONY_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|
         map.insert(id, tag_def);
     }
 
-    // exif_specific tags
-    for (id, tag_def) in exif_specific::get_exif_specific_tags() {
+    // other tags
+    for (id, tag_def) in other::get_other_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // datetime tags
+    for (id, tag_def) in datetime::get_datetime_tags() {
         map.insert(id, tag_def);
     }
 
@@ -139,496 +137,42 @@ fn read_int16s(data: &[u8], byte_order: ByteOrder) -> Result<i16> {
 }
 
 // Subdirectory processing functions
-fn process_sony_tag940a(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+fn process_sony_tag9404a(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
-    // AFPointsSelected at offset 4
-    if data.len() >= 8 {
-        // TODO: Handle format int32u
-    }
+    // ExposureProgram at offset 11
 
-    Ok(tags)
-}
+    // IntelligentAuto at offset 13
 
-fn process_sony_panorama(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // PanoramaDirection at offset 3
-
-    Ok(tags)
-}
-
-fn process_sony_focusinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // ISOSetting at offset 109
-
-    // ISO at offset 111
-
-    // DynamicRangeOptimizerMode at offset 119
-
-    // Rotation at offset 16
-
-    // ImageStabilizationSetting at offset 20
-
-    // DynamicRangeOptimizerMode at offset 21
-
-    // ShutterCount at offset 2118
-    if data.len() >= 4240 {
-        // TODO: Handle format int32u
-    }
-
-    // FocusPosition at offset 2491
-
-    // BracketShotNumber at offset 43
-
-    // TiffMeteringImage at offset 4368
-    if data.len() >= 27936 {
-        // TODO: Handle format undef
-    }
-
-    // WhiteBalanceBracketing at offset 44
-
-    // BracketShotNumber2 at offset 45
-
-    // DynamicRangeOptimizerBracket at offset 46
-
-    // ExposureBracketShotNumber at offset 47
-
-    // ExposureProgram at offset 63
-
-    // CreativeStyle at offset 65
-
-    Ok(tags)
-}
-
-fn process_sony_moreinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // MoreSettings at offset 1
-
-    // MoreInfo0401 at offset 1025
-
-    // TiffMeteringImage at offset 263
-
-    // MoreInfo0201 at offset 513
-
-    Ok(tags)
-}
-
-fn process_sony_tag9402(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // TempTest1 at offset 2
-
-    // FocusMode at offset 22
-
-    // AFAreaMode at offset 23
-
-    // AmbientTemperature at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8s
-    }
-
-    // FocusPosition2 at offset 45
-
-    Ok(tags)
-}
-
-fn process_sony_camerainfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // LensSpec at offset 0
-    if data.len() >= 16 {
-        // TODO: Handle format undef
-    }
-
-    // FocusModeSetting at offset 20
-
-    // AFPointSelected at offset 21
-
-    // AFPoint at offset 25
-
-    // AFStatusActiveSensor at offset 30
-    if data.len() >= 62 {
-        if let Ok(value) = read_int16s(&data[60..62], byte_order) {
-            tags.push(("AFStatusActiveSensor".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFMicroAdjValue at offset 304
-
-    // AFMicroAdjMode at offset 305
-
-    // AFMicroAdjRegisteredLenses at offset 305.1
-
-    // AFStatusUpper-left at offset 32
-    if data.len() >= 66 {
-        if let Ok(value) = read_int16s(&data[64..66], byte_order) {
-            tags.push(("AFStatusUpper-left".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusLeft at offset 34
-    if data.len() >= 70 {
-        if let Ok(value) = read_int16s(&data[68..70], byte_order) {
-            tags.push(("AFStatusLeft".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusLower-left at offset 36
-    if data.len() >= 74 {
-        if let Ok(value) = read_int16s(&data[72..74], byte_order) {
-            tags.push(("AFStatusLower-left".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusFarLeft at offset 38
-    if data.len() >= 78 {
-        if let Ok(value) = read_int16s(&data[76..78], byte_order) {
-            tags.push(("AFStatusFarLeft".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusBottomAssist-left at offset 40
-    if data.len() >= 82 {
-        if let Ok(value) = read_int16s(&data[80..82], byte_order) {
-            tags.push((
-                "AFStatusBottomAssist-left".to_string(),
-                TagValue::I16(value),
-            ));
-        }
-    }
-
-    // AFStatusBottom at offset 42
-    if data.len() >= 86 {
-        if let Ok(value) = read_int16s(&data[84..86], byte_order) {
-            tags.push(("AFStatusBottom".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusBottomAssist-right at offset 44
-    if data.len() >= 90 {
-        if let Ok(value) = read_int16s(&data[88..90], byte_order) {
-            tags.push((
-                "AFStatusBottomAssist-right".to_string(),
-                TagValue::I16(value),
-            ));
-        }
-    }
-
-    // AFStatusCenter-7 at offset 46
-    if data.len() >= 94 {
-        if let Ok(value) = read_int16s(&data[92..94], byte_order) {
-            tags.push(("AFStatusCenter-7".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusCenter-horizontal at offset 48
-    if data.len() >= 98 {
-        if let Ok(value) = read_int16s(&data[96..98], byte_order) {
-            tags.push((
-                "AFStatusCenter-horizontal".to_string(),
-                TagValue::I16(value),
-            ));
-        }
-    }
-
-    // AFStatusCenter-9 at offset 50
-    if data.len() >= 102 {
-        if let Ok(value) = read_int16s(&data[100..102], byte_order) {
-            tags.push(("AFStatusCenter-9".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusCenter-10 at offset 52
-    if data.len() >= 106 {
-        if let Ok(value) = read_int16s(&data[104..106], byte_order) {
-            tags.push(("AFStatusCenter-10".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusCenter-11 at offset 54
-    if data.len() >= 110 {
-        if let Ok(value) = read_int16s(&data[108..110], byte_order) {
-            tags.push(("AFStatusCenter-11".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusCenter-12 at offset 56
-    if data.len() >= 114 {
-        if let Ok(value) = read_int16s(&data[112..114], byte_order) {
-            tags.push(("AFStatusCenter-12".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusCenter-vertical at offset 58
-    if data.len() >= 118 {
-        if let Ok(value) = read_int16s(&data[116..118], byte_order) {
-            tags.push(("AFStatusCenter-vertical".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusCenter-14 at offset 60
-    if data.len() >= 122 {
-        if let Ok(value) = read_int16s(&data[120..122], byte_order) {
-            tags.push(("AFStatusCenter-14".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusTopAssist-left at offset 62
-    if data.len() >= 126 {
-        if let Ok(value) = read_int16s(&data[124..126], byte_order) {
-            tags.push(("AFStatusTopAssist-left".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusTop at offset 64
-    if data.len() >= 130 {
-        if let Ok(value) = read_int16s(&data[128..130], byte_order) {
-            tags.push(("AFStatusTop".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusTopAssist-right at offset 66
-    if data.len() >= 134 {
-        if let Ok(value) = read_int16s(&data[132..134], byte_order) {
-            tags.push(("AFStatusTopAssist-right".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusFarRight at offset 68
-    if data.len() >= 138 {
-        if let Ok(value) = read_int16s(&data[136..138], byte_order) {
-            tags.push(("AFStatusFarRight".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusUpper-right at offset 70
-    if data.len() >= 142 {
-        if let Ok(value) = read_int16s(&data[140..142], byte_order) {
-            tags.push(("AFStatusUpper-right".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusRight at offset 72
-    if data.len() >= 146 {
-        if let Ok(value) = read_int16s(&data[144..146], byte_order) {
-            tags.push(("AFStatusRight".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusLower-right at offset 74
-    if data.len() >= 150 {
-        if let Ok(value) = read_int16s(&data[148..150], byte_order) {
-            tags.push(("AFStatusLower-right".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusCenterF2-8 at offset 76
-    if data.len() >= 154 {
-        if let Ok(value) = read_int16s(&data[152..154], byte_order) {
-            tags.push(("AFStatusCenterF2-8".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    Ok(tags)
-}
-
-fn process_sony_camerainfo2(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // LensSpec at offset 0
-    if data.len() >= 16 {
-        // TODO: Handle format undef
-    }
-
-    // AFPointSelected at offset 20
-
-    // FocusModeSetting at offset 21
-
-    // AFPoint at offset 24
-
-    // AFStatusActiveSensor at offset 27
-    if data.len() >= 56 {
-        if let Ok(value) = read_int16s(&data[54..56], byte_order) {
-            tags.push(("AFStatusActiveSensor".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusTop-right at offset 29
-    if data.len() >= 60 {
-        if let Ok(value) = read_int16s(&data[58..60], byte_order) {
-            tags.push(("AFStatusTop-right".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusBottom-right at offset 31
-    if data.len() >= 64 {
-        if let Ok(value) = read_int16s(&data[62..64], byte_order) {
-            tags.push(("AFStatusBottom-right".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusBottom at offset 33
-    if data.len() >= 68 {
-        if let Ok(value) = read_int16s(&data[66..68], byte_order) {
-            tags.push(("AFStatusBottom".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusMiddleHorizontal at offset 35
-    if data.len() >= 72 {
-        if let Ok(value) = read_int16s(&data[70..72], byte_order) {
-            tags.push(("AFStatusMiddleHorizontal".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusCenterVertical at offset 37
-    if data.len() >= 76 {
-        if let Ok(value) = read_int16s(&data[74..76], byte_order) {
-            tags.push(("AFStatusCenterVertical".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusTop at offset 39
-    if data.len() >= 80 {
-        if let Ok(value) = read_int16s(&data[78..80], byte_order) {
-            tags.push(("AFStatusTop".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusTop-left at offset 41
-    if data.len() >= 84 {
-        if let Ok(value) = read_int16s(&data[82..84], byte_order) {
-            tags.push(("AFStatusTop-left".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusBottom-left at offset 43
-    if data.len() >= 88 {
-        if let Ok(value) = read_int16s(&data[86..88], byte_order) {
-            tags.push(("AFStatusBottom-left".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusLeft at offset 45
-    if data.len() >= 92 {
-        if let Ok(value) = read_int16s(&data[90..92], byte_order) {
-            tags.push(("AFStatusLeft".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusCenterHorizontal at offset 47
-    if data.len() >= 96 {
-        if let Ok(value) = read_int16s(&data[94..96], byte_order) {
-            tags.push(("AFStatusCenterHorizontal".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusRight at offset 49
-    if data.len() >= 100 {
-        if let Ok(value) = read_int16s(&data[98..100], byte_order) {
-            tags.push(("AFStatusRight".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    Ok(tags)
-}
-
-fn process_sony_camerainfo3(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // LensSpec at offset 0
-    if data.len() >= 16 {
-        // TODO: Handle format undef
-    }
-
-    // FocalLength at offset 14
-    if data.len() >= 30 {
+    // LensZoomPosition at offset 25
+    if data.len() >= 27 {
         // TODO: Handle format int16u
     }
 
-    // FocalLengthTeleZoom at offset 16
-    if data.len() >= 34 {
+    Ok(tags)
+}
+
+fn process_sony_tag9404b(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ExposureProgram at offset 12
+
+    // IntelligentAuto at offset 14
+
+    // LensZoomPosition at offset 30
+    if data.len() >= 32 {
         // TODO: Handle format int16u
     }
 
-    // AFPointSelected at offset 20
-
-    // FocusMode at offset 21
-
-    // AFPoint at offset 24
-
-    // FocusStatus at offset 25
-
-    // AFStatusActiveSensor at offset 27
-    if data.len() >= 56 {
-        if let Ok(value) = read_int16s(&data[54..56], byte_order) {
-            tags.push(("AFStatusActiveSensor".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFPointSelected at offset 28
-
-    // AFStatusBottom-right at offset 31
-    if data.len() >= 64 {
-        if let Ok(value) = read_int16s(&data[62..64], byte_order) {
-            tags.push(("AFStatusBottom-right".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFPoint at offset 32
-
-    // AFStatusCenterVertical at offset 37
-    if data.len() >= 76 {
-        if let Ok(value) = read_int16s(&data[74..76], byte_order) {
-            tags.push(("AFStatusCenterVertical".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusTop at offset 39
-    if data.len() >= 80 {
-        if let Ok(value) = read_int16s(&data[78..80], byte_order) {
-            tags.push(("AFStatusTop".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusTop-left at offset 41
-    if data.len() >= 84 {
-        if let Ok(value) = read_int16s(&data[82..84], byte_order) {
-            tags.push(("AFStatusTop-left".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusBottom-left at offset 43
-    if data.len() >= 88 {
-        if let Ok(value) = read_int16s(&data[86..88], byte_order) {
-            tags.push(("AFStatusBottom-left".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusLeft at offset 45
-    if data.len() >= 92 {
-        if let Ok(value) = read_int16s(&data[90..92], byte_order) {
-            tags.push(("AFStatusLeft".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusCenterHorizontal at offset 47
-    if data.len() >= 96 {
-        if let Ok(value) = read_int16s(&data[94..96], byte_order) {
-            tags.push(("AFStatusCenterHorizontal".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusRight at offset 49
-    if data.len() >= 100 {
-        if let Ok(value) = read_int16s(&data[98..100], byte_order) {
-            tags.push(("AFStatusRight".to_string(), TagValue::I16(value)));
-        }
-    }
+    // FocusPosition2 at offset 32
 
     Ok(tags)
 }
 
-fn process_sony_camerainfounknown(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
+fn process_sony_tag9404c(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
+    // ExposureProgram at offset 11
+
+    // IntelligentAuto at offset 13
+
     Ok(tags)
 }
 
@@ -676,14 +220,210 @@ fn process_sony_shotinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Stri
     Ok(tags)
 }
 
-fn process_sony_tag9403(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+fn process_sony_tag900b(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
-    // TempTest2 at offset 4
+    // FaceDetection at offset 189
 
-    // CameraTemperature at offset 5
-    if data.len() >= 6 {
-        // TODO: Handle format int8s
+    // FacesDetected at offset 2
+
+    Ok(tags)
+}
+
+fn process_sony_tag9416(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // Tag9416_0000 at offset 0
+
+    // SonyExposureTime2 at offset 10
+    if data.len() >= 12 {
+        // TODO: Handle format int16u
     }
+
+    // PictureProfile at offset 112
+
+    // FocalLength at offset 113
+    if data.len() >= 115 {
+        // TODO: Handle format int16u
+    }
+
+    // MinFocalLength at offset 115
+    if data.len() >= 117 {
+        // TODO: Handle format int16u
+    }
+
+    // MaxFocalLength at offset 117
+    if data.len() >= 119 {
+        // TODO: Handle format int16u
+    }
+
+    // ExposureTime at offset 12
+    if data.len() >= 14 {
+        // TODO: Handle format rational32u
+    }
+
+    // SonyFNumber2 at offset 16
+    if data.len() >= 18 {
+        // TODO: Handle format int16u
+    }
+
+    // SonyMaxApertureValue at offset 18
+    if data.len() >= 20 {
+        // TODO: Handle format int16u
+    }
+
+    // VignettingCorrParams at offset 2191
+    if data.len() >= 2223 {
+        if let Ok(values) = read_int16s_array(&data[2191..2223], byte_order, 16) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "VignettingCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // VignettingCorrParams at offset 2193
+    if data.len() >= 2225 {
+        if let Ok(values) = read_int16s_array(&data[2193..2225], byte_order, 16) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "VignettingCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // VignettingCorrParams at offset 2205
+    if data.len() >= 2269 {
+        if let Ok(values) = read_int16s_array(&data[2205..2269], byte_order, 32) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "VignettingCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // APS-CSizeCapture at offset 2229
+
+    // APS-CSizeCapture at offset 2231
+
+    // APS-CSizeCapture at offset 2277
+
+    // ChromaticAberrationCorrParams at offset 2324
+    if data.len() >= 2388 {
+        if let Ok(values) = read_int16s_array(&data[2324..2388], byte_order, 32) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "ChromaticAberrationCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ChromaticAberrationCorrParams at offset 2326
+    if data.len() >= 2390 {
+        if let Ok(values) = read_int16s_array(&data[2326..2390], byte_order, 32) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "ChromaticAberrationCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ChromaticAberrationCorrParams at offset 2373
+    if data.len() >= 2437 {
+        if let Ok(values) = read_int16s_array(&data[2373..2437], byte_order, 32) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "ChromaticAberrationCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // SequenceImageNumber at offset 29
+    if data.len() >= 33 {
+        // TODO: Handle format int32u
+    }
+
+    // SonyISO at offset 4
+    if data.len() >= 6 {
+        // TODO: Handle format int16u
+    }
+
+    // ReleaseMode2 at offset 43
+
+    // ExposureProgram at offset 53
+
+    // CreativeStyle at offset 55
+
+    // StopsAboveBaseISO at offset 6
+    if data.len() >= 8 {
+        // TODO: Handle format int16u
+    }
+
+    // LensMount at offset 72
+
+    // LensFormat at offset 73
+
+    // LensMount at offset 74
+
+    // LensType2 at offset 75
+    if data.len() >= 77 {
+        // TODO: Handle format int16u
+    }
+
+    // LensType at offset 77
+    if data.len() >= 79 {
+        // TODO: Handle format int16u
+    }
+
+    // DistortionCorrParams at offset 79
+    if data.len() >= 111 {
+        if let Ok(values) = read_int16s_array(&data[79..111], byte_order, 16) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "DistortionCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_panorama(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // PanoramaDirection at offset 3
 
     Ok(tags)
 }
@@ -1655,618 +1395,13 @@ fn process_sony_tag2010i(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Stri
     Ok(tags)
 }
 
-fn process_sony_extrainfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+fn process_sony_tag9403(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
-    // BatteryTemperature at offset 1
+    // TempTest2 at offset 4
 
-    // ImageStabilization2 at offset 10
-
-    // BatteryLevel at offset 12
-
-    // BatteryUnknown at offset 2
-    if data.len() >= 12 {
-        // TODO: Handle format undef
-    }
-
-    // ExtraInfoVersion at offset 26
-    if data.len() >= 56 {
-        // TODO: Handle format int8u
-    }
-
-    // BatteryVoltage at offset 8
-    if data.len() >= 24 {
-        // TODO: Handle format undef
-    }
-
-    Ok(tags)
-}
-
-fn process_sony_extrainfo2(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // ImageStabilization at offset 18
-
-    // BatteryLevel at offset 4
-
-    Ok(tags)
-}
-
-fn process_sony_extrainfo3(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // BatteryUnknown at offset 0
-    if data.len() >= 2 {
-        // TODO: Handle format int16u
-    }
-
-    // ImageStabilization at offset 17
-
-    // BatteryTemperature at offset 2
-
-    // CameraOrientation at offset 24
-
-    // BatteryLevel at offset 4
-
-    // BatteryVoltage1 at offset 6
-    if data.len() >= 14 {
-        // TODO: Handle format int16u
-    }
-
-    // BatteryVoltage2 at offset 8
-    if data.len() >= 18 {
-        // TODO: Handle format int16u
-    }
-
-    Ok(tags)
-}
-
-fn process_sony_tag9405a(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // DistortionCorrParamsPresent at offset 1536
-
-    // DistortionCorrection at offset 1537
-
-    // LensFormat at offset 1539
-
-    // LensMount at offset 1540
-
-    // LensType2 at offset 1541
-    if data.len() >= 1543 {
-        // TODO: Handle format int16u
-    }
-
-    // LensType at offset 1544
-    if data.len() >= 1546 {
-        // TODO: Handle format int16u
-    }
-
-    // VignettingCorrParams at offset 1610
-    if data.len() >= 1642 {
-        if let Ok(values) = read_int16s_array(&data[1610..1642], byte_order, 16) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "VignettingCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // ChromaticAberrationCorrParams at offset 1642
-    if data.len() >= 1706 {
-        if let Ok(values) = read_int16s_array(&data[1642..1706], byte_order, 32) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "ChromaticAberrationCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // DistortionCorrParams at offset 1738
-    if data.len() >= 1770 {
-        if let Ok(values) = read_int16s_array(&data[1738..1770], byte_order, 16) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "DistortionCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    Ok(tags)
-}
-
-fn process_sony_tag9405b(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // StopsAboveBaseISO at offset 10
-    if data.len() >= 12 {
-        // TODO: Handle format int16u
-    }
-
-    // DistortionCorrParams at offset 100
-    if data.len() >= 132 {
-        if let Ok(values) = read_int16s_array(&data[100..132], byte_order, 16) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "DistortionCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // SonyExposureTime2 at offset 14
-    if data.len() >= 16 {
-        // TODO: Handle format int16u
-    }
-
-    // ExposureTime at offset 16
-    if data.len() >= 18 {
-        // TODO: Handle format rational32u
-    }
-
-    // SonyFNumber at offset 20
-    if data.len() >= 22 {
-        // TODO: Handle format int16u
-    }
-
-    // SonyMaxApertureValue at offset 22
-    if data.len() >= 24 {
-        // TODO: Handle format int16u
-    }
-
-    // SequenceImageNumber at offset 36
-    if data.len() >= 40 {
-        // TODO: Handle format int32u
-    }
-
-    // SonyISO at offset 4
+    // CameraTemperature at offset 5
     if data.len() >= 6 {
-        // TODO: Handle format int16u
-    }
-
-    // ReleaseMode2 at offset 52
-
-    // BaseISO at offset 6
-    if data.len() >= 8 {
-        // TODO: Handle format int16u
-    }
-
-    // SonyImageWidthMax at offset 62
-    if data.len() >= 64 {
-        // TODO: Handle format int16u
-    }
-
-    // SonyImageHeightMax at offset 64
-    if data.len() >= 66 {
-        // TODO: Handle format int16u
-    }
-
-    // HighISONoiseReduction at offset 66
-
-    // LongExposureNoiseReduction at offset 68
-
-    // PictureEffect2 at offset 70
-
-    // ExposureProgram at offset 72
-
-    // CreativeStyle at offset 74
-
-    // Sharpness at offset 82
-    if data.len() >= 83 {
         // TODO: Handle format int8s
-    }
-
-    // LensZoomPosition at offset 834
-    if data.len() >= 836 {
-        // TODO: Handle format int16u
-    }
-
-    // VignettingCorrParams at offset 842
-    if data.len() >= 874 {
-        if let Ok(values) = read_int16s_array(&data[842..874], byte_order, 16) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "VignettingCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // LensZoomPosition at offset 846
-    if data.len() >= 848 {
-        // TODO: Handle format int16u
-    }
-
-    // VignettingCorrParams at offset 848
-    if data.len() >= 880 {
-        if let Ok(values) = read_int16s_array(&data[848..880], byte_order, 16) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "VignettingCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // LensZoomPosition at offset 858
-    if data.len() >= 860 {
-        // TODO: Handle format int16u
-    }
-
-    // VignettingCorrParams at offset 860
-    if data.len() >= 892 {
-        if let Ok(values) = read_int16s_array(&data[860..892], byte_order, 16) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "VignettingCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // VignettingCorrParams at offset 872
-    if data.len() >= 904 {
-        if let Ok(values) = read_int16s_array(&data[872..904], byte_order, 16) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "VignettingCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // ChromaticAberrationCorrParams at offset 892
-    if data.len() >= 956 {
-        if let Ok(values) = read_int16s_array(&data[892..956], byte_order, 32) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "ChromaticAberrationCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // DistortionCorrParamsPresent at offset 90
-
-    // ChromaticAberrationCorrParams at offset 900
-    if data.len() >= 964 {
-        if let Ok(values) = read_int16s_array(&data[900..964], byte_order, 32) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "ChromaticAberrationCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // DistortionCorrection at offset 91
-
-    // ChromaticAberrationCorrParams at offset 924
-    if data.len() >= 988 {
-        if let Ok(values) = read_int16s_array(&data[924..988], byte_order, 32) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "ChromaticAberrationCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // LensFormat at offset 93
-
-    // LensMount at offset 94
-
-    // ChromaticAberrationCorrParams at offset 944
-    if data.len() >= 1008 {
-        if let Ok(values) = read_int16s_array(&data[944..1008], byte_order, 32) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "ChromaticAberrationCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // ChromaticAberrationCorrParams at offset 952
-    if data.len() >= 1016 {
-        if let Ok(values) = read_int16s_array(&data[952..1016], byte_order, 32) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "ChromaticAberrationCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // LensType2 at offset 96
-    if data.len() >= 98 {
-        // TODO: Handle format int16u
-    }
-
-    // LensType at offset 98
-    if data.len() >= 100 {
-        // TODO: Handle format int16u
-    }
-
-    Ok(tags)
-}
-
-fn process_sony_tag940c(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // CameraE-mountVersion at offset 11
-    if data.len() >= 13 {
-        // TODO: Handle format int16u
-    }
-
-    // LensE-mountVersion at offset 13
-    if data.len() >= 15 {
-        // TODO: Handle format int16u
-    }
-
-    // LensFirmwareVersion at offset 20
-    if data.len() >= 22 {
-        // TODO: Handle format int16u
-    }
-
-    // LensMount2 at offset 8
-
-    // LensType3 at offset 9
-    if data.len() >= 11 {
-        // TODO: Handle format int16u
-    }
-
-    Ok(tags)
-}
-
-fn process_sony_tag9400a(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // SequenceFileNumber at offset 12
-    if data.len() >= 16 {
-        // TODO: Handle format int32u
-    }
-
-    // ReleaseMode2 at offset 16
-
-    // DigitalZoom at offset 18
-
-    // ShotNumberSincePowerUp at offset 26
-    if data.len() >= 30 {
-        // TODO: Handle format int32u
-    }
-
-    // SequenceLength at offset 34
-
-    // CameraOrientation at offset 40
-
-    // Quality2 at offset 41
-
-    // SonyImageHeight at offset 68
-    if data.len() >= 70 {
-        // TODO: Handle format int16u
-    }
-
-    // SequenceImageNumber at offset 8
-    if data.len() >= 12 {
-        // TODO: Handle format int32u
-    }
-
-    // ModelReleaseYear at offset 82
-    if data.len() >= 83 {
-        // TODO: Handle format int8u
-    }
-
-    Ok(tags)
-}
-
-fn process_sony_tag9400b(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // SequenceFileNumber at offset 12
-    if data.len() >= 16 {
-        // TODO: Handle format int32u
-    }
-
-    // ReleaseMode2 at offset 16
-
-    // DigitalZoom at offset 18
-
-    // ShotNumberSincePowerUp at offset 22
-    if data.len() >= 26 {
-        // TODO: Handle format int32u
-    }
-
-    // SequenceLength at offset 30
-
-    // CameraOrientation at offset 36
-
-    // Quality2 at offset 37
-
-    // SonyImageHeight at offset 63
-    if data.len() >= 65 {
-        // TODO: Handle format int16u
-    }
-
-    // ModelReleaseYear at offset 70
-    if data.len() >= 71 {
-        // TODO: Handle format int8u
-    }
-
-    // SequenceImageNumber at offset 8
-    if data.len() >= 12 {
-        // TODO: Handle format int32u
-    }
-
-    Ok(tags)
-}
-
-fn process_sony_tag9400c(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // ShotNumberSincePowerUp at offset 10
-    if data.len() >= 14 {
-        // TODO: Handle format int32u
-    }
-
-    // SequenceImageNumber at offset 18
-    if data.len() >= 22 {
-        // TODO: Handle format int32u
-    }
-
-    // SequenceLength at offset 22
-
-    // SequenceFileNumber at offset 26
-    if data.len() >= 30 {
-        // TODO: Handle format int32u
-    }
-
-    // SequenceLength at offset 30
-
-    // ShutterType at offset 307
-
-    // ShutterType at offset 313
-
-    // ShutterType at offset 319
-
-    // CameraOrientation at offset 41
-
-    // ModelReleaseYear at offset 83
-    if data.len() >= 84 {
-        // TODO: Handle format int8u
-    }
-
-    // ReleaseMode2 at offset 9
-
-    Ok(tags)
-}
-
-fn process_sony_afinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // AFAreaMode at offset 10
-
-    // FocusMode at offset 11
-
-    // AFStatus79 at offset 125
-    if data.len() >= 315 {
-        if let Ok(values) = read_int16s_array(&data[125..315], byte_order, 95) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("AFStatus79".to_string(), TagValue::String(value_str)));
-        }
-    }
-
-    // AFPointsUsed at offset 16
-    if data.len() >= 26 {
-        // TODO: Handle format int8u
-    }
-
-    // AFType at offset 2
-
-    // AFPointsUsed at offset 366
-    if data.len() >= 370 {
-        // TODO: Handle format int32u
-    }
-
-    // AFMicroAdj at offset 381
-    if data.len() >= 382 {
-        // TODO: Handle format int8s
-    }
-
-    // ExposureProgram at offset 382
-
-    // AFStatusActiveSensor at offset 4
-    if data.len() >= 6 {
-        if let Ok(value) = read_int16s(&data[4..6], byte_order) {
-            tags.push(("AFStatusActiveSensor".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // FocusMode at offset 5
-
-    // AFPoint at offset 55
-
-    // AFPointInFocus at offset 56
-
-    // AFPointAtShutterRelease at offset 57
-
-    // AFAreaMode at offset 58
-
-    // AFStatusActiveSensor at offset 59
-    if data.len() >= 61 {
-        if let Ok(value) = read_int16s(&data[59..61], byte_order) {
-            tags.push(("AFStatusActiveSensor".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // ExposureProgram at offset 67
-
-    // AFMicroAdj at offset 80
-    if data.len() >= 81 {
-        // TODO: Handle format int8s
-    }
-
-    Ok(tags)
-}
-
-fn process_sony_tag940e(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // TiffMeteringImageWidth at offset 6662
-
-    // TiffMeteringImageHeight at offset 6663
-
-    // TiffMeteringImage at offset 6664
-    if data.len() >= 11944 {
-        // TODO: Handle format undef
     }
 
     Ok(tags)
@@ -2522,11 +1657,87 @@ fn process_sony_tag202a(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Strin
     Ok(tags)
 }
 
-fn process_sony_hiddeninfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+fn process_sony_meterinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
-    // HiddenDataOffset at offset 0
+    // MeterInfo1Row1 at offset 0
+    if data.len() >= 108 {
+        // TODO: Handle format int32u
+    }
 
-    // HiddenDataLength at offset 1
+    // MeterInfo2Row3 at offset 1020
+    if data.len() >= 2172 {
+        // TODO: Handle format int32u
+    }
+
+    // MeterInfo1Row2 at offset 108
+    if data.len() >= 324 {
+        // TODO: Handle format int32u
+    }
+
+    // MeterInfo2Row4 at offset 1152
+    if data.len() >= 2436 {
+        // TODO: Handle format int32u
+    }
+
+    // MeterInfo2Row5 at offset 1284
+    if data.len() >= 2700 {
+        // TODO: Handle format int32u
+    }
+
+    // MeterInfo2Row6 at offset 1416
+    if data.len() >= 2964 {
+        // TODO: Handle format int32u
+    }
+
+    // MeterInfo2Row7 at offset 1548
+    if data.len() >= 3228 {
+        // TODO: Handle format int32u
+    }
+
+    // MeterInfo2Row8 at offset 1680
+    if data.len() >= 3492 {
+        // TODO: Handle format int32u
+    }
+
+    // MeterInfo2Row9 at offset 1812
+    if data.len() >= 3756 {
+        // TODO: Handle format int32u
+    }
+
+    // MeterInfo1Row3 at offset 216
+    if data.len() >= 540 {
+        // TODO: Handle format int32u
+    }
+
+    // MeterInfo1Row4 at offset 324
+    if data.len() >= 756 {
+        // TODO: Handle format int32u
+    }
+
+    // MeterInfo1Row5 at offset 432
+    if data.len() >= 972 {
+        // TODO: Handle format int32u
+    }
+
+    // MeterInfo1Row6 at offset 540
+    if data.len() >= 1188 {
+        // TODO: Handle format int32u
+    }
+
+    // MeterInfo1Row7 at offset 648
+    if data.len() >= 1404 {
+        // TODO: Handle format int32u
+    }
+
+    // MeterInfo2Row1 at offset 756
+    if data.len() >= 1644 {
+        // TODO: Handle format int32u
+    }
+
+    // MeterInfo2Row2 at offset 888
+    if data.len() >= 1908 {
+        // TODO: Handle format int32u
+    }
 
     Ok(tags)
 }
@@ -2852,462 +2063,6 @@ fn process_sony_tag9050d(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Stri
     if data.len() >= 62 {
         // TODO: Handle format int8u
     }
-
-    Ok(tags)
-}
-
-fn process_sony_meterinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // MeterInfo1Row1 at offset 0
-    if data.len() >= 108 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo2Row3 at offset 1020
-    if data.len() >= 2172 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo1Row2 at offset 108
-    if data.len() >= 324 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo2Row4 at offset 1152
-    if data.len() >= 2436 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo2Row5 at offset 1284
-    if data.len() >= 2700 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo2Row6 at offset 1416
-    if data.len() >= 2964 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo2Row7 at offset 1548
-    if data.len() >= 3228 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo2Row8 at offset 1680
-    if data.len() >= 3492 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo2Row9 at offset 1812
-    if data.len() >= 3756 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo1Row3 at offset 216
-    if data.len() >= 540 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo1Row4 at offset 324
-    if data.len() >= 756 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo1Row5 at offset 432
-    if data.len() >= 972 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo1Row6 at offset 540
-    if data.len() >= 1188 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo1Row7 at offset 648
-    if data.len() >= 1404 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo2Row1 at offset 756
-    if data.len() >= 1644 {
-        // TODO: Handle format int32u
-    }
-
-    // MeterInfo2Row2 at offset 888
-    if data.len() >= 1908 {
-        // TODO: Handle format int32u
-    }
-
-    Ok(tags)
-}
-
-fn process_sony_tag9416(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // Tag9416_0000 at offset 0
-
-    // SonyExposureTime2 at offset 10
-    if data.len() >= 12 {
-        // TODO: Handle format int16u
-    }
-
-    // PictureProfile at offset 112
-
-    // FocalLength at offset 113
-    if data.len() >= 115 {
-        // TODO: Handle format int16u
-    }
-
-    // MinFocalLength at offset 115
-    if data.len() >= 117 {
-        // TODO: Handle format int16u
-    }
-
-    // MaxFocalLength at offset 117
-    if data.len() >= 119 {
-        // TODO: Handle format int16u
-    }
-
-    // ExposureTime at offset 12
-    if data.len() >= 14 {
-        // TODO: Handle format rational32u
-    }
-
-    // SonyFNumber2 at offset 16
-    if data.len() >= 18 {
-        // TODO: Handle format int16u
-    }
-
-    // SonyMaxApertureValue at offset 18
-    if data.len() >= 20 {
-        // TODO: Handle format int16u
-    }
-
-    // VignettingCorrParams at offset 2191
-    if data.len() >= 2223 {
-        if let Ok(values) = read_int16s_array(&data[2191..2223], byte_order, 16) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "VignettingCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // VignettingCorrParams at offset 2193
-    if data.len() >= 2225 {
-        if let Ok(values) = read_int16s_array(&data[2193..2225], byte_order, 16) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "VignettingCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // VignettingCorrParams at offset 2205
-    if data.len() >= 2269 {
-        if let Ok(values) = read_int16s_array(&data[2205..2269], byte_order, 32) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "VignettingCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // APS-CSizeCapture at offset 2229
-
-    // APS-CSizeCapture at offset 2231
-
-    // APS-CSizeCapture at offset 2277
-
-    // ChromaticAberrationCorrParams at offset 2324
-    if data.len() >= 2388 {
-        if let Ok(values) = read_int16s_array(&data[2324..2388], byte_order, 32) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "ChromaticAberrationCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // ChromaticAberrationCorrParams at offset 2326
-    if data.len() >= 2390 {
-        if let Ok(values) = read_int16s_array(&data[2326..2390], byte_order, 32) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "ChromaticAberrationCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // ChromaticAberrationCorrParams at offset 2373
-    if data.len() >= 2437 {
-        if let Ok(values) = read_int16s_array(&data[2373..2437], byte_order, 32) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "ChromaticAberrationCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // SequenceImageNumber at offset 29
-    if data.len() >= 33 {
-        // TODO: Handle format int32u
-    }
-
-    // SonyISO at offset 4
-    if data.len() >= 6 {
-        // TODO: Handle format int16u
-    }
-
-    // ReleaseMode2 at offset 43
-
-    // ExposureProgram at offset 53
-
-    // CreativeStyle at offset 55
-
-    // StopsAboveBaseISO at offset 6
-    if data.len() >= 8 {
-        // TODO: Handle format int16u
-    }
-
-    // LensMount at offset 72
-
-    // LensFormat at offset 73
-
-    // LensMount at offset 74
-
-    // LensType2 at offset 75
-    if data.len() >= 77 {
-        // TODO: Handle format int16u
-    }
-
-    // LensType at offset 77
-    if data.len() >= 79 {
-        // TODO: Handle format int16u
-    }
-
-    // DistortionCorrParams at offset 79
-    if data.len() >= 111 {
-        if let Ok(values) = read_int16s_array(&data[79..111], byte_order, 16) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "DistortionCorrParams".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    Ok(tags)
-}
-
-fn process_sony_afstatus15(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // AFStatusUpper-left at offset 0
-    if data.len() >= 2 {
-        if let Ok(value) = read_int16s(&data[0..2], byte_order) {
-            tags.push(("AFStatusUpper-left".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusNearRight at offset 10
-    if data.len() >= 22 {
-        if let Ok(value) = read_int16s(&data[20..22], byte_order) {
-            tags.push(("AFStatusNearRight".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusCenterHorizontal at offset 12
-    if data.len() >= 26 {
-        if let Ok(value) = read_int16s(&data[24..26], byte_order) {
-            tags.push(("AFStatusCenterHorizontal".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusNearLeft at offset 14
-    if data.len() >= 30 {
-        if let Ok(value) = read_int16s(&data[28..30], byte_order) {
-            tags.push(("AFStatusNearLeft".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusBottomHorizontal at offset 16
-    if data.len() >= 34 {
-        if let Ok(value) = read_int16s(&data[32..34], byte_order) {
-            tags.push(("AFStatusBottomHorizontal".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusTopVertical at offset 18
-    if data.len() >= 38 {
-        if let Ok(value) = read_int16s(&data[36..38], byte_order) {
-            tags.push(("AFStatusTopVertical".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusLeft at offset 2
-    if data.len() >= 6 {
-        if let Ok(value) = read_int16s(&data[4..6], byte_order) {
-            tags.push(("AFStatusLeft".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusCenterVertical at offset 20
-    if data.len() >= 42 {
-        if let Ok(value) = read_int16s(&data[40..42], byte_order) {
-            tags.push(("AFStatusCenterVertical".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusBottomVertical at offset 22
-    if data.len() >= 46 {
-        if let Ok(value) = read_int16s(&data[44..46], byte_order) {
-            tags.push(("AFStatusBottomVertical".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusFarRight at offset 24
-    if data.len() >= 50 {
-        if let Ok(value) = read_int16s(&data[48..50], byte_order) {
-            tags.push(("AFStatusFarRight".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusUpper-right at offset 26
-    if data.len() >= 54 {
-        if let Ok(value) = read_int16s(&data[52..54], byte_order) {
-            tags.push(("AFStatusUpper-right".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusRight at offset 28
-    if data.len() >= 58 {
-        if let Ok(value) = read_int16s(&data[56..58], byte_order) {
-            tags.push(("AFStatusRight".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusLower-right at offset 30
-    if data.len() >= 62 {
-        if let Ok(value) = read_int16s(&data[60..62], byte_order) {
-            tags.push(("AFStatusLower-right".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusUpper-middle at offset 32
-    if data.len() >= 66 {
-        if let Ok(value) = read_int16s(&data[64..66], byte_order) {
-            tags.push(("AFStatusUpper-middle".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusLower-middle at offset 34
-    if data.len() >= 70 {
-        if let Ok(value) = read_int16s(&data[68..70], byte_order) {
-            tags.push(("AFStatusLower-middle".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusLower-left at offset 4
-    if data.len() >= 10 {
-        if let Ok(value) = read_int16s(&data[8..10], byte_order) {
-            tags.push(("AFStatusLower-left".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusFarLeft at offset 6
-    if data.len() >= 14 {
-        if let Ok(value) = read_int16s(&data[12..14], byte_order) {
-            tags.push(("AFStatusFarLeft".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    // AFStatusTopHorizontal at offset 8
-    if data.len() >= 18 {
-        if let Ok(value) = read_int16s(&data[16..18], byte_order) {
-            tags.push(("AFStatusTopHorizontal".to_string(), TagValue::I16(value)));
-        }
-    }
-
-    Ok(tags)
-}
-
-fn process_sony_tag9404a(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // ExposureProgram at offset 11
-
-    // IntelligentAuto at offset 13
-
-    // LensZoomPosition at offset 25
-    if data.len() >= 27 {
-        // TODO: Handle format int16u
-    }
-
-    Ok(tags)
-}
-
-fn process_sony_tag9404b(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // ExposureProgram at offset 12
-
-    // IntelligentAuto at offset 14
-
-    // LensZoomPosition at offset 30
-    if data.len() >= 32 {
-        // TODO: Handle format int16u
-    }
-
-    // FocusPosition2 at offset 32
-
-    Ok(tags)
-}
-
-fn process_sony_tag9404c(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // ExposureProgram at offset 11
-
-    // IntelligentAuto at offset 13
-
-    Ok(tags)
-}
-
-fn process_sony_tag900b(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // FaceDetection at offset 189
-
-    // FacesDetected at offset 2
 
     Ok(tags)
 }
@@ -3837,6 +2592,789 @@ fn process_sony_camerasettingsunknown(
     Ok(tags)
 }
 
+fn process_sony_tag940a(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // AFPointsSelected at offset 4
+    if data.len() >= 8 {
+        // TODO: Handle format int32u
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_tag940c(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // CameraE-mountVersion at offset 11
+    if data.len() >= 13 {
+        // TODO: Handle format int16u
+    }
+
+    // LensE-mountVersion at offset 13
+    if data.len() >= 15 {
+        // TODO: Handle format int16u
+    }
+
+    // LensFirmwareVersion at offset 20
+    if data.len() >= 22 {
+        // TODO: Handle format int16u
+    }
+
+    // LensMount2 at offset 8
+
+    // LensType3 at offset 9
+    if data.len() >= 11 {
+        // TODO: Handle format int16u
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_extrainfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // BatteryTemperature at offset 1
+
+    // ImageStabilization2 at offset 10
+
+    // BatteryLevel at offset 12
+
+    // BatteryUnknown at offset 2
+    if data.len() >= 12 {
+        // TODO: Handle format undef
+    }
+
+    // ExtraInfoVersion at offset 26
+    if data.len() >= 56 {
+        // TODO: Handle format int8u
+    }
+
+    // BatteryVoltage at offset 8
+    if data.len() >= 24 {
+        // TODO: Handle format undef
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_extrainfo2(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ImageStabilization at offset 18
+
+    // BatteryLevel at offset 4
+
+    Ok(tags)
+}
+
+fn process_sony_extrainfo3(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // BatteryUnknown at offset 0
+    if data.len() >= 2 {
+        // TODO: Handle format int16u
+    }
+
+    // ImageStabilization at offset 17
+
+    // BatteryTemperature at offset 2
+
+    // CameraOrientation at offset 24
+
+    // BatteryLevel at offset 4
+
+    // BatteryVoltage1 at offset 6
+    if data.len() >= 14 {
+        // TODO: Handle format int16u
+    }
+
+    // BatteryVoltage2 at offset 8
+    if data.len() >= 18 {
+        // TODO: Handle format int16u
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_hiddeninfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // HiddenDataOffset at offset 0
+
+    // HiddenDataLength at offset 1
+
+    Ok(tags)
+}
+
+fn process_sony_afstatus15(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // AFStatusUpper-left at offset 0
+    if data.len() >= 2 {
+        if let Ok(value) = read_int16s(&data[0..2], byte_order) {
+            tags.push(("AFStatusUpper-left".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusNearRight at offset 10
+    if data.len() >= 22 {
+        if let Ok(value) = read_int16s(&data[20..22], byte_order) {
+            tags.push(("AFStatusNearRight".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusCenterHorizontal at offset 12
+    if data.len() >= 26 {
+        if let Ok(value) = read_int16s(&data[24..26], byte_order) {
+            tags.push(("AFStatusCenterHorizontal".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusNearLeft at offset 14
+    if data.len() >= 30 {
+        if let Ok(value) = read_int16s(&data[28..30], byte_order) {
+            tags.push(("AFStatusNearLeft".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusBottomHorizontal at offset 16
+    if data.len() >= 34 {
+        if let Ok(value) = read_int16s(&data[32..34], byte_order) {
+            tags.push(("AFStatusBottomHorizontal".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusTopVertical at offset 18
+    if data.len() >= 38 {
+        if let Ok(value) = read_int16s(&data[36..38], byte_order) {
+            tags.push(("AFStatusTopVertical".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusLeft at offset 2
+    if data.len() >= 6 {
+        if let Ok(value) = read_int16s(&data[4..6], byte_order) {
+            tags.push(("AFStatusLeft".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusCenterVertical at offset 20
+    if data.len() >= 42 {
+        if let Ok(value) = read_int16s(&data[40..42], byte_order) {
+            tags.push(("AFStatusCenterVertical".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusBottomVertical at offset 22
+    if data.len() >= 46 {
+        if let Ok(value) = read_int16s(&data[44..46], byte_order) {
+            tags.push(("AFStatusBottomVertical".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusFarRight at offset 24
+    if data.len() >= 50 {
+        if let Ok(value) = read_int16s(&data[48..50], byte_order) {
+            tags.push(("AFStatusFarRight".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusUpper-right at offset 26
+    if data.len() >= 54 {
+        if let Ok(value) = read_int16s(&data[52..54], byte_order) {
+            tags.push(("AFStatusUpper-right".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusRight at offset 28
+    if data.len() >= 58 {
+        if let Ok(value) = read_int16s(&data[56..58], byte_order) {
+            tags.push(("AFStatusRight".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusLower-right at offset 30
+    if data.len() >= 62 {
+        if let Ok(value) = read_int16s(&data[60..62], byte_order) {
+            tags.push(("AFStatusLower-right".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusUpper-middle at offset 32
+    if data.len() >= 66 {
+        if let Ok(value) = read_int16s(&data[64..66], byte_order) {
+            tags.push(("AFStatusUpper-middle".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusLower-middle at offset 34
+    if data.len() >= 70 {
+        if let Ok(value) = read_int16s(&data[68..70], byte_order) {
+            tags.push(("AFStatusLower-middle".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusLower-left at offset 4
+    if data.len() >= 10 {
+        if let Ok(value) = read_int16s(&data[8..10], byte_order) {
+            tags.push(("AFStatusLower-left".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusFarLeft at offset 6
+    if data.len() >= 14 {
+        if let Ok(value) = read_int16s(&data[12..14], byte_order) {
+            tags.push(("AFStatusFarLeft".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusTopHorizontal at offset 8
+    if data.len() >= 18 {
+        if let Ok(value) = read_int16s(&data[16..18], byte_order) {
+            tags.push(("AFStatusTopHorizontal".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_camerainfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // LensSpec at offset 0
+    if data.len() >= 16 {
+        // TODO: Handle format undef
+    }
+
+    // FocusModeSetting at offset 20
+
+    // AFPointSelected at offset 21
+
+    // AFPoint at offset 25
+
+    // AFStatusActiveSensor at offset 30
+    if data.len() >= 62 {
+        if let Ok(value) = read_int16s(&data[60..62], byte_order) {
+            tags.push(("AFStatusActiveSensor".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFMicroAdjValue at offset 304
+
+    // AFMicroAdjMode at offset 305
+
+    // AFMicroAdjRegisteredLenses at offset 305.1
+
+    // AFStatusUpper-left at offset 32
+    if data.len() >= 66 {
+        if let Ok(value) = read_int16s(&data[64..66], byte_order) {
+            tags.push(("AFStatusUpper-left".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusLeft at offset 34
+    if data.len() >= 70 {
+        if let Ok(value) = read_int16s(&data[68..70], byte_order) {
+            tags.push(("AFStatusLeft".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusLower-left at offset 36
+    if data.len() >= 74 {
+        if let Ok(value) = read_int16s(&data[72..74], byte_order) {
+            tags.push(("AFStatusLower-left".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusFarLeft at offset 38
+    if data.len() >= 78 {
+        if let Ok(value) = read_int16s(&data[76..78], byte_order) {
+            tags.push(("AFStatusFarLeft".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusBottomAssist-left at offset 40
+    if data.len() >= 82 {
+        if let Ok(value) = read_int16s(&data[80..82], byte_order) {
+            tags.push((
+                "AFStatusBottomAssist-left".to_string(),
+                TagValue::I16(value),
+            ));
+        }
+    }
+
+    // AFStatusBottom at offset 42
+    if data.len() >= 86 {
+        if let Ok(value) = read_int16s(&data[84..86], byte_order) {
+            tags.push(("AFStatusBottom".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusBottomAssist-right at offset 44
+    if data.len() >= 90 {
+        if let Ok(value) = read_int16s(&data[88..90], byte_order) {
+            tags.push((
+                "AFStatusBottomAssist-right".to_string(),
+                TagValue::I16(value),
+            ));
+        }
+    }
+
+    // AFStatusCenter-7 at offset 46
+    if data.len() >= 94 {
+        if let Ok(value) = read_int16s(&data[92..94], byte_order) {
+            tags.push(("AFStatusCenter-7".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusCenter-horizontal at offset 48
+    if data.len() >= 98 {
+        if let Ok(value) = read_int16s(&data[96..98], byte_order) {
+            tags.push((
+                "AFStatusCenter-horizontal".to_string(),
+                TagValue::I16(value),
+            ));
+        }
+    }
+
+    // AFStatusCenter-9 at offset 50
+    if data.len() >= 102 {
+        if let Ok(value) = read_int16s(&data[100..102], byte_order) {
+            tags.push(("AFStatusCenter-9".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusCenter-10 at offset 52
+    if data.len() >= 106 {
+        if let Ok(value) = read_int16s(&data[104..106], byte_order) {
+            tags.push(("AFStatusCenter-10".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusCenter-11 at offset 54
+    if data.len() >= 110 {
+        if let Ok(value) = read_int16s(&data[108..110], byte_order) {
+            tags.push(("AFStatusCenter-11".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusCenter-12 at offset 56
+    if data.len() >= 114 {
+        if let Ok(value) = read_int16s(&data[112..114], byte_order) {
+            tags.push(("AFStatusCenter-12".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusCenter-vertical at offset 58
+    if data.len() >= 118 {
+        if let Ok(value) = read_int16s(&data[116..118], byte_order) {
+            tags.push(("AFStatusCenter-vertical".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusCenter-14 at offset 60
+    if data.len() >= 122 {
+        if let Ok(value) = read_int16s(&data[120..122], byte_order) {
+            tags.push(("AFStatusCenter-14".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusTopAssist-left at offset 62
+    if data.len() >= 126 {
+        if let Ok(value) = read_int16s(&data[124..126], byte_order) {
+            tags.push(("AFStatusTopAssist-left".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusTop at offset 64
+    if data.len() >= 130 {
+        if let Ok(value) = read_int16s(&data[128..130], byte_order) {
+            tags.push(("AFStatusTop".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusTopAssist-right at offset 66
+    if data.len() >= 134 {
+        if let Ok(value) = read_int16s(&data[132..134], byte_order) {
+            tags.push(("AFStatusTopAssist-right".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusFarRight at offset 68
+    if data.len() >= 138 {
+        if let Ok(value) = read_int16s(&data[136..138], byte_order) {
+            tags.push(("AFStatusFarRight".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusUpper-right at offset 70
+    if data.len() >= 142 {
+        if let Ok(value) = read_int16s(&data[140..142], byte_order) {
+            tags.push(("AFStatusUpper-right".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusRight at offset 72
+    if data.len() >= 146 {
+        if let Ok(value) = read_int16s(&data[144..146], byte_order) {
+            tags.push(("AFStatusRight".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusLower-right at offset 74
+    if data.len() >= 150 {
+        if let Ok(value) = read_int16s(&data[148..150], byte_order) {
+            tags.push(("AFStatusLower-right".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusCenterF2-8 at offset 76
+    if data.len() >= 154 {
+        if let Ok(value) = read_int16s(&data[152..154], byte_order) {
+            tags.push(("AFStatusCenterF2-8".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_camerainfo2(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // LensSpec at offset 0
+    if data.len() >= 16 {
+        // TODO: Handle format undef
+    }
+
+    // AFPointSelected at offset 20
+
+    // FocusModeSetting at offset 21
+
+    // AFPoint at offset 24
+
+    // AFStatusActiveSensor at offset 27
+    if data.len() >= 56 {
+        if let Ok(value) = read_int16s(&data[54..56], byte_order) {
+            tags.push(("AFStatusActiveSensor".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusTop-right at offset 29
+    if data.len() >= 60 {
+        if let Ok(value) = read_int16s(&data[58..60], byte_order) {
+            tags.push(("AFStatusTop-right".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusBottom-right at offset 31
+    if data.len() >= 64 {
+        if let Ok(value) = read_int16s(&data[62..64], byte_order) {
+            tags.push(("AFStatusBottom-right".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusBottom at offset 33
+    if data.len() >= 68 {
+        if let Ok(value) = read_int16s(&data[66..68], byte_order) {
+            tags.push(("AFStatusBottom".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusMiddleHorizontal at offset 35
+    if data.len() >= 72 {
+        if let Ok(value) = read_int16s(&data[70..72], byte_order) {
+            tags.push(("AFStatusMiddleHorizontal".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusCenterVertical at offset 37
+    if data.len() >= 76 {
+        if let Ok(value) = read_int16s(&data[74..76], byte_order) {
+            tags.push(("AFStatusCenterVertical".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusTop at offset 39
+    if data.len() >= 80 {
+        if let Ok(value) = read_int16s(&data[78..80], byte_order) {
+            tags.push(("AFStatusTop".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusTop-left at offset 41
+    if data.len() >= 84 {
+        if let Ok(value) = read_int16s(&data[82..84], byte_order) {
+            tags.push(("AFStatusTop-left".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusBottom-left at offset 43
+    if data.len() >= 88 {
+        if let Ok(value) = read_int16s(&data[86..88], byte_order) {
+            tags.push(("AFStatusBottom-left".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusLeft at offset 45
+    if data.len() >= 92 {
+        if let Ok(value) = read_int16s(&data[90..92], byte_order) {
+            tags.push(("AFStatusLeft".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusCenterHorizontal at offset 47
+    if data.len() >= 96 {
+        if let Ok(value) = read_int16s(&data[94..96], byte_order) {
+            tags.push(("AFStatusCenterHorizontal".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusRight at offset 49
+    if data.len() >= 100 {
+        if let Ok(value) = read_int16s(&data[98..100], byte_order) {
+            tags.push(("AFStatusRight".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_camerainfo3(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // LensSpec at offset 0
+    if data.len() >= 16 {
+        // TODO: Handle format undef
+    }
+
+    // FocalLength at offset 14
+    if data.len() >= 30 {
+        // TODO: Handle format int16u
+    }
+
+    // FocalLengthTeleZoom at offset 16
+    if data.len() >= 34 {
+        // TODO: Handle format int16u
+    }
+
+    // AFPointSelected at offset 20
+
+    // FocusMode at offset 21
+
+    // AFPoint at offset 24
+
+    // FocusStatus at offset 25
+
+    // AFStatusActiveSensor at offset 27
+    if data.len() >= 56 {
+        if let Ok(value) = read_int16s(&data[54..56], byte_order) {
+            tags.push(("AFStatusActiveSensor".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFPointSelected at offset 28
+
+    // AFStatusBottom-right at offset 31
+    if data.len() >= 64 {
+        if let Ok(value) = read_int16s(&data[62..64], byte_order) {
+            tags.push(("AFStatusBottom-right".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFPoint at offset 32
+
+    // AFStatusCenterVertical at offset 37
+    if data.len() >= 76 {
+        if let Ok(value) = read_int16s(&data[74..76], byte_order) {
+            tags.push(("AFStatusCenterVertical".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusTop at offset 39
+    if data.len() >= 80 {
+        if let Ok(value) = read_int16s(&data[78..80], byte_order) {
+            tags.push(("AFStatusTop".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusTop-left at offset 41
+    if data.len() >= 84 {
+        if let Ok(value) = read_int16s(&data[82..84], byte_order) {
+            tags.push(("AFStatusTop-left".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusBottom-left at offset 43
+    if data.len() >= 88 {
+        if let Ok(value) = read_int16s(&data[86..88], byte_order) {
+            tags.push(("AFStatusBottom-left".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusLeft at offset 45
+    if data.len() >= 92 {
+        if let Ok(value) = read_int16s(&data[90..92], byte_order) {
+            tags.push(("AFStatusLeft".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusCenterHorizontal at offset 47
+    if data.len() >= 96 {
+        if let Ok(value) = read_int16s(&data[94..96], byte_order) {
+            tags.push(("AFStatusCenterHorizontal".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // AFStatusRight at offset 49
+    if data.len() >= 100 {
+        if let Ok(value) = read_int16s(&data[98..100], byte_order) {
+            tags.push(("AFStatusRight".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_camerainfounknown(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    Ok(tags)
+}
+
+fn process_sony_afinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // AFAreaMode at offset 10
+
+    // FocusMode at offset 11
+
+    // AFStatus79 at offset 125
+    if data.len() >= 315 {
+        if let Ok(values) = read_int16s_array(&data[125..315], byte_order, 95) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("AFStatus79".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // AFPointsUsed at offset 16
+    if data.len() >= 26 {
+        // TODO: Handle format int8u
+    }
+
+    // AFType at offset 2
+
+    // AFPointsUsed at offset 366
+    if data.len() >= 370 {
+        // TODO: Handle format int32u
+    }
+
+    // AFMicroAdj at offset 381
+    if data.len() >= 382 {
+        // TODO: Handle format int8s
+    }
+
+    // ExposureProgram at offset 382
+
+    // AFStatusActiveSensor at offset 4
+    if data.len() >= 6 {
+        if let Ok(value) = read_int16s(&data[4..6], byte_order) {
+            tags.push(("AFStatusActiveSensor".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // FocusMode at offset 5
+
+    // AFPoint at offset 55
+
+    // AFPointInFocus at offset 56
+
+    // AFPointAtShutterRelease at offset 57
+
+    // AFAreaMode at offset 58
+
+    // AFStatusActiveSensor at offset 59
+    if data.len() >= 61 {
+        if let Ok(value) = read_int16s(&data[59..61], byte_order) {
+            tags.push(("AFStatusActiveSensor".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // ExposureProgram at offset 67
+
+    // AFMicroAdj at offset 80
+    if data.len() >= 81 {
+        // TODO: Handle format int8s
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_tag940e(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // TiffMeteringImageWidth at offset 6662
+
+    // TiffMeteringImageHeight at offset 6663
+
+    // TiffMeteringImage at offset 6664
+    if data.len() >= 11944 {
+        // TODO: Handle format undef
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_focusinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ISOSetting at offset 109
+
+    // ISO at offset 111
+
+    // DynamicRangeOptimizerMode at offset 119
+
+    // Rotation at offset 16
+
+    // ImageStabilizationSetting at offset 20
+
+    // DynamicRangeOptimizerMode at offset 21
+
+    // ShutterCount at offset 2118
+    if data.len() >= 4240 {
+        // TODO: Handle format int32u
+    }
+
+    // FocusPosition at offset 2491
+
+    // BracketShotNumber at offset 43
+
+    // TiffMeteringImage at offset 4368
+    if data.len() >= 27936 {
+        // TODO: Handle format undef
+    }
+
+    // WhiteBalanceBracketing at offset 44
+
+    // BracketShotNumber2 at offset 45
+
+    // DynamicRangeOptimizerBracket at offset 46
+
+    // ExposureBracketShotNumber at offset 47
+
+    // ExposureProgram at offset 63
+
+    // CreativeStyle at offset 65
+
+    Ok(tags)
+}
+
+fn process_sony_moreinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // MoreSettings at offset 1
+
+    // MoreInfo0401 at offset 1025
+
+    // TiffMeteringImage at offset 263
+
+    // MoreInfo0201 at offset 513
+
+    Ok(tags)
+}
+
 fn process_sony_tag9406(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
     // BatteryTemperature at offset 5
@@ -3865,146 +3403,789 @@ fn process_sony_tag9406b(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Stri
     Ok(tags)
 }
 
-pub fn process_tag_0x940a_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
+fn process_sony_tag9405a(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // DistortionCorrParamsPresent at offset 1536
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
+    // DistortionCorrection at offset 1537
+
+    // LensFormat at offset 1539
+
+    // LensMount at offset 1540
+
+    // LensType2 at offset 1541
+    if data.len() >= 1543 {
+        // TODO: Handle format int16u
     }
+
+    // LensType at offset 1544
+    if data.len() >= 1546 {
+        // TODO: Handle format int16u
+    }
+
+    // VignettingCorrParams at offset 1610
+    if data.len() >= 1642 {
+        if let Ok(values) = read_int16s_array(&data[1610..1642], byte_order, 16) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "VignettingCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ChromaticAberrationCorrParams at offset 1642
+    if data.len() >= 1706 {
+        if let Ok(values) = read_int16s_array(&data[1642..1706], byte_order, 32) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "ChromaticAberrationCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // DistortionCorrParams at offset 1738
+    if data.len() >= 1770 {
+        if let Ok(values) = read_int16s_array(&data[1738..1770], byte_order, 16) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "DistortionCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    Ok(tags)
 }
 
-pub fn process_tag_0x1003_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
+fn process_sony_tag9405b(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // StopsAboveBaseISO at offset 10
+    if data.len() >= 12 {
+        // TODO: Handle format int16u
     }
+
+    // DistortionCorrParams at offset 100
+    if data.len() >= 132 {
+        if let Ok(values) = read_int16s_array(&data[100..132], byte_order, 16) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "DistortionCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // SonyExposureTime2 at offset 14
+    if data.len() >= 16 {
+        // TODO: Handle format int16u
+    }
+
+    // ExposureTime at offset 16
+    if data.len() >= 18 {
+        // TODO: Handle format rational32u
+    }
+
+    // SonyFNumber at offset 20
+    if data.len() >= 22 {
+        // TODO: Handle format int16u
+    }
+
+    // SonyMaxApertureValue at offset 22
+    if data.len() >= 24 {
+        // TODO: Handle format int16u
+    }
+
+    // SequenceImageNumber at offset 36
+    if data.len() >= 40 {
+        // TODO: Handle format int32u
+    }
+
+    // SonyISO at offset 4
+    if data.len() >= 6 {
+        // TODO: Handle format int16u
+    }
+
+    // ReleaseMode2 at offset 52
+
+    // BaseISO at offset 6
+    if data.len() >= 8 {
+        // TODO: Handle format int16u
+    }
+
+    // SonyImageWidthMax at offset 62
+    if data.len() >= 64 {
+        // TODO: Handle format int16u
+    }
+
+    // SonyImageHeightMax at offset 64
+    if data.len() >= 66 {
+        // TODO: Handle format int16u
+    }
+
+    // HighISONoiseReduction at offset 66
+
+    // LongExposureNoiseReduction at offset 68
+
+    // PictureEffect2 at offset 70
+
+    // ExposureProgram at offset 72
+
+    // CreativeStyle at offset 74
+
+    // Sharpness at offset 82
+    if data.len() >= 83 {
+        // TODO: Handle format int8s
+    }
+
+    // LensZoomPosition at offset 834
+    if data.len() >= 836 {
+        // TODO: Handle format int16u
+    }
+
+    // VignettingCorrParams at offset 842
+    if data.len() >= 874 {
+        if let Ok(values) = read_int16s_array(&data[842..874], byte_order, 16) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "VignettingCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // LensZoomPosition at offset 846
+    if data.len() >= 848 {
+        // TODO: Handle format int16u
+    }
+
+    // VignettingCorrParams at offset 848
+    if data.len() >= 880 {
+        if let Ok(values) = read_int16s_array(&data[848..880], byte_order, 16) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "VignettingCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // LensZoomPosition at offset 858
+    if data.len() >= 860 {
+        // TODO: Handle format int16u
+    }
+
+    // VignettingCorrParams at offset 860
+    if data.len() >= 892 {
+        if let Ok(values) = read_int16s_array(&data[860..892], byte_order, 16) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "VignettingCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // VignettingCorrParams at offset 872
+    if data.len() >= 904 {
+        if let Ok(values) = read_int16s_array(&data[872..904], byte_order, 16) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "VignettingCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ChromaticAberrationCorrParams at offset 892
+    if data.len() >= 956 {
+        if let Ok(values) = read_int16s_array(&data[892..956], byte_order, 32) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "ChromaticAberrationCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // DistortionCorrParamsPresent at offset 90
+
+    // ChromaticAberrationCorrParams at offset 900
+    if data.len() >= 964 {
+        if let Ok(values) = read_int16s_array(&data[900..964], byte_order, 32) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "ChromaticAberrationCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // DistortionCorrection at offset 91
+
+    // ChromaticAberrationCorrParams at offset 924
+    if data.len() >= 988 {
+        if let Ok(values) = read_int16s_array(&data[924..988], byte_order, 32) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "ChromaticAberrationCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // LensFormat at offset 93
+
+    // LensMount at offset 94
+
+    // ChromaticAberrationCorrParams at offset 944
+    if data.len() >= 1008 {
+        if let Ok(values) = read_int16s_array(&data[944..1008], byte_order, 32) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "ChromaticAberrationCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ChromaticAberrationCorrParams at offset 952
+    if data.len() >= 1016 {
+        if let Ok(values) = read_int16s_array(&data[952..1016], byte_order, 32) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "ChromaticAberrationCorrParams".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // LensType2 at offset 96
+    if data.len() >= 98 {
+        // TODO: Handle format int16u
+    }
+
+    // LensType at offset 98
+    if data.len() >= 100 {
+        // TODO: Handle format int16u
+    }
+
+    Ok(tags)
 }
 
-pub fn process_tag_0x20_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
+fn process_sony_tag9400a(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // SequenceFileNumber at offset 12
+    if data.len() >= 16 {
+        // TODO: Handle format int32u
     }
+
+    // ReleaseMode2 at offset 16
+
+    // DigitalZoom at offset 18
+
+    // ShotNumberSincePowerUp at offset 26
+    if data.len() >= 30 {
+        // TODO: Handle format int32u
+    }
+
+    // SequenceLength at offset 34
+
+    // CameraOrientation at offset 40
+
+    // Quality2 at offset 41
+
+    // SonyImageHeight at offset 68
+    if data.len() >= 70 {
+        // TODO: Handle format int16u
+    }
+
+    // SequenceImageNumber at offset 8
+    if data.len() >= 12 {
+        // TODO: Handle format int32u
+    }
+
+    // ModelReleaseYear at offset 82
+    if data.len() >= 83 {
+        // TODO: Handle format int8u
+    }
+
+    Ok(tags)
 }
 
-pub fn process_tag_0x9402_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
+fn process_sony_tag9400b(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // SequenceFileNumber at offset 12
+    if data.len() >= 16 {
+        // TODO: Handle format int32u
     }
+
+    // ReleaseMode2 at offset 16
+
+    // DigitalZoom at offset 18
+
+    // ShotNumberSincePowerUp at offset 22
+    if data.len() >= 26 {
+        // TODO: Handle format int32u
+    }
+
+    // SequenceLength at offset 30
+
+    // CameraOrientation at offset 36
+
+    // Quality2 at offset 37
+
+    // SonyImageHeight at offset 63
+    if data.len() >= 65 {
+        // TODO: Handle format int16u
+    }
+
+    // ModelReleaseYear at offset 70
+    if data.len() >= 71 {
+        // TODO: Handle format int8u
+    }
+
+    // SequenceImageNumber at offset 8
+    if data.len() >= 12 {
+        // TODO: Handle format int32u
+    }
+
+    Ok(tags)
 }
 
-pub fn process_tag_0x10_subdirectory(
+fn process_sony_tag9400c(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ShotNumberSincePowerUp at offset 10
+    if data.len() >= 14 {
+        // TODO: Handle format int32u
+    }
+
+    // SequenceImageNumber at offset 18
+    if data.len() >= 22 {
+        // TODO: Handle format int32u
+    }
+
+    // SequenceLength at offset 22
+
+    // SequenceFileNumber at offset 26
+    if data.len() >= 30 {
+        // TODO: Handle format int32u
+    }
+
+    // SequenceLength at offset 30
+
+    // ShutterType at offset 307
+
+    // ShutterType at offset 313
+
+    // ShutterType at offset 319
+
+    // CameraOrientation at offset 41
+
+    // ModelReleaseYear at offset 83
+    if data.len() >= 84 {
+        // TODO: Handle format int8u
+    }
+
+    // ReleaseMode2 at offset 9
+
+    Ok(tags)
+}
+
+fn process_sony_tag9402(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // TempTest1 at offset 2
+
+    // FocusMode at offset 22
+
+    // AFAreaMode at offset 23
+
+    // AmbientTemperature at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8s
+    }
+
+    // FocusPosition2 at offset 45
+
+    Ok(tags)
+}
+
+pub fn process_tag_0x9404_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x9404_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        15360 => process_sony_camerainfo3(data, byte_order),
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x3000_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x3000_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
-pub fn process_tag_0x9403_subdirectory(
+pub fn process_tag_0x900b_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x900b_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
+}
+
+pub fn process_tag_0x9416_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x9416_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x1003_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x1003_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2010_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2010_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
-pub fn process_tag_0x116_subdirectory(
+pub fn process_tag_0x9403_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x9403_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
+}
+
+pub fn process_tag_0x202a_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x202a_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x4b8_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4b8_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x9050_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x9050_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0xb028_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xb028_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
 }
 
 pub fn process_tag_0xe00_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0xe00_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x9401_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x9401_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x114_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x114_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
     match count {
+        332 => {
+            debug!("Matched count 332 for variant sony_camerasettings2");
+            process_sony_camerasettings2(data, byte_order)
+        }
         _ => Ok(vec![]), // Unknown variant
     }
 }
 
-pub fn process_tag_0x9405_subdirectory(
+pub fn process_tag_0x940a_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x940a_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x940c_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x940c_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
-pub fn process_tag_0x9400_subdirectory(
+pub fn process_tag_0x388_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x388_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x116_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x116_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2044_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2044_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x23_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x23_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x10_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x10_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
     match count {
+        15360 => {
+            debug!("Matched count 15360 for variant sony_camerainfo3");
+            process_sony_camerainfo3(data, byte_order)
+        }
         _ => Ok(vec![]), // Unknown variant
     }
 }
@@ -4013,155 +4194,90 @@ pub fn process_tag_0x940e_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x940e_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
-pub fn process_tag_0xb028_subdirectory(
+pub fn process_tag_0x20_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x20_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x202a_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x2044_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x9050_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x4b8_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x9416_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x23_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x388_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x9404_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x900b_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x9401_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x114_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        332 => process_sony_camerasettings2(data, byte_order),
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x9406_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x9406_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
+}
+
+pub fn process_tag_0x9405_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x9405_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x9400_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x9400_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x9402_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x9402_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
 }
 
 /// Apply PrintConv for a tag from this module
@@ -4232,12 +4348,17 @@ pub fn process_subdirectory(
     value: &TagValue,
     byte_order: ByteOrder,
 ) -> Result<HashMap<String, TagValue>> {
+    use tracing::debug;
     let mut result = HashMap::new();
+
+    debug!("process_subdirectory called for tag_id: 0x{:04x}", tag_id);
 
     if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
         if let Some(SubDirectoryType::Binary { processor }) = &tag_kit.subdirectory {
+            debug!("Found subdirectory processor for tag_id: 0x{:04x}", tag_id);
             let bytes = match value {
                 TagValue::U16Array(arr) => {
+                    debug!("Converting U16Array with {} elements to bytes", arr.len());
                     // Convert U16 array to bytes based on byte order
                     let mut bytes = Vec::with_capacity(arr.len() * 2);
                     for val in arr {
@@ -4252,13 +4373,27 @@ pub fn process_subdirectory(
                 _ => return Ok(result), // Not array data
             };
 
+            debug!("Calling processor with {} bytes", bytes.len());
             // Process subdirectory and collect all extracted tags
-            if let Ok(extracted_tags) = processor(&bytes, byte_order) {
-                for (name, value) in extracted_tags {
-                    result.insert(name, value);
+            match processor(&bytes, byte_order) {
+                Ok(extracted_tags) => {
+                    debug!("Processor returned {} tags", extracted_tags.len());
+                    for (name, value) in extracted_tags {
+                        result.insert(name, value);
+                    }
+                }
+                Err(e) => {
+                    debug!("Processor error: {:?}", e);
                 }
             }
+        } else {
+            debug!(
+                "No subdirectory processor found for tag_id: 0x{:04x}",
+                tag_id
+            );
         }
+    } else {
+        debug!("Tag not found in TAG_KITS: 0x{:04x}", tag_id);
     }
 
     Ok(result)

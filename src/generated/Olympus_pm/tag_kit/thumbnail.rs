@@ -12,7 +12,7 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_69: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0 00 00".to_string(), "None");
     map.insert(
@@ -434,14 +434,14 @@ static PRINT_CONV_69: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_70: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_71: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1027".to_string(), "Spot+Shadow control");
     map.insert("2".to_string(), "Center-weighted average");
@@ -452,7 +452,7 @@ static PRINT_CONV_71: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_72: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_15: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
@@ -470,7 +470,7 @@ pub fn get_thumbnail_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("6 numbers: 1. Make, 2. Unknown, 3. Model, 4. Sub-model, 5-6. Unknown.  Only\n            the Make, Model and Sub-model are used to identify the lens type"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_69),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_12),
             value_conv: Some("my @a=split(\" \",$val); sprintf(\"%x %.2x %.2x\",@a[0,2,3])"),
             subdirectory: None,
         }),
@@ -492,7 +492,7 @@ pub fn get_thumbnail_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_70),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_13),
             value_conv: None,
             subdirectory: None,
         }),
@@ -503,7 +503,7 @@ pub fn get_thumbnail_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_71),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_14),
             value_conv: None,
             subdirectory: None,
         }),
@@ -536,7 +536,7 @@ pub fn get_thumbnail_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_72),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_15),
             value_conv: None,
             subdirectory: None,
         }),

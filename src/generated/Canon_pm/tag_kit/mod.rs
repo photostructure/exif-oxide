@@ -40,29 +40,17 @@ pub enum PrintConvType {
     Manual(&'static str),
 }
 
+/// Type alias for subdirectory processor function
+pub type SubDirectoryProcessor = fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>;
+
 #[derive(Debug, Clone)]
 pub enum SubDirectoryType {
-    Binary {
-        processor: fn(
-            &[u8],
-            crate::tiff_types::ByteOrder,
-        ) -> crate::types::Result<Vec<(String, TagValue)>>,
-    },
+    Binary { processor: SubDirectoryProcessor },
 }
 
 /// All tag kits for Canon_pm
 pub static CANON_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-
-    // thumbnail tags
-    for (id, tag_def) in thumbnail::get_thumbnail_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // datetime tags
-    for (id, tag_def) in datetime::get_datetime_tags() {
-        map.insert(id, tag_def);
-    }
 
     // other tags
     for (id, tag_def) in other::get_other_tags() {
@@ -71,6 +59,16 @@ pub static CANON_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(
 
     // interop tags
     for (id, tag_def) in interop::get_interop_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // datetime tags
+    for (id, tag_def) in datetime::get_datetime_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // thumbnail tags
+    for (id, tag_def) in thumbnail::get_thumbnail_tags() {
         map.insert(id, tag_def);
     }
 
@@ -127,2865 +125,6 @@ fn read_int16s(data: &[u8], byte_order: ByteOrder) -> Result<i16> {
 }
 
 // Subdirectory processing functions
-fn process_canon_facedetect3(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    Ok(tags)
-}
-
-fn process_canon_facedetect2(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    Ok(tags)
-}
-
-fn process_canon_previewimageinfo(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // PreviewQuality at offset 1
-
-    // PreviewImageLength at offset 2
-
-    // PreviewImageStart at offset 5
-
-    Ok(tags)
-}
-
-fn process_canon_colorinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // Saturation at offset 1
-
-    // ColorTone at offset 2
-
-    // ColorSpace at offset 3
-
-    Ok(tags)
-}
-
-fn process_canon_timeinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // TimeZone at offset 1
-
-    // TimeZoneCity at offset 2
-
-    // DaylightSavings at offset 3
-
-    Ok(tags)
-}
-
-fn process_canon_aspectinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // AspectRatio at offset 0
-
-    Ok(tags)
-}
-
-fn process_canon_cropinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    Ok(tags)
-}
-
-fn process_canon_mycolors(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // MyColorMode at offset 2
-
-    Ok(tags)
-}
-
-fn process_canon_filterinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // MiniatureFilter at offset 1025
-
-    // MiniatureFilterOrientation at offset 1026
-
-    // FisheyeFilter at offset 1281
-
-    // PaintingFilter at offset 1537
-
-    // WatercolorFilter at offset 1793
-
-    // GrainyBWFilter at offset 257
-
-    // SoftFocusFilter at offset 513
-
-    // ToyCameraFilter at offset 769
-
-    Ok(tags)
-}
-
-fn process_canon_unknownd30(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    Ok(tags)
-}
-
-fn process_canon_afinfo2(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // AFInfoSize at offset 0
-
-    // AFAreaMode at offset 1
-
-    // AFAreaXPositions at offset 10
-
-    // AFAreaYPositions at offset 11
-
-    // AFPointsInFocus at offset 12
-
-    // PrimaryAFPoint at offset 14
-
-    // NumAFPoints at offset 2
-
-    // ValidAFPoints at offset 3
-
-    // CanonImageWidth at offset 4
-
-    // CanonImageHeight at offset 5
-
-    // AFImageWidth at offset 6
-
-    // AFAreaWidths at offset 8
-
-    // AFAreaHeights at offset 9
-
-    Ok(tags)
-}
-
-fn process_canon_afinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // NumAFPoints at offset 0
-
-    // ValidAFPoints at offset 1
-
-    // AFPointsInFocus at offset 10
-
-    // CanonImageWidth at offset 2
-
-    // CanonImageHeight at offset 3
-
-    // AFImageWidth at offset 4
-
-    // AFAreaXPositions at offset 8
-
-    // AFAreaYPositions at offset 9
-
-    Ok(tags)
-}
-
-fn process_canon_camerasettings(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // MacroMode at offset 1
-
-    // CanonImageSize at offset 10
-
-    // EasyMode at offset 11
-
-    // DigitalZoom at offset 12
-
-    // Contrast at offset 13
-
-    // Saturation at offset 14
-
-    // Sharpness at offset 15
-
-    // CameraISO at offset 16
-
-    // MeteringMode at offset 17
-
-    // FocusRange at offset 18
-
-    // AFPoint at offset 19
-
-    // SelfTimer at offset 2
-
-    // CanonExposureMode at offset 20
-
-    // LensType at offset 22
-    if data.len() >= 44 {
-        // TODO: Handle format int16u
-    }
-
-    // MaxFocalLength at offset 23
-    if data.len() >= 46 {
-        // TODO: Handle format int16u
-    }
-
-    // MinFocalLength at offset 24
-    if data.len() >= 48 {
-        // TODO: Handle format int16u
-    }
-
-    // FocalUnits at offset 25
-
-    // MaxAperture at offset 26
-
-    // MinAperture at offset 27
-
-    // FlashActivity at offset 28
-
-    // FlashBits at offset 29
-
-    // Quality at offset 3
-
-    // FocusContinuous at offset 32
-
-    // AESetting at offset 33
-
-    // ImageStabilization at offset 34
-
-    // DisplayAperture at offset 35
-
-    // SpotMeteringMode at offset 39
-
-    // CanonFlashMode at offset 4
-
-    // PhotoEffect at offset 40
-
-    // ManualFlashOutput at offset 41
-
-    // ColorTone at offset 42
-
-    // SRAWQuality at offset 46
-
-    // ContinuousDrive at offset 5
-
-    // Clarity at offset 51
-
-    // HDR-PQ at offset 52
-
-    // FocusMode at offset 7
-
-    // RecordMode at offset 9
-
-    Ok(tags)
-}
-
-fn process_canon_loginfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // ColorMatrix at offset 10
-
-    // CanonLogVersion at offset 11
-
-    // CompressionFormat at offset 4
-
-    // Sharpness at offset 6
-
-    // Saturation at offset 7
-
-    // ColorTone at offset 8
-
-    // ColorSpace2 at offset 9
-
-    Ok(tags)
-}
-
-fn process_canon_afconfig(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // AFConfigTool at offset 1
-
-    // AutoAFPointSelEOSiTRAF at offset 10
-
-    // LensDriveWhenAFImpossible at offset 11
-
-    // SelectAFAreaSelectionMode at offset 12
-
-    // AFAreaSelectionMethod at offset 13
-
-    // OrientationLinkedAF at offset 14
-
-    // ManualAFPointSelPattern at offset 15
-
-    // AFPointDisplayDuringFocus at offset 16
-
-    // VFDisplayIllumination at offset 17
-
-    // AFStatusViewfinder at offset 18
-
-    // InitialAFPointInServo at offset 19
-
-    // SubjectToDetect at offset 20
-
-    // EyeDetection at offset 24
-
-    // AFAccelDecelTracking at offset 3
-
-    // AIServoFirstImage at offset 5
-
-    // AIServoSecondImage at offset 6
-
-    // AFAssistBeam at offset 8
-
-    // OneShotAFRelease at offset 9
-
-    Ok(tags)
-}
-
-fn process_canon_vignettingcorr(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // VignettingCorrVersion at offset 0
-    if data.len() >= 18446744073709551615 {
-        // TODO: Handle format int8u
-    }
-
-    // OriginalImageWidth at offset 11
-
-    // PeripheralLighting at offset 2
-
-    // DistortionCorrection at offset 3
-
-    // ChromaticAberrationCorr at offset 4
-
-    // ChromaticAberrationCorr at offset 5
-
-    Ok(tags)
-}
-
-fn process_canon_vignettingcorrunknown(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // VignettingCorrVersion at offset 0
-    if data.len() >= 18446744073709551615 {
-        // TODO: Handle format int8u
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_modifiedinfo(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // ModifiedToneCurve at offset 1
-
-    // ModifiedPictureStyle at offset 10
-
-    // ModifiedDigitalGain at offset 11
-
-    // ModifiedSharpness at offset 2
-
-    // ModifiedSharpnessFreq at offset 3
-
-    // ModifiedWhiteBalance at offset 8
-
-    Ok(tags)
-}
-
-fn process_canon_multiexp(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // MultiExposure at offset 1
-
-    // MultiExposureControl at offset 2
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo1d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // FocalLength at offset 10
-    if data.len() >= 12 {
-        // TODO: Handle format int16u
-    }
-
-    // LensType at offset 13
-    if data.len() >= 15 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 14
-    if data.len() >= 16 {
-        // TODO: Handle format int16u
-    }
-
-    // MaxFocalLength at offset 16
-    if data.len() >= 18 {
-        // TODO: Handle format int16u
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // SharpnessFrequency at offset 65
-
-    // Sharpness at offset 66
-    if data.len() >= 67 {
-        // TODO: Handle format int8s
-    }
-
-    // WhiteBalance at offset 68
-
-    // SharpnessFrequency at offset 71
-
-    // WhiteBalance at offset 74
-
-    // PictureStyle at offset 75
-
-    // ColorTemperature at offset 78
-    if data.len() >= 80 {
-        // TODO: Handle format int16u
-    }
-
-    // PictureStyle at offset 81
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo1dmkii(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // JPEGQuality at offset 102
-
-    // PictureStyle at offset 108
-
-    // Saturation at offset 110
-    if data.len() >= 111 {
-        // TODO: Handle format int8s
-    }
-
-    // ColorTone at offset 111
-    if data.len() >= 112 {
-        // TODO: Handle format int8s
-    }
-
-    // Sharpness at offset 114
-    if data.len() >= 115 {
-        // TODO: Handle format int8s
-    }
-
-    // Contrast at offset 115
-    if data.len() >= 116 {
-        // TODO: Handle format int8s
-    }
-
-    // ISO at offset 117
-    if data.len() >= 127 {
-        // TODO: Handle format string
-    }
-
-    // LensType at offset 12
-    if data.len() >= 14 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 17
-    if data.len() >= 19 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 19
-    if data.len() >= 21 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // FocalType at offset 45
-
-    // WhiteBalance at offset 54
-
-    // ColorTemperature at offset 55
-    if data.len() >= 57 {
-        // TODO: Handle format int16uRev
-    }
-
-    // CanonImageSize at offset 57
-    if data.len() >= 59 {
-        // TODO: Handle format int16u
-    }
-
-    // FocalLength at offset 9
-    if data.len() >= 11 {
-        // TODO: Handle format int16uRev
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo1dmkiin(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // PictureStyle at offset 115
-
-    // Sharpness at offset 116
-    if data.len() >= 117 {
-        // TODO: Handle format int8s
-    }
-
-    // Contrast at offset 117
-    if data.len() >= 118 {
-        // TODO: Handle format int8s
-    }
-
-    // Saturation at offset 118
-    if data.len() >= 119 {
-        // TODO: Handle format int8s
-    }
-
-    // ColorTone at offset 119
-    if data.len() >= 120 {
-        // TODO: Handle format int8s
-    }
-
-    // LensType at offset 12
-    if data.len() >= 14 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ISO at offset 121
-    if data.len() >= 131 {
-        // TODO: Handle format string
-    }
-
-    // MinFocalLength at offset 17
-    if data.len() >= 19 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 19
-    if data.len() >= 21 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // WhiteBalance at offset 54
-
-    // ColorTemperature at offset 55
-    if data.len() >= 57 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocalLength at offset 9
-    if data.len() >= 11 {
-        // TODO: Handle format int16uRev
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo1dmkiii(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // TimeStamp1 at offset 1114
-    if data.len() >= 1118 {
-        // TODO: Handle format int32u
-    }
-
-    // TimeStamp at offset 1118
-    if data.len() >= 1122 {
-        // TODO: Handle format int32u
-    }
-
-    // PictureStyle at offset 134
-
-    // CameraTemperature at offset 24
-    if data.len() >= 25 {
-        // TODO: Handle format int8u
-    }
-
-    // MacroMagnification at offset 27
-
-    // LensType at offset 273
-    if data.len() >= 275 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 275
-    if data.len() >= 277 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 277
-    if data.len() >= 279 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocalLength at offset 29
-    if data.len() >= 31 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 310
-    if data.len() >= 322 {
-        // TODO: Handle format string
-    }
-
-    // FileIndex at offset 370
-    if data.len() >= 374 {
-        // TODO: Handle format int32u
-    }
-
-    // ShutterCount at offset 374
-    if data.len() >= 378 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 382
-    if data.len() >= 386 {
-        // TODO: Handle format int32u
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // CameraOrientation at offset 48
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // FocusDistanceUpper at offset 67
-    if data.len() >= 69 {
-        // TODO: Handle format int16uRev
-    }
-
-    // PictureStyleInfo at offset 682
-
-    // FocusDistanceLower at offset 69
-    if data.len() >= 71 {
-        // TODO: Handle format int16uRev
-    }
-
-    // WhiteBalance at offset 94
-    if data.len() >= 96 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 98
-    if data.len() >= 100 {
-        // TODO: Handle format int16u
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo1dmkiv(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // FirmwareVersionLookAhead at offset 0
-
-    // WhiteBalance at offset 120
-    if data.len() >= 242 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 124
-    if data.len() >= 250 {
-        // TODO: Handle format int16u
-    }
-
-    // FlashMeteringMode at offset 21
-
-    // CameraTemperature at offset 25
-    if data.len() >= 51 {
-        // TODO: Handle format int8u
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // FocalLength at offset 30
-    if data.len() >= 62 {
-        // TODO: Handle format int16uRev
-    }
-
-    // LensType at offset 335
-    if data.len() >= 672 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 337
-    if data.len() >= 676 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 339
-    if data.len() >= 680 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 9 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 493
-    if data.len() >= 998 {
-        // TODO: Handle format string
-    }
-
-    // CameraOrientation at offset 53
-
-    // FileIndex at offset 556
-    if data.len() >= 1116 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 568
-    if data.len() >= 1140 {
-        // TODO: Handle format int32u
-    }
-
-    // ISO at offset 6
-    if data.len() >= 13 {
-        // TODO: Handle format int8u
-    }
-
-    // HighlightTonePriority at offset 7
-
-    // MeasuredEV2 at offset 8
-
-    // FocusDistanceUpper at offset 84
-    if data.len() >= 170 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 86
-    if data.len() >= 174 {
-        // TODO: Handle format int16uRev
-    }
-
-    // PictureStyleInfo at offset 872
-
-    // MeasuredEV3 at offset 9
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo1dx(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // FirmwareVersionLookAhead at offset 0
-
-    // PictureStyleInfo at offset 1012
-
-    // CameraOrientation at offset 125
-
-    // FocusDistanceUpper at offset 140
-    if data.len() >= 142 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 142
-    if data.len() >= 144 {
-        // TODO: Handle format int16uRev
-    }
-
-    // WhiteBalance at offset 188
-    if data.len() >= 190 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 192
-    if data.len() >= 194 {
-        // TODO: Handle format int16u
-    }
-
-    // PictureStyle at offset 244
-    if data.len() >= 245 {
-        // TODO: Handle format int8u
-    }
-
-    // CameraTemperature at offset 27
-    if data.len() >= 28 {
-        // TODO: Handle format int8u
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // FocalLength at offset 35
-    if data.len() >= 37 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // LensType at offset 423
-    if data.len() >= 425 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 425
-    if data.len() >= 427 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 427
-    if data.len() >= 429 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 640
-    if data.len() >= 652 {
-        // TODO: Handle format string
-    }
-
-    // FileIndex at offset 720
-    if data.len() >= 724 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 732
-    if data.len() >= 736 {
-        // TODO: Handle format int32u
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo5d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // PictureStyle at offset 108
-    if data.len() >= 109 {
-        // TODO: Handle format int8u
-    }
-
-    // LensType at offset 12
-    if data.len() >= 14 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 147
-    if data.len() >= 149 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 149
-    if data.len() >= 151 {
-        // TODO: Handle format int16uRev
-    }
-
-    // LensType at offset 151
-    if data.len() >= 153 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FirmwareRevision at offset 164
-    if data.len() >= 180 {
-        // TODO: Handle format string
-    }
-
-    // ShortOwnerName at offset 172
-    if data.len() >= 204 {
-        // TODO: Handle format string
-    }
-
-    // DirectoryIndex at offset 204
-    if data.len() >= 208 {
-        // TODO: Handle format int32u
-    }
-
-    // FileIndex at offset 208
-    if data.len() >= 210 {
-        // TODO: Handle format int16u
-    }
-
-    // CameraTemperature at offset 23
-    if data.len() >= 24 {
-        // TODO: Handle format int8u
-    }
-
-    // FilterEffectMonochrome at offset 255
-
-    // ToningEffectMonochrome at offset 264
-
-    // UserDef1PictureStyle at offset 268
-    if data.len() >= 270 {
-        // TODO: Handle format int16u
-    }
-
-    // MacroMagnification at offset 27
-
-    // UserDef2PictureStyle at offset 270
-    if data.len() >= 272 {
-        // TODO: Handle format int16u
-    }
-
-    // UserDef3PictureStyle at offset 272
-    if data.len() >= 274 {
-        // TODO: Handle format int16u
-    }
-
-    // TimeStamp at offset 284
-    if data.len() >= 288 {
-        // TODO: Handle format int32u
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // CameraOrientation at offset 39
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // FocalLength at offset 40
-    if data.len() >= 42 {
-        // TODO: Handle format int16uRev
-    }
-
-    // AFPointsInFocus5D at offset 56
-    if data.len() >= 58 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // WhiteBalance at offset 84
-    if data.len() >= 86 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 88
-    if data.len() >= 90 {
-        // TODO: Handle format int16u
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo5dmkii(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // FirmwareVersionLookAhead at offset 0
-
-    // WhiteBalance at offset 111
-    if data.len() >= 113 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 115
-    if data.len() >= 117 {
-        // TODO: Handle format int16u
-    }
-
-    // PictureStyle at offset 167
-    if data.len() >= 168 {
-        // TODO: Handle format int8u
-    }
-
-    // HighISONoiseReduction at offset 189
-
-    // AutoLightingOptimizer at offset 191
-
-    // FlashMeteringMode at offset 21
-
-    // LensType at offset 230
-    if data.len() >= 232 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 232
-    if data.len() >= 234 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 234
-    if data.len() >= 236 {
-        // TODO: Handle format int16uRev
-    }
-
-    // CameraTemperature at offset 25
-    if data.len() >= 26 {
-        // TODO: Handle format int8u
-    }
-
-    // MacroMagnification at offset 27
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // FocalLength at offset 30
-    if data.len() >= 32 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FirmwareVersion at offset 382
-    if data.len() >= 394 {
-        // TODO: Handle format string
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // FileIndex at offset 443
-    if data.len() >= 447 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 455
-    if data.len() >= 459 {
-        // TODO: Handle format int32u
-    }
-
-    // CameraOrientation at offset 49
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // HighlightTonePriority at offset 7
-
-    // PictureStyleInfo at offset 759
-
-    // FocusDistanceUpper at offset 80
-    if data.len() >= 82 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 82
-    if data.len() >= 84 {
-        // TODO: Handle format int16uRev
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo5dmkiii(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // FirmwareVersionLookAhead at offset 0
-
-    // CameraOrientation at offset 125
-
-    // FocusDistanceUpper at offset 140
-    if data.len() >= 142 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 142
-    if data.len() >= 144 {
-        // TODO: Handle format int16uRev
-    }
-
-    // WhiteBalance at offset 188
-    if data.len() >= 190 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 192
-    if data.len() >= 194 {
-        // TODO: Handle format int16u
-    }
-
-    // PictureStyle at offset 244
-    if data.len() >= 245 {
-        // TODO: Handle format int8u
-    }
-
-    // CameraTemperature at offset 27
-    if data.len() >= 28 {
-        // TODO: Handle format int8u
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // LensType at offset 339
-    if data.len() >= 341 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 341
-    if data.len() >= 343 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 343
-    if data.len() >= 345 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocalLength at offset 35
-    if data.len() >= 37 {
-        // TODO: Handle format int16uRev
-    }
-
-    // LensSerialNumber at offset 356
-    if data.len() >= 366 {
-        // TODO: Handle format undef
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 572
-    if data.len() >= 584 {
-        // TODO: Handle format string
-    }
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // FileIndex at offset 652
-    if data.len() >= 656 {
-        // TODO: Handle format int32u
-    }
-
-    // FileIndex2 at offset 656
-    if data.len() >= 660 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 664
-    if data.len() >= 668 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex2 at offset 668
-    if data.len() >= 672 {
-        // TODO: Handle format int32u
-    }
-
-    // PictureStyleInfo at offset 944
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo6d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // CameraOrientation at offset 131
-
-    // FocusDistanceUpper at offset 146
-    if data.len() >= 148 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 148
-    if data.len() >= 150 {
-        // TODO: Handle format int16uRev
-    }
-
-    // WhiteBalance at offset 194
-    if data.len() >= 196 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 198
-    if data.len() >= 200 {
-        // TODO: Handle format int16u
-    }
-
-    // PictureStyle at offset 250
-    if data.len() >= 251 {
-        // TODO: Handle format int8u
-    }
-
-    // CameraTemperature at offset 27
-    if data.len() >= 28 {
-        // TODO: Handle format int8u
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // FocalLength at offset 35
-    if data.len() >= 37 {
-        // TODO: Handle format int16uRev
-    }
-
-    // LensType at offset 353
-    if data.len() >= 355 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 355
-    if data.len() >= 357 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 357
-    if data.len() >= 359 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 598
-    if data.len() >= 610 {
-        // TODO: Handle format string
-    }
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // FileIndex at offset 682
-    if data.len() >= 686 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 694
-    if data.len() >= 698 {
-        // TODO: Handle format int32u
-    }
-
-    // PictureStyleInfo at offset 966
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo7d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // FirmwareVersionLookAhead at offset 0
-
-    // WhiteBalance at offset 119
-    if data.len() >= 121 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 123
-    if data.len() >= 125 {
-        // TODO: Handle format int16u
-    }
-
-    // CameraPictureStyle at offset 175
-
-    // HighISONoiseReduction at offset 201
-
-    // FlashMeteringMode at offset 21
-
-    // CameraTemperature at offset 25
-    if data.len() >= 26 {
-        // TODO: Handle format int8u
-    }
-
-    // LensType at offset 274
-    if data.len() >= 276 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 276
-    if data.len() >= 278 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 278
-    if data.len() >= 280 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // FocalLength at offset 30
-    if data.len() >= 32 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 428
-    if data.len() >= 440 {
-        // TODO: Handle format string
-    }
-
-    // FileIndex at offset 491
-    if data.len() >= 495 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 503
-    if data.len() >= 507 {
-        // TODO: Handle format int32u
-    }
-
-    // CameraOrientation at offset 53
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // HighlightTonePriority at offset 7
-
-    // MeasuredEV2 at offset 8
-
-    // PictureStyleInfo at offset 807
-
-    // FocusDistanceUpper at offset 84
-    if data.len() >= 86 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 86
-    if data.len() >= 88 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MeasuredEV at offset 9
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo40d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // WhiteBalance at offset 111
-    if data.len() >= 113 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 115
-    if data.len() >= 117 {
-        // TODO: Handle format int16u
-    }
-
-    // FlashMeteringMode at offset 21
-
-    // LensType at offset 214
-    if data.len() >= 216 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 216
-    if data.len() >= 218 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 218
-    if data.len() >= 220 {
-        // TODO: Handle format int16uRev
-    }
-
-    // LensModel at offset 2347
-    if data.len() >= 2475 {
-        // TODO: Handle format string
-    }
-
-    // CameraTemperature at offset 24
-    if data.len() >= 25 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 255
-    if data.len() >= 267 {
-        // TODO: Handle format string
-    }
-
-    // MacroMagnification at offset 27
-
-    // FocalLength at offset 29
-    if data.len() >= 31 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // FileIndex at offset 307
-    if data.len() >= 311 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 319
-    if data.len() >= 323 {
-        // TODO: Handle format int32u
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // CameraOrientation at offset 48
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // PictureStyleInfo at offset 603
-
-    // FocusDistanceUpper at offset 67
-    if data.len() >= 69 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 69
-    if data.len() >= 71 {
-        // TODO: Handle format int16uRev
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo50d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // FirmwareVersionLookAhead at offset 0
-
-    // WhiteBalance at offset 111
-    if data.len() >= 113 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 115
-    if data.len() >= 117 {
-        // TODO: Handle format int16u
-    }
-
-    // PictureStyle at offset 167
-    if data.len() >= 168 {
-        // TODO: Handle format int8u
-    }
-
-    // HighISONoiseReduction at offset 189
-
-    // AutoLightingOptimizer at offset 191
-
-    // FlashMeteringMode at offset 21
-
-    // LensType at offset 234
-    if data.len() >= 236 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 236
-    if data.len() >= 238 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 238
-    if data.len() >= 240 {
-        // TODO: Handle format int16uRev
-    }
-
-    // CameraTemperature at offset 25
-    if data.len() >= 26 {
-        // TODO: Handle format int8u
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // FocalLength at offset 30
-    if data.len() >= 32 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FirmwareVersion at offset 350
-    if data.len() >= 362 {
-        // TODO: Handle format string
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // FileIndex at offset 411
-    if data.len() >= 415 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 423
-    if data.len() >= 427 {
-        // TODO: Handle format int32u
-    }
-
-    // CameraOrientation at offset 49
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // HighlightTonePriority at offset 7
-
-    // PictureStyleInfo at offset 727
-
-    // FocusDistanceUpper at offset 80
-    if data.len() >= 82 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 82
-    if data.len() >= 84 {
-        // TODO: Handle format int16uRev
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo60d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // ColorTemperature at offset 125
-    if data.len() >= 127 {
-        // TODO: Handle format int16u
-    }
-
-    // LensType at offset 232
-    if data.len() >= 234 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 234
-    if data.len() >= 236 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 236
-    if data.len() >= 238 {
-        // TODO: Handle format int16uRev
-    }
-
-    // CameraTemperature at offset 25
-    if data.len() >= 26 {
-        // TODO: Handle format int8u
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // FocalLength at offset 30
-    if data.len() >= 32 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 409
-    if data.len() >= 421 {
-        // TODO: Handle format string
-    }
-
-    // FileIndex at offset 473
-    if data.len() >= 477 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 485
-    if data.len() >= 489 {
-        // TODO: Handle format int32u
-    }
-
-    // CameraOrientation at offset 54
-
-    // CameraOrientation at offset 58
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // PictureStyleInfo at offset 761
-
-    // PictureStyleInfo at offset 801
-
-    // FocusDistanceUpper at offset 85
-    if data.len() >= 87 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 87
-    if data.len() >= 89 {
-        // TODO: Handle format int16uRev
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo70d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // CameraOrientation at offset 132
-
-    // FocusDistanceUpper at offset 147
-    if data.len() >= 149 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 149
-    if data.len() >= 151 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ColorTemperature at offset 199
-    if data.len() >= 201 {
-        // TODO: Handle format int16u
-    }
-
-    // CameraTemperature at offset 27
-    if data.len() >= 28 {
-        // TODO: Handle format int8u
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // FocalLength at offset 35
-    if data.len() >= 37 {
-        // TODO: Handle format int16uRev
-    }
-
-    // LensType at offset 358
-    if data.len() >= 360 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 360
-    if data.len() >= 362 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 362
-    if data.len() >= 364 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 606
-    if data.len() >= 618 {
-        // TODO: Handle format string
-    }
-
-    // FileIndex at offset 691
-    if data.len() >= 695 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 703
-    if data.len() >= 707 {
-        // TODO: Handle format int32u
-    }
-
-    // PictureStyleInfo at offset 975
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo80d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // FirmwareVersion at offset 1114
-    if data.len() >= 1126 {
-        // TODO: Handle format string
-    }
-
-    // FileIndex at offset 1198
-    if data.len() >= 1202 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 1210
-    if data.len() >= 1214 {
-        // TODO: Handle format int32u
-    }
-
-    // CameraOrientation at offset 150
-
-    // FocusDistanceUpper at offset 165
-    if data.len() >= 167 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 167
-    if data.len() >= 169 {
-        // TODO: Handle format int16uRev
-    }
-
-    // CameraTemperature at offset 27
-    if data.len() >= 28 {
-        // TODO: Handle format int8u
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // ColorTemperature at offset 314
-    if data.len() >= 316 {
-        // TODO: Handle format int16u
-    }
-
-    // FocalLength at offset 35
-    if data.len() >= 37 {
-        // TODO: Handle format int16uRev
-    }
-
-    // LensType at offset 393
-    if data.len() >= 395 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 395
-    if data.len() >= 397 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 397
-    if data.len() >= 399 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo450d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // WhiteBalance at offset 111
-    if data.len() >= 113 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 115
-    if data.len() >= 117 {
-        // TODO: Handle format int16u
-    }
-
-    // FlashMeteringMode at offset 21
-
-    // LensType at offset 222
-    if data.len() >= 224 {
-        // TODO: Handle format int16uRev
-    }
-
-    // LensModel at offset 2355
-    if data.len() >= 2483 {
-        // TODO: Handle format string
-    }
-
-    // CameraTemperature at offset 24
-    if data.len() >= 25 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 263
-    if data.len() >= 275 {
-        // TODO: Handle format string
-    }
-
-    // MacroMagnification at offset 27
-
-    // OwnerName at offset 271
-    if data.len() >= 335 {
-        // TODO: Handle format string
-    }
-
-    // FocalLength at offset 29
-    if data.len() >= 31 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // DirectoryIndex at offset 307
-    if data.len() >= 311 {
-        // TODO: Handle format int32u
-    }
-
-    // FileIndex at offset 319
-    if data.len() >= 323 {
-        // TODO: Handle format int32u
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // CameraOrientation at offset 48
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // PictureStyleInfo at offset 611
-
-    // FocusDistanceUpper at offset 67
-    if data.len() >= 69 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 69
-    if data.len() >= 71 {
-        // TODO: Handle format int16uRev
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo500d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // WhiteBalance at offset 115
-    if data.len() >= 117 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 119
-    if data.len() >= 121 {
-        // TODO: Handle format int16u
-    }
-
-    // PictureStyle at offset 171
-    if data.len() >= 172 {
-        // TODO: Handle format int8u
-    }
-
-    // HighISONoiseReduction at offset 188
-
-    // AutoLightingOptimizer at offset 190
-
-    // FlashMeteringMode at offset 21
-
-    // LensType at offset 246
-    if data.len() >= 248 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 248
-    if data.len() >= 250 {
-        // TODO: Handle format int16uRev
-    }
-
-    // CameraTemperature at offset 25
-    if data.len() >= 26 {
-        // TODO: Handle format int8u
-    }
-
-    // MaxFocalLength at offset 250
-    if data.len() >= 252 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // FocalLength at offset 30
-    if data.len() >= 32 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 400
-    if data.len() >= 412 {
-        // TODO: Handle format string
-    }
-
-    // FileIndex at offset 467
-    if data.len() >= 471 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 479
-    if data.len() >= 483 {
-        // TODO: Handle format int32u
-    }
-
-    // CameraOrientation at offset 49
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // HighlightTonePriority at offset 7
-
-    // PictureStyleInfo at offset 779
-
-    // FocusDistanceUpper at offset 80
-    if data.len() >= 82 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 82
-    if data.len() >= 84 {
-        // TODO: Handle format int16uRev
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo550d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // WhiteBalance at offset 120
-    if data.len() >= 122 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 124
-    if data.len() >= 126 {
-        // TODO: Handle format int16u
-    }
-
-    // PictureStyle at offset 176
-    if data.len() >= 177 {
-        // TODO: Handle format int8u
-    }
-
-    // FlashMeteringMode at offset 21
-
-    // CameraTemperature at offset 25
-    if data.len() >= 26 {
-        // TODO: Handle format int8u
-    }
-
-    // LensType at offset 255
-    if data.len() >= 257 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 257
-    if data.len() >= 259 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 259
-    if data.len() >= 261 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // FocalLength at offset 30
-    if data.len() >= 32 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 420
-    if data.len() >= 432 {
-        // TODO: Handle format string
-    }
-
-    // FileIndex at offset 484
-    if data.len() >= 488 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 496
-    if data.len() >= 500 {
-        // TODO: Handle format int32u
-    }
-
-    // CameraOrientation at offset 53
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // HighlightTonePriority at offset 7
-
-    // PictureStyleInfo at offset 796
-
-    // FocusDistanceUpper at offset 84
-    if data.len() >= 86 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 86
-    if data.len() >= 88 {
-        // TODO: Handle format int16uRev
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo600d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // WhiteBalance at offset 123
-    if data.len() >= 125 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 127
-    if data.len() >= 129 {
-        // TODO: Handle format int16u
-    }
-
-    // PictureStyle at offset 179
-    if data.len() >= 180 {
-        // TODO: Handle format int8u
-    }
-
-    // FlashMeteringMode at offset 21
-
-    // LensType at offset 234
-    if data.len() >= 236 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 236
-    if data.len() >= 238 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 238
-    if data.len() >= 240 {
-        // TODO: Handle format int16uRev
-    }
-
-    // CameraTemperature at offset 25
-    if data.len() >= 26 {
-        // TODO: Handle format int8u
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // FocalLength at offset 30
-    if data.len() >= 32 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 411
-    if data.len() >= 423 {
-        // TODO: Handle format string
-    }
-
-    // FileIndex at offset 475
-    if data.len() >= 479 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 487
-    if data.len() >= 491 {
-        // TODO: Handle format int32u
-    }
-
-    // CameraOrientation at offset 56
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // HighlightTonePriority at offset 7
-
-    // PictureStyleInfo at offset 763
-
-    // FocusDistanceUpper at offset 87
-    if data.len() >= 89 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 89
-    if data.len() >= 91 {
-        // TODO: Handle format int16uRev
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo650d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // CameraOrientation at offset 125
-
-    // FocusDistanceUpper at offset 140
-    if data.len() >= 142 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 142
-    if data.len() >= 144 {
-        // TODO: Handle format int16uRev
-    }
-
-    // WhiteBalance at offset 188
-    if data.len() >= 190 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 192
-    if data.len() >= 194 {
-        // TODO: Handle format int16u
-    }
-
-    // PictureStyle at offset 244
-    if data.len() >= 245 {
-        // TODO: Handle format int8u
-    }
-
-    // CameraTemperature at offset 27
-    if data.len() >= 28 {
-        // TODO: Handle format int8u
-    }
-
-    // LensType at offset 295
-    if data.len() >= 297 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 297
-    if data.len() >= 299 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 299
-    if data.len() >= 301 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // FocalLength at offset 35
-    if data.len() >= 37 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 539
-    if data.len() >= 551 {
-        // TODO: Handle format string
-    }
-
-    // FirmwareVersion at offset 544
-    if data.len() >= 556 {
-        // TODO: Handle format string
-    }
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // FileIndex at offset 624
-    if data.len() >= 628 {
-        // TODO: Handle format int32u
-    }
-
-    // FileIndex at offset 628
-    if data.len() >= 632 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 636
-    if data.len() >= 640 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 640
-    if data.len() >= 644 {
-        // TODO: Handle format int32u
-    }
-
-    // PictureStyleInfo at offset 912
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo750d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // FirmwareVersion at offset 1085
-    if data.len() >= 1097 {
-        // TODO: Handle format string
-    }
-
-    // FirmwareVersion at offset 1097
-    if data.len() >= 1109 {
-        // TODO: Handle format string
-    }
-
-    // CameraOrientation at offset 150
-
-    // FocusDistanceUpper at offset 165
-    if data.len() >= 167 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 167
-    if data.len() >= 169 {
-        // TODO: Handle format int16uRev
-    }
-
-    // CameraTemperature at offset 27
-    if data.len() >= 28 {
-        // TODO: Handle format int8u
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // WhiteBalance at offset 305
-    if data.len() >= 307 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 309
-    if data.len() >= 311 {
-        // TODO: Handle format int16u
-    }
-
-    // FocalLength at offset 35
-    if data.len() >= 37 {
-        // TODO: Handle format int16uRev
-    }
-
-    // PictureStyle at offset 361
-    if data.len() >= 362 {
-        // TODO: Handle format int8u
-    }
-
-    // LensType at offset 388
-    if data.len() >= 390 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 390
-    if data.len() >= 392 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 392
-    if data.len() >= 394 {
-        // TODO: Handle format int16uRev
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfo1000d(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // WhiteBalance at offset 111
-    if data.len() >= 113 {
-        // TODO: Handle format int16u
-    }
-
-    // ColorTemperature at offset 115
-    if data.len() >= 117 {
-        // TODO: Handle format int16u
-    }
-
-    // FlashMeteringMode at offset 21
-
-    // LensType at offset 226
-    if data.len() >= 228 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MinFocalLength at offset 228
-    if data.len() >= 230 {
-        // TODO: Handle format int16uRev
-    }
-
-    // MaxFocalLength at offset 230
-    if data.len() >= 232 {
-        // TODO: Handle format int16uRev
-    }
-
-    // LensModel at offset 2359
-    if data.len() >= 2487 {
-        // TODO: Handle format string
-    }
-
-    // CameraTemperature at offset 24
-    if data.len() >= 25 {
-        // TODO: Handle format int8u
-    }
-
-    // FirmwareVersion at offset 267
-    if data.len() >= 279 {
-        // TODO: Handle format string
-    }
-
-    // MacroMagnification at offset 27
-
-    // FocalLength at offset 29
-    if data.len() >= 31 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FNumber at offset 3
-    if data.len() >= 4 {
-        // TODO: Handle format int8u
-    }
-
-    // DirectoryIndex at offset 311
-    if data.len() >= 315 {
-        // TODO: Handle format int32u
-    }
-
-    // FileIndex at offset 323
-    if data.len() >= 327 {
-        // TODO: Handle format int32u
-    }
-
-    // ExposureTime at offset 4
-    if data.len() >= 5 {
-        // TODO: Handle format int8u
-    }
-
-    // CameraOrientation at offset 48
-
-    // ISO at offset 6
-    if data.len() >= 7 {
-        // TODO: Handle format int8u
-    }
-
-    // PictureStyleInfo at offset 615
-
-    // FocusDistanceUpper at offset 67
-    if data.len() >= 69 {
-        // TODO: Handle format int16uRev
-    }
-
-    // FocusDistanceLower at offset 69
-    if data.len() >= 71 {
-        // TODO: Handle format int16uRev
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfor6(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // ShutterCount at offset 2801
-    if data.len() >= 5606 {
-        // TODO: Handle format int32u
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfor6m2(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // ShutterCount at offset 3369
-    if data.len() >= 6742 {
-        // TODO: Handle format int32u
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfog5xii(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // ShutterCount at offset 2709
-    if data.len() >= 5422 {
-        // TODO: Handle format int32u
-    }
-
-    // DirectoryIndex at offset 2849
-    if data.len() >= 5702 {
-        // TODO: Handle format int32u
-    }
-
-    // FileIndex at offset 2861
-    if data.len() >= 5726 {
-        // TODO: Handle format int32u
-    }
-
-    // ShutterCount at offset 659
-    if data.len() >= 1322 {
-        // TODO: Handle format int32u
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfopowershot(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // ISO at offset 0
-
-    // CameraTemperature at offset 135
-
-    // CameraTemperature at offset 145
-
-    // FNumber at offset 5
-
-    // ExposureTime at offset 6
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfopowershot2(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // ISO at offset 1
-
-    // CameraTemperature at offset 153
-
-    // CameraTemperature at offset 159
-
-    // CameraTemperature at offset 164
-
-    // CameraTemperature at offset 168
-
-    // CameraTemperature at offset 261
-
-    // FNumber at offset 6
-
-    // ExposureTime at offset 7
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfounknown32(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // CameraTemperature at offset -3
-
-    // CameraTemperature at offset 100
-
-    // CameraTemperature at offset 71
-
-    // CameraTemperature at offset 83
-
-    // CameraTemperature at offset 91
-
-    // CameraTemperature at offset 92
-
-    Ok(tags)
-}
-
-fn process_canon_camerainfounknown16(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    Ok(tags)
-}
-
-fn process_canon_camerainfounknown(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // FirmwareVersion at offset 1473
-    if data.len() >= 1485 {
-        // TODO: Handle format string
-    }
-
-    // LensSerialNumber at offset 363
-    if data.len() >= 373 {
-        // TODO: Handle format undef
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_focallength(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // FocalType at offset 0
-
-    // FocalLength at offset 1
-
-    Ok(tags)
-}
-
-fn process_canon_levelinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // RollAngle at offset 4
-
-    // PitchAngle at offset 5
-
-    // FocalLength at offset 7
-
-    // MinFocalLength2 at offset 8
-
-    // MaxFocalLength2 at offset 9
-
-    Ok(tags)
-}
-
-fn process_canon_colorbalance(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // WB_RGGBLevelsAuto at offset 1
-    if data.len() >= 10 {
-        if let Ok(values) = read_int16s_array(&data[2..10], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("WB_RGGBLevelsAuto".to_string(), TagValue::String(value_str)));
-        }
-    }
-
-    // WB_RGGBLevelsCloudy at offset 13
-    if data.len() >= 34 {
-        if let Ok(values) = read_int16s_array(&data[26..34], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "WB_RGGBLevelsCloudy".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // WB_RGGBLevelsTungsten at offset 17
-    if data.len() >= 42 {
-        if let Ok(values) = read_int16s_array(&data[34..42], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "WB_RGGBLevelsTungsten".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // WB_RGGBLevelsFluorescent at offset 21
-    if data.len() >= 50 {
-        if let Ok(values) = read_int16s_array(&data[42..50], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "WB_RGGBLevelsFluorescent".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // WB_RGGBLevelsFlash at offset 25
-    if data.len() >= 58 {
-        if let Ok(values) = read_int16s_array(&data[50..58], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "WB_RGGBLevelsFlash".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // WB_RGGBLevelsKelvin at offset 33
-    if data.len() >= 74 {
-        if let Ok(values) = read_int16s_array(&data[66..74], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "WB_RGGBLevelsKelvin".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // WB_RGGBBlackLevels at offset 37
-    if data.len() >= 82 {
-        if let Ok(values) = read_int16s_array(&data[74..82], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "WB_RGGBBlackLevels".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // WB_RGGBLevelsDaylight at offset 5
-    if data.len() >= 18 {
-        if let Ok(values) = read_int16s_array(&data[10..18], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "WB_RGGBLevelsDaylight".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    // WB_RGGBLevelsShade at offset 9
-    if data.len() >= 26 {
-        if let Ok(values) = read_int16s_array(&data[18..26], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "WB_RGGBLevelsShade".to_string(),
-                TagValue::String(value_str),
-            ));
-        }
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_panorama(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // PanoramaDirection at offset 5
-
-    Ok(tags)
-}
-
-fn process_canon_rawburstinfo(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    Ok(tags)
-}
-
-fn process_canon_lensinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // LensSerialNumber at offset 0
-    if data.len() >= 10 {
-        // TODO: Handle format undef
-    }
-
-    Ok(tags)
-}
-
-fn process_canon_flags(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    Ok(tags)
-}
-
-fn process_canon_vignettingcorr2(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // PeripheralLightingSetting at offset 5
-
-    // ChromaticAberrationSetting at offset 6
-
-    // DistortionCorrectionSetting at offset 7
-
-    // DigitalLensOptimizerSetting at offset 9
-
-    Ok(tags)
-}
-
 fn process_canon_colordata1(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
     // WB_RGGBLevelsAsShot at offset 25
@@ -8520,21 +5659,245 @@ fn process_canon_colordataunknown(
     Ok(tags)
 }
 
-fn process_canon_measuredcolor(
+fn process_canon_rawburstinfo(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
-    // MeasuredRGGB at offset 1
-    if data.len() >= 8 {
-        if let Ok(values) = read_int16u_array(&data[0..8], byte_order, 4) {
+    Ok(tags)
+}
+
+fn process_canon_vignettingcorr2(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // PeripheralLightingSetting at offset 5
+
+    // ChromaticAberrationSetting at offset 6
+
+    // DistortionCorrectionSetting at offset 7
+
+    // DigitalLensOptimizerSetting at offset 9
+
+    Ok(tags)
+}
+
+fn process_canon_flags(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    Ok(tags)
+}
+
+fn process_canon_previewimageinfo(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // PreviewQuality at offset 1
+
+    // PreviewImageLength at offset 2
+
+    // PreviewImageStart at offset 5
+
+    Ok(tags)
+}
+
+fn process_canon_facedetect2(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    Ok(tags)
+}
+
+fn process_canon_afmicroadj(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // AFMicroAdjMode at offset 1
+
+    // AFMicroAdjValue at offset 2
+    if data.len() >= 6 {
+        // TODO: Handle format rational64s
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_colorbalance(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // WB_RGGBLevelsAuto at offset 1
+    if data.len() >= 10 {
+        if let Ok(values) = read_int16s_array(&data[2..10], byte_order, 4) {
             let value_str = values
                 .iter()
                 .map(|v| v.to_string())
                 .collect::<Vec<_>>()
                 .join(" ");
-            tags.push(("MeasuredRGGB".to_string(), TagValue::String(value_str)));
+            tags.push(("WB_RGGBLevelsAuto".to_string(), TagValue::String(value_str)));
         }
+    }
+
+    // WB_RGGBLevelsCloudy at offset 13
+    if data.len() >= 34 {
+        if let Ok(values) = read_int16s_array(&data[26..34], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsCloudy".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsTungsten at offset 17
+    if data.len() >= 42 {
+        if let Ok(values) = read_int16s_array(&data[34..42], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsTungsten".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsFluorescent at offset 21
+    if data.len() >= 50 {
+        if let Ok(values) = read_int16s_array(&data[42..50], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsFluorescent".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsFlash at offset 25
+    if data.len() >= 58 {
+        if let Ok(values) = read_int16s_array(&data[50..58], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsFlash".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsKelvin at offset 33
+    if data.len() >= 74 {
+        if let Ok(values) = read_int16s_array(&data[66..74], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsKelvin".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBBlackLevels at offset 37
+    if data.len() >= 82 {
+        if let Ok(values) = read_int16s_array(&data[74..82], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBBlackLevels".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsDaylight at offset 5
+    if data.len() >= 18 {
+        if let Ok(values) = read_int16s_array(&data[10..18], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsDaylight".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsShade at offset 9
+    if data.len() >= 26 {
+        if let Ok(values) = read_int16s_array(&data[18..26], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsShade".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_modifiedinfo(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ModifiedToneCurve at offset 1
+
+    // ModifiedPictureStyle at offset 10
+
+    // ModifiedDigitalGain at offset 11
+
+    // ModifiedSharpness at offset 2
+
+    // ModifiedSharpnessFreq at offset 3
+
+    // ModifiedWhiteBalance at offset 8
+
+    Ok(tags)
+}
+
+fn process_canon_timeinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // TimeZone at offset 1
+
+    // TimeZoneCity at offset 2
+
+    // DaylightSavings at offset 3
+
+    Ok(tags)
+}
+
+fn process_canon_lensinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // LensSerialNumber at offset 0
+    if data.len() >= 10 {
+        // TODO: Handle format undef
     }
 
     Ok(tags)
@@ -8549,6 +5912,49 @@ fn process_canon_hdrinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Stri
     Ok(tags)
 }
 
+fn process_canon_afinfo2(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // AFInfoSize at offset 0
+
+    // AFAreaMode at offset 1
+
+    // AFAreaXPositions at offset 10
+
+    // AFAreaYPositions at offset 11
+
+    // AFPointsInFocus at offset 12
+
+    // PrimaryAFPoint at offset 14
+
+    // NumAFPoints at offset 2
+
+    // ValidAFPoints at offset 3
+
+    // CanonImageWidth at offset 4
+
+    // CanonImageHeight at offset 5
+
+    // AFImageWidth at offset 6
+
+    // AFAreaWidths at offset 8
+
+    // AFAreaHeights at offset 9
+
+    Ok(tags)
+}
+
+fn process_canon_focallength(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // FocalType at offset 0
+
+    // FocalLength at offset 1
+
+    Ok(tags)
+}
+
 fn process_canon_contrastinfo(
     data: &[u8],
     byte_order: ByteOrder,
@@ -8559,46 +5965,240 @@ fn process_canon_contrastinfo(
     Ok(tags)
 }
 
-fn process_canon_movieinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+fn process_canon_multiexp(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
-    // FrameRate at offset 1
+    // MultiExposure at offset 1
 
-    // Duration at offset 106
-    if data.len() >= 214 {
-        // TODO: Handle format int32u
+    // MultiExposureControl at offset 2
+
+    Ok(tags)
+}
+
+fn process_canon_sensorinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // BlackMaskLeftBorder at offset 9
+
+    Ok(tags)
+}
+
+fn process_canon_facedetect3(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    Ok(tags)
+}
+
+fn process_canon_afconfig(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // AFConfigTool at offset 1
+
+    // AutoAFPointSelEOSiTRAF at offset 10
+
+    // LensDriveWhenAFImpossible at offset 11
+
+    // SelectAFAreaSelectionMode at offset 12
+
+    // AFAreaSelectionMethod at offset 13
+
+    // OrientationLinkedAF at offset 14
+
+    // ManualAFPointSelPattern at offset 15
+
+    // AFPointDisplayDuringFocus at offset 16
+
+    // VFDisplayIllumination at offset 17
+
+    // AFStatusViewfinder at offset 18
+
+    // InitialAFPointInServo at offset 19
+
+    // SubjectToDetect at offset 20
+
+    // EyeDetection at offset 24
+
+    // AFAccelDecelTracking at offset 3
+
+    // AIServoFirstImage at offset 5
+
+    // AIServoSecondImage at offset 6
+
+    // AFAssistBeam at offset 8
+
+    // OneShotAFRelease at offset 9
+
+    Ok(tags)
+}
+
+fn process_canon_loginfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ColorMatrix at offset 10
+
+    // CanonLogVersion at offset 11
+
+    // CompressionFormat at offset 4
+
+    // Sharpness at offset 6
+
+    // Saturation at offset 7
+
+    // ColorTone at offset 8
+
+    // ColorSpace2 at offset 9
+
+    Ok(tags)
+}
+
+fn process_canon_lightingopt(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // PeripheralIlluminationCorr at offset 1
+
+    // DigitalLensOptimizer at offset 10
+
+    // DualPixelRaw at offset 11
+
+    // AutoLightingOptimizer at offset 2
+
+    // HighlightTonePriority at offset 3
+
+    // LongExposureNoiseReduction at offset 4
+
+    // HighISONoiseReduction at offset 5
+
+    Ok(tags)
+}
+
+fn process_canon_cropinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    Ok(tags)
+}
+
+fn process_canon_processing(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ToneCurve at offset 1
+
+    // PictureStyle at offset 10
+
+    // DigitalGain at offset 11
+
+    // WBShiftAB at offset 12
+
+    // WBShiftGM at offset 13
+
+    // Sharpness at offset 2
+
+    // SharpnessFrequency at offset 3
+
+    // WhiteBalance at offset 8
+
+    Ok(tags)
+}
+
+fn process_canon_levelinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // RollAngle at offset 4
+
+    // PitchAngle at offset 5
+
+    // FocalLength at offset 7
+
+    // MinFocalLength2 at offset 8
+
+    // MaxFocalLength2 at offset 9
+
+    Ok(tags)
+}
+
+fn process_canon_camerasettings(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // MacroMode at offset 1
+
+    // CanonImageSize at offset 10
+
+    // EasyMode at offset 11
+
+    // DigitalZoom at offset 12
+
+    // Contrast at offset 13
+
+    // Saturation at offset 14
+
+    // Sharpness at offset 15
+
+    // CameraISO at offset 16
+
+    // MeteringMode at offset 17
+
+    // FocusRange at offset 18
+
+    // AFPoint at offset 19
+
+    // SelfTimer at offset 2
+
+    // CanonExposureMode at offset 20
+
+    // LensType at offset 22
+    if data.len() >= 44 {
+        // TODO: Handle format int16u
     }
 
-    // AudioBitrate at offset 108
-    if data.len() >= 218 {
-        // TODO: Handle format int32u
+    // MaxFocalLength at offset 23
+    if data.len() >= 46 {
+        // TODO: Handle format int16u
     }
 
-    // AudioSampleRate at offset 110
-    if data.len() >= 222 {
-        // TODO: Handle format int32u
+    // MinFocalLength at offset 24
+    if data.len() >= 48 {
+        // TODO: Handle format int16u
     }
 
-    // AudioChannels at offset 112
-    if data.len() >= 226 {
-        // TODO: Handle format int32u
-    }
+    // FocalUnits at offset 25
 
-    // VideoCodec at offset 116
-    if data.len() >= 238 {
-        // TODO: Handle format undef
-    }
+    // MaxAperture at offset 26
 
-    // FrameCount at offset 2
+    // MinAperture at offset 27
 
-    // FrameCount at offset 4
-    if data.len() >= 10 {
-        // TODO: Handle format int32u
-    }
+    // FlashActivity at offset 28
 
-    // FrameRate at offset 6
-    if data.len() >= 12 {
-        // TODO: Handle format rational32u
-    }
+    // FlashBits at offset 29
+
+    // Quality at offset 3
+
+    // FocusContinuous at offset 32
+
+    // AESetting at offset 33
+
+    // ImageStabilization at offset 34
+
+    // DisplayAperture at offset 35
+
+    // SpotMeteringMode at offset 39
+
+    // CanonFlashMode at offset 4
+
+    // PhotoEffect at offset 40
+
+    // ManualFlashOutput at offset 41
+
+    // ColorTone at offset 42
+
+    // SRAWQuality at offset 46
+
+    // ContinuousDrive at offset 5
+
+    // Clarity at offset 51
+
+    // HDR-PQ at offset 52
+
+    // FocusMode at offset 7
+
+    // RecordMode at offset 9
 
     Ok(tags)
 }
@@ -8647,136 +6247,2426 @@ fn process_canon_fileinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Str
     Ok(tags)
 }
 
-fn process_canon_lightingopt(
+fn process_canon_camerainfo1d(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
-    // PeripheralIlluminationCorr at offset 1
+    // FocalLength at offset 10
+    if data.len() >= 12 {
+        // TODO: Handle format int16u
+    }
 
-    // DigitalLensOptimizer at offset 10
+    // LensType at offset 13
+    if data.len() >= 15 {
+        // TODO: Handle format int16uRev
+    }
 
-    // DualPixelRaw at offset 11
+    // MinFocalLength at offset 14
+    if data.len() >= 16 {
+        // TODO: Handle format int16u
+    }
 
-    // AutoLightingOptimizer at offset 2
+    // MaxFocalLength at offset 16
+    if data.len() >= 18 {
+        // TODO: Handle format int16u
+    }
 
-    // HighlightTonePriority at offset 3
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
 
-    // LongExposureNoiseReduction at offset 4
+    // SharpnessFrequency at offset 65
 
-    // HighISONoiseReduction at offset 5
+    // Sharpness at offset 66
+    if data.len() >= 67 {
+        // TODO: Handle format int8s
+    }
+
+    // WhiteBalance at offset 68
+
+    // SharpnessFrequency at offset 71
+
+    // WhiteBalance at offset 74
+
+    // PictureStyle at offset 75
+
+    // ColorTemperature at offset 78
+    if data.len() >= 80 {
+        // TODO: Handle format int16u
+    }
+
+    // PictureStyle at offset 81
 
     Ok(tags)
 }
 
-fn process_canon_serialinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+fn process_canon_camerainfo1dmkii(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
-    // InternalSerialNumber at offset 9
-    if data.len() >= 20 {
+    // JPEGQuality at offset 102
+
+    // PictureStyle at offset 108
+
+    // Saturation at offset 110
+    if data.len() >= 111 {
+        // TODO: Handle format int8s
+    }
+
+    // ColorTone at offset 111
+    if data.len() >= 112 {
+        // TODO: Handle format int8s
+    }
+
+    // Sharpness at offset 114
+    if data.len() >= 115 {
+        // TODO: Handle format int8s
+    }
+
+    // Contrast at offset 115
+    if data.len() >= 116 {
+        // TODO: Handle format int8s
+    }
+
+    // ISO at offset 117
+    if data.len() >= 127 {
         // TODO: Handle format string
     }
 
+    // LensType at offset 12
+    if data.len() >= 14 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 17
+    if data.len() >= 19 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 19
+    if data.len() >= 21 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // FocalType at offset 45
+
+    // WhiteBalance at offset 54
+
+    // ColorTemperature at offset 55
+    if data.len() >= 57 {
+        // TODO: Handle format int16uRev
+    }
+
+    // CanonImageSize at offset 57
+    if data.len() >= 59 {
+        // TODO: Handle format int16u
+    }
+
+    // FocalLength at offset 9
+    if data.len() >= 11 {
+        // TODO: Handle format int16uRev
+    }
+
     Ok(tags)
 }
 
-fn process_canon_wbinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+fn process_canon_camerainfo1dmkiin(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
-    // WB_GRBGLevelsDaylight at offset 10
-    if data.len() >= 52 {
-        // TODO: Handle format int32s
+    // PictureStyle at offset 115
+
+    // Sharpness at offset 116
+    if data.len() >= 117 {
+        // TODO: Handle format int8s
     }
 
-    // WB_GRBGLevelsCloudy at offset 18
-    if data.len() >= 84 {
-        // TODO: Handle format int32s
+    // Contrast at offset 117
+    if data.len() >= 118 {
+        // TODO: Handle format int8s
     }
 
-    // WB_GRBGLevelsAuto at offset 2
-    if data.len() >= 20 {
-        // TODO: Handle format int32s
+    // Saturation at offset 118
+    if data.len() >= 119 {
+        // TODO: Handle format int8s
     }
 
-    // WB_GRBGLevelsTungsten at offset 26
-    if data.len() >= 116 {
-        // TODO: Handle format int32s
+    // ColorTone at offset 119
+    if data.len() >= 120 {
+        // TODO: Handle format int8s
     }
 
-    // WB_GRBGLevelsFluorescent at offset 34
-    if data.len() >= 148 {
-        // TODO: Handle format int32s
+    // LensType at offset 12
+    if data.len() >= 14 {
+        // TODO: Handle format int16uRev
     }
 
-    // WB_GRBGLevelsFluorHigh at offset 42
+    // ISO at offset 121
+    if data.len() >= 131 {
+        // TODO: Handle format string
+    }
+
+    // MinFocalLength at offset 17
+    if data.len() >= 19 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 19
+    if data.len() >= 21 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // WhiteBalance at offset 54
+
+    // ColorTemperature at offset 55
+    if data.len() >= 57 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocalLength at offset 9
+    if data.len() >= 11 {
+        // TODO: Handle format int16uRev
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo1dmkiii(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // TimeStamp1 at offset 1114
+    if data.len() >= 1118 {
+        // TODO: Handle format int32u
+    }
+
+    // TimeStamp at offset 1118
+    if data.len() >= 1122 {
+        // TODO: Handle format int32u
+    }
+
+    // PictureStyle at offset 134
+
+    // CameraTemperature at offset 24
+    if data.len() >= 25 {
+        // TODO: Handle format int8u
+    }
+
+    // MacroMagnification at offset 27
+
+    // LensType at offset 273
+    if data.len() >= 275 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 275
+    if data.len() >= 277 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 277
+    if data.len() >= 279 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocalLength at offset 29
+    if data.len() >= 31 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 310
+    if data.len() >= 322 {
+        // TODO: Handle format string
+    }
+
+    // FileIndex at offset 370
+    if data.len() >= 374 {
+        // TODO: Handle format int32u
+    }
+
+    // ShutterCount at offset 374
+    if data.len() >= 378 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 382
+    if data.len() >= 386 {
+        // TODO: Handle format int32u
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // CameraOrientation at offset 48
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // FocusDistanceUpper at offset 67
+    if data.len() >= 69 {
+        // TODO: Handle format int16uRev
+    }
+
+    // PictureStyleInfo at offset 682
+
+    // FocusDistanceLower at offset 69
+    if data.len() >= 71 {
+        // TODO: Handle format int16uRev
+    }
+
+    // WhiteBalance at offset 94
+    if data.len() >= 96 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 98
+    if data.len() >= 100 {
+        // TODO: Handle format int16u
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo1dmkiv(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // FirmwareVersionLookAhead at offset 0
+
+    // WhiteBalance at offset 120
+    if data.len() >= 242 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 124
+    if data.len() >= 250 {
+        // TODO: Handle format int16u
+    }
+
+    // FlashMeteringMode at offset 21
+
+    // CameraTemperature at offset 25
+    if data.len() >= 51 {
+        // TODO: Handle format int8u
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // FocalLength at offset 30
+    if data.len() >= 62 {
+        // TODO: Handle format int16uRev
+    }
+
+    // LensType at offset 335
+    if data.len() >= 672 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 337
+    if data.len() >= 676 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 339
+    if data.len() >= 680 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 9 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 493
+    if data.len() >= 998 {
+        // TODO: Handle format string
+    }
+
+    // CameraOrientation at offset 53
+
+    // FileIndex at offset 556
+    if data.len() >= 1116 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 568
+    if data.len() >= 1140 {
+        // TODO: Handle format int32u
+    }
+
+    // ISO at offset 6
+    if data.len() >= 13 {
+        // TODO: Handle format int8u
+    }
+
+    // HighlightTonePriority at offset 7
+
+    // MeasuredEV2 at offset 8
+
+    // FocusDistanceUpper at offset 84
+    if data.len() >= 170 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 86
+    if data.len() >= 174 {
+        // TODO: Handle format int16uRev
+    }
+
+    // PictureStyleInfo at offset 872
+
+    // MeasuredEV3 at offset 9
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo1dx(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // FirmwareVersionLookAhead at offset 0
+
+    // PictureStyleInfo at offset 1012
+
+    // CameraOrientation at offset 125
+
+    // FocusDistanceUpper at offset 140
+    if data.len() >= 142 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 142
+    if data.len() >= 144 {
+        // TODO: Handle format int16uRev
+    }
+
+    // WhiteBalance at offset 188
+    if data.len() >= 190 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 192
+    if data.len() >= 194 {
+        // TODO: Handle format int16u
+    }
+
+    // PictureStyle at offset 244
+    if data.len() >= 245 {
+        // TODO: Handle format int8u
+    }
+
+    // CameraTemperature at offset 27
+    if data.len() >= 28 {
+        // TODO: Handle format int8u
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // FocalLength at offset 35
+    if data.len() >= 37 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // LensType at offset 423
+    if data.len() >= 425 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 425
+    if data.len() >= 427 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 427
+    if data.len() >= 429 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 640
+    if data.len() >= 652 {
+        // TODO: Handle format string
+    }
+
+    // FileIndex at offset 720
+    if data.len() >= 724 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 732
+    if data.len() >= 736 {
+        // TODO: Handle format int32u
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo5d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // PictureStyle at offset 108
+    if data.len() >= 109 {
+        // TODO: Handle format int8u
+    }
+
+    // LensType at offset 12
+    if data.len() >= 14 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 147
+    if data.len() >= 149 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 149
+    if data.len() >= 151 {
+        // TODO: Handle format int16uRev
+    }
+
+    // LensType at offset 151
+    if data.len() >= 153 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FirmwareRevision at offset 164
     if data.len() >= 180 {
-        // TODO: Handle format int32s
+        // TODO: Handle format string
     }
 
-    // WB_GRBGLevelsFlash at offset 50
-    if data.len() >= 212 {
-        // TODO: Handle format int32s
+    // ShortOwnerName at offset 172
+    if data.len() >= 204 {
+        // TODO: Handle format string
     }
 
-    // WB_GRBGLevelsUnderwater at offset 58
-    if data.len() >= 244 {
-        // TODO: Handle format int32s
+    // DirectoryIndex at offset 204
+    if data.len() >= 208 {
+        // TODO: Handle format int32u
     }
 
-    // WB_GRBGLevelsCustom1 at offset 66
+    // FileIndex at offset 208
+    if data.len() >= 210 {
+        // TODO: Handle format int16u
+    }
+
+    // CameraTemperature at offset 23
+    if data.len() >= 24 {
+        // TODO: Handle format int8u
+    }
+
+    // FilterEffectMonochrome at offset 255
+
+    // ToningEffectMonochrome at offset 264
+
+    // UserDef1PictureStyle at offset 268
+    if data.len() >= 270 {
+        // TODO: Handle format int16u
+    }
+
+    // MacroMagnification at offset 27
+
+    // UserDef2PictureStyle at offset 270
+    if data.len() >= 272 {
+        // TODO: Handle format int16u
+    }
+
+    // UserDef3PictureStyle at offset 272
+    if data.len() >= 274 {
+        // TODO: Handle format int16u
+    }
+
+    // TimeStamp at offset 284
+    if data.len() >= 288 {
+        // TODO: Handle format int32u
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // CameraOrientation at offset 39
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // FocalLength at offset 40
+    if data.len() >= 42 {
+        // TODO: Handle format int16uRev
+    }
+
+    // AFPointsInFocus5D at offset 56
+    if data.len() >= 58 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // WhiteBalance at offset 84
+    if data.len() >= 86 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 88
+    if data.len() >= 90 {
+        // TODO: Handle format int16u
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo5dmkii(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // FirmwareVersionLookAhead at offset 0
+
+    // WhiteBalance at offset 111
+    if data.len() >= 113 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 115
+    if data.len() >= 117 {
+        // TODO: Handle format int16u
+    }
+
+    // PictureStyle at offset 167
+    if data.len() >= 168 {
+        // TODO: Handle format int8u
+    }
+
+    // HighISONoiseReduction at offset 189
+
+    // AutoLightingOptimizer at offset 191
+
+    // FlashMeteringMode at offset 21
+
+    // LensType at offset 230
+    if data.len() >= 232 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 232
+    if data.len() >= 234 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 234
+    if data.len() >= 236 {
+        // TODO: Handle format int16uRev
+    }
+
+    // CameraTemperature at offset 25
+    if data.len() >= 26 {
+        // TODO: Handle format int8u
+    }
+
+    // MacroMagnification at offset 27
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // FocalLength at offset 30
+    if data.len() >= 32 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FirmwareVersion at offset 382
+    if data.len() >= 394 {
+        // TODO: Handle format string
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // FileIndex at offset 443
+    if data.len() >= 447 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 455
+    if data.len() >= 459 {
+        // TODO: Handle format int32u
+    }
+
+    // CameraOrientation at offset 49
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // HighlightTonePriority at offset 7
+
+    // PictureStyleInfo at offset 759
+
+    // FocusDistanceUpper at offset 80
+    if data.len() >= 82 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 82
+    if data.len() >= 84 {
+        // TODO: Handle format int16uRev
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo5dmkiii(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // FirmwareVersionLookAhead at offset 0
+
+    // CameraOrientation at offset 125
+
+    // FocusDistanceUpper at offset 140
+    if data.len() >= 142 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 142
+    if data.len() >= 144 {
+        // TODO: Handle format int16uRev
+    }
+
+    // WhiteBalance at offset 188
+    if data.len() >= 190 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 192
+    if data.len() >= 194 {
+        // TODO: Handle format int16u
+    }
+
+    // PictureStyle at offset 244
+    if data.len() >= 245 {
+        // TODO: Handle format int8u
+    }
+
+    // CameraTemperature at offset 27
+    if data.len() >= 28 {
+        // TODO: Handle format int8u
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // LensType at offset 339
+    if data.len() >= 341 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 341
+    if data.len() >= 343 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 343
+    if data.len() >= 345 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocalLength at offset 35
+    if data.len() >= 37 {
+        // TODO: Handle format int16uRev
+    }
+
+    // LensSerialNumber at offset 356
+    if data.len() >= 366 {
+        // TODO: Handle format undef
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 572
+    if data.len() >= 584 {
+        // TODO: Handle format string
+    }
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // FileIndex at offset 652
+    if data.len() >= 656 {
+        // TODO: Handle format int32u
+    }
+
+    // FileIndex2 at offset 656
+    if data.len() >= 660 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 664
+    if data.len() >= 668 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex2 at offset 668
+    if data.len() >= 672 {
+        // TODO: Handle format int32u
+    }
+
+    // PictureStyleInfo at offset 944
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo6d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // CameraOrientation at offset 131
+
+    // FocusDistanceUpper at offset 146
+    if data.len() >= 148 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 148
+    if data.len() >= 150 {
+        // TODO: Handle format int16uRev
+    }
+
+    // WhiteBalance at offset 194
+    if data.len() >= 196 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 198
+    if data.len() >= 200 {
+        // TODO: Handle format int16u
+    }
+
+    // PictureStyle at offset 250
+    if data.len() >= 251 {
+        // TODO: Handle format int8u
+    }
+
+    // CameraTemperature at offset 27
+    if data.len() >= 28 {
+        // TODO: Handle format int8u
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // FocalLength at offset 35
+    if data.len() >= 37 {
+        // TODO: Handle format int16uRev
+    }
+
+    // LensType at offset 353
+    if data.len() >= 355 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 355
+    if data.len() >= 357 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 357
+    if data.len() >= 359 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 598
+    if data.len() >= 610 {
+        // TODO: Handle format string
+    }
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // FileIndex at offset 682
+    if data.len() >= 686 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 694
+    if data.len() >= 698 {
+        // TODO: Handle format int32u
+    }
+
+    // PictureStyleInfo at offset 966
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo7d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // FirmwareVersionLookAhead at offset 0
+
+    // WhiteBalance at offset 119
+    if data.len() >= 121 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 123
+    if data.len() >= 125 {
+        // TODO: Handle format int16u
+    }
+
+    // CameraPictureStyle at offset 175
+
+    // HighISONoiseReduction at offset 201
+
+    // FlashMeteringMode at offset 21
+
+    // CameraTemperature at offset 25
+    if data.len() >= 26 {
+        // TODO: Handle format int8u
+    }
+
+    // LensType at offset 274
     if data.len() >= 276 {
-        // TODO: Handle format int32s
+        // TODO: Handle format int16uRev
     }
 
-    // WB_GRBGLevelsCustom2 at offset 74
-    if data.len() >= 308 {
-        // TODO: Handle format int32s
+    // MinFocalLength at offset 276
+    if data.len() >= 278 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 278
+    if data.len() >= 280 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // FocalLength at offset 30
+    if data.len() >= 32 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 428
+    if data.len() >= 440 {
+        // TODO: Handle format string
+    }
+
+    // FileIndex at offset 491
+    if data.len() >= 495 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 503
+    if data.len() >= 507 {
+        // TODO: Handle format int32u
+    }
+
+    // CameraOrientation at offset 53
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // HighlightTonePriority at offset 7
+
+    // MeasuredEV2 at offset 8
+
+    // PictureStyleInfo at offset 807
+
+    // FocusDistanceUpper at offset 84
+    if data.len() >= 86 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 86
+    if data.len() >= 88 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MeasuredEV at offset 9
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo40d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // WhiteBalance at offset 111
+    if data.len() >= 113 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 115
+    if data.len() >= 117 {
+        // TODO: Handle format int16u
+    }
+
+    // FlashMeteringMode at offset 21
+
+    // LensType at offset 214
+    if data.len() >= 216 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 216
+    if data.len() >= 218 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 218
+    if data.len() >= 220 {
+        // TODO: Handle format int16uRev
+    }
+
+    // LensModel at offset 2347
+    if data.len() >= 2475 {
+        // TODO: Handle format string
+    }
+
+    // CameraTemperature at offset 24
+    if data.len() >= 25 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 255
+    if data.len() >= 267 {
+        // TODO: Handle format string
+    }
+
+    // MacroMagnification at offset 27
+
+    // FocalLength at offset 29
+    if data.len() >= 31 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // FileIndex at offset 307
+    if data.len() >= 311 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 319
+    if data.len() >= 323 {
+        // TODO: Handle format int32u
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // CameraOrientation at offset 48
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // PictureStyleInfo at offset 603
+
+    // FocusDistanceUpper at offset 67
+    if data.len() >= 69 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 69
+    if data.len() >= 71 {
+        // TODO: Handle format int16uRev
     }
 
     Ok(tags)
 }
 
-fn process_canon_processing(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+fn process_canon_camerainfo50d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
-    // ToneCurve at offset 1
+    // FirmwareVersionLookAhead at offset 0
 
-    // PictureStyle at offset 10
-
-    // DigitalGain at offset 11
-
-    // WBShiftAB at offset 12
-
-    // WBShiftGM at offset 13
-
-    // Sharpness at offset 2
-
-    // SharpnessFrequency at offset 3
-
-    // WhiteBalance at offset 8
-
-    Ok(tags)
-}
-
-fn process_canon_ambience(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // AmbienceSelection at offset 1
-
-    Ok(tags)
-}
-
-fn process_canon_sensorinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // BlackMaskLeftBorder at offset 9
-
-    Ok(tags)
-}
-
-fn process_canon_afmicroadj(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // AFMicroAdjMode at offset 1
-
-    // AFMicroAdjValue at offset 2
-    if data.len() >= 6 {
-        // TODO: Handle format rational64s
+    // WhiteBalance at offset 111
+    if data.len() >= 113 {
+        // TODO: Handle format int16u
     }
+
+    // ColorTemperature at offset 115
+    if data.len() >= 117 {
+        // TODO: Handle format int16u
+    }
+
+    // PictureStyle at offset 167
+    if data.len() >= 168 {
+        // TODO: Handle format int8u
+    }
+
+    // HighISONoiseReduction at offset 189
+
+    // AutoLightingOptimizer at offset 191
+
+    // FlashMeteringMode at offset 21
+
+    // LensType at offset 234
+    if data.len() >= 236 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 236
+    if data.len() >= 238 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 238
+    if data.len() >= 240 {
+        // TODO: Handle format int16uRev
+    }
+
+    // CameraTemperature at offset 25
+    if data.len() >= 26 {
+        // TODO: Handle format int8u
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // FocalLength at offset 30
+    if data.len() >= 32 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FirmwareVersion at offset 350
+    if data.len() >= 362 {
+        // TODO: Handle format string
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // FileIndex at offset 411
+    if data.len() >= 415 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 423
+    if data.len() >= 427 {
+        // TODO: Handle format int32u
+    }
+
+    // CameraOrientation at offset 49
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // HighlightTonePriority at offset 7
+
+    // PictureStyleInfo at offset 727
+
+    // FocusDistanceUpper at offset 80
+    if data.len() >= 82 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 82
+    if data.len() >= 84 {
+        // TODO: Handle format int16uRev
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo60d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ColorTemperature at offset 125
+    if data.len() >= 127 {
+        // TODO: Handle format int16u
+    }
+
+    // LensType at offset 232
+    if data.len() >= 234 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 234
+    if data.len() >= 236 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 236
+    if data.len() >= 238 {
+        // TODO: Handle format int16uRev
+    }
+
+    // CameraTemperature at offset 25
+    if data.len() >= 26 {
+        // TODO: Handle format int8u
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // FocalLength at offset 30
+    if data.len() >= 32 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 409
+    if data.len() >= 421 {
+        // TODO: Handle format string
+    }
+
+    // FileIndex at offset 473
+    if data.len() >= 477 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 485
+    if data.len() >= 489 {
+        // TODO: Handle format int32u
+    }
+
+    // CameraOrientation at offset 54
+
+    // CameraOrientation at offset 58
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // PictureStyleInfo at offset 761
+
+    // PictureStyleInfo at offset 801
+
+    // FocusDistanceUpper at offset 85
+    if data.len() >= 87 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 87
+    if data.len() >= 89 {
+        // TODO: Handle format int16uRev
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo70d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // CameraOrientation at offset 132
+
+    // FocusDistanceUpper at offset 147
+    if data.len() >= 149 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 149
+    if data.len() >= 151 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ColorTemperature at offset 199
+    if data.len() >= 201 {
+        // TODO: Handle format int16u
+    }
+
+    // CameraTemperature at offset 27
+    if data.len() >= 28 {
+        // TODO: Handle format int8u
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // FocalLength at offset 35
+    if data.len() >= 37 {
+        // TODO: Handle format int16uRev
+    }
+
+    // LensType at offset 358
+    if data.len() >= 360 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 360
+    if data.len() >= 362 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 362
+    if data.len() >= 364 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 606
+    if data.len() >= 618 {
+        // TODO: Handle format string
+    }
+
+    // FileIndex at offset 691
+    if data.len() >= 695 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 703
+    if data.len() >= 707 {
+        // TODO: Handle format int32u
+    }
+
+    // PictureStyleInfo at offset 975
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo80d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // FirmwareVersion at offset 1114
+    if data.len() >= 1126 {
+        // TODO: Handle format string
+    }
+
+    // FileIndex at offset 1198
+    if data.len() >= 1202 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 1210
+    if data.len() >= 1214 {
+        // TODO: Handle format int32u
+    }
+
+    // CameraOrientation at offset 150
+
+    // FocusDistanceUpper at offset 165
+    if data.len() >= 167 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 167
+    if data.len() >= 169 {
+        // TODO: Handle format int16uRev
+    }
+
+    // CameraTemperature at offset 27
+    if data.len() >= 28 {
+        // TODO: Handle format int8u
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // ColorTemperature at offset 314
+    if data.len() >= 316 {
+        // TODO: Handle format int16u
+    }
+
+    // FocalLength at offset 35
+    if data.len() >= 37 {
+        // TODO: Handle format int16uRev
+    }
+
+    // LensType at offset 393
+    if data.len() >= 395 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 395
+    if data.len() >= 397 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 397
+    if data.len() >= 399 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo450d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // WhiteBalance at offset 111
+    if data.len() >= 113 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 115
+    if data.len() >= 117 {
+        // TODO: Handle format int16u
+    }
+
+    // FlashMeteringMode at offset 21
+
+    // LensType at offset 222
+    if data.len() >= 224 {
+        // TODO: Handle format int16uRev
+    }
+
+    // LensModel at offset 2355
+    if data.len() >= 2483 {
+        // TODO: Handle format string
+    }
+
+    // CameraTemperature at offset 24
+    if data.len() >= 25 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 263
+    if data.len() >= 275 {
+        // TODO: Handle format string
+    }
+
+    // MacroMagnification at offset 27
+
+    // OwnerName at offset 271
+    if data.len() >= 335 {
+        // TODO: Handle format string
+    }
+
+    // FocalLength at offset 29
+    if data.len() >= 31 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // DirectoryIndex at offset 307
+    if data.len() >= 311 {
+        // TODO: Handle format int32u
+    }
+
+    // FileIndex at offset 319
+    if data.len() >= 323 {
+        // TODO: Handle format int32u
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // CameraOrientation at offset 48
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // PictureStyleInfo at offset 611
+
+    // FocusDistanceUpper at offset 67
+    if data.len() >= 69 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 69
+    if data.len() >= 71 {
+        // TODO: Handle format int16uRev
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo500d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // WhiteBalance at offset 115
+    if data.len() >= 117 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 119
+    if data.len() >= 121 {
+        // TODO: Handle format int16u
+    }
+
+    // PictureStyle at offset 171
+    if data.len() >= 172 {
+        // TODO: Handle format int8u
+    }
+
+    // HighISONoiseReduction at offset 188
+
+    // AutoLightingOptimizer at offset 190
+
+    // FlashMeteringMode at offset 21
+
+    // LensType at offset 246
+    if data.len() >= 248 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 248
+    if data.len() >= 250 {
+        // TODO: Handle format int16uRev
+    }
+
+    // CameraTemperature at offset 25
+    if data.len() >= 26 {
+        // TODO: Handle format int8u
+    }
+
+    // MaxFocalLength at offset 250
+    if data.len() >= 252 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // FocalLength at offset 30
+    if data.len() >= 32 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 400
+    if data.len() >= 412 {
+        // TODO: Handle format string
+    }
+
+    // FileIndex at offset 467
+    if data.len() >= 471 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 479
+    if data.len() >= 483 {
+        // TODO: Handle format int32u
+    }
+
+    // CameraOrientation at offset 49
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // HighlightTonePriority at offset 7
+
+    // PictureStyleInfo at offset 779
+
+    // FocusDistanceUpper at offset 80
+    if data.len() >= 82 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 82
+    if data.len() >= 84 {
+        // TODO: Handle format int16uRev
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo550d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // WhiteBalance at offset 120
+    if data.len() >= 122 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 124
+    if data.len() >= 126 {
+        // TODO: Handle format int16u
+    }
+
+    // PictureStyle at offset 176
+    if data.len() >= 177 {
+        // TODO: Handle format int8u
+    }
+
+    // FlashMeteringMode at offset 21
+
+    // CameraTemperature at offset 25
+    if data.len() >= 26 {
+        // TODO: Handle format int8u
+    }
+
+    // LensType at offset 255
+    if data.len() >= 257 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 257
+    if data.len() >= 259 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 259
+    if data.len() >= 261 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // FocalLength at offset 30
+    if data.len() >= 32 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 420
+    if data.len() >= 432 {
+        // TODO: Handle format string
+    }
+
+    // FileIndex at offset 484
+    if data.len() >= 488 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 496
+    if data.len() >= 500 {
+        // TODO: Handle format int32u
+    }
+
+    // CameraOrientation at offset 53
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // HighlightTonePriority at offset 7
+
+    // PictureStyleInfo at offset 796
+
+    // FocusDistanceUpper at offset 84
+    if data.len() >= 86 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 86
+    if data.len() >= 88 {
+        // TODO: Handle format int16uRev
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo600d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // WhiteBalance at offset 123
+    if data.len() >= 125 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 127
+    if data.len() >= 129 {
+        // TODO: Handle format int16u
+    }
+
+    // PictureStyle at offset 179
+    if data.len() >= 180 {
+        // TODO: Handle format int8u
+    }
+
+    // FlashMeteringMode at offset 21
+
+    // LensType at offset 234
+    if data.len() >= 236 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 236
+    if data.len() >= 238 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 238
+    if data.len() >= 240 {
+        // TODO: Handle format int16uRev
+    }
+
+    // CameraTemperature at offset 25
+    if data.len() >= 26 {
+        // TODO: Handle format int8u
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // FocalLength at offset 30
+    if data.len() >= 32 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 411
+    if data.len() >= 423 {
+        // TODO: Handle format string
+    }
+
+    // FileIndex at offset 475
+    if data.len() >= 479 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 487
+    if data.len() >= 491 {
+        // TODO: Handle format int32u
+    }
+
+    // CameraOrientation at offset 56
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // HighlightTonePriority at offset 7
+
+    // PictureStyleInfo at offset 763
+
+    // FocusDistanceUpper at offset 87
+    if data.len() >= 89 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 89
+    if data.len() >= 91 {
+        // TODO: Handle format int16uRev
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo650d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // CameraOrientation at offset 125
+
+    // FocusDistanceUpper at offset 140
+    if data.len() >= 142 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 142
+    if data.len() >= 144 {
+        // TODO: Handle format int16uRev
+    }
+
+    // WhiteBalance at offset 188
+    if data.len() >= 190 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 192
+    if data.len() >= 194 {
+        // TODO: Handle format int16u
+    }
+
+    // PictureStyle at offset 244
+    if data.len() >= 245 {
+        // TODO: Handle format int8u
+    }
+
+    // CameraTemperature at offset 27
+    if data.len() >= 28 {
+        // TODO: Handle format int8u
+    }
+
+    // LensType at offset 295
+    if data.len() >= 297 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 297
+    if data.len() >= 299 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 299
+    if data.len() >= 301 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // FocalLength at offset 35
+    if data.len() >= 37 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 539
+    if data.len() >= 551 {
+        // TODO: Handle format string
+    }
+
+    // FirmwareVersion at offset 544
+    if data.len() >= 556 {
+        // TODO: Handle format string
+    }
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // FileIndex at offset 624
+    if data.len() >= 628 {
+        // TODO: Handle format int32u
+    }
+
+    // FileIndex at offset 628
+    if data.len() >= 632 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 636
+    if data.len() >= 640 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 640
+    if data.len() >= 644 {
+        // TODO: Handle format int32u
+    }
+
+    // PictureStyleInfo at offset 912
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo750d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // FirmwareVersion at offset 1085
+    if data.len() >= 1097 {
+        // TODO: Handle format string
+    }
+
+    // FirmwareVersion at offset 1097
+    if data.len() >= 1109 {
+        // TODO: Handle format string
+    }
+
+    // CameraOrientation at offset 150
+
+    // FocusDistanceUpper at offset 165
+    if data.len() >= 167 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 167
+    if data.len() >= 169 {
+        // TODO: Handle format int16uRev
+    }
+
+    // CameraTemperature at offset 27
+    if data.len() >= 28 {
+        // TODO: Handle format int8u
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // WhiteBalance at offset 305
+    if data.len() >= 307 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 309
+    if data.len() >= 311 {
+        // TODO: Handle format int16u
+    }
+
+    // FocalLength at offset 35
+    if data.len() >= 37 {
+        // TODO: Handle format int16uRev
+    }
+
+    // PictureStyle at offset 361
+    if data.len() >= 362 {
+        // TODO: Handle format int8u
+    }
+
+    // LensType at offset 388
+    if data.len() >= 390 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 390
+    if data.len() >= 392 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 392
+    if data.len() >= 394 {
+        // TODO: Handle format int16uRev
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfo1000d(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // WhiteBalance at offset 111
+    if data.len() >= 113 {
+        // TODO: Handle format int16u
+    }
+
+    // ColorTemperature at offset 115
+    if data.len() >= 117 {
+        // TODO: Handle format int16u
+    }
+
+    // FlashMeteringMode at offset 21
+
+    // LensType at offset 226
+    if data.len() >= 228 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MinFocalLength at offset 228
+    if data.len() >= 230 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MaxFocalLength at offset 230
+    if data.len() >= 232 {
+        // TODO: Handle format int16uRev
+    }
+
+    // LensModel at offset 2359
+    if data.len() >= 2487 {
+        // TODO: Handle format string
+    }
+
+    // CameraTemperature at offset 24
+    if data.len() >= 25 {
+        // TODO: Handle format int8u
+    }
+
+    // FirmwareVersion at offset 267
+    if data.len() >= 279 {
+        // TODO: Handle format string
+    }
+
+    // MacroMagnification at offset 27
+
+    // FocalLength at offset 29
+    if data.len() >= 31 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FNumber at offset 3
+    if data.len() >= 4 {
+        // TODO: Handle format int8u
+    }
+
+    // DirectoryIndex at offset 311
+    if data.len() >= 315 {
+        // TODO: Handle format int32u
+    }
+
+    // FileIndex at offset 323
+    if data.len() >= 327 {
+        // TODO: Handle format int32u
+    }
+
+    // ExposureTime at offset 4
+    if data.len() >= 5 {
+        // TODO: Handle format int8u
+    }
+
+    // CameraOrientation at offset 48
+
+    // ISO at offset 6
+    if data.len() >= 7 {
+        // TODO: Handle format int8u
+    }
+
+    // PictureStyleInfo at offset 615
+
+    // FocusDistanceUpper at offset 67
+    if data.len() >= 69 {
+        // TODO: Handle format int16uRev
+    }
+
+    // FocusDistanceLower at offset 69
+    if data.len() >= 71 {
+        // TODO: Handle format int16uRev
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfor6(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ShutterCount at offset 2801
+    if data.len() >= 5606 {
+        // TODO: Handle format int32u
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfor6m2(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ShutterCount at offset 3369
+    if data.len() >= 6742 {
+        // TODO: Handle format int32u
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfog5xii(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ShutterCount at offset 2709
+    if data.len() >= 5422 {
+        // TODO: Handle format int32u
+    }
+
+    // DirectoryIndex at offset 2849
+    if data.len() >= 5702 {
+        // TODO: Handle format int32u
+    }
+
+    // FileIndex at offset 2861
+    if data.len() >= 5726 {
+        // TODO: Handle format int32u
+    }
+
+    // ShutterCount at offset 659
+    if data.len() >= 1322 {
+        // TODO: Handle format int32u
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfopowershot(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ISO at offset 0
+
+    // CameraTemperature at offset 135
+
+    // CameraTemperature at offset 145
+
+    // FNumber at offset 5
+
+    // ExposureTime at offset 6
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfopowershot2(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ISO at offset 1
+
+    // CameraTemperature at offset 153
+
+    // CameraTemperature at offset 159
+
+    // CameraTemperature at offset 164
+
+    // CameraTemperature at offset 168
+
+    // CameraTemperature at offset 261
+
+    // FNumber at offset 6
+
+    // ExposureTime at offset 7
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfounknown32(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // CameraTemperature at offset -3
+    // CameraTemperature uses negative offset -12 (from end of data)
+    if data.len() as i32 + -12 < 0 {
+        // Skipping CameraTemperature - negative offset beyond data start
+        // (This is normal for some tables)
+    } else {
+        let cameratemperature_offset = (data.len() as i32 + -12) as usize;
+    }
+
+    // CameraTemperature at offset 100
+
+    // CameraTemperature at offset 71
+
+    // CameraTemperature at offset 83
+
+    // CameraTemperature at offset 91
+
+    // CameraTemperature at offset 92
+
+    Ok(tags)
+}
+
+fn process_canon_camerainfounknown16(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    Ok(tags)
+}
+
+fn process_canon_camerainfounknown(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // FirmwareVersion at offset 1473
+    if data.len() >= 1485 {
+        // TODO: Handle format string
+    }
+
+    // LensSerialNumber at offset 363
+    if data.len() >= 373 {
+        // TODO: Handle format undef
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_vignettingcorr(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // VignettingCorrVersion at offset 0
+    // VignettingCorrVersion uses negative offset -2 (from end of data)
+    if data.len() as i32 + -2 < 0 {
+        // Skipping VignettingCorrVersion - negative offset beyond data start
+        // (This is normal for some tables)
+    } else {
+        let vignettingcorrversion_offset = (data.len() as i32 + -2) as usize;
+        if vignettingcorrversion_offset < data.len() {
+            // TODO: Handle format int8u
+        }
+    }
+
+    // OriginalImageWidth at offset 11
+
+    // PeripheralLighting at offset 2
+
+    // DistortionCorrection at offset 3
+
+    // ChromaticAberrationCorr at offset 4
+
+    // ChromaticAberrationCorr at offset 5
+
+    Ok(tags)
+}
+
+fn process_canon_vignettingcorrunknown(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // VignettingCorrVersion at offset 0
+    // VignettingCorrVersion uses negative offset -2 (from end of data)
+    if data.len() as i32 + -2 < 0 {
+        // Skipping VignettingCorrVersion - negative offset beyond data start
+        // (This is normal for some tables)
+    } else {
+        let vignettingcorrversion_offset = (data.len() as i32 + -2) as usize;
+        if vignettingcorrversion_offset < data.len() {
+            // TODO: Handle format int8u
+        }
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_movieinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // FrameRate at offset 1
+
+    // Duration at offset 106
+    if data.len() >= 214 {
+        // TODO: Handle format int32u
+    }
+
+    // AudioBitrate at offset 108
+    if data.len() >= 218 {
+        // TODO: Handle format int32u
+    }
+
+    // AudioSampleRate at offset 110
+    if data.len() >= 222 {
+        // TODO: Handle format int32u
+    }
+
+    // AudioChannels at offset 112
+    if data.len() >= 226 {
+        // TODO: Handle format int32u
+    }
+
+    // VideoCodec at offset 116
+    if data.len() >= 238 {
+        // TODO: Handle format undef
+    }
+
+    // FrameCount at offset 2
+
+    // FrameCount at offset 4
+    if data.len() >= 10 {
+        // TODO: Handle format int32u
+    }
+
+    // FrameRate at offset 6
+    if data.len() >= 12 {
+        // TODO: Handle format rational32u
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_afinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // NumAFPoints at offset 0
+
+    // ValidAFPoints at offset 1
+
+    // AFPointsInFocus at offset 10
+
+    // CanonImageWidth at offset 2
+
+    // CanonImageHeight at offset 3
+
+    // AFImageWidth at offset 4
+
+    // AFAreaXPositions at offset 8
+
+    // AFAreaYPositions at offset 9
+
+    Ok(tags)
+}
+
+fn process_canon_filterinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // MiniatureFilter at offset 1025
+
+    // MiniatureFilterOrientation at offset 1026
+
+    // FisheyeFilter at offset 1281
+
+    // PaintingFilter at offset 1537
+
+    // WatercolorFilter at offset 1793
+
+    // GrainyBWFilter at offset 257
+
+    // SoftFocusFilter at offset 513
+
+    // ToyCameraFilter at offset 769
 
     Ok(tags)
 }
@@ -8914,6 +8804,80 @@ fn process_canon_facedetect1(
     Ok(tags)
 }
 
+fn process_canon_unknownd30(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    Ok(tags)
+}
+
+fn process_canon_panorama(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // PanoramaDirection at offset 5
+
+    Ok(tags)
+}
+
+fn process_canon_serialinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // InternalSerialNumber at offset 9
+    if data.len() >= 20 {
+        // TODO: Handle format string
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_mycolors(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // MyColorMode at offset 2
+
+    Ok(tags)
+}
+
+fn process_canon_ambience(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // AmbienceSelection at offset 1
+
+    Ok(tags)
+}
+
+fn process_canon_colorinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // Saturation at offset 1
+
+    // ColorTone at offset 2
+
+    // ColorSpace at offset 3
+
+    Ok(tags)
+}
+
+fn process_canon_measuredcolor(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // MeasuredRGGB at offset 1
+    if data.len() >= 8 {
+        if let Ok(values) = read_int16u_array(&data[0..8], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("MeasuredRGGB".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_aspectinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // AspectRatio at offset 0
+
+    Ok(tags)
+}
+
 fn process_canon_shotinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
     // AutoISO at offset 1
@@ -8979,277 +8943,94 @@ fn process_canon_shotinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Str
     Ok(tags)
 }
 
-pub fn process_tag_0x99_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
+fn process_canon_wbinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // WB_GRBGLevelsDaylight at offset 10
+    if data.len() >= 52 {
+        // TODO: Handle format int32s
     }
+
+    // WB_GRBGLevelsCloudy at offset 18
+    if data.len() >= 84 {
+        // TODO: Handle format int32s
+    }
+
+    // WB_GRBGLevelsAuto at offset 2
+    if data.len() >= 20 {
+        // TODO: Handle format int32s
+    }
+
+    // WB_GRBGLevelsTungsten at offset 26
+    if data.len() >= 116 {
+        // TODO: Handle format int32s
+    }
+
+    // WB_GRBGLevelsFluorescent at offset 34
+    if data.len() >= 148 {
+        // TODO: Handle format int32s
+    }
+
+    // WB_GRBGLevelsFluorHigh at offset 42
+    if data.len() >= 180 {
+        // TODO: Handle format int32s
+    }
+
+    // WB_GRBGLevelsFlash at offset 50
+    if data.len() >= 212 {
+        // TODO: Handle format int32s
+    }
+
+    // WB_GRBGLevelsUnderwater at offset 58
+    if data.len() >= 244 {
+        // TODO: Handle format int32s
+    }
+
+    // WB_GRBGLevelsCustom1 at offset 66
+    if data.len() >= 276 {
+        // TODO: Handle format int32s
+    }
+
+    // WB_GRBGLevelsCustom2 at offset 74
+    if data.len() >= 308 {
+        // TODO: Handle format int32s
+    }
+
+    Ok(tags)
 }
 
-pub fn process_tag_0x2f_subdirectory(
+pub fn process_tag_0x4001_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4001_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
     match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x25_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0xb6_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x4003_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x35_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x9a_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x98_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x1d_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x4024_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0xa_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x26_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x12_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x1_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x4026_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x4028_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x4015_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0xb1_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x4021_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x92_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0xd_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x2_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x4059_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0xa9_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x5_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
+        582 => {
+            debug!("Matched count 582 for variant canon_colordata1");
+            process_canon_colordata1(data, byte_order)
+        }
+        653 => {
+            debug!("Matched count 653 for variant canon_colordata2");
+            process_canon_colordata2(data, byte_order)
+        }
+        796 => {
+            debug!("Matched count 796 for variant canon_colordata3");
+            process_canon_colordata3(data, byte_order)
+        }
+        5120 => {
+            debug!("Matched count 5120 for variant canon_colordata5");
+            process_canon_colordata5(data, byte_order)
+        }
+        4528 => {
+            debug!("Matched count 4528 for variant canon_colordata12");
+            process_canon_colordata12(data, byte_order)
+        }
         _ => Ok(vec![]), // Unknown variant
     }
 }
@@ -9258,258 +9039,705 @@ pub fn process_tag_0x403f_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x403f_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x4019_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0xb0_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x4016_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4016_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
-pub fn process_tag_0x4001_subdirectory(
+pub fn process_tag_0xb0_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0xb0_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        582 => process_canon_colordata1(data, byte_order),
-        653 => process_canon_colordata2(data, byte_order),
-        796 => process_canon_colordata3(data, byte_order),
-        5120 => process_canon_colordata5(data, byte_order),
-        4528 => process_canon_colordata12(data, byte_order),
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
-pub fn process_tag_0xaa_subdirectory(
+pub fn process_tag_0xb6_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0xb6_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
-pub fn process_tag_0x4025_subdirectory(
+pub fn process_tag_0x25_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x25_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x27_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x3c_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x11_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x93_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x4018_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x96_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x29_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x91_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x90_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0xa0_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x4020_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0xf_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0xe0_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x4013_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4013_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
+}
+
+pub fn process_tag_0xa9_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xa9_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0xb1_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xb1_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x35_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x35_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x4019_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4019_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x4025_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4025_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x3c_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x3c_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x91_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x91_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x99_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x99_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x27_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x27_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x4021_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4021_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0xe0_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xe0_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2f_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2f_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x92_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x92_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x4028_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4028_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x4026_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4026_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x4018_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4018_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x98_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x98_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0xa0_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xa0_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x4059_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4059_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x1_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x1_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x93_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x93_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0xd_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xd_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x4015_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4015_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x11_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x11_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x12_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x12_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x4024_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4024_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
 }
 
 pub fn process_tag_0x24_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x24_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
+}
+
+pub fn process_tag_0xa_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xa_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x26_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x26_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x5_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x5_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x96_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x96_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x1d_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x1d_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x90_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x90_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x4020_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4020_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0xf_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xf_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x4003_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4003_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0xaa_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xaa_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x9a_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x9a_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
 }
 
 pub fn process_tag_0x4_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
+}
+
+pub fn process_tag_0x29_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x29_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
 }
 
 /// Apply PrintConv for a tag from this module
@@ -9580,12 +9808,17 @@ pub fn process_subdirectory(
     value: &TagValue,
     byte_order: ByteOrder,
 ) -> Result<HashMap<String, TagValue>> {
+    use tracing::debug;
     let mut result = HashMap::new();
+
+    debug!("process_subdirectory called for tag_id: 0x{:04x}", tag_id);
 
     if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
         if let Some(SubDirectoryType::Binary { processor }) = &tag_kit.subdirectory {
+            debug!("Found subdirectory processor for tag_id: 0x{:04x}", tag_id);
             let bytes = match value {
                 TagValue::U16Array(arr) => {
+                    debug!("Converting U16Array with {} elements to bytes", arr.len());
                     // Convert U16 array to bytes based on byte order
                     let mut bytes = Vec::with_capacity(arr.len() * 2);
                     for val in arr {
@@ -9600,13 +9833,27 @@ pub fn process_subdirectory(
                 _ => return Ok(result), // Not array data
             };
 
+            debug!("Calling processor with {} bytes", bytes.len());
             // Process subdirectory and collect all extracted tags
-            if let Ok(extracted_tags) = processor(&bytes, byte_order) {
-                for (name, value) in extracted_tags {
-                    result.insert(name, value);
+            match processor(&bytes, byte_order) {
+                Ok(extracted_tags) => {
+                    debug!("Processor returned {} tags", extracted_tags.len());
+                    for (name, value) in extracted_tags {
+                        result.insert(name, value);
+                    }
+                }
+                Err(e) => {
+                    debug!("Processor error: {:?}", e);
                 }
             }
+        } else {
+            debug!(
+                "No subdirectory processor found for tag_id: 0x{:04x}",
+                tag_id
+            );
         }
+    } else {
+        debug!("Tag not found in TAG_KITS: 0x{:04x}", tag_id);
     }
 
     Ok(result)

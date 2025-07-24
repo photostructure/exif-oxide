@@ -12,7 +12,7 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_222: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "RAW");
     map.insert("1".to_string(), "Super Fine");
@@ -28,7 +28,7 @@ static PRINT_CONV_222: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_223: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "None");
     map.insert("136".to_string(), "Minolta/Sony AF 1.4x APO (D)");
@@ -42,7 +42,7 @@ static PRINT_CONV_223: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_224: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "Color Temperature/Color Filter");
@@ -69,7 +69,7 @@ pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_222),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_0),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -97,7 +97,7 @@ pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_223),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_1),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -189,7 +189,7 @@ pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_224),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_2),
                 value_conv: None,
                 subdirectory: None,
             },
