@@ -34,12 +34,31 @@ pub fn kyocera_fnumber(val: u32) -> f64 {
 }
 
 /// Convert Kyocera internal ISO values to standard ISO speeds
-/// ExifTool: KyoceraRaw.pm %isoLookup hash
+/// ExifTool: KyoceraRaw.pm ISO tag PrintConv (lines 56-70)
 /// Maps internal values 7-19 to ISO speeds 25-400
-/// Now uses generated lookup table from codegen system
+///
+/// Now uses the generated tag kit system with PrintConv lookup
 pub fn kyocera_iso_lookup(val: u32) -> Option<u32> {
-    use crate::generated::KyoceraRaw_pm::lookup_kyocera_iso;
-    lookup_kyocera_iso(val)
+    use crate::expressions::ExpressionEvaluator;
+    use crate::generated::KyoceraRaw_pm::tag_kit::apply_print_conv;
+    use crate::types::TagValue;
+
+    let mut evaluator = ExpressionEvaluator::new();
+    let mut errors = Vec::new();
+    let mut warnings = Vec::new();
+
+    // Use the tag kit system to apply PrintConv for ISO tag (id=52)
+    let input_value = TagValue::U32(val);
+    let result = apply_print_conv(52, &input_value, &mut evaluator, &mut errors, &mut warnings);
+
+    // Parse the result back to u32 if it's a valid ISO value
+    if let TagValue::String(iso_str) = result {
+        if let Ok(iso_value) = iso_str.parse::<u32>() {
+            return Some(iso_value);
+        }
+    }
+
+    None
 }
 
 /// Helper function to extract ImageWidth/ImageHeight from any IFD
@@ -348,13 +367,15 @@ fn apply_dimension_priority(
     (ifd0_width, ifd0_height)
 }
 
+type DimensionScanResult = (Option<u32>, Option<u32>, Option<usize>, SensorBorders);
+
 /// Scan IFD entries for dimension-related data (dimensions, SubIFD pointer, sensor borders)
 /// Returns (image_width, image_height, sub_ifd_offset, sensor_borders)
 fn scan_ifd_for_dimensions(
     data: &[u8],
     ifd_offset: usize,
     is_little_endian: bool,
-) -> crate::types::Result<(Option<u32>, Option<u32>, Option<usize>, SensorBorders)> {
+) -> crate::types::Result<DimensionScanResult> {
     use tracing::debug;
 
     // Validate IFD offset
