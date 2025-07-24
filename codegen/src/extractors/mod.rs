@@ -39,7 +39,7 @@ pub trait Extractor: Send + Sync {
     /// Extract clean module name from source path for consistent naming
     fn sanitize_module_name(&self, config: &ModuleConfig) -> String {
         // Extract module name from path like "third-party/exiftool/lib/Image/ExifTool/Canon.pm" -> "canon"
-        if let Some(filename) = config.source_path.split('/').last() {
+        if let Some(filename) = config.source_path.split('/').next_back() {
             filename.replace(".pm", "").to_lowercase().replace('-', "_")
         } else {
             "unknown".to_string()
@@ -55,7 +55,7 @@ pub trait Extractor: Send + Sync {
         if let Some(name) = table_or_hash_name {
             format!("{}__{}__{}.json", module, config_type, name.to_lowercase())
         } else {
-            format!("{}__{}.json", module, config_type)
+            format!("{module}__{config_type}.json")
         }
     }
     
@@ -105,7 +105,7 @@ pub(super) fn run_perl_extractor(
     
     // Pass paths as environment variables
     cmd.env("CODEGEN_DIR", &codegen_dir);
-    cmd.env("REPO_ROOT", &repo_root);
+    cmd.env("REPO_ROOT", repo_root);
     
     setup_perl_environment(&mut cmd);
     

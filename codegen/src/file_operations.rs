@@ -65,6 +65,7 @@ pub fn read_directory(path: &Path) -> Result<fs::ReadDir> {
 /// Skip empty JSON files during processing
 /// 
 /// Returns true if the file should be skipped (is empty or contains only whitespace)
+#[allow(dead_code)]
 pub fn should_skip_empty_json(json_content: &str) -> bool {
     json_content.trim().is_empty()
 }

@@ -10,5 +10,6 @@
 
 /// Initialize all lazy static data structures
 /// This can be called during startup to avoid lazy initialization costs later
+#[allow(dead_code)]
 pub fn initialize_all() {
 }

@@ -49,7 +49,7 @@ pub fn generate_inline_printconv_lookup_with_name(
     let const_name = format!(
         "{}_{}", 
         to_screaming_snake_case(table_name),
-        to_screaming_snake_case(&tag_name)
+        to_screaming_snake_case(tag_name)
     );
     
     // Determine Rust type based on key_type
@@ -71,7 +71,7 @@ pub fn generate_inline_printconv_lookup_with_name(
     code.push_str(&format!("/// Raw data ({} entries)\n", entry.entries.len()));
     
     if is_string_key {
-        code.push_str(&format!("static {}_DATA: &[(&'static str, &'static str)] = &[\n", const_name));
+        code.push_str(&format!("static {const_name}_DATA: &[(&'static str, &'static str)] = &[\n"));
         
         // Sort entries for consistent output
         let mut sorted_entries: Vec<_> = entry.entries.iter().collect();
@@ -81,7 +81,7 @@ pub fn generate_inline_printconv_lookup_with_name(
             code.push_str(&format!("    (\"{}\", \"{}\"),\n", escape_string(key), escape_string(value)));
         }
     } else {
-        code.push_str(&format!("static {}_DATA: &[({}, &'static str)] = &[\n", const_name, rust_key_type));
+        code.push_str(&format!("static {const_name}_DATA: &[({rust_key_type}, &'static str)] = &[\n"));
         
         // Sort entries numerically/lexically
         let mut sorted_entries: Vec<_> = entry.entries.iter().collect();
@@ -105,36 +105,34 @@ pub fn generate_inline_printconv_lookup_with_name(
     
     if is_string_key {
         code.push_str(&format!(
-            "pub static {}: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {{\n",
-            const_name
+            "pub static {const_name}: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {{\n"
         ));
-        code.push_str(&format!("    {}_DATA.iter().cloned().collect()\n", const_name));
+        code.push_str(&format!("    {const_name}_DATA.iter().cloned().collect()\n"));
         code.push_str("});\n\n");
         
         // Generate lookup function
         code.push_str("/// Look up value by key\n");
         code.push_str(&format!(
             "pub fn lookup_{}(key: &str) -> Option<&'static str> {{\n",
-            to_snake_case(&format!("{}_{}", table_name, tag_name))
+            to_snake_case(&format!("{table_name}_{tag_name}"))
         ));
-        code.push_str(&format!("    {}.get(key).copied()\n", const_name));
+        code.push_str(&format!("    {const_name}.get(key).copied()\n"));
         code.push_str("}\n");
     } else {
         code.push_str(&format!(
-            "pub static {}: LazyLock<HashMap<{}, &'static str>> = LazyLock::new(|| {{\n",
-            const_name, rust_key_type
+            "pub static {const_name}: LazyLock<HashMap<{rust_key_type}, &'static str>> = LazyLock::new(|| {{\n"
         ));
-        code.push_str(&format!("    {}_DATA.iter().cloned().collect()\n", const_name));
+        code.push_str(&format!("    {const_name}_DATA.iter().cloned().collect()\n"));
         code.push_str("});\n\n");
         
         // Generate lookup function
         code.push_str("/// Look up value by key\n");
         code.push_str(&format!(
             "pub fn lookup_{}(key: {}) -> Option<&'static str> {{\n",
-            to_snake_case(&format!("{}_{}", table_name, tag_name)),
+            to_snake_case(&format!("{table_name}_{tag_name}")),
             rust_key_type
         ));
-        code.push_str(&format!("    {}.get(&key).copied()\n", const_name));
+        code.push_str(&format!("    {const_name}.get(&key).copied()\n"));
         code.push_str("}\n");
     }
     
@@ -142,6 +140,7 @@ pub fn generate_inline_printconv_lookup_with_name(
 }
 
 /// Generate lookup table code for an inline PrintConv entry
+#[allow(dead_code)]
 pub fn generate_inline_printconv_lookup(
     table_name: &str,
     tag_name: &str,
@@ -161,7 +160,7 @@ pub fn generate_inline_printconv_file(
     // Generate lookup for each inline PrintConv
     for (i, entry) in data.inline_printconvs.iter().enumerate() {
         if i > 0 {
-            code.push_str("\n");
+            code.push('\n');
         }
         
         // Handle duplicate tag names by adding tag_id suffix

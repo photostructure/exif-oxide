@@ -62,7 +62,7 @@ pub fn update_generated_mod_file(output_dir: &str) -> Result<()> {
     use crate::file_operations::{file_exists, write_file_atomic};
     use std::fs;
     
-    let mod_path = format!("{}/mod.rs", output_dir);
+    let mod_path = format!("{output_dir}/mod.rs");
     let mut content = if file_exists(Path::new(&mod_path)) {
         fs::read_to_string(&mod_path)?
     } else {
@@ -77,7 +77,7 @@ pub fn update_generated_mod_file(output_dir: &str) -> Result<()> {
         if path.is_dir() {
             if let Some(dir_name) = path.file_name().and_then(|n| n.to_str()) {
                 if dir_name.ends_with("_pm") && path.join("mod.rs").exists() {
-                    let mod_declaration = format!("pub mod {};\n", dir_name);
+                    let mod_declaration = format!("pub mod {dir_name};\n");
                     if !content.contains(&mod_declaration) {
                         content.push_str(&mod_declaration);
                     }
@@ -93,6 +93,7 @@ pub fn update_generated_mod_file(output_dir: &str) -> Result<()> {
 /// Discover all module directories ending with "_pm"
 ///
 /// Returns a sorted list of module directory names for consistent processing.
+#[allow(dead_code)]
 pub fn discover_module_directories(config_dir: &Path) -> Result<Vec<String>> {
     let mut modules = Vec::new();
     
