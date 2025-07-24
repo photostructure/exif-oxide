@@ -5,6 +5,9 @@
 # Generated code from ExifTool
 /codegen/generated
 
+# Coverage reports
+/codegen/coverage/
+
 # IDE files
 .idea/
 *.swp
