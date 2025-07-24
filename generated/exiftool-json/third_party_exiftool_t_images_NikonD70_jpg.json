@@ -14,5 +14,7 @@
   "EXIF:CreateDate": "2005:01:14 08:57:59",
   "EXIF:SubSecTime": 20,
   "EXIF:SubSecTimeOriginal": 20,
-  "EXIF:SubSecTimeDigitized": 20
+  "EXIF:SubSecTimeDigitized": 20,
+  "File:ImageWidth": 71,
+  "File:ImageHeight": 47
 }

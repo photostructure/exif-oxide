@@ -11,5 +11,7 @@
   "EXIF:Model": "P2_USB_IR",
   "EXIF:ImageHeight": 960,
   "EXIF:Make": "Infisense",
-  "EXIF:Orientation": "Horizontal (normal)"
+  "EXIF:Orientation": "Horizontal (normal)",
+  "File:ImageWidth": 8,
+  "File:ImageHeight": 8
 }

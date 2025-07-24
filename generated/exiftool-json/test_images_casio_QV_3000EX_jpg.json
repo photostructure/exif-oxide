@@ -11,5 +11,7 @@
   "EXIF:Model": "QV-3000EX",
   "EXIF:Orientation": "Horizontal (normal)",
   "EXIF:DateTimeOriginal": "2000:03:31 10:44:15",
-  "EXIF:CreateDate": "2000:03:31 10:44:15"
+  "EXIF:CreateDate": "2000:03:31 10:44:15",
+  "File:ImageWidth": 8,
+  "File:ImageHeight": 8
 }

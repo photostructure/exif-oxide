@@ -12,5 +12,7 @@
   "EXIF:Orientation": "Horizontal (normal)",
   "EXIF:ISO": 400,
   "EXIF:DateTimeOriginal": "2005:01:05 10:53:41",
-  "EXIF:CreateDate": "2005:01:05 10:53:41"
+  "EXIF:CreateDate": "2005:01:05 10:53:41",
+  "File:ImageWidth": 8,
+  "File:ImageHeight": 8
 }
