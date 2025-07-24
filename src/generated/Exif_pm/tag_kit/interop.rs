@@ -6,12 +6,13 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
-use super::{PrintConvType, TagKitDef};
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
 use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_26: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_53: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("R03".to_string(), "R03 - DCF option file (Adobe RGB)");
     map.insert("R98".to_string(), "R98 - DCF basic file (sRGB)");
@@ -31,8 +32,9 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_26),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_53),
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -46,6 +48,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -59,6 +62,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -72,6 +76,9 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: Some(SubDirectoryType::Binary {
+                    processor: process_tag_0xa005_subdirectory,
+                }),
             },
         ),
         (
@@ -85,6 +92,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
         (
@@ -98,6 +106,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 notes: Some("called RelatedImageLength by the DCF spec."),
                 print_conv: PrintConvType::None,
                 value_conv: None,
+                subdirectory: None,
             },
         ),
     ]

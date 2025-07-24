@@ -12,7 +12,6 @@ pub mod main_conditional_tags;
 pub mod offon;
 pub mod picturestyles;
 pub mod tag_kit;
-pub mod tag_structure;
 pub mod userdefstyles;
 
 // Re-export all lookup functions and constants
@@ -25,5 +24,4 @@ pub use main_conditional_tags::*;
 pub use offon::*;
 pub use picturestyles::*;
 pub use tag_kit::*;
-pub use tag_structure::*;
 pub use userdefstyles::*;

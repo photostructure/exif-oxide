@@ -6,15 +6,17 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 
+use super::*;
+use super::{PrintConvType, SubDirectoryType, TagKitDef};
+use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
-use crate::types::TagValue;
-use super::{TagKitDef, PrintConvType};
 
 /// Get tag definitions for interop category
 pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
-    vec![
-        (1, TagKitDef {
+    vec![(
+        1,
+        TagKitDef {
             id: 1,
             name: "FirmwareVersion",
             format: "string[10]",
@@ -23,6 +25,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
-        }),
-    ]
+            subdirectory: None,
+        },
+    )]
 }
