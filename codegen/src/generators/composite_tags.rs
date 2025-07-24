@@ -99,7 +99,7 @@ pub fn generate_composite_tag_table(tags: &[GeneratedCompositeTag], output_dir: 
     code.push_str("}\n");
 
     // Write file
-    let output_path = format!("{}/composite_tags.rs", output_dir);
+    let output_path = format!("{output_dir}/composite_tags.rs");
     fs::write(&output_path, code)?;
     debug!("  ✓ Generated {}", output_path);
 

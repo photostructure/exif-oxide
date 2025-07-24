@@ -85,6 +85,7 @@ pub struct IDCPattern {
 }
 
 /// Generate Rust code for offset patterns
+#[allow(dead_code)]
 pub fn generate_offset_patterns(data: &OffsetPatternExtraction) -> Result<String> {
     let mut code = String::new();
     
@@ -108,13 +109,13 @@ pub fn generate_offset_patterns(data: &OffsetPatternExtraction) -> Result<String
     // Generate model conditions if present
     if !data.offset_patterns.model_conditions.is_empty() {
         code.push_str(&generate_model_conditions(&data.offset_patterns.model_conditions)?);
-        code.push_str("\n");
+        code.push('\n');
     }
     
     // Generate offset calculation functions
     if !data.offset_patterns.offset_calculations.is_empty() {
         code.push_str(&generate_offset_calculators(&data.offset_patterns.offset_calculations)?);
-        code.push_str("\n");
+        code.push('\n');
     }
     
     // Generate IDC recovery patterns if present
@@ -125,6 +126,7 @@ pub fn generate_offset_patterns(data: &OffsetPatternExtraction) -> Result<String
     Ok(code)
 }
 
+#[allow(dead_code)]
 fn generate_model_conditions(conditions: &[ModelCondition]) -> Result<String> {
     let mut code = String::new();
     
@@ -159,6 +161,7 @@ fn generate_model_conditions(conditions: &[ModelCondition]) -> Result<String> {
     Ok(code)
 }
 
+#[allow(dead_code)]
 fn generate_offset_calculators(calculations: &[OffsetCalculation]) -> Result<String> {
     let mut code = String::new();
     
@@ -256,6 +259,7 @@ fn generate_offset_calculators(calculations: &[OffsetCalculation]) -> Result<Str
     Ok(code)
 }
 
+#[allow(dead_code)]
 fn generate_idc_recovery(patterns: &[IDCPattern]) -> Result<String> {
     let mut code = String::new();
     
@@ -286,6 +290,7 @@ fn generate_idc_recovery(patterns: &[IDCPattern]) -> Result<String> {
     Ok(code)
 }
 
+#[allow(dead_code)]
 fn to_camel_case(s: &str) -> String {
     s.split('_')
         .map(|word| {

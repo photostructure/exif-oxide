@@ -61,7 +61,7 @@ fn should_skip_directory(path: &Path) -> bool {
     !path.is_dir() || 
     path.file_name()
         .and_then(|name| name.to_str())
-        .map_or(true, |name| name.starts_with('.'))
+        .is_none_or(|name| name.starts_with('.'))
 }
 
 /// Parse all config files in a module directory.
@@ -123,11 +123,11 @@ fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig
 
 fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
     debug!("Reading config file: {}", config_path.display());
-    let config_content = match fs::read_to_string(&config_path) {
+    let config_content = match fs::read_to_string(config_path) {
         Ok(data) => data,
         Err(err) => {
             warn!("UTF-8 error reading {}: {}", config_path.display(), err);
-            let bytes = fs::read(&config_path)
+            let bytes = fs::read(config_path)
                 .with_context(|| format!("Failed to read bytes from {}", config_path.display()))?;
             String::from_utf8_lossy(&bytes).into_owned()
         }

@@ -30,7 +30,7 @@ impl Extractor for FileTypeLookupExtractor {
         
         // Add hash names with % prefix
         for hash_name in &config.hash_names {
-            args.push(format!("%{}", hash_name));
+            args.push(format!("%{hash_name}"));
         }
         
         args
@@ -38,6 +38,6 @@ impl Extractor for FileTypeLookupExtractor {
     
     fn output_filename(&self, config: &ModuleConfig, _hash_name: Option<&str>) -> String {
         let module_name = self.sanitize_module_name(config);
-        format!("{}_file_type_lookup.json", module_name)
+        format!("{module_name}_file_type_lookup.json")
     }
 }

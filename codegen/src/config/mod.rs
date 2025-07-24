@@ -26,6 +26,7 @@ pub struct SimpleMetadata {
 #[derive(Debug, serde::Deserialize)]
 pub struct SimpleExtractedTable {
     pub source: TableSource,
+    #[allow(dead_code)]
     pub metadata: SimpleMetadata,
     pub entries: Vec<TableEntry>,
 }
@@ -190,7 +191,7 @@ fn normalize_module_name(module: &str) -> String {
         "ExifTool_pm".to_string()
     } else if module.contains("/") {
         // New full path format: third-party/exiftool/lib/Image/ExifTool/Canon.pm -> Canon_pm
-        if let Some(filename) = module.split('/').last() {
+        if let Some(filename) = module.split('/').next_back() {
             filename.replace(".pm", "_pm")
         } else {
             module.replace(".pm", "_pm")

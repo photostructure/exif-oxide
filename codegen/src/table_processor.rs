@@ -17,6 +17,7 @@ use tracing::{debug, warn};
 ///
 /// This function processes both EXIF and GPS tags from the extracted data
 /// and converts them to the generated format used by the code generation system.
+#[allow(dead_code)]
 pub fn convert_tags(data: &ExtractedData) -> Result<Vec<GeneratedTag>> {
     let mut all_tags = Vec::new();
 
@@ -57,6 +58,7 @@ pub fn convert_tags(data: &ExtractedData) -> Result<Vec<GeneratedTag>> {
 ///
 /// This function processes composite tag data from the extraction system
 /// and converts it to the format used by the code generation system.
+#[allow(dead_code)]
 pub fn convert_composite_tags_from_data(data: &CompositeData) -> Result<Vec<GeneratedCompositeTag>> {
     Ok(data
         .composite_tags
@@ -78,6 +80,7 @@ pub fn convert_composite_tags_from_data(data: &CompositeData) -> Result<Vec<Gene
 ///
 /// This function orchestrates the entire tag processing pipeline,
 /// including both regular tags and composite tags.
+#[allow(dead_code)]
 pub fn process_tag_tables(
     tag_data_path: &str,
     composite_data_path: &str,
@@ -157,7 +160,7 @@ pub fn process_tag_tables_modular(extract_dir: &Path, output_dir: &str) -> Resul
                 
                 // Parse the modular tag definition format
                 let tag_data: serde_json::Value = serde_json::from_str(&json_data)
-                    .with_context(|| format!("Failed to parse {}", filename))?;
+                    .with_context(|| format!("Failed to parse {filename}"))?;
                 
                 // Extract tags from the modular format
                 if let Some(tags) = tag_data["tags"].as_array() {
@@ -212,7 +215,7 @@ pub fn process_tag_tables_modular(extract_dir: &Path, output_dir: &str) -> Resul
                 
                 // Parse the modular composite tag format
                 let composite_data: serde_json::Value = serde_json::from_str(&json_data)
-                    .with_context(|| format!("Failed to parse {}", filename))?;
+                    .with_context(|| format!("Failed to parse {filename}"))?;
                 
                 // Extract composite tags from the modular format
                 if let Some(composites) = composite_data["composite_tags"].as_array() {

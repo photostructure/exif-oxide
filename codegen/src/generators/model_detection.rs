@@ -85,18 +85,18 @@ pub fn generate_model_detection(data: &ModelDetectionExtraction) -> Result<Strin
         code.push_str("use crate::expressions::ExpressionEvaluator;\n");
         code.push_str("use crate::processor_registry::ProcessorContext;\n");
     }
-    code.push_str("\n");
+    code.push('\n');
     
     // Generate model pattern matcher if we have patterns
     if !data.patterns_data.patterns.is_empty() {
         code.push_str(&generate_model_matcher(data)?);
-        code.push_str("\n");
+        code.push('\n');
     }
     
     // Generate conditional tag dispatcher if we have conditional tags
     if !data.patterns_data.conditional_tags.is_empty() {
         code.push_str(&generate_conditional_tag_dispatcher(data)?);
-        code.push_str("\n");
+        code.push('\n');
     }
     
     // Generate the main model detection structure
@@ -112,13 +112,13 @@ pub fn generate_model_detection(data: &ModelDetectionExtraction) -> Result<Strin
         data.patterns_data.conditional_tags.len()
     ));
     code.push_str("#[derive(Debug, Clone)]\n");
-    code.push_str(&format!("pub struct {} {{\n", struct_name));
+    code.push_str(&format!("pub struct {struct_name} {{\n"));
     code.push_str("    /// Model string for pattern matching\n");
     code.push_str("    pub model: String,\n");
     code.push_str("}\n\n");
     
     // Generate implementation
-    code.push_str(&format!("impl {} {{\n", struct_name));
+    code.push_str(&format!("impl {struct_name} {{\n"));
     
     // Constructor
     code.push_str("    /// Create new model detection instance\n");
@@ -141,7 +141,7 @@ pub fn generate_model_detection(data: &ModelDetectionExtraction) -> Result<Strin
         }
         
         for (pattern_type, patterns) in pattern_groups {
-            code.push_str(&format!("            \"{}\" => {{\n", pattern_type));
+            code.push_str(&format!("            \"{pattern_type}\" => {{\n"));
             for pattern in patterns {
                 match pattern.pattern_type.as_str() {
                     "regex" => {
@@ -257,8 +257,7 @@ fn generate_model_matcher(data: &ModelDetectionExtraction) -> Result<String> {
         if pattern.pattern_type == "regex" {
             let pattern_name = sanitize_pattern_name(&pattern.pattern);
             code.push_str(&format!(
-                "static MODEL_PATTERN_{}: LazyLock<Regex> = LazyLock::new(|| {{\n",
-                pattern_name
+                "static MODEL_PATTERN_{pattern_name}: LazyLock<Regex> = LazyLock::new(|| {{\n"
             ));
             code.push_str(&format!(
                 "    Regex::new(r\"{}\").expect(\"Valid regex pattern for {}\")\n",
