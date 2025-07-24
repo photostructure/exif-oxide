@@ -25,7 +25,7 @@ use crate::file_detection::FileTypeDetector;
 use crate::generated::{EXIF_MAIN_TAGS, REQUIRED_PRINT_CONV, REQUIRED_VALUE_CONV};
 use crate::types::{ExifData, Result, TagEntry, TagValue};
 use crate::xmp::XmpProcessor;
-use std::collections::HashMap;
+use indexmap::IndexMap;
 use std::fs::File;
 use std::io::{BufReader, Read, Seek, SeekFrom};
 use std::path::Path;
@@ -50,7 +50,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
     let file_metadata = std::fs::metadata(path)?;
     let file_size = file_metadata.len();
 
-    let mut tags = HashMap::new();
+    let mut tags = IndexMap::new();
     let mut tag_entries = Vec::new();
 
     // Basic file information (now real data) - create as TagEntry objects
@@ -638,6 +638,31 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     let mut raw_tag_entries = exif_reader.get_all_tag_entries();
                     // Append RAW tag entries to our collection
                     tag_entries.append(&mut raw_tag_entries);
+
+                    // For RW2 files: Extract JPEG preview dimensions to create File:ImageWidth/ImageHeight tags
+                    // ExifTool creates File group tags from embedded JPEG preview (JpgFromRaw tag)
+                    if detection_result.file_type == "RW2" {
+                        if let Some(jpeg_preview_dimensions) =
+                            extract_rw2_jpeg_preview_dimensions(&exif_reader, &raw_data)
+                        {
+                            // Create File:ImageWidth and File:ImageHeight tags from JPEG preview
+                            // ExifTool: File group tags come from embedded JPEG SOF data, not sensor borders
+                            tag_entries.push(TagEntry {
+                                group: "File".to_string(),
+                                group1: "File".to_string(),
+                                name: "ImageWidth".to_string(),
+                                value: TagValue::U16(jpeg_preview_dimensions.0),
+                                print: TagValue::U16(jpeg_preview_dimensions.0),
+                            });
+                            tag_entries.push(TagEntry {
+                                group: "File".to_string(),
+                                group1: "File".to_string(),
+                                name: "ImageHeight".to_string(),
+                                value: TagValue::U16(jpeg_preview_dimensions.1),
+                                print: TagValue::U16(jpeg_preview_dimensions.1),
+                            });
+                        }
+                    }
                     // Also populate legacy tags for backward compatibility
                     let raw_tags = exif_reader.get_all_tags();
                     for (key, value) in raw_tags {
@@ -1081,6 +1106,51 @@ fn format_unix_permissions(mode: u32) -> String {
     permissions.push(if mode & 0o001 != 0 { 'x' } else { '-' });
 
     permissions
+}
+
+/// Extract JPEG preview dimensions from RW2 file's JpgFromRaw tag
+/// ExifTool: PanasonicRaw.pm tag 0x002e contains embedded JPEG with preview dimensions
+fn extract_rw2_jpeg_preview_dimensions(
+    exif_reader: &crate::exif::ExifReader,
+    raw_data: &[u8],
+) -> Option<(u16, u16)> {
+    use crate::types::TagValue;
+    use std::io::Cursor;
+
+    // Get JpgFromRaw tag (0x002e) offset from ExifReader
+    // This tag contains the offset to embedded JPEG data
+    let jpeg_offset = match exif_reader.get_extracted_tags().get(&0x002e) {
+        Some(TagValue::Binary(binary_data)) => {
+            // The binary data should contain the JPEG data directly
+            // For RW2 files, ExifTool processes this as raw JPEG data
+            if let Ok((_segment_info, Some(sof))) =
+                crate::formats::jpeg::scan_jpeg_segments(&mut Cursor::new(binary_data))
+            {
+                return Some((sof.image_width, sof.image_height));
+            }
+            return None;
+        }
+        Some(TagValue::U32(offset)) => *offset as usize,
+        Some(TagValue::U64(offset)) => *offset as usize,
+        _ => return None,
+    };
+
+    // If we have an offset, read JPEG data from that position in the file
+    if jpeg_offset >= raw_data.len() {
+        return None;
+    }
+
+    // The JPEG data starts at the offset - scan for JPEG segments
+    let jpeg_data = &raw_data[jpeg_offset..];
+
+    // Parse JPEG segments to find SOF data with dimensions
+    if let Ok((_segment_info, Some(sof))) =
+        crate::formats::jpeg::scan_jpeg_segments(&mut Cursor::new(jpeg_data))
+    {
+        Some((sof.image_width, sof.image_height))
+    } else {
+        None
+    }
 }
 
 #[cfg(test)]
