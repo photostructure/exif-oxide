@@ -82,6 +82,25 @@ codegen:
 sync: codegen
 	cargo build
 
+# Generate SubDirectory coverage report
+subdirectory-coverage:
+	@echo "📊 Generating SubDirectory coverage report..."
+	@mkdir -p codegen/coverage
+	@cd codegen/extractors && perl subdirectory_discovery.pl --json 2>/dev/null > ../coverage/subdirectory_coverage.json
+	@cd codegen/extractors && perl subdirectory_discovery.pl --markdown 2>/dev/null > ../../docs/reference/SUBDIRECTORY-COVERAGE.md
+	@coverage=$$(jq '.summary.coverage_percentage' codegen/coverage/subdirectory_coverage.json); \
+	echo "SubDirectory coverage: $$coverage%"
+
+# Check SubDirectory coverage and warn if below threshold
+check-subdirectory-coverage: subdirectory-coverage
+	@coverage=$$(jq -r '.summary.coverage_percentage' codegen/coverage/subdirectory_coverage.json | cut -d. -f1); \
+	if [ "$$coverage" -lt 80 ]; then \
+		echo "⚠️  Warning: SubDirectory coverage is only $${coverage}%"; \
+		echo "   See docs/reference/SUBDIRECTORY-COVERAGE.md for details"; \
+	else \
+		echo "✅ SubDirectory coverage is $${coverage}%"; \
+	fi
+
 # Set up local Perl environment and install cpanminus
 perl-setup:
 	@echo "Setting up local Perl environment..."
@@ -116,7 +135,7 @@ audit:
 	cargo audit
 
 # Pre-commit checks: do everything: update deps, codegen, fix code, lint, test, audit, and build
-precommit: update perl-deps codegen check-extractors fix lint yamllint compat-gen test codegen-test audit build
+precommit: update perl-deps codegen check-subdirectory-coverage check-extractors fix lint yamllint compat-gen test codegen-test audit build
 	@echo "✅ precommit successful 🥳" 
 
 # Generate ExifTool JSON reference data for compatibility testing (only missing files)
