@@ -10,6 +10,8 @@
   "File:FileModifyDate",
   "File:FileType",
   "File:FileTypeExtension",
+  "File:ImageHeight",
+  "File:ImageWidth",
   "EXIF:ImageHeight",
   "EXIF:ImageWidth",
   "PNG:ImageHeight",

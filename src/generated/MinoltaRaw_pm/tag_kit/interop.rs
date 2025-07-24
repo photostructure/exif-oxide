@@ -11,17 +11,6 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "None");
-    map.insert("1".to_string(), "Portrait");
-    map.insert("2".to_string(), "Text");
-    map.insert("3".to_string(), "Night Portrait");
-    map.insert("4".to_string(), "Sunset");
-    map.insert("5".to_string(), "Sports");
-    map
-});
-
 /// Get tag definitions for interop category
 pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
     vec![
@@ -47,97 +36,6 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            1,
-            TagKitDef {
-                id: 1,
-                name: "Saturation",
-                format: "int8s",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            2,
-            TagKitDef {
-                id: 2,
-                name: "Contrast",
-                format: "int8s",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            3,
-            TagKitDef {
-                id: 3,
-                name: "Sharpness",
-                format: "int8s",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-            },
-        ),
-        (
-            4,
-            TagKitDef {
-                id: 4,
-                name: "WBMode",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Manual("complex_expression_printconv"),
-                value_conv: None,
-            },
-        ),
-        (
-            5,
-            TagKitDef {
-                id: 5,
-                name: "ProgramMode",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_0),
-                value_conv: None,
-            },
-        ),
-        (
-            6,
-            TagKitDef {
-                id: 6,
-                name: "ISOSetting",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Manual("complex_hash_printconv"),
-                value_conv: None,
-            },
-        ),
-        (
-            8,
-            TagKitDef {
-                id: 8,
-                name: "WB_RBLevelsTungsten",
-                format: "int16u[2]",
-                groups: HashMap::new(),
-                writable: false,
-                notes: Some("these WB_RBLevels currently decoded only for the Sony A100"),
                 print_conv: PrintConvType::None,
                 value_conv: None,
             },

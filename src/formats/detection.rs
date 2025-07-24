@@ -14,11 +14,17 @@ use std::path::Path;
 /// Reads the first few bytes of the file to identify format by magic signature.
 /// This is more reliable than extension-based detection.
 pub fn detect_file_format<R: Read + Seek>(mut reader: R) -> Result<FileFormat> {
-    let mut magic_bytes = [0u8; 4];
-    reader.read_exact(&mut magic_bytes)?;
+    let mut magic_bytes = [0u8; 20]; // Need more bytes for AVIF detection
+    let bytes_read = reader.read(&mut magic_bytes)?;
 
     // Reset to beginning for subsequent reading
     reader.seek(SeekFrom::Start(0))?;
+
+    if bytes_read < 4 {
+        return Err(ExifError::Unsupported(
+            "File too short to detect format".to_string(),
+        ));
+    }
 
     match &magic_bytes[0..2] {
         // JPEG magic bytes: 0xFFD8
@@ -26,9 +32,22 @@ pub fn detect_file_format<R: Read + Seek>(mut reader: R) -> Result<FileFormat> {
         // TIFF magic bytes: "II" (little-endian) or "MM" (big-endian)
         [0x49, 0x49] | [0x4D, 0x4D] => Ok(FileFormat::Tiff),
         _ => {
+            // Check for AVIF (ISO Base Media File Format)
+            // AVIF files start with size + 'ftyp' + brand
+            if bytes_read >= 12 && &magic_bytes[4..8] == b"ftyp" {
+                // Check if major brand is 'avif' or compatible brand
+                if bytes_read >= 12 && &magic_bytes[8..12] == b"avif" {
+                    return Ok(FileFormat::Avif);
+                }
+                // Check compatible brands (starting at offset 16)
+                if bytes_read >= 20 && &magic_bytes[16..20] == b"avif" {
+                    return Ok(FileFormat::Avif);
+                }
+            }
+
             // Check for other formats by examining more bytes
             Err(ExifError::Unsupported(
-                "Unsupported file format - not a JPEG or TIFF".to_string(),
+                "Unsupported file format - not a JPEG, TIFF, or AVIF".to_string(),
             ))
         }
     }
@@ -50,6 +69,7 @@ pub enum FileFormat {
     NikonRaw,
     SonyRaw,
     Dng,
+    Avif,
 }
 
 impl FileFormat {
@@ -62,6 +82,7 @@ impl FileFormat {
             FileFormat::NikonRaw => "image/x-nikon-nef",
             FileFormat::SonyRaw => "image/x-sony-arw",
             FileFormat::Dng => "image/x-adobe-dng",
+            FileFormat::Avif => "image/avif",
         }
     }
 
@@ -74,6 +95,7 @@ impl FileFormat {
             FileFormat::NikonRaw => "nef",
             FileFormat::SonyRaw => "arw",
             FileFormat::Dng => "dng",
+            FileFormat::Avif => "avif",
         }
     }
 
@@ -88,6 +110,7 @@ impl FileFormat {
             FileFormat::NikonRaw => "NEF",
             FileFormat::SonyRaw => "ARW",
             FileFormat::Dng => "DNG",
+            FileFormat::Avif => "AVIF",
         }
     }
 
@@ -106,6 +129,7 @@ impl FileFormat {
             FileFormat::NikonRaw => "nef",
             FileFormat::SonyRaw => "arw",
             FileFormat::Dng => "dng",
+            FileFormat::Avif => "avif",
         }
     }
 }
@@ -115,7 +139,10 @@ pub fn get_format_properties(format: FileFormat) -> FormatProperties {
     FormatProperties {
         mime_type: format.mime_type(),
         extension: format.extension(),
-        supports_exif: matches!(format, FileFormat::Jpeg | FileFormat::Tiff),
+        supports_exif: matches!(
+            format,
+            FileFormat::Jpeg | FileFormat::Tiff | FileFormat::Avif
+        ),
         supports_makernotes: matches!(format, FileFormat::Jpeg | FileFormat::Tiff),
     }
 }

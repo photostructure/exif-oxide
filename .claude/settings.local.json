@@ -98,7 +98,9 @@
       "Bash(pngquant:*)",
       "Bash(git lfs:*)",
       "Bash(ffmpeg:*)",
-      "Bash(./tools/generate_exiftool_json.sh:*)"
+      "Bash(./tools/generate_exiftool_json.sh:*)",
+      "Bash(cd:*)",
+      "Bash(./debug_gps)"
     ],
     "deny": []
   }

@@ -420,12 +420,41 @@ impl ExifReader {
                         {
                             (conditional_name, None)
                         } else {
-                            // Fall back to standard tag lookup in unified table
-                            // ExifTool: lib/Image/ExifTool/ExifTool.pm:9026 $$tagTablePtr{$tagID}
-                            let tag_def = TAG_BY_ID.get(&(tag_id as u32)).copied();
-                            let name = tag_def
-                                .map(|def| def.name.to_string())
-                                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                            // Context-aware tag lookup to handle IFD-specific tag collisions
+                            // ExifTool: lib/Image/ExifTool/Exif.pm:8968 GPS vs InteropIFD conflict handling
+                            let (name, tag_def) = if let Some(source_info) = source_info {
+                                match (source_info.ifd_name.as_str(), tag_id) {
+                                    // InteropIFD-specific tags
+                                    // ExifTool: lib/Image/ExifTool/Exif.pm InteropIFD table
+                                    ("InteropIFD", 0x0001) => ("InteroperabilityIndex".to_string(), None),
+                                    ("InteropIFD", 0x0002) => ("InteroperabilityVersion".to_string(), None),
+                                    
+                                    // GPS IFD tags use standard lookup (already correct in global table)
+                                    ("GPS", _) => {
+                                        let tag_def = TAG_BY_ID.get(&(tag_id as u32)).copied();
+                                        let name = tag_def
+                                            .map(|def| def.name.to_string())
+                                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                        (name, tag_def)
+                                    }
+                                    
+                                    // All other contexts use global lookup
+                                    _ => {
+                                        let tag_def = TAG_BY_ID.get(&(tag_id as u32)).copied();
+                                        let name = tag_def
+                                            .map(|def| def.name.to_string())
+                                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                        (name, tag_def)
+                                    }
+                                }
+                            } else {
+                                // No context info - fall back to global lookup
+                                let tag_def = TAG_BY_ID.get(&(tag_id as u32)).copied();
+                                let name = tag_def
+                                    .map(|def| def.name.to_string())
+                                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                (name, tag_def)
+                            };
 
                             // Debug logging for ColorSpace and WhiteBalance
                             if tag_id == 0xa001 || tag_id == 0xa403 {

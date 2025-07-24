@@ -3,12 +3,14 @@
 //! This module handles different image file formats and extracts
 //! metadata from each according to format-specific requirements.
 
+mod avif;
 mod detection;
 mod gif;
 mod jpeg;
 mod png;
 mod tiff;
 
+pub use avif::{create_avif_tag_entries, extract_avif_dimensions, AvifImageProperties};
 pub use detection::{
     detect_file_format, detect_file_format_from_path, get_format_properties, FileFormat,
 };
@@ -59,7 +61,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         .to_string();
     tag_entries.push(TagEntry {
         group: "File".to_string(),
-        group1: "File".to_string(),
+        group1: "System".to_string(),
         name: "FileName".to_string(),
         value: TagValue::String(filename.clone()),
         print: TagValue::String(filename),
@@ -72,7 +74,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         .to_string();
     tag_entries.push(TagEntry {
         group: "File".to_string(),
-        group1: "File".to_string(),
+        group1: "System".to_string(),
         name: "Directory".to_string(),
         value: TagValue::String(directory.clone()),
         print: TagValue::String(directory),
@@ -82,7 +84,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
     // Store as string for the numeric value (ExifTool compatibility)
     tag_entries.push(TagEntry {
         group: "File".to_string(),
-        group1: "File".to_string(),
+        group1: "System".to_string(),
         name: "FileSize".to_string(),
         value: TagValue::String(file_size.to_string()),
         print: TagValue::String(file_size.to_string()),
@@ -97,7 +99,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
         tag_entries.push(TagEntry {
             group: "File".to_string(),
-            group1: "File".to_string(),
+            group1: "System".to_string(),
             name: "FileModifyDate".to_string(),
             value: TagValue::String(formatted.clone()),
             print: TagValue::String(formatted),
@@ -111,7 +113,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
         tag_entries.push(TagEntry {
             group: "File".to_string(),
-            group1: "File".to_string(),
+            group1: "System".to_string(),
             name: "FileAccessDate".to_string(),
             value: TagValue::String(formatted.clone()),
             print: TagValue::String(formatted),
@@ -128,7 +130,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
             let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
             tag_entries.push(TagEntry {
                 group: "File".to_string(),
-                group1: "File".to_string(),
+                group1: "System".to_string(),
                 name: "FileCreateDate".to_string(),
                 value: TagValue::String(formatted.clone()),
                 print: TagValue::String(formatted),
@@ -147,7 +149,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
             let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
             tag_entries.push(TagEntry {
                 group: "File".to_string(),
-                group1: "File".to_string(),
+                group1: "System".to_string(),
                 name: "FileInodeChangeDate".to_string(),
                 value: TagValue::String(formatted.clone()),
                 print: TagValue::String(formatted),
@@ -164,7 +166,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         let permissions_str = format_unix_permissions(mode);
         tag_entries.push(TagEntry {
             group: "File".to_string(),
-            group1: "File".to_string(),
+            group1: "System".to_string(),
             name: "FilePermissions".to_string(),
             value: TagValue::String(permissions_str.clone()),
             print: TagValue::String(permissions_str),
@@ -291,7 +293,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     group: "File".to_string(),
                     group1: "File".to_string(),
                     name: "ImageWidth".to_string(),
-                    value: TagValue::String(sof.image_width.to_string()),
+                    value: TagValue::U32(sof.image_width as u32),
                     print: TagValue::String(sof.image_width.to_string()),
                 });
 
@@ -300,7 +302,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     group: "File".to_string(),
                     group1: "File".to_string(),
                     name: "ImageHeight".to_string(),
-                    value: TagValue::String(sof.image_height.to_string()),
+                    value: TagValue::U32(sof.image_height as u32),
                     print: TagValue::String(sof.image_height.to_string()),
                 });
 
@@ -309,7 +311,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     group: "File".to_string(),
                     group1: "File".to_string(),
                     name: "BitsPerSample".to_string(),
-                    value: TagValue::String(sof.bits_per_sample.to_string()),
+                    value: TagValue::U16(sof.bits_per_sample as u16),
                     print: TagValue::String(sof.bits_per_sample.to_string()),
                 });
 
@@ -318,7 +320,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     group: "File".to_string(),
                     group1: "File".to_string(),
                     name: "ColorComponents".to_string(),
-                    value: TagValue::String(sof.color_components.to_string()),
+                    value: TagValue::U16(sof.color_components as u16),
                     print: TagValue::String(sof.color_components.to_string()),
                 });
 
@@ -339,7 +341,7 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     group: "File".to_string(),
                     group1: "File".to_string(),
                     name: "EncodingProcess".to_string(),
-                    value: TagValue::String(sof.encoding_process.to_string()),
+                    value: TagValue::U16(sof.encoding_process as u16),
                     print: TagValue::String(sof.encoding_process.to_string()),
                 });
             }
@@ -836,6 +838,127 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     tags.insert(
                         "Warning:GifParseError".to_string(),
                         TagValue::string(format!("Failed to parse GIF screen descriptor: {e}")),
+                    );
+                }
+            }
+        }
+        "MOV" => {
+            // ISO Base Media File Format processing (QuickTime, MP4, AVIF, HEIF, etc.)
+            // Check file type to determine specific processing
+            match detection_result.file_type.as_str() {
+                "AVIF" => {
+                    // AVIF format processing - extract dimensions from ispe box
+                    // Reset reader to start of file
+                    reader.seek(SeekFrom::Start(0))?;
+
+                    // Read entire AVIF file for ISO box processing
+                    let mut avif_data = Vec::new();
+                    reader.read_to_end(&mut avif_data)?;
+
+                    // Extract AVIF dimensions from ispe box following ExifTool's implementation
+                    // Reference: QuickTime.pm:2946-2959 (ispe box processing)
+                    match avif::extract_avif_dimensions(&avif_data) {
+                        Ok(props) => {
+                            // Create AVIF tag entries using ExifTool-compatible structure
+                            // AVIF image dimensions are assigned to "File" group in ExifTool
+                            let mut avif_tag_entries = avif::create_avif_tag_entries(&props);
+
+                            // Append AVIF tag entries to our collection
+                            tag_entries.append(&mut avif_tag_entries);
+
+                            // Add AVIF processing status
+                            tags.insert(
+                                "System:AvifDetectionStatus".to_string(),
+                                TagValue::String(format!(
+                                    "AVIF ispe box processed: {}x{}",
+                                    props.width, props.height
+                                )),
+                            );
+                        }
+                        Err(e) => {
+                            // Failed to parse AVIF ispe box - add error information
+                            tags.insert(
+                                "Warning:AvifParseError".to_string(),
+                                TagValue::string(format!("Failed to parse AVIF ispe box: {e}")),
+                            );
+                        }
+                    }
+                }
+                "HEIC" | "HEIF" => {
+                    // HEIC/HEIF format processing - extract dimensions from ispe box
+                    // HEIC and HEIF use the same ISO Base Media File Format and ispe box structure as AVIF
+                    // Reference: QuickTime.pm:2946-2959 (ispe box processing)
+                    reader.seek(SeekFrom::Start(0))?;
+
+                    // Read entire HEIC/HEIF file for ISO box processing
+                    let mut file_data = Vec::new();
+                    reader.read_to_end(&mut file_data)?;
+
+                    // LIMITATION: This is a simplified HEIC/HEIF implementation
+                    // ExifTool uses primary item detection (pitm/iinf/ipma boxes) to identify the main image
+                    // Our current implementation extracts the first ispe box found, which may be a thumbnail
+                    //
+                    // To fully match ExifTool's behavior, we need to implement:
+                    // 1. Parse pitm box to get primary item ID (QuickTime.pm:3550-3557)
+                    // 2. Parse iinf box to build item information map (QuickTime.pm:3730-3740)
+                    // 3. Parse ipma box to associate items with properties (QuickTime.pm:10320-10380)
+                    // 4. Use DOC_NUM logic to determine primary vs sub-document ispe boxes (QuickTime.pm:6450-6460)
+                    //
+                    // ExifTool reference: QuickTime.pm:2946-2959 (ispe processing with DOC_NUM check)
+                    match avif::extract_avif_dimensions(&file_data) {
+                        Ok(props) => {
+                            // Create File:ImageWidth and File:ImageHeight tag entries
+                            // ExifTool creates File group tags for HEIC/HEIF dimensions
+                            let file_type = &detection_result.file_type;
+                            let mut heic_tag_entries = vec![
+                                TagEntry {
+                                    group: "File".to_string(),
+                                    group1: "File".to_string(),
+                                    name: "ImageWidth".to_string(),
+                                    value: TagValue::U32(props.width),
+                                    print: TagValue::U32(props.width),
+                                },
+                                TagEntry {
+                                    group: "File".to_string(),
+                                    group1: "File".to_string(),
+                                    name: "ImageHeight".to_string(),
+                                    value: TagValue::U32(props.height),
+                                    print: TagValue::U32(props.height),
+                                },
+                            ];
+
+                            // Append HEIC/HEIF tag entries to our collection
+                            tag_entries.append(&mut heic_tag_entries);
+
+                            // Add HEIC/HEIF processing status
+                            tags.insert(
+                                format!("System:{}DetectionStatus", file_type),
+                                TagValue::String(format!(
+                                    "{} ispe box processed: {}x{}",
+                                    file_type, props.width, props.height
+                                )),
+                            );
+                        }
+                        Err(e) => {
+                            // Failed to parse HEIC/HEIF ispe box - add error information
+                            tags.insert(
+                                format!("Warning:{}ParseError", detection_result.file_type),
+                                TagValue::string(format!(
+                                    "Failed to parse {} ispe box: {e}",
+                                    detection_result.file_type
+                                )),
+                            );
+                        }
+                    }
+                }
+                _ => {
+                    // Other MOV-based formats not yet supported (MP4, QuickTime, HEIF, etc.)
+                    tags.insert(
+                        "System:ExifDetectionStatus".to_string(),
+                        TagValue::string(format!(
+                            "MOV-based format {} not yet supported for dimension extraction",
+                            detection_result.file_type
+                        )),
                     );
                 }
             }
