@@ -36,23 +36,10 @@ pub fn kyocera_fnumber(val: u32) -> f64 {
 /// Convert Kyocera internal ISO values to standard ISO speeds
 /// ExifTool: KyoceraRaw.pm %isoLookup hash
 /// Maps internal values 7-19 to ISO speeds 25-400
+/// Now uses generated lookup table from codegen system
 pub fn kyocera_iso_lookup(val: u32) -> Option<u32> {
-    match val {
-        7 => Some(25),
-        8 => Some(32),
-        9 => Some(40),
-        10 => Some(50),
-        11 => Some(64),
-        12 => Some(80),
-        13 => Some(100),
-        14 => Some(125),
-        15 => Some(160),
-        16 => Some(200),
-        17 => Some(250),
-        18 => Some(320),
-        19 => Some(400),
-        _ => None,
-    }
+    use crate::generated::KyoceraRaw_pm::lookup_kyocera_iso;
+    lookup_kyocera_iso(val)
 }
 
 /// Helper function to extract ImageWidth/ImageHeight from any IFD
