@@ -1,6 +1,8 @@
 # ExifTool Integration: Code Generation & Implementation
 
-**🚨 CRITICAL: All integration follows [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md) - we translate ExifTool exactly, never innovate.**
+**🚨 CRITICAL: All integration follows [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md) - we translate ExifTool exactly, never innovate.**
+
+**⚠️ MANUAL PORTING BANNED**: We've had 100+ bugs from manual transcription of ExifTool data. All ExifTool data MUST be extracted automatically.
 
 This document describes the complete system for integrating ExifTool's metadata extraction capabilities into exif-oxide through automated code generation and manual implementations.
 
@@ -762,6 +764,50 @@ make check-extractors   # Check Perl script syntax
 - **Fast Iteration**: Simple table changes rebuild in seconds
 
 ## Anti-Patterns: What NOT to Do
+
+### 🚨 NEVER Manual Port ExifTool Data
+
+**Problem**: We've had **100+ bugs** from manual transcription of ExifTool data. Manual porting is a nightmare to debug.
+
+**Why Manual Porting Always Fails**:
+- **Transcription errors**: Missing entries, typos in hex values, wrong magic numbers
+- **Missing edge cases**: ExifTool handles special values (e.g. -1 = "n/a") that manual ports miss  
+- **Version drift**: ExifTool releases monthly, manual ports become stale immediately
+- **Silent failures**: Wrong lens IDs/white balance modes fail only on specific camera models
+
+**Examples of Real Bugs**:
+
+```perl
+# ExifTool source (correct)
+%canonWhiteBalance = (
+    0 => 'Auto', 1 => 'Daylight', 2 => 'Cloudy', 
+    3 => 'Tungsten', 4 => 'Fluorescent', 5 => 'Flash', 9 => 'Custom'
+);
+```
+
+```rust
+// ❌ BANNED - Manual port with missing entries
+match wb_value {
+    0 => "Auto", 1 => "Daylight", 2 => "Cloudy", 3 => "Tungsten",
+    // Missing: 4 => "Fluorescent", 5 => "Flash", 9 => "Custom" 
+    _ => "Unknown", // Silent failure for missing modes
+}
+
+// ❌ BANNED - Magic number typos  
+0x0003 => "EF 35-80mm f/4-5.6",  // Should be 0x0004 - wrong lens name
+```
+
+**Required Approach**:
+
+```rust
+// ✅ REQUIRED - Use generated lookup tables
+use crate::generated::Canon_pm::lookup_canon_white_balance;
+if let Some(wb_name) = lookup_canon_white_balance(wb_value) {
+    TagValue::string(wb_name)  // Zero transcription errors, auto-updates
+}
+```
+
+**Enforcement**: All PRs containing manually transcribed ExifTool data will be **REJECTED**. Use codegen instead.
 
 ### ⚠️ NEVER Add Extraction Timestamps
 
