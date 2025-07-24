@@ -76,9 +76,11 @@ fn process_boolean_set_config(
             // Look for extracted boolean set file
             let boolean_set_file = path_utils::construct_extract_filename(
                 module_name,
-                &format!("boolean_set__{}", hash_name.trim_start_matches('%'))
+                &format!("boolean_set__{}", hash_name.trim_start_matches('%').to_lowercase())
             );
-            let boolean_set_path = path_utils::get_extract_dir("boolean_sets").join(&boolean_set_file);
+            let boolean_set_path = path_utils::get_extract_dir("boolean_sets").join(format!("{}.json", &boolean_set_file));
+            
+            debug!("Looking for boolean set file: {} at path: {:?}", hash_name, boolean_set_path);
             
             if boolean_set_path.exists() {
                 // Load and generate
@@ -91,6 +93,7 @@ fn process_boolean_set_config(
                 )?;
                 Ok(Some(file_name))
             } else {
+                warn!("Boolean set file not found for {}: {:?}", hash_name, boolean_set_path);
                 Ok(None)
             }
         })

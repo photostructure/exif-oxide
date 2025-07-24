@@ -58,7 +58,7 @@ pub fn generate_modular_tag_kit(
     }
     
     // Generate mod.rs that combines all modules and subdirectory processors
-    let mod_code = generate_mod_file(&generated_modules, &sanitized_module_name, extraction, &subdirectory_info)?;
+    let mod_code = generate_mod_file(&generated_modules, module_name, extraction, &subdirectory_info)?;
     fs::write(format!("{tag_kit_dir}/mod.rs"), mod_code)?;
     
     // Summary
@@ -276,11 +276,15 @@ fn generate_mod_file(
     code.push_str("    Manual(&'static str),\n");
     code.push_str("}\n\n");
     
+    // Type alias to fix clippy::type_complexity warning
+    code.push_str("/// Type alias for subdirectory processor function\n");
+    code.push_str("pub type SubDirectoryProcessor = fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>;\n\n");
+    
     // SubDirectory type enum
     code.push_str("#[derive(Debug, Clone)]\n");
     code.push_str("pub enum SubDirectoryType {\n");
     code.push_str("    Binary {\n");
-    code.push_str("        processor: fn(&[u8], crate::tiff_types::ByteOrder) -> crate::types::Result<Vec<(String, TagValue)>>,\n");
+    code.push_str("        processor: SubDirectoryProcessor,\n");
     code.push_str("    },\n");
     code.push_str("}\n\n");
     
@@ -307,7 +311,7 @@ fn generate_mod_file(
     code.push_str("// Helper functions for reading binary data\n");
     code.push_str("fn read_int16s_array(data: &[u8], byte_order: ByteOrder, count: usize) -> Result<Vec<i16>> {\n");
     code.push_str("    if data.len() < count * 2 {\n");
-    code.push_str("        return Err(crate::types::ExifError::InvalidData(\"Insufficient data for int16s array\".to_string()));\n");
+    code.push_str("        return Err(crate::types::ExifError::ParseError(\"Insufficient data for int16s array\".to_string()));\n");
     code.push_str("    }\n");
     code.push_str("    let mut values = Vec::with_capacity(count);\n");
     code.push_str("    for i in 0..count {\n");
@@ -323,7 +327,7 @@ fn generate_mod_file(
     
     code.push_str("fn read_int16u_array(data: &[u8], byte_order: ByteOrder, count: usize) -> Result<Vec<u16>> {\n");
     code.push_str("    if data.len() < count * 2 {\n");
-    code.push_str("        return Err(crate::types::ExifError::InvalidData(\"Insufficient data for int16u array\".to_string()));\n");
+    code.push_str("        return Err(crate::types::ExifError::ParseError(\"Insufficient data for int16u array\".to_string()));\n");
     code.push_str("    }\n");
     code.push_str("    let mut values = Vec::with_capacity(count);\n");
     code.push_str("    for i in 0..count {\n");
@@ -339,7 +343,7 @@ fn generate_mod_file(
     
     code.push_str("fn read_int16s(data: &[u8], byte_order: ByteOrder) -> Result<i16> {\n");
     code.push_str("    if data.len() < 2 {\n");
-    code.push_str("        return Err(crate::types::ExifError::InvalidData(\"Insufficient data for int16s\".to_string()));\n");
+    code.push_str("        return Err(crate::types::ExifError::ParseError(\"Insufficient data for int16s\".to_string()));\n");
     code.push_str("    }\n");
     code.push_str("    Ok(match byte_order {\n");
     code.push_str("        ByteOrder::LittleEndian => i16::from_le_bytes([data[0], data[1]]),\n");
@@ -377,58 +381,17 @@ fn generate_mod_file(
         }
     }
     
-    // Apply PrintConv function
+    // Apply PrintConv function (backward compatible - subdirectories return raw data)
     code.push_str("/// Apply PrintConv for a tag from this module\n");
     code.push_str("pub fn apply_print_conv(\n");
     code.push_str("    tag_id: u32,\n");
     code.push_str("    value: &TagValue,\n");
-    code.push_str("    byte_order: ByteOrder,\n");
     code.push_str("    _evaluator: &mut ExpressionEvaluator,\n");
     code.push_str("    _errors: &mut Vec<String>,\n");
     code.push_str("    warnings: &mut Vec<String>,\n");
     code.push_str(") -> TagValue {\n");
     code.push_str(&format!("    if let Some(tag_kit) = {const_name}.get(&tag_id) {{\n"));
-    code.push_str("        // Check if this tag has subdirectory processing\n");
-    code.push_str("        if let Some(SubDirectoryType::Binary { processor }) = &tag_kit.subdirectory {\n");
-    code.push_str("            // For subdirectory tags, we need to process the binary data\n");
-    code.push_str("            match value {\n");
-    code.push_str("                TagValue::U16Array(arr) => {\n");
-    code.push_str("                    // Convert U16 array to bytes\n");
-    code.push_str("                    let mut bytes = Vec::with_capacity(arr.len() * 2);\n");
-    code.push_str("                    for val in arr {\n");
-    code.push_str("                        bytes.extend_from_slice(&val.to_le_bytes());\n");
-    code.push_str("                    }\n");
-    code.push_str("                    // Process subdirectory and return first extracted tag for now\n");
-    code.push_str("                    // TODO: Handle multiple extracted tags properly\n");
-    code.push_str("                    if let Ok(extracted_tags) = processor(&bytes, byte_order) {\n");
-    code.push_str("                        if !extracted_tags.is_empty() {\n");
-    code.push_str("                            // For now, return a formatted string of all extracted tags\n");
-    code.push_str("                            let mut result_parts = Vec::new();\n");
-    code.push_str("                            for (name, val) in extracted_tags {\n");
-    code.push_str("                                result_parts.push(format!(\"{}: {}\", name, val));\n");
-    code.push_str("                            }\n");
-    code.push_str("                            return TagValue::String(result_parts.join(\"; \"));\n");
-    code.push_str("                        }\n");
-    code.push_str("                    }\n");
-    code.push_str("                }\n");
-    code.push_str("                TagValue::U8Array(arr) => {\n");
-    code.push_str("                    // Process U8 array directly\n");
-    code.push_str("                    if let Ok(extracted_tags) = processor(arr, byte_order) {\n");
-    code.push_str("                        if !extracted_tags.is_empty() {\n");
-    code.push_str("                            // For now, return a formatted string of all extracted tags\n");
-    code.push_str("                            let mut result_parts = Vec::new();\n");
-    code.push_str("                            for (name, val) in extracted_tags {\n");
-    code.push_str("                                result_parts.push(format!(\"{}: {}\", name, val));\n");
-    code.push_str("                            }\n");
-    code.push_str("                            return TagValue::String(result_parts.join(\"; \"));\n");
-    code.push_str("                        }\n");
-    code.push_str("                    }\n");
-    code.push_str("                }\n");
-    code.push_str("                _ => {} // Fall through to normal processing\n");
-    code.push_str("            }\n");
-    code.push_str("        }\n");
-    code.push_str("        \n");
-    code.push_str("        // Normal PrintConv processing\n");
+    code.push_str("        // Normal PrintConv processing only\n");
     code.push_str("        match &tag_kit.print_conv {\n");
     code.push_str("            PrintConvType::None => value.clone(),\n");
     code.push_str("            PrintConvType::Simple(lookup) => {\n");
@@ -466,6 +429,70 @@ fn generate_mod_file(
     code.push_str("        // Tag not found in kit\n");
     code.push_str("        value.clone()\n");
     code.push_str("    }\n");
+    code.push_str("}\n\n");
+    
+    // Add subdirectory processing functions
+    code.push_str("/// Check if a tag has subdirectory processing\n");
+    code.push_str("pub fn has_subdirectory(tag_id: u32) -> bool {\n");
+    code.push_str(&format!("    if let Some(tag_kit) = {const_name}.get(&tag_id) {{\n"));
+    code.push_str("        tag_kit.subdirectory.is_some()\n");
+    code.push_str("    } else {\n");
+    code.push_str("        false\n");
+    code.push_str("    }\n");
+    code.push_str("}\n\n");
+    
+    code.push_str("/// Process subdirectory tags and return multiple extracted tags\n");
+    code.push_str("pub fn process_subdirectory(\n");
+    code.push_str("    tag_id: u32,\n");
+    code.push_str("    value: &TagValue,\n");
+    code.push_str("    byte_order: ByteOrder,\n");
+    code.push_str(") -> Result<HashMap<String, TagValue>> {\n");
+    code.push_str("    use tracing::debug;\n");
+    code.push_str("    let mut result = HashMap::new();\n");
+    code.push_str("    \n");
+    code.push_str("    debug!(\"process_subdirectory called for tag_id: 0x{:04x}\", tag_id);\n");
+    code.push_str("    \n");
+    code.push_str(&format!("    if let Some(tag_kit) = {const_name}.get(&tag_id) {{\n"));
+    code.push_str("        if let Some(SubDirectoryType::Binary { processor }) = &tag_kit.subdirectory {\n");
+    code.push_str("            debug!(\"Found subdirectory processor for tag_id: 0x{:04x}\", tag_id);\n");
+    code.push_str("            let bytes = match value {\n");
+    code.push_str("                TagValue::U16Array(arr) => {\n");
+    code.push_str("                    debug!(\"Converting U16Array with {} elements to bytes\", arr.len());\n");
+    code.push_str("                    // Convert U16 array to bytes based on byte order\n");
+    code.push_str("                    let mut bytes = Vec::with_capacity(arr.len() * 2);\n");
+    code.push_str("                    for val in arr {\n");
+    code.push_str("                        match byte_order {\n");
+    code.push_str("                            ByteOrder::LittleEndian => bytes.extend_from_slice(&val.to_le_bytes()),\n");
+    code.push_str("                            ByteOrder::BigEndian => bytes.extend_from_slice(&val.to_be_bytes()),\n");
+    code.push_str("                        }\n");
+    code.push_str("                    }\n");
+    code.push_str("                    bytes\n");
+    code.push_str("                }\n");
+    code.push_str("                TagValue::U8Array(arr) => arr.clone(),\n");
+    code.push_str("                _ => return Ok(result), // Not array data\n");
+    code.push_str("            };\n");
+    code.push_str("            \n");
+    code.push_str("            debug!(\"Calling processor with {} bytes\", bytes.len());\n");
+    code.push_str("            // Process subdirectory and collect all extracted tags\n");
+    code.push_str("            match processor(&bytes, byte_order) {\n");
+    code.push_str("                Ok(extracted_tags) => {\n");
+    code.push_str("                    debug!(\"Processor returned {} tags\", extracted_tags.len());\n");
+    code.push_str("                    for (name, value) in extracted_tags {\n");
+    code.push_str("                        result.insert(name, value);\n");
+    code.push_str("                    }\n");
+    code.push_str("                }\n");
+    code.push_str("                Err(e) => {\n");
+    code.push_str("                    debug!(\"Processor error: {:?}\", e);\n");
+    code.push_str("                }\n");
+    code.push_str("            }\n");
+    code.push_str("        } else {\n");
+    code.push_str("            debug!(\"No subdirectory processor found for tag_id: 0x{:04x}\", tag_id);\n");
+    code.push_str("        }\n");
+    code.push_str("    } else {\n");
+    code.push_str("        debug!(\"Tag not found in TAG_KITS: 0x{:04x}\", tag_id);\n");
+    code.push_str("    }\n");
+    code.push_str("    \n");
+    code.push_str("    Ok(result)\n");
     code.push_str("}\n");
     
     Ok(code)
@@ -519,6 +546,30 @@ fn collect_subdirectory_info(tag_kits: &[TagKit]) -> HashMap<u32, SubDirectoryCo
 }
 
 /// Generate a binary data parser function for a subdirectory table
+/// 
+/// CRITICAL: ExifTool Binary Data Offset Handling
+/// ===============================================
+/// ExifTool allows NEGATIVE tag offsets in binary data tables!
+/// 
+/// Reference: ExifTool.pm lines 9830-9836 (ProcessBinaryData function)
+/// ```perl
+/// # get relative offset of this entry
+/// my $entry = int($index) * $increment + $varSize;
+/// # allow negative indices to represent bytes from end
+/// if ($entry < 0) {
+///     $entry += $size;
+///     next if $entry < 0;
+/// }
+/// ```
+/// 
+/// This means:
+/// - Tag offsets can be LESS than FIRST_ENTRY (e.g., offset 0 with FIRST_ENTRY = 1)
+/// - Negative offsets are interpreted as offsets from END of data block
+/// - Example: offset -2 means "2 bytes before end of data"
+/// 
+/// FOOTGUN WARNING: Using unsigned arithmetic here will cause wraparound!
+/// A calculation like (0 - 1) * 2 = -2 becomes 18446744073709551614 in usize.
+/// This creates absurd comparisons like "if data.len() >= 18446744073709551615"
 fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTable) -> Result<()> {
     code.push_str(&format!("fn process_{}(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n", fn_name));
     code.push_str("    let mut tags = Vec::new();\n");
@@ -535,10 +586,31 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
     
     // Generate tag extraction code for each tag in the table
     for tag in &table.tags {
+        // CRITICAL: Parse as i32 to handle negative offsets properly!
         let tag_offset = tag.tag_id.parse::<i32>().unwrap_or(0);
-        let byte_offset = ((tag_offset - first_entry) * format_size) as usize;
+        // CRITICAL: Keep as signed to detect negative offsets
+        let byte_offset = (tag_offset - first_entry) * format_size;
         
         code.push_str(&format!("    // {} at offset {}\n", tag.name, tag.tag_id));
+        
+        // Handle negative offsets (from end of data) like ExifTool does
+        let offset_var_name = tag.name.to_lowercase().replace(' ', "_").replace('-', "_");
+        if byte_offset < 0 {
+            // For negative offsets, we need to generate runtime calculation
+            code.push_str(&format!("    // {} uses negative offset {} (from end of data)\n", tag.name, byte_offset));
+            code.push_str(&format!("    if data.len() as i32 + {} < 0 {{\n", byte_offset));
+            code.push_str(&format!("        // Skipping {} - negative offset beyond data start\n", tag.name));
+            code.push_str("        // (This is normal for some tables)\n");
+            code.push_str("    } else {\n");
+            code.push_str(&format!("        let {}_offset = (data.len() as i32 + {}) as usize;\n", 
+                offset_var_name, byte_offset));
+            // Set indent for the tag processing code
+            code.push_str("        ");
+        } else {
+            // For positive offsets, use direct value
+            let byte_offset_usize = byte_offset as usize;
+            // No extra indent needed
+        }
         
         if let Some(format) = &tag.format {
             if format.ends_with(']') {
@@ -554,19 +626,34 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
                             _ => 2 * count,
                         };
                         
-                        code.push_str(&format!("    if data.len() >= {} {{\n", byte_offset + total_size));
+                        // Generate bounds check based on offset type
+                        if byte_offset < 0 {
+                            code.push_str(&format!("if {}_offset + {} <= data.len() {{\n", offset_var_name, total_size));
+                        } else {
+                            code.push_str(&format!("    if data.len() >= {} {{\n", byte_offset as usize + total_size));
+                        }
                         
                         match base_format {
                             "int16s" => {
-                                code.push_str(&format!("        if let Ok(values) = read_int16s_array(&data[{}..{}], byte_order, {}) {{\n", 
-                                    byte_offset, byte_offset + total_size, count));
+                                if byte_offset < 0 {
+                                    code.push_str(&format!("            if let Ok(values) = read_int16s_array(&data[{}_offset..{}_offset + {}], byte_order, {}) {{\n", 
+                                        offset_var_name, offset_var_name, total_size, count));
+                                } else {
+                                    code.push_str(&format!("        if let Ok(values) = read_int16s_array(&data[{}..{}], byte_order, {}) {{\n", 
+                                        byte_offset as usize, byte_offset as usize + total_size, count));
+                                }
                                 code.push_str("            let value_str = values.iter().map(|v| v.to_string()).collect::<Vec<_>>().join(\" \");\n");
                                 code.push_str(&format!("            tags.push((\"{}\".to_string(), TagValue::String(value_str)));\n", tag.name));
                                 code.push_str("        }\n");
                             }
                             "int16u" => {
-                                code.push_str(&format!("        if let Ok(values) = read_int16u_array(&data[{}..{}], byte_order, {}) {{\n", 
-                                    byte_offset, byte_offset + total_size, count));
+                                if byte_offset < 0 {
+                                    code.push_str(&format!("            if let Ok(values) = read_int16u_array(&data[{}_offset..{}_offset + {}], byte_order, {}) {{\n", 
+                                        offset_var_name, offset_var_name, total_size, count));
+                                } else {
+                                    code.push_str(&format!("        if let Ok(values) = read_int16u_array(&data[{}..{}], byte_order, {}) {{\n", 
+                                        byte_offset as usize, byte_offset as usize + total_size, count));
+                                }
                                 code.push_str("            let value_str = values.iter().map(|v| v.to_string()).collect::<Vec<_>>().join(\" \");\n");
                                 code.push_str(&format!("            tags.push((\"{}\".to_string(), TagValue::String(value_str)));\n", tag.name));
                                 code.push_str("        }\n");
@@ -578,6 +665,10 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
                         }
                         
                         code.push_str("    }\n");
+                        // Close the negative offset check if needed
+                        if byte_offset < 0 {
+                            code.push_str("    }\n");
+                        }
                     }
                 }
             } else {
@@ -589,12 +680,22 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
                     _ => 2,
                 };
                 
-                code.push_str(&format!("    if data.len() >= {} {{\n", byte_offset + value_size));
+                // Generate bounds check based on offset type
+                if byte_offset < 0 {
+                    code.push_str(&format!("if {}_offset + {} <= data.len() {{\n", offset_var_name, value_size));
+                } else {
+                    code.push_str(&format!("    if data.len() >= {} {{\n", byte_offset as usize + value_size));
+                }
                 
                 match format.as_str() {
                     "int16s" => {
-                        code.push_str(&format!("        if let Ok(value) = read_int16s(&data[{}..{}], byte_order) {{\n", 
-                            byte_offset, byte_offset + value_size));
+                        if byte_offset < 0 {
+                            code.push_str(&format!("            if let Ok(value) = read_int16s(&data[{}_offset..{}_offset + {}], byte_order) {{\n", 
+                                offset_var_name, offset_var_name, value_size));
+                        } else {
+                            code.push_str(&format!("        if let Ok(value) = read_int16s(&data[{}..{}], byte_order) {{\n", 
+                                byte_offset as usize, byte_offset as usize + value_size));
+                        }
                         code.push_str(&format!("            tags.push((\"{}\".to_string(), TagValue::I16(value)));\n", tag.name));
                         code.push_str("        }\n");
                     }
@@ -604,6 +705,15 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
                     }
                 }
                 
+                code.push_str("    }\n");
+                // Close the negative offset check if needed
+                if byte_offset < 0 {
+                    code.push_str("    }\n");
+                }
+            }
+        } else {
+            // No format specified - close negative offset block if needed
+            if byte_offset < 0 {
                 code.push_str("    }\n");
             }
         }
@@ -620,10 +730,12 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
 /// Generate a conditional dispatch function for a tag with subdirectory variants
 fn generate_subdirectory_dispatcher(code: &mut String, tag_id: u32, collection: &SubDirectoryCollection) -> Result<()> {
     code.push_str(&format!("pub fn process_tag_{:#x}_subdirectory(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n", tag_id));
+    code.push_str("    use tracing::debug;\n");
     
     // Determine the format for count calculation (usually int16s for Canon)
     let format_size = 2; // Default to int16s
     code.push_str(&format!("    let count = data.len() / {};\n", format_size));
+    code.push_str(&format!("    debug!(\"process_tag_{:#x}_subdirectory called with {{}} bytes, count={{}}\", data.len(), count);\n", tag_id));
     code.push_str("    \n");
     code.push_str("    match count {\n");
     
@@ -637,7 +749,10 @@ fn generate_subdirectory_dispatcher(code: &mut String, tag_id: u32, collection: 
                         .replace("::", "_")
                         .to_lowercase();
                     
-                    code.push_str(&format!("        {} => process_{}(data, byte_order),\n", count_val, table_fn_name));
+                    code.push_str(&format!("        {} => {{\n", count_val));
+                    code.push_str(&format!("            debug!(\"Matched count {} for variant {}\");\n", count_val, table_fn_name));
+                    code.push_str(&format!("            process_{}(data, byte_order)\n", table_fn_name));
+                    code.push_str("        }\n");
                 }
             }
         }

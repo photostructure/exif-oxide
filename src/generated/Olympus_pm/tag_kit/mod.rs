@@ -44,42 +44,25 @@ pub enum PrintConvType {
     Manual(&'static str),
 }
 
+/// Type alias for subdirectory processor function
+pub type SubDirectoryProcessor = fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>;
+
 #[derive(Debug, Clone)]
 pub enum SubDirectoryType {
-    Binary {
-        processor: fn(
-            &[u8],
-            crate::tiff_types::ByteOrder,
-        ) -> crate::types::Result<Vec<(String, TagValue)>>,
-    },
+    Binary { processor: SubDirectoryProcessor },
 }
 
 /// All tag kits for Olympus_pm
 pub static OLYMPUS_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
     let mut map = HashMap::new();
 
-    // datetime tags
-    for (id, tag_def) in datetime::get_datetime_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // interop tags
-    for (id, tag_def) in interop::get_interop_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // camera tags
-    for (id, tag_def) in camera::get_camera_tags() {
-        map.insert(id, tag_def);
-    }
-
     // core tags
     for (id, tag_def) in core::get_core_tags() {
         map.insert(id, tag_def);
     }
 
-    // color tags
-    for (id, tag_def) in color::get_color_tags() {
+    // thumbnail tags
+    for (id, tag_def) in thumbnail::get_thumbnail_tags() {
         map.insert(id, tag_def);
     }
 
@@ -88,13 +71,28 @@ pub static OLYMPUS_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::ne
         map.insert(id, tag_def);
     }
 
+    // datetime tags
+    for (id, tag_def) in datetime::get_datetime_tags() {
+        map.insert(id, tag_def);
+    }
+
     // document tags
     for (id, tag_def) in document::get_document_tags() {
         map.insert(id, tag_def);
     }
 
-    // thumbnail tags
-    for (id, tag_def) in thumbnail::get_thumbnail_tags() {
+    // camera tags
+    for (id, tag_def) in camera::get_camera_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // color tags
+    for (id, tag_def) in color::get_color_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // interop tags
+    for (id, tag_def) in interop::get_interop_tags() {
         map.insert(id, tag_def);
     }
 
@@ -165,257 +163,349 @@ fn process_olympus_afinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Str
     Ok(tags)
 }
 
-pub fn process_tag_0x2050_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x2020_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x208_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x2500_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x5000_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x2600_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
 pub fn process_tag_0x1_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x1_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x2900_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x328_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x2010_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x4000_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x3_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x3000_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x2200_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x2300_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2040_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2040_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
-pub fn process_tag_0x2400_subdirectory(
+pub fn process_tag_0x2900_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2900_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
-pub fn process_tag_0x2700_subdirectory(
+pub fn process_tag_0x3000_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x3000_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
-pub fn process_tag_0xe00_subdirectory(
+pub fn process_tag_0x5000_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x5000_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
+}
+
+pub fn process_tag_0x208_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x208_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2020_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2020_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2031_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2031_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x2800_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x2030_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let count = data.len() / 2;
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2100_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
     let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2100_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2200_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2200_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2700_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2700_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0xe00_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xe00_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x4000_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4000_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x3_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x3_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2050_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2050_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2300_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2300_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2800_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2800_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x328_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x328_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2400_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2400_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2500_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2500_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2600_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2600_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2010_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2010_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2030_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2030_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
 }
 
 /// Apply PrintConv for a tag from this module
@@ -486,12 +576,17 @@ pub fn process_subdirectory(
     value: &TagValue,
     byte_order: ByteOrder,
 ) -> Result<HashMap<String, TagValue>> {
+    use tracing::debug;
     let mut result = HashMap::new();
+
+    debug!("process_subdirectory called for tag_id: 0x{:04x}", tag_id);
 
     if let Some(tag_kit) = OLYMPUS_PM_TAG_KITS.get(&tag_id) {
         if let Some(SubDirectoryType::Binary { processor }) = &tag_kit.subdirectory {
+            debug!("Found subdirectory processor for tag_id: 0x{:04x}", tag_id);
             let bytes = match value {
                 TagValue::U16Array(arr) => {
+                    debug!("Converting U16Array with {} elements to bytes", arr.len());
                     // Convert U16 array to bytes based on byte order
                     let mut bytes = Vec::with_capacity(arr.len() * 2);
                     for val in arr {
@@ -506,13 +601,27 @@ pub fn process_subdirectory(
                 _ => return Ok(result), // Not array data
             };
 
+            debug!("Calling processor with {} bytes", bytes.len());
             // Process subdirectory and collect all extracted tags
-            if let Ok(extracted_tags) = processor(&bytes, byte_order) {
-                for (name, value) in extracted_tags {
-                    result.insert(name, value);
+            match processor(&bytes, byte_order) {
+                Ok(extracted_tags) => {
+                    debug!("Processor returned {} tags", extracted_tags.len());
+                    for (name, value) in extracted_tags {
+                        result.insert(name, value);
+                    }
+                }
+                Err(e) => {
+                    debug!("Processor error: {:?}", e);
                 }
             }
+        } else {
+            debug!(
+                "No subdirectory processor found for tag_id: 0x{:04x}",
+                tag_id
+            );
         }
+    } else {
+        debug!("Tag not found in TAG_KITS: 0x{:04x}", tag_id);
     }
 
     Ok(result)

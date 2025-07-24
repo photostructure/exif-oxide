@@ -12,7 +12,7 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_48: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_57: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Clean");
     map.insert("1".to_string(), "Regenerated");
@@ -20,14 +20,14 @@ static PRINT_CONV_48: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_49: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_58: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "CMYK");
     map.insert("2".to_string(), "Not CMYK");
     map
 });
 
-static PRINT_CONV_50: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_59: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1 1".to_string(), "YCbCr4:4:4 (1 1)");
     map.insert("1 2".to_string(), "YCbCr4:4:0 (1 2)");
@@ -40,7 +40,7 @@ static PRINT_CONV_50: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_51: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_60: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Centered");
     map.insert("2".to_string(), "Co-sited");
@@ -185,7 +185,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_48),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_57),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -229,7 +229,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_49),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_58),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -257,7 +257,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_50),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_59),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -271,7 +271,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_51),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_60),
                 value_conv: None,
                 subdirectory: None,
             },
