@@ -82,18 +82,18 @@ All formats below require ImageWidth/ImageHeight extraction for PhotoStructure i
 
 #### 🔲 **MEDIUM PRIORITY** (Less common)
 - 🔲 **Canon CRW** (`image/x-canon-crw`: crw) - Legacy Canon
-- 🔲 **Epson ERF** (`image/x-epson-erf`: erf) 
+- 🔲 **Panasonic RWL** (`image/x-panasonic-raw`: rwl) 
+- 🔲 **Nikon NRW** (`image/x-nikon-nrw`: nrw) - Compact RAW
+- 🔲 **Minolta MRW** (`image/x-minolta-mrw`: mrw)
+- 🔲 **Samsung SRW** (`image/x-samsung-srw`: srw)
 - 🔲 **Hasselblad 3FR** (`image/x-hasselblad-3fr`: 3fr) - Medium format
 - 🔲 **Kodak formats** (`image/x-kodak-dcr`: dcr, `image/x-kodak-k25`: k25, `image/x-kodak-kdc`: kdc)
 - 🔲 **Mamiya MEF** (`image/x-mamiya-mef`: mef) - Medium format
-- 🔲 **Minolta MRW** (`image/x-minolta-mrw`: mrw)
-- 🔲 **Nikon NRW** (`image/x-nikon-nrw`: nrw) - Compact RAW
-- 🔲 **Panasonic RWL** (`image/x-panasonic-raw`: rwl) 
 - 🔲 **Pentax PEF** (`image/x-pentax-pef`: pef, dng)
-- 🔲 **Samsung SRW** (`image/x-samsung-srw`: srw)
 - 🔲 **Sigma X3F** (`image/x-sigma-x3f`: x3f) - Foveon sensor
 - 🔲 **Sony SR2/SRF** (`image/x-sony-sr2`: sr2, `image/x-sony-srf`: srf) - Legacy Sony
 - 🔲 **Generic RAW** (`image/x-raw`: raw) - LEICA and Panasonic
+- 🔲 **Epson ERF** (`image/x-epson-erf`: erf) 
 
 ### **VideoFiletypes** (Video Containers)
 - 🔲 **MP4** (`video/mp4`: mp4, insv) - Most common
