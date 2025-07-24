@@ -26,9 +26,8 @@ static KYOCERA_ISO_DATA: &[(u32, u32)] = &[
 ];
 
 /// Lookup table (lazy-initialized)
-pub static KYOCERA_ISO_LOOKUP: LazyLock<HashMap<u32, u32>> = LazyLock::new(|| {
-    KYOCERA_ISO_DATA.iter().cloned().collect()
-});
+pub static KYOCERA_ISO_LOOKUP: LazyLock<HashMap<u32, u32>> =
+    LazyLock::new(|| KYOCERA_ISO_DATA.iter().cloned().collect());
 
 /// Look up Kyocera internal ISO value to standard ISO speed
 /// ExifTool: KyoceraRaw.pm %isoLookup hash
