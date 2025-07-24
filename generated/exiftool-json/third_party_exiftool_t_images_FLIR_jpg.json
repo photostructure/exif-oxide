@@ -11,5 +11,7 @@
   "EXIF:Model": "FLIR_i7",
   "EXIF:Orientation": "Horizontal (normal)",
   "EXIF:DateTimeOriginal": "2012:02:11 14:17:08",
-  "EXIF:CreateDate": "2012:02:11 14:17:08"
+  "EXIF:CreateDate": "2012:02:11 14:17:08",
+  "File:ImageWidth": 8,
+  "File:ImageHeight": 8
 }

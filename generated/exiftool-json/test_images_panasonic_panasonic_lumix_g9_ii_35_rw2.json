@@ -7,6 +7,8 @@
   "File:FileType": "RW2",
   "File:FileTypeExtension": "rw2",
   "File:MIMEType": "image/x-panasonic-rw2",
+  "File:ImageWidth": 1920,
+  "File:ImageHeight": 1440,
   "EXIF:Make": "Panasonic",
   "EXIF:Model": "DC-G9M2",
   "EXIF:Orientation": "Rotate 270 CW",

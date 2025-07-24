@@ -12,5 +12,7 @@
   "EXIF:Orientation": "Rotate 270 CW",
   "EXIF:ISO": 100,
   "EXIF:DateTimeOriginal": "2008:03:02 12:01:23",
-  "EXIF:CreateDate": "2008:03:02 12:01:23"
+  "EXIF:CreateDate": "2008:03:02 12:01:23",
+  "File:ImageWidth": 8,
+  "File:ImageHeight": 8
 }
