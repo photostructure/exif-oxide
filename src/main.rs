@@ -163,7 +163,7 @@ fn process_files(
                     source_file: path.to_string_lossy().to_string(),
                     exif_tool_version: "0.1.0-oxide".to_string(),
                     tags: vec![],
-                    legacy_tags: std::collections::HashMap::new(),
+                    legacy_tags: indexmap::IndexMap::new(),
                     errors: vec![format!("Error processing file: {e}")],
                     missing_implementations: None,
                 };
