@@ -10,10 +10,10 @@ pub mod datetime;
 pub mod interop;
 pub mod other;
 
-use crate::expressions::ExpressionEvaluator;
-use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
+use crate::types::TagValue;
+use crate::expressions::ExpressionEvaluator;
 
 #[derive(Debug, Clone)]
 pub struct TagKitDef {
@@ -38,22 +38,22 @@ pub enum PrintConvType {
 /// All tag kits for this module
 pub static TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-
+    
     // datetime tags
     for (id, tag_def) in datetime::get_datetime_tags() {
         map.insert(id, tag_def);
     }
-
+    
     // interop tags
     for (id, tag_def) in interop::get_interop_tags() {
         map.insert(id, tag_def);
     }
-
+    
     // other tags
     for (id, tag_def) in other::get_other_tags() {
         map.insert(id, tag_def);
     }
-
+    
     map
 });
 
@@ -80,7 +80,7 @@ pub fn apply_print_conv(
                     TagValue::String(s) => s.clone(),
                     _ => return value.clone(),
                 };
-
+                
                 if let Some(result) = lookup.get(&key) {
                     TagValue::String(result.to_string())
                 } else {
@@ -89,18 +89,14 @@ pub fn apply_print_conv(
             }
             PrintConvType::Expression(expr) => {
                 // TODO: Implement expression evaluation
-                warnings.push(format!(
-                    "Expression PrintConv not yet implemented for tag {}: {}",
-                    tag_kit.name, expr
-                ));
+                warnings.push(format!("Expression PrintConv not yet implemented for tag {}: {}", 
+                    tag_kit.name, expr));
                 value.clone()
             }
             PrintConvType::Manual(func_name) => {
                 // TODO: Look up in manual registry
-                warnings.push(format!(
-                    "Manual PrintConv '{}' not found for tag {}",
-                    func_name, tag_kit.name
-                ));
+                warnings.push(format!("Manual PrintConv '{}' not found for tag {}", 
+                    func_name, tag_kit.name));
                 value.clone()
             }
         }
