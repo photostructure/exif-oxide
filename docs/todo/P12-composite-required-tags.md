@@ -21,45 +21,45 @@
 ## Required Composite Tags (29 total)
 
 ### Image Properties (7 tags)
-- **ImageSize** - "WIDTHxHEIGHT" string format - freq 1.000
-- **ImageWidth** - Width from various sources - freq 1.000
-- **ImageHeight** - Height from various sources - freq 1.000
-- **Megapixels** - (Width × Height) / 1,000,000 - freq 1.000
-- **CircleOfConfusion** - Based on sensor size - freq 0.030
+- **ImageSize** - "WIDTHxHEIGHT" string format
+- **ImageWidth** - Width from various sources
+- **ImageHeight** - Height from various sources
+- **Megapixels** - (Width × Height) / 1,000,000
+- **CircleOfConfusion** - Based on sensor size
 - **ImageDataHash** - Hash of image pixel data
-- **AvgBitrate** - Average bitrate for video - freq 0.0015
+- **AvgBitrate** - Average bitrate for video
 
 ### Camera Settings (8 tags)
-- **Aperture** - F-number formatted (e.g., "5.6") - freq 0.850
-- **ShutterSpeed** - Formatted exposure time - freq 0.860
-- **ISO** - Combined from various ISO tags - freq 0.890
-- **LensID** - Lens identification - freq 0.200
-- **LensType** - Lens type from MakerNotes - freq 0.180
-- **Lens** - Full lens description - freq 0.150
-- **LensSpec** - Formatted lens specification - freq 0.039
-- **Rotation** - Effective rotation angle - freq 0.059
+- **Aperture** - F-number formatted (e.g., "5.6")
+- **ShutterSpeed** - Formatted exposure time
+- **ISO** - Combined from various ISO tags
+- **LensID** - Lens identification
+- **LensType** - Lens type from MakerNotes
+- **Lens** - Full lens description
+- **LensSpec** - Formatted lens specification
+- **Rotation** - Effective rotation angle
 
 ### Lens Calculations (4 tags)
-- **FocalLength35efl** - 35mm equivalent focal length - freq 0.040
-- **ScaleFactor35efl** - Crop factor - freq 0.020
-- **HyperfocalDistance** - Hyperfocal distance calculation - freq 0.021
-- **DOF** - Depth of field range - freq 0.140
+- **FocalLength35efl** - 35mm equivalent focal length
+- **ScaleFactor35efl** - Crop factor
+- **HyperfocalDistance** - Hyperfocal distance calculation
+- **DOF** - Depth of field range
 
 ### GPS (2 tags)
-- **GPSDateTime** - Combined GPS date and time - freq 0.027
-- **GPSPosition** - Combined lat/lon decimal - freq 0.034
+- **GPSDateTime** - Combined GPS date and time
+- **GPSPosition** - Combined lat/lon decimal
 
 ### Timestamps (5 tags)
-- **DateTimeOriginal** - Original capture time - freq 0.970
-- **SubSecDateTimeOriginal** - With subseconds - freq 0.093
-- **SubSecCreateDate** - Create date with subseconds - freq 0.090
-- **SubSecModifyDate** - Modify date with subseconds - freq 0.090
-- **SubSecMediaCreateDate** - Media create with subseconds - freq 0.000
+- **DateTimeOriginal** - Original capture time
+- **SubSecDateTimeOriginal** - With subseconds
+- **SubSecCreateDate** - Create date with subseconds
+- **SubSecModifyDate** - Modify date with subseconds
+- **SubSecMediaCreateDate** - Media create with subseconds
 
 ### Other (3 tags)
-- **FileNumber** - From filename pattern - freq 0.130
-- **RegionInfoMP** - Microsoft Photo regions - freq 0.000
-- **Duration** - Video duration - freq 0.002
+- **FileNumber** - From filename pattern
+- **RegionInfoMP** - Microsoft Photo regions
+- **Duration** - Video duration
 
 ## Work Completed
 
@@ -71,7 +71,7 @@
 
 ### High Priority - Core Calculations
 
-1. **ISO Consolidation** (freq 0.890)
+1. **ISO Consolidation**
    ```rust
    // Priority order: ISO, ISOSpeed, ISOSpeedRatings[0], PhotographicSensitivity
    // Handle manufacturer-specific tags:
@@ -81,7 +81,7 @@
    // Note: Nikon ISO values often require decryption
    ```
 
-2. **ShutterSpeed Formatting** (freq 0.860)
+2. **ShutterSpeed Formatting**
    ```rust
    // Convert ExposureTime to human-readable
    // 0.004 → "1/250"
@@ -89,7 +89,7 @@
    // 2.5 → "2.5"
    ```
 
-3. **Aperture Formatting** (freq 0.850)
+3. **Aperture Formatting**
    ```rust
    // NO "f/" prefix per ExifTool (just the number)
    // From FNumber or calculate from ApertureValue
@@ -103,26 +103,26 @@
 
 ### Medium Priority - Lens Information
 
-1. **LensID** (freq 0.200)
+1. **LensID**
    - Lookup from manufacturer lens databases
    - Combine MakerNotes LensType with lens tables
    - Handle third-party lenses
 
-2. **Lens** (freq 0.150)
+2. **Lens**
    - Full descriptive name from LensID
    - Or construct from LensModel/LensMake
    - Include adapter info if present
    - **Nikon**: Requires decrypting LensData for full info
    - **Nikon**: Check teleconverter flags in lens ID bytes
 
-3. **LensSpec** (freq 0.039)
+3. **LensSpec**
    - Format: "18-55mm f/3.5-5.6" (zoom)
    - Format: "50mm f/1.8" (prime)
    - Extract from LensInfo tag or construct
 
 ### Advanced Calculations
 
-1. **Depth of Field (DOF)** (freq 0.140)
+1. **Depth of Field (DOF)**
    ```rust
    // Requires: FocalLength, Aperture, FocusDistance, CircleOfConfusion
    // Near = (H × D) / (H + D - f)
@@ -135,14 +135,14 @@
    - **ScaleFactor35efl**: 43.27 / SensorDiagonal
    - Need sensor size from camera database
 
-3. **CircleOfConfusion** (freq 0.030)
+3. **CircleOfConfusion**
    - Based on sensor diagonal
    - Default: diagonal / 1440
    - Override for specific formats
 
 ### GPS & Timestamps
 
-1. **GPSDateTime** (freq 0.027)
+1. **GPSDateTime**
    - Combine GPSDateStamp + GPSTimeStamp
    - Convert to standard format
    - Handle timezone (usually UTC)
@@ -154,12 +154,12 @@
 
 ### Special Cases
 
-1. **Rotation** (freq 0.059)
+1. **Rotation**
    - From Orientation tag (1-8 → 0°, 90°, 180°, 270°)
    - Or from video rotation matrix
    - Account for camera orientation sensors
 
-2. **FileNumber** (freq 0.130)
+2. **FileNumber**
    - Extract from filename: DSC_(\d+), IMG_(\d+), _MG_(\d+)
    - Handle camera-specific patterns
    - Return numeric portion only
