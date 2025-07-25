@@ -159,19 +159,30 @@ This document lists all file formats that should be supported by exif-oxide for 
 
 2. **Priority**: Focus on formats used by major camera manufacturers and common interchange formats first.
 
-3. **Metadata Standards**: All formats should support extraction of:
+3. **Embedded image extraction support**: Some raw image formats aren't reliably rasterized, but will contain embedded full size JPEG or TIFF images -- we need to support extracting these embedded images. These are stored in the following tag names:
 
-   - EXIF data
-   - XMP metadata
-   - IPTC data (where applicable)
-   - Maker notes
-   - Embedded thumbnails/previews
+- PreviewImage
+- PreviewTIFF
+- JpgFromRaw
+- JpgFromRaw2
+- ThumbnailImage
+- ThumbnailTIFF
 
-4. **Performance Target**: Maintain 10-20x performance improvement over ExifTool for all supported formats.
+1. **Metadata Standards**: All formats should support extraction of:
 
-5. **HEIF/HEIC Dual Nature**: HEIF containers can contain both single images and video sequences. The same file extensions (.heic, .heif) are used for both, requiring content inspection to determine the actual media type. Both should be supported for comprehensive DAM functionality.
+Prioritize the "required tags" as per tag-metadata.json
 
-6. **Additional RAW Formats**: Some less common RAW formats may need investigation:
+- EXIF data
+- XMP metadata
+- IPTC data (where applicable)
+- Maker notes
+- Embedded thumbnails/previews
+
+5. **Performance Target**: Maintain 10-20x performance improvement over ExifTool for all supported formats.
+
+6. **HEIF/HEIC Dual Nature**: HEIF containers can contain both single images and video sequences. The same file extensions (.heic, .heif) are used for both, requiring content inspection to determine the actual media type. Both should be supported for comprehensive DAM functionality.
+
+7. **Additional RAW Formats**: Some less common RAW formats may need investigation:
    - GPR (GoPro RAW) - action camera format
    - MEF (Mamiya) - medium format camera
    - CRM (Canon) - newer Canon format variant
