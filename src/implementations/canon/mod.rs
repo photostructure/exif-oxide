@@ -943,7 +943,7 @@ fn process_canon_subdirectory_tags(exif_reader: &mut crate::exif::ExifReader) ->
     }
 
     // Process each subdirectory tag
-    for (tag_id, tag_value, source_info) in subdirectory_tags {
+    for (tag_id, tag_value, _source_info) in subdirectory_tags {
         debug!("Processing subdirectory for Canon tag 0x{:04x}", tag_id);
 
         // Use the new subdirectory processing API
@@ -974,12 +974,23 @@ fn process_canon_subdirectory_tags(exif_reader: &mut crate::exif::ExifReader) ->
                     );
 
                     // Store the extracted tag with Canon namespace
+                    // Use the tag name directly (not prefixed) since the synthetic_tag_names mapping will handle display
+                    let full_tag_name = format!("MakerNotes:{}", tag_name);
+                    exif_reader
+                        .synthetic_tag_names
+                        .insert(synthetic_id, full_tag_name.clone());
+
+                    debug!(
+                        "Storing tag 0x{:04x} with synthetic name mapping: '{}'",
+                        synthetic_id, full_tag_name
+                    );
+
                     exif_reader.store_tag_with_precedence(
                         synthetic_id,
                         value,
                         crate::types::TagSourceInfo::new(
                             "MakerNotes".to_string(),
-                            format!("Canon:{}", tag_name),
+                            "Canon".to_string(), // This should just be "Canon" for the ifd_name
                             "Canon::SubDirectory".to_string(),
                         ),
                     );

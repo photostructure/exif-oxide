@@ -358,27 +358,73 @@ impl ExifReader {
                 }
             }
             TiffFormat::Long => {
-                let value = value_extraction::extract_long_value(&self.data, &entry, byte_order)?;
-                let tag_value = TagValue::U32(value);
+                if entry.count == 1 {
+                    // Single LONG value - use existing logic
+                    let value =
+                        value_extraction::extract_long_value(&self.data, &entry, byte_order)?;
+                    let tag_value = TagValue::U32(value);
 
-                // Milestone 5: Check for SubDirectory tags (ExifIFD, GPS, etc.)
-                // ExifTool: SubDirectory processing for nested IFDs
-                if let Some(_tag_def) = tag_def {
-                    if self.is_subdirectory_tag(entry.tag_id) {
-                        let tag_name = self.get_tag_name(entry.tag_id, ifd_name);
-                        self.process_subdirectory_tag(entry.tag_id, value, &tag_name, None)?;
+                    // Milestone 5: Check for SubDirectory tags (ExifIFD, GPS, etc.)
+                    // ExifTool: SubDirectory processing for nested IFDs
+                    if let Some(_tag_def) = tag_def {
+                        if self.is_subdirectory_tag(entry.tag_id) {
+                            let tag_name = self.get_tag_name(entry.tag_id, ifd_name);
+                            self.process_subdirectory_tag(entry.tag_id, value, &tag_name, None)?;
+                        }
                     }
-                }
 
-                let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
-                trace!(
-                    "Extracted LONG tag {:#x} from {}: {:?}",
-                    entry.tag_id,
-                    ifd_name,
-                    final_value
-                );
-                let source_info = self.create_tag_source_info(ifd_name);
-                self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
+                    let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
+                    trace!(
+                        "Extracted LONG tag {:#x} from {}: {:?}",
+                        entry.tag_id,
+                        ifd_name,
+                        final_value
+                    );
+                    let source_info = self.create_tag_source_info(ifd_name);
+                    self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
+                } else {
+                    // Multiple LONG values - extract as array
+                    debug!(
+                        "Extracting LONG array tag {:#x} from {} with count {}",
+                        entry.tag_id, ifd_name, entry.count
+                    );
+
+                    let values =
+                        value_extraction::extract_long_array(&self.data, &entry, byte_order)?;
+                    let tag_value = TagValue::U32Array(values);
+
+                    // Check for SubDirectory tags that might need array processing
+                    // ExifTool: Some subdirectory tags contain arrays of data (like ColorData)
+                    if let Some(_tag_def) = tag_def {
+                        if self.is_subdirectory_tag(entry.tag_id) {
+                            let tag_name = self.get_tag_name(entry.tag_id, ifd_name);
+                            // For subdirectory processing, pass the raw data offset and size
+                            // ExifTool: ColorData arrays are processed as byte sequences at their data location
+                            debug!(
+                                "Processing LONG array subdirectory tag {:#x} ({}): {} values at offset {:#x}",
+                                entry.tag_id, tag_name, entry.count, entry.value_or_offset
+                            );
+                            let size = (entry.count as usize) * 4; // 4 bytes per LONG
+                            self.process_subdirectory_tag(
+                                entry.tag_id,
+                                entry.value_or_offset,
+                                &tag_name,
+                                Some(size),
+                            )?;
+                        }
+                    }
+
+                    let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
+                    trace!(
+                        "Extracted LONG array tag {:#x} from {} with {} values: {:?}",
+                        entry.tag_id,
+                        ifd_name,
+                        entry.count,
+                        final_value
+                    );
+                    let source_info = self.create_tag_source_info(ifd_name);
+                    self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
+                }
             }
             TiffFormat::Rational => {
                 // Milestone 6: RATIONAL format support (format 5)
