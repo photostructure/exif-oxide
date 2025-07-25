@@ -6,6 +6,7 @@
 
 use crate::tiff_types::{ByteOrder, IfdEntry};
 use crate::types::{ExifError, Result, TagValue};
+use tracing::debug;
 
 /// Extract ASCII string value from IFD entry
 /// ExifTool: lib/Image/ExifTool/Exif.pm:6372-6398 ASCII value handling
@@ -211,6 +212,45 @@ pub fn extract_long_value(data: &[u8], entry: &IfdEntry, byte_order: ByteOrder) 
         let offset = entry.value_or_offset as usize;
         byte_order.read_u32(data, offset)
     }
+}
+
+/// Extract LONG (u32) array values from IFD entry
+/// ExifTool: lib/Image/ExifTool/Exif.pm format 4 (int32u) with count > 1
+pub fn extract_long_array(
+    data: &[u8],
+    entry: &IfdEntry,
+    byte_order: ByteOrder,
+) -> Result<Vec<u32>> {
+    let mut values = Vec::with_capacity(entry.count as usize);
+    let bytes_per_value = 4; // Each LONG is 4 bytes
+    let total_bytes = entry.count as usize * bytes_per_value;
+
+    debug!(
+        "Extracting LONG array: count={}, total_bytes={}",
+        entry.count, total_bytes
+    );
+
+    if entry.is_inline() && entry.count == 1 {
+        // Single value stored inline
+        values.push(entry.value_or_offset);
+    } else {
+        // Multiple values or single value stored at offset
+        let offset = entry.value_or_offset as usize;
+        if offset + total_bytes > data.len() {
+            return Err(ExifError::ParseError(format!(
+                "LONG array offset {offset:#x} + {total_bytes} bytes beyond data bounds"
+            )));
+        }
+
+        for i in 0..entry.count {
+            let value_offset = offset + (i as usize * bytes_per_value);
+            let value = byte_order.read_u32(data, value_offset)?;
+            values.push(value);
+        }
+    }
+
+    debug!("Successfully extracted {} LONG values", values.len());
+    Ok(values)
 }
 
 /// Extract RATIONAL (2x u32) value - numerator and denominator

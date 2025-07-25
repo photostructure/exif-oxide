@@ -7,6 +7,8 @@
 //!
 #![allow(unused_imports)]
 #![allow(unused_mut)]
+#![allow(dead_code)]
+#![allow(unused_variables)]
 
 pub mod datetime;
 pub mod interop;

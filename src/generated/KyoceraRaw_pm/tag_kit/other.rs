@@ -5,6 +5,8 @@
 
 #![allow(unused_imports)]
 #![allow(unused_mut)]
+#![allow(dead_code)]
+#![allow(unused_variables)]
 
 use super::*;
 use super::{PrintConvType, SubDirectoryType, TagKitDef};
@@ -13,8 +15,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    
-    HashMap::new()
+    let mut map = HashMap::new();
+    map
 });
 
 /// Get tag definitions for other category

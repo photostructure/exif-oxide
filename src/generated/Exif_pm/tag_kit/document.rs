@@ -5,6 +5,8 @@
 
 #![allow(unused_imports)]
 #![allow(unused_mut)]
+#![allow(dead_code)]
+#![allow(unused_variables)]
 
 use super::*;
 use super::{PrintConvType, SubDirectoryType, TagKitDef};
@@ -12,9 +14,9 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_72: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    
-    HashMap::new()
+static PRINT_CONV_63: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map
 });
 
 /// Get tag definitions for document category
@@ -113,7 +115,7 @@ pub fn get_document_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_72),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_63),
                 value_conv: None,
                 subdirectory: None,
             },

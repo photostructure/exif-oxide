@@ -7,6 +7,8 @@
 //!
 #![allow(unused_imports)]
 #![allow(unused_mut)]
+#![allow(dead_code)]
+#![allow(unused_variables)]
 
 pub mod interop;
 pub mod other;
@@ -50,13 +52,13 @@ pub enum SubDirectoryType {
 pub static MINOLTARAW_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
     let mut map = HashMap::new();
 
-    // other tags
-    for (id, tag_def) in other::get_other_tags() {
+    // interop tags
+    for (id, tag_def) in interop::get_interop_tags() {
         map.insert(id, tag_def);
     }
 
-    // interop tags
-    for (id, tag_def) in interop::get_interop_tags() {
+    // other tags
+    for (id, tag_def) in other::get_other_tags() {
         map.insert(id, tag_def);
     }
 
