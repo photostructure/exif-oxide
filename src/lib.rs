@@ -33,6 +33,7 @@ pub mod implementations;
 pub mod processor_registry;
 pub mod raw;
 pub mod registry;
+pub mod runtime;
 pub mod tiff_types;
 pub mod tiff_utils;
 pub mod types;

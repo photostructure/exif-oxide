@@ -42,6 +42,19 @@ pub fn register_all_conversions() {
         "gpslongituderef_print_conv",
         print_conv::gpslongituderef_print_conv,
     );
+    registry::register_print_conv("gpslatitude_print_conv", print_conv::gpslatitude_print_conv);
+    registry::register_print_conv(
+        "gpslongitude_print_conv",
+        print_conv::gpslongitude_print_conv,
+    );
+    registry::register_print_conv(
+        "gpsdestlatitude_print_conv",
+        print_conv::gpsdestlatitude_print_conv,
+    );
+    registry::register_print_conv(
+        "gpsdestlongitude_print_conv",
+        print_conv::gpsdestlongitude_print_conv,
+    );
 
     // Register new Milestone 7 PrintConv implementations
     registry::register_print_conv("flash_print_conv", print_conv::flash_print_conv);

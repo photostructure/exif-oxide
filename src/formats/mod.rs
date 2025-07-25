@@ -22,7 +22,9 @@ pub use tiff::{extract_tiff_exif, extract_tiff_xmp, get_tiff_endianness, validat
 
 use crate::exif::ExifReader;
 use crate::file_detection::FileTypeDetector;
-use crate::generated::{EXIF_MAIN_TAGS, REQUIRED_PRINT_CONV, REQUIRED_VALUE_CONV};
+use crate::generated::Exif_pm::tag_kit::EXIF_PM_TAG_KITS;
+use crate::generated::GPS_pm::tag_kit::GPS_PM_TAG_KITS;
+use crate::generated::{REQUIRED_PRINT_CONV, REQUIRED_VALUE_CONV};
 use crate::types::{ExifData, Result, TagEntry, TagValue};
 use crate::xmp::XmpProcessor;
 use indexmap::IndexMap;
@@ -1041,14 +1043,29 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         let mut missing = Vec::new();
 
         // Check for missing mainstream tags
-        for tag_def in EXIF_MAIN_TAGS.iter() {
+        // Check EXIF tags
+        for (tag_id, tag_def) in EXIF_PM_TAG_KITS.iter() {
             let tag_found = tags.keys().any(|key| {
-                key.contains(&format!("Tag_{:04X}", tag_def.id))
-                    || key.contains(&format!("{:#x}", tag_def.id))
+                key.contains(&format!("Tag_{:04X}", tag_id))
+                    || key.contains(&format!("{:#x}", tag_id))
+                    || key.contains(tag_def.name)
             });
 
             if !tag_found {
-                missing.push(format!("Tag_{:04X}", tag_def.id));
+                missing.push(format!("Tag_{:04X}", tag_id));
+            }
+        }
+
+        // Check GPS tags
+        for (tag_id, tag_def) in GPS_PM_TAG_KITS.iter() {
+            let tag_found = tags.keys().any(|key| {
+                key.contains(&format!("Tag_{:04X}", tag_id))
+                    || key.contains(&format!("{:#x}", tag_id))
+                    || key.contains(tag_def.name)
+            });
+
+            if !tag_found {
+                missing.push(format!("Tag_{:04X}", tag_id));
             }
         }
 

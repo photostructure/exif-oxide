@@ -26,7 +26,7 @@ mod validation;
 use config::load_extracted_tables_with_config;
 use discovery::{discover_and_process_modules, update_generated_mod_file};
 use extraction::{extract_all_simple_tables, extract_single_config};
-use table_processor::process_tag_tables_modular;
+use table_processor::process_composite_tags_only;
 use file_operations::{create_directories, file_exists, write_file_atomic};
 use generators::generate_mod_file;
 use validation::validate_all_configs;
@@ -83,10 +83,10 @@ fn main() -> Result<()> {
     // This now includes tag definitions and composite tags via the config system
     extract_all_simple_tables()?;
 
-    // Process modular tag tables
+    // Process modular tag tables (only for composite tags now)
     let extract_dir = current_dir.join("generated").join("extract");
-    debug!("📋 Processing modular tag tables...");
-    process_tag_tables_modular(&extract_dir, output_dir)?;
+    debug!("📋 Processing composite tags...");
+    process_composite_tags_only(&extract_dir, output_dir)?;
 
     // Tag kit processing is now integrated into the module-based system
 
@@ -119,7 +119,13 @@ fn main() -> Result<()> {
 
     if !content.contains("pub mod file_type_lookup;") {
         // Add module declarations
-        content.push_str("pub mod file_type_lookup;\n\n");
+        content.push_str("pub mod file_type_lookup;\n");
+        updated = true;
+    }
+    
+    if !content.contains("pub mod magic_number_patterns;") {
+        // Add magic number patterns module
+        content.push_str("pub mod magic_number_patterns;\n\n");
         updated = true;
     }
 
@@ -128,7 +134,10 @@ fn main() -> Result<()> {
         content.push_str("// Re-export commonly used items\n");
         content.push_str("pub use file_type_lookup::{\n");
         content.push_str("    extensions_for_format, get_primary_format, lookup_file_type_by_extension,\n");
-        content.push_str("    resolve_file_type, supports_format, FILE_TYPE_EXTENSIONS\n");
+        content.push_str("    resolve_file_type, supports_format, FILE_TYPE_EXTENSIONS,\n");
+        content.push_str("};\n");
+        content.push_str("pub use magic_number_patterns::{\n");
+        content.push_str("    get_magic_file_types, get_magic_number_pattern, matches_magic_number,\n");
         content.push_str("};\n");
         content.push('\n');
         content.push_str("// Import regex patterns from their source-based location (ExifTool.pm)\n");

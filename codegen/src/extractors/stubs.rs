@@ -1,7 +1,8 @@
 //! Macro-generated stub extractors
 //! 
-//! These extractors follow standard patterns and can be generated with a macro.
-//! When implementing specific behavior, move the extractor to its own file.
+//! This file provides a macro that automatically generates extractor implementations for common patterns,
+//! eliminating boilerplate code. When an extractor needs custom behavior (like special filename handling),
+//! implement it manually instead of using the macro.
 
 use super::Extractor;
 use crate::extraction::ModuleConfig;
@@ -56,4 +57,43 @@ define_extractor!(CompositeTagsExtractor, "Composite Tags", "composite_tags.pl",
 define_extractor!(ProcessBinaryDataExtractor, "Process Binary Data", "process_binary_data.pl", "binary_data", "process_binary_data");
 define_extractor!(ModelDetectionExtractor, "Model Detection", "model_detection.pl", "model_detection", "model_detection");
 define_extractor!(ConditionalTagsExtractor, "Conditional Tags", "conditional_tags.pl", "conditional_tags", "conditional_tags");
-define_extractor!(RegexPatternsExtractor, "Regex Patterns", "regex_patterns.pl", "file_types", "regex_patterns");
+// RegexPatternsExtractor needs custom filename handling to match generator expectations
+pub struct RegexPatternsExtractor;
+
+impl Extractor for RegexPatternsExtractor {
+    fn name(&self) -> &'static str {
+        "Regex Patterns"
+    }
+    
+    fn script_name(&self) -> &'static str {
+        "regex_patterns.pl"
+    }
+    
+    fn output_subdir(&self) -> &'static str {
+        "file_types"
+    }
+    
+    fn handles_config(&self, config_type: &str) -> bool {
+        config_type == "regex_patterns"
+    }
+    
+    fn build_args(&self, config: &ModuleConfig, module_path: &Path) -> Vec<String> {
+        let mut args = vec![
+            module_path.to_string_lossy().to_string()
+        ];
+        
+        // Pass table/hash names as additional args
+        args.extend(config.hash_names.clone());
+        
+        args
+    }
+    
+    fn output_filename(&self, _config: &ModuleConfig, _hash_name: Option<&str>) -> String {
+        // Use the exact filename the generator expects
+        "regex_patterns.json".to_string()
+    }
+    
+    fn config_type_name(&self) -> &'static str {
+        "regex_patterns"
+    }
+}
