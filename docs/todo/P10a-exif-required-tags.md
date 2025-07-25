@@ -79,8 +79,45 @@
 - ✅ Value extraction for common types
 - ✅ Tag namespace assignment
 - ✅ Some tags already extracting (Make, Model, DateTime)
+- ✅ **Tag Kit Migration** (2025-07-25)
+  - Migrated EXIF and GPS modules from legacy tag_definitions.json to unified tag kit system
+  - All tag lookups now use EXIF_PM_TAG_KITS and GPS_PM_TAG_KITS
+  - PrintConv definitions embedded in tag kits (implementation pending)
+  - ValueConv expressions defined (implementation pending)
+- ✅ **GPS Coordinate Processing Restored** (2025-07-25)
+  - GPS ToDegrees ValueConv already implemented in `src/implementations/value_conv.rs`
+  - Added GPS coordinate PrintConv functions that return decimal degrees directly (no degree symbols)
+  - Registered GPS PrintConv functions in implementation registry
+  - Updated GPS processing in `tags.rs` to use manual registry for coordinates
+  - GPS coordinates now properly convert rational arrays to decimal degrees and output as decimal values
+
+## Current Status (2025-07-25)
+
+After the tag kit migration and GPS coordinate fix:
+- Basic tag extraction is working for all EXIF and GPS tags
+- GPS coordinate ValueConv/PrintConv fully working - outputs decimal degrees
+- ValueConv conversions implemented for GPS coordinates (GPS ToDegrees)
+- APEX conversions still need implementation (ApertureValue, ShutterSpeedValue)
+- Expression PrintConv evaluation still needs implementation (GPSAltitude "m" suffix)
+- Remaining work focuses on APEX values and expression evaluation
 
 ## Remaining Tasks
+
+### Immediate Priority - Fix PrintConv/ValueConv
+
+1. **Implement GPS Coordinate Conversion**
+   - Implement `Image::ExifTool::GPS::ToDegrees` ValueConv
+   - Convert rational array [degrees, minutes, seconds] to decimal degrees
+   - Handle GPSLatitudeRef/GPSLongitudeRef for sign
+
+2. **Implement Manual PrintConv Types**
+   - Handle `PrintConvType::Manual("complex_expression_printconv")`
+   - GPS coordinates need custom formatting with degree symbols
+   - GPSAltitude needs "m" suffix and "Below Sea Level" handling
+
+3. **Implement Expression PrintConv**
+   - Complete the TODO in tag kit apply_print_conv
+   - Many EXIF tags use simple expressions for formatting
 
 ### High Priority - Core Value Extraction
 
@@ -138,7 +175,7 @@
 
 ## Prerequisites
 
-- **Tag Kit Migration**: Complete [tag kit migration and retrofit](../done/20250723-tag-kit-migration-and-retrofit.md) for EXIF module
+- ✅ **Tag Kit Migration**: Complete [tag kit migration and retrofit](../done/20250723-tag-kit-migration-and-retrofit.md) for EXIF module
   - This ensures we're using the modern tag extraction system
   - Eliminates potential tag ID/PrintConv mismatches
 - Verify RATIONAL type extraction working correctly
