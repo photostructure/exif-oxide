@@ -582,16 +582,6 @@ static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> 
             format: None,
         },
     ]);
-        map.insert(
-            "56",
-            vec![ConditionalEntry {
-                condition: "$count == 76",
-                name: "BatteryType",
-                subdirectory: false,
-                writable: true,
-                format: None,
-            }],
-        );
         map.insert("13", vec![
         ConditionalEntry {
             condition: "$format eq \"int32u\" and ($count == 138 or $count == 148)",
@@ -608,6 +598,16 @@ static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> 
             format: None,
         },
     ]);
+        map.insert(
+            "56",
+            vec![ConditionalEntry {
+                condition: "$count == 76",
+                name: "BatteryType",
+                subdirectory: false,
+                writable: true,
+                format: None,
+            }],
+        );
         map
     },
 );

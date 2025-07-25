@@ -14,21 +14,21 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("82".to_string(), "Padded");
     map.insert("89".to_string(), "Linear");
     map
 });
 
-static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "RGGB");
     map.insert("4".to_string(), "GBRG");
     map
 });
 
-static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO Setting Used");
     map.insert("1".to_string(), "High Key");
@@ -36,7 +36,7 @@ static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO Setting Used");
     map.insert("1".to_string(), "High Key");
@@ -126,7 +126,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_0),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_3),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -140,7 +140,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_1),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_4),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -294,7 +294,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: Some("Minolta models"),
-                print_conv: PrintConvType::Simple(&PRINT_CONV_2),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_5),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -336,7 +336,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: Some("Sony models"),
-                print_conv: PrintConvType::Simple(&PRINT_CONV_3),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_6),
                 value_conv: None,
                 subdirectory: None,
             },

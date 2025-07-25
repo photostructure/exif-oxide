@@ -67,13 +67,13 @@ pub static PANASONICRAW_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLoc
         map.insert(id, tag_def);
     }
 
-    // exif_specific tags
-    for (id, tag_def) in exif_specific::get_exif_specific_tags() {
+    // document tags
+    for (id, tag_def) in document::get_document_tags() {
         map.insert(id, tag_def);
     }
 
-    // document tags
-    for (id, tag_def) in document::get_document_tags() {
+    // exif_specific tags
+    for (id, tag_def) in exif_specific::get_exif_specific_tags() {
         map.insert(id, tag_def);
     }
 
@@ -145,30 +145,6 @@ fn read_int16s(data: &[u8], byte_order: ByteOrder) -> Result<i16> {
 }
 
 // Subdirectory processing functions
-fn process_panasonicraw_distortioninfo(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // DistortionParam11 at offset 11
-
-    // DistortionN at offset 12
-
-    // DistortionParam02 at offset 2
-
-    // DistortionParam04 at offset 4
-
-    // DistortionScale at offset 5
-
-    // DistortionCorrection at offset 7.1
-
-    // DistortionParam08 at offset 8
-
-    // DistortionParam09 at offset 9
-
-    Ok(tags)
-}
-
 fn process_panasonicraw_wbinfo(
     data: &[u8],
     byte_order: ByteOrder,
@@ -381,55 +357,28 @@ fn process_panasonicraw_wbinfo2(
     Ok(tags)
 }
 
-pub fn process_tag_0x8825_subdirectory(
+fn process_panasonicraw_distortioninfo(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
-    use tracing::debug;
-    let count = data.len() / 2;
-    debug!(
-        "process_tag_0x8825_subdirectory called with {} bytes, count={}",
-        data.len(),
-        count
-    );
+    let mut tags = Vec::new();
+    // DistortionParam11 at offset 11
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
+    // DistortionN at offset 12
 
-pub fn process_tag_0x2e_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    use tracing::debug;
-    let count = data.len() / 2;
-    debug!(
-        "process_tag_0x2e_subdirectory called with {} bytes, count={}",
-        data.len(),
-        count
-    );
+    // DistortionParam02 at offset 2
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
+    // DistortionParam04 at offset 4
 
-pub fn process_tag_0x119_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    use tracing::debug;
-    let count = data.len() / 2;
-    debug!(
-        "process_tag_0x119_subdirectory called with {} bytes, count={}",
-        data.len(),
-        count
-    );
+    // DistortionScale at offset 5
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    // DistortionCorrection at offset 7.1
+
+    // DistortionParam08 at offset 8
+
+    // DistortionParam09 at offset 9
+
+    Ok(tags)
 }
 
 pub fn process_tag_0x13_subdirectory(
@@ -444,26 +393,7 @@ pub fn process_tag_0x13_subdirectory(
         count
     );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x8769_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    use tracing::debug;
-    let count = data.len() / 2;
-    debug!(
-        "process_tag_0x8769_subdirectory called with {} bytes, count={}",
-        data.len(),
-        count
-    );
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x27_subdirectory(
@@ -478,9 +408,37 @@ pub fn process_tag_0x27_subdirectory(
         count
     );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2e_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2e_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x119_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x119_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
 }
 
 pub fn process_tag_0x120_subdirectory(
@@ -495,26 +453,7 @@ pub fn process_tag_0x120_subdirectory(
         count
     );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x83bb_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    use tracing::debug;
-    let count = data.len() / 2;
-    debug!(
-        "process_tag_0x83bb_subdirectory called with {} bytes, count={}",
-        data.len(),
-        count
-    );
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2bc_subdirectory(
@@ -529,9 +468,52 @@ pub fn process_tag_0x2bc_subdirectory(
         count
     );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
+}
+
+pub fn process_tag_0x83bb_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x83bb_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x8769_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x8769_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x8825_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x8825_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
 }
 
 /// Apply PrintConv for a tag from this module

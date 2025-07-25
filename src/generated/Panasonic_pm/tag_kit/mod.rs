@@ -53,6 +53,11 @@ pub enum SubDirectoryType {
 pub static PANASONIC_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
     let mut map = HashMap::new();
 
+    // datetime tags
+    for (id, tag_def) in datetime::get_datetime_tags() {
+        map.insert(id, tag_def);
+    }
+
     // interop tags
     for (id, tag_def) in interop::get_interop_tags() {
         map.insert(id, tag_def);
@@ -60,11 +65,6 @@ pub static PANASONIC_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::
 
     // other tags
     for (id, tag_def) in other::get_other_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // datetime tags
-    for (id, tag_def) in datetime::get_datetime_tags() {
         map.insert(id, tag_def);
     }
 
@@ -121,19 +121,74 @@ fn read_int16s(data: &[u8], byte_order: ByteOrder) -> Result<i16> {
 }
 
 // Subdirectory processing functions
-fn process_panasonic_timeinfo(
+fn process_panasonic_facedetinfo(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
-    // PanasonicDateTime at offset 0
-    if data.len() >= 16 {
-        // TODO: Handle format undef
+    // NumFacePositions at offset 0
+    if data.len() >= 2 {
+        // TODO: Handle format int16u
     }
 
-    // TimeLapseShotNumber at offset 16
-    if data.len() >= 36 {
-        // TODO: Handle format int32u
+    // Face1Position at offset 1
+    if data.len() >= 10 {
+        if let Ok(values) = read_int16u_array(&data[2..10], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face1Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face4Position at offset 13
+    if data.len() >= 34 {
+        if let Ok(values) = read_int16u_array(&data[26..34], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face4Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face5Position at offset 17
+    if data.len() >= 42 {
+        if let Ok(values) = read_int16u_array(&data[34..42], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face5Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face2Position at offset 5
+    if data.len() >= 18 {
+        if let Ok(values) = read_int16u_array(&data[10..18], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face2Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face3Position at offset 9
+    if data.len() >= 26 {
+        if let Ok(values) = read_int16u_array(&data[18..26], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face3Position".to_string(), TagValue::String(value_str)));
+        }
     }
 
     Ok(tags)
@@ -227,111 +282,22 @@ fn process_panasonic_facerecinfo(
     Ok(tags)
 }
 
-fn process_panasonic_facedetinfo(
+fn process_panasonic_timeinfo(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
-    // NumFacePositions at offset 0
-    if data.len() >= 2 {
-        // TODO: Handle format int16u
+    // PanasonicDateTime at offset 0
+    if data.len() >= 16 {
+        // TODO: Handle format undef
     }
 
-    // Face1Position at offset 1
-    if data.len() >= 10 {
-        if let Ok(values) = read_int16u_array(&data[2..10], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("Face1Position".to_string(), TagValue::String(value_str)));
-        }
-    }
-
-    // Face4Position at offset 13
-    if data.len() >= 34 {
-        if let Ok(values) = read_int16u_array(&data[26..34], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("Face4Position".to_string(), TagValue::String(value_str)));
-        }
-    }
-
-    // Face5Position at offset 17
-    if data.len() >= 42 {
-        if let Ok(values) = read_int16u_array(&data[34..42], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("Face5Position".to_string(), TagValue::String(value_str)));
-        }
-    }
-
-    // Face2Position at offset 5
-    if data.len() >= 18 {
-        if let Ok(values) = read_int16u_array(&data[10..18], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("Face2Position".to_string(), TagValue::String(value_str)));
-        }
-    }
-
-    // Face3Position at offset 9
-    if data.len() >= 26 {
-        if let Ok(values) = read_int16u_array(&data[18..26], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("Face3Position".to_string(), TagValue::String(value_str)));
-        }
+    // TimeLapseShotNumber at offset 16
+    if data.len() >= 36 {
+        // TODO: Handle format int32u
     }
 
     Ok(tags)
-}
-
-pub fn process_tag_0x2003_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    use tracing::debug;
-    let count = data.len() / 2;
-    debug!(
-        "process_tag_0x2003_subdirectory called with {} bytes, count={}",
-        data.len(),
-        count
-    );
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x61_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    use tracing::debug;
-    let count = data.len() / 2;
-    debug!(
-        "process_tag_0x61_subdirectory called with {} bytes, count={}",
-        data.len(),
-        count
-    );
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
 }
 
 pub fn process_tag_0x4e_subdirectory(
@@ -346,9 +312,22 @@ pub fn process_tag_0x4e_subdirectory(
         count
     );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
+}
+
+pub fn process_tag_0x61_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x61_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
 }
 
 pub fn process_tag_0xe00_subdirectory(
@@ -363,9 +342,22 @@ pub fn process_tag_0xe00_subdirectory(
         count
     );
 
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
+}
+
+pub fn process_tag_0x2003_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2003_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
 }
 
 /// Apply PrintConv for a tag from this module

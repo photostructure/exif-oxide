@@ -73,7 +73,12 @@ pub fn generate_tag_kit(
                     code.push_str(&format!("static {table_name}: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {{\n"));
                     code.push_str("    let mut map = HashMap::new();\n");
                     
-                    for (key, value) in obj {
+                    // Sort keys for deterministic output
+                    let mut sorted_keys: Vec<&String> = obj.keys().collect();
+                    sorted_keys.sort();
+                    
+                    for key in sorted_keys {
+                        let value = &obj[key];
                         if let Some(val_str) = value.as_str() {
                             code.push_str(&format!("    map.insert(\"{}\".to_string(), \"{}\");\n", 
                                 escape_string(key), escape_string(val_str)));
