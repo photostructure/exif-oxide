@@ -259,12 +259,8 @@ impl ExifReader {
         //     entry.tag_id, entry.tag_id, ifd_name, entry.format, entry.count
         // );
 
-        // Look up tag definition in appropriate table based on IFD type and file format
-        // ExifTool: Different IFDs use different tag tables, and RAW formats have specific tables
-        let tag_def_owned = self.get_tag_definition_with_entry(&entry, ifd_name);
-        let tag_def = tag_def_owned
-            .as_ref()
-            .map(|td| Box::leak(Box::new(td.clone())) as &'static _);
+        // Tag definitions are now looked up directly in tag kits during conversion
+        // No need to pass around tag_def anymore
 
         // Milestone 3: Support for common numeric formats with PrintConv
         // ExifTool: lib/Image/ExifTool/Exif.pm:6390-6570 value extraction
@@ -274,7 +270,8 @@ impl ExifReader {
                 // debug!("ASCII tag {:#x} extracted value: {:?} (length: {})", entry.tag_id, value, value.len());
                 if !value.is_empty() {
                     let tag_value = TagValue::String(value);
-                    let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
+                    let (final_value, _print) =
+                        self.apply_conversions(&tag_value, entry.tag_id, ifd_name);
                     trace!(
                         "Extracted ASCII tag {:#x} from {}: {:?}",
                         entry.tag_id,
@@ -296,7 +293,8 @@ impl ExifReader {
                     TagValue::U8Array(values)
                 };
 
-                let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
+                let (final_value, _print) =
+                    self.apply_conversions(&tag_value, entry.tag_id, ifd_name);
                 trace!(
                     "Extracted BYTE tag {:#x} from {} (count: {}): {:?}",
                     entry.tag_id,
@@ -314,7 +312,8 @@ impl ExifReader {
                     let value =
                         value_extraction::extract_short_value(&self.data, &entry, byte_order)?;
                     let tag_value = TagValue::U16(value);
-                    let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
+                    let (final_value, _print) =
+                        self.apply_conversions(&tag_value, entry.tag_id, ifd_name);
 
                     trace!(
                         "Extracted SHORT tag {:#x} from {}: {:?}",
@@ -344,7 +343,8 @@ impl ExifReader {
                         &self.data, &entry, byte_order,
                     )?;
                     let tag_value = TagValue::U16Array(values);
-                    let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
+                    let (final_value, _print) =
+                        self.apply_conversions(&tag_value, entry.tag_id, ifd_name);
 
                     trace!(
                         "Extracted SHORT array tag {:#x} from {} with {} values",
@@ -366,14 +366,13 @@ impl ExifReader {
 
                     // Milestone 5: Check for SubDirectory tags (ExifIFD, GPS, etc.)
                     // ExifTool: SubDirectory processing for nested IFDs
-                    if let Some(_tag_def) = tag_def {
-                        if self.is_subdirectory_tag(entry.tag_id) {
-                            let tag_name = self.get_tag_name(entry.tag_id, ifd_name);
-                            self.process_subdirectory_tag(entry.tag_id, value, &tag_name, None)?;
-                        }
+                    if self.is_subdirectory_tag(entry.tag_id) {
+                        let tag_name = self.get_tag_name(entry.tag_id, ifd_name);
+                        self.process_subdirectory_tag(entry.tag_id, value, &tag_name, None)?;
                     }
 
-                    let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
+                    let (final_value, _print) =
+                        self.apply_conversions(&tag_value, entry.tag_id, ifd_name);
                     trace!(
                         "Extracted LONG tag {:#x} from {}: {:?}",
                         entry.tag_id,
@@ -395,26 +394,25 @@ impl ExifReader {
 
                     // Check for SubDirectory tags that might need array processing
                     // ExifTool: Some subdirectory tags contain arrays of data (like ColorData)
-                    if let Some(_tag_def) = tag_def {
-                        if self.is_subdirectory_tag(entry.tag_id) {
-                            let tag_name = self.get_tag_name(entry.tag_id, ifd_name);
-                            // For subdirectory processing, pass the raw data offset and size
-                            // ExifTool: ColorData arrays are processed as byte sequences at their data location
-                            debug!(
-                                "Processing LONG array subdirectory tag {:#x} ({}): {} values at offset {:#x}",
-                                entry.tag_id, tag_name, entry.count, entry.value_or_offset
-                            );
-                            let size = (entry.count as usize) * 4; // 4 bytes per LONG
-                            self.process_subdirectory_tag(
-                                entry.tag_id,
-                                entry.value_or_offset,
-                                &tag_name,
-                                Some(size),
-                            )?;
-                        }
+                    if self.is_subdirectory_tag(entry.tag_id) {
+                        let tag_name = self.get_tag_name(entry.tag_id, ifd_name);
+                        // For subdirectory processing, pass the raw data offset and size
+                        // ExifTool: ColorData arrays are processed as byte sequences at their data location
+                        debug!(
+                            "Processing LONG array subdirectory tag {:#x} ({}): {} values at offset {:#x}",
+                            entry.tag_id, tag_name, entry.count, entry.value_or_offset
+                        );
+                        let size = (entry.count as usize) * 4; // 4 bytes per LONG
+                        self.process_subdirectory_tag(
+                            entry.tag_id,
+                            entry.value_or_offset,
+                            &tag_name,
+                            Some(size),
+                        )?;
                     }
 
-                    let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
+                    let (final_value, _print) =
+                        self.apply_conversions(&tag_value, entry.tag_id, ifd_name);
                     trace!(
                         "Extracted LONG array tag {:#x} from {} with {} values: {:?}",
                         entry.tag_id,
@@ -431,7 +429,7 @@ impl ExifReader {
                 // ExifTool: 2x uint32 values representing numerator/denominator
                 let value =
                     value_extraction::extract_rational_value(&self.data, &entry, byte_order)?;
-                let (final_value, _print) = self.apply_conversions(&value, tag_def);
+                let (final_value, _print) = self.apply_conversions(&value, entry.tag_id, ifd_name);
                 trace!(
                     "Extracted RATIONAL tag {:#x} from {}: {:?}",
                     entry.tag_id,
@@ -446,7 +444,7 @@ impl ExifReader {
                 // ExifTool: 2x int32 values representing numerator/denominator
                 let value =
                     value_extraction::extract_srational_value(&self.data, &entry, byte_order)?;
-                let (final_value, _print) = self.apply_conversions(&value, tag_def);
+                let (final_value, _print) = self.apply_conversions(&value, entry.tag_id, ifd_name);
                 trace!(
                     "Extracted SRATIONAL tag {:#x} from {}: {:?}",
                     entry.tag_id,
@@ -486,15 +484,19 @@ impl ExifReader {
                     let size = entry.count as usize;
 
                     // Get tag name from definition or use fallback for known subdirectory tags
-                    let tag_name = if let Some(_tag_def) = tag_def {
-                        Some(self.get_tag_name(entry.tag_id, ifd_name))
-                    } else {
-                        // Fallback names for known subdirectory tags without definitions
-                        match entry.tag_id {
-                            0x927C => Some("MakerNotes".to_string()),
-                            _ => {
-                                debug!("UNDEFINED subdirectory tag {:#x} has no tag definition and no fallback", entry.tag_id);
+                    let tag_name = match entry.tag_id {
+                        0x927C => Some("MakerNotes".to_string()),
+                        _ => {
+                            // Try to get name from tag kit
+                            let name = self.get_tag_name(entry.tag_id, ifd_name);
+                            if name.starts_with("Tag_") {
+                                debug!(
+                                    "UNDEFINED subdirectory tag {:#x} has no tag definition",
+                                    entry.tag_id
+                                );
                                 None // Skip unknown subdirectory tags
+                            } else {
+                                Some(name)
                             }
                         }
                     };
@@ -620,7 +622,8 @@ impl ExifReader {
                 }
 
                 // Also store the tag value for completeness
-                let (final_value, _print) = self.apply_conversions(&tag_value, tag_def);
+                let (final_value, _print) =
+                    self.apply_conversions(&tag_value, entry.tag_id, ifd_name);
                 let source_info = self.create_tag_source_info(ifd_name);
                 self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
             }
@@ -645,85 +648,32 @@ impl ExifReader {
         self.parse_ifd(ifd_offset, ifd_name)
     }
 
-    /// Get tag definition with full entry context for conditional resolution
+    /// Get tag name from tag kits
     /// ExifTool: Uses format-specific tag tables with conditional logic
-    fn get_tag_definition_with_entry(
-        &self,
-        entry: &crate::tiff_types::IfdEntry,
-        _ifd_name: &str,
-    ) -> Option<crate::generated::tags::TagDef> {
-        // ✅ Phase 2: Runtime Integration - Conditional Tag Resolution
-        // Try conditional resolution first for manufacturer-specific tags
-        if let Some(resolved_tag) = self.try_conditional_tag_resolution_with_entry(entry) {
-            // Convert resolved_tag to TagDef for use in parsing pipeline
-            tracing::debug!(
-                "Conditional tag resolved: {} -> {}",
-                entry.tag_id,
-                resolved_tag.name
-            );
+    fn get_tag_name(&self, tag_id: u16, ifd_name: &str) -> String {
+        use crate::generated::Exif_pm::tag_kit;
+        use crate::generated::GPS_pm::tag_kit as gps_tag_kit;
 
-            // Create dynamic TagDef from resolved conditional tag
-            return Some(crate::generated::tags::TagDef {
-                id: entry.tag_id as u32,
-                name: Box::leak(resolved_tag.name.into_boxed_str()),
-                format: self.map_format_to_tag_format(&resolved_tag.format),
-                groups: &["Canon"],
-                writable: resolved_tag.writable,
-                description: None,
-                print_conv_ref: None,
-                value_conv_ref: None,
-                notes: None,
-            });
+        // For GPS IFD, check GPS tag kit first to avoid conflicts
+        // (e.g., tag 0x0002 is GPSLatitude in GPS IFD, InteropVersion in InteropIFD)
+        if ifd_name == "GPS" {
+            if let Some(tag_def) = gps_tag_kit::GPS_PM_TAG_KITS.get(&(tag_id as u32)) {
+                return tag_def.name.to_string();
+            }
         }
 
-        // Standard EXIF tag lookup
-        // ExifTool: Standard EXIF tag tables
-        crate::generated::TAG_BY_ID
-            .get(&(entry.tag_id as u32))
-            .copied()
-            .cloned()
-    }
-
-    /// Get tag definition based on file type and IFD context (legacy method)
-    /// ExifTool: Uses format-specific tag tables (e.g., PanasonicRaw::Main for RW2 files)
-    fn get_tag_definition(
-        &self,
-        tag_id: u16,
-        ifd_name: &str,
-    ) -> Option<crate::generated::tags::TagDef> {
-        // Create a minimal entry for compatibility
-        let minimal_entry = crate::tiff_types::IfdEntry {
-            tag_id,
-            format: crate::tiff_types::TiffFormat::Undefined,
-            count: 0,
-            value_or_offset: 0,
-        };
-        self.get_tag_definition_with_entry(&minimal_entry, ifd_name)
-    }
-
-    /// Map resolved tag format string to TagFormat enum
-    fn map_format_to_tag_format(
-        &self,
-        format: &Option<String>,
-    ) -> crate::generated::tags::TagFormat {
-        match format.as_deref() {
-            Some("int8u") => crate::generated::tags::TagFormat::U8,
-            Some("int16u") => crate::generated::tags::TagFormat::U16,
-            Some("int32u") => crate::generated::tags::TagFormat::U32,
-            Some("int8s") => crate::generated::tags::TagFormat::I8,
-            Some("int16s") => crate::generated::tags::TagFormat::I16,
-            Some("int32s") => crate::generated::tags::TagFormat::I32,
-            Some("rational64u") => crate::generated::tags::TagFormat::RationalU,
-            Some("rational64s") => crate::generated::tags::TagFormat::RationalS,
-            Some("string") => crate::generated::tags::TagFormat::String,
-            Some("float") => crate::generated::tags::TagFormat::Float,
-            Some("double") => crate::generated::tags::TagFormat::Double,
-            _ => crate::generated::tags::TagFormat::Undef,
+        // Check EXIF tag kit for other IFDs
+        if let Some(tag_def) = tag_kit::EXIF_PM_TAG_KITS.get(&(tag_id as u32)) {
+            return tag_def.name.to_string();
         }
+
+        // Default name if not found
+        format!("Tag_{:04X}", tag_id)
     }
 
     /// Try resolving tag using conditional tag resolution with full entry context
     /// TODO: Re-enable when conditional tags are generated
+    #[allow(dead_code)]
     fn try_conditional_tag_resolution_with_entry(
         &self,
         _entry: &crate::tiff_types::IfdEntry,
@@ -749,47 +699,6 @@ impl ExifReader {
         // Changed return type temporarily
         // TODO: Generate conditional context first
         None
-    }
-
-    /// Get tag name based on file type and IFD context
-    /// ExifTool: Uses format-specific tag tables (e.g., PanasonicRaw::Main for RW2 files)  
-    fn get_tag_name(&self, tag_id: u16, ifd_name: &str) -> String {
-        // Handle Olympus subdirectory-specific tags
-        // ExifTool: lib/Image/ExifTool/Olympus.pm subdirectory tag tables
-        if ifd_name == "Olympus:Equipment" {
-            // Use Olympus Equipment-specific tag definitions
-            // ExifTool: Olympus.pm %Image::ExifTool::Olympus::Equipment hash
-            // TODO: Generate Olympus equipment tag structure
-            // if let Some(equipment_name) =
-            //     crate::generated::Olympus_pm::equipment_tag_structure::get_equipment_tag_name(
-            //         tag_id,
-            //     )
-            // {
-            //     return equipment_name.to_string();
-            // }
-            // Fall through to standard lookup if not a known Equipment tag
-        }
-
-        // For RAW formats, use format-specific tag tables for main IFD
-        // ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main table for RW2 IFD0
-        if let Some(file_type) = &self.original_file_type {
-            if file_type == "RW2" && ifd_name == "IFD0" {
-                // Use Panasonic-specific tag definitions for IFD0 in RW2 files
-                // ExifTool: PanasonicRaw.pm %Image::ExifTool::PanasonicRaw::Main hash
-                if let Some(panasonic_name) =
-                    crate::raw::formats::panasonic::get_panasonic_tag_name(tag_id)
-                {
-                    return panasonic_name.to_string();
-                }
-                // Fall through to standard lookup if not a known Panasonic tag
-            }
-            // TODO: Add other RAW format handlers (MRW, etc.) as they're implemented
-        }
-
-        // Standard EXIF tag lookup for non-RAW formats or unknown tags
-        self.get_tag_definition(tag_id, ifd_name)
-            .map(|def| def.name.to_string())
-            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
     }
 
     /// Check if we're currently processing Olympus MakerNotes

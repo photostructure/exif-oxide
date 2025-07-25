@@ -95,6 +95,30 @@ pub fn gpslongituderef_print_conv(val: &TagValue) -> TagValue {
     }
 }
 
+/// GPS Latitude PrintConv - returns decimal degrees directly
+/// For GPS coordinates, we want the decimal value (post-ValueConv), not formatted with degree symbols
+pub fn gpslatitude_print_conv(val: &TagValue) -> TagValue {
+    val.clone() // Return the decimal value as-is
+}
+
+/// GPS Longitude PrintConv - returns decimal degrees directly  
+/// For GPS coordinates, we want the decimal value (post-ValueConv), not formatted with degree symbols
+pub fn gpslongitude_print_conv(val: &TagValue) -> TagValue {
+    val.clone() // Return the decimal value as-is
+}
+
+/// GPS DestLatitude PrintConv - returns decimal degrees directly
+/// For GPS coordinates, we want the decimal value (post-ValueConv), not formatted with degree symbols
+pub fn gpsdestlatitude_print_conv(val: &TagValue) -> TagValue {
+    val.clone() // Return the decimal value as-is
+}
+
+/// GPS DestLongitude PrintConv - returns decimal degrees directly
+/// For GPS coordinates, we want the decimal value (post-ValueConv), not formatted with degree symbols
+pub fn gpsdestlongitude_print_conv(val: &TagValue) -> TagValue {
+    val.clone() // Return the decimal value as-is
+}
+
 /// EXIF Flash PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:164-197, %flash hash
 /// Generated lookup: src/generated/Exif_pm/flash.rs

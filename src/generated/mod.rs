@@ -39,7 +39,6 @@ pub mod composite_tags;
 pub mod conversion_refs;
 pub mod file_types;
 pub mod supported_tags;
-pub mod tags;
 
 // Re-export commonly used types and functions
 pub use composite_tags::{
@@ -55,15 +54,10 @@ pub use supported_tags::{
     SUPPORTED_COMPOSITE_TAG_NAMES, SUPPORTED_TAG_COUNT, SUPPORTED_TAG_NAMES,
     TOTAL_SUPPORTED_TAG_COUNT,
 };
-pub use tags::TAG_LOOKUP as TAG_BY_ID;
-pub use tags::TAG_NAME_LOOKUP as TAG_BY_NAME;
-pub use tags::TAG_TABLE as EXIF_MAIN_TAGS;
-pub use tags::{lookup_tag_by_id, lookup_tag_by_name, TagDef, TagFormat, TAG_LOOKUP, TAG_TABLE};
 
 /// Initialize all lazy static data structures
 /// This can be called during startup to avoid lazy initialization costs later
 pub fn initialize_all() {
-    let _ = &*TAG_LOOKUP;
     let _ = &*COMPOSITE_TAG_LOOKUP;
     let _ = &*PRINT_CONV_REFS;
     let _ = &*VALUE_CONV_REFS;

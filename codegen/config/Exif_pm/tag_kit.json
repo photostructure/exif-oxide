@@ -1,11 +1,11 @@
 {
   "extractor": "tag_kit.pl",
   "source": "third-party/exiftool/lib/Image/ExifTool/Exif.pm",
-  "description": "Tag kits with embedded PrintConv for EXIF tags",
+  "description": "EXIF tag definitions with embedded PrintConv implementations",
   "tables": [
     {
       "table_name": "Main",
-      "description": "Main EXIF tag table with inline PrintConv"
+      "description": "Main EXIF tag table including standard TIFF/EXIF tags"
     }
   ]
 }

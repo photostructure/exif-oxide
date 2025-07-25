@@ -8,7 +8,8 @@ use std::collections::{HashMap, HashSet};
 use tracing::{debug, trace};
 
 use crate::generated::CompositeTagDef;
-use crate::generated::TAG_BY_ID;
+use crate::generated::Exif_pm::tag_kit;
+use crate::generated::GPS_pm::tag_kit as gps_tag_kit;
 use crate::types::TagValue;
 
 /// Build the initial available tags map from extracted tags with group prefixes
@@ -35,10 +36,19 @@ pub fn build_available_tags_map(
             _ => "EXIF",
         };
 
-        let base_tag_name = TAG_BY_ID
-            .get(&(tag_id as u32))
-            .map(|tag_def| tag_def.name.to_string())
-            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+        let base_tag_name = if group_name == "EXIF" {
+            tag_kit::EXIF_PM_TAG_KITS
+                .get(&(tag_id as u32))
+                .map(|tag_def| tag_def.name.to_string())
+                .or_else(|| {
+                    gps_tag_kit::GPS_PM_TAG_KITS
+                        .get(&(tag_id as u32))
+                        .map(|tag_def| tag_def.name.to_string())
+                })
+                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+        } else {
+            format!("Tag_{tag_id:04X}")
+        };
 
         // Add with group prefix (e.g., "GPS:GPSLatitude")
         let prefixed_name = format!("{group_name}:{base_tag_name}");

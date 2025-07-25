@@ -674,11 +674,20 @@ impl ExifReader {
     /// Resolve tag name to tag ID using generated tag tables
     /// This bridges the gap between processor string-based tag names and ExifReader's u16 tag IDs
     pub(crate) fn resolve_tag_name_to_id(&mut self, tag_name: &str) -> Option<u16> {
-        use crate::generated::TAG_BY_NAME;
+        use crate::generated::Exif_pm::tag_kit::EXIF_PM_TAG_KITS;
+        use crate::generated::GPS_pm::tag_kit::GPS_PM_TAG_KITS;
 
         // 1. Direct lookup in generated tables
-        if let Some(tag_def) = TAG_BY_NAME.get(tag_name) {
-            return Some(tag_def.id as u16);
+        // Since we don't have BY_NAME maps, search through the tag kits
+        for (tag_id, tag_def) in EXIF_PM_TAG_KITS.iter() {
+            if tag_def.name == tag_name {
+                return Some(*tag_id as u16);
+            }
+        }
+        for (tag_id, tag_def) in GPS_PM_TAG_KITS.iter() {
+            if tag_def.name == tag_name {
+                return Some(*tag_id as u16);
+            }
         }
 
         // 2. Handle "Tag_XXXX" hex format
@@ -711,8 +720,15 @@ impl ExifReader {
         // 6. Handle ExifTool-style group names (e.g., "MakerNotes:SelfTimer" -> "SelfTimer", "EXIF:Make" -> "Make")
         if tag_name.contains(':') {
             let simple_name = tag_name.split(':').next_back().unwrap_or(tag_name);
-            if let Some(tag_def) = TAG_BY_NAME.get(simple_name) {
-                return Some(tag_def.id as u16);
+            for (tag_id, tag_def) in EXIF_PM_TAG_KITS.iter() {
+                if tag_def.name == simple_name {
+                    return Some(*tag_id as u16);
+                }
+            }
+            for (tag_id, tag_def) in GPS_PM_TAG_KITS.iter() {
+                if tag_def.name == simple_name {
+                    return Some(*tag_id as u16);
+                }
             }
         }
 
