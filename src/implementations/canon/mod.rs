@@ -1088,7 +1088,7 @@ fn apply_camera_settings_print_conv(
 
 #[cfg(test)]
 mod tests {
-    
+
     use crate::exif::ExifReader;
     use crate::tiff_types::ByteOrder;
     use crate::types::TagValue;
@@ -1126,14 +1126,12 @@ mod tests {
 
         // Simulate what the subdirectory processing would do
         let tag_id = 0x4001u16;
-        let mut synthetic_counter: u16 = 0;
         let mut synthetic_ids = Vec::new();
 
         // Generate a few synthetic IDs like the real code would
-        for _i in 0..5 {
+        for synthetic_counter in 0..5_u16 {
             let synthetic_id = 0x8000 | (tag_id & 0x7F00) | (synthetic_counter & 0xFF);
             synthetic_ids.push(synthetic_id);
-            synthetic_counter += 1;
         }
 
         // Verify deterministic ID generation pattern
