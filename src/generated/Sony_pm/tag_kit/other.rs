@@ -1064,7 +1064,12 @@ static PRINT_CONV_88: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
         "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
     );
     map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
-    map.insert("49201".to_string(), "Zeiss Touit 12mm F2.8");
+    map.insert(
+        "49201".to_string(),
+        "Zeiss Touit 12mm F2.8 or other Touit lens",
+    );
+    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
     map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
     map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
     map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
@@ -3005,7 +3010,12 @@ static PRINT_CONV_234: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
         "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
     );
     map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
-    map.insert("49201".to_string(), "Zeiss Touit 12mm F2.8");
+    map.insert(
+        "49201".to_string(),
+        "Zeiss Touit 12mm F2.8 or other Touit lens",
+    );
+    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
     map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
     map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
     map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
@@ -3647,7 +3657,12 @@ static PRINT_CONV_250: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
         "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
     );
     map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
-    map.insert("49201".to_string(), "Zeiss Touit 12mm F2.8");
+    map.insert(
+        "49201".to_string(),
+        "Zeiss Touit 12mm F2.8 or other Touit lens",
+    );
+    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
     map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
     map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
     map.insert("49216".to_string(), "Zeiss Batis 25mm F2");

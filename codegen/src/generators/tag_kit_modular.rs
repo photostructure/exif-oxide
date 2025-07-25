@@ -8,6 +8,49 @@ use std::collections::HashMap;
 use crate::common::escape_string;
 use crate::schemas::tag_kit::{TagKitExtraction, TagKit, ExtractedTable};
 use super::tag_kit_split::{split_tag_kits, TagCategory};
+use serde::{Deserialize, Serialize};
+
+/// Shared table data loaded from shared_tables.json
+#[derive(Debug, Deserialize)]
+struct SharedTablesData {
+    metadata: serde_json::Value,
+    tables: HashMap<String, SharedTable>,
+}
+
+#[derive(Debug, Deserialize)]
+struct SharedTable {
+    path: String,
+    #[serde(rename = "type")]
+    table_type: String,
+    tags: HashMap<String, serde_json::Value>,
+}
+
+/// Load shared tables from JSON file
+fn load_shared_tables() -> Result<SharedTablesData> {
+    let shared_tables_path = "data/shared_tables.json";
+    if std::path::Path::new(shared_tables_path).exists() {
+        let contents = fs::read_to_string(shared_tables_path)?;
+        Ok(serde_json::from_str(&contents)?)
+    } else {
+        // Return empty data if file doesn't exist
+        Ok(SharedTablesData {
+            metadata: serde_json::Value::Null,
+            tables: HashMap::new(),
+        })
+    }
+}
+
+/// Check if a table name refers to a cross-module reference
+fn is_cross_module_reference(table_name: &str, current_module: &str) -> bool {
+    if let Some(module_part) = table_name.strip_prefix("Image::ExifTool::") {
+        if let Some(referenced_module) = module_part.split("::").next() {
+            // Handle _pm suffix in module names
+            let normalized_current = current_module.trim_end_matches("_pm");
+            return referenced_module != normalized_current;
+        }
+    }
+    false
+}
 
 /// Generate modular tag kit code from extracted data
 pub fn generate_modular_tag_kit(
@@ -19,6 +62,9 @@ pub fn generate_modular_tag_kit(
     // Create tag_kit subdirectory inside the output directory
     let tag_kit_dir = format!("{output_dir}/tag_kit");
     fs::create_dir_all(&tag_kit_dir)?;
+    
+    // Load shared tables for cross-module references
+    let shared_tables = load_shared_tables()?;
     
     // Split tag kits by category
     let categories = split_tag_kits(&extraction.tag_kits);
@@ -45,6 +91,8 @@ pub fn generate_modular_tag_kit(
             tag_kits,
             &extraction.source,
             &mut total_print_conv_count,
+            module_name,
+            &shared_tables,
         )?;
         
         // Write category module
@@ -61,7 +109,7 @@ pub fn generate_modular_tag_kit(
     }
     
     // Generate mod.rs that combines all modules and subdirectory processors
-    let mod_code = generate_mod_file(&generated_modules, module_name, extraction, &subdirectory_info)?;
+    let mod_code = generate_mod_file(&generated_modules, module_name, extraction, &subdirectory_info, &shared_tables)?;
     fs::write(format!("{tag_kit_dir}/mod.rs"), mod_code)?;
     
     // Summary
@@ -80,6 +128,8 @@ fn generate_category_module(
     tag_kits: &[&TagKit],
     source: &crate::schemas::tag_kit::SourceInfo,
     print_conv_counter: &mut usize,
+    current_module: &str,
+    shared_tables: &SharedTablesData,
 ) -> Result<(String, usize)> {
     let mut code = String::new();
     
@@ -233,6 +283,7 @@ fn generate_mod_file(
     module_name: &str,
     extraction: &TagKitExtraction,
     subdirectory_info: &HashMap<u32, SubDirectoryCollection>,
+    shared_tables: &SharedTablesData,
 ) -> Result<String> {
     let mut code = String::new();
     
@@ -327,6 +378,31 @@ fn generate_mod_file(
     
     // Generate binary data helper functions
     code.push_str("// Helper functions for reading binary data\n");
+    
+    // Add model matching helper
+    code.push_str("fn model_matches(model: &str, pattern: &str) -> bool {\n");
+    code.push_str("    // ExifTool regexes are already in a compatible format\n");
+    code.push_str("    // Just need to ensure proper escaping was preserved\n");
+    code.push_str("    \n");
+    code.push_str("    match regex::Regex::new(pattern) {\n");
+    code.push_str("        Ok(re) => re.is_match(model),\n");
+    code.push_str("        Err(e) => {\n");
+    code.push_str("            tracing::warn!(\"Failed to compile model regex '{}': {}\", pattern, e);\n");
+    code.push_str("            false\n");
+    code.push_str("        }\n");
+    code.push_str("    }\n");
+    code.push_str("}\n\n");
+    
+    // Add format matching helper
+    code.push_str("fn format_matches(format: &str, pattern: &str) -> bool {\n");
+    code.push_str("    if let Ok(re) = regex::Regex::new(pattern) {\n");
+    code.push_str("        re.is_match(format)\n");
+    code.push_str("    } else {\n");
+    code.push_str("        tracing::warn!(\"Failed to compile format regex: {}\", pattern);\n");
+    code.push_str("        false\n");
+    code.push_str("    }\n");
+    code.push_str("}\n\n");
+    
     code.push_str("fn read_int16s_array(data: &[u8], byte_order: ByteOrder, count: usize) -> Result<Vec<i16>> {\n");
     code.push_str("    if data.len() < count * 2 {\n");
     code.push_str("        return Err(crate::types::ExifError::ParseError(\"Insufficient data for int16s array\".to_string()));\n");
@@ -375,6 +451,7 @@ fn generate_mod_file(
         
         // Generate binary data parsers for each unique subdirectory table
         let mut generated_tables = std::collections::BTreeSet::new();
+        let mut referenced_tables = std::collections::BTreeSet::new();
         
         // Sort subdirectory collections by tag_id for deterministic output
         let mut sorted_collections: Vec<(&u32, &SubDirectoryCollection)> = subdirectory_info.iter().collect();
@@ -382,18 +459,39 @@ fn generate_mod_file(
         
         for (_, collection) in sorted_collections {
             for variant in &collection.variants {
-                if variant.is_binary_data {
-                    if let Some(extracted_table) = &variant.extracted_table {
-                        let table_fn_name = variant.table_name
-                            .replace("Image::ExifTool::", "")
-                            .replace("::", "_")
-                            .to_lowercase();
-                        
-                        if generated_tables.insert(table_fn_name.clone()) {
-                            generate_binary_parser(&mut code, &table_fn_name, extracted_table)?;
+                // Track all referenced tables
+                if !variant.table_name.is_empty() && variant.table_name != "Unknown" && !is_cross_module_reference(&variant.table_name, module_name) {
+                    let table_fn_name = variant.table_name
+                        .replace("Image::ExifTool::", "")
+                        .replace("::", "_")
+                        .to_lowercase();
+                    referenced_tables.insert(table_fn_name.clone());
+                    
+                    if variant.is_binary_data {
+                        if let Some(extracted_table) = &variant.extracted_table {
+                            if generated_tables.insert(table_fn_name.clone()) {
+                                generate_binary_parser(&mut code, &table_fn_name, extracted_table)?;
+                            }
                         }
                     }
                 }
+            }
+        }
+        
+        // Generate stub functions for referenced but not generated tables
+        let missing_tables: Vec<_> = referenced_tables
+            .difference(&generated_tables)
+            .cloned()
+            .collect();
+        
+        if !missing_tables.is_empty() {
+            code.push_str("\n// Stub functions for tables not extracted by tag kit\n");
+            for table_name in missing_tables {
+                code.push_str(&format!("fn process_{}(data: &[u8], _byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n", table_name));
+                code.push_str("    // TODO: Implement when this table is extracted\n");
+                code.push_str("    tracing::debug!(\"Stub function called for {}\", data.len());\n");
+                code.push_str("    Ok(vec![])\n");
+                code.push_str("}\n\n");
             }
         }
         
@@ -403,7 +501,7 @@ fn generate_mod_file(
         sorted_subdirs.sort_by_key(|(tag_id, _)| *tag_id);
         
         for (tag_id, collection) in sorted_subdirs {
-            generate_subdirectory_dispatcher(&mut code, *tag_id, collection)?;
+            generate_subdirectory_dispatcher(&mut code, *tag_id, collection, module_name, shared_tables)?;
         }
     }
     
@@ -522,6 +620,111 @@ fn generate_mod_file(
     code.push_str("}\n");
     
     Ok(code)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    fn test_parse_count_conditions() {
+        // Simple count
+        assert_eq!(parse_count_conditions("$count == 582"), vec![582]);
+        
+        // OR with 'or'
+        assert_eq!(parse_count_conditions("$count == 1273 or $count == 1275"), vec![1273, 1275]);
+        
+        // OR with '||'
+        assert_eq!(parse_count_conditions("$count == 1536 || $count == 2048"), vec![1536, 2048]);
+        
+        // Multi-line
+        let multi = "$count == 692  or $count == 674  or $count == 702 or
+                $count == 1227 or $count == 1250";
+        assert_eq!(parse_count_conditions(multi), vec![692, 674, 702, 1227, 1250]);
+    }
+    
+    #[test]
+    fn test_parse_model_patterns() {
+        // Simple model match
+        let pattern = parse_model_pattern("$$self{Model} =~ /EOS 5D/").unwrap();
+        assert_eq!(pattern.regex, "EOS 5D");
+        assert!(!pattern.negated);
+        
+        // Negated match
+        let pattern = parse_model_pattern("$$self{Model} !~ /EOS/").unwrap();
+        assert_eq!(pattern.regex, "EOS");
+        assert!(pattern.negated);
+        
+        // With word boundaries
+        let pattern = parse_model_pattern("$$self{Model} =~ /\\b(450D|REBEL XSi|Kiss X2)\\b/").unwrap();
+        assert_eq!(pattern.regex, "\\b(450D|REBEL XSi|Kiss X2)\\b");
+        assert!(!pattern.negated);
+        
+        // With end anchor
+        let pattern = parse_model_pattern("$$self{Model} =~ /\\b1Ds? Mark III$/").unwrap();
+        assert_eq!(pattern.regex, "\\b1Ds? Mark III$");
+        assert!(!pattern.negated);
+    }
+    
+    #[test]
+    fn test_parse_format_patterns() {
+        // Equality
+        let pattern = parse_format_pattern("$format eq \"int32u\"").unwrap();
+        assert_eq!(pattern.format, "int32u");
+        assert_eq!(pattern.operator, ComparisonOp::Eq);
+        assert!(pattern.additional_condition.is_none());
+        
+        // Inequality
+        let pattern = parse_format_pattern("$format ne \"ifd\"").unwrap();
+        assert_eq!(pattern.format, "ifd");
+        assert_eq!(pattern.operator, ComparisonOp::Ne);
+        
+        // With additional condition
+        let pattern = parse_format_pattern("$format eq \"int32u\" and ($count == 138 or $count == 148)").unwrap();
+        assert_eq!(pattern.format, "int32u");
+        assert_eq!(pattern.operator, ComparisonOp::Eq);
+        assert_eq!(pattern.additional_condition.as_ref().unwrap(), "($count == 138 or $count == 148)");
+        
+        // Regex pattern
+        let pattern = parse_format_pattern("$format =~ /^int16/").unwrap();
+        assert_eq!(pattern.format, "^int16");
+        assert_eq!(pattern.operator, ComparisonOp::Regex);
+    }
+    
+    #[test]
+    fn test_subdirectory_condition_classification() {
+        // Count condition
+        match parse_subdirectory_condition("$count == 582") {
+            SubdirectoryCondition::Count(counts) => assert_eq!(counts, vec![582]),
+            _ => panic!("Expected Count condition"),
+        }
+        
+        // Model condition
+        match parse_subdirectory_condition("$$self{Model} =~ /EOS 5D/") {
+            SubdirectoryCondition::Model(pattern) => {
+                assert_eq!(pattern.regex, "EOS 5D");
+                assert!(!pattern.negated);
+            }
+            _ => panic!("Expected Model condition"),
+        }
+        
+        // Format condition
+        match parse_subdirectory_condition("$format eq \"int32u\"") {
+            SubdirectoryCondition::Format(pattern) => {
+                assert_eq!(pattern.format, "int32u");
+                assert_eq!(pattern.operator, ComparisonOp::Eq);
+            }
+            _ => panic!("Expected Format condition"),
+        }
+        
+        // Complex runtime condition
+        match parse_subdirectory_condition("$$valPt =~ /^\\0/ and $$valPt !~ /^(\\0\\0\\0\\0|\\x00\\x40\\xdc\\x05)/") {
+            SubdirectoryCondition::Runtime(s) => {
+                assert!(s.contains("$$valPt"));
+            }
+            _ => panic!("Expected Runtime condition"),
+        }
+    }
 }
 
 /// Information about a subdirectory and all its variants
@@ -753,6 +956,115 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
     Ok(())
 }
 
+/// Represents different types of subdirectory conditions
+#[derive(Debug, Clone)]
+enum SubdirectoryCondition {
+    /// Count comparisons: $count == 582, $count == 1273 or $count == 1275
+    Count(Vec<usize>),
+    /// Model regex patterns: $$self{Model} =~ /EOS 5D/
+    Model(ModelPattern),
+    /// Format checks: $format eq "int32u"
+    Format(FormatPattern),
+    /// Complex conditions stored as runtime strings
+    Runtime(String),
+}
+
+#[derive(Debug, Clone)]
+struct ModelPattern {
+    regex: String,
+    negated: bool,
+}
+
+#[derive(Debug, Clone)]
+struct FormatPattern {
+    format: String,
+    operator: ComparisonOp,
+    additional_condition: Option<String>, // for cases like: $format eq "int32u" and ($count == 138 or $count == 148)
+}
+
+#[derive(Debug, Clone, PartialEq)]
+enum ComparisonOp {
+    Eq,  // eq
+    Ne,  // ne
+    Regex, // =~
+}
+
+/// Parse subdirectory conditions into structured types
+fn parse_subdirectory_condition(condition: &str) -> SubdirectoryCondition {
+    let trimmed = condition.trim();
+    
+    // Count patterns
+    if trimmed.contains("$count") && !trimmed.contains("$$self") && !trimmed.contains("$format") {
+        let counts = parse_count_conditions(trimmed);
+        if !counts.is_empty() {
+            return SubdirectoryCondition::Count(counts);
+        }
+    }
+    
+    // Model patterns
+    if let Some(model_pattern) = parse_model_pattern(trimmed) {
+        return SubdirectoryCondition::Model(model_pattern);
+    }
+    
+    // Format patterns
+    if let Some(format_pattern) = parse_format_pattern(trimmed) {
+        return SubdirectoryCondition::Format(format_pattern);
+    }
+    
+    // Everything else goes to runtime
+    SubdirectoryCondition::Runtime(condition.to_string())
+}
+
+/// Parse model regex patterns like: $$self{Model} =~ /EOS 5D/
+fn parse_model_pattern(condition: &str) -> Option<ModelPattern> {
+    // Match patterns like: $$self{Model} =~ /regex/ or $$self{Model} !~ /regex/
+    let re = regex::Regex::new(r#"\$\$self\{Model\}\s*(=~|!~)\s*/([^/]+)/"#).ok()?;
+    
+    if let Some(captures) = re.captures(condition) {
+        let operator = captures.get(1)?.as_str();
+        let regex = captures.get(2)?.as_str().to_string();
+        let negated = operator == "!~";
+        
+        return Some(ModelPattern { regex, negated });
+    }
+    
+    None
+}
+
+/// Parse format patterns like: $format eq "int32u"
+fn parse_format_pattern(condition: &str) -> Option<FormatPattern> {
+    // Simple equality/inequality
+    if let Some(captures) = regex::Regex::new(r#"\$format\s+(eq|ne)\s+"([^"]+)""#).ok()?.captures(condition) {
+        let operator = match captures.get(1)?.as_str() {
+            "eq" => ComparisonOp::Eq,
+            "ne" => ComparisonOp::Ne,
+            _ => return None,
+        };
+        let format = captures.get(2)?.as_str().to_string();
+        
+        // Check for additional conditions after "and"
+        let additional = if condition.contains(" and ") {
+            condition.split(" and ").nth(1).map(|s| s.trim().to_string())
+        } else {
+            None
+        };
+        
+        return Some(FormatPattern { format, operator, additional_condition: additional });
+    }
+    
+    // Regex format patterns like: $format =~ /^int16/
+    if let Some(captures) = regex::Regex::new(r#"\$format\s+=~\s*/([^/]+)/"#).ok()?.captures(condition) {
+        let regex = captures.get(1)?.as_str().to_string();
+        return Some(FormatPattern {
+            format: regex,
+            operator: ComparisonOp::Regex,
+            additional_condition: None,
+        });
+    }
+    
+    None
+}
+
 /// Parse count conditions including OR operators
 /// Handles:
 /// - Simple: "$count == 582"
@@ -787,41 +1099,122 @@ fn parse_count_conditions(condition: &str) -> Vec<usize> {
 }
 
 /// Generate a conditional dispatch function for a tag with subdirectory variants
-fn generate_subdirectory_dispatcher(code: &mut String, tag_id: u32, collection: &SubDirectoryCollection) -> Result<()> {
+fn generate_subdirectory_dispatcher(
+    code: &mut String, 
+    tag_id: u32, 
+    collection: &SubDirectoryCollection,
+    current_module: &str,
+    shared_tables: &SharedTablesData,
+) -> Result<()> {
     code.push_str(&format!("pub fn process_tag_{:#x}_subdirectory(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n", tag_id));
     code.push_str("    use tracing::debug;\n");
+    code.push_str("    // TODO: Accept model and format parameters when runtime integration supports it\n");
     
     // Determine the format for count calculation (usually int16s for Canon)
     let format_size = 2; // Default to int16s
     code.push_str(&format!("    let count = data.len() / {};\n", format_size));
     code.push_str(&format!("    debug!(\"process_tag_{:#x}_subdirectory called with {{}} bytes, count={{}}\", data.len(), count);\n", tag_id));
     code.push_str("    \n");
-    code.push_str("    match count {\n");
+    
+    // Analyze all variants and their conditions
+    let mut _has_count = false;
+    let mut _has_model = false;
+    let mut _has_format = false;
+    let mut _has_runtime = false;
     
     for variant in &collection.variants {
-        if let Some(condition) = &variant.condition {
-            // Use the new parser for count conditions
-            let counts = parse_count_conditions(condition);
-            
-            if !counts.is_empty() {
-                let table_fn_name = variant.table_name
-                    .replace("Image::ExifTool::", "")
-                    .replace("::", "_")
-                    .to_lowercase();
-                
-                // Generate a match arm for each count value
-                for count_val in counts {
-                    code.push_str(&format!("        {} => {{\n", count_val));
-                    code.push_str(&format!("            debug!(\"Matched count {} for variant {}\");\n", count_val, table_fn_name));
-                    code.push_str(&format!("            process_{}(data, byte_order)\n", table_fn_name));
-                    code.push_str("        }\n");
-                }
+        if let Some(condition_str) = &variant.condition {
+            let condition = parse_subdirectory_condition(condition_str);
+            match condition {
+                SubdirectoryCondition::Count(_) => _has_count = true,
+                SubdirectoryCondition::Model(_) => _has_model = true,
+                SubdirectoryCondition::Format(_) => _has_format = true,
+                SubdirectoryCondition::Runtime(_) => _has_runtime = true,
             }
         }
     }
     
-    code.push_str("        _ => Ok(vec![]), // Unknown variant\n");
-    code.push_str("    }\n");
+    // Check if there's only one variant with no condition
+    if collection.variants.len() == 1 && collection.variants[0].condition.is_none() {
+        // Direct call to the single processor function
+        let variant = &collection.variants[0];
+        if variant.table_name == "Unknown" || is_cross_module_reference(&variant.table_name, current_module) {
+            // Special case for "Unknown" table or cross-module reference
+            if variant.table_name == "Unknown" {
+                code.push_str("    // Reference to Unknown table\n");
+            } else {
+                code.push_str(&format!("    // Cross-module reference to {}\n", variant.table_name));
+            }
+            code.push_str("    // TODO: Implement cross-module subdirectory support\n");
+            code.push_str("    Ok(vec![])\n");
+        } else {
+            let table_fn_name = variant.table_name
+                .replace("Image::ExifTool::", "")
+                .replace("::", "_")
+                .to_lowercase();
+            
+            code.push_str(&format!("    // Single unconditional subdirectory\n"));
+            code.push_str(&format!("    process_{}(data, byte_order)\n", table_fn_name));
+        }
+    } else {
+        // For now, only generate count-based matching
+        // Model and format conditions will be added when runtime supports them
+        code.push_str("    match count {\n");
+        
+        for variant in &collection.variants {
+            if let Some(condition_str) = &variant.condition {
+                let condition = parse_subdirectory_condition(condition_str);
+                
+                match condition {
+                    SubdirectoryCondition::Count(counts) => {
+                        if is_cross_module_reference(&variant.table_name, current_module) {
+                            // Cross-module reference - add comment
+                            for count_val in counts {
+                                code.push_str(&format!("        {} => {{\n", count_val));
+                                code.push_str(&format!("            // Cross-module reference to {}\n", variant.table_name));
+                                code.push_str("            // TODO: Implement cross-module subdirectory support\n");
+                                code.push_str("            Ok(vec![])\n");
+                                code.push_str("        }\n");
+                            }
+                        } else {
+                            let table_fn_name = variant.table_name
+                                .replace("Image::ExifTool::", "")
+                                .replace("::", "_")
+                                .to_lowercase();
+                                
+                            for count_val in counts {
+                                code.push_str(&format!("        {} => {{\n", count_val));
+                                code.push_str(&format!("            debug!(\"Matched count {} for variant {}\");\n", count_val, table_fn_name));
+                                code.push_str(&format!("            process_{}(data, byte_order)\n", table_fn_name));
+                                code.push_str("        }\n");
+                            }
+                        }
+                    }
+                    SubdirectoryCondition::Model(_pattern) => {
+                        // Add as comment for now
+                        let escaped = escape_string(&condition_str);
+                        code.push_str(&format!("        // Model condition not yet supported: {}\n", escaped));
+                        code.push_str(&format!("        // Would dispatch to: {}\n", variant.table_name));
+                    }
+                    SubdirectoryCondition::Format(_pattern) => {
+                        // Add as comment for now
+                        let escaped = escape_string(&condition_str);
+                        code.push_str(&format!("        // Format condition not yet supported: {}\n", escaped));
+                        code.push_str(&format!("        // Would dispatch to: {}\n", variant.table_name));
+                    }
+                    SubdirectoryCondition::Runtime(runtime_str) => {
+                        // Add as comment for now
+                        let escaped = escape_string(&runtime_str);
+                        code.push_str(&format!("        // Runtime condition not yet supported: {}\n", escaped));
+                        code.push_str(&format!("        // Would dispatch to: {}\n", variant.table_name));
+                    }
+                }
+            }
+        }
+        
+        code.push_str("        _ => Ok(vec![]), // No matching variant\n");
+        code.push_str("    }\n");
+    }
     code.push_str("}\n\n");
     
     Ok(())

@@ -233,8 +233,8 @@ static PRINT_CONV_24: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
 
 static PRINT_CONV_25: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "No");
-    map.insert("1".to_string(), "Yes");
+    map.insert("1".to_string(), "No");
+    map.insert("2".to_string(), "Yes");
     map
 });
 

@@ -967,6 +967,12 @@ fn process_canon_subdirectory_tags(exif_reader: &mut crate::exif::ExifReader) ->
 
                 // Store each extracted tag
                 for (tag_name, value) in extracted_tags {
+                    // Skip tags marked as Unknown (matching ExifTool's default behavior)
+                    if tag_name.contains("Unknown") {
+                        debug!("Skipping unknown tag: {}", tag_name);
+                        continue;
+                    }
+
                     // Generate a deterministic synthetic tag ID for the extracted tag
                     // Uses parent tag ID's upper bits and counter for lower bits
                     // This ensures unique IDs for each tag in the subdirectory
@@ -1182,5 +1188,64 @@ mod tests {
         // In debug mode, inserting the same ID again would trigger the assertion
         // This test just verifies the data structure is set up correctly
         assert!(exif_reader.synthetic_tag_names.contains_key(&synthetic_id));
+    }
+
+    #[test]
+    fn test_unknown_tags_filtered() {
+        // Simulate subdirectory extraction with both known and unknown tags
+        let mock_tags = vec![
+            (
+                "WB_RGGBLevelsAsShot".to_string(),
+                TagValue::String("2241 1024 1024 1689".to_string()),
+            ),
+            (
+                "WB_RGGBLevelsUnknown".to_string(),
+                TagValue::String("1000 1000 1000 1000".to_string()),
+            ),
+            (
+                "WB_RGGBLevelsDaylight".to_string(),
+                TagValue::String("2217 1024 1024 1631".to_string()),
+            ),
+            (
+                "WB_RGGBLevelsUnknown2".to_string(),
+                TagValue::String("2000 2000 2000 2000".to_string()),
+            ),
+        ];
+
+        let mut exif_reader = ExifReader::new();
+        let tag_id = 0x4001_u16;
+        let mut synthetic_counter: u16 = 0;
+
+        // Process tags like the real code does
+        for (tag_name, value) in mock_tags {
+            // Skip tags marked as Unknown (matching ExifTool's default behavior)
+            if tag_name.contains("Unknown") {
+                continue;
+            }
+
+            let synthetic_id = 0x8000 | (tag_id & 0x7F00) | (synthetic_counter & 0xFF);
+            synthetic_counter += 1;
+
+            let full_tag_name = format!("MakerNotes:{}", tag_name);
+            exif_reader
+                .synthetic_tag_names
+                .insert(synthetic_id, full_tag_name);
+            exif_reader.extracted_tags.insert(synthetic_id, value);
+        }
+
+        // Should have only 2 tags (the known ones)
+        assert_eq!(exif_reader.synthetic_tag_names.len(), 2);
+        assert!(exif_reader
+            .synthetic_tag_names
+            .values()
+            .any(|v| v.contains("WB_RGGBLevelsAsShot")));
+        assert!(exif_reader
+            .synthetic_tag_names
+            .values()
+            .any(|v| v.contains("WB_RGGBLevelsDaylight")));
+        assert!(!exif_reader
+            .synthetic_tag_names
+            .values()
+            .any(|v| v.contains("Unknown")));
     }
 }

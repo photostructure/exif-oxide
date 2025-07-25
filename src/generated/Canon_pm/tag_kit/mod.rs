@@ -10,7 +10,10 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
+pub mod color;
+pub mod core;
 pub mod datetime;
+pub mod document;
 pub mod interop;
 pub mod other;
 pub mod thumbnail;
@@ -54,8 +57,23 @@ pub enum SubDirectoryType {
 pub static CANON_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
     let mut map = HashMap::new();
 
+    // color tags
+    for (id, tag_def) in color::get_color_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // core tags
+    for (id, tag_def) in core::get_core_tags() {
+        map.insert(id, tag_def);
+    }
+
     // datetime tags
     for (id, tag_def) in datetime::get_datetime_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // document tags
+    for (id, tag_def) in document::get_document_tags() {
         map.insert(id, tag_def);
     }
 
@@ -78,6 +96,28 @@ pub static CANON_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(
 });
 
 // Helper functions for reading binary data
+fn model_matches(model: &str, pattern: &str) -> bool {
+    // ExifTool regexes are already in a compatible format
+    // Just need to ensure proper escaping was preserved
+
+    match regex::Regex::new(pattern) {
+        Ok(re) => re.is_match(model),
+        Err(e) => {
+            tracing::warn!("Failed to compile model regex '{}': {}", pattern, e);
+            false
+        }
+    }
+}
+
+fn format_matches(format: &str, pattern: &str) -> bool {
+    if let Ok(re) = regex::Regex::new(pattern) {
+        re.is_match(format)
+    } else {
+        tracing::warn!("Failed to compile format regex: {}", pattern);
+        false
+    }
+}
+
 fn read_int16s_array(data: &[u8], byte_order: ByteOrder, count: usize) -> Result<Vec<i16>> {
     if data.len() < count * 2 {
         return Err(crate::types::ExifError::ParseError(
@@ -206,6 +246,8 @@ fn process_canon_camerasettings(
     // SRAWQuality at offset 46
 
     // ContinuousDrive at offset 5
+
+    // FocusBracketing at offset 50
 
     // Clarity at offset 51
 
@@ -2923,6 +2965,985 @@ fn process_canon_timeinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Str
     Ok(tags)
 }
 
+fn process_canon_colorcoefs(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // WB_RGGBLevelsAsShot at offset 0
+    if data.len() >= 8 {
+        if let Ok(values) = read_int16s_array(&data[0..8], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsAsShot".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsMeasured at offset 10
+    if data.len() >= 28 {
+        if let Ok(values) = read_int16s_array(&data[20..28], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsMeasured".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsUnknown11 at offset 100
+    if data.len() >= 208 {
+        if let Ok(values) = read_int16s_array(&data[200..208], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown11".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown11 at offset 104
+
+    // WB_RGGBLevelsUnknown12 at offset 105
+    if data.len() >= 218 {
+        if let Ok(values) = read_int16s_array(&data[210..218], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown12".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown12 at offset 109
+
+    // WB_RGGBLevelsUnknown13 at offset 110
+    if data.len() >= 228 {
+        if let Ok(values) = read_int16s_array(&data[220..228], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown13".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown13 at offset 114
+
+    // WB_RGGBLevelsUnknown at offset 15
+    if data.len() >= 38 {
+        if let Ok(values) = read_int16s_array(&data[30..38], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown at offset 19
+
+    // WB_RGGBLevelsDaylight at offset 20
+    if data.len() >= 48 {
+        if let Ok(values) = read_int16s_array(&data[40..48], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsDaylight".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsShade at offset 25
+    if data.len() >= 58 {
+        if let Ok(values) = read_int16s_array(&data[50..58], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsShade".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsCloudy at offset 30
+    if data.len() >= 68 {
+        if let Ok(values) = read_int16s_array(&data[60..68], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsCloudy".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsTungsten at offset 35
+    if data.len() >= 78 {
+        if let Ok(values) = read_int16s_array(&data[70..78], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsTungsten".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsFluorescent at offset 40
+    if data.len() >= 88 {
+        if let Ok(values) = read_int16s_array(&data[80..88], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsFluorescent".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsKelvin at offset 45
+    if data.len() >= 98 {
+        if let Ok(values) = read_int16s_array(&data[90..98], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsKelvin".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsAuto at offset 5
+    if data.len() >= 18 {
+        if let Ok(values) = read_int16s_array(&data[10..18], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("WB_RGGBLevelsAuto".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // WB_RGGBLevelsFlash at offset 50
+    if data.len() >= 108 {
+        if let Ok(values) = read_int16s_array(&data[100..108], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsFlash".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsUnknown2 at offset 55
+    if data.len() >= 118 {
+        if let Ok(values) = read_int16s_array(&data[110..118], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown2".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown2 at offset 59
+
+    // WB_RGGBLevelsUnknown3 at offset 60
+    if data.len() >= 128 {
+        if let Ok(values) = read_int16s_array(&data[120..128], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown3".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown3 at offset 64
+
+    // WB_RGGBLevelsUnknown4 at offset 65
+    if data.len() >= 138 {
+        if let Ok(values) = read_int16s_array(&data[130..138], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown4".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown4 at offset 69
+
+    // WB_RGGBLevelsUnknown5 at offset 70
+    if data.len() >= 148 {
+        if let Ok(values) = read_int16s_array(&data[140..148], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown5".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown5 at offset 74
+
+    // WB_RGGBLevelsUnknown6 at offset 75
+    if data.len() >= 158 {
+        if let Ok(values) = read_int16s_array(&data[150..158], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown6".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown6 at offset 79
+
+    // WB_RGGBLevelsUnknown7 at offset 80
+    if data.len() >= 168 {
+        if let Ok(values) = read_int16s_array(&data[160..168], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown7".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown7 at offset 84
+
+    // WB_RGGBLevelsUnknown8 at offset 85
+    if data.len() >= 178 {
+        if let Ok(values) = read_int16s_array(&data[170..178], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown8".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown8 at offset 89
+
+    // WB_RGGBLevelsUnknown9 at offset 90
+    if data.len() >= 188 {
+        if let Ok(values) = read_int16s_array(&data[180..188], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown9".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown9 at offset 94
+
+    // WB_RGGBLevelsUnknown10 at offset 95
+    if data.len() >= 198 {
+        if let Ok(values) = read_int16s_array(&data[190..198], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown10".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown10 at offset 99
+
+    Ok(tags)
+}
+
+fn process_canon_colorcoefs2(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // WB_RGGBLevelsAsShot at offset 0
+    if data.len() >= 8 {
+        if let Ok(values) = read_int16s_array(&data[0..8], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsAsShot".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown3 at offset 103
+
+    // WB_RGGBLevelsUnknown4 at offset 104
+    if data.len() >= 216 {
+        if let Ok(values) = read_int16s_array(&data[208..216], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown4".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown4 at offset 111
+
+    // WB_RGGBLevelsUnknown5 at offset 112
+    if data.len() >= 232 {
+        if let Ok(values) = read_int16s_array(&data[224..232], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown5".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown5 at offset 119
+
+    // WB_RGGBLevelsUnknown6 at offset 120
+    if data.len() >= 248 {
+        if let Ok(values) = read_int16s_array(&data[240..248], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown6".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown6 at offset 127
+
+    // WB_RGGBLevelsUnknown7 at offset 128
+    if data.len() >= 264 {
+        if let Ok(values) = read_int16s_array(&data[256..264], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown7".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown7 at offset 135
+
+    // WB_RGGBLevelsUnknown8 at offset 136
+    if data.len() >= 280 {
+        if let Ok(values) = read_int16s_array(&data[272..280], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown8".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown8 at offset 143
+
+    // WB_RGGBLevelsUnknown9 at offset 144
+    if data.len() >= 296 {
+        if let Ok(values) = read_int16s_array(&data[288..296], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown9".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown9 at offset 151
+
+    // WB_RGGBLevelsUnknown10 at offset 152
+    if data.len() >= 312 {
+        if let Ok(values) = read_int16s_array(&data[304..312], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown10".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown10 at offset 159
+
+    // WB_RGGBLevelsMeasured at offset 16
+    if data.len() >= 40 {
+        if let Ok(values) = read_int16s_array(&data[32..40], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsMeasured".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsUnknown11 at offset 160
+    if data.len() >= 328 {
+        if let Ok(values) = read_int16s_array(&data[320..328], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown11".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown11 at offset 167
+
+    // WB_RGGBLevelsUnknown12 at offset 168
+    if data.len() >= 344 {
+        if let Ok(values) = read_int16s_array(&data[336..344], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown12".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown12 at offset 175
+
+    // WB_RGGBLevelsUnknown13 at offset 176
+    if data.len() >= 360 {
+        if let Ok(values) = read_int16s_array(&data[352..360], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown13".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown13 at offset 183
+
+    // WB_RGGBLevelsUnknown at offset 24
+    if data.len() >= 56 {
+        if let Ok(values) = read_int16s_array(&data[48..56], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown at offset 31
+
+    // WB_RGGBLevelsDaylight at offset 32
+    if data.len() >= 72 {
+        if let Ok(values) = read_int16s_array(&data[64..72], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsDaylight".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsShade at offset 40
+    if data.len() >= 88 {
+        if let Ok(values) = read_int16s_array(&data[80..88], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsShade".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsCloudy at offset 48
+    if data.len() >= 104 {
+        if let Ok(values) = read_int16s_array(&data[96..104], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsCloudy".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsTungsten at offset 56
+    if data.len() >= 120 {
+        if let Ok(values) = read_int16s_array(&data[112..120], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsTungsten".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsFluorescent at offset 64
+    if data.len() >= 136 {
+        if let Ok(values) = read_int16s_array(&data[128..136], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsFluorescent".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsKelvin at offset 72
+    if data.len() >= 152 {
+        if let Ok(values) = read_int16s_array(&data[144..152], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsKelvin".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsAuto at offset 8
+    if data.len() >= 24 {
+        if let Ok(values) = read_int16s_array(&data[16..24], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("WB_RGGBLevelsAuto".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // WB_RGGBLevelsFlash at offset 80
+    if data.len() >= 168 {
+        if let Ok(values) = read_int16s_array(&data[160..168], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsFlash".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // WB_RGGBLevelsUnknown2 at offset 88
+    if data.len() >= 184 {
+        if let Ok(values) = read_int16s_array(&data[176..184], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown2".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // ColorTempUnknown2 at offset 95
+
+    // WB_RGGBLevelsUnknown3 at offset 96
+    if data.len() >= 200 {
+        if let Ok(values) = read_int16s_array(&data[192..200], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "WB_RGGBLevelsUnknown3".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    Ok(tags)
+}
+
+fn process_canon_colorcalib(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // CameraColorCalibration01 at offset 0
+    if data.len() >= 8 {
+        if let Ok(values) = read_int16s_array(&data[0..8], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration01".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration04 at offset 12
+    if data.len() >= 32 {
+        if let Ok(values) = read_int16s_array(&data[24..32], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration04".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration05 at offset 16
+    if data.len() >= 40 {
+        if let Ok(values) = read_int16s_array(&data[32..40], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration05".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration06 at offset 20
+    if data.len() >= 48 {
+        if let Ok(values) = read_int16s_array(&data[40..48], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration06".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration07 at offset 24
+    if data.len() >= 56 {
+        if let Ok(values) = read_int16s_array(&data[48..56], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration07".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration08 at offset 28
+    if data.len() >= 64 {
+        if let Ok(values) = read_int16s_array(&data[56..64], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration08".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration09 at offset 32
+    if data.len() >= 72 {
+        if let Ok(values) = read_int16s_array(&data[64..72], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration09".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration10 at offset 36
+    if data.len() >= 80 {
+        if let Ok(values) = read_int16s_array(&data[72..80], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration10".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration02 at offset 4
+    if data.len() >= 16 {
+        if let Ok(values) = read_int16s_array(&data[8..16], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration02".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration11 at offset 40
+    if data.len() >= 88 {
+        if let Ok(values) = read_int16s_array(&data[80..88], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration11".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration12 at offset 44
+    if data.len() >= 96 {
+        if let Ok(values) = read_int16s_array(&data[88..96], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration12".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration13 at offset 48
+    if data.len() >= 104 {
+        if let Ok(values) = read_int16s_array(&data[96..104], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration13".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration14 at offset 52
+    if data.len() >= 112 {
+        if let Ok(values) = read_int16s_array(&data[104..112], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration14".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration15 at offset 56
+    if data.len() >= 120 {
+        if let Ok(values) = read_int16s_array(&data[112..120], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration15".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration03 at offset 8
+    if data.len() >= 24 {
+        if let Ok(values) = read_int16s_array(&data[16..24], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration03".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    Ok(tags)
+}
+
 fn process_canon_fileinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
     // FilterEffect at offset 14
@@ -3205,6 +4226,239 @@ fn process_canon_previewimageinfo(
     // PreviewImageLength at offset 2
 
     // PreviewImageStart at offset 5
+
+    Ok(tags)
+}
+
+fn process_canon_colorcalib2(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // CameraColorCalibration01 at offset 0
+    if data.len() >= 10 {
+        if let Ok(values) = read_int16s_array(&data[0..10], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration01".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration03 at offset 10
+    if data.len() >= 30 {
+        if let Ok(values) = read_int16s_array(&data[20..30], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration03".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration04 at offset 15
+    if data.len() >= 40 {
+        if let Ok(values) = read_int16s_array(&data[30..40], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration04".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration05 at offset 20
+    if data.len() >= 50 {
+        if let Ok(values) = read_int16s_array(&data[40..50], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration05".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration06 at offset 25
+    if data.len() >= 60 {
+        if let Ok(values) = read_int16s_array(&data[50..60], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration06".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration07 at offset 30
+    if data.len() >= 70 {
+        if let Ok(values) = read_int16s_array(&data[60..70], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration07".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration08 at offset 35
+    if data.len() >= 80 {
+        if let Ok(values) = read_int16s_array(&data[70..80], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration08".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration09 at offset 40
+    if data.len() >= 90 {
+        if let Ok(values) = read_int16s_array(&data[80..90], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration09".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration10 at offset 45
+    if data.len() >= 100 {
+        if let Ok(values) = read_int16s_array(&data[90..100], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration10".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration02 at offset 5
+    if data.len() >= 20 {
+        if let Ok(values) = read_int16s_array(&data[10..20], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration02".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration11 at offset 50
+    if data.len() >= 110 {
+        if let Ok(values) = read_int16s_array(&data[100..110], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration11".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration12 at offset 55
+    if data.len() >= 120 {
+        if let Ok(values) = read_int16s_array(&data[110..120], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration12".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration13 at offset 60
+    if data.len() >= 130 {
+        if let Ok(values) = read_int16s_array(&data[120..130], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration13".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration14 at offset 65
+    if data.len() >= 140 {
+        if let Ok(values) = read_int16s_array(&data[130..140], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration14".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // CameraColorCalibration15 at offset 70
+    if data.len() >= 150 {
+        if let Ok(values) = read_int16s_array(&data[140..150], byte_order, 5) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "CameraColorCalibration15".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
 
     Ok(tags)
 }
@@ -9005,6 +10259,7 @@ pub fn process_tag_0x1_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x1_subdirectory called with {} bytes, count={}",
@@ -9012,7 +10267,8 @@ pub fn process_tag_0x1_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_camerasettings(data, byte_order)
 }
 
 pub fn process_tag_0x2_subdirectory(
@@ -9020,6 +10276,7 @@ pub fn process_tag_0x2_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2_subdirectory called with {} bytes, count={}",
@@ -9027,7 +10284,8 @@ pub fn process_tag_0x2_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_focallength(data, byte_order)
 }
 
 pub fn process_tag_0x4_subdirectory(
@@ -9035,6 +10293,7 @@ pub fn process_tag_0x4_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4_subdirectory called with {} bytes, count={}",
@@ -9042,7 +10301,8 @@ pub fn process_tag_0x4_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_shotinfo(data, byte_order)
 }
 
 pub fn process_tag_0x5_subdirectory(
@@ -9050,6 +10310,7 @@ pub fn process_tag_0x5_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x5_subdirectory called with {} bytes, count={}",
@@ -9057,7 +10318,8 @@ pub fn process_tag_0x5_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_panorama(data, byte_order)
 }
 
 pub fn process_tag_0xa_subdirectory(
@@ -9065,6 +10327,7 @@ pub fn process_tag_0xa_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xa_subdirectory called with {} bytes, count={}",
@@ -9072,7 +10335,8 @@ pub fn process_tag_0xa_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_unknownd30(data, byte_order)
 }
 
 pub fn process_tag_0xd_subdirectory(
@@ -9080,6 +10344,7 @@ pub fn process_tag_0xd_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xd_subdirectory called with {} bytes, count={}",
@@ -9087,29 +10352,7 @@ pub fn process_tag_0xd_subdirectory(
         count
     );
 
-    match count {
-        138 => {
-            debug!("Matched count 138 for variant canon_camerainfopowershot");
-            process_canon_camerainfopowershot(data, byte_order)
-        }
-        156 => {
-            debug!("Matched count 156 for variant canon_camerainfopowershot2");
-            process_canon_camerainfopowershot2(data, byte_order)
-        }
-        162 => {
-            debug!("Matched count 162 for variant canon_camerainfopowershot2");
-            process_canon_camerainfopowershot2(data, byte_order)
-        }
-        167 => {
-            debug!("Matched count 167 for variant canon_camerainfopowershot2");
-            process_canon_camerainfopowershot2(data, byte_order)
-        }
-        171 => {
-            debug!("Matched count 171 for variant canon_camerainfopowershot2");
-            process_canon_camerainfopowershot2(data, byte_order)
-        }
-        _ => Ok(vec![]), // Unknown variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0xf_subdirectory(
@@ -9117,6 +10360,7 @@ pub fn process_tag_0xf_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xf_subdirectory called with {} bytes, count={}",
@@ -9132,6 +10376,7 @@ pub fn process_tag_0x11_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x11_subdirectory called with {} bytes, count={}",
@@ -9139,7 +10384,8 @@ pub fn process_tag_0x11_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_movieinfo(data, byte_order)
 }
 
 pub fn process_tag_0x12_subdirectory(
@@ -9147,6 +10393,7 @@ pub fn process_tag_0x12_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x12_subdirectory called with {} bytes, count={}",
@@ -9162,6 +10409,7 @@ pub fn process_tag_0x1d_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x1d_subdirectory called with {} bytes, count={}",
@@ -9169,7 +10417,8 @@ pub fn process_tag_0x1d_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_mycolors(data, byte_order)
 }
 
 pub fn process_tag_0x24_subdirectory(
@@ -9177,6 +10426,7 @@ pub fn process_tag_0x24_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x24_subdirectory called with {} bytes, count={}",
@@ -9184,7 +10434,8 @@ pub fn process_tag_0x24_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_facedetect1(data, byte_order)
 }
 
 pub fn process_tag_0x25_subdirectory(
@@ -9192,6 +10443,7 @@ pub fn process_tag_0x25_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x25_subdirectory called with {} bytes, count={}",
@@ -9199,7 +10451,8 @@ pub fn process_tag_0x25_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_facedetect2(data, byte_order)
 }
 
 pub fn process_tag_0x26_subdirectory(
@@ -9207,6 +10460,7 @@ pub fn process_tag_0x26_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x26_subdirectory called with {} bytes, count={}",
@@ -9222,6 +10476,7 @@ pub fn process_tag_0x27_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x27_subdirectory called with {} bytes, count={}",
@@ -9237,6 +10492,7 @@ pub fn process_tag_0x29_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x29_subdirectory called with {} bytes, count={}",
@@ -9244,7 +10500,8 @@ pub fn process_tag_0x29_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_wbinfo(data, byte_order)
 }
 
 pub fn process_tag_0x2f_subdirectory(
@@ -9252,6 +10509,7 @@ pub fn process_tag_0x2f_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2f_subdirectory called with {} bytes, count={}",
@@ -9259,7 +10517,8 @@ pub fn process_tag_0x2f_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_facedetect3(data, byte_order)
 }
 
 pub fn process_tag_0x35_subdirectory(
@@ -9267,6 +10526,7 @@ pub fn process_tag_0x35_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x35_subdirectory called with {} bytes, count={}",
@@ -9274,7 +10534,8 @@ pub fn process_tag_0x35_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_timeinfo(data, byte_order)
 }
 
 pub fn process_tag_0x3c_subdirectory(
@@ -9282,6 +10543,7 @@ pub fn process_tag_0x3c_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x3c_subdirectory called with {} bytes, count={}",
@@ -9292,11 +10554,79 @@ pub fn process_tag_0x3c_subdirectory(
     Ok(vec![])
 }
 
+pub fn process_tag_0x3f_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x3f_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_canon_colorcoefs(data, byte_order)
+}
+
+pub fn process_tag_0x47_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x47_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x4b_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4b_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_canon_colorcalib(data, byte_order)
+}
+
+pub fn process_tag_0x85_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x85_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_canon_colorcalib(data, byte_order)
+}
+
 pub fn process_tag_0x90_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x90_subdirectory called with {} bytes, count={}",
@@ -9304,6 +10634,8 @@ pub fn process_tag_0x90_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::CanonCustom::Functions1D
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -9312,6 +10644,7 @@ pub fn process_tag_0x91_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x91_subdirectory called with {} bytes, count={}",
@@ -9319,6 +10652,8 @@ pub fn process_tag_0x91_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::CanonCustom::PersonalFuncs
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -9327,6 +10662,7 @@ pub fn process_tag_0x92_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x92_subdirectory called with {} bytes, count={}",
@@ -9334,6 +10670,8 @@ pub fn process_tag_0x92_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::CanonCustom::PersonalFuncValues
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -9342,6 +10680,7 @@ pub fn process_tag_0x93_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x93_subdirectory called with {} bytes, count={}",
@@ -9349,7 +10688,8 @@ pub fn process_tag_0x93_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_fileinfo(data, byte_order)
 }
 
 pub fn process_tag_0x96_subdirectory(
@@ -9357,6 +10697,7 @@ pub fn process_tag_0x96_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x96_subdirectory called with {} bytes, count={}",
@@ -9372,6 +10713,7 @@ pub fn process_tag_0x98_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x98_subdirectory called with {} bytes, count={}",
@@ -9379,7 +10721,8 @@ pub fn process_tag_0x98_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_cropinfo(data, byte_order)
 }
 
 pub fn process_tag_0x99_subdirectory(
@@ -9387,6 +10730,7 @@ pub fn process_tag_0x99_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x99_subdirectory called with {} bytes, count={}",
@@ -9394,6 +10738,8 @@ pub fn process_tag_0x99_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::CanonCustom::Functions2
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -9402,6 +10748,7 @@ pub fn process_tag_0x9a_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x9a_subdirectory called with {} bytes, count={}",
@@ -9409,7 +10756,8 @@ pub fn process_tag_0x9a_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_aspectinfo(data, byte_order)
 }
 
 pub fn process_tag_0xa0_subdirectory(
@@ -9417,6 +10765,7 @@ pub fn process_tag_0xa0_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xa0_subdirectory called with {} bytes, count={}",
@@ -9424,7 +10773,42 @@ pub fn process_tag_0xa0_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_processing(data, byte_order)
+}
+
+pub fn process_tag_0xa4_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xa4_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_canon_colorcalib(data, byte_order)
+}
+
+pub fn process_tag_0xa8_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xa8_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_canon_colorcalib(data, byte_order)
 }
 
 pub fn process_tag_0xa9_subdirectory(
@@ -9432,6 +10816,7 @@ pub fn process_tag_0xa9_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xa9_subdirectory called with {} bytes, count={}",
@@ -9439,7 +10824,8 @@ pub fn process_tag_0xa9_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_colorbalance(data, byte_order)
 }
 
 pub fn process_tag_0xaa_subdirectory(
@@ -9447,6 +10833,7 @@ pub fn process_tag_0xaa_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xaa_subdirectory called with {} bytes, count={}",
@@ -9454,7 +10841,8 @@ pub fn process_tag_0xaa_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_measuredcolor(data, byte_order)
 }
 
 pub fn process_tag_0xb0_subdirectory(
@@ -9462,6 +10850,7 @@ pub fn process_tag_0xb0_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xb0_subdirectory called with {} bytes, count={}",
@@ -9469,7 +10858,8 @@ pub fn process_tag_0xb0_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_flags(data, byte_order)
 }
 
 pub fn process_tag_0xb1_subdirectory(
@@ -9477,6 +10867,7 @@ pub fn process_tag_0xb1_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xb1_subdirectory called with {} bytes, count={}",
@@ -9484,7 +10875,8 @@ pub fn process_tag_0xb1_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_modifiedinfo(data, byte_order)
 }
 
 pub fn process_tag_0xb6_subdirectory(
@@ -9492,6 +10884,7 @@ pub fn process_tag_0xb6_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xb6_subdirectory called with {} bytes, count={}",
@@ -9499,17 +10892,19 @@ pub fn process_tag_0xb6_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_previewimageinfo(data, byte_order)
 }
 
-pub fn process_tag_0xe0_subdirectory(
+pub fn process_tag_0xba_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
-        "process_tag_0xe0_subdirectory called with {} bytes, count={}",
+        "process_tag_0xba_subdirectory called with {} bytes, count={}",
         data.len(),
         count
     );
@@ -9517,11 +10912,164 @@ pub fn process_tag_0xe0_subdirectory(
     Ok(vec![])
 }
 
+pub fn process_tag_0xbc_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xbc_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_canon_colorcalib(data, byte_order)
+}
+
+pub fn process_tag_0xd5_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xd5_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_canon_colorcalib(data, byte_order)
+}
+
+pub fn process_tag_0xe0_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xe0_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_canon_sensorinfo(data, byte_order)
+}
+
+pub fn process_tag_0xff_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xff_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x107_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x107_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_canon_colorcalib(data, byte_order)
+}
+
+pub fn process_tag_0x10a_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x10a_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_canon_colorcalib(data, byte_order)
+}
+
+pub fn process_tag_0x118_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x118_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_canon_colorcalib(data, byte_order)
+}
+
+pub fn process_tag_0x12c_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x12c_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_canon_colorcalib(data, byte_order)
+}
+
+pub fn process_tag_0x140_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x140_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_canon_colorcalib(data, byte_order)
+}
+
 pub fn process_tag_0x4001_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4001_subdirectory called with {} bytes, count={}",
@@ -9654,7 +11202,7 @@ pub fn process_tag_0x4001_subdirectory(
             debug!("Matched count 4528 for variant canon_colordata12");
             process_canon_colordata12(data, byte_order)
         }
-        _ => Ok(vec![]), // Unknown variant
+        _ => Ok(vec![]), // No matching variant
     }
 }
 
@@ -9663,6 +11211,7 @@ pub fn process_tag_0x4003_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4003_subdirectory called with {} bytes, count={}",
@@ -9670,7 +11219,8 @@ pub fn process_tag_0x4003_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_colorinfo(data, byte_order)
 }
 
 pub fn process_tag_0x4013_subdirectory(
@@ -9678,6 +11228,7 @@ pub fn process_tag_0x4013_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4013_subdirectory called with {} bytes, count={}",
@@ -9685,7 +11236,8 @@ pub fn process_tag_0x4013_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_afmicroadj(data, byte_order)
 }
 
 pub fn process_tag_0x4015_subdirectory(
@@ -9693,6 +11245,7 @@ pub fn process_tag_0x4015_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4015_subdirectory called with {} bytes, count={}",
@@ -9708,6 +11261,7 @@ pub fn process_tag_0x4016_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4016_subdirectory called with {} bytes, count={}",
@@ -9715,7 +11269,8 @@ pub fn process_tag_0x4016_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_vignettingcorr2(data, byte_order)
 }
 
 pub fn process_tag_0x4018_subdirectory(
@@ -9723,6 +11278,7 @@ pub fn process_tag_0x4018_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4018_subdirectory called with {} bytes, count={}",
@@ -9730,7 +11286,8 @@ pub fn process_tag_0x4018_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_lightingopt(data, byte_order)
 }
 
 pub fn process_tag_0x4019_subdirectory(
@@ -9738,6 +11295,7 @@ pub fn process_tag_0x4019_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4019_subdirectory called with {} bytes, count={}",
@@ -9745,7 +11303,8 @@ pub fn process_tag_0x4019_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_lensinfo(data, byte_order)
 }
 
 pub fn process_tag_0x4020_subdirectory(
@@ -9753,6 +11312,7 @@ pub fn process_tag_0x4020_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4020_subdirectory called with {} bytes, count={}",
@@ -9768,6 +11328,7 @@ pub fn process_tag_0x4021_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4021_subdirectory called with {} bytes, count={}",
@@ -9775,7 +11336,8 @@ pub fn process_tag_0x4021_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_multiexp(data, byte_order)
 }
 
 pub fn process_tag_0x4024_subdirectory(
@@ -9783,6 +11345,7 @@ pub fn process_tag_0x4024_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4024_subdirectory called with {} bytes, count={}",
@@ -9790,7 +11353,8 @@ pub fn process_tag_0x4024_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_filterinfo(data, byte_order)
 }
 
 pub fn process_tag_0x4025_subdirectory(
@@ -9798,6 +11362,7 @@ pub fn process_tag_0x4025_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4025_subdirectory called with {} bytes, count={}",
@@ -9805,7 +11370,8 @@ pub fn process_tag_0x4025_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_hdrinfo(data, byte_order)
 }
 
 pub fn process_tag_0x4026_subdirectory(
@@ -9813,6 +11379,7 @@ pub fn process_tag_0x4026_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4026_subdirectory called with {} bytes, count={}",
@@ -9820,7 +11387,8 @@ pub fn process_tag_0x4026_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_loginfo(data, byte_order)
 }
 
 pub fn process_tag_0x4028_subdirectory(
@@ -9828,6 +11396,7 @@ pub fn process_tag_0x4028_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4028_subdirectory called with {} bytes, count={}",
@@ -9835,7 +11404,8 @@ pub fn process_tag_0x4028_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_afconfig(data, byte_order)
 }
 
 pub fn process_tag_0x403f_subdirectory(
@@ -9843,6 +11413,7 @@ pub fn process_tag_0x403f_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x403f_subdirectory called with {} bytes, count={}",
@@ -9850,7 +11421,8 @@ pub fn process_tag_0x403f_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_rawburstinfo(data, byte_order)
 }
 
 pub fn process_tag_0x4059_subdirectory(
@@ -9858,6 +11430,7 @@ pub fn process_tag_0x4059_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4059_subdirectory called with {} bytes, count={}",
@@ -9865,7 +11438,8 @@ pub fn process_tag_0x4059_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_canon_levelinfo(data, byte_order)
 }
 
 /// Apply PrintConv for a tag from this module

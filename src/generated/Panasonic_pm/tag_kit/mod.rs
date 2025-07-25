@@ -72,6 +72,28 @@ pub static PANASONIC_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::
 });
 
 // Helper functions for reading binary data
+fn model_matches(model: &str, pattern: &str) -> bool {
+    // ExifTool regexes are already in a compatible format
+    // Just need to ensure proper escaping was preserved
+
+    match regex::Regex::new(pattern) {
+        Ok(re) => re.is_match(model),
+        Err(e) => {
+            tracing::warn!("Failed to compile model regex '{}': {}", pattern, e);
+            false
+        }
+    }
+}
+
+fn format_matches(format: &str, pattern: &str) -> bool {
+    if let Ok(re) = regex::Regex::new(pattern) {
+        re.is_match(format)
+    } else {
+        tracing::warn!("Failed to compile format regex: {}", pattern);
+        false
+    }
+}
+
 fn read_int16s_array(data: &[u8], byte_order: ByteOrder, count: usize) -> Result<Vec<i16>> {
     if data.len() < count * 2 {
         return Err(crate::types::ExifError::ParseError(
@@ -305,6 +327,7 @@ pub fn process_tag_0x4e_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4e_subdirectory called with {} bytes, count={}",
@@ -312,7 +335,8 @@ pub fn process_tag_0x4e_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_panasonic_facedetinfo(data, byte_order)
 }
 
 pub fn process_tag_0x61_subdirectory(
@@ -320,6 +344,7 @@ pub fn process_tag_0x61_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x61_subdirectory called with {} bytes, count={}",
@@ -327,7 +352,8 @@ pub fn process_tag_0x61_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_panasonic_facerecinfo(data, byte_order)
 }
 
 pub fn process_tag_0xe00_subdirectory(
@@ -335,6 +361,7 @@ pub fn process_tag_0xe00_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xe00_subdirectory called with {} bytes, count={}",
@@ -342,6 +369,8 @@ pub fn process_tag_0xe00_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::PrintIM::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -350,6 +379,7 @@ pub fn process_tag_0x2003_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2003_subdirectory called with {} bytes, count={}",
@@ -357,7 +387,8 @@ pub fn process_tag_0x2003_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_panasonic_timeinfo(data, byte_order)
 }
 
 /// Apply PrintConv for a tag from this module

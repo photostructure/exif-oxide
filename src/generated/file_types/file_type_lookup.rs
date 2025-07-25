@@ -1,6 +1,6 @@
 //! File type lookup tables generated from ExifTool's fileTypeLookup hash
 //!
-//! Total lookups: 343
+//! Total lookups: 344
 
 use std::collections::HashMap;
 use std::sync::LazyLock;
@@ -418,6 +418,10 @@ static FILE_TYPE_FORMATS: LazyLock<HashMap<&'static str, (Vec<&'static str>, &'s
         map.insert("THM", (vec!["JPEG"], "Thumbnail"));
         map.insert("THMX", (vec!["ZIP", "FPX"], "Office Open XML Theme"));
         map.insert("TIFF", (vec!["TIFF"], "Tagged Image File Format"));
+        map.insert(
+            "TNEF",
+            (vec!["TNEF"], "Transport Neural Encapsulation Format"),
+        );
         map.insert("TORRENT", (vec!["Torrent"], "BitTorrent description file"));
         map.insert("TTC", (vec!["Font"], "True Type Font Collection"));
         map.insert("TTF", (vec!["Font"], "True Type Font"));

@@ -102,6 +102,28 @@ pub static OLYMPUS_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::ne
 });
 
 // Helper functions for reading binary data
+fn model_matches(model: &str, pattern: &str) -> bool {
+    // ExifTool regexes are already in a compatible format
+    // Just need to ensure proper escaping was preserved
+
+    match regex::Regex::new(pattern) {
+        Ok(re) => re.is_match(model),
+        Err(e) => {
+            tracing::warn!("Failed to compile model regex '{}': {}", pattern, e);
+            false
+        }
+    }
+}
+
+fn format_matches(format: &str, pattern: &str) -> bool {
+    if let Ok(re) = regex::Regex::new(pattern) {
+        re.is_match(format)
+    } else {
+        tracing::warn!("Failed to compile format regex: {}", pattern);
+        false
+    }
+}
+
 fn read_int16s_array(data: &[u8], byte_order: ByteOrder, count: usize) -> Result<Vec<i16>> {
     if data.len() < count * 2 {
         return Err(crate::types::ExifError::ParseError(
@@ -160,9 +182,201 @@ fn process_olympus_textinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(S
     Ok(tags)
 }
 
+fn process_olympus_aftargetinfo(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // AFFrameSize at offset 0
+    if data.len() >= 4 {
+        if let Ok(values) = read_int16u_array(&data[0..4], byte_order, 2) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("AFFrameSize".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // AFFocusArea at offset 2
+    if data.len() >= 12 {
+        if let Ok(values) = read_int16u_array(&data[4..12], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("AFFocusArea".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // AFSelectedArea at offset 6
+    if data.len() >= 20 {
+        if let Ok(values) = read_int16u_array(&data[12..20], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("AFSelectedArea".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    Ok(tags)
+}
+
+fn process_olympus_subjectdetectinfo(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // SubjectDetectFrameSize at offset 0
+    if data.len() >= 4 {
+        if let Ok(values) = read_int16u_array(&data[0..4], byte_order, 2) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "SubjectDetectFrameSize".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // SubjectDetectStatus at offset 10
+
+    // SubjectDetectArea at offset 2
+    if data.len() >= 12 {
+        if let Ok(values) = read_int16u_array(&data[4..12], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("SubjectDetectArea".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // SubjectDetectDetail at offset 6
+    if data.len() >= 20 {
+        if let Ok(values) = read_int16u_array(&data[12..20], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "SubjectDetectDetail".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    Ok(tags)
+}
+
 fn process_olympus_afinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
+    // CAFSensitivity at offset 1580
+    if data.len() >= 3161 {
+        // TODO: Handle format int8s
+    }
+
     Ok(tags)
+}
+
+// Stub functions for tables not extracted by tag kit
+fn process_olympus_camerasettings(
+    data: &[u8],
+    _byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_olympus_equipment(
+    data: &[u8],
+    _byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_olympus_fetags(data: &[u8], _byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_olympus_focusinfo(
+    data: &[u8],
+    _byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_olympus_imageprocessing(
+    data: &[u8],
+    _byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_olympus_main(data: &[u8], _byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_olympus_rawdevelopment(
+    data: &[u8],
+    _byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_olympus_rawdevelopment2(
+    data: &[u8],
+    _byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_olympus_rawdevsubifd(
+    data: &[u8],
+    _byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_olympus_rawinfo(data: &[u8], _byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_olympus_unknowninfo(
+    data: &[u8],
+    _byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
 }
 
 pub fn process_tag_0x1_subdirectory(
@@ -170,6 +384,7 @@ pub fn process_tag_0x1_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x1_subdirectory called with {} bytes, count={}",
@@ -177,6 +392,8 @@ pub fn process_tag_0x1_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::Minolta::CameraSettings
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -185,6 +402,7 @@ pub fn process_tag_0x3_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x3_subdirectory called with {} bytes, count={}",
@@ -192,6 +410,8 @@ pub fn process_tag_0x3_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::Minolta::CameraSettings
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -200,6 +420,7 @@ pub fn process_tag_0x208_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x208_subdirectory called with {} bytes, count={}",
@@ -207,7 +428,42 @@ pub fn process_tag_0x208_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_olympus_textinfo(data, byte_order)
+}
+
+pub fn process_tag_0x30a_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x30a_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_olympus_aftargetinfo(data, byte_order)
+}
+
+pub fn process_tag_0x30b_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x30b_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_olympus_subjectdetectinfo(data, byte_order)
 }
 
 pub fn process_tag_0x328_subdirectory(
@@ -215,6 +471,7 @@ pub fn process_tag_0x328_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x328_subdirectory called with {} bytes, count={}",
@@ -222,7 +479,8 @@ pub fn process_tag_0x328_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_olympus_afinfo(data, byte_order)
 }
 
 pub fn process_tag_0xe00_subdirectory(
@@ -230,6 +488,7 @@ pub fn process_tag_0xe00_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xe00_subdirectory called with {} bytes, count={}",
@@ -237,6 +496,8 @@ pub fn process_tag_0xe00_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::PrintIM::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -245,6 +506,7 @@ pub fn process_tag_0x2010_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2010_subdirectory called with {} bytes, count={}",
@@ -260,6 +522,7 @@ pub fn process_tag_0x2020_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2020_subdirectory called with {} bytes, count={}",
@@ -275,6 +538,7 @@ pub fn process_tag_0x2030_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2030_subdirectory called with {} bytes, count={}",
@@ -290,6 +554,7 @@ pub fn process_tag_0x2031_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2031_subdirectory called with {} bytes, count={}",
@@ -305,6 +570,7 @@ pub fn process_tag_0x2040_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2040_subdirectory called with {} bytes, count={}",
@@ -320,6 +586,7 @@ pub fn process_tag_0x2050_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2050_subdirectory called with {} bytes, count={}",
@@ -335,6 +602,7 @@ pub fn process_tag_0x2100_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2100_subdirectory called with {} bytes, count={}",
@@ -350,6 +618,7 @@ pub fn process_tag_0x2200_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2200_subdirectory called with {} bytes, count={}",
@@ -365,6 +634,7 @@ pub fn process_tag_0x2300_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2300_subdirectory called with {} bytes, count={}",
@@ -380,6 +650,7 @@ pub fn process_tag_0x2400_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2400_subdirectory called with {} bytes, count={}",
@@ -395,6 +666,7 @@ pub fn process_tag_0x2500_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2500_subdirectory called with {} bytes, count={}",
@@ -410,6 +682,7 @@ pub fn process_tag_0x2600_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2600_subdirectory called with {} bytes, count={}",
@@ -425,6 +698,7 @@ pub fn process_tag_0x2700_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2700_subdirectory called with {} bytes, count={}",
@@ -440,6 +714,7 @@ pub fn process_tag_0x2800_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2800_subdirectory called with {} bytes, count={}",
@@ -455,6 +730,7 @@ pub fn process_tag_0x2900_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2900_subdirectory called with {} bytes, count={}",
@@ -470,6 +746,7 @@ pub fn process_tag_0x3000_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x3000_subdirectory called with {} bytes, count={}",
@@ -485,6 +762,7 @@ pub fn process_tag_0x4000_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4000_subdirectory called with {} bytes, count={}",
@@ -500,6 +778,7 @@ pub fn process_tag_0x5000_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x5000_subdirectory called with {} bytes, count={}",
@@ -508,6 +787,23 @@ pub fn process_tag_0x5000_subdirectory(
     );
 
     Ok(vec![])
+}
+
+pub fn process_tag_0x8000_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x8000_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_olympus_rawdevsubifd(data, byte_order)
 }
 
 /// Apply PrintConv for a tag from this module
