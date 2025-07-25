@@ -53,13 +53,13 @@ pub enum SubDirectoryType {
 pub static KYOCERARAW_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
     let mut map = HashMap::new();
 
-    // datetime tags
-    for (id, tag_def) in datetime::get_datetime_tags() {
+    // interop tags
+    for (id, tag_def) in interop::get_interop_tags() {
         map.insert(id, tag_def);
     }
 
-    // interop tags
-    for (id, tag_def) in interop::get_interop_tags() {
+    // datetime tags
+    for (id, tag_def) in datetime::get_datetime_tags() {
         map.insert(id, tag_def);
     }
 
