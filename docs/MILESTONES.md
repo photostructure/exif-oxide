@@ -32,7 +32,11 @@ After you think you're done implementing a milestone:
 
 1. If there is a direct reference in $REPO_ROOT/docs/MILESTONES.md to the milestone, remove the completed milestone section from this document.
 2. Add a terse summary of the completed work to the end of $REPO_ROOT/docs/done/DONE-MILESTONES.md.
-3. If you worked from a separate MILESTONES-$desc.md or HANDOFF-$desc.md file, move it to $REPO_ROOT/docs/done/DONE-$(YYYYMMDD)-$desc.md and edit with completion status and any surprising gotchas or tribal knowledge that tripped you up in the implementation. If you can, remove spurious or incorrect code or skipped tasks (due to in-flight strategic changes) to make sure the archived doc concisely preserves what was actually done (and not mislead the Engineers of Tomorrow if they ever refer to the doc)
+3. If you worked from a separate TPP or TODO file:
+   - Move from `docs/todo/PX-description.md` to `docs/done/YYYYMMDD-PX-description.md`
+   - Add completion date prefix when moving (e.g., `P0-fix-olympus.md` → `20250125-P0-fix-olympus.md`)
+   - Edit with completion status and any surprising gotchas or tribal knowledge
+   - Remove spurious or incorrect code or skipped tasks to preserve what was actually done
 
 ## Core Principles
 
@@ -107,25 +111,25 @@ This milestone plan embraces the reality that we're building a complex system in
 - Unified RAW processing foundation for all manufacturers
 - Canon, Nikon, Sony, Olympus, Fujifilm, Panasonic support  
 - TIFF-based formats with manufacturer-specific handlers
-- **Planning**: See [MILESTONE-17-RAW-Format-Support.md](milestones/MILESTONE-17-RAW-Format-Support.md)
+- **Planning**: See [P50-MILESTONE-17-RAW-Format-Support.md](todo/P50-MILESTONE-17-RAW-Format-Support.md)
 
 ### Milestone 18: Video Format Support
 - QuickTime/MP4 atom parsing infrastructure
 - Smartphone and prosumer video metadata extraction
 - HEIF/HEIC, MOV, AVI, MP4, MPEG-TS support
-- **Planning**: See [MILESTONE-18-Video-Format-Support.md](milestones/MILESTONE-18-Video-Format-Support.md)
+- **Planning**: See [P15-MILESTONE-18-Video-Format-Support.md](todo/P15-MILESTONE-18-Video-Format-Support.md)
 
 ### Milestone 19: Binary Data Extraction (`-b` support)
 - Extract embedded images, thumbnails, and binary data
 - CLI support for `exiftool -b` equivalent functionality  
 - Streaming API for large binary data extraction
-- **Planning**: See [MILESTONE-19-Binary-Data-Extraction.md](milestones/MILESTONE-19-Binary-Data-Extraction.md)
+- **Planning**: See [P16-MILESTONE-19-Binary-Data-Extraction.md](todo/P16-MILESTONE-19-Binary-Data-Extraction.md)
 
 ### Milestone 20: Error Classification System
 - MINOR_ERRORS classification and graceful degradation
 - Manufacturer quirk handling and corruption recovery
 - Comprehensive validation and error context tracking
-- **Planning**: Research in progress
+- **Planning**: Research in progress -- if this is required for basic write support, be sure to make this a prerequisite task. If it is not, then de-prioritize this work for later.
 
 ### Milestone 21: Basic Write Support
 - Core tag writing: title, caption, orientation, rating, dates
