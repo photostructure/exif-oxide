@@ -1,47 +1,119 @@
 {
   "extractor": "tag_kit.pl",
   "source": "third-party/exiftool/lib/Image/ExifTool/Sony.pm",
-  "description": "Sony tag definitions with embedded PrintConv implementations",
+  "description": "Sony tag definitions with embedded PrintConv implementations for Phase 2 subdirectory coverage expansion",
   "tables": [
     {
       "table_name": "Main",
       "description": "Sony main tag table - quality, white balance, flash modes (62 PrintConv entries)"
     },
     {
-      "table_name": "CameraSettings3",
-      "description": "Sony camera settings for newer models - full camera control (48 PrintConv entries)"
+      "table_name": "CameraInfo",
+      "description": "Sony camera information for A700/A850/A900 models (subdirectory reference)"
     },
     {
-      "table_name": "CameraSettings",
-      "description": "Sony camera settings - drive modes, focus, creative styles (33 PrintConv entries)"
-    },
-    {
-      "table_name": "CameraSettings2", 
-      "description": "Sony camera settings for A230/A290/A330/A380/A390 series (28 PrintConv entries)"
-    },
-    {
-      "table_name": "MoreSettings",
-      "description": "Sony extended camera configuration options (28 PrintConv entries)"
-    },
-    {
-      "table_name": "FocusInfo",
-      "description": "Sony autofocus system settings and status (9 PrintConv entries)"
+      "table_name": "CameraInfo2", 
+      "description": "Sony camera information for A200/A300/A350/A230/A290/A330/A380/A390 models (subdirectory reference)"
     },
     {
       "table_name": "CameraInfo3",
-      "description": "Sony camera information for specific model ranges (7 PrintConv entries)"
+      "description": "Sony camera information for A33/A35/A55V/A450/A500/A550/A560/A580/NEX models (subdirectory reference)"
+    },
+    {
+      "table_name": "CameraInfoUnknown",
+      "description": "Sony camera information fallback table (subdirectory reference)"
+    },
+    {
+      "table_name": "CameraSettings",
+      "description": "Sony camera settings for A200/A300/A350/A700/A850/A900 models (subdirectory reference)"
+    },
+    {
+      "table_name": "CameraSettings2", 
+      "description": "Sony camera settings for A230/A290/A330/A380/A390 series (subdirectory reference)"
+    },
+    {
+      "table_name": "CameraSettings3",
+      "description": "Sony camera settings for A560/A580/A33/A35/A55/NEX models (subdirectory reference)"
+    },
+    {
+      "table_name": "CameraSettingsUnknown",
+      "description": "Sony camera settings fallback table (subdirectory reference)"
+    },
+    {
+      "table_name": "ExtraInfo",
+      "description": "Sony extra information for A850/A900 models (subdirectory reference)"
+    },
+    {
+      "table_name": "ExtraInfo2",
+      "description": "Sony extra information for A230/A290/A330/A380/A390 models (subdirectory reference)"
     },
     {
       "table_name": "ExtraInfo3",
-      "description": "Sony additional metadata fields (7 PrintConv entries)"
+      "description": "Sony extra information for A450/A500/A550/A560/A580/A33/A35/A55/NEX models (subdirectory reference)"
+    },
+    {
+      "table_name": "FocusInfo",
+      "description": "Sony autofocus information for A200/A230/A290/A300/A330/A350/A380/A390/A700/A850/A900 models (subdirectory reference)"
+    },
+    {
+      "table_name": "MoreInfo",
+      "description": "Sony additional information for A450/A500/A550/A560/A580/A33/A35/A55/NEX models (subdirectory reference)"
+    },
+    {
+      "table_name": "MoreSettings",
+      "description": "Sony extended camera configuration options (subdirectory reference)"
+    },
+    {
+      "table_name": "Panorama",
+      "description": "Sony panorama mode information (subdirectory reference)"
+    },
+    {
+      "table_name": "ShotInfo",
+      "description": "Sony shot information metadata (subdirectory reference)"
+    },
+    {
+      "table_name": "HiddenInfo",
+      "description": "Sony hidden information block (subdirectory reference)"
+    },
+    {
+      "table_name": "Tag2010a",
+      "description": "Sony NEX-5N specific tags (subdirectory reference)"
+    },
+    {
+      "table_name": "Tag2010b",
+      "description": "Sony SLT-A65/A77/NEX-7/VG20E/Lunar specific tags (subdirectory reference)"
+    },
+    {
+      "table_name": "Tag2010c",
+      "description": "Sony SLT-A37/A57/NEX-F3 specific tags (subdirectory reference)"
+    },
+    {
+      "table_name": "Tag2010d",
+      "description": "Sony DSC compact camera specific tags (subdirectory reference)"
     },
     {
       "table_name": "Tag2010e",
-      "description": "Sony format-specific tag definitions (6 PrintConv entries)"
+      "description": "Sony SLT-A99/ILCE/NEX/DSC-RX series specific tags (subdirectory reference)"
+    },
+    {
+      "table_name": "Tag2010f",
+      "description": "Sony DSC-RX100M2/QX10/QX100 specific tags (subdirectory reference)"
     },
     {
       "table_name": "Tag2010g",
-      "description": "Sony additional specialized tags (5 PrintConv entries)"
+      "description": "Sony DSC-QX30/RX10/RX100M3/ILCE/ILCA series specific tags (subdirectory reference)"
+    },
+    {
+      "table_name": "Tag2010h",
+      "description": "Sony DSC-RX0/RX1RM2/RX10M2/ILCE/ILCA newer models specific tags (subdirectory reference)"
+    },
+    {
+      "table_name": "Tag2010i",
+      "description": "Sony ILCE/DSC/ZV latest models specific tags (subdirectory reference)"
+    },
+    {
+      "table_name": "Tag202a",
+      "description": "Sony newer camera models additional tags (subdirectory reference)"
     }
   ]
 }

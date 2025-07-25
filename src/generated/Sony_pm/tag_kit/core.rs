@@ -14,7 +14,7 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "RAW");
     map.insert("1".to_string(), "Super Fine");
@@ -30,7 +30,7 @@ static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "None");
     map.insert("136".to_string(), "Minolta/Sony AF 1.4x APO (D)");
@@ -44,7 +44,7 @@ static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "Color Temperature/Color Filter");
@@ -62,201 +62,159 @@ static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
 /// Get tag definitions for core category
 pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
     vec![
-        (
-            258,
-            TagKitDef {
-                id: 258,
-                name: "Quality",
-                format: "int32u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_1),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            260,
-            TagKitDef {
-                id: 260,
-                name: "FlashExposureComp",
-                format: "rational64s",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            261,
-            TagKitDef {
-                id: 261,
-                name: "Teleconverter",
-                format: "int32u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_2),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            274,
-            TagKitDef {
-                id: 274,
-                name: "WhiteBalanceFineTune",
-                format: "int32s",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            276,
-            TagKitDef {
-                id: 276,
-                name: "CameraSettings",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-                subdirectory: Some(SubDirectoryType::Binary {
-                    processor: process_tag_0x114_subdirectory,
-                }),
-            },
-        ),
-        (
-            276,
-            TagKitDef {
-                id: 276,
-                name: "CameraSettings2",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-                subdirectory: Some(SubDirectoryType::Binary {
-                    processor: process_tag_0x114_subdirectory,
-                }),
-            },
-        ),
-        (
-            276,
-            TagKitDef {
-                id: 276,
-                name: "CameraSettings3",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-                subdirectory: Some(SubDirectoryType::Binary {
-                    processor: process_tag_0x114_subdirectory,
-                }),
-            },
-        ),
-        (
-            276,
-            TagKitDef {
-                id: 276,
-                name: "CameraSettingsUnknown",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-                subdirectory: Some(SubDirectoryType::Binary {
-                    processor: process_tag_0x114_subdirectory,
-                }),
-            },
-        ),
-        (
-            277,
-            TagKitDef {
-                id: 277,
-                name: "WhiteBalance",
-                format: "int32u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_3),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            278,
-            TagKitDef {
-                id: 278,
-                name: "ExtraInfo",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-                subdirectory: Some(SubDirectoryType::Binary {
-                    processor: process_tag_0x116_subdirectory,
-                }),
-            },
-        ),
-        (
-            278,
-            TagKitDef {
-                id: 278,
-                name: "ExtraInfo2",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-                subdirectory: Some(SubDirectoryType::Binary {
-                    processor: process_tag_0x116_subdirectory,
-                }),
-            },
-        ),
-        (
-            278,
-            TagKitDef {
-                id: 278,
-                name: "ExtraInfo3",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::None,
-                value_conv: None,
-                subdirectory: Some(SubDirectoryType::Binary {
-                    processor: process_tag_0x116_subdirectory,
-                }),
-            },
-        ),
-        (
-            276,
-            TagKitDef {
-                id: 276,
-                name: "FolderNumber",
-                format: "int32u",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Expression("sprintf(\"%.3d\",$val)"),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
+        (258, TagKitDef {
+            id: 258,
+            name: "Quality",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_4),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (260, TagKitDef {
+            id: 260,
+            name: "FlashExposureComp",
+            format: "rational64s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (261, TagKitDef {
+            id: 261,
+            name: "Teleconverter",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_5),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (274, TagKitDef {
+            id: 274,
+            name: "WhiteBalanceFineTune",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (276, TagKitDef {
+            id: 276,
+            name: "CameraSettings",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x114_subdirectory }),
+        }),
+        (276, TagKitDef {
+            id: 276,
+            name: "CameraSettings2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x114_subdirectory }),
+        }),
+        (276, TagKitDef {
+            id: 276,
+            name: "CameraSettings3",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x114_subdirectory }),
+        }),
+        (276, TagKitDef {
+            id: 276,
+            name: "CameraSettingsUnknown",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x114_subdirectory }),
+        }),
+        (277, TagKitDef {
+            id: 277,
+            name: "WhiteBalance",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_6),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (278, TagKitDef {
+            id: 278,
+            name: "ExtraInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x116_subdirectory }),
+        }),
+        (278, TagKitDef {
+            id: 278,
+            name: "ExtraInfo2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x116_subdirectory }),
+        }),
+        (278, TagKitDef {
+            id: 278,
+            name: "ExtraInfo3",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x116_subdirectory }),
+        }),
+        (276, TagKitDef {
+            id: 276,
+            name: "FolderNumber",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.3d\",$val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (263, TagKitDef {
+            id: 263,
+            name: "TiffMeteringImage",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("10-bit RGB data from the 1200 AE metering segments, extracted as a 16-bit\n            TIFF image"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
     ]
 }

@@ -10,12 +10,14 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
+pub mod camera;
 pub mod color;
 pub mod core;
 pub mod datetime;
 pub mod exif_specific;
 pub mod interop;
 pub mod other;
+pub mod thumbnail;
 
 use crate::expressions::ExpressionEvaluator;
 use crate::tiff_types::ByteOrder;
@@ -56,6 +58,11 @@ pub enum SubDirectoryType {
 pub static SONY_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
     let mut map = HashMap::new();
 
+    // camera tags
+    for (id, tag_def) in camera::get_camera_tags() {
+        map.insert(id, tag_def);
+    }
+
     // color tags
     for (id, tag_def) in color::get_color_tags() {
         map.insert(id, tag_def);
@@ -83,6 +90,11 @@ pub static SONY_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|
 
     // other tags
     for (id, tag_def) in other::get_other_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // thumbnail tags
+    for (id, tag_def) in thumbnail::get_thumbnail_tags() {
         map.insert(id, tag_def);
     }
 
@@ -161,6 +173,391 @@ fn read_int16s(data: &[u8], byte_order: ByteOrder) -> Result<i16> {
 }
 
 // Subdirectory processing functions
+fn process_sony_moresettings(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // DriveMode2 at offset 1
+
+    // SharpnessSetting at offset 10
+    if data.len() >= 21 {
+        // TODO: Handle format int8s
+    }
+
+    // FlashAction2 at offset 119
+
+    // FlashActionExternal at offset 120
+
+    // FlashActionExternal at offset 124
+
+    // WhiteBalanceSetting at offset 13
+
+    // FlashStatus at offset 130
+
+    // FlashStatus at offset 134
+
+    // ColorTemperatureSetting at offset 14
+
+    // ColorCompensationFilterSet at offset 15
+    if data.len() >= 31 {
+        // TODO: Handle format int8s
+    }
+
+    // FlashMode at offset 16
+
+    // LongExposureNoiseReduction at offset 17
+
+    // HighISONoiseReduction at offset 18
+
+    // FocusMode at offset 19
+
+    // ExposureProgram at offset 2
+
+    // MultiFrameNoiseReduction at offset 21
+
+    // HDRSetting at offset 22
+
+    // HDRLevel at offset 23
+
+    // ViewingMode at offset 24
+
+    // FaceDetection at offset 25
+
+    // CustomWB_RBLevels at offset 26
+    if data.len() >= 56 {
+        // TODO: Handle format int16uRev
+    }
+
+    // MeteringMode at offset 3
+
+    // FNumber at offset 34
+
+    // ExposureCompensation2 at offset 36
+    if data.len() >= 74 {
+        if let Ok(value) = read_int16s(&data[72..74], byte_order) {
+            tags.push(("ExposureCompensation2".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // ExposureTime at offset 39
+
+    // DynamicRangeOptimizerSetting at offset 4
+
+    // Orientation2 at offset 40
+
+    // FocusPosition2 at offset 43
+
+    // FocusPosition2 at offset 47
+
+    // FlashAction at offset 48
+
+    // FocusMode2 at offset 50
+
+    // ColorSpace at offset 6
+
+    // CreativeStyleSetting at offset 7
+
+    // ContrastSetting at offset 8
+    if data.len() >= 17 {
+        // TODO: Handle format int8s
+    }
+
+    // SaturationSetting at offset 9
+    if data.len() >= 19 {
+        // TODO: Handle format int8s
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_faceinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // FacesDetected at offset 0
+    if data.len() >= 2 {
+        if let Ok(value) = read_int16s(&data[0..2], byte_order) {
+            tags.push(("FacesDetected".to_string(), TagValue::I16(value)));
+        }
+    }
+
+    // Face1Position at offset 1
+    if data.len() >= 10 {
+        if let Ok(values) = read_int16u_array(&data[2..10], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face1Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face3Position at offset 11
+    if data.len() >= 30 {
+        if let Ok(values) = read_int16u_array(&data[22..30], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face3Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face4Position at offset 16
+    if data.len() >= 40 {
+        if let Ok(values) = read_int16u_array(&data[32..40], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face4Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face5Position at offset 21
+    if data.len() >= 50 {
+        if let Ok(values) = read_int16u_array(&data[42..50], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face5Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face6Position at offset 26
+    if data.len() >= 60 {
+        if let Ok(values) = read_int16u_array(&data[52..60], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face6Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face7Position at offset 31
+    if data.len() >= 70 {
+        if let Ok(values) = read_int16u_array(&data[62..70], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face7Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face8Position at offset 36
+    if data.len() >= 80 {
+        if let Ok(values) = read_int16u_array(&data[72..80], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face8Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face2Position at offset 6
+    if data.len() >= 20 {
+        if let Ok(values) = read_int16u_array(&data[12..20], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face2Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_faceinfoa(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // Face2Position at offset 101
+    if data.len() >= 210 {
+        if let Ok(values) = read_int16u_array(&data[202..210], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face2Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // PotentialFace1Position at offset 11
+    if data.len() >= 30 {
+        if let Ok(values) = read_int16u_array(&data[22..30], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "PotentialFace1Position".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // Face3Position at offset 111
+    if data.len() >= 230 {
+        if let Ok(values) = read_int16u_array(&data[222..230], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face3Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face4Position at offset 121
+    if data.len() >= 250 {
+        if let Ok(values) = read_int16u_array(&data[242..250], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face4Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // FaceTest2 at offset 2
+
+    // PotentialFace2Position at offset 21
+    if data.len() >= 50 {
+        if let Ok(values) = read_int16u_array(&data[42..50], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "PotentialFace2Position".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // FacesDetected at offset 3
+
+    // PotentialFace3Position at offset 31
+    if data.len() >= 70 {
+        if let Ok(values) = read_int16u_array(&data[62..70], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "PotentialFace3Position".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // PotentialFace4Position at offset 41
+    if data.len() >= 90 {
+        if let Ok(values) = read_int16u_array(&data[82..90], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "PotentialFace4Position".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // PotentialFace5Position at offset 51
+    if data.len() >= 110 {
+        if let Ok(values) = read_int16u_array(&data[102..110], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "PotentialFace5Position".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // PotentialFace6Position at offset 61
+    if data.len() >= 130 {
+        if let Ok(values) = read_int16u_array(&data[122..130], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "PotentialFace6Position".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // PotentialFace7Position at offset 71
+    if data.len() >= 150 {
+        if let Ok(values) = read_int16u_array(&data[142..150], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "PotentialFace7Position".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // FaceTest8 at offset 8
+
+    // PotentialFace8Position at offset 81
+    if data.len() >= 170 {
+        if let Ok(values) = read_int16u_array(&data[162..170], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push((
+                "PotentialFace8Position".to_string(),
+                TagValue::String(value_str),
+            ));
+        }
+    }
+
+    // Face1Position at offset 91
+    if data.len() >= 190 {
+        if let Ok(values) = read_int16u_array(&data[182..190], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face1Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    Ok(tags)
+}
+
 fn process_sony_camerainfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
     // LensSpec at offset 0
@@ -750,6 +1147,208 @@ fn process_sony_afstatus15(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(St
     Ok(tags)
 }
 
+fn process_sony_faceinfo1(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // Face1Position at offset 0
+    if data.len() >= 8 {
+        if let Ok(values) = read_int16u_array(&data[0..8], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face1Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face5Position at offset 128
+    if data.len() >= 264 {
+        if let Ok(values) = read_int16u_array(&data[256..264], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face5Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face6Position at offset 160
+    if data.len() >= 328 {
+        if let Ok(values) = read_int16u_array(&data[320..328], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face6Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face7Position at offset 192
+    if data.len() >= 392 {
+        if let Ok(values) = read_int16u_array(&data[384..392], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face7Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face8Position at offset 224
+    if data.len() >= 456 {
+        if let Ok(values) = read_int16u_array(&data[448..456], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face8Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face2Position at offset 32
+    if data.len() >= 72 {
+        if let Ok(values) = read_int16u_array(&data[64..72], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face2Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face3Position at offset 64
+    if data.len() >= 136 {
+        if let Ok(values) = read_int16u_array(&data[128..136], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face3Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face4Position at offset 96
+    if data.len() >= 200 {
+        if let Ok(values) = read_int16u_array(&data[192..200], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face4Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_faceinfo2(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // Face1Position at offset 0
+    if data.len() >= 8 {
+        if let Ok(values) = read_int16u_array(&data[0..8], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face1Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face4Position at offset 111
+    if data.len() >= 230 {
+        if let Ok(values) = read_int16u_array(&data[222..230], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face4Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face5Position at offset 148
+    if data.len() >= 304 {
+        if let Ok(values) = read_int16u_array(&data[296..304], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face5Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face6Position at offset 185
+    if data.len() >= 378 {
+        if let Ok(values) = read_int16u_array(&data[370..378], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face6Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face7Position at offset 222
+    if data.len() >= 452 {
+        if let Ok(values) = read_int16u_array(&data[444..452], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face7Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face8Position at offset 259
+    if data.len() >= 526 {
+        if let Ok(values) = read_int16u_array(&data[518..526], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face8Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face2Position at offset 37
+    if data.len() >= 82 {
+        if let Ok(values) = read_int16u_array(&data[74..82], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face2Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // Face3Position at offset 74
+    if data.len() >= 156 {
+        if let Ok(values) = read_int16u_array(&data[148..156], byte_order, 4) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("Face3Position".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    Ok(tags)
+}
+
 fn process_sony_camerasettings(
     data: &[u8],
     byte_order: ByteOrder,
@@ -1320,6 +1919,127 @@ fn process_sony_meterinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Str
 
     // MeterInfo2Row2 at offset 888
     if data.len() >= 1908 {
+        // TODO: Handle format int32u
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_moreinfo0201(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ImageCount at offset 283
+    if data.len() >= 570 {
+        // TODO: Handle format int32u
+    }
+
+    // ShutterCount at offset 293
+    if data.len() >= 590 {
+        // TODO: Handle format int32u
+    }
+
+    // ShutterCount at offset 330
+    if data.len() >= 664 {
+        // TODO: Handle format int32u
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_meterinfo9(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // MeterInfo1Row1 at offset 0
+    if data.len() >= 180 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo2Row5 at offset 1070
+    if data.len() >= 2360 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo2Row6 at offset 1180
+    if data.len() >= 2580 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo2Row7 at offset 1290
+    if data.len() >= 2800 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo2Row8 at offset 1400
+    if data.len() >= 3020 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo2Row9 at offset 1510
+    if data.len() >= 3240 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo1Row3 at offset 180
+    if data.len() >= 540 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo1Row4 at offset 270
+    if data.len() >= 720 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo1Row5 at offset 360
+    if data.len() >= 900 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo1Row6 at offset 450
+    if data.len() >= 1080 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo1Row7 at offset 540
+    if data.len() >= 1260 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo2Row1 at offset 630
+    if data.len() >= 1480 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo2Row2 at offset 740
+    if data.len() >= 1700 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo2Row3 at offset 850
+    if data.len() >= 1920 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo1Row2 at offset 90
+    if data.len() >= 360 {
+        // TODO: Handle format undef
+    }
+
+    // MeterInfo2Row4 at offset 960
+    if data.len() >= 2140 {
+        // TODO: Handle format undef
+    }
+
+    Ok(tags)
+}
+
+fn process_sony_moreinfo0401(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    let mut tags = Vec::new();
+    // ShotNumberSincePowerUp at offset 1102
+    if data.len() >= 2208 {
         // TODO: Handle format int32u
     }
 
@@ -3887,6 +4607,39 @@ fn process_sony_tag9416(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Strin
     Ok(tags)
 }
 
+pub fn process_tag_0x1_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x1_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_sony_moresettings(data, byte_order)
+}
+
+pub fn process_tag_0x2_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
 pub fn process_tag_0x10_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
@@ -3967,6 +4720,38 @@ pub fn process_tag_0x23_subdirectory(
     Ok(vec![])
 }
 
+pub fn process_tag_0x48_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x48_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x5e_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x5e_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
 pub fn process_tag_0x114_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
@@ -4021,6 +4806,57 @@ pub fn process_tag_0x116_subdirectory(
     Ok(vec![])
 }
 
+pub fn process_tag_0x1e0_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x1e0_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_sony_meterinfo(data, byte_order)
+}
+
+pub fn process_tag_0x201_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x201_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_sony_moreinfo0201(data, byte_order)
+}
+
+pub fn process_tag_0x36d_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x36d_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_sony_meterinfo9(data, byte_order)
+}
+
 pub fn process_tag_0x388_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
@@ -4030,6 +4866,89 @@ pub fn process_tag_0x388_subdirectory(
     let count = data.len() / 2;
     debug!(
         "process_tag_0x388_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x398_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x398_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x401_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x401_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_sony_moreinfo0401(data, byte_order)
+}
+
+pub fn process_tag_0x490_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x490_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_sony_meterinfo(data, byte_order)
+}
+
+pub fn process_tag_0x4b0_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4b0_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_sony_meterinfo(data, byte_order)
+}
+
+pub fn process_tag_0x4b4_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x4b4_subdirectory called with {} bytes, count={}",
         data.len(),
         count
     );
@@ -4047,6 +4966,23 @@ pub fn process_tag_0x4b8_subdirectory(
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4b8_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_sony_meterinfo(data, byte_order)
+}
+
+pub fn process_tag_0x50c_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x50c_subdirectory called with {} bytes, count={}",
         data.len(),
         count
     );

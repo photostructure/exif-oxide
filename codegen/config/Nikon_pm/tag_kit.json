@@ -1,0 +1,59 @@
+{
+  "extractor": "tag_kit.pl",
+  "source": "third-party/exiftool/lib/Image/ExifTool/Nikon.pm",
+  "description": "Nikon tag definitions with embedded PrintConv implementations",
+  "tables": [
+    {
+      "table_name": "Main",
+      "description": "Main Nikon maker notes table with subdirectory references"
+    },
+    {
+      "table_name": "Type2", 
+      "description": "Type2 table for newer Nikon cameras"
+    },
+    {
+      "table_name": "CaptureOffsets",
+      "description": "Capture offsets for various Nikon camera models"
+    },
+    {
+      "table_name": "MenuSettingsZ8",
+      "description": "Z8 menu settings (firmware version dependent)"
+    },
+    {
+      "table_name": "MenuSettingsZ8v1",
+      "description": "Z8 menu settings version 1"
+    },
+    {
+      "table_name": "MenuSettingsZ8v2", 
+      "description": "Z8 menu settings version 2"
+    },
+    {
+      "table_name": "MenuSettingsZ9",
+      "description": "Z9 menu settings"
+    },
+    {
+      "table_name": "MenuSettingsZ9v3",
+      "description": "Z9 menu settings version 3"
+    },
+    {
+      "table_name": "MenuSettingsZ9v4",
+      "description": "Z9 menu settings version 4"
+    },
+    {
+      "table_name": "MenuSettingsZ6III",
+      "description": "Z6III menu settings"
+    },
+    {
+      "table_name": "MenuSettingsZ7II",
+      "description": "Z7II menu settings"
+    },
+    {
+      "table_name": "AVI",
+      "description": "Nikon AVI video tags"
+    },
+    {
+      "table_name": "MOV",
+      "description": "Nikon MOV video tags"
+    }
+  ]
+}
