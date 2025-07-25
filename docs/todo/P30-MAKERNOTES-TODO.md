@@ -22,12 +22,12 @@ The following MakerNotes tags were removed from `config/supported_tags.json`:
 ## Implementation Schedule
 
 ### ✅ Sony MakerNotes
-- **Milestone**: MILESTONE-17e-Sony-RAW
+- **Milestone**: P3-MILESTONE-17e-Sony-RAW
 - **Missing Tags**: `MakerNotes:ExposureTime`, `MakerNotes:FocalLength`
 - **Status**: Planned - Sony.pm codegen extraction
 
 ### ✅ Canon MakerNotes  
-- **Milestone**: MILESTONE-17d-Canon-RAW
+- **Milestone**: P3-MILESTONE-17d-Canon-RAW
 - **Missing Tags**: Various Canon-specific MakerNotes
 - **Status**: Planned - Canon lens database and binary data extraction
 

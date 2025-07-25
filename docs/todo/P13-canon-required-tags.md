@@ -19,7 +19,7 @@
   - `src/generated/Canon_pm/` - Generated lookup tables
   - `third-party/exiftool/lib/Image/ExifTool/Canon.pm` - ExifTool source
 - **Documentation**: 
-  - `docs/todo/MILESTONE-17d-Canon-RAW.md` - Current Canon status
+  - `docs/todo/P3-MILESTONE-17d-Canon-RAW.md` - Current Canon status
   - `third-party/exiftool/doc/modules/Canon.md` - Canon module overview
 
 ## Work Completed
