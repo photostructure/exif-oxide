@@ -280,7 +280,7 @@ CR2 File:
 
 ### Critical Documentation
 - **[TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md)** - Fundamental principle, read first
-- **[MILESTONE-17d-Canon-RAW.md](../todo/MILESTONE-17d-Canon-RAW.md)** - Original requirements
+- **[P3-MILESTONE-17d-Canon-RAW.md](../todo/P3-MILESTONE-17d-Canon-RAW.md)** - Original requirements
 - **[CODEGEN.md](../CODEGEN.md)** - Code generation guide
 
 ### Key ExifTool References
