@@ -376,7 +376,7 @@ Benefits:
 
 - [CODEGEN.md](../CODEGEN.md) - Current codegen system
 - [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md) - ExifTool integration principles
-- [MILESTONE-18-RAW-Codegen-Extraction.md](MILESTONE-18-RAW-Codegen-Extraction.md) - Scale-up requirements
+- [P3-MILESTONE-18-RAW-Codegen-Extraction.md](P3-MILESTONE-18-RAW-Codegen-Extraction.md) - Scale-up requirements
 
 ### Architecture Context
 
