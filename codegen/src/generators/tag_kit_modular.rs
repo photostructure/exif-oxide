@@ -7,7 +7,7 @@ use std::fs;
 use std::collections::HashMap;
 use crate::common::escape_string;
 use crate::schemas::tag_kit::{TagKitExtraction, TagKit, ExtractedTable};
-use super::tag_kit_split::split_tag_kits;
+use super::tag_kit_split::{split_tag_kits, TagCategory};
 
 /// Generate modular tag kit code from extracted data
 pub fn generate_modular_tag_kit(
@@ -30,8 +30,11 @@ pub fn generate_modular_tag_kit(
     // Collect all subdirectory information
     let subdirectory_info = collect_subdirectory_info(&extraction.tag_kits);
     
-    // Generate a module for each category with tags
-    for (category, tag_kits) in &categories {
+    // Generate a module for each category with tags (sorted for deterministic PRINT_CONV numbering)
+    let mut sorted_categories: Vec<(&TagCategory, &Vec<&TagKit>)> = categories.iter().collect();
+    sorted_categories.sort_by_key(|(category, _)| category.module_name());
+    
+    for (category, tag_kits) in sorted_categories {
         if tag_kits.is_empty() {
             continue;
         }
