@@ -50,6 +50,7 @@ ExifTool is the industry standard for metadata extraction, but modern antivirus 
 - **No geolocation**: Excludes ExifTool's GPS coordinate lookup features
 - **No write patterns**: No pattern-match replacements for tag updates
 - **No custom configuration**: ExifTool has a rich featureset for custom tag extraction and rendering. We're not porting that over.
+- **Unknown tags omitted**: Tags marked as "Unknown" in ExifTool are filtered out by default (ExifTool shows these with the `-u` flag)
 
 ## How It Works
 
