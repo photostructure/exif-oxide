@@ -2,7 +2,7 @@
 
 **Date:** 2025-07-21  
 **Status:** In Progress  
-**Related Milestone:** MILESTONE-17c-Olympus-RAW
+**Related Milestone:** P3-MILESTONE-17c-Olympus-RAW
 
 ## Project Overview
 
@@ -25,7 +25,7 @@
 - `src/generated/Olympus_pm/` - Generated code from ExifTool extraction
 
 ### Documentation
-- `docs/todo/MILESTONE-17c-Olympus-RAW.md` - Parent milestone tracking
+- `docs/todo/P3-MILESTONE-17c-Olympus-RAW.md` - Parent milestone tracking
 - `docs/TRUST-EXIFTOOL.md` - Critical: We translate ExifTool logic exactly
 - `third-party/exiftool/doc/modules/Olympus.md` - ExifTool Olympus module overview
 
@@ -124,7 +124,7 @@ extracted_tags: HashMap<(String, u16), TagValue>  // (namespace, tag_id)
 
 - Complete namespace-aware tag storage implementation
 - Fix codegen processing order (Main table before subdirectories)
-- **Tag Kit Migration**: Complete [tag kit migration and retrofit](20250122-tag-kit-migration-and-retrofit.md) for Olympus module
+- **Tag Kit Migration**: Complete [tag kit migration and retrofit](../done/20250723-tag-kit-migration-and-retrofit.md) for Olympus module
   - Olympus has inline_printconv config that needs migration
   - Ensures consistent extraction approach across all modules
 

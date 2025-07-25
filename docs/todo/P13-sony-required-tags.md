@@ -20,7 +20,7 @@
   - `src/generated/Sony_pm/` - Generated lookup tables
   - `third-party/exiftool/lib/Image/ExifTool/Sony.pm` - ExifTool source
 - **Documentation**:
-  - `docs/todo/MILESTONE-17e-Sony-RAW.md` - Sony implementation status
+  - `docs/todo/P3-MILESTONE-17e-Sony-RAW.md` - Sony implementation status
   - `third-party/exiftool/doc/modules/Sony.md` - Sony module overview
 
 ## Work Completed
@@ -115,7 +115,7 @@
 
 ## Prerequisites
 
-- **Tag Kit Migration**: Complete [tag kit migration and retrofit](20250122-tag-kit-migration-and-retrofit.md) for Sony module
+- **Tag Kit Migration**: Complete [tag kit migration and retrofit](../done/20250723-tag-kit-migration-and-retrofit.md) for Sony module
   - Sony already has inline_printconv config that needs migration
   - This ensures consistent tag extraction approach
 - Complete encryption/decryption for all Sony formats
