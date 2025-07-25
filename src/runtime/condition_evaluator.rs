@@ -4,7 +4,6 @@
 //! dispatch, extending the existing ExpressionEvaluator with subdirectory-specific
 //! logic patterns found in ExifTool.
 
-use crate::expressions::ExpressionEvaluator;
 use crate::tiff_types::ByteOrder;
 use crate::types::{ExifError, Result, TagValue};
 use regex::Regex;
@@ -13,8 +12,8 @@ use tracing::{debug, warn};
 
 /// Enhanced condition evaluator for subdirectory dispatch
 ///
-/// This evaluator extends the base ExpressionEvaluator with subdirectory-specific
-/// evaluation capabilities, including binary pattern matching and model/make context.
+/// This evaluator provides subdirectory-specific evaluation capabilities,
+/// including binary pattern matching and model/make context.
 ///
 /// ## ExifTool Reference
 ///
@@ -24,9 +23,6 @@ use tracing::{debug, warn};
 /// - `$$self{Make} =~ /pattern/` - Manufacturer matching
 /// - `$count == N` - Data count conditions
 pub struct SubdirectoryConditionEvaluator {
-    /// Base expression evaluator
-    expression_evaluator: ExpressionEvaluator,
-    
     /// Cache for compiled regex patterns specific to subdirectory conditions
     regex_cache: HashMap<String, Regex>,
 }
@@ -39,22 +35,22 @@ pub struct SubdirectoryConditionEvaluator {
 pub struct SubdirectoryContext {
     /// Binary data being processed ($valPt)
     pub val_ptr: Option<Vec<u8>>,
-    
+
     /// Camera make/manufacturer ($self{Make})
     pub make: Option<String>,
-    
+
     /// Camera model ($self{Model})
     pub model: Option<String>,
-    
+
     /// Data format information
     pub format: Option<String>,
-    
+
     /// Count of data elements
     pub count: Option<usize>,
-    
+
     /// Byte order for data interpretation
     pub byte_order: ByteOrder,
-    
+
     /// Additional metadata for condition evaluation
     pub metadata: HashMap<String, TagValue>,
 }
@@ -63,7 +59,6 @@ impl SubdirectoryConditionEvaluator {
     /// Create a new subdirectory condition evaluator
     pub fn new() -> Self {
         Self {
-            expression_evaluator: ExpressionEvaluator::new(),
             regex_cache: HashMap::new(),
         }
     }
@@ -86,11 +81,7 @@ impl SubdirectoryConditionEvaluator {
     ///
     /// Returns `Ok(true)` if the condition matches, `Ok(false)` if it doesn't match,
     /// or an error if the condition cannot be parsed or evaluated.
-    pub fn evaluate(
-        &mut self,
-        condition: &str,
-        context: &SubdirectoryContext,
-    ) -> Result<bool> {
+    pub fn evaluate(&mut self, condition: &str, context: &SubdirectoryContext) -> Result<bool> {
         debug!("Evaluating subdirectory condition: {}", condition);
 
         // Handle special ExifTool condition patterns
@@ -202,7 +193,7 @@ impl SubdirectoryConditionEvaluator {
 
             // Compile and test the regex directly against the data
             let regex = self.get_or_compile_regex(pattern)?;
-            
+
             // Try multiple data representations for pattern matching
             // 1. Raw binary as string (for text patterns)
             let data_str = String::from_utf8_lossy(val_ptr);
@@ -234,11 +225,14 @@ impl SubdirectoryConditionEvaluator {
             .captures(condition)
         {
             let pattern = &captures[1];
-            debug!("Extracted negated pattern from $$valPt condition: {}", pattern);
+            debug!(
+                "Extracted negated pattern from $$valPt condition: {}",
+                pattern
+            );
 
             // Use the same logic as above, but negate the result
             let regex = self.get_or_compile_regex(pattern)?;
-            
+
             let data_str = String::from_utf8_lossy(val_ptr);
             if regex.is_match(&data_str) {
                 return Ok(false); // Negated match
@@ -373,9 +367,9 @@ impl SubdirectoryConditionEvaluator {
             .captures(condition)
         {
             let operator = &captures[1];
-            let expected: usize = captures[2].parse().map_err(|e| {
-                ExifError::ParseError(format!("Invalid count value: {}", e))
-            })?;
+            let expected: usize = captures[2]
+                .parse()
+                .map_err(|e| ExifError::ParseError(format!("Invalid count value: {}", e)))?;
 
             let result = match operator {
                 "==" => count == expected,
@@ -528,7 +522,7 @@ mod tests {
     #[test]
     fn test_val_pt_pattern_matching() {
         let mut evaluator = SubdirectoryConditionEvaluator::new();
-        
+
         // Test binary pattern matching
         let context = SubdirectoryContext::from_data(
             &[0x02, 0x04, 0x00, 0x01],
@@ -537,16 +531,14 @@ mod tests {
             ByteOrder::LittleEndian,
         );
 
-        let result = evaluator
-            .evaluate("$$valPt =~ /^0204/", &context)
-            .unwrap();
+        let result = evaluator.evaluate("$$valPt =~ /^0204/", &context).unwrap();
         assert!(result, "Should match binary pattern ^0204");
     }
 
     #[test]
     fn test_self_model_matching() {
         let mut evaluator = SubdirectoryConditionEvaluator::new();
-        
+
         let context = SubdirectoryContext {
             make: Some("Canon".to_string()),
             model: Some("EOS R5".to_string()),
@@ -567,7 +559,7 @@ mod tests {
     #[test]
     fn test_count_conditions() {
         let evaluator = SubdirectoryConditionEvaluator::new();
-        
+
         let context = SubdirectoryContext {
             count: Some(4),
             ..Default::default()
@@ -587,7 +579,7 @@ mod tests {
     #[test]
     fn test_format_conditions() {
         let mut evaluator = SubdirectoryConditionEvaluator::new();
-        
+
         let context = SubdirectoryContext {
             format: Some("int16u".to_string()),
             ..Default::default()

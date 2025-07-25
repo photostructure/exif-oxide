@@ -10,6 +10,12 @@ use crate::types::{Result, TagValue};
 use std::collections::HashMap;
 use tracing::{debug, warn};
 
+/// Type alias for subdirectory processor function signature
+pub type SubdirectoryProcessorFn = fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>;
+
+/// Type alias for condition-processor pairs
+pub type ConditionProcessorPair = (String, SubdirectoryProcessorFn);
+
 /// Enhanced subdirectory processor that supports runtime condition evaluation
 ///
 /// This trait extends the basic subdirectory processor pattern with runtime
@@ -68,7 +74,7 @@ impl RuntimeSubdirectoryDispatcher {
         data: &[u8],
         byte_order: ByteOrder,
         context: &SubdirectoryContext,
-        conditions: &[(String, fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>)],
+        conditions: &[ConditionProcessorPair],
     ) -> Result<Vec<(String, TagValue)>> {
         debug!(
             "Dispatching subdirectory with {} conditions and {} bytes of data",
@@ -79,7 +85,7 @@ impl RuntimeSubdirectoryDispatcher {
         // Try each condition in order
         for (condition, processor) in conditions {
             debug!("Evaluating condition: {}", condition);
-            
+
             match self.condition_evaluator.evaluate(condition, context) {
                 Ok(true) => {
                     debug!("Condition matched: {}", condition);
@@ -111,7 +117,7 @@ impl RuntimeSubdirectoryDispatcher {
         byte_order: ByteOrder,
         context: &SubdirectoryContext,
         static_conditions: &[(String, bool)], // Pre-evaluated static conditions
-        runtime_conditions: &[(String, fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>)],
+        runtime_conditions: &[ConditionProcessorPair],
     ) -> Result<Vec<(String, TagValue)>> {
         debug!(
             "Dispatching with {} static and {} runtime conditions",
@@ -125,7 +131,10 @@ impl RuntimeSubdirectoryDispatcher {
                 debug!("Static condition matched: {}", condition_name);
                 // For static conditions, we need a different dispatch mechanism
                 // This would be handled by the generated code calling specific processors
-                warn!("Static condition matched but no processor mapping provided: {}", condition_name);
+                warn!(
+                    "Static condition matched but no processor mapping provided: {}",
+                    condition_name
+                );
             }
         }
 
@@ -153,13 +162,12 @@ pub fn create_subdirectory_context_from_exif(
     let make = exif_metadata
         .get("Make")
         .and_then(|v| v.as_string().map(|s| s.to_string()));
-    
+
     let model = exif_metadata
         .get("Model")
         .and_then(|v| v.as_string().map(|s| s.to_string()));
 
-    SubdirectoryContext::from_data(data, make, model, byte_order)
-        .with_count(data.len())
+    SubdirectoryContext::from_data(data, make, model, byte_order).with_count(data.len())
 }
 
 /// Macro to generate runtime-enhanced subdirectory processors
@@ -176,16 +184,16 @@ macro_rules! runtime_subdirectory_processor {
     ) => {
         pub fn $fn_name(
             data: &[u8],
-            byte_order: crate::tiff_types::ByteOrder,
+            byte_order: $crate::tiff_types::ByteOrder,
             make: Option<String>,
             model: Option<String>,
-        ) -> crate::types::Result<Vec<(String, crate::types::TagValue)>> {
-            use crate::runtime::integration::RuntimeSubdirectoryDispatcher;
-            use crate::runtime::condition_evaluator::SubdirectoryContext;
-            
+        ) -> $crate::types::Result<Vec<(String, $crate::types::TagValue)>> {
+            use $crate::runtime::condition_evaluator::SubdirectoryContext;
+            use $crate::runtime::integration::RuntimeSubdirectoryDispatcher;
+
             let context = SubdirectoryContext::from_data(data, make, model, byte_order);
             let mut dispatcher = RuntimeSubdirectoryDispatcher::new();
-            
+
             dispatcher.dispatch_with_conditions(data, byte_order, &context, $conditions)
         }
     };
@@ -198,13 +206,16 @@ mod tests {
 
     // Mock processor function for testing
     fn mock_processor(_data: &[u8], _byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-        Ok(vec![("TestTag".to_string(), TagValue::String("TestValue".to_string()))])
+        Ok(vec![(
+            "TestTag".to_string(),
+            TagValue::String("TestValue".to_string()),
+        )])
     }
 
     #[test]
     fn test_runtime_dispatch_with_matching_condition() {
         let mut dispatcher = RuntimeSubdirectoryDispatcher::new();
-        
+
         let context = SubdirectoryContext {
             val_ptr: Some(vec![0x02, 0x04, 0x00, 0x01]),
             make: Some("Canon".to_string()),
@@ -212,12 +223,16 @@ mod tests {
             ..Default::default()
         };
 
-        let conditions = vec![
-            ("$$valPt =~ /^0204/".to_string(), mock_processor as fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>),
-        ];
+        let conditions: Vec<ConditionProcessorPair> =
+            vec![("$$valPt =~ /^0204/".to_string(), mock_processor)];
 
         let result = dispatcher
-            .dispatch_with_conditions(&[0x02, 0x04, 0x00, 0x01], ByteOrder::LittleEndian, &context, &conditions)
+            .dispatch_with_conditions(
+                &[0x02, 0x04, 0x00, 0x01],
+                ByteOrder::LittleEndian,
+                &context,
+                &conditions,
+            )
             .unwrap();
 
         assert_eq!(result.len(), 1);
@@ -227,7 +242,7 @@ mod tests {
     #[test]
     fn test_runtime_dispatch_with_non_matching_condition() {
         let mut dispatcher = RuntimeSubdirectoryDispatcher::new();
-        
+
         let context = SubdirectoryContext {
             val_ptr: Some(vec![0x01, 0x02, 0x03, 0x04]),
             make: Some("Canon".to_string()),
@@ -235,12 +250,16 @@ mod tests {
             ..Default::default()
         };
 
-        let conditions = vec![
-            ("$$valPt =~ /^0204/".to_string(), mock_processor as fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>),
-        ];
+        let conditions: Vec<ConditionProcessorPair> =
+            vec![("$$valPt =~ /^0204/".to_string(), mock_processor)];
 
         let result = dispatcher
-            .dispatch_with_conditions(&[0x01, 0x02, 0x03, 0x04], ByteOrder::LittleEndian, &context, &conditions)
+            .dispatch_with_conditions(
+                &[0x01, 0x02, 0x03, 0x04],
+                ByteOrder::LittleEndian,
+                &context,
+                &conditions,
+            )
             .unwrap();
 
         assert_eq!(result.len(), 0);
@@ -253,11 +272,8 @@ mod tests {
         exif_metadata.insert("Model".to_string(), TagValue::String("EOS R5".to_string()));
 
         let data = &[0x01, 0x02, 0x03, 0x04];
-        let context = create_subdirectory_context_from_exif(
-            data, 
-            ByteOrder::LittleEndian, 
-            &exif_metadata
-        );
+        let context =
+            create_subdirectory_context_from_exif(data, ByteOrder::LittleEndian, &exif_metadata);
 
         assert_eq!(context.make, Some("Canon".to_string()));
         assert_eq!(context.model, Some("EOS R5".to_string()));
