@@ -26,8 +26,13 @@
 //! ```
 
 pub mod condition_evaluator;
+pub mod enhanced_processors;
 pub mod integration;
 
 // Re-export core types
 pub use condition_evaluator::{SubdirectoryConditionEvaluator, SubdirectoryContext};
-pub use integration::{RuntimeSubdirectoryDispatcher, RuntimeSubdirectoryProcessor, create_subdirectory_context_from_exif};
+pub use enhanced_processors::{enhanced_canon_subdirectory_processor, wrap_existing_processor};
+pub use integration::{
+    create_subdirectory_context_from_exif, RuntimeSubdirectoryDispatcher,
+    RuntimeSubdirectoryProcessor,
+};
