@@ -63,43 +63,69 @@
 
 ## Work Completed
 
+### Infrastructure ✅
 - ✅ Basic composite tag infrastructure exists
-- ✅ Some composite tags already defined
-- ⚠️ Need to verify calculations match ExifTool
+- ✅ Composite tags generation and dispatch system
+- ✅ Multi-pass dependency resolution algorithm
+
+### Phase 1: Core Essential Tags ✅ (July 25, 2025)
+- ✅ **ISO** - Priority-based consolidation from multiple ISO sources
+- ✅ **ImageWidth** - Width dimension with proper precedence (SubIFD3 > IFD0 > ExifIFD)
+- ✅ **ImageHeight** - Height dimension with proper precedence
+- ✅ **Rotation** - EXIF Orientation tag converted to degrees (0°, 90°, 180°, 270°)
+
+### Phase 2: GPS Consolidation ✅ (July 25, 2025)
+- ✅ **GPSDateTime** - Combined GPS date/time stamps to UTC format
+- ✅ **GPSLatitude** - Raw GPS coordinates to signed decimal degrees
+- ✅ **GPSLongitude** - Raw GPS coordinates to signed decimal degrees
+
+### Phase 3: SubSec Timestamps ✅ (July 25, 2025)
+- ✅ **SubSecCreateDate** - EXIF CreateDate with subseconds and timezone
+- ✅ **SubSecModifyDate** - EXIF ModifyDate with subseconds and timezone
+- ✅ **SubSecMediaCreateDate** - Media create date with subseconds
+
+### Quality Assurance ✅ (July 25, 2025)
+- ✅ All implementations include ExifTool source file and line number references
+- ✅ Comprehensive testing with `make precommit` - all tests passing
+- ✅ Full compliance with Trust ExifTool principle
+- ✅ 10 critical composite tags successfully implemented and validated
 
 ## Remaining Tasks
 
-### High Priority - Core Calculations
+### Phase 4: Lens System (Medium Priority)
+**Status**: Ready for implementation
 
-1. **ISO Consolidation**
-   ```rust
-   // Priority order: ISO, ISOSpeed, ISOSpeedRatings[0], PhotographicSensitivity
-   // Handle manufacturer-specific tags:
-   //   - Canon: CameraISO
-   //   - Nikon: ISO (0x0002), ISOSpeed (0x0076), ISOInfo (in ShotInfo - encrypted)
-   //   - Sony: SonyISO
-   // Note: Nikon ISO values often require decryption
-   ```
+- **Lens** - Full lens description from manufacturer databases
+- **LensID** - Lens identification from MakerNotes
+- **LensSpec** - Formatted lens specification (e.g., "18-55mm f/3.5-5.6")
+- **LensType** - Lens type from MakerNotes
 
-2. **ShutterSpeed Formatting**
-   ```rust
-   // Convert ExposureTime to human-readable
-   // 0.004 → "1/250"
-   // 0.3+ → "0.3" (not fraction)
-   // 2.5 → "2.5"
-   ```
+### Phase 5: Media Tags & Advanced Features (Medium Priority)
+**Status**: Ready for implementation
 
-3. **Aperture Formatting**
-   ```rust
-   // NO "f/" prefix per ExifTool (just the number)
-   // From FNumber or calculate from ApertureValue
-   // 2.8 → "2.8"
-   ```
+- **Duration** - Video duration calculation
+- **ScaleFactor35efl** - Complete sensor size calculation (basic version exists, needs enhancement)
 
-4. **Image Dimension Priority**
-   - Check SubIFD3:ImageWidth/Height first (full resolution)
-   - Then IFD0:ImageWidth/Height
-   - Then ExifIFD:ExifImageWidth/Height
+### Implementation Notes from Completed Phases
+
+1. **ISO Consolidation** ✅ COMPLETED
+   - Implemented priority order: ISO, ISOSpeed, ISOSpeedRatings[0], PhotographicSensitivity
+   - Manufacturer-specific tags: Canon CameraISO, Nikon ISO2, Sony SonyISO
+   - ExifTool: lib/Image/ExifTool/Canon.pm:9792-9806, lib/Image/ExifTool/Exif.pm:2116-2124
+
+2. **Image Dimension Priority** ✅ COMPLETED
+   - Implemented precedence: SubIFD3 > IFD0 > ExifIFD
+   - ExifTool: lib/Image/ExifTool/Exif.pm:725-745 (ImageWidth), 746-766 (ImageHeight)
+
+3. **GPS Coordinate Processing** ✅ COMPLETED
+   - GPS coordinates converted from DMS to signed decimal degrees
+   - Hemisphere handling: South/West negative
+   - ExifTool: lib/Image/ExifTool/GPS.pm:353-390
+
+4. **SubSec Timestamp Processing** ✅ COMPLETED
+   - SubSec values normalized to fractional seconds
+   - Timezone offset integration
+   - ExifTool: lib/Image/ExifTool/Exif.pm:4930-4950
 
 ### Medium Priority - Lens Information
 
