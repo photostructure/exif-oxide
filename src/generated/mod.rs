@@ -32,6 +32,8 @@ pub mod Panasonic_pm;
 #[allow(non_snake_case)]
 pub mod QuickTime_pm;
 #[allow(non_snake_case)]
+pub mod RIFF_pm;
+#[allow(non_snake_case)]
 pub mod Sony_pm;
 #[allow(non_snake_case)]
 pub mod XMP_pm;

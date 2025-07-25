@@ -703,6 +703,7 @@ fn generate_tag_kit_module(
 
 /// Generate code for a single tag kit category module
 /// This is adapted from the existing tag_kit_modular.rs code
+#[allow(dead_code)]
 fn generate_tag_kit_category_module(
     category_name: &str,
     tag_kits: &[&crate::schemas::tag_kit::TagKit],
@@ -841,6 +842,7 @@ fn generate_tag_kit_category_module(
 }
 
 /// Generate the tag_kit/mod.rs file that combines all category modules
+#[allow(dead_code)]
 fn generate_tag_kit_mod_file(
     category_modules: &[String], 
     tag_kit_data: &crate::schemas::tag_kit::TagKitExtraction,

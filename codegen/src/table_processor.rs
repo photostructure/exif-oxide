@@ -132,6 +132,7 @@ pub fn process_tag_tables(
 /// This function scans the type-specific directories for tag definition and composite tag files
 /// organized by source module (e.g., exif_tag_definitions.json, gps_composite_tags.json)
 /// and generates the unified tag table code.
+#[allow(dead_code)]
 pub fn process_tag_tables_modular(extract_dir: &Path, output_dir: &str) -> Result<()> {
     let mut all_tags = Vec::new();
     let mut all_composites = Vec::new();
