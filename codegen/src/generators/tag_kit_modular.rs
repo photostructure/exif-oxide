@@ -8,20 +8,25 @@ use std::collections::HashMap;
 use crate::common::escape_string;
 use crate::schemas::tag_kit::{TagKitExtraction, TagKit, ExtractedTable};
 use super::tag_kit_split::{split_tag_kits, TagCategory};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 /// Shared table data loaded from shared_tables.json
 #[derive(Debug, Deserialize)]
 struct SharedTablesData {
+    #[allow(dead_code)]
     metadata: serde_json::Value,
+    #[allow(dead_code)]
     tables: HashMap<String, SharedTable>,
 }
 
 #[derive(Debug, Deserialize)]
 struct SharedTable {
+    #[allow(dead_code)]
     path: String,
     #[serde(rename = "type")]
+    #[allow(dead_code)]
     table_type: String,
+    #[allow(dead_code)]
     tags: HashMap<String, serde_json::Value>,
 }
 
@@ -128,8 +133,8 @@ fn generate_category_module(
     tag_kits: &[&TagKit],
     source: &crate::schemas::tag_kit::SourceInfo,
     print_conv_counter: &mut usize,
-    current_module: &str,
-    shared_tables: &SharedTablesData,
+    _current_module: &str,
+    _shared_tables: &SharedTablesData,
 ) -> Result<(String, usize)> {
     let mut code = String::new();
     
@@ -263,7 +268,7 @@ fn generate_category_module(
         
         // Add subdirectory field
         if tag_kit.subdirectory.is_some() {
-            code.push_str(&format!("            subdirectory: Some(SubDirectoryType::Binary {{ processor: process_tag_{:#x}_subdirectory }}),\n", tag_id));
+            code.push_str(&format!("            subdirectory: Some(SubDirectoryType::Binary {{ processor: process_tag_{tag_id:#x}_subdirectory }}),\n"));
         } else {
             code.push_str("            subdirectory: None,\n");
         }
@@ -730,13 +735,16 @@ mod tests {
 /// Information about a subdirectory and all its variants
 #[derive(Debug)]
 struct SubDirectoryCollection {
+    #[allow(dead_code)]
     tag_id: u32,
+    #[allow(dead_code)]
     tag_name: String,
     variants: Vec<SubDirectoryVariant>,
 }
 
 #[derive(Debug, Clone)]
 struct SubDirectoryVariant {
+    #[allow(dead_code)]
     variant_id: String,
     condition: Option<String>,
     table_name: String,
@@ -971,14 +979,19 @@ enum SubdirectoryCondition {
 
 #[derive(Debug, Clone)]
 struct ModelPattern {
+    #[allow(dead_code)]
     regex: String,
+    #[allow(dead_code)]
     negated: bool,
 }
 
 #[derive(Debug, Clone)]
 struct FormatPattern {
+    #[allow(dead_code)]
     format: String,
+    #[allow(dead_code)]
     operator: ComparisonOp,
+    #[allow(dead_code)]
     additional_condition: Option<String>, // for cases like: $format eq "int32u" and ($count == 138 or $count == 148)
 }
 
@@ -1104,16 +1117,16 @@ fn generate_subdirectory_dispatcher(
     tag_id: u32, 
     collection: &SubDirectoryCollection,
     current_module: &str,
-    shared_tables: &SharedTablesData,
+    _shared_tables: &SharedTablesData,
 ) -> Result<()> {
-    code.push_str(&format!("pub fn process_tag_{:#x}_subdirectory(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n", tag_id));
+    code.push_str(&format!("pub fn process_tag_{tag_id:#x}_subdirectory(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n"));
     code.push_str("    use tracing::debug;\n");
     code.push_str("    // TODO: Accept model and format parameters when runtime integration supports it\n");
     
     // Determine the format for count calculation (usually int16s for Canon)
     let format_size = 2; // Default to int16s
-    code.push_str(&format!("    let count = data.len() / {};\n", format_size));
-    code.push_str(&format!("    debug!(\"process_tag_{:#x}_subdirectory called with {{}} bytes, count={{}}\", data.len(), count);\n", tag_id));
+    code.push_str(&format!("    let count = data.len() / {format_size};\n"));
+    code.push_str(&format!("    debug!(\"process_tag_{tag_id:#x}_subdirectory called with {{}} bytes, count={{}}\", data.len(), count);\n"));
     code.push_str("    \n");
     
     // Analyze all variants and their conditions
@@ -1153,8 +1166,8 @@ fn generate_subdirectory_dispatcher(
                 .replace("::", "_")
                 .to_lowercase();
             
-            code.push_str(&format!("    // Single unconditional subdirectory\n"));
-            code.push_str(&format!("    process_{}(data, byte_order)\n", table_fn_name));
+            code.push_str("    // Single unconditional subdirectory\n");
+            code.push_str(&format!("    process_{table_fn_name}(data, byte_order)\n"));
         }
     } else {
         // For now, only generate count-based matching

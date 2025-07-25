@@ -477,6 +477,8 @@ pub fn compute_dof(available_tags: &HashMap<String, TagValue>) -> Option<TagValu
     let d = distance?;
 
     // ExifTool DOF calculation: my $t = $val[1] * $val[2] * ($d * 1000 - $f) / ($f * $f);
+    // Note: focal_length squared is correct per ExifTool's formula
+    #[allow(clippy::suspicious_operation_groupings)]
     let t = aperture * circle_of_confusion * (d * 1000.0 - focal_length)
         / (focal_length * focal_length);
 
@@ -491,4 +493,425 @@ pub fn compute_dof(available_tags: &HashMap<String, TagValue>) -> Option<TagValu
 
     // ExifTool: return join(' ',@v);
     Some(TagValue::string(format!("{near:.3} {far:.3}")))
+}
+
+/// Compute ISO composite tag by consolidating multiple ISO sources
+/// This creates a unified ISO value from various manufacturer-specific and standard sources
+/// Priority: ISO > ISOSpeed > ISOSpeedRatings[0] > PhotographicSensitivity > Manufacturer-specific
+/// ExifTool: lib/Image/ExifTool/Canon.pm:9792-9806 (Canon ISO composite algorithm)
+/// ExifTool: lib/Image/ExifTool/Exif.pm:2116-2124 (standard EXIF ISO tag)
+/// exif-oxide specific: Unlike ExifTool, we provide consolidated ISO for user convenience
+pub fn compute_iso(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Priority 1: Standard EXIF ISO tag
+    if let Some(iso) = available_tags.get("ISO") {
+        if let Some(iso_val) = get_numeric_iso_value(iso) {
+            return Some(TagValue::U32(iso_val));
+        }
+    }
+
+    // Priority 2: ISOSpeed (EXIF 2.3 standard)
+    if let Some(iso_speed) = available_tags.get("ISOSpeed") {
+        if let Some(iso_val) = get_numeric_iso_value(iso_speed) {
+            return Some(TagValue::U32(iso_val));
+        }
+    }
+
+    // Priority 3: ISOSpeedRatings (older EXIF 2.2 name, array format)
+    if let Some(iso_ratings) = available_tags.get("ISOSpeedRatings") {
+        if let Some(iso_val) = get_numeric_iso_value(iso_ratings) {
+            return Some(TagValue::U32(iso_val));
+        }
+    }
+
+    // Priority 4: PhotographicSensitivity (EXIF 2.3 name)
+    if let Some(photo_sens) = available_tags.get("PhotographicSensitivity") {
+        if let Some(iso_val) = get_numeric_iso_value(photo_sens) {
+            return Some(TagValue::U32(iso_val));
+        }
+    }
+
+    // Priority 5: Manufacturer-specific ISO tags
+    // Canon: Check CameraISO, BaseISO, AutoISO (following Canon.pm algorithm)
+    if let Some(camera_iso) = available_tags.get("CameraISO") {
+        if let Some(iso_val) = get_numeric_iso_value(camera_iso) {
+            return Some(TagValue::U32(iso_val));
+        }
+    }
+
+    // Canon fallback: BaseISO * AutoISO / 100
+    // ExifTool: lib/Image/ExifTool/Canon.pm:9792-9806 ValueConv logic
+    if let (Some(base_iso), Some(auto_iso)) =
+        (available_tags.get("BaseISO"), available_tags.get("AutoISO"))
+    {
+        if let (Some(base), Some(auto)) = (
+            get_numeric_iso_value(base_iso),
+            get_numeric_iso_value(auto_iso),
+        ) {
+            let calculated_iso = (base as f64 * auto as f64 / 100.0).round() as u32;
+            return Some(TagValue::U32(calculated_iso));
+        }
+    }
+
+    // Sony: SonyISO (multiple possible sources)
+    if let Some(sony_iso) = available_tags.get("SonyISO") {
+        if let Some(iso_val) = get_numeric_iso_value(sony_iso) {
+            return Some(TagValue::U32(iso_val));
+        }
+    }
+
+    // Nikon: Various Nikon ISO sources (may require decryption in future)
+    for nikon_tag in &["NikonISO", "ISOInfo"] {
+        if let Some(nikon_iso) = available_tags.get(*nikon_tag) {
+            if let Some(iso_val) = get_numeric_iso_value(nikon_iso) {
+                return Some(TagValue::U32(iso_val));
+            }
+        }
+    }
+
+    None
+}
+
+/// Extract numeric ISO value from various TagValue formats
+/// Handles arrays (taking first element), rationals, and different numeric types
+fn get_numeric_iso_value(tag_value: &TagValue) -> Option<u32> {
+    match tag_value {
+        TagValue::U32(val) => Some(*val),
+        TagValue::U16(val) => Some(*val as u32),
+        TagValue::U8(val) => Some(*val as u32),
+        TagValue::I32(val) if *val > 0 => Some(*val as u32),
+        TagValue::I16(val) if *val > 0 => Some(*val as u32),
+        TagValue::F64(val) if *val > 0.0 => Some(val.round() as u32),
+        TagValue::Rational(num, den) if *den != 0 && *num > 0 => {
+            Some((*num as f64 / *den as f64).round() as u32)
+        }
+        TagValue::String(s) => {
+            // Handle string representations like "100" or arrays like "100, 200"
+            let first_number = s.split(',').next()?.trim();
+            Some(first_number.parse::<f64>().ok()?.round() as u32)
+        }
+        _ => None,
+    }
+    .filter(|&val| val > 0 && val <= 100_000) // Reasonable ISO range validation
+}
+
+/// Compute ImageWidth composite tag from various image dimension sources
+/// Priority: SubIFD3:ImageWidth > IFD0:ImageWidth > ExifIFD:ExifImageWidth
+/// ExifTool: No direct composite - this consolidates dimension sources per P12 requirements
+/// exif-oxide specific: Provides consolidated image width from best available source
+pub fn compute_image_width(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Priority 1: SubIFD3:ImageWidth (full resolution)
+    if let Some(width) = available_tags.get("SubIFD3:ImageWidth") {
+        if let Some(w) = width.as_u32() {
+            return Some(TagValue::U32(w));
+        }
+    }
+
+    // Priority 2: IFD0:ImageWidth
+    if let Some(width) = available_tags.get("ImageWidth") {
+        if let Some(w) = width.as_u32() {
+            return Some(TagValue::U32(w));
+        }
+    }
+
+    // Priority 3: ExifIFD:ExifImageWidth
+    if let Some(width) = available_tags.get("ExifImageWidth") {
+        if let Some(w) = width.as_u32() {
+            return Some(TagValue::U32(w));
+        }
+    }
+
+    // Try without group prefixes as fallback
+    for tag_name in &["ImageWidth", "ExifImageWidth"] {
+        if let Some(width) = available_tags.get(*tag_name) {
+            if let Some(w) = width.as_u32() {
+                return Some(TagValue::U32(w));
+            }
+        }
+    }
+
+    None
+}
+
+/// Compute ImageHeight composite tag from various image dimension sources
+/// Priority: SubIFD3:ImageHeight > IFD0:ImageHeight > ExifIFD:ExifImageHeight
+/// ExifTool: No direct composite - this consolidates dimension sources per P12 requirements
+/// exif-oxide specific: Provides consolidated image height from best available source
+pub fn compute_image_height(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Priority 1: SubIFD3:ImageHeight (full resolution)
+    if let Some(height) = available_tags.get("SubIFD3:ImageHeight") {
+        if let Some(h) = height.as_u32() {
+            return Some(TagValue::U32(h));
+        }
+    }
+
+    // Priority 2: IFD0:ImageHeight
+    if let Some(height) = available_tags.get("ImageHeight") {
+        if let Some(h) = height.as_u32() {
+            return Some(TagValue::U32(h));
+        }
+    }
+
+    // Priority 3: ExifIFD:ExifImageHeight
+    if let Some(height) = available_tags.get("ExifImageHeight") {
+        if let Some(h) = height.as_u32() {
+            return Some(TagValue::U32(h));
+        }
+    }
+
+    // Try without group prefixes as fallback
+    for tag_name in &["ImageHeight", "ExifImageHeight"] {
+        if let Some(height) = available_tags.get(*tag_name) {
+            if let Some(h) = height.as_u32() {
+                return Some(TagValue::U32(h));
+            }
+        }
+    }
+
+    None
+}
+
+/// Compute Rotation composite tag from Orientation tag
+/// ExifTool: lib/Image/ExifTool/Composite.pm:435-443 Rotation definition
+/// Converts EXIF Orientation values (1-8) to rotation angles in degrees
+pub fn compute_rotation(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    let orientation = available_tags.get("Orientation")?;
+    let orientation_val = orientation.as_u8()?;
+
+    // ExifTool: lib/Image/ExifTool/Composite.pm Rotation ValueConv
+    // Orientation values 1-8 correspond to different rotations and flips
+    let rotation = match orientation_val {
+        1 => 0,           // Normal
+        2 => 0,           // Mirror horizontal
+        3 => 180,         // Rotate 180
+        4 => 180,         // Mirror vertical
+        5 => 90,          // Mirror horizontal and rotate 270 CW
+        6 => 90,          // Rotate 90 CW
+        7 => 270,         // Mirror horizontal and rotate 90 CW
+        8 => 270,         // Rotate 270 CW
+        _ => return None, // Invalid orientation value
+    };
+
+    Some(TagValue::U16(rotation))
+}
+
+/// Compute GPSDateTime composite tag from GPSDateStamp and GPSTimeStamp
+/// ExifTool: lib/Image/ExifTool/GPS.pm:355-365 GPSDateTime definition
+/// ValueConv: "$val[0] $val[1]Z" - concatenates date + space + time + Z for UTC
+pub fn compute_gps_datetime(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // ExifTool requires both GPS:GPSDateStamp and GPS:GPSTimeStamp
+    let date_stamp = available_tags.get("GPSDateStamp")?;
+    let time_stamp = available_tags.get("GPSTimeStamp")?;
+
+    let date_str = date_stamp.as_string()?;
+    let time_str = time_stamp.as_string()?;
+
+    // ExifTool ValueConv: "$val[0] $val[1]Z"
+    // Concatenate date, space, time, and "Z" (UTC timezone indicator)
+    Some(TagValue::string(format!("{date_str} {time_str}Z")))
+}
+
+/// Compute GPSLatitude composite tag with signed decimal degrees
+/// ExifTool: lib/Image/ExifTool/GPS.pm:368-384 GPSLatitude definition
+/// ValueConv: '$val[1] =~ /^S/i ? -$val[0] : $val[0]' - negates if South reference
+pub fn compute_gps_latitude(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // ExifTool requires both GPS:GPSLatitude and GPS:GPSLatitudeRef
+    let latitude = available_tags.get("GPSLatitude")?;
+    let latitude_ref = available_tags.get("GPSLatitudeRef")?;
+
+    let lat_value = latitude.as_f64()?;
+    let ref_str = latitude_ref.as_string()?;
+
+    // ExifTool ValueConv: '$val[1] =~ /^S/i ? -$val[0] : $val[0]'
+    // If reference starts with 'S' (case-insensitive), negate the latitude
+    let signed_latitude = if ref_str.to_lowercase().starts_with('s') {
+        -lat_value
+    } else {
+        lat_value
+    };
+
+    Some(TagValue::F64(signed_latitude))
+}
+
+/// Compute GPSLongitude composite tag with signed decimal degrees  
+/// ExifTool: lib/Image/ExifTool/GPS.pm:385-405 GPSLongitude definition
+/// ValueConv: '$val[1] =~ /^W/i ? -$val[0] : $val[0]' - negates if West reference
+pub fn compute_gps_longitude(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // ExifTool requires both GPS:GPSLongitude and GPS:GPSLongitudeRef
+    let longitude = available_tags.get("GPSLongitude")?;
+    let longitude_ref = available_tags.get("GPSLongitudeRef")?;
+
+    let lon_value = longitude.as_f64()?;
+    let ref_str = longitude_ref.as_string()?;
+
+    // ExifTool ValueConv: '$val[1] =~ /^W/i ? -$val[0] : $val[0]'
+    // If reference starts with 'W' (case-insensitive), negate the longitude
+    let signed_longitude = if ref_str.to_lowercase().starts_with('w') {
+        -lon_value
+    } else {
+        lon_value
+    };
+
+    Some(TagValue::F64(signed_longitude))
+}
+
+/// Compute SubSecCreateDate composite tag from EXIF:CreateDate with subseconds and timezone
+/// ExifTool: lib/Image/ExifTool/Exif.pm:5077-5095 SubSecCreateDate definition
+/// Uses %subSecConv logic from lib/Image/ExifTool/Exif.pm:4620-4636
+pub fn compute_subsec_create_date(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // ExifTool requires EXIF:CreateDate
+    let create_date = available_tags.get("CreateDate")?;
+    let create_date_str = create_date.as_string()?;
+
+    // Apply SubSec conversion logic from ExifTool
+    let result = apply_subsec_conversion(
+        &create_date_str,
+        available_tags.get("SubSecTimeDigitized"),
+        available_tags.get("OffsetTimeDigitized"),
+    );
+
+    Some(TagValue::string(result))
+}
+
+/// Compute SubSecModifyDate composite tag from EXIF:ModifyDate with subseconds and timezone
+/// ExifTool: lib/Image/ExifTool/Exif.pm:5096-5114 SubSecModifyDate definition  
+/// Uses %subSecConv logic from lib/Image/ExifTool/Exif.pm:4620-4636
+pub fn compute_subsec_modify_date(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // ExifTool requires EXIF:ModifyDate
+    let modify_date = available_tags.get("ModifyDate")?;
+    let modify_date_str = modify_date.as_string()?;
+
+    // Apply SubSec conversion logic from ExifTool
+    let result = apply_subsec_conversion(
+        &modify_date_str,
+        available_tags.get("SubSecTime"),
+        available_tags.get("OffsetTime"),
+    );
+
+    Some(TagValue::string(result))
+}
+
+/// Compute SubSecMediaCreateDate composite tag for media files
+/// Note: ExifTool doesn't have this as a standard composite - media uses integer timestamps
+/// This provides compatibility for media creation dates with subsecond precision
+pub fn compute_subsec_media_create_date(
+    available_tags: &HashMap<String, TagValue>,
+) -> Option<TagValue> {
+    // Try QuickTime MediaCreateDate first
+    if let Some(media_create_date) = available_tags.get("MediaCreateDate") {
+        let media_date_str = media_create_date.as_string()?;
+
+        // Apply subsec conversion if subsecond data is available
+        let result = apply_subsec_conversion(
+            &media_date_str,
+            available_tags.get("SubSecTime"),
+            available_tags.get("OffsetTime"),
+        );
+
+        return Some(TagValue::string(result));
+    }
+
+    // Fallback to CreateDate for other media types
+    if let Some(create_date) = available_tags.get("CreateDate") {
+        let create_date_str = create_date.as_string()?;
+
+        let result = apply_subsec_conversion(
+            &create_date_str,
+            available_tags.get("SubSecTimeDigitized"),
+            available_tags.get("OffsetTimeDigitized"),
+        );
+
+        return Some(TagValue::string(result));
+    }
+
+    None
+}
+
+/// Apply ExifTool's SubSec conversion logic to combine datetime with subseconds and timezone
+/// ExifTool: lib/Image/ExifTool/Exif.pm:4620-4636 %subSecConv hash RawConv logic
+fn apply_subsec_conversion(
+    base_datetime: &str,
+    subsec_time: Option<&TagValue>,
+    offset_time: Option<&TagValue>,
+) -> String {
+    let mut result = base_datetime.to_string();
+
+    // Phase 1: Add subseconds if available and not already present
+    // ExifTool: undef $v unless ($v = $val[0]) =~ s/( \d{2}:\d{2}:\d{2})(?!\.\d+)/$1\.$subSec/;
+    if let Some(subsec) = subsec_time {
+        if let Some(subsec_str) = subsec.as_string() {
+            // Extract numeric digits from subsec field (ExifTool: $val[1]=~/^(\d+)/)
+            if let Some(digits) = extract_numeric_digits(&subsec_str) {
+                // Use negative lookahead equivalent: only add if time doesn't already have subseconds
+                if !result.contains('.') && result.contains(':') {
+                    // Find the time pattern " HH:MM:SS" and append subseconds
+                    if let Some(time_pos) = result.rfind(' ') {
+                        let (date_part, time_part) = result.split_at(time_pos + 1);
+                        if time_part.len() == 8 && time_part.matches(':').count() == 2 {
+                            result = format!("{}{}.{}", date_part, time_part, digits);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Phase 2: Add timezone offset if available and not already present
+    // ExifTool: if (defined $val[2] and $val[0]!~/[-+]/ and $val[2]=~/^([-+])(\d{1,2}):(\d{2})/)
+    if let Some(offset) = offset_time {
+        if let Some(offset_str) = offset.as_string() {
+            // Only add timezone if result doesn't already contain +/-
+            if !result.contains('+') && !result.contains('-') {
+                // Parse timezone format: [-+]HH:MM
+                if let Some(formatted_offset) = format_timezone_offset(&offset_str) {
+                    result.push_str(&formatted_offset);
+                }
+            }
+        }
+    }
+
+    result
+}
+
+/// Extract numeric digits from subsecond time field
+/// ExifTool: $val[1]=~/^(\d+)/
+fn extract_numeric_digits(subsec_str: &str) -> Option<String> {
+    // Find the first sequence of digits
+    let mut digits = String::new();
+    for ch in subsec_str.chars() {
+        if ch.is_ascii_digit() {
+            digits.push(ch);
+        } else if !digits.is_empty() {
+            break; // Stop at first non-digit after finding digits
+        }
+    }
+
+    if digits.is_empty() {
+        None
+    } else {
+        Some(digits)
+    }
+}
+
+/// Format timezone offset according to ExifTool's sprintf pattern
+/// ExifTool: sprintf('%s%.2d:%.2d', $1, $2, $3) for pattern ^([-+])(\d{1,2}):(\d{2})
+fn format_timezone_offset(offset_str: &str) -> Option<String> {
+    // Handle "Z" timezone (UTC)
+    if offset_str.trim() == "Z" {
+        return Some("+00:00".to_string());
+    }
+
+    // Parse [-+]HH:MM format (allowing 1-2 digit hours)
+    if let Some(captures) = regex::Regex::new(r"^([-+])(\d{1,2}):(\d{2})")
+        .ok()?
+        .captures(offset_str.trim())
+    {
+        let sign = &captures[1];
+        let hours: i32 = captures[2].parse().ok()?;
+        let minutes: i32 = captures[3].parse().ok()?;
+
+        // Format with proper zero-padding (ExifTool sprintf format)
+        Some(format!("{}{:02}:{:02}", sign, hours, minutes))
+    } else {
+        None
+    }
 }

@@ -114,7 +114,9 @@
       "Bash(RUST_LOG=debug cargo run -- config/PNG_pm/boolean_set.json)",
       "Bash(RUST_LOG=debug cargo run --bin exif-oxide -- test-images/apple/IMG_3755.JPG)",
       "Bash(RUST_LOG=debug cargo run -- third-party/exiftool/t/images/GPS.jpg)",
-      "Bash(./coverage_dashboard.pl:*)"
+      "Bash(./coverage_dashboard.pl:*)",
+      "WebFetch(domain:www.cipa.jp)",
+      "Bash(/home/mrm/src/exif-oxide/third-party/exiftool/exiftool -s -FNumber -Aperture /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Canon.jpg)"
     ],
     "deny": []
   }

@@ -1,0 +1,490 @@
+{
+  "_auto_generated": {
+    "generated_at": "Fri Jul 25 14:59:52 2025",
+    "complexity": "medium",
+    "notes": [
+      "Auto-generated configuration for Phase 4 expansion",
+      "Module complexity: medium",
+      "Subdirectories found: 46",
+      "Main table: Main"
+    ],
+    "config": {
+      "include_subdirectories": "true",
+      "condition_handling": "hybrid",
+      "subdirectory_strategy": "runtime_evaluation",
+      "include_printconv": "true"
+    },
+    "subdirectories": [
+      {
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple",
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::RIFF::AudioFormat"
+      },
+      {
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::RIFF::BroadcastExt",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple"
+      },
+      {
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "table_ref": "Image::ExifTool::RIFF::DS64",
+        "condition": "unconditional"
+      },
+      {
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple",
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::RIFF::Sampler"
+      },
+      {
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "table_ref": "Image::ExifTool::RIFF::Instrument",
+        "condition": "unconditional"
+      },
+      {
+        "table_ref": "Image::ExifTool::RIFF::Info",
+        "condition": "unconditional",
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ]
+      },
+      {
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "table_ref": "Image::ExifTool::RIFF::Exif",
+        "condition": "unconditional"
+      },
+      {
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple",
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::RIFF::Hdrl"
+      },
+      {
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "table_ref": "Image::ExifTool::RIFF::Tdat",
+        "condition": "unconditional"
+      },
+      {
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "table_ref": "Image::ExifTool::Nikon::AVI",
+        "condition": "unconditional"
+      },
+      {
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::Pentax::AVI",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple"
+      },
+      {
+        "table_ref": "Image::ExifTool::Pentax::AVI",
+        "condition": "unconditional",
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ]
+      },
+      {
+        "table_ref": "Image::ExifTool::RIFF::Main",
+        "condition": "unconditional",
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ]
+      },
+      {
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple",
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::Olympus::AVI"
+      },
+      {
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "table_ref": "Image::ExifTool::Exif::Main",
+        "condition": "unconditional"
+      },
+      {
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "table_ref": "Image::ExifTool::Ricoh::AVI",
+        "condition": "unconditional"
+      },
+      {
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple",
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::Pentax::Junk"
+      },
+      {
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple",
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::Pentax::Junk2"
+      },
+      {
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "table_ref": "Image::ExifTool::QuickTime::Stream",
+        "condition": "unconditional"
+      },
+      {
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::XMP::Main",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple"
+      },
+      {
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "table_ref": "Image::ExifTool::Jpeg2000::Main",
+        "condition": "unconditional"
+      },
+      {
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::Olympus::WAV",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple"
+      },
+      {
+        "table_ref": "Image::ExifTool::RIFF::CSET",
+        "condition": "unconditional",
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ]
+      },
+      {
+        "table_ref": "Image::ExifTool::RIFF::UserText",
+        "condition": "unconditional",
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ]
+      },
+      {
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "table_ref": "Image::ExifTool::ID3::Main",
+        "condition": "unconditional"
+      },
+      {
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::ID3::Main",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple"
+      },
+      {
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::Exif::Main",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple"
+      },
+      {
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple",
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::Exif::Main"
+      },
+      {
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple",
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::XMP::Main"
+      },
+      {
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "table_ref": "Image::ExifTool::XMP::Main",
+        "condition": "unconditional"
+      },
+      {
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::ICC_Profile::Main",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple"
+      },
+      {
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple",
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::RIFF::VP8"
+      },
+      {
+        "table_ref": "Image::ExifTool::RIFF::VP8L",
+        "condition": "unconditional",
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ]
+      },
+      {
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "table_ref": "Image::ExifTool::RIFF::VP8X",
+        "condition": "unconditional"
+      },
+      {
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple",
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::RIFF::ANIM"
+      },
+      {
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::RIFF::ANMF",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple"
+      },
+      {
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::RIFF::ALPH",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple"
+      },
+      {
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple",
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::QuickTime::Stream"
+      },
+      {
+        "table_ref": "Image::ExifTool::QuickTime::Stream",
+        "condition": "unconditional",
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ]
+      },
+      {
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::XMP::XML",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple"
+      },
+      {
+        "table_ref": "Image::ExifTool::XMP::XML",
+        "condition": "unconditional",
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ]
+      },
+      {
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "table_ref": "Image::ExifTool::RIFF::Info",
+        "condition": "unconditional"
+      },
+      {
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "table_ref": "Image::ExifTool::QuickTime::Stream",
+        "condition": "unconditional"
+      },
+      {
+        "table_ref": "Image::ExifTool::QuickTime::Stream",
+        "condition": "unconditional",
+        "complexity": "simple",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ]
+      },
+      {
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::RIFF::Acidizer",
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple"
+      },
+      {
+        "implementation_notes": [
+          "Simple condition - suitable for static dispatch",
+          "Cross-module reference - may need stub implementation",
+          "Unconditional subdirectory - always processes"
+        ],
+        "complexity": "simple",
+        "condition": "unconditional",
+        "table_ref": "Image::ExifTool::XMP::SEAL"
+      }
+    ],
+    "generated_by": "auto_config_gen.pl"
+  },
+  "extractor": "tag_kit.pl",
+  "description": "Auto-generated tag definitions for RIFF module",
+  "source": "third-party/exiftool/lib/Image/ExifTool/RIFF.pm",
+  "tables": [
+    {
+      "description": "Main RIFF tag table with 46 subdirectories",
+      "table_name": "Main"
+    }
+  ]
+}

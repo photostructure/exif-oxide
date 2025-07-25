@@ -93,6 +93,7 @@ pub fn module_to_source_path(module: &str) -> String {
 }
 
 /// Convert module directory name (e.g., "Canon_pm") to source file path
+#[allow(dead_code)]
 pub fn module_dir_to_source_path(module_dir: &str) -> String {
     if module_dir.ends_with("_pm") {
         let base_name = module_dir.strip_suffix("_pm").unwrap();

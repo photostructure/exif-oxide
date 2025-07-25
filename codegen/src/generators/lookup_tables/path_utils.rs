@@ -9,6 +9,7 @@ pub const EXTRACT_BASE_DIR: &str = "generated/extract";
 pub const MODULE_SUFFIX: &str = "_pm";
 
 /// Get the extract subdirectory for a given config type
+#[allow(dead_code)]
 pub fn get_extract_subdir(config_type: &str) -> &'static str {
     match config_type {
         "tag_table_structure" => "tag_structures",
@@ -44,6 +45,7 @@ pub fn construct_extract_filename(module_name: &str, pattern: &str) -> String {
 }
 
 /// Construct extract file path
+#[allow(dead_code)]
 pub fn construct_extract_path(module_name: &str, subdir: &str, pattern: &str) -> PathBuf {
     let extract_dir = get_extract_dir(subdir);
     let filename = construct_extract_filename(module_name, pattern);

@@ -57,6 +57,22 @@ pub fn compute_composite_tag(
         "FOV" => compute_fov(available_tags),
         "DOF" => compute_dof(available_tags),
 
+        // Phase 1: Core Essential Tags
+        "ISO" => compute_iso(available_tags),
+        "ImageWidth" => compute_image_width(available_tags),
+        "ImageHeight" => compute_image_height(available_tags),
+        "Rotation" => compute_rotation(available_tags),
+
+        // Phase 2: GPS Consolidation
+        "GPSDateTime" => compute_gps_datetime(available_tags),
+        "GPSLatitude" => compute_gps_latitude(available_tags),
+        "GPSLongitude" => compute_gps_longitude(available_tags),
+
+        // Phase 3: SubSec Timestamps
+        "SubSecCreateDate" => compute_subsec_create_date(available_tags),
+        "SubSecModifyDate" => compute_subsec_modify_date(available_tags),
+        "SubSecMediaCreateDate" => compute_subsec_media_create_date(available_tags),
+
         _ => {
             // For other composite tags, log what dependencies are available vs missing
             let mut available_deps = Vec::new();

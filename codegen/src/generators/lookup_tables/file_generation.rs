@@ -59,6 +59,7 @@ impl FileGenerator {
         self
     }
 
+    #[allow(dead_code)]
     pub fn with_custom_imports(mut self, imports: &[&'static str]) -> Self {
         self.imports.extend_from_slice(imports);
         self
