@@ -78,6 +78,58 @@
     {
       "table_name": "AFConfig",
       "description": "Canon AF configuration - advanced autofocus settings for modern bodies"
+    },
+    {
+      "table_name": "ColorData1",
+      "description": "Canon color data for 20D and 350D"
+    },
+    {
+      "table_name": "ColorData2", 
+      "description": "Canon color data for 1DmkII and 1DSmkII"
+    },
+    {
+      "table_name": "ColorData3",
+      "description": "Canon color data table 3"
+    },
+    {
+      "table_name": "ColorData4",
+      "description": "Canon color data table 4"
+    },
+    {
+      "table_name": "ColorData5",
+      "description": "Canon color data table 5"
+    },
+    {
+      "table_name": "ColorData6",
+      "description": "Canon color data table 6"
+    },
+    {
+      "table_name": "ColorData7",
+      "description": "Canon color data table 7"
+    },
+    {
+      "table_name": "ColorData8",
+      "description": "Canon color data table 8"
+    },
+    {
+      "table_name": "ColorData9",
+      "description": "Canon color data table 9"
+    },
+    {
+      "table_name": "ColorData10",
+      "description": "Canon color data table 10"
+    },
+    {
+      "table_name": "ColorData11",
+      "description": "Canon color data table 11"
+    },
+    {
+      "table_name": "ColorData12",
+      "description": "Canon color data table 12"
+    },
+    {
+      "table_name": "ColorDataUnknown",
+      "description": "Canon color data for unknown camera models"
     }
   ]
 }
