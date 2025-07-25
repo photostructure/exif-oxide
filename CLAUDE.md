@@ -40,6 +40,8 @@ Any time we stray from ExifTool's logic and heuristics will introduce defects in
 
 Almost every task will involve studying some part of the ExifTool codebase and validating that we are doing something exactly equivalent.
 
+**Note on Unknown Tags**: We follow ExifTool's default behavior of omitting tags marked with `Unknown => 1`. These tags are only shown in ExifTool when using the `-u` flag. This keeps our output clean and matches user expectations.
+
 ## Essential Documentation
 
 Before starting work on exif-oxide, familiarize yourself with:
@@ -50,6 +52,7 @@ Before starting work on exif-oxide, familiarize yourself with:
 - [MILESTONES.md](docs/MILESTONES.md) - Active development milestones
 - [ENGINEER-GUIDE.md](docs/ENGINEER-GUIDE.md) - Starting point for new contributors
 - [EXCLUDED-TAGS.md](docs/EXCLUDED-TAGS.md) - Tags excluded from implementation scope
+- [TPP.md](docs/TPP.md) - Technical Project Plan template with priority naming conventions
 
 #### Design Documents
 
@@ -213,6 +216,22 @@ project be as idiomatic rust as possible, so please web search and examine the
 rust language documentation to validate structures, setup, naming conventions,
 module interactions, and any other aspects that the rust community has adopted
 as a best practice, and explain those aspects to the user as we embrace them.
+
+### 7. Task prioritization and naming
+
+When creating Technical Project Plans (TPPs) or TODO documents, use the priority naming convention defined in [TPP.md](docs/TPP.md):
+- `P00-P09` - Critical blockers  
+- `P10-P19` - Maximum required tag impact (JPEG + Video ecosystem, binary extraction)
+- `P20-P29` - Technical debt
+- `P30-P39` - Architecture improvements
+- `P40-P49` - Video format support (if not required tag related)
+- `P50-P59` - RAW format support (low required tag impact)
+- `P60+` - Long-term/speculative work
+
+Add letter suffixes (a, b, c) only for strong prerequisites.
+When moving to `docs/done/`, prefix with completion date: `YYYYMMDD-P10a-description.md`
+
+**Priority Rationale**: Focus on extracting all required tags from docs/tag-metadata.json. P10-P19 covers ~97% of required tags (JPEG ecosystem + video). RAW formats (P50s) only add 3 required tags but become useful once binary extraction (P16) enables preview/thumbnail extraction.
 
 ## Development guidance
 
