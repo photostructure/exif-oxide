@@ -22,7 +22,6 @@ use ExifToolExtract qw(
     get_package_hash
     format_json_output
 );
-use MIME::Base64;
 
 # Check arguments - take explicit module path and hash name
 if (@ARGV < 2) {
@@ -61,24 +60,14 @@ for my $file_type (sort keys %$hash_ref) {
     $total_count++;
     
     # Create pattern entry
-    # Encode the pattern as base64 to avoid character escaping issues
-    # ExifTool patterns contain raw bytes (0x00-0xFF) that don't translate
-    # well through JSON -> Rust string literals -> regex compilation.
-    # Base64 encoding preserves the exact byte sequence without any
-    # interpretation or escaping complications.
-    
-    # We need to convert Perl string escape sequences to actual bytes
-    # before base64 encoding. This handles \xNN, \0, \r, \n etc.
-    my $pattern_bytes = eval qq{"$pattern"};
-    if ($@) {
-        warn "Failed to eval pattern for $file_type: $@\n";
-        $pattern_bytes = $pattern;  # Fall back to original
-    }
+    # Store the raw pattern string as-is for the Rust side to process
+    # The historical document (20250715-regex-pattern-extraction.md) shows
+    # this approach was working successfully before. The Rust side handles
+    # pattern processing with RegexBuilder::new().unicode(false).
     
     push @patterns, {
         file_type => $file_type,
         pattern => $pattern,
-        pattern_base64 => encode_base64($pattern_bytes, ''),  # No newlines
         source => {
             module => $module_path,
             hash => $hash_name,
