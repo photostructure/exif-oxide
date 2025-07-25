@@ -114,7 +114,12 @@ fn generate_category_module(
                     code.push_str(&format!("static {const_name}: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {{\n"));
                     code.push_str("    let mut map = HashMap::new();\n");
                     
-                    for (key, value) in data_obj {
+                    // Sort keys for deterministic output
+                    let mut sorted_keys: Vec<&String> = data_obj.keys().collect();
+                    sorted_keys.sort();
+                    
+                    for key in sorted_keys {
+                        let value = &data_obj[key];
                         tracing::debug!("Processing PrintConv entry: key='{}', value={:?}", key, value);
                         crate::generators::lookup_tables::generate_print_conv_entry(&mut code, key, value);
                     }
@@ -244,8 +249,11 @@ fn generate_mod_file(
     code.push_str("#![allow(dead_code)]\n");
     code.push_str("#![allow(unused_variables)]\n\n");
     
-    // Module declarations
-    for module in modules {
+    // Module declarations (sorted for deterministic output)
+    let mut sorted_modules: Vec<&str> = modules.iter().map(|s| s.as_ref()).collect();
+    sorted_modules.sort();
+    
+    for module in sorted_modules {
         code.push_str(&format!("pub mod {module};\n"));
     }
     code.push('\n');
@@ -299,8 +307,11 @@ fn generate_mod_file(
     code.push_str("    let mut map = HashMap::new();\n");
     code.push_str("    \n");
     
-    // Add tags from each module
-    for module in modules {
+    // Add tags from each module (sorted for deterministic output)
+    let mut sorted_modules: Vec<&str> = modules.iter().map(|s| s.as_ref()).collect();
+    sorted_modules.sort();
+    
+    for module in sorted_modules {
         code.push_str(&format!("    // {module} tags\n"));
         code.push_str(&format!("    for (id, tag_def) in {module}::get_{module}_tags() {{\n"));
         code.push_str("        map.insert(id, tag_def);\n");
@@ -360,9 +371,13 @@ fn generate_mod_file(
         code.push_str("// Subdirectory processing functions\n");
         
         // Generate binary data parsers for each unique subdirectory table
-        let mut generated_tables = std::collections::HashSet::new();
+        let mut generated_tables = std::collections::BTreeSet::new();
         
-        for collection in subdirectory_info.values() {
+        // Sort subdirectory collections by tag_id for deterministic output
+        let mut sorted_collections: Vec<(&u32, &SubDirectoryCollection)> = subdirectory_info.iter().collect();
+        sorted_collections.sort_by_key(|(tag_id, _)| *tag_id);
+        
+        for (_, collection) in sorted_collections {
             for variant in &collection.variants {
                 if variant.is_binary_data {
                     if let Some(extracted_table) = &variant.extracted_table {
@@ -380,7 +395,11 @@ fn generate_mod_file(
         }
         
         // Generate conditional dispatch functions for tags with subdirectories
-        for (tag_id, collection) in subdirectory_info {
+        // Sort by tag_id for deterministic output
+        let mut sorted_subdirs: Vec<(&u32, &SubDirectoryCollection)> = subdirectory_info.iter().collect();
+        sorted_subdirs.sort_by_key(|(tag_id, _)| *tag_id);
+        
+        for (tag_id, collection) in sorted_subdirs {
             generate_subdirectory_dispatcher(&mut code, *tag_id, collection)?;
         }
     }
@@ -612,7 +631,7 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
             code.push_str("        ");
         } else {
             // For positive offsets, use direct value
-            let byte_offset_usize = byte_offset as usize;
+            let _byte_offset_usize = byte_offset as usize;
             // No extra indent needed
         }
         

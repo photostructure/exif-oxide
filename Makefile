@@ -77,6 +77,7 @@ check-extractors:
 codegen:
 	@echo "🔧 Running code generation..."
 	@$(MAKE) --no-print-directory -C codegen -f Makefile.modular -j4 codegen
+	@$(MAKE) fix
 	
 # Extract all ExifTool algorithms and regenerate code  
 sync: codegen

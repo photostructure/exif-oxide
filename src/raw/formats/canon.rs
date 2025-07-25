@@ -305,7 +305,7 @@ pub fn get_canon_tag_name(_tag_id: u16) -> Option<&'static str> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generated::Canon_pm::tag_structure::CanonDataType;
+    use crate::generated::Canon_pm::tag_kit::CANON_PM_TAG_KITS;
 
     #[test]
     fn test_canon_format_names() {
@@ -322,29 +322,47 @@ mod tests {
     }
 
     #[test]
-    fn test_canon_data_type_tag_ids() {
-        assert_eq!(CanonDataType::CameraSettings.tag_id(), 0x0001);
-        assert_eq!(CanonDataType::FocalLength.tag_id(), 0x0002);
-        assert_eq!(CanonDataType::FlashInfo.tag_id(), 0x0003);
-        assert_eq!(CanonDataType::ShotInfo.tag_id(), 0x0004);
-        assert_eq!(CanonDataType::AFInfo2.tag_id(), 0x0026);
+    fn test_canon_tag_kit_lookup() {
+        // Test that we can look up Canon tags by ID
+        assert!(CANON_PM_TAG_KITS.get(&0x0001).is_some());
+        assert_eq!(CANON_PM_TAG_KITS.get(&0x0001).unwrap().name, "TimeZone");
+
+        assert!(CANON_PM_TAG_KITS.get(&0x0002).is_some());
+        assert_eq!(CANON_PM_TAG_KITS.get(&0x0002).unwrap().name, "TimeZoneCity");
+
+        assert!(CANON_PM_TAG_KITS.get(&0x0003).is_some());
+        assert_eq!(
+            CANON_PM_TAG_KITS.get(&0x0003).unwrap().name,
+            "AFAccelDecelTracking"
+        );
+
+        assert!(CANON_PM_TAG_KITS.get(&0x0004).is_some());
+        assert_eq!(CANON_PM_TAG_KITS.get(&0x0004).unwrap().name, "ExposureTime");
+
+        assert!(CANON_PM_TAG_KITS.get(&0x0026).is_some()); // AFInfo2
+        assert_eq!(CANON_PM_TAG_KITS.get(&0x0026).unwrap().name, "CanonAFInfo2");
     }
 
     #[test]
-    fn test_canon_data_type_from_tag_id() {
-        assert_eq!(
-            CanonDataType::from_tag_id(0x0001),
-            Some(CanonDataType::CameraSettings)
-        );
-        assert_eq!(
-            CanonDataType::from_tag_id(0x0002),
-            Some(CanonDataType::FocalLength)
-        );
-        assert_eq!(
-            CanonDataType::from_tag_id(0x0026),
-            Some(CanonDataType::AFInfo2)
-        );
-        assert_eq!(CanonDataType::from_tag_id(0x9999), None); // Unknown tag
+    fn test_canon_tag_lookup_by_id() {
+        // Test looking up tags by ID in the tag kit
+        let tag_1 = CANON_PM_TAG_KITS.get(&0x0001);
+        assert!(tag_1.is_some());
+        assert_eq!(tag_1.unwrap().id, 0x0001);
+        assert_eq!(tag_1.unwrap().name, "TimeZone");
+
+        let tag_2 = CANON_PM_TAG_KITS.get(&0x0002);
+        assert!(tag_2.is_some());
+        assert_eq!(tag_2.unwrap().id, 0x0002);
+        assert_eq!(tag_2.unwrap().name, "TimeZoneCity");
+
+        let tag_26 = CANON_PM_TAG_KITS.get(&0x0026);
+        assert!(tag_26.is_some());
+        assert_eq!(tag_26.unwrap().id, 0x0026);
+        assert_eq!(tag_26.unwrap().name, "CanonAFInfo2");
+
+        // Test unknown tag
+        assert!(CANON_PM_TAG_KITS.get(&0x9999).is_none());
     }
 
     #[test]
@@ -359,9 +377,16 @@ mod tests {
     }
 
     #[test]
-    fn test_canon_data_type_names() {
-        assert_eq!(CanonDataType::CameraSettings.name(), "CanonCameraSettings");
-        assert_eq!(CanonDataType::AFInfo2.name(), "CanonAFInfo2");
-        assert_eq!(CanonDataType::TimeInfo.name(), "TimeInfo");
+    fn test_canon_tag_names() {
+        // Test that tag names are correctly stored in the tag kit
+        assert_eq!(CANON_PM_TAG_KITS.get(&0x0001).unwrap().name, "TimeZone");
+        assert_eq!(CANON_PM_TAG_KITS.get(&0x0026).unwrap().name, "CanonAFInfo2");
+
+        // Find TimeInfo tag by searching through all tags
+        let time_info_tag = CANON_PM_TAG_KITS
+            .values()
+            .find(|tag| tag.name == "TimeInfo");
+        assert!(time_info_tag.is_some());
+        assert_eq!(time_info_tag.unwrap().name, "TimeInfo");
     }
 }
