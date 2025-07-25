@@ -473,7 +473,16 @@
     "groups": [
       "EXIF"
     ],
-    "required": false
+    "required": true
+  },
+  "JpgFromRaw2": {
+    "frequency": 0.0001,
+    "mainstream": true,
+    "groups": [
+      "PanasonicRaw",
+      "Preview"
+    ],
+    "required": true
   },
   "Keywords": {
     "frequency": 0.0014,
@@ -689,7 +698,7 @@
       "MPF",
       "MakerNotes"
     ],
-    "required": false
+    "required": true
   },
   "Rating": {
     "frequency": 0.14,
@@ -836,7 +845,7 @@
       "JFIF",
       "MakerNotes"
     ],
-    "required": false
+    "required": true
   },
   "ThumbnailTIFF": {
     "frequency": 0.0029,
@@ -845,7 +854,7 @@
       "EXIF",
       "JFIF"
     ],
-    "required": false
+    "required": true
   },
   "TimeStamp": {
     "frequency": 0.0079,
@@ -6680,7 +6689,7 @@
     "groups": [
       "EXIF"
     ],
-    "required": false
+    "required": true
   },
   "MetadataVersion": {
     "frequency": 0.0002,
