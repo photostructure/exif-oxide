@@ -496,6 +496,22 @@ static CONDITIONAL_ARRAYS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>
 static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> = LazyLock::new(
     || {
         let mut map = HashMap::new();
+        map.insert("13", vec![
+        ConditionalEntry {
+            condition: "$format eq \"int32u\" and ($count == 138 or $count == 148)",
+            name: "CanonCameraInfoPowerShot",
+            subdirectory: true,
+            writable: false,
+            format: None,
+        },
+        ConditionalEntry {
+            condition: "$format eq \"int32u\" and ($count == 156 or $count == 162 or $count == 167 or $count == 171 or $count == 264)",
+            name: "CanonCameraInfoPowerShot2",
+            subdirectory: true,
+            writable: false,
+            format: None,
+        },
+    ]);
         map.insert("16385", vec![
         ConditionalEntry {
             condition: "$count == 582",
@@ -577,22 +593,6 @@ static COUNT_CONDITIONS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> 
         ConditionalEntry {
             condition: "$count == 4528",
             name: "ColorData12",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-    ]);
-        map.insert("13", vec![
-        ConditionalEntry {
-            condition: "$format eq \"int32u\" and ($count == 138 or $count == 148)",
-            name: "CanonCameraInfoPowerShot",
-            subdirectory: true,
-            writable: false,
-            format: None,
-        },
-        ConditionalEntry {
-            condition: "$format eq \"int32u\" and ($count == 156 or $count == 162 or $count == 167 or $count == 171 or $count == 264)",
-            name: "CanonCameraInfoPowerShot2",
             subdirectory: true,
             writable: false,
             format: None,

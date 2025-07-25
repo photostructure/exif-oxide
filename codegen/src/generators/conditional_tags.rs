@@ -32,13 +32,13 @@ pub struct ConditionalData {
     pub cross_tag_dependencies: Vec<ConditionalEntry>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ConditionalArray {
     pub tag_id: String,
     pub conditions: Vec<ConditionalEntry>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ConditionalEntry {
     pub tag_id: String,
     pub condition: String,
@@ -302,7 +302,11 @@ fn generate_conditional_array_resolver(data: &ConditionalTagsExtraction) -> Resu
     code.push_str("static CONDITIONAL_ARRAYS: LazyLock<HashMap<&'static str, Vec<ConditionalEntry>>> = LazyLock::new(|| {\n");
     code.push_str("    let mut map = HashMap::new();\n");
 
-    for array in &data.conditional_data.conditional_arrays {
+    // Sort arrays by tag_id for deterministic output
+    let mut sorted_arrays = data.conditional_data.conditional_arrays.clone();
+    sorted_arrays.sort_by(|a, b| a.tag_id.cmp(&b.tag_id));
+    
+    for array in &sorted_arrays {
         code.push_str(&format!("    map.insert(\"{}\", vec![\n", array.tag_id));
 
         for condition in &array.conditions {
@@ -357,7 +361,11 @@ fn generate_count_condition_resolver(data: &ConditionalTagsExtraction) -> Result
             .push(condition);
     }
 
-    for (tag_id, conditions) in grouped_conditions {
+    // Sort grouped conditions by tag_id for deterministic output
+    let mut sorted_conditions: Vec<(String, Vec<&ConditionalEntry>)> = grouped_conditions.into_iter().collect();
+    sorted_conditions.sort_by(|a, b| a.0.cmp(&b.0));
+    
+    for (tag_id, conditions) in sorted_conditions {
         code.push_str(&format!("    map.insert(\"{tag_id}\", vec![\n"));
 
         for condition in conditions {
@@ -412,7 +420,11 @@ fn generate_binary_pattern_resolver(data: &ConditionalTagsExtraction) -> Result<
             .push(pattern);
     }
 
-    for (tag_id, patterns) in grouped_patterns {
+    // Sort grouped patterns by tag_id for deterministic output
+    let mut sorted_patterns: Vec<(String, Vec<&ConditionalEntry>)> = grouped_patterns.into_iter().collect();
+    sorted_patterns.sort_by(|a, b| a.0.cmp(&b.0));
+    
+    for (tag_id, patterns) in sorted_patterns {
         code.push_str(&format!("    map.insert(\"{tag_id}\", vec![\n"));
 
         for pattern in patterns {
