@@ -492,7 +492,7 @@ fn generate_mod_file(
         if !missing_tables.is_empty() {
             code.push_str("\n// Stub functions for tables not extracted by tag kit\n");
             for table_name in missing_tables {
-                code.push_str(&format!("fn process_{}(data: &[u8], _byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n", table_name));
+                code.push_str(&format!("fn process_{table_name}(data: &[u8], _byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n"));
                 code.push_str("    // TODO: Implement when this table is extracted\n");
                 code.push_str("    tracing::debug!(\"Stub function called for {}\", data.len());\n");
                 code.push_str("    Ok(vec![])\n");
@@ -761,7 +761,7 @@ fn collect_subdirectory_info(tag_kits: &[TagKit]) -> HashMap<u32, SubDirectoryCo
             let tag_id = tag_kit.tag_id.parse::<u32>().unwrap_or(0);
             
             let variant = SubDirectoryVariant {
-                variant_id: tag_kit.variant_id.clone().unwrap_or_else(|| format!("{}_default", tag_id)),
+                variant_id: tag_kit.variant_id.clone().unwrap_or_else(|| format!("{tag_id}_default")),
                 condition: tag_kit.condition.clone(),
                 table_name: subdirectory.tag_table.clone(),
                 is_binary_data: subdirectory.is_binary_data.unwrap_or(false),
@@ -808,7 +808,7 @@ fn collect_subdirectory_info(tag_kits: &[TagKit]) -> HashMap<u32, SubDirectoryCo
 /// A calculation like (0 - 1) * 2 = -2 becomes 18446744073709551614 in usize.
 /// This creates absurd comparisons like "if data.len() >= 18446744073709551615"
 fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTable) -> Result<()> {
-    code.push_str(&format!("fn process_{}(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n", fn_name));
+    code.push_str(&format!("fn process_{fn_name}(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n"));
     code.push_str("    let mut tags = Vec::new();\n");
     
     // Get the format size multiplier
@@ -831,16 +831,15 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
         code.push_str(&format!("    // {} at offset {}\n", tag.name, tag.tag_id));
         
         // Handle negative offsets (from end of data) like ExifTool does
-        let offset_var_name = tag.name.to_lowercase().replace(' ', "_").replace('-', "_");
+        let offset_var_name = tag.name.to_lowercase().replace([' ', '-'], "_");
         if byte_offset < 0 {
             // For negative offsets, we need to generate runtime calculation
             code.push_str(&format!("    // {} uses negative offset {} (from end of data)\n", tag.name, byte_offset));
-            code.push_str(&format!("    if data.len() as i32 + {} < 0 {{\n", byte_offset));
+            code.push_str(&format!("    if data.len() as i32 + {byte_offset} < 0 {{\n"));
             code.push_str(&format!("        // Skipping {} - negative offset beyond data start\n", tag.name));
             code.push_str("        // (This is normal for some tables)\n");
             code.push_str("    } else {\n");
-            code.push_str(&format!("        let {}_offset = (data.len() as i32 + {}) as usize;\n", 
-                offset_var_name, byte_offset));
+            code.push_str(&format!("        let {offset_var_name}_offset = (data.len() as i32 + {byte_offset}) as usize;\n"));
             // Set indent for the tag processing code
             code.push_str("        ");
         } else {
@@ -865,7 +864,7 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
                         
                         // Generate bounds check based on offset type
                         if byte_offset < 0 {
-                            code.push_str(&format!("if {}_offset + {} <= data.len() {{\n", offset_var_name, total_size));
+                            code.push_str(&format!("if {offset_var_name}_offset + {total_size} <= data.len() {{\n"));
                         } else {
                             code.push_str(&format!("    if data.len() >= {} {{\n", byte_offset as usize + total_size));
                         }
@@ -873,8 +872,7 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
                         match base_format {
                             "int16s" => {
                                 if byte_offset < 0 {
-                                    code.push_str(&format!("            if let Ok(values) = read_int16s_array(&data[{}_offset..{}_offset + {}], byte_order, {}) {{\n", 
-                                        offset_var_name, offset_var_name, total_size, count));
+                                    code.push_str(&format!("            if let Ok(values) = read_int16s_array(&data[{offset_var_name}_offset..{offset_var_name}_offset + {total_size}], byte_order, {count}) {{\n"));
                                 } else {
                                     code.push_str(&format!("        if let Ok(values) = read_int16s_array(&data[{}..{}], byte_order, {}) {{\n", 
                                         byte_offset as usize, byte_offset as usize + total_size, count));
@@ -885,8 +883,7 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
                             }
                             "int16u" => {
                                 if byte_offset < 0 {
-                                    code.push_str(&format!("            if let Ok(values) = read_int16u_array(&data[{}_offset..{}_offset + {}], byte_order, {}) {{\n", 
-                                        offset_var_name, offset_var_name, total_size, count));
+                                    code.push_str(&format!("            if let Ok(values) = read_int16u_array(&data[{offset_var_name}_offset..{offset_var_name}_offset + {total_size}], byte_order, {count}) {{\n"));
                                 } else {
                                     code.push_str(&format!("        if let Ok(values) = read_int16u_array(&data[{}..{}], byte_order, {}) {{\n", 
                                         byte_offset as usize, byte_offset as usize + total_size, count));
@@ -897,7 +894,7 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
                             }
                             _ => {
                                 // For other formats, just store the raw offset for now
-                                code.push_str(&format!("        // TODO: Handle format {}\n", base_format));
+                                code.push_str(&format!("        // TODO: Handle format {base_format}\n"));
                             }
                         }
                         
@@ -919,7 +916,7 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
                 
                 // Generate bounds check based on offset type
                 if byte_offset < 0 {
-                    code.push_str(&format!("if {}_offset + {} <= data.len() {{\n", offset_var_name, value_size));
+                    code.push_str(&format!("if {offset_var_name}_offset + {value_size} <= data.len() {{\n"));
                 } else {
                     code.push_str(&format!("    if data.len() >= {} {{\n", byte_offset as usize + value_size));
                 }
@@ -927,8 +924,7 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
                 match format.as_str() {
                     "int16s" => {
                         if byte_offset < 0 {
-                            code.push_str(&format!("            if let Ok(value) = read_int16s(&data[{}_offset..{}_offset + {}], byte_order) {{\n", 
-                                offset_var_name, offset_var_name, value_size));
+                            code.push_str(&format!("            if let Ok(value) = read_int16s(&data[{offset_var_name}_offset..{offset_var_name}_offset + {value_size}], byte_order) {{\n"));
                         } else {
                             code.push_str(&format!("        if let Ok(value) = read_int16s(&data[{}..{}], byte_order) {{\n", 
                                 byte_offset as usize, byte_offset as usize + value_size));
@@ -938,7 +934,7 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
                     }
                     _ => {
                         // For other formats, just store the raw offset for now
-                        code.push_str(&format!("        // TODO: Handle format {}\n", format));
+                        code.push_str(&format!("        // TODO: Handle format {format}\n"));
                     }
                 }
                 
@@ -1183,7 +1179,7 @@ fn generate_subdirectory_dispatcher(
                         if is_cross_module_reference(&variant.table_name, current_module) {
                             // Cross-module reference - add comment
                             for count_val in counts {
-                                code.push_str(&format!("        {} => {{\n", count_val));
+                                code.push_str(&format!("        {count_val} => {{\n"));
                                 code.push_str(&format!("            // Cross-module reference to {}\n", variant.table_name));
                                 code.push_str("            // TODO: Implement cross-module subdirectory support\n");
                                 code.push_str("            Ok(vec![])\n");
@@ -1196,29 +1192,29 @@ fn generate_subdirectory_dispatcher(
                                 .to_lowercase();
                                 
                             for count_val in counts {
-                                code.push_str(&format!("        {} => {{\n", count_val));
-                                code.push_str(&format!("            debug!(\"Matched count {} for variant {}\");\n", count_val, table_fn_name));
-                                code.push_str(&format!("            process_{}(data, byte_order)\n", table_fn_name));
+                                code.push_str(&format!("        {count_val} => {{\n"));
+                                code.push_str(&format!("            debug!(\"Matched count {count_val} for variant {table_fn_name}\");\n"));
+                                code.push_str(&format!("            process_{table_fn_name}(data, byte_order)\n"));
                                 code.push_str("        }\n");
                             }
                         }
                     }
                     SubdirectoryCondition::Model(_pattern) => {
                         // Add as comment for now
-                        let escaped = escape_string(&condition_str);
-                        code.push_str(&format!("        // Model condition not yet supported: {}\n", escaped));
+                        let escaped = escape_string(condition_str);
+                        code.push_str(&format!("        // Model condition not yet supported: {escaped}\n"));
                         code.push_str(&format!("        // Would dispatch to: {}\n", variant.table_name));
                     }
                     SubdirectoryCondition::Format(_pattern) => {
                         // Add as comment for now
-                        let escaped = escape_string(&condition_str);
-                        code.push_str(&format!("        // Format condition not yet supported: {}\n", escaped));
+                        let escaped = escape_string(condition_str);
+                        code.push_str(&format!("        // Format condition not yet supported: {escaped}\n"));
                         code.push_str(&format!("        // Would dispatch to: {}\n", variant.table_name));
                     }
                     SubdirectoryCondition::Runtime(runtime_str) => {
                         // Add as comment for now
                         let escaped = escape_string(&runtime_str);
-                        code.push_str(&format!("        // Runtime condition not yet supported: {}\n", escaped));
+                        code.push_str(&format!("        // Runtime condition not yet supported: {escaped}\n"));
                         code.push_str(&format!("        // Would dispatch to: {}\n", variant.table_name));
                     }
                 }
