@@ -53,7 +53,7 @@ pub fn generate_modular_tag_kit(
         
         generated_modules.push(module_name_cat);
         
-        println!("  ✓ Generated {} with {} tags, {} PrintConv tables",
+        tracing::debug!("  ✓ Generated {} with {} tags, {} PrintConv tables",
             module_name_cat,
             tag_kits.len(),
             print_conv_count
@@ -65,7 +65,7 @@ pub fn generate_modular_tag_kit(
     fs::write(format!("{tag_kit_dir}/mod.rs"), mod_code)?;
     
     // Summary
-    println!("  ✓ Generated modular tag kit for {} with {} tags split into {} modules", 
+    tracing::debug!("  ✓ Generated modular tag kit for {} with {} tags split into {} modules", 
         module_name,
         extraction.tag_kits.len(),
         generated_modules.len()

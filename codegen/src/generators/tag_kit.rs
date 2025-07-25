@@ -247,7 +247,7 @@ pub fn generate_tag_kit(
     let output_path = format!("{}/{}_tag_kit.rs", output_dir, module_name.to_lowercase());
     fs::write(&output_path, code)?;
     
-    println!("  ✓ Generated tag kit for {} with {} tags ({} simple, {} expression, {} manual)", 
+    tracing::debug!("  ✓ Generated tag kit for {} with {} tags ({} simple, {} expression, {} manual)", 
         module_name,
         extraction.tag_kits.len(),
         extraction.tag_kits.iter().filter(|t| t.print_conv_type == "Simple").count(),
