@@ -90,6 +90,28 @@ pub static SONY_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|
 });
 
 // Helper functions for reading binary data
+fn model_matches(model: &str, pattern: &str) -> bool {
+    // ExifTool regexes are already in a compatible format
+    // Just need to ensure proper escaping was preserved
+
+    match regex::Regex::new(pattern) {
+        Ok(re) => re.is_match(model),
+        Err(e) => {
+            tracing::warn!("Failed to compile model regex '{}': {}", pattern, e);
+            false
+        }
+    }
+}
+
+fn format_matches(format: &str, pattern: &str) -> bool {
+    if let Ok(re) = regex::Regex::new(pattern) {
+        re.is_match(format)
+    } else {
+        tracing::warn!("Failed to compile format regex: {}", pattern);
+        false
+    }
+}
+
 fn read_int16s_array(data: &[u8], byte_order: ByteOrder, count: usize) -> Result<Vec<i16>> {
     if data.len() < count * 2 {
         return Err(crate::types::ExifError::ParseError(
@@ -3870,6 +3892,7 @@ pub fn process_tag_0x10_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x10_subdirectory called with {} bytes, count={}",
@@ -3898,7 +3921,7 @@ pub fn process_tag_0x10_subdirectory(
             debug!("Matched count 15360 for variant sony_camerainfo3");
             process_sony_camerainfo3(data, byte_order)
         }
-        _ => Ok(vec![]), // Unknown variant
+        _ => Ok(vec![]), // No matching variant
     }
 }
 
@@ -3907,6 +3930,7 @@ pub fn process_tag_0x20_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x20_subdirectory called with {} bytes, count={}",
@@ -3923,7 +3947,7 @@ pub fn process_tag_0x20_subdirectory(
             debug!("Matched count 19148 for variant sony_focusinfo");
             process_sony_focusinfo(data, byte_order)
         }
-        _ => Ok(vec![]), // Unknown variant
+        _ => Ok(vec![]), // No matching variant
     }
 }
 
@@ -3932,6 +3956,7 @@ pub fn process_tag_0x23_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x23_subdirectory called with {} bytes, count={}",
@@ -3947,6 +3972,7 @@ pub fn process_tag_0x114_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x114_subdirectory called with {} bytes, count={}",
@@ -3975,7 +4001,7 @@ pub fn process_tag_0x114_subdirectory(
             debug!("Matched count 2048 for variant sony_camerasettings3");
             process_sony_camerasettings3(data, byte_order)
         }
-        _ => Ok(vec![]), // Unknown variant
+        _ => Ok(vec![]), // No matching variant
     }
 }
 
@@ -3984,6 +4010,7 @@ pub fn process_tag_0x116_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x116_subdirectory called with {} bytes, count={}",
@@ -3999,6 +4026,7 @@ pub fn process_tag_0x388_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x388_subdirectory called with {} bytes, count={}",
@@ -4006,7 +4034,8 @@ pub fn process_tag_0x388_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_sony_meterinfo(data, byte_order)
 }
 
 pub fn process_tag_0x4b8_subdirectory(
@@ -4014,6 +4043,7 @@ pub fn process_tag_0x4b8_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4b8_subdirectory called with {} bytes, count={}",
@@ -4021,7 +4051,8 @@ pub fn process_tag_0x4b8_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_sony_meterinfo(data, byte_order)
 }
 
 pub fn process_tag_0xe00_subdirectory(
@@ -4029,6 +4060,7 @@ pub fn process_tag_0xe00_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xe00_subdirectory called with {} bytes, count={}",
@@ -4036,6 +4068,8 @@ pub fn process_tag_0xe00_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::PrintIM::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -4044,6 +4078,7 @@ pub fn process_tag_0x1003_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x1003_subdirectory called with {} bytes, count={}",
@@ -4059,6 +4094,7 @@ pub fn process_tag_0x2010_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2010_subdirectory called with {} bytes, count={}",
@@ -4074,6 +4110,7 @@ pub fn process_tag_0x202a_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x202a_subdirectory called with {} bytes, count={}",
@@ -4089,6 +4126,7 @@ pub fn process_tag_0x2044_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2044_subdirectory called with {} bytes, count={}",
@@ -4096,7 +4134,8 @@ pub fn process_tag_0x2044_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_sony_hiddeninfo(data, byte_order)
 }
 
 pub fn process_tag_0x3000_subdirectory(
@@ -4104,6 +4143,7 @@ pub fn process_tag_0x3000_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x3000_subdirectory called with {} bytes, count={}",
@@ -4111,7 +4151,8 @@ pub fn process_tag_0x3000_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_sony_shotinfo(data, byte_order)
 }
 
 pub fn process_tag_0x900b_subdirectory(
@@ -4119,6 +4160,7 @@ pub fn process_tag_0x900b_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x900b_subdirectory called with {} bytes, count={}",
@@ -4134,6 +4176,7 @@ pub fn process_tag_0x9050_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x9050_subdirectory called with {} bytes, count={}",
@@ -4149,6 +4192,7 @@ pub fn process_tag_0x9400_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x9400_subdirectory called with {} bytes, count={}",
@@ -4164,6 +4208,7 @@ pub fn process_tag_0x9401_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x9401_subdirectory called with {} bytes, count={}",
@@ -4171,7 +4216,8 @@ pub fn process_tag_0x9401_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_sony_tag9401(data, byte_order)
 }
 
 pub fn process_tag_0x9402_subdirectory(
@@ -4179,6 +4225,7 @@ pub fn process_tag_0x9402_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x9402_subdirectory called with {} bytes, count={}",
@@ -4194,6 +4241,7 @@ pub fn process_tag_0x9403_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x9403_subdirectory called with {} bytes, count={}",
@@ -4201,7 +4249,8 @@ pub fn process_tag_0x9403_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_sony_tag9403(data, byte_order)
 }
 
 pub fn process_tag_0x9404_subdirectory(
@@ -4209,6 +4258,7 @@ pub fn process_tag_0x9404_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x9404_subdirectory called with {} bytes, count={}",
@@ -4224,6 +4274,7 @@ pub fn process_tag_0x9405_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x9405_subdirectory called with {} bytes, count={}",
@@ -4239,6 +4290,7 @@ pub fn process_tag_0x9406_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x9406_subdirectory called with {} bytes, count={}",
@@ -4254,6 +4306,7 @@ pub fn process_tag_0x940a_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x940a_subdirectory called with {} bytes, count={}",
@@ -4269,6 +4322,7 @@ pub fn process_tag_0x940c_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x940c_subdirectory called with {} bytes, count={}",
@@ -4284,6 +4338,7 @@ pub fn process_tag_0x940e_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x940e_subdirectory called with {} bytes, count={}",
@@ -4299,6 +4354,7 @@ pub fn process_tag_0x9416_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x9416_subdirectory called with {} bytes, count={}",
@@ -4306,7 +4362,8 @@ pub fn process_tag_0x9416_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_sony_tag9416(data, byte_order)
 }
 
 pub fn process_tag_0xb028_subdirectory(
@@ -4314,6 +4371,7 @@ pub fn process_tag_0xb028_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xb028_subdirectory called with {} bytes, count={}",

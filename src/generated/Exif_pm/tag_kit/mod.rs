@@ -120,6 +120,28 @@ pub static EXIF_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|
 });
 
 // Helper functions for reading binary data
+fn model_matches(model: &str, pattern: &str) -> bool {
+    // ExifTool regexes are already in a compatible format
+    // Just need to ensure proper escaping was preserved
+
+    match regex::Regex::new(pattern) {
+        Ok(re) => re.is_match(model),
+        Err(e) => {
+            tracing::warn!("Failed to compile model regex '{}': {}", pattern, e);
+            false
+        }
+    }
+}
+
+fn format_matches(format: &str, pattern: &str) -> bool {
+    if let Ok(re) = regex::Regex::new(pattern) {
+        re.is_match(format)
+    } else {
+        tracing::warn!("Failed to compile format regex: {}", pattern);
+        false
+    }
+}
+
 fn read_int16s_array(data: &[u8], byte_order: ByteOrder, count: usize) -> Result<Vec<i16>> {
     if data.len() < count * 2 {
         return Err(crate::types::ExifError::ParseError(
@@ -169,11 +191,20 @@ fn read_int16s(data: &[u8], byte_order: ByteOrder) -> Result<i16> {
 }
 
 // Subdirectory processing functions
+
+// Stub functions for tables not extracted by tag kit
+fn process_exif_main(data: &[u8], _byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
 pub fn process_tag_0x14a_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x14a_subdirectory called with {} bytes, count={}",
@@ -189,6 +220,7 @@ pub fn process_tag_0x190_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x190_subdirectory called with {} bytes, count={}",
@@ -196,6 +228,8 @@ pub fn process_tag_0x190_subdirectory(
         count
     );
 
+    // Reference to Unknown table
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -204,6 +238,7 @@ pub fn process_tag_0x2bc_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2bc_subdirectory called with {} bytes, count={}",
@@ -211,6 +246,8 @@ pub fn process_tag_0x2bc_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::XMP::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -219,6 +256,7 @@ pub fn process_tag_0x4748_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x4748_subdirectory called with {} bytes, count={}",
@@ -226,6 +264,8 @@ pub fn process_tag_0x4748_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::Microsoft::Stitch
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -234,6 +274,7 @@ pub fn process_tag_0x8290_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x8290_subdirectory called with {} bytes, count={}",
@@ -241,6 +282,8 @@ pub fn process_tag_0x8290_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::Kodak::IFD
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -249,6 +292,7 @@ pub fn process_tag_0x83bb_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x83bb_subdirectory called with {} bytes, count={}",
@@ -256,6 +300,8 @@ pub fn process_tag_0x83bb_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::IPTC::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -264,6 +310,7 @@ pub fn process_tag_0x8568_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x8568_subdirectory called with {} bytes, count={}",
@@ -271,6 +318,8 @@ pub fn process_tag_0x8568_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::IPTC::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -279,6 +328,7 @@ pub fn process_tag_0x8606_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x8606_subdirectory called with {} bytes, count={}",
@@ -286,6 +336,8 @@ pub fn process_tag_0x8606_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::Leaf::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -294,6 +346,7 @@ pub fn process_tag_0x8649_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x8649_subdirectory called with {} bytes, count={}",
@@ -301,6 +354,8 @@ pub fn process_tag_0x8649_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::Photoshop::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -309,6 +364,7 @@ pub fn process_tag_0x8769_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x8769_subdirectory called with {} bytes, count={}",
@@ -316,6 +372,8 @@ pub fn process_tag_0x8769_subdirectory(
         count
     );
 
+    // Reference to Unknown table
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -324,6 +382,7 @@ pub fn process_tag_0x8773_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x8773_subdirectory called with {} bytes, count={}",
@@ -331,6 +390,8 @@ pub fn process_tag_0x8773_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::ICC_Profile::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -339,6 +400,7 @@ pub fn process_tag_0x8825_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x8825_subdirectory called with {} bytes, count={}",
@@ -346,6 +408,8 @@ pub fn process_tag_0x8825_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::GPS::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -354,6 +418,7 @@ pub fn process_tag_0x888a_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x888a_subdirectory called with {} bytes, count={}",
@@ -361,6 +426,8 @@ pub fn process_tag_0x888a_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::Leaf::SubIFD
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -369,6 +436,7 @@ pub fn process_tag_0x927c_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x927c_subdirectory called with {} bytes, count={}",
@@ -384,6 +452,7 @@ pub fn process_tag_0x935c_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x935c_subdirectory called with {} bytes, count={}",
@@ -391,6 +460,8 @@ pub fn process_tag_0x935c_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::Photoshop::DocumentData
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -399,6 +470,7 @@ pub fn process_tag_0x9999_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x9999_subdirectory called with {} bytes, count={}",
@@ -406,6 +478,8 @@ pub fn process_tag_0x9999_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::JSON::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -414,6 +488,7 @@ pub fn process_tag_0xa005_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xa005_subdirectory called with {} bytes, count={}",
@@ -421,6 +496,8 @@ pub fn process_tag_0xa005_subdirectory(
         count
     );
 
+    // Reference to Unknown table
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -429,6 +506,7 @@ pub fn process_tag_0xc4a5_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xc4a5_subdirectory called with {} bytes, count={}",
@@ -436,6 +514,8 @@ pub fn process_tag_0xc4a5_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::PrintIM::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -444,6 +524,7 @@ pub fn process_tag_0xc519_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xc519_subdirectory called with {} bytes, count={}",
@@ -451,6 +532,8 @@ pub fn process_tag_0xc519_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::PLIST::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -459,6 +542,7 @@ pub fn process_tag_0xc51b_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xc51b_subdirectory called with {} bytes, count={}",
@@ -466,7 +550,8 @@ pub fn process_tag_0xc51b_subdirectory(
         count
     );
 
-    Ok(vec![])
+    // Single unconditional subdirectory
+    process_exif_main(data, byte_order)
 }
 
 pub fn process_tag_0xc634_subdirectory(
@@ -474,6 +559,7 @@ pub fn process_tag_0xc634_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xc634_subdirectory called with {} bytes, count={}",
@@ -489,6 +575,7 @@ pub fn process_tag_0xc68c_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xc68c_subdirectory called with {} bytes, count={}",
@@ -496,6 +583,8 @@ pub fn process_tag_0xc68c_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::DNG::OriginalRaw
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -504,6 +593,7 @@ pub fn process_tag_0xc68f_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xc68f_subdirectory called with {} bytes, count={}",
@@ -511,6 +601,8 @@ pub fn process_tag_0xc68f_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::ICC_Profile::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -519,6 +611,7 @@ pub fn process_tag_0xc691_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xc691_subdirectory called with {} bytes, count={}",
@@ -526,6 +619,8 @@ pub fn process_tag_0xc691_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::ICC_Profile::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -534,6 +629,7 @@ pub fn process_tag_0xc6f5_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xc6f5_subdirectory called with {} bytes, count={}",
@@ -541,6 +637,8 @@ pub fn process_tag_0xc6f5_subdirectory(
         count
     );
 
+    // Reference to Unknown table
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -549,6 +647,7 @@ pub fn process_tag_0xc7d5_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xc7d5_subdirectory called with {} bytes, count={}",
@@ -564,6 +663,7 @@ pub fn process_tag_0xcd41_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xcd41_subdirectory called with {} bytes, count={}",
@@ -571,6 +671,8 @@ pub fn process_tag_0xcd41_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::Jpeg2000::Main
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -579,6 +681,7 @@ pub fn process_tag_0xcd44_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xcd44_subdirectory called with {} bytes, count={}",
@@ -586,6 +689,8 @@ pub fn process_tag_0xcd44_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::DNG::ImageSeq
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -594,6 +699,7 @@ pub fn process_tag_0xcd47_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xcd47_subdirectory called with {} bytes, count={}",
@@ -601,6 +707,8 @@ pub fn process_tag_0xcd47_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::DNG::ProfileDynamicRange
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -609,6 +717,7 @@ pub fn process_tag_0xcea1_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xcea1_subdirectory called with {} bytes, count={}",
@@ -616,6 +725,8 @@ pub fn process_tag_0xcea1_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::XMP::SEAL
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
@@ -624,6 +735,7 @@ pub fn process_tag_0xfe00_subdirectory(
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xfe00_subdirectory called with {} bytes, count={}",
@@ -631,6 +743,8 @@ pub fn process_tag_0xfe00_subdirectory(
         count
     );
 
+    // Cross-module reference to Image::ExifTool::Kodak::KDC_IFD
+    // TODO: Implement cross-module subdirectory support
     Ok(vec![])
 }
 
