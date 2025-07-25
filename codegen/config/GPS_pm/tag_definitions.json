@@ -1,9 +1,0 @@
-{
-  "source": "third-party/exiftool/lib/Image/ExifTool/GPS.pm",
-  "description": "GPS tag definitions from main tag table", 
-  "table": "Main",
-  "filters": {
-    "frequency_threshold": 0.5,
-    "include_mainstream": true
-  }
-}

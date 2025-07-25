@@ -96,31 +96,214 @@ impl ExifReader {
     pub(crate) fn apply_conversions(
         &self,
         raw_value: &TagValue,
-        tag_def: Option<&'static crate::generated::tags::TagDef>,
+        tag_id: u16,
+        ifd_name: &str,
     ) -> (TagValue, TagValue) {
-        use crate::registry;
+        use crate::expressions::ExpressionEvaluator;
+        use crate::generated::Exif_pm::tag_kit;
+        use crate::generated::GPS_pm::tag_kit as gps_tag_kit;
+        use crate::implementations::value_conv;
 
         let mut value = raw_value.clone();
 
-        // Apply ValueConv first (if present)
-        if let Some(tag_def) = tag_def {
-            if let Some(value_conv_ref) = tag_def.value_conv_ref {
-                value = registry::apply_value_conv(value_conv_ref, &value);
-            }
-        }
+        // Process based on IFD context
+        if ifd_name == "GPS" {
+            // For GPS IFD, check GPS tag kit
+            if let Some(tag_def) = gps_tag_kit::GPS_PM_TAG_KITS.get(&(tag_id as u32)) {
+                // Apply ValueConv first (if present)
+                if let Some(value_conv_expr) = tag_def.value_conv {
+                    // Map known ValueConv expressions to implementations
+                    match value_conv_expr {
+                        "Image::ExifTool::GPS::ToDegrees($val)" => {
+                            match value_conv::gps_coordinate_value_conv(&value) {
+                                Ok(converted) => {
+                                    debug!(
+                                        "Applied GPS ToDegrees conversion to tag 0x{:04x}: {:?} -> {:?}",
+                                        tag_id, value, converted
+                                    );
+                                    value = converted;
+                                }
+                                Err(e) => {
+                                    debug!(
+                                        "Failed to apply GPS ToDegrees conversion to tag 0x{:04x}: {}",
+                                        tag_id, e
+                                    );
+                                }
+                            }
+                        }
+                        "Image::ExifTool::GPS::ConvertTimeStamp($val)" => {
+                            match value_conv::gpstimestamp_value_conv(&value) {
+                                Ok(converted) => {
+                                    debug!(
+                                        "Applied GPS timestamp conversion to tag 0x{:04x}: {:?} -> {:?}",
+                                        tag_id, value, converted
+                                    );
+                                    value = converted;
+                                }
+                                Err(e) => {
+                                    debug!(
+                                        "Failed to apply GPS timestamp conversion to tag 0x{:04x}: {}",
+                                        tag_id, e
+                                    );
+                                }
+                            }
+                        }
+                        _ => {
+                            // TODO: Implement other value conv expressions
+                            debug!(
+                                "ValueConv expression not yet implemented for tag 0x{:04x}: {}",
+                                tag_id, value_conv_expr
+                            );
+                        }
+                    }
+                }
 
-        // Apply PrintConv second (if present) to get display value
-        let print = if let Some(tag_def) = tag_def {
-            if let Some(print_conv_ref) = tag_def.print_conv_ref {
-                // Use new tag kit integration - pass both tag ID and function name
-                registry::apply_print_conv_with_tag_id(Some(tag_def.id), print_conv_ref, &value)
+                // Apply PrintConv second (if present) to get display value
+                // For GPS coordinates, we want to use our manual registry functions
+                let print = match tag_def.name {
+                    "GPSLatitude" => {
+                        use crate::registry;
+                        registry::apply_print_conv("gpslatitude_print_conv", &value)
+                    }
+                    "GPSLongitude" => {
+                        use crate::registry;
+                        registry::apply_print_conv("gpslongitude_print_conv", &value)
+                    }
+                    "GPSDestLatitude" => {
+                        use crate::registry;
+                        registry::apply_print_conv("gpsdestlatitude_print_conv", &value)
+                    }
+                    "GPSDestLongitude" => {
+                        use crate::registry;
+                        registry::apply_print_conv("gpsdestlongitude_print_conv", &value)
+                    }
+                    "GPSAltitude" => {
+                        // Expression: "$val =~ /^(inf|undef)$/ ? $val : \"$val m\""
+                        match value.as_f64() {
+                            Some(v) if v.is_infinite() => TagValue::String("inf".to_string()),
+                            Some(v) if v.is_nan() => TagValue::String("undef".to_string()),
+                            Some(v) => TagValue::String(format!("{} m", v)),
+                            None => {
+                                if let Some(s) = value.as_string() {
+                                    if s == "inf" || s == "undef" {
+                                        TagValue::String(s.to_string())
+                                    } else {
+                                        TagValue::String(format!("{} m", s))
+                                    }
+                                } else {
+                                    TagValue::String(format!("{} m", value))
+                                }
+                            }
+                        }
+                    }
+                    "GPSHPositioningError" => {
+                        // Expression: "\"$val m\""
+                        TagValue::String(format!("{} m", value))
+                    }
+                    _ => {
+                        // Use the generic tag kit apply_print_conv for other GPS tags
+                        let mut evaluator = ExpressionEvaluator::new();
+                        let mut errors = Vec::new();
+                        let mut warnings = Vec::new();
+
+                        let result = gps_tag_kit::apply_print_conv(
+                            tag_id as u32,
+                            &value,
+                            &mut evaluator,
+                            &mut errors,
+                            &mut warnings,
+                        );
+
+                        // Log any warnings
+                        for warning in warnings {
+                            debug!("PrintConv warning for tag 0x{:04x}: {}", tag_id, warning);
+                        }
+
+                        result
+                    }
+                };
+
+                (value, print)
             } else {
-                value.clone()
+                // No tag definition found, return raw value for both
+                (value.clone(), value)
             }
         } else {
-            value.clone()
-        };
+            // For other IFDs, check EXIF tag kit
+            if let Some(tag_def) = tag_kit::EXIF_PM_TAG_KITS.get(&(tag_id as u32)) {
+                // Apply ValueConv first (if present)
+                if let Some(value_conv_expr) = tag_def.value_conv {
+                    // Map known ValueConv expressions to implementations
+                    match value_conv_expr {
+                        "IsFloat($val) && abs($val)<100 ? 2**(-$val) : 0" => {
+                            // ShutterSpeedValue APEX conversion
+                            match value_conv::apex_shutter_speed_value_conv(&value) {
+                                Ok(converted) => {
+                                    debug!(
+                                        "Applied APEX shutter speed conversion to tag 0x{:04x}: {:?} -> {:?}",
+                                        tag_id, value, converted
+                                    );
+                                    value = converted;
+                                }
+                                Err(e) => {
+                                    debug!(
+                                        "Failed to apply APEX shutter speed conversion to tag 0x{:04x}: {}",
+                                        tag_id, e
+                                    );
+                                }
+                            }
+                        }
+                        "2 ** ($val / 2)" => {
+                            // ApertureValue and MaxApertureValue APEX conversion
+                            match value_conv::apex_aperture_value_conv(&value) {
+                                Ok(converted) => {
+                                    debug!(
+                                        "Applied APEX aperture conversion to tag 0x{:04x}: {:?} -> {:?}",
+                                        tag_id, value, converted
+                                    );
+                                    value = converted;
+                                }
+                                Err(e) => {
+                                    debug!(
+                                        "Failed to apply APEX aperture conversion to tag 0x{:04x}: {}",
+                                        tag_id, e
+                                    );
+                                }
+                            }
+                        }
+                        _ => {
+                            // TODO: Implement other value conv expressions
+                            debug!(
+                                "ValueConv expression not yet implemented for tag 0x{:04x}: {}",
+                                tag_id, value_conv_expr
+                            );
+                        }
+                    }
+                }
 
-        (value, print)
+                // Apply PrintConv second (if present) to get display value
+                let mut evaluator = ExpressionEvaluator::new();
+                let mut errors = Vec::new();
+                let mut warnings = Vec::new();
+
+                let print = tag_kit::apply_print_conv(
+                    tag_id as u32,
+                    &value,
+                    &mut evaluator,
+                    &mut errors,
+                    &mut warnings,
+                );
+
+                // Log any warnings
+                for warning in warnings {
+                    debug!("PrintConv warning for tag 0x{:04x}: {}", tag_id, warning);
+                }
+
+                (value, print)
+            } else {
+                // No tag definition found, return raw value for both
+                (value.clone(), value)
+            }
+        }
     }
 }

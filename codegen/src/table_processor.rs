@@ -404,3 +404,90 @@ mod tests {
         assert_eq!(generated_tags[0].id, 0x0001);
     }
 }
+
+/// Process only composite tags from modular extracted files
+pub fn process_composite_tags_only(extract_dir: &Path, output_dir: &str) -> Result<()> {
+    let mut all_composites = Vec::new();
+    let mut all_conversion_refs = crate::schemas::input::ConversionRefs {
+        print_conv: Vec::new(),
+        value_conv: Vec::new(),
+    };
+    
+    // Scan for composite tag files in the composite_tags directory
+    let composite_tags_dir = extract_dir.join("composite_tags");
+    if composite_tags_dir.exists() {
+        for entry in fs::read_dir(&composite_tags_dir)? {
+            let entry = entry?;
+            let file_path = entry.path();
+            
+            if file_path.extension().and_then(|s| s.to_str()) == Some("json") {
+                let filename = file_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+                debug!("  🔗 Processing {}", filename);
+                let json_data = read_utf8_with_fallback(&file_path)?;
+                
+                // Skip empty files
+                if json_data.trim().is_empty() {
+                    warn!("    ⚠️  Skipping empty file: {}", filename);
+                    continue;
+                }
+                
+                // Parse the modular composite tag format
+                let composite_data: serde_json::Value = serde_json::from_str(&json_data)
+                    .with_context(|| format!("Failed to parse {filename}"))?;
+                
+                // Extract composite tags from the modular format
+                if let Some(composites) = composite_data["composite_tags"].as_array() {
+                    for comp_val in composites {
+                        let composite = extract_composite_from_json(comp_val)?;
+                        all_composites.push(composite);
+                    }
+                }
+                
+                // Collect conversion references from composite tags too
+                if let Some(conv_refs) = composite_data["conversion_refs"].as_object() {
+                    if let Some(print_conv) = conv_refs["print_conv"].as_array() {
+                        for pc in print_conv {
+                            if let Some(pc_str) = pc.as_str() {
+                                if !all_conversion_refs.print_conv.contains(&pc_str.to_string()) {
+                                    all_conversion_refs.print_conv.push(pc_str.to_string());
+                                }
+                            }
+                        }
+                    }
+                    if let Some(value_conv) = conv_refs["value_conv"].as_array() {
+                        for vc in value_conv {
+                            if let Some(vc_str) = vc.as_str() {
+                                if !all_conversion_refs.value_conv.contains(&vc_str.to_string()) {
+                                    all_conversion_refs.value_conv.push(vc_str.to_string());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Sort for deterministic output
+    all_composites.sort_by(|a, b| a.name.cmp(&b.name));
+    all_conversion_refs.print_conv.sort();
+    all_conversion_refs.value_conv.sort();
+    
+    // Generate code
+    if !all_composites.is_empty() {
+        debug!("  🔗 Generating composite tag table...");
+        generate_composite_tag_table(&all_composites, output_dir)?;
+    }
+    
+    // Generate conversion references if we have any
+    if !all_conversion_refs.print_conv.is_empty() || !all_conversion_refs.value_conv.is_empty() {
+        debug!("  🔄 Generating conversion references...");
+        generate_conversion_refs(&all_conversion_refs, output_dir)?;
+    }
+    
+    // Generate supported tags summary (only for composite tags now)
+    debug!("  📊 Generating supported tags summary...");
+    generate_supported_tags(&[], &all_composites, output_dir)?;
+    
+    Ok(())
+}

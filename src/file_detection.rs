@@ -303,26 +303,20 @@ impl FileTypeDetector {
 
         // Use generated magic number patterns from ExifTool's %magicNumber hash
         // ExifTool.pm:912-1027 - patterns extracted and compiled as regex::bytes::Regex
-        use crate::generated::file_types::{
-            // magic_number_patterns::matches_magic_number, // TODO: Generate magic number patterns
-            resolve_file_type,
-        };
+        use crate::generated::file_types::{matches_magic_number, resolve_file_type};
 
         // First try to match against the file type itself
-        // TODO: Generate magic number patterns - temporarily disabled
-        // if matches_magic_number(file_type, buffer) {
-        //     return true;
-        // }
+        if matches_magic_number(file_type, buffer) {
+            return true;
+        }
 
         // If no direct match, check if this file type has a format that has magic patterns
         // ExifTool uses the format (MOV, TIFF, etc.) for magic pattern matching
-        if let Some((_formats, _desc)) = resolve_file_type(file_type) {
+        if let Some((formats, _desc)) = resolve_file_type(file_type) {
             // Try magic pattern for the primary format
-            // TODO: Uncomment when matches_magic_number is generated
-            // if matches_magic_number(formats[0], buffer) {
-            //     return true;
-            // }
-            // Temporary stub behavior
+            if matches_magic_number(formats[0], buffer) {
+                return true;
+            }
             return false;
         }
 
