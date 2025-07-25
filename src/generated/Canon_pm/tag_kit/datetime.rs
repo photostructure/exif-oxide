@@ -14,7 +14,7 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_63: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Date");
@@ -22,7 +22,7 @@ static PRINT_CONV_63: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_64: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "n/a");
     map.insert("1".to_string(), "Chatham Islands");
@@ -158,7 +158,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: Some("used only in postcard mode"),
-                print_conv: PrintConvType::Simple(&PRINT_CONV_63),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_0),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -202,7 +202,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_64),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_1),
                 value_conv: None,
                 subdirectory: None,
             },
