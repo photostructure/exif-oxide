@@ -275,7 +275,12 @@ sub process_tag_info {
     $tag_kit->{writable} = $writable if defined $writable;
     $tag_kit->{notes} = $notes if $notes;
     $tag_kit->{value_conv} = $value_conv if defined $value_conv;
-    $tag_kit->{condition} = $condition if defined $condition;
+    if (defined $condition) {
+        # Normalize whitespace in conditions: trim and collapse multiple spaces
+        $condition =~ s/^\s+|\s+$//g;  # trim leading/trailing whitespace
+        $condition =~ s/\s+/ /g;        # collapse multiple spaces to single space
+        $tag_kit->{condition} = $condition;
+    }
     
     # Add SubDirectory info
     if ($subdirectory_info) {
