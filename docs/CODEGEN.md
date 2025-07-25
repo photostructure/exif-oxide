@@ -344,6 +344,7 @@ The codegen system includes multiple specialized extractors, each serving a spec
   - Target: Any ExifTool tag table (EXIF, GPS, manufacturer-specific)
   - Output: Tag ID, name, format, groups, AND PrintConv data together
   - Benefit: Eliminates tag ID/PrintConv mismatch bugs
+  - Note: Extracts ALL tags including those marked `Unknown => 1` (which we filter during runtime)
 
 **Deprecated Extractors (Being Replaced by Tag Kit)**:
 - **`inline_printconv.pl`** - ⚠️ DEPRECATED - Extracts PrintConv hashes from tag definitions
