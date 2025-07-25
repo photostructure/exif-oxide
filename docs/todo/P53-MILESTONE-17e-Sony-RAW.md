@@ -29,7 +29,7 @@ Sony RAW implementation has **BREAKTHROUGH foundation already complete** but nee
 
 **Documentation**:
 - [Sony.md](../../third-party/exiftool/doc/modules/Sony.md) - Sony module overview
-- [20250122-sony-required-tags.md](20250122-sony-required-tags.md) - Required tags detailed analysis  
+- [P1-sony-required-tags.md](P1-sony-required-tags.md) - Required tags detailed analysis  
 - [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md) - Implementation principles
 
 **APIs & Systems**:

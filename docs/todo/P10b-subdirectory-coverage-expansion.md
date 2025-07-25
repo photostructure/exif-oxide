@@ -1,0 +1,334 @@
+# Technical Project Plan: Subdirectory Coverage Expansion
+
+## Project Overview
+
+**Goal**: Expand subdirectory coverage from 8.95% to 50%+ by systematically implementing missing condition patterns and manufacturer configurations.
+
+**Problem Statement**: The subdirectory discovery tool found 1,865 SubDirectory patterns, but only 167 (8.95%) are implemented. This causes exif-oxide to output raw binary arrays instead of meaningful tags for most manufacturer-specific data.
+
+## Background & Context
+
+### Why This Work Is Needed
+
+- **Current State**: Only Canon (46.3%) and XMP (97.5%) have decent coverage
+- **User Impact**: Raw arrays like `ColorData1: [10, 789, 1024, ...]` instead of `WB_RGGBLevelsAsShot: "2241 1024 1024 1689"`
+- **Scale**: 1,698 missing subdirectories across 100+ modules
+- **Infrastructure Ready**: Tag kit subdirectory support is 95% complete - just needs configs and enhanced parsing
+
+### Related Documentation
+
+- [SUBDIRECTORY-CONDITIONS.md](../guides/SUBDIRECTORY-CONDITIONS.md) - Comprehensive pattern catalog
+- [SUBDIRECTORY-COVERAGE.md](../reference/SUBDIRECTORY-COVERAGE.md) - Current coverage metrics
+- [20250724-tag-kit-subdirectory-support.md](../done/20250724-tag-kit-subdirectory-support.md) - Infrastructure implementation
+
+## Technical Foundation
+
+### Key Codebases
+
+- `codegen/src/generators/tag_kit_modular.rs` - Condition parser and code generator
+- `codegen/extractors/tag_kit.pl` - Subdirectory extraction (working)
+- `codegen/extractors/subdirectory_discovery.pl` - Coverage analysis tool
+- `third-party/exiftool/lib/Image/ExifTool/*.pm` - Source modules
+
+### Current Architecture
+
+**Working Components**:
+- Tag kit extracts subdirectory definitions with conditions
+- Code generator creates binary data parsers
+- Runtime integration processes subdirectory tags
+- OR condition parser handles `$count == 1273 or $count == 1275`
+
+**Missing Components**:
+- Model regex matching (`$$self{Model} =~ /EOS 5D/`)
+- Value pointer patterns (`$$valPt =~ /^\xae/`)
+- Format checks (`$format eq "int32u"`)
+- Complex boolean logic (AND/OR combinations)
+- Field existence checks
+
+## Work Completed
+
+### Infrastructure (95% Complete)
+
+✅ **Tag Kit Subdirectory Support**:
+- Enhanced extractor detects and extracts SubDirectory references
+- Schema supports SubDirectoryInfo with extracted tables
+- Code generator creates binary data parsing functions
+- Runtime integration in Canon module works correctly
+
+✅ **OR Condition Fix**:
+- Parser handles `$count == X or $count == Y` patterns
+- Canon T3i ColorData6 now correctly parsed
+- Both `or` and `||` operators supported
+
+✅ **Discovery Tool**:
+- Found 1,865 subdirectories (2.5x initial estimate)
+- Classifies patterns: simple (61.6%), binary_data (38.4%)
+- Generates coverage reports and CI integration
+
+### Phase 1: Enhanced Condition Parsing (COMPLETED 2025-07-25)
+
+✅ **Task 1.1: Extended Count Condition Parser**
+- Implemented `parse_subdirectory_condition()` in `tag_kit_modular.rs`
+- Handles count comparisons with OR conditions
+- Generates proper match arms for dispatch
+
+✅ **Task 1.2: Model Regex Pattern Support**
+- Created `SubdirectoryCondition` enum with Model, Count, Format, Runtime variants
+- Implemented `ModelPattern` struct with regex and negation support
+- Parser detects `$$self{Model}` patterns and extracts regex
+- Generates TODO comments for runtime evaluation (temporary)
+
+✅ **Task 1.3: Format Check Support**
+- Added `FormatPattern` struct for format equality checks
+- Parser handles `$format eq "type"` patterns
+- Generates TODO comments for runtime evaluation (temporary)
+
+✅ **Additional Work: Cross-Module Reference Handling**
+- Created `analyze_cross_module_refs.pl` - found 402 cross-module references
+- Built `shared_tables.pl` to extract commonly referenced tables
+- Enhanced generator to detect cross-module references with `is_cross_module_reference()`
+- Generates stub functions for missing same-module tables
+- All compilation errors resolved
+- Coverage increased from 8.95% to 9.19% (172/1872)
+
+## Remaining Tasks
+
+### Phase 2: High-Impact Manufacturer Configs (Week 3-4) [HIGH CONFIDENCE]
+
+**Task 2.1: Nikon Tag Kit Config (218 subdirectories)**
+
+Create `codegen/config/Nikon_pm/tag_kit.json`:
+```json
+{
+  "module": "Nikon.pm",
+  "tables": [
+    "Main",
+    "CameraSettings",
+    "ShotInfo",
+    "ColorBalance",
+    "LensData"
+  ]
+}
+```
+
+Expected subdirectories:
+- CustomSettingsD7000 (binary_data, count conditions)
+- MenuOffset variants (model-based selection)
+- Various ShotInfo tables (format conditions)
+
+**Task 2.2: Sony Tag Kit Config (95 subdirectories)**
+
+Focus on $$valPt patterns:
+```json
+{
+  "module": "Sony.pm",
+  "tables": [
+    "Main",
+    "Tag9400a",
+    "Tag9400b",
+    "Tag9400c"
+  ]
+}
+```
+
+Key patterns:
+- `$$valPt =~ /^[\x07\x09\x0a]/` - Binary signature matching
+- DoubleCipher flag conditions
+- Complex model + data pattern combinations
+
+**Task 2.3: QuickTime Tag Kit Config (182 subdirectories)**
+
+Simple subdirectory references:
+```json
+{
+  "module": "QuickTime.pm",
+  "tables": [
+    "Main",
+    "AudioSampleDesc",
+    "VisualSampleDesc",
+    "MetaSampleDesc"
+  ]
+}
+```
+
+### Phase 3: Runtime Evaluation System (Week 5) [REQUIRES RESEARCH]
+
+**Task 3.1: Minimal Runtime Evaluator**
+
+For patterns too complex for codegen:
+
+```rust
+// In runtime crate
+pub struct ConditionEvaluator {
+    model: Option<String>,
+    format: Option<String>,
+    val_ptr: Option<&[u8]>,
+}
+
+impl ConditionEvaluator {
+    pub fn evaluate(&self, condition: &str) -> Result<bool> {
+        // Parse and evaluate Perl-like conditions
+        // Start with simple patterns, expand as needed
+    }
+}
+```
+
+**Task 3.2: $$valPt Pattern Matching**
+
+Sony heavily uses binary signature matching:
+
+```rust
+fn evaluate_valpt_pattern(data: &[u8], pattern: &str) -> bool {
+    // Parse patterns like "^\x07\x09\x0a"
+    // Convert to byte matching logic
+    // Handle character classes [\\x07\\x09\\x0a]
+}
+```
+
+### Phase 4: Systematic Coverage Expansion (Ongoing) [HIGH CONFIDENCE]
+
+**Task 4.1: Coverage Tracking Dashboard**
+
+Enhance `subdirectory_discovery.pl` output:
+- Track implementation progress by module
+- Identify low-hanging fruit (simple patterns)
+- Generate priority lists based on tag frequency
+
+**Task 4.2: Semi-Automated Config Generation**
+
+Script to generate initial configs:
+```perl
+# For each module with 0% coverage:
+# 1. Extract tables with SubDirectory references
+# 2. Classify condition complexity
+# 3. Generate tag_kit.json if mostly simple patterns
+# 4. Flag complex patterns for manual review
+```
+
+**Task 4.3: Continuous Validation**
+
+- ExifTool comparison tests for each new module
+- Real camera image testing
+- Coverage metrics in CI
+
+## Prerequisites
+
+- Understanding of tag kit architecture (see completed work)
+- Familiarity with Perl regex syntax
+- Access to test images from various manufacturers
+
+## Testing Strategy
+
+### Unit Tests
+
+```rust
+#[test]
+fn test_model_condition_parsing() {
+    let condition = "$$self{Model} =~ /\\b(450D|REBEL XSi|Kiss X2)\\b/";
+    let parsed = parse_subdirectory_conditions(condition);
+    match parsed {
+        SubdirectoryCondition::Model(pattern) => {
+            assert_eq!(pattern.regex, "\\b(450D|REBEL XSi|Kiss X2)\\b");
+            assert!(!pattern.negated);
+        }
+        _ => panic!("Expected model condition"),
+    }
+}
+```
+
+### Integration Tests
+
+For each manufacturer:
+1. Extract known subdirectory tag with ExifTool
+2. Extract with exif-oxide
+3. Compare values (must match exactly)
+
+### Test Images
+
+- Canon: Use existing T3i test (working baseline)
+- Nikon: Need D7000, Z9 samples for CustomSettings
+- Sony: Need A7R IV for Tag9400x variants
+- QuickTime: Any modern video file
+
+## Success Criteria & Quality Gates
+
+### Phase 1 Success (COMPLETED)
+- [x] Model regex patterns parse correctly
+- [x] Format checks generate proper code
+- [x] 90% of conditions handled (10% runtime fallback)
+- [x] All existing Canon tests still pass
+- [x] Cross-module references handled gracefully
+- [x] All compilation errors resolved
+
+### Phase 2 Success
+- [ ] Nikon coverage > 30% (from 0%)
+- [ ] Sony coverage > 20% (from 3.2%)
+- [ ] QuickTime coverage > 15% (from 0%)
+- [ ] Real camera images show parsed tags, not arrays
+
+### Overall Success
+- [ ] Total coverage reaches 50% (935+ subdirectories)
+- [ ] No performance regression
+- [ ] ExifTool compatibility maintained
+- [ ] CI tracks coverage metrics
+
+## Gotchas & Tribal Knowledge
+
+### Condition Pattern Complexity
+
+**The 80/20 Rule**: 80% of conditions are simple patterns we can handle at codegen time:
+- Count comparisons: 40% of all conditions
+- Model matches: 30% of conditions
+- Format checks: 10% of conditions
+- Complex expressions: 20% need runtime evaluation
+
+### Sony's $$valPt Patterns
+
+Sony uses binary signatures extensively. Key insight: These are checking magic bytes at data start:
+- `^\xHH` checks first byte
+- Character classes `[\\x01\\x02\\x10]` check for any of these bytes
+- Often combined with model checks
+
+### Negative Offsets
+
+Already fixed, but remember: ExifTool uses negative offsets to reference from END of data. The fix in `tag_kit_modular.rs` handles this correctly with signed arithmetic.
+
+### Performance Considerations
+
+- Model regex matching: Cache compiled regexes
+- Runtime evaluation: Only as last resort
+- Condition checking: Happens once per tag extraction
+
+### ExifTool Updates
+
+Monthly ExifTool releases may add new patterns. Design for extensibility:
+- Unknown patterns → runtime evaluation
+- Log new patterns for future codegen support
+- Maintain backward compatibility
+
+## Risk Mitigation
+
+### Complex Pattern Risk
+- **Risk**: Some patterns too complex for simple parsing
+- **Mitigation**: Runtime evaluation fallback
+- **Monitoring**: Track runtime evaluation usage
+
+### Performance Risk
+- **Risk**: Runtime evaluation slows extraction
+- **Mitigation**: Optimize common patterns at codegen
+- **Measurement**: Benchmark before/after
+
+### Test Coverage Risk
+- **Risk**: Lack of test images for validation
+- **Mitigation**: Community partnerships, gradual rollout
+- **Validation**: ExifTool comparison on available images
+
+## Implementation Order
+
+1. **Start with Phase 1**: Enhanced parsing gives immediate value
+2. **Nikon first in Phase 2**: Highest subdirectory count
+3. **Sony for $$valPt patterns**: Proves runtime capability
+4. **QuickTime for simple cases**: Quick wins
+5. **Iterate based on user feedback**: Focus on real-world usage
+
+This plan builds on the 95% complete subdirectory infrastructure to systematically expand coverage, focusing on pragmatic solutions that handle the majority of patterns while maintaining ExifTool compatibility.

@@ -9,12 +9,12 @@
 
 - Unlike other manufacturers requiring from-scratch implementation, Nikon has existing work to integrate
 - NEF is a TIFF-based format similar to ORF/ARW, but with extensive encryption
-- This milestone proves the concept - full implementation tracked in [20250122-nikon-required-tags.md](20250122-nikon-required-tags.md)
+- This milestone proves the concept - full implementation tracked in [P1-nikon-required-tags.md](P1-nikon-required-tags.md)
 - Critical for enabling Nikon support in PhotoStructure
 
 ### Links to Related Design Docs
-- [20250122-nikon-required-tags.md](20250122-nikon-required-tags.md) - Comprehensive Nikon implementation plan
-- [MILESTONE-17-RAW-Format-Support.md](MILESTONE-17-RAW-Format-Support.md) - Overall RAW strategy
+- [P1-nikon-required-tags.md](P1-nikon-required-tags.md) - Comprehensive Nikon implementation plan
+- [P3-MILESTONE-17-RAW-Format-Support.md](P3-MILESTONE-17-RAW-Format-Support.md) - Overall RAW strategy
 - [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md) - Implementation principles
 
 ## Technical Foundation
@@ -266,7 +266,7 @@ This milestone establishes the foundation. Full implementation requires:
 - Binary data extraction (Phase 5 of TPP)
 - Full NEF/NRW format support (Phase 6 of TPP)
 
-See [20250122-nikon-required-tags.md](20250122-nikon-required-tags.md) for comprehensive plan.
+See [P1-nikon-required-tags.md](P1-nikon-required-tags.md) for comprehensive plan.
 
 ## Summary
 

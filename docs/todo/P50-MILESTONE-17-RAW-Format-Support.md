@@ -7,52 +7,52 @@
 
 This milestone implements RAW format support through a series of incremental sub-milestones, starting with the simplest formats and building up to the most complex. Each sub-milestone delivers working functionality while building toward comprehensive RAW metadata support.
 
-**Important Scope Clarification**: This milestone focuses exclusively on **metadata extraction**. All binary data extraction (preview images, thumbnails, embedded JPEGs) is handled by [Milestone 19: Binary Data Extraction](MILESTONE-19-Binary-Data-Extraction.md).
+**Important Scope Clarification**: This milestone focuses exclusively on **metadata extraction**. All binary data extraction (preview images, thumbnails, embedded JPEGs) is handled by [Milestone 19: Binary Data Extraction](P3-MILESTONE-19-Binary-Data-Extraction.md).
 
 ## Sub-Milestones
 
-### [17a: RAW Foundation & Kyocera](MILESTONE-17a-RAW-Foundation-Kyocera.md) (1-2 weeks)
+### [17a: RAW Foundation & Kyocera](P3-MILESTONE-17a-RAW-Foundation-Kyocera.md) (1-2 weeks)
 
 - Core RAW detection and routing infrastructure
 - Implement simplest format: KyoceraRaw (173 lines)
 - Basic TIFF container support for RAW files
 - CLI integration foundation
 
-### [17b: Simple TIFF-Based RAW](MILESTONE-17b-Simple-TIFF-RAW.md) (2 weeks)
+### [17b: Simple TIFF-Based RAW](P3-MILESTONE-17b-Simple-TIFF-RAW.md) (2 weeks)
 
 - MinoltaRaw/MRW support (537 lines)
 - PanasonicRaw/RW2 support (956 lines)
 - Entry-based offset handling (Panasonic)
 - Shared TIFF infrastructure improvements
 
-### [17c: Olympus RAW Support](MILESTONE-17c-Olympus-RAW.md) (2 weeks)
+### [17c: Olympus RAW Support](P3-MILESTONE-17c-Olympus-RAW.md) (2 weeks)
 
 - Olympus ORF format (4,235 lines)
 - Handle 15 ProcessBinaryData sections
 - Multiple IFD navigation
 - Olympus-specific tag processing
 
-### [17d: Canon RAW Support](MILESTONE-17d-Canon-RAW.md) (2-3 weeks)
+### [17d: Canon RAW Support](P3-MILESTONE-17d-Canon-RAW.md) (2-3 weeks)
 
 - Canon CR2 (TIFF-based) - required
 - Canon CRW (legacy) - optional
 - Canon CR3 (MOV container) - optional
 - Canon maker notes (169 ProcessBinaryData entries)
 
-### [17e: Sony RAW Support](MILESTONE-17e-Sony-RAW.md) (2-3 weeks)
+### [17e: Sony RAW Support](P3-MILESTONE-17e-Sony-RAW.md) (2-3 weeks)
 
 - Sony ARW/SR2/SRF formats (11,818 lines)
 - Advanced offset management system
 - Multi-generation format handling
 - Sony IDC corruption recovery
 
-### [17f: Nikon RAW Integration](MILESTONE-17f-Nikon-RAW-Integration.md) (1 week)
+### [17f: Nikon RAW Integration](P3-MILESTONE-17f-Nikon-RAW-Integration.md) (1 week)
 
 - Integrate existing Nikon work from Milestone 14
 - NEF/NRW format support
 - Ensure consistency with new infrastructure
 
-### [17g: Additional Formats & Testing](MILESTONE-17g-Additional-RAW-Testing.md) (1-2 weeks)
+### [17g: Additional Formats & Testing](P3-MILESTONE-17g-Additional-RAW-Testing.md) (1-2 weeks)
 
 - Fujifilm RAF (non-TIFF format)
 - Adobe DNG (multi-manufacturer)
