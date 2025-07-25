@@ -148,9 +148,14 @@ sub extract_conditional_array {
         next unless ref $tag_def eq 'HASH';
         next unless $tag_def->{Condition};
         
+        # Normalize whitespace in condition
+        my $condition = $tag_def->{Condition};
+        $condition =~ s/^\s+|\s+$//g;  # trim leading/trailing whitespace
+        $condition =~ s/\s+/ /g;        # collapse multiple spaces to single space
+        
         my $condition_entry = {
             tag_id => $tag_id,
-            condition => $tag_def->{Condition},
+            condition => $condition,
             name => $tag_def->{Name} || 'Unknown',
         };
         
@@ -199,9 +204,14 @@ sub has_complex_condition {
 sub extract_complex_condition {
     my ($tag_id, $tag_info) = @_;
     
+    # Normalize whitespace in condition
+    my $condition = $tag_info->{Condition};
+    $condition =~ s/^\s+|\s+$//g;  # trim leading/trailing whitespace
+    $condition =~ s/\s+/ /g;        # collapse multiple spaces to single space
+    
     return {
         tag_id => $tag_id,
-        condition => $tag_info->{Condition},
+        condition => $condition,
         name => $tag_info->{Name} || 'Unknown',
         description => $tag_info->{Description},
         format => $tag_info->{Format},

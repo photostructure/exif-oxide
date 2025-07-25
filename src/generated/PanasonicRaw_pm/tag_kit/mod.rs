@@ -57,6 +57,21 @@ pub enum SubDirectoryType {
 pub static PANASONICRAW_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
     let mut map = HashMap::new();
 
+    // camera tags
+    for (id, tag_def) in camera::get_camera_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // core tags
+    for (id, tag_def) in core::get_core_tags() {
+        map.insert(id, tag_def);
+    }
+
+    // exif_specific tags
+    for (id, tag_def) in exif_specific::get_exif_specific_tags() {
+        map.insert(id, tag_def);
+    }
+
     // document tags
     for (id, tag_def) in document::get_document_tags() {
         map.insert(id, tag_def);
@@ -67,28 +82,13 @@ pub static PANASONICRAW_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLoc
         map.insert(id, tag_def);
     }
 
-    // camera tags
-    for (id, tag_def) in camera::get_camera_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // other tags
-    for (id, tag_def) in other::get_other_tags() {
-        map.insert(id, tag_def);
-    }
-
-    // exif_specific tags
-    for (id, tag_def) in exif_specific::get_exif_specific_tags() {
-        map.insert(id, tag_def);
-    }
-
     // interop tags
     for (id, tag_def) in interop::get_interop_tags() {
         map.insert(id, tag_def);
     }
 
-    // core tags
-    for (id, tag_def) in core::get_core_tags() {
+    // other tags
+    for (id, tag_def) in other::get_other_tags() {
         map.insert(id, tag_def);
     }
 
@@ -145,108 +145,26 @@ fn read_int16s(data: &[u8], byte_order: ByteOrder) -> Result<i16> {
 }
 
 // Subdirectory processing functions
-fn process_panasonicraw_wbinfo2(
+fn process_panasonicraw_distortioninfo(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
-    // WBType1 at offset 1
+    // DistortionParam11 at offset 11
 
-    // WB_RGBLevels3 at offset 10
-    if data.len() >= 26 {
-        if let Ok(values) = read_int16u_array(&data[20..26], byte_order, 3) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("WB_RGBLevels3".to_string(), TagValue::String(value_str)));
-        }
-    }
+    // DistortionN at offset 12
 
-    // WBType4 at offset 13
+    // DistortionParam02 at offset 2
 
-    // WB_RGBLevels4 at offset 14
-    if data.len() >= 34 {
-        if let Ok(values) = read_int16u_array(&data[28..34], byte_order, 3) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("WB_RGBLevels4".to_string(), TagValue::String(value_str)));
-        }
-    }
+    // DistortionParam04 at offset 4
 
-    // WBType5 at offset 17
+    // DistortionScale at offset 5
 
-    // WB_RGBLevels5 at offset 18
-    if data.len() >= 42 {
-        if let Ok(values) = read_int16u_array(&data[36..42], byte_order, 3) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("WB_RGBLevels5".to_string(), TagValue::String(value_str)));
-        }
-    }
+    // DistortionCorrection at offset 7.1
 
-    // WB_RGBLevels1 at offset 2
-    if data.len() >= 10 {
-        if let Ok(values) = read_int16u_array(&data[4..10], byte_order, 3) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("WB_RGBLevels1".to_string(), TagValue::String(value_str)));
-        }
-    }
+    // DistortionParam08 at offset 8
 
-    // WBType6 at offset 21
-
-    // WB_RGBLevels6 at offset 22
-    if data.len() >= 50 {
-        if let Ok(values) = read_int16u_array(&data[44..50], byte_order, 3) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("WB_RGBLevels6".to_string(), TagValue::String(value_str)));
-        }
-    }
-
-    // WBType7 at offset 25
-
-    // WB_RGBLevels7 at offset 26
-    if data.len() >= 58 {
-        if let Ok(values) = read_int16u_array(&data[52..58], byte_order, 3) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("WB_RGBLevels7".to_string(), TagValue::String(value_str)));
-        }
-    }
-
-    // WBType2 at offset 5
-
-    // WB_RGBLevels2 at offset 6
-    if data.len() >= 18 {
-        if let Ok(values) = read_int16u_array(&data[12..18], byte_order, 3) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("WB_RGBLevels2".to_string(), TagValue::String(value_str)));
-        }
-    }
-
-    // WBType3 at offset 9
+    // DistortionParam09 at offset 9
 
     Ok(tags)
 }
@@ -357,28 +275,178 @@ fn process_panasonicraw_wbinfo(
     Ok(tags)
 }
 
-fn process_panasonicraw_distortioninfo(
+fn process_panasonicraw_wbinfo2(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
-    // DistortionParam11 at offset 11
+    // WBType1 at offset 1
 
-    // DistortionN at offset 12
+    // WB_RGBLevels3 at offset 10
+    if data.len() >= 26 {
+        if let Ok(values) = read_int16u_array(&data[20..26], byte_order, 3) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("WB_RGBLevels3".to_string(), TagValue::String(value_str)));
+        }
+    }
 
-    // DistortionParam02 at offset 2
+    // WBType4 at offset 13
 
-    // DistortionParam04 at offset 4
+    // WB_RGBLevels4 at offset 14
+    if data.len() >= 34 {
+        if let Ok(values) = read_int16u_array(&data[28..34], byte_order, 3) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("WB_RGBLevels4".to_string(), TagValue::String(value_str)));
+        }
+    }
 
-    // DistortionScale at offset 5
+    // WBType5 at offset 17
 
-    // DistortionCorrection at offset 7.1
+    // WB_RGBLevels5 at offset 18
+    if data.len() >= 42 {
+        if let Ok(values) = read_int16u_array(&data[36..42], byte_order, 3) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("WB_RGBLevels5".to_string(), TagValue::String(value_str)));
+        }
+    }
 
-    // DistortionParam08 at offset 8
+    // WB_RGBLevels1 at offset 2
+    if data.len() >= 10 {
+        if let Ok(values) = read_int16u_array(&data[4..10], byte_order, 3) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("WB_RGBLevels1".to_string(), TagValue::String(value_str)));
+        }
+    }
 
-    // DistortionParam09 at offset 9
+    // WBType6 at offset 21
+
+    // WB_RGBLevels6 at offset 22
+    if data.len() >= 50 {
+        if let Ok(values) = read_int16u_array(&data[44..50], byte_order, 3) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("WB_RGBLevels6".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // WBType7 at offset 25
+
+    // WB_RGBLevels7 at offset 26
+    if data.len() >= 58 {
+        if let Ok(values) = read_int16u_array(&data[52..58], byte_order, 3) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("WB_RGBLevels7".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // WBType2 at offset 5
+
+    // WB_RGBLevels2 at offset 6
+    if data.len() >= 18 {
+        if let Ok(values) = read_int16u_array(&data[12..18], byte_order, 3) {
+            let value_str = values
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            tags.push(("WB_RGBLevels2".to_string(), TagValue::String(value_str)));
+        }
+    }
+
+    // WBType3 at offset 9
 
     Ok(tags)
+}
+
+pub fn process_tag_0x8825_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x8825_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    match count {
+        _ => Ok(vec![]), // Unknown variant
+    }
+}
+
+pub fn process_tag_0x2e_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2e_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    match count {
+        _ => Ok(vec![]), // Unknown variant
+    }
+}
+
+pub fn process_tag_0x119_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x119_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    match count {
+        _ => Ok(vec![]), // Unknown variant
+    }
+}
+
+pub fn process_tag_0x13_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x13_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    match count {
+        _ => Ok(vec![]), // Unknown variant
+    }
 }
 
 pub fn process_tag_0x8769_subdirectory(
@@ -389,6 +457,23 @@ pub fn process_tag_0x8769_subdirectory(
     let count = data.len() / 2;
     debug!(
         "process_tag_0x8769_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    match count {
+        _ => Ok(vec![]), // Unknown variant
+    }
+}
+
+pub fn process_tag_0x27_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x27_subdirectory called with {} bytes, count={}",
         data.len(),
         count
     );
@@ -432,40 +517,6 @@ pub fn process_tag_0x83bb_subdirectory(
     }
 }
 
-pub fn process_tag_0x27_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    use tracing::debug;
-    let count = data.len() / 2;
-    debug!(
-        "process_tag_0x27_subdirectory called with {} bytes, count={}",
-        data.len(),
-        count
-    );
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x13_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    use tracing::debug;
-    let count = data.len() / 2;
-    debug!(
-        "process_tag_0x13_subdirectory called with {} bytes, count={}",
-        data.len(),
-        count
-    );
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
 pub fn process_tag_0x2bc_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
@@ -474,57 +525,6 @@ pub fn process_tag_0x2bc_subdirectory(
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2bc_subdirectory called with {} bytes, count={}",
-        data.len(),
-        count
-    );
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x8825_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    use tracing::debug;
-    let count = data.len() / 2;
-    debug!(
-        "process_tag_0x8825_subdirectory called with {} bytes, count={}",
-        data.len(),
-        count
-    );
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x119_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    use tracing::debug;
-    let count = data.len() / 2;
-    debug!(
-        "process_tag_0x119_subdirectory called with {} bytes, count={}",
-        data.len(),
-        count
-    );
-
-    match count {
-        _ => Ok(vec![]), // Unknown variant
-    }
-}
-
-pub fn process_tag_0x2e_subdirectory(
-    data: &[u8],
-    byte_order: ByteOrder,
-) -> Result<Vec<(String, TagValue)>> {
-    use tracing::debug;
-    let count = data.len() / 2;
-    debug!(
-        "process_tag_0x2e_subdirectory called with {} bytes, count={}",
         data.len(),
         count
     );
