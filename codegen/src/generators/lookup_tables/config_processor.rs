@@ -55,6 +55,7 @@ where
 }
 
 /// Process tag table structure configurations (handles multiple files)
+#[allow(dead_code)]
 pub fn find_tag_structure_configs(config_dir: &Path) -> Result<Vec<String>> {
     let mut config_files = Vec::new();
     

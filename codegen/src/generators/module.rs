@@ -34,7 +34,11 @@ pub fn generate_mod_file(output_dir: &str) -> Result<()> {
         } else if path.is_dir() {
             if let Some(name) = path.file_name() {
                 let name = name.to_string_lossy();
-                modules.push(name.to_string());
+                // Only include directories that have a mod.rs file
+                let mod_rs_path = path.join("mod.rs");
+                if mod_rs_path.exists() {
+                    modules.push(name.to_string());
+                }
             }
         }
     }
