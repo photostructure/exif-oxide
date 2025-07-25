@@ -23,52 +23,52 @@
 ## Required EXIF Tags (36 total)
 
 ### Core Camera Settings (8 tags)
-- **ApertureValue** (0x9202) - APEX aperture value - freq 0.390
-- **ExposureTime** (0x829A) - Shutter speed in seconds - freq 0.990
+- **ApertureValue** (0x9202) - APEX aperture value
+- **ExposureTime** (0x829A) - Shutter speed in seconds
   - Note: Sony cameras also write SonyExposureTime with potentially higher precision
-- **FNumber** (0x829D) - F-stop value - freq 0.970
+- **FNumber** (0x829D) - F-stop value
   - Note: Sony cameras also write SonyFNumber with lens corrections
-- **FocalLength** (0x920A) - Lens focal length in mm - freq 0.950
-- **ISO** (0x8827) - ISO sensitivity - freq 0.890
+- **FocalLength** (0x920A) - Lens focal length in mm
+- **ISO** (0x8827) - ISO sensitivity
   - Note: Sony cameras also write SonyISO with extended range info
-- **ISOSpeed** (0x8833) - ISO speed ratings - freq 0.002
-- **ShutterSpeedValue** (0x9201) - APEX shutter speed - freq 0.380
-- **MaxApertureValue** (0x9205) - Smallest F number of lens - freq 0.380
+- **ISOSpeed** (0x8833) - ISO speed ratings
+- **ShutterSpeedValue** (0x9201) - APEX shutter speed
+- **MaxApertureValue** (0x9205) - Smallest F number of lens
 
 ### Timestamps (7 tags)
-- **CreateDate** (0x9004) - When image was created - freq 0.970
-- **DateTimeOriginal** (0x9003) - When photo was taken - freq 0.970
-- **DateTimeDigitized** (0x9004) - When digitized - freq 0.004
-- **ModifyDate** (0x0132) - File modification time - freq 0.890
-- **SubSecTime** (0x9290) - Subsecond timestamps - freq 0.083
-- **SubSecTimeDigitized** (0x9292) - Subsecond for digitized - freq 0.084
-- **DateTime** (0x0132) - File change date/time - freq 0.000
+- **CreateDate** (0x9004) - When image was created
+- **DateTimeOriginal** (0x9003) - When photo was taken
+- **DateTimeDigitized** (0x9004) - When digitized
+- **ModifyDate** (0x0132) - File modification time
+- **SubSecTime** (0x9290) - Subsecond timestamps
+- **SubSecTimeDigitized** (0x9292) - Subsecond for digitized
+- **DateTime** (0x0132) - File change date/time
 
 ### Image Properties (6 tags)
-- **ImageWidth** (0x0100) - Image dimensions - freq 1.000
-- **ImageHeight** (0x0101) - Image dimensions - freq 1.000
-- **Orientation** (0x0112) - Rotation/flip info - freq 0.920
-- **ImageDescription** (0x010E) - User description - freq 0.430
-- **ExifImageWidth** (0xA002) - Valid image width - freq 0.980
-- **ExifImageHeight** (0xA003) - Valid image height - freq 0.980
+- **ImageWidth** (0x0100) - Image dimensions
+- **ImageHeight** (0x0101) - Image dimensions
+- **Orientation** (0x0112) - Rotation/flip info
+- **ImageDescription** (0x010E) - User description
+- **ExifImageWidth** (0xA002) - Valid image width
+- **ExifImageHeight** (0xA003) - Valid image height
 
 ### Camera/Lens Information (6 tags)
-- **Make** (0x010F) - Camera manufacturer - freq 1.000
-- **Model** (0x0110) - Camera model - freq 1.000
-- **Software** (0x0131) - Processing software - freq 0.600
-- **LensInfo** (0xA432) - Lens specification - freq 0.086
-- **LensMake** (0xA433) - Lens manufacturer - freq 0.022
-- **LensModel** (0xA434) - Lens model name - freq 0.100
+- **Make** (0x010F) - Camera manufacturer
+- **Model** (0x0110) - Camera model
+- **Software** (0x0131) - Processing software
+- **LensInfo** (0xA432) - Lens specification
+- **LensMake** (0xA433) - Lens manufacturer
+- **LensModel** (0xA434) - Lens model name
 
 ### GPS Information (5 tags)
-- **GPSLatitude** (0x0002) - Latitude - freq 0.079
-- **GPSLongitude** (0x0004) - Longitude - freq 0.079
-- **GPSAltitude** (0x0006) - Altitude - freq 0.061
-- **GPSLatitudeRef** (0x0001) - North or South - freq 0.039
-- **GPSLongitudeRef** (0x0003) - East or West - freq 0.040
+- **GPSLatitude** (0x0002) - Latitude
+- **GPSLongitude** (0x0004) - Longitude
+- **GPSAltitude** (0x0006) - Altitude
+- **GPSLatitudeRef** (0x0001) - North or South
+- **GPSLongitudeRef** (0x0003) - East or West
 
 ### Other Required Tags (4 tags)
-- **Copyright** (0x8298) - Copyright string - freq 0.200
+- **Copyright** (0x8298) - Copyright string
 - **Artist** (0x013B) - Person who created the image
 - **UserComment** (0x9286) - User comments
 - **ExifVersion** (0x9000) - EXIF version
