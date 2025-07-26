@@ -9,33 +9,59 @@ use tracing::trace;
 
 use crate::types::TagValue;
 
-/// Compute ImageSize composite (ImageWidth + ImageHeight)
-/// ExifTool: lib/Image/ExifTool/Composite.pm ImageSize definition
+/// Compute ImageSize composite (ImageWidth + ImageHeight) - ValueConv only
+/// ExifTool: lib/Image/ExifTool/Exif.pm:4641-4660 ImageSize definition
 /// ValueConv: return $val[4] if $val[4]; return "$val[2] $val[3]" if $val[2] and $val[3] and $$self{TIFF_TYPE} =~ /^(CR2|Canon 1D RAW|IIQ|EIP)$/; return "$val[0] $val[1]" if IsFloat($val[0]) and IsFloat($val[1]); return undef;
+/// PrintConv: '$val =~ tr/ /x/; $val' (handled separately in imagesize_print_conv)
 pub fn compute_image_size(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
     // Check RawImageCroppedSize first (index 4 in desire list)
     if let Some(raw_size) = available_tags.get("RawImageCroppedSize") {
         return Some(raw_size.clone());
     }
 
-    // Try ExifImageWidth/ExifImageHeight (indexes 2,3 in desire list)
-    // Note: ExifTool checks TIFF_TYPE here, but we'll use these for all files for now
-    if let (Some(width), Some(height)) = (
-        available_tags.get("ExifImageWidth"),
-        available_tags.get("ExifImageHeight"),
-    ) {
-        if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
-            return Some(TagValue::string(format!("{w} {h}"))); // ExifTool uses space separator
+    // ExifTool logic: Only use ExifImageWidth/Height for Canon and Phase One RAW formats
+    // TIFF_TYPE =~ /^(CR2|Canon 1D RAW|IIQ|EIP)$/
+    // TODO: Implement proper TIFF_TYPE detection - for now assume non-Canon files
+    // This matches ExifTool behavior for most JPEG and non-Canon RAW files
+    let use_exif_dimensions = false; // Will be true only for Canon CR2, Canon 1D RAW, IIQ, EIP
+
+    if use_exif_dimensions {
+        // Try ExifImageWidth/ExifImageHeight for Canon/Phase One RAW (indexes 2,3)
+        if let (Some(width), Some(height)) = (
+            available_tags.get("ExifImageWidth"),
+            available_tags.get("ExifImageHeight"),
+        ) {
+            if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
+                return Some(TagValue::string(format!("{w} {h}"))); // ValueConv: space separator
+            }
         }
     }
 
-    // Finally try ImageWidth/ImageHeight (indexes 0,1 in require list)
-    if let (Some(width), Some(height)) = (
-        available_tags.get("ImageWidth"),
-        available_tags.get("ImageHeight"),
-    ) {
-        if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
-            return Some(TagValue::string(format!("{w} {h}"))); // ExifTool uses space separator
+    // Use ImageWidth/ImageHeight for all other files (indexes 0,1 in require list)
+    // This includes JPEG, Sony ARW, Nikon NEF, most RAW formats, etc.
+    // Try multiple possible sources for ImageWidth/ImageHeight, prioritizing File: group
+    // which contains actual pixel dimensions (matches ExifTool behavior for processed test images)
+    let image_width_sources = [
+        "File:ImageWidth", // Actual pixel dimensions (priority 1)
+        "ImageWidth",      // Unprefixed fallback
+        "EXIF:ImageWidth", // EXIF IFD0 ImageWidth
+        "IFD0:ImageWidth", // Explicit IFD0 reference
+    ];
+    let image_height_sources = [
+        "File:ImageHeight", // Actual pixel dimensions (priority 1)
+        "ImageHeight",      // Unprefixed fallback
+        "EXIF:ImageHeight", // EXIF IFD0 ImageHeight
+        "IFD0:ImageHeight", // Explicit IFD0 reference
+    ];
+
+    for (width_key, height_key) in image_width_sources.iter().zip(image_height_sources.iter()) {
+        if let (Some(width), Some(height)) = (
+            available_tags.get(*width_key),
+            available_tags.get(*height_key),
+        ) {
+            if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
+                return Some(TagValue::string(format!("{w} {h}"))); // ValueConv: space separator
+            }
         }
     }
 
