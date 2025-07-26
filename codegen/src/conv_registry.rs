@@ -79,6 +79,12 @@ static TAG_SPECIFIC_PRINTCONV: LazyLock<HashMap<&'static str, (&'static str, &'s
     
     // Universal tags (work across all modules - fallback)
     m.insert("Flash", ("crate::implementations::print_conv", "flash_print_conv"));
+    m.insert("LensInfo", ("crate::implementations::print_conv", "lensinfo_print_conv"));
+    
+    // GPS reference tags (ComplexHash types)
+    m.insert("GPSAltitudeRef", ("crate::implementations::print_conv", "gpsaltituderef_print_conv"));
+    m.insert("GPSLatitudeRef", ("crate::implementations::print_conv", "gpslatituderef_print_conv"));
+    m.insert("GPSLongitudeRef", ("crate::implementations::print_conv", "gpslongituderef_print_conv"));
     
     // Add other tag-specific mappings here as needed
     
