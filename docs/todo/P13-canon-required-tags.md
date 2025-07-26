@@ -115,12 +115,82 @@ Canon cameras write these standard EXIF tags:
 - Verify required tags present in output
 - Check PrintConv human-readable values
 
-## Success Criteria
+## Success Criteria & Quality Gates
 
-- All 10 Canon-specific required tags extracting correctly
-- PrintConv producing human-readable values
-- Namespace correctly set to "MakerNotes:"
-- Pass compatibility tests with PhotoStructure
+### You are NOT done until this is done:
+
+1. **All Canon Required Tags Extracting**:
+   - [ ] 10 Canon-specific required tags from tag-metadata.json implemented
+   - [ ] All Canon MakerNotes tags properly namespaced as "MakerNotes:"
+   - [ ] PrintConv producing human-readable values where applicable
+
+2. **Canon MakerNotes Tags Missing from Compatibility Tests**:
+   ```json
+   Critical Canon tags currently missing:
+   - "MakerNotes:CameraID"        // Camera-specific identification
+   - "MakerNotes:LensType"        // Full lens description  
+   - "MakerNotes:FileNumber"      // Image counter
+   - "MakerNotes:InternalSerialNumber" // Internal camera ID
+   - "MakerNotes:ISO"             // Canon CameraISO tag
+   - "MakerNotes:Categories"      // Image categories
+   - "MakerNotes:City"            // Location city name
+   - "MakerNotes:Country"         // Location country
+   - "MakerNotes:Title"           // Image title
+   - "MakerNotes:DateTimeUTC"     // UTC timestamp
+   ```
+
+3. **Binary Data Integration** (Canon stores most data in binary sections):
+   - [ ] CameraSettings binary data processor working
+   - [ ] ShotInfo binary data processor working  
+   - [ ] AFInfo2 binary data processor working
+   - [ ] LensInfo calculation from binary data
+
+4. **Specific Tag Validation** (must be added to `config/supported_tags.json` and pass `make compat-force`):
+   ```bash
+   # All these Canon MakerNotes tags must be present:
+   - "MakerNotes:CameraID"
+   - "MakerNotes:LensType"
+   - "MakerNotes:FileNumber" 
+   - "MakerNotes:InternalSerialNumber"
+   - "MakerNotes:ExposureTime"    // Canon-specific exposure processing
+   - "MakerNotes:FNumber"         // Canon-specific aperture processing
+   - "MakerNotes:FocalLength"     // Canon-specific focal length
+   - "MakerNotes:ISO"             // Canon CameraISO
+   - "MakerNotes:Categories"
+   - "MakerNotes:City"
+   - "MakerNotes:Country"
+   - "MakerNotes:Title"
+   - "MakerNotes:DateTimeUTC"
+   ```
+
+5. **Validation Commands**:
+   ```bash
+   # Test with Canon images:
+   cargo run --bin compare-with-exiftool test-images/canon/Canon_T3i.CR2 MakerNotes:
+   cargo run --bin compare-with-exiftool test-images/canon/canon_cr2.cr2 MakerNotes:
+   
+   # After implementing Canon tags:
+   make compat-force                        # Regenerate reference files  
+   make compat-test | grep "MakerNotes:"    # Check Canon compatibility
+   
+   # Target: All Canon required tags extracting with human-readable values
+   ```
+
+6. **Manual Validation** (Test with Canon Files):
+   - **Canon CR2/CR3**: Verify lens identification and camera settings
+   - **Canon JPEG**: Confirm MakerNotes extraction from JPEG files
+   - **Multiple Canon Models**: Test across EOS, PowerShot, etc.
+   - **Lens Detection**: Verify LensType calculation with teleconverter detection
+
+### Prerequisites & Dependencies:
+- **P10a EXIF Foundation** - MUST be complete first (Canon references EXIF data)
+- **Binary Data Infrastructure** - Canon uses complex binary data structures
+- **Generated Lookup Tables** - Ensure Canon lookup tables are generated correctly (not Olympus)
+
+### Quality Gates Definition:
+- **Compatibility Test Threshold**: <3 Canon-related failures in `make compat-test`
+- **Binary Data Coverage**: All major Canon binary sections (CameraSettings, ShotInfo) processing
+- **Lens Identification**: LensType calculation working for at least Canon EF/RF lenses
 
 ## Gotchas & Tribal Knowledge
 

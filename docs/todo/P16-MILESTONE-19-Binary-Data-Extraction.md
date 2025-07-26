@@ -464,24 +464,79 @@ impl BinaryExtractor {
 
 ## Success Criteria
 
-### Core Requirements
+## Success Criteria & Quality Gates
 
-- [ ] **CLI Compatibility**: `exif-oxide -b TagName file.jpg` works equivalent to ExifTool
-- [ ] **Group Resolution**: Emulate ExifTool's logic for finding best binary tag match
-- [ ] **Streaming API**: Verify existing API supports binary extraction without loading into memory
-- [ ] **Format Coverage**: Support JPEG, TIFF, RAW binary extraction (ThumbnailImage, PreviewImage, JpgFromRaw)
-- [ ] **Tag Filtering**: Include-list based approach for supported binary tags
-- [ ] **Safety Limits**: Conservative size limits prevent excessive memory usage
-- [ ] **Error Handling**: Graceful handling of missing or corrupted binary data
+### You are NOT done until this is done:
 
-### Validation Tests
+1. **Binary Data Representation Issues** (critical compatibility failures):
+   ```json
+   Currently missing binary data indicators:
+   - "EXIF:ThumbnailImage"     // Must show "(Binary data X bytes, use -b option to extract)"
+   - "EXIF:PreviewImage"       // Must show "(Binary data X bytes, use -b option to extract)"
+   - "EXIF:PreviewTIFF"        // Binary TIFF thumbnail  
+   - "MakerNotes:PreviewImage" // Manufacturer-specific previews
+   - "MPF:PreviewImage"        // Multi-Picture Format previews
+   ```
 
-- [ ] **SHA Comparison**: Extract binary data with both tools and compare SHA256 hashes
-- [ ] **Test Coverage**: Use existing test-images/* samples for each manufacturer
-- [ ] **Missing Samples**: Check and request any missing RAW format samples
-- [ ] **Tag Support**: Test all tags in include-list (ThumbnailImage, PreviewImage, JpgFromRaw)
-- [ ] **Size Limits**: Verify conservative limits prevent malicious extraction
-- [ ] **Debug Output**: Optional saving to tmp/ directories for debugging
+2. **Core Requirements**:
+   - [ ] **CLI Compatibility**: `exif-oxide -b TagName file.jpg` works equivalent to ExifTool
+   - [ ] **Group Resolution**: Emulate ExifTool's logic for finding best binary tag match  
+   - [ ] **Streaming API**: Verify existing API supports binary extraction without loading into memory
+   - [ ] **Format Coverage**: Support JPEG, TIFF, RAW binary extraction (ThumbnailImage, PreviewImage, JpgFromRaw)
+   - [ ] **Binary Metadata Display**: Show binary data indicators in regular metadata output
+   - [ ] **Safety Limits**: Conservative size limits prevent excessive memory usage
+
+3. **Specific Tag Validation** (must be added to `config/supported_tags.json` and pass `make compat-force`):
+   ```bash
+   # All these binary tags must show proper indicators:
+   - "EXIF:ThumbnailImage"      // "(Binary data X bytes, use -b option to extract)"
+   - "EXIF:PreviewImage"        // "(Binary data X bytes, use -b option to extract)"
+   - "EXIF:PreviewTIFF"         // Binary TIFF preview
+   - "MakerNotes:PreviewImage"  // Manufacturer preview data
+   - "MPF:PreviewImage"         // Multi-Picture Format preview
+   - "JFIF:ThumbnailImage"      // JFIF embedded thumbnail
+   - "JFIF:ThumbnailTIFF"       // JFIF TIFF thumbnail
+   - "FlashPix:PreviewImage"    // FlashPix preview
+   ```
+
+4. **Validation Commands**:
+   ```bash
+   # Test binary data indicators appear in regular output:
+   cargo run --bin exif-oxide test-images/canon/canon_cr2.cr2 | grep "Binary data"
+   cargo run --bin exif-oxide test-images/nikon/nikon_nef.nef | grep "ThumbnailImage"
+   
+   # Test binary extraction works:
+   cargo run --bin exif-oxide -b ThumbnailImage test-images/jpeg_sample.jpg > thumbnail.jpg
+   
+   # After implementing binary support:
+   make compat-force                    # Regenerate reference files
+   make compat-test | grep -E "(Thumbnail|Preview)"  # Check binary indicators
+   
+   # Target: All binary tags show proper indicators, not missing tags
+   ```
+
+5. **Validation Tests**:
+   - [ ] **SHA Comparison**: Extract binary data with both tools and compare SHA256 hashes
+   - [ ] **Test Coverage**: Use existing test-images/* samples for each manufacturer
+   - [ ] **Tag Support**: Test all tags in include-list (ThumbnailImage, PreviewImage, JpgFromRaw)
+   - [ ] **Size Limits**: Verify conservative limits prevent malicious extraction
+   - [ ] **Binary Indicators**: Verify "(Binary data X bytes...)" appears in regular metadata output
+
+6. **Manual Validation** (Test Binary Data Workflow):
+   - **JPEG with Thumbnail**: Verify ThumbnailImage indicator appears and extraction works
+   - **Canon CR2**: Confirm PreviewImage extraction produces valid JPEG
+   - **Multi-format**: Test across JPEG, TIFF, RAW files  
+   - **Size Validation**: Confirm extracted binary matches expected file sizes
+
+### Prerequisites & Dependencies:
+- **P10a EXIF Foundation** - Binary data tags are often in EXIF IFDs
+- **P13* MakerNotes** - Many binary previews are in manufacturer-specific sections
+- **Format Detection** - Must identify file types to locate binary data correctly
+
+### Quality Gates Definition:
+- **Compatibility Test Threshold**: <2 binary-related failures in `make compat-test`
+- **Binary Indicator Coverage**: All thumbnail/preview tags show proper indicators instead of missing
+- **Extraction Functionality**: CLI -b option works for at least ThumbnailImage and PreviewImage
 
 ## Implementation Boundaries
 
