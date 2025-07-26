@@ -160,6 +160,35 @@ pub fn apply_print_conv(
     }
 }
 
+/// Apply ValueConv for a tag from this module
+pub fn apply_value_conv(
+    tag_id: u32,
+    value: &TagValue,
+    _errors: &mut Vec<String>,
+) -> Result<TagValue> {
+    match tag_id {
+        2 => crate::implementations::value_conv::gps_coordinate_value_conv(value),
+        4 => crate::implementations::value_conv::gps_coordinate_value_conv(value),
+        7 => crate::implementations::value_conv::gpstimestamp_value_conv(value),
+        20 => crate::implementations::value_conv::gps_coordinate_value_conv(value),
+        22 => crate::implementations::value_conv::gps_coordinate_value_conv(value),
+        _ => {
+            // Fall back to missing handler for unknown expressions
+            if let Some(tag_kit) = GPS_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id, expr, value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+    }
+}
+
 /// Check if a tag has subdirectory processing
 pub fn has_subdirectory(tag_id: u32) -> bool {
     if let Some(tag_kit) = GPS_PM_TAG_KITS.get(&tag_id) {

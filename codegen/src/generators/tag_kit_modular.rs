@@ -150,6 +150,80 @@ fn generate_print_conv_function(
     Ok(())
 }
 
+/// Generate the apply_value_conv function with direct function calls
+fn generate_value_conv_function(
+    code: &mut String,
+    extraction: &TagKitExtraction,
+    module_name: &str,
+    const_name: &str,
+) -> Result<()> {
+    code.push_str("/// Apply ValueConv for a tag from this module\n");
+    code.push_str("pub fn apply_value_conv(\n");
+    code.push_str("    tag_id: u32,\n");
+    code.push_str("    value: &TagValue,\n");
+    code.push_str("    _errors: &mut Vec<String>,\n");
+    code.push_str(") -> Result<TagValue> {\n");
+    
+    // First, collect all tags that need ValueConv
+    // Use HashMap to deduplicate by tag_id (keep first occurrence)
+    let mut tag_convs_map: std::collections::HashMap<u32, (String, String)> = std::collections::HashMap::new();
+    
+    for tag_kit in &extraction.tag_kits {
+        let tag_id = tag_kit.tag_id.parse::<u32>().unwrap_or(0);
+        
+        // Skip if we already have a ValueConv for this tag_id
+        if tag_convs_map.contains_key(&tag_id) {
+            continue;
+        }
+        
+        // Check if tag has ValueConv
+        if let Some(value_conv_expr) = &tag_kit.value_conv {
+            if let Some((module_path, func_name)) = lookup_valueconv(value_conv_expr, module_name) {
+                tag_convs_map.insert(tag_id, (module_path.to_string(), func_name.to_string()));
+            }
+        }
+    }
+    
+    // Convert to sorted Vec for deterministic output
+    let mut tag_convs: Vec<(u32, String, String)> = tag_convs_map
+        .into_iter()
+        .map(|(id, (module_path, func_name))| (id, module_path, func_name))
+        .collect();
+    
+    if tag_convs.is_empty() {
+        // No ValueConv functions - return value unchanged
+        code.push_str("    Ok(value.clone())\n");
+    } else {
+        // Generate optimized match with direct function calls
+        code.push_str("    match tag_id {\n");
+        
+        // Sort by tag_id for deterministic output
+        tag_convs.sort_by_key(|(id, _, _)| *id);
+        
+        for (tag_id, module_path, func_name) in tag_convs {
+            code.push_str(&format!("        {tag_id} => {}::{}(value),\n", module_path, func_name));
+        }
+        
+        code.push_str("        _ => {\n");
+        code.push_str("            // Fall back to missing handler for unknown expressions\n");
+        code.push_str(&format!("            if let Some(tag_kit) = {const_name}.get(&tag_id) {{\n"));
+        code.push_str("                if let Some(expr) = tag_kit.value_conv {\n");
+        code.push_str("                    Ok(crate::implementations::missing::missing_value_conv(tag_id, expr, value))\n");
+        code.push_str("                } else {\n");
+        code.push_str("                    Ok(value.clone())\n");
+        code.push_str("                }\n");
+        code.push_str("            } else {\n");
+        code.push_str("                Ok(value.clone())\n");
+        code.push_str("            }\n");
+        code.push_str("        }\n");
+        code.push_str("    }\n");
+    }
+    
+    code.push_str("}\n\n");
+    
+    Ok(())
+}
+
 /// Generate modular tag kit code from extracted data
 pub fn generate_modular_tag_kit(
     extraction: &TagKitExtraction,
@@ -605,6 +679,9 @@ fn generate_mod_file(
     
     // Generate apply_print_conv function with direct function calls
     generate_print_conv_function(&mut code, extraction, module_name, &const_name)?;
+    
+    // Generate apply_value_conv function with direct function calls
+    generate_value_conv_function(&mut code, extraction, module_name, &const_name)?;
     
     // Add subdirectory processing functions
     code.push_str("/// Check if a tag has subdirectory processing\n");
