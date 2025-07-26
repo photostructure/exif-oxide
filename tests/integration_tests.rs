@@ -83,14 +83,16 @@ fn test_cli_show_missing() {
         .map(|v| v.as_str().unwrap())
         .collect::<Vec<_>>();
 
-    // Current implementation tracks specific missing tag IDs and conversion functions
+    // Current implementation tracks missing PrintConv/ValueConv expressions with tag context
     assert!(
-        missing_str.iter().any(|s| s.starts_with("Tag_")),
-        "Should contain missing tag IDs"
+        missing_str
+            .iter()
+            .any(|s| s.contains("PrintConv:") || s.contains("ValueConv:")),
+        "Should contain missing PrintConv or ValueConv expressions"
     );
     assert!(
-        missing_str.iter().any(|s| s.starts_with("PrintConv_")),
-        "Should contain missing PrintConv functions"
+        missing_str.iter().any(|s| s.contains("[used by tags:")),
+        "Should show which tags use the missing conversions"
     );
 }
 

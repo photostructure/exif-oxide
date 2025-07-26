@@ -102,7 +102,6 @@ impl ExifReader {
         use crate::expressions::ExpressionEvaluator;
         use crate::generated::Exif_pm::tag_kit;
         use crate::generated::GPS_pm::tag_kit as gps_tag_kit;
-        use crate::implementations::value_conv;
 
         let mut value = raw_value.clone();
 
@@ -110,49 +109,25 @@ impl ExifReader {
         if ifd_name == "GPS" {
             // For GPS IFD, check GPS tag kit
             if let Some(tag_def) = gps_tag_kit::GPS_PM_TAG_KITS.get(&(tag_id as u32)) {
-                // Apply ValueConv first (if present)
-                if let Some(value_conv_expr) = tag_def.value_conv {
-                    // Map known ValueConv expressions to implementations
-                    match value_conv_expr {
-                        "Image::ExifTool::GPS::ToDegrees($val)" => {
-                            match value_conv::gps_coordinate_value_conv(&value) {
-                                Ok(converted) => {
-                                    debug!(
-                                        "Applied GPS ToDegrees conversion to tag 0x{:04x}: {:?} -> {:?}",
-                                        tag_id, value, converted
-                                    );
-                                    value = converted;
-                                }
-                                Err(e) => {
-                                    debug!(
-                                        "Failed to apply GPS ToDegrees conversion to tag 0x{:04x}: {}",
-                                        tag_id, e
-                                    );
-                                }
-                            }
-                        }
-                        "Image::ExifTool::GPS::ConvertTimeStamp($val)" => {
-                            match value_conv::gpstimestamp_value_conv(&value) {
-                                Ok(converted) => {
-                                    debug!(
-                                        "Applied GPS timestamp conversion to tag 0x{:04x}: {:?} -> {:?}",
-                                        tag_id, value, converted
-                                    );
-                                    value = converted;
-                                }
-                                Err(e) => {
-                                    debug!(
-                                        "Failed to apply GPS timestamp conversion to tag 0x{:04x}: {}",
-                                        tag_id, e
-                                    );
-                                }
-                            }
-                        }
-                        _ => {
-                            // TODO: Implement other value conv expressions
+                // Apply ValueConv first (if present) using generated function
+                if tag_def.value_conv.is_some() {
+                    let mut value_conv_errors = Vec::new();
+                    match gps_tag_kit::apply_value_conv(
+                        tag_id as u32,
+                        &value,
+                        &mut value_conv_errors,
+                    ) {
+                        Ok(converted) => {
                             debug!(
-                                "ValueConv expression not yet implemented for tag 0x{:04x}: {}",
-                                tag_id, value_conv_expr
+                                "Applied ValueConv to GPS tag 0x{:04x}: {:?} -> {:?}",
+                                tag_id, value, converted
+                            );
+                            value = converted;
+                        }
+                        Err(e) => {
+                            debug!(
+                                "Failed to apply ValueConv to GPS tag 0x{:04x}: {}",
+                                tag_id, e
                             );
                         }
                     }
@@ -231,51 +206,21 @@ impl ExifReader {
         } else {
             // For other IFDs, check EXIF tag kit
             if let Some(tag_def) = tag_kit::EXIF_PM_TAG_KITS.get(&(tag_id as u32)) {
-                // Apply ValueConv first (if present)
-                if let Some(value_conv_expr) = tag_def.value_conv {
-                    // Map known ValueConv expressions to implementations
-                    match value_conv_expr {
-                        "IsFloat($val) && abs($val)<100 ? 2**(-$val) : 0" => {
-                            // ShutterSpeedValue APEX conversion
-                            match value_conv::apex_shutter_speed_value_conv(&value) {
-                                Ok(converted) => {
-                                    debug!(
-                                        "Applied APEX shutter speed conversion to tag 0x{:04x}: {:?} -> {:?}",
-                                        tag_id, value, converted
-                                    );
-                                    value = converted;
-                                }
-                                Err(e) => {
-                                    debug!(
-                                        "Failed to apply APEX shutter speed conversion to tag 0x{:04x}: {}",
-                                        tag_id, e
-                                    );
-                                }
-                            }
-                        }
-                        "2 ** ($val / 2)" => {
-                            // ApertureValue and MaxApertureValue APEX conversion
-                            match value_conv::apex_aperture_value_conv(&value) {
-                                Ok(converted) => {
-                                    debug!(
-                                        "Applied APEX aperture conversion to tag 0x{:04x}: {:?} -> {:?}",
-                                        tag_id, value, converted
-                                    );
-                                    value = converted;
-                                }
-                                Err(e) => {
-                                    debug!(
-                                        "Failed to apply APEX aperture conversion to tag 0x{:04x}: {}",
-                                        tag_id, e
-                                    );
-                                }
-                            }
-                        }
-                        _ => {
-                            // TODO: Implement other value conv expressions
+                // Apply ValueConv first (if present) using generated function
+                if tag_def.value_conv.is_some() {
+                    let mut value_conv_errors = Vec::new();
+                    match tag_kit::apply_value_conv(tag_id as u32, &value, &mut value_conv_errors) {
+                        Ok(converted) => {
                             debug!(
-                                "ValueConv expression not yet implemented for tag 0x{:04x}: {}",
-                                tag_id, value_conv_expr
+                                "Applied ValueConv to EXIF tag 0x{:04x}: {:?} -> {:?}",
+                                tag_id, value, converted
+                            );
+                            value = converted;
+                        }
+                        Err(e) => {
+                            debug!(
+                                "Failed to apply ValueConv to EXIF tag 0x{:04x}: {}",
+                                tag_id, e
                             );
                         }
                     }

@@ -120,7 +120,9 @@
       "Bash(/home/mrm/src/exif-oxide/third-party/exiftool/exiftool -s -LensInfo -LensModel /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Canon.jpg)",
       "Bash(./exiftool -s -G1 -ISOSpeed -ISO -SensitivityType ./t/images/OlympusE1.jpg)",
       "Bash(./exiftool -s -G1 -ISOSpeed -ISO -SensitivityType ./t/images/Canon.jpg)",
-      "Bash(env RUST_LOG=debug cargo run -- test-images/canon/Canon_T3i.jpg)"
+      "Bash(env RUST_LOG=debug cargo run -- test-images/canon/Canon_T3i.jpg)",
+      "Bash(./target/debug/deps/integration_tests-*)",
+      "Bash(--list)"
     ],
     "deny": []
   }

@@ -5,6 +5,51 @@
 - **High-level goal**: Complete the implementation of subdirectory binary data parsers to properly extract individual tag values instead of raw byte arrays
 - **Problem statement**: While subdirectory dispatcher functions now correctly call processor functions (fixed 2025-07-25), the actual binary data parsing implementations remain as TODOs, causing tags like ProcessingInfo and CanonShotInfo to display as numeric arrays instead of meaningful values
 
+## MANDATORY READING
+
+These are relevant, mandatory, prerequisite reading for every task:
+
+- [@CLAUDE.md](../CLAUDE.md)
+- [@docs/TRUST-EXIFTOOL.md](../docs/TRUST-EXIFTOOL.md).
+
+## DO NOT BLINDLY FOLLOW THIS PLAN
+
+Building the wrong thing (because you made an assumption or misunderstood something) is **much** more expensive than asking for guidance or clarity.
+
+The authors tried their best, but also assume there will be aspects of this plan that may be odd, confusing, or unintuitive to you. Communication is hard!
+
+**FIRSTLY**, follow and study **all** referenced source and documentation. Ultrathink, analyze, and critique the given overall TPP and the current task breakdown.
+
+If anything doesn't make sense, or if there are alternatives that may be more optimal, ask clarifying questions. We all want to drive to the best solution and are delighted to help clarify issues and discuss alternatives. DON'T BE SHY!
+
+## KEEP THIS UPDATED
+
+This TPP is a living document. **MAKE UPDATES AS YOU WORK**. Be concise. Avoid lengthy prose!
+
+**What to Update:**
+
+- 🔍 **Discoveries**: Add findings with links to source code/docs (in relevant sections)
+- 🤔 **Decisions**: Document WHY you chose approach A over B (in "Work Completed")
+- ⚠️ **Surprises**: Note unexpected behavior or assumptions that were wrong (in "Gotchas")
+- ✅ **Progress**: Move completed items from "Remaining Tasks" to "Work Completed"
+- 🚧 **Blockers**: Add new prerequisites or dependencies you discover
+
+**When to Update:**
+
+- After each research session (even if you found nothing - document that!)
+- When you realize the original approach won't work
+- When you discover critical context not in the original TPP
+- Before context switching to another task
+
+**Keep the content tight**
+
+- If there were code examples that are now implemented, replace the code with a link to the final source.
+- If there is a lengthy discussion that resulted in failure or is now better encoded in source, summarize and link to the final source.
+- Remember: the `ReadTool` doesn't love reading files longer than 500 lines, and that can cause dangerous omissions of context.
+
+The Engineers of Tomorrow are interested in your discoveries, not just your final code!
+
+
 ## Background & Context
 
 - **Why this work is needed**: Users expect to see human-readable tag values (e.g., "WB_RGGBLevelsAsShot: 2241 1024 1024 1689") not raw arrays like "[28, 0, 2, 0, 0, 0...]"
