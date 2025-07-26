@@ -91,17 +91,18 @@ pub fn resolve_and_compute_composites(
                 if let Some(computed_value) = compute_composite_tag(composite_def, &available_tags)
                 {
                     // Apply PrintConv to the computed value
-                    let (final_value, _print) =
+                    let (_final_value, print_value) =
                         apply_composite_conversions(&computed_value, composite_def);
 
                     let composite_name = format!("Composite:{}", composite_def.name);
 
                     // Add to available_tags for future composite dependencies
-                    available_tags.insert(composite_name.clone(), final_value.clone());
-                    available_tags.insert(composite_def.name.to_string(), final_value.clone());
+                    // Use the PrintConv result for final output
+                    available_tags.insert(composite_name.clone(), print_value.clone());
+                    available_tags.insert(composite_def.name.to_string(), print_value.clone());
 
-                    // Store in composite_tags collection
-                    composite_tags.insert(composite_name.clone(), final_value);
+                    // Store in composite_tags collection - use PrintConv result
+                    composite_tags.insert(composite_name.clone(), print_value);
                     built_composites.insert(composite_def.name);
 
                     debug!("Built composite tag: {} (pass {})", composite_name, pass);
