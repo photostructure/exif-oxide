@@ -3,6 +3,11 @@
 //! This module contains the core IFD parsing functionality for processing
 //! EXIF directory structures, including subdirectory recursion management.
 //!
+//! ⚠️ CRITICAL: DO NOT APPLY CONVERSIONS DURING VALUE EXTRACTION
+//! ValueConv and PrintConv are applied ONLY in get_all_tag_entries() to avoid
+//! double conversion bugs (e.g., APEX values being converted twice: 6 → 8 → 16).
+//! Store raw extracted values here, conversions happen at output time.
+//!
 //! ExifTool Reference: lib/Image/ExifTool/Exif.pm IFD processing
 
 use crate::implementations::olympus;
@@ -268,19 +273,18 @@ impl ExifReader {
             TiffFormat::Ascii => {
                 let value = value_extraction::extract_ascii_value(&self.data, &entry, byte_order)?;
                 // debug!("ASCII tag {:#x} extracted value: {:?} (length: {})", entry.tag_id, value, value.len());
-                if !value.is_empty() {
-                    let tag_value = TagValue::String(value);
-                    let (final_value, _print) =
-                        self.apply_conversions(&tag_value, entry.tag_id, ifd_name);
-                    trace!(
-                        "Extracted ASCII tag {:#x} from {}: {:?}",
-                        entry.tag_id,
-                        ifd_name,
-                        final_value
-                    );
-                    let source_info = self.create_tag_source_info(ifd_name);
-                    self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
-                }
+
+                // Store ASCII strings including empty ones - ExifTool behavior
+                // Only skip if the extraction completely failed (shouldn't happen with proper ASCII extraction)
+                let tag_value = TagValue::String(value);
+                trace!(
+                    "Extracted ASCII tag {:#x} from {}: {:?}",
+                    entry.tag_id,
+                    ifd_name,
+                    tag_value
+                );
+                let source_info = self.create_tag_source_info(ifd_name);
+                self.store_tag_with_precedence(entry.tag_id, tag_value, source_info);
             }
             TiffFormat::Byte => {
                 // Handle both single byte and byte arrays
@@ -293,17 +297,16 @@ impl ExifReader {
                     TagValue::U8Array(values)
                 };
 
-                let (final_value, _print) =
-                    self.apply_conversions(&tag_value, entry.tag_id, ifd_name);
+                // Store raw value to avoid double conversion - conversions are applied in get_all_tag_entries
                 trace!(
                     "Extracted BYTE tag {:#x} from {} (count: {}): {:?}",
                     entry.tag_id,
                     ifd_name,
                     entry.count,
-                    final_value
+                    tag_value
                 );
                 let source_info = self.create_tag_source_info(ifd_name);
-                self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
+                self.store_tag_with_precedence(entry.tag_id, tag_value, source_info);
             }
             TiffFormat::Short => {
                 // Handle both single and array SHORT values
@@ -312,23 +315,21 @@ impl ExifReader {
                     let value =
                         value_extraction::extract_short_value(&self.data, &entry, byte_order)?;
                     let tag_value = TagValue::U16(value);
-                    let (final_value, _print) =
-                        self.apply_conversions(&tag_value, entry.tag_id, ifd_name);
-
+                    // Store raw value to avoid double conversion - conversions are applied in get_all_tag_entries
                     trace!(
                         "Extracted SHORT tag {:#x} from {}: {:?}",
                         entry.tag_id,
                         ifd_name,
-                        final_value
+                        tag_value
                     );
 
                     let source_info = self.create_tag_source_info(ifd_name);
-                    self.store_tag_with_precedence(entry.tag_id, final_value.clone(), source_info);
+                    self.store_tag_with_precedence(entry.tag_id, tag_value.clone(), source_info);
 
                     // Check for NEF -> NRW conversion
                     // ExifTool Exif.pm:1139-1140 - recognize NRW from JPEG-compressed thumbnail in IFD0
                     if entry.tag_id == 0x0103 && ifd_name == "IFD0" {
-                        if let TagValue::U16(compression) = final_value {
+                        if let TagValue::U16(compression) = tag_value {
                             if compression == 6 && self.original_file_type.as_deref() == Some("NEF")
                             {
                                 // Override file type from NEF to NRW
@@ -343,8 +344,7 @@ impl ExifReader {
                         &self.data, &entry, byte_order,
                     )?;
                     let tag_value = TagValue::U16Array(values);
-                    let (final_value, _print) =
-                        self.apply_conversions(&tag_value, entry.tag_id, ifd_name);
+                    // Store raw value to avoid double conversion - conversions are applied in get_all_tag_entries
 
                     trace!(
                         "Extracted SHORT array tag {:#x} from {} with {} values",
@@ -354,7 +354,7 @@ impl ExifReader {
                     );
 
                     let source_info = self.create_tag_source_info(ifd_name);
-                    self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
+                    self.store_tag_with_precedence(entry.tag_id, tag_value, source_info);
                 }
             }
             TiffFormat::Long => {
@@ -371,16 +371,15 @@ impl ExifReader {
                         self.process_subdirectory_tag(entry.tag_id, value, &tag_name, None)?;
                     }
 
-                    let (final_value, _print) =
-                        self.apply_conversions(&tag_value, entry.tag_id, ifd_name);
+                    // Store raw value to avoid double conversion - conversions are applied in get_all_tag_entries
                     trace!(
                         "Extracted LONG tag {:#x} from {}: {:?}",
                         entry.tag_id,
                         ifd_name,
-                        final_value
+                        tag_value
                     );
                     let source_info = self.create_tag_source_info(ifd_name);
-                    self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
+                    self.store_tag_with_precedence(entry.tag_id, tag_value, source_info);
                 } else {
                     // Multiple LONG values - extract as array
                     debug!(
@@ -411,17 +410,16 @@ impl ExifReader {
                         )?;
                     }
 
-                    let (final_value, _print) =
-                        self.apply_conversions(&tag_value, entry.tag_id, ifd_name);
+                    // Store raw value to avoid double conversion - conversions are applied in get_all_tag_entries
                     trace!(
                         "Extracted LONG array tag {:#x} from {} with {} values: {:?}",
                         entry.tag_id,
                         ifd_name,
                         entry.count,
-                        final_value
+                        tag_value
                     );
                     let source_info = self.create_tag_source_info(ifd_name);
-                    self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
+                    self.store_tag_with_precedence(entry.tag_id, tag_value, source_info);
                 }
             }
             TiffFormat::Rational => {
@@ -429,30 +427,30 @@ impl ExifReader {
                 // ExifTool: 2x uint32 values representing numerator/denominator
                 let value =
                     value_extraction::extract_rational_value(&self.data, &entry, byte_order)?;
-                let (final_value, _print) = self.apply_conversions(&value, entry.tag_id, ifd_name);
+                // Store raw value to avoid double conversion - conversions are applied in get_all_tag_entries
                 trace!(
                     "Extracted RATIONAL tag {:#x} from {}: {:?}",
                     entry.tag_id,
                     ifd_name,
-                    final_value
+                    value
                 );
                 let source_info = self.create_tag_source_info(ifd_name);
-                self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
+                self.store_tag_with_precedence(entry.tag_id, value, source_info);
             }
             TiffFormat::SRational => {
                 // Milestone 6: SRATIONAL format support (format 10)
                 // ExifTool: 2x int32 values representing numerator/denominator
                 let value =
                     value_extraction::extract_srational_value(&self.data, &entry, byte_order)?;
-                let (final_value, _print) = self.apply_conversions(&value, entry.tag_id, ifd_name);
+                // Store raw value to avoid double conversion - conversions are applied in get_all_tag_entries
                 trace!(
                     "Extracted SRATIONAL tag {:#x} from {}: {:?}",
                     entry.tag_id,
                     ifd_name,
-                    final_value
+                    value
                 );
                 let source_info = self.create_tag_source_info(ifd_name);
-                self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
+                self.store_tag_with_precedence(entry.tag_id, value, source_info);
             }
             TiffFormat::Undefined => {
                 // UNDEFINED format - can contain various data types including subdirectories
@@ -542,12 +540,31 @@ impl ExifReader {
                             );
                         }
                     } else {
-                        // Other UNDEFINED data - store as raw bytes for now
-                        // TODO: Implement specific UNDEFINED tag processing as needed
+                        // Other UNDEFINED data - extract as binary/byte array
+                        // This includes tags like UserComment (0x9286)
                         debug!(
-                            "UNDEFINED tag {:#x} ({}) not yet implemented (format 7, {} bytes)",
+                            "Extracting UNDEFINED tag {:#x} ({}) as binary data ({} bytes)",
                             entry.tag_id, tag_name, entry.count
                         );
+
+                        if let Ok(binary_data) =
+                            value_extraction::extract_byte_array_value(&self.data, &entry)
+                        {
+                            let tag_value = TagValue::Binary(binary_data);
+                            let source_info = self.create_tag_source_info(ifd_name);
+                            self.store_tag_with_precedence(entry.tag_id, tag_value, source_info);
+                            trace!(
+                                "Extracted UNDEFINED tag {:#x} from {}: {} bytes",
+                                entry.tag_id,
+                                ifd_name,
+                                entry.count
+                            );
+                        } else {
+                            debug!(
+                                "Failed to extract binary data for UNDEFINED tag {:#x} ({})",
+                                entry.tag_id, tag_name
+                            );
+                        }
                     }
                 }
             }
@@ -621,11 +638,9 @@ impl ExifReader {
                     );
                 }
 
-                // Also store the tag value for completeness
-                let (final_value, _print) =
-                    self.apply_conversions(&tag_value, entry.tag_id, ifd_name);
+                // Store raw value to avoid double conversion - conversions are applied in get_all_tag_entries
                 let source_info = self.create_tag_source_info(ifd_name);
-                self.store_tag_with_precedence(entry.tag_id, final_value, source_info);
+                self.store_tag_with_precedence(entry.tag_id, tag_value, source_info);
             }
             _ => {
                 // For other formats, store raw value for now
