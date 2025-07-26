@@ -11450,48 +11450,37 @@ pub fn apply_print_conv(
     _errors: &mut Vec<String>,
     warnings: &mut Vec<String>,
 ) -> TagValue {
-    if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
-        // Normal PrintConv processing only
-        match &tag_kit.print_conv {
-            PrintConvType::None => value.clone(),
-            PrintConvType::Simple(lookup) => {
-                // Convert value to string key for lookup
-                let key = match value {
-                    TagValue::U8(v) => v.to_string(),
-                    TagValue::U16(v) => v.to_string(),
-                    TagValue::U32(v) => v.to_string(),
-                    TagValue::I16(v) => v.to_string(),
-                    TagValue::I32(v) => v.to_string(),
-                    TagValue::String(s) => s.clone(),
-                    _ => return value.clone(),
-                };
-
-                if let Some(result) = lookup.get(&key) {
-                    TagValue::String(result.to_string())
-                } else {
-                    TagValue::String(format!("Unknown ({})", value))
-                }
-            }
-            PrintConvType::Expression(expr) => {
-                // TODO: Implement expression evaluation
-                warnings.push(format!(
-                    "Expression PrintConv not yet implemented for tag {}: {}",
-                    tag_kit.name, expr
-                ));
-                value.clone()
-            }
-            PrintConvType::Manual(func_name) => {
-                // TODO: Look up in manual registry
-                warnings.push(format!(
-                    "Manual PrintConv '{}' not found for tag {}",
-                    func_name, tag_kit.name
-                ));
+    match tag_id {
+        1 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        2 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        3 => crate::implementations::print_conv::decimal_2_print_conv(value),
+        4 => crate::implementations::print_conv::exposuretime_print_conv(value),
+        5 => crate::implementations::print_conv::exposuretime_print_conv(value),
+        6 => crate::implementations::print_conv::print_fraction(value),
+        8 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        10 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        12 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        13 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        15 => crate::implementations::print_conv::print_fraction(value),
+        17 => crate::implementations::print_conv::print_fraction(value),
+        19 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        20 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        21 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        22 => crate::implementations::print_conv::exposuretime_print_conv(value),
+        30 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        585 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        _ => {
+            // Fall back to shared handling
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                crate::implementations::generic::apply_fallback_print_conv(
+                    tag_id,
+                    value,
+                    crate::to_print_conv_ref!(&tag_kit.print_conv),
+                )
+            } else {
                 value.clone()
             }
         }
-    } else {
-        // Tag not found in kit
-        value.clone()
     }
 }
 

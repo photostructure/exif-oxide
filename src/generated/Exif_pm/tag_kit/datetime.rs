@@ -46,7 +46,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Manual("complex_expression_printconv"),
+            print_conv: PrintConvType::Expression("Image::ExifTool::Exif::PrintExposureTime($val)"),
             value_conv: None,
             subdirectory: None,
         }),
