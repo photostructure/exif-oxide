@@ -21,6 +21,9 @@
   "EXIF:MeteringMode": "Center-weighted average",
   "EXIF:Flash": "Off, Did not fire",
   "EXIF:FocalLength": "8.4 mm",
+  "EXIF:ExifImageWidth": 1280,
+  "EXIF:ExifImageHeight": 960,
   "File:ImageWidth": 8,
-  "File:ImageHeight": 8
+  "File:ImageHeight": 8,
+  "Composite:ImageSize": "8x8"
 }

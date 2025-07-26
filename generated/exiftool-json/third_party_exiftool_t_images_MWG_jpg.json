@@ -17,5 +17,6 @@
   "EXIF:SubSecTimeOriginal": 111,
   "EXIF:SubSecTimeDigitized": 122,
   "File:ImageWidth": 8,
-  "File:ImageHeight": 8
+  "File:ImageHeight": 8,
+  "Composite:ImageSize": "8x8"
 }

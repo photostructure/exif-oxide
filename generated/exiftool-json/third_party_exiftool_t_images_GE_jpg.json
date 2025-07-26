@@ -27,6 +27,9 @@
   "EXIF:Flash": "Auto, Did not fire",
   "EXIF:FocalLength": "22.5 mm",
   "EXIF:UserComment": "R:  139 G:  255 B:  189 X:39852 Y:    0 S:    0 Zs:   6 Zp: 115 F:  531 I:    1 ImgVer:08.01.09.10",
+  "EXIF:ExifImageWidth": 0,
+  "EXIF:ExifImageHeight": 0,
   "File:ImageWidth": 8,
-  "File:ImageHeight": 8
+  "File:ImageHeight": 8,
+  "Composite:ImageSize": "8x8"
 }

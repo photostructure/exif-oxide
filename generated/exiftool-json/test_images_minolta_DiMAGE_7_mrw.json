@@ -24,5 +24,6 @@
   "EXIF:MeteringMode": "Unknown",
   "EXIF:Flash": "Off, Did not fire",
   "EXIF:FocalLength": "7.2 mm",
-  "EXIF:UserComment": ""
+  "EXIF:UserComment": "",
+  "Composite:ImageSize": "3264x2448"
 }

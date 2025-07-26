@@ -28,8 +28,11 @@
   "EXIF:MeteringMode": "Multi-segment",
   "EXIF:Flash": "No Flash",
   "EXIF:FocalLength": "0.0 mm",
+  "EXIF:ExifImageWidth": 2400,
+  "EXIF:ExifImageHeight": 1600,
   "EXIF:GPSLatitudeRef": "North",
   "EXIF:GPSLongitudeRef": "West",
   "File:ImageWidth": 120,
-  "File:ImageHeight": 80
+  "File:ImageHeight": 80,
+  "Composite:ImageSize": "120x80"
 }

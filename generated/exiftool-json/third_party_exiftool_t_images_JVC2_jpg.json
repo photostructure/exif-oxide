@@ -24,6 +24,9 @@
   "EXIF:MeteringMode": "Multi-segment",
   "EXIF:Flash": "No Flash",
   "EXIF:FocalLength": "17.5 mm",
+  "EXIF:ExifImageWidth": 1024,
+  "EXIF:ExifImageHeight": 768,
   "File:ImageWidth": 8,
-  "File:ImageHeight": 8
+  "File:ImageHeight": 8,
+  "Composite:ImageSize": "8x8"
 }
