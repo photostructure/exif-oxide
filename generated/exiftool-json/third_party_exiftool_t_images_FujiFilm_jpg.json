@@ -11,14 +11,12 @@
   "EXIF:Model": "FinePix2400Zoom",
   "EXIF:Orientation": "Horizontal (normal)",
   "EXIF:ResolutionUnit": "inches",
-  "EXIF:Software": "Digital Camera FinePix2400Zoom Ver1.70",
   "EXIF:ModifyDate": "2001:05:19 18:36:41",
   "EXIF:YCbCrPositioning": "Co-sited",
   "EXIF:Copyright": "",
   "EXIF:FNumber": 3.5,
   "EXIF:ExposureProgram": "Program AE",
   "EXIF:ISO": 100,
-  "EXIF:ExifVersion": "0210",
   "EXIF:DateTimeOriginal": "2001:05:19 18:36:41",
   "EXIF:CreateDate": "2001:05:19 18:36:41",
   "EXIF:ShutterSpeedValue": "1/64",
@@ -27,8 +25,6 @@
   "EXIF:MeteringMode": "Multi-segment",
   "EXIF:Flash": "Fired",
   "EXIF:FocalLength": "6.0 mm",
-  "EXIF:ExifImageWidth": 1600,
-  "EXIF:ExifImageHeight": 1200,
   "File:ImageWidth": 8,
   "File:ImageHeight": 8
 }

@@ -11,16 +11,12 @@
   "EXIF:Model": "FLIR_i7",
   "EXIF:Orientation": "Horizontal (normal)",
   "EXIF:ResolutionUnit": "inches",
-  "EXIF:Software": "Common_dll v8.0.6b1",
   "EXIF:ModifyDate": "2012:02:11 14:17:08",
   "EXIF:YCbCrPositioning": "Centered",
   "EXIF:ExposureTime": "1/32",
-  "EXIF:ExifVersion": "0220",
   "EXIF:DateTimeOriginal": "2012:02:11 14:17:08",
   "EXIF:CreateDate": "2012:02:11 14:17:08",
   "EXIF:FocalLength": "6.7 mm",
-  "EXIF:ExifImageWidth": 240,
-  "EXIF:ExifImageHeight": 240,
   "File:ImageWidth": 8,
   "File:ImageHeight": 8
 }

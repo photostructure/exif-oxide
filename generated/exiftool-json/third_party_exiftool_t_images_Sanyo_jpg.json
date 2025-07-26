@@ -12,14 +12,12 @@
   "EXIF:Model": "VPC-MZ3",
   "EXIF:Orientation": "Horizontal (normal)",
   "EXIF:ResolutionUnit": "inches",
-  "EXIF:Software": "V612P-75",
   "EXIF:ModifyDate": "2003:10:11 12:43:05",
   "EXIF:YCbCrPositioning": "Co-sited",
   "EXIF:ExposureTime": "1/185",
   "EXIF:FNumber": 6.9,
   "EXIF:ExposureProgram": "Program AE",
   "EXIF:ISO": 400,
-  "EXIF:ExifVersion": "0220",
   "EXIF:DateTimeOriginal": "2003:10:11 12:43:05",
   "EXIF:CreateDate": "2003:10:11 12:43:05",
   "EXIF:MaxApertureValue": 2.8,
@@ -27,8 +25,6 @@
   "EXIF:Flash": "Auto, Did not fire",
   "EXIF:FocalLength": "23.1 mm",
   "EXIF:UserComment": "",
-  "EXIF:ExifImageWidth": 2000,
-  "EXIF:ExifImageHeight": 1496,
   "File:ImageWidth": 8,
   "File:ImageHeight": 8
 }

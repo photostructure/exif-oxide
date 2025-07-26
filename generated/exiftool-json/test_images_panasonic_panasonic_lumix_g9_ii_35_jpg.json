@@ -11,7 +11,6 @@
   "EXIF:Model": "DC-G9M2",
   "EXIF:Orientation": "Rotate 270 CW",
   "EXIF:ResolutionUnit": "inches",
-  "EXIF:Software": "Ver.0.4",
   "EXIF:ModifyDate": "2023:01:19 22:32:42",
   "EXIF:Artist": "",
   "EXIF:YCbCrPositioning": "Co-sited",
@@ -20,7 +19,6 @@
   "EXIF:FNumber": 6.3,
   "EXIF:ExposureProgram": "Aperture-priority AE",
   "EXIF:ISO": 100,
-  "EXIF:ExifVersion": "0231",
   "EXIF:DateTimeOriginal": "2023:01:19 22:32:42",
   "EXIF:CreateDate": "2023:01:19 22:32:42",
   "EXIF:MaxApertureValue": 6.3,
@@ -30,8 +28,6 @@
   "EXIF:SubSecTime": "047",
   "EXIF:SubSecTimeOriginal": "047",
   "EXIF:SubSecTimeDigitized": "047",
-  "EXIF:ExifImageWidth": 5776,
-  "EXIF:ExifImageHeight": 4336,
   "File:ImageWidth": 5776,
   "File:ImageHeight": 4336
 }
