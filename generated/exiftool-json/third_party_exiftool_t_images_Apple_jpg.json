@@ -29,6 +29,8 @@
   "EXIF:FocalLength": "4.0 mm",
   "EXIF:SubSecTimeOriginal": 813,
   "EXIF:SubSecTimeDigitized": 813,
+  "EXIF:ExifImageWidth": 4032,
+  "EXIF:ExifImageHeight": 3024,
   "EXIF:LensInfo": "3.99mm f/1.8",
   "EXIF:LensMake": "Apple",
   "EXIF:LensModel": "iPhone 7 back camera 3.99mm f/1.8",
@@ -36,5 +38,6 @@
   "EXIF:GPSLongitudeRef": "West",
   "EXIF:GPSAltitudeRef": "Above Sea Level",
   "File:ImageWidth": 8,
-  "File:ImageHeight": 8
+  "File:ImageHeight": 8,
+  "Composite:ImageSize": "8x8"
 }

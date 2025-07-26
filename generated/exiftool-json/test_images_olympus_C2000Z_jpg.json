@@ -25,6 +25,9 @@
   "EXIF:Flash": "Fired",
   "EXIF:FocalLength": "7.0 mm",
   "EXIF:UserComment": "",
+  "EXIF:ExifImageWidth": 640,
+  "EXIF:ExifImageHeight": 480,
   "File:ImageWidth": 8,
-  "File:ImageHeight": 8
+  "File:ImageHeight": 8,
+  "Composite:ImageSize": "8x8"
 }

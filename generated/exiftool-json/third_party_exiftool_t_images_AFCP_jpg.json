@@ -8,5 +8,6 @@
   "File:FileTypeExtension": "jpg",
   "File:MIMEType": "image/jpeg",
   "File:ImageWidth": 8,
-  "File:ImageHeight": 8
+  "File:ImageHeight": 8,
+  "Composite:ImageSize": "8x8"
 }

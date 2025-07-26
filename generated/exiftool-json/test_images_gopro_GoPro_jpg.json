@@ -29,9 +29,12 @@
   "EXIF:MeteringMode": "Average",
   "EXIF:Flash": "No flash function",
   "EXIF:FocalLength": "3.0 mm",
+  "EXIF:ExifImageWidth": 4000,
+  "EXIF:ExifImageHeight": 3000,
   "EXIF:GPSLatitudeRef": "North",
   "EXIF:GPSLongitudeRef": "West",
   "EXIF:GPSAltitudeRef": "Below Sea Level",
   "File:ImageWidth": 8,
-  "File:ImageHeight": 8
+  "File:ImageHeight": 8,
+  "Composite:ImageSize": "8x8"
 }

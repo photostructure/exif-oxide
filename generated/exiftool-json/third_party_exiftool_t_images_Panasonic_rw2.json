@@ -11,6 +11,8 @@
   "EXIF:ResolutionUnit": "inches",
   "EXIF:ModifyDate": "2008:08:06 15:21:56",
   "EXIF:YCbCrPositioning": "Co-sited",
+  "EXIF:ExifImageWidth": 1920,
+  "EXIF:ExifImageHeight": 1440,
   "File:ImageWidth": 8,
   "File:ImageHeight": 8,
   "EXIF:Make": "Panasonic",
@@ -24,5 +26,8 @@
   "EXIF:MaxApertureValue": 2.0,
   "EXIF:MeteringMode": "Multi-segment",
   "EXIF:Flash": "Off, Did not fire",
-  "EXIF:FocalLength": "5.1 mm"
+  "EXIF:FocalLength": "5.1 mm",
+  "Composite:ImageHeight": 2736,
+  "Composite:ImageWidth": 3648,
+  "Composite:ImageSize": "3648x2736"
 }

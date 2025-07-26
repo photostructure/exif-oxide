@@ -13,5 +13,6 @@
   "GIF:ColorResolutionDepth": 8,
   "GIF:BitsPerPixel": 8,
   "GIF:BackgroundColor": 0,
-  "GIF:PixelAspectRatio": 1
+  "GIF:PixelAspectRatio": 1,
+  "Composite:ImageSize": "8x8"
 }

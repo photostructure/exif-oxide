@@ -30,9 +30,12 @@
   "EXIF:Flash": "Auto, Did not fire",
   "EXIF:FocalLength": "5.7 mm",
   "EXIF:UserComment": "GCM_TAG",
+  "EXIF:ExifImageWidth": 2048,
+  "EXIF:ExifImageHeight": 1536,
   "EXIF:GPSLatitudeRef": "North",
   "EXIF:GPSLongitudeRef": "West",
   "EXIF:GPSAltitudeRef": "Above Sea Level",
   "File:ImageWidth": 8,
-  "File:ImageHeight": 8
+  "File:ImageHeight": 8,
+  "Composite:ImageSize": "8x8"
 }

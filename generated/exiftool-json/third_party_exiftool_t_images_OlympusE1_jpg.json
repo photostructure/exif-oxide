@@ -25,6 +25,9 @@
   "EXIF:Flash": "No Flash",
   "EXIF:FocalLength": "20.0 mm",
   "EXIF:UserComment": "",
+  "EXIF:ExifImageWidth": 2560,
+  "EXIF:ExifImageHeight": 1920,
   "File:ImageWidth": 8,
-  "File:ImageHeight": 8
+  "File:ImageHeight": 8,
+  "Composite:ImageSize": "8x8"
 }

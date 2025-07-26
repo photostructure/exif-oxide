@@ -30,9 +30,12 @@
   "EXIF:SubSecTime": 22,
   "EXIF:SubSecTimeOriginal": 22,
   "EXIF:SubSecTimeDigitized": 22,
+  "EXIF:ExifImageWidth": 6000,
+  "EXIF:ExifImageHeight": 4000,
   "EXIF:LensInfo": "14-30mm f/0",
   "EXIF:LensModel": "RF-S14-30mm F4-6.3 IS STM PZ",
   "EXIF:LensSerialNumber": 1500503180,
   "File:ImageWidth": 6000,
-  "File:ImageHeight": 4000
+  "File:ImageHeight": 4000,
+  "Composite:ImageSize": "6000x4000"
 }

@@ -26,5 +26,6 @@
   "EXIF:MaxApertureValue": 4.0,
   "EXIF:MeteringMode": "Average",
   "EXIF:Flash": "Off, Did not fire",
-  "EXIF:FocalLength": "55.0 mm"
+  "EXIF:FocalLength": "55.0 mm",
+  "Composite:ImageSize": "3516x2328"
 }

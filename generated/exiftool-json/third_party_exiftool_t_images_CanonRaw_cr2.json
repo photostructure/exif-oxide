@@ -25,5 +25,8 @@
   "EXIF:MeteringMode": "Average",
   "EXIF:Flash": "Off, Did not fire",
   "EXIF:FocalLength": "55.0 mm",
-  "EXIF:UserComment": ""
+  "EXIF:UserComment": "",
+  "EXIF:ExifImageWidth": 3456,
+  "EXIF:ExifImageHeight": 2304,
+  "Composite:ImageSize": "3456x2304"
 }

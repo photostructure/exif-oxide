@@ -10,6 +10,8 @@
   "EXIF:ResolutionUnit": "inches",
   "EXIF:ModifyDate": "2023:01:19 22:32:42",
   "EXIF:YCbCrPositioning": "Co-sited",
+  "EXIF:ExifImageWidth": 1920,
+  "EXIF:ExifImageHeight": 1440,
   "File:ImageWidth": 1920,
   "File:ImageHeight": 1440,
   "EXIF:Make": "Panasonic",
@@ -29,5 +31,8 @@
   "EXIF:FocalLength": "400.0 mm",
   "EXIF:SubSecTime": "047",
   "EXIF:SubSecTimeOriginal": "047",
-  "EXIF:SubSecTimeDigitized": "047"
+  "EXIF:SubSecTimeDigitized": "047",
+  "Composite:ImageHeight": 4336,
+  "Composite:ImageWidth": 5776,
+  "Composite:ImageSize": "5776x4336"
 }

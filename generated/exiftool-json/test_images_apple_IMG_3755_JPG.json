@@ -29,6 +29,8 @@
   "EXIF:FocalLength": "1.6 mm",
   "EXIF:SubSecTimeOriginal": 409,
   "EXIF:SubSecTimeDigitized": 409,
+  "EXIF:ExifImageWidth": 4032,
+  "EXIF:ExifImageHeight": 3024,
   "EXIF:LensInfo": "1.570000052-9mm f/1.5-2.8",
   "EXIF:LensMake": "Apple",
   "EXIF:LensModel": "iPhone 13 Pro back triple camera 1.57mm f/1.8",
@@ -36,5 +38,6 @@
   "EXIF:GPSLongitudeRef": "West",
   "EXIF:GPSAltitudeRef": "Above Sea Level",
   "File:ImageWidth": 4032,
-  "File:ImageHeight": 3024
+  "File:ImageHeight": 3024,
+  "Composite:ImageSize": "4032x3024"
 }

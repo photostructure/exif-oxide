@@ -31,10 +31,13 @@
   "EXIF:SubSecTime": 38,
   "EXIF:SubSecTimeOriginal": 38,
   "EXIF:SubSecTimeDigitized": 38,
+  "EXIF:ExifImageWidth": 7728,
+  "EXIF:ExifImageHeight": 5152,
   "EXIF:LensInfo": "23mm f/2.8",
   "EXIF:LensMake": "FUJIFILM",
   "EXIF:LensModel": "XF23mmF2.8 R WR",
   "EXIF:LensSerialNumber": "00R00079",
   "File:ImageWidth": 7728,
-  "File:ImageHeight": 5152
+  "File:ImageHeight": 5152,
+  "Composite:ImageSize": "7728x5152"
 }

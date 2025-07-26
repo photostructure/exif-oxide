@@ -17,6 +17,9 @@
   "EXIF:DateTimeOriginal": "2012:02:11 14:17:08",
   "EXIF:CreateDate": "2012:02:11 14:17:08",
   "EXIF:FocalLength": "6.7 mm",
+  "EXIF:ExifImageWidth": 240,
+  "EXIF:ExifImageHeight": 240,
   "File:ImageWidth": 8,
-  "File:ImageHeight": 8
+  "File:ImageHeight": 8,
+  "Composite:ImageSize": "8x8"
 }
