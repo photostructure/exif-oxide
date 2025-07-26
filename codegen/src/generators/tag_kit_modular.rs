@@ -8,6 +8,7 @@ use std::collections::HashMap;
 use crate::common::escape_string;
 use crate::schemas::tag_kit::{TagKitExtraction, TagKit, ExtractedTable};
 use super::tag_kit_split::{split_tag_kits, TagCategory};
+use crate::conv_registry::{lookup_printconv, lookup_valueconv};
 use serde::Deserialize;
 
 /// Shared table data loaded from shared_tables.json
@@ -55,6 +56,98 @@ fn is_cross_module_reference(table_name: &str, current_module: &str) -> bool {
         }
     }
     false
+}
+
+
+/// Generate the apply_print_conv function with direct function calls
+fn generate_print_conv_function(
+    code: &mut String,
+    extraction: &TagKitExtraction,
+    module_name: &str,
+    const_name: &str,
+) -> Result<()> {
+    code.push_str("/// Apply PrintConv for a tag from this module\n");
+    code.push_str("pub fn apply_print_conv(\n");
+    code.push_str("    tag_id: u32,\n");
+    code.push_str("    value: &TagValue,\n");
+    code.push_str("    _evaluator: &mut ExpressionEvaluator,\n");
+    code.push_str("    _errors: &mut Vec<String>,\n");
+    code.push_str("    warnings: &mut Vec<String>,\n");
+    code.push_str(") -> TagValue {\n");
+    
+    // First, collect all tags that need PrintConv
+    // Use HashMap to deduplicate by tag_id (keep first occurrence)
+    let mut tag_convs_map: std::collections::HashMap<u32, (String, String)> = std::collections::HashMap::new();
+    
+    for tag_kit in &extraction.tag_kits {
+        let tag_id = tag_kit.tag_id.parse::<u32>().unwrap_or(0);
+        
+        // Skip if we already have a PrintConv for this tag_id
+        if tag_convs_map.contains_key(&tag_id) {
+            continue;
+        }
+        
+        match tag_kit.print_conv_type.as_str() {
+            "Expression" => {
+                if let Some(expr_data) = &tag_kit.print_conv_data {
+                    if let Some(expr_str) = expr_data.as_str() {
+                        if let Some((module_path, func_name)) = lookup_printconv(expr_str, module_name) {
+                            tag_convs_map.insert(tag_id, (module_path.to_string(), func_name.to_string()));
+                        }
+                    }
+                }
+            }
+            "Manual" => {
+                if let Some(func_data) = &tag_kit.print_conv_data {
+                    if let Some(func_str) = func_data.as_str() {
+                        if let Some((module_path, func_name)) = lookup_printconv(func_str, module_name) {
+                            tag_convs_map.insert(tag_id, (module_path.to_string(), func_name.to_string()));
+                        }
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+    
+    // Convert to sorted Vec for deterministic output
+    let mut tag_convs: Vec<(u32, String, String)> = tag_convs_map
+        .into_iter()
+        .map(|(id, (module_path, func_name))| (id, module_path, func_name))
+        .collect();
+    
+    if tag_convs.is_empty() {
+        // No PrintConv functions - use shared fallback handling
+        code.push_str(&format!("    if let Some(tag_kit) = {const_name}.get(&tag_id) {{\n"));
+        code.push_str("        crate::implementations::generic::apply_fallback_print_conv(tag_id, value, crate::to_print_conv_ref!(&tag_kit.print_conv))\n");
+        code.push_str("    } else {\n");
+        code.push_str("        value.clone()\n");
+        code.push_str("    }\n");
+    } else {
+        // Generate optimized match with direct function calls
+        code.push_str("    match tag_id {\n");
+        
+        // Sort by tag_id for deterministic output
+        tag_convs.sort_by_key(|(id, _, _)| *id);
+        
+        for (tag_id, module_path, func_name) in tag_convs {
+            code.push_str(&format!("        {tag_id} => {}::{}(value),\n", module_path, func_name));
+        }
+        
+        code.push_str("        _ => {\n");
+        code.push_str(&format!("            // Fall back to shared handling\n"));
+        code.push_str(&format!("            if let Some(tag_kit) = {const_name}.get(&tag_id) {{\n"));
+        code.push_str("                crate::implementations::generic::apply_fallback_print_conv(tag_id, value, crate::to_print_conv_ref!(&tag_kit.print_conv))\n");
+        code.push_str("            } else {\n");
+        code.push_str("                value.clone()\n");
+        code.push_str("            }\n");
+        code.push_str("        }\n");
+        code.push_str("    }\n");
+    }
+    
+    code.push_str("}\n\n");
+    
+    Ok(())
 }
 
 /// Generate modular tag kit code from extracted data
@@ -510,55 +603,8 @@ fn generate_mod_file(
         }
     }
     
-    // Apply PrintConv function (backward compatible - subdirectories return raw data)
-    code.push_str("/// Apply PrintConv for a tag from this module\n");
-    code.push_str("pub fn apply_print_conv(\n");
-    code.push_str("    tag_id: u32,\n");
-    code.push_str("    value: &TagValue,\n");
-    code.push_str("    _evaluator: &mut ExpressionEvaluator,\n");
-    code.push_str("    _errors: &mut Vec<String>,\n");
-    code.push_str("    warnings: &mut Vec<String>,\n");
-    code.push_str(") -> TagValue {\n");
-    code.push_str(&format!("    if let Some(tag_kit) = {const_name}.get(&tag_id) {{\n"));
-    code.push_str("        // Normal PrintConv processing only\n");
-    code.push_str("        match &tag_kit.print_conv {\n");
-    code.push_str("            PrintConvType::None => value.clone(),\n");
-    code.push_str("            PrintConvType::Simple(lookup) => {\n");
-    code.push_str("                // Convert value to string key for lookup\n");
-    code.push_str("                let key = match value {\n");
-    code.push_str("                    TagValue::U8(v) => v.to_string(),\n");
-    code.push_str("                    TagValue::U16(v) => v.to_string(),\n");
-    code.push_str("                    TagValue::U32(v) => v.to_string(),\n");
-    code.push_str("                    TagValue::I16(v) => v.to_string(),\n");
-    code.push_str("                    TagValue::I32(v) => v.to_string(),\n");
-    code.push_str("                    TagValue::String(s) => s.clone(),\n");
-    code.push_str("                    _ => return value.clone(),\n");
-    code.push_str("                };\n");
-    code.push_str("                \n");
-    code.push_str("                if let Some(result) = lookup.get(&key) {\n");
-    code.push_str("                    TagValue::String(result.to_string())\n");
-    code.push_str("                } else {\n");
-    code.push_str("                    TagValue::String(format!(\"Unknown ({})\", value))\n");
-    code.push_str("                }\n");
-    code.push_str("            }\n");
-    code.push_str("            PrintConvType::Expression(expr) => {\n");
-    code.push_str("                // TODO: Implement expression evaluation\n");
-    code.push_str("                warnings.push(format!(\"Expression PrintConv not yet implemented for tag {}: {}\", \n");
-    code.push_str("                    tag_kit.name, expr));\n");
-    code.push_str("                value.clone()\n");
-    code.push_str("            }\n");
-    code.push_str("            PrintConvType::Manual(func_name) => {\n");
-    code.push_str("                // TODO: Look up in manual registry\n");
-    code.push_str("                warnings.push(format!(\"Manual PrintConv '{}' not found for tag {}\", \n");
-    code.push_str("                    func_name, tag_kit.name));\n");
-    code.push_str("                value.clone()\n");
-    code.push_str("            }\n");
-    code.push_str("        }\n");
-    code.push_str("    } else {\n");
-    code.push_str("        // Tag not found in kit\n");
-    code.push_str("        value.clone()\n");
-    code.push_str("    }\n");
-    code.push_str("}\n\n");
+    // Generate apply_print_conv function with direct function calls
+    generate_print_conv_function(&mut code, extraction, module_name, &const_name)?;
     
     // Add subdirectory processing functions
     code.push_str("/// Check if a tag has subdirectory processing\n");

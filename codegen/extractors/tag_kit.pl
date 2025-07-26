@@ -221,6 +221,7 @@ sub is_simple_expression {
     return 1 if $expr =~ /^\$val\s*[<>=]+\s*\d+\s*\?/;   # Comparison with ternary
     return 1 if $expr =~ /^".*\$val.*"$/;                 # Simple interpolation
     return 1 if $expr eq 'undef';                         # Literal undef
+    return 1 if $expr =~ /^Image::ExifTool::\w+::\w+\(\$val\)$/;  # ExifTool function calls
     
     # Otherwise it's complex
     return 0;

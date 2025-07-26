@@ -88,7 +88,9 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                print_conv: PrintConvType::Expression(
+                    "Image::ExifTool::Exif::PrintExposureTime($val)",
+                ),
                 value_conv: Some("exp(-Image::ExifTool::Canon::CanonEv($val)*log(2))*1000/32"),
                 subdirectory: None,
             },
@@ -102,7 +104,9 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                print_conv: PrintConvType::Expression(
+                    "Image::ExifTool::Exif::PrintExposureTime($val)",
+                ),
                 value_conv: Some("exp(-Image::ExifTool::Canon::CanonEv($val)*log(2))"),
                 subdirectory: None,
             },
@@ -130,7 +134,9 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                print_conv: PrintConvType::Expression(
+                    "Image::ExifTool::Exif::PrintExposureTime($val)",
+                ),
                 value_conv: Some("exp(-Image::ExifTool::Canon::CanonEv($val)*log(2))"),
                 subdirectory: None,
             },
@@ -144,7 +150,9 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                print_conv: PrintConvType::Expression(
+                    "Image::ExifTool::Exif::PrintExposureTime($val)",
+                ),
                 value_conv: Some("exp(4*log(2)*(1-Image::ExifTool::Canon::CanonEv($val-24)))"),
                 subdirectory: None,
             },

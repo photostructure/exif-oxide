@@ -401,7 +401,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("UTC time of GPS fix.  When writing, date is stripped off if present, and\n            time is adjusted to UTC if it includes a timezone"),
-            print_conv: PrintConvType::Manual("complex_expression_printconv"),
+            print_conv: PrintConvType::Expression("Image::ExifTool::GPS::PrintTimeStamp($val)"),
             value_conv: Some("Image::ExifTool::GPS::ConvertTimeStamp($val)"),
             subdirectory: None,
         }),

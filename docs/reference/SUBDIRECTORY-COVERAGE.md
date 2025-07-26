@@ -1,6 +1,6 @@
 # ExifTool SubDirectory Coverage Report
 
-Generated: Fri Jul 25 23:11:36 2025 UTC
+Generated: Sat Jul 26 17:02:00 2025 UTC
 
 ## Summary
 
@@ -43,77 +43,77 @@ Generated: Fri Jul 25 23:11:36 2025 UTC
 | Kodak                |    24 |           0 |     0.0% |
 | FLIR                 |    23 |           0 |     0.0% |
 | PDF                  |    20 |           0 |     0.0% |
+| Panasonic            |    19 |           0 |     0.0% |
 | FlashPix             |    19 |           0 |     0.0% |
 | DJI                  |    19 |           0 |     0.0% |
-| Panasonic            |    19 |           0 |     0.0% |
 | MNG                  |    18 |           0 |     0.0% |
 | CanonVRD             |    16 |           0 |     0.0% |
-| Leaf                 |    15 |           0 |     0.0% |
 | LNK                  |    15 |           0 |     0.0% |
+| Leaf                 |    15 |           0 |     0.0% |
 | NikonCapture         |    14 |           0 |     0.0% |
 | Photoshop            |    13 |           0 |     0.0% |
 | MISB                 |    13 |           0 |     0.0% |
 | ASF                  |    12 |           0 |     0.0% |
 | Ricoh                |    10 |           0 |     0.0% |
-| GIMP                 |     9 |           0 |     0.0% |
-| PanasonicRaw         |     9 |           0 |     0.0% |
 | Minolta              |     9 |           0 |     0.0% |
+| PanasonicRaw         |     9 |           0 |     0.0% |
+| GIMP                 |     9 |           0 |     0.0% |
 | Samsung              |     9 |           0 |     0.0% |
 | Real                 |     8 |           0 |     0.0% |
+| Flash                |     7 |           0 |     0.0% |
+| H264                 |     7 |           0 |     0.0% |
+| GIF                  |     7 |           0 |     0.0% |
 | FujiFilm             |     7 |           0 |     0.0% |
 | GoPro                |     7 |           0 |     0.0% |
-| GIF                  |     7 |           0 |     0.0% |
-| H264                 |     7 |           0 |     0.0% |
-| IPTC                 |     7 |           0 |     0.0% |
-| ID3                  |     7 |           0 |     0.0% |
-| Flash                |     7 |           0 |     0.0% |
 | ICC_Profile          |     7 |           0 |     0.0% |
-| DjVu                 |     6 |           0 |     0.0% |
+| ID3                  |     7 |           0 |     0.0% |
+| IPTC                 |     7 |           0 |     0.0% |
 | HTML                 |     6 |           0 |     0.0% |
 | MIFF                 |     6 |           0 |     0.0% |
-| Ogg                  |     5 |           0 |     0.0% |
+| DjVu                 |     6 |           0 |     0.0% |
 | PSP                  |     5 |           0 |     0.0% |
 | Font                 |     5 |           0 |     0.0% |
+| Ogg                  |     5 |           0 |     0.0% |
 | MinoltaRaw           |     4 |           0 |     0.0% |
-| AIFF                 |     4 |           0 |     0.0% |
-| Sanyo                |     4 |           0 |     0.0% |
-| FLAC                 |     4 |           0 |     0.0% |
-| Casio                |     4 |           0 |     0.0% |
 | PostScript           |     4 |           0 |     0.0% |
+| FLAC                 |     4 |           0 |     0.0% |
 | SigmaRaw             |     4 |           0 |     0.0% |
-| HP                   |     3 |           0 |     0.0% |
+| Sanyo                |     4 |           0 |     0.0% |
+| AIFF                 |     4 |           0 |     0.0% |
+| Casio                |     4 |           0 |     0.0% |
 | FLIF                 |     3 |           0 |     0.0% |
-| RSRC                 |     3 |           0 |     0.0% |
 | Vorbis               |     3 |           0 |     0.0% |
-| M2TS                 |     3 |           0 |     0.0% |
-| BPG                  |     3 |           0 |     0.0% |
 | Torrent              |     3 |           0 |     0.0% |
-| Sigma                |     2 |           0 |     0.0% |
-| FotoStation          |     2 |           0 |     0.0% |
-| Stim                 |     2 |           0 |     0.0% |
-| PICT                 |     2 |           0 |     0.0% |
+| M2TS                 |     3 |           0 |     0.0% |
+| HP                   |     3 |           0 |     0.0% |
+| BPG                  |     3 |           0 |     0.0% |
+| RSRC                 |     3 |           0 |     0.0% |
 | Red                  |     2 |           0 |     0.0% |
-| Opus                 |     2 |           0 |     0.0% |
-| TNEF                 |     2 |           0 |     0.0% |
-| ITC                  |     2 |           0 |     0.0% |
 | MacOS                |     2 |           0 |     0.0% |
+| Stim                 |     2 |           0 |     0.0% |
+| ITC                  |     2 |           0 |     0.0% |
+| FotoStation          |     2 |           0 |     0.0% |
+| PICT                 |     2 |           0 |     0.0% |
+| Opus                 |     2 |           0 |     0.0% |
 | OpenEXR              |     2 |           0 |     0.0% |
+| Sigma                |     2 |           0 |     0.0% |
+| TNEF                 |     2 |           0 |     0.0% |
 | Theora               |     2 |           0 |     0.0% |
 | ISO                  |     2 |           0 |     0.0% |
-| WTV                  |     1 |           0 |     0.0% |
+| PhotoMechanic        |     1 |           0 |     0.0% |
 | Nintendo             |     1 |           0 |     0.0% |
-| SonyIDC              |     1 |           0 |     0.0% |
-| PhaseOne             |     1 |           0 |     0.0% |
+| ICO                  |     1 |           0 |     0.0% |
 | BMP                  |     1 |           0 |     0.0% |
 | Apple                |     1 |           0 |     0.0% |
-| PLIST                |     1 |           0 |     0.0% |
-| ICO                  |     1 |           0 |     0.0% |
-| AFCP                 |     1 |           0 |     0.0% |
+| SonyIDC              |     1 |           0 |     0.0% |
 | MPF                  |     1 |           0 |     0.0% |
-| PhotoMechanic        |     1 |           0 |     0.0% |
-| MPEG                 |     1 |           0 |     0.0% |
-| Unknown              |     1 |           0 |     0.0% |
+| PhaseOne             |     1 |           0 |     0.0% |
+| PLIST                |     1 |           0 |     0.0% |
+| AFCP                 |     1 |           0 |     0.0% |
 | JSON                 |     1 |           0 |     0.0% |
+| MPEG                 |     1 |           0 |     0.0% |
+| WTV                  |     1 |           0 |     0.0% |
+| Unknown              |     1 |           0 |     0.0% |
 
 ## Missing High-Priority SubDirectories
 
@@ -121,33 +121,33 @@ Top 20 unimplemented SubDirectories by module:
 
 ### Nikon
 
-- **OrientOffset** (132): binary_data pattern, references `Image::ExifTool::Nikon::OrientationInfo`
-- **AutoCaptureOffset** (128): binary_data pattern, references `Image::ExifTool::Nikon::AutoCaptureInfo`
-- **SequenceOffset** (48): binary_data pattern, references `Image::ExifTool::Nikon::SeqInfoZ9`
-- **MenuOffset** (140): binary_data pattern, references `Image::ExifTool::Nikon::MenuInfoZ9`
-- **Offset13** (88): binary_data pattern, references `Image::ExifTool::Nikon::Offset13InfoZ9`
+- **MenuSettingsOffsetZ8v1** (16): binary_data pattern, references `Image::ExifTool::Nikon::MenuSettingsZ8v1`
+- **MenuSettingsOffsetZ8v2** (16): binary_data pattern, references `Image::ExifTool::Nikon::MenuSettingsZ8v2`
+- **DistortionInfo** (5): binary_data pattern, references `Image::ExifTool::Nikon::DistortionInfo`
+- **CustomSettingsZ9** (799): binary_data pattern, references `Image::ExifTool::NikonCustom::SettingsZ9`
+- **CustomSettingsZ9** (847): binary_data pattern, references `Image::ExifTool::NikonCustom::SettingsZ9`
 
 ### QuickTime
 
-- **FaceItem** (cits): simple pattern, references `Image::ExifTool::QuickTime::Keys`
-- **FaceInfo** (detected-face): simple pattern, references `Image::ExifTool::QuickTime::FaceInfo`
-- **VideoProfile** (VPRF): binary_data pattern, references `Image::ExifTool::QuickTime::VideoProf`
-- **AudioProfile** (APRF): binary_data pattern, references `Image::ExifTool::QuickTime::AudioProf`
-- **FileGlobalProfile** (FPRF): binary_data pattern, references `Image::ExifTool::QuickTime::FileProf`
+- **CDI1** (CDI1): simple pattern, references `Image::ExifTool::Canon::CDI1`
+- **CMP1** (CMP1): simple pattern, references `Image::ExifTool::Canon::CMP1`
+- **BitrateInfo** (btrt): binary_data pattern, references `Image::ExifTool::QuickTime::Bitrate`
+- **CleanAperture** (clap): binary_data pattern, references `Image::ExifTool::QuickTime::CleanAperture`
+- **ColorRepresentation** (colr): binary_data pattern, references `Image::ExifTool::QuickTime::ColorRep`
 
 ### Canon
 
-- **ColorCalib** (188): binary_data pattern, references `Image::ExifTool::Canon::ColorCalib`
 - **PictureStyleInfo** (1012): binary_data pattern, references `Image::ExifTool::Canon::PSInfo2`
-- **ColorCalib** (168): binary_data pattern, references `Image::ExifTool::Canon::ColorCalib`
-- **ColorCoefs** (63): binary_data pattern, references `Image::ExifTool::Canon::ColorCoefs`
-- **PictureStyleInfo** (801): binary_data pattern, references `Image::ExifTool::Canon::PSInfo2`
+- **PictureStyleInfo** (796): binary_data pattern, references `Image::ExifTool::Canon::PSInfo`
+- **ColorCalib** (188): binary_data pattern, references `Image::ExifTool::Canon::ColorCalib`
+- **IAD1** (IAD1): binary_data pattern, references `Image::ExifTool::Canon::IAD1`
+- **ColorCalib** (266): binary_data pattern, references `Image::ExifTool::Canon::ColorCalib`
 
 ### Exif
 
-- **LeafSubIFD** (34954): simple pattern, references `Image::ExifTool::Leaf::SubIFD`
-- **XiaomiSettings** (39321): simple pattern, references `Image::ExifTool::JSON::Main`
-- **LeafData** (34310): simple pattern, references `Image::ExifTool::Leaf::Main`
-- **ICC_Profile** (34675): simple pattern, references `Image::ExifTool::ICC_Profile::Main`
+- **JUMBF** (52545): simple pattern, references `Image::ExifTool::Jpeg2000::Main`
 - **ApplicationNotes** (700): simple pattern, references `Image::ExifTool::XMP::Main`
+- **CurrentICCProfile** (50833): simple pattern, references `Image::ExifTool::ICC_Profile::Main`
+- **GPSInfo** (34853): simple pattern, references `Image::ExifTool::GPS::Main`
+- **ProfileIFD** (50933): simple pattern, references `Unknown`
 

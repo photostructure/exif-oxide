@@ -5326,48 +5326,82 @@ pub fn apply_print_conv(
     _errors: &mut Vec<String>,
     warnings: &mut Vec<String>,
 ) -> TagValue {
-    if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
-        // Normal PrintConv processing only
-        match &tag_kit.print_conv {
-            PrintConvType::None => value.clone(),
-            PrintConvType::Simple(lookup) => {
-                // Convert value to string key for lookup
-                let key = match value {
-                    TagValue::U8(v) => v.to_string(),
-                    TagValue::U16(v) => v.to_string(),
-                    TagValue::U32(v) => v.to_string(),
-                    TagValue::I16(v) => v.to_string(),
-                    TagValue::I32(v) => v.to_string(),
-                    TagValue::String(s) => s.clone(),
-                    _ => return value.clone(),
-                };
-
-                if let Some(result) = lookup.get(&key) {
-                    TagValue::String(result.to_string())
-                } else {
-                    TagValue::String(format!("Unknown ({})", value))
-                }
-            }
-            PrintConvType::Expression(expr) => {
-                // TODO: Implement expression evaluation
-                warnings.push(format!(
-                    "Expression PrintConv not yet implemented for tag {}: {}",
-                    tag_kit.name, expr
-                ));
-                value.clone()
-            }
-            PrintConvType::Manual(func_name) => {
-                // TODO: Look up in manual registry
-                warnings.push(format!(
-                    "Manual PrintConv '{}' not found for tag {}",
-                    func_name, tag_kit.name
-                ));
+    match tag_id {
+        0 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        1 => crate::implementations::print_conv::fnumber_print_conv(value),
+        3 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        6 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        14 => crate::implementations::print_conv::focallength_print_conv(value),
+        16 => crate::implementations::print_conv::focallength_print_conv(value),
+        18 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        20 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        22 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        26 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        30 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        31 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        32 => crate::implementations::print_conv::fnumber_print_conv(value),
+        33 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        34 => crate::implementations::print_conv::fnumber_print_conv(value),
+        35 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        36 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        37 => crate::implementations::print_conv::focallength_print_conv(value),
+        38 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        39 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        40 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        41 => crate::implementations::print_conv::fnumber_print_conv(value),
+        42 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        44 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        47 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        48 => crate::implementations::print_conv::fnumber_print_conv(value),
+        109 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        111 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        438 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        510 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        528 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        535 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        546 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        547 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        556 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        560 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        778 => crate::implementations::print_conv::focallength_print_conv(value),
+        780 => crate::implementations::print_conv::focallength_print_conv(value),
+        782 => crate::implementations::print_conv::focallength_print_conv(value),
+        812 => crate::implementations::print_conv::focallength_print_conv(value),
+        814 => crate::implementations::print_conv::focallength_print_conv(value),
+        816 => crate::implementations::print_conv::focallength_print_conv(value),
+        4138 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        4152 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        4378 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        4392 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        4404 => crate::implementations::print_conv::focallength_print_conv(value),
+        4406 => crate::implementations::print_conv::focallength_print_conv(value),
+        4408 => crate::implementations::print_conv::focallength_print_conv(value),
+        4414 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        4428 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        4466 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        4480 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        4502 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        4728 => crate::implementations::print_conv::focallength_print_conv(value),
+        4730 => crate::implementations::print_conv::focallength_print_conv(value),
+        4732 => crate::implementations::print_conv::focallength_print_conv(value),
+        8230 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        8237 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        8247 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        45089 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        45099 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        45100 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        _ => {
+            // Fall back to shared handling
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                crate::implementations::generic::apply_fallback_print_conv(
+                    tag_id,
+                    value,
+                    crate::to_print_conv_ref!(&tag_kit.print_conv),
+                )
+            } else {
                 value.clone()
             }
         }
-    } else {
-        // Tag not found in kit
-        value.clone()
     }
 }
 

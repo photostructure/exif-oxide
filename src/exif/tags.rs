@@ -294,9 +294,11 @@ impl ExifReader {
                     &mut warnings,
                 );
 
-                // Log any warnings
-                for warning in warnings {
-                    debug!("PrintConv warning for tag 0x{:04x}: {}", tag_id, warning);
+                // Log any warnings (but suppress if we successfully applied fallback)
+                if print == value {
+                    for warning in warnings {
+                        debug!("PrintConv warning for tag 0x{:04x}: {}", tag_id, warning);
+                    }
                 }
 
                 (value, print)

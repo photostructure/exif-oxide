@@ -4,7 +4,9 @@
 //! All implementations are direct translations from ExifTool source code.
 
 pub mod canon;
+pub mod generic;
 pub mod minolta_raw;
+pub mod missing;
 pub mod nikon;
 pub mod olympus;
 pub mod panasonic_raw;

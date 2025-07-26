@@ -514,6 +514,85 @@ pub fn lensinfo_print_conv(val: &TagValue) -> TagValue {
     TagValue::string(result)
 }
 
+/// Generic decimal formatting functions for sprintf patterns
+pub fn decimal_1_print_conv(val: &TagValue) -> TagValue {
+    TagValue::String(format!("{:.1}", val.as_f64().unwrap_or(0.0)))
+}
+
+pub fn decimal_2_print_conv(val: &TagValue) -> TagValue {
+    TagValue::String(format!("{:.2}", val.as_f64().unwrap_or(0.0)))
+}
+
+pub fn signed_int_print_conv(val: &TagValue) -> TagValue {
+    match val {
+        TagValue::U8(v) => TagValue::String(format!("{:+}", *v as i32)),
+        TagValue::U16(v) => TagValue::String(format!("{:+}", *v as i32)),
+        TagValue::U32(v) => TagValue::String(format!("{:+}", *v as i32)),
+        TagValue::SRational(num, den) if *den != 0 => TagValue::String(format!("{:+}", num / den)),
+        _ => TagValue::String(format!("{:+.0}", val.as_f64().unwrap_or(0.0))),
+    }
+}
+
+pub fn focal_length_3_decimals_print_conv(val: &TagValue) -> TagValue {
+    TagValue::String(format!("{:.3} mm", val.as_f64().unwrap_or(0.0)))
+}
+
+/// Complex expression placeholder - delegates to appropriate function
+/// This is used when tag_kit.pl can't determine the exact function
+pub fn complex_expression_print_conv(val: &TagValue) -> TagValue {
+    // For now, return the value unchanged
+    // In the future, we could use context to determine the right function
+    val.clone()
+}
+
+/// EXIF PrintFraction PrintConv
+/// ExifTool: lib/Image/ExifTool/Exif.pm PrintFraction sub
+/// Converts a floating point value to a fractional representation with sign
+/// Used for exposure compensation and similar values
+pub fn print_fraction(val: &TagValue) -> TagValue {
+    // Get floating point value
+    let f_val = match val {
+        TagValue::F64(v) => Some(*v),
+        TagValue::Rational(num, den) => {
+            if *den != 0 {
+                Some(*num as f64 / *den as f64)
+            } else {
+                None
+            }
+        }
+        TagValue::I16(v) => Some(*v as f64),
+        TagValue::I32(v) => Some(*v as f64),
+        TagValue::U8(v) => Some(*v as f64),
+        TagValue::U16(v) => Some(*v as f64),
+        TagValue::U32(v) => Some(*v as f64),
+        _ => None,
+    };
+
+    match f_val {
+        Some(mut v) => {
+            // ExifTool multiplies by 1.00001 to avoid round-off errors
+            v *= 1.00001;
+
+            if v == 0.0 {
+                TagValue::string("0")
+            } else if (v.floor() / v).abs() > 0.999 {
+                // Whole number
+                TagValue::string(format!("{:+.0}", v.floor()))
+            } else if ((v * 2.0).floor() / (v * 2.0)).abs() > 0.999 {
+                // Half fraction (n/2)
+                TagValue::string(format!("{:+.0}/2", (v * 2.0).floor()))
+            } else if ((v * 3.0).floor() / (v * 3.0)).abs() > 0.999 {
+                // Third fraction (n/3)
+                TagValue::string(format!("{:+.0}/3", (v * 3.0).floor()))
+            } else {
+                // Use scientific notation with 3 significant digits
+                TagValue::string(format!("{:+.3}", v))
+            }
+        }
+        None => TagValue::string(format!("Unknown ({})", val)),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
