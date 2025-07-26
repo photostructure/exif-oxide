@@ -17,15 +17,12 @@
   "EXIF:FNumber": 4.0,
   "EXIF:ExposureProgram": "Program AE",
   "EXIF:ISO": 80,
-  "EXIF:ExifVersion": "0220",
   "EXIF:DateTimeOriginal": "2004:08:28 15:55:46",
   "EXIF:CreateDate": "2004:08:28 15:55:46",
   "EXIF:MaxApertureValue": 2.8,
   "EXIF:MeteringMode": "Multi-segment",
   "EXIF:Flash": "Off, Did not fire",
   "EXIF:FocalLength": "4.6 mm",
-  "EXIF:ExifImageWidth": 2016,
-  "EXIF:ExifImageHeight": 1512,
   "File:ImageWidth": 8,
   "File:ImageHeight": 8
 }
