@@ -400,16 +400,8 @@ pub fn apply_print_conv(
     warnings: &mut Vec<String>,
 ) -> TagValue {
     match tag_id {
-        2 => crate::implementations::print_conv::complex_expression_print_conv(value),
         35 => crate::implementations::print_conv::print_fraction(value),
         36 => crate::implementations::print_conv::print_fraction(value),
-        37 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        51 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        77 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        78 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        96 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        175 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        32784 => crate::implementations::print_conv::complex_expression_print_conv(value),
         _ => {
             // Fall back to shared handling
             if let Some(tag_kit) = PANASONIC_PM_TAG_KITS.get(&tag_id) {

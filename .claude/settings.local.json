@@ -122,7 +122,8 @@
       "Bash(./exiftool -s -G1 -ISOSpeed -ISO -SensitivityType ./t/images/Canon.jpg)",
       "Bash(env RUST_LOG=debug cargo run -- test-images/canon/Canon_T3i.jpg)",
       "Bash(./target/debug/deps/integration_tests-*)",
-      "Bash(--list)"
+      "Bash(--list)",
+      "WebFetch(domain:metacpan.org)"
     ],
     "deny": []
   }

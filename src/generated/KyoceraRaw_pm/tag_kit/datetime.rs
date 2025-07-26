@@ -26,7 +26,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
                 value_conv: None,
                 subdirectory: None,
             },

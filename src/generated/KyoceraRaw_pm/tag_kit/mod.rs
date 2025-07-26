@@ -151,7 +151,6 @@ pub fn apply_print_conv(
     warnings: &mut Vec<String>,
 ) -> TagValue {
     match tag_id {
-        33 => crate::implementations::print_conv::complex_expression_print_conv(value),
         56 => crate::implementations::print_conv::exposuretime_print_conv(value),
         _ => {
             // Fall back to shared handling

@@ -144,21 +144,14 @@ pub fn apply_print_conv(
     _errors: &mut Vec<String>,
     warnings: &mut Vec<String>,
 ) -> TagValue {
-    match tag_id {
-        76 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        78 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        _ => {
-            // Fall back to shared handling
-            if let Some(tag_kit) = MINOLTARAW_PM_TAG_KITS.get(&tag_id) {
-                crate::implementations::generic::apply_fallback_print_conv(
-                    tag_id,
-                    value,
-                    crate::to_print_conv_ref!(&tag_kit.print_conv),
-                )
-            } else {
-                value.clone()
-            }
-        }
+    if let Some(tag_kit) = MINOLTARAW_PM_TAG_KITS.get(&tag_id) {
+        crate::implementations::generic::apply_fallback_print_conv(
+            tag_id,
+            value,
+            crate::to_print_conv_ref!(&tag_kit.print_conv),
+        )
+    } else {
+        value.clone()
     }
 }
 

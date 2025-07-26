@@ -26,7 +26,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                print_conv: PrintConvType::Expression("$_=$val;s/^(\\d{2})/$1\\./;s/^0//;$_"),
                 value_conv: Some(
                     "$_=$val; /^[\\x00-\\x09]/ and $_=join(\"\",unpack(\"CCCC\",$_)); $_",
                 ),
@@ -42,7 +42,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                print_conv: PrintConvType::Expression("$_=$val;s/^0 //;s/^1 (\\d+)/Hi $1/;$_"),
                 value_conv: None,
                 subdirectory: None,
             },

@@ -757,29 +757,13 @@ pub fn apply_print_conv(
     warnings: &mut Vec<String>,
 ) -> TagValue {
     match tag_id {
-        306 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        32934 => crate::implementations::print_conv::complex_expression_print_conv(value),
         33434 => crate::implementations::print_conv::exposuretime_print_conv(value),
         33437 => crate::implementations::print_conv::fnumber_print_conv(value),
-        34855 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        36867 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        36868 => crate::implementations::print_conv::complex_expression_print_conv(value),
         37377 => crate::implementations::print_conv::exposuretime_print_conv(value),
         37378 => crate::implementations::print_conv::decimal_1_print_conv(value),
         37380 => crate::implementations::print_conv::print_fraction(value),
         37381 => crate::implementations::print_conv::decimal_1_print_conv(value),
         37386 => crate::implementations::print_conv::focallength_print_conv(value),
-        37398 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        41494 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        50706 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        50707 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        50709 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        50710 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        50971 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        51043 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        51044 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        51058 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        51114 => crate::implementations::print_conv::complex_expression_print_conv(value),
         _ => {
             // Fall back to shared handling
             if let Some(tag_kit) = EXIF_PM_TAG_KITS.get(&tag_id) {

@@ -139,12 +139,7 @@ pub fn apply_print_conv(
     warnings: &mut Vec<String>,
 ) -> TagValue {
     match tag_id {
-        0 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        2 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        4 => crate::implementations::print_conv::complex_expression_print_conv(value),
         6 => crate::implementations::print_conv::gpsaltitude_print_conv(value),
-        20 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        22 => crate::implementations::print_conv::complex_expression_print_conv(value),
         _ => {
             // Fall back to shared handling
             if let Some(tag_kit) = GPS_PM_TAG_KITS.get(&tag_id) {

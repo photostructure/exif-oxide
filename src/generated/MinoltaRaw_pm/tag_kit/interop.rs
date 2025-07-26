@@ -188,7 +188,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Manual("complex_hash_printconv"),
+                print_conv: PrintConvType::Expression("ComplexHash"),
                 value_conv: None,
                 subdirectory: None,
             },
