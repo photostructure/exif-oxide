@@ -20,5 +20,6 @@
   "EXIF:GPSAltitudeRef": "Above Sea Level",
   "EXIF:GPSLongitudeRef": "Unknown ()",
   "File:ImageWidth": 8,
-  "File:ImageHeight": 8
+  "File:ImageHeight": 8,
+  "Composite:ImageSize": "8x8"
 }

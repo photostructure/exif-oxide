@@ -13,5 +13,6 @@
   "PNG:ColorType": "Palette",
   "PNG:Compression": "Deflate/Inflate",
   "PNG:Filter": "Adaptive",
-  "PNG:Interlace": "Noninterlaced"
+  "PNG:Interlace": "Noninterlaced",
+  "Composite:ImageSize": "1130x726"
 }

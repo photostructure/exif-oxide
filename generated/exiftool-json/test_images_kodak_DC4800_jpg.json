@@ -23,6 +23,9 @@
   "EXIF:MeteringMode": "Average",
   "EXIF:Flash": "No Flash",
   "EXIF:FocalLength": "10.2 mm",
+  "EXIF:ExifImageWidth": 2448,
+  "EXIF:ExifImageHeight": 1632,
   "File:ImageWidth": 8,
-  "File:ImageHeight": 8
+  "File:ImageHeight": 8,
+  "Composite:ImageSize": "8x8"
 }

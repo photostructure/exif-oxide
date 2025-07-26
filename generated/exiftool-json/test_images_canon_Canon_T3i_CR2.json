@@ -31,7 +31,10 @@
   "EXIF:SubSecTime": "00",
   "EXIF:SubSecTimeOriginal": "00",
   "EXIF:SubSecTimeDigitized": "00",
+  "EXIF:ExifImageWidth": 5184,
+  "EXIF:ExifImageHeight": 3456,
   "EXIF:LensInfo": "24-105mm f/?",
   "EXIF:LensModel": "EF24-105mm f/4L IS USM",
-  "EXIF:LensSerialNumber": "0000124920"
+  "EXIF:LensSerialNumber": "0000124920",
+  "Composite:ImageSize": "5184x3456"
 }

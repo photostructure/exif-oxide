@@ -27,10 +27,13 @@
   "EXIF:SubSecTime": 51,
   "EXIF:SubSecTimeOriginal": 51,
   "EXIF:SubSecTimeDigitized": 51,
+  "EXIF:ExifImageWidth": 8256,
+  "EXIF:ExifImageHeight": 5504,
   "EXIF:LensInfo": "24-70mm f/4",
   "EXIF:LensMake": "NIKON",
   "EXIF:LensModel": "NIKKOR Z 24-70mm f/4 S",
   "EXIF:LensSerialNumber": 20004019,
   "File:ImageWidth": 8256,
-  "File:ImageHeight": 5504
+  "File:ImageHeight": 5504,
+  "Composite:ImageSize": "8256x5504"
 }

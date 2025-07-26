@@ -50,6 +50,8 @@
   "EXIF:CreateDate",
   "EXIF:DateTimeOriginal",
   "EXIF:DNGLensInfo",
+  "EXIF:ExifImageHeight",
+  "EXIF:ExifImageWidth",
   "EXIF:ExposureProgram",
   "EXIF:ExposureTime",
   "EXIF:Flash",

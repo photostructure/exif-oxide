@@ -8,5 +8,6 @@
   "File:FileTypeExtension": "avif",
   "File:MIMEType": "image/avif",
   "File:ImageWidth": 1204,
-  "File:ImageHeight": 800
+  "File:ImageHeight": 800,
+  "Composite:ImageSize": "1204x800"
 }

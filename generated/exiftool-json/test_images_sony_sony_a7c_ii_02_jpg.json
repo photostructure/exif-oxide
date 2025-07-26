@@ -27,8 +27,11 @@
   "EXIF:SubSecTime": 959,
   "EXIF:SubSecTimeOriginal": 959,
   "EXIF:SubSecTimeDigitized": 959,
+  "EXIF:ExifImageWidth": 7008,
+  "EXIF:ExifImageHeight": 4672,
   "EXIF:LensInfo": "24-70mm f/2.8",
   "EXIF:LensModel": "FE 24-70mm F2.8 GM",
   "File:ImageWidth": 7008,
-  "File:ImageHeight": 4672
+  "File:ImageHeight": 4672,
+  "Composite:ImageSize": "7008x4672"
 }
