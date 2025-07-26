@@ -5405,6 +5405,15 @@ pub fn apply_print_conv(
     }
 }
 
+/// Apply ValueConv for a tag from this module
+pub fn apply_value_conv(
+    tag_id: u32,
+    value: &TagValue,
+    _errors: &mut Vec<String>,
+) -> Result<TagValue> {
+    Ok(value.clone())
+}
+
 /// Check if a tag has subdirectory processing
 pub fn has_subdirectory(tag_id: u32) -> bool {
     if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {

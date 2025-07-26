@@ -123,8 +123,45 @@ pub fn lookup_valueconv(expr: &str, module: &str) -> Option<(&'static str, &'sta
 /// Normalize expression for consistent lookup
 /// Handles whitespace normalization and other variations
 pub fn normalize_expression(expr: &str) -> String {
-    // Collapse whitespace
-    expr.split_whitespace().collect::<Vec<_>>().join(" ")
+    // Remove spaces around punctuation and collapse whitespace
+    let mut result = String::new();
+    let mut last_was_space = false;
+    let mut chars = expr.chars().peekable();
+    
+    while let Some(ch) = chars.next() {
+        match ch {
+            ' ' | '\t' | '\n' | '\r' => {
+                // Skip spaces before punctuation
+                if let Some(&next) = chars.peek() {
+                    if matches!(next, '(' | ')' | ',' | '"') {
+                        continue;
+                    }
+                }
+                if !last_was_space && !result.is_empty() {
+                    result.push(' ');
+                    last_was_space = true;
+                }
+            }
+            '(' | ')' | ',' => {
+                // Remove trailing space before punctuation
+                if last_was_space && !result.is_empty() {
+                    result.pop();
+                }
+                result.push(ch);
+                last_was_space = false;
+                // Skip spaces after punctuation
+                while chars.peek() == Some(&' ') {
+                    chars.next();
+                }
+            }
+            _ => {
+                result.push(ch);
+                last_was_space = false;
+            }
+        }
+    }
+    
+    result.trim().to_string()
 }
 
 #[cfg(test)]
@@ -133,7 +170,8 @@ mod tests {
     
     #[test]
     fn test_module_scoped_lookup() {
-        let result = lookup_valueconv("ConvertTimeStamp($val)", "GPS_pm");
+        // Test direct lookup of a known value
+        let result = lookup_valueconv("Image::ExifTool::GPS::ConvertTimeStamp($val)", "GPS_pm");
         assert_eq!(result, Some(("crate::implementations::value_conv", "gpstimestamp_value_conv")));
     }
     

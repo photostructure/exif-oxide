@@ -22,9 +22,6 @@ pub use tiff::{extract_tiff_exif, extract_tiff_xmp, get_tiff_endianness, validat
 
 use crate::exif::ExifReader;
 use crate::file_detection::FileTypeDetector;
-use crate::generated::Exif_pm::tag_kit::EXIF_PM_TAG_KITS;
-use crate::generated::GPS_pm::tag_kit::GPS_PM_TAG_KITS;
-use crate::generated::{REQUIRED_PRINT_CONV, REQUIRED_VALUE_CONV};
 use crate::types::{ExifData, Result, TagEntry, TagValue};
 use crate::xmp::XmpProcessor;
 use indexmap::IndexMap;
@@ -1038,55 +1035,52 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         }
     }
 
-    // Collect any missing required tags for --show-missing functionality
+    // Collect any missing PrintConv/ValueConv implementations for --show-missing functionality
     let missing_implementations = if show_missing {
-        let mut missing = Vec::new();
+        let missing_convs = crate::implementations::missing::get_missing_conversions();
 
-        // Check for missing mainstream tags
-        // Check EXIF tags
-        for (tag_id, tag_def) in EXIF_PM_TAG_KITS.iter() {
-            let tag_found = tags.keys().any(|key| {
-                key.contains(&format!("Tag_{:04X}", tag_id))
-                    || key.contains(&format!("{:#x}", tag_id))
-                    || key.contains(tag_def.name)
-            });
-
-            if !tag_found {
-                missing.push(format!("Tag_{:04X}", tag_id));
-            }
-        }
-
-        // Check GPS tags
-        for (tag_id, tag_def) in GPS_PM_TAG_KITS.iter() {
-            let tag_found = tags.keys().any(|key| {
-                key.contains(&format!("Tag_{:04X}", tag_id))
-                    || key.contains(&format!("{:#x}", tag_id))
-                    || key.contains(tag_def.name)
-            });
-
-            if !tag_found {
-                missing.push(format!("Tag_{:04X}", tag_id));
-            }
-        }
-
-        // Check for missing required ValueConv functions
-        for conv_id in REQUIRED_VALUE_CONV.iter() {
-            // These would be checked during value conversion
-            // For now, just note that we need to implement them
-            missing.push(format!("ValueConv_{conv_id}"));
-        }
-
-        // Check for missing required PrintConv functions
-        for conv_id in REQUIRED_PRINT_CONV.iter() {
-            // These would be checked during print conversion
-            // For now, just note that we need to implement them
-            missing.push(format!("PrintConv_{conv_id}"));
-        }
-
-        if missing.is_empty() {
+        if missing_convs.is_empty() {
             None
         } else {
-            Some(missing)
+            // Group by expression and collect tag IDs
+            use std::collections::HashMap;
+            let mut grouped: HashMap<String, Vec<u32>> = HashMap::new();
+
+            for miss in &missing_convs {
+                grouped
+                    .entry(miss.expression.clone())
+                    .or_default()
+                    .push(miss.tag_id);
+            }
+
+            // Format as strings
+            let mut missing_strs = Vec::new();
+            for (expr, tag_ids) in grouped {
+                let conv_type = if missing_convs.iter().any(|m| {
+                    m.expression == expr
+                        && matches!(
+                            m.conv_type,
+                            crate::implementations::missing::ConversionType::PrintConv
+                        )
+                }) {
+                    "PrintConv"
+                } else {
+                    "ValueConv"
+                };
+
+                let tags_str = tag_ids
+                    .iter()
+                    .map(|id| format!("0x{:04x}", id))
+                    .collect::<Vec<_>>()
+                    .join(", ");
+
+                missing_strs.push(format!(
+                    "{}: {} [used by tags: {}]",
+                    conv_type, expr, tags_str
+                ));
+            }
+
+            Some(missing_strs)
         }
     } else {
         None
