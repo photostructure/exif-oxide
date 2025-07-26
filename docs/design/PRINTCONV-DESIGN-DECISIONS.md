@@ -89,3 +89,63 @@ This design diverges from ExifTool's JSON output for some tags. We believe this 
 | Flash        | "Fired"            | "Fired"       | TagValue::String("Fired") | "Fired"  |
 
 The key difference: we don't rely on string patterns to determine numeric vs string serialization.
+
+## PrintConv Lookup System
+
+To handle the complexity of mapping thousands of tags to their conversion functions, we use a three-tier lookup system:
+
+### Three-Tier Hierarchy
+
+The system checks in order:
+
+1. **Tag-Specific Lookup** (highest priority)
+   - `Module::Tag` - For module-specific implementations
+   - `Tag` - For universal implementations
+   - Example: `Flash` tag always uses `flash_print_conv` regardless of module
+
+2. **Expression Lookup** (second priority)
+   - Maps Perl expressions to Rust functions
+   - Example: `sprintf("%.1f mm",$val)` → `focallength_print_conv`
+
+3. **Fallback Handling** (lowest priority)
+   - Generic sprintf pattern matching
+   - Missing implementation tracking
+
+### Why Three Tiers?
+
+**Problem**: ExifTool uses various PrintConv patterns:
+- Simple hash lookups (`%orientation`)
+- Complex hash with special handling (`%flash` with OTHER function)
+- Sprintf expressions (`sprintf("%.1f mm",$val)`)
+- Module-specific functions (`Image::ExifTool::Canon::CanonEv`)
+
+**Solution**: The three-tier system provides:
+- **Flexibility**: Override any tag regardless of its ExifTool definition
+- **DRY**: Universal tags like Flash defined once, work everywhere
+- **Performance**: Direct function dispatch, no runtime pattern matching
+- **Maintainability**: New tags easily added to appropriate tier
+
+### Implementation
+
+The registry in `codegen/src/conv_registry.rs`:
+
+```rust
+static TAG_SPECIFIC_PRINTCONV: LazyLock<HashMap<&'static str, (&'static str, &'static str)>> = LazyLock::new(|| {
+    let mut m = HashMap::new();
+    
+    // Module-specific (e.g., Canon-specific white balance)
+    // m.insert("Canon_pm::WhiteBalance", ("crate::implementations::print_conv", "canon_wb_print_conv"));
+    
+    // Universal (e.g., Flash works the same for all cameras)
+    m.insert("Flash", ("crate::implementations::print_conv", "flash_print_conv"));
+    
+    m
+});
+```
+
+The generator checks tag-specific registry first, allowing us to:
+- Handle ComplexHash tags like Flash
+- Override standard expressions when needed
+- Share implementations across modules
+
+This design ensures correct PrintConv dispatch while maintaining ExifTool compatibility.

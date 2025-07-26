@@ -201,7 +201,7 @@ When working with the codegen system, use the right extractor for each task:
 
 See [EXTRACTOR-GUIDE.md](docs/reference/EXTRACTOR-GUIDE.md) for detailed extractor comparisons and [CODEGEN.md](docs/CODEGEN.md) for the complete extractor selection guide.
 
-### 5. When a task is complete
+### When a task is complete
 
 1. Verify and validate! No task is complete until `make precommit`
    passes.
@@ -209,7 +209,7 @@ See [EXTRACTOR-GUIDE.md](docs/reference/EXTRACTOR-GUIDE.md) for detailed extract
 2. Concisely update any impacted and related docs, including reference
    documentation, todo lists, milestone planning, and architectural design.
 
-### 6. The user is a rust newbie...
+### The user is a rust newbie...
 
 ...so explaining things as we go would be wonderful. We want to make this
 project be as idiomatic rust as possible, so please web search and examine the
@@ -217,7 +217,7 @@ rust language documentation to validate structures, setup, naming conventions,
 module interactions, and any other aspects that the rust community has adopted
 as a best practice, and explain those aspects to the user as we embrace them.
 
-### 7. Task prioritization and naming
+### Task prioritization and naming
 
 When creating Technical Project Plans (TPPs) or TODO documents, use the priority naming convention defined in [TPP.md](docs/TPP.md):
 - `P00-P09` - Critical blockers  
@@ -330,6 +330,15 @@ Environment variables:
 
 All commit messages must follow the Conventional Commits specification (https://www.conventionalcommits.org/en/v1.0.0/). Use the format: `<type>[optional scope]: <description>` where type is `feat` (new features, MINOR version), `fix` (bug patches, PATCH version), or other types like `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`. Breaking changes are indicated with `!` after type/scope or with a `BREAKING CHANGE:` footer. The scope should reference the most significant file/module changed. Keep descriptions concise and avoid enumerating every change unless crucial for understanding.
 
+### Is this tag prevalent?
+
+Tag "popularity" ranges widely. First check `docs/tag-metadata.json`, but if it's not there, use `exiftool` to do your own research! For the `ISOSpeed` tag, for example:
+
+```
+exiftool -j -struct -G -r -if '$ISOSpeed' -ISOSpeed test-images/ third-party/exiftool/t/images/ ../test-images/
+```
+
+Which shows it's only in the EXIF group, and in 20/10693 of our sample files.
 
 ### Test images
 

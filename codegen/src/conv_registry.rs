@@ -68,6 +68,23 @@ static PRINTCONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
     m
 });
 
+// Tag-specific registry for ComplexHash and other special cases
+// Key format: "ModuleName::TagName" (e.g., "Exif_pm::Flash") for module-specific
+// or just "TagName" (e.g., "Flash") for universal tags
+static TAG_SPECIFIC_PRINTCONV: LazyLock<HashMap<&'static str, (&'static str, &'static str)>> = LazyLock::new(|| {
+    let mut m = HashMap::new();
+    
+    // Module-specific tags (highest priority)
+    // m.insert("Canon_pm::WhiteBalance", ("crate::implementations::print_conv", "canon_white_balance_print_conv"));
+    
+    // Universal tags (work across all modules - fallback)
+    m.insert("Flash", ("crate::implementations::print_conv", "flash_print_conv"));
+    
+    // Add other tag-specific mappings here as needed
+    
+    m
+});
+
 static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'static str)>> = LazyLock::new(|| {
     let mut m = HashMap::new();
     
@@ -96,6 +113,19 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
     
     m
 });
+
+/// Look up a tag-specific PrintConv in the registry
+/// First tries module-specific lookup (Module::Tag), then universal lookup (Tag)
+pub fn lookup_tag_specific_printconv(module: &str, tag_name: &str) -> Option<(&'static str, &'static str)> {
+    // First try module-specific lookup
+    let module_key = format!("{}::{}", module, tag_name);
+    if let Some(result) = TAG_SPECIFIC_PRINTCONV.get(module_key.as_str()).copied() {
+        return Some(result);
+    }
+    
+    // Then try universal lookup
+    TAG_SPECIFIC_PRINTCONV.get(tag_name).copied()
+}
 
 /// Look up PrintConv implementation by Perl expression
 /// Tries module-scoped lookup first, then unscoped

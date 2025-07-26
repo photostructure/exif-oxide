@@ -9,6 +9,10 @@
   "File:MIMEType": "image/tiff",
   "EXIF:ImageWidth": 160,
   "EXIF:ImageHeight": 120,
+  "EXIF:ImageDescription": "The picture caption",
   "EXIF:Make": "Canon",
-  "EXIF:Model": "Canon EOS DIGITAL REBEL"
+  "EXIF:Model": "Canon EOS DIGITAL REBEL",
+  "EXIF:ResolutionUnit": "inches",
+  "EXIF:Software": "GraphicConverter",
+  "EXIF:ModifyDate": "2004:02:20 08:07:49"
 }

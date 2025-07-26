@@ -8,5 +8,6 @@
   "File:FileTypeExtension": "tif",
   "File:MIMEType": "image/tiff",
   "EXIF:ImageWidth": 1130,
-  "EXIF:ImageHeight": 726
+  "EXIF:ImageHeight": 726,
+  "EXIF:Software": "gnome-screenshot"
 }
