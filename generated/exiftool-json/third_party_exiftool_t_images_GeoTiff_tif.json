@@ -8,5 +8,6 @@
   "File:FileTypeExtension": "tif",
   "File:MIMEType": "image/tiff",
   "EXIF:ImageWidth": 25,
-  "EXIF:ImageHeight": 24
+  "EXIF:ImageHeight": 24,
+  "EXIF:ResolutionUnit": "inches"
 }

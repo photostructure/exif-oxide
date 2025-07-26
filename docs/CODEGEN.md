@@ -223,7 +223,89 @@ pub fn canon_wb_print_conv(value: &TagValue) -> TagValue {
 }
 ```
 
-### 3. Adding Simple Extraction Types
+### 3. Tag-Specific Registry System
+
+The PrintConv/ValueConv system uses a three-tier lookup hierarchy to map tags to their conversion functions:
+
+#### Three-Tier Lookup System
+
+1. **Module::Tag Lookup** (highest priority)
+   - Module-specific implementations for tags that behave differently per manufacturer
+   - Example: `Canon_pm::WhiteBalance` → `canon_white_balance_print_conv`
+
+2. **Expression Lookup** (second priority)
+   - Maps Perl expressions to conversion functions
+   - Example: `sprintf("%.1f mm",$val)` → `focallength_print_conv`
+
+3. **Universal Tag Lookup** (fallback)
+   - Tags that work the same across all modules
+   - Example: `Flash` → `flash_print_conv` (works for all manufacturers)
+
+#### Implementation
+
+**Registry Definition** (`codegen/src/conv_registry.rs`):
+
+```rust
+// Tag-specific registry for ComplexHash and other special cases
+// Key format: "ModuleName::TagName" or just "TagName" for universal tags
+static TAG_SPECIFIC_PRINTCONV: LazyLock<HashMap<&'static str, (&'static str, &'static str)>> = LazyLock::new(|| {
+    let mut m = HashMap::new();
+    
+    // Module-specific tags (highest priority)
+    // m.insert("Canon_pm::WhiteBalance", ("crate::implementations::print_conv", "canon_white_balance_print_conv"));
+    
+    // Universal tags (work across all modules - fallback)
+    m.insert("Flash", ("crate::implementations::print_conv", "flash_print_conv"));
+    
+    m
+});
+```
+
+**Lookup Function**:
+
+```rust
+/// Look up a tag-specific PrintConv in the registry
+/// First tries module-specific lookup (Module::Tag), then universal lookup (Tag)
+pub fn lookup_tag_specific_printconv(module: &str, tag_name: &str) -> Option<(&'static str, &'static str)> {
+    // First try module-specific lookup
+    let module_key = format!("{}::{}", module, tag_name);
+    if let Some(result) = TAG_SPECIFIC_PRINTCONV.get(module_key.as_str()).copied() {
+        return Some(result);
+    }
+    
+    // Then try universal lookup
+    TAG_SPECIFIC_PRINTCONV.get(tag_name).copied()
+}
+```
+
+**Generator Integration** (`codegen/src/generators/tag_kit_modular.rs`):
+
+```rust
+// Three-tier lookup system:
+// 1. First try tag-specific lookup (works for all tags, not just ComplexHash)
+if let Some((module_path, func_name)) = lookup_tag_specific_printconv(module_name, &tag_kit.name) {
+    tag_convs_map.insert(tag_id, (module_path.to_string(), func_name.to_string()));
+    continue;
+}
+
+// 2. Then try expression/manual lookup based on type
+match tag_kit.print_conv_type.as_str() {
+    "Expression" => { /* lookup by expression */ }
+    "Manual" => { /* lookup by manual name */ }
+    _ => {}
+}
+```
+
+#### When to Use Tag-Specific Registry
+
+Add entries to `TAG_SPECIFIC_PRINTCONV` when:
+
+1. **ComplexHash Tags**: Tags marked as "ComplexHash" in ExifTool (like Flash)
+2. **Module-Specific Behavior**: Tags that need different handling per manufacturer
+3. **Override Standard Expression**: When a tag needs special handling despite having a standard expression
+4. **DRY Principle**: Universal tags that work the same across all modules
+
+### 4. Adding Simple Extraction Types
 
 **Step 1: Add to Configuration**
 

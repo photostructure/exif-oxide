@@ -135,6 +135,8 @@ enum NormalizationRule {
     GPSAltitudeTolerance,
     /// Convert numbers to strings for SubSec* tags
     NumberToString,
+    /// Trim trailing whitespace from string values
+    TrimWhitespace,
 }
 
 /// Tag normalization configuration
@@ -183,6 +185,12 @@ fn get_normalization_rules() -> HashMap<&'static str, NormalizationRule> {
         NormalizationRule::CleanNumericPrecision { max_places: 3 },
     );
 
+    // Trim trailing whitespace from string values
+    // Some cameras pad these fields with spaces
+    rules.insert("EXIF:Make", NormalizationRule::TrimWhitespace);
+    rules.insert("EXIF:Model", NormalizationRule::TrimWhitespace);
+    rules.insert("EXIF:ImageDescription", NormalizationRule::TrimWhitespace);
+
     rules
 }
 
@@ -199,6 +207,7 @@ fn apply_normalization_rule(value: &Value, rule: &NormalizationRule) -> Value {
         }
         NormalizationRule::GPSAltitudeTolerance => normalize_gps_altitude_tolerance(value),
         NormalizationRule::NumberToString => normalize_number_to_string(value),
+        NormalizationRule::TrimWhitespace => normalize_trim_whitespace(value),
     }
 }
 
@@ -429,6 +438,15 @@ fn normalize_gps_altitude_tolerance(value: &Value) -> Value {
         Value::String(format!("{rounded:.1} m"))
     } else {
         value.clone()
+    }
+}
+
+/// Trim trailing whitespace from string values
+/// Some cameras pad certain fields with spaces
+fn normalize_trim_whitespace(value: &Value) -> Value {
+    match value {
+        Value::String(s) => Value::String(s.trim_end().to_string()),
+        _ => value.clone(),
     }
 }
 
