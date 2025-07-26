@@ -203,13 +203,76 @@
 - Verify formatting matches exactly
 - Test with various camera models
 
-## Success Criteria
+## Success Criteria & Quality Gates
 
-- All 29 composite tags calculating correctly
-- Values match ExifTool output exactly
-- Graceful handling of missing source data
-- Efficient calculation (no redundant work)
-- Proper precedence when multiple sources exist
+### You are NOT done until this is done:
+
+1. **All Required Composite Tags Implemented**:
+   - [ ] 29 composite tags from tag-metadata.json calculating correctly
+   - [ ] Values match ExifTool output exactly (critical formatting requirements)
+   - [ ] Graceful handling of missing source data
+
+2. **Critical Composite Formatting Issues** (addresses major compatibility failures):
+   ```json
+   Priority composite tags with formatting problems:
+   - "Composite:Aperture"      // Must show "3.9" not [39,10]
+   - "Composite:ShutterSpeed"  // Must show "1/30" not raw value
+   - "Composite:ImageSize"     // Must show "2048x1536" not "2048 1536"  
+   - "Composite:Megapixels"    // Must show "3.1" not "3.145728"
+   - "Composite:ISO"           // Must show consolidated ISO value
+   ```
+
+3. **Missing Composite Calculations** (found in compatibility failures):
+   ```json
+   Currently missing composite tags:
+   - "Composite:SubSecCreateDate"      // EXIF CreateDate + SubSecTime
+   - "Composite:SubSecDateTimeOriginal"// EXIF DateTimeOriginal + SubSecTimeOriginal  
+   - "Composite:SubSecModifyDate"      // EXIF ModifyDate + SubSecTime
+   - "Composite:GPSPosition"           // "lat lon" decimal format
+   - "Composite:GPSDateTime"           // Combined GPS date/time
+   ```
+
+4. **Specific Tag Validation** (must be added to `config/supported_tags.json` and pass `make compat-force`):
+   ```bash
+   # All these composite tags must be present and working:
+   - "Composite:Aperture"
+   - "Composite:ShutterSpeed"  
+   - "Composite:ImageSize"
+   - "Composite:Megapixels"
+   - "Composite:ISO"
+   - "Composite:Rotation"
+   - "Composite:SubSecCreateDate"
+   - "Composite:SubSecDateTimeOriginal"
+   - "Composite:SubSecMediaCreateDate"
+   - "Composite:SubSecModifyDate"
+   - "Composite:GPSDateTime"
+   - "Composite:GPSPosition"
+   ```
+
+5. **Validation Commands**:
+   ```bash
+   # After implementing composite calculations:
+   make compat-force                      # Regenerate reference files
+   make compat-test | grep "Composite:"   # Check composite compatibility
+   
+   # Target: All composite tags showing formatted values matching ExifTool
+   ```
+
+6. **Manual Validation** (Test with Multiple File Types):
+   - **JPEG with EXIF**: Verify ImageSize, Megapixels, Aperture calculations
+   - **GPS-enabled images**: Confirm GPSPosition, GPSDateTime composites
+   - **Various cameras**: Test ISO consolidation from multiple sources
+   - **SubSec precision**: Verify timestamp composites include subseconds
+
+### Prerequisites & Dependencies:
+- **MUST WAIT for P10a completion** - Composite tags depend on EXIF source data being properly formatted
+- **P14b GPS Processing** - GPS composite tags require GPS destination processing
+- Source tags (EXIF, GPS, MakerNotes) must be extracting correctly
+
+### Quality Gates Definition:
+- **Compatibility Test Threshold**: <5 Composite-related failures in `make compat-test`
+- **Format Consistency**: Composite:Aperture must match EXIF:FNumber formatting exactly
+- **ImageSize Format**: Must use "WIDTHxHEIGHT" format (2048x1536), never space-separated
 
 ## Gotchas & Tribal Knowledge
 

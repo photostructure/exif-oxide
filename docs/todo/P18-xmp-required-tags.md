@@ -200,13 +200,100 @@ Many standard EXIF tags are duplicated in XMP with high frequency:
 - Compare with ExifTool XMP extraction
 - Test sidecar files
 
-## Success Criteria
+## Success Criteria & Quality Gates
 
-- Extract all 63 required XMP tags
-- Handle multiple XMP namespaces correctly
-- Parse structured properties (arrays, structs, alternatives)
-- Match ExifTool output for XMP data
-- Support both embedded and sidecar XMP
+### You are NOT done until this is done:
+
+1. **XMP Infrastructure Must Exist**:
+   - [ ] XMP packet detection from JPEG APP1 segments, TIFF IFD0 tags
+   - [ ] XML/RDF parser capable of handling XMP structure
+   - [ ] Namespace registry supporting all XMP namespaces (dc, xmp, xmpRights, etc.)
+   - [ ] Support for both embedded and sidecar .xmp files
+
+2. **All Required XMP Tags Extracting**:
+   - [ ] 63 XMP required tags from tag-metadata.json implemented
+   - [ ] Parse structured properties (arrays, alternatives, structures)
+   - [ ] Handle multiple XMP namespaces correctly
+
+3. **Critical XMP Tags Missing from Compatibility Tests**:
+   ```json
+   High-priority XMP tags currently missing:
+   - "XMP:Rating"               // Star rating (0-5)
+   - "XMP:Title"                // Image title
+   - "XMP:Description"          // Image description  
+   - "XMP:Subject"              // Subject keywords
+   - "XMP:PersonInImage"        // People in image
+   - "XMP:RegionList"           // Face regions
+   - "XMP:HierarchicalKeywords" // Keyword hierarchy
+   - "XMP:License"              // Usage license
+   - "XMP:AttributionName"      // Credit name
+   - "XMP:AttributionURL"       // Credit URL
+   - "XMP:MetadataDate"         // Metadata modification date
+   - "XMP:CreatorTool"          // Creation software
+   ```
+
+4. **XMP Data Overlap with EXIF** (many XMP tags duplicate EXIF data):
+   ```json
+   XMP tags that often duplicate EXIF (follow precedence rules):
+   - "XMP:Make"                 // Camera manufacturer (prefer EXIF)
+   - "XMP:Model"                // Camera model (prefer EXIF)
+   - "XMP:ExposureTime"         // Shutter speed (prefer EXIF)
+   - "XMP:FNumber"              // Aperture (prefer EXIF)
+   - "XMP:FocalLength"          // Focal length (prefer EXIF)
+   - "XMP:ISO"                  // ISO sensitivity (prefer EXIF)
+   - "XMP:CreateDate"           // Creation date (prefer EXIF)
+   - "XMP:ModifyDate"           // Modification date (prefer EXIF)
+   ```
+
+5. **Specific Tag Validation** (must be added to `config/supported_tags.json` and pass `make compat-force`):
+   ```bash
+   # All these XMP tags must be present and extracting:
+   - "XMP:Rating"
+   - "XMP:Title"
+   - "XMP:Description"
+   - "XMP:Subject"
+   - "XMP:PersonInImage"
+   - "XMP:RegionList" 
+   - "XMP:HierarchicalKeywords"
+   - "XMP:License"
+   - "XMP:AttributionName"
+   - "XMP:AttributionURL"
+   - "XMP:MetadataDate"
+   - "XMP:CreatorTool"
+   - "XMP:Categories"
+   - "XMP:CatalogSets"
+   - "XMP:Source"
+   ```
+
+6. **Validation Commands**:
+   ```bash
+   # Test with XMP-rich images (Adobe Lightroom exports, etc.):
+   cargo run --bin compare-with-exiftool test-images/lightroom/exported.jpg XMP:
+   cargo run --bin exif-oxide test-images/adobe/xmp_sample.jpg | grep "XMP:"
+   
+   # After implementing XMP support:
+   make compat-force                    # Regenerate reference files
+   make compat-test | grep "XMP:"       # Check XMP compatibility
+   
+   # Target: All XMP required tags extracting with proper namespace handling
+   ```
+
+7. **Manual Validation** (Test XMP Parsing):
+   - **Adobe Lightroom**: Verify keyword hierarchies and ratings
+   - **Face Regions**: Test RegionList parsing with face detection data
+   - **Rights Management**: Confirm license and attribution data extraction
+   - **Sidecar Files**: Test .xmp sidecar file processing
+
+### Prerequisites & Dependencies:
+- **XML/RDF Parser**: Need robust XML parser supporting RDF syntax variations
+- **P10a EXIF Foundation** - XMP often duplicates EXIF data, precedence rules needed
+- **Namespace Handling**: Complex namespace prefix resolution
+
+### Quality Gates Definition:
+- **Compatibility Test Threshold**: <5 XMP-related failures in `make compat-test`
+- **Namespace Coverage**: Support for at least dc, xmp, xmpRights, exif, photoshop namespaces
+- **Structured Data**: Arrays, alternatives, and structures must parse correctly
+- **Precedence Rules**: EXIF data takes precedence over duplicate XMP data
 
 ## Gotchas & Tribal Knowledge
 

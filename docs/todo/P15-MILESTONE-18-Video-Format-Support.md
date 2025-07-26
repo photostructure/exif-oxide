@@ -257,20 +257,84 @@ impl MetadataExtractor for HEIFVideoProcessor {
 
 ## Success Criteria
 
-### Core Requirements
+## Success Criteria & Quality Gates
 
-- [ ] **Atom Parsing**: Robust QuickTime/MP4 atom parsing with recursion support
-- [ ] **Format Detection**: Accurate detection of video formats from MIMETYPES.md
-- [ ] **Track Management**: Extract track information (video/audio/metadata tracks)
-- [ ] **Multiple Metadata Systems**: Support for iTunes, QuickTime, MP4 metadata
-- [ ] **Basic Video Info**: Duration, dimensions, codec information, creation date
+### You are NOT done until this is done:
 
-### Validation Tests
+1. **Video Metadata Tags Missing from Compatibility Tests**:
+   ```json
+   Critical video/QuickTime tags currently missing:
+   - "QuickTime:Duration"          // Video duration
+   - "QuickTime:CompressorName"    // Video codec name
+   - "QuickTime:HandlerDescription"// Track handler info
+   - "QuickTime:MediaDuration"     // Media track duration
+   - "QuickTime:MediaCreateDate"   // Media creation date
+   - "QuickTime:MediaModifyDate"   // Media modification date
+   - "QuickTime:TrackCreateDate"   // Track creation date
+   - "QuickTime:TrackDuration"     // Individual track duration
+   - "QuickTime:TrackModifyDate"   // Track modification date
+   - "QuickTime:CreationDate"      // Overall creation date
+   ```
 
-- Process smartphone videos (iPhone MOV, Android MP4)
-- Handle action camera footage (GoPro MP4)
-- Extract metadata from social media exports
-- Process prosumer camera videos (Canon, Sony, Panasonic)
+2. **Core Requirements**:
+   - [ ] **Atom Parsing**: Robust QuickTime/MP4 atom parsing with recursion support
+   - [ ] **Format Detection**: Accurate detection of video formats from MIMETYPES.md
+   - [ ] **Track Management**: Extract track information (video/audio/metadata tracks)
+   - [ ] **Multiple Metadata Systems**: Support for iTunes, QuickTime, MP4 metadata
+   - [ ] **Basic Video Info**: Duration, dimensions, codec information, creation date
+
+3. **Specific Tag Validation** (must be added to `config/supported_tags.json` and pass `make compat-force`):
+   ```bash
+   # All these QuickTime/video tags must be present:
+   - "QuickTime:Duration"
+   - "QuickTime:CompressorName"
+   - "QuickTime:HandlerDescription"
+   - "QuickTime:MediaDuration"
+   - "QuickTime:MediaCreateDate"
+   - "QuickTime:MediaModifyDate"
+   - "QuickTime:TrackCreateDate"
+   - "QuickTime:TrackDuration"
+   - "QuickTime:TrackModifyDate"
+   - "QuickTime:CreationDate"
+   - "QuickTime:Make"              // Camera manufacturer for video
+   - "QuickTime:Model"             // Camera model for video
+   - "QuickTime:Software"          // Video processing software
+   ```
+
+4. **Validation Commands**:
+   ```bash
+   # Test with video files:
+   cargo run --bin compare-with-exiftool test-images/video/iphone.mov QuickTime:
+   cargo run --bin compare-with-exiftool test-images/video/gopro.mp4 QuickTime:
+   
+   # After implementing video support:
+   make compat-force                        # Regenerate reference files
+   make compat-test | grep "QuickTime:"     # Check video compatibility
+   
+   # Target: All video metadata tags extracting with proper duration/codec info
+   ```
+
+5. **Validation Tests**:
+   - Process smartphone videos (iPhone MOV, Android MP4)
+   - Handle action camera footage (GoPro MP4)
+   - Extract metadata from social media exports
+   - Process prosumer camera videos (Canon, Sony, Panasonic)
+
+6. **Manual Validation** (Test Video Parsing):
+   - **iPhone MOV**: Verify creation date and GPS metadata extraction
+   - **GoPro MP4**: Confirm duration and codec information
+   - **Professional Cameras**: Test Canon/Sony video metadata
+   - **Atom Structure**: Verify hierarchical atom parsing works correctly
+
+### Prerequisites & Dependencies:
+- **Large File Handling**: Videos can be multi-gigabyte files - need streaming support
+- **P10a EXIF Foundation** - Some video metadata uses EXIF structures
+- **Complex Format Detection** - QuickTime/MP4 have hundreds of format variants
+
+### Quality Gates Definition:
+- **Compatibility Test Threshold**: <5 video-related failures in `make compat-test`
+- **Atom Parsing Coverage**: Handle major QuickTime/MP4 atom types (moov, trak, mdat, etc.)
+- **Duration Calculation**: Accurate video duration extraction from track timescales
 
 ## Implementation Boundaries
 
