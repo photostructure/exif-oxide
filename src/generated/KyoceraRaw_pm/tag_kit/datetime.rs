@@ -40,7 +40,9 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                print_conv: PrintConvType::Expression(
+                    "Image::ExifTool::Exif::PrintExposureTime($val)",
+                ),
                 value_conv: Some("2**($val / 8) / 16000"),
                 subdirectory: None,
             },

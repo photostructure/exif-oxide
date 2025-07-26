@@ -73,6 +73,16 @@ pub fn compute_composite_tag(
         "SubSecModifyDate" => compute_subsec_modify_date(available_tags),
         "SubSecMediaCreateDate" => compute_subsec_media_create_date(available_tags),
 
+        // Phase 4: Lens System
+        "Lens" => compute_lens(available_tags),
+        "LensID" => compute_lens_id(available_tags),
+        "LensSpec" => compute_lens_spec(available_tags),
+        "LensType" => compute_lens_type(available_tags),
+
+        // Phase 5: Media Tags & Advanced Features
+        "Duration" => compute_duration(available_tags),
+        // Enhanced ScaleFactor35efl (keep existing simple version for compatibility)
+        // "ScaleFactor35efl" => compute_scale_factor_35efl_enhanced(available_tags),
         _ => {
             // For other composite tags, log what dependencies are available vs missing
             let mut available_deps = Vec::new();

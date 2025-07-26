@@ -1567,7 +1567,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("coordinates range from 0 to 255"),
-            print_conv: PrintConvType::Manual("complex_expression_printconv"),
+            print_conv: PrintConvType::Expression("Image::ExifTool::Olympus::PrintAFAreas($val)"),
             value_conv: None,
             subdirectory: None,
         }),

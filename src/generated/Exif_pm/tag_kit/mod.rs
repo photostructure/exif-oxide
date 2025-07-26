@@ -756,48 +756,42 @@ pub fn apply_print_conv(
     _errors: &mut Vec<String>,
     warnings: &mut Vec<String>,
 ) -> TagValue {
-    if let Some(tag_kit) = EXIF_PM_TAG_KITS.get(&tag_id) {
-        // Normal PrintConv processing only
-        match &tag_kit.print_conv {
-            PrintConvType::None => value.clone(),
-            PrintConvType::Simple(lookup) => {
-                // Convert value to string key for lookup
-                let key = match value {
-                    TagValue::U8(v) => v.to_string(),
-                    TagValue::U16(v) => v.to_string(),
-                    TagValue::U32(v) => v.to_string(),
-                    TagValue::I16(v) => v.to_string(),
-                    TagValue::I32(v) => v.to_string(),
-                    TagValue::String(s) => s.clone(),
-                    _ => return value.clone(),
-                };
-
-                if let Some(result) = lookup.get(&key) {
-                    TagValue::String(result.to_string())
-                } else {
-                    TagValue::String(format!("Unknown ({})", value))
-                }
-            }
-            PrintConvType::Expression(expr) => {
-                // TODO: Implement expression evaluation
-                warnings.push(format!(
-                    "Expression PrintConv not yet implemented for tag {}: {}",
-                    tag_kit.name, expr
-                ));
-                value.clone()
-            }
-            PrintConvType::Manual(func_name) => {
-                // TODO: Look up in manual registry
-                warnings.push(format!(
-                    "Manual PrintConv '{}' not found for tag {}",
-                    func_name, tag_kit.name
-                ));
+    match tag_id {
+        306 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        32934 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        33434 => crate::implementations::print_conv::exposuretime_print_conv(value),
+        33437 => crate::implementations::print_conv::fnumber_print_conv(value),
+        34855 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        36867 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        36868 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        37377 => crate::implementations::print_conv::exposuretime_print_conv(value),
+        37378 => crate::implementations::print_conv::decimal_1_print_conv(value),
+        37380 => crate::implementations::print_conv::print_fraction(value),
+        37381 => crate::implementations::print_conv::decimal_1_print_conv(value),
+        37386 => crate::implementations::print_conv::focallength_print_conv(value),
+        37398 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        41494 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        50706 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        50707 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        50709 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        50710 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        50971 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        51043 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        51044 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        51058 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        51114 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        _ => {
+            // Fall back to shared handling
+            if let Some(tag_kit) = EXIF_PM_TAG_KITS.get(&tag_id) {
+                crate::implementations::generic::apply_fallback_print_conv(
+                    tag_id,
+                    value,
+                    crate::to_print_conv_ref!(&tag_kit.print_conv),
+                )
+            } else {
                 value.clone()
             }
         }
-    } else {
-        // Tag not found in kit
-        value.clone()
     }
 }
 

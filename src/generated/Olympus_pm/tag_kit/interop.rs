@@ -590,7 +590,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Manual("complex_expression_printconv"),
+            print_conv: PrintConvType::Expression("Image::ExifTool::Exif::PrintExposureTime($val)"),
             value_conv: Some("abs($val)<100 ? 2**(-$val) : 0"),
             subdirectory: None,
         }),

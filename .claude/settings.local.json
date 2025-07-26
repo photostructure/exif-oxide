@@ -116,7 +116,11 @@
       "Bash(RUST_LOG=debug cargo run -- third-party/exiftool/t/images/GPS.jpg)",
       "Bash(./coverage_dashboard.pl:*)",
       "WebFetch(domain:www.cipa.jp)",
-      "Bash(/home/mrm/src/exif-oxide/third-party/exiftool/exiftool -s -FNumber -Aperture /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Canon.jpg)"
+      "Bash(/home/mrm/src/exif-oxide/third-party/exiftool/exiftool -s -FNumber -Aperture /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Canon.jpg)",
+      "Bash(/home/mrm/src/exif-oxide/third-party/exiftool/exiftool -s -LensInfo -LensModel /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Canon.jpg)",
+      "Bash(./exiftool -s -G1 -ISOSpeed -ISO -SensitivityType ./t/images/OlympusE1.jpg)",
+      "Bash(./exiftool -s -G1 -ISOSpeed -ISO -SensitivityType ./t/images/Canon.jpg)",
+      "Bash(env RUST_LOG=debug cargo run -- test-images/canon/Canon_T3i.jpg)"
     ],
     "deny": []
   }

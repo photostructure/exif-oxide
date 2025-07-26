@@ -915,3 +915,234 @@ fn format_timezone_offset(offset_str: &str) -> Option<String> {
         None
     }
 }
+
+/// Compute Lens composite tag - full lens description from manufacturer databases
+/// ExifTool: lib/Image/ExifTool/Canon.pm:9684-9691 Canon Lens composite
+/// ValueConv: $val[0] (returns first value from MinFocalLength)
+/// PrintConv: Image::ExifTool::Canon::PrintFocalRange(@val)
+pub fn compute_lens(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Canon-specific implementation: uses MinFocalLength, MaxFocalLength
+    // ExifTool: lib/Image/ExifTool/Canon.pm:9684-9691
+    if let (Some(min_focal), Some(max_focal)) = (
+        available_tags.get("MinFocalLength"),
+        available_tags.get("MaxFocalLength"),
+    ) {
+        if let (Some(min_f), Some(max_f)) = (min_focal.as_f64(), max_focal.as_f64()) {
+            // ExifTool PrintFocalRange function logic (Canon.pm:10212-10222)
+            let lens_desc = if (min_f - max_f).abs() < 0.1 {
+                // Prime lens: single focal length
+                format!("{:.1} mm", min_f)
+            } else {
+                // Zoom lens: focal length range
+                format!("{:.1} - {:.1} mm", min_f, max_f)
+            };
+            return Some(TagValue::string(lens_desc));
+        }
+    }
+
+    // Fallback: try LensModel directly
+    if let Some(lens_model) = available_tags.get("LensModel") {
+        return Some(lens_model.clone());
+    }
+
+    // Fallback: try generic Lens tag
+    if let Some(lens) = available_tags.get("Lens") {
+        return Some(lens.clone());
+    }
+
+    None
+}
+
+/// Compute LensID composite tag - sophisticated lens identification from manufacturer data
+/// ExifTool: lib/Image/ExifTool/Exif.pm:5197-5255 primary LensID implementation
+/// Complex algorithm using PrintLensID function (lines 5775-5954)
+pub fn compute_lens_id(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Note: Full ExifTool LensID implementation is extremely complex (180+ lines)
+    // involving manufacturer lens databases, adapter detection, teleconverter handling
+    // This is a simplified version focusing on the most common cases
+
+    // Primary: try LensType (required dependency)
+    if let Some(lens_type) = available_tags.get("LensType") {
+        // In a full implementation, this would look up lens_type in manufacturer tables
+        // For now, return the LensType value directly as identifier
+        return Some(lens_type.clone());
+    }
+
+    // Secondary: try XMP-aux:LensID (for XMP sources)
+    // ExifTool: lib/Image/ExifTool/XMP.pm:2761-2779
+    if let Some(xmp_lens_id) = available_tags.get("LensID") {
+        return Some(xmp_lens_id.clone());
+    }
+
+    // Nikon-specific: construct 8-byte hex string from LensType components
+    // ExifTool: lib/Image/ExifTool/Nikon.pm:13173-13189
+    if let (Some(lens_type), Some(lens_info)) = (
+        available_tags.get("LensType"),
+        available_tags.get("LensInfo"),
+    ) {
+        // This would construct Nikon's 8-byte lens identifier
+        // Format example: "0x123456789ABCDEF0"
+        return Some(TagValue::string(format!(
+            "{}:{}",
+            lens_type.as_string().unwrap_or_default(),
+            lens_info.as_string().unwrap_or_default()
+        )));
+    }
+
+    None
+}
+
+/// Compute LensSpec composite tag - formatted lens specification
+/// ExifTool: lib/Image/ExifTool/Nikon.pm:13165-13172 Nikon LensSpec
+/// ValueConv: "$val[0] $val[1]" (concatenates Lens and LensType)
+pub fn compute_lens_spec(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Nikon implementation: combines Lens + LensType
+    // ExifTool: lib/Image/ExifTool/Nikon.pm:13165-13172
+    if let (Some(lens), Some(lens_type)) =
+        (available_tags.get("Lens"), available_tags.get("LensType"))
+    {
+        let lens_str = lens.as_string().unwrap_or_default();
+        let type_str = lens_type.as_string().unwrap_or_default();
+        return Some(TagValue::string(format!("{} {}", lens_str, type_str)));
+    }
+
+    // Fallback: construct from focal length and aperture information
+    if let Some(lens_info) = available_tags.get("LensInfo") {
+        return Some(lens_info.clone());
+    }
+
+    // Generic construction from available lens parameters
+    let mut spec_parts = Vec::new();
+
+    // Add focal length information
+    match (
+        available_tags.get("MinFocalLength"),
+        available_tags.get("MaxFocalLength"),
+    ) {
+        (Some(min_f), Some(max_f)) => {
+            if let (Some(min_fl), Some(max_fl)) = (min_f.as_f64(), max_f.as_f64()) {
+                if (min_fl - max_fl).abs() < 0.1 {
+                    spec_parts.push(format!("{}mm", min_fl as u32));
+                } else {
+                    spec_parts.push(format!("{}-{}mm", min_fl as u32, max_fl as u32));
+                }
+            }
+        }
+        _ => {
+            if let Some(focal_length) = available_tags.get("FocalLength") {
+                if let Some(fl) = focal_length.as_f64() {
+                    spec_parts.push(format!("{}mm", fl as u32));
+                }
+            }
+        }
+    }
+
+    // Add aperture information
+    if let Some(max_aperture) = available_tags.get("MaxAperture") {
+        if let Some(ap) = max_aperture.as_f64() {
+            spec_parts.push(format!("f/{:.1}", ap));
+        }
+    }
+
+    if !spec_parts.is_empty() {
+        Some(TagValue::string(spec_parts.join(" ")))
+    } else {
+        None
+    }
+}
+
+/// Compute LensType composite tag - lens type from manufacturer-specific data
+/// ExifTool: lib/Image/ExifTool/Olympus.pm:4290-4299 Olympus LensType
+/// ValueConv: "$val[0] $val[1]" (concatenates LensTypeMake and LensTypeModel)
+pub fn compute_lens_type(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Olympus implementation: combines LensTypeMake + LensTypeModel
+    // ExifTool: lib/Image/ExifTool/Olympus.pm:4290-4299
+    if let (Some(make), Some(model)) = (
+        available_tags.get("LensTypeMake"),
+        available_tags.get("LensTypeModel"),
+    ) {
+        let make_str = make.as_string().unwrap_or_default();
+        let model_str = model.as_string().unwrap_or_default();
+        // Note: ExifTool also looks this up in %olympusLensTypes table for PrintConv
+        return Some(TagValue::string(format!("{} {}", make_str, model_str)));
+    }
+
+    // Direct LensType tag (most common case)
+    if let Some(lens_type) = available_tags.get("LensType") {
+        return Some(lens_type.clone());
+    }
+
+    // Canon/Nikon fallbacks
+    for fallback_tag in &["LensType2", "LensType3", "RFLensType"] {
+        if let Some(lens_type) = available_tags.get(*fallback_tag) {
+            return Some(lens_type.clone());
+        }
+    }
+
+    None
+}
+
+/// Compute Duration composite tag for audio/video files
+/// ExifTool: Multiple format-specific implementations in FLAC.pm, APE.pm, AIFF.pm, RIFF.pm, MPEG.pm, Vorbis.pm
+/// This implements a consolidated version supporting common video formats
+pub fn compute_duration(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Method 1: RIFF-style calculation using FrameRate and FrameCount
+    // ExifTool: lib/Image/ExifTool/RIFF.pm:1547-1580
+    if let (Some(frame_rate), Some(frame_count)) = (
+        available_tags.get("FrameRate"),
+        available_tags.get("FrameCount"),
+    ) {
+        if let (Some(rate), Some(count)) = (frame_rate.as_f64(), frame_count.as_f64()) {
+            if rate > 0.0 {
+                let duration_seconds = count / rate;
+                return Some(TagValue::F64(duration_seconds));
+            }
+        }
+    }
+
+    // Method 2: Video-specific frame calculations
+    if let (Some(video_rate), Some(video_count)) = (
+        available_tags.get("VideoFrameRate"),
+        available_tags.get("VideoFrameCount"),
+    ) {
+        if let (Some(rate), Some(count)) = (video_rate.as_f64(), video_count.as_f64()) {
+            if rate > 0.0 {
+                let duration_seconds = count / rate;
+                return Some(TagValue::F64(duration_seconds));
+            }
+        }
+    }
+
+    // Method 3: Audio-style calculation using SampleRate and TotalSamples
+    // ExifTool: lib/Image/ExifTool/FLAC.pm:137-146, AIFF.pm:136-145
+    if let (Some(sample_rate), Some(total_samples)) = (
+        available_tags.get("SampleRate"),
+        available_tags.get("TotalSamples"),
+    ) {
+        if let (Some(rate), Some(samples)) = (sample_rate.as_f64(), total_samples.as_f64()) {
+            if rate > 0.0 {
+                let duration_seconds = samples / rate;
+                return Some(TagValue::F64(duration_seconds));
+            }
+        }
+    }
+
+    // Method 4: Bitrate-based approximation (less accurate)
+    // ExifTool: lib/Image/ExifTool/MPEG.pm:385-415, Vorbis.pm:138-147
+    if let (Some(file_size), Some(bitrate)) = (
+        available_tags.get("FileSize"),
+        available_tags
+            .get("AudioBitrate")
+            .or_else(|| available_tags.get("VideoBitrate")),
+    ) {
+        if let (Some(size), Some(rate)) = (file_size.as_f64(), bitrate.as_f64()) {
+            if rate > 0.0 {
+                // Duration = (FileSize in bits) / bitrate
+                let duration_seconds = (size * 8.0) / rate;
+                return Some(TagValue::F64(duration_seconds));
+            }
+        }
+    }
+
+    None
+}

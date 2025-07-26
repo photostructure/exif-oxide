@@ -12,6 +12,7 @@ use tracing_subscriber::EnvFilter;
 
 mod common;
 mod config;
+mod conv_registry;
 mod discovery;
 mod extraction;
 mod extractors;
