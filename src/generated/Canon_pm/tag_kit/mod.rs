@@ -11451,24 +11451,13 @@ pub fn apply_print_conv(
     warnings: &mut Vec<String>,
 ) -> TagValue {
     match tag_id {
-        1 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        2 => crate::implementations::print_conv::complex_expression_print_conv(value),
         3 => crate::implementations::print_conv::decimal_2_print_conv(value),
         4 => crate::implementations::print_conv::exposuretime_print_conv(value),
         5 => crate::implementations::print_conv::exposuretime_print_conv(value),
         6 => crate::implementations::print_conv::print_fraction(value),
-        8 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        10 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        12 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        13 => crate::implementations::print_conv::complex_expression_print_conv(value),
         15 => crate::implementations::print_conv::print_fraction(value),
         17 => crate::implementations::print_conv::print_fraction(value),
-        19 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        20 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        21 => crate::implementations::print_conv::complex_expression_print_conv(value),
         22 => crate::implementations::print_conv::exposuretime_print_conv(value),
-        30 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        585 => crate::implementations::print_conv::complex_expression_print_conv(value),
         _ => {
             // Fall back to shared handling
             if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {

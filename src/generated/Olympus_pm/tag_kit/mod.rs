@@ -815,32 +815,11 @@ pub fn apply_print_conv(
     warnings: &mut Vec<String>,
 ) -> TagValue {
     match tag_id {
-        257 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        260 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        514 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        516 => crate::implementations::print_conv::complex_expression_print_conv(value),
         517 => crate::implementations::print_conv::decimal_1_print_conv(value),
         518 => crate::implementations::print_conv::decimal_1_print_conv(value),
         522 => crate::implementations::print_conv::decimal_1_print_conv(value),
-        772 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        773 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        1281 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        1283 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        1285 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        1286 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        1313 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        1315 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        1316 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        1536 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        1537 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        2305 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        2312 => crate::implementations::print_conv::complex_expression_print_conv(value),
         4096 => crate::implementations::print_conv::exposuretime_print_conv(value),
-        4097 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        4098 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        4617 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        5376 => crate::implementations::print_conv::complex_expression_print_conv(value),
-        5632 => crate::implementations::print_conv::complex_expression_print_conv(value),
+        4098 => crate::implementations::print_conv::decimal_1_print_conv(value),
         _ => {
             // Fall back to shared handling
             if let Some(tag_kit) = OLYMPUS_PM_TAG_KITS.get(&tag_id) {

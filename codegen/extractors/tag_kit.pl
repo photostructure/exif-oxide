@@ -138,8 +138,18 @@ sub extract_print_conv {
             }
             return ('Simple', \%entries) if %entries;
         }
-        # Complex hash - needs manual implementation
-        return ('Manual', 'complex_hash_printconv');
+        # Complex hash - preserve information about what makes it complex
+        if (exists $print_conv->{BITMASK}) {
+            return ('Expression', 'BITMASK');
+        } elsif (exists $print_conv->{Mask} || exists $print_conv->{PrintHex} || exists $print_conv->{PrintString}) {
+            my @types;
+            push @types, 'Mask' if exists $print_conv->{Mask};
+            push @types, 'PrintHex' if exists $print_conv->{PrintHex};
+            push @types, 'PrintString' if exists $print_conv->{PrintString};
+            return ('Expression', 'ComplexHash[' . join(',', @types) . ']');
+        } else {
+            return ('Expression', 'ComplexHash');
+        }
     }
     
     # String expression
@@ -148,8 +158,8 @@ sub extract_print_conv {
         if (is_simple_expression($print_conv)) {
             return ('Expression', $print_conv);
         }
-        # Complex expression
-        return ('Manual', 'complex_expression_printconv');
+        # Complex expression - preserve the original expression for tracking
+        return ('Expression', $print_conv);
     }
     
     # Code reference
