@@ -147,7 +147,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Manual("complex_expression_printconv"),
+                print_conv: PrintConvType::Expression("$val ? sprintf(\"%.1f\",$val) : $val"),
                 value_conv: Some("16 - $val/256"),
                 subdirectory: None,
             },

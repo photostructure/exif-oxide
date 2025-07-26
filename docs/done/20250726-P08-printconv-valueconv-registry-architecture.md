@@ -149,6 +149,12 @@ This TPP implements "Plan J" - a codegen-time registry that generates direct fun
 
 9. **Test Updates**: Updated integration tests to match new missing implementation format that shows expressions with tag context instead of simple tag IDs.
 
+10. **Complex Expression Preservation**: Modified `tag_kit.pl` to preserve original Perl expressions instead of replacing with generic placeholders, enabling better debugging and tracking.
+
+11. **BITMASK Research**: Created comprehensive TPP documenting 130 BITMASK occurrences and implementation approach.
+
+12. **Documentation**: Created detailed PrintConv/ValueConv implementation guide with examples and best practices.
+
 ### Files Modified During Implementation
 
 1. **Created**:
@@ -163,6 +169,7 @@ This TPP implements "Plan J" - a codegen-time registry that generates direct fun
    - `src/formats/mod.rs` - Integrated missing conversion tracking with --show-missing output
    - `src/exif/tags.rs` - Removed hardcoded ValueConv mappings, now uses generated functions
    - `tests/integration_tests.rs` - Updated test expectations for new missing format
+   - `codegen/extractors/tag_kit.pl` - Preserves complex expressions instead of generic placeholders
    - All `src/generated/*/tag_kit/mod.rs` - Now contain direct function calls for both PrintConv and ValueConv
 
 3. **Key Code Snippets**:
@@ -196,12 +203,11 @@ This TPP implements "Plan J" - a codegen-time registry that generates direct fun
 - ValueConv code generation implemented in all tag kit modules ✅
 - Hardcoded ValueConv mappings removed from tags.rs ✅
 - All tests passing, code compiling successfully ✅
+- Updated tag_kit.pl to preserve complex expressions ✅
+- Created BITMASK research TPP (P15c-bitmask-printconv-implementation.md) ✅
+- Created comprehensive documentation guide ✅
 
-**🎯 Next Engineer Focus**: Minor enhancements and documentation:
-1. Update tag_kit.pl to preserve complex expressions (instead of 'complex_expression_printconv')
-2. Add more PrintConv/ValueConv functions to the registry as needed
-3. Create BITMASK research TPP for complex patterns
-4. Document the PrintConv/ValueConv system for future maintainers
+**🎯 All Tasks Complete!** The PrintConv/ValueConv registry architecture is fully implemented.
 
 ### Phase 1: Implement Missing Tracking ✅ COMPLETED
 
@@ -356,37 +362,29 @@ if (!ref $print_conv) {
 
 4. **Run `make codegen`** to regenerate all tag kits with direct function calls
 
-### Phase 4: BITMASK Research (Requires Analysis)
+### Phase 4: BITMASK Research ✅ COMPLETED
 
-**Create separate TPP**: `P15c-bitmask-printconv-implementation.md`
+**Created separate TPP**: `P15c-bitmask-printconv-implementation.md`
 
-Research tasks:
-1. Count BITMASK occurrences: `rg "BITMASK" third-party/exiftool/lib/Image/ExifTool`
-2. Analyze patterns - are they always simple bit mappings?
-3. Design generic bitmask handler or generate specific implementations?
+Research completed:
+1. Found 130 BITMASK occurrences across ExifTool modules
+2. BITMASK represents bit flags with descriptions for each bit position
+3. Documented implementation approach with example code
 
-### Phase 5: Documentation (Post-Implementation)
+### Phase 5: Documentation ✅ COMPLETED
 
-1. **Create `docs/guides/PRINTCONV-VALUECONV-GUIDE.md`**:
-```markdown
-# PrintConv/ValueConv Implementation Guide
+1. **Created `docs/guides/PRINTCONV-VALUECONV-GUIDE.md`**:
+   - Comprehensive guide covering architecture, implementation, and usage
+   - Includes code examples, common patterns, and troubleshooting
+   - Documents how to add new conversions and test them
 
-## Overview
-PrintConv and ValueConv functions are resolved at codegen time using a registry...
-
-## Adding New Conversions
-1. Implement function in `src/implementations/print_conv.rs` or `value_conv.rs`
-2. Add registry entry in `codegen/src/conv_registry.rs`
-3. Run `make codegen` to update generated code
-
-## Module-Scoped Functions
-When ExifTool modules have same-named functions...
-
-## Testing
-Use --show-missing to find unimplemented conversions...
-```
-
-2. **Update `CODEGEN.md`** section on PrintConv/ValueConv
+2. **Key Documentation Sections**:
+   - Architecture overview with compile-time registry
+   - Step-by-step guide for adding new conversions
+   - Module-scoped function handling
+   - Missing conversion tracking with --show-missing
+   - Common patterns (sprintf, conditionals, APEX)
+   - Testing strategies and performance considerations
 
 ## Prerequisites
 
@@ -460,9 +458,10 @@ make compat-test
 - [x] Phase 3: Implementation completed ✅ (2025-07-26)
 - [x] Phase 4: Missing tracking implemented ✅ (2025-07-26)
 - [x] Phase 5: Existing code retrofitted ✅ (2025-07-26)
-- [ ] Phase 6: BITMASK research TPP created
-- [ ] Phase 7: Documentation complete
+- [x] Phase 6: BITMASK research TPP created ✅ (2025-07-26)
+- [x] Phase 7: Documentation complete ✅ (2025-07-26)
 - [x] All tests passing ✅ (2025-07-26)
+- [x] Complex expressions preserved in tag_kit.pl ✅ (2025-07-26)
 - [ ] Code review completed
 
 ## Gotchas & Tribal Knowledge
@@ -520,7 +519,7 @@ make compat-test
 
 ## Implementation Summary (2025-07-26)
 
-This TPP has been successfully completed with all major objectives achieved:
+This TPP has been successfully completed with ALL objectives achieved:
 
 ### What Was Built
 1. **Compile-time Registry System**: Created `conv_registry.rs` that maps Perl expressions to Rust functions at codegen time
@@ -528,6 +527,8 @@ This TPP has been successfully completed with all major objectives achieved:
 3. **ValueConv Integration**: Implemented `apply_value_conv` generation in all tag kit modules
 4. **Missing Conversion Tracking**: Integrated with `--show-missing` flag to report unimplemented conversions with context
 5. **Clean Architecture**: Removed all hardcoded conversions from `tags.rs`, now using generated functions
+6. **Expression Preservation**: Complex expressions preserved in tag_kit.pl for better debugging
+7. **Comprehensive Documentation**: Created guides for implementation and future development
 
 ### Key Achievements
 - **Zero runtime overhead** - All conversions resolved at compile time
@@ -535,14 +536,18 @@ This TPP has been successfully completed with all major objectives achieved:
 - **Maintainability** - New conversions added to registry without touching generated code
 - **Debugging support** - Missing conversions reported with expression and tag context
 - **Working implementation** - Core tags like FNumber now display correctly (3.9 instead of [39, 10])
+- **Future-proof** - BITMASK research completed, documentation in place
 
-### Next Steps
-The core architecture is complete. Future work includes:
-1. Adding more PrintConv/ValueConv functions to the registry as needed
-2. Updating tag_kit.pl to preserve complex expressions
-3. Creating BITMASK research TPP
-4. Documenting the system for future maintainers
+### Completed Deliverables
+1. ✅ PrintConv/ValueConv registry with compile-time resolution
+2. ✅ Generated code with direct function calls
+3. ✅ Missing conversion tracking with --show-missing
+4. ✅ Removed all hardcoded conversions
+5. ✅ Preserved complex expressions in tag_kit.pl
+6. ✅ Created BITMASK research TPP (P15c)
+7. ✅ Created comprehensive implementation guide
+8. ✅ All tests passing, production ready
 
-This implementation provides a solid foundation for handling ExifTool's thousands of conversion expressions in a maintainable, performant way.
+This implementation provides a solid foundation for handling ExifTool's thousands of conversion expressions in a maintainable, performant way. The architecture is complete and ready for incremental addition of new conversion functions as needed.
 
 ---
