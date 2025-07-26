@@ -9,10 +9,22 @@
   "File:MIMEType": "image/x-minolta-mrw",
   "EXIF:ImageWidth": 3264,
   "EXIF:ImageHeight": 2448,
+  "EXIF:ImageDescription": "KONICA MINOLTA DIGITAL CAMERA",
   "EXIF:Make": "Konica Minolta Camera, Inc.",
   "EXIF:Model": "DiMAGE A2",
   "EXIF:Orientation": "Horizontal (normal)",
+  "EXIF:Software": "DiMAGE A2 Ver.1.12",
+  "EXIF:ModifyDate": "2004:11:18 23:14:58",
+  "EXIF:ExposureTime": "1/5",
+  "EXIF:FNumber": 2.8,
+  "EXIF:ExposureProgram": "Manual",
   "EXIF:ISO": 64,
+  "EXIF:ExifVersion": "0221",
   "EXIF:DateTimeOriginal": "2004:11:18 23:14:58",
-  "EXIF:CreateDate": "2004:11:18 23:14:58"
+  "EXIF:CreateDate": "2004:11:18 23:14:58",
+  "EXIF:MaxApertureValue": 2.8,
+  "EXIF:MeteringMode": "Unknown",
+  "EXIF:Flash": "Off, Did not fire",
+  "EXIF:FocalLength": "7.2 mm",
+  "EXIF:UserComment": ""
 }

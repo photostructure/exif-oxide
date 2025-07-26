@@ -48,6 +48,7 @@ This tells you exactly what needs to be implemented.
 ### Issue: Tag Values Don't Match ExifTool
 
 **Symptoms:**
+
 - Output differs from `exiftool -j`
 - Missing tags that ExifTool shows
 - Wrong values for existing tags
@@ -55,11 +56,13 @@ This tells you exactly what needs to be implemented.
 **Debug Steps:**
 
 1. **Check ExifTool verbose output:**
+
    ```bash
    exiftool -v3 image.jpg | grep -A5 -B5 "TagName"
    ```
 
 2. **Verify raw binary data:**
+
    ```bash
    exiftool -htmlDump image.jpg > dump.html
    # Open dump.html in browser to see hex data
@@ -73,6 +76,7 @@ This tells you exactly what needs to be implemented.
    ```
 
 **Common Causes:**
+
 - Wrong byte order interpretation
 - Incorrect offset calculations
 - Missing ValueConv/PrintConv implementation
@@ -81,6 +85,7 @@ This tells you exactly what needs to be implemented.
 ### Issue: Offset Calculation Errors
 
 **Symptoms:**
+
 - Reading wrong data locations
 - Crashes on bounds checking
 - Corrupted tag values
@@ -88,6 +93,7 @@ This tells you exactly what needs to be implemented.
 **Debug Steps:**
 
 1. **Verify offset calculations:**
+
    ```rust
    assert_eq!(
        calculated_offset,
@@ -98,6 +104,7 @@ This tells you exactly what needs to be implemented.
    ```
 
 2. **Check manufacturer-specific offset schemes:**
+
    - Canon: 4, 6, 16, or 28 byte offsets
    - Nikon: TIFF header at offset 0x0a
    - Sony: Various detection patterns
@@ -108,6 +115,7 @@ This tells you exactly what needs to be implemented.
    ```
 
 **Common Causes:**
+
 - Wrong base offset for manufacturer
 - Missing TIFF footer validation
 - Incorrect entry-based offset handling
@@ -115,6 +123,7 @@ This tells you exactly what needs to be implemented.
 ### Issue: Binary Data Processing Fails
 
 **Symptoms:**
+
 - Canon/Nikon manufacturer-specific tags missing
 - Binary lens data not extracted
 - ProcessBinaryData errors
@@ -122,12 +131,14 @@ This tells you exactly what needs to be implemented.
 **Debug Steps:**
 
 1. **Verify binary data extraction:**
+
    ```rust
    trace!("Binary data length: {}", binary_data.len());
    trace!("First 16 bytes: {:02x?}", &binary_data[..16]);
    ```
 
 2. **Check table definitions:**
+
    - Verify FIRST_ENTRY offset
    - Check format overrides
    - Validate offset ranges
@@ -138,6 +149,7 @@ This tells you exactly what needs to be implemented.
    ```
 
 **Common Causes:**
+
 - Wrong binary data tag identification
 - Incorrect offset calculations within binary data
 - Missing format override handling
@@ -145,6 +157,7 @@ This tells you exactly what needs to be implemented.
 ### Issue: String Encoding Problems
 
 **Symptoms:**
+
 - Garbled text in string fields
 - Incorrect character display
 - UTF-8 encoding errors
@@ -152,6 +165,7 @@ This tells you exactly what needs to be implemented.
 **Debug Steps:**
 
 1. **Check for double-encoding:**
+
    ```rust
    if looks_like_double_utf8(&string) {
        string = decode_utf8_twice(string);
@@ -159,6 +173,7 @@ This tells you exactly what needs to be implemented.
    ```
 
 2. **Verify null termination:**
+
    ```rust
    // Scan for null terminator, don't assume clean strings
    let null_pos = string.bytes().position(|b| b == 0);
@@ -170,6 +185,7 @@ This tells you exactly what needs to be implemented.
    ```
 
 **Common Causes:**
+
 - Sony double-UTF8 encoding
 - Manufacturer-specific character encodings
 - Garbage data after null terminators
@@ -177,6 +193,7 @@ This tells you exactly what needs to be implemented.
 ### Issue: Performance Problems
 
 **Symptoms:**
+
 - Slow processing compared to ExifTool
 - Memory usage issues
 - Timeout errors
@@ -184,6 +201,7 @@ This tells you exactly what needs to be implemented.
 **Debug Steps:**
 
 1. **Profile with perf:**
+
    ```bash
    cargo build --release
    perf record --call-graph=dwarf target/release/exif-oxide image.jpg
@@ -191,6 +209,7 @@ This tells you exactly what needs to be implemented.
    ```
 
 2. **Check memory usage:**
+
    ```bash
    valgrind --tool=massif target/release/exif-oxide image.jpg
    ```
@@ -202,6 +221,7 @@ This tells you exactly what needs to be implemented.
    ```
 
 **Common Causes:**
+
 - Loading entire file instead of streaming
 - Inefficient lookup table access
 - Unnecessary memory allocations
@@ -209,6 +229,7 @@ This tells you exactly what needs to be implemented.
 ### Issue: Test Failures
 
 **Symptoms:**
+
 - Compatibility tests fail
 - Unit tests break after changes
 - Clippy import errors
@@ -216,28 +237,31 @@ This tells you exactly what needs to be implemented.
 **Debug Steps:**
 
 1. **Run specific test:**
+
    ```bash
    cargo test canon_lens --no-fail-fast -- --nocapture
    ```
 
 2. **Check test data:**
+
    ```bash
    # Make sure test images exist
    ls test-images/Canon/
-   
+
    # Verify ExifTool reference data (generates missing files)
    make compat-gen
-   
+
    # Force regenerate all reference data if needed
    make compat-gen-force
    ```
 
 3. **Fix clippy import issues:**
+
    ```rust
    // Use module-level cfg(test) imports
    #[cfg(test)]
    use crate::types::TagValue;
-   
+
    #[test]
    fn my_test() {
        let value = TagValue::String("test".to_string());
@@ -245,6 +269,7 @@ This tells you exactly what needs to be implemented.
    ```
 
 **Common Causes:**
+
 - Missing test helper features
 - Incorrect test file paths
 - Clippy import analysis issues
@@ -254,6 +279,7 @@ This tells you exactly what needs to be implemented.
 ### Issue: Codegen Fails
 
 **Symptoms:**
+
 - `cargo run -p codegen` errors
 - Missing generated files
 - Compilation errors in generated code
@@ -261,11 +287,13 @@ This tells you exactly what needs to be implemented.
 **Debug Steps:**
 
 1. **Check Perl dependencies:**
+
    ```bash
    perl -e 'use lib "third-party/exiftool/lib"; use Image::ExifTool; print "OK\n"'
    ```
 
 2. **Verify ExifTool submodule:**
+
    ```bash
    cd third-party/exiftool
    git status
@@ -280,6 +308,7 @@ This tells you exactly what needs to be implemented.
    ```
 
 **Common Causes:**
+
 - Outdated ExifTool submodule
 - Missing Perl modules
 - Syntax errors in extraction scripts
@@ -287,6 +316,7 @@ This tells you exactly what needs to be implemented.
 ### Issue: Compilation Errors
 
 **Symptoms:**
+
 - Rust compilation fails
 - Linking errors
 - Missing dependencies
@@ -294,12 +324,14 @@ This tells you exactly what needs to be implemented.
 **Debug Steps:**
 
 1. **Check Rust toolchain:**
+
    ```bash
    rustc --version
    cargo --version
    ```
 
 2. **Verify dependencies:**
+
    ```bash
    cargo check
    cargo update
@@ -312,6 +344,7 @@ This tells you exactly what needs to be implemented.
    ```
 
 **Common Causes:**
+
 - Outdated Rust toolchain
 - Missing system dependencies
 - Incompatible dependency versions
@@ -321,11 +354,13 @@ This tells you exactly what needs to be implemented.
 ### Canon Issues
 
 **Common Problems:**
+
 - LensType not extracted
 - Binary data not found
 - Wrong offset schemes
 
 **Debug with:**
+
 ```bash
 # Check Canon-specific verbose output
 exiftool -v3 -Canon:all image.jpg
@@ -337,11 +372,13 @@ exiftool -v3 image.jpg | grep -i "binary\|canon"
 ### Nikon Issues
 
 **Common Problems:**
+
 - Encrypted sections not handled
 - Wrong TIFF header offset
 - Version detection failures
 
 **Debug with:**
+
 ```bash
 # Check Nikon-specific data
 exiftool -v3 -Nikon:all image.jpg
@@ -353,11 +390,13 @@ exiftool -v3 image.jpg | grep -i "encrypt\|nikon"
 ### Sony Issues
 
 **Common Problems:**
+
 - Double-UTF8 encoding
 - Multiple maker note formats
 - Encryption on newer models
 
 **Debug with:**
+
 ```bash
 # Check Sony-specific data
 exiftool -v3 -Sony:all image.jpg
@@ -398,7 +437,7 @@ heaptrack target/debug/exif-oxide image.jpg
 fn debug_binary_data(data: &[u8], tag_name: &str) {
     trace!("Binary data for {}: {} bytes", tag_name, data.len());
     trace!("First 32 bytes: {:02x?}", &data[..std::cmp::min(32, data.len())]);
-    
+
     // Look for patterns
     for (i, &byte) in data.iter().enumerate() {
         if byte == 0xFF || byte == 0x00 {
@@ -407,6 +446,16 @@ fn debug_binary_data(data: &[u8], tag_name: &str) {
     }
 }
 ```
+
+### Is this tag prevalent?
+
+Tag "popularity" ranges widely. First check `docs/tag-metadata.json`, but if it's not there, use `exiftool` to do your own research! For the `ISOSpeed` tag, for example:
+
+```
+exiftool -j -struct -G -r -if '$ISOSpeed' -ISOSpeed test-images/ third-party/exiftool/t/images/ ../test-images/
+```
+
+Which shows it's only in the EXIF group, and in 20/10693 of our sample files.
 
 ## Getting Help
 

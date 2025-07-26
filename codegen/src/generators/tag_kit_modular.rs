@@ -8,7 +8,7 @@ use std::collections::HashMap;
 use crate::common::escape_string;
 use crate::schemas::tag_kit::{TagKitExtraction, TagKit, ExtractedTable};
 use super::tag_kit_split::{split_tag_kits, TagCategory};
-use crate::conv_registry::{lookup_printconv, lookup_valueconv};
+use crate::conv_registry::{lookup_printconv, lookup_valueconv, lookup_tag_specific_printconv};
 use serde::Deserialize;
 
 /// Shared table data loaded from shared_tables.json
@@ -87,6 +87,14 @@ fn generate_print_conv_function(
             continue;
         }
         
+        // Three-tier lookup system:
+        // 1. First try tag-specific lookup (works for all tags, not just ComplexHash)
+        if let Some((module_path, func_name)) = lookup_tag_specific_printconv(module_name, &tag_kit.name) {
+            tag_convs_map.insert(tag_id, (module_path.to_string(), func_name.to_string()));
+            continue;
+        }
+        
+        // 2. Then try expression/manual lookup based on type
         match tag_kit.print_conv_type.as_str() {
             "Expression" => {
                 if let Some(expr_data) = &tag_kit.print_conv_data {
