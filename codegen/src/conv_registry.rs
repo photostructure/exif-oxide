@@ -6,6 +6,12 @@
 
 use std::collections::HashMap;
 use std::sync::LazyLock;
+use std::process::Command;
+use std::sync::Mutex;
+
+// Cache for normalized expressions to avoid repeated subprocess calls
+static NORMALIZATION_CACHE: LazyLock<Mutex<HashMap<String, String>>> = 
+    LazyLock::new(|| Mutex::new(HashMap::new()));
 
 // Registry maps Perl expressions to (module_path, function_name)
 static PRINTCONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'static str)>> = LazyLock::new(|| {
@@ -121,48 +127,105 @@ pub fn lookup_valueconv(expr: &str, module: &str) -> Option<(&'static str, &'sta
 }
 
 /// Normalize expression for consistent lookup
-/// Handles whitespace normalization and other variations
+/// Uses Perl to normalize Perl expressions
 pub fn normalize_expression(expr: &str) -> String {
-    // Remove spaces around punctuation and collapse whitespace
-    let mut result = String::new();
-    let mut last_was_space = false;
-    let mut chars = expr.chars().peekable();
-    
-    while let Some(ch) = chars.next() {
-        match ch {
-            ' ' | '\t' | '\n' | '\r' => {
-                // Skip spaces before punctuation
-                if let Some(&next) = chars.peek() {
-                    if matches!(next, '(' | ')' | ',' | '"') {
-                        continue;
-                    }
-                }
-                if !last_was_space && !result.is_empty() {
-                    result.push(' ');
-                    last_was_space = true;
-                }
-            }
-            '(' | ')' | ',' => {
-                // Remove trailing space before punctuation
-                if last_was_space && !result.is_empty() {
-                    result.pop();
-                }
-                result.push(ch);
-                last_was_space = false;
-                // Skip spaces after punctuation
-                while chars.peek() == Some(&' ') {
-                    chars.next();
-                }
-            }
-            _ => {
-                result.push(ch);
-                last_was_space = false;
-            }
+    // Check cache first
+    if let Ok(cache) = NORMALIZATION_CACHE.lock() {
+        if let Some(normalized) = cache.get(expr) {
+            return normalized.clone();
         }
     }
     
-    result.trim().to_string()
+    // Use Perl normalization
+    let normalized = match normalize_with_perl(expr) {
+        Ok(result) => result,
+        Err(e) => {
+            eprintln!("Warning: Failed to normalize expression '{}': {}", expr, e);
+            eprintln!("Using original expression");
+            expr.to_string()
+        }
+    };
+    
+    // Cache the result
+    if let Ok(mut cache) = NORMALIZATION_CACHE.lock() {
+        cache.insert(expr.to_string(), normalized.clone());
+    }
+    
+    normalized
 }
+
+/// Call Perl script to normalize expression
+fn normalize_with_perl(expr: &str) -> Result<String, String> {
+    use std::io::Write;
+    use std::process::Stdio;
+    
+    // Find the normalize script by searching up from current directory
+    let script_path = find_normalize_script()
+        .ok_or_else(|| "Could not find normalize_expression.pl script".to_string())?;
+    
+    // Set up Perl environment for local::lib
+    let home_dir = std::env::var("HOME")
+        .map_err(|_| "HOME environment variable not set".to_string())?;
+    let perl5lib = format!("{}/perl5/lib/perl5", home_dir);
+    
+    // Call the Perl script with stdin and proper environment
+    let mut child = Command::new("perl")
+        .arg("-I")
+        .arg(&perl5lib)
+        .arg("-Mlocal::lib")
+        .arg(&script_path)
+        .env("PERL5LIB", &perl5lib)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|e| format!("Failed to execute Perl: {}", e))?;
+    
+    // Write expression to stdin
+    if let Some(mut stdin) = child.stdin.take() {
+        stdin.write_all(expr.as_bytes())
+            .map_err(|e| format!("Failed to write to Perl stdin: {}", e))?;
+    }
+    
+    // Wait for completion and get output
+    let output = child.wait_with_output()
+        .map_err(|e| format!("Failed to wait for Perl process: {}", e))?;
+    
+    if output.status.success() {
+        String::from_utf8(output.stdout)
+            .map_err(|e| format!("Invalid UTF-8 in Perl output: {}", e))
+            .map(|s| s.trim().to_string())
+    } else {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        Err(format!("Perl script failed: {}", stderr))
+    }
+}
+
+/// Find the normalize_expression.pl script by searching up the directory tree
+fn find_normalize_script() -> Option<std::path::PathBuf> {
+    let mut current = std::env::current_dir().ok()?;
+    
+    // Search up to 5 levels
+    for _ in 0..5 {
+        // Check if we're in the codegen directory
+        let script_path = current.join("extractors").join("normalize_expression.pl");
+        if script_path.exists() {
+            return Some(script_path);
+        }
+        
+        // Check if we're in the project root
+        let codegen_script = current.join("codegen").join("extractors").join("normalize_expression.pl");
+        if codegen_script.exists() {
+            return Some(codegen_script);
+        }
+        
+        // Move up one directory
+        current = current.parent()?.to_path_buf();
+    }
+    
+    None
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -176,16 +239,217 @@ mod tests {
     }
     
     #[test]
-    fn test_expression_normalization() {
+    fn test_manual_printconv_lookup() {
+        let result = lookup_printconv("fnumber_print_conv", "Exif_pm");
+        assert_eq!(result, Some(("crate::implementations::print_conv", "fnumber_print_conv")));
+    }
+    
+    #[test]
+    fn test_normalize_sprintf_expressions() {
+        // Basic sprintf patterns from ExifTool
         assert_eq!(
             normalize_expression("sprintf( \"%.1f mm\" , $val )"),
-            "sprintf(\"%.1f mm\",$val)"
+            "sprintf(\"%.1f mm\", $val)"
+        );
+        
+        assert_eq!(
+            normalize_expression("sprintf(\"%.1f\",$val)"),
+            "sprintf(\"%.1f\", $val)"
+        );
+        
+        assert_eq!(
+            normalize_expression("sprintf( \"%.2f\" , $val )"),
+            "sprintf(\"%.2f\", $val)"
+        );
+        
+        assert_eq!(
+            normalize_expression("sprintf(\"%+d\",$val)"),
+            "sprintf(\"%+d\", $val)"
+        );
+        
+        assert_eq!(
+            normalize_expression("sprintf(\"0x%x\", $val)"),
+            "sprintf(\"0x%x\", $val)"
+        );
+        
+        assert_eq!(
+            normalize_expression("sprintf(\"%+.1f\",$val)"),
+            "sprintf(\"%+.1f\", $val)"
         );
     }
     
     #[test]
-    fn test_manual_printconv_lookup() {
-        let result = lookup_printconv("fnumber_print_conv", "Exif_pm");
-        assert_eq!(result, Some(("crate::implementations::print_conv", "fnumber_print_conv")));
+    fn test_normalize_regex_expressions() {
+        // Regex substitution patterns - Perl::Tidy splits multi-statement lines
+        assert_eq!(
+            normalize_expression("$val =~ tr/ /./; $val"),
+            "$val =~ tr/ /./;\n$val"
+        );
+        
+        assert_eq!(
+            normalize_expression("$val=~tr/ /:/; $val"),
+            "$val =~ tr/ /:/;\n$val"
+        );
+        
+        assert_eq!(
+            normalize_expression("$val =~ /^(inf|undef)$/ ? $val : \"$val m\""),
+            "$val =~ /^(inf|undef)$/ ? $val : \"$val m\""
+        );
+        
+        assert_eq!(
+            normalize_expression("$val=~s/\\s+$//;$val"),
+            "$val =~ s/\\s+$//;\n$val"
+        );
+        
+        assert_eq!(
+            normalize_expression("$val =~ /^4194303.999/ ? \"n/a\" : $val"),
+            "$val =~ /^4194303.999/ ? \"n/a\" : $val"
+        );
+    }
+    
+    #[test]
+    fn test_normalize_ternary_expressions() {
+        // Ternary conditional patterns
+        assert_eq!(
+            normalize_expression("$val ? $val : \"Auto\""),
+            "$val ? $val : \"Auto\""
+        );
+        
+        assert_eq!(
+            normalize_expression("$val ? \"$val m\" : \"inf\""),
+            "$val ? \"$val m\" : \"inf\""
+        );
+        
+        assert_eq!(
+            normalize_expression("$val > 0 ? \"+$val\" : $val"),
+            "$val > 0 ? \"+$val\" : $val"
+        );
+        
+        assert_eq!(
+            normalize_expression("IsInt($val) ? \"$val C\" : $val"),
+            "IsInt($val) ? \"$val C\" : $val"
+        );
+    }
+    
+    #[test]
+    fn test_normalize_function_calls() {
+        // Module function calls
+        assert_eq!(
+            normalize_expression("Image::ExifTool::Exif::PrintExposureTime($val)"),
+            "Image::ExifTool::Exif::PrintExposureTime($val)"
+        );
+        
+        assert_eq!(
+            normalize_expression("Image::ExifTool::Exif::PrintFNumber($val)"),
+            "Image::ExifTool::Exif::PrintFNumber($val)"
+        );
+        
+        assert_eq!(
+            normalize_expression("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")"),
+            "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")"
+        );
+        
+        assert_eq!(
+            normalize_expression("ConvertDuration($val)"),
+            "ConvertDuration($val)"
+        );
+    }
+    
+    #[test]
+    fn test_normalize_complex_expressions() {
+        // Complex multi-statement expressions - Perl::Tidy splits statements
+        assert_eq!(
+            normalize_expression("$val=~s/^(.*?) (\\d+) (\\d+)$/$1 Rating=$2 Count=$3/s; $val"),
+            "$val =~ s/^(.*?) (\\d+) (\\d+)$/$1 Rating=$2 Count=$3/s;\n$val"
+        );
+        
+        assert_eq!(
+            normalize_expression("$val=sprintf(\"%x\",$val);$val=~s/(.{3})$/\\.$1/;$val"),
+            "$val = sprintf(\"%x\", $val);\n$val =~ s/(.{3})$/\\.$1/;\n$val"
+        );
+        
+        assert_eq!(
+            normalize_expression("$val=~s/(\\S+) (\\S+)/$1 m, $2 ft/; $val"),
+            "$val =~ s/(\\S+) (\\S+)/$1 m, $2 ft/;\n$val"
+        );
+    }
+    
+    #[test]
+    fn test_normalize_string_concatenation() {
+        // String concatenation patterns
+        assert_eq!(
+            normalize_expression("\"$val mm\""),
+            "\"$val mm\""
+        );
+        
+        assert_eq!(
+            normalize_expression("\"$val m\""),
+            "\"$val m\""
+        );
+        
+        assert_eq!(
+            normalize_expression("\"$val C\""),
+            "\"$val C\""
+        );
+    }
+    
+    #[test]
+    fn test_normalize_whitespace_handling() {
+        // Excessive whitespace
+        assert_eq!(
+            normalize_expression("  sprintf  (  \"%.1f\"  ,  $val  )  "),
+            "sprintf(\"%.1f\", $val)"
+        );
+        
+        // Tabs and newlines
+        assert_eq!(
+            normalize_expression("sprintf(\t\"%.1f\"\t,\t$val\t)"),
+            "sprintf(\"%.1f\", $val)"
+        );
+        
+        // Mixed whitespace
+        assert_eq!(
+            normalize_expression("$val\n?\n$val\n:\n\"Auto\""),
+            "$val\n? $val\n: \"Auto\""
+        );
+    }
+    
+    #[test]
+    fn test_normalize_preserves_important_spaces() {
+        // Spaces in strings should be preserved
+        assert_eq!(
+            normalize_expression("\"$val m\""),
+            "\"$val m\""
+        );
+        
+        // Spaces in regex patterns should be preserved
+        assert_eq!(
+            normalize_expression("$val =~ tr/ /./"),
+            "$val =~ tr/ /./"
+        );
+        
+        // Spaces between operators should be preserved
+        assert_eq!(
+            normalize_expression("$val > 0"),
+            "$val > 0"
+        );
+    }
+    
+    #[test]
+    fn test_normalize_edge_cases() {
+        // Empty string - Perl script will fail, so we get original back
+        assert_eq!(normalize_expression(""), "");
+        
+        // Just whitespace
+        assert_eq!(normalize_expression("   \t\n  "), "");
+        
+        // Single variable
+        assert_eq!(normalize_expression("$val"), "$val");
+        
+        // Expression with no spaces
+        assert_eq!(
+            normalize_expression("sprintf(\"%.1f\",$val)"),
+            "sprintf(\"%.1f\", $val)"
+        );
     }
 }
