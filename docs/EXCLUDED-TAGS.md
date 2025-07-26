@@ -5,14 +5,17 @@
 The following tags have limited to no use, and effort should not be expended on
 extraction, ValueConv, or PrintConv (regardless of TagMetadata)
 
+NOTE! Even though `ExifImageWidth` and `ExifImageHeight` are untrustworthy for
+most image types due to the fact that almost no image application updates that
+metadata correctly, we MUST parse it correctly to support several types of RAW
+image formats (like Canon).
+
 ```
 EXIF:CFAPattern
 Composite:CFAPattern
 EXIF:RedBlueBalance
 EXIF:CalculateLV
 EXIF:CalcScaleFactor35efl
-EXIF:ExifImageHeight
-EXIF:ExifImageWidth
 EXIF:Software
 EXIF:ExifVersion
 ```
