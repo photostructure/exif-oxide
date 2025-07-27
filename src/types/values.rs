@@ -326,6 +326,53 @@ impl TagValue {
     pub fn string<S: Into<String>>(s: S) -> Self {
         TagValue::String(s.into())
     }
+
+    /// Create a TagValue that matches ExifTool's JSON numeric detection
+    ///
+    /// ExifTool applies a regex to detect if a string should be output as a JSON number.
+    /// This function mimics ExifTool's behavior: if the string matches the numeric pattern,
+    /// it returns an F64 variant; otherwise it returns a String variant.
+    ///
+    /// The regex pattern from ExifTool exiftool:3762:
+    /// `^-?(\d|[1-9]\d{1,14})(\.\d{1,16})?(e[-+]?\d{1,3})?$`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use exif_oxide::types::TagValue;
+    ///
+    /// // Numeric strings become F64 values
+    /// let numeric = TagValue::string_with_numeric_detection("14.0");
+    /// assert_eq!(numeric, TagValue::F64(14.0));
+    ///
+    /// // Non-numeric strings remain strings  
+    /// let text = TagValue::string_with_numeric_detection("24.0 mm");
+    /// assert_eq!(text, TagValue::String("24.0 mm".to_string()));
+    /// ```
+    pub fn string_with_numeric_detection<S: Into<String>>(s: S) -> Self {
+        use regex::Regex;
+        use std::sync::LazyLock;
+
+        // ExifTool numeric detection regex - matches valid JSON numbers
+        // From exiftool:3762: ^-?(\d|[1-9]\d{1,14})(\.\d{1,16})?(e[-+]?\d{1,3})?$
+        static NUMERIC_REGEX: LazyLock<Regex> = LazyLock::new(|| {
+            Regex::new(r"^-?(\d|[1-9]\d{1,14})(\.\d{1,16})?(e[-+]?\d{1,3})?$")
+                .expect("Invalid numeric detection regex")
+        });
+
+        let string_val = s.into();
+
+        // Check if string matches ExifTool's numeric pattern
+        if NUMERIC_REGEX.is_match(&string_val) {
+            // Try to parse as f64
+            if let Ok(numeric_val) = string_val.parse::<f64>() {
+                return TagValue::F64(numeric_val);
+            }
+        }
+
+        // Not numeric or failed to parse - return as string
+        TagValue::String(string_val)
+    }
 }
 
 #[cfg(test)]
@@ -467,5 +514,70 @@ mod tests {
         // Test Array display
         let arr = TagValue::Array(vec![TagValue::string("item1"), TagValue::U32(123)]);
         assert_eq!(format!("{arr}"), "[item1, 123]");
+    }
+
+    #[test]
+    fn test_string_with_numeric_detection() {
+        // Numeric strings should become F64 values
+        assert_eq!(
+            TagValue::string_with_numeric_detection("14.0"),
+            TagValue::F64(14.0)
+        );
+        assert_eq!(
+            TagValue::string_with_numeric_detection("2.8"),
+            TagValue::F64(2.8)
+        );
+        assert_eq!(
+            TagValue::string_with_numeric_detection("-5.2"),
+            TagValue::F64(-5.2)
+        );
+        assert_eq!(
+            TagValue::string_with_numeric_detection("42"),
+            TagValue::F64(42.0)
+        );
+
+        // Scientific notation
+        assert_eq!(
+            TagValue::string_with_numeric_detection("1.23e4"),
+            TagValue::F64(12300.0)
+        );
+        assert_eq!(
+            TagValue::string_with_numeric_detection("1.5e-3"),
+            TagValue::F64(0.0015)
+        );
+
+        // Non-numeric strings should remain strings
+        assert_eq!(
+            TagValue::string_with_numeric_detection("24.0 mm"),
+            TagValue::String("24.0 mm".to_string())
+        );
+        assert_eq!(
+            TagValue::string_with_numeric_detection("1/200"),
+            TagValue::String("1/200".to_string())
+        );
+        assert_eq!(
+            TagValue::string_with_numeric_detection("f/2.8"),
+            TagValue::String("f/2.8".to_string())
+        );
+        assert_eq!(
+            TagValue::string_with_numeric_detection("text"),
+            TagValue::String("text".to_string())
+        );
+
+        // Edge cases
+        assert_eq!(
+            TagValue::string_with_numeric_detection("0"),
+            TagValue::F64(0.0)
+        );
+        assert_eq!(
+            TagValue::string_with_numeric_detection("0.0"),
+            TagValue::F64(0.0)
+        );
+
+        // Leading zeros not allowed for multi-digit numbers (ExifTool regex constraint)
+        assert_eq!(
+            TagValue::string_with_numeric_detection("01.5"),
+            TagValue::String("01.5".to_string())
+        );
     }
 }

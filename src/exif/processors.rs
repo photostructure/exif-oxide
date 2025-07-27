@@ -372,7 +372,14 @@ impl ExifReader {
             "About to process subdirectory {} at offset {:#x}",
             subdir_name, offset
         );
-        self.process_subdirectory(&dir_info)
+        let result = self.process_subdirectory(&dir_info);
+        debug!(
+            "Completed process_subdirectory for {} at offset {:#x}, result: {:?}",
+            subdir_name,
+            offset,
+            result.is_ok()
+        );
+        result
     }
 
     /// Get SubDirectory processor override if available

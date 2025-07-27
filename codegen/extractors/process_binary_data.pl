@@ -145,7 +145,7 @@ sub extract_table_header {
     }
     
     # Other attributes
-    $header->{writable} = 1 if $table_ref->{WRITABLE};
+    $header->{writable} = \1 if $table_ref->{WRITABLE};  # JSON boolean true
     $header->{notes} = $table_ref->{NOTES} if $table_ref->{NOTES};
     
     return $header;
@@ -180,7 +180,7 @@ sub extract_binary_data_tags {
         } else {
             # Simple tag name
             $tag_data->{name} = $tag_info;
-            $tag_data->{simple} = 1;
+            $tag_data->{simple} = \1;  # JSON boolean true
         }
         
         # Skip if we didn't get a name
@@ -223,10 +223,10 @@ sub extract_complex_tag_info {
     }
     
     # Flags and attributes
-    $tag_data->{writable} = 1 if $tag_info->{Writable};
-    $tag_data->{unknown} = 1 if $tag_info->{Unknown};
-    $tag_data->{binary} = 1 if $tag_info->{Binary};
-    $tag_data->{hidden} = 1 if $tag_info->{Hidden};
+    $tag_data->{writable} = \1 if $tag_info->{Writable};  # JSON boolean true
+    $tag_data->{unknown} = \1 if $tag_info->{Unknown};    # JSON boolean true
+    $tag_data->{binary} = \1 if $tag_info->{Binary};      # JSON boolean true
+    $tag_data->{hidden} = \1 if $tag_info->{Hidden};      # JSON boolean true
     
     # Description and notes
     $tag_data->{description} = $tag_info->{Description} if $tag_info->{Description};

@@ -11,6 +11,29 @@ use super::tag_kit_split::{split_tag_kits, TagCategory};
 use crate::conv_registry::{lookup_printconv, lookup_valueconv, lookup_tag_specific_printconv};
 use serde::Deserialize;
 
+/// Convert module name to ExifTool group name
+fn module_name_to_group(module_name: &str) -> &str {
+    match module_name {
+        "Exif_pm" => "EXIF",
+        "GPS_pm" => "GPS", 
+        "Canon_pm" => "Canon",
+        "Nikon_pm" => "Nikon",
+        "Sony_pm" => "Sony",
+        "Olympus_pm" => "Olympus",
+        "Panasonic_pm" => "Panasonic",
+        "PanasonicRaw_pm" => "PanasonicRaw",
+        "MinoltaRaw_pm" => "MinoltaRaw",
+        "KyoceraRaw_pm" => "KyoceraRaw",
+        "FujiFilm_pm" => "FujiFilm",
+        "Casio_pm" => "Casio",
+        "QuickTime_pm" => "QuickTime",
+        "RIFF_pm" => "RIFF",
+        "XMP_pm" => "XMP",
+        "PNG_pm" => "PNG",
+        _ => module_name.trim_end_matches("_pm"),
+    }
+}
+
 /// Shared table data loaded from shared_tables.json
 #[derive(Debug, Deserialize)]
 struct SharedTablesData {
@@ -127,7 +150,7 @@ fn generate_print_conv_function(
     if tag_convs.is_empty() {
         // No PrintConv functions - use shared fallback handling
         code.push_str(&format!("    if let Some(tag_kit) = {const_name}.get(&tag_id) {{\n"));
-        code.push_str("        crate::implementations::generic::apply_fallback_print_conv(tag_id, value, crate::to_print_conv_ref!(&tag_kit.print_conv))\n");
+        code.push_str(&format!("        crate::implementations::generic::apply_fallback_print_conv(tag_id, &tag_kit.name, \"{}\", value, crate::to_print_conv_ref!(&tag_kit.print_conv))\n", module_name_to_group(module_name)));
         code.push_str("    } else {\n");
         code.push_str("        value.clone()\n");
         code.push_str("    }\n");
@@ -145,7 +168,7 @@ fn generate_print_conv_function(
         code.push_str("        _ => {\n");
         code.push_str(&format!("            // Fall back to shared handling\n"));
         code.push_str(&format!("            if let Some(tag_kit) = {const_name}.get(&tag_id) {{\n"));
-        code.push_str("                crate::implementations::generic::apply_fallback_print_conv(tag_id, value, crate::to_print_conv_ref!(&tag_kit.print_conv))\n");
+        code.push_str(&format!("                crate::implementations::generic::apply_fallback_print_conv(tag_id, &tag_kit.name, \"{}\", value, crate::to_print_conv_ref!(&tag_kit.print_conv))\n", module_name_to_group(module_name)));
         code.push_str("            } else {\n");
         code.push_str("                value.clone()\n");
         code.push_str("            }\n");
@@ -216,7 +239,7 @@ fn generate_value_conv_function(
         code.push_str("            // Fall back to missing handler for unknown expressions\n");
         code.push_str(&format!("            if let Some(tag_kit) = {const_name}.get(&tag_id) {{\n"));
         code.push_str("                if let Some(expr) = tag_kit.value_conv {\n");
-        code.push_str("                    Ok(crate::implementations::missing::missing_value_conv(tag_id, expr, value))\n");
+        code.push_str(&format!("                    Ok(crate::implementations::missing::missing_value_conv(tag_id, &tag_kit.name, \"{}\", expr, value))\n", module_name_to_group(module_name)));
         code.push_str("                } else {\n");
         code.push_str("                    Ok(value.clone())\n");
         code.push_str("                }\n");
@@ -665,13 +688,19 @@ fn generate_mod_file(
             .collect();
         
         if !missing_tables.is_empty() {
-            code.push_str("\n// Stub functions for tables not extracted by tag kit\n");
+            code.push_str("\n// Functions for tables not extracted by tag kit\n");
             for table_name in missing_tables {
-                code.push_str(&format!("fn process_{table_name}(data: &[u8], _byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n"));
-                code.push_str("    // TODO: Implement when this table is extracted\n");
-                code.push_str("    tracing::debug!(\"Stub function called for {}\", data.len());\n");
-                code.push_str("    Ok(vec![])\n");
-                code.push_str("}\n\n");
+                // Check if there's a ProcessBinaryData table available
+                if has_binary_data_parser(module_name, &table_name) {
+                    generate_binary_data_integration(&mut code, &table_name, module_name)?;
+                } else {
+                    // Generate stub function
+                    code.push_str(&format!("fn process_{table_name}(data: &[u8], _byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n"));
+                    code.push_str("    // TODO: Implement when this table is extracted\n");
+                    code.push_str("    tracing::debug!(\"Stub function called for {}\", data.len());\n");
+                    code.push_str("    Ok(vec![])\n");
+                    code.push_str("}\n\n");
+                }
             }
         }
         
@@ -1358,4 +1387,105 @@ fn generate_subdirectory_dispatcher(
     code.push_str("}\n\n");
     
     Ok(())
+}
+
+/// Check if a ProcessBinaryData parser is available for the given table
+fn has_binary_data_parser(module_name: &str, table_name: &str) -> bool {
+    // Strip module prefix from table name (e.g., "canon_processing" -> "processing")
+    let module_prefix = module_name.replace("_pm", "").to_lowercase() + "_";
+    let clean_table_name = if table_name.to_lowercase().starts_with(&module_prefix) {
+        &table_name[module_prefix.len()..]
+    } else {
+        table_name
+    };
+    
+    let binary_data_file = format!("src/generated/{}/{}_binary_data.rs", 
+                                   module_name, 
+                                   clean_table_name.to_lowercase());
+    std::path::Path::new(&binary_data_file).exists()
+}
+
+/// Generate ProcessBinaryData integration for a table
+fn generate_binary_data_integration(code: &mut String, table_name: &str, module_name: &str) -> Result<()> {
+    // Strip module prefix from table name (e.g., "canon_processing" -> "processing")
+    let module_prefix = module_name.replace("_pm", "").to_lowercase() + "_";
+    let clean_table_name = if table_name.to_lowercase().starts_with(&module_prefix) {
+        &table_name[module_prefix.len()..]
+    } else {
+        table_name
+    };
+    
+    let table_snake = clean_table_name.to_lowercase();
+    let table_pascal = to_pascal_case(clean_table_name);
+    
+    code.push_str(&format!("fn process_{table_name}(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n"));
+    code.push_str(&format!("    tracing::debug!(\"process_{table_name} called with {{}} bytes\", data.len());\n"));
+    code.push_str(&format!("    use crate::generated::{}::{}_binary_data::{{{}{}Table, {}_TAGS}};\n", 
+                          module_name, table_snake, 
+                          module_name.replace("_pm", ""), table_pascal, table_snake.to_uppercase()));
+    code.push_str("    \n");
+    code.push_str("    let table = ");
+    code.push_str(&format!("{}{}Table::new();\n", module_name.replace("_pm", ""), table_pascal));
+    code.push_str("    let mut tags = Vec::new();\n");
+    code.push_str("    \n");
+    
+    // Determine entry size based on common formats (this could be enhanced to read from table metadata)
+    code.push_str("    let entry_size = match table.default_format {\n");
+    code.push_str("        \"int16s\" | \"int16u\" => 2,\n");
+    code.push_str("        \"int32s\" | \"int32u\" => 4,\n");
+    code.push_str("        _ => 2, // Default to 2 bytes\n");
+    code.push_str("    };\n");
+    code.push_str("    \n");
+    code.push_str(&format!("    tracing::debug!(\"{}BinaryData: format={{}}, first_entry={{}}, {{}} tag definitions\", \n", table_pascal));
+    code.push_str("                    table.default_format, table.first_entry, ");
+    code.push_str(&format!("{}_TAGS.len());\n", table_snake.to_uppercase()));
+    code.push_str("    \n");
+    code.push_str(&format!("    for (&offset, &tag_name) in {}_TAGS.iter() {{\n", table_snake.to_uppercase()));
+    code.push_str("        let byte_offset = ((offset as i32 - table.first_entry) * entry_size) as usize;\n");
+    code.push_str("        if byte_offset + entry_size as usize <= data.len() {\n");
+    code.push_str("            let tag_value = match entry_size {\n");
+    code.push_str("                2 => {\n");
+    code.push_str("                    let raw_u16 = byte_order.read_u16(data, byte_offset)?;\n");
+    code.push_str("                    if table.default_format.contains(\"int16s\") {\n");
+    code.push_str("                        TagValue::I32(raw_u16 as i16 as i32)\n");
+    code.push_str("                    } else {\n");
+    code.push_str("                        TagValue::U16(raw_u16)\n");
+    code.push_str("                    }\n");
+    code.push_str("                },\n");
+    code.push_str("                4 => {\n");
+    code.push_str("                    let raw_u32 = byte_order.read_u32(data, byte_offset)?;\n");
+    code.push_str("                    if table.default_format.contains(\"int32s\") {\n");
+    code.push_str("                        TagValue::I32(raw_u32 as i32)\n");
+    code.push_str("                    } else {\n");
+    code.push_str("                        TagValue::U32(raw_u32)\n");
+    code.push_str("                    }\n");
+    code.push_str("                },\n");
+    code.push_str("                _ => continue,\n");
+    code.push_str("            };\n");
+    code.push_str("            tracing::debug!(\"Extracted tag {{}}: {{}} = {{}}\", offset, tag_name, tag_value);\n");
+    code.push_str("            tags.push((tag_name.to_string(), tag_value));\n");
+    code.push_str("        } else {\n");
+    code.push_str("            tracing::debug!(\"Skipping tag {{}} ({{}}): offset {{}} exceeds data length {{}}\", \n");
+    code.push_str("                           offset, tag_name, byte_offset, data.len());\n");
+    code.push_str("        }\n");
+    code.push_str("    }\n");
+    code.push_str("    \n");
+    code.push_str(&format!("    tracing::debug!(\"process_{table_name} extracted {{}} tags\", tags.len());\n"));
+    code.push_str("    Ok(tags)\n");
+    code.push_str("}\n\n");
+    
+    Ok(())
+}
+
+/// Convert snake_case to PascalCase
+fn to_pascal_case(s: &str) -> String {
+    s.split('_')
+        .map(|word| {
+            let mut chars = word.chars();
+            match chars.next() {
+                None => String::new(),
+                Some(first) => first.to_uppercase().collect::<String>() + &chars.as_str().to_lowercase(),
+            }
+        })
+        .collect()
 }

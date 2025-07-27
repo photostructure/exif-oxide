@@ -1,0 +1,5 @@
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
+  "description": "Canon ProcessBinaryData tables for image extraction and processing metadata",
+  "tables": ["PreviewImageInfo", "Processing"]
+}

@@ -25,6 +25,12 @@ pub type PrintConvFn = fn(&TagValue) -> TagValue;
 /// For example: APEX values to actual f-stop numbers
 pub type ValueConvFn = fn(&TagValue) -> Result<TagValue>;
 
+/// Function signature for RawConv implementations
+///
+/// RawConv functions are applied first to raw tag values before ValueConv/PrintConv.
+/// Used for decoding or special processing of raw data (e.g., UserComment character encoding)
+pub type RawConvFn = fn(&TagValue) -> Result<TagValue>;
+
 // Global registry instance - uses LazyLock to create a singleton registry that can be
 // accessed from anywhere in the application. RwLock allows concurrent reads while protecting writes.
 static GLOBAL_REGISTRY: LazyLock<Arc<RwLock<Registry>>> =
@@ -42,9 +48,13 @@ pub struct Registry {
     /// ValueConv function registry  
     value_conv: HashMap<String, ValueConvFn>,
 
+    /// RawConv function registry
+    raw_conv: HashMap<String, RawConvFn>,
+
     /// Track requested but missing implementations
     missing_print_conv: HashSet<String>,
     missing_value_conv: HashSet<String>,
+    missing_raw_conv: HashSet<String>,
 
     /// Statistics for coverage analysis
     print_conv_hits: HashMap<String, u64>,
@@ -57,8 +67,10 @@ impl Registry {
         Self {
             print_conv: HashMap::new(),
             value_conv: HashMap::new(),
+            raw_conv: HashMap::new(),
             missing_print_conv: HashSet::new(),
             missing_value_conv: HashSet::new(),
+            missing_raw_conv: HashSet::new(),
             print_conv_hits: HashMap::new(),
             print_conv_misses: HashMap::new(),
         }
@@ -82,6 +94,16 @@ impl Registry {
     pub fn register_value_conv(&mut self, name: impl Into<String>, func: ValueConvFn) {
         let name = name.into();
         self.value_conv.insert(name, func);
+    }
+
+    /// Register a RawConv function
+    ///
+    /// # Arguments  
+    /// * `name` - Function name (e.g., "convert_exif_text")
+    /// * `func` - Function pointer
+    pub fn register_raw_conv(&mut self, name: impl Into<String>, func: RawConvFn) {
+        let name = name.into();
+        self.raw_conv.insert(name, func);
     }
 
     /// Look up and execute a PrintConv function
@@ -129,6 +151,30 @@ impl Registry {
         }
     }
 
+    /// Look up and execute a RawConv function
+    ///
+    /// # Arguments
+    /// * `name` - Function name to look up  
+    /// * `value` - Value to convert
+    ///
+    /// # Returns
+    /// Converted value, or original value if not found or conversion failed
+    pub fn apply_raw_conv(&mut self, name: &str, value: &TagValue) -> TagValue {
+        if let Some(func) = self.raw_conv.get(name) {
+            match func(value) {
+                Ok(converted) => converted,
+                Err(_) => {
+                    // Log error but don't crash - return original value
+                    value.clone()
+                }
+            }
+        } else {
+            // Track miss and return original value
+            self.missing_raw_conv.insert(name.to_string());
+            value.clone()
+        }
+    }
+
     /// Get list of missing PrintConv implementations
     pub fn get_missing_print_conv(&self) -> Vec<String> {
         self.missing_print_conv.iter().cloned().collect()
@@ -137,6 +183,11 @@ impl Registry {
     /// Get list of missing ValueConv implementations  
     pub fn get_missing_value_conv(&self) -> Vec<String> {
         self.missing_value_conv.iter().cloned().collect()
+    }
+
+    /// Get list of missing RawConv implementations  
+    pub fn get_missing_raw_conv(&self) -> Vec<String> {
+        self.missing_raw_conv.iter().cloned().collect()
     }
 
     /// Get PrintConv coverage statistics
@@ -151,6 +202,7 @@ impl Registry {
     pub fn clear_missing_tracking(&mut self) {
         self.missing_print_conv.clear();
         self.missing_value_conv.clear();
+        self.missing_raw_conv.clear();
         self.print_conv_misses.clear();
     }
 }
@@ -175,6 +227,12 @@ pub fn register_print_conv(name: impl Into<String>, func: PrintConvFn) {
 pub fn register_value_conv(name: impl Into<String>, func: ValueConvFn) {
     let mut registry = GLOBAL_REGISTRY.write().unwrap();
     registry.register_value_conv(name, func);
+}
+
+/// Register a RawConv function globally
+pub fn register_raw_conv(name: impl Into<String>, func: RawConvFn) {
+    let mut registry = GLOBAL_REGISTRY.write().unwrap();
+    registry.register_raw_conv(name, func);
 }
 
 /// Apply PrintConv globally with tag kit integration
@@ -233,6 +291,12 @@ fn try_tag_kit_print_conv(tag_id: u32, value: &TagValue) -> Option<TagValue> {
 pub fn apply_value_conv(name: &str, value: &TagValue) -> TagValue {
     let mut registry = GLOBAL_REGISTRY.write().unwrap();
     registry.apply_value_conv(name, value)
+}
+
+/// Apply RawConv globally  
+pub fn apply_raw_conv(name: &str, value: &TagValue) -> TagValue {
+    let mut registry = GLOBAL_REGISTRY.write().unwrap();
+    registry.apply_raw_conv(name, value)
 }
 
 /// Get missing implementations for --show-missing

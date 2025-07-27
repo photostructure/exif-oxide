@@ -105,6 +105,14 @@ impl ExifReader {
 
         let mut value = raw_value.clone();
 
+        // Apply RawConv first for special tags that need character encoding or data processing
+        // ExifTool: RawConv is applied before ValueConv/PrintConv
+        if tag_id == 0x9286 {
+            // UserComment tag needs RawConv for character encoding
+            use crate::registry;
+            value = registry::apply_raw_conv("convert_exif_text", &value);
+        }
+
         // Process based on IFD context
         if ifd_name == "GPS" {
             // For GPS IFD, check GPS tag kit

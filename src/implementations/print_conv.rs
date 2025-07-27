@@ -515,12 +515,17 @@ pub fn lensinfo_print_conv(val: &TagValue) -> TagValue {
 }
 
 /// Generic decimal formatting functions for sprintf patterns
+/// ExifTool: sprintf("%.1f",$val) - outputs numeric JSON when value looks like a number
 pub fn decimal_1_print_conv(val: &TagValue) -> TagValue {
-    TagValue::String(format!("{:.1}", val.as_f64().unwrap_or(0.0)))
+    let formatted = format!("{:.1}", val.as_f64().unwrap_or(0.0));
+    // Use ExifTool's numeric detection to match JSON output behavior
+    TagValue::string_with_numeric_detection(formatted)
 }
 
 pub fn decimal_2_print_conv(val: &TagValue) -> TagValue {
-    TagValue::String(format!("{:.2}", val.as_f64().unwrap_or(0.0)))
+    let formatted = format!("{:.2}", val.as_f64().unwrap_or(0.0));
+    // Use ExifTool's numeric detection to match JSON output behavior
+    TagValue::string_with_numeric_detection(formatted)
 }
 
 pub fn signed_int_print_conv(val: &TagValue) -> TagValue {
@@ -590,6 +595,107 @@ pub fn print_fraction(val: &TagValue) -> TagValue {
             }
         }
         None => TagValue::string(format!("Unknown ({})", val)),
+    }
+}
+
+/// Composite ImageSize PrintConv
+/// ExifTool: lib/Image/ExifTool/Exif.pm:4641-4660 ImageSize PrintConv
+/// PrintConv: '$val =~ tr/ /x/; $val' - replaces space with 'x' separator
+pub fn imagesize_print_conv(val: &TagValue) -> TagValue {
+    if let Some(size_str) = val.as_string() {
+        // ExifTool: $val =~ tr/ /x/; $val
+        // Replace space with 'x' to convert "1920 1080" to "1920x1080"
+        TagValue::string(size_str.replace(' ', "x"))
+    } else {
+        TagValue::string(format!("Unknown ({val})"))
+    }
+}
+
+/// EXIF ExifVersion PrintConv
+/// ExifTool: lib/Image/ExifTool/Exif.pm:2203-2209
+/// Converts undef bytes to ASCII string (e.g., [48, 50, 50, 48] -> "0220")
+pub fn exifversion_print_conv(val: &TagValue) -> TagValue {
+    match val {
+        TagValue::U8Array(bytes) | TagValue::Binary(bytes) => {
+            // Convert byte array to ASCII string
+            let ascii_string: String = bytes
+                .iter()
+                .map(|&b| b as char)
+                .collect::<String>()
+                .trim_end_matches('\0') // Remove null terminators
+                .to_string();
+            TagValue::string(ascii_string)
+        }
+        _ => TagValue::string(format!("Unknown ({val})")),
+    }
+}
+
+/// EXIF FlashpixVersion PrintConv
+/// ExifTool: lib/Image/ExifTool/Exif.pm:2613-2619
+/// Converts undef bytes to ASCII string (e.g., [48, 48, 49, 48] -> "0100")
+pub fn flashpixversion_print_conv(val: &TagValue) -> TagValue {
+    match val {
+        TagValue::U8Array(bytes) | TagValue::Binary(bytes) => {
+            // Convert byte array to ASCII string
+            let ascii_string: String = bytes
+                .iter()
+                .map(|&b| b as char)
+                .collect::<String>()
+                .trim_end_matches('\0') // Remove null terminators
+                .to_string();
+            TagValue::string(ascii_string)
+        }
+        _ => TagValue::string(format!("Unknown ({val})")),
+    }
+}
+
+/// EXIF ComponentsConfiguration PrintConv
+/// ExifTool: lib/Image/ExifTool/Exif.pm:2262-2300
+/// Converts component array to "Y, Cb, Cr, -" format
+pub fn componentsconfiguration_print_conv(val: &TagValue) -> TagValue {
+    match val {
+        TagValue::U8Array(components) | TagValue::Binary(components) => {
+            let component_names: Vec<&str> = components
+                .iter()
+                .map(|&comp| match comp {
+                    0 => "-",
+                    1 => "Y",
+                    2 => "Cb",
+                    3 => "Cr",
+                    4 => "R",
+                    5 => "G",
+                    6 => "B",
+                    _ => "Err",
+                })
+                .collect();
+
+            TagValue::string(component_names.join(", "))
+        }
+        _ => TagValue::string(format!("Unknown ({val})")),
+    }
+}
+
+/// EXIF CompressedBitsPerPixel PrintConv
+/// ExifTool: lib/Image/ExifTool/Exif.pm:2301-2305
+/// Standard rational64u conversion to decimal
+pub fn compressedbitsperpixel_print_conv(val: &TagValue) -> TagValue {
+    match val {
+        TagValue::RationalArray(rationals) if rationals.len() == 1 => {
+            let (num, den) = rationals[0];
+            if den != 0 {
+                TagValue::F64(num as f64 / den as f64)
+            } else {
+                TagValue::string(format!("Unknown ({val})"))
+            }
+        }
+        TagValue::Rational(num, den) => {
+            if *den != 0 {
+                TagValue::F64(*num as f64 / *den as f64)
+            } else {
+                TagValue::string(format!("Unknown ({val})"))
+            }
+        }
+        _ => TagValue::string(format!("Unknown ({val})")),
     }
 }
 
@@ -896,6 +1002,63 @@ mod tests {
         assert_eq!(
             focallength_in_35mm_format_print_conv(&"invalid".into()),
             "Unknown (invalid)".into()
+        );
+    }
+
+    #[test]
+    fn test_gps_altitude_ref_print_conv() {
+        // Test numeric values
+        assert_eq!(
+            gpsaltituderef_print_conv(&TagValue::U8(0)),
+            "Above Sea Level".into()
+        );
+        assert_eq!(
+            gpsaltituderef_print_conv(&TagValue::U8(1)),
+            "Below Sea Level".into()
+        );
+
+        // Test unknown values
+        assert_eq!(
+            gpsaltituderef_print_conv(&TagValue::U8(99)),
+            "Unknown (99)".into()
+        );
+    }
+
+    #[test]
+    fn test_gps_latitude_ref_print_conv() {
+        // Test string values
+        assert_eq!(
+            gpslatituderef_print_conv(&TagValue::String("N".to_string())),
+            "North".into()
+        );
+        assert_eq!(
+            gpslatituderef_print_conv(&TagValue::String("S".to_string())),
+            "South".into()
+        );
+
+        // Test unknown values
+        assert_eq!(
+            gpslatituderef_print_conv(&TagValue::String("X".to_string())),
+            "Unknown (X)".into()
+        );
+    }
+
+    #[test]
+    fn test_gps_longitude_ref_print_conv() {
+        // Test string values
+        assert_eq!(
+            gpslongituderef_print_conv(&TagValue::String("E".to_string())),
+            "East".into()
+        );
+        assert_eq!(
+            gpslongituderef_print_conv(&TagValue::String("W".to_string())),
+            "West".into()
+        );
+
+        // Test unknown values
+        assert_eq!(
+            gpslongituderef_print_conv(&TagValue::String("Z".to_string())),
+            "Unknown (Z)".into()
         );
     }
 }
