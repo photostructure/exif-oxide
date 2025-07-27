@@ -47,7 +47,9 @@ tracing-subscriber = { version = "0.3", features = [
 chrono = { version = "0.4", features = [
     "serde",
 ] } # Date and time handling for File:FileModifyDate
-indexmap = { version = "2.6", features = ["serde"] } # Preserves insertion order for tag output
+indexmap = { version = "2.6", features = [
+    "serde",
+] } # Preserves insertion order for tag output
 
 [dev-dependencies]
 criterion = "0.6" # Benchmarking
@@ -68,12 +70,13 @@ test-helpers = []
 # Integration tests feature - enables tests that require external test assets
 integration-tests = []
 
+
 [profile.release]
-opt-level = 3          # Maximum optimization (equivalent to -O3)
-lto = true            # Link-time optimization
-codegen-units = 1     # Single codegen unit for better optimization
-strip = true          # Strip symbols automatically
-panic = "abort"       # Smaller binary, faster panic
+opt-level = 3     # Maximum optimization (equivalent to -O3)
+lto = true        # Link-time optimization
+codegen-units = 1 # Single codegen unit for better optimization
+strip = true      # Strip symbols automatically
+panic = "abort"   # Smaller binary, faster panic
 
 [[bin]]
 name = "exif-oxide"
