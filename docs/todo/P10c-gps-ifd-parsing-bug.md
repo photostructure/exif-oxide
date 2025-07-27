@@ -135,22 +135,34 @@ Processing tag 0x3 (3) from GPS (format: Ascii, count: 2)     ← GPSLongitudeRe
 Processing tag 0x4 (4) from GPS (format: Rational, count: 3)  ← GPSLongitude
 ```
 
-**✅ ROOT CAUSE CONFIRMED**: Tag ID collision between EXIF and GPS namespaces!
+**✅ ROOT CAUSE IDENTIFIED**: ExifTool uses dynamic tag table switching, not collision resolution!
 
-**Debug Evidence**:
+**Key Research Findings** (via exiftool-researcher sub-agent):
+- ✅ ExifTool switches tag tables during subdirectory processing: `TagTable => 'Image::ExifTool::GPS::Main'`
+- ✅ GPS subdirectory gets completely different tag table context where 0x0001 → GPSLatitudeRef (not EXIF collision)
+- ✅ No namespace prefixing or collision resolution - ExifTool uses **context-specific tag table lookup**
+- ✅ Same ProcessExif function used, but different `$tagTablePtr` parameter switches the lookup context
+
+**ExifTool Source Evidence**:
+```perl
+# Exif.pm line ~8825: GPS subdirectory definition
+0x8825 => {
+    SubDirectory => {
+        TagTable => 'Image::ExifTool::GPS::Main',  # ← Context switch!
+    },
+},
+
+# GPS.pm lines 51-82: GPS-specific tag table
+%Image::ExifTool::GPS::Main = (
+    GROUPS => { 1 => 'GPS' },
+    0x0001 => { Name => 'GPSLatitudeRef' },   # Different from EXIF 0x0001
+    0x0002 => { Name => 'GPSLatitude' },      # Different from EXIF 0x0002
+);
 ```
-Tag 0x0001: Keeping first encountered EXIF over EXIF  ← GPSLatitudeRef blocked!
-Tag 0x0002: Keeping first encountered EXIF over EXIF  ← GPSLatitude blocked!
-```
 
-**Testing Confirmation**:
-- ✅ `cargo run -- ./t/images/Ricoh2.jpg -GPSLongitude` → Returns 0.5075027777777777
-- ❌ `cargo run -- ./t/images/Ricoh2.jpg -GPSLatitude` → Returns nothing  
-- ❌ `cargo run -- ./t/images/Ricoh2.jpg -GPSLatitudeRef` → Returns nothing
+**Problem**: Our implementation uses static tag name resolution and collision-based storage instead of ExifTool's dynamic tag table switching during subdirectory processing.
 
-**Problem**: Tags 0x1 and 0x2 exist in both EXIF and GPS IFDs. Our precedence logic keeps the first value (EXIF) and discards the GPS values. This is why longitude works (tags 0x3, 0x4 are GPS-specific) but latitude fails.
-
-**Solution**: Fix GPS IFD context handling in tag storage. GPS tags need proper namespace isolation to avoid collisions with EXIF tags.
+**Solution**: Fix GPS processing to use proper tag table context switching that matches ExifTool's architecture. The issue isn't namespace collision - it's using the wrong tag lookup context during GPS subdirectory processing.
 
 ### 4. Verify GPS coordinate extraction
 
