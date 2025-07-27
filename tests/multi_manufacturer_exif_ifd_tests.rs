@@ -35,7 +35,7 @@ fn test_manufacturer_group_assignment(
 
     println!("Testing {manufacturer} ExifIFD group assignment: {image_path}");
 
-    let exif_data = match extract_metadata(std::path::Path::new(image_path), false, false) {
+    let exif_data = match extract_metadata(std::path::Path::new(image_path), false, false, None) {
         Ok(data) => data,
         Err(e) => {
             println!("Failed to process {manufacturer} image: {e}");
@@ -340,7 +340,8 @@ fn test_maker_notes_exif_ifd_interaction() {
             continue;
         }
 
-        let exif_data = match extract_metadata(std::path::Path::new(image_path), false, false) {
+        let exif_data = match extract_metadata(std::path::Path::new(image_path), false, false, None)
+        {
             Ok(data) => data,
             Err(_) => continue,
         };
@@ -428,8 +429,8 @@ fn test_exif_ifd_across_file_formats() {
 
         println!("Comparing ExifIFD group assignment: {format1_name} vs {format2_name}");
 
-        let data1 = extract_metadata(std::path::Path::new(format1_path), false, false);
-        let data2 = extract_metadata(std::path::Path::new(format2_path), false, false);
+        let data1 = extract_metadata(std::path::Path::new(format1_path), false, false, None);
+        let data2 = extract_metadata(std::path::Path::new(format2_path), false, false, None);
 
         match (data1, data2) {
             (Ok(exif1), Ok(exif2)) => {
@@ -515,7 +516,7 @@ fn test_multi_manufacturer_summary() {
         total_tests += 1;
 
         if std::path::Path::new(image_path).exists() {
-            match extract_metadata(std::path::Path::new(image_path), false, false) {
+            match extract_metadata(std::path::Path::new(image_path), false, false, None) {
                 Ok(exif_data) => {
                     if !exif_data.tags.is_empty() {
                         successful_tests += 1;

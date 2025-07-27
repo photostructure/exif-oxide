@@ -10039,7 +10039,7 @@ fn process_canon_vignettingcorr(
         // (This is normal for some tables)
     } else {
         let vignettingcorrversion_offset = (data.len() as i32 + -2) as usize;
-        if vignettingcorrversion_offset + 1 <= data.len() {
+        if vignettingcorrversion_offset < data.len() {
             // TODO: Handle format int8u
         }
     }
@@ -10069,7 +10069,7 @@ fn process_canon_vignettingcorrunknown(
         // (This is normal for some tables)
     } else {
         let vignettingcorrversion_offset = (data.len() as i32 + -2) as usize;
-        if vignettingcorrversion_offset + 1 <= data.len() {
+        if vignettingcorrversion_offset < data.len() {
             // TODO: Handle format int8u
         }
     }
@@ -10352,77 +10352,7 @@ pub fn process_tag_0xd_subdirectory(
         count
     );
 
-    match count {
-        // Model condition not yet supported: ($$self{CameraInfoCount} = $count) and $$self{Model} =~ /\\b1DS?$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo1D
-        // Model condition not yet supported: $$self{Model} =~ /\\b1Ds? Mark II$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo1DmkII
-        // Model condition not yet supported: $$self{Model} =~ /\\b1Ds? Mark II N$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo1DmkIIN
-        // Model condition not yet supported: $$self{Model} =~ /\\b1Ds? Mark III$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo1DmkIII
-        // Model condition not yet supported: $$self{Model} =~ /\\b1D Mark IV$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo1DmkIV
-        // Model condition not yet supported: $$self{Model} =~ /EOS-1D X$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo1DX
-        // Model condition not yet supported: $$self{Model} =~ /EOS 5D$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo5D
-        // Model condition not yet supported: $$self{Model} =~ /EOS 5D Mark II$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo5DmkII
-        // Model condition not yet supported: $$self{Model} =~ /EOS 5D Mark III$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo5DmkIII
-        // Model condition not yet supported: $$self{Model} =~ /EOS 6D$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo6D
-        // Model condition not yet supported: $$self{Model} =~ /EOS 7D$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo7D
-        // Model condition not yet supported: $$self{Model} =~ /EOS 40D$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo40D
-        // Model condition not yet supported: $$self{Model} =~ /EOS 50D$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo50D
-        // Model condition not yet supported: $$self{Model} =~ /EOS 60D$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo60D
-        // Model condition not yet supported: $$self{Model} =~ /EOS 70D$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo70D
-        // Model condition not yet supported: $$self{Model} =~ /EOS 80D$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo80D
-        // Model condition not yet supported: $$self{Model} =~ /\\b(450D|REBEL XSi|Kiss X2)\\b/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo450D
-        // Model condition not yet supported: $$self{Model} =~ /\\b(500D|REBEL T1i|Kiss X3)\\b/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo500D
-        // Model condition not yet supported: $$self{Model} =~ /\\b(550D|REBEL T2i|Kiss X4)\\b/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo550D
-        // Model condition not yet supported: $$self{Model} =~ /\\b(600D|REBEL T3i|Kiss X5)\\b/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo600D
-        // Model condition not yet supported: $$self{Model} =~ /\\b(650D|REBEL T4i|Kiss X6i)\\b/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo650D
-        // Model condition not yet supported: $$self{Model} =~ /\\b(700D|REBEL T5i|Kiss X7i)\\b/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo650D
-        // Model condition not yet supported: $$self{Model} =~ /\\b(750D|Rebel T6i|Kiss X8i)\\b/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo750D
-        // Model condition not yet supported: $$self{Model} =~ /\\b(760D|Rebel T6s|8000D)\\b/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo750D
-        // Model condition not yet supported: $$self{Model} =~ /\\b(1000D|REBEL XS|Kiss F)\\b/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo1000D
-        // Model condition not yet supported: $$self{Model} =~ /\\b(1100D|REBEL T3|Kiss X50)\\b/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo600D
-        // Model condition not yet supported: $$self{Model} =~ /\\b(1200D|REBEL T5|Kiss X70)\\b/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfo60D
-        // Model condition not yet supported: $$self{Model} =~ /\\bEOS R[56]$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfoR6
-        // Model condition not yet supported: $$self{Model} =~ /\\bEOS (R6m2|R8|R50)$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfoR6m2
-        // Model condition not yet supported: $$self{Model} =~ /\\bG5 X Mark II$/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfoG5XII
-        // Format condition not yet supported: $format eq \"int32u\" and ($count == 138 or $count == 148)
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfoPowerShot
-        // Format condition not yet supported: $format eq \"int32u\" and ($count == 156 or $count == 162 or $count == 167 or $count == 171 or $count == 264)
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfoPowerShot2
-        // Format condition not yet supported: $format =~ /^int32/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfoUnknown32
-        // Format condition not yet supported: $format =~ /^int16/
-        // Would dispatch to: Image::ExifTool::Canon::CameraInfoUnknown16
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0xf_subdirectory(
@@ -10438,27 +10368,7 @@ pub fn process_tag_0xf_subdirectory(
         count
     );
 
-    match count {
-        // Model condition not yet supported: $$self{Model} =~ /EOS-1D/
-        // Would dispatch to: Image::ExifTool::CanonCustom::Functions1D
-        // Model condition not yet supported: $$self{Model} =~ /EOS 5D/
-        // Would dispatch to: Image::ExifTool::CanonCustom::Functions5D
-        // Model condition not yet supported: $$self{Model} =~ /EOS 10D/
-        // Would dispatch to: Image::ExifTool::CanonCustom::Functions10D
-        // Model condition not yet supported: $$self{Model} =~ /EOS 20D/
-        // Would dispatch to: Image::ExifTool::CanonCustom::Functions20D
-        // Model condition not yet supported: $$self{Model} =~ /EOS 30D/
-        // Would dispatch to: Image::ExifTool::CanonCustom::Functions30D
-        // Model condition not yet supported: $$self{Model} =~ /\\b(350D|REBEL XT|Kiss Digital N)\\b/
-        // Would dispatch to: Image::ExifTool::CanonCustom::Functions350D
-        // Model condition not yet supported: $$self{Model} =~ /\\b(400D|REBEL XTi|Kiss Digital X|K236)\\b/
-        // Would dispatch to: Image::ExifTool::CanonCustom::Functions400D
-        // Model condition not yet supported: $$self{Model} =~ /EOS D30\\b/
-        // Would dispatch to: Image::ExifTool::CanonCustom::FunctionsD30
-        // Model condition not yet supported: $$self{Model} =~ /EOS D60\\b/
-        // Would dispatch to: Image::ExifTool::CanonCustom::FunctionsD30
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x11_subdirectory(
@@ -10491,11 +10401,7 @@ pub fn process_tag_0x12_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$self{AFInfoCount} = $count
-        // Would dispatch to: Image::ExifTool::Canon::AFInfo
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x1d_subdirectory(
@@ -10562,11 +10468,7 @@ pub fn process_tag_0x26_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$valPt !~ /^\\0\\0\\0\\0/
-        // Would dispatch to: Image::ExifTool::Canon::AFInfo2
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x27_subdirectory(
@@ -10582,11 +10484,7 @@ pub fn process_tag_0x27_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$valPt =~ /^\\x0a\\0/
-        // Would dispatch to: Image::ExifTool::Canon::ContrastInfo
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x29_subdirectory(
@@ -10653,11 +10551,7 @@ pub fn process_tag_0x3c_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$self{AFInfo3} = 1
-        // Would dispatch to: Image::ExifTool::Canon::AFInfo2
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x3f_subdirectory(
@@ -10690,13 +10584,7 @@ pub fn process_tag_0x47_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$self{ColorDataVersion} == -3
-        // Would dispatch to: Image::ExifTool::Canon::ColorCoefs
-        // Runtime condition not yet supported: $$self{ColorDataVersion} == -4
-        // Would dispatch to: Image::ExifTool::Canon::ColorCoefs2
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x4b_subdirectory(
@@ -10817,11 +10705,7 @@ pub fn process_tag_0x96_subdirectory(
         count
     );
 
-    match count {
-        // Model condition not yet supported: $$self{Model} =~ /EOS 5D/
-        // Would dispatch to: Image::ExifTool::Canon::SerialInfo
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x98_subdirectory(
@@ -11025,11 +10909,7 @@ pub fn process_tag_0xba_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$self{ColorDataVersion} == -3
-        // Would dispatch to: Image::ExifTool::Canon::ColorCalib2
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0xbc_subdirectory(
@@ -11096,11 +10976,7 @@ pub fn process_tag_0xff_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$self{ColorDataVersion} == -4
-        // Would dispatch to: Image::ExifTool::Canon::ColorCalib2
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x107_subdirectory(
@@ -11377,15 +11253,7 @@ pub fn process_tag_0x4015_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$valPt =~ /^\\0/ and $$valPt !~ /^(\\0\\0\\0\\0|\\x00\\x40\\xdc\\x05)/
-        // Would dispatch to: Image::ExifTool::Canon::VignettingCorr
-        // Runtime condition not yet supported: $$valPt =~ /^[\\x01\\x02\\x10\\x20]/ and $$valPt !~ /^(\\0\\0\\0\\0|\\x02\\x50\\x7c\\x04)/
-        // Would dispatch to: Image::ExifTool::Canon::VignettingCorrUnknown
-        // Runtime condition not yet supported: $$valPt !~ /^\\0\\0\\0\\0/
-        // Would dispatch to: Image::ExifTool::Canon::VignettingCorrUnknown
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x4016_subdirectory(
@@ -11452,11 +11320,7 @@ pub fn process_tag_0x4020_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$valPt !~ /^\\0\\0\\0\\0/
-        // Would dispatch to: Image::ExifTool::Canon::Ambience
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x4021_subdirectory(

@@ -15,8 +15,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map
+    
+    HashMap::new()
 });
 
 /// Get tag definitions for document category

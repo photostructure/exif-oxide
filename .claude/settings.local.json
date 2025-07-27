@@ -145,7 +145,15 @@
       "Bash(RUST_BACKTRACE=1 cargo test --lib implementations::ricoh::tests::test_ricoh_signature_detection -- --nocapture)",
       "Bash(RUST_LOG=debug ./target/debug/exif-oxide test-images/Canon/Canon_T3i.CR2)",
       "Bash(RUST_LOG=debug cargo run --bin exif-oxide -- third-party/exiftool/t/images/Ricoh2.jpg)",
-      "Bash(env RUST_LOG=debug cargo run --bin exif-oxide -- third-party/exiftool/t/images/Ricoh2.jpg)"
+      "Bash(env RUST_LOG=debug cargo run --bin exif-oxide -- third-party/exiftool/t/images/Ricoh2.jpg)",
+      "Bash(RUST_LOG=debug cargo run --quiet -- -MIMEType test-images/canon/Canon_T3i.jpg)",
+      "Bash(env RUST_LOG=debug cargo run --quiet -- -MIMEType test-images/canon/Canon_T3i.jpg)",
+      "Bash(RUST_LOG=info cargo run --release --quiet)",
+      "Bash(RUST_LOG=info cargo run --release -- config/Canon_pm/tag_kit.json)",
+      "Bash(RUST_LOG=debug cargo run --release --quiet config/Canon_pm/tag_kit.json)",
+      "Bash(RUST_LOG=debug cargo test test_canon_print_conv_performance -- --nocapture)",
+      "Bash(env RUST_LOG=debug cargo test test_canon_print_conv_performance -- --nocapture)",
+      "Bash(RUST_LOG=debug cargo run -- third-party/exiftool/t/images/Ricoh2.jpg)"
     ],
     "deny": []
   }

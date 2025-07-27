@@ -26,7 +26,8 @@ use common::CANON_T3I_JPG;
 /// Test get_exif_ifd_tags() method returns only ExifIFD tags
 #[test]
 fn test_get_exif_ifd_tags_method() {
-    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
+    let exif_data =
+        extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false, None).unwrap();
 
     // Get all ExifIFD tags using the dedicated method
     let exif_ifd_tags = exif_data.get_exif_ifd_tags();
@@ -70,7 +71,8 @@ fn test_get_exif_ifd_tags_method() {
 /// Test get_tags_by_group1() method for different Group1 values
 #[test]
 fn test_get_tags_by_group1_method() {
-    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
+    let exif_data =
+        extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false, None).unwrap();
 
     // Test IFD0 group (main IFD)
     let ifd0_tags = exif_data.get_tags_by_group1("IFD0");
@@ -139,7 +141,8 @@ fn test_get_tags_by_group1_method() {
 /// Test get_tag_by_group() method for both Group0 and Group1 access
 #[test]
 fn test_get_tag_by_group_method() {
-    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
+    let exif_data =
+        extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false, None).unwrap();
 
     // Test Group0 (format family) access
     let make_by_exif = exif_data.get_tag_by_group("EXIF", "Make");
@@ -207,7 +210,8 @@ fn test_get_tag_by_group_method() {
 /// Test get_tag_exiftool_style() method for qualified tag names
 #[test]
 fn test_get_tag_exiftool_style_method() {
-    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
+    let exif_data =
+        extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false, None).unwrap();
 
     // Test Group0:TagName format
     let make_qualified = exif_data.get_tag_exiftool_style("EXIF:Make");
@@ -282,7 +286,8 @@ fn test_get_tag_exiftool_style_method() {
 /// Test get_tag_by_name() method for basic unqualified access
 #[test]
 fn test_get_tag_by_name_method() {
-    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
+    let exif_data =
+        extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false, None).unwrap();
 
     // Test basic tag access
     let make_tag = exif_data.get_tag_by_name("Make");
@@ -334,7 +339,8 @@ fn test_get_tag_by_name_method() {
 /// Test API method consistency and cross-validation
 #[test]
 fn test_api_method_consistency() {
-    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
+    let exif_data =
+        extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false, None).unwrap();
 
     // Test that different access methods return the same tag
     let make_by_name = exif_data.get_tag_by_name("Make");
@@ -388,7 +394,8 @@ fn test_api_method_consistency() {
 /// Test API performance and behavior with large tag sets
 #[test]
 fn test_api_performance_and_edge_cases() {
-    let exif_data = extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false).unwrap();
+    let exif_data =
+        extract_metadata(std::path::Path::new(CANON_T3I_JPG), false, false, None).unwrap();
 
     // Test with empty string
     let empty_tag = exif_data.get_tag_by_name("");

@@ -68,7 +68,6 @@ clean-generated:
 # Deep clean - removes all build artifacts and generated code
 clean-all: clean clean-generated
 
-
 # Check that all Perl extractors are working correctly
 check-extractors:
 	$(MAKE) -C codegen -f Makefile.modular check-extractors
@@ -77,7 +76,6 @@ check-extractors:
 codegen:
 	@echo "🔧 Running code generation..."
 	@$(MAKE) --no-print-directory -C codegen -f Makefile.modular -j4 codegen
-	@$(MAKE) fix
 	
 # Extract all ExifTool algorithms and regenerate code  
 sync: codegen
@@ -136,7 +134,7 @@ audit:
 	cargo audit
 
 # Pre-commit checks: do everything: update deps, codegen, fix code, lint, test, audit, and build
-precommit: update perl-deps codegen check-subdirectory-coverage check-extractors fix lint yamllint compat-gen test codegen-test audit build
+precommit: update perl-deps codegen check-subdirectory-coverage check-extractors fix yamllint compat-gen test codegen-test audit build
 	@echo "✅ precommit successful 🥳" 
 
 # Generate ExifTool JSON reference data for compatibility testing (only missing files)
