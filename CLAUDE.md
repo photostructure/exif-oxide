@@ -2,13 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with exif-oxide.
 
-Today's date is July 27, 2025. 
+Today's date is July 27, 2025.
 
 ## 🚨 CRITICAL: ALWAYS USE ABSOLUTE PATHS 🚨
 
 **NEVER use `cd ..` or `cd ../..` - there have been devastating mistakes due to directory confusion.**
 
 **ALWAYS:**
+
 1. Run `pwd` first to check your current directory
 2. Use absolute paths: `cd /home/mrm/src/exif-oxide` or `cd /home/mrm/src/exif-oxide/codegen`
 3. When in doubt, ask the user to confirm the intended directory
@@ -41,6 +42,14 @@ Any time we stray from ExifTool's logic and heuristics will introduce defects in
 Almost every task will involve studying some part of the ExifTool codebase and validating that we are doing something exactly equivalent.
 
 **Note on Unknown Tags**: We follow ExifTool's default behavior of omitting tags marked with `Unknown => 1`. These tags are only shown in ExifTool when using the `-u` flag. This keeps our output clean and matches user expectations.
+
+## ⚠️ CRITICAL: Assume Concurrent Edits
+
+There are several other engineers working _on the same copy of the source tree_ at the same time you are.
+
+If you ever encounter a build error that isn't near code that you wrote, **STOP** and tell the user the issue.
+
+The user will fix the build nd tell you when you can resume your work.
 
 ## Essential Documentation
 
@@ -204,8 +213,9 @@ See [EXTRACTOR-GUIDE.md](docs/reference/EXTRACTOR-GUIDE.md) for detailed extract
 ### Bug Fixing
 
 **MANDATORY**: When a bug is discovered, follow the test-driven debugging workflow in [TDD.md](docs/TDD.md):
+
 1. Create a breaking test that reproduces the issue
-2. Validate that the test fails for the expected reason  
+2. Validate that the test fails for the expected reason
 3. Fix the bug following "Trust ExifTool" principles
 4. Validate that the test now passes and no regressions occur
 
@@ -228,7 +238,8 @@ as a best practice, and explain those aspects to the user as we embrace them.
 ### Task prioritization and naming
 
 When creating Technical Project Plans (TPPs) or TODO documents, use the priority naming convention defined in [TPP.md](docs/TPP.md):
-- `P00-P09` - Critical blockers  
+
+- `P00-P09` - Critical blockers
 - `P10-P19` - Maximum required tag impact (JPEG + Video ecosystem, binary extraction)
 - `P20-P29` - Technical debt
 - `P30-P39` - Architecture improvements
@@ -325,6 +336,7 @@ cargo run --bin compare-with-exiftool image.jpg EXIF:
 ```
 
 This tool:
+
 - Normalizes values using the same logic as our test suite (e.g., "25 MB" → "26214400")
 - Shows only actual differences, not formatting variations
 - Groups differences into: tags only in ExifTool, tags only in exif-oxide, and tags with different values
@@ -343,6 +355,7 @@ The `scripts/compare-with-exiftool.sh` script provides a basic JSON diff:
 ```
 
 Environment variables:
+
 - `DEBUG=1` - Keep the raw outputs for debugging
 - `DIFF_CONTEXT=3` - Show more context lines in diff (default is 0 for minimal diff)
 
