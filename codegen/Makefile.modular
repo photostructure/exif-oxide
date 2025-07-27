@@ -19,7 +19,7 @@ codegen: check-schemas check-extractors
 codegen-flocked: generate-rust
 
 generate-rust:
-	@cargo run --release --quiet ; ret=$$? ; \
+	@RUST_LOG=warn cargo run --release --quiet ; ret=$$? ; \
 	git -C ../third-party/exiftool checkout -- lib/Image/*.pm lib/Image/ExifTool/*.pm 2>/dev/null ; \
 	sync ; \
 	if [ $$ret -eq 0 ]; then \
