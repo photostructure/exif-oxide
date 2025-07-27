@@ -616,8 +616,7 @@ impl MinoltaPrdProcessor {
 
             // Use offset as tag ID for PRD tags
             let tag_id = 0x1000 + offset as u16; // Offset to avoid conflicts
-            reader.extracted_tags.insert(tag_id, tag_value);
-            reader.tag_sources.insert(tag_id, source_info);
+            reader.store_tag_with_precedence(tag_id, tag_value, source_info);
         }
 
         Ok(())
@@ -719,8 +718,7 @@ impl MinoltaWbgProcessor {
 
             // Use offset as tag ID for WBG tags
             let tag_id = 0x2000 + offset as u16; // Offset to avoid conflicts
-            reader.extracted_tags.insert(tag_id, tag_value);
-            reader.tag_sources.insert(tag_id, source_info);
+            reader.store_tag_with_precedence(tag_id, tag_value, source_info);
         }
 
         Ok(())
@@ -893,8 +891,7 @@ impl MinoltaRifProcessor {
 
             // Use offset as tag ID for RIF tags
             let tag_id = 0x3000 + offset as u16; // Offset to avoid conflicts
-            reader.extracted_tags.insert(tag_id, tag_value);
-            reader.tag_sources.insert(tag_id, source_info);
+            reader.store_tag_with_precedence(tag_id, tag_value, source_info);
         }
 
         Ok(())

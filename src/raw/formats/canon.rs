@@ -135,7 +135,7 @@ impl CanonRawHandler {
 
         // Verify that Canon maker note detection will work
         // ExifTool: lib/Image/ExifTool/MakerNotes.pm:60-68 Canon detection
-        if let Some(make) = exif_reader.extracted_tags.get(&0x010F) {
+        if let Some(make) = exif_reader.get_tag_across_namespaces(0x010F) {
             if let Some(make_str) = make.as_string() {
                 debug!("Detected Make field: '{}'", make_str);
 

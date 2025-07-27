@@ -158,7 +158,7 @@ impl PanasonicRawHandler {
         let extracted_tags: Vec<(u16, TagValue)> = reader
             .get_extracted_tags()
             .iter()
-            .map(|(tag_id, tag_value)| (*tag_id, tag_value.clone()))
+            .map(|((tag_id, _namespace), tag_value)| (*tag_id, tag_value.clone()))
             .collect();
 
         // Process each tag that has entry-based offset rules
@@ -326,7 +326,7 @@ impl PanasonicRawHandler {
         let extracted_tags: Vec<(u16, TagValue)> = reader
             .get_extracted_tags()
             .iter()
-            .map(|(&k, v)| (k, v.clone()))
+            .map(|((tag_id, _namespace), tag_value)| (*tag_id, tag_value.clone()))
             .collect();
 
         // Apply PrintConv to applicable tags
@@ -338,7 +338,8 @@ impl PanasonicRawHandler {
 
             // Only update if PrintConv actually changed the value
             if converted_value != raw_value {
-                reader.extracted_tags.insert(tag_id, converted_value);
+                // Use legacy insert to update the value in the EXIF namespace
+                reader.legacy_insert_tag(tag_id, converted_value, "EXIF");
             }
         }
 
@@ -621,11 +622,11 @@ impl PanasonicBinaryProcessor {
             TagSourceInfo::new("EXIF".to_string(), "IFD0".to_string(), "Image".to_string());
 
         // Placeholder: create a basic tag entry
-        reader.extracted_tags.insert(
+        reader.store_tag_with_precedence(
             0x0001, // PanasonicRawVersion equivalent
             TagValue::String("Panasonic RW2/RWL".to_string()),
+            source_info,
         );
-        reader.tag_sources.insert(0x0001, source_info);
 
         Ok(())
     }

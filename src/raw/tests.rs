@@ -135,20 +135,32 @@ fn test_sensor_border_calculation() {
     assert!(result.is_ok());
 
     // Verify all sensor border tags were extracted
-    assert_eq!(reader.extracted_tags.get(&0x04), Some(&TagValue::U16(4))); // SensorTopBorder
-    assert_eq!(reader.extracted_tags.get(&0x05), Some(&TagValue::U16(4))); // SensorLeftBorder
-    assert_eq!(reader.extracted_tags.get(&0x06), Some(&TagValue::U16(4340))); // SensorBottomBorder
-    assert_eq!(reader.extracted_tags.get(&0x07), Some(&TagValue::U16(5780))); // SensorRightBorder
+    assert_eq!(
+        reader.extracted_tags.get(&(0x04, "EXIF".to_string())),
+        Some(&TagValue::U16(4))
+    ); // SensorTopBorder
+    assert_eq!(
+        reader.extracted_tags.get(&(0x05, "EXIF".to_string())),
+        Some(&TagValue::U16(4))
+    ); // SensorLeftBorder
+    assert_eq!(
+        reader.extracted_tags.get(&(0x06, "EXIF".to_string())),
+        Some(&TagValue::U16(4340))
+    ); // SensorBottomBorder
+    assert_eq!(
+        reader.extracted_tags.get(&(0x07, "EXIF".to_string())),
+        Some(&TagValue::U16(5780))
+    ); // SensorRightBorder
 
     // Verify calculated dimensions (ExifTool: PanasonicRaw.pm:675-690)
     // ImageWidth = RightBorder - LeftBorder = 5780 - 4 = 5776
     // ImageHeight = BottomBorder - TopBorder = 4340 - 4 = 4336
     assert_eq!(
-        reader.extracted_tags.get(&0x0100),
+        reader.extracted_tags.get(&(0x0100, "EXIF".to_string())),
         Some(&TagValue::U32(5776))
     ); // ImageWidth
     assert_eq!(
-        reader.extracted_tags.get(&0x0101),
+        reader.extracted_tags.get(&(0x0101, "EXIF".to_string())),
         Some(&TagValue::U32(4336))
     ); // ImageHeight
 }

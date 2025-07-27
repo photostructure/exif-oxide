@@ -4011,23 +4011,63 @@ fn process_canon_aspectinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(S
 }
 
 fn process_canon_processing(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    tracing::debug!("process_canon_processing called with {} bytes", data.len());
+    use crate::generated::Canon_pm::processing_binary_data::{
+        CanonProcessingTable, PROCESSING_TAGS,
+    };
+
+    let table = CanonProcessingTable::new();
     let mut tags = Vec::new();
-    // ToneCurve at offset 1
 
-    // PictureStyle at offset 10
+    let entry_size = match table.default_format {
+        "int16s" | "int16u" => 2,
+        "int32s" | "int32u" => 4,
+        _ => 2, // Default to 2 bytes
+    };
 
-    // DigitalGain at offset 11
+    tracing::debug!(
+        "ProcessingBinaryData: format={}, first_entry={}, {} tag definitions",
+        table.default_format,
+        table.first_entry,
+        PROCESSING_TAGS.len()
+    );
 
-    // WBShiftAB at offset 12
+    for (&offset, &tag_name) in PROCESSING_TAGS.iter() {
+        let byte_offset = ((offset as i32 - table.first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            let tag_value = match entry_size {
+                2 => {
+                    let raw_u16 = byte_order.read_u16(data, byte_offset)?;
+                    if table.default_format.contains("int16s") {
+                        TagValue::I32(raw_u16 as i16 as i32)
+                    } else {
+                        TagValue::U16(raw_u16)
+                    }
+                }
+                4 => {
+                    let raw_u32 = byte_order.read_u32(data, byte_offset)?;
+                    if table.default_format.contains("int32s") {
+                        TagValue::I32(raw_u32 as i32)
+                    } else {
+                        TagValue::U32(raw_u32)
+                    }
+                }
+                _ => continue,
+            };
+            tracing::debug!("Extracted tag {}: {} = {}", offset, tag_name, tag_value);
+            tags.push((tag_name.to_string(), tag_value));
+        } else {
+            tracing::debug!(
+                "Skipping tag {} ({}): offset {} exceeds data length {}",
+                offset,
+                tag_name,
+                byte_offset,
+                data.len()
+            );
+        }
+    }
 
-    // WBShiftGM at offset 13
-
-    // Sharpness at offset 2
-
-    // SharpnessFrequency at offset 3
-
-    // WhiteBalance at offset 8
-
+    tracing::debug!("process_canon_processing extracted {} tags", tags.len());
     Ok(tags)
 }
 
@@ -4220,13 +4260,69 @@ fn process_canon_previewimageinfo(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    tracing::debug!(
+        "process_canon_previewimageinfo called with {} bytes",
+        data.len()
+    );
+    use crate::generated::Canon_pm::previewimageinfo_binary_data::{
+        CanonPreviewImageInfoTable, PREVIEWIMAGEINFO_TAGS,
+    };
+
+    let table = CanonPreviewImageInfoTable::new();
     let mut tags = Vec::new();
-    // PreviewQuality at offset 1
 
-    // PreviewImageLength at offset 2
+    let entry_size = match table.default_format {
+        "int16s" | "int16u" => 2,
+        "int32s" | "int32u" => 4,
+        _ => 2, // Default to 2 bytes
+    };
 
-    // PreviewImageStart at offset 5
+    tracing::debug!(
+        "PreviewimageinfoBinaryData: format={}, first_entry={}, {} tag definitions",
+        table.default_format,
+        table.first_entry,
+        PREVIEWIMAGEINFO_TAGS.len()
+    );
 
+    for (&offset, &tag_name) in PREVIEWIMAGEINFO_TAGS.iter() {
+        let byte_offset = ((offset as i32 - table.first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            let tag_value = match entry_size {
+                2 => {
+                    let raw_u16 = byte_order.read_u16(data, byte_offset)?;
+                    if table.default_format.contains("int16s") {
+                        TagValue::I32(raw_u16 as i16 as i32)
+                    } else {
+                        TagValue::U16(raw_u16)
+                    }
+                }
+                4 => {
+                    let raw_u32 = byte_order.read_u32(data, byte_offset)?;
+                    if table.default_format.contains("int32s") {
+                        TagValue::I32(raw_u32 as i32)
+                    } else {
+                        TagValue::U32(raw_u32)
+                    }
+                }
+                _ => continue,
+            };
+            tracing::debug!("Extracted tag {}: {} = {}", offset, tag_name, tag_value);
+            tags.push((tag_name.to_string(), tag_value));
+        } else {
+            tracing::debug!(
+                "Skipping tag {} ({}): offset {} exceeds data length {}",
+                offset,
+                tag_name,
+                byte_offset,
+                data.len()
+            );
+        }
+    }
+
+    tracing::debug!(
+        "process_canon_previewimageinfo extracted {} tags",
+        tags.len()
+    );
     Ok(tags)
 }
 

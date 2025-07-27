@@ -11,47 +11,78 @@ use tracing::debug;
 use super::ExifReader;
 
 impl ExifReader {
-    /// Store tag with conflict resolution and proper namespace handling
-    /// ExifTool behavior: Main EXIF tags take precedence over MakerNote tags with same ID
+    /// Store tag with namespace-aware storage and conflict resolution
+    /// ExifTool behavior: Tags with same ID but different contexts are stored separately
     pub fn store_tag_with_precedence(
         &mut self,
         tag_id: u16,
         value: TagValue,
         source_info: TagSourceInfo,
     ) {
-        // Check if tag already exists
-        if let Some(existing_source) = self.tag_sources.get(&tag_id) {
-            // Compare priorities - higher priority wins
+        let key = (tag_id, source_info.namespace.clone());
+
+        // Check if tag already exists in this namespace
+        if let Some(existing_source) = self.tag_sources.get(&key) {
+            // Compare priorities - higher priority wins within same namespace
             if source_info.priority > existing_source.priority {
                 debug!(
-                    "Tag 0x{:04x}: Replacing lower priority {} with higher priority {}",
-                    tag_id, existing_source.namespace, source_info.namespace
+                    "Tag 0x{:04x} ({}): Replacing lower priority with higher priority",
+                    tag_id, source_info.namespace
                 );
-                self.extracted_tags.insert(tag_id, value);
-                self.tag_sources.insert(tag_id, source_info);
+                self.extracted_tags.insert(key.clone(), value);
+                self.tag_sources.insert(key, source_info);
             } else if source_info.priority == existing_source.priority {
                 // Same priority - keep first encountered (ExifTool behavior)
                 debug!(
-                    "Tag 0x{:04x}: Keeping first encountered {} over {}",
-                    tag_id, existing_source.namespace, source_info.namespace
+                    "Tag 0x{:04x} ({}): Keeping first encountered",
+                    tag_id, source_info.namespace
                 );
                 // Do not overwrite - keep existing
             } else {
                 // Lower priority - ignore
                 debug!(
-                    "Tag 0x{:04x}: Ignoring lower priority {} (existing: {})",
-                    tag_id, source_info.namespace, existing_source.namespace
+                    "Tag 0x{:04x} ({}): Ignoring lower priority",
+                    tag_id, source_info.namespace
                 );
             }
         } else {
-            // New tag - store it
+            // New tag - store it with namespace-aware key
             debug!(
-                "Tag 0x{:04x}: Storing new {} tag",
+                "Tag 0x{:04x} ({}): Storing new tag",
                 tag_id, source_info.namespace
             );
-            self.extracted_tags.insert(tag_id, value);
-            self.tag_sources.insert(tag_id, source_info);
+            self.extracted_tags.insert(key.clone(), value);
+            self.tag_sources.insert(key, source_info);
         }
+    }
+
+    /// Find tag value across namespaces with priority order
+    /// Used for accessing tags that might exist in multiple contexts (like Make tag)
+    pub(crate) fn get_tag_across_namespaces(&self, tag_id: u16) -> Option<&TagValue> {
+        // Priority order: EXIF -> GPS -> MakerNotes
+        // EXIF namespace has the highest priority for most tags
+        let namespaces = ["EXIF", "GPS", "MakerNotes"];
+
+        for namespace in namespaces {
+            let key = (tag_id, namespace.to_string());
+            if let Some(value) = self.extracted_tags.get(&key) {
+                return Some(value);
+            }
+        }
+        None
+    }
+
+    /// DEPRECATED: Legacy access method for backwards compatibility
+    /// Other modules should migrate to get_tag_across_namespaces or store_tag_with_precedence
+    pub fn legacy_get_tag(&self, tag_id: u16) -> Option<&TagValue> {
+        self.get_tag_across_namespaces(tag_id)
+    }
+
+    /// DEPRECATED: Legacy storage method for backwards compatibility  
+    /// Other modules should migrate to store_tag_with_precedence with proper namespace
+    pub fn legacy_insert_tag(&mut self, tag_id: u16, value: TagValue, namespace: &str) {
+        let source_info = self.create_tag_source_info(namespace);
+        self.store_tag_with_precedence(tag_id, value, source_info);
     }
 
     /// Create TagSourceInfo from IFD name with proper namespace mapping

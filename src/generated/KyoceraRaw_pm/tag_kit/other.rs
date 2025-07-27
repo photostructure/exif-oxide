@@ -14,7 +14,7 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(HashMap::new);
+static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| HashMap::new());
 
 /// Get tag definitions for other category
 pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {

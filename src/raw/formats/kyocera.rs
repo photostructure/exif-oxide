@@ -391,8 +391,8 @@ impl RawFormatHandler for KyoceraRawHandler {
                 group2.to_string(),
             );
 
-            reader.extracted_tags.insert(tag_id, final_value);
-            reader.tag_sources.insert(tag_id, source_info);
+            // Use namespace-aware storage for Kyocera tags
+            reader.store_tag_with_precedence(tag_id, final_value, source_info);
         }
 
         Ok(())

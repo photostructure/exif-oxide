@@ -39,8 +39,7 @@ impl ExifReader {
 
         // Extract manufacturer from Make tag for signature detection
         let make = self
-            .extracted_tags
-            .get(&0x010F) // Make tag
+            .get_tag_across_namespaces(0x010F) // Make tag
             .and_then(|v| v.as_string())
             .unwrap_or_default();
 
@@ -762,7 +761,7 @@ impl ExifReader {
         // Check if the IFD name indicates Olympus MakerNotes
         if ifd_name.contains("MakerNotes") || ifd_name.starts_with("Olympus") {
             // Check if the Make field indicates this is an Olympus camera
-            if let Some(make_tag) = self.extracted_tags.get(&0x010F) {
+            if let Some(make_tag) = self.get_tag_across_namespaces(0x010F) {
                 if let Some(make_str) = make_tag.as_string() {
                     return olympus::is_olympus_makernote(make_str);
                 }

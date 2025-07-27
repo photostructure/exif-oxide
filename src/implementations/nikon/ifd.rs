@@ -338,8 +338,7 @@ pub fn process_standard_nikon_tags(
     // Get the camera model from existing tags for table selection
     // Clone to avoid borrowing issues later when mutably borrowing reader
     let model = reader
-        .extracted_tags
-        .get(&0x0110) // Model tag
+        .get_tag_across_namespaces(0x0110) // Model tag
         .and_then(|v| v.as_string())
         .unwrap_or("Unknown Nikon")
         .to_string();

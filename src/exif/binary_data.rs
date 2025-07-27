@@ -205,17 +205,18 @@ impl ExifReader {
                     .get(&0)
                     .cloned()
                     .unwrap_or_else(|| "Unknown".to_string());
+                let namespace = group_0.clone();
                 let source_info =
                     TagSourceInfo::new(group_0, "BinaryData".to_string(), "BinaryData".to_string());
-
-                self.extracted_tags.insert(index as u16, final_value);
-                self.tag_sources.insert(index as u16, source_info);
+                let key = (index as u16, namespace);
+                self.extracted_tags.insert(key.clone(), final_value);
+                self.tag_sources.insert(key.clone(), source_info);
 
                 debug!(
                     "Extracted binary tag {} (index {}) = {:?}",
                     tag_def.name,
                     index,
-                    self.extracted_tags.get(&(index as u16))
+                    self.extracted_tags.get(&key)
                 );
             }
         }

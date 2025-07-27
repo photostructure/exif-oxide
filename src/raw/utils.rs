@@ -881,19 +881,19 @@ pub fn extract_tiff_dimensions(
     // Add extracted sensor border tags to reader as individual tags
     // These are needed for Panasonic RW2 files - ExifTool: PanasonicRaw.pm:82-85
     if let Some(value) = sensor_borders.top {
-        reader.extracted_tags.insert(0x04, TagValue::U16(value));
+        reader.legacy_insert_tag(0x04, TagValue::U16(value), "EXIF");
         debug!("Added SensorTopBorder (0x04) = {}", value);
     }
     if let Some(value) = sensor_borders.left {
-        reader.extracted_tags.insert(0x05, TagValue::U16(value));
+        reader.legacy_insert_tag(0x05, TagValue::U16(value), "EXIF");
         debug!("Added SensorLeftBorder (0x05) = {}", value);
     }
     if let Some(value) = sensor_borders.bottom {
-        reader.extracted_tags.insert(0x06, TagValue::U16(value));
+        reader.legacy_insert_tag(0x06, TagValue::U16(value), "EXIF");
         debug!("Added SensorBottomBorder (0x06) = {}", value);
     }
     if let Some(value) = sensor_borders.right {
-        reader.extracted_tags.insert(0x07, TagValue::U16(value));
+        reader.legacy_insert_tag(0x07, TagValue::U16(value), "EXIF");
         debug!("Added SensorRightBorder (0x07) = {}", value);
     }
 
@@ -911,13 +911,13 @@ pub fn extract_tiff_dimensions(
     if !skip_exif_dimensions {
         if let Some(width) = image_width {
             // Add ImageWidth tag (0x0100) - ExifTool: Exif.pm:460
-            reader.extracted_tags.insert(0x0100, TagValue::U32(width));
+            reader.legacy_insert_tag(0x0100, TagValue::U32(width), "EXIF");
             debug!("Added EXIF:ImageWidth (0x0100) = {}", width);
         }
 
         if let Some(height) = image_height {
             // Add ImageHeight tag (0x0101) - ExifTool: Exif.pm:473
-            reader.extracted_tags.insert(0x0101, TagValue::U32(height));
+            reader.legacy_insert_tag(0x0101, TagValue::U32(height), "EXIF");
             debug!("Added EXIF:ImageHeight (0x0101) = {}", height);
         }
     } else {

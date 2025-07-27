@@ -172,7 +172,8 @@ impl ExifReader {
                         // Convert tag_name to tag_id and store in extracted_tags
                         if let Some(tag_id) = self.resolve_tag_name_to_id(&tag_name) {
                             debug!("    → Resolved to ID: 0x{:04X}", tag_id);
-                            self.extracted_tags.insert(tag_id, tag_value.clone());
+                            let source_info = self.create_tag_source_info("ProcessedData");
+                            self.store_tag_with_precedence(tag_id, tag_value.clone(), source_info);
                             debug!(
                                 "Stored tag: {} (0x{:04X}) = {:?}",
                                 tag_name, tag_id, tag_value
@@ -181,7 +182,12 @@ impl ExifReader {
                             debug!("    → FAILED to resolve tag name");
                             // For unknown tag names, try to parse as hex if it looks like Tag_XXXX format
                             if let Some(tag_id) = self.parse_hex_tag_name(&tag_name) {
-                                self.extracted_tags.insert(tag_id, tag_value.clone());
+                                let source_info = self.create_tag_source_info("ProcessedData");
+                                self.store_tag_with_precedence(
+                                    tag_id,
+                                    tag_value.clone(),
+                                    source_info,
+                                );
                                 debug!(
                                     "Stored hex tag: {} (0x{:04X}) = {:?}",
                                     tag_name, tag_id, tag_value
@@ -189,7 +195,12 @@ impl ExifReader {
                             } else {
                                 // Store manufacturer-specific tags with synthetic IDs to preserve them
                                 let synthetic_id = self.generate_synthetic_tag_id(&tag_name);
-                                self.extracted_tags.insert(synthetic_id, tag_value.clone());
+                                let source_info = self.create_tag_source_info("ProcessedData");
+                                self.store_tag_with_precedence(
+                                    synthetic_id,
+                                    tag_value.clone(),
+                                    source_info,
+                                );
                                 debug!(
                                     "Stored unresolved tag with synthetic ID: {} (0x{:04X}) = {:?}",
                                     tag_name, synthetic_id, tag_value
@@ -423,14 +434,12 @@ impl ExifReader {
     pub(crate) fn detect_makernote_processor(&self) -> Option<String> {
         // Extract Make and Model from current tags for detection
         let make = self
-            .extracted_tags
-            .get(&0x010F) // Make tag
+            .get_tag_across_namespaces(0x010F) // Make tag
             .and_then(|v| v.as_string())
             .unwrap_or("");
 
         let model = self
-            .extracted_tags
-            .get(&0x0110) // Model tag
+            .get_tag_across_namespaces(0x0110) // Model tag
             .and_then(|v| v.as_string())
             .unwrap_or("");
 
@@ -539,7 +548,7 @@ impl ExifReader {
     /// Used to determine if Olympus-specific subdirectory tags should be processed
     fn is_olympus_subdirectory_context(&self) -> bool {
         // Check if the Make field indicates this is an Olympus camera
-        if let Some(make_tag) = self.extracted_tags.get(&0x010F) {
+        if let Some(make_tag) = self.get_tag_across_namespaces(0x010F) {
             if let Some(make_str) = make_tag.as_string() {
                 let is_olympus = olympus::is_olympus_makernote(make_str);
                 debug!(
@@ -562,18 +571,15 @@ impl ExifReader {
     ) -> Result<ProcessorContext> {
         // Extract manufacturer info from current tags
         let manufacturer = self
-            .extracted_tags
-            .get(&0x010F) // Make tag
+            .get_tag_across_namespaces(0x010F) // Make tag
             .and_then(|v| v.as_string());
 
         let model = self
-            .extracted_tags
-            .get(&0x0110) // Model tag
+            .get_tag_across_namespaces(0x0110) // Model tag
             .and_then(|v| v.as_string());
 
         let firmware = self
-            .extracted_tags
-            .get(&0x0131) // Software tag (often contains firmware)
+            .get_tag_across_namespaces(0x0131) // Software tag (often contains firmware)
             .and_then(|v| v.as_string());
 
         // Detect file format - simplified for now
@@ -608,7 +614,7 @@ impl ExifReader {
 
         // Add parent tags for context (simplified - just the extracted tags)
         let mut parent_tags = HashMap::new();
-        for (&tag_id, tag_value) in &self.extracted_tags {
+        for (&(tag_id, _), tag_value) in &self.extracted_tags {
             let tag_name = format!("Tag_{tag_id:04X}");
             parent_tags.insert(tag_name, tag_value.clone());
         }
@@ -650,8 +656,7 @@ impl ExifReader {
             "MakerNotes" => {
                 // Try to detect manufacturer and route accordingly
                 let make = self
-                    .extracted_tags
-                    .get(&0x010F) // Make tag
+                    .get_tag_across_namespaces(0x010F) // Make tag
                     .and_then(|v| v.as_string())
                     .unwrap_or("");
 
@@ -800,7 +805,8 @@ impl ExifReader {
             "MakerNotes".to_string(),
             format!("{namespace}::BinaryData"),
         );
-        self.tag_sources.insert(synthetic_id, source_info);
+        self.tag_sources
+            .insert((synthetic_id, namespace.to_string()), source_info);
 
         debug!(
             "Assigned synthetic tag ID 0x{:04X} to '{}' with namespace '{}'",

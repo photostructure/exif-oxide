@@ -268,7 +268,7 @@ impl SonyRawHandler {
         // This tag contains a 4-byte identifier that determines ARW version
         // ExifTool: Sony.pm lines around format detection
 
-        if let Some(tag_value) = reader.extracted_tags.get(&0xb000) {
+        if let Some(tag_value) = reader.get_tag_across_namespaces(0xb000) {
             // Convert TagValue to raw bytes for format detection
             match tag_value {
                 TagValue::U8Array(bytes) => {
@@ -317,7 +317,7 @@ impl SonyRawHandler {
     pub fn detect_idc_corruption(&mut self, reader: &ExifReader) -> Result<IDCCorruption> {
         // Check for general IDC corruption via Software field
         // ExifTool: Sony.pm - IDC corruption detected by Software field containing "Sony IDC"
-        if let Some(software_tag) = reader.extracted_tags.get(&0x0131) {
+        if let Some(software_tag) = reader.get_tag_across_namespaces(0x0131) {
             // Software tag
             if let Some(software_str) = software_tag.as_string() {
                 if software_str.contains("Sony IDC") {
@@ -336,7 +336,7 @@ impl SonyRawHandler {
         if let Some(model) = &self.camera_model {
             if model.contains("A100") {
                 // Check tag 0x14a structure to detect corruption
-                if let Some(tag_14a) = reader.extracted_tags.get(&0x014a) {
+                if let Some(tag_14a) = reader.get_tag_across_namespaces(0x014a) {
                     // A100 IDC corruption: tag 0x14a gets corrupted from pointer to SubIFD
                     // ExifTool detects this by checking if the tag value structure is corrupted
                     match tag_14a {
@@ -451,15 +451,15 @@ impl SonyRawHandler {
 
         let mut tags_to_update = Vec::new();
 
-        for (&tag_id, tag_value) in &reader.extracted_tags {
+        for (&(tag_id, ref _namespace), tag_value) in &reader.extracted_tags {
             if let Some(converted_value) = self.apply_sony_print_conv(tag_id, tag_value) {
-                tags_to_update.push((tag_id, converted_value));
+                tags_to_update.push(((tag_id, "EXIF".to_string()), converted_value));
             }
         }
 
         // Apply the conversions
-        for (tag_id, converted_value) in tags_to_update {
-            reader.extracted_tags.insert(tag_id, converted_value);
+        for (tag_key, converted_value) in tags_to_update {
+            reader.extracted_tags.insert(tag_key, converted_value);
         }
 
         debug!("Sony PrintConv transformations applied");
@@ -584,21 +584,19 @@ impl SonyRawHandler {
 
         // Get manufacturer info for context
         let manufacturer = reader
-            .extracted_tags
-            .get(&0x010F)
+            .get_tag_across_namespaces(0x010F)
             .and_then(|v| v.as_string())
             .unwrap_or("SONY")
             .to_string();
 
         let model = reader
-            .extracted_tags
-            .get(&0x0110)
+            .get_tag_across_namespaces(0x0110)
             .and_then(|v| v.as_string())
             .map(|s| s.to_string());
 
         // Process each binary data tag
         for &(tag_id, table_name) in &binary_data_tags {
-            if let Some(tag_value) = reader.extracted_tags.get(&tag_id) {
+            if let Some(tag_value) = reader.get_tag_across_namespaces(tag_id) {
                 debug!(
                     "Found Sony ProcessBinaryData tag 0x{:04x} ({})",
                     tag_id, table_name
@@ -674,7 +672,7 @@ impl SonyRawHandler {
                             // The processors return string tag names, we need to look up the ID
                             if let Some(tag_id) = reader.resolve_tag_name_to_id(&tag_name) {
                                 debug!("Adding extracted tag: {} (0x{:04x})", tag_name, tag_id);
-                                reader.extracted_tags.insert(tag_id, tag_value);
+                                reader.legacy_insert_tag(tag_id, tag_value, "EXIF");
                             } else {
                                 debug!("Unknown tag name from processor: {}", tag_name);
                             }
