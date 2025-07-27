@@ -14,7 +14,7 @@ use exif_oxide::types::FilterOptions;
 /// - `-GroupName:all` - extract all tags from group
 /// - `-all` - extract all tags
 ///
-/// Returns (file_paths, filter_options)
+/// Returns (file_paths, filter_options) or exits on error
 fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
     let mut file_paths = Vec::new();
     let mut requested_tags = Vec::new();
@@ -31,9 +31,26 @@ fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
         if arg == "-all" || arg == "--all" {
             // Special case: extract all tags
             extract_all = true;
+        } else if arg == "-ver" {
+            // Version flag - print version and exit
+            println!("{}", env!("CARGO_PKG_VERSION"));
+            std::process::exit(0);
+        } else if arg == "-j" || arg == "-struct" || arg == "-G" {
+            // ExifTool compatibility flags - ignore these (no-op)
+            // -j: JSON output format (we always output JSON)
+            // -struct: structured output (we always use structured output)
+            // -G: group names in output (we always include group names)
+            debug!("Ignoring ExifTool compatibility flag: {}", arg);
+            continue;
         } else if arg.starts_with('-') && arg.len() > 1 {
             // Process tag/group filters
             let filter_arg = &arg[1..]; // Remove leading '-'
+
+            // Check for invalid short options (1-2 characters or unknown single-char flags)
+            if filter_arg.len() <= 2 {
+                eprintln!("Unknown option {}", arg);
+                std::process::exit(1);
+            }
 
             if filter_arg.ends_with('#') && filter_arg.len() > 1 {
                 // Numeric tag: -TagName# or -Pattern#
@@ -145,6 +162,7 @@ fn main() {
             "  exif-oxide -GPS* image.jpg              Extract all GPS tags (wildcard)\n",
             "  exif-oxide -*Date* image.jpg            Extract all tags containing 'Date'\n",
             "  exif-oxide -all image.jpg               Extract all available tags\n",
+            "  exif-oxide -ver                         Print version (ExifTool compatibility)\n",
             "\n",
             "TAG FILTERING:\n",
             "  -TagName         Extract specific tag (case-insensitive)\n",
@@ -154,6 +172,10 @@ fn main() {
             "  -*Pattern        Suffix wildcard (e.g., -*tude for latitude/longitude)\n",
             "  -*Pattern*       Middle wildcard (e.g., -*Date* for date-related tags)\n",
             "  -all             Extract all available tags\n",
+            "\n",
+            "EXIFTOOL COMPATIBILITY:\n",
+            "  -ver             Print version number and exit\n",
+            "  -j, -struct, -G  Ignored (we always output JSON with structure and groups)\n",
             "\n",
             "Multiple filters can be combined:\n",
             "  exif-oxide -Orientation# -GPS* -EXIF:all image.jpg\n"
@@ -180,6 +202,7 @@ fn main() {
                 .action(clap::ArgAction::SetTrue), // Boolean flag
         )
         .get_matches();
+
 
     // Extract all arguments and parse ExifTool-style filters
     let args: Vec<&String> = matches.get_many::<String>("args").unwrap().collect();
@@ -394,4 +417,83 @@ mod tests {
         assert_eq!(files, vec!["image.jpg"]);
         assert!(filter_opts.extract_all);
     }
+
+    #[test]
+    fn test_parse_exiftool_args_compatibility_flags() {
+        // Test ExifTool compatibility flags are ignored as no-ops
+        let image = "image.jpg".to_string();
+        let json_flag = "-j".to_string();
+        let struct_flag = "-struct".to_string();
+        let group_flag = "-G".to_string();
+        let fnumber = "-FNumber".to_string();
+        let args = vec![&image, &json_flag, &struct_flag, &group_flag, &fnumber];
+
+        let (files, filter_opts) = parse_exiftool_args(args);
+
+        // Should have only the image file, compatibility flags ignored
+        assert_eq!(files, vec!["image.jpg"]);
+        // Should only have the FNumber tag, not the compatibility flags
+        assert_eq!(filter_opts.requested_tags.len(), 1);
+        assert!(filter_opts.requested_tags.contains(&"FNumber".to_string()));
+        assert!(!filter_opts.extract_all);
+    }
+
+    #[test]
+    fn test_parse_exiftool_args_compatibility_flags_only() {
+        // Test with only compatibility flags (should default to extract_all)
+        let image = "image.jpg".to_string();
+        let json_flag = "-j".to_string();
+        let struct_flag = "-struct".to_string();
+        let group_flag = "-G".to_string();
+        let args = vec![&image, &json_flag, &struct_flag, &group_flag];
+
+        let (files, filter_opts) = parse_exiftool_args(args);
+
+        // Should have only the image file
+        assert_eq!(files, vec!["image.jpg"]);
+        // Since no actual tag filters were specified, should default to extract_all
+        assert!(filter_opts.extract_all);
+        assert!(filter_opts.requested_tags.is_empty());
+    }
+
+
+
+
+    #[test]
+    fn test_parse_exiftool_args_boundary_lengths() {
+        // Test boundary cases for filter length validation - only valid 3+ char tags accepted
+        let image = "image.jpg".to_string();
+        let three_char = "-abc".to_string();    // 3 chars - should be accepted
+        let args = vec![&image, &three_char];
+
+        let (files, filter_opts) = parse_exiftool_args(args);
+
+        // Should have only the image file
+        assert_eq!(files, vec!["image.jpg"]);
+        // Should only have the 3-character tag
+        assert_eq!(filter_opts.requested_tags.len(), 1);
+        assert!(filter_opts.requested_tags.contains(&"abc".to_string()));
+        assert!(!filter_opts.extract_all);
+    }
+
+    #[test]
+    fn test_parse_exiftool_args_all_compatibility_flags() {
+        // Test all compatibility flags together
+        let image = "image.jpg".to_string();
+        let j_flag = "-j".to_string();
+        let struct_flag = "-struct".to_string();
+        let g_flag = "-G".to_string();
+        let valid_tag = "-MIMEType".to_string();
+        let args = vec![&image, &j_flag, &struct_flag, &g_flag, &valid_tag];
+
+        let (files, filter_opts) = parse_exiftool_args(args);
+
+        // Should have only the image file
+        assert_eq!(files, vec!["image.jpg"]);
+        // Should only have the valid tag, compatibility flags ignored
+        assert_eq!(filter_opts.requested_tags.len(), 1);
+        assert!(filter_opts.requested_tags.contains(&"MIMEType".to_string()));
+        assert!(!filter_opts.extract_all);
+    }
+
 }
