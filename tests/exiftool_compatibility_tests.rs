@@ -876,12 +876,12 @@ fn get_tolerance_for_values(expected: &Value, actual: &Value) -> Option<f64> {
     if is_gps_coordinate(expected) || is_gps_coordinate(actual) {
         return Some(0.0001);
     }
-    
+
     // Check for timestamp sub-second precision - important for burst photos
     if is_timestamp_value(expected) || is_timestamp_value(actual) {
         return Some(0.001); // 1ms tolerance for timestamp precision
     }
-    
+
     // Default tolerance for other numeric comparisons
     Some(0.001)
 }
@@ -894,7 +894,7 @@ fn is_gps_coordinate(value: &Value) -> bool {
             // GPS coordinates are typically -180 to 180 for longitude, -90 to 90 for latitude
             abs_val <= 180.0 && abs_val > 0.0001
         }
-        _ => false
+        _ => false,
     }
 }
 
@@ -910,7 +910,7 @@ fn is_timestamp_value(value: &Value) -> bool {
             let val = n.as_f64().unwrap_or(0.0);
             val > 1000000000.0 || (val > 0.0 && val < 86400.0) // Unix epoch or seconds in day
         }
-        _ => false
+        _ => false,
     }
 }
 
@@ -926,13 +926,14 @@ fn extract_numeric_from_string(s: &str) -> Option<f64> {
             }
         }
     }
-    
+
     // Handle strings with units "50.0 mm", "F4.0", or prefixes
-    let cleaned = s.chars()
+    let cleaned = s
+        .chars()
         .skip_while(|c| !c.is_ascii_digit() && *c != '-' && *c != '.')
         .take_while(|c| c.is_ascii_digit() || *c == '.' || *c == '-')
         .collect::<String>();
-    
+
     cleaned.parse::<f64>().ok()
 }
 
