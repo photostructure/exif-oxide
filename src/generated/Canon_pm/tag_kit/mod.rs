@@ -171,18 +171,18 @@ fn process_canon_camerasettings(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
-    tracing::debug!("process_canon_camerasettings called with {} bytes", data.len());
+    tracing::debug!("process_canon_camerasettings called with {} bytes, byte_order: {:?}", data.len(), byte_order);
     
     // Use manual implementation from src/implementations/canon/binary_data.rs
     // since CameraSettings table has complex Perl expressions that can't be auto-generated
     match crate::implementations::canon::binary_data::extract_camera_settings(data, 0, data.len(), byte_order) {
         Ok(hash_map) => {
             let tags: Vec<(String, TagValue)> = hash_map.into_iter().collect();
-            tracing::debug!("Canon CameraSettings extracted {} tags", tags.len());
+            tracing::debug!("Canon CameraSettings extracted {} tags: {:?}", tags.len(), tags.iter().map(|(k, _)| k).collect::<Vec<_>>());
             Ok(tags)
         }
         Err(e) => {
-            tracing::debug!("Canon CameraSettings extraction failed: {}", e);
+            tracing::warn!("Canon CameraSettings extraction failed: {}", e);
             Ok(Vec::new()) // Return empty rather than failing completely
         }
     }
