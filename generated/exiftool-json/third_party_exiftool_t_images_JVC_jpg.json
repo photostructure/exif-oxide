@@ -1,9 +1,13 @@
 {
   "SourceFile": "third-party/exiftool/t/images/JVC.jpg",
   "File:FileSize": 1253,
+  "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "JVC.jpg",
   "File:Directory": "third-party/exiftool/t/images",
   "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileAccessDate": "2025:07:27 12:08:27-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
   "File:MIMEType": "image/jpeg",
@@ -16,7 +20,6 @@
   "EXIF:YCbCrPositioning": "Co-sited",
   "EXIF:ExposureTime": "1/25",
   "EXIF:FNumber": 11.0,
-  "EXIF:ExifVersion": "0220",
   "EXIF:DateTimeOriginal": "2004:06:26 12:36:46",
   "EXIF:CreateDate": "2004:06:26 12:36:46",
   "EXIF:MeteringMode": "Center-weighted average",
@@ -26,5 +29,9 @@
   "EXIF:ExifImageHeight": 960,
   "File:ImageWidth": 8,
   "File:ImageHeight": 8,
-  "Composite:ImageSize": "8x8"
+  "Composite:Aperture": 11.0,
+  "Composite:ShutterSpeed": "1/25",
+  "EXIF:ThumbnailImage": "(Binary data 28 bytes, use -b option to extract)",
+  "Composite:ImageSize": "8x8",
+  "Composite:Megapixels": 0.000064
 }

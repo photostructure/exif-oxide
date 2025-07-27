@@ -1,0 +1,18 @@
+{
+  "SourceFile": "third-party/exiftool/t/images/QuickTime.heic",
+  "File:FileSize": 623,
+  "ExifTool:ExifToolVersion": 13.31,
+  "File:FileName": "QuickTime.heic",
+  "File:Directory": "third-party/exiftool/t/images",
+  "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileAccessDate": "2025:07:27 12:08:26-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
+  "File:FileType": "HEIF",
+  "File:FileTypeExtension": "heif",
+  "File:MIMEType": "image/heif",
+  "File:ImageWidth": 1596,
+  "File:ImageHeight": 1064,
+  "Composite:ImageSize": "1596x1064",
+  "Composite:Megapixels": 1.7
+}

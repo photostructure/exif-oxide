@@ -1,13 +1,40 @@
 {
   "SourceFile": "third-party/exiftool/t/images/PhotoMechanic.jpg",
   "File:FileSize": 3417,
+  "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "PhotoMechanic.jpg",
   "File:Directory": "third-party/exiftool/t/images",
   "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileAccessDate": "2025:07:27 12:08:27-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
   "File:MIMEType": "image/jpeg",
+  "IPTC:City": "kingston",
+  "IPTC:ObjectName": "Object Name",
+  "IPTC:Keywords": [
+    "Keywords",
+    "one",
+    "three",
+    "two"
+  ],
+  "IPTC:Source": "Source",
+  "XMP:City": "kingston",
+  "XMP:Country": "Country",
+  "XMP:Source": "Source",
+  "XMP:Subject": [
+    "Keywords",
+    "one",
+    "three",
+    "two"
+  ],
+  "XMP:Description": "Caption",
+  "XMP:Title": "Object Name",
   "File:ImageWidth": 8,
   "File:ImageHeight": 8,
-  "Composite:ImageSize": "8x8"
+  "Composite:DateTimeCreated": "2006:10:29 06:27:51-05:00",
+  "Composite:DateTimeOriginal": "2006:10:29 06:27:51-05:00",
+  "Composite:ImageSize": "8x8",
+  "Composite:Megapixels": 0.000064
 }
