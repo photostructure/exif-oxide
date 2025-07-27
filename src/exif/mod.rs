@@ -552,6 +552,7 @@ impl ExifReader {
                 .as_ref()
                 .map(|s| s.ifd_name.as_str())
                 .unwrap_or("");
+
             let (value, print) = self.apply_conversions(raw_value, tag_id, ifd_name);
 
             // Get group1 value using TagSourceInfo with special handling for IFD pointer tags
