@@ -107,6 +107,7 @@ pub fn register_all_conversions() {
         print_conv::composite_gps_gpsaltitude_print_conv,
     );
     registry::register_print_conv("imagesize_print_conv", print_conv::imagesize_print_conv);
+    registry::register_print_conv("print_fraction", print_conv::print_fraction);
 
     // GPS coordinate ValueConv functions - convert to unsigned decimal degrees
     // Sign handling happens in Composite tags that combine coordinate + ref
