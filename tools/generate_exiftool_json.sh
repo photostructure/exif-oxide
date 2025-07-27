@@ -17,11 +17,10 @@ SNAPSHOTS_DIR="$PROJECT_ROOT/generated/exiftool-json"
 # Single source of truth now maintained in config/supported_tags.json (Milestone 8a)
 # Milestone 8c: Now using group prefixes, need to specify allowed groups
 SUPPORTED_TAGS=$(cat "$PROJECT_ROOT/config/supported_tags.json")
-ALLOWED_GROUPS='["EXIF", "File", "System", "MakerNotes", "PNG", "GIF", "QuickTime"]'
 
 # Supported file extensions for compatibility testing
 # Add new extensions here as support is added
-SUPPORTED_EXTENSIONS=("jpg" "jpeg" "orf" "raw" "mrw" "rw2" "cr2" "arw" "sr2" "srf" "png" "gif" "tif" "tiff" "avif" "dng")
+SUPPORTED_EXTENSIONS=("jpg" "jpeg" "orf" "raw" "mrw" "rw2" "cr2" "arw" "sr2" "srf" "png" "gif" "tif" "tiff" "avif" "dng" "heic" "heif" "webp")
 
 echo "Generating ExifTool reference snapshots for exif-oxide compatibility testing"
 echo "Project root: $PROJECT_ROOT"
