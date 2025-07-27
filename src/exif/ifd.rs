@@ -297,7 +297,12 @@ impl ExifReader {
         // ExifTool: lib/Image/ExifTool/Exif.pm:6390-6570 value extraction
         match entry.format {
             TiffFormat::Ascii => {
-                let value = value_extraction::extract_ascii_value(&self.data, &entry, byte_order)?;
+                let value = value_extraction::extract_ascii_value(
+                    &self.data,
+                    &entry,
+                    byte_order,
+                    entry.tag_id,
+                )?;
                 // debug!("ASCII tag {:#x} extracted value: {:?} (length: {})", entry.tag_id, value, value.len());
 
                 // Store ASCII strings including empty ones - ExifTool behavior
@@ -576,7 +581,7 @@ impl ExifReader {
                         }
                     } else {
                         // Other UNDEFINED data - extract as binary/byte array
-                        // This includes tags like UserComment (0x9286)
+                        // This includes tags like UserComment (0x9286) and ExifVersion (0x9000)
                         debug!(
                             "Extracting UNDEFINED tag {:#x} ({}) as binary data ({} bytes)",
                             entry.tag_id, tag_name, entry.count
@@ -585,7 +590,41 @@ impl ExifReader {
                         if let Ok(binary_data) =
                             value_extraction::extract_byte_array_value(&self.data, &entry)
                         {
-                            let tag_value = TagValue::Binary(binary_data);
+                            // Special handling for tags that need format conversion from binary to string
+                            let tag_value = match entry.tag_id {
+                                0x9000 => {
+                                    // ExifVersion - convert binary to ASCII string
+                                    // ExifTool: lib/Image/ExifTool/Exif.pm:2203-2209
+                                    let ascii_string: String = binary_data
+                                        .iter()
+                                        .map(|&b| b as char)
+                                        .collect::<String>()
+                                        .trim_end_matches('\0') // RawConv: strip trailing nulls
+                                        .to_string();
+                                    debug!(
+                                        "Converted ExifVersion binary {:?} to string '{}'",
+                                        binary_data, ascii_string
+                                    );
+                                    TagValue::String(ascii_string)
+                                }
+                                0xA000 => {
+                                    // FlashpixVersion - same conversion as ExifVersion
+                                    // ExifTool: lib/Image/ExifTool/Exif.pm:2613-2619
+                                    let ascii_string: String = binary_data
+                                        .iter()
+                                        .map(|&b| b as char)
+                                        .collect::<String>()
+                                        .trim_end_matches('\0')
+                                        .to_string();
+                                    debug!(
+                                        "Converted FlashpixVersion binary {:?} to string '{}'",
+                                        binary_data, ascii_string
+                                    );
+                                    TagValue::String(ascii_string)
+                                }
+                                _ => TagValue::Binary(binary_data),
+                            };
+
                             let source_info = self.create_tag_source_info(ifd_name);
                             self.store_tag_with_precedence(entry.tag_id, tag_value, source_info);
                             trace!(
