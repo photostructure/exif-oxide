@@ -6,7 +6,8 @@
 use anyhow::{Context, Result};
 use std::collections::HashMap;
 use std::path::Path;
-use tracing::debug;
+use std::time::Instant;
+use tracing::{debug, info};
 
 use crate::file_operations::read_directory;
 use crate::generators::lookup_tables;
@@ -42,12 +43,14 @@ pub fn discover_and_process_modules(
             let module_name = dir_name.to_string_lossy();
             debug!("  Processing module: {}", module_name);
             
+            let start = Instant::now();
             lookup_tables::process_config_directory(
                 &module_config_dir,
                 &module_name,
                 all_extracted_tables,
                 output_dir,
             )?;
+            info!("    🏭 Module {} code generation completed in {:.2}s", module_name, start.elapsed().as_secs_f64());
         }
     }
     
