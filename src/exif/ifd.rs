@@ -28,6 +28,7 @@ impl ExifReader {
         ifd_name: &str,
     ) -> Result<()> {
         use crate::implementations::olympus::{detect_olympus_signature, is_olympus_makernote};
+        use crate::implementations::ricoh::{detect_ricoh_signature, is_ricoh_makernote};
 
         let offset = entry.value_or_offset as usize;
         let size = entry.count as usize;
@@ -62,7 +63,7 @@ impl ExifReader {
         let mut adjusted_offset = offset;
         let mut _adjusted_base = 0i64;
 
-        // Detect Olympus signature and apply offset adjustments
+        // Detect manufacturer signatures and apply offset adjustments
         if let Some(signature) = detect_olympus_signature(make, &maker_notes_data) {
             let data_offset = signature.data_offset();
             let base_offset = signature.base_offset();
@@ -74,9 +75,25 @@ impl ExifReader {
                 "Detected Olympus signature: {:?}, data_offset: {}, base_offset: {}, adjusted_offset: {:#x}",
                 signature, data_offset, base_offset, adjusted_offset
             );
+        } else if let Some(signature) = detect_ricoh_signature(make, &maker_notes_data) {
+            let data_offset = signature.data_offset();
+            let base_offset = signature.base_offset();
+
+            adjusted_offset = offset + data_offset;
+            _adjusted_base = base_offset;
+
+            debug!(
+                "Detected RICOH signature: {:?}, data_offset: {}, base_offset: {}, adjusted_offset: {:#x}",
+                signature, data_offset, base_offset, adjusted_offset
+            );
         } else if is_olympus_makernote(make) {
             // Fallback for Olympus cameras without proper signature
             debug!("Olympus camera detected via Make field but no signature found, using default offset");
+        } else if is_ricoh_makernote(make) {
+            // Fallback for RICOH cameras without recognized signature
+            debug!(
+                "RICOH camera detected via Make field but no signature found, using default offset"
+            );
         }
 
         // Validate adjusted offset
@@ -197,6 +214,11 @@ impl ExifReader {
         for index in 0..num_entries {
             let entry_offset = ifd_offset + 2 + 12 * index;
 
+            debug!(
+                "Processing IFD {} entry {} of {} at offset {:#x}",
+                ifd_name, index, num_entries, entry_offset
+            );
+
             if entry_offset + 12 > self.data.len() {
                 debug!(
                     "IFD {} entry {} at offset {:#x} beyond data bounds (data len: {})",
@@ -230,6 +252,11 @@ impl ExifReader {
             }
         }
 
+        debug!(
+            "Completed processing all {} entries for IFD {}",
+            num_entries, ifd_name
+        );
+
         Ok(())
     }
 
@@ -259,10 +286,10 @@ impl ExifReader {
         };
 
         // Debug: Log all tag IDs being processed
-        // debug!(
-        //     "Processing tag {:#x} ({}) from {} (format: {:?}, count: {})",
-        //     entry.tag_id, entry.tag_id, ifd_name, entry.format, entry.count
-        // );
+        debug!(
+            "Processing tag {:#x} ({}) from {} (format: {:?}, count: {})",
+            entry.tag_id, entry.tag_id, ifd_name, entry.format, entry.count
+        );
 
         // Tag definitions are now looked up directly in tag kits during conversion
         // No need to pass around tag_def anymore
@@ -368,7 +395,15 @@ impl ExifReader {
                     // ExifTool: SubDirectory processing for nested IFDs
                     if self.is_subdirectory_tag(entry.tag_id) {
                         let tag_name = self.get_tag_name(entry.tag_id, ifd_name);
+                        debug!(
+                            "About to process subdirectory tag {:#x} ({}) from {} - value: {}",
+                            entry.tag_id, tag_name, ifd_name, value
+                        );
                         self.process_subdirectory_tag(entry.tag_id, value, &tag_name, None)?;
+                        debug!(
+                            "Completed subdirectory processing for tag {:#x} ({}) from {}",
+                            entry.tag_id, tag_name, ifd_name
+                        );
                     }
 
                     // Store raw value to avoid double conversion - conversions are applied in get_all_tag_entries
@@ -471,36 +506,36 @@ impl ExifReader {
                     // Special handling for MakerNotes - detect manufacturer signature and adjust offset
                     if entry.tag_id == 0x927C {
                         // MakerNotes
-                        return self.process_maker_notes_with_signature_detection(
+                        self.process_maker_notes_with_signature_detection(
                             &entry, byte_order, ifd_name,
-                        );
-                    }
+                        )?;
+                        // Continue processing after MakerNotes to allow other IFD entries
+                    } else {
+                        // For other subdirectory UNDEFINED tags, the data starts at the offset
+                        // ExifTool: MakerNotes and other subdirectories stored as UNDEFINED
+                        let offset = entry.value_or_offset as usize;
+                        let size = entry.count as usize;
 
-                    // For other subdirectory UNDEFINED tags, the data starts at the offset
-                    // ExifTool: MakerNotes and other subdirectories stored as UNDEFINED
-                    let offset = entry.value_or_offset as usize;
-                    let size = entry.count as usize;
-
-                    // Get tag name from definition or use fallback for known subdirectory tags
-                    let tag_name = match entry.tag_id {
-                        0x927C => Some("MakerNotes".to_string()),
-                        _ => {
-                            // Try to get name from tag kit
-                            let name = self.get_tag_name(entry.tag_id, ifd_name);
-                            if name.starts_with("Tag_") {
-                                debug!(
-                                    "UNDEFINED subdirectory tag {:#x} has no tag definition",
-                                    entry.tag_id
-                                );
-                                None // Skip unknown subdirectory tags
-                            } else {
-                                Some(name)
+                        // Get tag name from definition or use fallback for known subdirectory tags
+                        let tag_name = match entry.tag_id {
+                            0x927C => Some("MakerNotes".to_string()),
+                            _ => {
+                                // Try to get name from tag kit
+                                let name = self.get_tag_name(entry.tag_id, ifd_name);
+                                if name.starts_with("Tag_") {
+                                    debug!(
+                                        "UNDEFINED subdirectory tag {:#x} has no tag definition",
+                                        entry.tag_id
+                                    );
+                                    None // Skip unknown subdirectory tags
+                                } else {
+                                    Some(name)
+                                }
                             }
-                        }
-                    };
+                        };
 
-                    if let Some(name) = tag_name {
-                        debug!(
+                        if let Some(name) = tag_name {
+                            debug!(
                             "Processing UNDEFINED subdirectory tag {:#x} ({}) from {}: offset={:#x}, size={}",
                             entry.tag_id,
                             name,
@@ -508,12 +543,13 @@ impl ExifReader {
                             offset,
                             size
                         );
-                        self.process_subdirectory_tag(
-                            entry.tag_id,
-                            offset as u32,
-                            &name,
-                            Some(size),
-                        )?;
+                            self.process_subdirectory_tag(
+                                entry.tag_id,
+                                offset as u32,
+                                &name,
+                                Some(size),
+                            )?;
+                        }
                     }
                 } else {
                     // Regular UNDEFINED data - extract the binary data
@@ -653,6 +689,10 @@ impl ExifReader {
             }
         }
 
+        debug!(
+            "Completed parse_ifd_entry for tag {:#x} from {}",
+            entry.tag_id, ifd_name
+        );
         Ok(())
     }
 

@@ -84,7 +84,7 @@ This TPP implements "Plan J" - a codegen-time registry that generates direct fun
 
 ### Design Decisions
 1. **No new crate needed** - Codegen only needs a registry returning function names
-2. **Module-scoped lookups** - Try `Canon.pm::funcname()` before `funcname()`
+2. **Module-scoped lookups** - Try `Canon::funcname()` before `funcname()`
 3. **Perl expression as key** - Map exact Perl strings to Rust functions
 4. **Direct function calls** - Generate imports and calls at codegen time
 

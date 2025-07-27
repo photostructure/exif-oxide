@@ -25,6 +25,7 @@ use crate::file_detection::FileTypeDetector;
 use crate::types::{ExifData, Result, TagEntry, TagValue};
 use crate::xmp::XmpProcessor;
 use indexmap::IndexMap;
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufReader, Read, Seek, SeekFrom};
 use std::path::Path;
@@ -1042,20 +1043,21 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
         if missing_convs.is_empty() {
             None
         } else {
-            // Group by expression and collect tag IDs
+            // Group by expression and collect tag information
             use std::collections::HashMap;
-            let mut grouped: HashMap<String, Vec<u32>> = HashMap::new();
+            let mut grouped: HashMap<String, Vec<(u32, String, String)>> = HashMap::new();
 
             for miss in &missing_convs {
-                grouped
-                    .entry(miss.expression.clone())
-                    .or_default()
-                    .push(miss.tag_id);
+                grouped.entry(miss.expression.clone()).or_default().push((
+                    miss.tag_id,
+                    miss.tag_name.clone(),
+                    miss.group.clone(),
+                ));
             }
 
             // Format as strings
             let mut missing_strs = Vec::new();
-            for (expr, tag_ids) in grouped {
+            for (expr, tag_info) in grouped {
                 let conv_type = if missing_convs.iter().any(|m| {
                     m.expression == expr
                         && matches!(
@@ -1068,9 +1070,9 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
                     "ValueConv"
                 };
 
-                let tags_str = tag_ids
+                let tags_str = tag_info
                     .iter()
-                    .map(|id| format!("0x{:04x}", id))
+                    .map(|(_, tag_name, group)| format!("{}:{}", group, tag_name))
                     .collect::<Vec<_>>()
                     .join(", ");
 
@@ -1090,8 +1092,18 @@ pub fn extract_metadata(path: &Path, show_missing: bool, show_warnings: bool) ->
     let source_file = path.to_string_lossy().to_string();
     let mut exif_data = ExifData::new(source_file, env!("CARGO_PKG_VERSION").to_string());
 
+    // ⚠️ CRITICAL ARCHITECTURE: Build composite tags after all tags (including File group tags) are available
+    // This ensures File:ImageWidth/ImageHeight are available for Composite:ImageSize dependency resolution
+    // DO NOT move this back to EXIF processing - it will break composite tag dependency resolution
+    // See: docs/todo/P10a-exif-required-tags.md "Composite:ImageSize Architecture Fix"
+    let composite_tags = build_composite_tags_from_entries(&tag_entries);
+
+    // Add composite tags to the tag_entries collection
+    let mut all_tag_entries = tag_entries;
+    all_tag_entries.extend(composite_tags);
+
     // Set tag entries (new API)
-    exif_data.tags = tag_entries;
+    exif_data.tags = all_tag_entries;
 
     // Set legacy tags for backward compatibility
     exif_data.legacy_tags = tags;
@@ -1215,6 +1227,50 @@ fn extract_rw2_jpeg_preview_dimensions(
     } else {
         None
     }
+}
+
+/// Build composite tags from a collection of TagEntry objects
+/// This enables composite tag processing after all tags (including File group tags) are available
+fn build_composite_tags_from_entries(tag_entries: &[TagEntry]) -> Vec<TagEntry> {
+    // Convert TagEntry collection to the format expected by composite tag processing
+    let mut available_tags = HashMap::new();
+
+    for entry in tag_entries {
+        // Add with group prefix (e.g., "File:ImageWidth")
+        let prefixed_name = format!("{}:{}", entry.group, entry.name);
+        available_tags.insert(prefixed_name, entry.value.clone());
+
+        // Also add without group prefix for broader matching (e.g., "ImageWidth")
+        available_tags.insert(entry.name.clone(), entry.value.clone());
+    }
+
+    // Delegate to the composite tag processing system
+    let computed_composites = crate::composite_tags::resolve_and_compute_composites(available_tags);
+
+    // Convert results back to TagEntry format
+    let mut composite_tag_entries = Vec::new();
+    for (composite_name, value) in computed_composites {
+        // Parse the composite name to extract the tag name (remove "Composite:" prefix if present)
+        let tag_name = if composite_name.starts_with("Composite:") {
+            composite_name
+                .strip_prefix("Composite:")
+                .unwrap_or(&composite_name)
+        } else {
+            &composite_name
+        };
+
+        // Apply PrintConv to get human-readable representation
+        // For now, assume value and print are the same - PrintConv will be applied during tag processing
+        composite_tag_entries.push(TagEntry {
+            group: "Composite".to_string(),
+            group1: "Composite".to_string(),
+            name: tag_name.to_string(),
+            value: value.clone(),
+            print: value, // PrintConv already applied by composite processing
+        });
+    }
+
+    composite_tag_entries
 }
 
 #[cfg(test)]

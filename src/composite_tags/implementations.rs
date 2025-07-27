@@ -56,12 +56,9 @@ pub fn compute_image_size(available_tags: &HashMap<String, TagValue>) -> Option<
 fn is_canon_raw_tiff_type(available_tags: &HashMap<String, TagValue>) -> bool {
     // Check for File:FileType tag which should indicate RAW format
     if let Some(file_type) = available_tags.get("File:FileType") {
-        if let Some(type_str) = file_type.as_string() {
-            // Match ExifTool's TIFF_TYPE regex: /^(CR2|Canon 1D RAW|IIQ|EIP)$/
-            match type_str {
-                "CR2" | "Canon 1D RAW" | "IIQ" | "EIP" => return true,
-                _ => {}
-            }
+        // Match ExifTool's TIFF_TYPE regex: /^(CR2|Canon 1D RAW|IIQ|EIP)$/
+        if let Some("CR2" | "Canon 1D RAW" | "IIQ" | "EIP") = file_type.as_string() {
+            return true;
         }
     }
 

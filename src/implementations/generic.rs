@@ -7,18 +7,20 @@ use std::collections::HashMap;
 /// This avoids duplicating the match logic across all generated modules
 pub fn apply_fallback_print_conv(
     tag_id: u32,
+    tag_name: &str,
+    group: &str,
     value: &TagValue,
     print_conv_type: PrintConvTypeRef,
 ) -> TagValue {
     match print_conv_type {
         PrintConvTypeRef::None => value.clone(),
         PrintConvTypeRef::Simple(lookup) => apply_simple_print_conv(value, lookup),
-        PrintConvTypeRef::Expression(expr) => {
-            crate::implementations::missing::missing_print_conv(tag_id, expr, value)
-        }
-        PrintConvTypeRef::Manual(func_name) => {
-            crate::implementations::missing::missing_print_conv(tag_id, func_name, value)
-        }
+        PrintConvTypeRef::Expression(expr) => crate::implementations::missing::missing_print_conv(
+            tag_id, tag_name, group, expr, value,
+        ),
+        PrintConvTypeRef::Manual(func_name) => crate::implementations::missing::missing_print_conv(
+            tag_id, tag_name, group, func_name, value,
+        ),
     }
 }
 

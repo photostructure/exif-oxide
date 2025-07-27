@@ -6,7 +6,7 @@
 use crate::types::TagValue;
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 /// A single extracted metadata tag with both its converted value and display string.
 ///

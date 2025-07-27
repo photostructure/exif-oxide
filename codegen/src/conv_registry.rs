@@ -18,18 +18,18 @@ static PRINTCONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
     let mut m = HashMap::new();
     
     // Common sprintf patterns
-    m.insert("sprintf(\"%.1f mm\",$val)", ("crate::implementations::print_conv", "focallength_print_conv"));
-    m.insert("sprintf(\"%.1f\",$val)", ("crate::implementations::print_conv", "decimal_1_print_conv"));
-    m.insert("sprintf(\"%.2f\",$val)", ("crate::implementations::print_conv", "decimal_2_print_conv"));
-    m.insert("sprintf(\"%+d\",$val)", ("crate::implementations::print_conv", "signed_int_print_conv"));
-    m.insert("sprintf(\"%.3f mm\",$val)", ("crate::implementations::print_conv", "focal_length_3_decimals_print_conv"));
+    m.insert("sprintf(\"%.1f mm\", $val)", ("crate::implementations::print_conv", "focallength_print_conv"));
+    m.insert("sprintf(\"%.1f\", $val)", ("crate::implementations::print_conv", "decimal_1_print_conv"));
+    m.insert("sprintf(\"%.2f\", $val)", ("crate::implementations::print_conv", "decimal_2_print_conv"));
+    m.insert("sprintf(\"%+d\", $val)", ("crate::implementations::print_conv", "signed_int_print_conv"));
+    m.insert("sprintf(\"%.3f mm\", $val)", ("crate::implementations::print_conv", "focal_length_3_decimals_print_conv"));
     
     // Conditional expressions
     m.insert("$val =~ /^(inf|undef)$/ ? $val : \"$val m\"", ("crate::implementations::print_conv", "gpsaltitude_print_conv"));
     
     // Module-scoped functions
-    m.insert("GPS.pm::ConvertTimeStamp($val)", ("crate::implementations::value_conv", "gpstimestamp_value_conv"));
-    m.insert("ID3.pm::ConvertTimeStamp($val)", ("crate::implementations::value_conv", "id3_timestamp_value_conv"));
+    m.insert("GPS::ConvertTimeStamp($val)", ("crate::implementations::value_conv", "gpstimestamp_value_conv"));
+    m.insert("ID3::ConvertTimeStamp($val)", ("crate::implementations::value_conv", "id3_timestamp_value_conv"));
     
     // Complex expressions (placeholder names from tag_kit.pl)
     // These need to be mapped to appropriate implementations based on the tag
@@ -99,8 +99,8 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
     m.insert("Image::ExifTool::GPS::ConvertTimeStamp($val)", ("crate::implementations::value_conv", "gpstimestamp_value_conv"));
     
     // APEX conversions
-    m.insert("IsFloat($val) && abs($val)<100 ? 2**(-$val) : 0", ("crate::implementations::value_conv", "apex_shutter_speed_value_conv"));
-    m.insert("2 ** ($val / 2)", ("crate::implementations::value_conv", "apex_aperture_value_conv"));
+    m.insert("IsFloat($val) && abs($val) < 100 ? 2**(-$val) : 0", ("crate::implementations::value_conv", "apex_shutter_speed_value_conv"));
+    m.insert("2**($val / 2)", ("crate::implementations::value_conv", "apex_aperture_value_conv"));
     
     // Manual function mappings
     m.insert("gpslatitude_value_conv", ("crate::implementations::value_conv", "gps_coordinate_value_conv"));
@@ -136,30 +136,36 @@ pub fn lookup_tag_specific_printconv(module: &str, tag_name: &str) -> Option<(&'
 /// Look up PrintConv implementation by Perl expression
 /// Tries module-scoped lookup first, then unscoped
 pub fn lookup_printconv(expr: &str, module: &str) -> Option<(&'static str, &'static str)> {
-    // Normalize module name (GPS_pm -> GPS.pm)
-    let normalized_module = module.replace("_pm", ".pm");
+    // Normalize the expression for consistent lookup
+    let normalized_expr = normalize_expression(expr);
     
-    // Try module-scoped first
-    let scoped_key = format!("{}::{}", normalized_module, expr);
+    // Normalize module name (GPS_pm -> GPS)
+    let normalized_module = module.replace("_pm", "");
+    
+    // Try module-scoped first with normalized expression
+    let scoped_key = format!("{}::{}", normalized_module, normalized_expr);
     if let Some(value) = PRINTCONV_REGISTRY.get(scoped_key.as_str()) {
         return Some(*value);
     }
     
-    // Fall back to exact match
-    PRINTCONV_REGISTRY.get(expr).copied()
+    // Fall back to exact match with normalized expression
+    PRINTCONV_REGISTRY.get(normalized_expr.as_str()).copied()
 }
 
 /// Look up ValueConv implementation by Perl expression
 pub fn lookup_valueconv(expr: &str, module: &str) -> Option<(&'static str, &'static str)> {
+    // Normalize the expression for consistent lookup
+    let normalized_expr = normalize_expression(expr);
+    
     // Same module-scoped logic as PrintConv
-    let normalized_module = module.replace("_pm", ".pm");
-    let scoped_key = format!("{}::{}", normalized_module, expr);
+    let normalized_module = module.replace("_pm", "");
+    let scoped_key = format!("{}::{}", normalized_module, normalized_expr);
     
     if let Some(value) = VALUECONV_REGISTRY.get(scoped_key.as_str()) {
         return Some(*value);
     }
     
-    VALUECONV_REGISTRY.get(expr).copied()
+    VALUECONV_REGISTRY.get(normalized_expr.as_str()).copied()
 }
 
 /// Normalize expression for consistent lookup
@@ -487,5 +493,51 @@ mod tests {
             normalize_expression("sprintf(\"%.1f\",$val)"),
             "sprintf(\"%.1f\", $val)"
         );
+    }
+    
+    #[test]
+    fn test_registry_keys_are_normalized() {
+        let mut normalization_issues = Vec::new();
+        
+        // Check PRINTCONV_REGISTRY keys
+        for &key in PRINTCONV_REGISTRY.keys() {
+            let normalized = normalize_expression(key);
+            if key != normalized {
+                normalization_issues.push(format!(
+                    "PRINTCONV_REGISTRY key '{}' should be normalized to '{}'", 
+                    key, normalized
+                ));
+            }
+        }
+        
+        // Check VALUECONV_REGISTRY keys
+        for &key in VALUECONV_REGISTRY.keys() {
+            let normalized = normalize_expression(key);
+            if key != normalized {
+                normalization_issues.push(format!(
+                    "VALUECONV_REGISTRY key '{}' should be normalized to '{}'", 
+                    key, normalized
+                ));
+            }
+        }
+        
+        // Check TAG_SPECIFIC_PRINTCONV keys (excluding module-scoped ones)
+        for &key in TAG_SPECIFIC_PRINTCONV.keys() {
+            // Skip module-scoped keys (contain ::)
+            if !key.contains("::") {
+                let normalized = normalize_expression(key);
+                if key != normalized {
+                    normalization_issues.push(format!(
+                        "TAG_SPECIFIC_PRINTCONV key '{}' should be normalized to '{}'", 
+                        key, normalized
+                    ));
+                }
+            }
+        }
+        
+        if !normalization_issues.is_empty() {
+            panic!("Registry contains keys that need normalization:\n{}", 
+                   normalization_issues.join("\n"));
+        }
     }
 }

@@ -147,9 +147,9 @@ impl ExifReader {
         };
         self.process_subdirectory(&dir_info)?;
 
-        // Build composite tags after all extraction is complete
+        // NOTE: Composite tag building moved to format processing level
+        // to ensure File group tags are available as dependencies
         // Milestone 8f: Composite tag infrastructure
-        self.build_composite_tags();
 
         // NOTE: GPS coordinate decimal conversion is deferred to Milestone 8 (ValueConv)
         // Milestone 6 outputs raw rational arrays matching ExifTool default behavior

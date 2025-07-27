@@ -10,6 +10,8 @@ use std::sync::{LazyLock, Mutex};
 #[derive(Debug, Clone)]
 pub struct MissingConversion {
     pub tag_id: u32,
+    pub tag_name: String,
+    pub group: String,
     pub expression: String,
     pub conv_type: ConversionType,
 }
@@ -24,7 +26,13 @@ static MISSING_CONVERSIONS: LazyLock<Mutex<Vec<MissingConversion>>> =
     LazyLock::new(|| Mutex::new(Vec::new()));
 
 /// Record a missing PrintConv implementation
-pub fn missing_print_conv(tag_id: u32, expr: &str, value: &TagValue) -> TagValue {
+pub fn missing_print_conv(
+    tag_id: u32,
+    tag_name: &str,
+    group: &str,
+    expr: &str,
+    value: &TagValue,
+) -> TagValue {
     let mut missing = MISSING_CONVERSIONS.lock().unwrap();
 
     // Only record each unique expression once
@@ -35,6 +43,8 @@ pub fn missing_print_conv(tag_id: u32, expr: &str, value: &TagValue) -> TagValue
     if !already_recorded {
         missing.push(MissingConversion {
             tag_id,
+            tag_name: tag_name.to_string(),
+            group: group.to_string(),
             expression: expr.to_string(),
             conv_type: ConversionType::PrintConv,
         });
@@ -44,7 +54,13 @@ pub fn missing_print_conv(tag_id: u32, expr: &str, value: &TagValue) -> TagValue
 }
 
 /// Record a missing ValueConv implementation
-pub fn missing_value_conv(tag_id: u32, expr: &str, value: &TagValue) -> TagValue {
+pub fn missing_value_conv(
+    tag_id: u32,
+    tag_name: &str,
+    group: &str,
+    expr: &str,
+    value: &TagValue,
+) -> TagValue {
     let mut missing = MISSING_CONVERSIONS.lock().unwrap();
 
     let already_recorded = missing
@@ -54,6 +70,8 @@ pub fn missing_value_conv(tag_id: u32, expr: &str, value: &TagValue) -> TagValue
     if !already_recorded {
         missing.push(MissingConversion {
             tag_id,
+            tag_name: tag_name.to_string(),
+            group: group.to_string(),
             expression: expr.to_string(),
             conv_type: ConversionType::ValueConv,
         });
