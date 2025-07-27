@@ -67,7 +67,7 @@ impl OlympusRawHandler {
         let extracted_tags: Vec<(u16, TagValue)> = reader
             .get_extracted_tags()
             .iter()
-            .map(|(tag_id, tag_value)| (*tag_id, tag_value.clone()))
+            .map(|((tag_id, _namespace), tag_value)| (*tag_id, tag_value.clone()))
             .collect();
 
         // Process sections found in the maker notes using generated enum

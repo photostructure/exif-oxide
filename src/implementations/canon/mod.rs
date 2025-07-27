@@ -152,8 +152,7 @@ fn process_canon_binary_data_with_existing_processors(
 
     // Get model for conditional processing
     let model = exif_reader
-        .extracted_tags
-        .get(&0x0110) // Model tag
+        .get_tag_across_namespaces(0x0110) // Model tag
         .and_then(|tag| tag.as_string())
         .unwrap_or("");
 
@@ -169,9 +168,6 @@ fn process_canon_binary_data_with_existing_processors(
 
     // Now store all collected tags (after all borrows are released)
     for (synthetic_id, converted_value, full_tag_name) in tags_to_store {
-        exif_reader
-            .extracted_tags
-            .insert(synthetic_id, converted_value);
         // Store the mapping from synthetic ID to tag name
         exif_reader
             .synthetic_tag_names
@@ -185,9 +181,9 @@ fn process_canon_binary_data_with_existing_processors(
             "Canon".to_string(),             // ifd_name: Canon so get_group1() returns "Canon"
             "Canon::BinaryData".to_string(), // processor: Canon binary data processor
         );
-        exif_reader
-            .tag_sources
-            .insert(synthetic_id, canon_source_info);
+
+        // Use namespace-aware storage
+        exif_reader.store_tag_with_precedence(synthetic_id, converted_value, canon_source_info);
 
         debug!(
             "Stored Canon tag {} with synthetic ID 0x{:04X} and TagSourceInfo with ifd_name='Canon'",
@@ -840,13 +836,13 @@ fn apply_canon_main_table_print_conv(exif_reader: &mut crate::exif::ExifReader) 
 
     debug!("Applying Canon main table PrintConv processing");
 
-    // Create a list of tag IDs that need Canon-specific PrintConv processing
+    // Create a list of tag keys that need Canon-specific PrintConv processing
     let mut tags_to_update = Vec::new();
 
     // Find Canon tags that need PrintConv processing
-    for (&tag_id, tag_value) in &exif_reader.extracted_tags {
+    for (&(tag_id, ref namespace), tag_value) in &exif_reader.extracted_tags {
         // Only process tags that have Canon source info (MakerNotes namespace)
-        if let Some(source_info) = exif_reader.tag_sources.get(&tag_id) {
+        if let Some(source_info) = exif_reader.tag_sources.get(&(tag_id, namespace.clone())) {
             if source_info.namespace == "MakerNotes" && source_info.ifd_name.starts_with("Canon") {
                 match tag_id {
                     0x10 => {
@@ -855,12 +851,14 @@ fn apply_canon_main_table_print_conv(exif_reader: &mut crate::exif::ExifReader) 
                         if let TagValue::U32(model_id) = tag_value {
                             if let Some(model_name) = lookup_canon_model_id(*model_id) {
                                 debug!("Canon CanonModelID: {} -> {}", model_id, model_name);
-                                tags_to_update
-                                    .push((tag_id, TagValue::String(model_name.to_string())));
+                                tags_to_update.push((
+                                    (tag_id, namespace.clone()),
+                                    TagValue::String(model_name.to_string()),
+                                ));
                             } else {
                                 debug!("Canon CanonModelID: {} (unknown model)", model_id);
                                 tags_to_update.push((
-                                    tag_id,
+                                    (tag_id, namespace.clone()),
                                     TagValue::String(format!("Unknown model ({model_id})")),
                                 ));
                             }
@@ -885,8 +883,8 @@ fn apply_canon_main_table_print_conv(exif_reader: &mut crate::exif::ExifReader) 
     }
 
     // Apply the PrintConv updates
-    for (tag_id, new_value) in tags_to_update {
-        exif_reader.extracted_tags.insert(tag_id, new_value);
+    for (tag_key, new_value) in tags_to_update {
+        exif_reader.extracted_tags.insert(tag_key, new_value);
     }
 
     debug!("Canon main table PrintConv processing completed");
@@ -926,9 +924,9 @@ fn process_canon_subdirectory_tags(exif_reader: &mut crate::exif::ExifReader) ->
     // Collect tags that have subdirectory processing
     let mut subdirectory_tags = Vec::new();
 
-    for (&tag_id, tag_value) in &exif_reader.extracted_tags {
+    for (&(tag_id, ref namespace), tag_value) in &exif_reader.extracted_tags {
         // Check if this is a Canon tag with subdirectory processing
-        if let Some(source_info) = exif_reader.tag_sources.get(&tag_id) {
+        if let Some(source_info) = exif_reader.tag_sources.get(&(tag_id, namespace.clone())) {
             if source_info.namespace == "MakerNotes" && source_info.ifd_name.starts_with("Canon") {
                 // Check if this tag has subdirectory processing
                 if tag_kit::has_subdirectory(tag_id as u32) {
@@ -1025,8 +1023,11 @@ fn process_canon_subdirectory_tags(exif_reader: &mut crate::exif::ExifReader) ->
                 }
 
                 // Remove the original array tag since we've expanded it
-                exif_reader.extracted_tags.remove(&tag_id);
-                exif_reader.tag_sources.remove(&tag_id);
+                // We need to find the right namespace for this tag - check the subdirectory_tags
+                // The namespace should be from the source_info we collected earlier
+                let tag_key = (tag_id, "MakerNotes".to_string()); // Canon subdirectory tags are in MakerNotes namespace
+                exif_reader.extracted_tags.remove(&tag_key);
+                exif_reader.tag_sources.remove(&tag_key);
             }
             Err(e) => {
                 debug!(
@@ -1117,9 +1118,11 @@ mod tests {
         let mock_data = TagValue::U16Array(vec![0; 100]); // Mock binary data
 
         // Store the tag in the reader
-        exif_reader.extracted_tags.insert(tag_id, mock_data);
+        exif_reader
+            .extracted_tags
+            .insert((tag_id, "Canon".to_string()), mock_data);
         exif_reader.tag_sources.insert(
-            tag_id,
+            (tag_id, "Canon".to_string()),
             crate::types::TagSourceInfo::new(
                 "MakerNotes".to_string(),
                 "Canon".to_string(),
@@ -1230,7 +1233,9 @@ mod tests {
             exif_reader
                 .synthetic_tag_names
                 .insert(synthetic_id, full_tag_name);
-            exif_reader.extracted_tags.insert(synthetic_id, value);
+            exif_reader
+                .extracted_tags
+                .insert((synthetic_id, "MakerNotes".to_string()), value);
         }
 
         // Should have only 2 tags (the known ones)

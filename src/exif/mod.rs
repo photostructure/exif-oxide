@@ -33,11 +33,12 @@ use tracing::{debug, trace};
 /// ExifTool: lib/Image/ExifTool/Exif.pm ProcessExif function architecture
 #[derive(Debug)]
 pub struct ExifReader {
-    /// Extracted tag values by tag ID
-    pub(crate) extracted_tags: HashMap<u16, TagValue>,
+    /// Extracted tag values by (tag_id, namespace) for context-aware storage
+    /// ExifTool: Dynamic tag table switching requires namespace-aware storage
+    pub(crate) extracted_tags: HashMap<(u16, String), TagValue>,
     /// Enhanced tag source tracking for conflict resolution
-    /// Maps tag_id -> TagSourceInfo with namespace, priority, and processor context
-    pub(crate) tag_sources: HashMap<u16, TagSourceInfo>,
+    /// Maps (tag_id, namespace) -> TagSourceInfo with namespace, priority, and processor context
+    pub(crate) tag_sources: HashMap<(u16, String), TagSourceInfo>,
     /// TIFF header information
     pub(crate) header: Option<TiffHeader>,
     /// Raw EXIF data buffer
@@ -166,9 +167,20 @@ impl ExifReader {
         self.composite_tags.clear();
 
         // Build initial available tags lookup from extracted tags
+        // TODO: Update composite_tags module to handle namespace-aware storage
+        let legacy_extracted_tags: HashMap<u16, TagValue> = self
+            .extracted_tags
+            .iter()
+            .map(|((tag_id, _namespace), value)| (*tag_id, value.clone()))
+            .collect();
+        let legacy_tag_sources: HashMap<u16, crate::types::TagSourceInfo> = self
+            .tag_sources
+            .iter()
+            .map(|((tag_id, _namespace), source)| (*tag_id, source.clone()))
+            .collect();
         let available_tags = crate::composite_tags::build_available_tags_map(
-            &self.extracted_tags,
-            &self.tag_sources,
+            &legacy_extracted_tags,
+            &legacy_tag_sources,
         );
 
         // Delegate the multi-pass resolution and computation to the composite_tags module
@@ -181,7 +193,7 @@ impl ExifReader {
 
     /// Get extracted tag by ID
     pub fn get_tag_by_id(&self, tag_id: u16) -> Option<&TagValue> {
-        self.extracted_tags.get(&tag_id)
+        self.get_tag_across_namespaces(tag_id)
     }
 
     /// Lookup tag name by source information to resolve tag ID conflicts
@@ -229,9 +241,9 @@ impl ExifReader {
         let mut result = HashMap::new();
 
         // Add extracted tags
-        for (&tag_id, value) in &self.extracted_tags {
+        for (&(tag_id, ref namespace), value) in &self.extracted_tags {
             // Get the enhanced source info for this tag
-            let source_info = self.tag_sources.get(&tag_id);
+            let source_info = self.tag_sources.get(&(tag_id, namespace.clone()));
 
             // Look up tag name using format-specific tables when appropriate
             let (group_name, base_tag_name) = if tag_id >= 0xC000 {
@@ -241,24 +253,13 @@ impl ExifReader {
                     if let Some((group_part, name_part)) = synthetic_name.split_once(':') {
                         (group_part.to_string(), name_part.to_string())
                     } else {
-                        // No group prefix, use source info or default
-                        let group = if let Some(source_info) = source_info {
-                            source_info.namespace.clone()
-                        } else {
-                            "EXIF".to_string()
-                        };
-                        (group, synthetic_name.clone())
+                        // No group prefix, use namespace from key
+                        (namespace.clone(), synthetic_name.clone())
                     }
                 } else {
                     // Fall back to manufacturer-specific names for other synthetic IDs
-                    let group = if let Some(source_info) = source_info {
-                        source_info.namespace.clone()
-                    } else {
-                        "EXIF".to_string()
-                    };
-
-                    let tag_name = if let Some(source_info) = source_info {
-                        match source_info.namespace.as_str() {
+                    let tag_name = if let Some(_source_info) = source_info {
+                        match namespace.as_str() {
                             "Canon" => canon::get_canon_tag_name(tag_id)
                                 .unwrap_or_else(|| format!("Tag_{tag_id:04X}")),
                             "Sony" => sony::get_sony_tag_name(tag_id)
@@ -271,20 +272,15 @@ impl ExifReader {
                             .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
                     };
 
-                    (group, tag_name)
+                    (namespace.clone(), tag_name)
                 }
             } else {
-                // Use namespace from TagSourceInfo or default to EXIF for non-synthetic tags
-                let group = if let Some(source_info) = source_info {
-                    source_info.namespace.clone()
-                } else {
-                    "EXIF".to_string()
-                };
+                // Use namespace from key for non-synthetic tags
 
                 // Check for RAW format-specific tag names
                 // ExifTool: Uses format-specific tag tables (e.g., PanasonicRaw::Main for RW2 files)
                 let tag_name = if let Some(file_type) = &self.original_file_type {
-                    if file_type == "RW2" && group == "EXIF" {
+                    if file_type == "RW2" && namespace == "EXIF" {
                         // Use Panasonic-specific tag definitions for RW2 files
                         // ExifTool: PanasonicRaw.pm %Image::ExifTool::PanasonicRaw::Main hash
                         if let Some(panasonic_name) =
@@ -312,7 +308,7 @@ impl ExifReader {
                     self.lookup_tag_name_by_source(tag_id, source_info)
                 };
 
-                (group, tag_name)
+                (namespace.clone(), tag_name)
             };
 
             // Format with group prefix
@@ -361,9 +357,9 @@ impl ExifReader {
         let mut entries = Vec::new();
 
         // Process extracted tags
-        for (&tag_id, raw_value) in &self.extracted_tags {
+        for (&(tag_id, ref namespace), raw_value) in &self.extracted_tags {
             // Get the enhanced source info for this tag
-            let source_info = self.tag_sources.get(&tag_id);
+            let source_info = self.tag_sources.get(&(tag_id, namespace.clone()));
 
             // Look up tag name and group, handling synthetic tags properly
             let (group_name, base_tag_name, _tag_def) = if tag_id >= 0xC000 {
@@ -373,13 +369,8 @@ impl ExifReader {
                     if let Some((group_part, name_part)) = synthetic_name.split_once(':') {
                         (group_part, name_part.to_string(), None::<()>)
                     } else {
-                        // No group prefix, use source info or default
-                        let group = if let Some(source_info) = source_info {
-                            source_info.namespace.as_str()
-                        } else {
-                            "EXIF"
-                        };
-                        (group, synthetic_name.clone(), None)
+                        // No group prefix, use namespace from key
+                        (namespace.as_str(), synthetic_name.clone(), None)
                     }
                 } else {
                     // Canon-specific synthetic tag IDs - try conditional resolution first
@@ -391,22 +382,11 @@ impl ExifReader {
                     if let Some(conditional_name) =
                         self.resolve_conditional_tag_name(tag_id, count, None, None)
                     {
-                        let group = if let Some(source_info) = source_info {
-                            source_info.namespace.as_str()
-                        } else {
-                            "EXIF"
-                        };
-                        (group, conditional_name, None)
+                        (namespace.as_str(), conditional_name, None)
                     } else {
                         // Fall back to manufacturer-specific tag names
-                        let group = if let Some(source_info) = source_info {
-                            source_info.namespace.as_str()
-                        } else {
-                            "EXIF"
-                        };
-
-                        let tag_name = if let Some(source_info) = source_info {
-                            match source_info.namespace.as_str() {
+                        let tag_name = if let Some(_source_info) = source_info {
+                            match namespace.as_str() {
                                 "Canon" => canon::get_canon_tag_name(tag_id)
                                     .unwrap_or_else(|| format!("Tag_{tag_id:04X}")),
                                 "Sony" => sony::get_sony_tag_name(tag_id)
@@ -419,16 +399,11 @@ impl ExifReader {
                                 .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
                         };
 
-                        (group, tag_name, None)
+                        (namespace.as_str(), tag_name, None)
                     }
                 }
             } else {
-                // Use namespace from TagSourceInfo or default to EXIF for regular tags
-                let group = if let Some(source_info) = source_info {
-                    source_info.namespace.as_str()
-                } else {
-                    "EXIF" // Default fallback
-                };
+                // Use namespace from key for regular tags
                 let (name, def) = {
                     // Check if this tag should be looked up in the global table based on source context
                     // ExifTool: lib/Image/ExifTool/Exif.pm:6375 uses context-specific tag tables
@@ -467,73 +442,47 @@ impl ExifReader {
                         {
                             (conditional_name, None)
                         } else {
-                            // Context-aware tag lookup to handle IFD-specific tag collisions
+                            // Context-aware tag lookup using namespace from key
                             // ExifTool: lib/Image/ExifTool/Exif.pm:8968 GPS vs InteropIFD conflict handling
-                            let (name, _tag_def) = if let Some(source_info) = source_info {
-                                match (source_info.ifd_name.as_str(), tag_id) {
-                                    // InteropIFD-specific tags
-                                    // ExifTool: lib/Image/ExifTool/Exif.pm InteropIFD table
-                                    ("InteropIFD", 0x0001) => {
-                                        ("InteroperabilityIndex".to_string(), None::<()>)
-                                    }
-                                    ("InteropIFD", 0x0002) => {
-                                        ("InteroperabilityVersion".to_string(), None::<()>)
-                                    }
-
-                                    // GPS IFD tags - check GPS tag kit first to avoid conflicts
-                                    // (e.g., tag 0x0002 is GPSLatitude in GPS IFD, InteropVersion in InteropIFD)
-                                    ("GPS", _) => {
-                                        let name = GPS_PM_TAG_KITS
-                                            .get(&(tag_id as u32))
-                                            .map(|def| def.name.to_string())
-                                            .or_else(|| {
-                                                EXIF_PM_TAG_KITS
-                                                    .get(&(tag_id as u32))
-                                                    .map(|def| def.name.to_string())
-                                            })
-                                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
-                                        (name, None)
-                                    }
-
-                                    // All other contexts use global lookup
-                                    _ => {
-                                        let name = EXIF_PM_TAG_KITS
-                                            .get(&(tag_id as u32))
-                                            .map(|def| def.name.to_string())
-                                            .or_else(|| {
-                                                GPS_PM_TAG_KITS
-                                                    .get(&(tag_id as u32))
-                                                    .map(|def| def.name.to_string())
-                                            })
-                                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
-                                        (name, None)
-                                    }
+                            let (name, _tag_def) = match (namespace.as_str(), tag_id) {
+                                // InteropIFD-specific tags
+                                // ExifTool: lib/Image/ExifTool/Exif.pm InteropIFD table
+                                ("InteropIFD", 0x0001) => {
+                                    ("InteroperabilityIndex".to_string(), None::<()>)
                                 }
-                            } else {
-                                // No context info - fall back to global lookup
-                                let name = EXIF_PM_TAG_KITS
-                                    .get(&(tag_id as u32))
-                                    .map(|def| def.name.to_string())
-                                    .or_else(|| {
-                                        GPS_PM_TAG_KITS
-                                            .get(&(tag_id as u32))
-                                            .map(|def| def.name.to_string())
-                                    })
-                                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
-                                (name, None)
+                                ("InteropIFD", 0x0002) => {
+                                    ("InteroperabilityVersion".to_string(), None::<()>)
+                                }
+
+                                // GPS IFD tags - check GPS tag kit first to avoid conflicts
+                                // (e.g., tag 0x0002 is GPSLatitude in GPS IFD, InteropVersion in InteropIFD)
+                                ("GPS", _) => {
+                                    let name = GPS_PM_TAG_KITS
+                                        .get(&(tag_id as u32))
+                                        .map(|def| def.name.to_string())
+                                        .or_else(|| {
+                                            EXIF_PM_TAG_KITS
+                                                .get(&(tag_id as u32))
+                                                .map(|def| def.name.to_string())
+                                        })
+                                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                    (name, None)
+                                }
+
+                                // All other contexts use global lookup
+                                _ => {
+                                    let name = EXIF_PM_TAG_KITS
+                                        .get(&(tag_id as u32))
+                                        .map(|def| def.name.to_string())
+                                        .or_else(|| {
+                                            GPS_PM_TAG_KITS
+                                                .get(&(tag_id as u32))
+                                                .map(|def| def.name.to_string())
+                                        })
+                                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                    (name, None)
+                                }
                             };
-
-                            // Debug logging for ColorSpace and WhiteBalance
-                            if tag_id == 0xa001 || tag_id == 0xa403 {
-                                debug!(
-                                "Processing tag 0x{:04x} ({}) with value {:?}, tag_def found: {}",
-                                tag_id,
-                                name,
-                                raw_value,
-                                false
-                            );
-                            }
-
                             (name, None)
                         }
                     } else {
@@ -582,7 +531,7 @@ impl ExifReader {
                         }
                     }
                 };
-                (group, name, def)
+                (namespace.as_str(), name, def)
             };
 
             // Apply conversions to get both value and print
@@ -711,12 +660,12 @@ impl ExifReader {
     }
 
     /// Test helper: Get extracted tags (public for integration tests)
-    pub fn get_extracted_tags(&self) -> &HashMap<u16, TagValue> {
+    pub fn get_extracted_tags(&self) -> &HashMap<(u16, String), TagValue> {
         &self.extracted_tags
     }
 
     /// Test helper: Get tag sources (public for integration tests)  
-    pub fn get_tag_sources(&self) -> &HashMap<u16, TagSourceInfo> {
+    pub fn get_tag_sources(&self) -> &HashMap<(u16, String), TagSourceInfo> {
         &self.tag_sources
     }
 
@@ -738,13 +687,11 @@ impl ExifReader {
         binary_data: Option<Vec<u8>>,
     ) -> crate::generated::Canon_pm::main_conditional_tags::ConditionalContext {
         let make = self
-            .extracted_tags
-            .get(&0x010F)
+            .get_tag_across_namespaces(0x010F)
             .and_then(|v| v.as_string())
             .map(|s| s.to_string());
         let model = self
-            .extracted_tags
-            .get(&0x0110)
+            .get_tag_across_namespaces(0x0110)
             .and_then(|v| v.as_string())
             .map(|s| s.to_string());
         crate::generated::Canon_pm::main_conditional_tags::ConditionalContext {
@@ -763,13 +710,11 @@ impl ExifReader {
         format: Option<String>,
     ) -> crate::generated::FujiFilm_pm::main_model_detection::ConditionalContext {
         let make = self
-            .extracted_tags
-            .get(&0x010F)
+            .get_tag_across_namespaces(0x010F)
             .and_then(|v| v.as_string())
             .map(|s| s.to_string());
         let model = self
-            .extracted_tags
-            .get(&0x0110)
+            .get_tag_across_namespaces(0x0110)
             .and_then(|v| v.as_string())
             .map(|s| s.to_string());
         crate::generated::FujiFilm_pm::main_model_detection::ConditionalContext {
@@ -790,7 +735,10 @@ impl ExifReader {
         binary_data: Option<Vec<u8>>,
     ) -> Option<String> {
         // Only perform conditional resolution for Canon tags when we have Canon context
-        if let Some(make) = self.extracted_tags.get(&0x010F).and_then(|v| v.as_string()) {
+        if let Some(make) = self
+            .get_tag_across_namespaces(0x010F)
+            .and_then(|v| v.as_string())
+        {
             if make.contains("Canon") {
                 let context = self.create_conditional_context(count, format, binary_data);
                 let canon_resolver =
@@ -806,8 +754,7 @@ impl ExifReader {
             } else if make.contains("FUJIFILM") {
                 let context = self.create_fujifilm_conditional_context(count, format);
                 let model = self
-                    .extracted_tags
-                    .get(&0x0110) // Model tag
+                    .get_tag_across_namespaces(0x0110) // Model tag
                     .and_then(|v| v.as_string())
                     .unwrap_or("")
                     .to_string();
@@ -836,9 +783,10 @@ impl ExifReader {
     #[cfg(any(test, feature = "test-helpers"))]
     pub fn add_test_tag(&mut self, tag_id: u16, value: TagValue, namespace: &str, ifd_name: &str) {
         use crate::types::TagSourceInfo;
-        self.extracted_tags.insert(tag_id, value);
+        let key = (tag_id, namespace.to_string());
+        self.extracted_tags.insert(key.clone(), value);
         self.tag_sources.insert(
-            tag_id,
+            key,
             TagSourceInfo::new(
                 namespace.to_string(),
                 ifd_name.to_string(),

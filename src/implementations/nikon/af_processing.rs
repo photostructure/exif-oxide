@@ -537,7 +537,9 @@ mod tests {
         assert!(result.is_ok());
 
         // Check that version was extracted (tag 0x0088)
-        assert!(reader.extracted_tags.contains_key(&0x0088));
+        assert!(reader
+            .extracted_tags
+            .contains_key(&(0x0088, "MakerNotes".to_string())));
     }
 
     #[test]
@@ -584,7 +586,11 @@ mod tests {
         assert!(result.is_ok());
 
         // Check subject detection was processed (tags 0x0098, 0x0099)
-        assert!(reader.extracted_tags.contains_key(&0x0098));
-        assert!(reader.extracted_tags.contains_key(&0x0099));
+        assert!(reader
+            .extracted_tags
+            .contains_key(&(0x0098, "MakerNotes".to_string())));
+        assert!(reader
+            .extracted_tags
+            .contains_key(&(0x0099, "MakerNotes".to_string())));
     }
 }
