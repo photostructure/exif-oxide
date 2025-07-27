@@ -362,6 +362,43 @@ PrintConvType::Manual(func_name) => {
 - Verify APEX conversions match ExifTool output
 - Check edge cases (missing values, invalid data)
 
+## Composite Tag Implementation (2025-07-27)
+
+### ✅ RESOLVED: Composite:ImageSize Architecture Fix
+
+**Issue**: Composite tags were being built during EXIF processing before File group tags were available
+- Composite:ImageSize showing as empty/missing because File:ImageWidth/Height weren't available
+- Moved composite tag building from `exif/mod.rs` to `formats/mod.rs` after all tags extracted
+
+**Fix Details**:
+1. Moved `resolve_and_compute_composites()` call to end of format processing
+2. Added critical architecture warning comments to prevent regression
+3. Fixed PrintConv application in `orchestration.rs` to use print result instead of raw value
+
+### ✅ RESOLVED: Composite:ImageSize RAW File Support (2025-07-27)
+
+**Issue**: RAW files showing wrong dimensions - thumbnail size instead of full sensor resolution
+- Sony ARW: Showing 7008x4672 (crop) instead of 7040x4688 (full sensor)
+- Panasonic RW2: Showing 1920x1440 (preview) instead of 3648x2736 (full sensor)
+
+**Research**: Used exiftool-researcher to understand ExifTool's exact logic:
+- Priority 1: RawImageCroppedSize (FujiFilm RAF only)
+- Priority 2: ExifImageWidth/Height if TIFF_TYPE =~ /^(CR2|Canon 1D RAW|IIQ|EIP)$/
+- Priority 3: ImageWidth/Height (standard fallback)
+
+**Implementation**:
+1. **TIFF_TYPE Detection**: Implemented `is_canon_raw_tiff_type()` using File:FileType
+2. **Sony ARW Fix**: Now uses EXIF:ImageWidth/Height (7040x4688) not ExifImageWidth/Height
+3. **Panasonic RW2 Fix**: Implemented sensor border calculation
+   - Added `compute_panasonic_image_width/height()` functions
+   - Calculates from SensorRightBorder - SensorLeftBorder (3656-8 = 3648)
+   - Integrated into composite ImageWidth/Height computation
+
+**Results**:
+- Sony ARW: ✅ "Composite:ImageSize": "7040x4688" (matches ExifTool)
+- Canon CR2: ✅ "Composite:ImageSize": "5184x3456" (maintained correct behavior)
+- Panasonic RW2: ✅ "Composite:ImageSize": "3648x2736" (matches ExifTool)
+
 ## Success Criteria & Quality Gates
 
 ### You are NOT done until this is done:

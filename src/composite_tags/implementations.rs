@@ -21,15 +21,13 @@ pub fn compute_image_size(available_tags: &HashMap<String, TagValue>) -> Option<
 
     // ExifTool logic: Only use ExifImageWidth/Height for Canon and Phase One RAW formats
     // TIFF_TYPE =~ /^(CR2|Canon 1D RAW|IIQ|EIP)$/
-    // TODO: Implement proper TIFF_TYPE detection - for now assume non-Canon files
-    // This matches ExifTool behavior for most JPEG and non-Canon RAW files
-    let use_exif_dimensions = false; // Will be true only for Canon CR2, Canon 1D RAW, IIQ, EIP
+    let use_exif_dimensions = is_canon_raw_tiff_type(available_tags);
 
     if use_exif_dimensions {
         // Try ExifImageWidth/ExifImageHeight for Canon/Phase One RAW (indexes 2,3)
         if let (Some(width), Some(height)) = (
-            available_tags.get("ExifImageWidth"),
-            available_tags.get("ExifImageHeight"),
+            available_tags.get("EXIF:ExifImageWidth"),
+            available_tags.get("EXIF:ExifImageHeight"),
         ) {
             if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
                 return Some(TagValue::string(format!("{w} {h}"))); // ValueConv: space separator
@@ -37,35 +35,44 @@ pub fn compute_image_size(available_tags: &HashMap<String, TagValue>) -> Option<
         }
     }
 
-    // Use ImageWidth/ImageHeight for all other files (indexes 0,1 in require list)
-    // This includes JPEG, Sony ARW, Nikon NEF, most RAW formats, etc.
-    // Try multiple possible sources for ImageWidth/ImageHeight, prioritizing File: group
-    // which contains actual pixel dimensions (matches ExifTool behavior for processed test images)
-    let image_width_sources = [
-        "File:ImageWidth", // Actual pixel dimensions (priority 1)
-        "ImageWidth",      // Unprefixed fallback
-        "EXIF:ImageWidth", // EXIF IFD0 ImageWidth
-        "IFD0:ImageWidth", // Explicit IFD0 reference
-    ];
-    let image_height_sources = [
-        "File:ImageHeight", // Actual pixel dimensions (priority 1)
-        "ImageHeight",      // Unprefixed fallback
-        "EXIF:ImageHeight", // EXIF IFD0 ImageHeight
-        "IFD0:ImageHeight", // Explicit IFD0 reference
-    ];
-
-    for (width_key, height_key) in image_width_sources.iter().zip(image_height_sources.iter()) {
-        if let (Some(width), Some(height)) = (
-            available_tags.get(*width_key),
-            available_tags.get(*height_key),
-        ) {
-            if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
-                return Some(TagValue::string(format!("{w} {h}"))); // ValueConv: space separator
-            }
+    // Priority 3: Use the best available ImageWidth/ImageHeight values
+    // This calls our composite computation functions directly to get dimensions
+    // including Panasonic sensor border calculations, EXIF values, etc.
+    if let (Some(width), Some(height)) = (
+        compute_image_width(available_tags),
+        compute_image_height(available_tags),
+    ) {
+        if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
+            return Some(TagValue::string(format!("{w} {h}"))); // ValueConv: space separator
         }
     }
 
     None
+}
+
+/// Check if TIFF_TYPE matches Canon/Phase One RAW formats that prefer ExifImageWidth/Height
+/// ExifTool: lib/Image/ExifTool/Exif.pm:4655 TIFF_TYPE =~ /^(CR2|Canon 1D RAW|IIQ|EIP)$/
+/// For now, we detect this by looking at file type indicators in available tags
+fn is_canon_raw_tiff_type(available_tags: &HashMap<String, TagValue>) -> bool {
+    // Check for File:FileType tag which should indicate RAW format
+    if let Some(file_type) = available_tags.get("File:FileType") {
+        if let Some(type_str) = file_type.as_string() {
+            // Match ExifTool's TIFF_TYPE regex: /^(CR2|Canon 1D RAW|IIQ|EIP)$/
+            match type_str {
+                "CR2" | "Canon 1D RAW" | "IIQ" | "EIP" => return true,
+                _ => {}
+            }
+        }
+    }
+
+    // Fallback: Check File:FileTypeExtension
+    if let Some(extension) = available_tags.get("File:FileTypeExtension") {
+        if let Some(ext_str) = extension.as_string() {
+            return ext_str.to_uppercase() == "CR2" || ext_str.to_uppercase() == "IIQ";
+        }
+    }
+
+    false
 }
 
 /// Compute GPSAltitude composite (GPSAltitude + GPSAltitudeRef)
@@ -622,24 +629,31 @@ fn get_numeric_iso_value(tag_value: &TagValue) -> Option<u32> {
 
 /// Compute ImageWidth composite tag from various image dimension sources
 /// Priority: SubIFD3:ImageWidth > IFD0:ImageWidth > ExifIFD:ExifImageWidth
-/// ExifTool: No direct composite - this consolidates dimension sources per P12 requirements
-/// exif-oxide specific: Provides consolidated image width from best available source
+/// Compute ImageWidth composite with Panasonic sensor border support
+/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm:676-681 for Panasonic sensor borders
+/// Plus general dimension source consolidation per P12 requirements
 pub fn compute_image_width(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
-    // Priority 1: SubIFD3:ImageWidth (full resolution)
+    // Priority 1: Panasonic sensor border calculation (when available)
+    // ExifTool: SensorRightBorder - SensorLeftBorder
+    if let Some(panasonic_width) = compute_panasonic_image_width(available_tags) {
+        return Some(panasonic_width);
+    }
+
+    // Priority 2: SubIFD3:ImageWidth (full resolution)
     if let Some(width) = available_tags.get("SubIFD3:ImageWidth") {
         if let Some(w) = width.as_u32() {
             return Some(TagValue::U32(w));
         }
     }
 
-    // Priority 2: IFD0:ImageWidth
+    // Priority 3: IFD0:ImageWidth
     if let Some(width) = available_tags.get("ImageWidth") {
         if let Some(w) = width.as_u32() {
             return Some(TagValue::U32(w));
         }
     }
 
-    // Priority 3: ExifIFD:ExifImageWidth
+    // Priority 4: ExifIFD:ExifImageWidth
     if let Some(width) = available_tags.get("ExifImageWidth") {
         if let Some(w) = width.as_u32() {
             return Some(TagValue::U32(w));
@@ -660,24 +674,31 @@ pub fn compute_image_width(available_tags: &HashMap<String, TagValue>) -> Option
 
 /// Compute ImageHeight composite tag from various image dimension sources
 /// Priority: SubIFD3:ImageHeight > IFD0:ImageHeight > ExifIFD:ExifImageHeight
-/// ExifTool: No direct composite - this consolidates dimension sources per P12 requirements
-/// exif-oxide specific: Provides consolidated image height from best available source
+/// Compute ImageHeight composite with Panasonic sensor border support
+/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm:682-687 for Panasonic sensor borders  
+/// Plus general dimension source consolidation per P12 requirements
 pub fn compute_image_height(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
-    // Priority 1: SubIFD3:ImageHeight (full resolution)
+    // Priority 1: Panasonic sensor border calculation (when available)
+    // ExifTool: SensorBottomBorder - SensorTopBorder
+    if let Some(panasonic_height) = compute_panasonic_image_height(available_tags) {
+        return Some(panasonic_height);
+    }
+
+    // Priority 2: SubIFD3:ImageHeight (full resolution)
     if let Some(height) = available_tags.get("SubIFD3:ImageHeight") {
         if let Some(h) = height.as_u32() {
             return Some(TagValue::U32(h));
         }
     }
 
-    // Priority 2: IFD0:ImageHeight
+    // Priority 3: IFD0:ImageHeight
     if let Some(height) = available_tags.get("ImageHeight") {
         if let Some(h) = height.as_u32() {
             return Some(TagValue::U32(h));
         }
     }
 
-    // Priority 3: ExifIFD:ExifImageHeight
+    // Priority 4: ExifIFD:ExifImageHeight
     if let Some(height) = available_tags.get("ExifImageHeight") {
         if let Some(h) = height.as_u32() {
             return Some(TagValue::U32(h));
@@ -1170,5 +1191,49 @@ pub fn compute_duration(available_tags: &HashMap<String, TagValue>) -> Option<Ta
         }
     }
 
+    None
+}
+
+/// Compute Panasonic ImageWidth composite from sensor borders
+/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm:676-681
+/// ValueConv: '$val[1] - $val[0]' where val[0]=SensorLeftBorder, val[1]=SensorRightBorder
+pub fn compute_panasonic_image_width(
+    available_tags: &HashMap<String, TagValue>,
+) -> Option<TagValue> {
+    if let (Some(left), Some(right)) = (
+        available_tags
+            .get("EXIF:SensorLeftBorder")
+            .or_else(|| available_tags.get("SensorLeftBorder")),
+        available_tags
+            .get("EXIF:SensorRightBorder")
+            .or_else(|| available_tags.get("SensorRightBorder")),
+    ) {
+        if let (Some(left_val), Some(right_val)) = (left.as_u32(), right.as_u32()) {
+            let width = right_val - left_val;
+            return Some(TagValue::U32(width));
+        }
+    }
+    None
+}
+
+/// Compute Panasonic ImageHeight composite from sensor borders  
+/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm:682-687
+/// ValueConv: '$val[1] - $val[0]' where val[0]=SensorTopBorder, val[1]=SensorBottomBorder
+pub fn compute_panasonic_image_height(
+    available_tags: &HashMap<String, TagValue>,
+) -> Option<TagValue> {
+    if let (Some(top), Some(bottom)) = (
+        available_tags
+            .get("EXIF:SensorTopBorder")
+            .or_else(|| available_tags.get("SensorTopBorder")),
+        available_tags
+            .get("EXIF:SensorBottomBorder")
+            .or_else(|| available_tags.get("SensorBottomBorder")),
+    ) {
+        if let (Some(top_val), Some(bottom_val)) = (top.as_u32(), bottom.as_u32()) {
+            let height = bottom_val - top_val;
+            return Some(TagValue::U32(height));
+        }
+    }
     None
 }
