@@ -26,6 +26,7 @@
   "EXIF:DateTimeOriginal",
   "EXIF:ExifImageHeight",
   "EXIF:ExifImageWidth",
+  "EXIF:ExifVersion",
   "EXIF:ExposureProgram",
   "EXIF:ExposureTime",
   "EXIF:FilePermissions",
