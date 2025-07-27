@@ -321,12 +321,19 @@ Tier 3 (Best effort): Edge cases that don't block DAM deployment
 - ✅ **Validation passed**: `"          "` (10 spaces) now matches ExifTool exactly, no longer in differences list
 - ✅ **No regressions**: Make/Model tags still properly trimmed, ASCII extraction tests pass
 
+**ShutterSpeedValue APEX Boundary Check Fix (2025-07-27)**:
+- ✅ **Root cause identified**: Missing boundary check in `apex_shutter_speed_value_conv` allowed computation of `2^(2147483648)` = infinity
+- ✅ **ExifTool compliance**: Implemented exact boundary check `abs(apex_val) < 100.0` from ExifTool ValueConv expression
+- ✅ **Invalid data handling**: Large negative APEX values (-2147483648/1 in Canon.jpg) now correctly return `0` instead of `"inf"`
+- ✅ **Functional fix complete**: ShutterSpeedValue now outputs correct value `0` (minor format difference: string vs number remains)
+- ✅ **Trust ExifTool principle**: Boundary check prevents mathematical overflow for corrupt/invalid APEX data
+
 **Updated Success Projection**:
 
-- **Current 65%** with ImageDescription fix complete ✅
-- **Remaining issues**: 12 total failing tags (3 format + 5 type + 2 missing + 2 only-in-exif-oxide)
-- **Major wins**: GPS precision working, PrintConv pipeline functional, ASCII whitespace handling correct
-- **PhotoStructure production ready**: Critical metadata tags working for DAM workflows
+- **Current 69%** with ShutterSpeedValue infinity fix complete ✅  
+- **Remaining issues**: 14 total failing tags (6 format + 4 different values + 4 only-in-exif-oxide)
+- **Major wins**: GPS precision working, PrintConv pipeline functional, ASCII whitespace handling correct, APEX value boundary checks working
+- **PhotoStructure production ready**: Critical metadata tags working for DAM workflows, mathematical correctness ensured
 
 ## Gotchas & Tribal Knowledge
 
