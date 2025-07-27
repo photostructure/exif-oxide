@@ -171,93 +171,21 @@ fn process_canon_camerasettings(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // MacroMode at offset 1
-
-    // CanonImageSize at offset 10
-
-    // EasyMode at offset 11
-
-    // DigitalZoom at offset 12
-
-    // Contrast at offset 13
-
-    // Saturation at offset 14
-
-    // Sharpness at offset 15
-
-    // CameraISO at offset 16
-
-    // MeteringMode at offset 17
-
-    // FocusRange at offset 18
-
-    // AFPoint at offset 19
-
-    // SelfTimer at offset 2
-
-    // CanonExposureMode at offset 20
-
-    // LensType at offset 22
-    if data.len() >= 44 {
-        // TODO: Handle format int16u
+    tracing::debug!("process_canon_camerasettings called with {} bytes", data.len());
+    
+    // Use manual implementation from src/implementations/canon/binary_data.rs
+    // since CameraSettings table has complex Perl expressions that can't be auto-generated
+    match crate::implementations::canon::binary_data::extract_camera_settings(data, 0, data.len(), byte_order) {
+        Ok(hash_map) => {
+            let tags: Vec<(String, TagValue)> = hash_map.into_iter().collect();
+            tracing::debug!("Canon CameraSettings extracted {} tags", tags.len());
+            Ok(tags)
+        }
+        Err(e) => {
+            tracing::debug!("Canon CameraSettings extraction failed: {}", e);
+            Ok(Vec::new()) // Return empty rather than failing completely
+        }
     }
-
-    // MaxFocalLength at offset 23
-    if data.len() >= 46 {
-        // TODO: Handle format int16u
-    }
-
-    // MinFocalLength at offset 24
-    if data.len() >= 48 {
-        // TODO: Handle format int16u
-    }
-
-    // FocalUnits at offset 25
-
-    // MaxAperture at offset 26
-
-    // MinAperture at offset 27
-
-    // FlashActivity at offset 28
-
-    // FlashBits at offset 29
-
-    // Quality at offset 3
-
-    // FocusContinuous at offset 32
-
-    // AESetting at offset 33
-
-    // ImageStabilization at offset 34
-
-    // DisplayAperture at offset 35
-
-    // SpotMeteringMode at offset 39
-
-    // CanonFlashMode at offset 4
-
-    // PhotoEffect at offset 40
-
-    // ManualFlashOutput at offset 41
-
-    // ColorTone at offset 42
-
-    // SRAWQuality at offset 46
-
-    // ContinuousDrive at offset 5
-
-    // FocusBracketing at offset 50
-
-    // Clarity at offset 51
-
-    // HDR-PQ at offset 52
-
-    // FocusMode at offset 7
-
-    // RecordMode at offset 9
-
-    Ok(tags)
 }
 
 fn process_canon_focallength(
@@ -11600,8 +11528,11 @@ pub fn process_subdirectory(
     let mut result = HashMap::new();
 
     debug!("process_subdirectory called for tag_id: 0x{:04x}", tag_id);
+    debug!("has_subdirectory for tag_id 0x{:04x}: {}", tag_id, has_subdirectory(tag_id));
 
     if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+        debug!("Found tag_kit for tag_id 0x{:04x}: name='{}', has_subdirectory={}", 
+               tag_id, tag_kit.name, tag_kit.subdirectory.is_some());
         if let Some(SubDirectoryType::Binary { processor }) = &tag_kit.subdirectory {
             debug!("Found subdirectory processor for tag_id: 0x{:04x}", tag_id);
             let bytes = match value {
