@@ -203,7 +203,6 @@ fn main() {
         )
         .get_matches();
 
-
     // Extract all arguments and parse ExifTool-style filters
     let args: Vec<&String> = matches.get_many::<String>("args").unwrap().collect();
     let show_missing = matches.get_flag("show-missing");
@@ -456,14 +455,11 @@ mod tests {
         assert!(filter_opts.requested_tags.is_empty());
     }
 
-
-
-
     #[test]
     fn test_parse_exiftool_args_boundary_lengths() {
         // Test boundary cases for filter length validation - only valid 3+ char tags accepted
         let image = "image.jpg".to_string();
-        let three_char = "-abc".to_string();    // 3 chars - should be accepted
+        let three_char = "-abc".to_string(); // 3 chars - should be accepted
         let args = vec![&image, &three_char];
 
         let (files, filter_opts) = parse_exiftool_args(args);
@@ -495,5 +491,4 @@ mod tests {
         assert!(filter_opts.requested_tags.contains(&"MIMEType".to_string()));
         assert!(!filter_opts.extract_all);
     }
-
 }

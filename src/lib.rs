@@ -20,6 +20,7 @@
 //! test images and the ExifTool submodule to be available. They are automatically
 //! excluded from published crates to keep package size manageable.
 
+pub mod compat;
 pub mod composite_tags;
 pub mod examples;
 pub mod exif;

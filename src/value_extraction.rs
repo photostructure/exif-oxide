@@ -10,7 +10,12 @@ use tracing::debug;
 
 /// Extract ASCII string value from IFD entry
 /// ExifTool: lib/Image/ExifTool/Exif.pm:6372-6398 ASCII value handling
-pub fn extract_ascii_value(data: &[u8], entry: &IfdEntry, byte_order: ByteOrder) -> Result<String> {
+pub fn extract_ascii_value(
+    data: &[u8],
+    entry: &IfdEntry,
+    byte_order: ByteOrder,
+    tag_id: u16,
+) -> Result<String> {
     // debug!("extract_ascii_value: tag {:#x}, count {}, is_inline: {}, value_or_offset: {:#x}",
     //        entry.tag_id, entry.count, entry.is_inline(), entry.value_or_offset);
 
@@ -48,10 +53,28 @@ pub fn extract_ascii_value(data: &[u8], entry: &IfdEntry, byte_order: ByteOrder)
 
     // Convert to UTF-8, handling invalid sequences gracefully
     match String::from_utf8(trimmed.to_vec()) {
-        Ok(s) => Ok(s.trim().to_string()), // Trim whitespace
+        Ok(s) => {
+            // Tag-specific trimming behavior based on ExifTool RawConv expressions
+            // ExifTool: lib/Image/ExifTool/Exif.pm tags with RawConv => '$val =~ s/\0.*//; $val'
+            // ImageDescription (0x010E) preserves whitespace, unlike Make/Model/Software
+            if tag_id == 0x010E {
+                // ImageDescription: Only remove null bytes, preserve other whitespace
+                // ExifTool: lib/Image/ExifTool/Exif.pm:549 ImageDescription has no RawConv trimming
+                Ok(s.replace('\0', ""))
+            } else {
+                // Other ASCII tags: Apply normal trimming (Make, Model, Software, etc.)
+                // ExifTool: Make/Model/Software have RawConv => '$val =~ s/\0.*//; $val'
+                Ok(s.trim().to_string())
+            }
+        }
         Err(_) => {
-            // Fallback for invalid UTF-8 - convert lossy
-            Ok(String::from_utf8_lossy(trimmed).trim().to_string())
+            // Fallback for invalid UTF-8 - convert lossy with same tag-specific logic
+            let s = String::from_utf8_lossy(trimmed);
+            if tag_id == 0x010E {
+                Ok(s.replace('\0', ""))
+            } else {
+                Ok(s.trim().to_string())
+            }
         }
     }
 }
@@ -378,7 +401,7 @@ mod tests {
             value_or_offset: u32::from_le_bytes([b'A', b'B', b'C', 0]), // "ABC" + null byte in little-endian
         };
         let data = &[];
-        let result = extract_ascii_value(data, &entry, ByteOrder::LittleEndian).unwrap();
+        let result = extract_ascii_value(data, &entry, ByteOrder::LittleEndian, 0x010f).unwrap();
         assert_eq!(result, "ABC");
     }
 
