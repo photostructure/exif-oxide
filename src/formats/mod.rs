@@ -67,7 +67,7 @@ pub fn extract_metadata(
     crate::init();
 
     // Use default filter options if none provided (backward compatibility)
-    let filter_opts = filter_options.as_ref().map(|f| f.clone()).unwrap_or_default();
+    let filter_opts = filter_options.clone().unwrap_or_default();
 
     // PERFORMANCE OPTIMIZATION: Check if only File group tags are requested
     // This allows early return without expensive format-specific parsing
@@ -1182,7 +1182,7 @@ pub fn extract_metadata(
     // Create final ExifData structure
     let source_file = path.to_string_lossy().to_string();
     // P12: Only include ExifToolVersion when not filtering (matches ExifTool behavior)
-    let version = if filter_options.as_ref().map_or(true, |f| f.extract_all) {
+    let version = if filter_options.as_ref().is_none_or(|f| f.extract_all) {
         env!("CARGO_PKG_VERSION").to_string()
     } else {
         String::new() // Empty version when filtering

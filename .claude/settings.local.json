@@ -153,7 +153,15 @@
       "Bash(RUST_LOG=debug cargo run --release --quiet config/Canon_pm/tag_kit.json)",
       "Bash(RUST_LOG=debug cargo test test_canon_print_conv_performance -- --nocapture)",
       "Bash(env RUST_LOG=debug cargo test test_canon_print_conv_performance -- --nocapture)",
-      "Bash(RUST_LOG=debug cargo run -- third-party/exiftool/t/images/Ricoh2.jpg)"
+      "Bash(RUST_LOG=debug cargo run -- third-party/exiftool/t/images/Ricoh2.jpg)",
+      "Bash(./exiftool -GPS ../../third-party/exiftool/t/images/Ricoh2.jpg)",
+      "Bash(./exiftool -GPS* t/images/Ricoh2.jpg)",
+      "Bash(RUST_LOG=warn cargo run --release)",
+      "Bash(env RUST_LOG=warn cargo run --release)",
+      "Bash(./target/release/generate_rust config/Canon_pm/tag_kit.json)",
+      "Bash(/home/mrm/src/exif-oxide/target/debug/exif-oxide:*)",
+      "Bash(RUST_LOG=debug cargo run --bin generate_rust --manifest-path codegen/Cargo.toml -- codegen/config/Canon_pm/tag_kit.json)",
+      "Bash(RUST_LOG=debug cargo run --bin generate_rust -- /home/mrm/src/exif-oxide/codegen/config/Canon_pm/tag_kit.json)"
     ],
     "deny": []
   }
