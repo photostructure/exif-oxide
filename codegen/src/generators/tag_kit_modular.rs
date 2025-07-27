@@ -5,11 +5,13 @@
 use anyhow::Result;
 use std::fs;
 use std::collections::HashMap;
+use std::time::Instant;
 use crate::common::escape_string;
 use crate::schemas::tag_kit::{TagKitExtraction, TagKit, ExtractedTable};
 use super::tag_kit_split::{split_tag_kits, TagCategory};
 use crate::conv_registry::{lookup_printconv, lookup_valueconv, lookup_tag_specific_printconv};
 use serde::Deserialize;
+use tracing::{debug, info};
 
 /// Convert module name to ExifTool group name
 fn module_name_to_group(module_name: &str) -> &str {
@@ -98,7 +100,41 @@ fn generate_print_conv_function(
     code.push_str("    warnings: &mut Vec<String>,\n");
     code.push_str(") -> TagValue {\n");
     
-    // First, collect all tags that need PrintConv
+    // First, collect all expressions that need normalization
+    let mut expressions_to_normalize = std::collections::HashSet::new();
+    for tag_kit in &extraction.tag_kits {
+        // Collect expressions that would be normalized during lookup
+        match tag_kit.print_conv_type.as_str() {
+            "Expression" => {
+                if let Some(expr_data) = &tag_kit.print_conv_data {
+                    if let Some(expr_str) = expr_data.as_str() {
+                        expressions_to_normalize.insert(expr_str.to_string());
+                    }
+                }
+            }
+            "Manual" => {
+                if let Some(func_data) = &tag_kit.print_conv_data {
+                    if let Some(func_str) = func_data.as_str() {
+                        expressions_to_normalize.insert(func_str.to_string());
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+    
+    // Batch normalize all expressions at once
+    let expressions_vec: Vec<String> = expressions_to_normalize.into_iter().collect();
+    if !expressions_vec.is_empty() {
+        debug!("            🚀 Batch normalizing {} PrintConv expressions", expressions_vec.len());
+        let _batch_results = crate::conv_registry::batch_normalize_expressions(&expressions_vec)
+            .unwrap_or_else(|e| {
+                eprintln!("Warning: Batch normalization failed: {}", e);
+                std::collections::HashMap::new()
+            });
+    }
+    
+    // Now collect all tags that need PrintConv (lookups will be fast with cached normalization)
     // Use HashMap to deduplicate by tag_id (keep first occurrence)
     let mut tag_convs_map: std::collections::HashMap<u32, (String, String)> = std::collections::HashMap::new();
     
@@ -195,7 +231,26 @@ fn generate_value_conv_function(
     code.push_str("    _errors: &mut Vec<String>,\n");
     code.push_str(") -> Result<TagValue> {\n");
     
-    // First, collect all tags that need ValueConv
+    // First, collect all expressions that need normalization for ValueConv
+    let mut expressions_to_normalize = std::collections::HashSet::new();
+    for tag_kit in &extraction.tag_kits {
+        if let Some(value_conv_expr) = &tag_kit.value_conv {
+            expressions_to_normalize.insert(value_conv_expr.clone());
+        }
+    }
+    
+    // Batch normalize all ValueConv expressions at once
+    let expressions_vec: Vec<String> = expressions_to_normalize.into_iter().collect();
+    if !expressions_vec.is_empty() {
+        debug!("            🚀 Batch normalizing {} ValueConv expressions", expressions_vec.len());
+        let _batch_results = crate::conv_registry::batch_normalize_expressions(&expressions_vec)
+            .unwrap_or_else(|e| {
+                eprintln!("Warning: ValueConv batch normalization failed: {}", e);
+                std::collections::HashMap::new()
+            });
+    }
+    
+    // Now collect all tags that need ValueConv (lookups will be fast with cached normalization)
     // Use HashMap to deduplicate by tag_id (keep first occurrence)
     let mut tag_convs_map: std::collections::HashMap<u32, (String, String)> = std::collections::HashMap::new();
     
@@ -261,16 +316,23 @@ pub fn generate_modular_tag_kit(
     output_dir: &str,
     module_name: &str,
 ) -> Result<()> {
+    let start_time = Instant::now();
+    info!("        🏭 Starting tag kit generation for {} ({} tag kits)", module_name, extraction.tag_kits.len());
+    
     // Create output directory for tag kit modules 
     // Create tag_kit subdirectory inside the output directory
     let tag_kit_dir = format!("{output_dir}/tag_kit");
     fs::create_dir_all(&tag_kit_dir)?;
     
     // Load shared tables for cross-module references
+    let shared_start = Instant::now();
     let shared_tables = load_shared_tables()?;
+    debug!("          📚 Loaded shared tables in {:.3}s", shared_start.elapsed().as_secs_f64());
     
     // Split tag kits by category
+    let split_start = Instant::now();
     let categories = split_tag_kits(&extraction.tag_kits);
+    info!("          📂 Split into {} categories in {:.3}s", categories.len(), split_start.elapsed().as_secs_f64());
     
     // Keep track of all generated modules
     let mut generated_modules = Vec::new();
@@ -289,6 +351,7 @@ pub fn generate_modular_tag_kit(
         }
         
         let module_name_cat = category.module_name();
+        let category_start = Instant::now();
         let (module_code, print_conv_count) = generate_category_module(
             module_name_cat,
             tag_kits,
@@ -297,27 +360,35 @@ pub fn generate_modular_tag_kit(
             module_name,
             &shared_tables,
         )?;
+        let generation_time = category_start.elapsed();
         
         // Write category module
+        let write_start = Instant::now();
         let file_path = format!("{tag_kit_dir}/{module_name_cat}.rs");
         fs::write(&file_path, module_code)?;
+        let write_time = write_start.elapsed();
         
         generated_modules.push(module_name_cat);
         
-        tracing::debug!("  ✓ Generated {} with {} tags, {} PrintConv tables",
+        info!("          ⚙️  Category {} generated in {:.3}s (write: {:.3}s) - {} tags, {} PrintConv tables",
             module_name_cat,
+            generation_time.as_secs_f64(),
+            write_time.as_secs_f64(),
             tag_kits.len(),
             print_conv_count
         );
     }
     
     // Generate mod.rs that combines all modules and subdirectory processors
+    let mod_start = Instant::now();
     let mod_code = generate_mod_file(&generated_modules, module_name, extraction, &subdirectory_info, &shared_tables)?;
     fs::write(format!("{tag_kit_dir}/mod.rs"), mod_code)?;
+    debug!("          📝 Generated mod.rs in {:.3}s", mod_start.elapsed().as_secs_f64());
     
     // Summary
-    tracing::debug!("  ✓ Generated modular tag kit for {} with {} tags split into {} modules", 
+    info!("        ✅ Tag kit generation for {} completed in {:.2}s - {} tags split into {} modules", 
         module_name,
+        start_time.elapsed().as_secs_f64(),
         extraction.tag_kits.len(),
         generated_modules.len()
     );
@@ -334,6 +405,7 @@ fn generate_category_module(
     _current_module: &str,
     _shared_tables: &SharedTablesData,
 ) -> Result<(String, usize)> {
+    let start_time = Instant::now();
     let mut code = String::new();
     
     // Header with warning suppression at the top
@@ -376,7 +448,6 @@ fn generate_category_module(
                     
                     for key in sorted_keys {
                         let value = &data_obj[key];
-                        tracing::debug!("Processing PrintConv entry: key='{}', value={:?}", key, value);
                         crate::generators::lookup_tables::generate_print_conv_entry(&mut code, key, value);
                     }
                     
@@ -477,6 +548,7 @@ fn generate_category_module(
     code.push_str("    ]\n");
     code.push_str("}\n");
     
+    debug!("            🔧 Category {} code generation took {:.3}s", category_name, start_time.elapsed().as_secs_f64());
     Ok((code, local_print_conv_count))
 }
 
@@ -488,6 +560,8 @@ fn generate_mod_file(
     subdirectory_info: &HashMap<u32, SubDirectoryCollection>,
     shared_tables: &SharedTablesData,
 ) -> Result<String> {
+    let start_time = Instant::now();
+    info!("          🔧 Generating mod.rs with {} modules", modules.len());
     let mut code = String::new();
     
     // Header
@@ -718,7 +792,9 @@ fn generate_mod_file(
     generate_print_conv_function(&mut code, extraction, module_name, &const_name)?;
     
     // Generate apply_value_conv function with direct function calls
+    let value_conv_start = Instant::now();
     generate_value_conv_function(&mut code, extraction, module_name, &const_name)?;
+    debug!("            🔄 ValueConv generation took {:.3}s", value_conv_start.elapsed().as_secs_f64());
     
     // Add subdirectory processing functions
     code.push_str("/// Check if a tag has subdirectory processing\n");
@@ -784,6 +860,7 @@ fn generate_mod_file(
     code.push_str("    Ok(result)\n");
     code.push_str("}\n");
     
+    info!("          ✅ mod.rs generation completed in {:.3}s", start_time.elapsed().as_secs_f64());
     Ok(code)
 }
 
@@ -806,6 +883,43 @@ mod tests {
         let multi = "$count == 692  or $count == 674  or $count == 702 or
                 $count == 1227 or $count == 1250";
         assert_eq!(parse_count_conditions(multi), vec![692, 674, 702, 1227, 1250]);
+    }
+    
+    #[test]
+    fn test_canon_print_conv_performance() {
+        use std::time::Instant;
+        
+        // Load Canon tag kit data
+        let canon_data = std::fs::read_to_string("generated/extract/tag_kits/canon__tag_kit.json")
+            .expect("Canon tag kit data should exist");
+        let extraction: crate::schemas::tag_kit::TagKitExtraction = 
+            serde_json::from_str(&canon_data).expect("Should parse Canon data");
+        
+        println!("Loaded Canon data with {} tag kits", extraction.tag_kits.len());
+        
+        // Test PrintConv generation in isolation
+        let mut code = String::new();
+        let start = Instant::now();
+        generate_print_conv_function(&mut code, &extraction, "Canon_pm", "CANON_PM_TAG_KITS")
+            .expect("PrintConv generation should succeed");
+        let print_conv_time = start.elapsed();
+        
+        println!("PrintConv generation took: {:.3}s", print_conv_time.as_secs_f64());
+        println!("Generated {} characters of code", code.len());
+        
+        // Test ValueConv generation in isolation
+        code.clear();
+        let start = Instant::now();
+        generate_value_conv_function(&mut code, &extraction, "Canon_pm", "CANON_PM_TAG_KITS")
+            .expect("ValueConv generation should succeed");
+        let value_conv_time = start.elapsed();
+        
+        println!("ValueConv generation took: {:.3}s", value_conv_time.as_secs_f64());
+        println!("Generated {} characters of code", code.len());
+        
+        // Assert reasonable performance (should be much less than 5 seconds each)
+        assert!(print_conv_time.as_secs_f64() < 2.0, "PrintConv took too long: {:.3}s", print_conv_time.as_secs_f64());
+        assert!(value_conv_time.as_secs_f64() < 2.0, "ValueConv took too long: {:.3}s", value_conv_time.as_secs_f64());
     }
     
     #[test]
