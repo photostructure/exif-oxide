@@ -192,22 +192,15 @@ impl ExifReader {
                         registry::apply_print_conv("gpsdestlongitude_print_conv", &value)
                     }
                     "GPSAltitude" => {
-                        // Expression: "$val =~ /^(inf|undef)$/ ? $val : \"$val m\""
-                        match value.as_f64() {
-                            Some(v) if v.is_infinite() => TagValue::String("inf".to_string()),
-                            Some(v) if v.is_nan() => TagValue::String("undef".to_string()),
-                            Some(v) => TagValue::String(format!("{} m", v)),
-                            None => {
-                                if let Some(s) = value.as_string() {
-                                    if s == "inf" || s == "undef" {
-                                        TagValue::String(s.to_string())
-                                    } else {
-                                        TagValue::String(format!("{} m", s))
-                                    }
-                                } else {
-                                    TagValue::String(format!("{} m", value))
-                                }
-                            }
+                        // Note: Skip PrintConv for GPSAltitude because our test snapshots use
+                        // ExifTool's -GPSAltitude# flag which outputs converted decimal values
+                        // without PrintConv units to match PhotoStructure DAM requirements
+
+                        // Convert rational to decimal if needed (matching ExifTool -GPSAltitude# behavior)
+                        if let Some(rational) = value.as_rational() {
+                            TagValue::F64(rational.0 as f64 / rational.1 as f64)
+                        } else {
+                            value.clone()
                         }
                     }
                     "GPSHPositioningError" => {
@@ -245,6 +238,10 @@ impl ExifReader {
         } else {
             // For other IFDs, check EXIF tag kit
             if let Some(tag_def) = tag_kit::EXIF_PM_TAG_KITS.get(&(tag_id as u32)) {
+                debug!(
+                    "Found tag definition for tag 0x{:04x}: {}",
+                    tag_id, tag_def.name
+                );
                 // Apply ValueConv first (if present) using generated function
                 if tag_def.value_conv.is_some() {
                     let mut value_conv_errors = Vec::new();
@@ -270,13 +267,29 @@ impl ExifReader {
                 let mut errors = Vec::new();
                 let mut warnings = Vec::new();
 
-                let print = tag_kit::apply_print_conv(
-                    tag_id as u32,
-                    &value,
-                    &mut evaluator,
-                    &mut errors,
-                    &mut warnings,
-                );
+                let print = match tag_def.name {
+                    "SubSecTime" | "SubSecTimeOriginal" | "SubSecTimeDigitized" => {
+                        // Note: These are stored as strings in TIFF but ExifTool outputs them as
+                        // numbers in JSON when they contain only digits (matching ExifTool's JSON behavior)
+                        if let Some(s) = value.as_string() {
+                            // Apply ValueConv: trim trailing whitespace like ExifTool
+                            let trimmed = s.trim_end();
+                            TagValue::string_with_numeric_detection(trimmed)
+                        } else {
+                            value.clone()
+                        }
+                    }
+                    _ => {
+                        // Use generic tag kit PrintConv
+                        tag_kit::apply_print_conv(
+                            tag_id as u32,
+                            &value,
+                            &mut evaluator,
+                            &mut errors,
+                            &mut warnings,
+                        )
+                    }
+                };
 
                 // Log any warnings (but suppress if we successfully applied fallback)
                 if print == value {
