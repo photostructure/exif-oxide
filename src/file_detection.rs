@@ -224,8 +224,9 @@ impl FileTypeDetector {
                 _ => Ok(vec![normalized_ext.clone()]), // Use the extension as the type
             }
         } else {
-            // Unknown extension - return normalized extension as candidate
-            Ok(vec![normalized_ext])
+            // Unknown extension - return empty candidates to trigger magic number scanning
+            // This matches ExifTool.pm behavior where GetFileType() returns () for unknown extensions
+            Ok(vec![])
         }
     }
 
@@ -898,10 +899,10 @@ mod tests {
     }
 
     #[test]
-    fn test_bug_unknown_extension_should_fallback_to_magic() {
-        // BUG REPRODUCTION TEST
-        // This test demonstrates the current bug where unknown extensions
-        // are treated as valid file types instead of falling back to magic detection
+    fn test_unknown_extension_fallback_to_magic() {
+        // Test that unknown extensions correctly fall back to magic number detection
+        // This ensures we follow ExifTool's behavior: unknown extensions trigger
+        // comprehensive magic number scanning instead of being treated as file types
 
         let detector = FileTypeDetector::new();
         let path = Path::new("unknown.xyz"); // Completely unknown extension
@@ -913,15 +914,9 @@ mod tests {
 
         let result = detector.detect_file_type(path, &mut cursor).unwrap();
 
-        // BUG: Currently returns "XYZ" instead of detecting JPEG via magic
-        // This assertion will FAIL until we fix the logic
-        println!("Current result: {:?}", result.file_type);
-
-        // TODO: Uncomment this line after fixing the bug
-        // assert_eq!(result.file_type, "JPEG");
-
-        // For now, demonstrate the bug exists
-        assert_eq!(result.file_type, "XYZ"); // This shows the current broken behavior
+        // Should detect JPEG via magic number, not treat "XYZ" as a file type
+        assert_eq!(result.file_type, "JPEG");
+        assert_eq!(result.mime_type, "image/jpeg");
     }
 
     #[test]
