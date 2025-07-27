@@ -43,7 +43,7 @@ pub mod xmp;
 pub use file_detection::{FileDetectionError, FileTypeDetectionResult, FileTypeDetector};
 pub use generated::*;
 pub use registry::Registry;
-pub use types::{ExifData, ExifError, TagValue};
+pub use types::{ExifData, ExifError, FilterOptions, TagValue};
 
 pub use generated::COMPOSITE_TAG_LOOKUP as COMPOSITE_TAG_BY_NAME;
 
@@ -81,4 +81,115 @@ pub fn extract_metadata_json(file_path: &str) -> Result<Value, ExifError> {
         .map_err(|e| ExifError::ParseError(format!("Failed to serialize to JSON: {e}")))?;
 
     Ok(json)
+}
+
+/// Extract metadata from a file with tag filtering and return it as JSON
+///
+/// This function provides the same functionality as the CLI, allowing programmatic
+/// access to ExifTool-style tag filtering and value formatting control.
+///
+/// # Examples
+///
+/// ```no_run
+/// use exif_oxide::{extract_metadata_json_with_filter, FilterOptions};
+/// use std::collections::HashSet;
+///
+/// // Extract only MIMEType tag
+/// let filter = FilterOptions::tags_only(vec!["MIMEType".to_string()]);
+/// let result = extract_metadata_json_with_filter("image.jpg", Some(filter))?;
+///
+/// // Extract Orientation with numeric value (like -Orientation#)
+/// let mut numeric_tags = HashSet::new();
+/// numeric_tags.insert("Orientation".to_string());
+/// let filter = FilterOptions {
+///     requested_tags: vec!["Orientation".to_string()],
+///     requested_groups: vec![],
+///     group_all_patterns: vec![],
+///     extract_all: false,
+///     numeric_tags,
+///     glob_patterns: vec![],
+/// };
+/// let result = extract_metadata_json_with_filter("image.jpg", Some(filter))?;
+///
+/// // Extract all EXIF group tags (like -EXIF:all)
+/// let filter = FilterOptions {
+///     requested_tags: vec![],
+///     requested_groups: vec![],
+///     group_all_patterns: vec!["EXIF:all".to_string()],
+///     extract_all: false,
+///     numeric_tags: HashSet::new(),
+///     glob_patterns: vec![],
+/// };
+/// let result = extract_metadata_json_with_filter("image.jpg", Some(filter))?;
+///
+/// // Extract GPS tags with wildcard (like -GPS*)
+/// let filter = FilterOptions {
+///     requested_tags: vec![],
+///     requested_groups: vec![],
+///     group_all_patterns: vec![],
+///     extract_all: false,
+///     numeric_tags: HashSet::new(),
+///     glob_patterns: vec!["GPS*".to_string()],
+/// };
+/// let result = extract_metadata_json_with_filter("image.jpg", Some(filter))?;
+/// # Ok::<(), exif_oxide::ExifError>(())
+/// ```
+pub fn extract_metadata_json_with_filter(
+    file_path: &str,
+    filter_options: Option<FilterOptions>,
+) -> Result<Value, ExifError> {
+    // Ensure conversions are registered
+    init();
+
+    // Use the existing extract_metadata function from formats module
+    let path = Path::new(file_path);
+    let mut exif_data = formats::extract_metadata(path, false, false, filter_options.clone())?;
+
+    // Prepare for serialization with numeric tags if specified
+    let numeric_tags_ref = filter_options.as_ref().and_then(|f| {
+        if f.numeric_tags.is_empty() {
+            None
+        } else {
+            Some(&f.numeric_tags)
+        }
+    });
+
+    exif_data.prepare_for_serialization(numeric_tags_ref);
+
+    // Convert ExifData to JSON
+    let json = serde_json::to_value(&exif_data)
+        .map_err(|e| ExifError::ParseError(format!("Failed to serialize to JSON: {e}")))?;
+
+    Ok(json)
+}
+
+/// Extract metadata from a file with tag filtering and return structured data
+///
+/// This function provides direct access to the TagEntry structure without JSON conversion,
+/// allowing for more efficient programmatic processing of metadata.
+///
+/// # Examples
+///
+/// ```no_run
+/// use exif_oxide::{extract_metadata_with_filter, FilterOptions};
+/// use std::path::Path;
+///
+/// // Extract all metadata
+/// let result = extract_metadata_with_filter(Path::new("image.jpg"), None)?;
+/// println!("Found {} tags", result.tags.len());
+///
+/// // Extract only File group tags for performance
+/// let filter = FilterOptions::groups_only(vec!["File".to_string()]);
+/// let result = extract_metadata_with_filter(Path::new("image.jpg"), Some(filter))?;
+/// # Ok::<(), exif_oxide::ExifError>(())
+/// ```
+pub fn extract_metadata_with_filter(
+    file_path: &Path,
+    filter_options: Option<FilterOptions>,
+) -> Result<ExifData, ExifError> {
+    // Ensure conversions are registered
+    init();
+
+    // Use the existing extract_metadata function from formats module
+    formats::extract_metadata(file_path, false, false, filter_options)
 }
