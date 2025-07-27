@@ -224,9 +224,27 @@ The P11 project expansion to Sony demonstrates the architecture's scalability an
 (No other Canon MakerNotes tags)
 ```
 
-### 🎯 **ACTUAL P11 STATUS**: Infrastructure exists but runtime integration broken
+### 🎯 **ROOT CAUSE DISCOVERED (2025-07-27)**:
 
-**Root Cause**: Generated binary data parsers and tag kit integration exist but are not being called during Canon MakerNotes processing.
+**🔍 BREAKTHROUGH**: After extensive debugging, the exact failure point has been identified:
+
+1. **MakerNotes tag 0x927c IS being found and processed correctly** ✅
+2. **Canon Main processor IS being selected and called** ✅ 
+3. **Canon processor FAILS with format parsing error**: `Canon tag kit processing error: Parsing error: Invalid TIFF byte order marker` ❌
+
+**🔥 TECHNICAL ROOT CAUSE**: 
+Canon MakerNotes use a **proprietary format**, not standard TIFF format. Our Canon processor assumes Canon MakerNotes follow TIFF structure (with `II`/`MM` byte order markers), but Canon MakerNotes have their own header format.
+
+**Debug Evidence** (`/tmp/debug_output.log:296`):
+```
+Canon Main processor processing 45072 bytes for table: MakerNotes
+Processing Canon MakerNotes via tag kit: 45072 bytes at offset 0x0  
+Canon tag kit processing error: Parsing error: Invalid TIFF byte order marker
+```
+
+**🎯 ACTUAL P11 STATUS**: Infrastructure complete, Canon format parser needs Canon-specific MakerNotes format handling instead of generic TIFF parsing.
+
+**Next Action**: Fix Canon processor in `src/processor_registry/processors/canon.rs` to handle Canon's proprietary MakerNotes format structure instead of expecting standard TIFF format.
 
 ## Work Completed
 
