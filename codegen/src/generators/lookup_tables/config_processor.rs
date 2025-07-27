@@ -1,6 +1,6 @@
 //! Configuration processing utilities for lookup table generation
 
-use anyhow::Result;
+use anyhow::{Result, Context};
 use std::fs;
 use std::path::Path;
 use serde_json::Value;
@@ -9,7 +9,8 @@ use tracing::warn;
 /// Read and parse a JSON configuration file
 pub fn read_config_json(config_path: &Path) -> Result<Value> {
     let config_content = fs::read_to_string(config_path)?;
-    let config_json: Value = serde_json::from_str(&config_content)?;
+    let config_json: Value = serde_json::from_str(&config_content)
+        .with_context(|| format!("Failed to parse JSON file: {}", config_path.display()))?;
     Ok(config_json)
 }
 
@@ -101,6 +102,7 @@ where
     T: serde::de::DeserializeOwned,
 {
     let content = fs::read_to_string(path)?;
-    let data: T = serde_json::from_str(&content)?;
+    let data: T = serde_json::from_str(&content)
+        .with_context(|| format!("Failed to parse extracted JSON file: {}", path.display()))?;
     Ok(data)
 }

@@ -74,7 +74,49 @@ pub struct BinaryDataTag {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct PrintConvEntry {
     pub key: String,
+    // TODO: Proper BITMASK support - see docs/todo/P15c-bitmask-printconv-implementation.md
+    // For now, we handle both string values and BITMASK objects with a custom deserializer
+    #[serde(deserialize_with = "deserialize_print_conv_value")]
     pub value: String,
+}
+
+// Custom deserializer to handle both string values and BITMASK objects
+fn deserialize_print_conv_value<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    use serde::de::{self, Visitor};
+    
+    struct PrintConvValueVisitor;
+    
+    impl<'de> Visitor<'de> for PrintConvValueVisitor {
+        type Value = String;
+        
+        fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+            formatter.write_str("a string or BITMASK object")
+        }
+        
+        fn visit_str<E>(self, value: &str) -> Result<String, E>
+        where
+            E: de::Error,
+        {
+            Ok(value.to_string())
+        }
+        
+        fn visit_map<A>(self, mut map: A) -> Result<String, A::Error>
+        where
+            A: de::MapAccess<'de>,
+        {
+            // TODO P15c: Extract and properly process BITMASK mapping data
+            // For now, consume all map entries and return a placeholder
+            while let Some((_key, _value)) = map.next_entry::<String, serde_json::Value>()? {
+                // Consume all entries to avoid "trailing characters" error
+            }
+            Ok("TODO_BITMASK_P15c".to_string())
+        }
+    }
+    
+    deserializer.deserialize_any(PrintConvValueVisitor)
 }
 
 /// Generate Rust code for a ProcessBinaryData table

@@ -161,7 +161,26 @@
       "Bash(./target/release/generate_rust config/Canon_pm/tag_kit.json)",
       "Bash(/home/mrm/src/exif-oxide/target/debug/exif-oxide:*)",
       "Bash(RUST_LOG=debug cargo run --bin generate_rust --manifest-path codegen/Cargo.toml -- codegen/config/Canon_pm/tag_kit.json)",
-      "Bash(RUST_LOG=debug cargo run --bin generate_rust -- /home/mrm/src/exif-oxide/codegen/config/Canon_pm/tag_kit.json)"
+      "Bash(RUST_LOG=debug cargo run --bin generate_rust -- /home/mrm/src/exif-oxide/codegen/config/Canon_pm/tag_kit.json)",
+      "Bash(RUST_LOG=debug cargo run --bin exif-oxide -- /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Ricoh2.jpg \"-GPS*\")",
+      "Bash(env RUST_LOG=debug cargo run --bin exif-oxide -- /home/mrm/src/exif-oxide/third-party/exiftool/t/images/Ricoh2.jpg \"-GPS*\")",
+      "Bash(DEBUG=1 cargo run -- --config config/Canon_pm/tag_kit.json)",
+      "Bash(env RUST_LOG=debug cargo run -- third-party/exiftool/t/images/Ricoh2.jpg)",
+      "Bash(DEBUG=1 cargo run -- config/Canon_pm/tag_kit.json)",
+      "Bash(RUST_LOG=debug cargo run -- test-images/Canon/T3i.jpg)",
+      "Bash(env RUST_LOG=debug cargo run -- test-images/Canon/T3i.jpg)",
+      "Bash(echo \"4. Group filtering:\" cargo run --bin exif-oxide -- --json test-images/canon/Canon_T3i.jpg -EXIF:all)",
+      "Bash(echo \"5. Wildcard patterns - GPS prefix:\" cargo run --bin exif-oxide -- --json third-party/exiftool/t/images/Ricoh2.jpg -GPS*)",
+      "Bash(env RUST_LOG=trace cargo run -- test-images/canon/Canon_T3i.jpg)",
+      "Bash(echo \"7. Middle wildcard test:\" cargo run --bin exif-oxide -- --json test-images/canon/Canon_T3i.jpg \"-*Image*\")",
+      "Bash(RUST_LOG=debug cargo run third-party/exiftool/t/images/Ricoh2.jpg)",
+      "Bash(env RUST_LOG=debug cargo run third-party/exiftool/t/images/Ricoh2.jpg)",
+      "Bash(/home/mrm/src/exiftool-vendored.pl/bin/exiftool -a -G1 -n test-images/canon/Canon_T3i.jpg)",
+      "Bash(env RUST_LOG=debug cargo run)",
+      "Bash(env:*)",
+      "Bash(./target/debug/generate_rust)",
+      "Bash(./target/debug/generate_rust:*)",
+      "Bash(RUST_LOG=warn cargo run --release --quiet)"
     ],
     "deny": []
   }

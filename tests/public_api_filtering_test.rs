@@ -94,28 +94,37 @@ fn test_extract_metadata_json_with_filter_middle_wildcard() {
         numeric_tags: HashSet::new(),
         glob_patterns: vec!["*Date*".to_string()],
     };
-    
+
     let result = extract_metadata_json_with_filter(TEST_IMAGE, Some(filter)).unwrap();
     let obj = result.as_object().unwrap();
-    
+
     // Should contain tags with "Date" in the name
-    let date_tags: Vec<_> = obj.keys()
+    let date_tags: Vec<_> = obj
+        .keys()
         .filter(|k| k.to_lowercase().contains("date"))
         .collect();
-    
+
     assert!(!date_tags.is_empty(), "Expected tags containing 'Date'");
-    assert!(date_tags.len() >= 6, "Expected multiple date tags, got {}", date_tags.len());
-    
+    assert!(
+        date_tags.len() >= 6,
+        "Expected multiple date tags, got {}",
+        date_tags.len()
+    );
+
     // Verify some specific expected date tags
     assert!(obj.contains_key("EXIF:CreateDate"));
     assert!(obj.contains_key("EXIF:DateTimeOriginal"));
     assert!(obj.contains_key("File:FileModifyDate"));
-    
+
     // All returned tags should match the pattern
     for key in obj.keys() {
         if key != "SourceFile" {
-            let tag_name = key.split(':').last().unwrap_or(key);
-            assert!(tag_name.to_lowercase().contains("date"), "Non-date tag found: {}", key);
+            let tag_name = key.split(':').next_back().unwrap_or(key);
+            assert!(
+                tag_name.to_lowercase().contains("date"),
+                "Non-date tag found: {}",
+                key
+            );
         }
     }
 }

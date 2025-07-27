@@ -62,6 +62,11 @@ static PROCESSOR_REGISTRY: LazyLock<ProcessorRegistry> = LazyLock::new(|| {
 
     // Register Canon processors
     registry.register_processor(
+        ProcessorKey::new("Canon".to_string(), "Main".to_string()),
+        CanonMainProcessor,
+    );
+
+    registry.register_processor(
         ProcessorKey::new("Canon".to_string(), "SerialData".to_string()),
         CanonSerialDataProcessor,
     );

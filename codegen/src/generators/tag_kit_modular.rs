@@ -1525,7 +1525,7 @@ fn has_binary_data_parser(module_name: &str, table_name: &str) -> bool {
         table_name
     };
     
-    let binary_data_file = format!("src/generated/{}/{}_binary_data.rs", 
+    let binary_data_file = format!("../src/generated/{}/{}_binary_data.rs", 
                                    module_name, 
                                    clean_table_name.to_lowercase());
     std::path::Path::new(&binary_data_file).exists()
@@ -1546,25 +1546,50 @@ fn generate_binary_data_integration(code: &mut String, table_name: &str, module_
     
     code.push_str(&format!("fn process_{table_name}(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n"));
     code.push_str(&format!("    tracing::debug!(\"process_{table_name} called with {{}} bytes\", data.len());\n"));
-    code.push_str(&format!("    use crate::generated::{}::{}_binary_data::{{{}{}Table, {}_TAGS}};\n", 
-                          module_name, table_snake, 
-                          module_name.replace("_pm", ""), table_pascal, table_snake.to_uppercase()));
+    // Generate the correct struct name to match binary data generator pattern
+    // Extract manufacturer from module name (e.g., "Canon_pm" -> "Canon", "Sony_pm" -> "Sony")
+    let manufacturer = module_name.replace("_pm", "");
+    
+    // Use the exact same naming pattern as process_binary_data.rs:141
+    // format!("{}{}Table", data.manufacturer, data.table_data.table_name)
+    // The table_name in the binary data comes from the JSON, so we need to match that exactly
+    let struct_name = match clean_table_name.to_lowercase().as_str() {
+        "previewimageinfo" => format!("{}PreviewImageInfoTable", manufacturer),
+        "camerasettings" => format!("{}CameraSettingsTable", manufacturer),
+        "camerasettings2" => format!("{}CameraSettings2Table", manufacturer),
+        "shotinfo" => format!("{}ShotInfoTable", manufacturer),
+        "processing" => format!("{}ProcessingTable", manufacturer),
+        _ => format!("{}{table_pascal}Table", manufacturer)
+    };
+    code.push_str(&format!("    use crate::generated::{}::{}_binary_data::{{{}, {}_TAGS}};\n", 
+                          module_name, table_snake, struct_name, table_snake.to_uppercase()));
     code.push_str("    \n");
-    code.push_str("    let table = ");
-    code.push_str(&format!("{}{}Table::new();\n", module_name.replace("_pm", ""), table_pascal));
+    code.push_str(&format!("    let table = {}::new();\n", struct_name));
     code.push_str("    let mut tags = Vec::new();\n");
     code.push_str("    \n");
     
-    // Determine entry size based on common formats (this could be enhanced to read from table metadata)
-    code.push_str("    let entry_size = match table.default_format {\n");
-    code.push_str("        \"int16s\" | \"int16u\" => 2,\n");
-    code.push_str("        \"int32s\" | \"int32u\" => 4,\n");
-    code.push_str("        _ => 2, // Default to 2 bytes\n");
-    code.push_str("    };\n");
+    // Determine entry size based on format - Canon has default_format field, Sony doesn't
+    if manufacturer == "Canon" {
+        code.push_str("    let entry_size = match table.default_format {\n");
+        code.push_str("        \"int16s\" | \"int16u\" => 2,\n");
+        code.push_str("        \"int32s\" | \"int32u\" => 4,\n");
+        code.push_str("        _ => 2, // Default to 2 bytes\n");
+        code.push_str("    };\n");
+    } else {
+        // Sony and other manufacturers - default to 2 bytes (int16u is most common)
+        code.push_str("    let entry_size = 2; // Default to 2 bytes (int16u format)\n");
+    }
     code.push_str("    \n");
-    code.push_str(&format!("    tracing::debug!(\"{}BinaryData: format={{}}, first_entry={{}}, {{}} tag definitions\", \n", table_pascal));
-    code.push_str("                    table.default_format, table.first_entry, ");
-    code.push_str(&format!("{}_TAGS.len());\n", table_snake.to_uppercase()));
+    // Debug log that handles different struct fields based on manufacturer
+    if manufacturer == "Canon" {
+        code.push_str(&format!("    tracing::debug!(\"{}BinaryData: format={{}}, first_entry={{}}, {{}} tag definitions\", \n", table_pascal));
+        code.push_str("                    table.default_format, table.first_entry, ");
+        code.push_str(&format!("{}_TAGS.len());\n", table_snake.to_uppercase()));
+    } else {
+        code.push_str(&format!("    tracing::debug!(\"{}BinaryData: first_entry={{}}, {{}} tag definitions\", \n", table_pascal));
+        code.push_str("                    table.first_entry, ");
+        code.push_str(&format!("{}_TAGS.len());\n", table_snake.to_uppercase()));
+    }
     code.push_str("    \n");
     code.push_str(&format!("    for (&offset, &tag_name) in {}_TAGS.iter() {{\n", table_snake.to_uppercase()));
     code.push_str("        let byte_offset = ((offset as i32 - table.first_entry) * entry_size) as usize;\n");
@@ -1572,26 +1597,40 @@ fn generate_binary_data_integration(code: &mut String, table_name: &str, module_
     code.push_str("            let tag_value = match entry_size {\n");
     code.push_str("                2 => {\n");
     code.push_str("                    let raw_u16 = byte_order.read_u16(data, byte_offset)?;\n");
-    code.push_str("                    if table.default_format.contains(\"int16s\") {\n");
-    code.push_str("                        TagValue::I32(raw_u16 as i16 as i32)\n");
-    code.push_str("                    } else {\n");
-    code.push_str("                        TagValue::U16(raw_u16)\n");
-    code.push_str("                    }\n");
+    
+    if manufacturer == "Canon" {
+        code.push_str("                    if table.default_format.contains(\"int16s\") {\n");
+        code.push_str("                        TagValue::I32(raw_u16 as i16 as i32)\n");
+        code.push_str("                    } else {\n");
+        code.push_str("                        TagValue::U16(raw_u16)\n");
+        code.push_str("                    }\n");
+    } else {
+        // Sony - default to unsigned int16u
+        code.push_str("                    TagValue::U16(raw_u16)\n");
+    }
+    
     code.push_str("                },\n");
     code.push_str("                4 => {\n");
     code.push_str("                    let raw_u32 = byte_order.read_u32(data, byte_offset)?;\n");
-    code.push_str("                    if table.default_format.contains(\"int32s\") {\n");
-    code.push_str("                        TagValue::I32(raw_u32 as i32)\n");
-    code.push_str("                    } else {\n");
-    code.push_str("                        TagValue::U32(raw_u32)\n");
-    code.push_str("                    }\n");
+    
+    if manufacturer == "Canon" {
+        code.push_str("                    if table.default_format.contains(\"int32s\") {\n");
+        code.push_str("                        TagValue::I32(raw_u32 as i32)\n");
+        code.push_str("                    } else {\n");
+        code.push_str("                        TagValue::U32(raw_u32)\n");
+        code.push_str("                    }\n");
+    } else {
+        // Sony - default to unsigned int32u
+        code.push_str("                    TagValue::U32(raw_u32)\n");
+    }
+    
     code.push_str("                },\n");
     code.push_str("                _ => continue,\n");
     code.push_str("            };\n");
-    code.push_str("            tracing::debug!(\"Extracted tag {{}}: {{}} = {{}}\", offset, tag_name, tag_value);\n");
+    code.push_str("            tracing::debug!(\"Extracted tag {}: {} = {}\", offset, tag_name, tag_value);\n");
     code.push_str("            tags.push((tag_name.to_string(), tag_value));\n");
     code.push_str("        } else {\n");
-    code.push_str("            tracing::debug!(\"Skipping tag {{}} ({{}}): offset {{}} exceeds data length {{}}\", \n");
+    code.push_str("            tracing::debug!(\"Skipping tag {} ({}): offset {} exceeds data length {}\", \n");
     code.push_str("                           offset, tag_name, byte_offset, data.len());\n");
     code.push_str("        }\n");
     code.push_str("    }\n");

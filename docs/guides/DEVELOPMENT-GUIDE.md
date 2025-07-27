@@ -149,16 +149,26 @@ registry.register_print_conv(
 
 ##### Run Tests
 
-```bash
-# Unit tests
-cargo test
+**⚠️ Important: Use `cargo t` instead of `cargo test`**
 
-# Integration tests
+Integration tests require both `test-helpers` and `integration-tests` features enabled. We've configured cargo aliases for convenience:
+
+```bash
+# Unit and integration tests (recommended)
+cargo t
+
+# Specific test patterns
+cargo t pattern
+cargo t test_png_pattern_directly
+
+# Full test suite including compatibility tests
 make test
 
-# Compatibility tests
+# Compatibility tests only
 make compat
 ```
+
+**Why `cargo t`?** The `test-helpers` feature enables test-only public methods like `add_test_tag()` that integration tests need, and `integration-tests` enables tests requiring external test assets. The alias automatically includes `--features test-helpers,integration-tests` while keeping these features out of release builds.
 
 ##### Compare with ExifTool
 

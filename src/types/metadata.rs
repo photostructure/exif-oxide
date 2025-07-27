@@ -248,7 +248,28 @@ impl FilterOptions {
             && self
                 .group_all_patterns
                 .iter()
-                .all(|pattern| pattern.to_lowercase() == "file:all");
+                .all(|pattern| pattern.to_lowercase() == "file:all")
+            && self.glob_patterns.iter().all(|pattern| {
+                // Check if glob pattern could match non-File group tags
+                // Only File group patterns or pure File tag patterns should be considered file-only
+                let pattern_lower = pattern.to_lowercase();
+                pattern_lower == "file:*"
+                    || pattern_lower.starts_with("file")
+                    || matches!(
+                        pattern_lower.as_str(),
+                        "filename*"
+                            | "directory*"
+                            | "filesize*"
+                            | "filemodifydate*"
+                            | "fileaccessdate*"
+                            | "fileinodechangedate*"
+                            | "filecreatedate*"
+                            | "filepermissions*"
+                            | "filetype*"
+                            | "filetypeextension*"
+                            | "mimetype*"
+                    )
+            });
 
         all_file_related && self.has_specific_requests()
     }
@@ -736,6 +757,42 @@ mod tests {
         // This is correct ExifTool behavior - group-qualified names are checked
         assert!(filter_opts.should_extract_tag("Altitude", "GPS"));
         assert!(!filter_opts.should_extract_tag("Altitude", "EXIF")); // Different group
+    }
+
+    #[test]
+    fn test_is_file_group_only_with_glob_patterns() {
+        // GPS glob pattern should NOT be file-only
+        let gps_filter = FilterOptions {
+            requested_tags: Vec::new(),
+            requested_groups: Vec::new(),
+            group_all_patterns: Vec::new(),
+            extract_all: false,
+            numeric_tags: HashSet::new(),
+            glob_patterns: vec!["GPS*".to_string()],
+        };
+        assert!(!gps_filter.is_file_group_only());
+
+        // File glob pattern SHOULD be file-only
+        let file_filter = FilterOptions {
+            requested_tags: Vec::new(),
+            requested_groups: Vec::new(),
+            group_all_patterns: Vec::new(),
+            extract_all: false,
+            numeric_tags: HashSet::new(),
+            glob_patterns: vec!["File*".to_string()],
+        };
+        assert!(file_filter.is_file_group_only());
+
+        // MIMEType glob pattern SHOULD be file-only (File group tag)
+        let mime_filter = FilterOptions {
+            requested_tags: Vec::new(),
+            requested_groups: Vec::new(),
+            group_all_patterns: Vec::new(),
+            extract_all: false,
+            numeric_tags: HashSet::new(),
+            glob_patterns: vec!["MIMEType*".to_string()],
+        };
+        assert!(mime_filter.is_file_group_only());
     }
 }
 

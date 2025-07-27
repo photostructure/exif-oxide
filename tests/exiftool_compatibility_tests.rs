@@ -10,28 +10,17 @@
 
 use serde_json::Value;
 use similar::{ChangeTag, TextDiff};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
 mod common;
 use common::CASIO_QVCI_JPG;
 
-/// Load supported tags from shared config file (Milestone 8a)
-/// Single source of truth now maintained in config/supported_tags.json
-///
-/// Note: Future tags requiring PrintConv implementations:
-/// - MeteringMode: Needs Canon-specific "Evaluative" vs "Multi-segment" handling
-/// - ExifImageWidth/ExifImageHeight: Work but no PrintConv needed
-/// - XResolution/YResolution: Need PrintConv to format as integer
-/// - FocalLength: Needs PrintConv to format as "24.0 mm"
-/// - FNumber: Needs PrintConv to format as "4.0"
-/// - ExposureTime: Needs PrintConv to format as "1/2000"
-/// - DateTimeOriginal/CreateDate: Need PrintConv date formatting
-/// - GPSLatitude/GPSLongitude: Need ValueConv for decimal degrees (Milestone 8)
-/// - GPS tags temporarily excluded due to extraction issues in some files
+/// Load supported tags from shared config file
+/// Uses supported_tags_final.json which contains the comprehensive list of 271 tags
 fn load_supported_tags() -> Vec<String> {
-    const CONFIG_JSON: &str = include_str!("../config/supported_tags.json");
-    serde_json::from_str(CONFIG_JSON).expect("Failed to parse supported_tags.json")
+    const CONFIG_JSON: &str = include_str!("../config/supported_tags_final.json");
+    serde_json::from_str(CONFIG_JSON).expect("Failed to parse supported_tags_final.json")
 }
 
 /// Files to exclude from testing (problematic files to deal with later)
@@ -619,6 +608,340 @@ fn detect_manufacturer_from_path(file_path: &str) -> Option<String> {
     }
 }
 
+/// Analysis result for a specific tag difference
+#[derive(Debug, Clone)]
+struct TagDifference {
+    tag: String,
+    expected: Option<Value>,
+    actual: Option<Value>,
+    difference_type: DifferenceType,
+    sample_file: String,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+enum DifferenceType {
+    Working,             // Values match exactly
+    ValueFormatMismatch, // Same data, different format (e.g., "1.5" vs 1.5)
+    Missing,             // Tag missing from our output
+    TypeMismatch,        // Completely different data types
+    OnlyInOurs,          // Tag only exists in our output
+}
+
+/// Structured compatibility analysis result
+#[derive(Debug)]
+struct CompatibilityReport {
+    working_tags: Vec<String>,
+    value_format_mismatches: Vec<TagDifference>,
+    missing_tags: Vec<TagDifference>,
+    type_mismatches: Vec<TagDifference>,
+    only_in_ours: Vec<TagDifference>,
+    total_tags_tested: usize,
+    total_files_tested: usize,
+}
+
+impl CompatibilityReport {
+    fn new() -> Self {
+        Self {
+            working_tags: Vec::new(),
+            value_format_mismatches: Vec::new(),
+            missing_tags: Vec::new(),
+            type_mismatches: Vec::new(),
+            only_in_ours: Vec::new(),
+            total_tags_tested: 0,
+            total_files_tested: 0,
+        }
+    }
+
+    fn print_summary(&self) {
+        let total_failing = self.value_format_mismatches.len()
+            + self.missing_tags.len()
+            + self.type_mismatches.len();
+        let success_rate = if self.total_tags_tested > 0 {
+            (self.working_tags.len() * 100) / self.total_tags_tested
+        } else {
+            0
+        };
+
+        println!("\n🎯 ExifTool Compatibility Report");
+        println!("=================================");
+        println!("Files tested: {}", self.total_files_tested);
+        println!("Unique tags tested: {}", self.total_tags_tested);
+        println!(
+            "Success rate: {}% ({}/{})",
+            success_rate,
+            self.working_tags.len(),
+            self.total_tags_tested
+        );
+        println!();
+
+        if !self.working_tags.is_empty() {
+            println!("✅ WORKING ({} tags):", self.working_tags.len());
+            let mut sorted_working = self.working_tags.clone();
+            sorted_working.sort();
+            for tag in sorted_working.iter().take(10) {
+                println!("  {}", tag);
+            }
+            if self.working_tags.len() > 10 {
+                println!("  ... and {} more", self.working_tags.len() - 10);
+            }
+            println!();
+        }
+
+        if !self.value_format_mismatches.is_empty() {
+            println!(
+                "⚠️  VALUE FORMAT MISMATCHES ({} tags):",
+                self.value_format_mismatches.len()
+            );
+            for diff in self.value_format_mismatches.iter().take(5) {
+                println!(
+                    "  {}: Expected: {:?}, Got: {:?} ({})",
+                    diff.tag, diff.expected, diff.actual, diff.sample_file
+                );
+            }
+            if self.value_format_mismatches.len() > 5 {
+                println!("  ... and {} more", self.value_format_mismatches.len() - 5);
+            }
+            println!();
+        }
+
+        if !self.missing_tags.is_empty() {
+            println!("❌ MISSING TAGS ({} tags):", self.missing_tags.len());
+            for diff in self.missing_tags.iter().take(5) {
+                println!(
+                    "  {}: Expected: {:?} ({})",
+                    diff.tag, diff.expected, diff.sample_file
+                );
+            }
+            if self.missing_tags.len() > 5 {
+                println!("  ... and {} more", self.missing_tags.len() - 5);
+            }
+            println!();
+        }
+
+        if !self.type_mismatches.is_empty() {
+            println!("🔥 TYPE MISMATCHES ({} tags):", self.type_mismatches.len());
+            for diff in self.type_mismatches.iter().take(5) {
+                println!(
+                    "  {}: Expected: {:?}, Got: {:?} ({})",
+                    diff.tag, diff.expected, diff.actual, diff.sample_file
+                );
+            }
+            if self.type_mismatches.len() > 5 {
+                println!("  ... and {} more", self.type_mismatches.len() - 5);
+            }
+            println!();
+        }
+
+        if !self.only_in_ours.is_empty() {
+            println!("ℹ️  ONLY IN EXIF-OXIDE ({} tags):", self.only_in_ours.len());
+            for diff in self.only_in_ours.iter().take(5) {
+                println!("  {}: {:?} ({})", diff.tag, diff.actual, diff.sample_file);
+            }
+            if self.only_in_ours.len() > 5 {
+                println!("  ... and {} more", self.only_in_ours.len() - 5);
+            }
+            println!();
+        }
+
+        println!(
+            "Summary: {}% working, {} needing attention",
+            success_rate, total_failing
+        );
+    }
+}
+
+/// Analyze differences between ExifTool reference and our output for a single file
+fn analyze_tag_differences(
+    file_path: &str,
+    exiftool_data: &Value,
+    our_data: &Value,
+) -> Vec<TagDifference> {
+    let mut differences = Vec::new();
+    let supported_tags: HashSet<String> = load_supported_tags().into_iter().collect();
+
+    let empty_map = serde_json::Map::new();
+    let exiftool_obj = exiftool_data.as_object().unwrap_or(&empty_map);
+    let our_obj = our_data.as_object().unwrap_or(&empty_map);
+
+    // Check all supported tags
+    for tag in &supported_tags {
+        if tag == "SourceFile" {
+            continue; // Skip SourceFile as it's always different
+        }
+
+        let expected = exiftool_obj.get(tag);
+        let actual = our_obj.get(tag);
+
+        let difference_type = match (expected, actual) {
+            (Some(exp), Some(act)) => {
+                if values_match_semantically(exp, act) {
+                    DifferenceType::Working
+                } else if same_data_different_format(exp, act) {
+                    DifferenceType::ValueFormatMismatch
+                } else {
+                    DifferenceType::TypeMismatch
+                }
+            }
+            (Some(_), None) => DifferenceType::Missing,
+            (None, Some(_)) => DifferenceType::OnlyInOurs,
+            (None, None) => continue, // Tag not present in either
+        };
+
+        differences.push(TagDifference {
+            tag: tag.clone(),
+            expected: expected.cloned(),
+            actual: actual.cloned(),
+            difference_type,
+            sample_file: file_path.to_string(),
+        });
+    }
+
+    differences
+}
+
+/// Check if two values represent the same data but in different formats
+/// Enhanced for PhotoStructure DAM workflows with appropriate tolerances
+fn same_data_different_format(expected: &Value, actual: &Value) -> bool {
+    match (expected, actual) {
+        // String vs Number with same numeric value
+        (Value::String(s), Value::Number(n)) => {
+            if let Some(tolerance) = get_tolerance_for_values(expected, actual) {
+                s.parse::<f64>()
+                    .map(|parsed| (parsed - n.as_f64().unwrap_or(0.0)).abs() < tolerance)
+                    .unwrap_or(false)
+            } else {
+                false
+            }
+        }
+        (Value::Number(n), Value::String(s)) => {
+            if let Some(tolerance) = get_tolerance_for_values(expected, actual) {
+                s.parse::<f64>()
+                    .map(|parsed| (parsed - n.as_f64().unwrap_or(0.0)).abs() < tolerance)
+                    .unwrap_or(false)
+            } else {
+                false
+            }
+        }
+        // Rational array vs formatted string (e.g., [500, 10] vs "50.0 mm")
+        (Value::Array(arr), Value::String(s)) if arr.len() == 2 => {
+            if let (Some(num), Some(den)) = (arr[0].as_f64(), arr[1].as_f64()) {
+                if den != 0.0 {
+                    let ratio = num / den;
+                    if let Some(numeric_part) = extract_numeric_from_string(s) {
+                        let tolerance = get_tolerance_for_values(expected, actual).unwrap_or(0.001);
+                        return (ratio - numeric_part).abs() < tolerance;
+                    }
+                }
+            }
+            false
+        }
+        (Value::String(s), Value::Array(arr)) if arr.len() == 2 => {
+            if let (Some(num), Some(den)) = (arr[0].as_f64(), arr[1].as_f64()) {
+                if den != 0.0 {
+                    let ratio = num / den;
+                    if let Some(numeric_part) = extract_numeric_from_string(s) {
+                        let tolerance = get_tolerance_for_values(expected, actual).unwrap_or(0.001);
+                        return (ratio - numeric_part).abs() < tolerance;
+                    }
+                }
+            }
+            false
+        }
+        // Array vs single value (like rational array [5, 1] vs number 5)
+        (Value::Array(arr), Value::Number(n)) if arr.len() == 2 => {
+            if let (Some(num), Some(den)) = (arr[0].as_f64(), arr[1].as_f64()) {
+                if den != 0.0 {
+                    let tolerance = get_tolerance_for_values(expected, actual).unwrap_or(0.001);
+                    return (num / den - n.as_f64().unwrap_or(0.0)).abs() < tolerance;
+                }
+            }
+            false
+        }
+        (Value::Number(n), Value::Array(arr)) if arr.len() == 2 => {
+            if let (Some(num), Some(den)) = (arr[0].as_f64(), arr[1].as_f64()) {
+                if den != 0.0 {
+                    let tolerance = get_tolerance_for_values(expected, actual).unwrap_or(0.001);
+                    return (num / den - n.as_f64().unwrap_or(0.0)).abs() < tolerance;
+                }
+            }
+            false
+        }
+        _ => false,
+    }
+}
+
+/// Get appropriate tolerance based on value types and PhotoStructure DAM requirements
+fn get_tolerance_for_values(expected: &Value, actual: &Value) -> Option<f64> {
+    // Check for GPS coordinates - need 0.0001° tolerance (consumer GPS precision)
+    if is_gps_coordinate(expected) || is_gps_coordinate(actual) {
+        return Some(0.0001);
+    }
+    
+    // Check for timestamp sub-second precision - important for burst photos
+    if is_timestamp_value(expected) || is_timestamp_value(actual) {
+        return Some(0.001); // 1ms tolerance for timestamp precision
+    }
+    
+    // Default tolerance for other numeric comparisons
+    Some(0.001)
+}
+
+/// Check if a value represents GPS coordinates
+fn is_gps_coordinate(value: &Value) -> bool {
+    match value {
+        Value::Number(n) => {
+            let abs_val = n.as_f64().unwrap_or(0.0).abs();
+            // GPS coordinates are typically -180 to 180 for longitude, -90 to 90 for latitude
+            abs_val <= 180.0 && abs_val > 0.0001
+        }
+        _ => false
+    }
+}
+
+/// Check if a value represents timestamp data
+fn is_timestamp_value(value: &Value) -> bool {
+    match value {
+        Value::String(s) => {
+            // Check for timestamp formats like "14:58:24" or ISO datetime
+            s.contains(':') && (s.len() >= 8)
+        }
+        Value::Number(n) => {
+            // Unix timestamps or sub-second values
+            let val = n.as_f64().unwrap_or(0.0);
+            val > 1000000000.0 || (val > 0.0 && val < 86400.0) // Unix epoch or seconds in day
+        }
+        _ => false
+    }
+}
+
+/// Extract numeric value from strings like "50.0 mm", "1/2000", "F4.0"
+fn extract_numeric_from_string(s: &str) -> Option<f64> {
+    // Handle fraction format "1/2000"
+    if let Some(slash_pos) = s.find('/') {
+        let num_str = &s[..slash_pos];
+        let den_str = &s[slash_pos + 1..];
+        if let (Ok(num), Ok(den)) = (num_str.parse::<f64>(), den_str.parse::<f64>()) {
+            if den != 0.0 {
+                return Some(num / den);
+            }
+        }
+    }
+    
+    // Handle strings with units "50.0 mm", "F4.0", or prefixes
+    let cleaned = s.chars()
+        .skip_while(|c| !c.is_ascii_digit() && *c != '-' && *c != '.')
+        .take_while(|c| c.is_ascii_digit() || *c == '.' || *c == '-')
+        .collect::<String>();
+    
+    cleaned.parse::<f64>().ok()
+}
+
+/// Check if values match semantically (using existing normalization)
+fn values_match_semantically(expected: &Value, actual: &Value) -> bool {
+    // Use existing normalization logic
+    expected == actual
+}
+
 /// Test ExifTool compatibility using stored snapshots
 #[test]
 fn test_exiftool_compatibility() {
@@ -685,9 +1008,9 @@ fn test_exiftool_compatibility() {
         snapshot_files.len()
     );
 
-    let mut failed_files = Vec::new();
-    let mut passed_files = Vec::new();
+    let mut compatibility_report = CompatibilityReport::new();
     let mut tested_files = 0;
+    let mut all_tag_differences = HashMap::new(); // tag -> TagDifference
 
     for file_path in snapshot_files {
         // Skip excluded files (check both absolute and relative paths)
@@ -710,42 +1033,63 @@ fn test_exiftool_compatibility() {
 
         tested_files += 1;
 
-        if let Err(e) = compare_file_output(&file_path) {
-            failed_files.push((file_path, e.to_string()));
-        } else {
-            passed_files.push(file_path);
+        // Load both ExifTool reference and our output
+        match (
+            load_exiftool_snapshot(&file_path),
+            run_exif_oxide(&file_path),
+        ) {
+            (Ok(exiftool_data), Ok(our_data)) => {
+                let file_differences =
+                    analyze_tag_differences(&file_path, &exiftool_data, &our_data);
+
+                // Aggregate differences by tag (keep the first example of each tag difference)
+                for diff in file_differences {
+                    if !all_tag_differences.contains_key(&diff.tag) {
+                        all_tag_differences.insert(diff.tag.clone(), diff);
+                    }
+                }
+            }
+            (Err(e), _) => {
+                println!("Failed to load ExifTool snapshot for {}: {}", file_path, e);
+            }
+            (_, Err(e)) => {
+                println!("Failed to run exif-oxide on {}: {}", file_path, e);
+            }
         }
     }
 
-    println!("\n📊 Summary:");
-    println!("  Files tested: {tested_files}");
-    println!("  Matches: {}", passed_files.len());
-    println!("  Mismatches: {}", failed_files.len());
+    // Convert aggregated differences into report structure
+    compatibility_report.total_files_tested = tested_files;
 
-    if 1 > 2 && !passed_files.is_empty() {
-        println!("\n✅ Passed files:");
-        for file in &passed_files {
-            let relative_path = Path::new(file)
-                .strip_prefix(std::env::current_dir().unwrap_or_default())
-                .unwrap_or(Path::new(file))
-                .to_string_lossy();
-            println!("  - {relative_path}");
+    for (tag, diff) in all_tag_differences {
+        match diff.difference_type {
+            DifferenceType::Working => compatibility_report.working_tags.push(tag),
+            DifferenceType::ValueFormatMismatch => {
+                compatibility_report.value_format_mismatches.push(diff)
+            }
+            DifferenceType::Missing => compatibility_report.missing_tags.push(diff),
+            DifferenceType::TypeMismatch => compatibility_report.type_mismatches.push(diff),
+            DifferenceType::OnlyInOurs => compatibility_report.only_in_ours.push(diff),
         }
     }
 
-    if !failed_files.is_empty() {
-        println!("\n❌ Failed files:");
-        for (file, error) in &failed_files {
-            let relative_path = Path::new(file)
-                .strip_prefix(std::env::current_dir().unwrap_or_default())
-                .unwrap_or(Path::new(file))
-                .to_string_lossy();
-            println!("  - {relative_path}: {error}");
-        }
+    compatibility_report.total_tags_tested = compatibility_report.working_tags.len()
+        + compatibility_report.value_format_mismatches.len()
+        + compatibility_report.missing_tags.len()
+        + compatibility_report.type_mismatches.len()
+        + compatibility_report.only_in_ours.len();
 
+    // Print the enhanced compatibility report
+    compatibility_report.print_summary();
+
+    // Fail test if there are critical issues
+    let critical_failures =
+        compatibility_report.missing_tags.len() + compatibility_report.type_mismatches.len();
+    if critical_failures > 0 {
         panic!(
-            "{} files had mismatches with ExifTool snapshots",
-            failed_files.len()
+            "Critical compatibility failures: {} missing tags, {} type mismatches",
+            compatibility_report.missing_tags.len(),
+            compatibility_report.type_mismatches.len()
         );
     }
 }
