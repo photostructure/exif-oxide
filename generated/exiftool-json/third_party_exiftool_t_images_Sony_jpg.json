@@ -1,9 +1,13 @@
 {
   "SourceFile": "third-party/exiftool/t/images/Sony.jpg",
   "File:FileSize": 2779,
+  "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "Sony.jpg",
   "File:Directory": "third-party/exiftool/t/images",
   "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileAccessDate": "2025:07:27 12:08:27-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
   "File:MIMEType": "image/jpeg",
@@ -18,10 +22,8 @@
   "EXIF:FNumber": 7.1,
   "EXIF:ExposureProgram": "Program AE",
   "EXIF:ISO": 64,
-  "EXIF:ExifVersion": "0220",
   "EXIF:DateTimeOriginal": "2003:12:18 13:51:33",
   "EXIF:CreateDate": "2003:12:18 13:51:33",
-  "EXIF:MaxApertureValue": 2.0,
   "EXIF:MeteringMode": "Multi-segment",
   "EXIF:Flash": "Off, Did not fire",
   "EXIF:FocalLength": "12.5 mm",
@@ -29,5 +31,9 @@
   "EXIF:ExifImageHeight": 2448,
   "File:ImageWidth": 8,
   "File:ImageHeight": 8,
-  "Composite:ImageSize": "8x8"
+  "Composite:Aperture": 7.1,
+  "Composite:ShutterSpeed": "1/250",
+  "EXIF:ThumbnailImage": "(Binary data 28 bytes, use -b option to extract)",
+  "Composite:ImageSize": "8x8",
+  "Composite:Megapixels": 0.000064
 }

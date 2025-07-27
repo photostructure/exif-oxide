@@ -1,23 +1,42 @@
 {
   "SourceFile": "third-party/exiftool/t/images/MWG.jpg",
   "File:FileSize": 2255,
+  "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "MWG.jpg",
   "File:Directory": "third-party/exiftool/t/images",
   "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileAccessDate": "2025:07:27 12:08:26-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
   "File:MIMEType": "image/jpeg",
   "EXIF:ImageDescription": "RIGHT-EXIF-Description",
   "EXIF:Orientation": "Rotate 90 CW",
   "EXIF:ResolutionUnit": "inches",
-  "EXIF:Artist": "RIGHT1of2-EXIF-Creator; RIGHT2of2-EXIF-Creator",
   "EXIF:YCbCrPositioning": "Centered",
-  "EXIF:ExifVersion": "0220",
   "EXIF:DateTimeOriginal": "2001:01:01 01:11:11",
   "EXIF:SubSecTime": 133,
   "EXIF:SubSecTimeOriginal": 111,
   "EXIF:SubSecTimeDigitized": 122,
+  "IPTC:Keywords": [
+    "WRONG1of2-IPTC-Keywords",
+    "WRONG2of2-IPTC-Keywords"
+  ],
+  "IPTC:City": "WRONG-IPTC-City",
+  "XMP:Description": "WRONG-XMP-Description",
+  "XMP:Subject": [
+    "RIGHT1of2-XMP-Keywords",
+    "RIGHT2of2-XMP-Keywords"
+  ],
+  "XMP:City": "RIGHT-XMP-City",
+  "XMP:ModifyDate": "2003:03:03 03:33:33.333+03:00",
+  "XMP:Rating": 3,
   "File:ImageWidth": 8,
   "File:ImageHeight": 8,
-  "Composite:ImageSize": "8x8"
+  "Composite:SubSecDateTimeOriginal": "2001:01:01 01:11:11.111",
+  "Composite:DateTimeCreated": "1992:01:01 02:11:11+01:00",
+  "Composite:DigitalCreationDateTime": "2002:02:02 02:22:22+02:00",
+  "Composite:ImageSize": "8x8",
+  "Composite:Megapixels": 0.000064
 }
