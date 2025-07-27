@@ -1,0 +1,7 @@
+
+# Cargo aliases for convenient testing
+[alias]
+# Use 'cargo t' instead of 'cargo test' - automatically enables both test features
+# test-helpers: enables test-only methods like add_test_tag()
+# integration-tests: enables tests that require external test assets
+t = "test --features test-helpers,integration-tests"
