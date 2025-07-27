@@ -4637,13 +4637,7 @@ pub fn process_tag_0x2_subdirectory(
         count
     );
 
-    match count {
-        // Model condition not yet supported: $$self{Model} !~ /^DSLR-(A450|A500|A550)$/
-        // Would dispatch to: Image::ExifTool::Sony::FaceInfo
-        // Model condition not yet supported: $$self{Model} =~ /^DSLR-(A450|A500|A550)$/
-        // Would dispatch to: Image::ExifTool::Sony::FaceInfoA
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x10_subdirectory(
@@ -4723,11 +4717,7 @@ pub fn process_tag_0x23_subdirectory(
         count
     );
 
-    match count {
-        // Model condition not yet supported: $$self{Model} =~ /^(SLT-|DSLR-A(560|580))\\b/
-        // Would dispatch to: Image::ExifTool::Sony::AFStatus15
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x48_subdirectory(
@@ -4743,11 +4733,7 @@ pub fn process_tag_0x48_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$self{FacesDetected} and $$self{FaceInfoOffset} == 0x48 and $$self{FaceInfoLength} == 0x20
-        // Would dispatch to: Image::ExifTool::Sony::FaceInfo1
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x5e_subdirectory(
@@ -4763,11 +4749,7 @@ pub fn process_tag_0x5e_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$self{FacesDetected} and $$self{FaceInfoOffset} == 0x5e and $$self{FaceInfoLength} == 0x25
-        // Would dispatch to: Image::ExifTool::Sony::FaceInfo2
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x114_subdirectory(
@@ -4821,13 +4803,7 @@ pub fn process_tag_0x116_subdirectory(
         count
     );
 
-    match count {
-        // Model condition not yet supported: $$self{Model} =~ /^DSLR-A(850|900)\\b/
-        // Would dispatch to: Image::ExifTool::Sony::ExtraInfo
-        // Model condition not yet supported: $$self{Model} =~ /^DSLR-A(230|290|330|380|390)\\b/
-        // Would dispatch to: Image::ExifTool::Sony::ExtraInfo2
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x1e0_subdirectory(
@@ -4894,11 +4870,7 @@ pub fn process_tag_0x388_subdirectory(
         count
     );
 
-    match count {
-        // Model condition not yet supported: $$self{Model} !~ /^(ILCA-99M2|ILCE-6500|DSC-(RX0|RX100M5))/
-        // Would dispatch to: Image::ExifTool::Sony::MeterInfo
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x398_subdirectory(
@@ -4914,11 +4886,7 @@ pub fn process_tag_0x398_subdirectory(
         count
     );
 
-    match count {
-        // Model condition not yet supported: $$self{Model} =~ /^(ILCA-99M2|ILCE-6500|DSC-(RX0|RX100M5))/
-        // Would dispatch to: Image::ExifTool::Sony::MeterInfo
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x401_subdirectory(
@@ -5054,11 +5022,7 @@ pub fn process_tag_0x1003_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$self{Panorama} = ($$valPt =~ /^(\\0\\0)?\\x01\\x01/)
-        // Would dispatch to: Image::ExifTool::Sony::Panorama
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2010_subdirectory(
@@ -5074,27 +5038,7 @@ pub fn process_tag_0x2010_subdirectory(
         count
     );
 
-    match count {
-        // Model condition not yet supported: $$self{Model} =~ /^NEX-5N$/
-        // Would dispatch to: Image::ExifTool::Sony::Tag2010a
-        // Model condition not yet supported: $$self{Model} =~ /^(SLT-A(65|77)V?|NEX-(7|VG20E)|Lunar)$/
-        // Would dispatch to: Image::ExifTool::Sony::Tag2010b
-        // Model condition not yet supported: $$self{Model} =~ /^(SLT-A(37|57)|NEX-F3)$/
-        // Would dispatch to: Image::ExifTool::Sony::Tag2010c
-        // Model condition not yet supported: $$self{Model} =~ /^(DSC-(HX10V|HX20V|HX30V|HX200V|TX66|TX200V|TX300V|WX50|WX70|WX100|WX150))$/ and not $$self{Panorama}
-        // Would dispatch to: Image::ExifTool::Sony::Tag2010d
-        // Model condition not yet supported: $$self{Model} =~ /^(SLT-A99V?|HV|SLT-A58|ILCE-(3000|3500)|NEX-(3N|5R|5T|6|VG900|VG30E)|DSC-(RX100|RX1|RX1R)|Stellar)$/ or ($$self{Model} =~ /^(DSC-(HX300|HX50|HX50V|TX30|WX60|WX80|WX200|WX300))$/ and not $$self{Panorama})
-        // Would dispatch to: Image::ExifTool::Sony::Tag2010e
-        // Model condition not yet supported: $$self{Model} =~ /^(DSC-(RX100M2|QX10|QX100))$/
-        // Would dispatch to: Image::ExifTool::Sony::Tag2010f
-        // Model condition not yet supported: $$self{Model} =~ /^(DSC-(QX30|RX10|RX100M3|HX60V|HX350|HX400V|WX220|WX350)|ILCE-(7(R|S|M2)?|[56]000|5100|QX1)|ILCA-(68|77M2))\\b/
-        // Would dispatch to: Image::ExifTool::Sony::Tag2010g
-        // Model condition not yet supported: $$self{Model} =~ /^(DSC-(RX0|RX1RM2|RX10M2|RX10M3|RX100M4|RX100M5|HX80|HX90V?|WX500)|ILCE-(6300|6500|7RM2|7SM2)|ILCA-99M2)\\b/
-        // Would dispatch to: Image::ExifTool::Sony::Tag2010h
-        // Model condition not yet supported: $$self{Model} =~ /^(ILCE-(6100|6400|6600|7C|7M3|7RM3A?|7RM4A?|9|9M2)|DSC-(RX10M4|RX100M6|RX100M5A|RX100M7|HX95|HX99|RX0M2)|ZV-(1F?|1M2|E10))\\b/
-        // Would dispatch to: Image::ExifTool::Sony::Tag2010i
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x202a_subdirectory(
@@ -5110,11 +5054,7 @@ pub fn process_tag_0x202a_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$valPt =~ /^\\x01/
-        // Would dispatch to: Image::ExifTool::Sony::Tag202a
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2044_subdirectory(
@@ -5164,11 +5104,7 @@ pub fn process_tag_0x900b_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$valPt =~ /^\\xae/
-        // Would dispatch to: Image::ExifTool::Sony::Tag900b
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x9050_subdirectory(
@@ -5184,17 +5120,7 @@ pub fn process_tag_0x9050_subdirectory(
         count
     );
 
-    match count {
-        // Model condition not yet supported: $$self{Model} !~ /^(DSC-|Stellar|ILCE-(1|6100|6300|6400|6500|6600|6700|7C|7M3|7M4|7RM2|7RM3A?|7RM4A?|7RM5|7SM2|7SM3|9|9M2)|ILCA-99M2|ILME-FX3|ZV-)/
-        // Would dispatch to: Image::ExifTool::Sony::Tag9050a
-        // Model condition not yet supported: $$self{Model} =~ /^(ILCE-(6100|6300|6400|6500|6600|7C|7M3|7RM2|7RM3A?|7RM4A?|7SM2|9|9M2)|ILCA-99M2|ZV-E10)\\b/
-        // Would dispatch to: Image::ExifTool::Sony::Tag9050b
-        // Model condition not yet supported: $$self{Model} =~ /^(ILCE-(1\\b|7M4|7RM5|7SM3)|ILME-FX3)/
-        // Would dispatch to: Image::ExifTool::Sony::Tag9050c
-        // Model condition not yet supported: $$self{Model} =~ /^(ILCE-(6700|7CM2|7CR)|ZV-(E1|E10M2))\\b/ or ($$self{Model} =~ /^(ILCE-1M2)/ and $$valPt =~ /^\\x00/)
-        // Would dispatch to: Image::ExifTool::Sony::Tag9050d
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x9400_subdirectory(
@@ -5210,15 +5136,7 @@ pub fn process_tag_0x9400_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$valPt =~ /^[\\x07\\x09\\x0a]/ or ($$valPt =~ /^[\\x5e\\xe7\\x04]/ and $$self{DoubleCipher} = 1)
-        // Would dispatch to: Image::ExifTool::Sony::Tag9400a
-        // Runtime condition not yet supported: $$valPt =~ /^\\x0c/
-        // Would dispatch to: Image::ExifTool::Sony::Tag9400b
-        // Runtime condition not yet supported: $$valPt =~ /^[\\x23\\x24\\x26\\x28\\x31\\x32\\x33]/
-        // Would dispatch to: Image::ExifTool::Sony::Tag9400c
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x9401_subdirectory(
@@ -5251,11 +5169,7 @@ pub fn process_tag_0x9402_subdirectory(
         count
     );
 
-    match count {
-        // Model condition not yet supported: $$self{Model} !~ /^(SLT-|HV|ILCA-)/ and $$valPt !~ /^[\\x05\\xff]/
-        // Would dispatch to: Image::ExifTool::Sony::Tag9402
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x9403_subdirectory(
@@ -5288,15 +5202,7 @@ pub fn process_tag_0x9404_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$valPt =~ /^[\\x40\\x7d]..\\x01/
-        // Would dispatch to: Image::ExifTool::Sony::Tag9404a
-        // Runtime condition not yet supported: $$valPt =~ /^[\\xe7\\xea\\xcd\\x8a\\x70]..\\x08/
-        // Would dispatch to: Image::ExifTool::Sony::Tag9404b
-        // Runtime condition not yet supported: $$valPt =~ /^\\xb6..\\x01/
-        // Would dispatch to: Image::ExifTool::Sony::Tag9404c
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x9405_subdirectory(
@@ -5312,13 +5218,7 @@ pub fn process_tag_0x9405_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$valPt =~ /^[\\x1b\\x40\\x7d]/
-        // Would dispatch to: Image::ExifTool::Sony::Tag9405a
-        // Runtime condition not yet supported: $$valPt =~ /^[\\x3a\\xb3\\x7e\\x9a\\x25\\xe1\\x76\\x8b]/
-        // Would dispatch to: Image::ExifTool::Sony::Tag9405b
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x9406_subdirectory(
@@ -5334,13 +5234,7 @@ pub fn process_tag_0x9406_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$valPt =~ /^[\\x01\\x08\\x1b].[\\x08\\x1b]/s
-        // Would dispatch to: Image::ExifTool::Sony::Tag9406
-        // Runtime condition not yet supported: $$valPt =~ /^[\\x40]/s
-        // Would dispatch to: Image::ExifTool::Sony::Tag9406b
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x940a_subdirectory(
@@ -5356,11 +5250,7 @@ pub fn process_tag_0x940a_subdirectory(
         count
     );
 
-    match count {
-        // Model condition not yet supported: $$self{Model} =~ /^(SLT-|HV)/
-        // Would dispatch to: Image::ExifTool::Sony::Tag940a
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x940c_subdirectory(
@@ -5376,11 +5266,7 @@ pub fn process_tag_0x940c_subdirectory(
         count
     );
 
-    match count {
-        // Model condition not yet supported: $$self{Model} =~ /^(NEX-|ILCE-|ILME-|Lunar|ZV-E10|ZV-E10M2|ZV-E1)\\b/
-        // Would dispatch to: Image::ExifTool::Sony::Tag940c
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x940e_subdirectory(
@@ -5396,13 +5282,7 @@ pub fn process_tag_0x940e_subdirectory(
         count
     );
 
-    match count {
-        // Model condition not yet supported: $$self{Model} =~ /^(SLT-|HV|ILCA-)/
-        // Would dispatch to: Image::ExifTool::Sony::AFInfo
-        // Model condition not yet supported: $$self{Model} =~ /^(NEX-|ILCE-|Lunar)/
-        // Would dispatch to: Image::ExifTool::Sony::Tag940e
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x9416_subdirectory(
@@ -5435,11 +5315,7 @@ pub fn process_tag_0xb028_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$valPt ne \"\\0\\0\\0\\0\"
-        // Would dispatch to: Image::ExifTool::Minolta::Main
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 /// Apply PrintConv for a tag from this module

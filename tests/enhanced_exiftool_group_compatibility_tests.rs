@@ -117,7 +117,7 @@ fn test_group0_assignments_match_exiftool() {
         }
     };
 
-    let exif_data = extract_metadata(std::path::Path::new(image_path), false, false).unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(image_path), false, false, None).unwrap();
 
     println!("Group0 (format family) compatibility test:");
 
@@ -182,7 +182,7 @@ fn test_group1_assignments_match_exiftool() {
         }
     };
 
-    let exif_data = extract_metadata(std::path::Path::new(image_path), false, false).unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(image_path), false, false, None).unwrap();
 
     println!("Group1 (subdirectory location) compatibility test:");
 
@@ -271,7 +271,7 @@ fn test_group2_full_hierarchy_compatibility() {
         }
     };
 
-    let exif_data = extract_metadata(std::path::Path::new(image_path), false, false).unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(image_path), false, false, None).unwrap();
 
     println!("Group2 (full hierarchy) compatibility test:");
 
@@ -339,7 +339,7 @@ fn test_group_assignment_distribution() {
         }
     };
 
-    let exif_data = extract_metadata(std::path::Path::new(image_path), false, false).unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(image_path), false, false, None).unwrap();
 
     // Analyze ExifTool's group distribution
     let mut exiftool_group0_categories = HashSet::new();
@@ -423,7 +423,7 @@ fn test_key_exif_ifd_tag_grouping() {
         }
     };
 
-    let exif_data = extract_metadata(std::path::Path::new(image_path), false, false).unwrap();
+    let exif_data = extract_metadata(std::path::Path::new(image_path), false, false, None).unwrap();
 
     // Key ExifIFD tags that are reliable indicators
     let key_exif_ifd_tags = [

@@ -605,6 +605,7 @@ impl ExifReader {
                 "IFD0".to_string() // Default fallback
             };
 
+
             // Debug logging for ColorSpace and WhiteBalance
             if tag_id == 0xa001 || tag_id == 0xa403 {
                 debug!("Creating TagEntry for 0x{:04x}: group={}, group1={}, name={}, value={:?}, print={:?}", 
@@ -627,6 +628,7 @@ impl ExifReader {
             // Composite tags already have "Composite:" prefix in the name
             // Extract just the tag name part
             let name = tag_name.strip_prefix("Composite:").unwrap_or(tag_name);
+
 
             // Find the composite definition
             let composite_def = COMPOSITE_TAGS.iter().find(|def| def.name == name);
@@ -832,6 +834,7 @@ impl ExifReader {
     /// Test helper: Add extracted tag with source info for testing
     /// Only available when the 'test-helpers' feature is enabled
     /// DO NOT USE in production code - only for tests
+    /// Test helper: Add test tag for integration tests
     #[cfg(any(test, feature = "test-helpers"))]
     pub fn add_test_tag(&mut self, tag_id: u16, value: TagValue, namespace: &str, ifd_name: &str) {
         use crate::types::TagSourceInfo;

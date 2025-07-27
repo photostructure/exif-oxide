@@ -8,6 +8,196 @@ use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 
+/// Configuration for filtering which tags to extract and how to format them
+///
+/// This struct controls both tag selection (filtering) and value formatting (PrintConv vs ValueConv).
+/// It enables performance optimization by extracting only requested tags and early termination
+/// when simple tags (like File group tags) are requested.
+///
+/// # Examples
+///
+/// ```
+/// use exif_oxide::types::FilterOptions;
+/// use std::collections::HashSet;
+///
+/// // Extract only MIMEType tag (performance optimized - no EXIF parsing needed)
+/// let mime_only = FilterOptions {
+///     requested_tags: vec!["MIMEType".to_string()],
+///     requested_groups: vec![],
+///     group_all_patterns: vec![],
+///     extract_all: false,
+///     numeric_tags: HashSet::new(),
+/// };
+///
+/// // Extract all EXIF group tags with some numeric values
+/// let mut numeric_tags = HashSet::new();
+/// numeric_tags.insert("Orientation".to_string());
+/// let exif_with_numeric = FilterOptions {
+///     requested_tags: vec![],
+///     requested_groups: vec![],
+///     group_all_patterns: vec!["EXIF:all".to_string()],
+///     extract_all: false,
+///     numeric_tags,
+/// };
+/// ```
+#[derive(Debug, Clone, PartialEq)]
+pub struct FilterOptions {
+    /// Specific tags to extract (case-insensitive)
+    /// Examples: ["MIMEType", "Orientation", "FNumber"]
+    pub requested_tags: Vec<String>,
+
+    /// Group filters without :all suffix (case-insensitive)  
+    /// Examples: ["EXIF", "File", "GPS"]
+    pub requested_groups: Vec<String>,
+
+    /// Group:all patterns (case-insensitive)
+    /// Examples: ["File:all", "EXIF:all", "GPS:all"]
+    pub group_all_patterns: Vec<String>,
+
+    /// Extract all available tags (default behavior for backward compatibility)
+    /// When true, all other filters are ignored
+    pub extract_all: bool,
+
+    /// Tags that should use numeric values instead of PrintConv
+    /// These correspond to ExifTool's -TagName# syntax
+    pub numeric_tags: HashSet<String>,
+}
+
+impl Default for FilterOptions {
+    fn default() -> Self {
+        Self {
+            requested_tags: Vec::new(),
+            requested_groups: Vec::new(),
+            group_all_patterns: Vec::new(),
+            extract_all: true, // Default to extracting all tags for backward compatibility
+            numeric_tags: HashSet::new(),
+        }
+    }
+}
+
+impl FilterOptions {
+    /// Create FilterOptions that extracts all tags (backward compatibility)
+    pub fn extract_all() -> Self {
+        Self::default()
+    }
+
+    /// Create FilterOptions for specific tags only
+    pub fn tags_only(tags: Vec<String>) -> Self {
+        Self {
+            requested_tags: tags,
+            requested_groups: Vec::new(),
+            group_all_patterns: Vec::new(),
+            extract_all: false,
+            numeric_tags: HashSet::new(),
+        }
+    }
+
+    /// Create FilterOptions for specific groups
+    pub fn groups_only(groups: Vec<String>) -> Self {
+        Self {
+            requested_tags: Vec::new(),
+            requested_groups: groups,
+            group_all_patterns: Vec::new(),
+            extract_all: false,
+            numeric_tags: HashSet::new(),
+        }
+    }
+
+    /// Check if we should extract all tags (ignoring filters)
+    pub fn should_extract_all(&self) -> bool {
+        self.extract_all
+    }
+
+    /// Check if any specific tags or groups are requested
+    pub fn has_specific_requests(&self) -> bool {
+        !self.requested_tags.is_empty()
+            || !self.requested_groups.is_empty()
+            || !self.group_all_patterns.is_empty()
+    }
+
+    /// Check if a tag should be extracted based on current filters
+    /// Uses case-insensitive matching to match ExifTool behavior
+    pub fn should_extract_tag(&self, tag_name: &str, tag_group: &str) -> bool {
+        if self.extract_all {
+            return true;
+        }
+
+        let tag_name_lower = tag_name.to_lowercase();
+        let tag_group_lower = tag_group.to_lowercase();
+
+        // Check specific tag requests (case-insensitive)
+        if self
+            .requested_tags
+            .iter()
+            .any(|t| t.to_lowercase() == tag_name_lower)
+        {
+            return true;
+        }
+
+        // Check group filters (case-insensitive)
+        if self
+            .requested_groups
+            .iter()
+            .any(|g| g.to_lowercase() == tag_group_lower)
+        {
+            return true;
+        }
+
+        // Check group:all patterns (case-insensitive)
+        for pattern in &self.group_all_patterns {
+            let pattern_lower = pattern.to_lowercase();
+            if let Some((group_part, all_part)) = pattern_lower.split_once(':') {
+                if all_part == "all" && group_part == tag_group_lower {
+                    return true;
+                }
+            }
+        }
+
+        false
+    }
+
+    /// Check if a tag should use numeric output (ValueConv instead of PrintConv)
+    pub fn should_use_numeric(&self, tag_name: &str) -> bool {
+        self.numeric_tags.contains(tag_name)
+    }
+
+    /// Determine if only File group tags are requested (performance optimization)
+    /// This enables early return without expensive EXIF/MakerNotes parsing
+    pub fn is_file_group_only(&self) -> bool {
+        if self.extract_all {
+            return false;
+        }
+
+        // Check if all requested items are File group related
+        let all_file_related = self.requested_tags.iter().all(|tag| {
+            // Common File group tags that don't require format-specific parsing
+            matches!(
+                tag.to_lowercase().as_str(),
+                "filename"
+                    | "directory"
+                    | "filesize"
+                    | "filemodifydate"
+                    | "fileaccessdate"
+                    | "fileinodechangedate"
+                    | "filecreatedate"
+                    | "filepermissions"
+                    | "filetype"
+                    | "filetypeextension"
+                    | "mimetype"
+            )
+        }) && self
+            .requested_groups
+            .iter()
+            .all(|group| group.to_lowercase() == "file")
+            && self
+                .group_all_patterns
+                .iter()
+                .all(|pattern| pattern.to_lowercase() == "file:all");
+
+        all_file_related && self.has_specific_requests()
+    }
+}
+
 /// A single extracted metadata tag with both its converted value and display string.
 ///
 /// This structure provides access to both the logical value (after ValueConv)

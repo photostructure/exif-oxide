@@ -212,11 +212,7 @@ pub fn process_tag_0x14a_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$self{DIR_NAME} ne 'IFD0' or $$self{FILE_TYPE} ne 'TIFF' or $$self{Make} !~ /^SONY/ or not $$self{SubfileType} or $$self{SubfileType} != 1 or not $$self{Compression} or $$self{Compression} != 6 or not require Image::ExifTool::Sony or Image::ExifTool::Sony::SetARW($self, $valPt)
-        // Would dispatch to: Unknown
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x190_subdirectory(
@@ -448,181 +444,7 @@ pub fn process_tag_0x927c_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$valPt =~ /^Apple iOS\\0/
-        // Would dispatch to: Image::ExifTool::Apple::Main
-        // Runtime condition not yet supported: $$valPt=~/^Nikon\\x00\\x02/
-        // Would dispatch to: Image::ExifTool::Nikon::Main
-        // Runtime condition not yet supported: $$self{Make} =~ /^Canon/
-        // Would dispatch to: Image::ExifTool::Canon::Main
-        // Runtime condition not yet supported: $$self{Make}=~/^CASIO/ and $$valPt!~/^(QVC|DCI)\\0/
-        // Would dispatch to: Image::ExifTool::Casio::Main
-        // Runtime condition not yet supported: $$valPt =~ /^(QVC|DCI)\\0/
-        // Would dispatch to: Image::ExifTool::Casio::Type2
-        // Runtime condition not yet supported: $$valPt =~ /^\\[ae_dbg_info:/
-        // Would dispatch to: Image::ExifTool::DJI::Info
-        // Runtime condition not yet supported: $$self{Make} eq \"DJI\" and $$valPt !~ /^(...\\@AMBA|DJI)/s
-        // Would dispatch to: Image::ExifTool::DJI::Main
-        // Runtime condition not yet supported: $$self{Make} =~ /^FLIR Systems/
-        // Would dispatch to: Image::ExifTool::FLIR::Main
-        // Runtime condition not yet supported: $$valPt =~ /^(FUJIFILM|GENERALE)/
-        // Would dispatch to: Image::ExifTool::FujiFilm::Main
-        // Runtime condition not yet supported: $$valPt =~ /^GE(\\0\\0|NIC\\0)/
-        // Would dispatch to: Image::ExifTool::GE::Main
-        // Runtime condition not yet supported: $$valPt =~ /^GE\\x0c\\0\\0\\0\\x16\\0\\0\\0/
-        // Would dispatch to: Image::ExifTool::FujiFilm::Main
-        // Runtime condition not yet supported: $$self{Make} eq \"Hasselblad\"
-        // Would dispatch to: Image::ExifTool::Unknown::Main
-        // Runtime condition not yet supported: $$valPt =~ /^(Hewlett-Packard|Vivitar)/
-        // Would dispatch to: Image::ExifTool::HP::Main
-        // Runtime condition not yet supported: $$valPt =~ /^610[\\0-\\4]/
-        // Would dispatch to: Image::ExifTool::HP::Type2
-        // Runtime condition not yet supported: $$valPt =~ /^IIII[\\x04|\\x05]\\0/
-        // Would dispatch to: Image::ExifTool::HP::Type4
-        // Runtime condition not yet supported: $$valPt =~ /^IIII\\x06\\0/
-        // Would dispatch to: Image::ExifTool::HP::Type6
-        // Runtime condition not yet supported: $$valPt =~ /^ISLMAKERNOTE000\\0/
-        // Would dispatch to: Image::ExifTool::Unknown::Main
-        // Runtime condition not yet supported: $$valPt=~/^JVC /
-        // Would dispatch to: Image::ExifTool::JVC::Main
-        // Runtime condition not yet supported: $$self{Make}=~/^(JVC|Victor)/ and $$valPt=~/^VER:/
-        // Would dispatch to: Image::ExifTool::JVC::Text
-        // Runtime condition not yet supported: $$self{Make}=~/^EASTMAN KODAK/ and $$valPt=~/^KDK INFO/
-        // Would dispatch to: Image::ExifTool::Kodak::Main
-        // Runtime condition not yet supported: $$self{Make}=~/^EASTMAN KODAK/ and $$valPt=~/^KDK/
-        // Would dispatch to: Image::ExifTool::Kodak::Main
-        // Runtime condition not yet supported: $$valPt =~ /^.{8}Eastman Kodak/s or $$valPt =~ /^\\x01\\0[\\0\\x01]\\0\\0\\0\\x04\\0[a-zA-Z]{4}/
-        // Would dispatch to: Image::ExifTool::Kodak::Type2
-        // Runtime condition not yet supported: $$self{Make} =~ /^EASTMAN KODAK/ and $$valPt =~ /^(?!MM|II).{12}\\x07/s and $$valPt !~ /^(MM|II|AOC)/
-        // Would dispatch to: Image::ExifTool::Kodak::Type3
-        // Runtime condition not yet supported: $$self{Make} =~ /^Eastman Kodak/ and $$valPt =~ /^.{41}JPG/s and $$valPt !~ /^(MM|II|AOC)/
-        // Would dispatch to: Image::ExifTool::Kodak::Type4
-        // Model condition not yet supported: $$self{Make}=~/^EASTMAN KODAK/ and ($$self{Model}=~/CX(4200|4230|4300|4310|6200|6230)/ or # try to pick up similar models we haven't tested yet $$valPt=~/^\\0(\\x1a\\x18|\\x3a\\x08|\\x59\\xf8|\\x14\\x80)\\0/)
-        // Would dispatch to: Image::ExifTool::Kodak::Type5
-        // Model condition not yet supported: $$self{Make}=~/^EASTMAN KODAK/ and $$self{Model}=~/DX3215/
-        // Would dispatch to: Image::ExifTool::Kodak::Type6
-        // Model condition not yet supported: $$self{Make}=~/^EASTMAN KODAK/ and $$self{Model}=~/DX3700/
-        // Would dispatch to: Image::ExifTool::Kodak::Type6
-        // Runtime condition not yet supported: $$self{Make}=~/Kodak/i and $$valPt =~ /^[CK][A-Z\\d]{3} ?[A-Z\\d]{1,2}\\d{2}[A-Z\\d]\\d{4}[ \\0]/
-        // Would dispatch to: Image::ExifTool::Kodak::Type7
-        // Runtime condition not yet supported: $$self{Make}=~/Kodak/i and ($$valPt =~ /^\\0[\\x02-\\x7f]..\\0[\\x01-\\x0c]\\0\\0/s or $$valPt =~ /^[\\x02-\\x7f]\\0..[\\x01-\\x0c]\\0..\\0\\0/s)
-        // Would dispatch to: Image::ExifTool::Kodak::Type8
-        // Runtime condition not yet supported: $$self{Make}=~/Kodak/i and $$valPt =~ /^MM\\0\\x2a\\0\\0\\0\\x08\\0.\\0\\0/
-        // Would dispatch to: Image::ExifTool::Kodak::Type8
-        // Runtime condition not yet supported: $$self{Make}=~/Kodak/i and $$valPt =~ /^(MM\\0\\x2a\\0\\0\\0\\x08|II\\x2a\\0\\x08\\0\\0\\0)/
-        // Would dispatch to: Image::ExifTool::Kodak::Type8
-        // Runtime condition not yet supported: $$valPt =~ m{^IIII[\\x02\\x03]\\0.{14}\\d{4}/\\d{2}/\\d{2} }s
-        // Would dispatch to: Image::ExifTool::Kodak::Type9
-        // Runtime condition not yet supported: $$self{Make}=~/Kodak/i and $$valPt =~ /^(MM\\0[\\x02-\\x7f]|II[\\x02-\\x7f]\\0)/
-        // Would dispatch to: Image::ExifTool::Kodak::Type10
-        // Model condition not yet supported: $$self{Model}=~/(Kodak|PixPro)/i and $$valPt =~ /^II\\x2a\\0\\x08\\0\\0\\0.\\0\\0\\0/s
-        // Would dispatch to: Image::ExifTool::Kodak::Type11
-        // Model condition not yet supported: $$self{Model}=~/(Kodak|PixPro)/i and $$valPt =~ /^MM\\0\\x2a\\0\\0\\0\\x08\\0\\0\\0./s
-        // Would dispatch to: Image::ExifTool::Kodak::Type11
-        // Runtime condition not yet supported: $$self{Make}=~/Kodak/i and $$valPt!~/^AOC\\0/
-        // Would dispatch to: Image::ExifTool::Kodak::Unknown
-        // Runtime condition not yet supported: $$valPt =~ /^KYOCERA/
-        // Would dispatch to: Image::ExifTool::Unknown::Main
-        // Runtime condition not yet supported: $$self{Make}=~/^(Konica Minolta|Minolta)/i and $$valPt !~ /^(MINOL|CAMER|MLY0|KC|\\+M\\+M|\\xd7)/
-        // Would dispatch to: Image::ExifTool::Minolta::Main
-        // Runtime condition not yet supported: $$valPt =~ /^(MINOL|CAMER)\\0/ and $$self{OlympusCAMER} = 1
-        // Would dispatch to: Image::ExifTool::Olympus::Main
-        // Runtime condition not yet supported: $$valPt=~/^MOT\\0/
-        // Would dispatch to: Image::ExifTool::Motorola::Main
-        // Runtime condition not yet supported: $$valPt=~/^Nikon\\x00\\x01/
-        // Would dispatch to: Image::ExifTool::Nikon::Type2
-        // Runtime condition not yet supported: $$self{Make}=~/^NIKON/i
-        // Would dispatch to: Image::ExifTool::Nikon::Main
-        // Runtime condition not yet supported: $$self{Make} eq \"Nintendo\"
-        // Would dispatch to: Image::ExifTool::Nintendo::Main
-        // Runtime condition not yet supported: $$valPt =~ /^(OLYMP|EPSON)\\0/
-        // Would dispatch to: Image::ExifTool::Olympus::Main
-        // Runtime condition not yet supported: $$valPt =~ /^OLYMPUS\\0/
-        // Would dispatch to: Image::ExifTool::Olympus::Main
-        // Runtime condition not yet supported: $$valPt =~ /^OM SYSTEM\\0/
-        // Would dispatch to: Image::ExifTool::Olympus::Main
-        // Runtime condition not yet supported: $$self{Make} eq \"LEICA\"
-        // Would dispatch to: Image::ExifTool::Panasonic::Main
-        // Runtime condition not yet supported: $$self{Make} =~ /^Leica Camera AG/ and $$valPt =~ /^LEICA\\0\\0\\0/
-        // Would dispatch to: Image::ExifTool::Panasonic::Leica2
-        // Runtime condition not yet supported: $$self{Make} =~ /^Leica Camera AG/ and $$valPt !~ /^LEICA/ and $$self{Model} ne \"S2\" and $$self{Model} ne \"LEICA M (Typ 240)\"
-        // Would dispatch to: Image::ExifTool::Panasonic::Leica3
-        // Runtime condition not yet supported: $$self{Make} =~ /^Leica Camera AG/ and $$valPt =~ /^LEICA0/
-        // Would dispatch to: Image::ExifTool::Panasonic::Leica4
-        // Runtime condition not yet supported: $$valPt =~ /^LEICA\\0[\\x01\\x04\\x05\\x06\\x07\\x10\\x1a]\\0/
-        // Would dispatch to: Image::ExifTool::Panasonic::Leica5
-        // Runtime condition not yet supported: ($$self{Make} eq 'Leica Camera AG' and ($$self{Model} eq 'S2' or $$self{Model} eq 'LEICA M (Typ 240)' or $$self{Model} eq 'LEICA S (Typ 006)'))
-        // Would dispatch to: Image::ExifTool::Panasonic::Leica6
-        // Runtime condition not yet supported: $$valPt =~ /^LEICA\\0\\x02\\xff/
-        // Would dispatch to: Image::ExifTool::Panasonic::Leica6
-        // Runtime condition not yet supported: $$valPt =~ /^LEICA\\0[\\x08\\x09\\x0a]\\0/
-        // Would dispatch to: Image::ExifTool::Panasonic::Leica5
-        // Runtime condition not yet supported: $$self{Make} =~ /^Leica Camera AG/ and $$valPt =~ /^LEICA\\0\\x02\\0/
-        // Would dispatch to: Image::ExifTool::Panasonic::Leica9
-        // Runtime condition not yet supported: $$valPt =~ /^LEICA CAMERA AG\\0/
-        // Would dispatch to: Image::ExifTool::Panasonic::Main
-        // Runtime condition not yet supported: $$valPt=~/^Panasonic/ and $$self{Model} ne \"DC-FT7\"
-        // Would dispatch to: Image::ExifTool::Panasonic::Main
-        // Runtime condition not yet supported: $$self{Make}=~/^Panasonic/ and $$valPt=~/^MKE/
-        // Would dispatch to: Image::ExifTool::Panasonic::Type2
-        // Runtime condition not yet supported: $$valPt=~/^Panasonic/
-        // Would dispatch to: Image::ExifTool::Panasonic::Main
-        // Model condition not yet supported: $$valPt=~/^AOC\\0/ and $$self{Model} !~ /^PENTAX Optio ?[34]30RS\\s*$/
-        // Would dispatch to: Image::ExifTool::Pentax::Main
-        // Runtime condition not yet supported: $$self{Make}=~/^Asahi/ and $$valPt!~/^AOC\\0/
-        // Would dispatch to: Image::ExifTool::Pentax::Type2
-        // Runtime condition not yet supported: $$self{Make}=~/^Asahi/
-        // Would dispatch to: Image::ExifTool::Casio::Type2
-        // Runtime condition not yet supported: $$self{Make}=~/^PENTAX/ and $$valPt=~/^\\d{3}/
-        // Would dispatch to: Image::ExifTool::Pentax::Type4
-        // Runtime condition not yet supported: $$valPt=~/^PENTAX \\0/
-        // Would dispatch to: Image::ExifTool::Pentax::Main
-        // Runtime condition not yet supported: $$valPt=~/^S1\\0{6}\\x0c\\0{3}/
-        // Would dispatch to: Image::ExifTool::Pentax::S1
-        // Runtime condition not yet supported: return undef unless $$valPt =~ /^(IIII.waR|MMMMRaw.)/s; $self->OverrideFileType($$self{TIFF_TYPE} = 'IIQ') if $count > 1000000; return 1;
-        // Would dispatch to: Image::ExifTool::PhaseOne::Main
-        // Runtime condition not yet supported: $$valPt =~ /^\\x01\\xf1([\\x02\\x03]\\x00)?/ and ($1 or $$self{Make} eq \"RECONYX\")
-        // Would dispatch to: Image::ExifTool::Reconyx::Main
-        // Runtime condition not yet supported: $$valPt =~ /^RECONYXUF\\0/
-        // Would dispatch to: Image::ExifTool::Reconyx::Type2
-        // Runtime condition not yet supported: $$valPt =~ /^RECONYXH2\\0/
-        // Would dispatch to: Image::ExifTool::Reconyx::Type3
-        // Runtime condition not yet supported: $$valPt=~/^RICOH\\0(II|MM)/
-        // Would dispatch to: Image::ExifTool::Pentax::Main
-        // Runtime condition not yet supported: $$self{Make} =~ /^(PENTAX )?RICOH/ and $$valPt =~ /^(Ricoh| |MM\\0\\x2a|II\\x2a\\0)/i and $$valPt !~ /^(MM\\0\\x2a\\0\\0\\0\\x08\\0.\\0\\0|II\\x2a\\0\\x08\\0\\0\\0.\\0\\0\\0)/s and $$self{Model} ne 'RICOH WG-M1'
-        // Would dispatch to: Image::ExifTool::Ricoh::Main
-        // Runtime condition not yet supported: $$self{Make} =~ /^(PENTAX )?RICOH/ and ($$self{Model} eq 'RICOH WG-M1' or $$valPt =~ /^(MM\\0\\x2a\\0\\0\\0\\x08\\0.\\0\\0|II\\x2a\\0\\x08\\0\\0\\0.\\0\\0\\0)/s)
-        // Would dispatch to: Image::ExifTool::Ricoh::Type2
-        // Runtime condition not yet supported: $$self{Make}=~/^RICOH/
-        // Would dispatch to: Image::ExifTool::Ricoh::Text
-        // Runtime condition not yet supported: $$valPt =~ /^STMN\\d{3}/
-        // Would dispatch to: Image::ExifTool::Samsung::Main
-        // Runtime condition not yet supported: uc $$self{Make} eq 'SAMSUNG' and ($$self{TIFF_TYPE} eq 'SRW' or $$valPt=~/^(\\0.\\0\\x01\\0\\x07\\0{3}\\x04|.\\0\\x01\\0\\x07\\0\\x04\\0{3})0100/s)
-        // Would dispatch to: Image::ExifTool::Samsung::Type2
-        // Model condition not yet supported: $$self{Make}=~/^SANYO/ and $$self{Model}!~/^(C4|J\\d|S\\d)\\b/
-        // Would dispatch to: Image::ExifTool::Sanyo::Main
-        // Model condition not yet supported: $$self{Make}=~/^SANYO/ and $$self{Model}=~/^C4\\b/
-        // Would dispatch to: Image::ExifTool::Sanyo::Main
-        // Runtime condition not yet supported: $$self{Make}=~/^SANYO/
-        // Would dispatch to: Image::ExifTool::Sanyo::Main
-        // Runtime condition not yet supported: return undef unless $$self{Make}=~/^(SIGMA|FOVEON)/i; # save version number in \"MakerNoteSigmaVer\" member variable $$self{MakerNoteSigmaVer} = $$valPt=~/^SIGMA\\0\\0\\0.(.)/s ? ord($1) : -1; return 1;
-        // Would dispatch to: Image::ExifTool::Sigma::Main
-        // Runtime condition not yet supported: $$valPt=~/^(SONY (DSC|CAM|MOBILE)|\\0\\0SONY PIC\\0|VHAB \\0)/
-        // Would dispatch to: Image::ExifTool::Sony::Main
-        // Runtime condition not yet supported: $$valPt=~/^SONY PI\\0/ and $$self{OlympusCAMER}=1
-        // Would dispatch to: Image::ExifTool::Olympus::Main
-        // Runtime condition not yet supported: $$valPt=~/^(PREMI)\\0/ and $$self{OlympusCAMER}=1
-        // Would dispatch to: Image::ExifTool::Olympus::Main
-        // Runtime condition not yet supported: $$valPt=~/^SONY PIC\\0/
-        // Would dispatch to: Image::ExifTool::Sony::PIC
-        // Model condition not yet supported: ($$self{Make}=~/^SONY/ or ($$self{Make}=~/^HASSELBLAD/ and $$self{Model}=~/^(HV|Stellar|Lusso|Lunar)/)) and $$valPt!~/^\\x01\\x00/
-        // Would dispatch to: Image::ExifTool::Sony::Main
-        // Runtime condition not yet supported: $$valPt =~ /^SEMC MS\\0/
-        // Would dispatch to: Image::ExifTool::Sony::Ericsson
-        // Runtime condition not yet supported: $$self{Make}=~/^SONY/
-        // Would dispatch to: Image::ExifTool::Sony::SRF
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x935c_subdirectory(
@@ -745,21 +567,7 @@ pub fn process_tag_0xc634_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$self{TIFF_TYPE} =~ /^(ARW|SR2)$/
-        // Would dispatch to: Image::ExifTool::Sony::SR2Private
-        // Runtime condition not yet supported: $$valPt =~ /^Adobe\\0/
-        // Would dispatch to: Image::ExifTool::DNG::AdobeData
-        // Model condition not yet supported: $$valPt =~ /^(PENTAX |SAMSUNG)\\0/ and $$self{Model} =~ /\\b(K(-[57mrx]|(10|20|100|110|200)D|2000)|GX(10|20))\\b/
-        // Would dispatch to: Image::ExifTool::Pentax::Main
-        // Runtime condition not yet supported: $$valPt =~ /^(PENTAX |SAMSUNG)\\0/
-        // Would dispatch to: Image::ExifTool::Pentax::Main
-        // Runtime condition not yet supported: $$valPt =~ /^RICOH\\0(II|MM)/
-        // Would dispatch to: Image::ExifTool::Pentax::Main
-        // Runtime condition not yet supported: $$valPt =~ /^\\[ae_dbg_info:/
-        // Would dispatch to: Image::ExifTool::DJI::Info
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0xc68c_subdirectory(
@@ -847,11 +655,7 @@ pub fn process_tag_0xc7d5_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$valPt =~ /^Nikon\\0/
-        // Would dispatch to: Image::ExifTool::Nikon::NEFInfo
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0xcd41_subdirectory(
