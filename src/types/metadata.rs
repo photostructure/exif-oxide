@@ -27,6 +27,7 @@ use std::collections::{HashMap, HashSet};
 ///     group_all_patterns: vec![],
 ///     extract_all: false,
 ///     numeric_tags: HashSet::new(),
+///     glob_patterns: vec![],
 /// };
 ///
 /// // Extract all EXIF group tags with some numeric values
@@ -38,6 +39,7 @@ use std::collections::{HashMap, HashSet};
 ///     group_all_patterns: vec!["EXIF:all".to_string()],
 ///     extract_all: false,
 ///     numeric_tags,
+///     glob_patterns: vec![],
 /// };
 /// ```
 #[derive(Debug, Clone, PartialEq)]
