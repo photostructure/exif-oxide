@@ -1,0 +1,9 @@
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Sony.pm",
+  "description": "Sony ProcessBinaryData tables for camera settings and image metadata",
+  "tables": [
+    "CameraSettings",
+    "CameraSettings2",
+    "ShotInfo"
+  ]
+}

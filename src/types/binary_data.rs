@@ -431,6 +431,9 @@ pub struct BinaryDataTag {
     /// DataMember name if this tag should be stored for later use
     /// ExifTool: DataMember => 'Name' in tag definition
     pub data_member: Option<String>,
+    /// Group assignment for this tag (e.g., 0 for MakerNotes, 2 for Camera)
+    /// ExifTool: Individual tags can override the table's default group
+    pub group: Option<u8>,
 }
 
 impl Default for BinaryDataTable {

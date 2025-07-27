@@ -403,6 +403,188 @@ fn extract_binary_value_direct(
     }
 }
 
+/// Canon Main processor that delegates to tag kit system
+///
+/// This processor handles Canon MakerNotes processing by using the tag kit system
+/// for binary data integration. It replaces the direct Canon MakerNotes processing
+/// to enable proper binary data parsing for tags like ProcessingInfo.
+///
+/// ## ExifTool Reference
+///
+/// Canon.pm MakerNotes processing with tag kit integration for binary data tables
+pub struct CanonMainProcessor;
+
+impl BinaryDataProcessor for CanonMainProcessor {
+    fn can_process(&self, context: &ProcessorContext) -> ProcessorCapability {
+        // Perfect match for Canon MakerNotes
+        if context.is_manufacturer("Canon") && context.table_name == "MakerNotes" {
+            return ProcessorCapability::Perfect;
+        }
+
+        // Good match for any Canon table starting with Canon::
+        if context.is_manufacturer("Canon") && context.table_name.starts_with("Canon::") {
+            return ProcessorCapability::Good;
+        }
+
+        ProcessorCapability::Incompatible
+    }
+
+    fn process_data(&self, data: &[u8], context: &ProcessorContext) -> Result<ProcessorResult> {
+        debug!(
+            "Canon Main processor processing {} bytes for table: {}",
+            data.len(),
+            context.table_name
+        );
+
+        let mut result = ProcessorResult::new();
+
+        // Use generic tag kit integration for Canon MakerNotes
+        let byte_order = context
+            .byte_order
+            .unwrap_or(crate::tiff_types::ByteOrder::LittleEndian);
+        let extracted_tags = extract_makernotes_via_tag_kit(
+            data, 
+            context.data_offset, 
+            byte_order, 
+            "Canon",
+            crate::generated::Canon_pm::tag_kit::process_subdirectory
+        );
+
+        match extracted_tags {
+            Ok(tags) => {
+                debug!("Canon tag kit extracted {} tags", tags.len());
+                for (tag_name, tag_value) in tags {
+                    result.add_tag(tag_name, tag_value);
+                }
+            }
+            Err(e) => {
+                let warning = format!("Canon tag kit processing failed: {e}");
+                result.add_warning(warning);
+                debug!("Canon tag kit processing error: {}", e);
+            }
+        }
+
+        if result.extracted_tags.is_empty() {
+            result.add_warning("No Canon tags extracted from MakerNotes".to_string());
+        } else {
+            debug!(
+                "Canon Main processor extracted {} tags",
+                result.extracted_tags.len()
+            );
+        }
+
+        Ok(result)
+    }
+
+    fn get_metadata(&self) -> ProcessorMetadata {
+        ProcessorMetadata::new(
+            "Canon Main Processor".to_string(),
+            "Processes Canon MakerNotes using tag kit system with binary data integration"
+                .to_string(),
+        )
+        .with_manufacturer("Canon".to_string())
+        .with_required_context("manufacturer".to_string())
+        .with_example_condition("manufacturer == 'Canon' && table == 'MakerNotes'".to_string())
+    }
+}
+
+/// Generic MakerNotes extraction via tag kit system
+///
+/// This function provides a DRY solution for all manufacturers to integrate their tag kits
+/// with the processor registry system. It parses MakerNotes as an IFD structure and calls
+/// the manufacturer-specific tag kit processor for each subdirectory tag.
+///
+/// ## Pattern for all manufacturers:
+/// 1. Parse MakerNotes as IFD to extract individual tag entries  
+/// 2. For each tag with binary data, call manufacturer tag kit's process_subdirectory
+/// 3. Collect and return all extracted tags with proper namespacing
+///
+/// ## Usage:
+/// ```rust
+/// let tags = extract_makernotes_via_tag_kit(
+///     data, offset, byte_order, "Canon", 
+///     crate::generated::Canon_pm::tag_kit::process_subdirectory
+/// )?;
+/// ```
+fn extract_makernotes_via_tag_kit(
+    data: &[u8],
+    data_offset: usize,
+    byte_order: crate::tiff_types::ByteOrder,
+    manufacturer: &str,
+    tag_kit_processor: fn(u32, &TagValue, crate::tiff_types::ByteOrder) -> Result<HashMap<String, TagValue>>,
+) -> Result<HashMap<String, TagValue>> {
+    use crate::tiff_types::{IfdEntry, TiffHeader};
+    use crate::implementations::nikon::ifd::extract_tag_value;
+    
+    let mut extracted_tags = HashMap::new();
+
+    debug!(
+        "Processing {} MakerNotes via tag kit: {} bytes at offset {:#x}",
+        manufacturer, data.len(), data_offset
+    );
+
+    // Parse MakerNotes as IFD structure to extract individual tag entries
+    if data.len() < 8 {
+        return Ok(extracted_tags);
+    }
+
+    let header = TiffHeader::parse(data)?;
+    let ifd_offset = header.ifd0_offset as usize;
+    
+    if ifd_offset + 2 > data.len() {
+        return Ok(extracted_tags);
+    }
+
+    // Read number of IFD entries
+    let entry_count = match byte_order {
+        crate::tiff_types::ByteOrder::LittleEndian => u16::from_le_bytes([data[ifd_offset], data[ifd_offset + 1]]),
+        crate::tiff_types::ByteOrder::BigEndian => u16::from_be_bytes([data[ifd_offset], data[ifd_offset + 1]]),
+    } as usize;
+
+    debug!("Found {} IFD entries in {} MakerNotes", entry_count, manufacturer);
+
+    // Process each IFD entry through the tag kit
+    let mut offset = ifd_offset + 2;
+    for _i in 0..entry_count {
+        if offset + 12 > data.len() {
+            break;
+        }
+
+        let entry = IfdEntry::parse(data, offset, byte_order)?;
+        
+        // Extract tag data as TagValue for tag kit processing
+        let tag_value = extract_tag_value(data, &entry, byte_order)?;
+
+        // Call manufacturer tag kit to process this tag
+        match tag_kit_processor(entry.tag_id as u32, &tag_value, byte_order) {
+            Ok(processed_tags) => {
+                debug!("Tag 0x{:04x} extracted {} sub-tags via {} tag kit", 
+                       entry.tag_id, processed_tags.len(), manufacturer);
+                for (name, value) in processed_tags {
+                    // Add manufacturer namespace to avoid conflicts
+                    let full_name = if name.contains(':') {
+                        name // Already namespaced
+                    } else {
+                        format!("MakerNotes:{}", name)
+                    };
+                    extracted_tags.insert(full_name, value);
+                }
+            }
+            Err(e) => {
+                debug!("Tag kit processing failed for tag 0x{:04x}: {}", entry.tag_id, e);
+            }
+        }
+
+        offset += 12;
+    }
+
+    debug!(
+        "{} tag kit extraction completed with {} tags",
+        manufacturer, extracted_tags.len()
+    );
+    Ok(extracted_tags)
+}
+
 /// Apply PrintConv lookup to a raw value
 fn apply_print_conv(raw_value: &TagValue, print_conv: &HashMap<u32, String>) -> TagValue {
     match raw_value {

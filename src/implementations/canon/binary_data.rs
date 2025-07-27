@@ -740,6 +740,7 @@ pub fn create_canon_af_info_table() -> BinaryDataTable {
             mask: None,
             print_conv: None,
             data_member: Some("NumAFPoints".to_string()), // This becomes a DataMember
+            group: Some(0),                               // MakerNotes group
         },
     );
     table.data_member_tags.push(0);
@@ -755,6 +756,7 @@ pub fn create_canon_af_info_table() -> BinaryDataTable {
             mask: None,
             print_conv: None,
             data_member: None,
+            group: Some(0), // MakerNotes group
         },
     );
 
@@ -768,6 +770,7 @@ pub fn create_canon_af_info_table() -> BinaryDataTable {
             mask: None,
             print_conv: None,
             data_member: None,
+            group: Some(2), // Camera group
         },
     );
 
@@ -781,6 +784,7 @@ pub fn create_canon_af_info_table() -> BinaryDataTable {
             mask: None,
             print_conv: None,
             data_member: None,
+            group: Some(2), // Camera group
         },
     );
 
@@ -794,6 +798,7 @@ pub fn create_canon_af_info_table() -> BinaryDataTable {
             mask: None,
             print_conv: None,
             data_member: None,
+            group: Some(0), // MakerNotes group
         },
     );
 
@@ -807,6 +812,7 @@ pub fn create_canon_af_info_table() -> BinaryDataTable {
             mask: None,
             print_conv: None,
             data_member: None,
+            group: Some(0), // MakerNotes group
         },
     );
 
@@ -820,6 +826,7 @@ pub fn create_canon_af_info_table() -> BinaryDataTable {
             mask: None,
             print_conv: None,
             data_member: None,
+            group: Some(0), // MakerNotes group
         },
     );
 
@@ -833,6 +840,7 @@ pub fn create_canon_af_info_table() -> BinaryDataTable {
             mask: None,
             print_conv: None,
             data_member: None,
+            group: Some(0), // MakerNotes group
         },
     );
 
@@ -850,6 +858,7 @@ pub fn create_canon_af_info_table() -> BinaryDataTable {
             mask: None,
             print_conv: None,
             data_member: None,
+            group: Some(0), // MakerNotes group
         },
     );
 
@@ -867,6 +876,7 @@ pub fn create_canon_af_info_table() -> BinaryDataTable {
             mask: None,
             print_conv: None,
             data_member: None,
+            group: Some(0), // MakerNotes group
         },
     );
 
@@ -884,6 +894,7 @@ pub fn create_canon_af_info_table() -> BinaryDataTable {
             mask: None,
             print_conv: None,
             data_member: None,
+            group: Some(0), // MakerNotes group
         },
     );
 
@@ -925,6 +936,7 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
                 Some(conv)
             },
             data_member: None,
+            group: Some(0), // MakerNotes group
         },
     );
 
@@ -942,6 +954,7 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
                 Some(conv)
             },
             data_member: None,
+            group: Some(0), // MakerNotes group
         },
     );
 
@@ -961,6 +974,7 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
                 Some(conv)
             },
             data_member: None,
+            group: Some(0), // MakerNotes group
         },
     );
 
@@ -981,6 +995,7 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
                 Some(conv)
             },
             data_member: None,
+            group: Some(0), // MakerNotes group
         },
     );
 
@@ -1169,14 +1184,16 @@ pub fn extract_binary_data_tags(
             "Canon::BinaryData".to_string(),
         );
 
-        reader.extracted_tags.insert(index as u16, final_value);
-        reader.tag_sources.insert(index as u16, source_info);
+        // Use namespace-aware storage
+        reader.store_tag_with_precedence(index as u16, final_value, source_info);
 
         debug!(
             "Extracted Canon binary tag {} (index {}) = {:?}",
             tag_def.name,
             index,
-            reader.extracted_tags.get(&(index as u16))
+            reader
+                .extracted_tags
+                .get(&(index as u16, "Canon".to_string()))
         );
     }
 
@@ -1385,30 +1402,32 @@ mod tests {
 
         // Check NumAFPoints (DataMember)
         assert_eq!(
-            extracted_tags.get(&0),
+            extracted_tags.get(&(0, "MakerNotes".to_string())),
             Some(&crate::types::TagValue::U16(9))
         );
 
         // Check ValidAFPoints
         assert_eq!(
-            extracted_tags.get(&1),
+            extracted_tags.get(&(1, "MakerNotes".to_string())),
             Some(&crate::types::TagValue::U16(7))
         );
 
         // Check CanonImageWidth
         assert_eq!(
-            extracted_tags.get(&2),
+            extracted_tags.get(&(2, "Camera".to_string())),
             Some(&crate::types::TagValue::U16(1600))
         );
 
         // Check CanonImageHeight
         assert_eq!(
-            extracted_tags.get(&3),
+            extracted_tags.get(&(3, "Camera".to_string())),
             Some(&crate::types::TagValue::U16(1200))
         );
 
         // Check variable arrays - AFAreaXPositions should be array of 9 elements
-        if let Some(crate::types::TagValue::U16Array(x_positions)) = extracted_tags.get(&8) {
+        if let Some(crate::types::TagValue::U16Array(x_positions)) =
+            extracted_tags.get(&(8, "MakerNotes".to_string()))
+        {
             assert_eq!(
                 x_positions.len(),
                 9,
@@ -1420,7 +1439,9 @@ mod tests {
         }
 
         // Check variable arrays - AFAreaYPositions should be array of 9 elements
-        if let Some(crate::types::TagValue::U16Array(y_positions)) = extracted_tags.get(&9) {
+        if let Some(crate::types::TagValue::U16Array(y_positions)) =
+            extracted_tags.get(&(9, "MakerNotes".to_string()))
+        {
             assert_eq!(
                 y_positions.len(),
                 9,
@@ -1432,7 +1453,9 @@ mod tests {
 
         // Check complex expression - AFPointsInFocus should be array of 1 element
         // Expression: int((9+15)/16) = int(24/16) = 1
-        if let Some(crate::types::TagValue::U16Array(points_in_focus)) = extracted_tags.get(&10) {
+        if let Some(crate::types::TagValue::U16Array(points_in_focus)) =
+            extracted_tags.get(&(10, "MakerNotes".to_string()))
+        {
             assert_eq!(
                 points_in_focus.len(),
                 1,
@@ -1489,7 +1512,11 @@ mod tests {
         let mut table = BinaryDataTable {
             default_format: BinaryDataFormat::Int16u,
             first_entry: Some(0),
-            groups: HashMap::new(),
+            groups: {
+                let mut groups = HashMap::new();
+                groups.insert(0, "MakerNotes".to_string());
+                groups
+            },
             tags: HashMap::new(),
             data_member_tags: Vec::new(),
             dependency_order: Vec::new(),
@@ -1505,6 +1532,7 @@ mod tests {
                 mask: None,
                 print_conv: None,
                 data_member: Some("StringLength".to_string()),
+                group: Some(0), // MakerNotes group
             },
         );
         table.data_member_tags.push(0);
@@ -1521,6 +1549,7 @@ mod tests {
                 mask: None,
                 print_conv: None,
                 data_member: None,
+                group: Some(0), // MakerNotes group
             },
         );
 
@@ -1542,13 +1571,13 @@ mod tests {
 
         // Check StringLength DataMember
         assert_eq!(
-            extracted_tags.get(&0),
+            extracted_tags.get(&(0, "MakerNotes".to_string())),
             Some(&crate::types::TagValue::U16(5))
         );
 
         // Check VariableString
         assert_eq!(
-            extracted_tags.get(&1),
+            extracted_tags.get(&(1, "MakerNotes".to_string())),
             Some(&crate::types::TagValue::String("Hello".to_string()))
         );
     }
@@ -1571,7 +1600,11 @@ mod tests {
         let mut table = BinaryDataTable {
             default_format: BinaryDataFormat::Int16u,
             first_entry: Some(0),
-            groups: HashMap::new(),
+            groups: {
+                let mut groups = HashMap::new();
+                groups.insert(0, "MakerNotes".to_string());
+                groups
+            },
             tags: HashMap::new(),
             data_member_tags: Vec::new(),
             dependency_order: Vec::new(),
@@ -1587,6 +1620,7 @@ mod tests {
                 mask: None,
                 print_conv: None,
                 data_member: Some("Count".to_string()),
+                group: Some(0), // MakerNotes group
             },
         );
         table.data_member_tags.push(0);
@@ -1604,6 +1638,7 @@ mod tests {
                 mask: None,
                 print_conv: None,
                 data_member: None,
+                group: Some(0), // MakerNotes group
             },
         );
 
@@ -1620,13 +1655,13 @@ mod tests {
 
         // Check Count
         assert_eq!(
-            extracted_tags.get(&0),
+            extracted_tags.get(&(0, "MakerNotes".to_string())),
             Some(&crate::types::TagValue::U16(0))
         );
 
         // Check EmptyArray (should be empty array)
         assert_eq!(
-            extracted_tags.get(&1),
+            extracted_tags.get(&(1, "MakerNotes".to_string())),
             Some(&crate::types::TagValue::U8Array(vec![]))
         );
     }
