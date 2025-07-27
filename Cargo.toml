@@ -81,3 +81,7 @@ panic = "abort"   # Smaller binary, faster panic
 [[bin]]
 name = "exif-oxide"
 path = "src/main.rs"
+
+[[bin]]
+name = "compare-with-exiftool"
+path = "src/bin/compare-with-exiftool.rs"
