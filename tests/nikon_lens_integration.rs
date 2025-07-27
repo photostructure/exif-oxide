@@ -55,7 +55,7 @@ fn test_nikon_z8_lens_extraction() {
     if std::path::Path::new(image_path).exists() {
         // Parse the actual JPEG file using the correct API
         let path = std::path::Path::new(image_path);
-        let result = exif_oxide::formats::extract_metadata(path, false, false);
+        let result = exif_oxide::formats::extract_metadata(path, false, false, None);
 
         match result {
             Ok(exif_data) => {

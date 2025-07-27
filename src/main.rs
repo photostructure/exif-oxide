@@ -5,49 +5,90 @@ use tracing::{debug, error, info};
 
 // Import our library modules
 use exif_oxide::formats::extract_metadata;
+use exif_oxide::types::FilterOptions;
 
-/// Parse -TagName# syntax to extract tag name
-/// ExifTool uses -TagName# to show numeric value instead of PrintConv
-fn parse_numeric_tag(arg: &str) -> Result<String, String> {
-    if arg.starts_with('-') && arg.ends_with('#') && arg.len() > 2 {
-        // Extract tag name between - and #
-        Ok(arg[1..arg.len() - 1].to_string())
-    } else if !arg.starts_with('-') {
-        // Plain tag name without -# syntax
-        Ok(arg.to_string())
-    } else {
-        Err(format!("Invalid numeric tag format: {arg}"))
-    }
-}
-
-/// Separate mixed CLI arguments into files and numeric tags
-/// Returns (file_paths, numeric_tags)
-fn parse_mixed_args(args: Vec<&String>) -> (Vec<&String>, HashSet<String>) {
+/// Parse command line arguments into file paths and filter options
+/// Supports ExifTool-style tag filtering patterns:
+/// - `-TagName` - extract specific tag
+/// - `-TagName#` - extract tag with numeric value (ValueConv)  
+/// - `-GroupName:all` - extract all tags from group
+/// - `-all` - extract all tags
+/// Returns (file_paths, filter_options)
+fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
     let mut file_paths = Vec::new();
+    let mut requested_tags = Vec::new();
+    let requested_groups = Vec::new();
+    let mut group_all_patterns = Vec::new();
     let mut numeric_tags = HashSet::new();
+    let mut extract_all = false;
 
     for arg in args {
-        if arg.starts_with('-') && arg.ends_with('#') && arg.len() > 2 {
-            // This is a numeric tag like -FNumber#
-            match parse_numeric_tag(arg) {
-                Ok(tag_name) => {
-                    numeric_tags.insert(tag_name);
-                }
-                Err(e) => {
-                    eprintln!("Warning: {e}");
-                }
+        if arg == "-all" || arg == "--all" {
+            // Special case: extract all tags
+            extract_all = true;
+        } else if arg.starts_with('-') && arg.len() > 1 {
+            // Process tag/group filters
+            let filter_arg = &arg[1..]; // Remove leading '-'
+
+            if filter_arg.ends_with('#') && filter_arg.len() > 1 {
+                // Numeric tag: -TagName#
+                let tag_name = &filter_arg[..filter_arg.len() - 1];
+                requested_tags.push(tag_name.to_string());
+                numeric_tags.insert(tag_name.to_string());
+            } else if filter_arg.ends_with(":all") {
+                // Group all pattern: -GroupName:all
+                group_all_patterns.push(filter_arg.to_string());
+            } else if filter_arg.contains(':') {
+                // Group:tag pattern (future extension)
+                // For now, treat as specific tag request
+                requested_tags.push(filter_arg.to_string());
+            } else {
+                // Simple tag name: -TagName
+                requested_tags.push(filter_arg.to_string());
             }
-        } else if !arg.starts_with('-') || arg == "-" || arg == "--" {
-            // This is a file path (not starting with -, or is - or --)
+        } else if arg == "-" || arg == "--" {
+            // Stdin markers
             file_paths.push(arg);
         } else {
-            // Unrecognized argument format
-            eprintln!("Warning: Unrecognized argument: {arg}");
-            file_paths.push(arg); // Treat as file path
+            // File path (doesn't start with -, or is stdin marker)
+            file_paths.push(arg);
         }
     }
 
-    (file_paths, numeric_tags)
+    // Build FilterOptions based on parsed arguments
+    let filter_options = if extract_all {
+        // -all flag overrides everything else
+        FilterOptions {
+            requested_tags: Vec::new(),
+            requested_groups: Vec::new(),
+            group_all_patterns: Vec::new(),
+            extract_all: true,
+            numeric_tags,
+        }
+    } else if requested_tags.is_empty()
+        && requested_groups.is_empty()
+        && group_all_patterns.is_empty()
+    {
+        // No filters specified - extract all tags (backward compatibility)
+        FilterOptions {
+            requested_tags: Vec::new(),
+            requested_groups: Vec::new(),
+            group_all_patterns: Vec::new(),
+            extract_all: true,
+            numeric_tags,
+        }
+    } else {
+        // Specific filters requested
+        FilterOptions {
+            requested_tags,
+            requested_groups,
+            group_all_patterns,
+            extract_all: false,
+            numeric_tags,
+        }
+    };
+
+    (file_paths, filter_options)
 }
 
 /// Main CLI application for exif-oxide
@@ -96,13 +137,13 @@ fn main() {
         )
         .get_matches();
 
-    // Extract all arguments and separate them into files and numeric tags
+    // Extract all arguments and parse ExifTool-style filters
     let args: Vec<&String> = matches.get_many::<String>("args").unwrap().collect();
     let show_missing = matches.get_flag("show-missing");
     let show_warnings = matches.get_flag("warnings");
 
-    // Separate arguments into files and numeric tags based on their format
-    let (file_paths, numeric_tags) = parse_mixed_args(args);
+    // Parse arguments into files and filter options using ExifTool patterns
+    let (file_paths, filter_options) = parse_exiftool_args(args);
 
     // Validate we have at least one file
     if file_paths.is_empty() {
@@ -116,10 +157,10 @@ fn main() {
     debug!("Processing {} files", paths.len());
     debug!("Show missing implementations: {}", show_missing);
     debug!("Show warnings: {}", show_warnings);
-    debug!("Numeric tags: {:?}", numeric_tags);
+    debug!("Filter options: {:?}", filter_options);
 
     // Process all files - this will output a JSON array like ExifTool
-    match process_files(&paths, show_missing, show_warnings, numeric_tags) {
+    match process_files(&paths, show_missing, show_warnings, filter_options) {
         Ok(()) => {
             // Success - output has already been printed
         }
@@ -141,7 +182,7 @@ fn process_files(
     paths: &[PathBuf],
     show_missing: bool,
     show_warnings: bool,
-    numeric_tags: HashSet<String>,
+    filter_options: FilterOptions,
 ) -> Result<(), Box<dyn std::error::Error>> {
     use exif_oxide::types::ExifData;
 
@@ -150,7 +191,7 @@ fn process_files(
     // Process each file
     for path in paths {
         debug!("Processing file: {}", path.display());
-        match process_single_file(path, show_missing, show_warnings) {
+        match process_single_file(path, show_missing, show_warnings, &filter_options) {
             Ok(metadata) => {
                 info!("Successfully processed: {}", path.display());
                 results.push(metadata);
@@ -174,10 +215,10 @@ fn process_files(
 
     // Prepare for serialization by converting tags to legacy format
     // Pass numeric_tags to determine which tags should use numeric values
-    let numeric_tags_ref = if numeric_tags.is_empty() {
+    let numeric_tags_ref = if filter_options.numeric_tags.is_empty() {
         None
     } else {
-        Some(&numeric_tags)
+        Some(&filter_options.numeric_tags)
     };
 
     for result in &mut results {
@@ -198,14 +239,20 @@ fn process_single_file(
     path: &std::path::Path,
     show_missing: bool,
     show_warnings: bool,
+    filter_options: &FilterOptions,
 ) -> Result<exif_oxide::types::ExifData, Box<dyn std::error::Error>> {
     // Verify file exists
     if !path.exists() {
         return Err(format!("File not found: {}", path.display()).into());
     }
 
-    // Extract metadata using our library
-    let metadata = extract_metadata(path, show_missing, show_warnings)?;
+    // Extract metadata using our library with filtering
+    let metadata = extract_metadata(
+        path,
+        show_missing,
+        show_warnings,
+        Some(filter_options.clone()),
+    )?;
 
     Ok(metadata)
 }
@@ -215,143 +262,92 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_parse_numeric_tag() {
-        // Valid numeric tag formats
-        assert_eq!(parse_numeric_tag("-FNumber#").unwrap(), "FNumber");
-        assert_eq!(parse_numeric_tag("-ExposureTime#").unwrap(), "ExposureTime");
-        assert_eq!(parse_numeric_tag("-ISO#").unwrap(), "ISO");
-        assert_eq!(parse_numeric_tag("-LongTagName#").unwrap(), "LongTagName");
-
-        // Plain tag names (without -#)
-        assert_eq!(parse_numeric_tag("FNumber").unwrap(), "FNumber");
-        assert_eq!(parse_numeric_tag("ExposureTime").unwrap(), "ExposureTime");
-
-        // Invalid formats
-        assert!(parse_numeric_tag("-#").is_err());
-        assert!(parse_numeric_tag("-").is_err());
-        assert!(parse_numeric_tag("-Tag").is_err());
-        assert!(parse_numeric_tag("-Tag#Extra").is_err());
-    }
-
-    #[test]
-    fn test_parse_mixed_args_files_before_tags() {
+    fn test_parse_exiftool_args_files_before_tags() {
         let image1 = "image1.jpg".to_string();
         let image2 = "image2.png".to_string();
         let fnumber = "-FNumber#".to_string();
         let exposure = "-ExposureTime#".to_string();
         let args = vec![&image1, &image2, &fnumber, &exposure];
 
-        let (files, tags) = parse_mixed_args(args);
+        let (files, filter_opts) = parse_exiftool_args(args);
 
         assert_eq!(files, vec!["image1.jpg", "image2.png"]);
-        assert!(tags.contains("FNumber"));
-        assert!(tags.contains("ExposureTime"));
-        assert_eq!(tags.len(), 2);
+        assert!(filter_opts.requested_tags.contains(&"FNumber".to_string()));
+        assert!(filter_opts
+            .requested_tags
+            .contains(&"ExposureTime".to_string()));
+        assert!(filter_opts.numeric_tags.contains("FNumber"));
+        assert!(filter_opts.numeric_tags.contains("ExposureTime"));
+        assert_eq!(filter_opts.requested_tags.len(), 2);
     }
 
     #[test]
-    fn test_parse_mixed_args_tags_before_files() {
-        let fnumber = "-FNumber#".to_string();
-        let exposure = "-ExposureTime#".to_string();
-        let image1 = "image1.jpg".to_string();
-        let image2 = "image2.png".to_string();
-        let args = vec![&fnumber, &exposure, &image1, &image2];
-
-        let (files, tags) = parse_mixed_args(args);
-
-        assert_eq!(files, vec!["image1.jpg", "image2.png"]);
-        assert!(tags.contains("FNumber"));
-        assert!(tags.contains("ExposureTime"));
-        assert_eq!(tags.len(), 2);
-    }
-
-    #[test]
-    fn test_parse_mixed_args_interleaved() {
-        let fnumber = "-FNumber#".to_string();
-        let image1 = "image1.jpg".to_string();
-        let exposure = "-ExposureTime#".to_string();
-        let image2 = "image2.png".to_string();
-        let iso = "-ISO#".to_string();
-        let args = vec![&fnumber, &image1, &exposure, &image2, &iso];
-
-        let (files, tags) = parse_mixed_args(args);
-
-        assert_eq!(files, vec!["image1.jpg", "image2.png"]);
-        assert!(tags.contains("FNumber"));
-        assert!(tags.contains("ExposureTime"));
-        assert!(tags.contains("ISO"));
-        assert_eq!(tags.len(), 3);
-    }
-
-    #[test]
-    fn test_parse_mixed_args_edge_cases() {
-        // Test with stdin marker "-"
-        let dash = "-".to_string();
-        let fnumber = "-FNumber#".to_string();
-        let args = vec![&dash, &fnumber];
-        let (files, tags) = parse_mixed_args(args);
-        assert_eq!(files, vec!["-"]);
-        assert!(tags.contains("FNumber"));
-
-        // Test with stdin marker "--"
-        let ddash = "--".to_string();
-        let fnumber2 = "-FNumber#".to_string();
-        let args = vec![&ddash, &fnumber2];
-        let (files, tags) = parse_mixed_args(args);
-        assert_eq!(files, vec!["--"]);
-        assert!(tags.contains("FNumber"));
-
-        // Test with files that start with hyphen (treated as unrecognized)
-        let weird = "-weirdfile.jpg".to_string();
-        let fnumber3 = "-FNumber#".to_string();
-        let args = vec![&weird, &fnumber3];
-        let (files, tags) = parse_mixed_args(args);
-        assert_eq!(files, vec!["-weirdfile.jpg"]); // Treated as file
-        assert!(tags.contains("FNumber"));
-    }
-
-    #[test]
-    fn test_parse_mixed_args_no_tags() {
-        let image1 = "image1.jpg".to_string();
-        let image2 = "image2.png".to_string();
-        let image3 = "image3.tiff".to_string();
-        let args = vec![&image1, &image2, &image3];
-
-        let (files, tags) = parse_mixed_args(args);
-
-        assert_eq!(files, vec!["image1.jpg", "image2.png", "image3.tiff"]);
-        assert!(tags.is_empty());
-    }
-
-    #[test]
-    fn test_parse_mixed_args_no_files() {
-        let fnumber = "-FNumber#".to_string();
-        let exposure = "-ExposureTime#".to_string();
-        let iso = "-ISO#".to_string();
-        let args = vec![&fnumber, &exposure, &iso];
-
-        let (files, tags) = parse_mixed_args(args);
-
-        assert!(files.is_empty());
-        assert!(tags.contains("FNumber"));
-        assert!(tags.contains("ExposureTime"));
-        assert!(tags.contains("ISO"));
-        assert_eq!(tags.len(), 3);
-    }
-
-    #[test]
-    fn test_parse_mixed_args_duplicate_tags() {
+    fn test_parse_exiftool_args_group_all_patterns() {
         let image = "image.jpg".to_string();
-        let fnumber1 = "-FNumber#".to_string();
-        let fnumber2 = "-FNumber#".to_string();
-        let exposure = "-ExposureTime#".to_string();
-        let args = vec![&image, &fnumber1, &fnumber2, &exposure];
+        let file_all = "-File:all".to_string();
+        let exif_all = "-EXIF:all".to_string();
+        let args = vec![&image, &file_all, &exif_all];
 
-        let (files, tags) = parse_mixed_args(args);
+        let (files, filter_opts) = parse_exiftool_args(args);
 
         assert_eq!(files, vec!["image.jpg"]);
-        assert!(tags.contains("FNumber"));
-        assert!(tags.contains("ExposureTime"));
-        assert_eq!(tags.len(), 2); // Set removes duplicates
+        assert!(filter_opts
+            .group_all_patterns
+            .contains(&"File:all".to_string()));
+        assert!(filter_opts
+            .group_all_patterns
+            .contains(&"EXIF:all".to_string()));
+        assert_eq!(filter_opts.group_all_patterns.len(), 2);
+        assert!(!filter_opts.extract_all);
+    }
+
+    #[test]
+    fn test_parse_exiftool_args_extract_all() {
+        let image = "image.jpg".to_string();
+        let all_flag = "-all".to_string();
+        let args = vec![&image, &all_flag];
+
+        let (files, filter_opts) = parse_exiftool_args(args);
+
+        assert_eq!(files, vec!["image.jpg"]);
+        assert!(filter_opts.extract_all);
+        assert!(filter_opts.requested_tags.is_empty());
+        assert!(filter_opts.group_all_patterns.is_empty());
+    }
+
+    #[test]
+    fn test_parse_exiftool_args_numeric_tags() {
+        let image = "image.jpg".to_string();
+        let orientation_num = "-Orientation#".to_string();
+        let fnumber_norm = "-FNumber".to_string();
+        let args = vec![&image, &orientation_num, &fnumber_norm];
+
+        let (files, filter_opts) = parse_exiftool_args(args);
+
+        assert_eq!(files, vec!["image.jpg"]);
+        assert!(filter_opts
+            .requested_tags
+            .contains(&"Orientation".to_string()));
+        assert!(filter_opts.requested_tags.contains(&"FNumber".to_string()));
+        assert!(filter_opts.numeric_tags.contains("Orientation"));
+        assert!(!filter_opts.numeric_tags.contains("FNumber"));
+    }
+
+    #[test]
+    fn test_parse_exiftool_args_edge_cases() {
+        // Test with stdin marker "-"
+        let dash = "-".to_string();
+        let fnumber = "-FNumber".to_string();
+        let args = vec![&dash, &fnumber];
+        let (files, filter_opts) = parse_exiftool_args(args);
+        assert_eq!(files, vec!["-"]);
+        assert!(filter_opts.requested_tags.contains(&"FNumber".to_string()));
+
+        // Test with no filters (should default to extract_all)
+        let image = "image.jpg".to_string();
+        let args = vec![&image];
+        let (files, filter_opts) = parse_exiftool_args(args);
+        assert_eq!(files, vec!["image.jpg"]);
+        assert!(filter_opts.extract_all);
     }
 }

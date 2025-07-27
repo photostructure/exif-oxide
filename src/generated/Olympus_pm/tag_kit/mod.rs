@@ -514,11 +514,7 @@ pub fn process_tag_0x2010_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::Equipment
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2020_subdirectory(
@@ -534,11 +530,7 @@ pub fn process_tag_0x2020_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::CameraSettings
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2030_subdirectory(
@@ -554,11 +546,7 @@ pub fn process_tag_0x2030_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::RawDevelopment
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2031_subdirectory(
@@ -574,11 +562,7 @@ pub fn process_tag_0x2031_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::RawDevelopment2
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2040_subdirectory(
@@ -594,11 +578,7 @@ pub fn process_tag_0x2040_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::ImageProcessing
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2050_subdirectory(
@@ -614,13 +594,7 @@ pub fn process_tag_0x2050_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\" and not $$self{OlympusCAMER}
-        // Would dispatch to: Image::ExifTool::Olympus::FocusInfo
-        // Runtime condition not yet supported: not $$self{OlympusCAMER}
-        // Would dispatch to: Image::ExifTool::Olympus::FocusInfo
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2100_subdirectory(
@@ -636,11 +610,7 @@ pub fn process_tag_0x2100_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::FETags
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2200_subdirectory(
@@ -656,11 +626,7 @@ pub fn process_tag_0x2200_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::FETags
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2300_subdirectory(
@@ -676,11 +642,7 @@ pub fn process_tag_0x2300_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::FETags
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2400_subdirectory(
@@ -696,11 +658,7 @@ pub fn process_tag_0x2400_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::FETags
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2500_subdirectory(
@@ -716,11 +674,7 @@ pub fn process_tag_0x2500_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::FETags
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2600_subdirectory(
@@ -736,11 +690,7 @@ pub fn process_tag_0x2600_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::FETags
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2700_subdirectory(
@@ -756,11 +706,7 @@ pub fn process_tag_0x2700_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::FETags
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2800_subdirectory(
@@ -776,11 +722,7 @@ pub fn process_tag_0x2800_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::FETags
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x2900_subdirectory(
@@ -796,11 +738,7 @@ pub fn process_tag_0x2900_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::FETags
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x3000_subdirectory(
@@ -816,11 +754,7 @@ pub fn process_tag_0x3000_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::RawInfo
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x4000_subdirectory(
@@ -836,11 +770,7 @@ pub fn process_tag_0x4000_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::Main
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x5000_subdirectory(
@@ -856,11 +786,7 @@ pub fn process_tag_0x5000_subdirectory(
         count
     );
 
-    match count {
-        // Format condition not yet supported: $format ne \"ifd\" and $format ne \"int32u\"
-        // Would dispatch to: Image::ExifTool::Olympus::UnknownInfo
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 pub fn process_tag_0x8000_subdirectory(

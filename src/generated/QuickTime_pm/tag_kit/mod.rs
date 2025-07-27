@@ -372,7 +372,7 @@ fn process_quicktime_movieheader(
 ) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
     // MovieHeaderVersion at offset 0
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
@@ -429,7 +429,7 @@ fn process_quicktime_userdata(
     // GPSCoordinates at offset @xyz
 
     // PlayAllFrames at offset AllF
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
@@ -447,7 +447,7 @@ fn process_quicktime_userdata(
     // SerialNumber at offset SNum
 
     // PlaySelection at offset SelO
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
@@ -707,7 +707,7 @@ fn process_quicktime_trackheader(
 ) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
     // TrackHeaderVersion at offset 0
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
@@ -1173,7 +1173,7 @@ fn process_quicktime_itemlist(
     // AlbumArtist at offset aART
 
     // AppleStoreAccountType at offset akID
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
@@ -1194,7 +1194,7 @@ fn process_quicktime_itemlist(
     // CoverArt at offset covr
 
     // Compilation at offset cpil
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
@@ -1252,22 +1252,22 @@ fn process_quicktime_itemlist(
     }
 
     // HDVideo at offset hdvd
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
     // iTunesU at offset itnu
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
     // Podcast at offset pcst
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
     // PlayGap at offset pgap
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
@@ -1279,7 +1279,7 @@ fn process_quicktime_itemlist(
     // ReleaseDate at offset rldt
 
     // Rating at offset rtng
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
@@ -1289,14 +1289,14 @@ fn process_quicktime_itemlist(
     }
 
     // ShowMovement at offset shwm
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
     // PreviewImage at offset snal
 
     // MediaType at offset stik
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
@@ -1381,7 +1381,7 @@ fn process_quicktime_audiokeys(
 ) -> Result<Vec<(String, TagValue)>> {
     let mut tags = Vec::new();
     // Mute at offset player.movie.audio.mute
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
@@ -1483,7 +1483,7 @@ fn process_quicktime_keys(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Str
     // Model at offset model
 
     // Mute at offset player.movie.audio.mute
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
@@ -1646,7 +1646,7 @@ fn process_quicktime_visualsampledesc(
     // PixelAspectRatio at offset pasp
 
     // Stereoscopic3D at offset st3d
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
@@ -2147,7 +2147,7 @@ fn process_quicktime_itempropcont(
     // HEVCConfiguration at offset hvcC
 
     // Rotation at offset irot
-    if data.len() >= 1 {
+    if !data.is_empty() {
         // TODO: Handle format int8u
     }
 
@@ -2336,73 +2336,7 @@ pub fn process_tag_0x0_subdirectory(
         count
     );
 
-    match count {
-        // Runtime condition not yet supported: $$valPt =~ /^\\0\\0\\0.Seri/s
-        // Would dispatch to: Image::ExifTool::Kodak::Free
-        // Runtime condition not yet supported: $$valPt =~ /^\\0\\0..(cprt|sttm|ptnm|ptrh|thum|gps |3gf )/s
-        // Would dispatch to: Image::ExifTool::QuickTime::Pittasoft
-        // Runtime condition not yet supported: $$valPt =~ /^\\0.{3}(CNDB|CNCV|CNMN|CNFV|CNTH|CNDM)/s
-        // Would dispatch to: Image::ExifTool::Canon::Skip
-        // Runtime condition not yet supported: $$valPt =~ /^\\0[\\0-\\x04]..[a-zA-Z ]{4}/s
-        // Would dispatch to: Image::ExifTool::QuickTime::SkipInfo
-        // Runtime condition not yet supported: $$valPt =~ /^LIGOGPSINFO\\0/ and $$self{OPTIONS}{ExtractEmbedded}
-        // Would dispatch to: Image::ExifTool::QuickTime::Stream
-        // Runtime condition not yet supported: $$valPt =~ /^VIDEOUUUUUUUUUUUUUUUUUUUUUU/
-        // Would dispatch to: Image::ExifTool::QuickTime::Stream
-        // Runtime condition not yet supported: $$valPt =~ /^LIGOGPSINFO \\{/
-        // Would dispatch to: Image::ExifTool::QuickTime::Stream
-        // Runtime condition not yet supported: $$valPt =~ /^.{8}__V35AX_QVDATA__/
-        // Would dispatch to: Image::ExifTool::QuickTime::Stream
-        // Runtime condition not yet supported: $$valPt=~/^\\xbe\\x7a\\xcf\\xcb\\x97\\xa9\\x42\\xe8\\x9c\\x71\\x99\\x94\\x91\\xe3\\xaf\\xac/
-        // Would dispatch to: Image::ExifTool::XMP::Main
-        // Runtime condition not yet supported: $$valPt=~/^PROF!\\xd2\\x4f\\xce\\xbb\\x88\\x69\\x5c\\xfa\\xc9\\xc7\\x40/
-        // Would dispatch to: Image::ExifTool::QuickTime::Profile
-        // Runtime condition not yet supported: $$valPt=~/^\\x4a\\xb0\\x3b\\x0f\\x61\\x8d\\x40\\x75\\x82\\xb2\\xd9\\xfa\\xce\\xd3\\x5f\\xf5/
-        // Would dispatch to: Image::ExifTool::QuickTime::Flip
-        // Runtime condition not yet supported: $$valPt=~/^\\x21\\x0f\\x16\\x87\\x91\\x49\\x11\\xe4\\x81\\x11\\x00\\x24\\x21\\x31\\xfc\\xe4/
-        // Would dispatch to: Image::ExifTool::Canon::uuid2
-        // Runtime condition not yet supported: $$valPt=~/^\\xef\\xe1\\x58\\x9a\\xbb\\x77\\x49\\xef\\x80\\x95\\x27\\x75\\x9e\\xb1\\xdc\\x6f/ and $$self{OPTIONS}{ExtractEmbedded}
-        // Would dispatch to: Image::ExifTool::QuickTime::Tags360Fly
-        // Runtime condition not yet supported: $$valPt=~/^\\xd8\\xfe\\xc3\\xd6\\x1b\\x0e\\x48\\x3c\\x92\\x97\\x58\\x28\\x87\\x7e\\xc4\\x81.{4}manifest\\0/s
-        // Would dispatch to: Image::ExifTool::Jpeg2000::Main
-        // Runtime condition not yet supported: $$valPt=~/^\\xd8\\xfe\\xc3\\xd6\\x1b\\x0e\\x48\\x3c\\x92\\x97\\x58\\x28\\x87\\x7e\\xc4\\x81.{4}merkle\\0/s
-        // Would dispatch to: Image::ExifTool::CBOR::Main
-        // Runtime condition not yet supported: $$valPt=~/^USMT!\\xd2\\x4f\\xce\\xbb\\x88\\x69\\x5c\\xfa\\xc9\\xc7\\x40/
-        // Would dispatch to: Image::ExifTool::QuickTime::UserMedia
-        // Runtime condition not yet supported: $$valPt=~/^\\x85\\xc0\\xb6\\x87\\x82\\x0f\\x11\\xe0\\x81\\x11\\xf4\\xce\\x46\\x2b\\x6a\\x48/
-        // Would dispatch to: Image::ExifTool::Canon::uuid
-        // Runtime condition not yet supported: $$valPt=~/^\\x9b\\x63\\x0f\\x8d\\x63\\x74\\x40\\xec\\x82\\x04\\xbc\\x5f\\xf5\\x09\\x17\\x28/ and $$self{OPTIONS}{ExtractEmbedded}
-        // Would dispatch to: Image::ExifTool::QuickTime::Stream
-        // Runtime condition not yet supported: $$valPt=~/^USMT!\\xd2\\x4f\\xce\\xbb\\x88\\x69\\x5c\\xfa\\xc9\\xc7\\x40/
-        // Would dispatch to: Image::ExifTool::QuickTime::UserMedia
-        // Runtime condition not yet supported: $$valPt=~/^\\xff\\xcc\\x82\\x63\\xf8\\x55\\x4a\\x93\\x88\\x14\\x58\\x7a\\x02\\x52\\x1f\\xdd/
-        // Would dispatch to: Image::ExifTool::XMP::Main
-        // Runtime condition not yet supported: $$valPt =~ /^.{4}\\xff\\xd8\\xff\\xdb/s
-        // Would dispatch to: Image::ExifTool::Olympus::scrn
-        // Runtime condition not yet supported: $$valPt =~ /^PENTAX \\0II/
-        // Would dispatch to: Image::ExifTool::Pentax::Main
-        // Runtime condition not yet supported: $$valPt =~ /^.{4}\\xff\\xd8\\xff\\xdb/s
-        // Would dispatch to: Image::ExifTool::Olympus::thmb
-        // Runtime condition not yet supported: $$self{LastItemID} = -1; $$valPt =~ /^\\0/
-        // Would dispatch to: Image::ExifTool::QuickTime::ItemInfo
-        // Runtime condition not yet supported: $$self{ItemRefVersion} = ord($$valPt); 1
-        // Would dispatch to: Image::ExifTool::QuickTime::ItemRef
-        // Runtime condition not yet supported: $$self{MediaType} eq \"soun\"
-        // Would dispatch to: Image::ExifTool::QuickTime::AudioKeys
-        // Runtime condition not yet supported: $$self{MediaType} eq \"vide\"
-        // Would dispatch to: Image::ExifTool::QuickTime::VideoKeys
-        // Runtime condition not yet supported: $$self{HandlerType} and $$self{HandlerType} eq \"soun\"
-        // Would dispatch to: Image::ExifTool::QuickTime::AudioSampleDesc
-        // Runtime condition not yet supported: $$self{HandlerType} and $$self{HandlerType} eq \"vide\"
-        // Would dispatch to: Image::ExifTool::QuickTime::VisualSampleDesc
-        // Runtime condition not yet supported: $$self{HandlerType} and $$self{HandlerType} eq \"hint\"
-        // Would dispatch to: Image::ExifTool::QuickTime::HintSampleDesc
-        // Runtime condition not yet supported: $$self{HandlerType} and $$self{HandlerType} eq \"meta\"
-        // Would dispatch to: Image::ExifTool::QuickTime::MetaSampleDesc
-        // Runtime condition not yet supported: $$valPt =~ /^(prof|rICC)/
-        // Would dispatch to: Image::ExifTool::ICC_Profile::Main
-        _ => Ok(vec![]), // No matching variant
-    }
+    Ok(vec![])
 }
 
 /// Apply PrintConv for a tag from this module
