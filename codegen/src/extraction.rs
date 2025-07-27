@@ -216,11 +216,26 @@ fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
     
     let hash_names: Vec<String> = match config_type {
         "tag_definitions.json" | "composite_tags.json" | "tag_table_structure.json" |
-        "process_binary_data.json" | "model_detection.json" | "conditional_tags.json" => {
+        "model_detection.json" | "conditional_tags.json" => {
             // For tag definitions, composite tags, and tag table structure, we use the table name from config root
             let table = config["table"].as_str()
                 .ok_or_else(|| anyhow::anyhow!("Missing 'table' field in {}", config_path.display()))?;
             vec![table.to_string()]
+        },
+        "process_binary_data.json" => {
+            // For process_binary_data, support both single table and tables array
+            if let Some(table) = config["table"].as_str() {
+                // Legacy single table format
+                vec![table.to_string()]
+            } else if let Some(tables_array) = config["tables"].as_array() {
+                // New multi-table format
+                tables_array.iter()
+                    .filter_map(|table| table.as_str())
+                    .map(|name| name.to_string())
+                    .collect()
+            } else {
+                return Err(anyhow::anyhow!("Missing 'table' or 'tables' field in {}", config_path.display()));
+            }
         },
         config_name if config_name.ends_with("_tag_table_structure.json") => {
             // For tag table structure configs (including equipment_tag_table_structure.json)

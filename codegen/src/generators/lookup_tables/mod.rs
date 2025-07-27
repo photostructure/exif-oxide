@@ -231,18 +231,11 @@ pub fn process_config_directory(
         }
     }
     
-    // Process process_binary_data configuration
-    let binary_data_files = process_single_extract_config::<
-        crate::generators::process_binary_data::ProcessBinaryDataExtraction,
-        _
-    >(
+    // Process process_binary_data configuration (handles multiple tables)
+    let binary_data_files = process_process_binary_data_config(
         config_dir,
         module_name,
-        "process_binary_data.json",
-        "binary_data",
-        "process_binary_data.json",
         &module_output_dir,
-        generate_process_binary_data_file,
     )?;
     has_content |= !binary_data_files.is_empty();
     generated_files.extend(binary_data_files);
@@ -394,6 +387,50 @@ fn generate_tag_structure_file(
     file_generation::FileGenerator::new("Auto-generated from ExifTool source")
         .with_content(structure_code)
         .write_to_file(&file_path)
+}
+
+/// Process process_binary_data configuration with support for multiple tables
+fn process_process_binary_data_config(
+    config_dir: &Path,
+    module_name: &str,
+    output_dir: &Path,
+) -> Result<Vec<String>> {
+    config_processor::process_config_if_exists(config_dir, "process_binary_data.json", |config| {
+        let mut generated_files = Vec::new();
+        
+        // Handle both single table and multiple tables format
+        let table_names: Vec<String> = if let Some(table) = config["table"].as_str() {
+            // Legacy single table format
+            vec![table.to_string()]
+        } else if let Some(tables_array) = config["tables"].as_array() {
+            // New multi-table format
+            tables_array.iter()
+                .filter_map(|table| table.as_str())
+                .map(|name| name.to_string())
+                .collect()
+        } else {
+            return Ok(vec![]); // No tables to process
+        };
+        
+        // Process each table
+        for table_name in table_names {
+            // Construct extract filename for this specific table
+            let extract_file = format!("{}__process_binary_data__{}.json", 
+                module_name.trim_end_matches("_pm").to_lowercase(),
+                table_name.to_lowercase()
+            );
+            let extract_path = path_utils::get_extract_dir("binary_data").join(&extract_file);
+            
+            if extract_path.exists() {
+                let data: crate::generators::process_binary_data::ProcessBinaryDataExtraction = 
+                    config_processor::load_extracted_json(&extract_path)?;
+                let file_name = generate_process_binary_data_file(&data, output_dir)?;
+                generated_files.push(file_name);
+            }
+        }
+        
+        Ok(generated_files)
+    })
 }
 
 fn generate_process_binary_data_file(

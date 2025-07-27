@@ -109,12 +109,12 @@ make codegen
 Some ExifTool functions exist in multiple modules:
 
 ```rust
-// GPS.pm has ConvertTimeStamp
-m.insert("GPS.pm::ConvertTimeStamp($val)", 
+// GPS has ConvertTimeStamp
+m.insert("GPS::ConvertTimeStamp($val)", 
     ("crate::implementations::value_conv", "gpstimestamp_value_conv"));
 
-// ID3.pm also has ConvertTimeStamp - different implementation!
-m.insert("ID3.pm::ConvertTimeStamp($val)", 
+// ID3 also has ConvertTimeStamp - different implementation!
+m.insert("ID3::ConvertTimeStamp($val)", 
     ("crate::implementations::value_conv", "id3_timestamp_value_conv"));
 ```
 

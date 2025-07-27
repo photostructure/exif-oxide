@@ -4,6 +4,11 @@
 
 - **High-level goal**: Complete the implementation of subdirectory binary data parsers to properly extract individual tag values instead of raw byte arrays
 - **Problem statement**: While subdirectory dispatcher functions now correctly call processor functions (fixed 2025-07-25), the actual binary data parsing implementations remain as TODOs, causing tags like ProcessingInfo and CanonShotInfo to display as numeric arrays instead of meaningful values
+- **Root cause discovered (2025-07-26)**: The issue is missing ProcessBinaryData pipeline infrastructure, not missing implementations. The `process_binary_data.pl` extractor exists but has never been configured or activated.
+- **Critical constraints**: 
+  - ⚡ Focus on embedded image extraction (PreviewImage, JpgFromRaw, ThumbnailImage, etc.) for CLI `-b` flag support
+  - 🔧 Integrate with existing proven two-phase pattern (binary extraction → tag kit PrintConv)
+  - 📐 Maintain compatibility with existing manual implementations during incremental migration
 
 ## MANDATORY READING
 
@@ -63,9 +68,11 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
 
 ### Key Codebases
 - **ExifTool source**: `third-party/exiftool/lib/Image/ExifTool/*.pm` - The canonical implementation we're translating
-- **Generated parsers**: `src/generated/*/tag_kit/mod.rs` - Where dispatcher functions live
-- **Binary data framework**: `src/binary_data.rs` - Infrastructure for parsing fixed-format binary data
-- **Code generator**: `codegen/src/generators/tag_kit_modular.rs` - Generates the dispatcher functions
+- **ProcessBinaryData function**: `third-party/exiftool/lib/Image/ExifTool.pm:9830+` - Core binary parsing logic  
+- **Generated parsers**: `src/generated/*/tag_kit/mod.rs` - Where dispatcher functions live (currently empty stubs)
+- **Manual binary processors**: `src/implementations/canon/binary_data.rs` - Working two-phase implementation examples
+- **Unused extractor**: `codegen/extractors/process_binary_data.pl` - Exists but never configured
+- **Tag kit generator**: `codegen/src/generators/tag_kit_modular.rs` - Generates empty stubs, needs binary integration
 
 ### Key Concepts
 - **SubDirectory tags**: Tags that reference other tables for parsing their binary data
@@ -82,6 +89,45 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
 },
 ```
 
+## Key Discoveries (2025-07-27)
+
+🎯 **MAJOR BREAKTHROUGH**: ProcessBinaryData pipeline fully expanded with multi-table support.
+
+1. **ProcessBinaryData Pipeline Status**: 
+   - ✅ **FIXED**: `process_binary_data.pl` extractor boolean parsing issue resolved
+   - ✅ **ACTIVE**: Multi-table Canon configuration system implemented
+   - ✅ **GENERATED**: Multiple binary data parsers with comprehensive tag coverage
+   - ✅ **VALIDATED**: Generated parsers contain all target image extraction and processing tags
+
+2. **Multi-Table Architecture Achievement** (2025-07-27):
+   - **DRY Config System**: Single `process_binary_data.json` with `tables` array
+   - **Backward Compatibility**: Supports both legacy single `table` and new `tables` formats
+   - **Custom Rust Orchestration**: ProcessBinaryDataExtractor calls Perl script multiple times per config
+   - **Automatic Integration**: Generated modules automatically added to mod.rs with proper re-exports
+
+3. **Generated Canon Binary Data Parsers**:
+   - **PreviewImageInfo** (✅): 5 tags for image extraction (`PreviewImageLength`, `PreviewImageStart`, `PreviewImageWidth`, `PreviewImageHeight`, `PreviewQuality`)
+   - **Processing** (✅): 15 tags for processing metadata (`ToneCurve`, `Sharpness`, `WhiteBalance`, `ColorTemperature`, `PictureStyle`, `WBShiftAB/GM`)
+
+4. **Current Architecture - 3 Unified Systems**:
+   - **Tag Kit System** (✅ Working): Generates tag definitions + subdirectory dispatcher stubs
+   - **Manual Binary Processors** (✅ Working): `src/implementations/canon/binary_data.rs` using proven two-phase pattern
+   - **ProcessBinaryData Pipeline** (✅ **FULLY EXPANDED**): Multi-table generation system operational
+
+5. **Proven Integration Pattern**:
+   - Manual implementations use: binary extraction → `tag_kit::apply_print_conv()`
+   - Pattern proven in `canon/binary_data.rs:225` and throughout binary processors
+   - Two-phase system is battle-tested and working with generated parsers
+   - **Ready for Tag Kit Integration**: Generated parsers follow same interface patterns
+
+6. **Phase 3: Tag Kit Auto-Integration** (COMPLETED 2025-07-27):
+   - ✅ **Enhanced Tag Kit Generator**: Implemented intelligent binary data parser detection
+   - ✅ **Auto-Detection Logic**: `has_binary_data_parser()` checks for generated `*_binary_data.rs` files
+   - ✅ **Smart Function Generation**: `generate_binary_data_integration()` replaces stubs with full implementations
+   - ✅ **Module Prefix Mapping**: Correctly handles `canon_processing` → `processing_binary_data.rs` name mapping
+   - ✅ **Format-Aware Parsing**: Automatic int16s/int32s detection with proper signed/unsigned conversion
+   - 🎯 **Next Codegen Run**: Will auto-replace stub functions with binary data extraction for ProcessingInfo and PreviewImageInfo
+
 ## Work Completed
 
 1. **Subdirectory dispatcher fix** (2025-07-25):
@@ -97,110 +143,175 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
    - Added temporary stubs for cross-module references to allow compilation
    - Affected modules: Canon, Exif, Olympus, PanasonicRaw, Sony
 
+4. **🎯 ProcessBinaryData Pipeline Activated** (2025-07-26):
+   - **FIXED**: Boolean parsing bug in `process_binary_data.pl` extractor (`1` → `true`)
+   - **CREATED**: `codegen/config/Canon_pm/process_binary_data.json` configuration
+   - **GENERATED**: `src/generated/Canon_pm/previewimageinfo_binary_data.rs` with complete parser
+   - **VALIDATED**: Generated parser contains all 5 target image extraction tags
+
+5. **🚀 Multi-Table ProcessBinaryData Expansion** (2025-07-27):
+   - **IMPLEMENTED**: DRY config system with `tables` array support
+   - **ENHANCED**: Custom ProcessBinaryDataExtractor with multi-table orchestration  
+   - **GENERATED**: Two comprehensive Canon binary data parsers:
+     - `previewimageinfo_binary_data.rs` - 5 image extraction tags
+     - `processing_binary_data.rs` - 15 processing metadata tags
+   - **AUTOMATED**: Module integration with proper mod.rs updates and re-exports
+   - **PROVEN**: Multi-table system scales to any number of binary tables
+
+6. **🔬 Canon Image Testing** (2025-07-26):
+   - **CONFIRMED**: Canon T3i.CR2 contains working preview data (1.79MB preview image)
+   - **DISCOVERED**: Preview location varies by camera model (EXIF IFD vs MakerNotes)
+   - **ARCHITECTURE INSIGHT**: Different Canon models use different preview storage strategies
+
 ## Remaining Tasks
 
-### Phase 1: Implement Canon Binary Parsers (High Confidence)
+### ✅ **COMPLETED: ProcessBinaryData Pipeline Expansion** 
 
-1. **process_canon_shotinfo** (`src/generated/Canon_pm/tag_kit/mod.rs`):
+**🎯 Achievement**: Successfully implemented multi-table ProcessBinaryData system with DRY configuration.
+
+**Status**: **MULTI-TABLE PIPELINE OPERATIONAL** - Canon PreviewImageInfo + Processing parsers generated and integrated.
+
+### Phase 3: Tag Kit Integration (CURRENT PRIORITY)
+
+**🎯 Goal**: Connect generated binary parsers to existing tag kit subdirectory dispatcher system.
+
+1. **Integration Architecture**:
+   - **Generated Parsers**: `previewimageinfo_binary_data.rs` + `processing_binary_data.rs` provide tag name lookups
+   - **Tag Kit Dispatcher**: Existing `process_canon_*` functions need to call generated parsers
+   - **Two-Phase Pattern**: binary extraction → `tag_kit::apply_print_conv()` (proven in manual implementations)
+
+2. **Implementation Strategy**:
    ```rust
-   // Current stub:
-   pub fn process_canon_shotinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-       // TODO: Implement binary data parsing for Canon ShotInfo
-       Ok(vec![])
+   // Example integration in tag_kit/mod.rs
+   fn process_canon_previewimageinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+       // Phase 1: Use generated binary parser
+       let raw_tags = crate::generated::Canon_pm::parse_preview_image_info(data, byte_order)?;
+       
+       // Phase 2: Apply tag kit PrintConv conversion
+       let mut final_tags = Vec::new();
+       for (tag_name, raw_value) in raw_tags {
+           let converted = tag_kit::apply_print_conv(&tag_name, &raw_value)?;
+           final_tags.push((tag_name, converted));
+       }
+       Ok(final_tags)
    }
    ```
-   - **Source table**: `third-party/exiftool/lib/Image/ExifTool/Canon.pm` starting at line 2851
-   - **Table attributes**:
-     ```perl
-     %Image::ExifTool::Canon::ShotInfo = (
-         %binaryDataAttrs,
-         FORMAT => 'int16s',      # Default format for all entries
-         FIRST_ENTRY => 1,        # First tag at offset 1
-         DATAMEMBER => [ 19 ],    # Tag 19 affects parsing of other tags
-         GROUPS => { 0 => 'MakerNotes', 2 => 'Image' },
+
+3. **Testing Requirements**:
+   - Verify generated parsers work with Canon T3i.CR2 test images
+   - Validate CLI `-b` flag image extraction functionality  
+   - Ensure compatibility with existing image extraction pipeline
+
+### Phase 2: Tag Kit Integration (Modified Approach)
+
+**🎯 Goal**: Modify tag kit generator to integrate with ProcessBinaryData pipeline.
+
+1. **Enhance Tag Kit Generator** (`codegen/src/generators/tag_kit_modular.rs`):
+   - **Detection logic**: Identify when a subdirectory references a binary data table
+   - **Integration code**: Generate calls to binary parser + tag kit PrintConv conversion
+   - **Two-phase pattern**: 
+     ```rust
+     fn process_canon_shotinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+         // Phase 1: Binary extraction
+         let raw_tags = crate::generated::Canon_pm::binary_data_tables::parse_shot_info(data, byte_order)?;
+         
+         // Phase 2: Tag kit conversion
+         let mut final_tags = Vec::new();
+         for (tag_name, raw_value) in raw_tags {
+             let converted = tag_kit::apply_print_conv(&tag_name, &raw_value)?;
+             final_tags.push((tag_name, converted));
+         }
+         Ok(final_tags)
+     }
      ```
-   - **Example tags**:
-     - AutoISO (offset 1): `ValueConv => 'exp($val/32*log(2))*100'`
-     - BaseISO (offset 3): Direct value
-     - MeasuredEV (offset 5): `ValueConv => '$val / 32'`
-     - TargetAperture (offset 6): Complex ExifTool::Canon::CanonEv conversion
-   - **Implementation approach**:
-     1. Check if we already have a ShotInfo binary data table extracted
-     2. If not, add to Canon_pm process_binary_data.json config
-     3. Use the generated binary data parser
-     4. Handle the DATAMEMBER dependency for tag 19
 
-2. **process_canon_processing** (`src/generated/Canon_pm/tag_kit/mod.rs`):
-   - **Source table**: `third-party/exiftool/lib/Image/ExifTool/Canon.pm` starting at line 5087
-   - **Table attributes**:
-     ```perl
-     %Image::ExifTool::Canon::Processing = (
-         %binaryDataAttrs,
-         FORMAT => 'int16s',      # Default format for all entries
-         FIRST_ENTRY => 1,        # First tag at offset 1
-         GROUPS => { 0 => 'MakerNotes', 2 => 'Image' },
-     ```
-   - **Example tags**:
-     - ToneCurve (offset 1): PrintConv with Standard/Manual/Custom
-     - Sharpness (offset 2): Direct value (unsharp mask strength)
-     - SharpnessFrequency (offset 3): PrintConv with n1-n5, Standard, Low, High
-     - ColorTone (offset 9): Direct value (-4 to +4)
-   - **Special handling**: Some tags have negative offsets (e.g., offset -1 for RawBrightnessAdj)
-   - **Implementation**: Similar to ShotInfo, check for existing extraction first
+### Phase 3: Runtime Fallback System (Safety Net)
 
-3. **process_canon_crwparam**:
-   - **Source**: Check if CRWParam has a defined table or needs special handling
-   - May be related to CRW (Canon Raw) format specifics
+**🎯 Goal**: Graceful migration from manual to generated implementations.
 
-### Phase 2: Cross-Module Extraction Strategy (Requires Research)
+1. **Hybrid Dispatcher Architecture**:
+   ```rust
+   fn process_canon_shotinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+       // Try generated binary parser first
+       if let Ok(result) = try_generated_parser(data, byte_order) {
+           return Ok(result);
+       }
+       
+       // Fallback to manual implementation  
+       crate::implementations::canon::binary_data::process_shot_info_manual(data, byte_order)
+   }
+   ```
 
-1. **Analyze cross-module dependencies**:
-   - Run analysis to identify all cross-module subdirectory references
-   - Create dependency graph showing which modules reference which tables
-   - Example: Canon.pm → CanonCustom.pm, Exif.pm → manufacturer modules
+2. **Incremental Migration Strategy**:
+   - Generate parsers for "low-hanging fruit" simple binary tables
+   - Keep manual implementations for complex cases (negative offsets, hooks, conditions)
+   - Clear manual/generated boundaries with runtime selection
 
-2. **Design extraction approach**:
-   - Option A: Extract all referenced tables into the referencing module's config
-   - Option B: Create a separate "cross-module" extraction config
-   - Option C: Implement runtime module loading (complex)
+### Critical Research Questions (Must Answer Before Implementation)
 
-3. **Update tag_kit extractor**:
-   - Modify to handle cross-module table references
-   - May need to parse multiple .pm files in one extraction run
+1. **ProcessBinaryData Feature Scope**:
+   - What percentage of ExifTool's binary tables are "simple" (basic offsets + formats) vs "complex" (hooks, conditions, runtime logic)?
+   - Which specific binary tables contain the 6 target image extraction tags?
+   - What are the key ProcessBinaryData patterns that require exact ExifTool translation?
 
-### Phase 3: Systematic Implementation
+2. **Integration Complexity**:
+   - How difficult is it to modify the tag kit generator to detect and integrate binary data tables?
+   - What are the integration points between ProcessBinaryData extraction and tag kit PrintConv conversion?
+   - Are there any conflicts between existing manual implementations and potential generated ones?
 
-1. **Priority order** (based on tag frequency):
-   - Canon custom functions (very common in Canon images)
-   - Exif manufacturer subdirectories
-   - Other manufacturer cross-references
+3. **Implementation Priority**:
+   - Which binary tables should be implemented first to support image extraction (PreviewImage, JpgFromRaw, etc.)?
+   - What is the migration path from manual implementations to generated ones?
+   - How can we validate that generated parsers produce identical output to ExifTool?
 
-2. **For each table**:
-   - Extract table definition from source module
-   - Generate parser function
-   - Test with real images
-   - Validate against ExifTool output
+**Research Success Criteria**: Clear answers to these questions with concrete implementation plan and risk assessment.
 
-## Prerequisites
+### Legacy Context (Preserved for Reference)
 
-- Understanding of ExifTool's binary data format (see `PROCESS_PROC.md`)
-- Familiarity with the tag kit extraction system
-- Test images with the affected tags (Canon T3i.CR2 is a good example)
+The original P11 plan focused on manually implementing Canon ShotInfo/Processing parsers. Our research revealed this approach was addressing symptoms rather than the root cause - the missing ProcessBinaryData pipeline infrastructure. 
 
-### Important: Check Existing Extractions First
+**Key Tables Identified**:
+- **Canon ShotInfo** (`Canon.pm:2851`): AutoISO, BaseISO, MeasuredEV with complex ValueConv expressions  
+- **Canon Processing** (`Canon.pm:5087`): ToneCurve, Sharpness, SharpnessFrequency with negative offsets
+- **Canon CRWParam**: Needs investigation for CRW format specifics
 
-Before implementing any binary parser manually:
-1. Check if the table is already configured in `codegen/config/{Module}_pm/process_binary_data.json`
-2. Look for existing generated code in `src/generated/{Module}_pm/binary_data_tables.rs`
-3. ColorData tables are a good example of already-working binary data extraction
+These tables will be implemented using the new 3-phase approach once the ProcessBinaryData pipeline is activated.
 
-If the table is already extracted, the fix might be as simple as:
-```rust
-pub fn process_canon_shotinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    use crate::generated::Canon_pm::binary_data_tables::parse_shot_info;
-    parse_shot_info(data, byte_order, None, None) // model and format params
-}
-```
+## Prerequisites (Updated)
+
+### Phase 1 Prerequisites (Research & Infrastructure Setup)
+
+1. **ExifTool ProcessBinaryData Expertise**:
+   - Deep understanding of `third-party/exiftool/lib/Image/ExifTool.pm` ProcessBinaryData function
+   - Knowledge of binary data features: formats, offsets, conditions, hooks, negative offsets
+   - See `third-party/exiftool/doc/concepts/PROCESS_PROC.md` for background
+
+2. **Codegen Pipeline Familiarity**:
+   - Understanding of extraction framework in `codegen/extractors/`
+   - Experience with `process_binary_data.pl` extractor (currently unused)
+   - Knowledge of tag kit generation system
+
+3. **Test Environment**:
+   - Test images with binary data (Canon T3i.CR2, Sony samples, etc.)
+   - ExifTool reference installation for output comparison
+   - Access to `cargo run --bin compare-with-exiftool` tool
+
+### Phase 2+ Prerequisites (Implementation)
+
+4. **Rust Generator Modification**:
+   - Experience with `codegen/src/generators/tag_kit_modular.rs`
+   - Understanding of two-phase pattern: binary extraction → PrintConv conversion
+   - Knowledge of existing manual implementations in `src/implementations/canon/binary_data.rs`
+
+### ⚠️ Critical Discovery: ProcessBinaryData Pipeline Is Inactive
+
+**Before any implementation work**, verify the current status:
+
+1. **NO process_binary_data.json configs exist** in `codegen/config/*/`
+2. **NO binary_data_tables.rs files exist** in `src/generated/*/`  
+3. **ProcessBinaryData pipeline has never been activated** - this is the root cause
+
+The existing note about "check for existing extractions" is **obsolete** - there are none. The pipeline needs to be built from scratch.
 
 ## Testing Strategy
 

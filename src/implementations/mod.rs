@@ -11,6 +11,8 @@ pub mod nikon;
 pub mod olympus;
 pub mod panasonic_raw;
 pub mod print_conv;
+pub mod raw_conv;
+pub mod ricoh;
 pub mod sony;
 pub mod value_conv;
 
@@ -84,11 +86,27 @@ pub fn register_all_conversions() {
     registry::register_print_conv("lensinfo_print_conv", print_conv::lensinfo_print_conv);
     registry::register_print_conv("iso_print_conv", print_conv::iso_print_conv);
 
+    // EXIF version and component PrintConv functions
+    registry::register_print_conv("exifversion_print_conv", print_conv::exifversion_print_conv);
+    registry::register_print_conv(
+        "flashpixversion_print_conv",
+        print_conv::flashpixversion_print_conv,
+    );
+    registry::register_print_conv(
+        "componentsconfiguration_print_conv",
+        print_conv::componentsconfiguration_print_conv,
+    );
+    registry::register_print_conv(
+        "compressedbitsperpixel_print_conv",
+        print_conv::compressedbitsperpixel_print_conv,
+    );
+
     // Composite tag PrintConv functions
     registry::register_print_conv(
         "composite_gps_gpsaltitude_print_conv",
         print_conv::composite_gps_gpsaltitude_print_conv,
     );
+    registry::register_print_conv("imagesize_print_conv", print_conv::imagesize_print_conv);
 
     // GPS coordinate ValueConv functions - convert to unsigned decimal degrees
     // Sign handling happens in Composite tags that combine coordinate + ref
@@ -140,4 +158,7 @@ pub fn register_all_conversions() {
         value_conv::exposuretime_value_conv,
     );
     registry::register_value_conv("focallength_value_conv", value_conv::focallength_value_conv);
+
+    // Register RawConv functions
+    registry::register_raw_conv("convert_exif_text", raw_conv::convert_exif_text);
 }
