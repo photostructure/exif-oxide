@@ -61,7 +61,7 @@ impl ExifReader {
         // ExifTool: lib/Image/ExifTool/Exif.pm group mappings
         let namespace = match ifd_name {
             "Root" | "IFD0" | "IFD1" => "EXIF",
-            "GPS" => "EXIF",     // GPS tags belong to EXIF group in ExifTool
+            "GPS" => "GPS", // GPS tags need distinct namespace to avoid tag ID collisions
             "ExifIFD" => "EXIF", // ExifIFD tags belong to EXIF group (Group0) in ExifTool
             "InteropIFD" => "EXIF",
             "MakerNotes" => "MakerNotes",

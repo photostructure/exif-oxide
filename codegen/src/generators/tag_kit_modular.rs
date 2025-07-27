@@ -747,7 +747,7 @@ fn generate_mod_file(
                     if variant.is_binary_data {
                         if let Some(extracted_table) = &variant.extracted_table {
                             if generated_tables.insert(table_fn_name.clone()) {
-                                generate_binary_parser(&mut code, &table_fn_name, extracted_table)?;
+                                generate_binary_parser(&mut code, &table_fn_name, extracted_table, module_name)?;
                             }
                         }
                     }
@@ -1081,7 +1081,19 @@ fn collect_subdirectory_info(tag_kits: &[TagKit]) -> HashMap<u32, SubDirectoryCo
 /// FOOTGUN WARNING: Using unsigned arithmetic here will cause wraparound!
 /// A calculation like (0 - 1) * 2 = -2 becomes 18446744073709551614 in usize.
 /// This creates absurd comparisons like "if data.len() >= 18446744073709551615"
-fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTable) -> Result<()> {
+fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTable, module_name: &str) -> Result<()> {
+    println!("DEBUG: generate_binary_parser called for module '{}', fn_name '{}'", module_name, fn_name);
+    
+    // Try to use ProcessBinaryData integration if available
+    if has_binary_data_parser(module_name, fn_name) {
+        println!("DEBUG: Found binary data parser for '{}', generating integration", fn_name);
+        generate_binary_data_integration(code, fn_name, module_name)?;
+        return Ok(());
+    } else {
+        println!("DEBUG: No binary data parser found for '{}'", fn_name);
+    }
+    
+    // Fall back to manual tag extraction
     code.push_str(&format!("fn process_{fn_name}(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n"));
     code.push_str("    let mut tags = Vec::new();\n");
     

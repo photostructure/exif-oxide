@@ -19,8 +19,12 @@ fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
     let mut requested_tags = Vec::new();
     let requested_groups = Vec::new();
     let mut group_all_patterns = Vec::new();
+    let mut glob_patterns = Vec::new();
     let mut numeric_tags = HashSet::new();
     let mut extract_all = false;
+
+    // Debug: print all received arguments
+    debug!("CLI args received: {:?}", args);
 
     for arg in args {
         if arg == "-all" || arg == "--all" {
@@ -31,13 +35,23 @@ fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
             let filter_arg = &arg[1..]; // Remove leading '-'
 
             if filter_arg.ends_with('#') && filter_arg.len() > 1 {
-                // Numeric tag: -TagName#
+                // Numeric tag: -TagName# or -Pattern#
                 let tag_name = &filter_arg[..filter_arg.len() - 1];
-                requested_tags.push(tag_name.to_string());
-                numeric_tags.insert(tag_name.to_string());
+                if tag_name.contains('*') {
+                    // Glob pattern with numeric: -GPS*#
+                    glob_patterns.push(tag_name.to_string());
+                    numeric_tags.insert(tag_name.to_string());
+                } else {
+                    // Regular numeric tag: -TagName#
+                    requested_tags.push(tag_name.to_string());
+                    numeric_tags.insert(tag_name.to_string());
+                }
             } else if filter_arg.ends_with(":all") {
                 // Group all pattern: -GroupName:all
                 group_all_patterns.push(filter_arg.to_string());
+            } else if filter_arg.contains('*') {
+                // Glob pattern: -GPS*, -*tude, -*Date*, -EXIF:*
+                glob_patterns.push(filter_arg.to_string());
             } else if filter_arg.contains(':') {
                 // Group:tag pattern (future extension)
                 // For now, treat as specific tag request
@@ -64,10 +78,12 @@ fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
             group_all_patterns: Vec::new(),
             extract_all: true,
             numeric_tags,
+            glob_patterns: Vec::new(),
         }
     } else if requested_tags.is_empty()
         && requested_groups.is_empty()
         && group_all_patterns.is_empty()
+        && glob_patterns.is_empty()
     {
         // No filters specified - extract all tags (backward compatibility)
         FilterOptions {
@@ -76,6 +92,7 @@ fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
             group_all_patterns: Vec::new(),
             extract_all: true,
             numeric_tags,
+            glob_patterns: Vec::new(),
         }
     } else {
         // Specific filters requested
@@ -85,8 +102,12 @@ fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
             group_all_patterns,
             extract_all: false,
             numeric_tags,
+            glob_patterns,
         }
     };
+
+    // Debug: print final filter options
+    debug!("Final FilterOptions: {:?}", filter_options);
 
     (file_paths, filter_options)
 }
