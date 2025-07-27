@@ -111,9 +111,10 @@ impl FileTypeDetector {
         for candidate in &candidates {
             // Check if this is a weak magic type that defers to extension
             // ExifTool.pm:1030 - %weakMagic hash contains types with weak magic
-            // if lookup_weakmagic(candidate) {
-            if false {
-                // TODO: Re-enable when lookup_weakmagic is generated
+            // Note: Most weak magic types (MP3, etc.) rely on extension detection
+            let is_weak_magic =
+                matches!(candidate.as_str(), "MP3" | "MP4" | "AAC" | "OGG" | "FLAC");
+            if is_weak_magic {
                 // Weak magic types are fallback only if no strong magic matches
                 // ExifTool.pm:2970 - "next if $weakMagic{$type} and defined $recognizedExt"
                 if matched_type.is_none() {
@@ -302,25 +303,39 @@ impl FileTypeDetector {
         }
 
         // Use generated magic number patterns from ExifTool's %magicNumber hash
-        // ExifTool.pm:912-1027 - patterns extracted and compiled as regex::bytes::Regex
-        use crate::generated::file_types::{matches_magic_number, resolve_file_type};
+        // ExifTool.pm:912-1027 - patterns extracted and compiled from regex patterns
+        use crate::generated::ExifTool_pm::regex_patterns::REGEX_PATTERNS;
+
+        // Use generated magic number patterns from ExifTool's %magicNumber hash
+        // ExifTool logic: Extension-based candidates are validated with magic numbers
+        // ExifTool.pm:2951-2973 - Test each candidate type against magic patterns
 
         // First try to match against the file type itself
-        if matches_magic_number(file_type, buffer) {
-            return true;
+        if let Some(pattern) = REGEX_PATTERNS.get(file_type) {
+            if buffer.starts_with(pattern) {
+                return true;
+            }
         }
 
         // If no direct match, check if this file type has a format that has magic patterns
         // ExifTool uses the format (MOV, TIFF, etc.) for magic pattern matching
+        use crate::generated::file_types::resolve_file_type;
         if let Some((formats, _desc)) = resolve_file_type(file_type) {
             // Try magic pattern for the primary format
-            if matches_magic_number(formats[0], buffer) {
-                return true;
+            if let Some(pattern) = REGEX_PATTERNS.get(formats[0]) {
+                if buffer.starts_with(pattern) {
+                    return true;
+                }
             }
+            // ExifTool behavior: If type has magic pattern defined but doesn't match, reject it
+            // ExifTool.pm:2960 - "next if $buff !~ /^$magicNumber{$type}/s and not $noMagic{$type}"
             return false;
         }
 
-        false
+        // ExifTool behavior: Types without magic numbers can be recognized by extension alone
+        // ExifTool.pm:2966 - "next if defined $moduleName{$type} and not $moduleName{$type}"
+        // If we reach here, this file type has no magic pattern defined, so allow extension-based detection
+        true
     }
 
     /// Detect actual RIFF format type from buffer
