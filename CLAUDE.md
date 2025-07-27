@@ -235,6 +235,18 @@ When moving to `docs/done/`, prefix with completion date: `YYYYMMDD-P10a-descrip
 
 ## Development guidance
 
+### Running Tests
+
+**Use `cargo t` instead of `cargo test`** - Integration tests require the `test-helpers` feature to access test helper methods like `add_test_tag()`. We've configured a cargo alias for convenience:
+
+- `cargo t` - Run all tests with test features enabled (shorthand)
+- `cargo t pattern` - Run tests matching "pattern"
+- `cargo t test_png_pattern_directly` - Run specific test
+
+The alias is defined in `.cargo/config.toml` and automatically includes `--features test-helpers,integration-tests`.
+
+**Why not regular `cargo test`?** The `test-helpers` feature enables test-only public methods on `ExifReader` that integration tests need, and `integration-tests` enables tests requiring external test assets. We don't include these in default features to keep them out of release builds.
+
 ### ⚠️ IMPORTANT: ExifTool is a Git Submodule
 
 The `third-party/exiftool` directory is a **git submodule**. This means:

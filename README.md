@@ -103,6 +103,8 @@ Dual-licensed under commercial license and GNU Affero General Public License v3.
 
    ```bash
    make precommit  # Build, test, and lint
+   # Or run tests directly:
+   cargo t         # Run tests (use 'cargo t' not 'cargo test')
    ```
 
 3. Run on test images:
