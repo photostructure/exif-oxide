@@ -96,44 +96,63 @@ ExifTool verbose shows:
 
 ✅ **Confirmed GPS processing works**: When GPS IFD is processed, tags extract correctly with proper PrintConv/ValueConv
 
-✅ **CRITICAL DISCOVERY**: Debug investigation confirms IFD0 loop stops after entry 10 (ExifIFD processing). The loop never reaches "Processing IFD IFD0 entry 11" or "Processing IFD IFD0 entry 12" despite num_entries=13. This is NOT a return statement issue - it's a deeper control flow problem in subdirectory processing chain.
+✅ **CRITICAL DISCOVERY & RESOLUTION**: Root cause was RICOH MakerNotes corrupted entry count (21,097 vs expected 9) causing infinite loop that prevented IFD0 from continuing. Fixed with proper RICOH signature detection using 8-byte offset matching ExifTool's `Start => '$valuePtr + 8'` logic.
+
+✅ **MAJOR BREAKTHROUGH**: IFD parsing now works correctly! After RICOH fix:
+- ✅ IFD0 processes all 13 entries including entry 11 (GPSInfo) 
+- ✅ GPS IFD processes all 24 entries (tags 0x0-0x1e)
+- ✅ GPSLongitude and GPSLongitudeRef appear in output correctly
+- ❌ **NEW ISSUE**: GPSLatitude and GPSLatitudeRef are processed but missing from final output
 
 ## Remaining Tasks
 
-### 1. Investigate subdirectory processing control flow bug
+### 1. ✅ ~~Investigate subdirectory processing control flow bug~~ **COMPLETED**
 
-**Acceptance Criteria**: Identify why control flow never returns to IFD0 loop after ExifIFD processing
+**✅ RESOLUTION**: Fixed RICOH MakerNotes signature detection in [`src/implementations/ricoh.rs`](../../src/implementations/ricoh.rs). Issue was corrupted entry count causing infinite loop.
 
-**Research Findings**:
-- ✅ IFD0 loop starts correctly, processes entries 0-10
-- ✅ Entry 10 (ExifIFD) starts subdirectory processing
-- ✅ ExifIFD processes all 28 entries including MakerNotes correctly
-- ❌ Control flow never returns to IFD0 loop to process entries 11-12
+### 2. ✅ ~~Fix IFD parsing control flow~~ **COMPLETED**
 
-**Investigation Approach**:
-1. The issue occurs somewhere in the subdirectory processing chain after ExifIFD completes
-2. Need to trace exactly where control flow is lost between ExifIFD completion and IFD0 loop continuation
-3. Likely in `process_subdirectory_tag()`, `process_subdirectory()`, or `dispatch_processor_with_params()` call chain
-
-### 2. Fix IFD parsing control flow
-
-**Acceptance Criteria**: IFD0 processes all 13 entries including entry 11 (GPSInfo)
-
-**✅ Correct Behavior**:
+**✅ VERIFICATION**: IFD0 now processes all 13 entries:
 ```
 Processing IFD IFD0 entry 10 of 13 at offset 0x82  ✓ (ExifIFD)
-Processing IFD IFD0 entry 11 of 13 at offset 0x8e  ✓ (GPSInfo)  <- Must reach this!
+Processing IFD IFD0 entry 11 of 13 at offset 0x8e  ✓ (GPSInfo) ← FIXED!
 Processing IFD IFD0 entry 12 of 13 at offset 0x9a  ✓
 ```
 
-**❌ Common Mistake**: Adding bandaid fixes that mask the root cause instead of fixing the control flow issue
+### 3. **INVESTIGATE**: GPS coordinate conversion bug
 
-**Implementation Notes**:
-- Focus on ensuring subdirectory processing returns control to parent IFD loop
-- Verify no hidden early returns or exceptions in the call chain
-- May require fixing exception handling or loop control logic
+**NEW DISCOVERY**: Tags are processed but conversion fails:
+- ✅ **Parsing Works**: GPS tags 0x1 (GPSLatitudeRef) and 0x2 (GPSLatitude) are processed
+- ✅ **GPS IFD Works**: All 24 GPS entries processed correctly
+- ❌ **Conversion Fails**: GPSLatitude/GPSLatitudeRef disappear between parsing and output
+- ✅ **Partial Success**: GPSLongitude/GPSLongitudeRef work correctly
 
-### 3. Verify GPS coordinate extraction
+**Debug Evidence**:
+```
+Processing tag 0x1 (1) from GPS (format: Ascii, count: 2)     ← GPSLatitudeRef
+Processing tag 0x2 (2) from GPS (format: Rational, count: 3)  ← GPSLatitude  
+Processing tag 0x3 (3) from GPS (format: Ascii, count: 2)     ← GPSLongitudeRef
+Processing tag 0x4 (4) from GPS (format: Rational, count: 3)  ← GPSLongitude
+```
+
+**✅ ROOT CAUSE CONFIRMED**: Tag ID collision between EXIF and GPS namespaces!
+
+**Debug Evidence**:
+```
+Tag 0x0001: Keeping first encountered EXIF over EXIF  ← GPSLatitudeRef blocked!
+Tag 0x0002: Keeping first encountered EXIF over EXIF  ← GPSLatitude blocked!
+```
+
+**Testing Confirmation**:
+- ✅ `cargo run -- ./t/images/Ricoh2.jpg -GPSLongitude` → Returns 0.5075027777777777
+- ❌ `cargo run -- ./t/images/Ricoh2.jpg -GPSLatitude` → Returns nothing  
+- ❌ `cargo run -- ./t/images/Ricoh2.jpg -GPSLatitudeRef` → Returns nothing
+
+**Problem**: Tags 0x1 and 0x2 exist in both EXIF and GPS IFDs. Our precedence logic keeps the first value (EXIF) and discards the GPS values. This is why longitude works (tags 0x3, 0x4 are GPS-specific) but latitude fails.
+
+**Solution**: Fix GPS IFD context handling in tag storage. GPS tags need proper namespace isolation to avoid collisions with EXIF tags.
+
+### 4. Verify GPS coordinate extraction
 
 **Acceptance Criteria**: GPSLatitude and GPSLongitude appear in output for test images
 
