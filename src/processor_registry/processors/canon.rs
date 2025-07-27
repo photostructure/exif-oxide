@@ -12,6 +12,7 @@ use super::super::{
     BinaryDataProcessor, ProcessorCapability, ProcessorContext, ProcessorMetadata, ProcessorResult,
 };
 use crate::implementations::canon;
+use crate::implementations::canon::tags::get_canon_tag_name;
 use crate::types::{Result, TagValue};
 use std::collections::HashMap;
 use tracing::debug;
@@ -443,11 +444,11 @@ impl BinaryDataProcessor for CanonMainProcessor {
             .byte_order
             .unwrap_or(crate::tiff_types::ByteOrder::LittleEndian);
         let extracted_tags = extract_makernotes_via_tag_kit(
-            data, 
-            context.data_offset, 
-            byte_order, 
+            data,
+            context.data_offset,
+            byte_order,
             "Canon",
-            crate::generated::Canon_pm::tag_kit::process_subdirectory
+            crate::generated::Canon_pm::tag_kit::process_subdirectory,
         );
 
         match extracted_tags {
@@ -500,9 +501,9 @@ impl BinaryDataProcessor for CanonMainProcessor {
 /// 3. Collect and return all extracted tags with proper namespacing
 ///
 /// ## Usage:
-/// ```rust
+/// ```rust,ignore
 /// let tags = extract_makernotes_via_tag_kit(
-///     data, offset, byte_order, "Canon", 
+///     data, offset, byte_order, "Canon",
 ///     crate::generated::Canon_pm::tag_kit::process_subdirectory
 /// )?;
 /// ```
@@ -511,37 +512,48 @@ fn extract_makernotes_via_tag_kit(
     data_offset: usize,
     byte_order: crate::tiff_types::ByteOrder,
     manufacturer: &str,
-    tag_kit_processor: fn(u32, &TagValue, crate::tiff_types::ByteOrder) -> Result<HashMap<String, TagValue>>,
+    tag_kit_processor: fn(
+        u32,
+        &TagValue,
+        crate::tiff_types::ByteOrder,
+    ) -> Result<HashMap<String, TagValue>>,
 ) -> Result<HashMap<String, TagValue>> {
-    use crate::tiff_types::{IfdEntry, TiffHeader};
     use crate::implementations::nikon::ifd::extract_tag_value;
-    
+    use crate::tiff_types::IfdEntry;
+
     let mut extracted_tags = HashMap::new();
 
     debug!(
         "Processing {} MakerNotes via tag kit: {} bytes at offset {:#x}",
-        manufacturer, data.len(), data_offset
+        manufacturer,
+        data.len(),
+        data_offset
     );
 
     // Parse MakerNotes as IFD structure to extract individual tag entries
-    if data.len() < 8 {
+    // Canon MakerNotes have NO TIFF header - they start directly with IFD entry count
+    // ExifTool: lib/Image/ExifTool/MakerNotes.pm Canon "(starts with an IFD)"
+    if data.len() < 2 {
         return Ok(extracted_tags);
     }
 
-    let header = TiffHeader::parse(data)?;
-    let ifd_offset = header.ifd0_offset as usize;
-    
-    if ifd_offset + 2 > data.len() {
-        return Ok(extracted_tags);
-    }
+    // Canon MakerNotes start directly with IFD entry count (no header)
+    let ifd_offset = 0;
 
-    // Read number of IFD entries
+    // Read number of IFD entries at the beginning of the data
     let entry_count = match byte_order {
-        crate::tiff_types::ByteOrder::LittleEndian => u16::from_le_bytes([data[ifd_offset], data[ifd_offset + 1]]),
-        crate::tiff_types::ByteOrder::BigEndian => u16::from_be_bytes([data[ifd_offset], data[ifd_offset + 1]]),
+        crate::tiff_types::ByteOrder::LittleEndian => {
+            u16::from_le_bytes([data[ifd_offset], data[ifd_offset + 1]])
+        }
+        crate::tiff_types::ByteOrder::BigEndian => {
+            u16::from_be_bytes([data[ifd_offset], data[ifd_offset + 1]])
+        }
     } as usize;
 
-    debug!("Found {} IFD entries in {} MakerNotes", entry_count, manufacturer);
+    debug!(
+        "Found {} IFD entries in {} MakerNotes",
+        entry_count, manufacturer
+    );
 
     // Process each IFD entry through the tag kit
     let mut offset = ifd_offset + 2;
@@ -550,16 +562,36 @@ fn extract_makernotes_via_tag_kit(
             break;
         }
 
-        let entry = IfdEntry::parse(data, offset, byte_order)?;
-        
-        // Extract tag data as TagValue for tag kit processing
-        let tag_value = extract_tag_value(data, &entry, byte_order)?;
+        let entry = match IfdEntry::parse(data, offset, byte_order) {
+            Ok(entry) => entry,
+            Err(e) => {
+                debug!("Failed to parse IFD entry at offset {:#x}: {}", offset, e);
+                break;
+            }
+        };
 
-        // Call manufacturer tag kit to process this tag
-        match tag_kit_processor(entry.tag_id as u32, &tag_value, byte_order) {
-            Ok(processed_tags) => {
-                debug!("Tag 0x{:04x} extracted {} sub-tags via {} tag kit", 
-                       entry.tag_id, processed_tags.len(), manufacturer);
+        // Extract tag data as TagValue for tag kit processing
+        let tag_value = match extract_tag_value(data, &entry, byte_order) {
+            Ok(value) => value,
+            Err(e) => {
+                debug!("Failed to extract tag value for tag 0x{:04x}: {}", entry.tag_id, e);
+                offset += 12;
+                continue;
+            }
+        };
+
+        // First try tag kit for binary data tags (subdirectories)
+        let tag_kit_result = tag_kit_processor(entry.tag_id as u32, &tag_value, byte_order);
+
+        match tag_kit_result {
+            Ok(processed_tags) if !processed_tags.is_empty() => {
+                // Successfully processed as binary data tag
+                debug!(
+                    "Tag 0x{:04x} extracted {} sub-tags via {} tag kit",
+                    entry.tag_id,
+                    processed_tags.len(),
+                    manufacturer
+                );
                 for (name, value) in processed_tags {
                     // Add manufacturer namespace to avoid conflicts
                     let full_name = if name.contains(':') {
@@ -570,8 +602,19 @@ fn extract_makernotes_via_tag_kit(
                     extracted_tags.insert(full_name, value);
                 }
             }
-            Err(e) => {
-                debug!("Tag kit processing failed for tag 0x{:04x}: {}", entry.tag_id, e);
+            Ok(_) | Err(_) => {
+                // Not a binary data tag or tag kit failed - treat as regular MakerNotes tag
+                let tag_name = get_canon_tag_name(entry.tag_id)
+                    .unwrap_or_else(|| format!("CanonTag_{:04x}", entry.tag_id));
+
+                debug!(
+                    "Tag 0x{:04x} processed as regular MakerNotes tag: {}",
+                    entry.tag_id, tag_name
+                );
+
+                // Store as regular tag with MakerNotes namespace
+                let full_name = format!("MakerNotes:{}", tag_name);
+                extracted_tags.insert(full_name, tag_value);
             }
         }
 
@@ -580,7 +623,8 @@ fn extract_makernotes_via_tag_kit(
 
     debug!(
         "{} tag kit extraction completed with {} tags",
-        manufacturer, extracted_tags.len()
+        manufacturer,
+        extracted_tags.len()
     );
     Ok(extracted_tags)
 }
