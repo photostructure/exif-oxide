@@ -13,6 +13,7 @@ use exif_oxide::types::FilterOptions;
 /// - `-TagName#` - extract tag with numeric value (ValueConv)  
 /// - `-GroupName:all` - extract all tags from group
 /// - `-all` - extract all tags
+///
 /// Returns (file_paths, filter_options)
 fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
     let mut file_paths = Vec::new();
@@ -135,6 +136,28 @@ fn main() {
         .version("0.1.0")
         .author("exif-oxide@photostructure.com")
         .about("High-performance Rust implementation of ExifTool")
+        .after_help(concat!(
+            "EXAMPLES:\n",
+            "  exif-oxide image.jpg                    Extract all metadata\n",
+            "  exif-oxide -MIMEType image.jpg          Extract only MIMEType tag\n",
+            "  exif-oxide -Orientation# image.jpg      Extract Orientation with numeric value\n",
+            "  exif-oxide -EXIF:all image.jpg          Extract all EXIF group tags\n",
+            "  exif-oxide -GPS* image.jpg              Extract all GPS tags (wildcard)\n",
+            "  exif-oxide -*Date* image.jpg            Extract all tags containing 'Date'\n",
+            "  exif-oxide -all image.jpg               Extract all available tags\n",
+            "\n",
+            "TAG FILTERING:\n",
+            "  -TagName         Extract specific tag (case-insensitive)\n",
+            "  -TagName#        Extract tag with numeric value (ValueConv)\n",
+            "  -Group:all       Extract all tags from group (File, EXIF, GPS, etc.)\n",
+            "  -Pattern*        Prefix wildcard (e.g., -GPS*, -Canon*)\n",
+            "  -*Pattern        Suffix wildcard (e.g., -*tude for latitude/longitude)\n",
+            "  -*Pattern*       Middle wildcard (e.g., -*Date* for date-related tags)\n",
+            "  -all             Extract all available tags\n",
+            "\n",
+            "Multiple filters can be combined:\n",
+            "  exif-oxide -Orientation# -GPS* -EXIF:all image.jpg\n"
+        ))
         .arg(
             Arg::new("args")
                 .help("Image files and/or -TagName# flags")

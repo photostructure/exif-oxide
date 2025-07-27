@@ -158,158 +158,99 @@ exiftool '-Orientation#' file.jpg     # 8
 - Fixed compilation errors in multiple test modules
 - Maintained test coverage while adding new functionality
 
+✅ **Phase 7: Critical Bug Fix - Central Filtering Architecture** (July 2025)
+
+- **🚨 FIXED**: Discovered and fixed critical bug where specific tag requests extracted ALL tags instead of filtered subset
+- **Root Cause**: Filtering was applied at CLI level but ignored during format-specific extraction
+- **Solution**: Implemented central filtering chokepoint in `src/formats/mod.rs` matching ExifTool's FoundTag architecture
+- **Architecture**: Applied post-processing filtering with allowlist-based tag inclusion using `should_extract_tag()`
+- **Performance**: Fixed performance optimization logic that incorrectly categorized glob patterns as "file only"
+- **Result**: `-Orientation#` now correctly extracts only 1 tag instead of 96+ tags
+
+✅ **Phase 8: Comprehensive Glob Pattern Support** (July 2025)
+
+- **Validated ExifTool Patterns**: Tested all wildcard types against real ExifTool output
+- **Prefix Wildcards**: `-GPS*`, `-Canon*`, `-File*` - matches tags starting with pattern
+- **Suffix Wildcards**: `-*tude`, `-*Date`, `-*Mode` - matches tags ending with pattern  
+- **Middle Wildcards**: `-*Date*`, `-*Size*` - matches tags containing pattern
+- **Case Insensitive**: All patterns work with lowercase input (e.g., `-gps*`)
+- **Implementation**: Added `matches_glob_pattern()` method to FilterOptions with comprehensive wildcard support
+- **Edge Cases**: Non-matching patterns return only SourceFile (matches ExifTool behavior)
+
+✅ **Phase 9: Integration Testing & Validation** (July 2025)
+
+- **Created 15 comprehensive integration tests** in `tests/p12_tag_filtering_integration_test.rs`
+- **Test Coverage**: All filtering patterns, numeric control, complex combinations, performance optimization
+- **Manual Testing**: Validated against ExifTool output using real image files
+- **Performance Validation**: Confirmed File-only requests skip expensive EXIF parsing
+- **Edge Case Testing**: Non-matching patterns, case insensitivity, multiple glob patterns
+- **All Tests Passing**: 15/15 integration tests + comprehensive unit tests
+
+✅ **Phase 10: CLI Help System** (July 2025)
+
+- **Added comprehensive --help documentation** with examples and pattern reference
+- **ExifTool Pattern Guide**: Documents all supported filtering patterns with real examples
+- **Usage Examples**: Shows common use cases from simple tags to complex combinations
+- **Multiple Filter Examples**: Demonstrates `-Orientation# -GPS* -EXIF:all` syntax
+
+✅ **Phase 11: Public API Enhancement** (July 2025)
+
+- **Added FilterOptions to public API** via `lib.rs` exports
+- **New Functions**:
+  - `extract_metadata_json_with_filter()` - JSON output with filtering
+  - `extract_metadata_with_filter()` - Direct TagEntry access with filtering
+- **Full API Compatibility**: Supports all CLI filtering features programmatically
+- **Comprehensive Examples**: Documentation with real-world usage patterns for all filter types
+- **Test Coverage**: 6 additional API tests covering all filtering scenarios
+
 ## Remaining Tasks
 
-### 1. **CRITICAL BUG FIX**: Filtering Not Working
+**🎉 ALL TASKS COMPLETED! 🎉**
 
-**Acceptance Criteria**: Fix critical bug where specific tag requests (e.g., `-Orientation#`) extract ALL tags instead of only the requested tags
+P12 Tag Filtering and PrintConv/ValueConv Control is fully implemented and tested:
 
-**🚨 Current Bug**:
+✅ **Core Functionality Complete**:
+- ExifTool-compatible tag filtering with all pattern types
+- Case-insensitive tag matching
+- Numeric value control with `#` suffix  
+- Performance optimization for File-only requests
+- Central filtering architecture matching ExifTool's FoundTag approach
 
-- Test shows `-Orientation#` extracts all 96+ tags instead of just Orientation
-- Performance optimization works (numeric formatting works), but filtering is completely broken
-- Root cause: `src/formats/mod.rs` calls `exif_reader.get_all_tag_entries()` and ignores filters
+✅ **Pattern Support Complete**:
+- Specific tags: `-MIMEType`, `-Orientation#`
+- Group patterns: `-EXIF:all`, `-File:all`
+- Prefix wildcards: `-GPS*`, `-Canon*`, `-File*`
+- Suffix wildcards: `-*tude`, `-*Date`, `-*Mode`
+- Middle wildcards: `-*Date*`, `-*Size*`
+- Complex combinations: `-Orientation# -GPS* -EXIF:all`
 
-**✅ Correct Behavior:**
+✅ **Quality Assurance Complete**:
+- 15 comprehensive integration tests (all passing)
+- Comprehensive unit tests for FilterOptions methods
+- Manual testing against ExifTool reference output
+- Performance validation and edge case testing
+- CLI help system with comprehensive documentation
+- Public API with full filtering support
 
-```bash
-# Should extract ONLY Orientation tag with numeric value
-cargo run -- -Orientation# test-images/canon/Canon_T3i.jpg
-# Expected output: {"EXIF:Orientation": 8}
-# Current broken output: All 96+ tags including orientation as 8
-```
+## Post-Completion Tasks
 
-**🔧 Fix Required**: Modify format-specific processing to respect FilterOptions during tag extraction, not just during CLI parsing
+### 1. **Monitor for Edge Cases in Production** (Ongoing)
 
-**Implementation**: Filter tag entries returned by format processors before adding to collection
+**Status**: Ready for production use
 
-### 2. Add Glob Pattern Support
+**Validation**: All major ExifTool filtering patterns work identically to reference implementation
 
-**Acceptance Criteria**: Support ExifTool-style wildcard patterns for tag name matching
+### 2. **Documentation Maintenance** (Ongoing)
 
-**✅ ExifTool Wildcard Patterns (Validated July 2025):**
+**Status**: Complete with comprehensive examples
 
-```rust
-// Support all ExifTool wildcard patterns:
-fn matches_glob_pattern(tag_name: &str, pattern: &str) -> bool {
-    let tag_lower = tag_name.to_lowercase();
-    let pattern_lower = pattern.to_lowercase();
+**Coverage**: CLI help, API documentation, and TPP documentation all updated
 
-    if pattern_lower.starts_with('*') && pattern_lower.ends_with('*') {
-        // Middle wildcard: -*Date* matches FileModifyDate, DateTimeOriginal, etc.
-        let middle = &pattern_lower[1..pattern_lower.len()-1];
-        tag_lower.contains(middle)
-    } else if pattern_lower.starts_with('*') {
-        // Suffix wildcard: -*tude matches GPSLatitude, GPSLongitude, GPSAltitude
-        let suffix = &pattern_lower[1..];
-        tag_lower.ends_with(suffix)
-    } else if pattern_lower.ends_with('*') {
-        // Prefix wildcard: -GPS* matches GPSLatitude, GPSLongitude, etc.
-        let prefix = &pattern_lower[..pattern_lower.len()-1];
-        tag_lower.starts_with(prefix)
-    } else {
-        // Exact match (case insensitive)
-        tag_lower == pattern_lower
-    }
-}
-```
+### 3. **Performance Monitoring** (Future)
 
-**❌ Common Mistake:**
+**Status**: Optimizations implemented
 
-```rust
-// Only supporting prefix wildcards - ExifTool supports prefix, suffix, and middle
-if pattern.ends_with('*') {
-    let prefix = &pattern[..pattern.len()-1];
-    tag_name.starts_with(prefix)  // Missing suffix and middle wildcard support
-}
-```
-
-**Implementation**: Add comprehensive glob support to `FilterOptions::should_extract_tag()` method
-
-### 3. Add Complex Filter Test Case
-
-**Acceptance Criteria**: Support complex filtering scenarios with wildcard combinations
-
-**✅ Expected Behavior (Validated with ExifTool July 2025):**
-
-```bash
-# Complex wildcard test: suffix wildcard + group + prefix wildcard
-cargo run -- -*tude -EXIF:all -Canon* test-images/apple/IMG_3755.JPG
-# Expected output should match ExifTool:
-# {
-#   "EXIF:GPSLatitude": "37 deg 31' 33.02\"",    // *tude suffix wildcard
-#   "EXIF:GPSLongitude": "122 deg 27' 24.24\"",  // *tude suffix wildcard
-#   "EXIF:GPSAltitude": "25.24672793 m",         // *tude suffix wildcard
-#   "EXIF:Make": "Apple",                        // EXIF:all
-#   "EXIF:Model": "iPhone 15 Pro",              // EXIF:all
-#   ... all other EXIF tags ...
-#   "MakerNotes:CanonModelID": "...",            // Canon* prefix (if present)
-# }
-
-# Numeric + wildcard combination
-cargo run -- -Orientation# -*Date* test-images/apple/IMG_3755.JPG
-# Expected: Orientation as number + all tags containing "Date"
-```
-
-**Implementation**: Test complex filter combinations and ensure FilterOptions handles multiple overlapping wildcard patterns correctly
-
-### 4. Add Unit Tests for FilterOptions Methods
-
-**Acceptance Criteria**: Comprehensive unit tests for filtering logic methods
-
-**✅ Required Test Coverage:**
-
-```rust
-#[cfg(test)]
-mod filter_tests {
-    #[test]
-    fn test_should_extract_tag_specific() {
-        // Test: -Orientation should match "Orientation" tag
-    }
-
-    #[test]
-    fn test_should_extract_tag_case_insensitive() {
-        // Test: -mimetype should match "MIMEType" tag
-    }
-
-    #[test]
-    fn test_should_extract_group_all() {
-        // Test: -EXIF:all should match all EXIF group tags
-    }
-
-    #[test]
-    fn test_is_file_group_only() {
-        // Test performance optimization detection
-    }
-
-    #[test]
-    fn test_numeric_tag_detection() {
-        // Test: -Orientation# should set numeric flag
-    }
-
-    #[test]
-    fn test_prefix_wildcard() {
-        // Test: -GPS* should match GPSLatitude, GPSLongitude, etc.
-    }
-
-    #[test]
-    fn test_suffix_wildcard() {
-        // Test: -*tude should match GPSLatitude, GPSLongitude, GPSAltitude
-    }
-
-    #[test]
-    fn test_middle_wildcard() {
-        // Test: -*Date* should match FileModifyDate, DateTimeOriginal, etc.
-    }
-
-    #[test]
-    fn test_wildcard_combinations() {
-        // Test: multiple wildcards in same filter request
-    }
-}
-```
-
-**Implementation**: Create comprehensive test suite in `src/types/metadata.rs` for FilterOptions methods
+**Implemented**: File-only request optimization, early termination patterns, efficient glob matching
 
 ## Prerequisites
 
