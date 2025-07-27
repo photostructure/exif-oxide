@@ -25,7 +25,9 @@ pub fn extract_string_value(
     byte_order: ByteOrder,
 ) -> Result<String> {
     match entry.format {
-        TiffFormat::Ascii => value_extraction::extract_ascii_value(data, entry, byte_order),
+        TiffFormat::Ascii => {
+            value_extraction::extract_ascii_value(data, entry, byte_order, entry.tag_id)
+        }
         _ => {
             // For non-ASCII formats, convert to string representation
             match entry.format {
@@ -187,16 +189,26 @@ pub fn extract_tag_value(data: &[u8], entry: &IfdEntry, byte_order: ByteOrder) -
             Ok(TagValue::U8(val))
         }
         TiffFormat::Ascii => {
-            let val = value_extraction::extract_ascii_value(data, entry, byte_order)?;
+            let val = value_extraction::extract_ascii_value(data, entry, byte_order, entry.tag_id)?;
             Ok(TagValue::String(val))
         }
         TiffFormat::Short => {
-            let val = value_extraction::extract_short_value(data, entry, byte_order)?;
-            Ok(TagValue::U16(val))
+            if entry.count == 1 {
+                let val = value_extraction::extract_short_value(data, entry, byte_order)?;
+                Ok(TagValue::U16(val))
+            } else {
+                let val = value_extraction::extract_short_array_value(data, entry, byte_order)?;
+                Ok(TagValue::U16Array(val))
+            }
         }
         TiffFormat::Long => {
-            let val = value_extraction::extract_long_value(data, entry, byte_order)?;
-            Ok(TagValue::U32(val))
+            if entry.count == 1 {
+                let val = value_extraction::extract_long_value(data, entry, byte_order)?;
+                Ok(TagValue::U32(val))
+            } else {
+                let val = value_extraction::extract_long_array(data, entry, byte_order)?;
+                Ok(TagValue::U32Array(val))
+            }
         }
         TiffFormat::Rational => {
             let val = value_extraction::extract_rational_value(data, entry, byte_order)?;
