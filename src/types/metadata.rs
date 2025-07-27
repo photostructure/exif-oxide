@@ -61,6 +61,11 @@ pub struct FilterOptions {
     /// Tags that should use numeric values instead of PrintConv
     /// These correspond to ExifTool's -TagName# syntax
     pub numeric_tags: HashSet<String>,
+
+    /// Glob patterns for tag/group matching (case-insensitive)
+    /// Examples: ["GPS*", "*tude", "*Date*", "Canon*"]
+    /// Supports prefix (*), suffix (*), and middle (*) wildcards
+    pub glob_patterns: Vec<String>,
 }
 
 impl Default for FilterOptions {
@@ -71,6 +76,7 @@ impl Default for FilterOptions {
             group_all_patterns: Vec::new(),
             extract_all: true, // Default to extracting all tags for backward compatibility
             numeric_tags: HashSet::new(),
+            glob_patterns: Vec::new(),
         }
     }
 }
@@ -89,6 +95,7 @@ impl FilterOptions {
             group_all_patterns: Vec::new(),
             extract_all: false,
             numeric_tags: HashSet::new(),
+            glob_patterns: Vec::new(),
         }
     }
 
@@ -100,6 +107,7 @@ impl FilterOptions {
             group_all_patterns: Vec::new(),
             extract_all: false,
             numeric_tags: HashSet::new(),
+            glob_patterns: Vec::new(),
         }
     }
 
@@ -113,6 +121,7 @@ impl FilterOptions {
         !self.requested_tags.is_empty()
             || !self.requested_groups.is_empty()
             || !self.group_all_patterns.is_empty()
+            || !self.glob_patterns.is_empty()
     }
 
     /// Check if a tag should be extracted based on current filters
@@ -153,12 +162,59 @@ impl FilterOptions {
             }
         }
 
+        // Check glob patterns (case-insensitive)
+        // Test against both tag name and group:tag format like ExifTool
+        for pattern in &self.glob_patterns {
+            if Self::matches_glob_pattern(tag_name, pattern) {
+                return true;
+            }
+            // Also check group:tag format for patterns like "EXIF:*"
+            let qualified_name = format!("{}:{}", tag_group, tag_name);
+            if Self::matches_glob_pattern(&qualified_name, pattern) {
+                return true;
+            }
+        }
+
         false
     }
 
     /// Check if a tag should use numeric output (ValueConv instead of PrintConv)
     pub fn should_use_numeric(&self, tag_name: &str) -> bool {
         self.numeric_tags.contains(tag_name)
+    }
+
+    /// Check if a string matches a glob pattern (case-insensitive)
+    /// Supports ExifTool-style wildcards: prefix (*), suffix (*), and middle (*)
+    /// Examples: "GPS*" matches "GPSLatitude", "*tude" matches "Latitude", "*Date*" matches "CreateDate"
+    fn matches_glob_pattern(text: &str, pattern: &str) -> bool {
+        let text_lower = text.to_lowercase();
+        let pattern_lower = pattern.to_lowercase();
+
+        if pattern_lower == "*" {
+            return true; // * matches everything
+        }
+
+        if !pattern_lower.contains('*') {
+            return text_lower == pattern_lower; // Exact match if no wildcards
+        }
+
+        // Handle different wildcard patterns
+        if pattern_lower.starts_with('*') && pattern_lower.ends_with('*') {
+            // Middle wildcard: "*Date*" matches anything containing "date"
+            let middle = &pattern_lower[1..pattern_lower.len() - 1];
+            text_lower.contains(middle)
+        } else if let Some(suffix) = pattern_lower.strip_prefix('*') {
+            // Suffix wildcard: "*tude" matches anything ending with "tude"
+            text_lower.ends_with(suffix)
+        } else if pattern_lower.ends_with('*') {
+            // Prefix wildcard: "GPS*" matches anything starting with "gps"
+            let prefix = &pattern_lower[..pattern_lower.len() - 1];
+            text_lower.starts_with(prefix)
+        } else {
+            // Multiple * in pattern - for now, treat as exact match
+            // TODO: Could implement full glob matching if needed
+            text_lower == pattern_lower
+        }
     }
 
     /// Determine if only File group tags are requested (performance optimization)
@@ -304,7 +360,7 @@ pub struct ExifData {
     pub source_file: String,
 
     /// Version of exif-oxide
-    #[serde(rename = "ExifToolVersion")]
+    #[serde(rename = "ExifToolVersion", skip_serializing_if = "String::is_empty")]
     pub exif_tool_version: String,
 
     /// All extracted tags with both value and print representations
@@ -627,6 +683,60 @@ pub struct TagSourceInfo {
     /// Processor name that handled this tag
     /// ExifTool: PROCESS_PROC information
     pub processor_name: String,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_matches_glob_pattern() {
+        // Test prefix wildcard
+        assert!(FilterOptions::matches_glob_pattern("GPSAltitude", "GPS*"));
+        assert!(FilterOptions::matches_glob_pattern("GPSLatitude", "GPS*"));
+        assert!(!FilterOptions::matches_glob_pattern("Altitude", "GPS*"));
+
+        // Test suffix wildcard
+        assert!(FilterOptions::matches_glob_pattern("GPSLatitude", "*tude"));
+        assert!(FilterOptions::matches_glob_pattern("Altitude", "*tude"));
+        assert!(!FilterOptions::matches_glob_pattern("GPSAltitu", "*tude"));
+
+        // Test middle wildcard
+        assert!(FilterOptions::matches_glob_pattern("CreateDate", "*Date*"));
+        assert!(FilterOptions::matches_glob_pattern(
+            "DateTimeOriginal",
+            "*Date*"
+        ));
+        assert!(!FilterOptions::matches_glob_pattern("CreateTime", "*Date*"));
+
+        // Test case insensitive
+        assert!(FilterOptions::matches_glob_pattern("gpsaltitude", "GPS*"));
+        assert!(FilterOptions::matches_glob_pattern("GPSAltitude", "gps*"));
+    }
+
+    #[test]
+    fn test_should_extract_tag_with_glob_patterns() {
+        let filter_opts = FilterOptions {
+            requested_tags: Vec::new(),
+            requested_groups: Vec::new(),
+            group_all_patterns: Vec::new(),
+            extract_all: false,
+            numeric_tags: HashSet::new(),
+            glob_patterns: vec!["GPS*".to_string()],
+        };
+
+        // Should match GPS tags
+        assert!(filter_opts.should_extract_tag("GPSAltitude", "GPS"));
+        assert!(filter_opts.should_extract_tag("GPSLatitude", "GPS"));
+        assert!(filter_opts.should_extract_tag("GPSVersionID", "EXIF"));
+
+        // Should not match non-GPS tags
+        assert!(!filter_opts.should_extract_tag("Make", "EXIF"));
+        // Note: "Altitude" in GPS group creates "GPS:Altitude" which DOES match "GPS*" pattern
+        // This is correct ExifTool behavior - group-qualified names are checked
+        assert!(filter_opts.should_extract_tag("Altitude", "GPS"));
+        assert!(!filter_opts.should_extract_tag("Altitude", "EXIF")); // Different group
+    }
 }
 
 impl TagSourceInfo {

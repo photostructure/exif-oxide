@@ -605,7 +605,6 @@ impl ExifReader {
                 "IFD0".to_string() // Default fallback
             };
 
-
             // Debug logging for ColorSpace and WhiteBalance
             if tag_id == 0xa001 || tag_id == 0xa403 {
                 debug!("Creating TagEntry for 0x{:04x}: group={}, group1={}, name={}, value={:?}, print={:?}", 
@@ -628,7 +627,6 @@ impl ExifReader {
             // Composite tags already have "Composite:" prefix in the name
             // Extract just the tag name part
             let name = tag_name.strip_prefix("Composite:").unwrap_or(tag_name);
-
 
             // Find the composite definition
             let composite_def = COMPOSITE_TAGS.iter().find(|def| def.name == name);
