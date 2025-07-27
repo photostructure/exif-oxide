@@ -174,12 +174,14 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
 ### ✅ RESOLVED: Double ValueConv Application Bug (2025-07-26)
 
 **Issue**: ApertureValue was showing 16.0 instead of 8.0 in DNG.dng due to ValueConv being applied twice:
+
 - First in ifd.rs when extracting RATIONAL values
 - Second in get_all_tag_entries when preparing output
 
 **Fix**: Removed all `apply_conversions` calls from the extraction phase in ifd.rs. Conversions are now only applied once in get_all_tag_entries.
 
 **Results**:
+
 - DNG.dng: ApertureValue now correctly shows "8.0" (was "16.0")
 - Minolta.jpg: MaxApertureValue now correctly shows "3.4" (was "3.2")
 
@@ -313,12 +315,14 @@ PrintConvType::Manual(func_name) => {
 ### ✅ ALL REQUIRED TAGS COMPLETED (2025-07-26)
 
 1. **String Tags** ✅ ALL EXTRACTED AND WORKING
+
    - Artist (0x013B) ✅ - Extracting correctly as string
    - Copyright (0x8298) ✅ - Extracting correctly as string
    - ImageDescription (0x010E) ✅ - Extracting correctly as string
    - UserComment (0x9286) ✅ - Now extracting correctly with RawConv character encoding
 
 2. **Lens Information Tags** ✅ ALL WORKING
+
    - LensInfo (0xA432) ✅ - Shows formatted ranges like "1.57-9mm f/1.5-2.8"
    - LensMake (0xA433) ✅ - Shows manufacturer like "Apple"
    - LensModel (0xA434) ✅ - Shows full model like "iPhone 13 Pro back triple camera 1.57mm f/1.8"
@@ -367,10 +371,12 @@ PrintConvType::Manual(func_name) => {
 ### ✅ RESOLVED: Composite:ImageSize Architecture Fix
 
 **Issue**: Composite tags were being built during EXIF processing before File group tags were available
+
 - Composite:ImageSize showing as empty/missing because File:ImageWidth/Height weren't available
 - Moved composite tag building from `exif/mod.rs` to `formats/mod.rs` after all tags extracted
 
 **Fix Details**:
+
 1. Moved `resolve_and_compute_composites()` call to end of format processing
 2. Added critical architecture warning comments to prevent regression
 3. Fixed PrintConv application in `orchestration.rs` to use print result instead of raw value
@@ -378,15 +384,18 @@ PrintConvType::Manual(func_name) => {
 ### ✅ RESOLVED: Composite:ImageSize RAW File Support (2025-07-27)
 
 **Issue**: RAW files showing wrong dimensions - thumbnail size instead of full sensor resolution
+
 - Sony ARW: Showing 7008x4672 (crop) instead of 7040x4688 (full sensor)
 - Panasonic RW2: Showing 1920x1440 (preview) instead of 3648x2736 (full sensor)
 
 **Research**: Used exiftool-researcher to understand ExifTool's exact logic:
+
 - Priority 1: RawImageCroppedSize (FujiFilm RAF only)
 - Priority 2: ExifImageWidth/Height if TIFF_TYPE =~ /^(CR2|Canon 1D RAW|IIQ|EIP)$/
 - Priority 3: ImageWidth/Height (standard fallback)
 
 **Implementation**:
+
 1. **TIFF_TYPE Detection**: Implemented `is_canon_raw_tiff_type()` using File:FileType
 2. **Sony ARW Fix**: Now uses EXIF:ImageWidth/Height (7040x4688) not ExifImageWidth/Height
 3. **Panasonic RW2 Fix**: Implemented sensor border calculation
@@ -395,9 +404,23 @@ PrintConvType::Manual(func_name) => {
    - Integrated into composite ImageWidth/Height computation
 
 **Results**:
+
 - Sony ARW: ✅ "Composite:ImageSize": "7040x4688" (matches ExifTool)
 - Canon CR2: ✅ "Composite:ImageSize": "5184x3456" (maintained correct behavior)
 - Panasonic RW2: ✅ "Composite:ImageSize": "3648x2736" (matches ExifTool)
+
+### ✅ RESOLVED: EXIF:ApertureValue Numeric Detection (2025-07-27)
+
+**Issue**: ApertureValue showing as quoted string "14.0" instead of numeric 14.0 in JSON output
+
+- ExifTool uses regex to detect numeric-looking strings for JSON serialization
+- Our decimal PrintConv functions were returning TagValue::String
+
+**Fix**:
+
+1. Added `TagValue::string_with_numeric_detection()` function implementing ExifTool's numeric regex
+2. Updated `decimal_1_print_conv()` and `decimal_2_print_conv()` to use numeric detection
+3. Numeric strings now serialize as numbers in JSON matching ExifTool behavior
 
 ## Success Criteria & Quality Gates
 
@@ -459,12 +482,12 @@ PrintConvType::Manual(func_name) => {
    - "EXIF:Copyright"           ✅
    - "EXIF:Artist"              ✅
    - "EXIF:UserComment"         ✅
-   
+
    # ✅ Lens Tags - All working:
    - "EXIF:LensInfo"            ✅
    - "EXIF:LensMake"            ✅
    - "EXIF:LensModel"           ✅
-   
+
    # ✅ Other Required Tags - All working:
    - "EXIF:ApertureValue"       ✅
    - "EXIF:ShutterSpeedValue"   ✅
@@ -621,26 +644,29 @@ make precommit
 
 ## P10a COMPLETE - All Required EXIF Tags Fully Working ✅
 
-**Final Status (2025-07-26)**: 
+**Final Status (2025-07-26)**:
+
 - **ALL 36 REQUIRED EXIF TAGS COMPLETE** including Composite:ImageSize ✅
 - All implemented tags extract correctly and match ExifTool output exactly
 - **CRITICAL BUG FIXED**: Double ValueConv application causing incorrect APEX values resolved
 - **CRITICAL ARCHITECTURE FIX**: Composite:ImageSize now working with correct dependency resolution
 
 **Double ValueConv Bug Resolution**:
+
 - **Problem**: ApertureValue was showing 16.0 instead of 8.0 in DNG.dng due to APEX conversion applied twice
 - **Root Cause**: ValueConv applied both during IFD extraction AND output generation
 - **Solution**: Removed all `apply_conversions` calls from IFD extraction phase in ifd.rs
 - **Prevention**: Added warning comment in ifd.rs header to prevent future double-conversion bugs
-- **Results**: 
+- **Results**:
   - ✅ DNG.dng: ApertureValue now correctly shows "8.0" (was "16.0")
   - ✅ Minolta.jpg: MaxApertureValue now correctly shows "3.4" (was "3.2")
   - ✅ All APEX values (ApertureValue, MaxApertureValue, ShutterSpeedValue) now convert correctly
 - **Key Learning**: Always store raw values during extraction, apply conversions only at output time
 
 **Composite:ImageSize Architecture Fix**:
+
 - **Problem**: Composite:ImageSize was not being output despite proper implementation
-- **Root Cause**: Composite tags built during EXIF processing, before File group tags available  
+- **Root Cause**: Composite tags built during EXIF processing, before File group tags available
 - **Solution**: Moved composite tag building to format processing level after all tags collected
 - **Implementation**: Added `build_composite_tags_from_entries()` in formats/mod.rs
 - **Results**:
@@ -648,6 +674,25 @@ make precommit
   - ✅ File:ImageWidth/ImageHeight now available for composite dependency resolution
   - ✅ PrintConv pipeline properly applied (space to 'x' conversion working)
 - **Key Learning**: Composite tags must be built AFTER all source tags (including File group) are available
+
+**EXIF:ApertureValue Numeric Output Fix (2025-07-26)**:
+
+- **Problem**: ApertureValue and MaxApertureValue showing as quoted strings ("14.0") instead of JSON numbers (14.0)
+- **Root Cause**: PrintConv functions returning TagValue::String instead of numeric-detectable values
+- **Research**: ExifTool uses regex `/^-?(\d|[1-9]\d{1,14})(\.\d{1,16})?(e[-+]?\d{1,3})?$/` to detect JSON numbers
+- **Solution**:
+  - Added `TagValue::string_with_numeric_detection()` function implementing ExifTool's numeric regex
+  - Modified `decimal_1_print_conv()` and `decimal_2_print_conv()` to use numeric detection
+  - Values like "14.0" now become `TagValue::F64(14.0)` which serialize as unquoted JSON numbers
+- **Implementation**:
+  - `/home/mrm/src/exif-oxide/src/types/values.rs:352-375` - Added numeric detection function
+  - `/home/mrm/src/exif-oxide/src/implementations/print_conv.rs:519-528` - Updated decimal PrintConv functions
+- **Results**:
+  - ✅ EXIF:ApertureValue now outputs as `14.0` (numeric) instead of `"14.0"` (string)
+  - ✅ EXIF:MaxApertureValue now outputs as `4.5` (numeric) instead of `"4.5"` (string)
+  - ✅ Compatibility test failures reduced from 53 to 8 files
+  - ✅ All sprintf("%.1f",$val) expressions now produce numeric JSON output matching ExifTool
+- **Key Learning**: ExifTool's JSON output behavior depends on post-PrintConv numeric detection, not the PrintConv result type
 
 ### Summary of Work Completed:
 
@@ -664,8 +709,9 @@ make precommit
 ### Next Priority Tasks:
 
 With P10a complete, the following tasks are now unblocked:
+
 - P12: Canon-specific tags
-- P13*: Nikon-specific tags
+- P13\*: Nikon-specific tags
 - P17a: Video metadata extraction
 
 ### Technical Achievements:
