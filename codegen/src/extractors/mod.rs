@@ -7,6 +7,7 @@ use anyhow::{Context, Result};
 use std::fs;
 use std::path::Path;
 use std::process::Command;
+use std::time::Instant;
 use tracing::{debug, warn};
 
 use crate::extraction::ModuleConfig;
@@ -109,10 +110,13 @@ pub(super) fn run_perl_extractor(
     
     setup_perl_environment(&mut cmd);
     
-    debug!("    Running: perl {} {}", script_name, args.join(" "));
+    debug!("          🐪 Running: perl {} {}", script_name, args.join(" "));
     
+    let start = Instant::now();
     let output = cmd.output()
         .with_context(|| format!("Failed to execute {} for {}", extractor_name, config.module_name))?;
+    let perl_time = start.elapsed();
+    debug!("          ⏱️  Perl execution completed in {:.3}s", perl_time.as_secs_f64());
     
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr);
@@ -120,6 +124,7 @@ pub(super) fn run_perl_extractor(
     }
     
     // Handle script output 
+    let start = Instant::now();
     let stdout = String::from_utf8_lossy(&output.stdout);
     let stderr = String::from_utf8_lossy(&output.stderr);
     
@@ -144,7 +149,9 @@ pub(super) fn run_perl_extractor(
         fs::write(&output_file, stdout.as_bytes())
             .with_context(|| format!("Failed to write output to {}", output_file.display()))?;
         
-        debug!("Created {}", output_filename);
+        debug!("          📝 Created {} ({} bytes) in {:.3}s", output_filename, stdout.len(), start.elapsed().as_secs_f64());
+    } else {
+        debug!("          ⚠️  No output from Perl script");
     }
     
     Ok(())

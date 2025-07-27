@@ -7,6 +7,7 @@ use anyhow::Result;
 use clap::{Arg, Command};
 use std::fs;
 use std::path::Path;
+use std::time::Instant;
 use tracing::{info, debug};
 use tracing_subscriber::EnvFilter;
 
@@ -82,12 +83,16 @@ fn main() -> Result<()> {
     
     // Extract all tables using Rust orchestration (replaces Makefile extract-* targets)
     // This now includes tag definitions and composite tags via the config system
+    let start = Instant::now();
     extract_all_simple_tables()?;
+    info!("📊 Extract phase completed in {:.2}s", start.elapsed().as_secs_f64());
 
     // Process modular tag tables (only for composite tags now)
     let extract_dir = current_dir.join("generated").join("extract");
     debug!("📋 Processing composite tags...");
+    let start = Instant::now();
     process_composite_tags_only(&extract_dir, output_dir)?;
+    info!("📋 Composite tags phase completed in {:.2}s", start.elapsed().as_secs_f64());
 
     // Tag kit processing is now integrated into the module-based system
 
@@ -97,7 +102,9 @@ fn main() -> Result<()> {
     // Generate file type detection code
     debug!("📁 Generating file type detection code...");
     let extract_dir = current_dir.join("generated").join("extract");
+    let start = Instant::now();
     generators::file_detection::generate_file_detection_code(&extract_dir, output_dir)?;
+    info!("📁 File detection generation completed in {:.2}s", start.elapsed().as_secs_f64());
 
     // Create or update file_types mod.rs to include generated modules
     let file_types_mod_path = format!("{output_dir}/file_types/mod.rs");
@@ -161,27 +168,35 @@ fn main() -> Result<()> {
 
     // Validate all configurations first
     if config_dir.exists() && schemas_dir.exists() {
+        let start = Instant::now();
         validate_all_configs(&config_dir, &schemas_dir)?;
+        debug!("  ✓ Config validation completed in {:.2}s", start.elapsed().as_secs_f64());
 
         // Load all extracted tables with their configurations
         let extract_dir = current_dir.join("generated/extract");
+        let start = Instant::now();
         let all_extracted_tables = load_extracted_tables_with_config(&extract_dir, &config_dir)?;
-
-        debug!("  Found {} extracted tables", all_extracted_tables.len());
+        debug!("  ✓ Loaded {} extracted tables in {:.2}s", all_extracted_tables.len(), start.elapsed().as_secs_f64());
 
         // Auto-discover and process each module directory
+        let start = Instant::now();
         discover_and_process_modules(&config_dir, &all_extracted_tables, output_dir)?;
+        info!("🔄 Module processing phase completed in {:.2}s", start.elapsed().as_secs_f64());
 
         // No macros.rs needed - using direct code generation
 
         // Update the main mod.rs to include new modules
+        let start = Instant::now();
         update_generated_mod_file(output_dir)?;
+        debug!("  ✓ Updated generated mod.rs in {:.2}s", start.elapsed().as_secs_f64());
     } else {
         debug!("  ⚠️  New config directory structure not found, using legacy generation only");
     }
 
     // Generate module file
+    let start = Instant::now();
     generate_mod_file(output_dir)?;
+    debug!("  ✓ Generated module file in {:.2}s", start.elapsed().as_secs_f64());
 
     info!("✅ Code generation complete!");
 
