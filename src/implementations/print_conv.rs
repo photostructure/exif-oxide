@@ -579,7 +579,9 @@ pub fn print_fraction(val: &TagValue) -> TagValue {
             v *= 1.00001;
 
             if v == 0.0 {
-                TagValue::string("0")
+                // ExifTool returns '0' string, but JSON output shows number 0
+                // Match ExifTool's JSON behavior for zero values
+                TagValue::F64(0.0)
             } else if (v.floor() / v).abs() > 0.999 {
                 // Whole number
                 TagValue::string(format!("{:+.0}", v.floor()))
@@ -1059,6 +1061,32 @@ mod tests {
         assert_eq!(
             gpslongituderef_print_conv(&TagValue::String("Z".to_string())),
             "Unknown (Z)".into()
+        );
+    }
+
+    #[test]
+    fn test_print_fraction() {
+        // Test zero value
+        assert_eq!(
+            print_fraction(&TagValue::F64(0.0)),
+            TagValue::F64(0.0)
+        );
+
+        // Test simple fractions
+        assert_eq!(
+            print_fraction(&TagValue::F64(0.5)),
+            TagValue::String("1/2".to_string())
+        );
+
+        assert_eq!(
+            print_fraction(&TagValue::F64(0.333333)),
+            TagValue::String("1/3".to_string())
+        );
+
+        // Test negative fractions
+        assert_eq!(
+            print_fraction(&TagValue::F64(-0.5)),
+            TagValue::String("-1/2".to_string())
         );
     }
 }
