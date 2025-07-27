@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with exif-oxide.
 
-Today's date is July 24, 2025. 
+Today's date is July 27, 2025. 
 
 ## 🚨 CRITICAL: ALWAYS USE ABSOLUTE PATHS 🚨
 
@@ -200,6 +200,14 @@ When working with the codegen system, use the right extractor for each task:
 **Important**: We're migrating to the tag kit system for all tag-related extraction. If you see configs for `inline_printconv.pl`, `tag_tables.pl`, or `tag_definitions.pl`, suggest converting them to tag kit instead.
 
 See [EXTRACTOR-GUIDE.md](docs/reference/EXTRACTOR-GUIDE.md) for detailed extractor comparisons and [CODEGEN.md](docs/CODEGEN.md) for the complete extractor selection guide.
+
+### Bug Fixing
+
+**MANDATORY**: When a bug is discovered, follow the test-driven debugging workflow in [TDD.md](docs/TDD.md):
+1. Create a breaking test that reproduces the issue
+2. Validate that the test fails for the expected reason  
+3. Fix the bug following "Trust ExifTool" principles
+4. Validate that the test now passes and no regressions occur
 
 ### When a task is complete
 

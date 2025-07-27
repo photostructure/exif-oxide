@@ -13,7 +13,7 @@ mod file_generation;
 mod path_utils;
 mod config_processor;
 
-use anyhow::Result;
+use anyhow::{Result, Context};
 use std::collections::HashMap;
 use std::path::Path;
 use std::fs;
@@ -190,7 +190,8 @@ pub fn process_config_directory(
         for entry in config_files {
             let tag_structure_config = entry.path();
             let config_content = fs::read_to_string(&tag_structure_config)?;
-            let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
+            let config_json: serde_json::Value = serde_json::from_str(&config_content)
+                .with_context(|| format!("Failed to parse tag structure config: {}", tag_structure_config.display()))?;
             
             // Extract table name from config
             if let Some(table_name) = config_json["table"].as_str() {
@@ -208,7 +209,8 @@ pub fn process_config_directory(
                 if structure_path.exists() {
                     let structure_content = fs::read_to_string(&structure_path)?;
                     let mut structure_data: crate::generators::tag_structure::TagStructureData = 
-                        serde_json::from_str(&structure_content)?;
+                        serde_json::from_str(&structure_content)
+                        .with_context(|| format!("Failed to parse tag structure data: {}", structure_path.display()))?;
                     
                     // Apply output configuration if present
                     if let Some(output_config) = config_json["output"].as_object() {
@@ -1072,7 +1074,8 @@ fn generate_regex_patterns_file(
     output_dir: &Path,
 ) -> Result<String> {
     let regex_content = fs::read_to_string(regex_file_path)?;
-    let regex_data: serde_json::Value = serde_json::from_str(&regex_content)?;
+    let regex_data: serde_json::Value = serde_json::from_str(&regex_content)
+        .with_context(|| format!("Failed to parse regex file: {}", regex_file_path.display()))?;
     
     let mut code = String::new();
     

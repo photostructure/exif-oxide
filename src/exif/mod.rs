@@ -308,7 +308,14 @@ impl ExifReader {
                     self.lookup_tag_name_by_source(tag_id, source_info)
                 };
 
-                (namespace.clone(), tag_name)
+                // Map internal namespace to ExifTool-compatible Group0
+                // ExifTool: GPS.pm:52 GROUPS => { 0 => 'EXIF', 1 => 'GPS', 2 => 'Location' }
+                // GPS tags use "GPS" namespace internally for collision resolution but display as Group0="EXIF"
+                let display_group = match namespace.as_str() {
+                    "GPS" => "EXIF", // GPS tags have Group0="EXIF" per ExifTool GPS.pm:52
+                    other => other,  // Keep other namespaces as-is
+                };
+                (display_group.to_string(), tag_name)
             };
 
             // Format with group prefix
@@ -531,7 +538,13 @@ impl ExifReader {
                         }
                     }
                 };
-                (namespace.as_str(), name, def)
+                // Map internal namespace to ExifTool-compatible Group0 for TagEntry
+                // ExifTool: GPS.pm:52 GROUPS => { 0 => 'EXIF', 1 => 'GPS', 2 => 'Location' }
+                let display_group = match namespace.as_str() {
+                    "GPS" => "EXIF", // GPS tags have Group0="EXIF" per ExifTool GPS.pm:52
+                    other => other,  // Keep other namespaces as-is
+                };
+                (display_group, name, def)
             };
 
             // Apply conversions to get both value and print

@@ -21,7 +21,7 @@ pub fn generate_file_detection_code(
 ) -> Result<()> {
     // Generate components directly in output_dir
     // They will handle their own subdirectory creation if needed
-    patterns::generate_magic_patterns(json_dir, output_dir)?;
+    patterns::generate_regex_patterns(json_dir, output_dir)?;
     types::generate_file_type_lookup(json_dir, output_dir)?;
     
     // Note: mime and extensions modules are placeholders for future expansion

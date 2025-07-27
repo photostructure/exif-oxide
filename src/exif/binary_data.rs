@@ -200,12 +200,25 @@ impl ExifReader {
                 };
 
                 // Store the tag with source info
+                // ExifTool: Tags can have specific group assignments
+                // Check if this tag has a specific group, otherwise use default group 0
                 let group_0 = table
                     .groups
                     .get(&0)
                     .cloned()
                     .unwrap_or_else(|| "Unknown".to_string());
-                let namespace = group_0.clone();
+
+                // Determine the correct group for this specific tag
+                // ExifTool: Different tags can belong to different groups (e.g., Camera vs MakerNotes)
+                let namespace = if let Some(tag_group) = tag_def.group {
+                    table
+                        .groups
+                        .get(&tag_group)
+                        .cloned()
+                        .unwrap_or_else(|| group_0.clone())
+                } else {
+                    group_0.clone()
+                };
                 let source_info =
                     TagSourceInfo::new(group_0, "BinaryData".to_string(), "BinaryData".to_string());
                 let key = (index as u16, namespace);

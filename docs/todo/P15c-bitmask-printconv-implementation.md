@@ -58,10 +58,44 @@ For value 0x35 (binary: 00110101):
 
 ## Implementation Plan
 
-### Phase 1: Codegen Extraction
-1. Modify `tag_kit.pl` to extract BITMASK data
-2. Store bit position -> description mappings
-3. Generate appropriate data structures
+### ✅ **Phase 0: P11 Integration Complete (2025-07-27)**
+
+**🎯 Achievement**: P11 binary data integration has established BITMASK TODO framework.
+
+#### BITMASK Integration Infrastructure Ready:
+
+1. **TODO Placeholder System**:
+   - **Location**: `/home/mrm/src/exif-oxide/codegen/src/generators/process_binary_data.rs:106-116`
+   - **Function**: Custom serde deserializer handles BITMASK objects in Sony ProcessBinaryData
+   - **Placeholder**: All BITMASK entries currently return `"TODO_BITMASK_P15c"`
+   - **Search Pattern**: Use `git grep "TODO_BITMASK_P15c"` to find all locations needing P15c implementation
+
+2. **Sony BITMASK Examples Ready**:
+   - **File**: `codegen/generated/extract/binary_data/sony__process_binary_data__camerasettings.json:993-998`
+   - **Example Structure**:
+     ```json
+     {
+        "key" : "BITMASK",
+        "value" : {
+           "0" : "Confirmed",
+           "1" : "Failed", 
+           "2" : "Tracking"
+        }
+     }
+     ```
+   - **Context**: FocusStatus tag with bit flag definitions ready for extraction
+
+3. **Integration Points Established**:
+   - **Custom Deserializer**: Framework ready to extract BITMASK bit position mappings
+   - **Generated Code Path**: Binary data parsers will use BITMASK functions when implemented
+   - **Test Data Available**: Real Sony BITMASK examples provide validation targets
+
+#### Next Phase Implementation Strategy:
+
+### Phase 1: Codegen Extraction (Enhanced)
+1. **Modify custom deserializer** in `process_binary_data.rs` to extract BITMASK mappings instead of placeholder
+2. Store bit position -> description mappings in generated structures
+3. Generate BITMASK-specific functions for each tag
 
 ### Phase 2: Runtime Implementation
 1. Create `bitmask_print_conv` in `implementations/print_conv.rs`

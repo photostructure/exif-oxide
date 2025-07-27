@@ -303,7 +303,27 @@ pub fn extract_metadata(
             || filter_opts
                 .group_all_patterns
                 .iter()
-                .any(|pattern| !pattern.to_lowercase().starts_with("file:")));
+                .any(|pattern| !pattern.to_lowercase().starts_with("file:"))
+            || filter_opts.glob_patterns.iter().any(|pattern| {
+                // Check if glob pattern could match non-File group tags
+                let pattern_lower = pattern.to_lowercase();
+                !(pattern_lower == "file:*"
+                    || pattern_lower.starts_with("file")
+                    || matches!(
+                        pattern_lower.as_str(),
+                        "filename*"
+                            | "directory*"
+                            | "filesize*"
+                            | "filemodifydate*"
+                            | "fileaccessdate*"
+                            | "fileinodechangedate*"
+                            | "filecreatedate*"
+                            | "filepermissions*"
+                            | "filetype*"
+                            | "filetypeextension*"
+                            | "mimetype*"
+                    ))
+            }));
 
     // Only do format-specific processing if needed
     if filter_opts.extract_all || needs_format_processing {
@@ -1331,7 +1351,7 @@ fn extract_rw2_jpeg_preview_dimensions(
 
     // Get JpgFromRaw tag (0x002e) offset from ExifReader
     // This tag contains the offset to embedded JPEG data
-    let jpeg_offset = match exif_reader.get_extracted_tags().get(&0x002e) {
+    let jpeg_offset = match exif_reader.get_tag_across_namespaces(0x002e) {
         Some(TagValue::Binary(binary_data)) => {
             // The binary data should contain the JPEG data directly
             // For RW2 files, ExifTool processes this as raw JPEG data

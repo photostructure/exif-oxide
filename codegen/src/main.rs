@@ -130,12 +130,6 @@ fn main() -> Result<()> {
         content.push_str("pub mod file_type_lookup;\n");
         updated = true;
     }
-    
-    if !content.contains("pub mod magic_number_patterns;") {
-        // Add magic number patterns module
-        content.push_str("pub mod magic_number_patterns;\n\n");
-        updated = true;
-    }
 
     // Add re-exports if not present
     if !content.contains("pub use file_type_lookup::") {
@@ -144,12 +138,9 @@ fn main() -> Result<()> {
         content.push_str("    extensions_for_format, get_primary_format, lookup_file_type_by_extension,\n");
         content.push_str("    resolve_file_type, supports_format, FILE_TYPE_EXTENSIONS,\n");
         content.push_str("};\n");
-        content.push_str("pub use magic_number_patterns::{\n");
-        content.push_str("    get_magic_file_types, get_magic_number_pattern, matches_magic_number,\n");
-        content.push_str("};\n");
         content.push('\n');
-        content.push_str("// Import regex patterns from their source-based location (ExifTool.pm)\n");
-        content.push_str("pub use crate::generated::ExifTool_pm::regex_patterns::{detect_file_type_by_regex, REGEX_PATTERNS};\n");
+        // Note: Regex patterns are used directly from ExifTool_pm::regex_patterns
+        // No re-export needed since all code uses the direct import path
         updated = true;
     }
 

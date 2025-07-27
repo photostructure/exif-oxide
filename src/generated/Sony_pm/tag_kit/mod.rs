@@ -1353,120 +1353,53 @@ fn process_sony_camerasettings(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    tracing::debug!(
+        "process_sony_camerasettings called with {} bytes",
+        data.len()
+    );
+    use crate::generated::Sony_pm::camerasettings_binary_data::{
+        SonyCameraSettingsTable, CAMERASETTINGS_TAGS,
+    };
+
+    let table = SonyCameraSettingsTable::new();
     let mut tags = Vec::new();
-    // ExposureTime at offset 0
 
-    // FNumber at offset 1
+    let entry_size = 2; // Default to 2 bytes (int16u format)
 
-    // RedEyeReduction at offset 106
+    tracing::debug!(
+        "CamerasettingsBinaryData: first_entry={}, {} tag definitions",
+        table.first_entry,
+        CAMERASETTINGS_TAGS.len()
+    );
 
-    // ColorTemperatureCustom at offset 12
-
-    // ColorCompensationFilterCustom at offset 13
-
-    // WhiteBalance at offset 15
-
-    // FolderNumber at offset 154
-
-    // ImageNumber at offset 155
-
-    // FocusModeSetting at offset 16
-
-    // AFAreaMode at offset 17
-
-    // AFPointSetting at offset 18
-    if data.len() >= 38 {
-        // TODO: Handle format int16u
+    for (&offset, &tag_name) in CAMERASETTINGS_TAGS.iter() {
+        let byte_offset = ((offset as i32 - table.first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            let tag_value = match entry_size {
+                2 => {
+                    let raw_u16 = byte_order.read_u16(data, byte_offset)?;
+                    TagValue::U16(raw_u16)
+                }
+                4 => {
+                    let raw_u32 = byte_order.read_u32(data, byte_offset)?;
+                    TagValue::U32(raw_u32)
+                }
+                _ => continue,
+            };
+            tracing::debug!("Extracted tag {}: {} = {}", offset, tag_name, tag_value);
+            tags.push((tag_name.to_string(), tag_value));
+        } else {
+            tracing::debug!(
+                "Skipping tag {} ({}): offset {} exceeds data length {}",
+                offset,
+                tag_name,
+                byte_offset,
+                data.len()
+            );
+        }
     }
 
-    // FlashMode at offset 19
-
-    // HighSpeedSync at offset 2
-
-    // FlashExposureCompSet at offset 20
-
-    // MeteringMode at offset 21
-
-    // ISOSetting at offset 22
-
-    // DynamicRangeOptimizerMode at offset 24
-
-    // DynamicRangeOptimizerLevel at offset 25
-
-    // CreativeStyle at offset 26
-
-    // ColorSpace at offset 27
-
-    // Sharpness at offset 28
-
-    // Contrast at offset 29
-
-    // ExposureCompensationSet at offset 3
-
-    // Saturation at offset 30
-
-    // ZoneMatchingValue at offset 31
-
-    // Brightness at offset 34
-
-    // FlashControl at offset 35
-
-    // DriveMode at offset 4
-
-    // PrioritySetupShutterRelease at offset 40
-
-    // AFIlluminator at offset 41
-
-    // AFWithShutter at offset 42
-
-    // LongExposureNoiseReduction at offset 43
-
-    // HighISONoiseReduction at offset 44
-
-    // ImageStyle at offset 45
-
-    // FocusModeSwitch at offset 46
-
-    // ShutterSpeedSetting at offset 47
-
-    // ApertureSetting at offset 48
-
-    // WhiteBalanceSetting at offset 5
-
-    // WhiteBalanceFineTune at offset 6
-
-    // ExposureProgram at offset 60
-
-    // ImageStabilizationSetting at offset 61
-
-    // FlashAction at offset 62
-
-    // Rotation at offset 63
-
-    // AELock at offset 64
-
-    // ColorTemperatureSet at offset 7
-
-    // FlashAction2 at offset 76
-
-    // FocusMode at offset 77
-
-    // ColorCompensationFilterSet at offset 8
-
-    // BatteryState at offset 80
-
-    // BatteryLevel at offset 81
-
-    // FocusStatus at offset 83
-
-    // SonyImageSize at offset 84
-
-    // AspectRatio at offset 85
-
-    // Quality at offset 86
-
-    // ExposureLevelIncrements at offset 88
-
+    tracing::debug!("process_sony_camerasettings extracted {} tags", tags.len());
     Ok(tags)
 }
 
@@ -1474,111 +1407,53 @@ fn process_sony_camerasettings2(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    tracing::debug!(
+        "process_sony_camerasettings2 called with {} bytes",
+        data.len()
+    );
+    use crate::generated::Sony_pm::camerasettings2_binary_data::{
+        SonyCameraSettings2Table, CAMERASETTINGS2_TAGS,
+    };
+
+    let table = SonyCameraSettings2Table::new();
     let mut tags = Vec::new();
-    // ExposureTime at offset 0
 
-    // FNumber at offset 1
+    let entry_size = 2; // Default to 2 bytes (int16u format)
 
-    // ColorTemperatureCustom at offset 11
+    tracing::debug!(
+        "Camerasettings2BinaryData: first_entry={}, {} tag definitions",
+        table.first_entry,
+        CAMERASETTINGS2_TAGS.len()
+    );
 
-    // ColorCompensationFilterCustom at offset 12
-
-    // DriveMode at offset 126
-
-    // FlashMode at offset 127
-
-    // ColorSpace at offset 131
-
-    // WhiteBalance at offset 14
-
-    // FocusModeSetting at offset 15
-
-    // AFAreaMode at offset 16
-
-    // AFPointSetting at offset 17
-    if data.len() >= 36 {
-        // TODO: Handle format int16u
-    }
-
-    // FlashExposureCompSet at offset 18
-
-    // MeteringMode at offset 19
-
-    // HighSpeedSync at offset 2
-
-    // ISOSetting at offset 20
-
-    // DynamicRangeOptimizerMode at offset 22
-
-    // CreativeStyle at offset 24
-
-    // Sharpness at offset 25
-
-    // Contrast at offset 26
-
-    // Saturation at offset 27
-
-    // ExposureCompensationSet at offset 3
-
-    // FlashControl at offset 31
-
-    // LongExposureNoiseReduction at offset 37
-
-    // HighISONoiseReduction at offset 38
-
-    // ImageStyle at offset 39
-
-    // WhiteBalanceSetting at offset 4
-
-    // ShutterSpeedSetting at offset 40
-
-    // ApertureSetting at offset 41
-
-    // WhiteBalanceFineTune at offset 5
-
-    // ColorTemperatureSet at offset 6
-
-    // ExposureProgram at offset 60
-
-    // ImageStabilizationSetting at offset 61
-
-    // FlashAction at offset 62
-
-    // Rotation at offset 63
-
-    // AELock at offset 64
-
-    // ColorCompensationFilterSet at offset 7
-
-    // FlashAction2 at offset 76
-
-    // FocusMode at offset 77
-
-    // CustomWB_RGBLevels at offset 8
-    if data.len() >= 22 {
-        if let Ok(values) = read_int16u_array(&data[16..22], byte_order, 3) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push((
-                "CustomWB_RGBLevels".to_string(),
-                TagValue::String(value_str),
-            ));
+    for (&offset, &tag_name) in CAMERASETTINGS2_TAGS.iter() {
+        let byte_offset = ((offset as i32 - table.first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            let tag_value = match entry_size {
+                2 => {
+                    let raw_u16 = byte_order.read_u16(data, byte_offset)?;
+                    TagValue::U16(raw_u16)
+                }
+                4 => {
+                    let raw_u32 = byte_order.read_u32(data, byte_offset)?;
+                    TagValue::U32(raw_u32)
+                }
+                _ => continue,
+            };
+            tracing::debug!("Extracted tag {}: {} = {}", offset, tag_name, tag_value);
+            tags.push((tag_name.to_string(), tag_value));
+        } else {
+            tracing::debug!(
+                "Skipping tag {} ({}): offset {} exceeds data length {}",
+                offset,
+                tag_name,
+                byte_offset,
+                data.len()
+            );
         }
     }
 
-    // FocusStatus at offset 83
-
-    // SonyImageSize at offset 84
-
-    // AspectRatio at offset 85
-
-    // Quality at offset 86
-
-    // ExposureLevelIncrements at offset 88
-
+    tracing::debug!("process_sony_camerasettings2 extracted {} tags", tags.len());
     Ok(tags)
 }
 
@@ -3280,46 +3155,48 @@ fn process_sony_hiddeninfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(St
 }
 
 fn process_sony_shotinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    tracing::debug!("process_sony_shotinfo called with {} bytes", data.len());
+    use crate::generated::Sony_pm::shotinfo_binary_data::{SonyShotInfoTable, SHOTINFO_TAGS};
+
+    let table = SonyShotInfoTable::new();
     let mut tags = Vec::new();
-    // FaceInfoOffset at offset 2
-    if data.len() >= 6 {
-        // TODO: Handle format int16u
+
+    let entry_size = 2; // Default to 2 bytes (int16u format)
+
+    tracing::debug!(
+        "ShotinfoBinaryData: first_entry={}, {} tag definitions",
+        table.first_entry,
+        SHOTINFO_TAGS.len()
+    );
+
+    for (&offset, &tag_name) in SHOTINFO_TAGS.iter() {
+        let byte_offset = ((offset as i32 - table.first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            let tag_value = match entry_size {
+                2 => {
+                    let raw_u16 = byte_order.read_u16(data, byte_offset)?;
+                    TagValue::U16(raw_u16)
+                }
+                4 => {
+                    let raw_u32 = byte_order.read_u32(data, byte_offset)?;
+                    TagValue::U32(raw_u32)
+                }
+                _ => continue,
+            };
+            tracing::debug!("Extracted tag {}: {} = {}", offset, tag_name, tag_value);
+            tags.push((tag_name.to_string(), tag_value));
+        } else {
+            tracing::debug!(
+                "Skipping tag {} ({}): offset {} exceeds data length {}",
+                offset,
+                tag_name,
+                byte_offset,
+                data.len()
+            );
+        }
     }
 
-    // SonyImageHeight at offset 26
-    if data.len() >= 54 {
-        // TODO: Handle format int16u
-    }
-
-    // SonyImageWidth at offset 28
-    if data.len() >= 58 {
-        // TODO: Handle format int16u
-    }
-
-    // FacesDetected at offset 48
-    if data.len() >= 98 {
-        // TODO: Handle format int16u
-    }
-
-    // FaceInfoLength at offset 50
-    if data.len() >= 102 {
-        // TODO: Handle format int16u
-    }
-
-    // MetaVersion at offset 52
-    if data.len() >= 136 {
-        // TODO: Handle format string
-    }
-
-    // SonyDateTime at offset 6
-    if data.len() >= 52 {
-        // TODO: Handle format string
-    }
-
-    // FaceInfo1 at offset 72
-
-    // FaceInfo2 at offset 94
-
+    tracing::debug!("process_sony_shotinfo extracted {} tags", tags.len());
     Ok(tags)
 }
 

@@ -373,7 +373,12 @@ fn test_multiple_glob_patterns() {
         .count();
 
     // Canon T3i should have Composite tags but no GPS
-    assert!(composite_count > 0, "Expected Composite tags, found {} composite tags, {} total tags", composite_count, result.tags.len());
+    assert!(
+        composite_count > 0,
+        "Expected Composite tags, found {} composite tags, {} total tags",
+        composite_count,
+        result.tags.len()
+    );
     // Note: Canon_T3i.jpg doesn't have GPS data, so gps_count may be 0
 }
 
