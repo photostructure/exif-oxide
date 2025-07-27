@@ -1,6 +1,6 @@
 [package]
 name = "exif-oxide"
-version = "0.1.0"
+version = "0.2.0-dev"
 edition = "2021"
 authors = ["exif-oxide@photostructure.com"]
 description = "High-performance Rust implementation of ExifTool"
