@@ -150,9 +150,9 @@ impl Extractor for RegexPatternsExtractor {
         args
     }
     
-    fn output_filename(&self, _config: &ModuleConfig, _hash_name: Option<&str>) -> String {
-        // Use the exact filename the generator expects
-        "regex_patterns.json".to_string()
+    fn output_filename(&self, config: &ModuleConfig, _hash_name: Option<&str>) -> String {
+        // Use standardized naming convention 
+        self.standardized_filename(config, None)
     }
     
     fn config_type_name(&self) -> &'static str {

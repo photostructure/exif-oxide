@@ -6,7 +6,8 @@ use anyhow::{Context, Result};
 use serde_json::Value;
 use std::fs;
 use std::path::Path;
-use tracing::{debug, warn};
+use std::time::Instant;
+use tracing::{debug, info, warn};
 
 use crate::patching;
 use crate::extractors::find_extractor;
@@ -30,9 +31,12 @@ pub fn extract_all_simple_tables() -> Result<()> {
     fs::create_dir_all(extract_base)?;
     
     let configs = discover_module_configs()?;
+    debug!("  📋 Found {} module configs to process", configs.len());
     
     for config in configs {
+        let start = Instant::now();
         process_module_config(&config, extract_base)?;
+        info!("    ⏱️  Module config {} processed in {:.2}s", config.module_name, start.elapsed().as_secs_f64());
     }
     
     debug!("  ✓ Simple table extraction complete");
@@ -297,26 +301,34 @@ fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
 }
 
 fn process_module_config(config: &ModuleConfig, extract_base: &Path) -> Result<()> {
-    debug!("  📷 Processing {} tables...", config.module_name);
+    debug!("      📷 Processing {} with {} tables...", config.module_name, config.hash_names.len());
     
     // Find the appropriate extractor
+    let start = Instant::now();
     let extractor = find_extractor(&config.module_name)
         .ok_or_else(|| anyhow::anyhow!("No extractor found for config type: {}", config.module_name))?;
+    debug!("        🔍 Found extractor {} in {:.3}s", extractor.name(), start.elapsed().as_secs_f64());
     
     // Get absolute paths
+    let start = Instant::now();
     let current_dir = std::env::current_dir()?;
     let repo_root = current_dir.parent()
         .ok_or_else(|| anyhow::anyhow!("Could not find repo root"))?;
     let module_path = repo_root.join(&config.source_path).canonicalize()
         .with_context(|| format!("Failed to canonicalize module path: {}", config.source_path))?;
+    debug!("        📁 Path resolution in {:.3}s", start.elapsed().as_secs_f64());
     
     // Only patch if the extractor requires it
     if extractor.requires_patching() {
+        let start = Instant::now();
         patching::patch_module(&module_path, &config.hash_names)?;
+        debug!("        🩹 Patching completed in {:.3}s", start.elapsed().as_secs_f64());
     }
     
     // Execute the extraction
+    let start = Instant::now();
     extractor.extract(config, extract_base, &module_path)?;
+    debug!("        🚀 Extraction completed in {:.3}s", start.elapsed().as_secs_f64());
     
     Ok(())
 }
