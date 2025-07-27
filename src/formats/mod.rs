@@ -67,7 +67,7 @@ pub fn extract_metadata(
     crate::init();
 
     // Use default filter options if none provided (backward compatibility)
-    let filter_opts = filter_options.unwrap_or_default();
+    let filter_opts = filter_options.as_ref().map(|f| f.clone()).unwrap_or_default();
 
     // PERFORMANCE OPTIMIZATION: Check if only File group tags are requested
     // This allows early return without expensive format-specific parsing
@@ -1181,7 +1181,13 @@ pub fn extract_metadata(
 
     // Create final ExifData structure
     let source_file = path.to_string_lossy().to_string();
-    let mut exif_data = ExifData::new(source_file, env!("CARGO_PKG_VERSION").to_string());
+    // P12: Only include ExifToolVersion when not filtering (matches ExifTool behavior)
+    let version = if filter_options.as_ref().map_or(true, |f| f.extract_all) {
+        env!("CARGO_PKG_VERSION").to_string()
+    } else {
+        String::new() // Empty version when filtering
+    };
+    let mut exif_data = ExifData::new(source_file, version);
 
     // ⚠️ CRITICAL ARCHITECTURE: Build composite tags after all tags (including File group tags) are available
     // This ensures File:ImageWidth/ImageHeight are available for Composite:ImageSize dependency resolution
@@ -1224,8 +1230,30 @@ pub fn extract_metadata(
     // Set tag entries (new API)
     exif_data.tags = filtered_tag_entries;
 
+    // P12: Filter legacy tags using same logic as tag_entries
+    let filtered_legacy_tags = if let Some(filter_opts) = &filter_options {
+        if filter_opts.extract_all {
+            tags
+        } else {
+            // Apply same filtering to legacy tags
+            tags.into_iter()
+                .filter(|(tag_key, _)| {
+                    // Parse "Group:TagName" format from legacy keys
+                    if let Some((group, tag_name)) = tag_key.split_once(':') {
+                        filter_opts.should_extract_tag(tag_name, group)
+                    } else {
+                        // Tags without group prefix (like "SourceFile") - keep for compatibility
+                        true
+                    }
+                })
+                .collect()
+        }
+    } else {
+        tags
+    };
+
     // Set legacy tags for backward compatibility
-    exif_data.legacy_tags = tags;
+    exif_data.legacy_tags = filtered_legacy_tags;
 
     // Set missing implementations if requested
     exif_data.missing_implementations = missing_implementations;
