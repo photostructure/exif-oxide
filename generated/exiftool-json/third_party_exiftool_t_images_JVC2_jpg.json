@@ -1,9 +1,13 @@
 {
   "SourceFile": "third-party/exiftool/t/images/JVC2.jpg",
   "File:FileSize": 947,
+  "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "JVC2.jpg",
   "File:Directory": "third-party/exiftool/t/images",
   "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileAccessDate": "2025:07:27 12:08:27-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
   "File:MIMEType": "image/jpeg",
@@ -18,10 +22,8 @@
   "EXIF:FNumber": 3.8,
   "EXIF:ExposureProgram": "Program AE",
   "EXIF:ISO": 80,
-  "EXIF:ExifVersion": "0210",
   "EXIF:DateTimeOriginal": "2002:07:14 22:59:31",
   "EXIF:CreateDate": "2002:07:14 22:59:31",
-  "EXIF:MaxApertureValue": 3.8,
   "EXIF:MeteringMode": "Multi-segment",
   "EXIF:Flash": "No Flash",
   "EXIF:FocalLength": "17.5 mm",
@@ -29,5 +31,9 @@
   "EXIF:ExifImageHeight": 768,
   "File:ImageWidth": 8,
   "File:ImageHeight": 8,
-  "Composite:ImageSize": "8x8"
+  "Composite:Aperture": 3.8,
+  "Composite:ShutterSpeed": "1/30",
+  "EXIF:ThumbnailImage": "(Binary data 28 bytes, use -b option to extract)",
+  "Composite:ImageSize": "8x8",
+  "Composite:Megapixels": 0.000064
 }

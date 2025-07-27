@@ -1,18 +1,21 @@
 {
   "SourceFile": "third-party/exiftool/t/images/PNG.png",
   "File:FileSize": 572,
+  "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "PNG.png",
   "File:Directory": "third-party/exiftool/t/images",
   "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileAccessDate": "2025:07:27 12:08:27-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "PNG",
   "File:FileTypeExtension": "png",
   "File:MIMEType": "image/png",
-  "PNG:ImageWidth": 16,
-  "PNG:ImageHeight": 16,
   "PNG:BitDepth": 1,
   "PNG:ColorType": "Grayscale",
   "PNG:Compression": "Deflate/Inflate",
   "PNG:Filter": "Adaptive",
   "PNG:Interlace": "Noninterlaced",
-  "Composite:ImageSize": "16x16"
+  "Composite:ImageSize": "16x16",
+  "Composite:Megapixels": 0.000256
 }

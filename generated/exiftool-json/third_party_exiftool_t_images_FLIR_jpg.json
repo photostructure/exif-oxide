@@ -1,9 +1,13 @@
 {
   "SourceFile": "third-party/exiftool/t/images/FLIR.jpg",
   "File:FileSize": 7338,
+  "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "FLIR.jpg",
   "File:Directory": "third-party/exiftool/t/images",
   "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileAccessDate": "2025:07:27 12:08:26-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
   "File:MIMEType": "image/jpeg",
@@ -11,10 +15,10 @@
   "EXIF:Model": "FLIR_i7",
   "EXIF:Orientation": "Horizontal (normal)",
   "EXIF:ResolutionUnit": "inches",
+  "EXIF:Software": "Common_dll v8.0.6b1",
   "EXIF:ModifyDate": "2012:02:11 14:17:08",
   "EXIF:YCbCrPositioning": "Centered",
   "EXIF:ExposureTime": "1/32",
-  "EXIF:ExifVersion": "0220",
   "EXIF:DateTimeOriginal": "2012:02:11 14:17:08",
   "EXIF:CreateDate": "2012:02:11 14:17:08",
   "EXIF:FocalLength": "6.7 mm",
@@ -22,5 +26,8 @@
   "EXIF:ExifImageHeight": 240,
   "File:ImageWidth": 8,
   "File:ImageHeight": 8,
-  "Composite:ImageSize": "8x8"
+  "Composite:ShutterSpeed": "1/32",
+  "EXIF:ThumbnailImage": "(Binary data 2314 bytes, use -b option to extract)",
+  "Composite:ImageSize": "8x8",
+  "Composite:Megapixels": 0.000064
 }

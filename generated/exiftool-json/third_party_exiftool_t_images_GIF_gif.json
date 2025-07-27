@@ -1,18 +1,22 @@
 {
   "SourceFile": "third-party/exiftool/t/images/GIF.gif",
   "File:FileSize": 2321,
+  "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "GIF.gif",
   "File:Directory": "third-party/exiftool/t/images",
   "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileAccessDate": "2025:07:27 12:08:26-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "GIF",
   "File:FileTypeExtension": "gif",
   "File:MIMEType": "image/gif",
-  "GIF:ImageWidth": 8,
-  "GIF:ImageHeight": 8,
   "GIF:HasColorMap": "Yes",
   "GIF:ColorResolutionDepth": 8,
   "GIF:BitsPerPixel": 8,
   "GIF:BackgroundColor": 0,
   "GIF:PixelAspectRatio": 1,
-  "Composite:ImageSize": "8x8"
+  "XMP:Title": "GIF with XMP",
+  "Composite:ImageSize": "8x8",
+  "Composite:Megapixels": 0.000064
 }

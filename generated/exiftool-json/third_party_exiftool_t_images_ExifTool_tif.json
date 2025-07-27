@@ -1,9 +1,13 @@
 {
   "SourceFile": "third-party/exiftool/t/images/ExifTool.tif",
   "File:FileSize": 4864,
+  "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "ExifTool.tif",
   "File:Directory": "third-party/exiftool/t/images",
   "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileAccessDate": "2025:07:27 12:08:27-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "TIFF",
   "File:FileTypeExtension": "tif",
   "File:MIMEType": "image/tiff",
@@ -13,6 +17,16 @@
   "EXIF:Make": "Canon",
   "EXIF:Model": "Canon EOS DIGITAL REBEL",
   "EXIF:ResolutionUnit": "inches",
+  "EXIF:Software": "GraphicConverter",
   "EXIF:ModifyDate": "2004:02:20 08:07:49",
-  "Composite:ImageSize": "160x120"
+  "IPTC:Source": "My camera",
+  "IPTC:ObjectName": "This is the title",
+  "IPTC:City": "Kingston",
+  "IPTC:Keywords": [
+    "exiftool",
+    "test",
+    "picture"
+  ],
+  "Composite:ImageSize": "160x120",
+  "Composite:Megapixels": 0.019
 }

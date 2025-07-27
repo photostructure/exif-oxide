@@ -1,13 +1,19 @@
 {
   "SourceFile": "test-images/casio/QVCI.jpg",
   "File:FileSize": 407,
+  "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "QVCI.jpg",
   "File:Directory": "test-images/casio",
   "File:FileModifyDate": "2025:06:30 10:16:41-07:00",
+  "File:FileAccessDate": "2025:07:27 12:08:25-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
   "File:MIMEType": "image/jpeg",
+  "MakerNotes:DateTimeOriginal": "1998:10:24 12:08:57",
   "File:ImageWidth": 8,
   "File:ImageHeight": 8,
-  "Composite:ImageSize": "8x8"
+  "Composite:ImageSize": "8x8",
+  "Composite:Megapixels": 0.000064
 }

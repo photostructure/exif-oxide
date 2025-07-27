@@ -1,10 +1,24 @@
 {
   "SourceFile": "third-party/exiftool/t/images/KyoceraRaw.raw",
   "File:FileSize": 166,
+  "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "KyoceraRaw.raw",
   "File:Directory": "third-party/exiftool/t/images",
   "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileAccessDate": "2025:07:27 12:08:26-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "RAW",
   "File:FileTypeExtension": "raw",
-  "File:MIMEType": "image/x-raw"
+  "File:MIMEType": "image/x-raw",
+  "MakerNotes:Model": "N DIGITAL",
+  "MakerNotes:Make": "KYOCERA",
+  "MakerNotes:DateTimeOriginal": "2005:07:16 18:14:30",
+  "MakerNotes:ISO": 100,
+  "MakerNotes:ExposureTime": "1/125",
+  "MakerNotes:FNumber": 11,
+  "MakerNotes:FocalLength": "55 mm",
+  "MakerNotes:Lens": "VS28-80/3.5",
+  "Composite:Aperture": 11.3,
+  "Composite:ShutterSpeed": "1/125"
 }

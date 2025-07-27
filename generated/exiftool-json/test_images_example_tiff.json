@@ -1,13 +1,19 @@
 {
   "SourceFile": "test-images/example.tiff",
   "File:FileSize": 136613,
+  "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "example.tiff",
   "File:Directory": "test-images",
   "File:FileModifyDate": "2025:07:23 12:53:25-07:00",
+  "File:FileAccessDate": "2025:07:27 10:04:03-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 12:53:25-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "TIFF",
   "File:FileTypeExtension": "tif",
   "File:MIMEType": "image/tiff",
   "EXIF:ImageWidth": 1130,
   "EXIF:ImageHeight": 726,
-  "Composite:ImageSize": "1130x726"
+  "EXIF:Software": "gnome-screenshot",
+  "Composite:ImageSize": "1130x726",
+  "Composite:Megapixels": 0.820
 }
