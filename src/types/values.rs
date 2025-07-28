@@ -4,7 +4,7 @@
 //! EXIF tag values after parsing, along with its conversion methods and
 //! display formatting.
 
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Serializer};
 use std::collections::HashMap;
 
 /// Represents a tag value that can be of various types
@@ -35,7 +35,7 @@ use std::collections::HashMap;
 /// assert_eq!(tag3, TagValue::String("Foo".to_string()));
 /// assert_eq!(tag4, TagValue::String("Bar".to_string()));
 /// ```
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[serde(untagged)]
 pub enum TagValue {
     /// Unsigned 8-bit integer
@@ -81,6 +81,110 @@ pub enum TagValue {
     /// Array of heterogeneous values (e.g., XMP RDF containers)
     /// Used for RDF Bag/Seq containers and mixed-type arrays
     Array(Vec<TagValue>),
+}
+
+/// Check if a string matches ExifTool's JSON numeric pattern
+/// ExifTool: exiftool:3762 EscapeJSON function
+/// Regex: /^-?(\d|[1-9]\d{1,14})(\.\d{1,16})?(e[-+]?\d{1,3})?$/i
+///
+/// ## Why String→Regex→Number (Not Direct Numeric Types)?
+///
+/// PrintConv functions return strings that may be numeric ("2.8") or descriptive ("Unknown").
+/// ExifTool's proven architecture: Raw → ValueConv → PrintConv → String → EscapeJSON → JSON
+/// This regex gracefully handles mixed outputs without complex tag categorization that would
+/// drift from ExifTool compatibility and miss edge cases in real-world camera firmware.
+///
+/// From ExifTool source:
+/// ```perl
+/// sub EscapeJSON($;$)
+/// {
+///     my ($str, $quote) = @_;
+///     unless ($quote) {
+///         # JSON boolean (true or false)
+///         return lc($str) if $str =~ /^(true|false)$/i and $json < 2;
+///         # JSON/PHP number (see json.org for numerical format)
+///         return $str if $str =~ /^-?(\d|[1-9]\d{1,14})(\.\d{1,16})?(e[-+]?\d{1,3})?$/i;
+///     }
+///     # ... string escaping logic
+/// }
+/// ```
+fn is_json_numeric_string(s: &str) -> bool {
+    use regex::Regex;
+    use std::sync::LazyLock;
+
+    // ExifTool: exiftool:3762 - exact regex from EscapeJSON function
+    // JSON/PHP number format validation per json.org specification
+    static NUMERIC_REGEX: LazyLock<Regex> = LazyLock::new(|| {
+        Regex::new(r"^-?(\d|[1-9]\d{1,14})(\.\d{1,16})?(e[-+]?\d{1,3})?$")
+            .expect("Invalid ExifTool numeric regex")
+    });
+
+    // ExifTool: Case-insensitive matching (note the 'i' flag in ExifTool regex)
+    NUMERIC_REGEX.is_match(&s.to_lowercase())
+}
+
+impl Serialize for TagValue {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match self {
+            TagValue::U8(v) => serializer.serialize_u8(*v),
+            TagValue::U16(v) => serializer.serialize_u16(*v),
+            TagValue::U32(v) => serializer.serialize_u32(*v),
+            TagValue::U64(v) => serializer.serialize_u64(*v),
+            TagValue::I16(v) => serializer.serialize_i16(*v),
+            TagValue::I32(v) => serializer.serialize_i32(*v),
+            TagValue::F64(v) => serializer.serialize_f64(*v),
+            TagValue::String(s) => {
+                // ExifTool: exiftool:3762 EscapeJSON function - JSON numeric conversion
+                // If string matches JSON number pattern, return unquoted (as number)
+                // This matches ExifTool's behavior for JSON output format
+                if is_json_numeric_string(s) {
+                    // ExifTool: Simply returns the string unquoted for JSON numbers
+                    // Parse to ensure proper JSON number format in Rust
+                    if let Ok(int_val) = s.parse::<i64>() {
+                        return serializer.serialize_i64(int_val);
+                    }
+                    if let Ok(float_val) = s.parse::<f64>() {
+                        if float_val.is_finite() {
+                            return serializer.serialize_f64(float_val);
+                        }
+                    }
+                }
+
+                // ExifTool: Falls through to string escaping if not numeric
+                serializer.serialize_str(s)
+            }
+            TagValue::U8Array(arr) => arr.serialize(serializer),
+            TagValue::U16Array(arr) => arr.serialize(serializer),
+            TagValue::U32Array(arr) => arr.serialize(serializer),
+            TagValue::F64Array(arr) => arr.serialize(serializer),
+            TagValue::Rational(num, denom) => {
+                // Serialize rational as 2-element array [numerator, denominator]
+                vec![*num, *denom].serialize(serializer)
+            }
+            TagValue::SRational(num, denom) => {
+                // Serialize signed rational as 2-element array [numerator, denominator]
+                vec![*num, *denom].serialize(serializer)
+            }
+            TagValue::RationalArray(arr) => {
+                // Serialize as array of 2-element arrays
+                let converted: Vec<Vec<u32>> =
+                    arr.iter().map(|(num, denom)| vec![*num, *denom]).collect();
+                converted.serialize(serializer)
+            }
+            TagValue::SRationalArray(arr) => {
+                // Serialize as array of 2-element arrays
+                let converted: Vec<Vec<i32>> =
+                    arr.iter().map(|(num, denom)| vec![*num, *denom]).collect();
+                converted.serialize(serializer)
+            }
+            TagValue::Binary(data) => data.serialize(serializer),
+            TagValue::Object(map) => map.serialize(serializer),
+            TagValue::Array(values) => values.serialize(serializer),
+        }
+    }
 }
 
 impl TagValue {
@@ -555,7 +659,7 @@ mod tests {
         );
         assert_eq!(
             TagValue::string_with_numeric_detection("42"),
-            TagValue::F64(42.0)
+            TagValue::U16(42)
         );
 
         // Scientific notation
@@ -589,7 +693,7 @@ mod tests {
         // Edge cases
         assert_eq!(
             TagValue::string_with_numeric_detection("0"),
-            TagValue::F64(0.0)
+            TagValue::U16(0)
         );
         assert_eq!(
             TagValue::string_with_numeric_detection("0.0"),
