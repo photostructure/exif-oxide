@@ -4,6 +4,7 @@
   "Composite:GPSLatitude": 54.9896666666667,
   "EXIF:GPSLongitude": 1.91416666666667,
   "Composite:GPSLongitude": -1.91416666666667,
+  "Composite:GPSPosition": "54.9896666666667 -1.91416666666667",
   "File:FileSize": 2133,
   "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "GPS.jpg",
@@ -48,7 +49,6 @@
   "Composite:Aperture": 0.64,
   "Composite:ShutterSpeed": "1/724",
   "EXIF:ThumbnailImage": "(Binary data 28 bytes, use -b option to extract)",
-  "Composite:GPSPosition": "54 deg 59' 22.80\" N, 1 deg 54' 51.00\" W",
   "Composite:ImageSize": "120x80",
   "Composite:Megapixels": 0.010
 }

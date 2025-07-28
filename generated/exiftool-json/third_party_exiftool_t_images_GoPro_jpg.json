@@ -6,6 +6,7 @@
   "Composite:GPSLongitude": -73.9933542999722,
   "EXIF:GPSAltitude": 3.983,
   "Composite:GPSAltitude": -3.983,
+  "Composite:GPSPosition": "40.6584191999722 -73.9933542999722",
   "File:FileSize": 4601,
   "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "GoPro.jpg",
@@ -49,7 +50,6 @@
   "Composite:ShutterSpeed": "1/1205",
   "EXIF:ThumbnailImage": "(Binary data 28 bytes, use -b option to extract)",
   "Composite:GPSDateTime": "2017:10:03 14:58:14Z",
-  "Composite:GPSPosition": "40 deg 39' 30.31\" N, 73 deg 59' 36.08\" W",
   "Composite:ImageSize": "8x8",
   "Composite:Megapixels": 0.000064
 }

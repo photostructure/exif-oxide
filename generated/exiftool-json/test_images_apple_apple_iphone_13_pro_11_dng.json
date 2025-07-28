@@ -6,6 +6,7 @@
   "Composite:GPSLongitude": -3.18537221666667,
   "EXIF:GPSAltitude": 4.959316322,
   "Composite:GPSAltitude": 4.959316322,
+  "Composite:GPSPosition": "51.4831444333333 -3.18537221666667",
   "File:FileSize": 27795754,
   "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "apple_iphone_13_pro_11.dng",
@@ -60,6 +61,5 @@
   "Composite:SubSecCreateDate": "2021:10:11 16:01:28.185+01:00",
   "Composite:SubSecDateTimeOriginal": "2021:10:11 16:01:28.185+01:00",
   "Composite:SubSecModifyDate": "2021:10:11 16:01:28+01:00",
-  "Composite:GPSPosition": "51 deg 28' 59.32\" N, 3 deg 11' 7.34\" W",
   "Composite:LensID": "iPhone 13 Pro back triple camera 1.57mm f/1.8"
 }

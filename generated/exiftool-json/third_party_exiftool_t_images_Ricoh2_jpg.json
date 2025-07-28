@@ -6,6 +6,7 @@
   "Composite:GPSLongitude": -0.507502777777778,
   "EXIF:GPSAltitude": 117,
   "Composite:GPSAltitude": 117,
+  "Composite:GPSPosition": "42.034575 -0.507502777777778",
   "File:FileSize": 3187,
   "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "Ricoh2.jpg",
@@ -48,7 +49,6 @@
   "Composite:ShutterSpeed": "1/1740",
   "EXIF:ThumbnailImage": "(Binary data 28 bytes, use -b option to extract)",
   "Composite:GPSDateTime": "2006:05:26 10:47:24Z",
-  "Composite:GPSPosition": "42 deg 2' 4.47\" N, 0 deg 30' 27.01\" W",
   "Composite:ImageSize": "8x8",
   "Composite:Megapixels": 0.000064
 }

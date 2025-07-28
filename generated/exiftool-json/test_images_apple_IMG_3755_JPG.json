@@ -6,6 +6,7 @@
   "Composite:GPSLongitude": -122.456734600022,
   "EXIF:GPSAltitude": 25.24672793,
   "Composite:GPSAltitude": 25.24672793,
+  "Composite:GPSPosition": "37.5258393999556 -122.456734600022",
   "File:FileSize": 1477912,
   "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "IMG_3755.JPG",
@@ -58,6 +59,5 @@
   "Composite:SubSecModifyDate": "2025:06:24 15:24:45-07:00",
   "EXIF:ThumbnailImage": "(Binary data 8106 bytes, use -b option to extract)",
   "Composite:GPSDateTime": "2025:06:24 22:24:43Z",
-  "Composite:GPSPosition": "37 deg 31' 33.02\" N, 122 deg 27' 24.24\" W",
   "Composite:LensID": "iPhone 13 Pro back triple camera 1.57mm f/1.8"
 }

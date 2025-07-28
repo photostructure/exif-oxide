@@ -81,7 +81,7 @@ done
 # Note: Using default ExifTool behavior (rational arrays) for Milestone 6
 # Milestone 8c: Using -G flag to get group-prefixed tag names (e.g., "EXIF:Make", "GPS:GPSLatitude")
 
-if ! exiftool -r -json -struct -G -GPSLatitude\# -GPSLongitude\# -GPSAltitude\# -FileSize\# -all -if "$FILTER_CONDITION" \
+if ! exiftool -r -json -struct -G -GPSLatitude\# -GPSLongitude\# -GPSAltitude\# -GPSPosition\# -FileSize\# -all -if "$FILTER_CONDITION" \
     "$PROJECT_ROOT/test-images" \
     "$PROJECT_ROOT/third-party/exiftool/t/images" \
     > "$TEMP_JSON" 2>/dev/null; then
