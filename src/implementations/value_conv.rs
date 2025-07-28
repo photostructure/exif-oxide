@@ -175,6 +175,138 @@ pub fn gpsdatestamp_value_conv(value: &TagValue) -> Result<TagValue> {
     Ok(value.clone())
 }
 
+/// Canon AutoISO conversion: exp($val/32*log(2))*100
+///
+/// ExifTool: lib/Image/ExifTool/Canon.pm AutoISO ValueConv
+/// Formula: exp($val/32*log(2))*100
+pub fn canon_auto_iso_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => {
+            // exp($val/32*log(2))*100 = exp($val * ln(2) / 32) * 100 = 2^($val/32) * 100
+            let iso_value = (val / 32.0).exp2() * 100.0;
+            Ok(TagValue::F64(iso_value))
+        }
+        None => Err(ExifError::ParseError(
+            "Canon AutoISO conversion requires numeric value".to_string(),
+        )),
+    }
+}
+
+/// Canon BaseISO conversion: exp($val/32*log(2))*100/32
+///
+/// ExifTool: lib/Image/ExifTool/Canon.pm BaseISO ValueConv
+/// Formula: exp($val/32*log(2))*100/32
+pub fn canon_base_iso_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => {
+            // exp($val/32*log(2))*100/32 = 2^($val/32) * 100 / 32
+            let iso_value = (val / 32.0).exp2() * 100.0 / 32.0;
+            Ok(TagValue::F64(iso_value))
+        }
+        None => Err(ExifError::ParseError(
+            "Canon BaseISO conversion requires numeric value".to_string(),
+        )),
+    }
+}
+
+/// Canon simple division: $val / 32 + 5
+///
+/// ExifTool: lib/Image/ExifTool/Canon.pm various tags
+/// Formula: $val / 32 + 5
+pub fn canon_div_32_plus_5_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(val / 32.0 + 5.0)),
+        None => Err(ExifError::ParseError(
+            "Canon division conversion requires numeric value".to_string(),
+        )),
+    }
+}
+
+/// Canon simple division: $val / 10
+///
+/// ExifTool: lib/Image/ExifTool/Canon.pm various tags
+/// Formula: $val / 10
+pub fn canon_div_10_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(val / 10.0)),
+        None => Err(ExifError::ParseError(
+            "Canon division conversion requires numeric value".to_string(),
+        )),
+    }
+}
+
+/// Canon simple division: $val / 100
+///
+/// ExifTool: lib/Image/ExifTool/Canon.pm various tags
+/// Formula: $val / 100
+pub fn canon_div_100_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(val / 100.0)),
+        None => Err(ExifError::ParseError(
+            "Canon division conversion requires numeric value".to_string(),
+        )),
+    }
+}
+
+/// Canon addition: $val + 1
+///
+/// ExifTool: lib/Image/ExifTool/Canon.pm various tags
+/// Formula: $val + 1
+pub fn canon_plus_1_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(val + 1.0)),
+        None => Err(ExifError::ParseError(
+            "Canon addition conversion requires numeric value".to_string(),
+        )),
+    }
+}
+
+/// Canon millimeter conversion: $val * 25.4 / 1000
+///
+/// ExifTool: lib/Image/ExifTool/Canon.pm sensor size conversions
+/// Formula: $val * 25.4 / 1000 (converts from unknown units to millimeters)
+pub fn canon_millimeter_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(val * 25.4 / 1000.0)),
+        None => Err(ExifError::ParseError(
+            "Canon millimeter conversion requires numeric value".to_string(),
+        )),
+    }
+}
+
+/// Canon bit shift operations for file numbers: ($val>>16)|(($val&0xffff)<<16)
+///
+/// ExifTool: lib/Image/ExifTool/Canon.pm FileNumber ValueConv
+/// Formula: ($val>>16)|(($val&0xffff)<<16) - swaps 16-bit halves
+pub fn canon_file_number_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_u32() {
+        Some(val) => {
+            let result = (val >> 16) | ((val & 0xffff) << 16);
+            Ok(TagValue::U32(result))
+        }
+        None => Err(ExifError::ParseError(
+            "Canon file number conversion requires integer value".to_string(),
+        )),
+    }
+}
+
+/// Canon complex directory number conversion
+///
+/// ExifTool: lib/Image/ExifTool/Canon.pm DirectoryNumber ValueConv
+/// Complex bit manipulation for directory numbers
+pub fn canon_directory_number_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_u32() {
+        Some(val) => {
+            // (($val&0xffc0)>>6)*10000+(($val>>16)&0xff)+(($val&0x3f)<<8)
+            let result = ((val & 0xffc0) >> 6) * 10000 + ((val >> 16) & 0xff) + ((val & 0x3f) << 8);
+            Ok(TagValue::U32(result))
+        }
+        None => Err(ExifError::ParseError(
+            "Canon directory number conversion requires integer value".to_string(),
+        )),
+    }
+}
+
 /// White balance ValueConv (placeholder)
 ///
 /// ExifTool: lib/Image/ExifTool/Exif.pm WhiteBalance

@@ -75,6 +75,7 @@ static TAG_SPECIFIC_PRINTCONV: LazyLock<HashMap<&'static str, (&'static str, &'s
     let mut m = HashMap::new();
     
     // Module-specific tags (highest priority)
+    m.insert("Canon_pm::SelfTimer", ("crate::implementations::print_conv", "canon_selftimer_print_conv"));
     // m.insert("Canon_pm::WhiteBalance", ("crate::implementations::print_conv", "canon_white_balance_print_conv"));
     
     // Universal tags (work across all modules - fallback)
