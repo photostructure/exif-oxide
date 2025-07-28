@@ -14,7 +14,7 @@
 use clap::{Arg, Command};
 use exif_oxide::compat::{
     analyze_all_tag_differences, apply_exiftool_filter, filter_to_groups, filter_to_supported_tags,
-    normalize_for_comparison, parse_exiftool_filters, run_exif_oxide, run_exiftool, 
+    normalize_for_comparison, parse_exiftool_filters, run_exif_oxide, run_exiftool,
     CompatibilityReport, DifferenceType,
 };
 use std::process;
