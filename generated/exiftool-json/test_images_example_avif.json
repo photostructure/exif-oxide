@@ -1,0 +1,19 @@
+{
+  "SourceFile": "test-images/example.avif",
+  "File:FileSize": 80743,
+  "ExifTool:ExifToolVersion": 13.31,
+  "File:FileName": "example.avif",
+  "File:Directory": "test-images",
+  "File:FileModifyDate": "2025:07:23 13:34:27-07:00",
+  "File:FileAccessDate": "2025:07:28 13:48:20-07:00",
+  "File:FileInodeChangeDate": "2025:07:28 13:48:20-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
+  "File:FileType": "AVIF",
+  "File:FileTypeExtension": "avif",
+  "File:MIMEType": "image/avif",
+  "QuickTime:HandlerDescription": "cavif - https://github.com/link-u/cavif",
+  "File:ImageWidth": 1204,
+  "File:ImageHeight": 800,
+  "Composite:ImageSize": "1204x800",
+  "Composite:Megapixels": 0.963
+}
