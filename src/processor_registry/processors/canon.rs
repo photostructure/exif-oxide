@@ -574,7 +574,10 @@ fn extract_makernotes_via_tag_kit(
         let tag_value = match extract_tag_value(data, &entry, byte_order) {
             Ok(value) => value,
             Err(e) => {
-                debug!("Failed to extract tag value for tag 0x{:04x}: {}", entry.tag_id, e);
+                debug!(
+                    "Failed to extract tag value for tag 0x{:04x}: {}",
+                    entry.tag_id, e
+                );
                 offset += 12;
                 continue;
             }
@@ -593,13 +596,9 @@ fn extract_makernotes_via_tag_kit(
                     manufacturer
                 );
                 for (name, value) in processed_tags {
-                    // Add manufacturer namespace to avoid conflicts
-                    let full_name = if name.contains(':') {
-                        name // Already namespaced
-                    } else {
-                        format!("MakerNotes:{}", name)
-                    };
-                    extracted_tags.insert(full_name, value);
+                    // Tag storage system will add MakerNotes namespace automatically
+                    // based on IFD name, so don't add prefix here to avoid double namespacing
+                    extracted_tags.insert(name, value);
                 }
             }
             Ok(_) | Err(_) => {
@@ -612,9 +611,8 @@ fn extract_makernotes_via_tag_kit(
                     entry.tag_id, tag_name
                 );
 
-                // Store as regular tag with MakerNotes namespace
-                let full_name = format!("MakerNotes:{}", tag_name);
-                extracted_tags.insert(full_name, tag_value);
+                // Store as regular tag - tag storage system will add MakerNotes namespace
+                extracted_tags.insert(tag_name, tag_value);
             }
         }
 
