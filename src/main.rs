@@ -173,6 +173,10 @@ fn main() {
             "  -*Pattern*       Middle wildcard (e.g., -*Date* for date-related tags)\n",
             "  -all             Extract all available tags\n",
             "\n",
+            "BINARY EXTRACTION:\n",
+            "  -b, --binary     Extract binary data (use with tag filters, outputs to stdout)\n",
+            "                   Example: exif-oxide -b -ThumbnailImage image.jpg > thumb.jpg\n",
+            "\n",
             "EXIFTOOL COMPATIBILITY:\n",
             "  -ver             Print version number and exit\n",
             "  -j, -struct, -G  Ignored (we always output JSON with structure and groups)\n",
@@ -201,12 +205,20 @@ fn main() {
                 .help("Include parsing warnings in output (suppressed by default)")
                 .action(clap::ArgAction::SetTrue), // Boolean flag
         )
+        .arg(
+            Arg::new("binary")
+                .short('b')
+                .long("binary")
+                .help("Extract binary data for specified tag (outputs raw binary to stdout)")
+                .action(clap::ArgAction::SetTrue), // Boolean flag
+        )
         .get_matches();
 
     // Extract all arguments and parse ExifTool-style filters
     let args: Vec<&String> = matches.get_many::<String>("args").unwrap().collect();
     let show_missing = matches.get_flag("show-missing");
     let show_warnings = matches.get_flag("warnings");
+    let binary_extraction = matches.get_flag("binary");
 
     // Parse arguments into files and filter options using ExifTool patterns
     let (file_paths, filter_options) = parse_exiftool_args(args);
@@ -223,10 +235,30 @@ fn main() {
     debug!("Processing {} files", paths.len());
     debug!("Show missing implementations: {}", show_missing);
     debug!("Show warnings: {}", show_warnings);
+    debug!("Binary extraction mode: {}", binary_extraction);
     debug!("Filter options: {:?}", filter_options);
 
-    // Process all files - this will output a JSON array like ExifTool
-    match process_files(&paths, show_missing, show_warnings, filter_options) {
+    // Validate binary extraction requirements
+    if binary_extraction {
+        // Binary extraction requires exactly one tag and one file for simplicity
+        if filter_options.requested_tags.len() != 1 {
+            eprintln!("Error: Binary extraction requires exactly one tag (e.g., -b -ThumbnailImage image.jpg)");
+            std::process::exit(1);
+        }
+        if paths.len() != 1 {
+            eprintln!("Error: Binary extraction requires exactly one file");
+            std::process::exit(1);
+        }
+    }
+
+    // Process all files - this will output a JSON array like ExifTool (or binary data if -b)
+    match process_files(
+        &paths,
+        show_missing,
+        show_warnings,
+        binary_extraction,
+        filter_options,
+    ) {
         Ok(()) => {
             // Success - output has already been printed
         }
@@ -248,6 +280,7 @@ fn process_files(
     paths: &[PathBuf],
     show_missing: bool,
     show_warnings: bool,
+    binary_extraction: bool,
     filter_options: FilterOptions,
 ) -> Result<(), Box<dyn std::error::Error>> {
     use exif_oxide::types::ExifData;
@@ -260,6 +293,34 @@ fn process_files(
         match process_single_file(path, show_missing, show_warnings, &filter_options) {
             Ok(metadata) => {
                 info!("Successfully processed: {}", path.display());
+
+                // Handle binary extraction if requested
+                if binary_extraction {
+                    let tag_name = &filter_options.requested_tags[0]; // We validated exactly one tag
+                                                                      // For binary extraction, we need full metadata to find offset/length tags
+                                                                      // Extract metadata again without filtering to get all tags
+                    let no_filters = FilterOptions {
+                        requested_tags: Vec::new(),
+                        requested_groups: Vec::new(),
+                        group_all_patterns: Vec::new(),
+                        extract_all: true,
+                        numeric_tags: std::collections::HashSet::new(),
+                        glob_patterns: Vec::new(),
+                    };
+                    match process_single_file(path, show_missing, show_warnings, &no_filters) {
+                        Ok(full_metadata) => {
+                            return extract_binary_data(&full_metadata, tag_name, path);
+                        }
+                        Err(e) => {
+                            return Err(format!(
+                                "Failed to extract full metadata for binary extraction: {}",
+                                e
+                            )
+                            .into());
+                        }
+                    }
+                }
+
                 results.push(metadata);
             }
             Err(e) => {
@@ -321,6 +382,135 @@ fn process_single_file(
     )?;
 
     Ok(metadata)
+}
+
+/// Extract binary data for the specified tag and write to stdout
+/// ExifTool: Follow the same pattern as ExifTool's binary extraction
+/// This function finds offset/length tags and streams binary data from the file
+fn extract_binary_data(
+    metadata: &exif_oxide::types::ExifData,
+    requested_tag: &str,
+    file_path: &PathBuf,
+) -> Result<(), Box<dyn std::error::Error>> {
+    use std::fs::File;
+    use std::io::{self, Read, Seek, SeekFrom, Write};
+
+    debug!("Extracting binary data for tag: {}", requested_tag);
+
+    // Map binary tag names to their offset/length counterparts
+    // Based on ExifTool's composite tag definitions and format-specific naming
+    let (offset_pattern, length_pattern) = match requested_tag.to_lowercase().as_str() {
+        "thumbnailimage" => {
+            // Try multiple patterns for thumbnail data
+            if let (Some(offset), Some(length)) =
+                find_tag_pair(metadata, "ThumbnailOffset", "ThumbnailLength")
+            {
+                (Some(offset), Some(length))
+            } else {
+                find_tag_pair(metadata, "OtherImageStart", "OtherImageLength")
+            }
+        }
+        "previewimage" => {
+            // Try multiple patterns for preview data
+            if let (Some(offset), Some(length)) =
+                find_tag_pair(metadata, "PreviewImageStart", "PreviewImageLength")
+            {
+                (Some(offset), Some(length))
+            } else {
+                find_tag_pair(metadata, "OtherImageStart", "OtherImageLength")
+            }
+        }
+        "otherimage" => find_tag_pair(metadata, "OtherImageStart", "OtherImageLength"),
+        _ => {
+            return Err(
+                format!("Binary extraction not supported for tag: {}", requested_tag).into(),
+            );
+        }
+    };
+
+    let (offset_value, length_value) = match (offset_pattern, length_pattern) {
+        (Some(offset), Some(length)) => (offset, length),
+        _ => {
+            return Err(format!(
+                "Required offset/length tags not found for: {}",
+                requested_tag
+            )
+            .into());
+        }
+    };
+
+    debug!("Found offset: {}, length: {}", offset_value, length_value);
+
+    // Open file for binary reading
+    let mut file = File::open(file_path)?;
+
+    // Seek to offset position
+    file.seek(SeekFrom::Start(offset_value as u64))?;
+
+    // Read binary data in chunks and stream to stdout
+    // This approach handles large previews (500KB+) efficiently without loading into memory
+    let mut buffer = vec![0u8; 8192]; // 8KB buffer for streaming
+    let mut remaining = length_value as usize;
+    let stdout = io::stdout();
+    let mut handle = stdout.lock();
+
+    while remaining > 0 {
+        let chunk_size = std::cmp::min(buffer.len(), remaining);
+        let bytes_read = file.read(&mut buffer[..chunk_size])?;
+
+        if bytes_read == 0 {
+            return Err("Unexpected end of file during binary extraction".into());
+        }
+
+        handle.write_all(&buffer[..bytes_read])?;
+        remaining -= bytes_read;
+    }
+
+    handle.flush()?;
+    debug!("Successfully extracted {} bytes", length_value);
+
+    Ok(())
+}
+
+/// Find a pair of offset/length tags in metadata
+/// Returns (offset_value, length_value) if both found, otherwise (None, None)
+fn find_tag_pair(
+    metadata: &exif_oxide::types::ExifData,
+    offset_name: &str,
+    length_name: &str,
+) -> (Option<u32>, Option<u32>) {
+    let mut offset_value = None;
+    let mut length_value = None;
+
+    debug!("Looking for tags: {} and {}", offset_name, length_name);
+    debug!(
+        "Available tags: {:?}",
+        metadata.tags.iter().map(|t| &t.name).collect::<Vec<_>>()
+    );
+
+    // Search through all tags for the offset and length values
+    for tag_entry in &metadata.tags {
+        // Check if tag name matches (with or without group prefix)
+        if tag_entry.name.ends_with(&format!(":{}", offset_name)) || tag_entry.name == offset_name {
+            if let Some(val) = tag_entry.value.as_u32() {
+                debug!("Found offset tag {}: {}", tag_entry.name, val);
+                offset_value = Some(val);
+            }
+        } else if tag_entry.name.ends_with(&format!(":{}", length_name))
+            || tag_entry.name == length_name
+        {
+            if let Some(val) = tag_entry.value.as_u32() {
+                debug!("Found length tag {}: {}", tag_entry.name, val);
+                length_value = Some(val);
+            }
+        }
+    }
+
+    debug!(
+        "Result: offset={:?}, length={:?}",
+        offset_value, length_value
+    );
+    (offset_value, length_value)
 }
 
 #[cfg(test)]
