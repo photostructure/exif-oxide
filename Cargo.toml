@@ -62,6 +62,7 @@ similar = { version = "2.7", features = [
     "text",
 ] } # Text diffing for ExifTool comparison
 tracing-test = "0.2" # Testing utilities for tracing
+walkdir = "2.5" # Directory walking for integration tests
 
 [features]
 default = []
