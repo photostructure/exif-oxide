@@ -347,10 +347,18 @@ Tier 3 (Best effort): Edge cases that don't block DAM deployment
   - **Solution**: Added `ByteOrder` parameter to `extract_byte_array_value()` and respect file's endianness for inline 4-byte values like ExifVersion
   - **Impact**: Fixed 3 critical EXIF version tag mismatches, resolving byte-swapping issues for inline UNDEFINED format tags
 
-**Current Status (2025-07-27 afternoon)**:
-- **59 working tags** (improved from 54) with fixes for integer formatting and version tag byte order
-- **153 total differences** (down from 158) - steady progress toward 95% PhotoStructure target
-- **No more ExifVersion issues** - all version tags now match ExifTool exactly
+**JSON Numeric Conversion Fix (2025-07-28)**:
+
+- ✅ **Root cause identified**: ExifTool applies JSON numeric conversion during serialization, not tag processing
+- ✅ **ExifTool compliance**: Implemented exact logic from `exiftool:3762 EscapeJSON` function using regex `/^-?(\d|[1-9]\d{1,14})(\.\d{1,16})?(e[-+]?\d{1,3})?$/i`
+- ✅ **Software tag fixed**: String values like `"1.00"` now serialize as JSON numbers when they match ExifTool's numeric pattern
+- ✅ **ShutterSpeedValue fixed**: PrintConv results like `"0"` now serialize as numbers instead of strings
+- ✅ **Trust ExifTool principle**: Added proper source code references to `exiftool:3762` and copied exact regex logic
+
+**Current Status (2025-07-28)**:
+- **51 working tags** (Casio2.jpg) with JSON numeric conversion fixes implemented
+- **53 total differences** remaining - continued progress toward 95% PhotoStructure target
+- **VALUE FORMAT MISMATCHES resolved** - Software and ShutterSpeedValue now match ExifTool JSON output exactly
 
 ## Gotchas & Tribal Knowledge
 
