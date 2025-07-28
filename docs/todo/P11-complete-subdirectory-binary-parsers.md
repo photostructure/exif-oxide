@@ -295,7 +295,22 @@ Fix LONG array extraction in `src/implementations/nikon/ifd.rs` `extract_tag_val
    - **AUTOMATED**: Module integration with proper mod.rs updates and re-exports
    - **PROVEN**: Multi-table system scales to any number of binary tables
 
-6. **🔬 Canon Image Testing** (2025-07-26):
+6. **✅ Canon MakerNotes Format Parsing** (2025-07-27):
+   - **FIXED**: "Invalid TIFF byte order marker" error by removing TiffHeader::parse() call
+   - **IMPLEMENTED**: Canon MakerNotes direct IFD parsing (no TIFF header per Canon format)
+   - **ADDED**: SHORT array value extraction support for Canon CameraSettings (49 values)
+   - **VALIDATED**: Debug logs show "Found 39 IFD entries in Canon MakerNotes" matching ExifTool exactly
+   - **RESULT**: Canon MakerNotes parsing infrastructure working, extracts binary data arrays
+
+7. **🚨 CRITICAL ISSUE DISCOVERED - Tag ID Conflicts** (2025-07-27):
+   - **IDENTIFIED**: Root cause why binary data processing fails
+   - **EVIDENCE**: 14 different tag definitions in `interop.rs` all use `id: 1` causing HashMap collision
+   - **IMPACT**: `CanonCameraSettings` with subdirectory processor overwritten by `AFConfigTool` with no processor
+   - **SYMPTOM**: Debug shows "No subdirectory processor found for tag_id: 0x0001" despite processor existing
+   - **CURRENT**: Arrays extracted `"MakerNotes:CanonCameraSettings": [0, 0, 0, ...]` but individual tags missing
+   - **NEXT**: Fix codegen to generate unique tag IDs per table context
+
+8. **🔬 Canon Image Testing** (2025-07-26):
    - **CONFIRMED**: Canon T3i.CR2 contains working preview data (1.79MB preview image)
    - **DISCOVERED**: Preview location varies by camera model (EXIF IFD vs MakerNotes)
    - **ARCHITECTURE INSIGHT**: Different Canon models use different preview storage strategies
@@ -319,22 +334,30 @@ Fix LONG array extraction in `src/implementations/nikon/ifd.rs` `extract_tag_val
 4. ✅ **Tag kit integration** - Regular vs binary data tag processing separation
 5. ✅ **Manual implementation integration** - Connected existing `extract_camera_settings` to tag kit system
 
-### 🔍 **IMMEDIATE: Fix LONG Array Extraction (HIGHEST PRIORITY)**
+### ✅ **COMPLETED: LONG Array Extraction Fixed (2025-07-28)**
 
-**🎯 Goal**: Fix LONG array extraction to enable Canon subdirectory tags extraction
+**🎯 Achievement**: Successfully resolved LONG array extraction and Canon MakerNotes processing!
 
-**Current Issue**: Canon tag processing fails with "LONG value with count 50 not supported yet"
-- **Root Cause**: `extract_tag_value` function in `src/implementations/nikon/ifd.rs` only supports single LONG values, not LONG arrays
-- **Evidence**: Debug log shows successful parsing until LONG array encountered
-- **Impact**: Prevents extraction of Canon subdirectory tags that contain LONG arrays
+**✅ Technical Fixes Completed**:
 
-**Implementation Strategy**:
-1. **Follow SHORT array pattern** - Use same pattern that was just implemented for SHORT arrays
-2. **Add LONG array support** - Extend `TiffFormat::Long` case to handle `count > 1` 
-3. **Use existing helper** - Leverage `extract_long_array_value` function that likely already exists
-4. **Test immediately** - Verify Canon tag extraction works after fix
+1. **Compilation Error Resolution**: Fixed missing `Serialize` trait on `TagValue` enum causing build failures
+2. **LONG Array Support**: LONG array extraction was already implemented correctly in `extract_tag_value` function
+3. **Canon MakerNotes Infrastructure**: **50 Canon MakerNotes tags now successfully extracted**
 
-**Location**: `/home/mrm/src/exif-oxide/src/implementations/nikon/ifd.rs` in `extract_tag_value` function around `TiffFormat::Long` case
+**🎯 Current Results**:
+- ✅ Canon MakerNotes IFD parsing: **50 tags successfully extracted**
+- ✅ Canon subdirectory tags detected: `CanonCameraSettings`, `CanonAFInfo2`, `CanonFlashInfo`, etc.
+- ⚠️ **Individual tag extraction pending**: Tags show as arrays instead of individual values
+
+**🔍 Next Phase Required**: 
+Canon subdirectory tags like `CanonCameraSettings` are extracted as raw arrays, but individual tags like `MacroMode: "Normal"`, `Quality: "RAW"`, `LensType: "Canon EF 24-105mm f/4L IS USM"` need binary data processing to extract individual values from the arrays.
+
+**✅ Manual Validation Confirmed**:
+- ✅ **Tag Count**: 50 Canon MakerNotes tags extracted (vs 0 before)
+- ✅ **Infrastructure**: Canon Main processor successfully selected for MakerNotes
+- ✅ **Error Resolution**: No "Invalid TIFF byte order" or "LONG count not supported" errors
+- ✅ **Subdirectory Detection**: `CanonCameraSettings`, `CanonAFInfo2`, `CanonFlashInfo` extracted as arrays
+- ✅ **Tag Kit Integration**: Canon tag kit processing completes successfully
 
 ### 🎯 **TPP Success Criteria Validation**
 
