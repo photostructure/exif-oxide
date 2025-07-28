@@ -65,7 +65,7 @@ pub fn gps_coordinate_value_conv(value: &TagValue) -> Result<TagValue> {
 pub fn apex_shutter_speed_value_conv(value: &TagValue) -> Result<TagValue> {
     match value.as_f64() {
         Some(apex_val) => {
-            // Trust ExifTool: boundary check prevents computing 2^(very_large_number) 
+            // Trust ExifTool: boundary check prevents computing 2^(very_large_number)
             // for invalid/corrupt APEX values (like -2147483648 in Canon.jpg)
             if apex_val.abs() < 100.0 {
                 let shutter_speed = (-apex_val).exp2(); // 2^(-val)
