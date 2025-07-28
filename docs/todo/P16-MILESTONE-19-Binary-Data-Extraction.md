@@ -26,11 +26,13 @@ From ExifTool manual:
 Before starting implementation, verify test sample availability:
 
 1. **Check existing test images**: Review `test-images/*` directory for RAW and JPEG samples
-2. **Required formats**: Ensure we have samples for:
-   - Canon CR2/CR3 with embedded previews
-   - Nikon NEF with preview images
-   - Sony ARW with embedded JPEGs
-   - JPEG files with EXIF thumbnails
+2. **Required formats**: Ensure we have samples with embedded full-size, preview, and thumb previews for:
+   - Canon CR2/CR3 
+   - Nikon NEF 
+   - Sony ARW 
+   - FUJI 
+   - PANASONIC
+   - JPEG files
 3. **Request missing samples**: Ask user to provide any missing format samples needed for comprehensive testing
 
 ### Phase 1: Core Binary Extraction Infrastructure (Week 1)
