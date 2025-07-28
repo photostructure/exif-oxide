@@ -138,7 +138,11 @@ pub fn extract_byte_value(data: &[u8], entry: &IfdEntry) -> Result<u8> {
 /// Extract BYTE array values from IFD entry
 /// ExifTool: lib/Image/ExifTool/Exif.pm:6372-6398 value extraction
 /// This handles BYTE format with count > 1 (arrays of unsigned 8-bit integers)
-pub fn extract_byte_array_value(data: &[u8], entry: &IfdEntry, byte_order: ByteOrder) -> Result<Vec<u8>> {
+pub fn extract_byte_array_value(
+    data: &[u8],
+    entry: &IfdEntry,
+    byte_order: ByteOrder,
+) -> Result<Vec<u8>> {
     let count = entry.count as usize;
 
     if entry.is_inline() && count <= 4 {
