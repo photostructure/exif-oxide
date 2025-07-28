@@ -757,14 +757,17 @@ pub fn apply_print_conv(
     warnings: &mut Vec<String>,
 ) -> TagValue {
     match tag_id {
+        2 => crate::implementations::print_conv::interopversion_print_conv(value),
         33434 => crate::implementations::print_conv::exposuretime_print_conv(value),
         33437 => crate::implementations::print_conv::fnumber_print_conv(value),
+        37121 => crate::implementations::print_conv::componentsconfiguration_print_conv(value),
         37377 => crate::implementations::print_conv::exposuretime_print_conv(value),
         37378 => crate::implementations::print_conv::decimal_1_print_conv(value),
         37380 => crate::implementations::print_conv::print_fraction(value),
         37381 => crate::implementations::print_conv::decimal_1_print_conv(value),
         37385 => crate::implementations::print_conv::flash_print_conv(value),
         37386 => crate::implementations::print_conv::focallength_print_conv(value),
+        41728 => crate::implementations::print_conv::filesource_print_conv(value),
         42034 => crate::implementations::print_conv::lensinfo_print_conv(value),
         _ => {
             // Fall back to shared handling
