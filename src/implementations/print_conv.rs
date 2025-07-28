@@ -658,6 +658,25 @@ pub fn flashpixversion_print_conv(val: &TagValue) -> TagValue {
     }
 }
 
+/// EXIF InteropVersion PrintConv
+/// ExifTool: lib/Image/ExifTool/Exif.pm:2850-2856 (InteropIFD definition)
+/// Converts undef bytes to ASCII string (e.g., [48, 49, 48, 48] -> "0100")
+pub fn interopversion_print_conv(val: &TagValue) -> TagValue {
+    match val {
+        TagValue::U8Array(bytes) | TagValue::Binary(bytes) => {
+            // Convert byte array to ASCII string
+            let ascii_string: String = bytes
+                .iter()
+                .map(|&b| b as char)
+                .collect::<String>()
+                .trim_end_matches('\0') // Remove null terminators
+                .to_string();
+            TagValue::string(ascii_string)
+        }
+        _ => TagValue::string(format!("Unknown ({val})")),
+    }
+}
+
 /// EXIF ComponentsConfiguration PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2262-2300
 /// Converts component array to "Y, Cb, Cr, -" format
@@ -680,6 +699,33 @@ pub fn componentsconfiguration_print_conv(val: &TagValue) -> TagValue {
 
             TagValue::string(component_names.join(", "))
         }
+        _ => TagValue::string(format!("Unknown ({val})")),
+    }
+}
+
+/// EXIF FileSource PrintConv
+/// ExifTool: lib/Image/ExifTool/Exif.pm:2313-2320
+/// Converts FileSource byte value to descriptive string
+pub fn filesource_print_conv(val: &TagValue) -> TagValue {
+    match val {
+        TagValue::U8Array(bytes) | TagValue::Binary(bytes) => {
+            if let Some(&first_byte) = bytes.first() {
+                match first_byte {
+                    1 => TagValue::string("Film Scanner"),
+                    2 => TagValue::string("Reflection Print Scanner"),
+                    3 => TagValue::string("Digital Camera"),
+                    _ => TagValue::string(format!("Unknown ({})", first_byte)),
+                }
+            } else {
+                TagValue::string(format!("Unknown ({val})"))
+            }
+        }
+        TagValue::U8(val) => match val {
+            1 => TagValue::string("Film Scanner"),
+            2 => TagValue::string("Reflection Print Scanner"),
+            3 => TagValue::string("Digital Camera"),
+            _ => TagValue::string(format!("Unknown ({val})")),
+        },
         _ => TagValue::string(format!("Unknown ({val})")),
     }
 }
@@ -1074,10 +1120,7 @@ mod tests {
     #[test]
     fn test_print_fraction() {
         // Test zero value
-        assert_eq!(
-            print_fraction(&TagValue::F64(0.0)),
-            TagValue::F64(0.0)
-        );
+        assert_eq!(print_fraction(&TagValue::F64(0.0)), TagValue::F64(0.0));
 
         // Test SRational zero (like ExposureCompensation 0/3)
         assert_eq!(
