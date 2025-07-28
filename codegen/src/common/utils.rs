@@ -73,6 +73,40 @@ pub fn escape_regex_for_rust(pattern: &str) -> String {
     }
 }
 
+/// Check if a string contains characters that require raw string literal in Rust
+pub fn needs_raw_string(s: &str) -> bool {
+    // Check for backslash followed by common escape sequences that aren't valid in Rust
+    s.contains("\\s") || s.contains("\\S") || s.contains("\\d") || s.contains("\\D") ||
+    s.contains("\\w") || s.contains("\\W") || s.contains("\\b") || s.contains("\\B") ||
+    s.contains("\\A") || s.contains("\\z") || s.contains("\\Z") ||
+    // Also check for regex patterns
+    s.contains("=~") || s.contains("!~")
+}
+
+/// Format a string for use in Rust code, using raw string if needed
+pub fn format_rust_string(s: &str) -> String {
+    if needs_raw_string(s) {
+        // Use raw string literal
+        if s.contains('"') && !s.contains('#') {
+            // Use r#"..."# format
+            format!("r#\"{}\"#", s)
+        } else if s.contains('"') && s.contains('#') {
+            // Need to use more # symbols if the string contains #
+            let mut hashes = "#".to_string();
+            while s.contains(&format!("\"{}", hashes)) {
+                hashes.push('#');
+            }
+            format!("r{}\"{}\"{}", hashes, s, hashes)
+        } else {
+            // Simple raw string
+            format!("r\"{}\"", s)
+        }
+    } else {
+        // Use regular escaped string
+        format!("\"{}\"", escape_string(s))
+    }
+}
+
 /// Convert ExifTool module names to relative source file paths
 pub fn module_to_source_path(module: &str) -> String {
     if module.contains("/") {

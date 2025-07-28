@@ -6,10 +6,11 @@ use anyhow::Result;
 use std::fs;
 use std::collections::HashMap;
 use std::time::Instant;
-use crate::common::escape_string;
+use crate::common::{escape_string, format_rust_string};
 use crate::schemas::tag_kit::{TagKitExtraction, TagKit, ExtractedTable};
 use super::tag_kit_split::{split_tag_kits, TagCategory};
 use crate::conv_registry::{lookup_printconv, lookup_valueconv, lookup_tag_specific_printconv};
+use crate::printconv_translator::PrintConvTranslator;
 use serde::Deserialize;
 use tracing::{debug, info};
 
@@ -26,7 +27,7 @@ fn module_name_to_group(module_name: &str) -> &str {
         "PanasonicRaw_pm" => "PanasonicRaw",
         "MinoltaRaw_pm" => "MinoltaRaw",
         "KyoceraRaw_pm" => "KyoceraRaw",
-        "FujiFilm_pm" => "FujiFilm",
+        "FujiFilm_pm" => "FujiFilM",
         "Casio_pm" => "Casio",
         "QuickTime_pm" => "QuickTime",
         "RIFF_pm" => "RIFF",
@@ -34,6 +35,48 @@ fn module_name_to_group(module_name: &str) -> &str {
         "PNG_pm" => "PNG",
         _ => module_name.trim_end_matches("_pm"),
     }
+}
+
+/// Parse fractional keys (e.g., "10.1" -> 10) or regular integer keys
+/// This handles ExifTool's use of fractional keys to distinguish sub-variants:
+/// - Canon lens types: "10.1", "10.2" for multiple lenses sharing base ID 10
+/// - Nikon tag IDs: "586.1", "590.2" for sub-features within larger tag structures  
+/// - Shutter speeds: "37.5", "40.5" for precise intermediate values
+fn parse_fractional_key_as_i16(key: &str) -> i16 {
+    // First try parsing as regular integer
+    if let Ok(val) = key.parse::<i16>() {
+        return val;
+    }
+    
+    // Try parsing fractional key (e.g., "10.1" -> 10)
+    if let Some(dot_pos) = key.find('.') {
+        let base_part = &key[..dot_pos];
+        if let Ok(base_val) = base_part.parse::<i16>() {
+            return base_val;
+        }
+    }
+    
+    // Fallback to 0 if parsing fails completely
+    0
+}
+
+/// Parse fractional keys as u32 for tag IDs
+fn parse_fractional_key_as_u32(key: &str) -> u32 {
+    // First try parsing as regular integer
+    if let Ok(val) = key.parse::<u32>() {
+        return val;
+    }
+    
+    // Try parsing fractional key (e.g., "586.1" -> 586)
+    if let Some(dot_pos) = key.find('.') {
+        let base_part = &key[..dot_pos];
+        if let Ok(base_val) = base_part.parse::<u32>() {
+            return base_val;
+        }
+    }
+    
+    // Fallback to 0 if parsing fails completely
+    0
 }
 
 /// Shared table data loaded from shared_tables.json
@@ -139,7 +182,7 @@ fn generate_print_conv_function(
     let mut tag_convs_map: std::collections::HashMap<u32, (String, String)> = std::collections::HashMap::new();
     
     for tag_kit in &extraction.tag_kits {
-        let tag_id = tag_kit.tag_id.parse::<u32>().unwrap_or(0);
+        let tag_id = parse_fractional_key_as_u32(&tag_kit.tag_id);
         
         // Skip if we already have a PrintConv for this tag_id
         if tag_convs_map.contains_key(&tag_id) {
@@ -255,7 +298,7 @@ fn generate_value_conv_function(
     let mut tag_convs_map: std::collections::HashMap<u32, (String, String)> = std::collections::HashMap::new();
     
     for tag_kit in &extraction.tag_kits {
-        let tag_id = tag_kit.tag_id.parse::<u32>().unwrap_or(0);
+        let tag_id = parse_fractional_key_as_u32(&tag_kit.tag_id);
         
         // Skip if we already have a ValueConv for this tag_id
         if tag_convs_map.contains_key(&tag_id) {
@@ -407,6 +450,8 @@ fn generate_category_module(
 ) -> Result<(String, usize)> {
     let start_time = Instant::now();
     let mut code = String::new();
+    let mut translated_functions = Vec::new(); // Collect translated functions
+    let mut generated_function_names = std::collections::HashSet::new(); // Track already generated functions
     
     // Header with warning suppression at the top
     code.push_str(&format!("//! Tag kits for {} category from {}\n", category_name, source.module));
@@ -467,7 +512,7 @@ fn generate_category_module(
     let mut category_print_conv_index = *print_conv_counter - local_print_conv_count;
     
     for tag_kit in tag_kits {
-        let tag_id = tag_kit.tag_id.parse::<u32>().unwrap_or(0);
+        let tag_id = parse_fractional_key_as_u32(&tag_kit.tag_id);
         
         code.push_str(&format!("        ({tag_id}, TagKitDef {{\n"));
         code.push_str(&format!("            id: {tag_id},\n"));
@@ -502,8 +547,36 @@ fn generate_category_module(
             "Expression" => {
                 if let Some(expr_data) = &tag_kit.print_conv_data {
                     if let Some(expr_str) = expr_data.as_str() {
-                        code.push_str(&format!("            print_conv: PrintConvType::Expression(\"{}\"),\n", 
-                            escape_string(expr_str)));
+                        // Try to translate the Perl expression to Rust code
+                        let mut translator = PrintConvTranslator::new();
+                        let module_name = _current_module;
+                        
+                        match translator.translate_expression(expr_str, &tag_kit.name, module_name) {
+                            Ok(rust_code) => {
+                                // Translation succeeded - collect the function and use Manual type
+                                let function_name = format!("{}_printconv", tag_kit.name.to_lowercase()
+                                    .replace('-', "_")
+                                    .replace(' ', "_")
+                                    .replace(':', "_")
+                                    .replace('.', "_"));
+                                
+                                // Only add the function if we haven't already generated it
+                                if !generated_function_names.contains(&function_name) {
+                                    translated_functions.push(rust_code);
+                                    generated_function_names.insert(function_name.clone());
+                                }
+                                
+                                code.push_str(&format!("            print_conv: PrintConvType::Manual(\"{}\"),\n", 
+                                    function_name));
+                                debug!("Successfully translated Expression for {}: {}", tag_kit.name, expr_str);
+                            }
+                            Err(e) => {
+                                // Translation failed - fall back to Expression type
+                                debug!("Failed to translate Expression for {}: {} - Error: {}", tag_kit.name, expr_str, e);
+                                code.push_str(&format!("            print_conv: PrintConvType::Expression({}),\n", 
+                                    format_rust_string(expr_str)));
+                            }
+                        }
                     } else {
                         code.push_str("            print_conv: PrintConvType::Expression(\"unknown\"),\n");
                     }
@@ -547,6 +620,15 @@ fn generate_category_module(
     
     code.push_str("    ]\n");
     code.push_str("}\n");
+    
+    // Add translated PrintConv functions at the end
+    if !translated_functions.is_empty() {
+        code.push_str("\n// Translated PrintConv functions\n");
+        for func_code in translated_functions {
+            code.push_str(&func_code);
+            code.push_str("\n");
+        }
+    }
     
     debug!("            🔧 Category {} code generation took {:.3}s", category_name, start_time.elapsed().as_secs_f64());
     Ok((code, local_print_conv_count))
@@ -635,7 +717,7 @@ fn generate_mod_file(
     let const_name = format!("{}_TAG_KITS", module_name.to_uppercase());
     code.push_str(&format!("/// All tag kits for {module_name}\n"));
     code.push_str(&format!("pub static {const_name}: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {{\n"));
-    code.push_str("    let mut map = HashMap::new();\n");
+    code.push_str("    let mut map: HashMap<u32, TagKitDef> = HashMap::new();\n");
     code.push_str("    \n");
     
     // Add tags from each module (sorted for deterministic output)
@@ -645,6 +727,17 @@ fn generate_mod_file(
     for module in sorted_modules {
         code.push_str(&format!("    // {module} tags\n"));
         code.push_str(&format!("    for (id, tag_def) in {module}::get_{module}_tags() {{\n"));
+        code.push_str("        // Priority insertion: preserve existing entries with subdirectory processors\n");
+        code.push_str("        match map.get(&id) {\n");
+        code.push_str("            Some(existing) if existing.subdirectory.is_some() => {\n");
+        code.push_str("                // Keep existing tag if it has a subdirectory processor\n");
+        code.push_str("                if tag_def.subdirectory.is_none() {\n");
+        code.push_str("                    // Skip this tag - existing one is more important\n");
+        code.push_str("                    continue;\n");
+        code.push_str("                }\n");
+        code.push_str("            }\n");
+        code.push_str("            _ => {}\n");
+        code.push_str("        }\n");
         code.push_str("        map.insert(id, tag_def);\n");
         code.push_str("    }\n");
         code.push_str("    \n");
@@ -1032,7 +1125,7 @@ fn collect_subdirectory_info(tag_kits: &[TagKit]) -> HashMap<u32, SubDirectoryCo
     
     for tag_kit in tag_kits {
         if let Some(subdirectory) = &tag_kit.subdirectory {
-            let tag_id = tag_kit.tag_id.parse::<u32>().unwrap_or(0);
+            let tag_id = parse_fractional_key_as_u32(&tag_kit.tag_id);
             
             let variant = SubDirectoryVariant {
                 variant_id: tag_kit.variant_id.clone().unwrap_or_else(|| format!("{tag_id}_default")),
@@ -1515,6 +1608,7 @@ fn generate_subdirectory_dispatcher(
     Ok(())
 }
 
+
 /// Check if a ProcessBinaryData parser is available for the given table
 fn has_binary_data_parser(module_name: &str, table_name: &str) -> bool {
     // Strip module prefix from table name (e.g., "canon_processing" -> "processing")
@@ -1525,10 +1619,30 @@ fn has_binary_data_parser(module_name: &str, table_name: &str) -> bool {
         table_name
     };
     
+    // Check for generated ProcessBinaryData parser
     let binary_data_file = format!("../src/generated/{}/{}_binary_data.rs", 
                                    module_name, 
                                    clean_table_name.to_lowercase());
-    std::path::Path::new(&binary_data_file).exists()
+    if std::path::Path::new(&binary_data_file).exists() {
+        return true;
+    }
+    
+    // Check for runtime table data
+    if has_runtime_table_data(module_name, clean_table_name) {
+        return true;
+    }
+    
+    // No manual implementations needed - conv_registry handles ValueConv automatically
+    false
+}
+
+/// Check if runtime table data is available for the given table
+fn has_runtime_table_data(module_name: &str, table_name: &str) -> bool {
+    // Check for CameraSettings specifically
+    if module_name == "Canon_pm" && table_name.to_lowercase() == "camerasettings" {
+        return true;
+    }
+    false
 }
 
 /// Generate ProcessBinaryData integration for a table
@@ -1541,11 +1655,19 @@ fn generate_binary_data_integration(code: &mut String, table_name: &str, module_
         table_name
     };
     
+    // Check if we should use runtime table data instead
+    if has_runtime_table_data(module_name, clean_table_name) {
+        return generate_runtime_table_integration(code, table_name, module_name, clean_table_name);
+    }
+    
     let table_snake = clean_table_name.to_lowercase();
     let table_pascal = to_pascal_case(clean_table_name);
     
     code.push_str(&format!("fn process_{table_name}(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n"));
     code.push_str(&format!("    tracing::debug!(\"process_{table_name} called with {{}} bytes\", data.len());\n"));
+    
+    // Conv_registry system now handles Canon ValueConv processing automatically
+    
     // Generate the correct struct name to match binary data generator pattern
     // Extract manufacturer from module name (e.g., "Canon_pm" -> "Canon", "Sony_pm" -> "Sony")
     let manufacturer = module_name.replace("_pm", "");
@@ -1559,6 +1681,7 @@ fn generate_binary_data_integration(code: &mut String, table_name: &str, module_
         "camerasettings2" => format!("{}CameraSettings2Table", manufacturer),
         "shotinfo" => format!("{}ShotInfoTable", manufacturer),
         "processing" => format!("{}ProcessingTable", manufacturer),
+        "measuredcolor" => format!("{}MeasuredColorTable", manufacturer),
         _ => format!("{}{table_pascal}Table", manufacturer)
     };
     code.push_str(&format!("    use crate::generated::{}::{}_binary_data::{{{}, {}_TAGS}};\n", 
@@ -1639,6 +1762,96 @@ fn generate_binary_data_integration(code: &mut String, table_name: &str, module_
     code.push_str("    Ok(tags)\n");
     code.push_str("}\n\n");
     
+    Ok(())
+}
+
+/// Generate binary data parser from runtime table data
+fn generate_runtime_table_integration(code: &mut String, table_name: &str, module_name: &str, clean_table_name: &str) -> Result<()> {
+    // For now, handle Canon CameraSettings specifically
+    if module_name == "Canon_pm" && clean_table_name.to_lowercase() == "camerasettings" {
+        return generate_canon_camerasettings_parser(code, table_name);
+    }
+    
+    // Fall back to empty stub for other tables
+    code.push_str(&format!("fn process_{table_name}(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n"));
+    code.push_str("    let mut tags = Vec::new();\n");
+    code.push_str("    // TODO: Implement runtime table parser\n");
+    code.push_str("    Ok(tags)\n");
+    code.push_str("}\n");
+    Ok(())
+}
+
+/// Generate Canon CameraSettings parser from runtime table data
+fn generate_canon_camerasettings_parser(code: &mut String, table_name: &str) -> Result<()> {
+    // Load the runtime table data - use absolute path from project root
+    let runtime_data_path = "generated/extract/runtime_tables/third-party_exiftool_lib_image_exiftool_canon_runtime_tables.json";
+    let runtime_data = std::fs::read_to_string(runtime_data_path)?;
+    let runtime_json: serde_json::Value = serde_json::from_str(&runtime_data)?;
+    
+    code.push_str(&format!("fn process_{table_name}(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n"));
+    code.push_str(&format!("    tracing::debug!(\"process_{table_name} called with {{}} bytes\", data.len());\n"));
+    code.push_str("    let mut tags = Vec::new();\n");
+    code.push_str("    \n");
+    code.push_str("    // Canon CameraSettings uses int16s format with FIRST_ENTRY = 1\n");
+    code.push_str("    let entry_size = 2;\n");
+    code.push_str("    let first_entry = 1;\n");
+    code.push_str("    \n");
+    
+    // Extract tag definitions from runtime table data
+    if let Some(tag_definitions) = runtime_json["tables"]["CameraSettings"]["tag_definitions"].as_object() {
+        // Sort tags by offset for consistent output
+        let mut sorted_tags: Vec<(&String, &serde_json::Value)> = tag_definitions.iter().collect();
+        sorted_tags.sort_by_key(|(offset, _)| offset.parse::<u32>().unwrap_or(0));
+        
+        for (offset_str, tag_data) in sorted_tags {
+            let offset: u32 = offset_str.parse().unwrap_or(0);
+            let tag_name = tag_data["name"].as_str().unwrap_or("Unknown");
+            
+            code.push_str(&format!("    // {} at offset {}\n", tag_name, offset));
+            code.push_str(&format!("    {{\n"));
+            code.push_str(&format!("        let byte_offset = (({}i32 - first_entry) * entry_size) as usize;\n", offset));
+            code.push_str(&format!("        if byte_offset + entry_size as usize <= data.len() {{\n"));
+            code.push_str(&format!("            if let Ok(value) = read_int16s(&data[byte_offset..byte_offset + entry_size as usize], byte_order) {{\n"));
+            
+            // Check if there's a simple PrintConv for this tag
+            if let Some(print_conv) = tag_data["print_conv"].as_object() {
+                if print_conv["conversion_type"] == "simple_hash" {
+                    if let Some(print_conv_data) = print_conv["data"].as_object() {
+                        code.push_str(&format!("                let formatted = match value {{\n"));
+                        // Group fractional keys by their base integer value
+                        let mut grouped_keys: HashMap<i16, Vec<(&String, &serde_json::Value)>> = HashMap::new();
+                        for (key, val) in print_conv_data {
+                            let key_val = parse_fractional_key_as_i16(key);
+                            grouped_keys.entry(key_val).or_insert_with(Vec::new).push((key, val));
+                        }
+                        
+                        // Generate match arms, using the first description for each base key
+                        for (key_val, entries) in grouped_keys.iter() {
+                            let description = entries[0].1.as_str().unwrap_or("Unknown");
+                            code.push_str(&format!("                    {} => \"{}\",\n", key_val, description));
+                        }
+                        code.push_str(&format!("                    _ => \"Unknown\",\n"));
+                        code.push_str(&format!("                }};\n"));
+                        code.push_str(&format!("                tags.push((\"{}\".to_string(), TagValue::String(formatted.to_string())));\n", tag_name));
+                    }
+                } else {
+                    // No PrintConv or complex PrintConv - store raw value
+                    code.push_str(&format!("                tags.push((\"{}\".to_string(), TagValue::I16(value)));\n", tag_name));
+                }
+            } else {
+                // No PrintConv - store raw value
+                code.push_str(&format!("                tags.push((\"{}\".to_string(), TagValue::I16(value)));\n", tag_name));
+            }
+            
+            code.push_str(&format!("            }}\n"));
+            code.push_str(&format!("        }}\n"));
+            code.push_str(&format!("    }}\n"));
+            code.push_str(&format!("    \n"));
+        }
+    }
+    
+    code.push_str("    Ok(tags)\n");
+    code.push_str("}\n");
     Ok(())
 }
 

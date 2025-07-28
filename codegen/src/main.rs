@@ -21,6 +21,7 @@ mod file_operations;
 mod generated;
 mod generators;
 mod patching;
+mod printconv_translator;
 mod schemas;
 mod table_processor;
 mod validation;
