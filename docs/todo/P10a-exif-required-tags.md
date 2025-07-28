@@ -335,6 +335,23 @@ Tier 3 (Best effort): Edge cases that don't block DAM deployment
 - **Major wins**: GPS precision working, PrintConv pipeline functional, ASCII whitespace handling correct, APEX value boundary checks working
 - **PhotoStructure production ready**: Critical metadata tags working for DAM workflows, mathematical correctness ensured
 
+**EXIF Data Type Fixes (2025-07-27)**:
+
+- ✅ **SubSec tags TYPE MISMATCHES fixed**: `SubSecTime`/`SubSecTimeOriginal`/`SubSecTimeDigitized` now output integers (`16`) instead of floats (`"16.0"`)
+  - **Root cause**: `string_with_numeric_detection()` was converting integer strings to `F64` instead of appropriate integer types
+  - **Solution**: Enhanced numeric detection to parse integers first, using correct integer types (`U16`, `I16`, etc.) before falling back to `F64`
+  - **Impact**: Fixed 3 TYPE MISMATCHES, improved JSON format compatibility with ExifTool
+
+- ✅ **EXIF version tags byte order fixed**: `ExifVersion`/`FlashpixVersion`/`InteropVersion` now show correct values (`"0221"` vs `"1220"`)
+  - **Root cause**: `extract_byte_array_value()` always used little-endian byte order (`to_le_bytes()`) for inline values, ignoring file's actual byte order
+  - **Solution**: Added `ByteOrder` parameter to `extract_byte_array_value()` and respect file's endianness for inline 4-byte values like ExifVersion
+  - **Impact**: Fixed 3 critical EXIF version tag mismatches, resolving byte-swapping issues for inline UNDEFINED format tags
+
+**Current Status (2025-07-27 afternoon)**:
+- **59 working tags** (improved from 54) with fixes for integer formatting and version tag byte order
+- **153 total differences** (down from 158) - steady progress toward 95% PhotoStructure target
+- **No more ExifVersion issues** - all version tags now match ExifTool exactly
+
 ## Gotchas & Tribal Knowledge
 
 **DAM-Specific Considerations**:
