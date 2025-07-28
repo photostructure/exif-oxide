@@ -107,6 +107,17 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
     m.insert("IsFloat($val) && abs($val) < 100 ? 2**(-$val) : 0", ("crate::implementations::value_conv", "apex_shutter_speed_value_conv"));
     m.insert("2**($val / 2)", ("crate::implementations::value_conv", "apex_aperture_value_conv"));
     
+    // Canon ValueConv expressions (normalized)
+    m.insert("exp($val / 32 * log(2)) * 100", ("crate::implementations::value_conv", "canon_auto_iso_value_conv"));
+    m.insert("exp($val / 32 * log(2)) * 100 / 32", ("crate::implementations::value_conv", "canon_base_iso_value_conv"));
+    m.insert("$val / 32 + 5", ("crate::implementations::value_conv", "canon_div_32_plus_5_value_conv"));
+    m.insert("$val / 10", ("crate::implementations::value_conv", "canon_div_10_value_conv"));
+    m.insert("$val / 100", ("crate::implementations::value_conv", "canon_div_100_value_conv"));
+    m.insert("$val + 1", ("crate::implementations::value_conv", "canon_plus_1_value_conv"));
+    m.insert("$val * 25.4 / 1000", ("crate::implementations::value_conv", "canon_millimeter_value_conv"));
+    m.insert("($val >> 16) | (($val & 0xffff) << 16)", ("crate::implementations::value_conv", "canon_file_number_value_conv"));
+    m.insert("(($val & 0xffc0) >> 6) * 10000 + (($val >> 16) & 0xff) + (($val & 0x3f) << 8)", ("crate::implementations::value_conv", "canon_directory_number_value_conv"));
+
     // Manual function mappings
     m.insert("gpslatitude_value_conv", ("crate::implementations::value_conv", "gps_coordinate_value_conv"));
     m.insert("gpslongitude_value_conv", ("crate::implementations::value_conv", "gps_coordinate_value_conv"));
