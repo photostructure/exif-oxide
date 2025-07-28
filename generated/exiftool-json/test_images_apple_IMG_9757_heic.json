@@ -6,6 +6,7 @@
   "Composite:GPSLongitude": -122.38015,
   "EXIF:GPSAltitude": 148.0275536,
   "Composite:GPSAltitude": 148.0275536,
+  "Composite:GPSPosition": "40.5935972222222 -122.38015",
   "File:FileSize": 1843714,
   "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "IMG_9757.heic",
@@ -56,6 +57,5 @@
   "Composite:SubSecDateTimeOriginal": "2024:04:20 20:22:20.636-07:00",
   "Composite:SubSecModifyDate": "2024:04:20 20:22:20-07:00",
   "Composite:GPSDateTime": "2024:04:21 03:22:20Z",
-  "Composite:GPSPosition": "40 deg 35' 36.95\" N, 122 deg 22' 48.54\" W",
   "Composite:LensID": "iPhone 13 Pro back triple camera 5.7mm f/1.5"
 }

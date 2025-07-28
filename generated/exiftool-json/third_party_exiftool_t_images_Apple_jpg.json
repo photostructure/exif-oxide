@@ -6,6 +6,7 @@
   "Composite:GPSLongitude": -1.45667777777778,
   "EXIF:GPSAltitude": 72.36649215,
   "Composite:GPSAltitude": 72.36649215,
+  "Composite:GPSPosition": "53.3828472222222 -1.45667777777778",
   "File:FileSize": 2355,
   "ExifTool:ExifToolVersion": 13.31,
   "File:FileName": "Apple.jpg",
@@ -55,7 +56,6 @@
   "Composite:SubSecDateTimeOriginal": "2016:09:28 18:18:05.813",
   "EXIF:ThumbnailImage": "(Binary data 28 bytes, use -b option to extract)",
   "Composite:GPSDateTime": "2016:09:28 17:17:58.65Z",
-  "Composite:GPSPosition": "53 deg 22' 58.25\" N, 1 deg 27' 24.04\" W",
   "Composite:ImageSize": "8x8",
   "Composite:Megapixels": 0.000064,
   "Composite:LensID": "iPhone 7 back camera 3.99mm f/1.8"
