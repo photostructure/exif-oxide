@@ -9,13 +9,18 @@ use tracing::trace;
 
 use crate::types::TagValue;
 
-/// Compute ImageSize composite (ImageWidth + ImageHeight) - ValueConv only
+/// Compute ImageSize composite with proper formatting
 /// ExifTool: lib/Image/ExifTool/Exif.pm:4641-4660 ImageSize definition
 /// ValueConv: return $val[4] if $val[4]; return "$val[2] $val[3]" if $val[2] and $val[3] and $$self{TIFF_TYPE} =~ /^(CR2|Canon 1D RAW|IIQ|EIP)$/; return "$val[0] $val[1]" if IsFloat($val[0]) and IsFloat($val[1]); return undef;
-/// PrintConv: '$val =~ tr/ /x/; $val' (handled separately in imagesize_print_conv)
+/// PrintConv: '$val =~ tr/ /x/; $val' - converts spaces to 'x' for "WIDTHxHEIGHT" format
 pub fn compute_image_size(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
     // Check RawImageCroppedSize first (index 4 in desire list)
     if let Some(raw_size) = available_tags.get("RawImageCroppedSize") {
+        // Apply PrintConv formatting if it's a space-separated format
+        if let Some(size_str) = raw_size.as_string() {
+            let formatted = size_str.replace(' ', "x");
+            return Some(TagValue::string(formatted));
+        }
         return Some(raw_size.clone());
     }
 
@@ -30,7 +35,8 @@ pub fn compute_image_size(available_tags: &HashMap<String, TagValue>) -> Option<
             available_tags.get("EXIF:ExifImageHeight"),
         ) {
             if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
-                return Some(TagValue::string(format!("{w} {h}"))); // ValueConv: space separator
+                // Apply PrintConv formatting: "WIDTHxHEIGHT" format
+                return Some(TagValue::string(format!("{w}x{h}")));
             }
         }
     }
@@ -43,7 +49,8 @@ pub fn compute_image_size(available_tags: &HashMap<String, TagValue>) -> Option<
         compute_image_height(available_tags),
     ) {
         if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
-            return Some(TagValue::string(format!("{w} {h}"))); // ValueConv: space separator
+            // Apply PrintConv formatting: "WIDTHxHEIGHT" format
+            return Some(TagValue::string(format!("{w}x{h}")));
         }
     }
 
@@ -116,6 +123,75 @@ pub fn compute_preview_image_size(available_tags: &HashMap<String, TagValue>) ->
     None
 }
 
+/// Generate ThumbnailImage binary data indicator when ThumbnailOffset and ThumbnailLength are present
+/// ExifTool: When both JPEGInterchangeFormat (ThumbnailOffset) and JPEGInterchangeFormatLength (ThumbnailLength) exist,
+/// ExifTool creates a binary data indicator: "(Binary data X bytes, use -b option to extract)"
+/// Reference: ExifTool's Composite.pm ThumbnailImage definition
+///
+/// Note: ExifTool uses different tag names for the same IDs depending on format/IFD:
+/// - ThumbnailOffset/ThumbnailLength: IFD1 of JPEG and some TIFF
+/// - PreviewImageStart/PreviewImageLength: MakerNotes and IFD0 of ARW/SR2  
+/// - OtherImageStart/OtherImageLength: everything else (including Sony ARW in our implementation)
+pub fn compute_thumbnail_image(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Try multiple naming patterns used by ExifTool for format-specific contexts
+
+    // Pattern 1: Standard thumbnail naming (JPEG IFD1, some TIFF)
+    if let (Some(offset), Some(length)) = (
+        available_tags.get("ThumbnailOffset"),
+        available_tags.get("ThumbnailLength"),
+    ) {
+        if let (Some(_offset_val), Some(length_val)) = (offset.as_u32(), length.as_u32()) {
+            if length_val > 0 {
+                return Some(TagValue::string(format!(
+                    "(Binary data {} bytes, use -b option to extract)",
+                    length_val
+                )));
+            }
+        }
+    }
+
+    // Pattern 2: Generic image naming (used for Sony ARW and other formats)
+    if let (Some(offset), Some(length)) = (
+        available_tags.get("OtherImageStart"),
+        available_tags.get("OtherImageLength"),
+    ) {
+        if let (Some(_offset_val), Some(length_val)) = (offset.as_u32(), length.as_u32()) {
+            if length_val > 0 {
+                return Some(TagValue::string(format!(
+                    "(Binary data {} bytes, use -b option to extract)",
+                    length_val
+                )));
+            }
+        }
+    }
+
+    None
+}
+
+/// Generate PreviewImage binary data indicator when PreviewImageStart and PreviewImageLength are present
+/// ExifTool: When both PreviewImageStart and PreviewImageLength exist,
+/// ExifTool creates a binary data indicator: "(Binary data X bytes, use -b option to extract)"
+/// Reference: ExifTool's Composite.pm PreviewImage definition
+pub fn compute_preview_image(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Look for PreviewImageStart and PreviewImageLength (required for composite)
+    if let (Some(start), Some(length)) = (
+        available_tags.get("PreviewImageStart"),
+        available_tags.get("PreviewImageLength"),
+    ) {
+        // Verify both values are valid positive numbers
+        if let (Some(_start_val), Some(length_val)) = (start.as_u32(), length.as_u32()) {
+            if length_val > 0 {
+                // ExifTool format: "(Binary data X bytes, use -b option to extract)"
+                return Some(TagValue::string(format!(
+                    "(Binary data {} bytes, use -b option to extract)",
+                    length_val
+                )));
+            }
+        }
+    }
+    None
+}
+
 /// Compute ShutterSpeed composite (ExposureTime formatted as '1/x' or 'x''')  
 /// ExifTool: lib/Image/ExifTool/Composite.pm ShutterSpeed definition
 /// ValueConv: ($val[2] and $val[2]>0) ? $val[2] : (defined($val[0]) ? $val[0] : $val[1])
@@ -180,21 +256,35 @@ pub fn format_shutter_speed(time_seconds: f64) -> TagValue {
     }
 }
 
-/// Compute Aperture composite tag
+/// Compute Aperture composite tag with proper formatting
 /// ExifTool: lib/Image/ExifTool/Composite.pm - "$val[0] || $val[1]"
-/// Tries FNumber first, falls back to ApertureValue
+/// ValueConv: Tries FNumber first, falls back to ApertureValue
+/// PrintConv: Format as decimal (e.g., "3.9") without "f/" prefix
 pub fn compute_aperture(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
     // Try FNumber first (index 0 in desire list)
-    if let Some(fnumber) = available_tags.get("FNumber") {
-        return Some(fnumber.clone());
-    }
+    let raw_value = if let Some(fnumber) = available_tags.get("FNumber") {
+        fnumber
+    } else if let Some(aperture_value) = available_tags.get("ApertureValue") {
+        // Fall back to ApertureValue (index 1 in desire list)
+        aperture_value
+    } else {
+        return None;
+    };
 
-    // Fall back to ApertureValue (index 1 in desire list)
-    if let Some(aperture_value) = available_tags.get("ApertureValue") {
-        return Some(aperture_value.clone());
-    }
+    // Apply PrintConv formatting: convert to decimal format
+    let aperture_f64 = raw_value.as_f64()?;
 
-    None
+    // ExifTool displays aperture as decimal (no "f/" prefix)
+    // Round to 1 decimal place for standard apertures
+    let formatted = if aperture_f64.fract() < 0.01 {
+        // Display whole numbers without decimal (e.g., "2" not "2.0")
+        format!("{:.0}", aperture_f64)
+    } else {
+        // Display with one decimal place (e.g., "3.9")
+        format!("{:.1}", aperture_f64)
+    };
+
+    Some(TagValue::string(formatted))
 }
 
 /// Compute DateTimeOriginal composite tag
@@ -315,9 +405,10 @@ pub fn compute_circle_of_confusion(available_tags: &HashMap<String, TagValue>) -
     Some(TagValue::F64(coc))
 }
 
-/// Compute Megapixels composite tag from ImageSize
+/// Compute Megapixels composite tag with proper formatting
 /// ExifTool: lib/Image/ExifTool/Composite.pm Megapixels definition
 /// ValueConv: my @d = ($val =~ /\d+/g); $d[0] * $d[1] / 1000000
+/// PrintConv: Round to 1 decimal place (e.g., "16.1" not "16.12")
 pub fn compute_megapixels(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
     // Require ImageSize
     let image_size = available_tags.get("ImageSize")?;
@@ -341,7 +432,10 @@ pub fn compute_megapixels(available_tags: &HashMap<String, TagValue>) -> Option<
     let height = digits[1] as f64;
     let megapixels = (width * height) / 1_000_000.0;
 
-    Some(TagValue::F64(megapixels))
+    // Apply PrintConv formatting: round to 1 decimal place
+    // ExifTool displays as "16.1" not "16.12345"
+    let formatted = format!("{:.1}", megapixels);
+    Some(TagValue::string(formatted))
 }
 
 /// Compute GPSPosition composite tag from GPSLatitude and GPSLongitude
@@ -1233,4 +1327,64 @@ pub fn compute_panasonic_image_height(
         }
     }
     None
+}
+
+/// Compute LightValue composite tag using ExifTool's exact algorithm
+/// ExifTool: lib/Image/ExifTool/Exif.pm:4685-4697 LightValue definition
+/// ExifTool: lib/Image/ExifTool/Exif.pm:5319-5330 CalculateLV function
+/// ValueConv: 'Image::ExifTool::Exif::CalculateLV($val[0],$val[1],$prt[2])'
+/// Formula: LV = log₂(Aperture² × 100 / (ShutterSpeed × ISO))
+/// Reference: LV=0 is defined as f/1.0 at 1 second with ISO 100
+pub fn compute_light_value(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // Require Aperture (index 0), ShutterSpeed (index 1), ISO (index 2)
+    let aperture = available_tags.get("Aperture")?;
+    let shutter_speed = available_tags.get("ShutterSpeed")?;
+    let iso = available_tags.get("ISO")?;
+
+    // Extract and validate numeric values - all must be positive
+    // ExifTool: foreach (@_) { return undef unless $_ and /([+-]?(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?)/ and $1 > 0; }
+    let aperture_val = extract_positive_float(aperture)?;
+    let shutter_speed_val = extract_positive_float(shutter_speed)?;
+    let iso_val = extract_positive_float(iso)?;
+
+    // ExifTool: return log($_[0] * $_[0] * 100 / ($_[1] * $_[2])) / log(2);
+    // LV = log₂(Aperture² × 100 / (ShutterSpeed × ISO))
+    let light_value = (aperture_val * aperture_val * 100.0 / (shutter_speed_val * iso_val)).log2();
+
+    Some(TagValue::F64(light_value))
+}
+
+/// Extract positive float from TagValue matching ExifTool's regex pattern
+/// ExifTool: /([+-]?(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?)/ and $1 > 0
+fn extract_positive_float(tag_value: &TagValue) -> Option<f64> {
+    match tag_value {
+        TagValue::F64(val) if *val > 0.0 => Some(*val),
+        TagValue::U32(val) if *val > 0 => Some(*val as f64),
+        TagValue::U16(val) if *val > 0 => Some(*val as f64),
+        TagValue::U8(val) if *val > 0 => Some(*val as f64),
+        TagValue::I32(val) if *val > 0 => Some(*val as f64),
+        TagValue::I16(val) if *val > 0 => Some(*val as f64),
+        TagValue::Rational(num, den) if *den != 0 && *num > 0 => Some(*num as f64 / *den as f64),
+        TagValue::String(s) => {
+            // ExifTool regex: extract float from string (handles "1/200s", "f/2.8", etc.)
+            parse_float_from_string(s).filter(|&val| val > 0.0)
+        }
+        _ => None,
+    }
+}
+
+/// Parse float from string matching ExifTool's pattern extraction
+/// ExifTool: /([+-]?(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?)/
+fn parse_float_from_string(s: &str) -> Option<f64> {
+    // Handle fractional strings like "1/200"
+    if let Some(slash_pos) = s.find('/') {
+        let numerator = s[..slash_pos].parse::<f64>().ok()?;
+        let denominator = s[slash_pos + 1..].parse::<f64>().ok()?;
+        if denominator != 0.0 {
+            return Some(numerator / denominator);
+        }
+    }
+
+    // Try direct float parsing (handles "2.8", "100", etc.)
+    s.parse::<f64>().ok()
 }

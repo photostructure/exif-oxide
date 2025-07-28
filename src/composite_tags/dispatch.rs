@@ -10,77 +10,104 @@ use crate::generated::CompositeTagDef;
 use crate::types::TagValue;
 
 use super::implementations::*;
+use super::resolution::resolve_tag_dependency;
 
-/// Compute a single composite tag value based on its dependencies
-/// ExifTool: lib/Image/ExifTool.pm composite tag evaluation
+/// Compute a single composite tag value based on its dependencies using ExifTool's resolution
+/// ExifTool: lib/Image/ExifTool.pm composite tag evaluation with dynamic dependency resolution
 pub fn compute_composite_tag(
     composite_def: &CompositeTagDef,
     available_tags: &HashMap<String, TagValue>,
+    built_composites: &std::collections::HashSet<&str>,
 ) -> Option<TagValue> {
-    // Special handling for flexible composite tags like ImageSize
-    // Most composite implementations have their own dependency logic in the compute functions
-    if composite_def.name == "ImageSize" {
-        // ImageSize handles its own dependency logic internally
-    } else {
-        // Check if all required dependencies are available for other composites
-        for tag_name in composite_def.require {
-            if !available_tags.contains_key(*tag_name) {
-                trace!(
-                    "Missing required dependency for {}: {}",
-                    composite_def.name,
-                    tag_name
-                );
-                return None;
-            }
+    // Create a resolved dependency map for the composite computation
+    // This maps dependency names to their resolved values using ExifTool's dynamic lookup
+    let mut resolved_dependencies = HashMap::new();
+
+    // Resolve all require dependencies
+    for tag_name in composite_def.require {
+        if let Some(resolved_value) =
+            resolve_tag_dependency(tag_name, available_tags, built_composites)
+        {
+            resolved_dependencies.insert(tag_name.to_string(), resolved_value);
+        } else {
+            trace!(
+                "Missing required dependency for {}: {}",
+                composite_def.name,
+                tag_name
+            );
+            return None;
         }
+    }
+
+    // Resolve all desire dependencies (optional)
+    for tag_name in composite_def.desire {
+        if let Some(resolved_value) =
+            resolve_tag_dependency(tag_name, available_tags, built_composites)
+        {
+            resolved_dependencies.insert(tag_name.to_string(), resolved_value);
+        }
+    }
+
+    // For backward compatibility, also include original available_tags
+    // This allows compute functions to access tags not explicitly in require/desire
+    for (key, value) in available_tags {
+        resolved_dependencies
+            .entry(key.clone())
+            .or_insert_with(|| value.clone());
     }
 
     // Dispatch to specific composite tag implementations
     // Each implementation translates ExifTool's Perl ValueConv expression
     match composite_def.name {
         // Existing implementations
-        "ImageSize" => compute_image_size(available_tags),
-        "GPSAltitude" => compute_gps_altitude(available_tags),
-        "PreviewImageSize" => compute_preview_image_size(available_tags),
-        "ShutterSpeed" => compute_shutter_speed(available_tags),
+        "ImageSize" => compute_image_size(&resolved_dependencies),
+        "GPSAltitude" => compute_gps_altitude(&resolved_dependencies),
+        "PreviewImageSize" => compute_preview_image_size(&resolved_dependencies),
+        "ThumbnailImage" => compute_thumbnail_image(&resolved_dependencies),
+        "PreviewImage" => compute_preview_image(&resolved_dependencies),
+        "ShutterSpeed" => compute_shutter_speed(&resolved_dependencies),
 
         // New implementations for common composite tags
-        "Aperture" => compute_aperture(available_tags),
-        "DateTimeOriginal" => compute_datetime_original(available_tags),
-        "FocalLength35efl" => compute_focal_length_35efl(available_tags),
-        "ScaleFactor35efl" => compute_scale_factor_35efl(available_tags),
-        "SubSecDateTimeOriginal" => compute_subsec_datetime_original(available_tags),
-        "CircleOfConfusion" => compute_circle_of_confusion(available_tags),
-        "Megapixels" => compute_megapixels(available_tags),
-        "GPSPosition" => compute_gps_position(available_tags),
-        "HyperfocalDistance" => compute_hyperfocal_distance(available_tags),
-        "FOV" => compute_fov(available_tags),
-        "DOF" => compute_dof(available_tags),
+        "Aperture" => compute_aperture(&resolved_dependencies),
+        "DateTimeOriginal" => compute_datetime_original(&resolved_dependencies),
+        "FocalLength35efl" => compute_focal_length_35efl(&resolved_dependencies),
+        "ScaleFactor35efl" => compute_scale_factor_35efl(&resolved_dependencies),
+        "SubSecDateTimeOriginal" => compute_subsec_datetime_original(&resolved_dependencies),
+        "CircleOfConfusion" => compute_circle_of_confusion(&resolved_dependencies),
+        "Megapixels" => compute_megapixels(&resolved_dependencies),
+        "GPSPosition" => compute_gps_position(&resolved_dependencies),
+        "HyperfocalDistance" => compute_hyperfocal_distance(&resolved_dependencies),
+        "FOV" => compute_fov(&resolved_dependencies),
+        "DOF" => compute_dof(&resolved_dependencies),
 
         // Phase 1: Core Essential Tags
-        "ISO" => compute_iso(available_tags),
-        "ImageWidth" => compute_image_width(available_tags),
-        "ImageHeight" => compute_image_height(available_tags),
-        "Rotation" => compute_rotation(available_tags),
+        "ISO" => compute_iso(&resolved_dependencies),
+        "ImageWidth" => compute_image_width(&resolved_dependencies),
+        "ImageHeight" => compute_image_height(&resolved_dependencies),
+        "Rotation" => compute_rotation(&resolved_dependencies),
 
         // Phase 2: GPS Consolidation
-        "GPSDateTime" => compute_gps_datetime(available_tags),
-        "GPSLatitude" => compute_gps_latitude(available_tags),
-        "GPSLongitude" => compute_gps_longitude(available_tags),
+        "GPSDateTime" => compute_gps_datetime(&resolved_dependencies),
+        "GPSLatitude" => compute_gps_latitude(&resolved_dependencies),
+        "GPSLongitude" => compute_gps_longitude(&resolved_dependencies),
 
         // Phase 3: SubSec Timestamps
-        "SubSecCreateDate" => compute_subsec_create_date(available_tags),
-        "SubSecModifyDate" => compute_subsec_modify_date(available_tags),
-        "SubSecMediaCreateDate" => compute_subsec_media_create_date(available_tags),
+        "SubSecCreateDate" => compute_subsec_create_date(&resolved_dependencies),
+        "SubSecModifyDate" => compute_subsec_modify_date(&resolved_dependencies),
+        "SubSecMediaCreateDate" => compute_subsec_media_create_date(&resolved_dependencies),
 
         // Phase 4: Lens System
-        "Lens" => compute_lens(available_tags),
-        "LensID" => compute_lens_id(available_tags),
-        "LensSpec" => compute_lens_spec(available_tags),
-        "LensType" => compute_lens_type(available_tags),
+        "Lens" => compute_lens(&resolved_dependencies),
+        "LensID" => compute_lens_id(&resolved_dependencies),
+        "LensSpec" => compute_lens_spec(&resolved_dependencies),
+        "LensType" => compute_lens_type(&resolved_dependencies),
 
         // Phase 5: Media Tags & Advanced Features
-        "Duration" => compute_duration(available_tags),
+        "Duration" => compute_duration(&resolved_dependencies),
+
+        // Advanced composite calculations
+        "LightValue" => compute_light_value(&resolved_dependencies),
+
         // Enhanced ScaleFactor35efl (keep existing simple version for compatibility)
         // "ScaleFactor35efl" => compute_scale_factor_35efl_enhanced(available_tags),
         _ => {

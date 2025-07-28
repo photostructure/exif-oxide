@@ -129,11 +129,18 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
 - ✅ **SubSecModifyDate** - EXIF ModifyDate with subseconds and timezone
 - ✅ **SubSecMediaCreateDate** - Media create date with subseconds
 
+### Phase 6: Dynamic Dependency Resolution ✅ (July 28, 2025)
+- ✅ **ExifTool-compatible dynamic tag resolution** - Implements ExifTool's BuildCompositeTags algorithm (lib/Image/ExifTool.pm:3977-4055)
+- ✅ **Multi-pass composite-to-composite dependencies** - Handles complex dependency graphs like LightValue requiring Aperture, ShutterSpeed, ISO
+- ✅ **Manual tag computation bridge** - Allows enhanced consolidation (ISO from multiple sources) while maintaining ExifTool compatibility
+- ✅ **LightValue composite implementation** - Exact ExifTool CalculateLV function (lib/Image/ExifTool/Exif.pm:5319-5330)
+- ✅ **Validated with real images** - LightValue: 14.96 computed correctly using dynamic ISO resolution
+
 ### Quality Assurance ✅ (July 25, 2025)
 - ✅ All implementations include ExifTool source file and line number references
 - ✅ Comprehensive testing with `make precommit` - all tests passing
 - ✅ Full compliance with Trust ExifTool principle
-- ✅ 10 critical composite tags successfully implemented and validated
+- ✅ 11 critical composite tags successfully implemented and validated
 
 ## Remaining Tasks
 
