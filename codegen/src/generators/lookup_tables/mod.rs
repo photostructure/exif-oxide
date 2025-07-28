@@ -477,6 +477,53 @@ fn generate_conditional_tags_file(
         .write_to_file(&file_path)
 }
 
+/// Integrate Main table tags that have subdirectories into the tag kit
+fn integrate_main_table_tags(
+    tag_kit_data: &mut crate::schemas::tag_kit::TagKitExtraction,
+    tag_structure_data: &crate::generators::tag_structure::TagStructureData,
+) {
+    use crate::schemas::tag_kit::{TagKit, SubDirectoryInfo};
+    
+    // Convert Main table tags with subdirectories into tag kit entries
+    for tag in &tag_structure_data.tags {
+        if tag.has_subdirectory && tag.subdirectory_table.is_some() {
+            let subdirectory_table = tag.subdirectory_table.as_ref().unwrap();
+            
+            // Create a tag kit entry for this Main table tag
+            let tag_kit = TagKit {
+                tag_id: tag.tag_id_decimal.to_string(),
+                name: tag.name.clone(),
+                format: "unknown".to_string(), // Main table tags don't have specific formats in tag structure
+                groups: HashMap::new(),
+                writable: if tag.writable { Some(serde_json::Value::Bool(true)) } else { None },
+                notes: tag.description.clone(),
+                print_conv_type: "None".to_string(),
+                print_conv_data: None,
+                value_conv: None,
+                variant_id: None,
+                condition: None,
+                subdirectory: Some(SubDirectoryInfo {
+                    tag_table: subdirectory_table.clone(),
+                    validate: None,
+                    has_validate_code: Some(false),
+                    process_proc: None,
+                    has_process_proc_code: Some(false),
+                    base: None,
+                    byte_order: None,
+                    is_binary_data: Some(true), // Assume binary data for Canon subdirectories
+                    extracted_table: None,
+                }),
+            };
+            
+            // Add to tag kits if not already present
+            let tag_id_str = tag.tag_id_decimal.to_string();
+            if !tag_kit_data.tag_kits.iter().any(|tk| tk.tag_id == tag_id_str && tk.subdirectory.is_some()) {
+                tag_kit_data.tag_kits.push(tag_kit);
+            }
+        }
+    }
+}
+
 /// Process tag_kit configuration
 fn process_tag_kit_config(
     config_dir: &Path,
@@ -492,8 +539,20 @@ fn process_tag_kit_config(
             let tag_kit_path = path_utils::get_extract_dir("tag_kits").join(&tag_kit_file);
             
             if tag_kit_path.exists() {
-                let tag_kit_data: crate::schemas::tag_kit::TagKitExtraction = 
+                let mut tag_kit_data: crate::schemas::tag_kit::TagKitExtraction = 
                     config_processor::load_extracted_json(&tag_kit_path)?;
+                
+                // Also load Main table tag structure to get tags with subdirectories
+                let tag_structure_file = path_utils::construct_extract_filename(module_name, "tag_structure__main.json");
+                let tag_structure_path = path_utils::get_extract_dir("tag_structures").join(&tag_structure_file);
+                
+                if tag_structure_path.exists() {
+                    let tag_structure_data: crate::generators::tag_structure::TagStructureData = 
+                        config_processor::load_extracted_json(&tag_structure_path)?;
+                    
+                    // Add Main table tags that have subdirectories to the tag kit
+                    integrate_main_table_tags(&mut tag_kit_data, &tag_structure_data);
+                }
                 
                 // Generate modular tag kit files in module directory
                 Ok(generate_tag_kit_module(&tag_kit_data, module_output_dir)?)
