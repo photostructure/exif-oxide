@@ -776,6 +776,55 @@ pub fn compressedbitsperpixel_print_conv(val: &TagValue) -> TagValue {
     }
 }
 
+/// Canon FileNumber PrintConv
+/// ExifTool: lib/Image/ExifTool/Canon.pm:1229
+/// PrintConv: '$_=$val,s/(\d+)(\d{4})/$1-$2/,$_'
+/// Converts numeric FileNumber to "directory-file" format (e.g., 1181861 -> "118-1861")
+pub fn canon_filenumber_print_conv(val: &TagValue) -> TagValue {
+    // Convert value to string representation
+    let val_str = match val {
+        TagValue::U32(v) => v.to_string(),
+        TagValue::U16(v) => v.to_string(),
+        TagValue::I32(v) => v.to_string(),
+        TagValue::String(s) => s.clone(),
+        _ => return TagValue::string(format!("Unknown ({})", val)),
+    };
+
+    // ExifTool regex: s/(\d+)(\d{4})/$1-$2/
+    // Match: digits followed by exactly 4 digits, replace with "digits-4digits"
+    if val_str.len() >= 5 {
+        let (directory, file) = val_str.split_at(val_str.len() - 4);
+        TagValue::string(format!("{}-{}", directory, file))
+    } else {
+        // If less than 5 digits, can't split properly - return as-is
+        TagValue::string(val_str)
+    }
+}
+
+/// Canon SelfTimer PrintConv
+/// ExifTool: lib/Image/ExifTool/Canon.pm:2182-2184 (SelfTimer Print)
+pub fn canon_selftimer_print_conv(val: &TagValue) -> TagValue {
+    if let Some(timer_val) = val.as_u16() {
+        let timer_val = timer_val as i16; // Convert u16 to i16 for signed operations
+
+        // return 'Off' unless $val;
+        if timer_val == 0 {
+            return TagValue::string("Off".to_string());
+        }
+
+        // return (($val&0xfff) / 10) . ' s' . ($val & 0x4000 ? ', Custom' : '');
+        let seconds = ((timer_val & 0xfff) as f32) / 10.0;
+        let custom = if timer_val & 0x4000 != 0 {
+            ", Custom"
+        } else {
+            ""
+        };
+        TagValue::string(format!("{} s{}", seconds, custom))
+    } else {
+        TagValue::string(format!("Unknown ({})", val))
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1161,5 +1210,33 @@ mod tests {
         );
 
         // Note: Other fraction formatting tests not critical for ExposureCompensation fix
+    }
+
+    #[test]
+    fn test_canon_filenumber_print_conv() {
+        // Test Canon FileNumber PrintConv
+        // ExifTool: converts 1181861 -> "118-1861"
+        assert_eq!(
+            canon_filenumber_print_conv(&TagValue::U32(1181861)),
+            TagValue::String("118-1861".to_string())
+        );
+
+        // Test other formats
+        assert_eq!(
+            canon_filenumber_print_conv(&TagValue::U16(12345)),
+            TagValue::String("1-2345".to_string())
+        );
+
+        // Test edge cases
+        assert_eq!(
+            canon_filenumber_print_conv(&TagValue::U32(1000)),
+            TagValue::String("1000".to_string()) // Less than 5 digits, return as-is
+        );
+
+        // Test string format
+        assert_eq!(
+            canon_filenumber_print_conv(&TagValue::String("1181861".to_string())),
+            TagValue::String("118-1861".to_string())
+        );
     }
 }
