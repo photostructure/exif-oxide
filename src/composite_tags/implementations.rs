@@ -168,20 +168,23 @@ pub fn compute_thumbnail_image(available_tags: &HashMap<String, TagValue>) -> Op
     None
 }
 
-/// Generate PreviewImage binary data indicator when PreviewImageStart and PreviewImageLength are present
-/// ExifTool: When both PreviewImageStart and PreviewImageLength exist,
-/// ExifTool creates a binary data indicator: "(Binary data X bytes, use -b option to extract)"
+/// Generate PreviewImage binary data indicator when preview offset and length are present
+/// ExifTool: When both offset and length exist, creates binary data indicator
 /// Reference: ExifTool's Composite.pm PreviewImage definition
+///
+/// Note: ExifTool uses different tag names for the same IDs depending on format/IFD:
+/// - PreviewImageStart/PreviewImageLength: MakerNotes and IFD0 of ARW/SR2  
+/// - OtherImageStart/OtherImageLength: Sony ARW and other formats (alternative naming)
 pub fn compute_preview_image(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
-    // Look for PreviewImageStart and PreviewImageLength (required for composite)
+    // Try multiple naming patterns used by ExifTool for format-specific contexts
+
+    // Pattern 1: Standard preview naming (MakerNotes, IFD0 of ARW/SR2)
     if let (Some(start), Some(length)) = (
         available_tags.get("PreviewImageStart"),
         available_tags.get("PreviewImageLength"),
     ) {
-        // Verify both values are valid positive numbers
         if let (Some(_start_val), Some(length_val)) = (start.as_u32(), length.as_u32()) {
             if length_val > 0 {
-                // ExifTool format: "(Binary data X bytes, use -b option to extract)"
                 return Some(TagValue::string(format!(
                     "(Binary data {} bytes, use -b option to extract)",
                     length_val
@@ -189,6 +192,22 @@ pub fn compute_preview_image(available_tags: &HashMap<String, TagValue>) -> Opti
             }
         }
     }
+
+    // Pattern 2: Alternative preview naming (Sony ARW and other formats)
+    if let (Some(start), Some(length)) = (
+        available_tags.get("OtherImageStart"),
+        available_tags.get("OtherImageLength"),
+    ) {
+        if let (Some(_start_val), Some(length_val)) = (start.as_u32(), length.as_u32()) {
+            if length_val > 0 {
+                return Some(TagValue::string(format!(
+                    "(Binary data {} bytes, use -b option to extract)",
+                    length_val
+                )));
+            }
+        }
+    }
+
     None
 }
 
