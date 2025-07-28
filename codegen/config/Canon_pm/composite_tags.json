@@ -1,0 +1,9 @@
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
+  "description": "Canon module composite tag definitions",
+  "table": "Composite",
+  "filters": {
+    "frequency_threshold": 0.5,
+    "include_mainstream": true
+  }
+}
