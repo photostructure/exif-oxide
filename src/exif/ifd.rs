@@ -324,7 +324,8 @@ impl ExifReader {
                     TagValue::U8(value)
                 } else {
                     // Handle byte arrays (count > 1)
-                    let values = value_extraction::extract_byte_array_value(&self.data, &entry)?;
+                    let values =
+                        value_extraction::extract_byte_array_value(&self.data, &entry, byte_order)?;
                     TagValue::U8Array(values)
                 };
 
@@ -563,9 +564,9 @@ impl ExifReader {
                     if entry.tag_id == 0x002e || entry.tag_id == 0x0127 {
                         // JpgFromRaw and JpgFromRaw2 - extract the embedded JPEG data
                         // ExifTool: PanasonicRaw.pm tags 0x002e and 0x0127 contain JPEG data
-                        if let Ok(binary_data) =
-                            value_extraction::extract_byte_array_value(&self.data, &entry)
-                        {
+                        if let Ok(binary_data) = value_extraction::extract_byte_array_value(
+                            &self.data, &entry, byte_order,
+                        ) {
                             let tag_value = TagValue::Binary(binary_data);
                             let source_info = self.create_tag_source_info(ifd_name);
                             self.store_tag_with_precedence(entry.tag_id, tag_value, source_info);
@@ -587,9 +588,9 @@ impl ExifReader {
                             entry.tag_id, tag_name, entry.count
                         );
 
-                        if let Ok(binary_data) =
-                            value_extraction::extract_byte_array_value(&self.data, &entry)
-                        {
+                        if let Ok(binary_data) = value_extraction::extract_byte_array_value(
+                            &self.data, &entry, byte_order,
+                        ) {
                             // Special handling for tags that need format conversion from binary to string
                             let tag_value = match entry.tag_id {
                                 0x9000 => {
