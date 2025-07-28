@@ -1,0 +1,18 @@
+{
+  "SourceFile": "test-images/example.webp",
+  "File:FileSize": 435168,
+  "ExifTool:ExifToolVersion": 13.31,
+  "File:FileName": "example.webp",
+  "File:Directory": "test-images",
+  "File:FileModifyDate": "2025:07:28 13:52:07-07:00",
+  "File:FileAccessDate": "2025:07:28 13:54:49-07:00",
+  "File:FileInodeChangeDate": "2025:07:28 13:52:20-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
+  "File:FileType": "WEBP",
+  "File:FileTypeExtension": "webp",
+  "File:MIMEType": "image/webp",
+  "RIFF:ImageWidth": 896,
+  "RIFF:ImageHeight": 1080,
+  "Composite:ImageSize": "896x1080",
+  "Composite:Megapixels": 0.968
+}
