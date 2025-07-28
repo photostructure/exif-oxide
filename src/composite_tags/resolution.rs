@@ -125,31 +125,82 @@ pub fn can_build_composite(
     true
 }
 
-/// Check if a specific dependency (tag name) is available
-/// Handles group prefixes and composite tag references
+/// Check if a specific dependency (tag name) is available using ExifTool's dynamic resolution
+/// ExifTool: lib/Image/ExifTool.pm:3977-4005 BuildCompositeTags dependency resolution
+/// ExifTool: lib/Image/ExifTool.pm:4006-4026 tag value lookup from $$rawValue{$reqTag}
 pub fn is_dependency_available(
     tag_name: &str,
     available_tags: &HashMap<String, TagValue>,
     built_composites: &HashSet<&str>,
 ) -> bool {
-    // Direct lookup in available tags
-    if available_tags.contains_key(tag_name) {
-        return true;
-    }
+    resolve_tag_dependency(tag_name, available_tags, built_composites).is_some()
+}
 
-    // Check with various group prefixes
-    for prefix in &["EXIF", "GPS", "MakerNotes", "Composite"] {
-        let prefixed_name = format!("{prefix}:{tag_name}");
-        if available_tags.contains_key(&prefixed_name) {
-            return true;
+/// Resolve a tag dependency using ExifTool's dynamic lookup algorithm
+/// ExifTool: lib/Image/ExifTool.pm:4006-4026 - dependency resolution from rawValue hash
+/// ExifTool: lib/Image/ExifTool.pm:3977-3983 - composite-to-composite dependency handling
+/// ExifTool: lib/Image/ExifTool.pm:4027-4055 - group matching and priority resolution
+pub fn resolve_tag_dependency(
+    tag_name: &str,
+    available_tags: &HashMap<String, TagValue>,
+    built_composites: &HashSet<&str>,
+) -> Option<TagValue> {
+    // Step 1: Check if the tag is a composite that has already been built
+    // ExifTool: lib/Image/ExifTool.pm:3977-3983 composite dependency handling
+    if built_composites.contains(tag_name) {
+        // Look for the built composite in available_tags
+        let composite_name = format!("Composite:{tag_name}");
+        if let Some(value) = available_tags.get(&composite_name) {
+            return Some(value.clone());
+        }
+        // Also check without prefix (we store both formats)
+        if let Some(value) = available_tags.get(tag_name) {
+            return Some(value.clone());
         }
     }
 
-    // Special handling for composite dependencies
-    // Check if the tag is a composite that has already been built
-    if built_composites.contains(tag_name) {
-        return true;
+    // Step 2: Direct lookup in available tags (highest priority)
+    // ExifTool: lib/Image/ExifTool.pm:4006-4026 $$rawValue{$reqTag} lookup
+    if let Some(value) = available_tags.get(tag_name) {
+        return Some(value.clone());
     }
 
-    false
+    // Step 3: Check with group prefixes following ExifTool's precedence
+    // ExifTool: lib/Image/ExifTool.pm:4027-4055 group matching logic
+    // Priority order matches ExifTool's typical group precedence
+    for prefix in &["EXIF", "GPS", "MakerNotes", "Composite"] {
+        let prefixed_name = format!("{prefix}:{tag_name}");
+        if let Some(value) = available_tags.get(&prefixed_name) {
+            return Some(value.clone());
+        }
+    }
+
+    // Step 4: Try manual computation for special cases
+    // This handles cases like "ISO" where ExifTool would find EXIF:ISO tag 0x8827
+    // but we want to provide consolidated ISO from multiple sources
+    if let Some(computed_value) = try_manual_tag_computation(tag_name, available_tags) {
+        return Some(computed_value);
+    }
+
+    None
+}
+
+/// Attempt manual computation for tags that need consolidation logic
+/// This handles cases where ExifTool uses direct tag lookup but we provide enhanced computation
+/// ExifTool equivalent: direct tag access, but we add consolidation for user convenience
+fn try_manual_tag_computation(
+    tag_name: &str,
+    available_tags: &HashMap<String, TagValue>,
+) -> Option<TagValue> {
+    match tag_name {
+        // ISO consolidation - provides unified ISO value from multiple sources
+        // ExifTool: searches for any tag named "ISO" in rawValue hash
+        // We enhance this by consolidating from multiple ISO sources
+        "ISO" => {
+            // Import the compute_iso function from implementations
+            use crate::composite_tags::implementations::compute_iso;
+            compute_iso(available_tags)
+        }
+        _ => None,
+    }
 }

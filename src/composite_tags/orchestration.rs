@@ -88,7 +88,8 @@ pub fn resolve_and_compute_composites(
         for composite_def in pending_composites {
             if can_build_composite(composite_def, &available_tags, &built_composites) {
                 // All dependencies available - build the composite
-                if let Some(computed_value) = compute_composite_tag(composite_def, &available_tags)
+                if let Some(computed_value) =
+                    compute_composite_tag(composite_def, &available_tags, &built_composites)
                 {
                     // Apply PrintConv to the computed value
                     let (_final_value, print_value) =
