@@ -8,7 +8,7 @@ use serde_json::Value;
 use std::collections::{HashMap, HashSet};
 
 /// Parse ExifTool-style filter expressions into FilterOptions
-/// 
+///
 /// Supports all the patterns that the main CLI supports:
 /// - `-TagName` - extract specific tag
 /// - `-TagName#` - extract tag with numeric value (ValueConv)  
@@ -20,13 +20,13 @@ use std::collections::{HashMap, HashSet};
 ///
 /// ```
 /// use exif_oxide::compat::parse_exiftool_filters;
-/// 
+///
 /// // Parse EXIF group filter
 /// let filter = parse_exiftool_filters(&["-EXIF:all"]);
-/// 
+///
 /// // Parse specific tag with numeric output
 /// let filter = parse_exiftool_filters(&["-Orientation#"]);
-/// 
+///
 /// // Parse glob pattern
 /// let filter = parse_exiftool_filters(&["-GPS*"]);
 /// ```
@@ -114,7 +114,7 @@ pub fn parse_exiftool_filters(args: &[&str]) -> FilterOptions {
 }
 
 /// Apply ExifTool-style filtering to JSON output
-/// 
+///
 /// This filters a JSON object containing tag data to only include tags
 /// that match the FilterOptions criteria.
 pub fn apply_exiftool_filter(data: &Value, filter: &FilterOptions) -> Value {
@@ -141,7 +141,11 @@ pub fn apply_exiftool_filter(data: &Value, filter: &FilterOptions) -> Value {
 
                 // Also check if the full key matches any requested tags
                 // This handles cases like -EXIF:Orientation where the user specifies the full key
-                if filter.requested_tags.iter().any(|req_tag| req_tag.to_lowercase() == key.to_lowercase()) {
+                if filter
+                    .requested_tags
+                    .iter()
+                    .any(|req_tag| req_tag.to_lowercase() == key.to_lowercase())
+                {
                     return true;
                 }
 
