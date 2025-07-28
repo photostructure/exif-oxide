@@ -249,8 +249,9 @@ pub fn fnumber_print_conv(val: &TagValue) -> TagValue {
 /// ExposureTime PrintConv - formats shutter speed
 /// ExifTool: lib/Image/ExifTool/Exif.pm:5595-5605 PrintExposureTime
 /// Converts decimal seconds to fractional notation (e.g., 0.0005 -> "1/2000")
+/// NOTE: Returns numeric TagValue for simple numbers to preserve JSON numeric serialization
 pub fn exposuretime_print_conv(val: &TagValue) -> TagValue {
-    TagValue::string(match val.as_f64() {
+    match val.as_f64() {
         Some(secs) => {
             // ExifTool: return $secs unless Image::ExifTool::IsFloat($secs);
             // We always have floats from as_f64(), so continue with the logic
@@ -259,7 +260,7 @@ pub fn exposuretime_print_conv(val: &TagValue) -> TagValue {
             if secs < 0.25001 && secs > 0.0 {
                 // ExifTool: return sprintf("1/%d",int(0.5 + 1/$secs));
                 let denominator = (0.5 + 1.0 / secs) as i32;
-                format!("1/{denominator}")
+                TagValue::string(format!("1/{denominator}"))
             } else {
                 // ExifTool: $_ = sprintf("%.1f",$secs);
                 let mut result = format!("{secs:.1}");
@@ -267,7 +268,18 @@ pub fn exposuretime_print_conv(val: &TagValue) -> TagValue {
                 if result.ends_with(".0") {
                     result.truncate(result.len() - 2);
                 }
-                result
+
+                // If the result is a simple integer (like "0", "1", "2"), return as numeric
+                // to match ExifTool's JSON output behavior. Keep decimals as strings.
+                if result.chars().all(|c| c.is_ascii_digit() || c == '-') {
+                    if let Ok(int_val) = result.parse::<i32>() {
+                        TagValue::I32(int_val)
+                    } else {
+                        TagValue::string(result)
+                    }
+                } else {
+                    TagValue::string(result)
+                }
             }
         }
         None => {
@@ -284,13 +296,23 @@ pub fn exposuretime_print_conv(val: &TagValue) -> TagValue {
                         if result.ends_with(".0") {
                             result.truncate(result.len() - 2);
                         }
-                        return TagValue::string(result);
+
+                        // If the result is a simple integer, return as numeric
+                        if result.chars().all(|c| c.is_ascii_digit() || c == '-') {
+                            if let Ok(int_val) = result.parse::<i32>() {
+                                return TagValue::I32(int_val);
+                            } else {
+                                return TagValue::string(result);
+                            }
+                        } else {
+                            return TagValue::string(result);
+                        }
                     }
                 }
             }
-            format!("Unknown ({val})")
+            TagValue::string(format!("Unknown ({val})"))
         }
-    })
+    }
 }
 
 /// FocalLength PrintConv - formats focal length with "mm" unit
@@ -964,10 +986,20 @@ mod tests {
         assert_eq!(exposuretime_print_conv(&TagValue::F64(0.25)), "1/4".into());
 
         // Test exposures >= 0.25001
-        assert_eq!(exposuretime_print_conv(&TagValue::F64(0.5)), "0.5".into());
-        assert_eq!(exposuretime_print_conv(&TagValue::F64(1.0)), "1".into()); // .0 is stripped
-        assert_eq!(exposuretime_print_conv(&TagValue::F64(2.0)), "2".into()); // .0 is stripped
-        assert_eq!(exposuretime_print_conv(&TagValue::F64(2.5)), "2.5".into());
+        assert_eq!(
+            exposuretime_print_conv(&TagValue::F64(0.0)),
+            TagValue::I32(0)
+        ); // Zero becomes number (like ExifTool)
+        assert_eq!(exposuretime_print_conv(&TagValue::F64(0.5)), "0.5".into()); // Decimal stays string
+        assert_eq!(
+            exposuretime_print_conv(&TagValue::F64(1.0)),
+            TagValue::I32(1)
+        ); // Integer becomes number
+        assert_eq!(
+            exposuretime_print_conv(&TagValue::F64(2.0)),
+            TagValue::I32(2)
+        ); // Integer becomes number
+        assert_eq!(exposuretime_print_conv(&TagValue::F64(2.5)), "2.5".into()); // Decimal stays string
 
         // Test with rational input
         assert_eq!(

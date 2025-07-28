@@ -93,9 +93,14 @@ pub fn register_all_conversions() {
         print_conv::flashpixversion_print_conv,
     );
     registry::register_print_conv(
+        "interopversion_print_conv",
+        print_conv::interopversion_print_conv,
+    );
+    registry::register_print_conv(
         "componentsconfiguration_print_conv",
         print_conv::componentsconfiguration_print_conv,
     );
+    registry::register_print_conv("filesource_print_conv", print_conv::filesource_print_conv);
     registry::register_print_conv(
         "compressedbitsperpixel_print_conv",
         print_conv::compressedbitsperpixel_print_conv,

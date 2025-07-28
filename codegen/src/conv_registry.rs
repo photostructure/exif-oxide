@@ -86,6 +86,11 @@ static TAG_SPECIFIC_PRINTCONV: LazyLock<HashMap<&'static str, (&'static str, &'s
     m.insert("GPSLatitudeRef", ("crate::implementations::print_conv", "gpslatituderef_print_conv"));
     m.insert("GPSLongitudeRef", ("crate::implementations::print_conv", "gpslongituderef_print_conv"));
     
+    // EXIF component configuration tags
+    m.insert("ComponentsConfiguration", ("crate::implementations::print_conv", "componentsconfiguration_print_conv"));
+    m.insert("FileSource", ("crate::implementations::print_conv", "filesource_print_conv"));
+    m.insert("InteropVersion", ("crate::implementations::print_conv", "interopversion_print_conv"));
+    
     // Add other tag-specific mappings here as needed
     
     m
