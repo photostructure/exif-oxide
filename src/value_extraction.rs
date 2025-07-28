@@ -138,13 +138,17 @@ pub fn extract_byte_value(data: &[u8], entry: &IfdEntry) -> Result<u8> {
 /// Extract BYTE array values from IFD entry
 /// ExifTool: lib/Image/ExifTool/Exif.pm:6372-6398 value extraction
 /// This handles BYTE format with count > 1 (arrays of unsigned 8-bit integers)
-pub fn extract_byte_array_value(data: &[u8], entry: &IfdEntry) -> Result<Vec<u8>> {
+pub fn extract_byte_array_value(data: &[u8], entry: &IfdEntry, byte_order: ByteOrder) -> Result<Vec<u8>> {
     let count = entry.count as usize;
 
     if entry.is_inline() && count <= 4 {
         // Value stored inline - extract bytes from value_or_offset
         // ExifTool: lib/Image/ExifTool/Exif.pm:6372 inline value handling
-        let bytes = entry.value_or_offset.to_le_bytes();
+        // CRITICAL: Respect file's byte order for inline values (fixes ExifVersion byte swapping)
+        let bytes = match byte_order {
+            ByteOrder::BigEndian => entry.value_or_offset.to_be_bytes(),
+            ByteOrder::LittleEndian => entry.value_or_offset.to_le_bytes(),
+        };
         Ok(bytes[..count].to_vec())
     } else if entry.is_inline() {
         // Should not happen - more than 4 bytes can't fit inline
