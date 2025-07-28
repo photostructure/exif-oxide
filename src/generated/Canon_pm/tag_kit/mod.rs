@@ -171,104 +171,68 @@ fn process_canon_camerasettings(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
-    tracing::debug!("process_canon_camerasettings called with {} bytes, byte_order: {:?}", data.len(), byte_order);
-    
-    // Use manual implementation from src/implementations/canon/binary_data.rs
-    // since CameraSettings table has complex Perl expressions that can't be auto-generated
-    match crate::implementations::canon::binary_data::extract_camera_settings(data, 0, data.len(), byte_order) {
-        Ok(hash_map) => {
-            let tags: Vec<(String, TagValue)> = hash_map.into_iter().collect();
-            tracing::debug!("Canon CameraSettings extracted {} tags: {:?}", tags.len(), tags.iter().map(|(k, _)| k).collect::<Vec<_>>());
-            Ok(tags)
-        }
-        Err(e) => {
-            tracing::warn!("Canon CameraSettings extraction failed: {}", e);
-            Ok(Vec::new()) // Return empty rather than failing completely
-        }
-    }
+    tracing::debug!(
+        "process_canon_camerasettings called with {} bytes",
+        data.len()
+    );
+    // Use existing manual implementation from canon/binary_data.rs
+    use crate::implementations::canon::binary_data::extract_camera_settings;
+
+    // Call the manual implementation
+    let result_map = extract_camera_settings(data, 0, data.len(), byte_order)?;
+
+    // Convert HashMap<String, TagValue> to Vec<(String, TagValue)>
+    let tags: Vec<(String, TagValue)> = result_map.into_iter().collect();
+
+    tracing::debug!("Manual implementation extracted {} tags", tags.len());
+    Ok(tags)
 }
 
 fn process_canon_focallength(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // FocalType at offset 0
+    tracing::debug!("process_canon_focallength called with {} bytes", data.len());
+    // Use existing manual implementation from canon/binary_data.rs
+    use crate::implementations::canon::binary_data::extract_focal_length;
 
-    // FocalLength at offset 1
+    // Call the manual implementation
+    let result_map = extract_focal_length(data, 0, data.len(), byte_order)?;
 
+    // Convert HashMap<String, TagValue> to Vec<(String, TagValue)>
+    let tags: Vec<(String, TagValue)> = result_map.into_iter().collect();
+
+    tracing::debug!("Manual implementation extracted {} tags", tags.len());
     Ok(tags)
 }
 
 fn process_canon_shotinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // AutoISO at offset 1
+    tracing::debug!("process_canon_shotinfo called with {} bytes", data.len());
+    // Use existing manual implementation from canon/binary_data.rs
+    use crate::implementations::canon::binary_data::extract_shot_info;
 
-    // OpticalZoomCode at offset 10
+    // Call the manual implementation
+    let result_map = extract_shot_info(data, 0, data.len(), byte_order)?;
 
-    // CameraTemperature at offset 12
+    // Convert HashMap<String, TagValue> to Vec<(String, TagValue)>
+    let tags: Vec<(String, TagValue)> = result_map.into_iter().collect();
 
-    // FlashGuideNumber at offset 13
-
-    // AFPointsInFocus at offset 14
-
-    // FlashExposureComp at offset 15
-
-    // AutoExposureBracketing at offset 16
-
-    // AEBBracketValue at offset 17
-
-    // ControlMode at offset 18
-
-    // FocusDistanceUpper at offset 19
-    if data.len() >= 38 {
-        // TODO: Handle format int16u
-    }
-
-    // BaseISO at offset 2
-
-    // FocusDistanceLower at offset 20
-    if data.len() >= 40 {
-        // TODO: Handle format int16u
-    }
-
-    // FNumber at offset 21
-
-    // MeasuredEV2 at offset 23
-
-    // BulbDuration at offset 24
-
-    // CameraType at offset 26
-
-    // AutoRotate at offset 27
-
-    // NDFilter at offset 28
-
-    // SelfTimer2 at offset 29
-
-    // MeasuredEV at offset 3
-
-    // FlashOutput at offset 33
-
-    // TargetAperture at offset 4
-
-    // TargetExposureTime at offset 5
-
-    // ExposureCompensation at offset 6
-
-    // WhiteBalance at offset 7
-
-    // SlowShutter at offset 8
-
-    // SequenceNumber at offset 9
-
+    tracing::debug!("Manual implementation extracted {} tags", tags.len());
     Ok(tags)
 }
 
 fn process_canon_panorama(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // PanoramaDirection at offset 5
+    tracing::debug!("process_canon_panorama called with {} bytes", data.len());
+    // Use existing manual implementation from canon/binary_data.rs
+    use crate::implementations::canon::binary_data::extract_panorama;
 
+    // Call the manual implementation
+    let result_map = extract_panorama(data, 0, data.len(), byte_order)?;
+
+    // Convert HashMap<String, TagValue> to Vec<(String, TagValue)>
+    let tags: Vec<(String, TagValue)> = result_map.into_iter().collect();
+
+    tracing::debug!("Manual implementation extracted {} tags", tags.len());
     Ok(tags)
 }
 
@@ -2631,9 +2595,17 @@ fn process_canon_afinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Strin
 }
 
 fn process_canon_mycolors(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    let mut tags = Vec::new();
-    // MyColorMode at offset 2
+    tracing::debug!("process_canon_mycolors called with {} bytes", data.len());
+    // Use existing manual implementation from canon/binary_data.rs
+    use crate::implementations::canon::binary_data::extract_my_colors;
 
+    // Call the manual implementation
+    let result_map = extract_my_colors(data, 0, data.len(), byte_order)?;
+
+    // Convert HashMap<String, TagValue> to Vec<(String, TagValue)>
+    let tags: Vec<(String, TagValue)> = result_map.into_iter().collect();
+
+    tracing::debug!("Manual implementation extracted {} tags", tags.len());
     Ok(tags)
 }
 
@@ -11528,11 +11500,8 @@ pub fn process_subdirectory(
     let mut result = HashMap::new();
 
     debug!("process_subdirectory called for tag_id: 0x{:04x}", tag_id);
-    debug!("has_subdirectory for tag_id 0x{:04x}: {}", tag_id, has_subdirectory(tag_id));
 
     if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
-        debug!("Found tag_kit for tag_id 0x{:04x}: name='{}', has_subdirectory={}", 
-               tag_id, tag_kit.name, tag_kit.subdirectory.is_some());
         if let Some(SubDirectoryType::Binary { processor }) = &tag_kit.subdirectory {
             debug!("Found subdirectory processor for tag_id: 0x{:04x}", tag_id);
             let bytes = match value {
