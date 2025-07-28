@@ -364,7 +364,29 @@ impl TagValue {
 
         // Check if string matches ExifTool's numeric pattern
         if NUMERIC_REGEX.is_match(&string_val) {
-            // Try to parse as f64
+            // First try to parse as integer to preserve integer types
+            // This matches ExifTool's JSON output format where integers are integers, not floats
+            if let Ok(int_val) = string_val.parse::<i64>() {
+                // Use appropriate integer type based on value range
+                if int_val >= 0 {
+                    if int_val <= u16::MAX as i64 {
+                        return TagValue::U16(int_val as u16);
+                    } else if int_val <= u32::MAX as i64 {
+                        return TagValue::U32(int_val as u32);
+                    } else {
+                        return TagValue::U64(int_val as u64);
+                    }
+                } else if int_val >= i16::MIN as i64 {
+                    return TagValue::I16(int_val as i16);
+                } else if int_val >= i32::MIN as i64 {
+                    return TagValue::I32(int_val as i32);
+                } else {
+                    // For very large negative numbers, fall back to F64
+                    return TagValue::F64(int_val as f64);
+                }
+            }
+
+            // If not a valid integer, try to parse as f64
             if let Ok(numeric_val) = string_val.parse::<f64>() {
                 return TagValue::F64(numeric_val);
             }
