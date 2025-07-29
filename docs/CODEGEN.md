@@ -305,6 +305,51 @@ Add entries to `TAG_SPECIFIC_PRINTCONV` when:
 3. **Override Standard Expression**: When a tag needs special handling despite having a standard expression
 4. **DRY Principle**: Universal tags that work the same across all modules
 
+#### ValueConv Expression Registry
+
+ValueConv functions convert raw tag values to logical values. The registry system automatically maps Perl expressions to Rust functions:
+
+**Registry Setup** (`codegen/src/conv_registry.rs`):
+
+```rust
+static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'static str)>> = LazyLock::new(|| {
+    let mut m = HashMap::new();
+    
+    // Simple arithmetic patterns
+    m.insert("$val * 100", ("crate::implementations::value_conv", "multiply_100_value_conv"));
+    m.insert("$val / 8", ("crate::implementations::value_conv", "divide_8_value_conv"));
+    
+    // String processing patterns  
+    m.insert("$val=~s/ +$//; $val", ("crate::implementations::value_conv", "trim_whitespace_value_conv"));
+    m.insert("$val=~s/^.*: //;$val", ("crate::implementations::value_conv", "remove_prefix_colon_value_conv"));
+    
+    // GPS coordinate conversion
+    m.insert("gpslatitude_value_conv", ("crate::implementations::value_conv", "gps_coordinate_value_conv"));
+    
+    m
+});
+```
+
+**Function Implementation** (`src/implementations/value_conv.rs`):
+
+```rust
+/// Multiply value by 100 - ExifTool pattern: $val * 100
+pub fn multiply_100_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(val * 100.0)),
+        None => Ok(value.clone()),
+    }
+}
+```
+
+**How to Add New Patterns**:
+
+1. **Add registry entry**: Map Perl expression to function name in `VALUECONV_REGISTRY`
+2. **Implement function**: Create function in `src/implementations/value_conv.rs` with signature `fn(value: &TagValue) -> Result<TagValue>`
+3. **Regenerate**: Run `make codegen` - expressions automatically become function names
+
+The system tries exact matches first (efficient), then normalized expressions for complex cases.
+
 ### 4. Adding Simple Extraction Types
 
 **Step 1: Add to Configuration**
