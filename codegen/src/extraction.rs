@@ -3,9 +3,11 @@
 //! Handles auto-discovery of configs and orchestration of Perl extraction scripts.
 
 use anyhow::{Context, Result};
+use rayon::prelude::*;
 use serde_json::Value;
 use std::fs;
 use std::path::Path;
+use std::sync::Mutex;
 use std::time::Instant;
 use tracing::{debug, info, warn};
 
@@ -25,19 +27,59 @@ pub struct ModuleConfig {
 
 /// Extract all simple tables using Rust orchestration (replaces Makefile targets)
 pub fn extract_all_simple_tables() -> Result<()> {
+    let total_start = Instant::now();
     debug!("📊 Extracting all tables and data...");
     
     let extract_base = Path::new("generated/extract");
     fs::create_dir_all(extract_base)?;
     
+    let discovery_start = Instant::now();
     let configs = discover_module_configs()?;
-    debug!("  📋 Found {} module configs to process", configs.len());
+    info!("  📋 Module discovery completed in {:.3}s - found {} configs", 
+          discovery_start.elapsed().as_secs_f64(), configs.len());
     
-    for config in configs {
+    let total_extraction_time = Mutex::new(0.0);
+    let extraction_stats: Mutex<std::collections::HashMap<String, f64>> = Mutex::new(std::collections::HashMap::new());
+    
+    let parallel_start = Instant::now();
+    info!("🚀 Starting parallel extraction with {} threads", rayon::current_num_threads());
+    
+    configs.par_iter().try_for_each(|config| -> Result<()> {
         let start = Instant::now();
-        process_module_config(&config, extract_base)?;
-        info!("    ⏱️  Module config {} processed in {:.2}s", config.module_name, start.elapsed().as_secs_f64());
+        process_module_config(config, extract_base)?;
+        let elapsed = start.elapsed().as_secs_f64();
+        
+        // Update shared stats (with locking)
+        {
+            let mut total_time = total_extraction_time.lock().unwrap();
+            *total_time += elapsed;
+        }
+        
+        {
+            let mut stats = extraction_stats.lock().unwrap();
+            let extractor_type = config.module_name.split('.').next().unwrap_or("unknown");
+            *stats.entry(extractor_type.to_string()).or_insert(0.0) += elapsed;
+        }
+        
+        info!("    ⏱️  Module config {} processed in {:.3}s ({} tables)", 
+              config.module_name, elapsed, config.hash_names.len());
+        Ok(())
+    })?;
+    
+    let parallel_elapsed = parallel_start.elapsed().as_secs_f64();
+    let total_extraction_time = *total_extraction_time.lock().unwrap();
+    let extraction_stats = extraction_stats.into_inner().unwrap();
+    
+    // Summary statistics  
+    info!("📊 EXTRACTION PHASE SUMMARY:");
+    info!("  Parallel wall time: {:.3}s (vs {:.3}s sequential)", parallel_elapsed, total_extraction_time);
+    info!("  Speedup: {:.1}x with {} threads", total_extraction_time / parallel_elapsed, rayon::current_num_threads());
+    info!("  Total CPU time: {:.3}s", total_extraction_time);
+    info!("  Average per config: {:.3}s", total_extraction_time / extraction_stats.len() as f64);
+    for (extractor_type, time) in extraction_stats {
+        info!("  {}: {:.3}s", extractor_type, time);
     }
+    info!("  Overall extraction phase: {:.3}s", total_start.elapsed().as_secs_f64());
     
     debug!("  ✓ Simple table extraction complete");
     Ok(())
@@ -301,13 +343,15 @@ fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
 }
 
 fn process_module_config(config: &ModuleConfig, extract_base: &Path) -> Result<()> {
+    let config_start = Instant::now();
     debug!("      📷 Processing {} with {} tables...", config.module_name, config.hash_names.len());
     
     // Find the appropriate extractor
     let start = Instant::now();
     let extractor = find_extractor(&config.module_name)
         .ok_or_else(|| anyhow::anyhow!("No extractor found for config type: {}", config.module_name))?;
-    debug!("        🔍 Found extractor {} in {:.3}s", extractor.name(), start.elapsed().as_secs_f64());
+    let extractor_lookup_time = start.elapsed().as_secs_f64();
+    debug!("        🔍 Found extractor {} in {:.3}s", extractor.name(), extractor_lookup_time);
     
     // Get absolute paths
     let start = Instant::now();
@@ -316,19 +360,29 @@ fn process_module_config(config: &ModuleConfig, extract_base: &Path) -> Result<(
         .ok_or_else(|| anyhow::anyhow!("Could not find repo root"))?;
     let module_path = repo_root.join(&config.source_path).canonicalize()
         .with_context(|| format!("Failed to canonicalize module path: {}", config.source_path))?;
-    debug!("        📁 Path resolution in {:.3}s", start.elapsed().as_secs_f64());
+    let path_resolution_time = start.elapsed().as_secs_f64();
+    debug!("        📁 Path resolution in {:.3}s", path_resolution_time);
     
     // Only patch if the extractor requires it
-    if extractor.requires_patching() {
+    let patching_time = if extractor.requires_patching() {
         let start = Instant::now();
         patching::patch_module(&module_path, &config.hash_names)?;
-        debug!("        🩹 Patching completed in {:.3}s", start.elapsed().as_secs_f64());
-    }
+        let elapsed = start.elapsed().as_secs_f64();
+        debug!("        🩹 Patching completed in {:.3}s", elapsed);
+        elapsed
+    } else {
+        0.0
+    };
     
     // Execute the extraction
     let start = Instant::now();
     extractor.extract(config, extract_base, &module_path)?;
-    debug!("        🚀 Extraction completed in {:.3}s", start.elapsed().as_secs_f64());
+    let extraction_time = start.elapsed().as_secs_f64();
+    debug!("        🚀 Extraction completed in {:.3}s", extraction_time);
+    
+    let total_config_time = config_start.elapsed().as_secs_f64();
+    info!("      📋 {} timing breakdown: lookup={:.3}s, path={:.3}s, patch={:.3}s, extract={:.3}s, total={:.3}s",
+          config.module_name, extractor_lookup_time, path_resolution_time, patching_time, extraction_time, total_config_time);
     
     Ok(())
 }

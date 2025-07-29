@@ -5,18 +5,37 @@
 
 use anyhow::{Context, Result};
 use regex::Regex;
+use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
+use std::sync::{LazyLock, Mutex};
 use tracing::debug;
+
+// Global mutex per ExifTool module path to prevent concurrent patching
+static PATCH_MUTEXES: LazyLock<Mutex<HashMap<String, std::sync::Arc<Mutex<()>>>>> = 
+    LazyLock::new(|| Mutex::new(HashMap::new()));
 
 /// Patch ExifTool module to convert my-scoped variables to package variables
 /// This operation is idempotent - safe to run multiple times
+/// Thread-safe: Uses per-file mutex to prevent concurrent patching of the same module
 pub fn patch_module(module_path: &Path, variables: &[String]) -> Result<()> {
     if variables.is_empty() {
         return Ok(());
     }
     
-    debug!("  Patching {} for variables: {}", 
+    // Get or create a mutex for this specific module path
+    let module_path_str = module_path.to_string_lossy().to_string();
+    let file_mutex = {
+        let mut mutexes = PATCH_MUTEXES.lock().unwrap();
+        mutexes.entry(module_path_str.clone())
+            .or_insert_with(|| std::sync::Arc::new(Mutex::new(())))
+            .clone()
+    };
+    
+    // Acquire the file-specific lock before patching
+    let _lock = file_mutex.lock().unwrap();
+    
+    debug!("  Patching {} for variables: {} (thread-safe)", 
         module_path.display(), 
         variables.join(", ")
     );
