@@ -1,4 +1,4 @@
-.PHONY: all check fmt-check fmt lint yamllint test codegen-test fix build install doc clean patch-exiftool codegen sync update audit precommit help snapshot-generate snapshot-tests snapshots perl-deps perl-setup
+.PHONY: all check fmt-check fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-extractors codegen sync subdirectory-coverage check-subdirectory-coverage perl-setup perl-deps update upgrade-gha upgrade audit checks tests precommit compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
 
 # Default target: build the project
 all: build
@@ -30,13 +30,14 @@ unit-test:
 test:
 	cargo test --all --features test-helpers,integration-tests
 
+t: test
+
 # Run codegen tests
 codegen-test:
 	$(MAKE) -C codegen -f Makefile.modular test
 
 # Fix formatting and auto-fixable clippy issues
-fix:
-	cargo fmt --all
+fix: fmt
 	cargo clippy --all-targets --all-features --fix --allow-dirty --allow-staged
 
 # Build in release mode
@@ -75,7 +76,7 @@ check-extractors:
 # Extract EXIF tags from ExifTool and regenerate Rust code
 codegen:
 	@echo "🔧 Running code generation..."
-	@$(MAKE) --no-print-directory -C codegen -f Makefile.modular -j4 codegen
+	@$(MAKE) --no-print-directory -C codegen -f Makefile.modular codegen
 	
 # Extract all ExifTool algorithms and regenerate code  
 sync: codegen
@@ -133,9 +134,14 @@ audit:
 	@command -v cargo-audit >/dev/null 2>&1 || { echo "cargo-audit not found. Install with: cargo install cargo-audit --locked"; exit 1; }
 	cargo audit
 
+checks: check fmt-check lint yamllint check-subdirectory-coverage check-extractors
+
+# All tests including unit, integration, codegen, and compatibility tests
+tests: test codegen-test compat-full
+
 # Pre-commit checks: do everything: update deps, codegen, fix code, lint, test, audit, and build
-precommit: update perl-deps codegen check-subdirectory-coverage check-extractors fix yamllint compat-gen test codegen-test audit build
-	@echo "✅ precommit successful 🥳" 
+precommit: update audit perl-deps codegen fix checks tests build
+	@echo "✅ precommit successful 🥳"
 
 # Generate ExifTool JSON reference data for compatibility testing (only missing files)
 compat-gen:
@@ -149,15 +155,58 @@ compat-gen-force:
 compat-test:
 	cargo test --test exiftool_compatibility_tests --features integration-tests -- --nocapture
 
+# Run ExifTool compatibility tests with custom tag filtering
+# Usage: TAGS_FILTER="Composite:Lens,EXIF:Make" make compat-tags
+# Usage: make compat-tags TAGS_FILTER="Composite:Duration"
+compat-tags:
+	@if [ -z "$(TAGS_FILTER)" ]; then \
+		echo "Error: TAGS_FILTER must be set. Example: TAGS_FILTER=\"Composite:Lens,EXIF:Make\" make compat-tags"; \
+		exit 1; \
+	fi
+	@echo "Running compatibility tests with tag filter: $(TAGS_FILTER)"
+	TAGS_FILTER="$(TAGS_FILTER)" cargo test --test exiftool_compatibility_tests --features integration-tests -- --nocapture
+
 # Run MIME type compatibility tests
 test-mime-compat:
 	@echo "Running MIME type compatibility tests..."
 	cargo test --test mime_type_compatibility_tests --features integration-tests -- --nocapture
 
+# Run comprehensive binary extraction compatibility tests
+binary-compat-test:
+	@echo "Running comprehensive binary extraction compatibility tests..."
+	@echo "⏱️  Note: This test processes 344+ files and takes several minutes to complete"
+	cargo test --test binary_extraction_comprehensive --features integration-tests -- --nocapture --ignored
+
+# Compare exif-oxide output with ExifTool using the Rust comparison tool
+# Usage: make cmp -- image.jpg [group_prefix]
+# Examples:
+#   make cmp -- image.jpg
+#   make cmp -- image.jpg File:
+#   make cmp -- image.jpg EXIF:
+cmp:
+	@cargo run --bin compare-with-exiftool -- $(filter-out $@,$(MAKECMDGOALS))
+
+# Test binary extraction for a specific file (for debugging)
+# Usage: make binary-test-file FILE=test-images/nikon/d850.nef
+binary-test-file:
+	@if [ -z "$(FILE)" ]; then \
+		echo "Usage: make binary-test-file FILE=path/to/image.ext"; \
+		echo "Examples:"; \
+		echo "  make binary-test-file FILE=test-images/nikon/d850.nef"; \
+		echo "  make binary-test-file FILE=test-images/sony/sony_a7c_ii_02.arw"; \
+		echo "  make binary-test-file FILE=test-images/canon/5d_mark_iv.cr2"; \
+		exit 1; \
+	fi
+	@echo "🔍 Testing binary extraction for specific file: $(FILE)"
+	BINARY_TEST_FILE=$(FILE) cargo test --test binary_extraction_comprehensive test_specific_binary_extraction --features integration-tests -- --nocapture
+
 # Generate reference data and run compatibility tests
 compat: compat-gen compat-test test-mime-compat
 
 compat-force: compat-gen-force compat-test test-mime-compat
+
+# Run all compatibility tests including binary extraction
+compat-full: compat binary-compat-test
 
 # Show available make targets
 help:
@@ -169,11 +218,13 @@ help:
 	@echo ""
 	@echo "Development:"
 	@echo "  make check         - Run all checks without modifying (for CI)"
+	@echo "  make checks        - Run all checks (alias for various check targets)"
 	@echo "  make fmt           - Format code"
 	@echo "  make lint          - Run clippy linter"
 	@echo "  make yamllint      - Run yamllint on YAML files"
 	@echo "  make unit-test     - Run unit tests only (fast)"
 	@echo "  make test          - Run all tests including integration tests"
+	@echo "  make t             - Alias for 'make test'"
 	@echo "  make fix           - Fix formatting and auto-fixable issues"
 	@echo "  make build         - Build in release mode"
 	@echo "  make install       - Install the binary locally"
@@ -181,7 +232,11 @@ help:
 	@echo ""
 	@echo "Code Generation:"
 	@echo "  make codegen       - Generate all code from ExifTool"
-	@echo "  make patch-exiftool - Patch ExifTool modules (required before codegen)"
+	@echo "  make codegen-test  - Run codegen tests"
+	@echo "  make sync          - Extract all ExifTool algorithms and regenerate code"
+	@echo "  make check-extractors - Check that all Perl extractors are working"
+	@echo "  make subdirectory-coverage - Generate SubDirectory coverage report"
+	@echo "  make check-subdirectory-coverage - Check SubDirectory coverage and warn if low"
 	@echo ""
 	@echo "Cleaning:"
 	@echo "  make clean         - Clean build artifacts (cargo clean)"
@@ -190,6 +245,7 @@ help:
 	@echo ""
 	@echo "Maintenance:"
 	@echo "  make update        - Update dependencies"
+	@echo "  make upgrade-gha   - Upgrade GitHub Actions to latest versions"
 	@echo "  make upgrade       - Upgrade to latest dependency versions"
 	@echo "  make perl-setup    - Set up local Perl environment"
 	@echo "  make perl-deps     - Install Perl dependencies"
@@ -197,8 +253,14 @@ help:
 	@echo "  make precommit     - Run full pre-commit checks"
 	@echo ""
 	@echo "Testing:"
+	@echo "  make tests         - Run all tests including unit, integration, codegen, and compatibility"
 	@echo "  make compat        - Run compatibility tests"
 	@echo "  make compat-gen    - Generate missing ExifTool JSON reference files"
 	@echo "  make compat-gen-force - Force regenerate all ExifTool JSON reference files"
 	@echo "  make compat-test   - Run ExifTool compatibility tests"
-	@echo "  make snapshot-tests - Run snapshot tests"
+	@echo "  make compat-force  - Force regenerate and run compatibility tests"
+	@echo "  make test-mime-compat - Run MIME type compatibility tests"
+	@echo "  make binary-compat-test - Run comprehensive binary extraction tests"
+	@echo "  make binary-test-file FILE=path - Test binary extraction for specific file (debugging)"
+	@echo "  make cmp -- file [group] - Compare exif-oxide output with ExifTool (supported tags by default, --all for all tags)"
+	@echo "  make compat-full   - Run all compatibility tests including binary extraction"

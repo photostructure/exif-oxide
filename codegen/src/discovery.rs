@@ -4,8 +4,10 @@
 //! orchestrates the processing of each module's configuration.
 
 use anyhow::{Context, Result};
+use rayon::prelude::*;
 use std::collections::HashMap;
 use std::path::Path;
+use std::sync::Mutex;
 use std::time::Instant;
 use tracing::{debug, info};
 
@@ -22,9 +24,13 @@ pub fn discover_and_process_modules(
     all_extracted_tables: &HashMap<String, ExtractedTable>,
     output_dir: &str,
 ) -> Result<()> {
+    let discovery_start = Instant::now();
     let config_entries = read_directory(config_dir)
         .context("Failed to read config directory")?;
     
+    let mut module_dirs = Vec::new();
+    
+    // First pass: collect all module directories
     for entry in config_entries {
         let entry = entry.context("Failed to read directory entry")?;
         let module_config_dir = entry.path();
@@ -39,20 +45,63 @@ pub fn discover_and_process_modules(
             if dir_name.to_string_lossy().starts_with('.') {
                 continue;
             }
-            
-            let module_name = dir_name.to_string_lossy();
-            debug!("  Processing module: {}", module_name);
-            
-            let start = Instant::now();
-            lookup_tables::process_config_directory(
-                &module_config_dir,
-                &module_name,
-                all_extracted_tables,
-                output_dir,
-            )?;
-            info!("    🏭 Module {} code generation completed in {:.2}s", module_name, start.elapsed().as_secs_f64());
+            let module_name = dir_name.to_string_lossy().to_string();
+            module_dirs.push((module_config_dir, module_name));
         }
     }
+    
+    info!("🔍 Module discovery completed in {:.3}s - found {} modules to process", 
+          discovery_start.elapsed().as_secs_f64(), module_dirs.len());
+    
+    // Second pass: process each module in parallel for maximum performance
+    let total_generation_time = Mutex::new(0.0);
+    let generation_stats: Mutex<HashMap<String, f64>> = Mutex::new(HashMap::new());
+    
+    let parallel_start = Instant::now();
+    info!("🚀 Starting parallel module processing with {} threads", rayon::current_num_threads());
+    
+    module_dirs.par_iter().try_for_each(|(module_config_dir, module_name)| -> Result<()> {
+        debug!("  Processing module: {}", module_name);
+        
+        let start = Instant::now();
+        lookup_tables::process_config_directory(
+            module_config_dir,
+            module_name,
+            all_extracted_tables,
+            output_dir,
+        )?;
+        let elapsed = start.elapsed().as_secs_f64();
+        
+        // Update shared stats (with locking)
+        {
+            let mut total_time = total_generation_time.lock().unwrap();
+            *total_time += elapsed;
+        }
+        
+        {
+            let mut stats = generation_stats.lock().unwrap();
+            let module_type = if module_name.ends_with("_pm") { &module_name[..module_name.len()-3] } else { module_name };
+            *stats.entry(module_type.to_string()).or_insert(0.0) += elapsed;
+        }
+        
+        info!("    🏭 Module {} code generation completed in {:.3}s", module_name, elapsed);
+        Ok(())
+    })?;
+    
+    let parallel_elapsed = parallel_start.elapsed().as_secs_f64();
+    let total_generation_time = *total_generation_time.lock().unwrap();
+    let generation_stats = generation_stats.into_inner().unwrap();
+    
+    // Summary statistics
+    info!("🏭 CODE GENERATION PHASE SUMMARY:");
+    info!("  Parallel wall time: {:.3}s (vs {:.3}s sequential)", parallel_elapsed, total_generation_time);
+    info!("  Speedup: {:.1}x with {} threads", total_generation_time / parallel_elapsed, rayon::current_num_threads());
+    info!("  Total CPU time: {:.3}s", total_generation_time);
+    info!("  Average per module: {:.3}s", total_generation_time / generation_stats.len() as f64);
+    for (module_type, time) in generation_stats {
+        info!("  {}: {:.3}s", module_type, time);
+    }
+    info!("  Overall generation phase: {:.3}s", discovery_start.elapsed().as_secs_f64());
     
     Ok(())
 }
