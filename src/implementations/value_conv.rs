@@ -354,6 +354,182 @@ pub fn focallength_value_conv(value: &TagValue) -> Result<TagValue> {
     }
 }
 
+/// Trim trailing whitespace from string values
+/// ExifTool pattern: $val=~s/ +$//; $val
+pub fn trim_whitespace_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value {
+        TagValue::String(s) => Ok(TagValue::String(s.trim_end().to_string())),
+        _ => Ok(value.clone()),
+    }
+}
+
+/// Multiply value by 100
+/// ExifTool pattern: $val * 100
+pub fn multiply_100_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(val * 100.0)),
+        None => Ok(value.clone()),
+    }
+}
+
+/// Divide value by 8
+/// ExifTool pattern: $val / 8
+pub fn divide_8_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(val / 8.0)),
+        None => Ok(value.clone()),
+    }
+}
+
+/// Divide value by 256
+/// ExifTool pattern: $val / 256
+pub fn divide_256_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(val / 256.0)),
+        None => Ok(value.clone()),
+    }
+}
+
+/// Subtract 5 from value
+/// ExifTool pattern: $val - 5
+pub fn subtract_5_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(val - 5.0)),
+        None => Ok(value.clone()),
+    }
+}
+
+/// Add 3 to value
+/// ExifTool pattern: $val + 3
+pub fn add_3_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(val + 3.0)),
+        None => Ok(value.clone()),
+    }
+}
+
+/// Power function: 2 ** (-$val/3)
+/// ExifTool pattern: 2 ** (-$val/3)
+pub fn power_neg_div_3_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(2.0_f64.powf(-val / 3.0))),
+        None => Ok(value.clone()),
+    }
+}
+
+/// Divide value by 6
+/// ExifTool pattern: $val/6
+pub fn divide_6_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(val / 6.0)),
+        None => Ok(value.clone()),
+    }
+}
+
+/// Subtract 104 and divide by 8
+/// ExifTool pattern: ($val-104)/8
+pub fn subtract_104_divide_8_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64((val - 104.0) / 8.0)),
+        None => Ok(value.clone()),
+    }
+}
+
+/// Reciprocal multiplied by 10: $val ? 10 / $val : 0
+/// ExifTool pattern: $val ? 10 / $val : 0
+pub fn reciprocal_10_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) if val != 0.0 => Ok(TagValue::F64(10.0 / val)),
+        _ => Ok(TagValue::F64(0.0)),
+    }
+}
+
+/// Sony exposure time conversion: $val ? 2 ** (6 - $val/8) : 0
+/// ExifTool pattern: $val ? 2 ** (6 - $val/8) : 0
+pub fn sony_exposure_time_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) if val != 0.0 => Ok(TagValue::F64(2.0_f64.powf(6.0 - val / 8.0))),
+        _ => Ok(TagValue::F64(0.0)),
+    }
+}
+
+/// Sony ISO conversion: $val ? exp(($val/8-6)*log(2))*100 : $val
+/// ExifTool pattern: $val ? exp(($val/8-6)*log(2))*100 : $val
+pub fn sony_iso_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) if val != 0.0 => {
+            let result = ((val / 8.0 - 6.0) * 2.0_f64.ln()).exp() * 100.0;
+            Ok(TagValue::F64(result))
+        }
+        _ => Ok(value.clone()),
+    }
+}
+
+/// Sony FNumber conversion: 2 ** (($val/8 - 1) / 2)
+/// ExifTool pattern: 2 ** (($val/8 - 1) / 2)
+pub fn sony_fnumber_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(2.0_f64.powf((val / 8.0 - 1.0) / 2.0))),
+        None => Ok(value.clone()),
+    }
+}
+
+/// EXIF date conversion
+/// ExifTool pattern: Image::ExifTool::Exif::ExifDate($val)
+pub fn exif_date_value_conv(value: &TagValue) -> Result<TagValue> {
+    // For now, pass through - implement specific date conversion when needed
+    Ok(value.clone())
+}
+
+/// XMP date conversion
+/// ExifTool pattern: require Image::ExifTool::XMP; return Image::ExifTool::XMP::ConvertXMPDate($val);
+pub fn xmp_date_value_conv(value: &TagValue) -> Result<TagValue> {
+    // For now, pass through - implement specific XMP date conversion when needed
+    Ok(value.clone())
+}
+
+/// Reference long strings (> 32 chars) to avoid duplication
+/// ExifTool pattern: length($val) > 32 ? \$val : $val
+pub fn reference_long_string_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value {
+        TagValue::String(s) if s.len() > 32 => {
+            // In Rust, we don't have references like Perl, so just return the string
+            Ok(value.clone())
+        }
+        _ => Ok(value.clone()),
+    }
+}
+
+/// Reference very long strings (> 64 chars) to avoid duplication
+/// ExifTool pattern: length($val) > 64 ? \$val : $val
+pub fn reference_very_long_string_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value {
+        TagValue::String(s) if s.len() > 64 => {
+            // In Rust, we don't have references like Perl, so just return the string
+            Ok(value.clone())
+        }
+        _ => Ok(value.clone()),
+    }
+}
+
+/// Remove prefix up to ": " from string values
+/// ExifTool pattern: $val=~s/^.*: //;$val
+pub fn remove_prefix_colon_value_conv(value: &TagValue) -> Result<TagValue> {
+    match value {
+        TagValue::String(s) => {
+            if let Some(pos) = s.find(": ") {
+                // Remove everything up to and including ": "
+                let trimmed = &s[pos + 2..];
+                Ok(TagValue::String(trimmed.to_string()))
+            } else {
+                // No ": " found, return original
+                Ok(value.clone())
+            }
+        }
+        _ => Ok(value.clone()),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

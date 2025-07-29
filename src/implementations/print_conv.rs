@@ -360,6 +360,24 @@ pub fn focallength_in_35mm_format_print_conv(val: &TagValue) -> TagValue {
     })
 }
 
+/// Canon Focal Length PrintConv - simple "XX.X mm" formatting
+/// ExifTool: lib/Image/ExifTool/Canon.pm PrintConv: '"$val mm"'
+/// Used for Canon CameraSettings MinFocalLength and MaxFocalLength
+pub fn focal_length_mm_print_conv(val: &TagValue) -> TagValue {
+    TagValue::string(match val.as_f64() {
+        Some(focal_length) => {
+            // Format with 1 decimal place like ExifTool, but remove .0 for integers
+            let rounded = (focal_length * 10.0).round() / 10.0;
+            if (rounded.fract()).abs() < 0.001 {
+                format!("{} mm", rounded as i32)
+            } else {
+                format!("{:.1} mm", rounded)
+            }
+        }
+        None => format!("Unknown ({})", val),
+    })
+}
+
 /// Composite GPS Altitude PrintConv
 /// ExifTool: lib/Image/ExifTool/GPS.pm:423-431
 /// Formats GPS altitude with "Above/Below Sea Level" based on sign
