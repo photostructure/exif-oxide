@@ -191,20 +191,22 @@ pub fn extract_metadata(
     #[cfg(not(any(target_os = "windows", target_os = "macos")))]
     {
         // On Unix systems, use ctime as FileInodeChangeDate
-        // This represents when the inode was last changed
-        // Note: std::fs::Metadata doesn't expose ctime directly, so we use created() as fallback
+        // This represents when the inode was last changed (not creation time)
+        // ExifTool.pm:2860-2861 uses stat[10] which is ctime
         if filter_opts.should_extract_tag("FileInodeChangeDate", "File") {
-            if let Ok(created) = file_metadata.created() {
-                use chrono::{DateTime, Local};
-                let datetime: DateTime<Local> = created.into();
-                let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
-                tag_entries.push(TagEntry {
-                    group: "File".to_string(),
-                    group1: "System".to_string(),
-                    name: "FileInodeChangeDate".to_string(),
-                    value: TagValue::String(formatted.clone()),
-                    print: TagValue::String(formatted),
-                });
+            if let Some(ctime) = get_unix_ctime(path) {
+                use chrono::{Local, TimeZone};
+                let datetime = Local.timestamp_opt(ctime as i64, 0).single();
+                if let Some(datetime) = datetime {
+                    let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
+                    tag_entries.push(TagEntry {
+                        group: "File".to_string(),
+                        group1: "System".to_string(),
+                        name: "FileInodeChangeDate".to_string(),
+                        value: TagValue::String(formatted.clone()),
+                        print: TagValue::String(formatted),
+                    });
+                }
             }
         }
     }
@@ -1642,6 +1644,23 @@ fn is_file_group_tag(tag_name: &str) -> bool {
             | "encodingprocess"
             | "exifbyteorder"
     )
+}
+
+/// Get Unix ctime (inode change time) from file path
+/// This matches ExifTool.pm:2860-2861 which uses stat[10] for ctime
+#[cfg(not(any(target_os = "windows", target_os = "macos")))]
+fn get_unix_ctime(path: &Path) -> Option<u64> {
+    use std::os::unix::fs::MetadataExt;
+    
+    // Get Unix metadata to access ctime
+    match std::fs::metadata(path) {
+        Ok(metadata) => {
+            // ctime() returns the inode change time (stat[10] in Perl's stat function)
+            // This is exactly what ExifTool uses for FileInodeChangeDate on Unix systems
+            Some(metadata.ctime() as u64)
+        }
+        Err(_) => None,
+    }
 }
 
 #[cfg(test)]
