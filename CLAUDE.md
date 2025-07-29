@@ -45,11 +45,7 @@ Almost every task will involve studying some part of the ExifTool codebase and v
 
 ## ⚠️ CRITICAL: Assume Concurrent Edits
 
-There are several other engineers working _on the same copy of the source tree_ at the same time you are.
-
-If you ever encounter a build error that isn't near code that you wrote, **STOP** and tell the user the issue.
-
-The user will fix the build nd tell you when you can resume your work.
+There are several other engineers working _on the same copy of the source tree_ at the same time you are. If you ever encounter a build error that isn't near code that you wrote, **STOP** and tell the user the issue. The user will fix the build nd tell you when you can resume your work.
 
 ## Essential Documentation
 
@@ -67,7 +63,7 @@ Before starting work on exif-oxide, familiarize yourself with:
 
 - [API-DESIGN.md](docs/design/API-DESIGN.md) - Public API structure and TagEntry design
 - [CODEGEN.md](docs/CODEGEN.md) - Unified code generation and implementation guide
-- [PRINTCONV-DESIGN-DECISIONS.md](docs/design/PRINTCONV-DESIGN-DECISIONS.md) - PrintConv implementation decisions
+- [PRINTCONV-VALUECONV-GUIDE.md](docs/guides/PRINTCONV-VALUECONV-GUIDE.md) - PrintConv/ValueConv implementation guide and design decisions
 
 #### Guides
 
