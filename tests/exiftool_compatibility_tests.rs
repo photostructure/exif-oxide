@@ -9,19 +9,17 @@
 #![cfg(feature = "integration-tests")]
 
 use exif_oxide::compat::{
-    analyze_tag_differences, filter_to_supported_tags, normalize_for_comparison, run_exif_oxide,
-    CompatibilityReport, DifferenceType,
+    analyze_tag_differences, filter_to_custom_tags, filter_to_supported_tags,
+    normalize_for_comparison, run_exif_oxide, CompatibilityReport, DifferenceType,
 };
 use serde_json::Value;
 use similar::{ChangeTag, TextDiff};
 use std::path::Path;
 
 mod common;
-use common::CASIO_QVCI_JPG;
 
 /// Files to exclude from testing (problematic files to deal with later)
 const EXCLUDED_FILES: &[&str] = &[
-    CASIO_QVCI_JPG,
     "third-party/exiftool/t/images/ExtendedXMP.jpg",
     "third-party/exiftool/t/images/PhotoMechanic.jpg",
     "third-party/exiftool/t/images/ExifTool.jpg",
@@ -29,6 +27,18 @@ const EXCLUDED_FILES: &[&str] = &[
     "third-party/exiftool/t/images/InfiRay.jpg", // Thermal imaging - specialized format
     "third-party/exiftool/t/images/IPTC.jpg",    // IPTC-specific metadata edge case
 ];
+
+/// Parse the TAGS_FILTER environment variable into a list of tag names
+/// Format: "Composite:Lens,EXIF:Make,File:FileType"
+fn parse_tags_filter() -> Option<Vec<String>> {
+    std::env::var("TAGS_FILTER").ok().map(|filter_str| {
+        filter_str
+            .split(',')
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect()
+    })
+}
 
 /// Load ExifTool reference snapshot for a file
 fn load_exiftool_snapshot(file_path: &str) -> Result<Value, Box<dyn std::error::Error>> {
@@ -88,9 +98,21 @@ fn compare_file_output(file_path: &str) -> Result<(), Box<dyn std::error::Error>
         }
     };
 
-    // Filter both to supported tags only
-    let mut filtered_exiftool = filter_to_supported_tags(&exiftool_output);
-    let mut filtered_exif_oxide = filter_to_supported_tags(&exif_oxide_output);
+    // Filter both to supported tags (or custom tags if TAGS_FILTER is set)
+    let (mut filtered_exiftool, mut filtered_exif_oxide) =
+        if let Some(custom_tags) = parse_tags_filter() {
+            println!("  Using custom tag filter: {:?}", custom_tags);
+            let tag_refs: Vec<&str> = custom_tags.iter().map(|s| s.as_str()).collect();
+            (
+                filter_to_custom_tags(&exiftool_output, &tag_refs),
+                filter_to_custom_tags(&exif_oxide_output, &tag_refs),
+            )
+        } else {
+            (
+                filter_to_supported_tags(&exiftool_output),
+                filter_to_supported_tags(&exif_oxide_output),
+            )
+        };
 
     // Remove known missing tags for this file type
     remove_known_missing_tags(&mut filtered_exiftool, file_path);
@@ -343,9 +365,20 @@ fn test_exiftool_compatibility() {
             run_exif_oxide(&file_path),
         ) {
             (Ok(exiftool_data), Ok(our_data)) => {
-                // Filter both to supported tags only
-                let mut filtered_exiftool = filter_to_supported_tags(&exiftool_data);
-                let mut filtered_exif_oxide = filter_to_supported_tags(&our_data);
+                // Filter both to supported tags (or custom tags if TAGS_FILTER is set)
+                let (mut filtered_exiftool, mut filtered_exif_oxide) =
+                    if let Some(custom_tags) = parse_tags_filter() {
+                        let tag_refs: Vec<&str> = custom_tags.iter().map(|s| s.as_str()).collect();
+                        (
+                            filter_to_custom_tags(&exiftool_data, &tag_refs),
+                            filter_to_custom_tags(&our_data, &tag_refs),
+                        )
+                    } else {
+                        (
+                            filter_to_supported_tags(&exiftool_data),
+                            filter_to_supported_tags(&our_data),
+                        )
+                    };
 
                 // Remove known missing tags for this file type
                 remove_known_missing_tags(&mut filtered_exiftool, &file_path);
@@ -387,6 +420,9 @@ fn test_exiftool_compatibility() {
                 compatibility_report.value_format_mismatches.push(diff)
             }
             DifferenceType::Missing => compatibility_report.missing_tags.push(diff),
+            DifferenceType::DependencyFailure => {
+                compatibility_report.dependency_failures.push(diff)
+            }
             DifferenceType::TypeMismatch => compatibility_report.type_mismatches.push(diff),
             DifferenceType::OnlyInOurs => compatibility_report.only_in_ours.push(diff),
         }
@@ -395,6 +431,7 @@ fn test_exiftool_compatibility() {
     compatibility_report.total_tags_tested = compatibility_report.working_tags.len()
         + compatibility_report.value_format_mismatches.len()
         + compatibility_report.missing_tags.len()
+        + compatibility_report.dependency_failures.len()
         + compatibility_report.type_mismatches.len()
         + compatibility_report.only_in_ours.len();
 
@@ -404,11 +441,14 @@ fn test_exiftool_compatibility() {
     // Report critical issues but don't fail the test - this is for tracking progress
     let critical_failures =
         compatibility_report.missing_tags.len() + compatibility_report.type_mismatches.len();
-    if critical_failures > 0 {
+    let dependency_failures = compatibility_report.dependency_failures.len();
+
+    if critical_failures > 0 || dependency_failures > 0 {
         println!(
-            "\n⚠️  Tracking {} critical compatibility gaps: {} missing tags, {} type mismatches",
-            critical_failures,
+            "\n⚠️  Tracking {} compatibility gaps: {} missing tags, {} dependency failures, {} type mismatches",
+            critical_failures + dependency_failures,
             compatibility_report.missing_tags.len(),
+            dependency_failures,
             compatibility_report.type_mismatches.len()
         );
         println!("This test tracks progress towards ExifTool compatibility - failures are expected during development.");
