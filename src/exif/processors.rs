@@ -885,7 +885,8 @@ impl ExifReader {
         };
 
         // Store in the format "Group:TagName" expected by synthetic tag resolution
-        let full_tag_name = format!("{namespace}:{tag_name}");
+        // Use defensive grouping to avoid double nesting
+        let full_tag_name = crate::utils::ensure_group_prefix(tag_name, namespace);
         self.synthetic_tag_names
             .insert(tag_id, full_tag_name.clone());
 

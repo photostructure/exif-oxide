@@ -14,6 +14,7 @@
 mod binary_data;
 mod ifd;
 mod processors;
+pub mod subdirectory_processing;
 mod tags;
 
 // Only re-export what needs to be public - most functionality is internal
