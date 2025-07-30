@@ -451,22 +451,6 @@ pub fn classify_valueconv_expression(expr: &str, module: &str) -> ValueConvType 
     }
 }
 
-/// Get a list of all simple arithmetic expressions that can be compiled
-/// Used for documentation and debugging
-pub fn get_compilable_expressions() -> Vec<&'static str> {
-    let mut compilable = Vec::new();
-    
-    // Check all expressions in the registry
-    for &expr in VALUECONV_REGISTRY.keys() {
-        if CompiledExpression::is_compilable(expr) {
-            compilable.push(expr);
-        }
-    }
-    
-    compilable.sort();
-    compilable
-}
-
 
 #[cfg(test)]
 mod tests {
@@ -765,22 +749,4 @@ mod tests {
         }
     }
     
-    #[test]
-    fn test_get_compilable_expressions() {
-        let compilable = get_compilable_expressions();
-        
-        // Should include simple arithmetic expressions
-        assert!(compilable.contains(&"$val / 8"));
-        assert!(compilable.contains(&"$val * 100"));
-        assert!(compilable.contains(&"($val-104)/8"));
-        
-        // Should not include complex expressions
-        assert!(!compilable.contains(&"$val ? 10 / $val : 0"));
-        assert!(!compilable.contains(&"exp($val / 32 * log(2)) * 100"));
-        
-        println!("Found {} compilable expressions", compilable.len());
-        for expr in &compilable[..5.min(compilable.len())] {
-            println!("  - {}", expr);
-        }
-    }
 }

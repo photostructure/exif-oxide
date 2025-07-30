@@ -221,7 +221,33 @@ pub fn apply_value_conv(
     value: &TagValue,
     _errors: &mut Vec<String>,
 ) -> Result<TagValue> {
-    Ok(value.clone())
+    match tag_id {
+        6 => {
+            // Compiled arithmetic: $val / 1000
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 1000.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        _ => {
+            // Fall back to missing handler for unknown expressions
+            if let Some(tag_kit) = CASIO_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Casio",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+    }
 }
 
 /// Check if a tag has subdirectory processing
