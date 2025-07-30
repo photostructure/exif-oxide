@@ -8,7 +8,7 @@ use exif_oxide::types::{FilterOptions, TagValue};
 use std::collections::HashSet;
 use std::path::Path;
 
-const TEST_IMAGE_CANON: &str = "test-images/canon/Canon_T3i.jpg";
+const TEST_IMAGE_CANON: &str = "test-images/canon/eos_rebel_t3i.jpg";
 const TEST_IMAGE_RICOH: &str = "third-party/exiftool/t/images/Ricoh2.jpg";
 
 #[test]
@@ -379,7 +379,7 @@ fn test_multiple_glob_patterns() {
         composite_count,
         result.tags.len()
     );
-    // Note: Canon_T3i.jpg doesn't have GPS data, so gps_count may be 0
+    // Note: eos_rebel_t3i.jpg doesn't have GPS data, so gps_count may be 0
 }
 
 #[test]
