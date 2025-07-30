@@ -30,7 +30,7 @@ pub use tags::get_canon_tag_name;
 
 use crate::tiff_types::ByteOrder;
 use crate::types::Result;
-use tracing::{debug, warn};
+use tracing::debug;
 
 // CameraSettings functions are provided by the binary_data module
 
@@ -77,125 +77,19 @@ pub fn process_canon_makernotes(
     // ExifTool: Canon.pm SubDirectory processing for tags like ColorData1-12
     process_canon_subdirectory_tags(exif_reader)?;
 
-    // CRITICAL: Now process specific Canon binary data tags using existing Canon processors
-    // ExifTool: Canon.pm processes each Canon tag through specific SubDirectory processors
-
-    // Process Canon binary data tags directly using existing implementations
-    process_canon_binary_data_with_existing_processors(exif_reader, dir_start, size)?;
+    // Canon binary data processing is now handled entirely by the tag kit system
+    // The manual binary data processing was causing conflicts and value corruption
 
     debug!("Canon MakerNotes processing completed");
     Ok(())
 }
 
-/// Process Canon binary data using existing Canon processors and generated lookup tables
-/// ExifTool: Canon.pm processes Canon maker notes through specific binary data processors
-fn process_canon_binary_data_with_existing_processors(
-    exif_reader: &mut crate::exif::ExifReader,
-    dir_start: usize,
-    size: usize,
-) -> Result<()> {
-    debug!("Processing Canon binary data using existing Canon processors");
-
-    // Collect tags to store after processing (to avoid borrow issues)
-    let mut tags_to_store = Vec::new();
-
-    // Get the raw maker note data to process with Canon-specific processors
-    let full_data = exif_reader.get_data();
-    let data = &full_data[dir_start..dir_start + size];
-    let byte_order = ByteOrder::LittleEndian; // Canon typically uses little-endian
-
-    // Process Canon CameraSettings (tag 0x0001) using existing Canon processor
-    // ExifTool: Canon.pm CanonCameraSettings SubDirectory processing
-    if let Some(camera_settings_data) = find_canon_tag_data(data, 0x0001) {
-        debug!("Processing Canon CameraSettings using existing Canon processor");
-
-        // Use existing extract_camera_settings function with generated lookup tables
-        match extract_camera_settings(
-            camera_settings_data,
-            0, // offset within the camera settings data
-            camera_settings_data.len(),
-            byte_order,
-        ) {
-            Ok(camera_settings) => {
-                debug!(
-                    "Extracted {} Canon CameraSettings tags",
-                    camera_settings.len()
-                );
-
-                // Apply generated PrintConv lookup tables to camera settings
-                for (tag_name, tag_value) in camera_settings {
-                    let converted_value = apply_camera_settings_print_conv(&tag_name, &tag_value);
-                    // Note: tag_name already includes "MakerNotes:" prefix from extract_camera_settings()
-
-                    debug!("Canon CameraSettings: {} = {:?}", tag_name, converted_value);
-
-                    // Generate a synthetic tag ID for Canon CameraSettings tags
-                    // Using high range (0xC000+) to avoid conflicts with standard tags
-                    // Add hash of tag name to ensure uniqueness
-                    use std::collections::hash_map::DefaultHasher;
-                    use std::hash::{Hash, Hasher};
-
-                    let mut hasher = DefaultHasher::new();
-                    tag_name.hash(&mut hasher);
-                    let hash = hasher.finish();
-                    let synthetic_id = 0xC000 + ((hash as u16) & 0x0FFF);
-
-                    // Collect tag to store later
-                    tags_to_store.push((synthetic_id, converted_value, tag_name));
-                }
-            }
-            Err(e) => {
-                debug!("Failed to extract Canon CameraSettings: {}", e);
-            }
-        }
-    }
-
-    // Get model for conditional processing
-    let model = exif_reader
-        .get_tag_across_namespaces(0x0110) // Model tag
-        .and_then(|tag| tag.as_string())
-        .unwrap_or("");
-
-    // Process other Canon binary data tags using similar approach
-    let mut other_tags = process_other_canon_binary_tags_with_reader(
-        exif_reader,
-        data,
-        dir_start,
-        byte_order,
-        model,
-    )?;
-    tags_to_store.append(&mut other_tags);
-
-    // Now store all collected tags (after all borrows are released)
-    for (synthetic_id, converted_value, full_tag_name) in tags_to_store {
-        // Store the mapping from synthetic ID to tag name
-        exif_reader
-            .synthetic_tag_names
-            .insert(synthetic_id, full_tag_name.clone());
-
-        // CRITICAL: Store TagSourceInfo for synthetic Canon tags so they get proper Group1 assignment
-        // Without this, Canon MakerNote tags default to Group1="IFD0" instead of Group1="Canon"
-        use crate::types::TagSourceInfo;
-        let canon_source_info = TagSourceInfo::new(
-            "Canon".to_string(),             // namespace: Canon for maker note tags
-            "Canon".to_string(),             // ifd_name: Canon so get_group1() returns "Canon"
-            "Canon::BinaryData".to_string(), // processor: Canon binary data processor
-        );
-
-        // Use namespace-aware storage
-        exif_reader.store_tag_with_precedence(synthetic_id, converted_value, canon_source_info);
-
-        debug!(
-            "Stored Canon tag {} with synthetic ID 0x{:04X} and TagSourceInfo with ifd_name='Canon'",
-            full_tag_name, synthetic_id
-        );
-    }
-
-    Ok(())
-}
+// Removed process_canon_binary_data_with_existing_processors function - it was causing
+// conflicts with the tag kit system leading to corrupted Canon MakerNotes values
 
 /// Find specific Canon tag data with proper offset handling
 /// ExifTool: Canon.pm handles maker note offsets properly
+#[allow(dead_code)]
 fn find_canon_tag_data_with_full_access<'a>(
     full_data: &'a [u8],
     maker_note_data: &'a [u8],
@@ -473,6 +367,7 @@ fn find_canon_tag_data(data: &[u8], tag_id: u16) -> Option<&[u8]> {
 /// Process other Canon binary data tags using existing Canon processors
 /// ExifTool: Canon.pm processes various Canon subdirectories
 /// Returns Vec of (synthetic_id, tag_value, full_tag_name) tuples for storage
+#[allow(dead_code)]
 fn process_other_canon_binary_tags_with_reader(
     exif_reader: &crate::exif::ExifReader,
     maker_note_data: &[u8],
@@ -891,6 +786,20 @@ fn apply_canon_main_table_print_conv(exif_reader: &mut crate::exif::ExifReader) 
     Ok(())
 }
 
+/// Find Canon tag ID by name from the tag kit system
+/// Used for applying PrintConv to subdirectory-extracted tags
+fn find_canon_tag_id_by_name(tag_name: &str) -> Option<u32> {
+    use crate::generated::Canon_pm::tag_kit::CANON_PM_TAG_KITS;
+
+    // Search through all Canon tag kit entries to find matching name
+    for (&tag_id, tag_def) in CANON_PM_TAG_KITS.iter() {
+        if tag_def.name == tag_name {
+            return Some(tag_id);
+        }
+    }
+    None
+}
+
 /// Map Canon CameraSettings tag names to their tag kit IDs
 /// ExifTool: Canon.pm CameraSettings table tag IDs extracted from tag kit
 fn get_canon_camera_settings_tag_id(tag_name: &str) -> Option<u32> {
@@ -901,12 +810,43 @@ fn get_canon_camera_settings_tag_id(tag_name: &str) -> Option<u32> {
     // These IDs come from the generated Canon tag kit system
     match clean_tag_name {
         "MacroMode" => Some(1),       // TagKitDef { id: 1, name: "MacroMode", ... }
-        "Quality" => Some(3),         // TagKitDef { id: 3, name: "Quality", ... }
-        "CanonFlashMode" => Some(4),  // TagKitDef { id: 4, name: "CanonFlashMode", ... }
+        "SelfTimer" => Some(2), // TagKitDef { id: 2, name: "SelfTimer", ... } (in datetime.rs)
+        "Quality" => Some(3),   // TagKitDef { id: 3, name: "Quality", ... }
+        "CanonFlashMode" => Some(4), // TagKitDef { id: 4, name: "CanonFlashMode", ... }
         "ContinuousDrive" => Some(5), // TagKitDef { id: 5, name: "ContinuousDrive", ... }
-        "FocusMode" => Some(7),       // TagKitDef { id: 7, name: "FocusMode", ... }
-        "RecordMode" => Some(9),      // TagKitDef { id: 9, name: "RecordMode", ... }
-        "WhiteBalance" => Some(7), // TagKitDef { id: 7, name: "WhiteBalance", ... } (different context)
+        "FocusMode" => Some(7), // TagKitDef { id: 7, name: "FocusMode", ... }
+        "RecordMode" => Some(9), // TagKitDef { id: 9, name: "RecordMode", ... }
+        "CanonImageSize" => Some(10), // TagKitDef { id: 10, name: "CanonImageSize", ... }
+        "EasyMode" => None,     // Not found in generated tag kit yet
+        "DigitalZoom" => None,  // Not found in generated tag kit yet
+        "Contrast" => None,     // Not found in generated tag kit yet
+        "Saturation" => None,   // Not found in generated tag kit yet
+        "Sharpness" => None,    // Not found in generated tag kit yet
+        "CameraISO" => None,    // Not found in generated tag kit yet
+        "MeteringMode" => None, // Not found in generated tag kit yet
+        "FocusRange" => None,   // Not found in generated tag kit yet
+        "AFPoint" => None,      // Not found in generated tag kit yet
+        "CanonExposureMode" => None, // Not found in generated tag kit yet
+        "LensID" => None,       // Not found in generated tag kit yet
+        "LensType" => None,     // Not found in generated tag kit yet
+        "ShortFocal" => None,   // Not found in generated tag kit yet
+        "LongFocal" => None,    // Not found in generated tag kit yet
+        "FocalUnits" => None,   // Not found in generated tag kit yet
+        "MaxAperture" => None,  // Not found in generated tag kit yet
+        "MinAperture" => None,  // Not found in generated tag kit yet
+        "FlashActivity" => None, // Not found in generated tag kit yet
+        "FlashBits" => None,    // Not found in generated tag kit yet
+        "ManualFlashOutput" => None, // Not found in generated tag kit yet
+        "FocusContinuous" => None, // Not found in generated tag kit yet
+        "AESetting" => None,    // Not found in generated tag kit yet
+        "ImageStabilization" => None, // Not found in generated tag kit yet
+        "DisplayAperture" => None, // Not found in generated tag kit yet
+        "ZoomSourceWidth" => None, // Not found in generated tag kit yet
+        "ZoomTargetWidth" => None, // Not found in generated tag kit yet
+        "SpotMeteringMode" => None, // Not found in generated tag kit yet
+        "PhotoEffect" => None,  // Not found in generated tag kit yet
+        "ColorTone" => None,    // Not found in generated tag kit yet
+        "SRAWQuality" => None,  // Not found in generated tag kit yet
         _ => {
             debug!("Unknown Canon CameraSettings tag name: {}", clean_tag_name);
             None
@@ -914,130 +854,24 @@ fn get_canon_camera_settings_tag_id(tag_name: &str) -> Option<u32> {
     }
 }
 
-/// Process Canon subdirectory tags (like ColorData) and expand them into individual tags
+/// Process Canon subdirectory tags using the generic subdirectory processing system
 /// ExifTool: Canon.pm SubDirectory processing for binary data expansion
 fn process_canon_subdirectory_tags(exif_reader: &mut crate::exif::ExifReader) -> Result<()> {
+    use crate::exif::subdirectory_processing::process_subdirectories_with_printconv;
     use crate::generated::Canon_pm::tag_kit;
 
-    debug!("Processing Canon subdirectory tags");
+    debug!("Processing Canon subdirectory tags using generic system");
 
-    // Collect tags that have subdirectory processing
-    let mut subdirectory_tags = Vec::new();
-
-    for (&(tag_id, ref namespace), tag_value) in &exif_reader.extracted_tags {
-        // Check if this is a Canon tag with subdirectory processing
-        if let Some(source_info) = exif_reader.tag_sources.get(&(tag_id, namespace.clone())) {
-            if source_info.namespace == "MakerNotes" && source_info.ifd_name.starts_with("Canon") {
-                // Check if this tag has subdirectory processing
-                if tag_kit::has_subdirectory(tag_id as u32) {
-                    debug!(
-                        "Found Canon tag 0x{:04x} with subdirectory processing",
-                        tag_id
-                    );
-                    subdirectory_tags.push((tag_id, tag_value.clone(), source_info.clone()));
-                }
-            }
-        }
-    }
-
-    // Process each subdirectory tag
-    for (tag_id, tag_value, _source_info) in subdirectory_tags {
-        debug!("Processing subdirectory for Canon tag 0x{:04x}", tag_id);
-
-        // Use the new subdirectory processing API
-        // Get byte order from TIFF header
-        let byte_order = exif_reader
-            .header
-            .as_ref()
-            .map(|h| h.byte_order)
-            .unwrap_or(ByteOrder::LittleEndian);
-
-        match tag_kit::process_subdirectory(tag_id as u32, &tag_value, byte_order) {
-            Ok(extracted_tags) => {
-                debug!(
-                    "Extracted {} tags from subdirectory 0x{:04x}",
-                    extracted_tags.len(),
-                    tag_id
-                );
-
-                // Initialize counter for deterministic synthetic ID generation
-                let mut synthetic_counter: u16 = 0;
-
-                // Store each extracted tag
-                for (tag_name, value) in extracted_tags {
-                    // Skip tags marked as Unknown (matching ExifTool's default behavior)
-                    if tag_name.contains("Unknown") {
-                        debug!("Skipping unknown tag: {}", tag_name);
-                        continue;
-                    }
-
-                    // Generate a deterministic synthetic tag ID for the extracted tag
-                    // Uses parent tag ID's upper bits and counter for lower bits
-                    // This ensures unique IDs for each tag in the subdirectory
-                    let synthetic_id = 0x8000 | (tag_id & 0x7F00) | (synthetic_counter & 0xFF);
-                    synthetic_counter += 1;
-
-                    // Check bounds to prevent overflow into other ID ranges
-                    if synthetic_counter > 255 {
-                        warn!(
-                            "Too many synthetic tags extracted from subdirectory 0x{:04x}, some may be lost",
-                            tag_id
-                        );
-                        break;
-                    }
-
-                    debug!(
-                        "Storing extracted tag '{}' from subdirectory 0x{:04x} with synthetic ID 0x{:04x}",
-                        tag_name, tag_id, synthetic_id
-                    );
-
-                    // Add debug assertion to catch any future collision bugs
-                    debug_assert!(
-                        !exif_reader.synthetic_tag_names.contains_key(&synthetic_id),
-                        "Synthetic tag ID collision detected: 0x{:04x} for tag '{}'",
-                        synthetic_id,
-                        tag_name
-                    );
-
-                    // Store the extracted tag with Canon namespace
-                    // Use the tag name directly (not prefixed) since the synthetic_tag_names mapping will handle display
-                    let full_tag_name = format!("MakerNotes:{}", tag_name);
-                    exif_reader
-                        .synthetic_tag_names
-                        .insert(synthetic_id, full_tag_name.clone());
-
-                    debug!(
-                        "Storing tag 0x{:04x} with synthetic name mapping: '{}'",
-                        synthetic_id, full_tag_name
-                    );
-
-                    exif_reader.store_tag_with_precedence(
-                        synthetic_id,
-                        value,
-                        crate::types::TagSourceInfo::new(
-                            "MakerNotes".to_string(),
-                            "Canon".to_string(), // This should just be "Canon" for the ifd_name
-                            "Canon::SubDirectory".to_string(),
-                        ),
-                    );
-                }
-
-                // Remove the original array tag since we've expanded it
-                // We need to find the right namespace for this tag - check the subdirectory_tags
-                // The namespace should be from the source_info we collected earlier
-                let tag_key = (tag_id, "MakerNotes".to_string()); // Canon subdirectory tags are in MakerNotes namespace
-                exif_reader.extracted_tags.remove(&tag_key);
-                exif_reader.tag_sources.remove(&tag_key);
-            }
-            Err(e) => {
-                debug!(
-                    "Failed to process subdirectory for tag 0x{:04x}: {}",
-                    tag_id, e
-                );
-                // Keep the original array data if subdirectory processing fails
-            }
-        }
-    }
+    // Use the generic subdirectory processing with Canon-specific functions
+    process_subdirectories_with_printconv(
+        exif_reader,
+        "Canon",
+        "MakerNotes",
+        tag_kit::has_subdirectory,
+        tag_kit::process_subdirectory,
+        tag_kit::apply_print_conv,
+        find_canon_tag_id_by_name,
+    )?;
 
     debug!("Canon subdirectory processing completed");
     Ok(())
@@ -1045,7 +879,7 @@ fn process_canon_subdirectory_tags(exif_reader: &mut crate::exif::ExifReader) ->
 
 /// Apply Canon CameraSettings PrintConv using unified tag kit system
 /// ExifTool: Canon.pm CameraSettings PrintConv with tag kit lookup tables
-fn apply_camera_settings_print_conv(
+pub fn apply_camera_settings_print_conv(
     tag_name: &str,
     tag_value: &crate::types::TagValue,
 ) -> crate::types::TagValue {
@@ -1059,6 +893,7 @@ fn apply_camera_settings_print_conv(
 
     // Get the tag kit ID for this tag name
     if let Some(tag_id) = get_canon_camera_settings_tag_id(tag_name) {
+        debug!("Found tag kit ID {} for tag {}", tag_id, tag_name);
         // Use unified tag kit system for PrintConv
         let mut evaluator = ExpressionEvaluator::new();
         let mut errors = Vec::new();
@@ -1082,6 +917,10 @@ fn apply_camera_settings_print_conv(
             debug!("Canon tag kit error: {}", error);
         }
 
+        debug!(
+            "Tag kit PrintConv result for {}: {:?} -> {:?}",
+            tag_name, tag_value, result
+        );
         return result;
     }
 
@@ -1099,6 +938,7 @@ mod tests {
     use crate::exif::ExifReader;
     use crate::tiff_types::ByteOrder;
     use crate::types::TagValue;
+    use crate::utils::ensure_group_prefix;
 
     #[test]
     fn test_unique_synthetic_ids_for_subdirectory_tags() {
@@ -1229,7 +1069,7 @@ mod tests {
             let synthetic_id = 0x8000 | (tag_id & 0x7F00) | (synthetic_counter & 0xFF);
             synthetic_counter += 1;
 
-            let full_tag_name = format!("MakerNotes:{}", tag_name);
+            let full_tag_name = ensure_group_prefix(&tag_name, "MakerNotes");
             exif_reader
                 .synthetic_tag_names
                 .insert(synthetic_id, full_tag_name);
