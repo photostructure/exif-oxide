@@ -6,45 +6,6 @@
 
 **Problem Statement**: The subdirectory discovery tool found 1,865 SubDirectory patterns, but only 167 (8.95%) are implemented. This causes exif-oxide to output raw binary arrays instead of meaningful tags for most manufacturer-specific data.
 
-## MANDATORY READING
-
-- [CLAUDE.md](../CLAUDE.md) - Project-wide rules
-- [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md) - Core principle #1
-
-## ⚠️ CRITICAL: Assume Concurrent Edits
-
-Several engineers work on the **same source tree** simultaneously. If you encounter a build error that isn't near code you wrote:
-
-1. **STOP IMMEDIATELY**
-2. Tell the user about the error
-3. Wait for user to fix and give you the all-clear
-
-## DO NOT BLINDLY FOLLOW THIS PLAN
-
-**Red flags = STOP and ask:**
-
-- "Optimize" or "improve" ExifTool logic (violates trust principle)
-- Debugging >1 hour (you're probably on wrong path)
-- Would break tests (tests are sacred)
-- Confused about approach (clarification prevents waste)
-
-Building the wrong thing costs 10x more than asking questions.
-
-## KEEP THIS UPDATED
-
-Update as you work:
-
-- 🟢 **Done**: [Task] → [commit/file link]
-- 🟡 **WIP**: [Task] → [current blocker]
-- 🔴 **Blocked**: [Task] → [what's needed]
-- 🔍 **Found**: [Discovery] → [why it matters]
-
-Rules:
-
-1. Task is ONLY done when 100% complete + tested
-2. Every task needs automated test proving it works
-3. Completed TPPs → `docs/done/YYYYMMDD-PXX-description.md`
-
 ## Background & Context
 
 ### Why This Work Is Needed

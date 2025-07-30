@@ -1,332 +1,214 @@
-# Technical Project Plan: XMP Required Tags Implementation
+# Technical Project Plan: XMP Required Tags Individual Extraction
 
 ## Project Overview
 
-- **Goal**: Implement extraction of 63 XMP tags marked as required by PhotoStructure
-- **Problem**: XMP parsing is not yet implemented, blocking access to critical workflow and rights metadata
+- **Goal**: Implement individual extraction of 63 XMP tags marked as required, producing `XMP:TagName` entries matching ExifTool output
+- **Problem**: Existing XMP infrastructure produces structured objects but not individual XMP tags that applications expect
+- **Constraints**: Must maintain backward compatibility with structured XMP output, zero performance regression
 
-## Background & Context
+---
 
-- XMP uses RDF/XML format embedded in images
-- 50 required tags span multiple XMP namespaces (dc, xmp, xmpRights, etc.)
-- Critical for rights management, people tagging, and processing history
+## ⚠️ CRITICAL REMINDERS
 
-## Technical Foundation
+If you read this document, you **MUST** read and follow [CLAUDE.md](../CLAUDE.md) as well as [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md):
 
-- **Key areas**:
-  - Need XMP parser implementation
-  - XML/RDF parsing
-  - Namespace handling
-  - XMP packet location in various file formats
-- **Standards**: XMP Specification Part 1-3
+- **Trust ExifTool** (Translate and cite references, but using codegen is preferred)
+- **Ask clarifying questions** (Maximize "velocity made good")
+- **Assume Concurrent Edits** (STOP if you find a compilation error that isn't related to your work)
+- **Don't edit generated code** (read [CODEGEN.md](CODEGEN.md) if you find yourself wanting to edit `src/generated/**.*rs`)
+- **Keep documentation current** (so update this TPP with status updates, and any novel context that will be helpful to future engineers that are tasked with completing this TPP. Do not use hyperbolic "DRAMATIC IMPROVEMENT"/"GROUNDBREAKING PROGRESS" styled updates -- that causes confusion and partially-completed low-quality work)
 
-## Required XMP Tags (63 total)
+**NOTE**: These rules prevent build breaks, data corruption, and wasted effort across the team. 
 
-### High Frequency Core Tags (>50% frequency)
-- **ImageHeight** (1.000) - Image dimensions
-- **ImageWidth** (1.000) - Image dimensions
-- **Make** (1.000) - Camera manufacturer
-- **Model** (1.000) - Camera model
-- **ExposureTime** (0.990) - Shutter speed
-- **CreateDate** (0.970) - When created
-- **DateTimeOriginal** (0.970) - Original capture time
-- **FNumber** (0.970) - Aperture f-stop
-- **FocalLength** (0.950) - Lens focal length
-- **Orientation** (0.920) - Image rotation
-- **ModifyDate** (0.890) - Last modified
-- **ISO** (0.890) - ISO sensitivity
-- **Software** (0.600) - Processing software
+If you are found violating any topics in these sections, **your work will be immediately halted, reverted, and you will be dismissed from the team.**
 
-### Camera/Lens Information
-- **LensID** (0.200) - Lens identification
-- **LensModel** (0.100) - Lens model name
-- **LensInfo** (0.086) - Lens specifications
-- **LensMake** (0.022) - Lens manufacturer
-- **ApertureValue** (0.390) - APEX aperture
-- **ShutterSpeedValue** (0.380) - APEX shutter speed
+Honest. RTFM.
 
-### GPS Location Tags
-- **GPSLatitude** (0.079) - Latitude coordinate
-- **GPSLongitude** (0.079) - Longitude coordinate
-- **GPSAltitude** (0.061) - Altitude
-- **GPSProcessingMethod** (0.012) - GPS processing
-- **GPSDateStamp** (0.027) - GPS date
-- **GPSTimeStamp** (0.029) - GPS time
+---
 
-### Rights Management
-- **Copyright** (0.200) - Copyright notice
-- **License** (0.001) - Usage license
-- **AttributionName** (0.001) - Credit name
-- **AttributionURL** (0.001) - Credit URL
-- **Permits** (0.001) - Permitted uses
-- **Prohibits** (0.001) - Prohibited uses
-- **Requires** (0.001) - Required actions
-- **UseGuidelines** (0.001) - Usage guidelines
-- **Jurisdiction** (0.001) - Legal jurisdiction
+## Context & Foundation
 
-### People & Regions
-- **PersonInImage** (0.000) - People in photo
-- **PersonInImageName** (0.001) - Person names
-- **PersonInImageWDetails** (0.001) - Person details
-- **People** (0.001) - People list
-- **RegionList** (0.005) - Face regions
-- **HierarchicalKeywords** (0.005) - Keyword hierarchy
+### System Overview
 
-### Content & Workflow
-- **Title** (0.021) - Image title
-- **Description** (0.003) - Image description
-- **Subject** (0.004) - Subject keywords
-- **Keywords** (0.001) - Flat keywords
-- **Rating** (0.140) - Star rating
-- **CreatorTool** (0.032) - Creation software
-- **MetadataDate** (0.020) - Metadata modified
-- **LastKeywordXMP** (0.002) - Last keyword
-- **Categories** (0.051) - Category tags
-- **CatalogSets** (0.000) - Catalog membership
-- **TagsList** (0.000) - All tags
-- **Source** (0.000) - Image source
-- **HierarchicalSubject** (0.001) - Subject hierarchy
-- **KeywordInfo** (0.005) - Keyword metadata
+- **XMP Processor**: Full RDF/XML parser (`src/xmp/processor.rs`) with namespace awareness, UTF-16/BOM handling, Extended XMP reassembly - creates single structured TagEntry with "XMP" name containing entire XML structure as TagValue::Object
+- **Integration Pipeline**: Complete format-specific integration (`src/formats/mod.rs`) extracts XMP from JPEG APP1, TIFF IFD0, standalone .xmp files and processes with XmpProcessor
+- **Namespace Tables**: Generated lookup tables (`src/generated/XMP_pm/`) from ExifTool XMP.pm providing namespace prefix-to-URI mappings and character conversions
+- **Tag Metadata System**: 63 required XMP tags identified in `docs/tag-metadata.json` with frequency data, but none currently implemented as individual tags
 
-### Time/Date Tags
-- **DateTimeDigitized** (0.004) - Digitized time
-- **SubSecTimeDigitized** (0.084) - Subsecond precision
-- **CreationDate** (0.001) - Creation date
-- **DigitalCreationDateTime** (0.001) - Digital creation
-- **HistoryWhen** (0.001) - History timestamp
-- **TrackCreateDate** (0.002) - Track creation
-- **TrackModifyDate** (0.002) - Track modified
+### Key Concepts & Domain Knowledge
 
-### Other Metadata
-- **ColorSpace** (1.000) - Color space
-- **MeteringMode** (1.000) - Metering mode
-- **YCbCrPositioning** (1.000) - YCbCr positioning
-- **FlashModel** (0.011) - Flash unit model
-- **State** (0.010) - Location state
-- **City** (0.010) - Location city
-- **Country** (0.010) - Location country
+- **XMP Namespaces**: Dublin Core (dc:), basic XMP (xmp:), rights management (xmpRights:), EXIF-in-XMP (exif:), etc. - each namespace has its own tag table in ExifTool
+- **RDF/XML Structure**: XMP uses RDF containers (Bag/Seq → arrays, Alt → language alternatives) and nested structures that must be flattened to individual tags
+- **ExifTool Tag Format**: Produces individual tags like `XMP:Rating`, `XMP:Title`, `XMP:Subject` rather than nested structures
+- **Precedence Rules**: When tags exist in both EXIF and XMP (Make, Model, ExposureTime, etc.), EXIF takes precedence per ExifTool behavior
+
+### Surprising Context
+
+- **Existing Infrastructure Complete**: Current P18 claimed "❌ No XMP parsing infrastructure yet" but full processor with namespace awareness and format integration already exists and is working
+- **Single vs Individual Tags**: Current XMP processor creates one "XMP" TagEntry containing structured data, but ExifTool produces dozens of individual `XMP:TagName` entries that applications expect
+- **Codegen Gap**: XMP_pm has `simple_table.json` for namespace mappings but no `tag_kit.json` to extract actual tag definitions from ExifTool's 20+ XMP namespace tables
+- **Testing Infrastructure Ready**: Compat system can validate XMP tag extraction immediately - many ExifTool JSON reference files already contain XMP tags for comparison
+
+### Foundation Documents
+
+- **ExifTool XMP Implementation**: `third-party/exiftool/lib/Image/ExifTool/XMP.pm` contains 20+ namespace-specific tag tables (XMP::dc, XMP::xmp, XMP::xmpRights, etc.)
+- **Existing XMP Processor**: `src/xmp/processor.rs:52-75` shows current structured output approach
+- **Integration Points**: `src/formats/mod.rs:280-295` (JPEG), `src/formats/mod.rs:340-355` (TIFF), `src/formats/mod.rs:420-435` (.xmp files)
+- **Generated Tables**: `src/generated/XMP_pm/nsuri.rs` shows namespace URI mappings already extracted via codegen
+
+### Prerequisites
+
+- **Codegen System**: Existing tag_kit extraction framework for converting ExifTool Perl tag tables to Rust
+- **Structured TagValue Support**: TagValue::Object and TagValue::Array already support nested XMP data structures
+- **Namespace Resolution**: Generated NAMESPACE_URIS table provides prefix-to-URI mapping for all XMP namespaces
 
 ## Work Completed
 
-- ❌ No XMP parsing infrastructure yet
-- ✅ Tag metadata identifies XMP namespace tags
+- ✅ **Full XMP Processor** → Complete RDF/XML parser with namespace awareness, UTF-16/BOM handling, Extended XMP reassembly
+- ✅ **Format Integration** → JPEG APP1, TIFF IFD0, standalone .xmp file processing integrated into main extraction pipeline  
+- ✅ **Generated Namespace Tables** → XMP_pm namespace mappings, character conversions extracted from ExifTool via codegen
+- ✅ **Required Tags Identified** → 63 required XMP tags documented in tag-metadata.json with frequency data
+- ✅ **Testing Framework** → Compat system ready for validation, ExifTool reference files contain XMP tags
 
 ## Remaining Tasks
 
-### Critical - XMP Infrastructure
+### 1. RESEARCH: Current XMP Tag Output Analysis
 
-1. **XMP Packet Detection**
-   - Find XMP packets in JPEG APP1 segments (after EXIF)
-   - Extract from TIFF/DNG (typically in IFD0)
-   - Handle sidecar .xmp files
-   - Support extended XMP for large packets
+**Objective**: Determine which XMP tags (if any) are currently working and understand output format gaps
 
-2. **XML/RDF Parser**
-   - Parse RDF/XML structure
-   - Handle multiple namespaces (dc, xmp, xmpRights, exif, etc.)
-   - Extract simple properties, arrays, and structures
-   - Handle different RDF syntaxes (abbreviated, full)
+**Success Criteria**: 
+- Document current XMP processor output structure vs ExifTool individual tag format
+- Identify which of the 63 required XMP tags appear in our test files  
+- List specific ExifTool XMP namespace tables that need tag_kit extraction
 
-3. **Namespace Registry**
-   ```
-   dc: http://purl.org/dc/elements/1.1/
-   xmp: http://ns.adobe.com/xap/1.0/
-   xmpRights: http://ns.adobe.com/xap/1.0/rights/
-   exif: http://ns.adobe.com/exif/1.0/
-   photoshop: http://ns.adobe.com/photoshop/1.0/
-   xmpMM: http://ns.adobe.com/xap/1.0/mm/
-   MWG-rs: http://www.metadataworkinggroup.com/schemas/regions/
-   ```
+**Approach**: 
+- Run `cargo run --bin compare-with-exiftool test-images/canon_eos_r8.jpg XMP:` to see current vs expected output
+- Check `generated/exiftool-json/` files for XMP tag examples
+- Map required tags to ExifTool namespace tables (dc, xmp, xmpRights, etc.)
 
-### High Priority - Camera/EXIF Tags in XMP
+**Dependencies**: None
 
-Many standard EXIF tags are duplicated in XMP with high frequency:
+### 2. Task: Create XMP Tag Kit Codegen Configuration
 
-1. **Core Camera Settings**
-   - ExposureTime, FNumber, ISO (>90% frequency)
-   - FocalLength, Make, Model
-   - Map from exif: namespace
+**Success Criteria**: XMP tag definitions extracted from ExifTool and available as generated Rust code
 
-2. **Image Properties**
-   - ImageWidth/Height, Orientation
-   - ColorSpace, MeteringMode
-   - Often in tiff: or exif: namespaces
+**Approach**: Create `codegen/config/XMP_pm/tag_kit.json` to extract tag tables from ExifTool XMP.pm namespace tables
 
-3. **Timestamps**
-   - CreateDate, ModifyDate, DateTimeOriginal
-   - Handle timezone formatting differences
+**Dependencies**: Task 1 (need namespace analysis)
 
-### Medium Priority - Content & Rights
+**Success Patterns**:
+- ✅ Generated tag definitions in `src/generated/XMP_pm/tag_kit/` modules
+- ✅ `make codegen` runs without errors and produces XMP tag structures
+- ✅ Tag definitions include PrintConv/ValueConv references where applicable
 
-1. **Dublin Core (dc:) Tags**
-   - title, description, subject (arrays)
-   - creator, rights, source
-   - Handle language alternatives (xml:lang)
+### 3. Task: Implement Individual XMP Tag Extraction
 
-2. **Rights Management (xmpRights:)**
-   - Marked, WebStatement, UsageTerms
-   - Certificate, Owner
-   - Complex structured properties
+**Success Criteria**: XMP processor produces individual TagEntry objects for each XMP property, not single structured object
 
-3. **People & Regions (MWG-rs:)**
-   - RegionList with Areas and Names
-   - Parse rectangle/circle regions
-   - Handle rotation adjustments
+**Approach**: 
+- Extend `XmpProcessor::process_xmp_data()` to flatten structured XMP into individual TagEntry objects
+- Map namespace prefixes to "XMP" group for ExifTool compatibility 
+- Handle RDF containers (Bag/Seq → arrays, Alt → language alternatives) appropriately
 
-### Low Priority - Workflow Tags
+**Dependencies**: Task 2 (need generated tag definitions)
 
-1. **Hierarchical Keywords (lr:)**
-   - hierarchicalSubject structures
-   - Maintain parent-child relationships
+**Success Patterns**:
+- ✅ Individual `XMP:Rating`, `XMP:Title`, `XMP:Subject` etc. TagEntry objects produced
+- ✅ Structured XMP data correctly flattened to ExifTool-compatible format
+- ✅ Namespace prefixes properly resolved using generated tables
 
-2. **History (xmpMM:)**
-   - History array of actions
-   - InstanceID, DocumentID tracking
+### 4. Task: Add Required XMP Tags to Supported Tags
 
-3. **Photoshop (photoshop:)**
-   - Category, SupplementalCategories
-   - Instructions, Credit
+**Success Criteria**: All 63 required XMP tags added to `config/supported_tags.json` and pass compat testing
+
+**Approach**: 
+- Add each required XMP tag from tag-metadata.json to supported_tags.json
+- Run `make compat-force` to regenerate reference data including XMP 
+- Fix any conversion implementations needed for complex XMP structures
+
+**Dependencies**: Task 3 (need individual tag extraction working)
+
+**Success Patterns**:
+- ✅ All 63 XMP tags present in supported_tags.json
+- ✅ `make compat-test` passes for XMP tags
+- ✅ ExifTool comparison shows matching output for XMP-rich test files
+
+### 5. Task: Implement XMP/EXIF Precedence Rules
+
+**Success Criteria**: When tags exist in both EXIF and XMP, EXIF values take precedence per ExifTool behavior
+
+**Approach**: 
+- Identify overlapping tags (Make, Model, ExposureTime, FNumber, etc.)
+- Modify extraction pipeline to prefer EXIF over XMP for duplicate tags
+- Document precedence rules following ExifTool's approach
+
+**Dependencies**: Task 4 (need XMP tags working)
+
+**Success Patterns**:
+- ✅ EXIF:Make preferred over XMP:Make when both present
+- ✅ Precedence behavior matches ExifTool exactly
+- ✅ No duplicate tags in final output
+
+## Implementation Guidance
+
+### Recommended Patterns
+
+- **Tag Kit Extraction**: Use existing tag_kit framework to extract XMP namespace tables - see `codegen/config/Exif_pm/tag_kit.json` for example structure
+- **Namespace Handling**: Use generated `NAMESPACE_URIS` table to resolve prefixes, map all XMP namespaces to "XMP" group for compatibility
+- **RDF Container Mapping**: Bag/Seq containers become TagValue::Array, Alt containers become TagValue::Object with language keys
+- **Flattening Strategy**: Recursive traversal of structured XMP data to create individual TagEntry objects with dotted notation for nested properties
+
+### Tools to Leverage
+
+- **Existing XMP Processor**: Build on `src/xmp/processor.rs` RDF/XML parsing rather than replacing it
+- **Codegen Tag Kit**: Use `codegen/extractors/tag_kit.pl` to extract XMP namespace tables from ExifTool
+- **Generated Tables**: Leverage `src/generated/XMP_pm/` namespace mappings and character conversions
+- **Compat Testing**: Use `make compat-test` and `compare-with-exiftool` for validation
+
+### ExifTool Translation Notes
+
+- **XMP Namespace Tables**: ExifTool XMP.pm defines 20+ namespace-specific tag tables that need individual extraction
+- **Tag Group Mapping**: All XMP tags use "XMP" as group regardless of original namespace (dc:title → XMP:Title)
+- **Structured Property Handling**: Complex XMP structures must be flattened to individual tags while preserving semantic meaning
 
 ## Prerequisites
 
-- XML parsing library or implementation
-- Understanding of RDF structure
-- XMP specification compliance
+- **P10a EXIF Foundation** → Many XMP tags duplicate EXIF data, need precedence rules
+- **Codegen System** → Must use tag_kit extraction for XMP tag definitions
+- **Testing Infrastructure** → Compat system validates XMP output against ExifTool
 
-## Testing Strategy
+## Testing
 
-- Test with Adobe-created XMP
-- Verify namespace handling
-- Compare with ExifTool XMP extraction
-- Test sidecar files
+- **Unit**: Test XMP processor flattening logic with synthetic XMP data
+- **Integration**: Verify individual XMP tags extracted from real XMP-rich images
+- **Manual check**: Run `make compat-test | grep "XMP:"` and confirm all required tags pass
 
-## Success Criteria & Quality Gates
+## Definition of Done
 
-### You are NOT done until this is done:
-
-1. **XMP Infrastructure Must Exist**:
-   - [ ] XMP packet detection from JPEG APP1 segments, TIFF IFD0 tags
-   - [ ] XML/RDF parser capable of handling XMP structure
-   - [ ] Namespace registry supporting all XMP namespaces (dc, xmp, xmpRights, etc.)
-   - [ ] Support for both embedded and sidecar .xmp files
-
-2. **All Required XMP Tags Extracting**:
-   - [ ] 63 XMP required tags from tag-metadata.json implemented
-   - [ ] Parse structured properties (arrays, alternatives, structures)
-   - [ ] Handle multiple XMP namespaces correctly
-
-3. **Critical XMP Tags Missing from Compatibility Tests**:
-   ```json
-   High-priority XMP tags currently missing:
-   - "XMP:Rating"               // Star rating (0-5)
-   - "XMP:Title"                // Image title
-   - "XMP:Description"          // Image description  
-   - "XMP:Subject"              // Subject keywords
-   - "XMP:PersonInImage"        // People in image
-   - "XMP:RegionList"           // Face regions
-   - "XMP:HierarchicalKeywords" // Keyword hierarchy
-   - "XMP:License"              // Usage license
-   - "XMP:AttributionName"      // Credit name
-   - "XMP:AttributionURL"       // Credit URL
-   - "XMP:MetadataDate"         // Metadata modification date
-   - "XMP:CreatorTool"          // Creation software
-   ```
-
-4. **XMP Data Overlap with EXIF** (many XMP tags duplicate EXIF data):
-   ```json
-   XMP tags that often duplicate EXIF (follow precedence rules):
-   - "XMP:Make"                 // Camera manufacturer (prefer EXIF)
-   - "XMP:Model"                // Camera model (prefer EXIF)
-   - "XMP:ExposureTime"         // Shutter speed (prefer EXIF)
-   - "XMP:FNumber"              // Aperture (prefer EXIF)
-   - "XMP:FocalLength"          // Focal length (prefer EXIF)
-   - "XMP:ISO"                  // ISO sensitivity (prefer EXIF)
-   - "XMP:CreateDate"           // Creation date (prefer EXIF)
-   - "XMP:ModifyDate"           // Modification date (prefer EXIF)
-   ```
-
-5. **Specific Tag Validation** (must be added to `config/supported_tags.json` and pass `make compat-force`):
-   ```bash
-   # All these XMP tags must be present and extracting:
-   - "XMP:Rating"
-   - "XMP:Title"
-   - "XMP:Description"
-   - "XMP:Subject"
-   - "XMP:PersonInImage"
-   - "XMP:RegionList" 
-   - "XMP:HierarchicalKeywords"
-   - "XMP:License"
-   - "XMP:AttributionName"
-   - "XMP:AttributionURL"
-   - "XMP:MetadataDate"
-   - "XMP:CreatorTool"
-   - "XMP:Categories"
-   - "XMP:CatalogSets"
-   - "XMP:Source"
-   ```
-
-6. **Validation Commands**:
-   ```bash
-   # Test with XMP-rich images (Adobe Lightroom exports, etc.):
-   cargo run --bin compare-with-exiftool test-images/lightroom/exported.jpg XMP:
-   cargo run --bin exif-oxide test-images/adobe/xmp_sample.jpg | grep "XMP:"
-   
-   # After implementing XMP support:
-   make compat-force                    # Regenerate reference files
-   make compat-test | grep "XMP:"       # Check XMP compatibility
-   
-   # Target: All XMP required tags extracting with proper namespace handling
-   ```
-
-7. **Manual Validation** (Test XMP Parsing):
-   - **Adobe Lightroom**: Verify keyword hierarchies and ratings
-   - **Face Regions**: Test RegionList parsing with face detection data
-   - **Rights Management**: Confirm license and attribution data extraction
-   - **Sidecar Files**: Test .xmp sidecar file processing
-
-### Prerequisites & Dependencies:
-- **XML/RDF Parser**: Need robust XML parser supporting RDF syntax variations
-- **P10a EXIF Foundation** - XMP often duplicates EXIF data, precedence rules needed
-- **Namespace Handling**: Complex namespace prefix resolution
-
-### Quality Gates Definition:
-- **Compatibility Test Threshold**: <5 XMP-related failures in `make compat-test`
-- **Namespace Coverage**: Support for at least dc, xmp, xmpRights, exif, photoshop namespaces
-- **Structured Data**: Arrays, alternatives, and structures must parse correctly
-- **Precedence Rules**: EXIF data takes precedence over duplicate XMP data
+- [ ] All 63 required XMP tags from tag-metadata.json extracting as individual TagEntry objects
+- [ ] `make compat-test` passes for XMP tags with <5 failures
+- [ ] ExifTool comparison shows matching output: `cargo run --bin compare-with-exiftool image.jpg XMP:`
+- [ ] XMP/EXIF precedence rules implemented correctly
+- [ ] Generated XMP tag definitions via codegen tag_kit system
+- [ ] `make precommit` clean
 
 ## Gotchas & Tribal Knowledge
 
-### XMP Location Issues
-- **JPEG**: XMP in APP1 segment after EXIF (starts with "http://ns.adobe.com/xap/1.0/\0")
-- **TIFF/DNG**: Usually in IFD0 tag 0x02BC (XMP)
-- **Multiple Packets**: Some files have XMP in multiple locations
-- **Extended XMP**: Large packets split across multiple APP1 segments
+### XMP Processing Complexity
 
-### Parsing Complexities
-- **Namespace Prefixes**: Arbitrary (dc:title vs dublin:title)
-- **RDF Syntax**: Same data can be expressed multiple ways
-- **Language Alternatives**: dc:title can have multiple languages
-- **Empty vs Missing**: Distinguish between empty string and no value
+- **Namespace Prefix Arbitrariness** → Same URI can use different prefixes (dc:title vs dublin:title), must use URI-based resolution
+- **RDF Syntax Variations** → Same data can be expressed as attributes, elements, or containers - parser must handle all forms
+- **Language Alternatives** → Alt containers with xml:lang require special handling for internationalization
+- **Extended XMP Reassembly** → Large XMP packets split across multiple JPEG APP1 segments need correct ordering and reassembly
 
-### Data Duplication
-- **EXIF/XMP Overlap**: Many tags exist in both (prefer EXIF if conflicts)
-- **Precedence**: EXIF > XMP > IPTC for standard tags
-- **Format Differences**: Dates, GPS coords formatted differently
+### Current Implementation Gaps
 
-### Structure Types
-- **Simple Properties**: `<dc:format>image/jpeg</dc:format>`
-- **Arrays**: `<dc:subject><rdf:Bag><rdf:li>keyword</rdf:li></rdf:Bag></dc:subject>`
-- **Structures**: `<xmpRights:UsageTerms><rdf:Alt><rdf:li xml:lang="x-default">terms</rdf:li></rdf:Alt></xmpRights:UsageTerms>`
+- **Single Structured Output** → Current processor creates one "XMP" TagEntry instead of individual tags applications expect
+- **Missing Tag Definitions** → No codegen extraction of ExifTool XMP namespace tables means no tag implementations
+- **No Flattening Logic** → Structured RDF data not converted to individual TagEntry objects matching ExifTool format
 
-### Common Mistakes
-- **UTF-8 BOM**: XMP should not have BOM but some tools add it
-- **Whitespace**: Significant in some contexts, not in others
-- **CDATA**: May contain embedded XML that needs escaping
-- **Packet Wrapper**: <?xpacket> wrapper is optional
+### Integration Gotchas
 
-### Special Cases
-- **Lightroom**: Uses lr: namespace for hierarchical keywords
-- **Photoshop**: Stores legacy IPTC data in XMP
-- **Face Regions**: MWG standard vs proprietary formats
-- **GPS**: Different coordinate format than EXIF (decimal vs DMS)
+- **Precedence Rules Critical** → EXIF must take precedence over XMP for overlapping tags to match ExifTool behavior
+- **Group Name Consistency** → All XMP tags must use "XMP" group regardless of namespace for ExifTool compatibility
+- **Empty vs Missing Values** → Distinguish between empty XMP properties and missing properties for correct null handling

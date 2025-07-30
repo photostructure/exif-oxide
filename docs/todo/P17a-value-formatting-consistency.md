@@ -2,224 +2,162 @@
 
 ## Project Overview
 
-- **Goal**: Ensure all tag values match ExifTool's exact formatting conventions for numeric precision, string formatting, and output consistency
-- **Problem**: Minor formatting differences causing compatibility test failures despite correct data extraction
-
-## Background & Context
-
-- ExifTool has specific formatting rules for different value types
-- Numeric precision, string formatting, and data type representations must match exactly
-- These differences affect user experience and downstream tool compatibility
-
-## Technical Foundation
-
-- **Key files**:
-  - `src/value_conv.rs` - Value conversion implementations
-  - `src/print_conv.rs` - Output formatting implementations  
-  - `src/implementations/*/print_conv.rs` - Manufacturer-specific formatting
-  - `src/generated/*/tag_kit/` - Generated PrintConv definitions
-
-## Work Completed
-
-- ✅ Basic value extraction infrastructure
-- ✅ Some PrintConv implementations exist
-- ⚙️ **PrintConv infrastructure needs systematic completion**
-
-## Remaining Tasks
-
-### High Priority - Core Formatting Issues
-
-**Based on compatibility test failures:**
-
-1. **Numeric Precision Consistency**
-   - ExifTool: `"Software": 1.0` → exif-oxide: `"Software": "1.00"`
-   - ExifTool: `"ShutterSpeedValue": 0` → exif-oxide: `"ShutterSpeedValue": 0.0`
-   - **Fix**: Ensure integer values display as integers, floats match ExifTool precision
-
-2. **Exposure Settings Formatting**
-   - ExifTool: `"FNumber": 3.9` → exif-oxide: `"FNumber": [39, 10]` 
-   - ExifTool: `"ExposureTime": "1/80"` → exif-oxide: `"ExposureTime": [1, 80]`
-   - ExifTool: `"FocalLength": "17.5 mm"` → exif-oxide: `"FocalLength": [175, 10]`
-   - **Fix**: Implement proper PrintConv for rational values
-
-3. **Flash Mode Formatting**
-   - ExifTool: `"Flash": "Off, Did not fire"` → exif-oxide: `"Flash": 16`
-   - **Fix**: Implement flash lookup table and descriptive formatting
-
-4. **Image Size Formatting**
-   - ExifTool: `"ImageSize": "8x8"` → exif-oxide: `"ImageSize": "2048 1536"`
-   - **Fix**: Ensure proper "WIDTHxHEIGHT" format for ImageSize composite
-
-5. **Composite Aperture/ShutterSpeed**
-   - ExifTool: `"Aperture": 3.9` → exif-oxide: `"Aperture": [39, 10]`
-   - ExifTool: `"ShutterSpeed": "1/30"` → exif-oxide: `"ShutterSpeed": "1/30"`
-   - **Fix**: Format composite tags consistently with EXIF counterparts
-
-### Medium Priority - Manufacturer-Specific Formatting
-
-1. **Canon Value Formatting**
-   - Ensure Canon MakerNotes values match ExifTool formatting
-   - LensType, CameraID, FileNumber formatting
-
-2. **Nikon Value Formatting**  
-   - Encrypted value handling and display
-   - LensID calculation and formatting
-
-3. **Sony Value Formatting**
-   - SonyISO, SonyFNumber, SonyExposureTime formatting
-
-### Implementation Strategy
-
-**Phase 1: Fix Core EXIF PrintConv**
-```rust
-// Update src/exif/print_conv.rs
-pub fn format_fnumber(rational: &[u32; 2]) -> String {
-    let value = rational[0] as f64 / rational[1] as f64;
-    if value.fract() == 0.0 {
-        format!("{:.0}", value)  // "4" not "4.0"
-    } else {
-        format!("{:.1}", value)  // "3.9" not "3.90"
-    }
-}
-
-pub fn format_exposure_time(rational: &[u32; 2]) -> String {
-    let numerator = rational[0];
-    let denominator = rational[1];
-    
-    if numerator == 1 {
-        format!("1/{}", denominator)  // "1/80"
-    } else {
-        let value = numerator as f64 / denominator as f64;
-        if value >= 0.3 {
-            format!("{:.1}", value)   // "0.5" not "1/2"
-        } else {
-            format!("{}/{}", numerator, denominator)  // "1/200"
-        }
-    }
-}
-
-pub fn format_focal_length(rational: &[u32; 2]) -> String {
-    let value = rational[0] as f64 / rational[1] as f64;
-    format!("{:.1} mm", value)  // "17.5 mm"
-}
-```
-
-**Phase 2: Flash Mode Lookup**
-```rust
-// Extract from ExifTool Flash.pm via codegen
-pub fn format_flash_mode(value: u16) -> String {
-    match value {
-        0 => "No Flash",
-        1 => "Fired",
-        5 => "Fired, Return not detected",
-        7 => "Fired, Return detected",
-        8 => "On, Did not fire",
-        16 => "Off, Did not fire",
-        // ... complete lookup table from codegen
-        _ => format!("Unknown ({})", value),
-    }
-}
-```
-
-**Phase 3: Composite Tag Formatting**
-```rust
-// Update src/composite_tags/implementations.rs
-pub fn format_image_size(width: u32, height: u32) -> String {
-    format!("{}x{}", width, height)  // "2048x1536" not "2048 1536"
-}
-
-pub fn format_megapixels(width: u32, height: u32) -> String {
-    let mp = (width as f64 * height as f64) / 1_000_000.0;
-    format!("{:.1}", mp)  // "3.1" not "3.145728"
-}
-```
-
-## Prerequisites
-
-- **P10a: EXIF Required Tags** - Core EXIF PrintConv infrastructure must exist
-- **P12: Composite Required Tags** - Composite calculation framework needed
-- **P20: Codegen Migration** - Flash lookup and other tables should be generated
-
-## Testing Strategy
-
-- **Compatibility Test Focus**: Run `make compat-force` and target formatting mismatches
-- **Regression Testing**: Ensure formatting fixes don't break existing functionality
-- **Cross-Manufacturer Testing**: Verify formatting consistency across Canon, Nikon, Sony files
-- **Edge Case Testing**: Test with unusual values (zero denominators, very large/small numbers)
-
-## Success Criteria & Quality Gates
-
-### You are NOT done until this is done:
-
-1. **Compatibility Test Pass Rate**:
-   - [ ] Reduce formatting-related compatibility failures by >80%
-   - [ ] No regressions in existing successful tag extractions
-
-2. **Specific Tag Validation** (must be added to `config/supported_tags.json` and pass `make compat-force`):
-   ```json
-   Core EXIF formatting tags:
-   - "EXIF:FNumber"          // Must show "3.9" not [39,10]
-   - "EXIF:ExposureTime"     // Must show "1/80" not [1,80] 
-   - "EXIF:FocalLength"      // Must show "17.5 mm" not [175,10]
-   - "EXIF:Flash"            // Must show "Off, Did not fire" not 16
-   - "EXIF:Software"         // Must show "1.0" not "1.00"
-   
-   Composite formatting tags:
-   - "Composite:Aperture"    // Must show "3.9" not [39,10]
-   - "Composite:ShutterSpeed"// Must show "1/30" not raw value
-   - "Composite:ImageSize"   // Must show "2048x1536" not "2048 1536"
-   - "Composite:Megapixels"  // Must show "3.1" not "3.145728"
-   ```
-
-3. **Validation Commands**:
-   ```bash
-   # After implementing fixes:
-   make compat-force              # Regenerate reference files
-   make compat-test | grep -c "❌"  # Count remaining failures
-   
-   # Target: <20 formatting-related failures remaining
-   ```
-
-4. **Manual Validation**:
-   - Compare exif-oxide output with ExifTool for 10 representative files
-   - Verify rational values display as formatted strings, not arrays
-   - Confirm flash modes show descriptive text, not numeric codes
-
-## Gotchas & Tribal Knowledge
-
-### Formatting Rules from ExifTool
-
-1. **Rational Formatting**:
-   - Display as decimal when denominator results in simple decimal
-   - Show as fraction for shutter speeds <0.3 seconds
-   - Always include units for measurements (mm, seconds, etc.)
-
-2. **Integer vs Float Display**:
-   - Integer values should not show decimal points
-   - Float values should use minimal precision (3.9 not 3.90)
-
-3. **Composite Tag Consistency**:
-   - Composite tags should format identically to their EXIF counterparts
-   - ImageSize always uses "x" separator, never space
-
-4. **Flash Mode Special Cases**:
-   - Flash value is a bitmask with multiple flags
-   - Must decode all flags to create descriptive text
-   - "Off, Did not fire" is different from "No Flash"
-
-### Error Patterns to Avoid
-
-1. **Over-Precision**: Don't show more decimal places than ExifTool
-2. **Under-Precision**: Don't round values ExifTool shows precisely  
-3. **Unit Inconsistency**: Always include units where ExifTool does
-4. **Format Mixing**: Don't mix rational arrays with formatted strings in output
-
-### Dependencies
-
-- Flash lookup tables must be generated via codegen (P20)
-- EXIF PrintConv infrastructure must exist (P10a)
-- Composite tag calculations must be working (P12)
+- **Goal**: Ensure all tag values match ExifTool's exact formatting conventions by identifying and fixing remaining formatting edge cases through systematic compatibility testing
+- **Problem**: Despite comprehensive PrintConv infrastructure, specific formatting edge cases still cause compatibility test failures and inconsistent user experience
+- **Constraints**: Zero runtime overhead, maintain existing API compatibility, preserve numeric types in JSON output
 
 ---
 
-**⚠️ Implementation Note**: This TPP focuses on OUTPUT FORMATTING only. The underlying data extraction should already be working - we're just fixing how values are presented to match ExifTool exactly.
+## ⚠️ CRITICAL REMINDERS
+
+If you read this document, you **MUST** read and follow [CLAUDE.md](../CLAUDE.md) as well as [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md):
+
+- **Trust ExifTool** (Translate and cite references, but using codegen is preferred)
+- **Ask clarifying questions** (Maximize "velocity made good")
+- **Assume Concurrent Edits** (STOP if you find a compilation error that isn't related to your work)
+- **Don't edit generated code** (read [CODEGEN.md](CODEGEN.md) if you find yourself wanting to edit `src/generated/**.*rs`)
+- **Keep documentation current** (so update this TPP with status updates, and any novel context that will be helpful to future engineers that are tasked with completing this TPP. Do not use hyperbolic "DRAMATIC IMPROVEMENT"/"GROUNDBREAKING PROGRESS" styled updates -- that causes confusion and partially-completed low-quality work)
+
+**NOTE**: These rules prevent build breaks, data corruption, and wasted effort across the team. 
+
+If you are found violating any topics in these sections, **your work will be immediately halted, reverted, and you will be dismissed from the team.**
+
+Honest. RTFM.
+
+---
+
+## Context & Foundation
+
+### System Overview
+
+- **Value Conversion Pipeline**: Raw bytes → ValueConv (mathematical) → PrintConv (formatting) → JSON output. ValueConv maintains precision for calculations; PrintConv handles display formatting and type detection.
+- **PrintConv Infrastructure**: Comprehensive `src/implementations/print_conv.rs` with 40+ formatting functions for EXIF standard, GPS, Canon-specific, and composite tags. Most core EXIF tags already implemented.
+- **Codegen System**: Generated lookup tables in `src/generated/*/` including Flash modes, Orientation values, and manufacturer-specific tables extracted from ExifTool Perl source.
+- **Comparison Tools**: `compare-with-exiftool.rs` binary uses same normalization logic as compatibility tests, filtering formatting variations to show only actual differences.
+
+### Key Concepts & Domain Knowledge
+
+- **JSON Type Preservation**: ExifTool outputs numeric JSON for values that look like numbers, string JSON otherwise. Our `TagValue::string_with_numeric_detection()` mimics this behavior.
+- **ExifTool's Formatting Hierarchy**: PrintConv functions can return different types - numeric values become JSON numbers, strings become JSON strings. Type preservation affects downstream tool compatibility.
+- **Rational Formatting Rules**: Based on ExifTool's PrintFNumber/PrintExposureTime logic - different precision rules for different value ranges and usage contexts.
+
+### Surprising Context
+
+- **PrintConv Infrastructure Already Exists**: Unlike the original TPP assumptions, comprehensive PrintConv infrastructure is implemented. FNumber, ExposureTime, FocalLength, Flash, and most core EXIF tags have working implementations.
+- **Generated Tables Working**: Flash lookup, Orientation, and other manufacturer tables are generated and working. The original TPP's "Phase 2" tasks are largely complete.
+- **Value vs Display Distinction**: ExifTool sometimes returns numeric values (for calculations) vs formatted strings (for display). Our system must match both behaviors depending on context.
+- **Edge Case Focus**: Since major formatting is working, remaining issues are likely edge cases around precision, units, or specific value ranges.
+
+### Foundation Documents
+
+- **Current Implementation**: `src/implementations/print_conv.rs` - all existing PrintConv functions with ExifTool citations
+- **Value Pipeline**: `src/implementations/value_conv.rs` - mathematical conversions feeding into PrintConv
+- **Comparison Infrastructure**: `src/bin/compare-with-exiftool.rs` - normalized comparison tool
+- **ExifTool References**: All PrintConv functions cite specific ExifTool source lines
+
+### Prerequisites
+
+- **Knowledge assumed**: Understanding of ExifTool's JSON output behavior and type detection
+- **Setup required**: `compare-with-exiftool` binary built, test images available
+
+## Work Completed
+
+- ✅ **PrintConv Infrastructure** → Comprehensive system with 40+ functions implemented
+- ✅ **Core EXIF Formatting** → FNumber, ExposureTime, FocalLength, Flash, Orientation working
+- ✅ **Generated Lookup Tables** → Flash, Orientation, and manufacturer tables from codegen
+- ✅ **Comparison Tools** → `compare-with-exiftool.rs` with normalization logic
+- ✅ **Value Conversion Pipeline** → Mathematical conversions for GPS, APEX, Canon, Sony values
+
+## Remaining Tasks
+
+### 1. Task: Identify Current Formatting Differences Through Systematic Testing
+
+**Success Criteria**: Complete analysis of formatting differences across representative test files with specific examples of remaining edge cases
+**Approach**: Use comparison tools and compatibility tests to identify specific formatting mismatches
+**Dependencies**: None
+
+**Success Patterns**:
+- ✅ Run `compare-with-exiftool` on 10+ representative files covering major manufacturers
+- ✅ Categorize differences into: precision issues, unit formatting, type detection, missing PrintConvs
+- ✅ Document specific ExifTool vs exif-oxide examples for each category
+- ✅ Prioritize by frequency and impact on required tags from `docs/tag-metadata.json`
+
+### 2. Task: Fix High-Priority Formatting Edge Cases
+
+**Success Criteria**: Address the most common formatting differences identified in Task 1 with ExifTool-matching implementations
+**Approach**: Update existing PrintConv functions or add missing ones based on systematic analysis
+**Dependencies**: Task 1 must identify specific issues
+
+**Success Patterns**:
+- ✅ Each fix cites specific ExifTool source line numbers
+- ✅ Fixes maintain JSON type compatibility with ExifTool
+- ✅ Edge cases in precision, units, or value ranges addressed
+- ✅ Regression tests prevent breaking existing working tags
+
+### 3. RESEARCH: Analyze Composite Tag Formatting Consistency
+
+**Objective**: Determine if composite tags (Aperture, ShutterSpeed, ImageSize) format consistently with their EXIF counterparts
+**Success Criteria**: Document any composite-specific formatting requirements and implementation gaps
+**Done When**: Clear report on composite tag formatting status with specific examples
+
+### 4. Task: Implement Missing PrintConv Functions Identified by Analysis
+
+**Success Criteria**: Any missing PrintConv functions identified in analysis are implemented with ExifTool compatibility
+**Approach**: Add new PrintConv functions to `print_conv.rs` following existing patterns
+**Dependencies**: Tasks 1-3 must identify specific missing functions
+
+**Success Patterns**:
+- ✅ New functions follow ExifTool source exactly with proper citations
+- ✅ Functions use `TagValue::string_with_numeric_detection()` for type preservation
+- ✅ Unit tests verify formatting matches ExifTool for edge cases
+
+## Implementation Guidance
+
+### Recommended Patterns
+
+- **Use Comparison Tools First**: Always run `compare-with-exiftool file.jpg` to see actual differences before making changes
+- **Type Detection Pattern**: Use `TagValue::string_with_numeric_detection(result)` to match ExifTool's JSON numeric detection
+- **ExifTool Citation Pattern**: Every function should have `/// ExifTool: lib/Image/ExifTool/Module.pm:line_numbers` comments
+- **Edge Case Testing**: Test boundary conditions (zero values, very large/small numbers, undefined rationals)
+
+### Tools to Leverage
+
+- **`compare-with-exiftool.rs`**: Primary comparison tool with normalization logic
+- **Compatibility test framework**: `tests/exiftool_compatibility_tests.rs` for systematic verification
+- **Existing PrintConv functions**: Pattern library for consistent implementation style
+
+### ExifTool Translation Notes
+
+- **Numeric Detection**: ExifTool uses `Image::ExifTool::IsFloat()` - we use `string_with_numeric_detection()`
+- **Rational Handling**: Different precision rules for different contexts (FNumber vs FocalLength)
+- **Unit Formatting**: Always include units where ExifTool does ("mm", "s", etc.)
+
+## Testing
+
+- **Systematic Comparison**: Run `compare-with-exiftool` on test files from each major manufacturer
+- **Regression Testing**: Verify fixes don't break existing working tags with `cargo t`
+- **Edge Case Validation**: Test with zero denominators, infinite values, very large numbers
+- **Type Preservation**: Verify JSON output types match ExifTool exactly
+
+## Definition of Done
+
+- [ ] `compare-with-exiftool` shows <5 formatting differences on representative test files
+- [ ] No regressions in existing compatibility test pass rates
+- [ ] All required tags from `docs/tag-metadata.json` format consistently with ExifTool
+- [ ] `make precommit` passes cleanly
+
+## Gotchas & Tribal Knowledge
+
+**Format Quality Check**: Can you identify the specific formatting difference by running the comparison tool, and does your fix cite the exact ExifTool source?
+
+### Error Patterns to Avoid
+
+- **Over-Engineering**: Don't rewrite working PrintConv functions - focus on edge cases and missing functions
+- **Type Confusion**: Preserve ExifTool's JSON type behavior (numeric vs string) exactly
+- **Citation Gaps**: Every formatting decision must trace back to specific ExifTool source lines
+
+### Dependencies
+
+- Comparison tools working properly
+- Representative test files covering major camera manufacturers
+- Understanding of ExifTool's type detection behavior

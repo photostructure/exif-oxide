@@ -1,219 +1,217 @@
-# P16: Binary Data Extraction Infrastructure (`-b` flag support)
+# P16: Complete Binary Data Extraction (`-b` flag support)
 
-**Goal**: Implement ExifTool-compatible binary data extraction with `exif-oxide -b TagName` CLI support and proper binary data indicators in regular metadata output.
+## Project Overview
 
-**Problem**: Users cannot extract embedded thumbnails, previews, and other binary metadata. ExifTool shows `"(Binary data X bytes, use -b option to extract)"` but exif-oxide shows missing tags or incorrect values.
+- **Goal**: Implement complete ExifTool-compatible binary data extraction for all mainstream binary tags, enabling users to extract embedded images with byte-identical output using `exif-oxide -b TagName file.ext > output.jpg`
+- **Problem**: Binary extraction is partially implemented but has critical gaps - wrong data extraction, missing tag types, and format-specific naming mismatches cause user-facing failures
+- **Constraints**: Must maintain byte-identical compatibility with ExifTool `-b` flag across all supported formats and maintain memory efficiency for large preview images (500KB+)
 
-**Status**: CLI `-b` flag **✅ COMPLETE** and byte-identical to ExifTool. Binary indicators blocked by tag naming inconsistencies in extraction layer.
+---
 
-**Critical Constraints**:
+## ⚠️ CRITICAL REMINDERS
 
-- 🔧 Must show binary data indicators in regular output (not just with -b flag)
-- ⚡ Memory-efficient streaming for large preview images (500KB+)
-- 📐 ExifTool-compatible format-specific tag naming patterns
-- 🎯 Support mainstream binary tags: ThumbnailImage, PreviewImage, JpgFromRaw
+If you read this document, you **MUST** read and follow [CLAUDE.md](../CLAUDE.md) as well as [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md):
 
-## Background & Context
+- **Trust ExifTool** (Translate and cite references, but using codegen is preferred)
+- **Ask clarifying questions** (Maximize "velocity made good")
+- **Assume Concurrent Edits** (STOP if you find a compilation error that isn't related to your work)
+- **Don't edit generated code** (read [CODEGEN.md](CODEGEN.md) if you find yourself wanting to edit `src/generated/**.*rs`)
+- **Keep documentation current** (so update this TPP with status updates, and any novel context that will be helpful to future engineers that are tasked with completing this TPP. Do not use hyperbolic "DRAMATIC IMPROVEMENT"/"GROUNDBREAKING PROGRESS" styled updates -- that causes confusion and partially-completed low-quality work)
 
-Binary data extraction is fundamental to ExifTool functionality. Users expect to extract embedded JPEG thumbnails from RAW files, preview images, and color profiles using `exiftool -b TagName`.
+**NOTE**: These rules prevent build breaks, data corruption, and wasted effort across the team. 
 
-The challenge: ExifTool uses **format-specific tag naming** - the same tag ID gets different names depending on file format and IFD context.
+If you are found violating any topics in these sections, **your work will be immediately halted, reverted, and you will be dismissed from the team.**
 
-Reference: Original milestone document at `docs/todo/P16-MILESTONE-19-Binary-Data-Extraction.md`
+Honest. RTFM.
+
+---
+
+## Current State Analysis (2025-07-30)
+
+### ✅ What's Working
+- **CLI `-b` flag**: Fully implemented in `src/main.rs:200-503` with streaming I/O
+- **Binary indicators**: Show correctly in regular output ("Binary data X bytes, use -b option to extract")
+- **Sony ARW PreviewImage**: Perfect extraction - 508,756 bytes, SHA256-verified byte-identical to ExifTool
+- **Basic infrastructure**: Binary extraction pipeline, composite tag generation, memory-efficient streaming
+
+### ❌ Critical Failures
+1. **Wrong data extraction**: `-b -ThumbnailImage` on Sony ARW returns PreviewImage data (508,756 bytes instead of 10,857)
+2. **Unsupported binary tags**: `-b -JpgFromRaw` fails completely ("Binary extraction not supported for tag: JpgFromRaw")
+3. **Format-specific naming mismatches**: Canon CR2 uses `JpgFromRawStart/Length` but binary extraction looks for `PreviewImageStart/Length`
+4. **JPEG thumbnail extraction**: Regular JPEG files fail ("Required offset/length tags not found for: ThumbnailImage")
+
+### 🔍 Root Cause: Incomplete Binary Tag Mapping
+
+**Current implementation** (`src/main.rs:402-428`) only handles 3 binary tag types:
+- `thumbnailimage` → tries `ThumbnailOffset/Length` OR `OtherImageStart/Length`
+- `previewimage` → tries `PreviewImageStart/Length` OR `OtherImageStart/Length`  
+- `otherimage` → uses `OtherImageStart/Length`
+
+**ExifTool reality**: 13+ offset/length patterns, format-specific naming, composite tag construction, and special JPEG handling.
 
 ## Technical Foundation
 
-**Key Files:**
+### ExifTool Binary Extraction Architecture
 
-- `src/composite_tags/implementations.rs` - Binary data indicator generation
-- `src/composite_tags/dispatch.rs` - Composite tag routing
-- `src/generated/composite_tags.rs` - Tag definitions (ThumbnailImage, PreviewImage)
-- `config/supported_tags.json` - Binary tag include list
+**Core Pattern** (`lib/Image/ExifTool.pm:9716-9749`):
+1. **Dual-mode behavior**: Returns placeholder text OR actual binary data based on `-b` flag
+2. **Offset pair mapping**: 13+ predefined offset/length relationships in `HtmlDump.pm`
+3. **Format-specific naming**: Same binary data uses different tag names per manufacturer
+4. **Composite construction**: Binary tags generated on-demand, not stored directly
 
-**ExifTool Binary Tag Patterns:**
+**Key Mappings** (from `HtmlDump.pm`):
+```perl
+my %offsetPair = (
+    ThumbnailOffset   => 'ThumbnailLength',
+    PreviewImageStart => 'PreviewImageLength', 
+    JpgFromRawStart   => 'JpgFromRawLength',
+    OtherImageStart   => 'OtherImageLength',
+    PreviewJXLStart   => 'PreviewJXLLength',
+    IDCPreviewStart   => 'IDCPreviewLength',
+    # ... 8 more patterns
+);
+```
 
-- `ThumbnailOffset/ThumbnailLength` → `ThumbnailImage` composite
-- `PreviewImageStart/PreviewImageLength` → `PreviewImage` composite
-- Output: `"(Binary data X bytes, use -b option to extract)"`
+### Binary Tags Requiring Implementation
 
-## Work Completed
+Based on user requirements and ExifTool analysis:
 
-### ✅ **Root Cause Analysis**
+**High Priority** (Required for mainstream workflows):
+- `Composite:PreviewImage` ✅ **WORKING (Sony ARW only)**
+- `EXIF:JpgFromRaw` ❌ **MISSING** 
+- `EXIF:PreviewImage` ❌ **BROKEN (Canon CR2)**
+- `EXIF:ThumbnailImage` ❌ **WRONG DATA**
+- `EXIF:ThumbnailTIFF` ❌ **MISSING**
+- `JFIF:ThumbnailImage` ❌ **MISSING (special JFIF handling)**
+- `MakerNotes:PreviewImage` ❌ **MISSING**
+- `MakerNotes:ThumbnailImage` ❌ **MISSING**
 
-**Discovery**: exif-oxide wasn't showing binary data indicators because offset/length tags had format-specific names not handled by composite system.
+**Medium Priority** (Format-specific):
+- `File:PreviewImage` ❌ **MISSING**
+- `FlashPix:PreviewImage` ❌ **MISSING** 
+- `MPF:PreviewImage` ❌ **MISSING (Multi-Picture Format)**
+- `PanasonicRaw:JpgFromRaw2` ❌ **MISSING**
+- `Preview:JpgFromRaw2` ❌ **MISSING**
 
-**Decision**: Use composite tags to generate indicators instead of modifying core extraction pipeline.
+**Advanced** (Future consideration):
+- `PreviewJXL`, `IDCPreview`, `SamsungRawPointers` - New binary types not in original user list
 
-### ✅ **Format-Specific Tag Naming Research**
+## Implementation Plan
 
-**Key Finding**: ExifTool uses different tag names for same IDs depending on format:
+### Phase 1: Core Binary Tag Mapping (P16a)
 
-- `ThumbnailOffset/ThumbnailLength`: JPEG IFD1, some TIFF
-- `PreviewImageStart/PreviewImageLength`: MakerNotes, IFD0 of ARW/SR2
-- `OtherImageStart/OtherImageLength`: Sony ARW and other formats
+**Goal**: Fix wrong data extraction and implement complete offset/length pattern mapping
 
-Source: ExifTool tag definition notes in `src/generated/Exif_pm/tag_kit/thumbnail.rs`
+**Tasks**:
+1. **Implement comprehensive offset pair mapping** - Port ExifTool's 13+ offset/length patterns
+2. **Fix Sony ARW thumbnail/preview discrimination** - Multiple binary images need proper differentiation  
+3. **Add Canon format-specific mapping** - `JpgFromRawStart/Length` → `JpgFromRaw` binary tag
+4. **Implement JPEG/JFIF thumbnail extraction** - Special case using `MakeTiffHeader()` equivalent
+5. **Add missing binary tag types** - Extend beyond current 3 to support all mainstream tags
 
-### ✅ **Binary Data Indicator Implementation**
+**Key Files**:
+- `src/main.rs:extract_binary_data()` - Binary extraction engine
+- `src/composite_tags/implementations.rs` - Binary indicator generation 
+- New: `src/binary_extraction/` - Format-specific binary handlers
 
-**Implemented**:
+### Phase 2: Format-Specific Binary Handlers (P16b)
 
-- `compute_thumbnail_image()` in `src/composite_tags/implementations.rs:135-169`
-- `compute_preview_image()` in `src/composite_tags/implementations.rs:171-189`
-- Added to dispatch table in `src/composite_tags/dispatch.rs:60-61`
+**Goal**: Implement manufacturer-specific binary extraction patterns
 
-**Design**: Multi-pattern lookup handles format-specific naming automatically.
+**Tasks**:
+1. **Canon binary extraction** - CR2/CR3 preview and thumbnail handling
+2. **Nikon binary extraction** - NEF format-specific patterns
+3. **Olympus binary extraction** - ORF multiple preview sizes
+4. **Panasonic binary extraction** - RW2 and embedded JPEG processing
+5. **Multi-Picture Format support** - MPF binary image extraction
 
-### ✅ **Test Image Verification**
+**Prerequisites**: P16a complete (core mapping infrastructure)
 
-**Confirmed**: Sony ARW file `test-images/sony/sony_a7c_ii_02.arw` contains real binary data:
+### Phase 3: Advanced Binary Features (P16c)
 
-- Thumbnail: 10,857 bytes (160x120 JPEG)
-- Preview: 508,756 bytes (1616x1080 JPEG)
-- Tags extracted as `OtherImageStart/OtherImageLength`
+**Goal**: Handle edge cases and optimize for real-world usage
 
-### ✅ **Binary Data Indicator Infrastructure Completed**
+**Tasks**:
+1. **Error handling and validation** - Corrupted data, missing offsets, format validation
+2. **Memory optimization** - Large preview streaming (tested with 500KB+ files)
+3. **Video format support** - QuickTime/MP4 preview frame extraction
+4. **Comprehensive testing** - All binary tags across all supported formats
 
-**Implemented**:
+**Prerequisites**: P16b complete (format handlers working)
 
-- Enhanced `compute_preview_image()` to handle `OtherImageStart/OtherImageLength` pattern (line 196-209)
-- Multi-pattern lookup in both thumbnail and preview functions
-- Proper ExifTool format matching: `"(Binary data X bytes, use -b option to extract)"`
+## Success Criteria
 
-### ✅ **Root Cause Analysis - Tag Naming Mismatch**
+**Definition of Done**:
+- [ ] All 15 binary tags from user requirements support `-b` extraction
+- [ ] Byte-identical output compared to ExifTool (SHA256 verified)
+- [ ] Binary indicators appear correctly in regular metadata output
+- [ ] Memory usage remains constant regardless of binary data size (streaming)
+- [ ] `make binary-compat-test` passes with >95% success rate across test corpus
 
-**Critical Discovery**: Composite tag system requires exact tag name matches, but extraction naming differs:
+**Quality Gates**:
+- Sony ARW: Both ThumbnailImage (10,857 bytes) AND PreviewImage (508,756 bytes) extract correctly
+- Canon CR2: JpgFromRaw extraction works using `JpgFromRawStart/Length` tags
+- JPEG files: ThumbnailImage extraction works using JFIF embedded thumbnail construction
+- All manufacturers: Format-specific binary tags extract byte-identical to ExifTool
 
-**ExifTool extracts**:
+## Dependencies
 
-- `PreviewImageStart/PreviewImageLength` → `PreviewImage` composite
-- `ThumbnailOffset/ThumbnailLength` → `ThumbnailImage` composite
-
-**Our extraction**:
-
-- `OtherImageStart/OtherImageLength` (same binary data, different names)
-- Missing `ThumbnailOffset/ThumbnailLength` entirely
-
-**Impact**: Composite functions never called because required tags don't match extracted tag names.
-
-**Next Step**: This is an extraction/naming issue separate from binary indicator logic.
-
-### ✅ **CLI -b Flag Implementation - PERFECT SUCCESS**
-
-**Implemented**: Complete binary extraction with ExifTool-compatible syntax and output
-
-**✅ What Works**:
-
-- `exif-oxide -b -PreviewImage file.arw > preview.jpg` - **✅ BYTE-IDENTICAL to ExifTool**
-- Streaming I/O for memory efficiency (8KB chunks, handles 500KB+ previews)
-- Multi-pattern tag lookup (PreviewImageStart/Length, OtherImageStart/Length)
-- Proper error handling for missing tags and corrupt data
-
-**✅ Validation Results**:
-
-- **File size**: 508,756 bytes (exact match with ExifTool)
-- **SHA256 hash**: `03b08efc5b2da2969f8c2201c5011300d115bdb69b187c49be56c8720d4fab92` (identical)
-- **JPEG validation**: Valid JPEG magic number `ff d8 ff db`
-
-**Implementation**: `src/main.rs:205-503` - Full CLI integration with binary extraction functions
-
-## Remaining Tasks
-
-### ✅ **Comprehensive Binary Extraction Test Suite - COMPLETE**
-
-**Acceptance Criteria**: Automated integration tests verify binary extraction across all test images - **✅ IMPLEMENTED**
-
-**✅ Manual Validation Completed**: Sony ARW PreviewImage extraction verified byte-identical (SHA256: `03b08efc...`)
-
-**✅ Comprehensive Integration Test Suite**:
-
-**Implementation**: `tests/integration/binary_extraction_comprehensive.rs`
-
-- **Dynamic tag discovery**: Probes each image with ExifTool to find actual binary tags
-- **All supported formats**: Covers 50+ formats from SUPPORTED-FORMATS.md (JPEG, CR2, ARW, NEF, ORF, etc.)
-- **Comprehensive coverage**: Tests `test-images/` + `third-party/exiftool/t/images/` directories
-- **Manufacturer-specific patterns**: Canon, Sony, Nikon, Olympus, Panasonic, Fujifilm, etc.
-- **All binary tag types**: PreviewImage, PreviewTIFF, JpgFromRaw, JpgFromRaw2, ThumbnailImage, ThumbnailTIFF
-- **SHA256 validation**: Byte-identical comparison with ExifTool
-- **Structured reporting**: Success/failure rates by format and manufacturer
-- **Error handling**: Graceful handling of missing tags, corrupt data, unsupported formats
-
-**✅ Makefile Integration**:
-
-- `make binary-compat-test` - Run comprehensive binary extraction tests
-- `make compat-full` - Run all compatibility tests including binary extraction
-- Integrated with existing test infrastructure and `#[cfg(feature = "integration-tests")]`
-
-**✅ Test Design Advantages**:
-
-- **Rust implementation**: Type safety, better error handling, parallel processing capability
-- **Existing infrastructure reuse**: Leverages `src/compat/` utilities for consistency
-- **Comprehensive format coverage**: Tests real-world manufacturer-specific quirks
-- **Easy debugging**: Clear success/failure reporting with file sizes and hash information
-- **CI integration**: Works with `cargo t` workflow
-
-## Prerequisites
-
-- **P10a EXIF Foundation**: Binary tags often in EXIF IFDs
-- **P13 MakerNotes**: Many binary previews in manufacturer-specific sections
-- **Format Detection**: Must identify file types to locate binary data correctly
+- **P10a EXIF Foundation**: Binary tags often in EXIF IFDs ✅ **COMPLETE**
+- **P13 MakerNotes**: Manufacturer-specific binary tags ⚠️ **IN PROGRESS**
+- **Tag Kit System**: Binary tag definitions and composite generation ✅ **COMPLETE**
 
 ## Testing Strategy
 
-**Unit Tests**: Binary data indicator generation with mock tag sets
-**Integration Tests**: Full pipeline tests with real image files
-**Manual Validation**:
+**Existing Infrastructure**:
+- `tests/binary_extraction_comprehensive.rs` - Multi-format binary extraction validation ✅ **EXISTS**
+- `make binary-compat-test` - Comprehensive test suite ✅ **EXISTS** 
+- Test image corpus: 379 files across all supported formats ✅ **EXISTS**
 
-- Compare output with ExifTool for multiple file formats
-- Verify extracted binary data produces valid images
-- Test memory usage with large preview images
+**Test Plan**:
+1. **Unit tests**: Offset pair mapping logic, format-specific handlers
+2. **Integration tests**: Full pipeline with real image files (extend existing comprehensive test)
+3. **Compatibility validation**: SHA256 comparison with ExifTool output for each binary tag type
+4. **Performance testing**: Memory usage profiling with large preview images
 
-## Success Criteria & Quality Gates
+## Risk Assessment
 
-**Definition of Done**:
+**High Risk**:
+- **Format-specific complexity**: Each manufacturer has subtle differences in binary storage
+- **Memory management**: Large binary data (4MB+ JpgFromRaw) requires careful streaming
+- **Tag naming conflicts**: Same binary data, different names across formats
 
-- [ ] Binary data indicators appear in regular metadata output
-- [x] CLI `-b` flag extracts binary data identical to ExifTool (SHA256 verified) - **✅ COMPLETE**
-- [ ] `make compat-test` shows <2 binary-related failures
-- [ ] All binary tags in `config/supported_tags.json` show proper indicators
+**Mitigation**:
+- **Trust ExifTool principle**: Translate exact logic, don't "improve" or optimize
+- **Incremental testing**: Validate each format individually before moving to next
+- **Comprehensive test coverage**: Use existing 379-file test corpus for validation
 
-**Quality Gates**:
+## Context and Gotchas
 
-- Memory usage remains constant regardless of binary data size (streaming) - **✅ VERIFIED**
-- Extraction works for JPEG, TIFF, and RAW formats - **✅ VERIFIED (Sony ARW)**
-- Error handling for corrupt/missing binary data - **✅ IMPLEMENTED**
-- **NEW**: Comprehensive test suite validates extraction across entire test-images corpus
+### Format-Specific Binary Storage Patterns
 
-## Gotchas & Tribal Knowledge
+**Sony ARW**: Uses `OtherImageStart/Length` for BOTH thumbnail AND preview data - differentiation requires additional logic (thumbnail typically <50KB, preview >500KB)
 
-### Format-Specific Tag Naming is Complex
+**Canon CR2**: Uses `JpgFromRawStart/Length` for preview data, but our current mapping looks for `PreviewImageStart/Length`
 
-ExifTool's tag naming depends on:
+**JPEG/JFIF**: Thumbnails are embedded in JFIF APP segments, not offset/length pairs - requires special construction using TIFF header generation
 
-- File format (JPEG vs TIFF vs RAW)
-- IFD context (IFD0 vs IFD1 vs MakerNotes)
-- Manufacturer (Canon vs Sony vs Nikon)
+### Multiple Binary Images Per File
 
-**Example**: Tag 0x201 becomes:
+Many RAW files contain:
+- Small thumbnail (typically 160x120, <50KB) for quick display
+- Large preview (typically 1600x1080, >500KB) for editing preview
+- Full-resolution JPEG (4MB+) for immediate processing
 
-- `ThumbnailOffset` in JPEG IFD1
-- `PreviewImageStart` in Canon MakerNotes
-- `OtherImageStart` in Sony ARW IFD0
+Each needs separate extraction logic despite similar underlying storage.
 
-### Test Images Have No Real Binary Data
+### ExifTool Compatibility Requirements
 
-ExifTool test images in `third-party/exiftool/t/images/` are stripped 8x8 images. Use files in `test-images/*/` for real binary data testing.
+ExifTool's `-b` flag has specific behaviors:
+- Output format: Raw bytes to stdout (no base64 encoding)
+- Error handling: Silent failure for missing tags (no error message)
+- Memory efficiency: Streaming for large data (never loads full binary into memory)
+- Validation: JPEG magic number checking, format validation
 
-### Composite Tag Dependencies
+## Status Updates
 
-Binary data indicators are generated by composite tags, which require both offset AND length tags to be present. Missing either tag means no indicator appears.
-
-### Tag Naming Must Match Exactly
-
-**Critical**: The composite tag system uses exact string matching between required tag names and extracted tag names. Even if the same binary data is extracted with a different tag name (e.g., `OtherImageStart` vs `PreviewImageStart`), the composite function won't be called.
-
-**ExifTool Research Finding**: ExifTool doesn't alias `OtherImageStart` to `PreviewImage` - instead, it uses context-based naming during extraction to ensure the right names are used for the right composite tags.
-
-### Memory Efficiency Critical
-
-Preview images can be 500KB+ (Sony ARW example). Must use streaming I/O, never load entire binary payload into memory.
+**2025-07-30**: Initial analysis complete. Binary extraction partially working but needs comprehensive rewrite for complete ExifTool compatibility. Core infrastructure exists but binary tag mapping system needs complete overhaul.

@@ -1,7 +1,5 @@
 # Technical Project Plan: Olympus Required Tags Support
 
-**Date:** 2025-07-21  
-**Status:** In Progress  
 **Related Milestone:** P3-MILESTONE-17c-Olympus-RAW
 
 ## Project Overview
