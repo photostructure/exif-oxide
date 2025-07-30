@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with exif-oxide.
 
-Today's date is July 27, 2025.
+Today's date is (at least) July 30, 2025. Honest, you can check with `date`, although we're in `America/Los_Angeles`, not UTC.
 
 ## 🚨 CRITICAL: ALWAYS USE ABSOLUTE PATHS 🚨
 
@@ -45,11 +45,13 @@ Almost every task will involve studying some part of the ExifTool codebase and v
 
 ## ⚠️ CRITICAL: Assume Concurrent Edits
 
-There are several other engineers working _on the same copy of the source tree_ at the same time you are. If you ever encounter a build error that isn't near code that you wrote, **STOP** and tell the user the issue. The user will fix the build nd tell you when you can resume your work.
+There are several other engineers working _on the same copy of the source tree_ at the same time you are. If you ever encounter a build error that you are positive is not a side-effect from code that you've edited, **STOP** and tell the user the issue. The user will fix the build nd tell you when you can resume your work.
 
 ## Essential Documentation
 
-Before starting work on exif-oxide, familiarize yourself with:
+This project has many non-intuitive aspects. Before starting any task, **READ THE RELEVANT DOCUMENTATION**. 
+
+If you skip this step, your work will likely be spurious, wrong, and rejected.
 
 ### Our Documentation
 
@@ -89,7 +91,7 @@ Before starting work on exif-oxide, familiarize yourself with:
 
 ## Critical Development Principles
 
-### 0. Ask the user clarifying questions
+### 0. Ask clarifying questions
 
 If you have any clarifying questions for any aspects that are odd, nebulous, confusing, inadequately specific, or otherwise unclear, **please ask the user**.
 
@@ -119,50 +121,11 @@ To maintain a manageable scope:
 - This reduces scope from ExifTool's 15,000+ tags to approximately 500-1000
 - See [TagMetadata.json](docs/tag-metadata.json) for tag popularity data
 
-### 4. Look for easy codegen wins
+### 4. Look for codegen opportunities
 
 ExifTool releases new versions monthly. The more our code can be generated automatically from ExifTool source, the better.
 
-**CRITICAL**: If you ever see any simple, static mapping in our code, **immediately look for where that came from in the ExifTool source, and ask the user to rewrite it with the codegen infrastructure**. See [CODEGEN.md](docs/CODEGEN.md) "Simple Table Extraction Framework" for details.
-
-### 5. DO NOT EDIT THE FILES THAT SAY DO NOT EDIT
-
-Everything in `src/generated` **is generated code** -- if you edit the file directly, the next time `make codegen` is run, your edit will be deleted.
-
-#### Simple Table Detection
-
-Be especially vigilant for these patterns that should NEVER be manually maintained:
-
-❌ **Manual lookup tables** (should be generated):
-
-```rust
-// BAD - This should be generated from ExifTool!
-fn canon_white_balance_lookup(value: u8) -> &'static str {
-    match value {
-        0 => "Auto",
-        1 => "Daylight",
-        2 => "Cloudy",
-        3 => "Tungsten",
-        _ => "Unknown",
-    }
-}
-```
-
-✅ **Using generated tables**:
-
-```rust
-// GOOD - Using simple table extraction framework
-use crate::generated::canon::white_balance::lookup_canon_white_balance;
-
-fn canon_white_balance_print_conv(value: &TagValue) -> Result<String> {
-    if let Some(wb_value) = value.as_u8() {
-        if let Some(description) = lookup_canon_white_balance(wb_value) {
-            return Ok(description.to_string());
-        }
-    }
-    Ok(format!("Unknown ({})", value))
-}
-```
+**CRITICAL**: If you ever see any manually-ported static maps or sets in our non-`src/generated/**/*.rs` code, **immediately look for where that came from in the ExifTool source, and ask the user to rewrite it with the codegen infrastructure**. See [CODEGEN.md](docs/CODEGEN.md) "Simple Table Extraction Framework" for details.
 
 #### What to Look For
 
@@ -193,6 +156,12 @@ If you see ANY of these, immediately suggest codegen extraction:
 - Version-specific model lists that need manual updates
 
 **Remember**: Manually translated lookup tables are a minefield of bugs -- they're difficult to compare with the source material, frequently contain subtle translation mistakes, and are a substantial maintenance burden that grows with each ExifTool release. The codegen system automates hundreds of perl-encoded tables with zero ongoing maintenance costs.
+
+### 5. DO NOT EDIT THE FILES THAT SAY DO NOT EDIT
+
+Everything in `src/generated` **is generated code** -- if you edit the file directly, the next time `make codegen` is run, your edit will be deleted. Fix the generating code in `codegen/src` instead.
+
+YOU WILL BE IMMEDIATELY FIRED IF YOU IGNORE THIS WARNING, as you've obviously not read this manual, and all your other work will be circumspect.
 
 ### Choosing the Right Extractor
 
