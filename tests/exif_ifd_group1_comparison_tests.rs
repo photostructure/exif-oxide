@@ -157,7 +157,7 @@ fn test_group1_assignments_match_exiftool_canon() {
 /// Test Group1 assignments for multiple image formats
 #[test]
 fn test_group1_assignments_multiple_formats() {
-    let test_images = [CANON_T3I_JPG, "test-images/canon/Canon_T3i.CR2"];
+    let test_images = [CANON_T3I_JPG, "test-images/canon/eos_rebel_t3i.cr2"];
 
     for image_path in &test_images {
         if !std::path::Path::new(image_path).exists() {

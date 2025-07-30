@@ -87,7 +87,7 @@ fn test_manufacturer_group_assignment(
 fn test_canon_exif_ifd_group_assignment() {
     let canon_images = [
         CANON_T3I_JPG,
-        "test-images/canon/Canon_T3i.CR2",
+        "test-images/canon/eos_rebel_t3i.cr2",
         "test-images/canon/canon_eos_r50v_01.jpg",
         "test-images/canon/canon_eos_r5_mark_ii_10.jpg",
     ];
@@ -400,7 +400,7 @@ fn test_exif_ifd_across_file_formats() {
             "Canon JPG",
             CANON_T3I_JPG,
             "Canon CR2",
-            "test-images/canon/Canon_T3i.CR2",
+            "test-images/canon/eos_rebel_t3i.cr2",
         ),
         (
             "Nikon JPG",

@@ -13,7 +13,7 @@ fn test_canon_camerasettings_extraction() {
     let canon_images = [
         "third-party/exiftool/t/images/Canon.jpg",
         "third-party/exiftool/t/images/Canon1DmkIII.jpg",
-        "test-images/canon/Canon_T3i.jpg",
+        "test-images/canon/eos_rebel_t3i.jpg",
     ];
 
     for image_path in &canon_images {
@@ -117,7 +117,7 @@ fn test_canon_selftimer_extraction() {
     // Test the SelfTimer tag specifically since we have PrintConv for it
     let canon_images = [
         "third-party/exiftool/t/images/Canon.jpg",
-        "test-images/canon/Canon_T3i.jpg",
+        "test-images/canon/eos_rebel_t3i.jpg",
     ];
 
     for image_path in &canon_images {

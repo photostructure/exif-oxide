@@ -6,7 +6,7 @@ use exif_oxide::{extract_metadata_json_with_filter, extract_metadata_with_filter
 use std::collections::HashSet;
 use std::path::Path;
 
-const TEST_IMAGE: &str = "test-images/canon/Canon_T3i.jpg";
+const TEST_IMAGE: &str = "test-images/canon/eos_rebel_t3i.jpg";
 
 #[test]
 fn test_extract_metadata_json_with_filter_specific_tag() {
