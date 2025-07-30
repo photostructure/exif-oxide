@@ -102,3 +102,40 @@ pub fn process_nikon_makernotes(reader: &mut ExifReader, offset: usize) -> Resul
 
     Ok(())
 }
+
+/// Find Nikon tag ID by name from the tag kit system
+/// Used for applying PrintConv to subdirectory-extracted tags
+fn find_nikon_tag_id_by_name(tag_name: &str) -> Option<u32> {
+    use crate::generated::Nikon_pm::tag_kit::NIKON_PM_TAG_KITS;
+
+    // Search through all Nikon tag kit entries to find matching name
+    for (&tag_id, tag_def) in NIKON_PM_TAG_KITS.iter() {
+        if tag_def.name == tag_name {
+            return Some(tag_id);
+        }
+    }
+    None
+}
+
+/// Process Nikon subdirectory tags using the generic subdirectory processing system
+/// ExifTool: Nikon.pm SubDirectory processing for binary data expansion
+pub fn process_nikon_subdirectory_tags(exif_reader: &mut ExifReader) -> Result<()> {
+    use crate::exif::subdirectory_processing::process_subdirectories_with_printconv;
+    use crate::generated::Nikon_pm::tag_kit;
+
+    debug!("Processing Nikon subdirectory tags using generic system");
+
+    // Use the generic subdirectory processing with Nikon-specific functions
+    process_subdirectories_with_printconv(
+        exif_reader,
+        "Nikon",
+        "MakerNotes",
+        tag_kit::has_subdirectory,
+        tag_kit::process_subdirectory,
+        tag_kit::apply_print_conv,
+        find_nikon_tag_id_by_name,
+    )?;
+
+    debug!("Nikon subdirectory processing completed");
+    Ok(())
+}
