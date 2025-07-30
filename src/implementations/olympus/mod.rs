@@ -92,3 +92,43 @@ pub fn is_olympus_makernote(make: &str) -> bool {
     // ExifTool: Check if Make field indicates Olympus
     make.starts_with("OLYMPUS") || make == "OM Digital Solutions"
 }
+
+/// Find Olympus tag ID by name from the tag kit system
+/// Used for applying PrintConv to subdirectory-extracted tags
+fn find_olympus_tag_id_by_name(tag_name: &str) -> Option<u32> {
+    use crate::generated::Olympus_pm::tag_kit::OLYMPUS_PM_TAG_KITS;
+
+    // Search through all Olympus tag kit entries to find matching name
+    for (&tag_id, tag_def) in OLYMPUS_PM_TAG_KITS.iter() {
+        if tag_def.name == tag_name {
+            return Some(tag_id);
+        }
+    }
+    None
+}
+
+/// Process Olympus subdirectory tags using the generic subdirectory processing system
+/// ExifTool: Olympus.pm SubDirectory processing for binary data expansion
+pub fn process_olympus_subdirectory_tags(
+    exif_reader: &mut crate::exif::ExifReader,
+) -> crate::types::Result<()> {
+    use crate::exif::subdirectory_processing::process_subdirectories_with_printconv;
+    use crate::generated::Olympus_pm::tag_kit;
+    use tracing::debug;
+
+    debug!("Processing Olympus subdirectory tags using generic system");
+
+    // Use the generic subdirectory processing with Olympus-specific functions
+    process_subdirectories_with_printconv(
+        exif_reader,
+        "Olympus",
+        "MakerNotes",
+        tag_kit::has_subdirectory,
+        tag_kit::process_subdirectory,
+        tag_kit::apply_print_conv,
+        find_olympus_tag_id_by_name,
+    )?;
+
+    debug!("Olympus subdirectory processing completed");
+    Ok(())
+}
