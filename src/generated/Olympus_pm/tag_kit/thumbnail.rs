@@ -483,7 +483,7 @@ pub fn get_thumbnail_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("$val=~s/\\s+$//;$val"),
+            print_conv: PrintConvType::Expression(r"$val=~s/\s+$//;$val"),
             value_conv: None,
             subdirectory: None,
         }),

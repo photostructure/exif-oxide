@@ -59,60 +59,181 @@ pub enum SubDirectoryType {
 
 /// All tag kits for Exif_pm
 pub static EXIF_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
+    let mut map: HashMap<u32, TagKitDef> = HashMap::new();
 
     // camera tags
     for (id, tag_def) in camera::get_camera_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // color tags
     for (id, tag_def) in color::get_color_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // core tags
     for (id, tag_def) in core::get_core_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // datetime tags
     for (id, tag_def) in datetime::get_datetime_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // document tags
     for (id, tag_def) in document::get_document_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // exif_specific tags
     for (id, tag_def) in exif_specific::get_exif_specific_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // gps tags
     for (id, tag_def) in gps::get_gps_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // interop tags
     for (id, tag_def) in interop::get_interop_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // other tags
     for (id, tag_def) in other::get_other_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // thumbnail tags
     for (id, tag_def) in thumbnail::get_thumbnail_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // windows_xp tags
     for (id, tag_def) in windows_xp::get_windows_xp_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
@@ -768,6 +889,7 @@ pub fn apply_print_conv(
         37385 => crate::implementations::print_conv::flash_print_conv(value),
         37386 => crate::implementations::print_conv::focallength_print_conv(value),
         41728 => crate::implementations::print_conv::filesource_print_conv(value),
+        41989 => crate::implementations::print_conv::focal_length_mm_print_conv(value),
         42034 => crate::implementations::print_conv::lensinfo_print_conv(value),
         _ => {
             // Fall back to shared handling
@@ -793,9 +915,40 @@ pub fn apply_value_conv(
     _errors: &mut Vec<String>,
 ) -> Result<TagValue> {
     match tag_id {
+        273 => crate::implementations::value_conv::reference_long_string_value_conv(value),
+        279 => crate::implementations::value_conv::reference_long_string_value_conv(value),
+        288 => crate::implementations::value_conv::reference_long_string_value_conv(value),
+        289 => crate::implementations::value_conv::reference_long_string_value_conv(value),
+        324 => crate::implementations::value_conv::reference_long_string_value_conv(value),
+        325 => crate::implementations::value_conv::reference_long_string_value_conv(value),
         37377 => crate::implementations::value_conv::apex_shutter_speed_value_conv(value),
         37378 => crate::implementations::value_conv::apex_aperture_value_conv(value),
         37381 => crate::implementations::value_conv::apex_aperture_value_conv(value),
+        37500 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        37520 => crate::implementations::value_conv::trim_whitespace_value_conv(value),
+        37521 => crate::implementations::value_conv::trim_whitespace_value_conv(value),
+        37522 => crate::implementations::value_conv::trim_whitespace_value_conv(value),
+        50715 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        50716 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        50938 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        50939 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        50940 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        50982 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        52537 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        65000 => crate::implementations::value_conv::remove_prefix_colon_value_conv(value),
+        65001 => crate::implementations::value_conv::remove_prefix_colon_value_conv(value),
+        65002 => crate::implementations::value_conv::remove_prefix_colon_value_conv(value),
+        65100 => crate::implementations::value_conv::remove_prefix_colon_value_conv(value),
+        65101 => crate::implementations::value_conv::remove_prefix_colon_value_conv(value),
+        65102 => crate::implementations::value_conv::remove_prefix_colon_value_conv(value),
+        65105 => crate::implementations::value_conv::remove_prefix_colon_value_conv(value),
+        65106 => crate::implementations::value_conv::remove_prefix_colon_value_conv(value),
+        65107 => crate::implementations::value_conv::remove_prefix_colon_value_conv(value),
+        65108 => crate::implementations::value_conv::remove_prefix_colon_value_conv(value),
+        65109 => crate::implementations::value_conv::remove_prefix_colon_value_conv(value),
+        65110 => crate::implementations::value_conv::remove_prefix_colon_value_conv(value),
+        65111 => crate::implementations::value_conv::remove_prefix_colon_value_conv(value),
+        65112 => crate::implementations::value_conv::remove_prefix_colon_value_conv(value),
         _ => {
             // Fall back to missing handler for unknown expressions
             if let Some(tag_kit) = EXIF_PM_TAG_KITS.get(&tag_id) {

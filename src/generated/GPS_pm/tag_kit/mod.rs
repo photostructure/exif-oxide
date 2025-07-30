@@ -49,10 +49,21 @@ pub enum SubDirectoryType {
 
 /// All tag kits for GPS_pm
 pub static GPS_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
+    let mut map: HashMap<u32, TagKitDef> = HashMap::new();
 
     // gps tags
     for (id, tag_def) in gps::get_gps_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
@@ -172,6 +183,7 @@ pub fn apply_value_conv(
         7 => crate::implementations::value_conv::gpstimestamp_value_conv(value),
         20 => crate::implementations::value_conv::gps_coordinate_value_conv(value),
         22 => crate::implementations::value_conv::gps_coordinate_value_conv(value),
+        29 => crate::implementations::value_conv::exif_date_value_conv(value),
         _ => {
             // Fall back to missing handler for unknown expressions
             if let Some(tag_kit) = GPS_PM_TAG_KITS.get(&tag_id) {

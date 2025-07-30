@@ -76,7 +76,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: Some("time in 1/100 s from when the camera was powered on to when the image is\n            written to memory card"),
             print_conv: PrintConvType::Manual("code_ref_printconv"),
-            value_conv: Some("$val / 100"),
+            value_conv: Some("canon_div_100_value_conv"),
             subdirectory: None,
         }),
         (46, TagKitDef {

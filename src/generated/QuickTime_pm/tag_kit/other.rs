@@ -7045,7 +7045,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Expression("$val =~ s/^(\\d+) (\\d+) (\\d+) (\\d+)/${3}x$4/; $val"),
+            print_conv: PrintConvType::Expression(r"$val =~ s/^(\d+) (\d+) (\d+) (\d+)/${3}x$4/; $val"),
             value_conv: None,
             subdirectory: None,
         }),
@@ -7386,7 +7386,11 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Expression("\n            return $val unless $val =~ /^\\d+$/;\n            require Image::ExifTool::ID3;\n            Image::ExifTool::ID3::PrintGenre($val - 1); # note the \"- 1\"\n        "),
+            print_conv: PrintConvType::Expression(r#"
+            return $val unless $val =~ /^\d+$/;
+            require Image::ExifTool::ID3;
+            Image::ExifTool::ID3::PrintGenre($val - 1); # note the "- 1"
+        "#),
             value_conv: Some("unpack(\"n\",$val)"),
             subdirectory: None,
         }),
@@ -8893,7 +8897,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Expression("$val =~ tr/ /x/; $val"),
+            print_conv: PrintConvType::Expression(r"$val =~ tr/ /x/; $val"),
             value_conv: None,
             subdirectory: None,
         }),

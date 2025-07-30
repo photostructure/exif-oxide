@@ -55,40 +55,117 @@ pub enum SubDirectoryType {
 
 /// All tag kits for Nikon_pm
 pub static NIKON_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
+    let mut map: HashMap<u32, TagKitDef> = HashMap::new();
 
     // color tags
     for (id, tag_def) in color::get_color_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // core tags
     for (id, tag_def) in core::get_core_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // datetime tags
     for (id, tag_def) in datetime::get_datetime_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // document tags
     for (id, tag_def) in document::get_document_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // interop tags
     for (id, tag_def) in interop::get_interop_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // other tags
     for (id, tag_def) in other::get_other_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // thumbnail tags
     for (id, tag_def) in thumbnail::get_thumbnail_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
@@ -4068,7 +4145,57 @@ pub fn apply_value_conv(
     value: &TagValue,
     _errors: &mut Vec<String>,
 ) -> Result<TagValue> {
-    Ok(value.clone())
+    match tag_id {
+        38 => crate::implementations::value_conv::reciprocal_10_value_conv(value),
+        324 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
+        326 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
+        334 => crate::implementations::value_conv::divide_8_value_conv(value),
+        338 => crate::implementations::value_conv::power_neg_div_3_value_conv(value),
+        340 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
+        342 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
+        344 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
+        346 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
+        350 => crate::implementations::value_conv::divide_8_value_conv(value),
+        354 => crate::implementations::value_conv::divide_8_value_conv(value),
+        358 => crate::implementations::value_conv::power_neg_div_3_value_conv(value),
+        426 => crate::implementations::value_conv::divide_6_value_conv(value),
+        430 => crate::implementations::value_conv::add_3_value_conv(value),
+        434 => crate::implementations::value_conv::power_neg_div_3_value_conv(value),
+        446 => crate::implementations::value_conv::divide_6_value_conv(value),
+        450 => crate::implementations::value_conv::add_3_value_conv(value),
+        454 => crate::implementations::value_conv::power_neg_div_3_value_conv(value),
+        516 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
+        616 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
+        620 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
+        650 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
+        658 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
+        662 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
+        730 => crate::implementations::value_conv::add_3_value_conv(value),
+        734 => crate::implementations::value_conv::power_neg_div_3_value_conv(value),
+        742 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
+        746 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
+        750 => crate::implementations::value_conv::divide_6_value_conv(value),
+        754 => crate::implementations::value_conv::power_neg_div_3_value_conv(value),
+        1434 => crate::implementations::value_conv::subtract_5_value_conv(value),
+        _ => {
+            // Fall back to missing handler for unknown expressions
+            if let Some(tag_kit) = NIKON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Nikon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+    }
 }
 
 /// Check if a tag has subdirectory processing

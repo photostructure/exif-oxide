@@ -50,15 +50,37 @@ pub enum SubDirectoryType {
 
 /// All tag kits for MinoltaRaw_pm
 pub static MINOLTARAW_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
+    let mut map: HashMap<u32, TagKitDef> = HashMap::new();
 
     // interop tags
     for (id, tag_def) in interop::get_interop_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // other tags
     for (id, tag_def) in other::get_other_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
@@ -163,7 +185,29 @@ pub fn apply_value_conv(
     value: &TagValue,
     _errors: &mut Vec<String>,
 ) -> Result<TagValue> {
-    Ok(value.clone())
+    match tag_id {
+        60 => crate::implementations::value_conv::multiply_100_value_conv(value),
+        76 => crate::implementations::value_conv::multiply_100_value_conv(value),
+        78 => crate::implementations::value_conv::multiply_100_value_conv(value),
+        _ => {
+            // Fall back to missing handler for unknown expressions
+            if let Some(tag_kit) = MINOLTARAW_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "MinoltaRaw",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+    }
 }
 
 /// Check if a tag has subdirectory processing

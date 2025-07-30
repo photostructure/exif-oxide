@@ -51,20 +51,53 @@ pub enum SubDirectoryType {
 
 /// All tag kits for Panasonic_pm
 pub static PANASONIC_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
+    let mut map: HashMap<u32, TagKitDef> = HashMap::new();
 
     // datetime tags
     for (id, tag_def) in datetime::get_datetime_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // interop tags
     for (id, tag_def) in interop::get_interop_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // other tags
     for (id, tag_def) in other::get_other_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
@@ -425,7 +458,33 @@ pub fn apply_value_conv(
     value: &TagValue,
     _errors: &mut Vec<String>,
 ) -> Result<TagValue> {
-    Ok(value.clone())
+    match tag_id {
+        41 => crate::implementations::value_conv::canon_div_100_value_conv(value),
+        81 => crate::implementations::value_conv::trim_whitespace_value_conv(value),
+        82 => crate::implementations::value_conv::trim_whitespace_value_conv(value),
+        83 => crate::implementations::value_conv::trim_whitespace_value_conv(value),
+        84 => crate::implementations::value_conv::trim_whitespace_value_conv(value),
+        134 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        144 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        _ => {
+            // Fall back to missing handler for unknown expressions
+            if let Some(tag_kit) = PANASONIC_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Panasonic",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+    }
 }
 
 /// Check if a tag has subdirectory processing
