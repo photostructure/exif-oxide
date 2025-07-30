@@ -24,8 +24,50 @@ use std::sync::LazyLock;
 /// Known acceptable differences between our implementation and ExifTool
 /// These represent cases where we intentionally differ (e.g., providing fallback MIME types)
 static KNOWN_DIFFERENCES: LazyLock<HashMap<&'static str, KnownDifference>> = LazyLock::new(|| {
-    // Currently empty - all known differences have been resolved
-    HashMap::new()
+    let mut differences = HashMap::new();
+
+    // NEF/NRW: We trust file extensions while ExifTool uses content analysis
+    // These are NRW files (based on content) with .nef extensions
+    differences.insert(
+        "test-images/nikon/z6_3_02.nef",
+        KnownDifference::ExtensionTrusted,
+    );
+    differences.insert(
+        "test-images/nikon/z_f.nef",
+        KnownDifference::ExtensionTrusted,
+    );
+    differences.insert(
+        "test-images/nikon/nikon_z8_73.NEF",
+        KnownDifference::ExtensionTrusted,
+    );
+    differences.insert(
+        "test-images/nikon/z6_3_03.nef",
+        KnownDifference::ExtensionTrusted,
+    );
+    differences.insert(
+        "test-images/nikon/z6_3_01.nef",
+        KnownDifference::ExtensionTrusted,
+    );
+
+    // Underscore versions of the same files (new test images)
+    differences.insert(
+        "test-images/nikon/z_6_3_01.nef",
+        KnownDifference::ExtensionTrusted,
+    );
+    differences.insert(
+        "test-images/nikon/z_6_3_02.nef",
+        KnownDifference::ExtensionTrusted,
+    );
+    differences.insert(
+        "test-images/nikon/z_6_3_03.nef",
+        KnownDifference::ExtensionTrusted,
+    );
+    differences.insert(
+        "test-images/nikon/z_8_73.nef",
+        KnownDifference::ExtensionTrusted,
+    );
+
+    differences
 });
 
 #[derive(Debug, Clone)]
@@ -45,6 +87,8 @@ enum KnownDifference {
     /// Magic pattern doesn't match the specific test file format
     #[allow(dead_code)]
     PatternMismatch,
+    /// We trust file extension while ExifTool uses content analysis
+    ExtensionTrusted,
 }
 
 #[derive(Debug, PartialEq)]
@@ -275,6 +319,9 @@ fn compare_mime_types(
             }
             KnownDifference::StandardVariation => {
                 "Different but equivalent MIME type standards".to_string()
+            }
+            KnownDifference::ExtensionTrusted => {
+                "We trust file extension while ExifTool uses content analysis".to_string()
             }
         };
 
