@@ -15,6 +15,7 @@ mod common;
 mod config;
 mod conv_registry;
 mod discovery;
+mod expression_compiler;
 mod extraction;
 mod extractors;
 mod file_operations;
