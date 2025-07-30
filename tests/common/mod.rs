@@ -33,10 +33,10 @@ use exif_oxide::types::TagValue;
 /// - Document any special properties of the test images (e.g., has GPS, MakerNotes, etc.)
 ///
 /// Canon T3i JPEG - Primary test image with comprehensive EXIF data including ExifIFD
-pub const CANON_T3I_JPG: &str = "test-images/canon/Canon_T3i.jpg";
+pub const CANON_T3I_JPG: &str = "test-images/canon/eos_rebel_t3i.jpg";
 
 /// Canon T3i RAW file - Companion RAW format for testing raw processing
-pub const CANON_T3I_CR2: &str = "test-images/canon/Canon_T3i.CR2";
+pub const CANON_T3I_CR2: &str = "test-images/canon/eos_rebel_t3i.cr2";
 
 /// Olympus ORF test file - Tests Olympus-specific RAW format and MakerNotes
 pub const OLYMPUS_TEST_ORF: &str = "test-images/olympus/test.orf";
@@ -45,47 +45,37 @@ pub const OLYMPUS_TEST_ORF: &str = "test-images/olympus/test.orf";
 pub const APPLE_IMG_3755_JPG: &str = "test-images/apple/IMG_3755.JPG";
 
 /// Nikon Z8 image - Tests modern Nikon mirrorless camera metadata
-pub const NIKON_Z8_JPG: &str = "test-images/nikon/nikon_z8_73.jpg";
+pub const NIKON_Z8_JPG: &str = "test-images/nikon/z_8_73.jpg";
 
 /// Sony A7C II image - Tests Sony mirrorless camera metadata
-pub const SONY_A7C_JPG: &str = "test-images/sony/sony_a7c_ii_02.jpg";
+pub const SONY_A7C_JPG: &str = "test-images/sony/a7c_ii.jpg";
 
 /// Canon EOS R50V image - Tests newer Canon mirrorless format
-pub const CANON_EOS_R50V_JPG: &str = "test-images/canon/canon_eos_r50v_01.jpg";
+pub const CANON_EOS_R50V_JPG: &str = "test-images/canon/eos_r50v_01.jpg";
 
 /// Canon EOS R5 Mark II image - Tests latest Canon high-resolution format
 pub const CANON_EOS_R5_MARK_II_JPG: &str = "test-images/canon/canon_eos_r5_mark_ii_10.jpg";
 
 /// Fujifilm X-E5 image - Tests Fujifilm X-series metadata
-pub const FUJIFILM_XE5_JPG: &str = "test-images/fujifilm/fuji_xe5_02.jpg";
+pub const FUJIFILM_XE5_JPG: &str = "test-images/fujifilm/xe5_02.jpg";
 
 /// Panasonic G9 II image - Tests Panasonic Lumix metadata
-pub const PANASONIC_G9_II_JPG: &str = "test-images/panasonic/panasonic_lumix_g9_ii_35.jpg";
-
-// Additional test image constants for comprehensive test coverage
-/// Casio QVCI image - Tests Casio camera metadata
-pub const CASIO_QVCI_JPG: &str = "test-images/casio/QVCI.jpg";
-
-/// Casio EX-Z3 image - Tests Casio compact camera metadata
-pub const CASIO_EX_Z3_JPG: &str = "test-images/casio/EX-Z3.jpg";
+pub const PANASONIC_G9_II_JPG: &str = "test-images/panasonic/dc-g9m2.jpg";
 
 /// Olympus C2000Z image - Tests Olympus camera metadata  
-pub const OLYMPUS_C2000Z_JPG: &str = "test-images/olympus/C2000Z.jpg";
-
-/// Pentax K-1 image - Tests Pentax DSLR metadata
-pub const PENTAX_K1_JPG: &str = "test-images/pentax/K-1.jpg";
+pub const OLYMPUS_C2000Z_JPG: &str = "test-images/olympus/c2020z.jpg";
 
 /// Nikon Z8 NEF RAW file - Tests Nikon RAW format
-pub const NIKON_Z8_NEF: &str = "test-images/nikon/nikon_z8_73.NEF";
+pub const NIKON_Z8_NEF: &str = "test-images/nikon/z_8_73.nef";
 
 /// Sony A7C II ARW RAW file - Tests Sony RAW format
-pub const SONY_A7C_ARW: &str = "test-images/sony/sony_a7c_ii_02.arw";
+pub const SONY_A7C_ARW: &str = "test-images/sony/a7c_ii.arw";
 
 /// Panasonic G9 II RW2 RAW file - Tests Panasonic RAW format
-pub const PANASONIC_G9_II_RW2: &str = "test-images/panasonic/panasonic_lumix_g9_ii_35.rw2";
+pub const PANASONIC_G9_II_RW2: &str = "test-images/panasonic/dc-g9m2.rw2";
 
 /// Minolta DiMAGE 7 MRW RAW file - Tests Minolta RAW format
-pub const MINOLTA_DIMAGE_7_MRW: &str = "test-images/minolta/DiMAGE_7.mrw";
+pub const MINOLTA_DIMAGE_7_MRW: &str = "test-images/minolta/dimage_7.mrw";
 
 /// Apple IMG_9757 HEIC file - Tests Apple HEIC format
 pub const APPLE_IMG_9757_HEIC: &str = "test-images/apple/IMG_9757.heic";
