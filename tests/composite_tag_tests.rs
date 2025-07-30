@@ -220,6 +220,13 @@ fn test_dependency_resolution_logic() {
     available_tags.insert("GPS:GPSLatitude".to_string(), "37.7749".into());
     available_tags.insert("ImageWidth".to_string(), TagValue::U32(1920));
 
+    // Add composite tag values (these would normally be added when composites are built)
+    available_tags.insert("Composite:ScaleFactor35efl".to_string(), TagValue::F64(1.0));
+    available_tags.insert(
+        "Composite:CircleOfConfusion".to_string(),
+        TagValue::F64(0.03),
+    );
+
     let mut built_composites = HashSet::new();
     built_composites.insert("ScaleFactor35efl");
     built_composites.insert("CircleOfConfusion");
