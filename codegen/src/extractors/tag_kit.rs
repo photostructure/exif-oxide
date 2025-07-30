@@ -46,6 +46,9 @@ impl Extractor for TagKitExtractor {
     /// Custom extract implementation for tag_kit that calls the script once per table
     /// and then consolidates all tables into a single module file
     fn extract(&self, config: &ModuleConfig, base_dir: &Path, module_path: &Path) -> Result<()> {
+        use std::time::Instant;
+        
+        let extract_start = Instant::now();
         debug!("🔧 TagKitExtractor::extract called for module: {} with {} tables", 
             config.module_name, config.hash_names.len());
         use super::run_perl_extractor;
@@ -58,10 +61,14 @@ impl Extractor for TagKitExtractor {
         let mut all_source_info = None;
         let mut total_scanned = 0;
         let mut total_skipped = 0;
+        let mut total_perl_time = 0.0;
+        let mut total_io_time = 0.0;
         
         // Call the script once per table (hash_name) and collect results
-        for table_name in &config.hash_names {
-            debug!("    Running: perl {} {} {}", 
+        for (i, table_name) in config.hash_names.iter().enumerate() {
+            let table_start = Instant::now();
+            debug!("    [{}/{}] Running: perl {} {} {}", 
+                i + 1, config.hash_names.len(),
                 self.script_name(), 
                 module_path.display(), 
                 table_name
@@ -75,6 +82,7 @@ impl Extractor for TagKitExtractor {
             let individual_filename = format!("{}__temp__{}.json", 
                 self.sanitize_module_name(config), table_name.to_lowercase());
             
+            let perl_start = Instant::now();
             run_perl_extractor(
                 self.script_name(),
                 &args,
@@ -83,13 +91,19 @@ impl Extractor for TagKitExtractor {
                 self.name(),
                 &individual_filename,
             )?;
+            let perl_time = perl_start.elapsed().as_secs_f64();
+            total_perl_time += perl_time;
             
             // Read the individual file and parse it
+            let io_start = Instant::now();
             let individual_path = output_dir.join(&individual_filename);
             if individual_path.exists() {
                 let content = fs::read_to_string(&individual_path)?;
                 let extraction: crate::schemas::tag_kit::TagKitExtraction = 
                     serde_json::from_str(&content)?;
+                
+                // Store counts before moving data
+                let tag_kits_count = extraction.tag_kits.len();
                 
                 // Collect tag kits
                 all_tag_kits.extend(extraction.tag_kits);
@@ -105,13 +119,19 @@ impl Extractor for TagKitExtractor {
                 
                 // Remove the temporary individual file
                 fs::remove_file(&individual_path)?;
+                
+                let io_time = io_start.elapsed().as_secs_f64();
+                total_io_time += io_time;
+                
+                let table_time = table_start.elapsed().as_secs_f64();
+                debug!("      [{}/{}] Table {} completed in {:.3}s (perl={:.3}s, io={:.3}s) - {} tag kits", 
+                       i + 1, config.hash_names.len(), table_name, table_time, perl_time, io_time, tag_kits_count);
             }
         }
         
         // Create consolidated tag kit file
+        let total_tag_kits = all_tag_kits.len();
         if !all_tag_kits.is_empty() {
-            let total_tag_kits = all_tag_kits.len();
-            
             let consolidated = crate::schemas::tag_kit::TagKitExtraction {
                 source: all_source_info.unwrap_or_else(|| crate::schemas::tag_kit::SourceInfo {
                     module: config.source_path.clone(),
@@ -133,6 +153,11 @@ impl Extractor for TagKitExtractor {
             
             debug!("  ✓ Consolidated {} tables into {}", config.hash_names.len(), consolidated_filename);
         }
+        
+        let total_extract_time = extract_start.elapsed().as_secs_f64();
+        tracing::info!("🔧 TagKitExtractor summary for {}: {:.3}s total ({:.3}s perl, {:.3}s io) - {} tables → {} tag kits",
+                      config.module_name, total_extract_time, total_perl_time, total_io_time, 
+                      config.hash_names.len(), total_tag_kits);
         
         Ok(())
     }
