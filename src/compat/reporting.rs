@@ -87,6 +87,8 @@ impl CompatibilityReport {
             0
         };
 
+        let sample_size = 30;
+
         println!("\n🎯 ExifTool Compatibility Report");
         println!("=================================");
         println!("Files tested: {}", self.total_files_tested);
@@ -117,7 +119,7 @@ impl CompatibilityReport {
                 "⚠️  VALUE FORMAT MISMATCHES ({} tags):",
                 self.value_format_mismatches.len()
             );
-            for diff in self.value_format_mismatches.iter().take(5) {
+            for diff in self.value_format_mismatches.iter().take(sample_size) {
                 println!(
                     "  {}: Expected: {}, Got: {} ({})",
                     diff.tag,
@@ -126,15 +128,18 @@ impl CompatibilityReport {
                     diff.sample_file
                 );
             }
-            if self.value_format_mismatches.len() > 5 {
-                println!("  ... and {} more", self.value_format_mismatches.len() - 5);
+            if self.value_format_mismatches.len() > sample_size {
+                println!(
+                    "  ... and {} more",
+                    self.value_format_mismatches.len() - sample_size
+                );
             }
             println!();
         }
 
         if !self.missing_tags.is_empty() {
             println!("❌ MISSING TAGS ({} tags):", self.missing_tags.len());
-            for diff in self.missing_tags.iter().take(5) {
+            for diff in self.missing_tags.iter().take(sample_size) {
                 println!(
                     "  {}: Expected: {} ({})",
                     diff.tag,
@@ -142,8 +147,8 @@ impl CompatibilityReport {
                     diff.sample_file
                 );
             }
-            if self.missing_tags.len() > 5 {
-                println!("  ... and {} more", self.missing_tags.len() - 5);
+            if self.missing_tags.len() > sample_size {
+                println!("  ... and {} more", self.missing_tags.len() - sample_size);
             }
             println!();
         }
@@ -153,7 +158,7 @@ impl CompatibilityReport {
                 "🔗 MISSING COMPOSITE DEPENDENCIES ({} tags):",
                 self.dependency_failures.len()
             );
-            for diff in self.dependency_failures.iter().take(5) {
+            for diff in self.dependency_failures.iter().take(sample_size) {
                 println!(
                     "  {}: Expected: {} ({})",
                     diff.tag,
@@ -161,15 +166,18 @@ impl CompatibilityReport {
                     diff.sample_file
                 );
             }
-            if self.dependency_failures.len() > 5 {
-                println!("  ... and {} more", self.dependency_failures.len() - 5);
+            if self.dependency_failures.len() > sample_size {
+                println!(
+                    "  ... and {} more",
+                    self.dependency_failures.len() - sample_size
+                );
             }
             println!();
         }
 
         if !self.type_mismatches.is_empty() {
             println!("🔥 TYPE MISMATCHES ({} tags):", self.type_mismatches.len());
-            for diff in self.type_mismatches.iter().take(5) {
+            for diff in self.type_mismatches.iter().take(sample_size) {
                 println!(
                     "  {}: Expected: {}, Got: {} ({})",
                     diff.tag,
@@ -178,15 +186,18 @@ impl CompatibilityReport {
                     diff.sample_file
                 );
             }
-            if self.type_mismatches.len() > 5 {
-                println!("  ... and {} more", self.type_mismatches.len() - 5);
+            if self.type_mismatches.len() > sample_size {
+                println!(
+                    "  ... and {} more",
+                    self.type_mismatches.len() - sample_size
+                );
             }
             println!();
         }
 
         if !self.only_in_ours.is_empty() {
             println!("ℹ️  ONLY IN EXIF-OXIDE ({} tags):", self.only_in_ours.len());
-            for diff in self.only_in_ours.iter().take(5) {
+            for diff in self.only_in_ours.iter().take(sample_size) {
                 println!(
                     "  {}: {} ({})",
                     diff.tag,
@@ -194,8 +205,8 @@ impl CompatibilityReport {
                     diff.sample_file
                 );
             }
-            if self.only_in_ours.len() > 5 {
-                println!("  ... and {} more", self.only_in_ours.len() - 5);
+            if self.only_in_ours.len() > sample_size {
+                println!("  ... and {} more", self.only_in_ours.len() - sample_size);
             }
             println!();
         }
