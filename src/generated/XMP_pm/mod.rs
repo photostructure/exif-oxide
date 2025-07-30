@@ -7,6 +7,7 @@ pub mod charname;
 pub mod charnum;
 pub mod nsuri;
 pub mod stdxlatns;
+pub mod tag_kit;
 pub mod xmpns;
 
 // Re-export all lookup functions and constants
@@ -14,4 +15,5 @@ pub use charname::*;
 pub use charnum::*;
 pub use nsuri::*;
 pub use stdxlatns::*;
+pub use tag_kit::*;
 pub use xmpns::*;

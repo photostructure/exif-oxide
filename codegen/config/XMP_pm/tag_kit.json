@@ -1,0 +1,47 @@
+{
+  "extractor": "tag_kit.pl",
+  "source": "third-party/exiftool/lib/Image/ExifTool/XMP.pm",
+  "description": "XMP namespace tag definitions with PrintConv implementations for individual tag extraction",
+  "tables": [
+    {
+      "table_name": "Image::ExifTool::XMP::dc",
+      "description": "Dublin Core namespace (dc) - title, description, subject, creator, rights"
+    },
+    {
+      "table_name": "Image::ExifTool::XMP::xmp",
+      "description": "Basic XMP namespace (xmp) - CreateDate, ModifyDate, MetadataDate, CreatorTool, Rating"
+    },
+    {
+      "table_name": "Image::ExifTool::XMP::xmpRights",
+      "description": "XMP rights management namespace (xmpRights) - license, attribution, permissions"
+    },
+    {
+      "table_name": "Image::ExifTool::XMP::photoshop",
+      "description": "Photoshop namespace (photoshop) - City, Country, Source, Categories"
+    },
+    {
+      "table_name": "Image::ExifTool::XMP::exif",
+      "description": "EXIF-in-XMP namespace (exif) - camera settings, exposure, lens data"
+    },
+    {
+      "table_name": "Image::ExifTool::XMP::tiff",
+      "description": "TIFF-in-XMP namespace (tiff) - ImageWidth, ImageHeight, Orientation"
+    },
+    {
+      "table_name": "Image::ExifTool::XMP::aux",
+      "description": "Adobe auxiliary namespace (aux) - lens and camera auxiliary data"
+    },
+    {
+      "table_name": "Image::ExifTool::XMP::iptcCore",
+      "description": "IPTC Core namespace (iptc4xmpCore) - location and rights metadata"
+    },
+    {
+      "table_name": "Image::ExifTool::XMP::xmpMM",
+      "description": "XMP Media Management namespace (xmpMM) - history, versioning, document management"
+    },
+    {
+      "table_name": "Image::ExifTool::XMP::Lightroom",
+      "description": "Adobe Lightroom namespace (lr) - hierarchical keywords and processing"
+    }
+  ]
+}

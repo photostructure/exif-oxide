@@ -956,7 +956,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::Expression("sprintf(\"%.1f kPa\",$val)"),
-            value_conv: Some("canon_div_10_value_conv"),
+            value_conv: Some("$val / 10"),
             subdirectory: None,
         }),
         (137, TagKitDef {
@@ -1044,7 +1044,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: Some("converted to degrees of clockwise camera rotation"),
             print_conv: PrintConvType::None,
-            value_conv: Some("canon_div_10_value_conv"),
+            value_conv: Some("$val / 10"),
             subdirectory: None,
         }),
         (145, TagKitDef {

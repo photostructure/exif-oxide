@@ -4146,37 +4146,519 @@ pub fn apply_value_conv(
     _errors: &mut Vec<String>,
 ) -> Result<TagValue> {
     match tag_id {
+        1 => {
+            if let Some(tag_kit) = NIKON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Nikon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        13 => {
+            if let Some(tag_kit) = NIKON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Nikon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        14 => {
+            if let Some(tag_kit) = NIKON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Nikon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        18 => {
+            if let Some(tag_kit) = NIKON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Nikon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        23 => {
+            if let Some(tag_kit) = NIKON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Nikon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        24 => {
+            if let Some(tag_kit) = NIKON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Nikon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        28 => {
+            if let Some(tag_kit) = NIKON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Nikon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
         38 => crate::implementations::value_conv::reciprocal_10_value_conv(value),
-        324 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
-        326 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
-        334 => crate::implementations::value_conv::divide_8_value_conv(value),
+        92 => {
+            if let Some(tag_kit) = NIKON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Nikon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        139 => {
+            if let Some(tag_kit) = NIKON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Nikon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        158 => {
+            if let Some(tag_kit) = NIKON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Nikon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
         338 => crate::implementations::value_conv::power_neg_div_3_value_conv(value),
-        340 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
-        342 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
-        344 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
-        346 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
-        350 => crate::implementations::value_conv::divide_8_value_conv(value),
-        354 => crate::implementations::value_conv::divide_8_value_conv(value),
         358 => crate::implementations::value_conv::power_neg_div_3_value_conv(value),
-        426 => crate::implementations::value_conv::divide_6_value_conv(value),
-        430 => crate::implementations::value_conv::add_3_value_conv(value),
         434 => crate::implementations::value_conv::power_neg_div_3_value_conv(value),
-        446 => crate::implementations::value_conv::divide_6_value_conv(value),
-        450 => crate::implementations::value_conv::add_3_value_conv(value),
         454 => crate::implementations::value_conv::power_neg_div_3_value_conv(value),
-        516 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
-        616 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
-        620 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
-        650 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
-        658 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
-        662 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
-        730 => crate::implementations::value_conv::add_3_value_conv(value),
         734 => crate::implementations::value_conv::power_neg_div_3_value_conv(value),
-        742 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
-        746 => crate::implementations::value_conv::subtract_104_divide_8_value_conv(value),
-        750 => crate::implementations::value_conv::divide_6_value_conv(value),
         754 => crate::implementations::value_conv::power_neg_div_3_value_conv(value),
-        1434 => crate::implementations::value_conv::subtract_5_value_conv(value),
+        324 => {
+            // Compiled arithmetic: ($val-104)/8
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(104.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(8.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        326 => {
+            // Compiled arithmetic: ($val-104)/8
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(104.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(8.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        334 => {
+            // Compiled arithmetic: $val / 8
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 8.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        340 => {
+            // Compiled arithmetic: ($val-104)/8
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(104.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(8.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        342 => {
+            // Compiled arithmetic: ($val-104)/8
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(104.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(8.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        344 => {
+            // Compiled arithmetic: ($val-104)/8
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(104.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(8.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        346 => {
+            // Compiled arithmetic: ($val-104)/8
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(104.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(8.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        350 => {
+            // Compiled arithmetic: $val / 8
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 8.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        354 => {
+            // Compiled arithmetic: $val / 8
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 8.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        426 => {
+            // Compiled arithmetic: $val/6
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 6.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        430 => {
+            // Compiled arithmetic: $val + 3
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val + 3.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        446 => {
+            // Compiled arithmetic: $val/6
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 6.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        450 => {
+            // Compiled arithmetic: $val + 3
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val + 3.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        516 => {
+            // Compiled arithmetic: ($val-104)/8
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(104.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(8.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        616 => {
+            // Compiled arithmetic: ($val-104)/8
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(104.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(8.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        620 => {
+            // Compiled arithmetic: ($val-104)/8
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(104.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(8.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        650 => {
+            // Compiled arithmetic: ($val-104)/8
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(104.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(8.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        658 => {
+            // Compiled arithmetic: ($val-104)/8
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(104.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(8.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        662 => {
+            // Compiled arithmetic: ($val-104)/8
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(104.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(8.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        730 => {
+            // Compiled arithmetic: $val + 3
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val + 3.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        742 => {
+            // Compiled arithmetic: ($val-104)/8
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(104.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(8.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        746 => {
+            // Compiled arithmetic: ($val-104)/8
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(104.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(8.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        750 => {
+            // Compiled arithmetic: $val/6
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 6.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        1434 => {
+            // Compiled arithmetic: $val - 5
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val - 5.0)),
+                None => Ok(value.clone()),
+            }
+        }
         _ => {
             // Fall back to missing handler for unknown expressions
             if let Some(tag_kit) = NIKON_PM_TAG_KITS.get(&tag_id) {

@@ -631,7 +631,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("this is the Canon name for what could better be called MeasuredLV, and\n            should be close to the calculated LightValue for a proper exposure with most\n            models"),
             print_conv: PrintConvType::Expression("sprintf(\"%.2f\",$val)"),
-            value_conv: Some("canon_div_32_plus_5_value_conv"),
+            value_conv: Some("$val / 32 + 5"),
             subdirectory: None,
         }),
         (4, TagKitDef {
@@ -708,7 +708,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("these focal plane sizes are only valid for some models, and are affected by\n                digital zoom if applied"),
             print_conv: PrintConvType::Expression("sprintf(\"%.2f mm\",$val)"),
-            value_conv: Some("canon_millimeter_value_conv"),
+            value_conv: Some("$val * 25.4 / 1000"),
             subdirectory: None,
         }),
         (2, TagKitDef {
@@ -730,7 +730,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("sprintf(\"%.2f mm\",$val)"),
-            value_conv: Some("canon_millimeter_value_conv"),
+            value_conv: Some("$val * 25.4 / 1000"),
             subdirectory: None,
         }),
         (3, TagKitDef {
@@ -1379,7 +1379,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("\"Case $val\""),
-            value_conv: Some("canon_plus_1_value_conv"),
+            value_conv: Some("$val + 1"),
             subdirectory: None,
         }),
         (10, TagKitDef {

@@ -8683,7 +8683,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_52),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (342, TagKitDef {
@@ -8694,7 +8694,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_53),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (432, TagKitDef {
@@ -8947,7 +8947,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_76),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (744, TagKitDef {
@@ -8969,7 +8969,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_78),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (820, TagKitDef {
@@ -10487,7 +10487,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("subtract_5_value_conv"),
+            value_conv: Some("$val - 5"),
             subdirectory: None,
         }),
         (1456, TagKitDef {
@@ -10718,7 +10718,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
-            value_conv: Some("divide_6_value_conv"),
+            value_conv: Some("$val/6"),
             subdirectory: None,
         }),
         (430, TagKitDef {
@@ -10729,7 +10729,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_165),
-            value_conv: Some("add_3_value_conv"),
+            value_conv: Some("$val + 3"),
             subdirectory: None,
         }),
         (434, TagKitDef {
@@ -10861,7 +10861,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_176),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (618, TagKitDef {
@@ -10883,7 +10883,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_178),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (696, TagKitDef {
@@ -11345,7 +11345,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_213),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (346, TagKitDef {
@@ -11356,7 +11356,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_214),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (436, TagKitDef {
@@ -11411,7 +11411,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
-            value_conv: Some("divide_6_value_conv"),
+            value_conv: Some("$val/6"),
             subdirectory: None,
         }),
         (450, TagKitDef {
@@ -11422,7 +11422,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_219),
-            value_conv: Some("add_3_value_conv"),
+            value_conv: Some("$val + 3"),
             subdirectory: None,
         }),
         (454, TagKitDef {
@@ -11576,7 +11576,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_232),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (660, TagKitDef {
@@ -11598,7 +11598,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_234),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (72, TagKitDef {
@@ -12720,7 +12720,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_288),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (346, TagKitDef {
@@ -12731,7 +12731,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_289),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (436, TagKitDef {
@@ -12786,7 +12786,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
-            value_conv: Some("divide_6_value_conv"),
+            value_conv: Some("$val/6"),
             subdirectory: None,
         }),
         (450, TagKitDef {
@@ -12797,7 +12797,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_294),
-            value_conv: Some("add_3_value_conv"),
+            value_conv: Some("$val + 3"),
             subdirectory: None,
         }),
         (454, TagKitDef {
@@ -12984,7 +12984,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_310),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (660, TagKitDef {
@@ -13006,7 +13006,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_312),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (72, TagKitDef {
@@ -13600,7 +13600,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_353),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (718, TagKitDef {
@@ -13666,7 +13666,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_359),
-            value_conv: Some("add_3_value_conv"),
+            value_conv: Some("$val + 3"),
             subdirectory: None,
         }),
         (734, TagKitDef {
@@ -13721,7 +13721,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
-            value_conv: Some("divide_6_value_conv"),
+            value_conv: Some("$val/6"),
             subdirectory: None,
         }),
         (754, TagKitDef {
@@ -14106,7 +14106,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
-            value_conv: Some("divide_6_value_conv"),
+            value_conv: Some("$val/6"),
             subdirectory: None,
         }),
         (358, TagKitDef {
@@ -14172,7 +14172,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_389),
-            value_conv: Some("subtract_104_divide_8_value_conv"),
+            value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
         (568, TagKitDef {

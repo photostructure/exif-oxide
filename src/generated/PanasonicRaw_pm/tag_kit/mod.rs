@@ -676,13 +676,60 @@ pub fn apply_value_conv(
     _errors: &mut Vec<String>,
 ) -> Result<TagValue> {
     match tag_id {
-        17 => crate::implementations::value_conv::divide_256_value_conv(value),
-        18 => crate::implementations::value_conv::divide_256_value_conv(value),
-        24 => crate::implementations::value_conv::divide_256_value_conv(value),
-        25 => crate::implementations::value_conv::divide_256_value_conv(value),
-        26 => crate::implementations::value_conv::divide_256_value_conv(value),
         273 => crate::implementations::value_conv::reference_long_string_value_conv(value),
         279 => crate::implementations::value_conv::reference_long_string_value_conv(value),
+        284 => {
+            if let Some(tag_kit) = PANASONICRAW_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "PanasonicRaw",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        17 => {
+            // Compiled arithmetic: $val / 256
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 256.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        18 => {
+            // Compiled arithmetic: $val / 256
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 256.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        24 => {
+            // Compiled arithmetic: $val / 256
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 256.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        25 => {
+            // Compiled arithmetic: $val / 256
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 256.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        26 => {
+            // Compiled arithmetic: $val / 256
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 256.0)),
+                None => Ok(value.clone()),
+            }
+        }
         _ => {
             // Fall back to missing handler for unknown expressions
             if let Some(tag_kit) = PANASONICRAW_PM_TAG_KITS.get(&tag_id) {

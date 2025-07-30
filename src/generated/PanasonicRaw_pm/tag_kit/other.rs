@@ -78,7 +78,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: Some("found in Digilux 2 RAW images"),
             print_conv: PrintConvType::None,
-            value_conv: Some("divide_256_value_conv"),
+            value_conv: Some("$val / 256"),
             subdirectory: None,
         }),
         (18, TagKitDef {
@@ -89,7 +89,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("divide_256_value_conv"),
+            value_conv: Some("$val / 256"),
             subdirectory: None,
         }),
         (19, TagKitDef {
@@ -122,7 +122,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("divide_256_value_conv"),
+            value_conv: Some("$val / 256"),
             subdirectory: None,
         }),
         (25, TagKitDef {
@@ -133,7 +133,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("divide_256_value_conv"),
+            value_conv: Some("$val / 256"),
             subdirectory: None,
         }),
         (26, TagKitDef {
@@ -144,7 +144,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("divide_256_value_conv"),
+            value_conv: Some("$val / 256"),
             subdirectory: None,
         }),
         (27, TagKitDef {

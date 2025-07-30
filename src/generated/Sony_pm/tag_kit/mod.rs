@@ -5340,44 +5340,1397 @@ pub fn apply_value_conv(
     match tag_id {
         0 => crate::implementations::value_conv::sony_exposure_time_value_conv(value),
         1 => crate::implementations::value_conv::sony_fnumber_value_conv(value),
-        4 => crate::implementations::value_conv::canon_plus_1_value_conv(value),
-        6 => crate::implementations::value_conv::multiply_100_value_conv(value),
-        7 => crate::implementations::value_conv::multiply_100_value_conv(value),
-        11 => crate::implementations::value_conv::multiply_100_value_conv(value),
-        12 => crate::implementations::value_conv::multiply_100_value_conv(value),
-        14 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        20 => crate::implementations::value_conv::sony_iso_value_conv(value),
+        2 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        5 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        6 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        8 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        13 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
         22 => crate::implementations::value_conv::sony_iso_value_conv(value),
-        23 => crate::implementations::value_conv::multiply_100_value_conv(value),
-        31 => crate::implementations::value_conv::sony_iso_value_conv(value),
         32 => crate::implementations::value_conv::sony_fnumber_value_conv(value),
         33 => crate::implementations::value_conv::sony_exposure_time_value_conv(value),
-        34 => crate::implementations::value_conv::sony_fnumber_value_conv(value),
-        35 => crate::implementations::value_conv::sony_exposure_time_value_conv(value),
-        36 => crate::implementations::value_conv::divide_8_value_conv(value),
-        37 => crate::implementations::value_conv::sony_iso_value_conv(value),
-        38 => crate::implementations::value_conv::divide_8_value_conv(value),
+        37 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
         39 => crate::implementations::value_conv::sony_exposure_time_value_conv(value),
         40 => crate::implementations::value_conv::sony_exposure_time_value_conv(value),
         41 => crate::implementations::value_conv::sony_fnumber_value_conv(value),
-        42 => crate::implementations::value_conv::divide_8_value_conv(value),
-        44 => crate::implementations::value_conv::divide_8_value_conv(value),
         47 => crate::implementations::value_conv::sony_exposure_time_value_conv(value),
         48 => crate::implementations::value_conv::sony_fnumber_value_conv(value),
         109 => crate::implementations::value_conv::sony_iso_value_conv(value),
         111 => crate::implementations::value_conv::sony_iso_value_conv(value),
-        778 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        780 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        782 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        812 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        814 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        816 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        4404 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        4406 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        4408 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        4728 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        4730 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        4732 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        438 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        510 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        528 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        547 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        556 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        560 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        800 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        836 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        838 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        4152 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        4392 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        4412 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        4428 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        4480 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        4596 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        4632 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        4692 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        4696 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        4720 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        4736 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        8208 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        8241 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        36944 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37888 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37890 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37892 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37893 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37894 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37895 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37896 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37897 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37898 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37899 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37900 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37901 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37902 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37903 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        37905 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        45099 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        45100 => {
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        3 => {
+            // Compiled arithmetic: ($val - 128) / 24
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(128.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(24.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        4 => {
+            // Compiled arithmetic: $val + 1
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val + 1.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        7 => {
+            // Compiled arithmetic: $val * 100
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val * 100.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        11 => {
+            // Compiled arithmetic: $val * 100
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val * 100.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        12 => {
+            // Compiled arithmetic: $val * 100
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val * 100.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        14 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        16 => {
+            // Compiled arithmetic: $val * 2 / 3
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(2.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a * b);
+                    stack.push(3.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        18 => {
+            // Compiled arithmetic: ($val - 128) / 24
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(128.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(24.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        20 => {
+            // Compiled arithmetic: ($val - 128) / 24
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(128.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(24.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        23 => {
+            // Compiled arithmetic: $val * 100
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val * 100.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        25 => {
+            // Compiled arithmetic: $val - 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val - 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        26 => {
+            // Compiled arithmetic: $val - 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val - 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        27 => {
+            // Compiled arithmetic: $val - 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val - 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        28 => {
+            // Compiled arithmetic: $val - 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val - 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        29 => {
+            // Compiled arithmetic: $val - 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val - 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        30 => {
+            // Compiled arithmetic: $val - 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val - 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        31 => {
+            // Compiled arithmetic: $val - 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val - 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        34 => {
+            // Compiled arithmetic: $val - 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val - 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        35 => {
+            // Compiled arithmetic: ($val - 128) / 24
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(128.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    stack.push(24.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        36 => {
+            // Compiled arithmetic: $val / 8
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 8.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        38 => {
+            // Compiled arithmetic: $val / 8
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 8.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        42 => {
+            // Compiled arithmetic: $val / 8
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 8.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        44 => {
+            // Compiled arithmetic: $val / 8
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 8.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        304 => {
+            // Compiled arithmetic: $val - 20
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val - 20.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        512 => {
+            // Compiled arithmetic: $val/16
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 16.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        535 => {
+            // Compiled arithmetic: 16 - $val/256
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(16.0);
+                    stack.push(val);
+                    stack.push(256.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        537 => {
+            // Compiled arithmetic: $val/256 - 56.6
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(256.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    stack.push(56.6);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        540 => {
+            // Compiled arithmetic: $val/16
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 16.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        546 => {
+            // Compiled arithmetic: 16 - $val/256
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(16.0);
+                    stack.push(val);
+                    stack.push(256.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        548 => {
+            // Compiled arithmetic: $val/256 - 56.6
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(256.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    stack.push(56.6);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        778 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        780 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        782 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        812 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        814 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        816 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        4138 => {
+            // Compiled arithmetic: 16 - $val/256
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(16.0);
+                    stack.push(val);
+                    stack.push(256.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        4140 => {
+            // Compiled arithmetic: $val/256 - 56.6
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(256.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    stack.push(56.6);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        4378 => {
+            // Compiled arithmetic: 16 - $val/256
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(16.0);
+                    stack.push(val);
+                    stack.push(256.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        4380 => {
+            // Compiled arithmetic: $val/256 - 56.6
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(256.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    stack.push(56.6);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        4404 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        4406 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        4408 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        4414 => {
+            // Compiled arithmetic: 16 - $val/256
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(16.0);
+                    stack.push(val);
+                    stack.push(256.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        4416 => {
+            // Compiled arithmetic: $val/256 - 56.6
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(256.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    stack.push(56.6);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        4466 => {
+            // Compiled arithmetic: 16 - $val/256
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(16.0);
+                    stack.push(val);
+                    stack.push(256.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        4468 => {
+            // Compiled arithmetic: $val/256 - 56.6
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(256.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    stack.push(56.6);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        4502 => {
+            // Compiled arithmetic: 16 - $val/256
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(16.0);
+                    stack.push(val);
+                    stack.push(256.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        4504 => {
+            // Compiled arithmetic: $val/256 - 56.6
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(256.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    stack.push(56.6);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a - b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        4728 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        4730 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        4732 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        8222 => {
+            // Compiled arithmetic: $val - 1
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val - 1.0)),
+                None => Ok(value.clone()),
+            }
+        }
         _ => {
             // Fall back to missing handler for unknown expressions
             if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {

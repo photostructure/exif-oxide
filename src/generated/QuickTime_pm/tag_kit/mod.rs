@@ -2421,7 +2421,43 @@ pub fn apply_value_conv(
     value: &TagValue,
     _errors: &mut Vec<String>,
 ) -> Result<TagValue> {
-    Ok(value.clone())
+    match tag_id {
+        0 => {
+            if let Some(tag_kit) = QUICKTIME_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "QuickTime",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        _ => {
+            // Fall back to missing handler for unknown expressions
+            if let Some(tag_kit) = QUICKTIME_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "QuickTime",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+    }
 }
 
 /// Check if a tag has subdirectory processing
