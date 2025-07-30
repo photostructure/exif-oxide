@@ -370,13 +370,15 @@ pub fn compute_scale_factor_35efl(available_tags: &HashMap<String, TagValue>) ->
 }
 
 /// Compute SubSecDateTimeOriginal composite tag
-/// ExifTool: lib/Image/ExifTool/Composite.pm
-/// Combines DateTimeOriginal with SubSecTimeOriginal and OffsetTimeOriginal
+/// ExifTool: lib/Image/ExifTool/Exif.pm:4894-4912 SubSecDateTimeOriginal definition
+/// Uses EXIF:DateTimeOriginal (standard format) as base, not composite DateTimeOriginal
+/// This ensures "YYYY:MM:DD HH:MM:SS" format instead of compact format
 pub fn compute_subsec_datetime_original(
     available_tags: &HashMap<String, TagValue>,
 ) -> Option<TagValue> {
-    // Require DateTimeOriginal
-    let datetime_original = available_tags.get("DateTimeOriginal")?;
+    // Require EXIF:DateTimeOriginal specifically to get standard format
+    // ExifTool uses %subSecConv which expects "YYYY:MM:DD HH:MM:SS" format
+    let datetime_original = available_tags.get("EXIF:DateTimeOriginal")?;
     let datetime_str = datetime_original.as_string()?;
 
     let mut result = datetime_str.to_string();
@@ -915,8 +917,8 @@ pub fn compute_gps_longitude(available_tags: &HashMap<String, TagValue>) -> Opti
 /// ExifTool: lib/Image/ExifTool/Exif.pm:5077-5095 SubSecCreateDate definition
 /// Uses %subSecConv logic from lib/Image/ExifTool/Exif.pm:4620-4636
 pub fn compute_subsec_create_date(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
-    // ExifTool requires EXIF:CreateDate
-    let create_date = available_tags.get("CreateDate")?;
+    // ExifTool requires EXIF:CreateDate specifically for standard format
+    let create_date = available_tags.get("EXIF:CreateDate")?;
     let create_date_str = create_date.as_string()?;
 
     // Apply SubSec conversion logic from ExifTool
@@ -933,8 +935,8 @@ pub fn compute_subsec_create_date(available_tags: &HashMap<String, TagValue>) ->
 /// ExifTool: lib/Image/ExifTool/Exif.pm:5096-5114 SubSecModifyDate definition  
 /// Uses %subSecConv logic from lib/Image/ExifTool/Exif.pm:4620-4636
 pub fn compute_subsec_modify_date(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
-    // ExifTool requires EXIF:ModifyDate
-    let modify_date = available_tags.get("ModifyDate")?;
+    // ExifTool requires EXIF:ModifyDate specifically for standard format
+    let modify_date = available_tags.get("EXIF:ModifyDate")?;
     let modify_date_str = modify_date.as_string()?;
 
     // Apply SubSec conversion logic from ExifTool
