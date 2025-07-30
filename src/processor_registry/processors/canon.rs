@@ -141,12 +141,17 @@ impl BinaryDataProcessor for CanonCameraSettingsProcessor {
 
         let mut result = ProcessorResult::new();
 
-        // Create the Canon CameraSettings table using existing implementation
-        let table = canon::binary_data::create_canon_camera_settings_table();
-
-        // Use existing binary data extraction logic
-        // This mimics what an ExifReader would do with the table
-        let extracted_tags = extract_binary_data_using_table(data, context, &table)?;
+        // Use the specialized Canon CameraSettings extraction function that handles FocalUnits dependencies
+        // This calls our extract_camera_settings function with proper ValueConv and PrintConv
+        let byte_order = context
+            .byte_order
+            .unwrap_or(crate::tiff_types::ByteOrder::LittleEndian);
+        let extracted_tags = canon::binary_data::extract_camera_settings(
+            data,
+            0, // offset
+            data.len(),
+            byte_order,
+        )?;
 
         for (tag_name, tag_value) in extracted_tags {
             result.add_tag(tag_name, tag_value);
@@ -270,137 +275,6 @@ impl BinaryDataProcessor for CanonSerialDataMkIIProcessor {
             "manufacturer == 'Canon' && (model.contains('EOS R5') || model.contains('EOS R6'))"
                 .to_string(),
         )
-    }
-}
-
-/// Helper function to extract binary data using a Canon table definition
-///
-/// This function mimics what ExifReader.process_binary_data would do but works
-/// independently for processor implementations.
-fn extract_binary_data_using_table(
-    data: &[u8],
-    context: &ProcessorContext,
-    table: &crate::types::BinaryDataTable,
-) -> Result<HashMap<String, TagValue>> {
-    let mut extracted = HashMap::new();
-
-    // Process each defined tag in the table
-    for (&index, tag_def) in &table.tags {
-        // Calculate position based on FIRST_ENTRY
-        let first_entry = table.first_entry.unwrap_or(0);
-        if index < first_entry {
-            continue;
-        }
-
-        let entry_offset = (index - first_entry) as usize * table.default_format.byte_size();
-        if entry_offset + table.default_format.byte_size() > data.len() {
-            debug!("Tag {} at index {} beyond data bounds", tag_def.name, index);
-            continue;
-        }
-
-        let data_offset = context.data_offset + entry_offset;
-
-        // Extract the raw value using the table's default format
-        let format = tag_def.format.unwrap_or(table.default_format);
-        let byte_order = context
-            .byte_order
-            .unwrap_or(crate::tiff_types::ByteOrder::LittleEndian);
-        let raw_value = extract_binary_value_direct(data, data_offset, format, byte_order)?;
-
-        // Apply PrintConv if available
-        let final_value = if let Some(print_conv) = &tag_def.print_conv {
-            apply_print_conv(&raw_value, print_conv)
-        } else {
-            raw_value
-        };
-
-        // Store with group prefix like ExifTool
-        let group_0 = table
-            .groups
-            .get(&0)
-            .cloned()
-            .unwrap_or_else(|| "Unknown".to_string());
-
-        let tag_name = format!("{}:{}", group_0, tag_def.name);
-
-        debug!(
-            "Extracted Canon binary tag {} (index {}) = {:?}",
-            tag_def.name, index, final_value
-        );
-
-        extracted.insert(tag_name, final_value);
-    }
-
-    Ok(extracted)
-}
-
-/// Extract binary value directly from data
-///
-/// This is a simplified version of the binary value extraction that works
-/// without requiring a full ExifReader instance.
-fn extract_binary_value_direct(
-    data: &[u8],
-    offset: usize,
-    format: crate::types::BinaryDataFormat,
-    byte_order: crate::tiff_types::ByteOrder,
-) -> Result<TagValue> {
-    use crate::types::{BinaryDataFormat, ExifError};
-
-    match format {
-        BinaryDataFormat::Int8u => {
-            if offset >= data.len() {
-                return Err(ExifError::ParseError(
-                    "Offset beyond data bounds".to_string(),
-                ));
-            }
-            Ok(TagValue::U8(data[offset]))
-        }
-        BinaryDataFormat::Int16s => {
-            if offset + 2 > data.len() {
-                return Err(ExifError::ParseError(
-                    "Offset beyond data bounds for int16s".to_string(),
-                ));
-            }
-            let value = byte_order.read_u16(data, offset)? as i16;
-            Ok(TagValue::I16(value))
-        }
-        BinaryDataFormat::Int16u => {
-            if offset + 2 > data.len() {
-                return Err(ExifError::ParseError(
-                    "Offset beyond data bounds for int16u".to_string(),
-                ));
-            }
-            let value = byte_order.read_u16(data, offset)?;
-            Ok(TagValue::U16(value))
-        }
-        BinaryDataFormat::Int32u => {
-            if offset + 4 > data.len() {
-                return Err(ExifError::ParseError(
-                    "Offset beyond data bounds for int32u".to_string(),
-                ));
-            }
-            let value = byte_order.read_u32(data, offset)?;
-            Ok(TagValue::U32(value))
-        }
-        BinaryDataFormat::String => {
-            if offset >= data.len() {
-                return Err(ExifError::ParseError(
-                    "Offset beyond data bounds for string".to_string(),
-                ));
-            }
-
-            let mut end = offset;
-            while end < data.len() && data[end] != 0 {
-                end += 1;
-            }
-
-            let string_bytes = &data[offset..end];
-            let string_value = String::from_utf8_lossy(string_bytes).to_string();
-            Ok(TagValue::String(string_value))
-        }
-        _ => Err(ExifError::ParseError(format!(
-            "Binary format {format:?} not yet implemented"
-        ))),
     }
 }
 
@@ -611,8 +485,47 @@ fn extract_makernotes_via_tag_kit(
                     entry.tag_id, tag_name
                 );
 
+                // Apply PrintConv for regular Canon tags like FileNumber
+                // ExifTool: lib/Image/ExifTool/Canon.pm PrintConv handling for scalar tags
+                let final_value = if manufacturer == "Canon" {
+                    // Apply Canon-specific PrintConv using the tag kit system
+                    use crate::expressions::ExpressionEvaluator;
+                    let mut evaluator = ExpressionEvaluator::new();
+                    let mut errors = Vec::new();
+                    let mut warnings = Vec::new();
+
+                    let print_value = crate::generated::Canon_pm::tag_kit::apply_print_conv(
+                        entry.tag_id as u32,
+                        &tag_value,
+                        &mut evaluator,
+                        &mut errors,
+                        &mut warnings,
+                    );
+
+                    // Log any warnings
+                    for warning in warnings {
+                        debug!(
+                            "Canon PrintConv warning for tag 0x{:04x}: {}",
+                            entry.tag_id, warning
+                        );
+                    }
+
+                    // Use print value if different from raw, otherwise use raw
+                    if print_value != tag_value {
+                        debug!(
+                            "Applied Canon PrintConv to tag 0x{:04x}: {:?} -> {:?}",
+                            entry.tag_id, tag_value, print_value
+                        );
+                        print_value
+                    } else {
+                        tag_value
+                    }
+                } else {
+                    tag_value
+                };
+
                 // Store as regular tag - tag storage system will add MakerNotes namespace
-                extracted_tags.insert(tag_name, tag_value);
+                extracted_tags.insert(tag_name, final_value);
             }
         }
 
@@ -625,34 +538,6 @@ fn extract_makernotes_via_tag_kit(
         extracted_tags.len()
     );
     Ok(extracted_tags)
-}
-
-/// Apply PrintConv lookup to a raw value
-fn apply_print_conv(raw_value: &TagValue, print_conv: &HashMap<u32, String>) -> TagValue {
-    match raw_value {
-        TagValue::I16(val) => {
-            if let Some(converted) = print_conv.get(&(*val as u32)) {
-                TagValue::String(converted.clone())
-            } else {
-                raw_value.clone()
-            }
-        }
-        TagValue::U16(val) => {
-            if let Some(converted) = print_conv.get(&(*val as u32)) {
-                TagValue::String(converted.clone())
-            } else {
-                raw_value.clone()
-            }
-        }
-        TagValue::U32(val) => {
-            if let Some(converted) = print_conv.get(val) {
-                TagValue::String(converted.clone())
-            } else {
-                raw_value.clone()
-            }
-        }
-        _ => raw_value.clone(),
-    }
 }
 
 #[cfg(test)]
