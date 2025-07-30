@@ -30,6 +30,7 @@
 ## Technical Foundation
 
 ### ExifTool Implementation ✅ RESEARCHED
+
 - **`third-party/exiftool/lib/Image/ExifTool/QuickTime.pm`** - Handles HEIC as QuickTime variant
   - **Key Functions**: `HandleItemInfo()` (line 9226+), `ParseItemLocation()` (line 9014)
   - **Detection Logic**: ftyp brands (lines 119-126), handler types (lines 8319-8323)
@@ -43,6 +44,7 @@
   - **Motion Photo support**: Samsung mpvd atoms (lines 950-956)
 
 ### Key Standards
+
 - ISO/IEC 23008-12:2017 (HEIF specification)
 - ISO/IEC 14496-12 (ISO Base Media File Format)
 - ITU-T H.265 (HEVC codec)
@@ -52,16 +54,19 @@
 ### Task 1: Format Structure Analysis (High Priority) ✅ COMPLETED
 
 **Research Questions**:
+
 1. **How does ExifTool parse HEIC/HEIF files?**
+
    - **Answer**: ExifTool processes HEIC/HEIF files through `QuickTime.pm` as QuickTime-variant containers using the same atom/box parsing infrastructure. Files are detected via `ftyp` atom brands (`heic`, `hevc`, `mif1`, `msf1`, `heix`) and routed through the QuickTime processing pipeline with HEIC-specific handling in the `HandleItemInfo()` function (QuickTime.pm:9226+).
 
 2. **What's the box/atom structure?**
+
    - **Answer**: HEIC uses ISO Base Media File Format (ISOBMFF) structure identical to QuickTime/MP4:
      ```
      ftyp (heic/heif/mif1/msf1) - File type identification
      ├── meta (metadata container)
      │   ├── hdlr (handler = 'pict' for images)
-     │   ├── pitm (primary item reference)  
+     │   ├── pitm (primary item reference)
      │   ├── iinf (item information)
      │   ├── iloc (item location - offsets to data)
      │   ├── iprp (item properties)
@@ -71,15 +76,17 @@
      ```
 
 3. **How are images stored vs video sequences?**
+
    - **Answer**: Images use **item-based storage** (items referenced by ID in `iloc` box) while video sequences use **track-based storage** (traditional QuickTime media tracks). HEIC images are stored as items with image data in `mdat` or `idat` containers, while video uses track atoms with media data in `mdat`.
 
 4. **Where is EXIF/XMP metadata located?**
-   - **Answer**: 
+   - **Answer**:
      - **EXIF**: Stored in item-based containers, processed by `HandleItemInfo()` with TIFF processing
      - **XMP**: Stored in UUID boxes (`\xbe\x7a\xcf\xcb...` UUID) or UserData `XMP_` atoms
      - **Apple metadata**: Stored in `mdta` handler tags with dynamic key definitions
 
 **Deliverables**:
+
 - ✅ Document box structure hierarchy (see above)
 - ✅ Identify metadata location patterns (EXIF=items, XMP=UUID, Apple=mdta)
 - ✅ Map to QuickTime atom parsing infrastructure (same parsing, HEIC-specific item handling)
@@ -87,20 +94,24 @@
 ### Task 2: Image vs Video Detection (Critical) ✅ COMPLETED
 
 **Research Questions**:
+
 1. **How to detect if HEIC contains single image vs video sequence?**
+
    - **Answer**: ExifTool uses a **two-tier detection system**:
      - **Primary**: `ftyp` atom major brand (`heic` = single image, `hevc` = image sequence)
      - **Secondary**: Handler types in `hdlr` atoms (`pict` = picture content, `vide` = video content)
      - **Tertiary**: Duration analysis (zero duration = still image, non-zero = sequence/motion)
 
 2. **What boxes/atoms indicate content type?**
+
    - **Answer**: Key indicators (QuickTime.pm:119-123, 8319-8322):
+
      ```perl
      # ftyp brands
      'heic' => 'High Efficiency Image Format HEVC still image (.HEIC)'
      'hevc' => 'High Efficiency Image Format HEVC sequence (.HEICS)'
-     
-     # hdlr handler types  
+
+     # hdlr handler types
      pict => 'Picture'      # HEIC images
      vide => 'Video Track'  # Video content
      ```
@@ -114,6 +125,7 @@
      5. **Track structure analysis** for mixed content scenarios
 
 **Investigation Results**:
+
 - ✅ Detection logic found in QuickTime.pm:119-126 (MIME mapping), 8319-8322 (handler types)
 - ✅ Live Photo detection via Apple metadata (lines 6650-6716)
 - ✅ Samsung Motion Photos handled via `mpvd` atoms (lines 950-956)
@@ -121,10 +133,13 @@
 ### Task 3: Binary Extraction Patterns (Critical for PhotoStructure) ✅ COMPLETED
 
 **Research Questions**:
+
 1. **Where are image payloads stored?**
+
    - **Answer**: Image data stored in **mdat** (media data) or **idat** (item data) containers, with locations specified by **iloc** (item location) box. The `ConstructionMethod` field determines storage type: 0=file offset, 1=idat container, 2=item reference.
 
 2. **How to extract primary image?**
+
    - **Answer**: Primary image extraction process (QuickTime.pm:9226+ `HandleItemInfo()`):
      1. **Primary Item ID** from `pitm` atom identifies main image
      2. **Item Location** from `iloc` provides offset/length data with extents array
@@ -132,6 +147,7 @@
      4. **Format Detection** recognizes EXIF, XMP, JPEG, and raw image data types
 
 3. **How to extract video poster frame?**
+
    - **Answer**: Video frame extraction uses **track-based processing**:
      - **Handler Context**: `$$et{HandlerType}` determines processing path
      - **Sample Description**: Video codec info in `stsd` atoms
@@ -141,11 +157,12 @@
 4. **What about burst sequences?**
    - **Answer**: Burst sequence handling:
      - **Multi-Image Processing**: `iref` box defines relationships between images
-     - **Item Association**: Properties linked to multiple items via `ipma` box  
+     - **Item Association**: Properties linked to multiple items via `ipma` box
      - **Document Numbers**: Sub-documents created for non-primary items (lines 9399-9405)
      - **Sequential Processing**: Items processed in sorted order for consistency
 
 **Key Boxes Implementation**:
+
 - ✅ **`iloc`** - Parsed by `ParseItemLocation()` (line 9014) with extent processing
 - ✅ **`mdat/idat`** - Binary data extraction with fragmentation support
 - ✅ **`iref`** - Item relationships for derived/related images (line 2836)
@@ -154,17 +171,21 @@
 ### Task 4: Metadata Extraction ✅ COMPLETED
 
 **Research Questions**:
+
 1. **Where is EXIF data stored? (Exif box?)**
+
    - **Answer**: EXIF data is stored in **item-based containers** (not traditional Exif boxes). Processing occurs in `HandleItemInfo()` (QuickTime.pm:9345-9367) with TIFF processing after header validation. EXIF items are identified by content type mapping and processed with `Image::ExifTool::ProcessTIFF`.
 
 2. **Where is XMP data? (uuid box?)**
+
    - **Answer**: XMP stored in **UUID boxes** with specific UUID `\xbe\x7a\xcf\xcb\x97\xa9\x42\xe8\x9c\x71\x99\x94\x91\xe3\xaf\xac` (QuickTime.pm:681-690). Alternative storage in UserData `XMP_` atoms. XMP can also be in `application/rdf+xml` MIME-type items within the item structure.
 
 3. **Apple-specific metadata location?**
+
    - **Answer**: Apple metadata stored in **`mdta` handler** (Metadata Tags) with dynamic key definitions (QuickTime.pm:9659-9686). Key Apple tags include:
      ```
      com.apple.quicktime.live-photo-info → LivePhotoInfo
-     com.apple.quicktime.video-orientation → VideoOrientation  
+     com.apple.quicktime.video-orientation → VideoOrientation
      com.apple.quicktime.scene-illuminance → SceneIlluminance
      com.apple.proapps.exif.{Exif}.* → ProRes RAW EXIF mappings
      ```
@@ -182,18 +203,20 @@
 **Key Research Finding**: ExifTool processes HEIC/HEIF entirely through `QuickTime.pm` - no separate HEIF module exists. HEIC uses item-based architecture within ISOBMFF containers.
 
 ### Phase 1: Detection & Routing ✅ PLANNED
+
 - **Add HEIC/HEIF detection** to `src/formats/mod.rs` using ftyp atom major brands:
   - `heic` → Single still image
-  - `hevc` → Image sequence/video  
+  - `hevc` → Image sequence/video
   - `mif1`/`msf1` → HEIF variants
   - `heix` → Canon variant
 - **Route through QuickTime processor** (confirmed: same ISOBMFF foundation as MP4)
 - **Implement three-tier detection**:
-  1. ftyp brand analysis (primary) 
+  1. ftyp brand analysis (primary)
   2. hdlr handler type verification (`pict` vs `vide`)
   3. Structural analysis (duration, Apple metadata)
 
 ### Phase 2: Metadata Extraction ✅ PLANNED
+
 - **Leverage QuickTime atom parsing** infrastructure if available
 - **Implement item-based EXIF extraction** using `HandleItemInfo()` equivalent:
   - Parse iloc (item location) boxes for data offsets
@@ -202,7 +225,8 @@
 - **Add XMP extraction** from UUID boxes (`be7a-cfcb-97a9-42e8...` UUID)
 - **Implement Apple mdta handler** for Live Photo and Apple-specific metadata
 
-### Phase 3: Binary Extraction ✅ PLANNED  
+### Phase 3: Binary Extraction ✅ PLANNED
+
 - **Implement iloc box parsing** (`ParseItemLocation()` equivalent) for PhotoStructure:
   - Handle three construction methods (file offset, idat container, item reference)
   - Support fragmented data across multiple extents
@@ -232,6 +256,7 @@
 ## Testing Strategy
 
 ### Test Samples Needed
+
 ```
 test-images/heic/
 ├── iphone_single_image.heic      # Basic single image
@@ -242,6 +267,7 @@ test-images/heic/
 ```
 
 ### Validation
+
 1. Compare metadata extraction with ExifTool
 2. Verify binary extraction produces valid JPEG
 3. Test image vs video detection accuracy
@@ -273,18 +299,21 @@ test-images/heic/
 ## Gotchas & Tribal Knowledge
 
 ### Apple Variations
+
 - **Live Photos**: Contain both image and 3-second video
 - **ProRAW**: DNG data wrapped in HEIC container
 - **Depth Data**: Portrait mode includes depth map
 - **Burst Photos**: Multiple full-res images in single file
 
 ### Technical Challenges
+
 - **Fragmented mdat**: Image data may be split across multiple mdat boxes
 - **Compression**: HEVC decoder not needed - extract compressed data
 - **Tile-based**: Large images may be tiled
 - **Edit Lists**: May contain non-destructive edits
 
 ### Implementation Notes
+
 - Can likely reuse much QuickTime atom parsing code
 - Focus on metadata and offset extraction, not HEVC decoding
 - Binary extraction returns compressed HEIC tiles, not decoded pixels
@@ -299,6 +328,7 @@ test-images/heic/
 ## Research Deliverables ✅ COMPLETED
 
 **Comprehensive Documentation Created**:
+
 1. **`third-party/exiftool/doc/concepts/HEIC_HEIF_PROCESSING.md`** - Complete format processing guide
 2. **`third-party/exiftool/doc/concepts/HEIC_BINARY_EXTRACTION.md`** - Binary data extraction specifics
 3. **`third-party/exiftool/doc/concepts/HEIC_METADATA_EXTRACTION.md`** - Metadata location and extraction patterns
@@ -309,6 +339,7 @@ test-images/heic/
 ## Next Steps - Implementation Phase
 
 **Immediate Next Actions**:
+
 1. **Create detailed implementation plan** based on research findings
 2. **Begin QuickTime infrastructure assessment** - audit existing atom parsing capabilities
 3. **Implement ftyp-based HEIC detection** in `src/formats/mod.rs`
@@ -317,6 +348,7 @@ test-images/heic/
 6. **Create test harness** with diverse HEIC samples for validation
 
 **Implementation Priority Order** (based on PhotoStructure needs):
+
 1. **Detection & Routing** (enables format recognition)
 2. **Basic Metadata Extraction** (EXIF/XMP parity with ExifTool)
 3. **Binary Extraction** (primary image extraction for PhotoStructure)
