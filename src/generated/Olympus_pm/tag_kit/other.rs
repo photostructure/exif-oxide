@@ -1512,7 +1512,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::Expression("\"$val kPa\""),
-            value_conv: Some("canon_div_10_value_conv"),
+            value_conv: Some("$val / 10"),
             subdirectory: None,
         }),
         (2305, TagKitDef {

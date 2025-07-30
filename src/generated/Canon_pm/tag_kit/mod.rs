@@ -267,8 +267,8 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    2 => "Normal",
                     1 => "Macro",
+                    2 => "Normal",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -302,14 +302,14 @@ fn process_canon_camerasettings(
             ) {
                 let formatted = match value {
                     -1 => "n/a",
+                    1 => "Economy",
                     2 => "Normal",
                     3 => "Fine",
-                    5 => "Superfine",
-                    131 => "Standard (RAW)",
-                    1 => "Economy",
-                    130 => "Light (RAW)",
                     4 => "RAW",
+                    5 => "Superfine",
                     7 => "CRAW",
+                    130 => "Light (RAW)",
+                    131 => "Standard (RAW)",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -330,13 +330,13 @@ fn process_canon_camerasettings(
             ) {
                 let formatted = match value {
                     -1 => "n/a",
-                    5 => "Red-eye reduction (Auto)",
-                    6 => "Red-eye reduction (On)",
-                    2 => "On",
                     0 => "Off",
                     1 => "Auto",
+                    2 => "On",
                     3 => "Red-eye reduction",
                     4 => "Slow-sync",
+                    5 => "Red-eye reduction (Auto)",
+                    6 => "Red-eye reduction (On)",
                     16 => "External flash",
                     _ => "Unknown",
                 };
@@ -357,16 +357,16 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    3 => "Continuous, Speed Priority",
-                    8 => "Continuous, High+",
-                    5 => "Continuous, High",
-                    9 => "Single, Silent",
-                    4 => "Continuous, Low",
+                    0 => "Single",
                     1 => "Continuous",
                     2 => "Movie",
-                    10 => "Continuous, Silent",
-                    0 => "Single",
+                    3 => "Continuous, Speed Priority",
+                    4 => "Continuous, Low",
+                    5 => "Continuous, High",
                     6 => "Silent Single",
+                    8 => "Continuous, High+",
+                    9 => "Single, Silent",
+                    10 => "Continuous, Silent",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -386,19 +386,19 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    256 => "One-shot AF (Live View)",
-                    1 => "AI Servo AF",
-                    258 => "AI Focus AF (Live View)",
-                    512 => "Movie Snap Focus",
-                    5 => "Continuous",
                     0 => "One-shot AF",
-                    16 => "Pan Focus",
+                    1 => "AI Servo AF",
                     2 => "AI Focus AF",
-                    257 => "AI Servo AF (Live View)",
                     3 => "Manual Focus (3)",
                     4 => "Single",
-                    519 => "Movie Servo AF",
+                    5 => "Continuous",
                     6 => "Manual Focus (6)",
+                    16 => "Pan Focus",
+                    256 => "One-shot AF (Live View)",
+                    257 => "AI Servo AF (Live View)",
+                    258 => "AI Focus AF (Live View)",
+                    512 => "Movie Snap Focus",
+                    519 => "Movie Servo AF",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -418,20 +418,20 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    12 => "CR3",
-                    9 => "MOV",
-                    4 => "TIF",
-                    6 => "CR2",
-                    13 => "CR3+JPEG",
-                    2 => "CRW+THM",
-                    15 => "CR3+HIF",
                     1 => "JPEG",
-                    10 => "MP4",
-                    5 => "TIF+JPEG",
-                    7 => "CR2+JPEG",
+                    2 => "CRW+THM",
                     3 => "AVI+THM",
-                    14 => "HIF",
+                    4 => "TIF",
+                    5 => "TIF+JPEG",
+                    6 => "CR2",
+                    7 => "CR2+JPEG",
+                    9 => "MOV",
+                    10 => "MP4",
                     11 => "CRM",
+                    12 => "CR3",
+                    13 => "CR3+JPEG",
+                    14 => "HIF",
+                    15 => "CR3+HIF",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -451,25 +451,25 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    10 => "Medium Widescreen",
-                    8 => "Postcard",
                     -1 => "n/a",
-                    5 => "Medium 1",
-                    1 => "Medium",
-                    7 => "Medium 3",
-                    2 => "Small",
-                    130 => "Small Movie",
-                    9 => "Widescreen",
-                    129 => "Medium Movie",
                     0 => "Large",
-                    137 => "1280x720 Movie",
-                    16 => "Small 3",
+                    1 => "Medium",
+                    2 => "Small",
+                    5 => "Medium 1",
                     6 => "Medium 2",
-                    128 => "640x480 Movie",
+                    7 => "Medium 3",
+                    8 => "Postcard",
+                    9 => "Widescreen",
+                    10 => "Medium Widescreen",
                     14 => "Small 1",
+                    15 => "Small 2",
+                    16 => "Small 3",
+                    128 => "640x480 Movie",
+                    129 => "Medium Movie",
+                    130 => "Small Movie",
+                    137 => "1280x720 Movie",
                     142 => "1920x1080 Movie",
                     143 => "4096x2160 Movie",
-                    15 => "Small 2",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -489,81 +489,81 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    18 => "Foliage",
-                    50 => "Best Image Selection",
-                    25 => "Night Snapshot",
-                    30 => "Color Accent",
-                    7 => "Sepia",
-                    47 => "Fisheye Effect",
-                    49 => "High-speed Burst",
-                    5 => "Night",
-                    23 => "Snow",
-                    265 => "Low Light 2",
-                    13 => "Vivid",
-                    261 => "Sunset",
-                    31 => "Color Swap",
-                    15 => "Flash Off",
-                    35 => "Creative Light Effect",
-                    38 => "Creative Auto",
-                    45 => "Smile",
-                    24 => "Kids & Pets",
-                    22 => "Underwater",
-                    32 => "Aquarium",
-                    56 => "Blur Reduction",
-                    8 => "Portrait",
-                    84 => "HDR Art Standard",
-                    11 => "Black & White",
-                    46 => "Wink Self-timer",
-                    85 => "HDR Art Vivid",
-                    55 => "Discreet",
-                    43 => "Poster Effect",
-                    53 => "Movie Digest",
-                    12 => "Pan focus",
-                    57 => "Monochrome",
-                    10 => "Macro",
-                    60 => "High-speed Burst HQ",
-                    52 => "Handheld Night Scene",
-                    54 => "Live View Control",
-                    14 => "Neutral",
-                    19 => "Indoor",
-                    34 => "ISO 6400",
-                    44 => "Face Self-timer",
-                    59 => "Scene Intelligent Auto",
-                    28 => "Movie Snap",
-                    40 => "Low Light",
-                    36 => "Easy",
                     0 => "Full auto",
-                    37 => "Quick Shot",
-                    48 => "Miniature Effect",
-                    41 => "Nostalgic",
-                    61 => "Smooth Skin",
-                    264 => "Surface",
-                    68 => "Food",
-                    58 => "Toy Camera Effect",
-                    29 => "Super Macro 2",
-                    263 => "Night Scene",
-                    20 => "Fireworks",
                     1 => "Manual",
-                    259 => "Night+",
                     2 => "Landscape",
-                    33 => "ISO 3200",
-                    4 => "Slow shutter",
                     3 => "Fast shutter",
-                    21 => "Beach",
-                    257 => "Spotlight",
-                    39 => "Zoom Blur",
-                    9 => "Sports",
-                    258 => "Night 2",
-                    62 => "Soft Focus",
+                    4 => "Slow shutter",
+                    5 => "Night",
                     6 => "Gray Scale",
-                    17 => "Super Macro",
-                    27 => "My Colors",
-                    51 => "High Dynamic Range",
-                    93 => "HDR Art Bold",
-                    42 => "Super Vivid",
-                    260 => "Super Night",
-                    26 => "Digital Macro",
+                    7 => "Sepia",
+                    8 => "Portrait",
+                    9 => "Sports",
+                    10 => "Macro",
+                    11 => "Black & White",
+                    12 => "Pan focus",
+                    13 => "Vivid",
+                    14 => "Neutral",
+                    15 => "Flash Off",
                     16 => "Long Shutter",
+                    17 => "Super Macro",
+                    18 => "Foliage",
+                    19 => "Indoor",
+                    20 => "Fireworks",
+                    21 => "Beach",
+                    22 => "Underwater",
+                    23 => "Snow",
+                    24 => "Kids & Pets",
+                    25 => "Night Snapshot",
+                    26 => "Digital Macro",
+                    27 => "My Colors",
+                    28 => "Movie Snap",
+                    29 => "Super Macro 2",
+                    30 => "Color Accent",
+                    31 => "Color Swap",
+                    32 => "Aquarium",
+                    33 => "ISO 3200",
+                    34 => "ISO 6400",
+                    35 => "Creative Light Effect",
+                    36 => "Easy",
+                    37 => "Quick Shot",
+                    38 => "Creative Auto",
+                    39 => "Zoom Blur",
+                    40 => "Low Light",
+                    41 => "Nostalgic",
+                    42 => "Super Vivid",
+                    43 => "Poster Effect",
+                    44 => "Face Self-timer",
+                    45 => "Smile",
+                    46 => "Wink Self-timer",
+                    47 => "Fisheye Effect",
+                    48 => "Miniature Effect",
+                    49 => "High-speed Burst",
+                    50 => "Best Image Selection",
+                    51 => "High Dynamic Range",
+                    52 => "Handheld Night Scene",
+                    53 => "Movie Digest",
+                    54 => "Live View Control",
+                    55 => "Discreet",
+                    56 => "Blur Reduction",
+                    57 => "Monochrome",
+                    58 => "Toy Camera Effect",
+                    59 => "Scene Intelligent Auto",
+                    60 => "High-speed Burst HQ",
+                    61 => "Smooth Skin",
+                    62 => "Soft Focus",
+                    68 => "Food",
+                    84 => "HDR Art Standard",
+                    85 => "HDR Art Vivid",
+                    93 => "HDR Art Bold",
+                    257 => "Spotlight",
+                    258 => "Night 2",
+                    259 => "Night+",
+                    260 => "Super Night",
+                    261 => "Sunset",
+                    263 => "Night Scene",
+                    264 => "Surface",
+                    265 => "Low Light 2",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -583,9 +583,9 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    2 => "4x",
                     0 => "None",
                     1 => "2x",
+                    2 => "4x",
                     3 => "Other",
                     _ => "Unknown",
                 };
@@ -672,11 +672,11 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    2 => "Average",
-                    4 => "Partial",
                     0 => "Default",
                     1 => "Spot",
+                    2 => "Average",
                     3 => "Evaluative",
+                    4 => "Partial",
                     5 => "Center-weighted average",
                     _ => "Unknown",
                 };
@@ -697,17 +697,17 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
+                    0 => "Manual",
                     1 => "Auto",
                     2 => "Not Known",
-                    5 => "Close",
-                    7 => "Far Range",
-                    10 => "Infinity",
-                    8 => "Pan Focus",
-                    0 => "Manual",
-                    9 => "Super Macro",
-                    4 => "Very Close",
-                    6 => "Middle Range",
                     3 => "Macro",
+                    4 => "Very Close",
+                    5 => "Close",
+                    6 => "Middle Range",
+                    7 => "Far Range",
+                    8 => "Pan Focus",
+                    9 => "Super Macro",
+                    10 => "Infinity",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -727,13 +727,13 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    12288 => "None (MF)",
                     8197 => "Manual AF point selection",
-                    12291 => "Center",
-                    16385 => "Auto AF point selection",
-                    12292 => "Left",
+                    12288 => "None (MF)",
                     12289 => "Auto AF point selection",
                     12290 => "Right",
+                    12291 => "Center",
+                    12292 => "Left",
+                    16385 => "Auto AF point selection",
                     16390 => "Face Detect",
                     _ => "Unknown",
                 };
@@ -754,14 +754,14 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    3 => "Aperture-priority AE",
                     0 => "Easy",
-                    7 => "Bulb",
-                    6 => "M-Dep",
                     1 => "Program AE",
-                    5 => "Depth-of-field AE",
                     2 => "Shutter speed priority AE",
+                    3 => "Aperture-priority AE",
                     4 => "Manual",
+                    5 => "Depth-of-field AE",
+                    6 => "M-Dep",
+                    7 => "Bulb",
                     8 => "Flexible-priority AE",
                     _ => "Unknown",
                 };
@@ -782,234 +782,234 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    4146 => "Canon EF-S 18-55mm f/3.5-5.6 IS STM",
-                    198 => "Canon EF 50mm f/1.4 USM or Other Lens",
-                    178 => "Canon EF 28-135mm f/3.5-5.6 IS",
-                    0 => "Canon EF 70-300mm f/4-5.6 IS II USM",
-                    18 => "Canon EF 28-70mm f/3.5-4.5",
-                    127 => "Canon TS-E 90mm f/2.8 or Tamron Lens",
-                    368 => "Sigma 14-24mm f/2.8 DG HSM | A or other Sigma Lens",
-                    81 => "Canon TS-E 90mm f/2.8L Macro",
-                    209 => "Canon EF 55-200mm f/4.5-5.6",
-                    24 => "Canon EF 35-80mm f/4-5.6 Power Zoom",
-                    33 => "Voigtlander or Carl Zeiss Lens",
-                    4 => "Canon EF 35-105mm f/3.5-4.5 or Sigma Lens",
-                    232 => "Canon EF 70-300mm f/4.5-5.6 DO IS USM",
-                    757 => "Canon EF 400mm f/2.8L IS III USM",
-                    21 => "Canon EF 80-200mm f/2.8L",
-                    63 => "Irix 30mm F1.4 Dragonfly",
-                    144 => "Canon EF 35-135mm f/4-5.6 USM",
-                    226 => "Canon EF 70-200mm f/2.8L IS USM + 2x",
-                    54 => "Canon EF-S 55-250mm f/4-5.6 IS II",
-                    753 => "Canon EF 85mm f/1.4L IS USM",
-                    20 => "Canon EF 100-200mm f/4.5A",
-                    163 => "Canon EF 300mm f/4L",
-                    135 => "Canon EF 200mm f/1.8L USM",
-                    231 => "Canon EF 17-40mm f/4L USM or Sigma Lens",
-                    136 => "Canon EF 300mm f/2.8L USM",
-                    151 => "Canon EF 200mm f/2.8L USM",
-                    508 => "Canon EF 11-24mm f/4L USM or Tamron Lens",
-                    95 => "Canon TS-E 24mm f/3.5L II",
-                    125 => "Canon TS-E 24mm f/3.5L",
-                    7 => "Canon EF 100-300mm f/5.6L",
-                    4143 => "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens",
-                    51 => "Canon EF-S 18-135mm f/3.5-5.6 IS",
-                    22 => "Canon EF 20-35mm f/2.8L or Tokina Lens",
-                    13 => "Canon EF 15mm f/2.8 Fisheye",
-                    166 => "Canon EF 70-200mm f/2.8L USM + 1.4x",
-                    169 => "Canon EF 17-35mm f/2.8L USM or Sigma Lens",
-                    245 => "Canon EF 70-200mm f/4L IS USM + 2.8x",
-                    141 => "Canon EF 500mm f/4.5L USM",
-                    496 => "Canon EF 200-400mm f/4L IS USM",
-                    29 => "Canon EF 50mm f/1.8 II",
-                    246 => "Canon EF 16-35mm f/2.8L II USM",
-                    161 => "Canon EF 28-70mm f/2.8L USM or Other Lens",
-                    154 => "Canon EF 20mm f/2.8 USM or Zeiss Lens",
-                    187 => "Canon EF 70-200mm f/4L USM + 1.4x",
-                    17 => "Canon EF 35-70mm f/3.5-4.5A",
-                    224 => "Canon EF 70-200mm f/2.8L IS USM",
-                    4148 => "Canon EF-S 55-250mm f/4-5.6 IS STM",
-                    239 => "Canon EF 85mm f/1.2L II USM or Rokinon Lens",
-                    162 => "Canon EF 200mm f/2.8L USM",
-                    171 => "Canon EF 300mm f/4L USM",
-                    4157 => "Canon EF-M 18-150mm f/3.5-6.3 IS STM",
-                    138 => "Canon EF 28-80mm f/2.8-4L",
-                    117 => "Tamron 35-150mm f/2.8-4.0 Di VC OSD (A043) or other Tamron Lens",
-                    42 => "Canon EF 28-200mm f/3.5-5.6 or Tamron Lens",
-                    243 => "Canon EF 70-200mm f/4L IS USM + 1.4x",
-                    3 => "Canon EF 135mm f/2.8 Soft",
-                    488 => "Canon EF-S 15-85mm f/3.5-5.6 IS USM",
-                    37 => "Canon EF 35-80mm f/4-5.6 or Tamron Lens",
-                    240 => "Canon EF-S 17-55mm f/2.8 IS USM or Sigma Lens",
-                    43 => "Canon EF 28-105mm f/4-5.6",
-                    225 => "Canon EF 70-200mm f/2.8L IS USM + 1.4x",
-                    202 => "Canon EF 28-80mm f/3.5-5.6 USM IV",
-                    229 => "Canon EF 16-35mm f/2.8L USM",
-                    145 => "Canon EF 100-300mm f/4.5-5.6 USM",
-                    35 => "Canon EF 35-80mm f/4-5.6",
-                    199 => "Canon EF 28-80mm f/3.5-5.6 USM",
-                    184 => "Canon EF 400mm f/2.8L USM + 2x",
-                    754 => "Canon EF 70-200mm f/4L IS II USM",
-                    182 => "Canon EF 100-400mm f/4.5-5.6L IS USM + 2x or Sigma Lens",
-                    82 => "Canon TS-E 135mm f/4L Macro",
-                    167 => "Canon EF 70-200mm f/2.8L USM + 2x",
-                    181 => "Canon EF 100-400mm f/4.5-5.6L IS USM + 1.4x or Sigma Lens",
-                    175 => "Canon EF 400mm f/2.8L USM",
-                    758 => "Canon EF 600mm f/4L IS III USM",
-                    46 => "Canon EF 28-90mm f/4-5.6",
-                    180 => "Canon EF 35mm f/1.4L USM or Other Lens",
-                    196 => "Canon EF 75-300mm f/4-5.6 USM",
-                    201 => "Canon EF 28-80mm f/3.5-5.6 USM",
-                    190 => "Canon EF 100mm f/2.8 Macro USM",
-                    200 => "Canon EF 75-300mm f/4-5.6 USM",
-                    210 => "Canon EF 28-90mm f/4-5.6 USM",
-                    236 => "Canon EF-S 60mm f/2.8 Macro USM",
-                    132 => "Canon EF 1200mm f/5.6L USM",
-                    490 => "Canon EF 8-15mm f/4L Fisheye USM",
-                    749 => "Canon EF 100-400mm f/4.5-5.6L IS II USM + 2x or Tamron Lens",
-                    193 => "Canon EF 35-80mm f/4-5.6 USM",
-                    493 => "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM",
-                    747 => "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens",
-                    150 => "Canon EF 14mm f/2.8L USM or Sigma Lens",
-                    4145 => "Canon EF-M 22mm f/2 STM",
-                    213 => "Canon EF 90-300mm f/4.5-5.6 USM or Tamron Lens",
-                    499 => "Canon EF 200-400mm f/4L IS USM + 1.4x",
-                    748 => "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x or Tamron Lens",
-                    164 => "Canon EF 400mm f/5.6L",
-                    131 => "Canon EF 28-80mm f/2.8-4L USM or Sigma Lens",
-                    130 => "Canon EF 50mm f/1.0L USM",
-                    4154 => "Canon EF-S 24mm f/2.8 STM",
-                    172 => "Canon EF 400mm f/5.6L USM or Sigma Lens",
-                    4147 => "Canon EF-M 11-22mm f/4-5.6 IS STM",
-                    9 => "Canon EF 70-210mm f/4",
-                    147 => "Canon EF 35-135mm f/4-5.6 USM",
-                    235 => "Canon EF-S 10-22mm f/3.5-4.5 USM",
-                    53 => "Canon EF-S 18-55mm f/3.5-5.6 III",
-                    10 => "Canon EF 50mm f/2.5 Macro or Sigma Lens",
-                    146 => "Canon EF 70-210mm f/3.5-4.5 USM",
-                    52 => "Canon EF-S 18-55mm f/3.5-5.6 IS II",
-                    1 => "Canon EF 50mm f/1.8",
-                    195 => "Canon EF 35-105mm f/4.5-5.6 USM",
-                    4160 => "Canon EF-S 35mm f/2.8 Macro IS STM",
-                    752 => "Canon EF 24-105mm f/4L IS II USM",
-                    60 => "Irix 11mm f/4 or 15mm f/2.4",
-                    185 => "Canon EF 600mm f/4L IS USM",
-                    251 => "Canon EF 70-200mm f/2.8L IS II USM",
-                    160 => "Canon EF 20-35mm f/3.5-4.5 USM or Tamron or Tokina Lens",
-                    30 => "Canon EF 35-105mm f/4.5-5.6",
-                    94 => "Canon TS-E 17mm f/4L",
-                    188 => "Canon EF 70-200mm f/4L USM + 2x",
-                    506 => "Canon EF 400mm f/4 DO IS II USM",
-                    140 => "Canon EF 500mm f/4.5L USM",
-                    215 => "Canon EF 55-200mm f/4.5-5.6 II USM",
-                    168 => "Canon EF 28mm f/1.8 USM or Sigma Lens",
-                    5 => "Canon EF 35-70mm f/3.5-4.5",
-                    183 => "Canon EF 100-400mm f/4.5-5.6L IS USM or Sigma Lens",
-                    106 => "Rokinon SP / Samyang XP 35mm f/1.2",
-                    124 => "Canon MP-E 65mm f/2.8 1-5x Macro Photo",
-                    27 => "Canon EF 35-80mm f/4-5.6",
-                    186 => "Canon EF 70-200mm f/4L USM",
-                    237 => "Canon EF 24-105mm f/4L IS USM",
-                    11 => "Canon EF 35mm f/2",
-                    220 => "Yongnuo YN 50mm f/1.8",
-                    155 => "Canon EF 85mm f/1.8 USM or Sigma Lens",
-                    494 => "Canon EF 600mm f/4L IS II USM",
-                    31 => "Canon EF 75-300mm f/4-5.6 or Tamron Lens",
-                    26 => "Canon EF 100mm f/2.8 Macro or Other Lens",
-                    112 => "Sigma 28mm f/1.5 FF High-speed Prime or other Sigma Lens",
-                    170 => "Canon EF 200mm f/2.8L II USM or Sigma Lens",
-                    504 => "Canon EF 24-70mm f/4L IS USM",
-                    244 => "Canon EF 70-200mm f/4L IS USM + 2x",
                     -1 => "n/a",
-                    32 => "Canon EF 24mm f/2.8 or Sigma Lens",
-                    191 => "Canon EF 400mm f/4 DO IS or Sigma Lens",
+                    0 => "Canon EF 70-300mm f/4-5.6 IS II USM",
+                    1 => "Canon EF 50mm f/1.8",
                     2 => "Canon EF 28mm f/2.8 or Sigma Lens",
-                    149 => "Canon EF 100mm f/2 USM",
-                    40 => "Canon EF 28-80mm f/3.5-5.6",
-                    48 => "Canon EF-S 18-55mm f/3.5-5.6 IS",
-                    129 => "Canon EF 300mm f/2.8L USM",
-                    214 => "Canon EF-S 18-55mm f/3.5-5.6 USM",
-                    211 => "Canon EF 28-200mm f/3.5-5.6 USM",
-                    143 => "Canon EF 500mm f/4L IS USM or Sigma Lens",
-                    4153 => "Canon EF-M 15-45mm f/3.5-6.3 IS STM",
-                    28 => "Canon EF 80-200mm f/4.5-5.6 or Tamron Lens",
-                    4142 => "Canon EF-S 18-135mm f/3.5-5.6 IS STM",
-                    176 => "Canon EF 24-85mm f/3.5-4.5 USM",
-                    49 => "Canon EF-S 55-250mm f/4-5.6 IS",
-                    156 => "Canon EF 28-105mm f/3.5-4.5 USM or Tamron Lens",
-                    23 => "Canon EF 35-105mm f/3.5-4.5",
-                    212 => "Canon EF 28-105mm f/4-5.6 USM",
-                    491 => "Canon EF 300mm f/2.8L IS II USM or Tamron Lens",
-                    624 => "Sigma 70-200mm f/2.8 DG OS HSM | S or other Sigma Lens",
-                    139 => "Canon EF 400mm f/2.8L USM",
-                    507 => "Canon EF 16-35mm f/4L IS USM",
-                    50 => "Canon EF-S 18-200mm f/3.5-5.6 IS",
-                    36 => "Canon EF 38-76mm f/4.5-5.6",
-                    152 => "Canon EF 300mm f/4L IS USM or Sigma Lens",
-                    16 => "Canon EF 35-135mm f/3.5-4.5",
-                    505 => "Canon EF 35mm f/2 IS USM",
-                    197 => "Canon EF 75-300mm f/4-5.6 IS USM or Sigma Lens",
-                    4208 => "Sigma 56mm f/1.4 DC DN | C or other Sigma Lens",
-                    241 => "Canon EF 50mm f/1.2L USM",
-                    750 => "Canon EF 35mm f/1.4L II USM or Tamron Lens",
-                    249 => "Canon EF 800mm f/5.6L IS USM",
-                    189 => "Canon EF 70-200mm f/4L USM + 2.8x",
-                    492 => "Canon EF 400mm f/2.8L IS II USM",
-                    502 => "Canon EF 28mm f/2.8 IS USM or Tamron Lens",
-                    173 => "Canon EF 180mm Macro f/3.5L USM or Sigma Lens",
-                    227 => "Canon EF 70-200mm f/2.8L IS USM + 2.8x",
-                    126 => "Canon TS-E 45mm f/2.8",
-                    4156 => "Canon EF 50mm f/1.8 STM",
-                    103 => "Samyang AF 14mm f/2.8 EF or Rokinon Lens",
-                    233 => "Canon EF 28-300mm f/3.5-5.6L IS USM",
-                    248 => "Canon EF 200mm f/2L IS USM or Sigma Lens",
-                    4155 => "Canon EF-M 28mm f/3.5 Macro IS STM",
-                    1136 => "Sigma 24-70mm f/2.8 DG OS HSM | A",
-                    38 => "Canon EF 80-200mm f/4.5-5.6 II",
-                    254 => "Canon EF 100mm f/2.8L Macro IS USM or Tamron Lens",
-                    4150 => "Canon EF-S 10-18mm f/4.5-5.6 IS STM",
-                    253 => "Canon EF 70-200mm f/2.8L IS II USM + 2x",
-                    495 => "Canon EF 24-70mm f/2.8L II USM or Sigma Lens",
-                    247 => "Canon EF 14mm f/2.8L II USM",
-                    238 => "Canon EF 70-300mm f/4-5.6 IS USM",
-                    252 => "Canon EF 70-200mm f/2.8L IS II USM + 1.4x",
-                    255 => "Sigma 24-105mm f/4 DG OS HSM | A or Other Lens",
-                    39 => "Canon EF 75-300mm f/4-5.6",
-                    4144 => "Canon EF 40mm f/2.8 STM",
-                    142 => "Canon EF 300mm f/2.8L IS USM",
-                    4152 => "Canon EF 24-105mm f/3.5-5.6 IS STM",
-                    14 => "Canon EF 50-200mm f/3.5-4.5L",
-                    4159 => "Canon EF-M 32mm f/1.4 STM",
+                    3 => "Canon EF 135mm f/2.8 Soft",
+                    4 => "Canon EF 35-105mm f/3.5-4.5 or Sigma Lens",
+                    5 => "Canon EF 35-70mm f/3.5-4.5",
                     6 => "Canon EF 28-70mm f/3.5-4.5 or Sigma or Tokina Lens",
-                    242 => "Canon EF 70-200mm f/4L IS USM",
-                    25 => "Canon EF 35-80mm f/4-5.6 Power Zoom",
-                    194 => "Canon EF 80-200mm f/4.5-5.6 USM",
+                    7 => "Canon EF 100-300mm f/5.6L",
                     8 => "Canon EF 100-300mm f/5.6 or Sigma or Tokina Lens",
-                    4149 => "Canon EF-M 55-200mm f/4.5-6.3 IS STM",
-                    165 => "Canon EF 70-200mm f/2.8L USM",
-                    228 => "Canon EF 28-105mm f/3.5-4.5 USM",
-                    489 => "Canon EF 70-300mm f/4-5.6L IS USM",
-                    503 => "Canon EF 24mm f/2.8 IS USM",
-                    148 => "Canon EF 28-80mm f/3.5-5.6 USM",
-                    177 => "Canon EF 300mm f/4L IS USM",
-                    137 => "Canon EF 85mm f/1.2L USM or Sigma or Tamron Lens",
-                    179 => "Canon EF 24mm f/1.4L USM",
-                    80 => "Canon TS-E 50mm f/2.8L Macro",
-                    41 => "Canon EF 28-90mm f/4-5.6",
-                    234 => "Canon EF-S 17-85mm f/4-5.6 IS USM or Tokina Lens",
-                    44 => "Canon EF 90-300mm f/4.5-5.6",
-                    751 => "Canon EF 16-35mm f/2.8L III USM",
-                    47 => "Zeiss Milvus 35mm f/2 or 50mm f/2",
-                    174 => "Canon EF 135mm f/2L USM or Other Lens",
-                    217 => "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD",
-                    230 => "Canon EF 24-70mm f/2.8L USM",
-                    250 => "Canon EF 24mm f/1.4L II USM or Sigma Lens",
-                    4158 => "Canon EF-S 18-55mm f/4-5.6 IS STM",
-                    134 => "Canon EF 600mm f/4L IS USM",
+                    9 => "Canon EF 70-210mm f/4",
+                    10 => "Canon EF 50mm f/2.5 Macro or Sigma Lens",
+                    11 => "Canon EF 35mm f/2",
+                    13 => "Canon EF 15mm f/2.8 Fisheye",
+                    14 => "Canon EF 50-200mm f/3.5-4.5L",
                     15 => "Canon EF 50-200mm f/3.5-4.5",
+                    16 => "Canon EF 35-135mm f/3.5-4.5",
+                    17 => "Canon EF 35-70mm f/3.5-4.5A",
+                    18 => "Canon EF 28-70mm f/3.5-4.5",
+                    20 => "Canon EF 100-200mm f/4.5A",
+                    21 => "Canon EF 80-200mm f/2.8L",
+                    22 => "Canon EF 20-35mm f/2.8L or Tokina Lens",
+                    23 => "Canon EF 35-105mm f/3.5-4.5",
+                    24 => "Canon EF 35-80mm f/4-5.6 Power Zoom",
+                    25 => "Canon EF 35-80mm f/4-5.6 Power Zoom",
+                    26 => "Canon EF 100mm f/2.8 Macro or Other Lens",
+                    27 => "Canon EF 35-80mm f/4-5.6",
+                    28 => "Canon EF 80-200mm f/4.5-5.6 or Tamron Lens",
+                    29 => "Canon EF 50mm f/1.8 II",
+                    30 => "Canon EF 35-105mm f/4.5-5.6",
+                    31 => "Canon EF 75-300mm f/4-5.6 or Tamron Lens",
+                    32 => "Canon EF 24mm f/2.8 or Sigma Lens",
+                    33 => "Voigtlander or Carl Zeiss Lens",
+                    35 => "Canon EF 35-80mm f/4-5.6",
+                    36 => "Canon EF 38-76mm f/4.5-5.6",
+                    37 => "Canon EF 35-80mm f/4-5.6 or Tamron Lens",
+                    38 => "Canon EF 80-200mm f/4.5-5.6 II",
+                    39 => "Canon EF 75-300mm f/4-5.6",
+                    40 => "Canon EF 28-80mm f/3.5-5.6",
+                    41 => "Canon EF 28-90mm f/4-5.6",
+                    42 => "Canon EF 28-200mm f/3.5-5.6 or Tamron Lens",
+                    43 => "Canon EF 28-105mm f/4-5.6",
+                    44 => "Canon EF 90-300mm f/4.5-5.6",
                     45 => "Canon EF-S 18-55mm f/3.5-5.6 [II]",
-                    208 => "Canon EF 22-55mm f/4-5.6 USM",
+                    46 => "Canon EF 28-90mm f/4-5.6",
+                    47 => "Zeiss Milvus 35mm f/2 or 50mm f/2",
+                    48 => "Canon EF-S 18-55mm f/3.5-5.6 IS",
+                    49 => "Canon EF-S 55-250mm f/4-5.6 IS",
+                    50 => "Canon EF-S 18-200mm f/3.5-5.6 IS",
+                    51 => "Canon EF-S 18-135mm f/3.5-5.6 IS",
+                    52 => "Canon EF-S 18-55mm f/3.5-5.6 IS II",
+                    53 => "Canon EF-S 18-55mm f/3.5-5.6 III",
+                    54 => "Canon EF-S 55-250mm f/4-5.6 IS II",
+                    60 => "Irix 11mm f/4 or 15mm f/2.4",
+                    63 => "Irix 30mm F1.4 Dragonfly",
+                    80 => "Canon TS-E 50mm f/2.8L Macro",
+                    81 => "Canon TS-E 90mm f/2.8L Macro",
+                    82 => "Canon TS-E 135mm f/4L Macro",
+                    94 => "Canon TS-E 17mm f/4L",
+                    95 => "Canon TS-E 24mm f/3.5L II",
+                    103 => "Samyang AF 14mm f/2.8 EF or Rokinon Lens",
+                    106 => "Rokinon SP / Samyang XP 35mm f/1.2",
+                    112 => "Sigma 28mm f/1.5 FF High-speed Prime or other Sigma Lens",
+                    117 => "Tamron 35-150mm f/2.8-4.0 Di VC OSD (A043) or other Tamron Lens",
+                    124 => "Canon MP-E 65mm f/2.8 1-5x Macro Photo",
+                    125 => "Canon TS-E 24mm f/3.5L",
+                    126 => "Canon TS-E 45mm f/2.8",
+                    127 => "Canon TS-E 90mm f/2.8 or Tamron Lens",
+                    129 => "Canon EF 300mm f/2.8L USM",
+                    130 => "Canon EF 50mm f/1.0L USM",
+                    131 => "Canon EF 28-80mm f/2.8-4L USM or Sigma Lens",
+                    132 => "Canon EF 1200mm f/5.6L USM",
+                    134 => "Canon EF 600mm f/4L IS USM",
+                    135 => "Canon EF 200mm f/1.8L USM",
+                    136 => "Canon EF 300mm f/2.8L USM",
+                    137 => "Canon EF 85mm f/1.2L USM or Sigma or Tamron Lens",
+                    138 => "Canon EF 28-80mm f/2.8-4L",
+                    139 => "Canon EF 400mm f/2.8L USM",
+                    140 => "Canon EF 500mm f/4.5L USM",
+                    141 => "Canon EF 500mm f/4.5L USM",
+                    142 => "Canon EF 300mm f/2.8L IS USM",
+                    143 => "Canon EF 500mm f/4L IS USM or Sigma Lens",
+                    144 => "Canon EF 35-135mm f/4-5.6 USM",
+                    145 => "Canon EF 100-300mm f/4.5-5.6 USM",
+                    146 => "Canon EF 70-210mm f/3.5-4.5 USM",
+                    147 => "Canon EF 35-135mm f/4-5.6 USM",
+                    148 => "Canon EF 28-80mm f/3.5-5.6 USM",
+                    149 => "Canon EF 100mm f/2 USM",
+                    150 => "Canon EF 14mm f/2.8L USM or Sigma Lens",
+                    151 => "Canon EF 200mm f/2.8L USM",
+                    152 => "Canon EF 300mm f/4L IS USM or Sigma Lens",
                     153 => "Canon EF 35-350mm f/3.5-5.6L USM or Sigma or Tamron Lens",
+                    154 => "Canon EF 20mm f/2.8 USM or Zeiss Lens",
+                    155 => "Canon EF 85mm f/1.8 USM or Sigma Lens",
+                    156 => "Canon EF 28-105mm f/3.5-4.5 USM or Tamron Lens",
+                    160 => "Canon EF 20-35mm f/3.5-4.5 USM or Tamron or Tokina Lens",
+                    161 => "Canon EF 28-70mm f/2.8L USM or Other Lens",
+                    162 => "Canon EF 200mm f/2.8L USM",
+                    163 => "Canon EF 300mm f/4L",
+                    164 => "Canon EF 400mm f/5.6L",
+                    165 => "Canon EF 70-200mm f/2.8L USM",
+                    166 => "Canon EF 70-200mm f/2.8L USM + 1.4x",
+                    167 => "Canon EF 70-200mm f/2.8L USM + 2x",
+                    168 => "Canon EF 28mm f/1.8 USM or Sigma Lens",
+                    169 => "Canon EF 17-35mm f/2.8L USM or Sigma Lens",
+                    170 => "Canon EF 200mm f/2.8L II USM or Sigma Lens",
+                    171 => "Canon EF 300mm f/4L USM",
+                    172 => "Canon EF 400mm f/5.6L USM or Sigma Lens",
+                    173 => "Canon EF 180mm Macro f/3.5L USM or Sigma Lens",
+                    174 => "Canon EF 135mm f/2L USM or Other Lens",
+                    175 => "Canon EF 400mm f/2.8L USM",
+                    176 => "Canon EF 24-85mm f/3.5-4.5 USM",
+                    177 => "Canon EF 300mm f/4L IS USM",
+                    178 => "Canon EF 28-135mm f/3.5-5.6 IS",
+                    179 => "Canon EF 24mm f/1.4L USM",
+                    180 => "Canon EF 35mm f/1.4L USM or Other Lens",
+                    181 => "Canon EF 100-400mm f/4.5-5.6L IS USM + 1.4x or Sigma Lens",
+                    182 => "Canon EF 100-400mm f/4.5-5.6L IS USM + 2x or Sigma Lens",
+                    183 => "Canon EF 100-400mm f/4.5-5.6L IS USM or Sigma Lens",
+                    184 => "Canon EF 400mm f/2.8L USM + 2x",
+                    185 => "Canon EF 600mm f/4L IS USM",
+                    186 => "Canon EF 70-200mm f/4L USM",
+                    187 => "Canon EF 70-200mm f/4L USM + 1.4x",
+                    188 => "Canon EF 70-200mm f/4L USM + 2x",
+                    189 => "Canon EF 70-200mm f/4L USM + 2.8x",
+                    190 => "Canon EF 100mm f/2.8 Macro USM",
+                    191 => "Canon EF 400mm f/4 DO IS or Sigma Lens",
+                    193 => "Canon EF 35-80mm f/4-5.6 USM",
+                    194 => "Canon EF 80-200mm f/4.5-5.6 USM",
+                    195 => "Canon EF 35-105mm f/4.5-5.6 USM",
+                    196 => "Canon EF 75-300mm f/4-5.6 USM",
+                    197 => "Canon EF 75-300mm f/4-5.6 IS USM or Sigma Lens",
+                    198 => "Canon EF 50mm f/1.4 USM or Other Lens",
+                    199 => "Canon EF 28-80mm f/3.5-5.6 USM",
+                    200 => "Canon EF 75-300mm f/4-5.6 USM",
+                    201 => "Canon EF 28-80mm f/3.5-5.6 USM",
+                    202 => "Canon EF 28-80mm f/3.5-5.6 USM IV",
+                    208 => "Canon EF 22-55mm f/4-5.6 USM",
+                    209 => "Canon EF 55-200mm f/4.5-5.6",
+                    210 => "Canon EF 28-90mm f/4-5.6 USM",
+                    211 => "Canon EF 28-200mm f/3.5-5.6 USM",
+                    212 => "Canon EF 28-105mm f/4-5.6 USM",
+                    213 => "Canon EF 90-300mm f/4.5-5.6 USM or Tamron Lens",
+                    214 => "Canon EF-S 18-55mm f/3.5-5.6 USM",
+                    215 => "Canon EF 55-200mm f/4.5-5.6 II USM",
+                    217 => "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD",
+                    220 => "Yongnuo YN 50mm f/1.8",
+                    224 => "Canon EF 70-200mm f/2.8L IS USM",
+                    225 => "Canon EF 70-200mm f/2.8L IS USM + 1.4x",
+                    226 => "Canon EF 70-200mm f/2.8L IS USM + 2x",
+                    227 => "Canon EF 70-200mm f/2.8L IS USM + 2.8x",
+                    228 => "Canon EF 28-105mm f/3.5-4.5 USM",
+                    229 => "Canon EF 16-35mm f/2.8L USM",
+                    230 => "Canon EF 24-70mm f/2.8L USM",
+                    231 => "Canon EF 17-40mm f/4L USM or Sigma Lens",
+                    232 => "Canon EF 70-300mm f/4.5-5.6 DO IS USM",
+                    233 => "Canon EF 28-300mm f/3.5-5.6L IS USM",
+                    234 => "Canon EF-S 17-85mm f/4-5.6 IS USM or Tokina Lens",
+                    235 => "Canon EF-S 10-22mm f/3.5-4.5 USM",
+                    236 => "Canon EF-S 60mm f/2.8 Macro USM",
+                    237 => "Canon EF 24-105mm f/4L IS USM",
+                    238 => "Canon EF 70-300mm f/4-5.6 IS USM",
+                    239 => "Canon EF 85mm f/1.2L II USM or Rokinon Lens",
+                    240 => "Canon EF-S 17-55mm f/2.8 IS USM or Sigma Lens",
+                    241 => "Canon EF 50mm f/1.2L USM",
+                    242 => "Canon EF 70-200mm f/4L IS USM",
+                    243 => "Canon EF 70-200mm f/4L IS USM + 1.4x",
+                    244 => "Canon EF 70-200mm f/4L IS USM + 2x",
+                    245 => "Canon EF 70-200mm f/4L IS USM + 2.8x",
+                    246 => "Canon EF 16-35mm f/2.8L II USM",
+                    247 => "Canon EF 14mm f/2.8L II USM",
+                    248 => "Canon EF 200mm f/2L IS USM or Sigma Lens",
+                    249 => "Canon EF 800mm f/5.6L IS USM",
+                    250 => "Canon EF 24mm f/1.4L II USM or Sigma Lens",
+                    251 => "Canon EF 70-200mm f/2.8L IS II USM",
+                    252 => "Canon EF 70-200mm f/2.8L IS II USM + 1.4x",
+                    253 => "Canon EF 70-200mm f/2.8L IS II USM + 2x",
+                    254 => "Canon EF 100mm f/2.8L Macro IS USM or Tamron Lens",
+                    255 => "Sigma 24-105mm f/4 DG OS HSM | A or Other Lens",
+                    368 => "Sigma 14-24mm f/2.8 DG HSM | A or other Sigma Lens",
+                    488 => "Canon EF-S 15-85mm f/3.5-5.6 IS USM",
+                    489 => "Canon EF 70-300mm f/4-5.6L IS USM",
+                    490 => "Canon EF 8-15mm f/4L Fisheye USM",
+                    491 => "Canon EF 300mm f/2.8L IS II USM or Tamron Lens",
+                    492 => "Canon EF 400mm f/2.8L IS II USM",
+                    493 => "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM",
+                    494 => "Canon EF 600mm f/4L IS II USM",
+                    495 => "Canon EF 24-70mm f/2.8L II USM or Sigma Lens",
+                    496 => "Canon EF 200-400mm f/4L IS USM",
+                    499 => "Canon EF 200-400mm f/4L IS USM + 1.4x",
+                    502 => "Canon EF 28mm f/2.8 IS USM or Tamron Lens",
+                    503 => "Canon EF 24mm f/2.8 IS USM",
+                    504 => "Canon EF 24-70mm f/4L IS USM",
+                    505 => "Canon EF 35mm f/2 IS USM",
+                    506 => "Canon EF 400mm f/4 DO IS II USM",
+                    507 => "Canon EF 16-35mm f/4L IS USM",
+                    508 => "Canon EF 11-24mm f/4L USM or Tamron Lens",
+                    624 => "Sigma 70-200mm f/2.8 DG OS HSM | S or other Sigma Lens",
+                    747 => "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens",
+                    748 => "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x or Tamron Lens",
+                    749 => "Canon EF 100-400mm f/4.5-5.6L IS II USM + 2x or Tamron Lens",
+                    750 => "Canon EF 35mm f/1.4L II USM or Tamron Lens",
+                    751 => "Canon EF 16-35mm f/2.8L III USM",
+                    752 => "Canon EF 24-105mm f/4L IS II USM",
+                    753 => "Canon EF 85mm f/1.4L IS USM",
+                    754 => "Canon EF 70-200mm f/4L IS II USM",
+                    757 => "Canon EF 400mm f/2.8L IS III USM",
+                    758 => "Canon EF 600mm f/4L IS III USM",
+                    1136 => "Sigma 24-70mm f/2.8 DG OS HSM | A",
+                    4142 => "Canon EF-S 18-135mm f/3.5-5.6 IS STM",
+                    4143 => "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens",
+                    4144 => "Canon EF 40mm f/2.8 STM",
+                    4145 => "Canon EF-M 22mm f/2 STM",
+                    4146 => "Canon EF-S 18-55mm f/3.5-5.6 IS STM",
+                    4147 => "Canon EF-M 11-22mm f/4-5.6 IS STM",
+                    4148 => "Canon EF-S 55-250mm f/4-5.6 IS STM",
+                    4149 => "Canon EF-M 55-200mm f/4.5-6.3 IS STM",
+                    4150 => "Canon EF-S 10-18mm f/4.5-5.6 IS STM",
+                    4152 => "Canon EF 24-105mm f/3.5-5.6 IS STM",
+                    4153 => "Canon EF-M 15-45mm f/3.5-6.3 IS STM",
+                    4154 => "Canon EF-S 24mm f/2.8 STM",
+                    4155 => "Canon EF-M 28mm f/3.5 Macro IS STM",
+                    4156 => "Canon EF 50mm f/1.8 STM",
+                    4157 => "Canon EF-M 18-150mm f/3.5-6.3 IS STM",
+                    4158 => "Canon EF-S 18-55mm f/4-5.6 IS STM",
+                    4159 => "Canon EF-M 32mm f/1.4 STM",
+                    4160 => "Canon EF-S 35mm f/2.8 Macro IS STM",
+                    4208 => "Sigma 56mm f/1.4 DC DN | C or other Sigma Lens",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -1127,9 +1127,9 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
+                    0 => "Single",
                     1 => "Continuous",
                     8 => "Manual",
-                    0 => "Single",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -1151,9 +1151,9 @@ fn process_canon_camerasettings(
                 let formatted = match value {
                     0 => "Normal AE",
                     1 => "Exposure Compensation",
-                    4 => "No AE",
                     2 => "AE Lock",
                     3 => "AE Lock + Exposure Comp.",
+                    4 => "No AE",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -1173,16 +1173,16 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    4 => "Dynamic",
-                    2 => "Shoot Only",
-                    256 => "Off (2)",
-                    3 => "Panning",
-                    257 => "On (2)",
-                    259 => "Panning (2)",
                     0 => "Off",
-                    260 => "Dynamic (2)",
                     1 => "On",
+                    2 => "Shoot Only",
+                    3 => "Panning",
+                    4 => "Dynamic",
+                    256 => "Off (2)",
+                    257 => "On (2)",
                     258 => "Shoot Only (2)",
+                    259 => "Panning (2)",
+                    260 => "Dynamic (2)",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -1262,14 +1262,14 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    6 => "Custom",
-                    1 => "Vivid",
-                    4 => "Sepia",
-                    3 => "Smooth",
                     0 => "Off",
-                    100 => "My Color Data",
+                    1 => "Vivid",
                     2 => "Neutral",
+                    3 => "Smooth",
+                    4 => "Sepia",
                     5 => "B&W",
+                    6 => "Custom",
+                    100 => "My Color Data",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -1291,9 +1291,9 @@ fn process_canon_camerasettings(
                 let formatted = match value {
                     0 => "n/a",
                     1280 => "Full",
-                    32767 => "n/a",
-                    1284 => "Low",
                     1282 => "Medium",
+                    1284 => "Low",
+                    32767 => "n/a",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -1333,9 +1333,9 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    2 => "sRAW2 (sRAW)",
                     0 => "n/a",
                     1 => "sRAW1 (mRAW)",
+                    2 => "sRAW2 (sRAW)",
                     _ => "Unknown",
                 };
                 tags.push((
@@ -1397,8 +1397,8 @@ fn process_canon_camerasettings(
                 byte_order,
             ) {
                 let formatted = match value {
-                    0 => "Off",
                     -1 => "n/a",
+                    0 => "Off",
                     1 => "On",
                     _ => "Unknown",
                 };
@@ -12787,20 +12787,335 @@ pub fn apply_value_conv(
     match tag_id {
         1 => crate::implementations::value_conv::canon_auto_iso_value_conv(value),
         2 => crate::implementations::value_conv::canon_base_iso_value_conv(value),
-        3 => crate::implementations::value_conv::canon_div_32_plus_5_value_conv(value),
-        11 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        19 => crate::implementations::value_conv::canon_div_100_value_conv(value),
-        20 => crate::implementations::value_conv::canon_div_100_value_conv(value),
-        21 => crate::implementations::value_conv::canon_div_100_value_conv(value),
-        24 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        29 => crate::implementations::value_conv::canon_div_10_value_conv(value),
-        35 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        4 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        5 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        6 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        15 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        16 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        17 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        21 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        22 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        23 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        24 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        26 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        27 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        40 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        150 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
         161 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
         162 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
         163 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
         164 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
         178 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
         179 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        584 => {
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+        3 => {
+            // Compiled arithmetic: $val / 32 + 5
+            match value.as_f64() {
+                Some(val) => {
+                    let mut stack = Vec::new();
+                    stack.push(val);
+                    stack.push(32.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a / b);
+                    stack.push(5.0);
+                    let b = stack.pop().unwrap();
+                    let a = stack.pop().unwrap();
+                    stack.push(a + b);
+                    Ok(TagValue::F64(stack[0]))
+                }
+                None => Ok(value.clone()),
+            }
+        }
+        11 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        12 => {
+            // Compiled arithmetic: $val - 128
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val - 128.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        13 => {
+            // Compiled arithmetic: $val / 32
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 32.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        19 => {
+            // Compiled arithmetic: $val / 100
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 100.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        20 => {
+            // Compiled arithmetic: $val / 100
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 100.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        29 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
+        35 => {
+            // Compiled arithmetic: $val / 10
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(val / 10.0)),
+                None => Ok(value.clone()),
+            }
+        }
         _ => {
             // Fall back to missing handler for unknown expressions
             if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {

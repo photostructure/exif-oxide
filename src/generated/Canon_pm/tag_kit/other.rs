@@ -3621,7 +3621,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("canon_div_10_value_conv"),
+            value_conv: Some("$val / 10"),
             subdirectory: None,
         }),
         (39, TagKitDef {
@@ -3797,7 +3797,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("FocusDistance tags are only extracted if FocusDistanceUpper is non-zero"),
             print_conv: PrintConvType::Expression("$val > 655.345 ? \"inf\" : \"$val m\""),
-            value_conv: Some("canon_div_100_value_conv"),
+            value_conv: Some("$val / 100"),
             subdirectory: None,
         }),
         (20, TagKitDef {
@@ -3808,7 +3808,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val > 655.345 ? \"inf\" : \"$val m\""),
-            value_conv: Some("canon_div_100_value_conv"),
+            value_conv: Some("$val / 100"),
             subdirectory: None,
         }),
         (21, TagKitDef {
@@ -3841,7 +3841,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("canon_div_10_value_conv"),
+            value_conv: Some("$val / 10"),
             subdirectory: None,
         }),
         (26, TagKitDef {
@@ -3951,7 +3951,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val > 655.345 ? \"inf\" : \"$val m\""),
-            value_conv: Some("canon_div_100_value_conv"),
+            value_conv: Some("$val / 100"),
             subdirectory: None,
         }),
         (21, TagKitDef {
@@ -3962,7 +3962,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val > 655.345 ? \"inf\" : \"$val m\""),
-            value_conv: Some("canon_div_100_value_conv"),
+            value_conv: Some("$val / 100"),
             subdirectory: None,
         }),
         (23, TagKitDef {
@@ -5783,7 +5783,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("canon_div_10_value_conv"),
+            value_conv: Some("$val / 10"),
             subdirectory: None,
         }),
         (12, TagKitDef {
@@ -5816,7 +5816,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("canon_div_10_value_conv"),
+            value_conv: Some("$val / 10"),
             subdirectory: None,
         }),
         (0, TagKitDef {

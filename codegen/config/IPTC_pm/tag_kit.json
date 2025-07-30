@@ -1,0 +1,15 @@
+{
+  "extractor": "tag_kit.pl",
+  "source": "third-party/exiftool/lib/Image/ExifTool/IPTC.pm",
+  "description": "IPTC tag definitions with embedded PrintConv implementations",
+  "tables": [
+    {
+      "table_name": "ApplicationRecord",
+      "description": "IPTC ApplicationRecord (Record 2) containing core metadata like keywords, caption, location"
+    },
+    {
+      "table_name": "EnvelopeRecord", 
+      "description": "IPTC EnvelopeRecord (Record 1) containing file envelope information like format and character sets"
+    }
+  ]
+}
