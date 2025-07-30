@@ -16,7 +16,7 @@ pub(super) fn module_name_to_group(module_name: &str) -> &str {
         "PanasonicRaw_pm" => "PanasonicRaw",
         "MinoltaRaw_pm" => "MinoltaRaw",
         "KyoceraRaw_pm" => "KyoceraRaw",
-        "FujiFilm_pm" => "FujiFilM",
+        "FujiFilm_pm" => "FujiFilm",
         "Casio_pm" => "Casio",
         "QuickTime_pm" => "QuickTime",
         "RIFF_pm" => "RIFF",

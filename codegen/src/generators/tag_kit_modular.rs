@@ -10,7 +10,6 @@ use crate::common::{escape_string, format_rust_string};
 use crate::schemas::tag_kit::{TagKitExtraction, TagKit, ExtractedTable};
 use super::tag_kit_split::{split_tag_kits, TagCategory};
 use crate::conv_registry::{lookup_printconv, lookup_valueconv, lookup_tag_specific_printconv};
-use crate::printconv_translator::PrintConvTranslator;
 use serde::Deserialize;
 use tracing::{debug, info};
 
@@ -27,7 +26,7 @@ fn module_name_to_group(module_name: &str) -> &str {
         "PanasonicRaw_pm" => "PanasonicRaw",
         "MinoltaRaw_pm" => "MinoltaRaw",
         "KyoceraRaw_pm" => "KyoceraRaw",
-        "FujiFilm_pm" => "FujiFilM",
+        "FujiFilm_pm" => "FujiFilm",
         "Casio_pm" => "Casio",
         "QuickTime_pm" => "QuickTime",
         "RIFF_pm" => "RIFF",
@@ -450,8 +449,6 @@ fn generate_category_module(
 ) -> Result<(String, usize)> {
     let start_time = Instant::now();
     let mut code = String::new();
-    let mut translated_functions = Vec::new(); // Collect translated functions
-    let mut generated_function_names = std::collections::HashSet::new(); // Track already generated functions
     
     // Header with warning suppression at the top
     code.push_str(&format!("//! Tag kits for {} category from {}\n", category_name, source.module));
@@ -484,20 +481,27 @@ fn generate_category_module(
                     *print_conv_counter += 1;
                     local_print_conv_count += 1;
                     
-                    code.push_str(&format!("static {const_name}: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {{\n"));
-                    code.push_str("    let mut map = HashMap::new();\n");
-                    
                     // Sort keys for deterministic output
                     let mut sorted_keys: Vec<&String> = data_obj.keys().collect();
                     sorted_keys.sort();
                     
-                    for key in sorted_keys {
-                        let value = &data_obj[key];
-                        crate::generators::lookup_tables::generate_print_conv_entry(&mut code, key, value);
+                    if sorted_keys.is_empty() {
+                        // Empty HashMap - this may indicate upstream extraction issues
+                        tracing::warn!("Generated empty PrintConv HashMap for tag '{}' - this may indicate upstream extraction issues", tag_kit.name);
+                        code.push_str(&format!("static {const_name}: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| HashMap::new());\n\n"));
+                    } else {
+                        // Non-empty HashMap - use verbose format with entries
+                        code.push_str(&format!("static {const_name}: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {{\n"));
+                        code.push_str("    let mut map = HashMap::new();\n");
+                        
+                        for key in sorted_keys {
+                            let value = &data_obj[key];
+                            crate::generators::lookup_tables::generate_print_conv_entry(&mut code, key, value);
+                        }
+                        
+                        code.push_str("    map\n");
+                        code.push_str("});\n\n");
                     }
-                    
-                    code.push_str("    map\n");
-                    code.push_str("});\n\n");
                 }
             }
         }
@@ -547,36 +551,8 @@ fn generate_category_module(
             "Expression" => {
                 if let Some(expr_data) = &tag_kit.print_conv_data {
                     if let Some(expr_str) = expr_data.as_str() {
-                        // Try to translate the Perl expression to Rust code
-                        let mut translator = PrintConvTranslator::new();
-                        let module_name = _current_module;
-                        
-                        match translator.translate_expression(expr_str, &tag_kit.name, module_name) {
-                            Ok(rust_code) => {
-                                // Translation succeeded - collect the function and use Manual type
-                                let function_name = format!("{}_printconv", tag_kit.name.to_lowercase()
-                                    .replace('-', "_")
-                                    .replace(' ', "_")
-                                    .replace(':', "_")
-                                    .replace('.', "_"));
-                                
-                                // Only add the function if we haven't already generated it
-                                if !generated_function_names.contains(&function_name) {
-                                    translated_functions.push(rust_code);
-                                    generated_function_names.insert(function_name.clone());
-                                }
-                                
-                                code.push_str(&format!("            print_conv: PrintConvType::Manual(\"{}\"),\n", 
-                                    function_name));
-                                debug!("Successfully translated Expression for {}: {}", tag_kit.name, expr_str);
-                            }
-                            Err(e) => {
-                                // Translation failed - fall back to Expression type
-                                debug!("Failed to translate Expression for {}: {} - Error: {}", tag_kit.name, expr_str, e);
-                                code.push_str(&format!("            print_conv: PrintConvType::Expression({}),\n", 
-                                    format_rust_string(expr_str)));
-                            }
-                        }
+                        code.push_str(&format!("            print_conv: PrintConvType::Expression({}),\n", 
+                            format_rust_string(expr_str)));
                     } else {
                         code.push_str("            print_conv: PrintConvType::Expression(\"unknown\"),\n");
                     }
@@ -601,9 +577,15 @@ fn generate_category_module(
             }
         }
         
-        // ValueConv
+        // ValueConv - use registry lookup for function dispatch
         if let Some(value_conv) = &tag_kit.value_conv {
-            code.push_str(&format!("            value_conv: Some(\"{}\"),\n", escape_string(value_conv)));
+            if let Some((_module_path, func_name)) = lookup_valueconv(value_conv, _current_module) {
+                code.push_str(&format!("            value_conv: Some(\"{}\"),\n", func_name));
+            } else {
+                // If not found in registry, still store as raw expression for manual implementation
+                debug!("ValueConv not found in registry for {}: {}", tag_kit.name, value_conv);
+                code.push_str(&format!("            value_conv: Some(\"{}\"),\n", escape_string(value_conv)));
+            }
         } else {
             code.push_str("            value_conv: None,\n");
         }
@@ -621,14 +603,6 @@ fn generate_category_module(
     code.push_str("    ]\n");
     code.push_str("}\n");
     
-    // Add translated PrintConv functions at the end
-    if !translated_functions.is_empty() {
-        code.push_str("\n// Translated PrintConv functions\n");
-        for func_code in translated_functions {
-            code.push_str(&func_code);
-            code.push_str("\n");
-        }
-    }
     
     debug!("            🔧 Category {} code generation took {:.3}s", category_name, start_time.elapsed().as_secs_f64());
     Ok((code, local_print_conv_count))
@@ -1175,15 +1149,15 @@ fn collect_subdirectory_info(tag_kits: &[TagKit]) -> HashMap<u32, SubDirectoryCo
 /// A calculation like (0 - 1) * 2 = -2 becomes 18446744073709551614 in usize.
 /// This creates absurd comparisons like "if data.len() >= 18446744073709551615"
 fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTable, module_name: &str) -> Result<()> {
-    println!("DEBUG: generate_binary_parser called for module '{}', fn_name '{}'", module_name, fn_name);
+    debug!("DEBUG: generate_binary_parser called for module '{}', fn_name '{}'", module_name, fn_name);
     
     // Try to use ProcessBinaryData integration if available
     if has_binary_data_parser(module_name, fn_name) {
-        println!("DEBUG: Found binary data parser for '{}', generating integration", fn_name);
+        debug!("DEBUG: Found binary data parser for '{}', generating integration", fn_name);
         generate_binary_data_integration(code, fn_name, module_name)?;
         return Ok(());
     } else {
-        println!("DEBUG: No binary data parser found for '{}'", fn_name);
+        info!("DEBUG: No binary data parser found for '{}'", fn_name);
     }
     
     // Fall back to manual tag extraction

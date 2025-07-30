@@ -69,24 +69,27 @@ pub fn generate_tag_kit(
                     let table_name = format!("PRINT_CONV_{idx}");
                     simple_tables.insert(tag_kit.tag_id.clone(), table_name.clone());
                     
-                    // Generate the lookup table
-                    code.push_str(&format!("static {table_name}: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {{\n"));
-                    code.push_str("    let mut map = HashMap::new();\n");
-                    
                     // Sort keys for deterministic output
                     let mut sorted_keys: Vec<&String> = obj.keys().collect();
                     sorted_keys.sort();
                     
-                    for key in sorted_keys {
-                        let value = &obj[key];
-                        if let Some(val_str) = value.as_str() {
-                            code.push_str(&format!("    map.insert(\"{}\".to_string(), \"{}\");\n", 
-                                escape_string(key), escape_string(val_str)));
+                    if sorted_keys.is_empty() {
+                        // Empty HashMap - this may indicate upstream extraction issues
+                        tracing::warn!("Generated empty PrintConv HashMap for tag kit '{}' - this may indicate upstream extraction issues", table_name);
+                        code.push_str(&format!("static {table_name}: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| HashMap::new());\n\n"));
+                    } else {
+                        // Non-empty HashMap - use verbose format with entries
+                        code.push_str(&format!("static {table_name}: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {{\n"));
+                        code.push_str("    let mut map = HashMap::new();\n");
+                        
+                        for key in sorted_keys {
+                            let value = &obj[key];
+                            crate::generators::lookup_tables::generate_print_conv_entry(&mut code, key, value);
                         }
+                        
+                        code.push_str("    map\n");
+                        code.push_str("});\n\n");
                     }
-                    
-                    code.push_str("    map\n");
-                    code.push_str("});\n\n");
                 }
             }
         }
