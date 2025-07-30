@@ -24,8 +24,8 @@ use std::collections::HashMap;
 
 /// Load supported tags from the configuration file
 pub fn load_supported_tags() -> Vec<String> {
-    const CONFIG_JSON: &str = include_str!("../../config/supported_tags_final.json");
-    serde_json::from_str(CONFIG_JSON).expect("Failed to parse supported_tags_final.json")
+    const CONFIG_JSON: &str = include_str!("../../config/supported_tags.json");
+    serde_json::from_str(CONFIG_JSON).expect("Failed to parse supported_tags.json")
 }
 
 /// Filter JSON object to only include supported tags
@@ -68,6 +68,29 @@ pub fn filter_to_groups(data: &Value, groups: &[&str]) -> Value {
 
                 // Check if key starts with any of the specified groups
                 groups.iter().any(|group| key.starts_with(group))
+            })
+            .map(|(k, v)| (k.clone(), v.clone()))
+            .collect();
+        serde_json::to_value(filtered).unwrap()
+    } else {
+        data.clone()
+    }
+}
+
+/// Filter JSON object to only include specific tags by name
+/// Tags should be specified as full tag names (e.g., "Composite:Lens", "EXIF:Make")
+pub fn filter_to_custom_tags(data: &Value, tags: &[&str]) -> Value {
+    if let Some(obj) = data.as_object() {
+        let filtered: HashMap<String, Value> = obj
+            .iter()
+            .filter(|(key, _)| {
+                // Always include SourceFile regardless of tag filtering
+                if key.as_str() == "SourceFile" {
+                    return true;
+                }
+
+                // Check if key matches any of the specified tags exactly
+                tags.contains(&key.as_str())
             })
             .map(|(k, v)| (k.clone(), v.clone()))
             .collect();

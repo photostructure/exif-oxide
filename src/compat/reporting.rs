@@ -4,6 +4,7 @@
 //! ExifTool and exif-oxide output.
 
 use crate::compat::{comparison::*, load_supported_tags};
+use crate::generated::composite_tags::lookup_composite_tag;
 use serde_json::Value;
 use std::collections::HashSet;
 
@@ -43,6 +44,7 @@ pub enum DifferenceType {
     Working,             // Values match exactly
     ValueFormatMismatch, // Same data, different format (e.g., "1.5" vs 1.5)
     Missing,             // Tag missing from our output
+    DependencyFailure,   // Composite tag missing due to unmet dependencies
     TypeMismatch,        // Completely different data types
     OnlyInOurs,          // Tag only exists in our output
 }
@@ -53,6 +55,7 @@ pub struct CompatibilityReport {
     pub working_tags: Vec<String>,
     pub value_format_mismatches: Vec<TagDifference>,
     pub missing_tags: Vec<TagDifference>,
+    pub dependency_failures: Vec<TagDifference>,
     pub type_mismatches: Vec<TagDifference>,
     pub only_in_ours: Vec<TagDifference>,
     pub total_tags_tested: usize,
@@ -65,6 +68,7 @@ impl CompatibilityReport {
             working_tags: Vec::new(),
             value_format_mismatches: Vec::new(),
             missing_tags: Vec::new(),
+            dependency_failures: Vec::new(),
             type_mismatches: Vec::new(),
             only_in_ours: Vec::new(),
             total_tags_tested: 0,
@@ -75,6 +79,7 @@ impl CompatibilityReport {
     pub fn print_summary(&self) {
         let total_failing = self.value_format_mismatches.len()
             + self.missing_tags.len()
+            + self.dependency_failures.len()
             + self.type_mismatches.len();
         let success_rate = if self.total_tags_tested > 0 {
             (self.working_tags.len() * 100) / self.total_tags_tested
@@ -139,6 +144,25 @@ impl CompatibilityReport {
             }
             if self.missing_tags.len() > 5 {
                 println!("  ... and {} more", self.missing_tags.len() - 5);
+            }
+            println!();
+        }
+
+        if !self.dependency_failures.is_empty() {
+            println!(
+                "🔗 MISSING COMPOSITE DEPENDENCIES ({} tags):",
+                self.dependency_failures.len()
+            );
+            for diff in self.dependency_failures.iter().take(5) {
+                println!(
+                    "  {}: Expected: {} ({})",
+                    diff.tag,
+                    TagDifference::format_value_truncated(&diff.expected),
+                    diff.sample_file
+                );
+            }
+            if self.dependency_failures.len() > 5 {
+                println!("  ... and {} more", self.dependency_failures.len() - 5);
             }
             println!();
         }
@@ -295,19 +319,25 @@ pub fn analyze_tag_differences(
 
         let difference_type = match (expected, actual) {
             (Some(exp), Some(act)) => {
-                if values_match_semantically(exp, act) {
-                    DifferenceType::Working
-                } else if values_match_with_tolerance(tag, exp, act) {
-                    DifferenceType::Working // GPS coordinates within tolerance should be Working, not ValueFormatMismatch
+                if values_match_semantically(exp, act) || values_match_with_tolerance(tag, exp, act)
+                {
+                    DifferenceType::Working // Semantic matches or GPS coordinates within tolerance should be Working
                 } else if same_data_different_format_with_tag(tag, exp, act) {
                     DifferenceType::ValueFormatMismatch
                 } else {
                     DifferenceType::TypeMismatch
                 }
             }
-            (Some(_), None) => DifferenceType::Missing,
+            (Some(_), None) => {
+                // Check if this is a composite tag with unmet dependencies
+                if is_composite_dependency_failure(tag, our_obj) {
+                    DifferenceType::DependencyFailure
+                } else {
+                    DifferenceType::Missing
+                }
+            }
             (None, Some(_)) => DifferenceType::OnlyInOurs,
-            (None, None) => continue, // Tag not present in either
+            (None, None) => continue, // Tag not present in either - skip, don't count
         };
 
         differences.push(TagDifference {
@@ -320,6 +350,54 @@ pub fn analyze_tag_differences(
     }
 
     differences
+}
+
+/// Check if a composite tag has unmet dependencies
+/// Returns true if the tag is a composite tag and its required dependencies are not available
+fn is_composite_dependency_failure(tag: &str, our_obj: &serde_json::Map<String, Value>) -> bool {
+    // Only check composite tags
+    if !tag.starts_with("Composite:") {
+        return false;
+    }
+
+    // Strip the "Composite:" prefix to get the tag name
+    let tag_name = &tag[10..];
+
+    // Look up the composite tag definition
+    if let Some(composite_def) = lookup_composite_tag(tag_name) {
+        // Check if all required dependencies are available in our output
+        for required_tag in composite_def.require {
+            // Check various possible tag name formats
+            let possible_names = [
+                required_tag.to_string(),
+                format!(
+                    "{}:{}",
+                    required_tag.split(':').next().unwrap_or(required_tag),
+                    required_tag.split(':').next_back().unwrap_or(required_tag)
+                ),
+                required_tag
+                    .split(':')
+                    .next_back()
+                    .unwrap_or(required_tag)
+                    .to_string(),
+            ];
+
+            let mut found = false;
+            for name in &possible_names {
+                if our_obj.contains_key(name) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if !found {
+                // Missing a required dependency
+                return true;
+            }
+        }
+    }
+
+    false
 }
 
 /// Analyze differences between two JSON objects without filtering to supported tags
@@ -351,9 +429,9 @@ pub fn analyze_all_tag_differences(
 
         let difference_type = match (expected, actual) {
             (Some(exp), Some(act)) => {
-                if values_match_semantically(exp, act) {
-                    DifferenceType::Working
-                } else if values_match_with_tolerance(&tag, exp, act) {
+                if values_match_semantically(exp, act)
+                    || values_match_with_tolerance(&tag, exp, act)
+                {
                     DifferenceType::Working
                 } else if same_data_different_format_with_tag(&tag, exp, act) {
                     DifferenceType::ValueFormatMismatch
