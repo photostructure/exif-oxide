@@ -163,7 +163,41 @@ This reveals Canon's inconsistent byte ordering in some fields, requiring specia
 - Multiple encryption schemes
 - Format changes between firmware versions
 
-### 2.2 Nikon Encryption
+### 2.2 NEF vs NRW File Type Detection
+
+**NEF/NRW File Type Strategy** (updated 2025-07-28):
+
+ExifTool uses a complex multi-stage detection process:
+
+1. **Initial Detection**: Based on file extension (.nef or .nrw)
+2. **IFD0 Override**: If NEF file has JPEG compression (value 6) in IFD0 → change to NRW
+3. **MakerNotes Override**: If NRW file has NEFLinearizationTable (tag 0x0096) → change back to NEF
+
+**Key Facts**:
+- Both NEF and NRW use standard TIFF structure
+- IFD0 compression alone is NOT sufficient to distinguish them
+- NEF files can have JPEG compression in IFD0 (for thumbnails)
+- The main image is usually in SubIFD1 with compression 34713 (Nikon NEF Compressed)
+- NEFLinearizationTable is located in MakerNotes, not IFD0
+
+**exif-oxide Implementation**:
+We trust file extensions for NEF/NRW distinction. This design choice:
+- Provides predictable, documented behavior
+- Avoids false positives from incomplete content analysis
+- Eliminates the complexity of parsing MakerNotes during file detection
+- Matches common industry practice of trusting extensions for initial type detection
+
+**Rationale**:
+- ExifTool's complete detection requires parsing MakerNotes, which adds significant complexity
+- Many NEF files have JPEG compression in IFD0 (for thumbnails) but are still NEF files
+- Without checking NEFLinearizationTable in MakerNotes, content-based detection produces false positives
+- File extensions are reliable for camera-generated files
+
+**References**:
+- ExifTool Exif.pm:1138-1141 (NRW detection from JPEG compression)
+- ExifTool.pm:8672-8674 (NEF recovery from NEFLinearizationTable)
+
+### 2.3 Nikon Encryption
 
 **Nikon Encryption Facts**:
 
