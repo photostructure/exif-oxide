@@ -5,55 +5,49 @@
 - **High-level goal**: Complete the implementation of subdirectory binary data parsers to properly extract individual tag values instead of raw byte arrays
 - **Problem statement**: While subdirectory dispatcher functions now correctly call processor functions (fixed 2025-07-25), the actual binary data parsing implementations remain as TODOs, causing tags like ProcessingInfo and CanonShotInfo to display as numeric arrays instead of meaningful values
 - **Root cause discovered (2025-07-26)**: The issue is missing ProcessBinaryData pipeline infrastructure, not missing implementations. The `process_binary_data.pl` extractor exists but has never been configured or activated.
-- **Critical constraints**: 
+- **Critical constraints**:
   - ⚡ Focus on embedded image extraction (PreviewImage, JpgFromRaw, ThumbnailImage, etc.) for CLI `-b` flag support
   - 🔧 Integrate with existing proven two-phase pattern (binary extraction → tag kit PrintConv)
   - 📐 Maintain compatibility with existing manual implementations during incremental migration
 
 ## MANDATORY READING
 
-These are relevant, mandatory, prerequisite reading for every task:
+- [CLAUDE.md](../CLAUDE.md) - Project-wide rules
+- [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md) - Core principle #1
 
-- [@CLAUDE.md](../CLAUDE.md)
-- [@docs/TRUST-EXIFTOOL.md](../docs/TRUST-EXIFTOOL.md).
+## ⚠️ CRITICAL: Assume Concurrent Edits
+
+Several engineers work on the **same source tree** simultaneously. If you encounter a build error that isn't near code you wrote:
+
+1. **STOP IMMEDIATELY**
+2. Tell the user about the error
+3. Wait for user to fix and give you the all-clear
 
 ## DO NOT BLINDLY FOLLOW THIS PLAN
 
-Building the wrong thing (because you made an assumption or misunderstood something) is **much** more expensive than asking for guidance or clarity.
+**Red flags = STOP and ask:**
 
-The authors tried their best, but also assume there will be aspects of this plan that may be odd, confusing, or unintuitive to you. Communication is hard!
+- "Optimize" or "improve" ExifTool logic (violates trust principle)
+- Debugging >1 hour (you're probably on wrong path)
+- Would break tests (tests are sacred)
+- Confused about approach (clarification prevents waste)
 
-**FIRSTLY**, follow and study **all** referenced source and documentation. Ultrathink, analyze, and critique the given overall TPP and the current task breakdown.
-
-If anything doesn't make sense, or if there are alternatives that may be more optimal, ask clarifying questions. We all want to drive to the best solution and are delighted to help clarify issues and discuss alternatives. DON'T BE SHY!
+Building the wrong thing costs 10x more than asking questions.
 
 ## KEEP THIS UPDATED
 
-This TPP is a living document. **MAKE UPDATES AS YOU WORK**. Be concise. Avoid lengthy prose!
+Update as you work:
 
-**What to Update:**
+- 🟢 **Done**: [Task] → [commit/file link]
+- 🟡 **WIP**: [Task] → [current blocker]
+- 🔴 **Blocked**: [Task] → [what's needed]
+- 🔍 **Found**: [Discovery] → [why it matters]
 
-- 🔍 **Discoveries**: Add findings with links to source code/docs (in relevant sections)
-- 🤔 **Decisions**: Document WHY you chose approach A over B (in "Work Completed")
-- ⚠️ **Surprises**: Note unexpected behavior or assumptions that were wrong (in "Gotchas")
-- ✅ **Progress**: Move completed items from "Remaining Tasks" to "Work Completed"
-- 🚧 **Blockers**: Add new prerequisites or dependencies you discover
+Rules:
 
-**When to Update:**
-
-- After each research session (even if you found nothing - document that!)
-- When you realize the original approach won't work
-- When you discover critical context not in the original TPP
-- Before context switching to another task
-
-**Keep the content tight**
-
-- If there were code examples that are now implemented, replace the code with a link to the final source.
-- If there is a lengthy discussion that resulted in failure or is now better encoded in source, summarize and link to the final source.
-- Remember: the `ReadTool` doesn't love reading files longer than 500 lines, and that can cause dangerous omissions of context.
-
-The Engineers of Tomorrow are interested in your discoveries, not just your final code!
-
+1. Task is ONLY done when 100% complete + tested
+2. Every task needs automated test proving it works
+3. Completed TPPs → `docs/done/YYYYMMDD-PXX-description.md`
 
 ## Background & Context
 
@@ -67,19 +61,22 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
 ## Technical Foundation
 
 ### Key Codebases
+
 - **ExifTool source**: `third-party/exiftool/lib/Image/ExifTool/*.pm` - The canonical implementation we're translating
-- **ProcessBinaryData function**: `third-party/exiftool/lib/Image/ExifTool.pm:9830+` - Core binary parsing logic  
+- **ProcessBinaryData function**: `third-party/exiftool/lib/Image/ExifTool.pm:9830+` - Core binary parsing logic
 - **Generated parsers**: `src/generated/*/tag_kit/mod.rs` - Where dispatcher functions live (currently empty stubs)
 - **Manual binary processors**: `src/implementations/canon/binary_data.rs` - Working two-phase implementation examples
 - **Unused extractor**: `codegen/extractors/process_binary_data.pl` - Exists but never configured
 - **Tag kit generator**: `codegen/src/generators/tag_kit_modular.rs` - Generates empty stubs, needs binary integration
 
 ### Key Concepts
+
 - **SubDirectory tags**: Tags that reference other tables for parsing their binary data
 - **Binary data tables**: Fixed-format structures with tags at specific byte offsets
 - **Cross-module references**: Subdirectory tables that exist in different ExifTool modules
 
 ### ExifTool Binary Data Format
+
 ```perl
 # Example from Canon.pm ShotInfo table:
 1 => { # byte offset 1
@@ -95,43 +92,50 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
 
 ### Canon MakerNotes Integration Success (2025-07-27)
 
-1. **ProcessBinaryData Pipeline Status**: 
+1. **ProcessBinaryData Pipeline Status**:
+
    - ✅ **FIXED**: `process_binary_data.pl` extractor boolean parsing issue resolved
    - ✅ **ACTIVE**: Multi-table Canon configuration system implemented
    - ✅ **GENERATED**: Multiple binary data parsers with comprehensive tag coverage
    - ✅ **VALIDATED**: Generated parsers contain all target image extraction and processing tags
 
 2. **Canon MakerNotes Runtime Integration**:
+
    - ✅ **FIXED**: Canon MakerNotes format parser - Canon uses proprietary format starting directly with IFD entry count (no TIFF header)
    - ✅ **FIXED**: SHORT/LONG array value extraction - Added support for arrays with count > 1 (critical for Canon CameraSettings with 49 values)
    - ✅ **FIXED**: Canon processor logic - Regular tags extracted directly, binary data tags use tag kit system
    - ✅ **FIXED**: Error handling - Parse errors on individual tags don't invalidate all successful extractions
    - ✅ **COMPLETE**: **53 Canon MakerNotes tags successfully extracted** in runtime testing
 
-2. **Multi-Table Architecture Achievement** (2025-07-27):
+3. **Multi-Table Architecture Achievement** (2025-07-27):
+
    - **DRY Config System**: Single `process_binary_data.json` with `tables` array
    - **Backward Compatibility**: Supports both legacy single `table` and new `tables` formats
    - **Custom Rust Orchestration**: ProcessBinaryDataExtractor calls Perl script multiple times per config
    - **Automatic Integration**: Generated modules automatically added to mod.rs with proper re-exports
 
-3. **Generated Canon Binary Data Parsers**:
+4. **Generated Canon Binary Data Parsers**:
+
    - **PreviewImageInfo** (✅): 5 tags for image extraction (`PreviewImageLength`, `PreviewImageStart`, `PreviewImageWidth`, `PreviewImageHeight`, `PreviewQuality`)
    - **Processing** (✅): 15 tags for processing metadata (`ToneCurve`, `Sharpness`, `WhiteBalance`, `ColorTemperature`, `PictureStyle`, `WBShiftAB/GM`)
 
-4. **Current Architecture - 3 Unified Systems**:
+5. **Current Architecture - 3 Unified Systems**:
+
    - **Tag Kit System** (✅ Working): Generates tag definitions + subdirectory dispatcher stubs
    - **Manual Binary Processors** (✅ Working): `src/implementations/canon/binary_data.rs` using proven two-phase pattern
    - **ProcessBinaryData Pipeline** (✅ **FULLY EXPANDED**): Multi-table generation system operational
 
-5. **Proven Integration Pattern**:
+6. **Proven Integration Pattern**:
+
    - Manual implementations use: binary extraction → `tag_kit::apply_print_conv()`
    - Pattern proven in `canon/binary_data.rs:225` and throughout binary processors
    - Two-phase system is battle-tested and working with generated parsers
    - **Ready for Tag Kit Integration**: Generated parsers follow same interface patterns
 
-6. **Phase 3: Tag Kit Auto-Integration** (COMPLETED 2025-07-27):
+7. **Phase 3: Tag Kit Auto-Integration** (COMPLETED 2025-07-27):
+
    - ✅ **Enhanced Tag Kit Generator**: Implemented intelligent binary data parser detection
-   - ✅ **Auto-Detection Logic**: `has_binary_data_parser()` checks for generated `*_binary_data.rs` files  
+   - ✅ **Auto-Detection Logic**: `has_binary_data_parser()` checks for generated `*_binary_data.rs` files
    - ✅ **Smart Function Generation**: `generate_binary_data_integration()` replaces stubs with full implementations
    - ✅ **Module Prefix Mapping**: Correctly handles `canon_processing` → `processing_binary_data.rs` name mapping
    - ✅ **Format-Aware Parsing**: Automatic int16s/int32s detection with proper signed/unsigned conversion
@@ -139,7 +143,7 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
    - ✅ **Compilation Issues Resolved**: Fixed struct naming conflicts (CanonPreviewImageInfoTable vs CanonPreviewimageinfoTable)
    - ✅ **Integration Code Generated**: Both `process_canon_processing` and `process_canon_previewimageinfo` functions replaced with binary data integration
 
-7. **Binary Data Integration Architecture Complete** (2025-07-27):
+8. **Binary Data Integration Architecture Complete** (2025-07-27):
    - ✅ **Code Generation Pipeline**: Tag kit generator automatically detects and integrates binary data parsers
    - ✅ **Generated Integration Functions**: Complete binary data parsing with proper value extraction and type conversion
    - ✅ **Compilation Success**: All generated code compiles and runs without errors
@@ -156,17 +160,20 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
 #### ✅ **Sony Binary Data Pipeline Integration Complete**:
 
 1. **Multi-Manufacturer Support Validated**:
+
    - **Architecture Proven**: P11 ProcessBinaryData pipeline successfully scales beyond Canon to Sony
    - **Configuration System**: Sony integrated using identical multi-table config pattern as Canon
    - **Generated Parsers**: Sony binary data extraction infrastructure operational
 
 2. **BITMASK TODO Integration Framework** (2025-07-27):
+
    - **Problem Solved**: Sony binary data contained BITMASK objects that caused "trailing characters at line 995 column 22" JSON parsing errors
    - **Solution Implemented**: Custom serde deserializer properly consumes BITMASK map structures
    - **Placeholder System**: All BITMASK entries return "TODO_BITMASK_P15c" for future P15c implementation
    - **Location Reference**: BITMASK TODOs are in `/home/mrm/src/exif-oxide/codegen/src/generators/process_binary_data.rs:106-116`
 
 3. **Sony ProcessBinaryData Scope**:
+
    - **139 Tables**: Sony.pm contains extensive ProcessBinaryData table ecosystem
    - **Config Created**: `codegen/config/Sony_pm/process_binary_data.json` with CameraSettings, CameraSettings2, ShotInfo tables
    - **Infrastructure Ready**: Sony binary data extraction framework prepared for future tag extraction needs
@@ -185,6 +192,7 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
    ```
 
 #### 🔗 **P15c Integration Ready**:
+
 - **TODO Locations Documented**: P15c implementation can find all BITMASK placeholders via "TODO_BITMASK_P15c" string search
 - **Framework Established**: Custom deserializer infrastructure ready for BITMASK bit flag processing
 - **Architecture Prepared**: Sony binary data pipeline ready to leverage P15c BITMASK implementation when complete
@@ -196,38 +204,44 @@ The P11 project expansion to Sony demonstrates the architecture's scalability an
 **🔴 CRITICAL FINDINGS (2025-07-27 Re-evaluation)**:
 
 **1. Binary Data Integration Infrastructure**: ✅ COMPLETE
-   - Multi-table extraction system implemented and tested
-   - Canon PreviewImageInfo + Processing parsers generated and compiled
-   - Binary data tables with comprehensive tag coverage exist
+
+- Multi-table extraction system implemented and tested
+- Canon PreviewImageInfo + Processing parsers generated and compiled
+- Binary data tables with comprehensive tag coverage exist
 
 **2. Tag Kit Integration Code**: ✅ GENERATED AND COMPILED
-   - Automatic binary data parser detection working
-   - Smart function generation replacing stubs operational
-   - Binary data integration code generated and compiles successfully
+
+- Automatic binary data parser detection working
+- Smart function generation replacing stubs operational
+- Binary data integration code generated and compiles successfully
 
 **3. Runtime Connection**: ❌ **MISSING/BROKEN**
-   - Canon Main processor exists but not properly connected
-   - Tag kit binary data integration **NOT activated at runtime**
-   - **ACTUAL RESULT**: Only extracts `ProcessorInfo: "Canon Main Processor"` instead of 30+ individual Canon tags
+
+- Canon Main processor exists but not properly connected
+- Tag kit binary data integration **NOT activated at runtime**
+- **ACTUAL RESULT**: Only extracts `ProcessorInfo: "Canon Main Processor"` instead of 30+ individual Canon tags
 
 **4. TPP Definition of Done FAILURES**:
-   - ❌ ProcessingInfo/CanonShotInfo/CRWParam **missing completely**
-   - ❌ Values **DO NOT match ExifTool** (missing 30+ Canon MakerNotes tags)
-   - ❌ **Regression found**: ApplicationNotes still raw 8000+ number array
-   - ❌ `make precommit` has 2 test failures
+
+- ❌ ProcessingInfo/CanonShotInfo/CRWParam **missing completely**
+- ❌ Values **DO NOT match ExifTool** (missing 30+ Canon MakerNotes tags)
+- ❌ **Regression found**: ApplicationNotes still raw 8000+ number array
+- ❌ `make precommit` has 2 test failures
 
 ### 🚨 **Evidence of Runtime Failure**:
 
 **ExifTool extracts:**
+
 ```
 [MakerNotes] Macro Mode: Normal
-[MakerNotes] Quality: RAW  
+[MakerNotes] Quality: RAW
 [MakerNotes] Canon Flash Mode: Off
 [MakerNotes] Lens Type: Canon EF 24-105mm f/4L IS USM
 ... (30+ more Canon tags)
 ```
 
 **Our tool extracts:**
+
 ```
 "MakerNotes:MakerNotes:ProcessorInfo": "Canon Main Processor"
 (No other Canon MakerNotes tags)
@@ -240,11 +254,13 @@ The P11 project expansion to Sony demonstrates the architecture's scalability an
 **✅ TECHNICAL FIXES COMPLETED**:
 
 1. **Canon MakerNotes Format Parser** - Fixed proprietary format handling:
+
    - **Issue**: Canon MakerNotes don't use TIFF headers - they start directly with IFD entry count
    - **Solution**: Updated Canon processor to parse directly as IFD structure (no TIFF header parsing)
    - **Reference**: ExifTool MakerNotes.pm Canon "(starts with an IFD)"
 
 2. **SHORT/LONG Array Value Extraction** - Added array support:
+
    - **Issue**: Canon CameraSettings has 49 int16u values causing "SHORT value with count 49 not supported yet"
    - **Solution**: Enhanced `extract_tag_value` function to handle arrays (count > 1) using `extract_short_array_value`
    - **Impact**: Canon CameraSettings and other array-based subdirectories now parse correctly
@@ -252,43 +268,49 @@ The P11 project expansion to Sony demonstrates the architecture's scalability an
 3. **Debug Results** (`/tmp/debug_output3.log`):
    ```
    Found 39 IFD entries in Canon MakerNotes
-   Tag 0x0026 extracted 0 sub-tags via Canon tag kit  
+   Tag 0x0026 extracted 0 sub-tags via Canon tag kit
    Canon tag kit processing error: Parsing error: LONG value with count 50 not supported yet
    ```
 
-**🎯 CURRENT STATUS**: 
+**🎯 CURRENT STATUS**:
+
 - ✅ Canon MakerNotes IFD parsing: **39 entries successfully parsed**
-- ✅ Format issues resolved for SHORT arrays  
+- ✅ Format issues resolved for SHORT arrays
 - ⚠️ **NEXT ISSUE**: LONG array support needed (similar fix to SHORT arrays)
 - 🎯 **PROGRESS**: Infrastructure working, need to add LONG array extraction support
 
-**🚀 NEXT ACTION FOR ENGINEER**: 
+**🚀 NEXT ACTION FOR ENGINEER**:
 Fix LONG array extraction in `src/implementations/nikon/ifd.rs` `extract_tag_value` function by adding LONG array support similar to SHORT array support that was just implemented.
 
 ## Work Completed
 
 1. **Subdirectory dispatcher fix** (2025-07-25):
+
    - Fixed code generator bug where unconditional subdirectories generated empty match statements
    - Dispatcher functions now correctly call processor functions
    - Example: `process_tag_0x4_subdirectory` now calls `process_canon_shotinfo`
 
 2. **ColorData extraction working**:
+
    - ColorData6 and other ColorData variants successfully extract individual tags
    - Example: `WB_RGGBLevelsAsShot: "2241 1024 1024 1689"` instead of array
 
 3. **Stub functions added**:
+
    - Added temporary stubs for cross-module references to allow compilation
    - Affected modules: Canon, Exif, Olympus, PanasonicRaw, Sony
 
 4. **🎯 ProcessBinaryData Pipeline Activated** (2025-07-26):
+
    - **FIXED**: Boolean parsing bug in `process_binary_data.pl` extractor (`1` → `true`)
    - **CREATED**: `codegen/config/Canon_pm/process_binary_data.json` configuration
    - **GENERATED**: `src/generated/Canon_pm/previewimageinfo_binary_data.rs` with complete parser
    - **VALIDATED**: Generated parser contains all 5 target image extraction tags
 
 5. **🚀 Multi-Table ProcessBinaryData Expansion** (2025-07-27):
+
    - **IMPLEMENTED**: DRY config system with `tables` array support
-   - **ENHANCED**: Custom ProcessBinaryDataExtractor with multi-table orchestration  
+   - **ENHANCED**: Custom ProcessBinaryDataExtractor with multi-table orchestration
    - **GENERATED**: Two comprehensive Canon binary data parsers:
      - `previewimageinfo_binary_data.rs` - 5 image extraction tags
      - `processing_binary_data.rs` - 15 processing metadata tags
@@ -296,6 +318,7 @@ Fix LONG array extraction in `src/implementations/nikon/ifd.rs` `extract_tag_val
    - **PROVEN**: Multi-table system scales to any number of binary tables
 
 6. **✅ Canon MakerNotes Format Parsing** (2025-07-27):
+
    - **FIXED**: "Invalid TIFF byte order marker" error by removing TiffHeader::parse() call
    - **IMPLEMENTED**: Canon MakerNotes direct IFD parsing (no TIFF header per Canon format)
    - **ADDED**: SHORT array value extraction support for Canon CameraSettings (49 values)
@@ -303,6 +326,7 @@ Fix LONG array extraction in `src/implementations/nikon/ifd.rs` `extract_tag_val
    - **RESULT**: Canon MakerNotes parsing infrastructure working, extracts binary data arrays
 
 7. **🚨 CRITICAL ISSUE DISCOVERED - Tag ID Conflicts** (2025-07-27):
+
    - **IDENTIFIED**: Root cause why binary data processing fails
    - **EVIDENCE**: 14 different tag definitions in `interop.rs` all use `id: 1` causing HashMap collision
    - **IMPACT**: `CanonCameraSettings` with subdirectory processor overwritten by `AFConfigTool` with no processor
@@ -322,14 +346,16 @@ Fix LONG array extraction in `src/implementations/nikon/ifd.rs` `extract_tag_val
 **🎯 Status**: **INFRASTRUCTURE COMPLETE** - Canon MakerNotes runtime integration fully operational!
 
 **Current Results**: Canon T3i.CR2 **successfully extracts 53 Canon MakerNotes tags** including:
+
 - `MakerNotes:CanonCameraSettings`, `MakerNotes:CanonFirmwareVersion`, `MakerNotes:LensModel`
 - `MakerNotes:CanonAFInfo2`, `MakerNotes:CanonFlashInfo`, etc.
 
 **Architecture Proven**: Regular tags extracted directly, binary data tags use tag kit system.
 
 **✅ Technical Fixes Completed (2025-07-27)**:
+
 1. ✅ **Canon MakerNotes format parser** - Fixed proprietary format (IFD-only, no TIFF header)
-2. ✅ **SHORT/LONG array extraction** - Added support for arrays with count > 1  
+2. ✅ **SHORT/LONG array extraction** - Added support for arrays with count > 1
 3. ✅ **Processor error handling** - Individual tag failures don't invalidate all results
 4. ✅ **Tag kit integration** - Regular vs binary data tag processing separation
 5. ✅ **Manual implementation integration** - Connected existing `extract_camera_settings` to tag kit system
@@ -345,14 +371,16 @@ Fix LONG array extraction in `src/implementations/nikon/ifd.rs` `extract_tag_val
 3. **Canon MakerNotes Infrastructure**: **50 Canon MakerNotes tags now successfully extracted**
 
 **🎯 Current Results**:
+
 - ✅ Canon MakerNotes IFD parsing: **50 tags successfully extracted**
 - ✅ Canon subdirectory tags detected: `CanonCameraSettings`, `CanonAFInfo2`, `CanonFlashInfo`, etc.
 - ⚠️ **Individual tag extraction pending**: Tags show as arrays instead of individual values
 
-**🔍 Next Phase Required**: 
+**🔍 Next Phase Required**:
 Canon subdirectory tags like `CanonCameraSettings` are extracted as raw arrays, but individual tags like `MacroMode: "Normal"`, `Quality: "RAW"`, `LensType: "Canon EF 24-105mm f/4L IS USM"` need binary data processing to extract individual values from the arrays.
 
 **✅ Manual Validation Confirmed**:
+
 - ✅ **Tag Count**: 50 Canon MakerNotes tags extracted (vs 0 before)
 - ✅ **Infrastructure**: Canon Main processor successfully selected for MakerNotes
 - ✅ **Error Resolution**: No "Invalid TIFF byte order" or "LONG count not supported" errors
@@ -362,6 +390,7 @@ Canon subdirectory tags like `CanonCameraSettings` are extracted as raw arrays, 
 ### 🎯 **TPP Success Criteria Validation**
 
 **Required for P11 completion**:
+
 1. **Individual tag extraction**: ProcessingInfo, CanonShotInfo, CRWParam show meaningful values not arrays
 2. **ExifTool compatibility**: Output matches ExifTool tag-for-tag using compare script
 3. **No regression**: ApplicationNotes and other working tags remain functional
@@ -369,7 +398,7 @@ Canon subdirectory tags like `CanonCameraSettings` are extracted as raw arrays, 
 
 ### 🔧 **Infrastructure Status** (Already Complete)
 
-### ✅ **COMPLETED: ProcessBinaryData Pipeline Expansion** 
+### ✅ **COMPLETED: ProcessBinaryData Pipeline Expansion**
 
 **Status**: **MULTI-TABLE PIPELINE OPERATIONAL** - Canon PreviewImageInfo + Processing parsers generated and integrated.
 
@@ -384,27 +413,31 @@ Canon subdirectory tags like `CanonCameraSettings` are extracted as raw arrays, 
 **Key Implementations (2025-07-27)**:
 
 1. **Canon Main Processor Created**:
+
    - **Location**: `src/processor_registry/processors/canon.rs:415` - `CanonMainProcessor` implementation
    - **Capability**: `ProcessorCapability::Perfect` for Canon MakerNotes processing
    - **Integration**: Designed to use tag kit system with binary data parsing enabled
 
 2. **Processor Registry Integration**:
+
    - **Registration**: `src/processor_registry/mod.rs:64` - Canon Main processor registered as `ProcessorKey::new("Canon", "Main")`
    - **Runtime Selection**: When `detect_makernote_processor()` returns `"Canon::Main"` for Canon cameras, processor registry finds and selects `CanonMainProcessor`
    - **Call Chain**: ExifReader → Canon MakerNotes (0x927C) → processor registry → `CanonMainProcessor.process_data()` → tag kit binary data integration
 
 3. **Binary Data Integration Architecture**:
+
    - **Generated Parsers**: `previewimageinfo_binary_data.rs` + `processing_binary_data.rs` with comprehensive tag lookups
    - **Tag Kit Dispatcher**: `process_canon_processing` function now has full binary data parsing logic using generated `PROCESSING_TAGS` HashMap
    - **Two-Phase Pattern**: Binary extraction → individual tag values (ToneCurve, Sharpness, ColorTemperature, etc.)
 
 4. **Implementation Strategy Realized**:
+
    ```rust
    // Example: process_canon_processing in tag_kit/mod.rs (lines 6953-6994)
    fn process_canon_processing(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
        let mut tags = Vec::new();
        let table = CanonProcessingTable::new();
-       
+
        // Process binary data using the format from generated table (int16s)
        for (&offset, &tag_name) in PROCESSING_TAGS.iter() {
            let byte_offset = ((offset as i32 - table.first_entry) * 2) as usize;
@@ -428,14 +461,16 @@ Canon subdirectory tags like `CanonCameraSettings` are extracted as raw arrays, 
 **🎯 Goal**: Modify tag kit generator to integrate with ProcessBinaryData pipeline.
 
 1. **Enhance Tag Kit Generator** (`codegen/src/generators/tag_kit_modular.rs`):
+
    - **Detection logic**: Identify when a subdirectory references a binary data table
    - **Integration code**: Generate calls to binary parser + tag kit PrintConv conversion
-   - **Two-phase pattern**: 
+   - **Two-phase pattern**:
+
      ```rust
      fn process_canon_shotinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
          // Phase 1: Binary extraction
          let raw_tags = crate::generated::Canon_pm::binary_data_tables::parse_shot_info(data, byte_order)?;
-         
+
          // Phase 2: Tag kit conversion
          let mut final_tags = Vec::new();
          for (tag_name, raw_value) in raw_tags {
@@ -451,14 +486,15 @@ Canon subdirectory tags like `CanonCameraSettings` are extracted as raw arrays, 
 **🎯 Goal**: Graceful migration from manual to generated implementations.
 
 1. **Hybrid Dispatcher Architecture**:
+
    ```rust
    fn process_canon_shotinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
        // Try generated binary parser first
        if let Ok(result) = try_generated_parser(data, byte_order) {
            return Ok(result);
        }
-       
-       // Fallback to manual implementation  
+
+       // Fallback to manual implementation
        crate::implementations::canon::binary_data::process_shot_info_manual(data, byte_order)
    }
    ```
@@ -471,11 +507,13 @@ Canon subdirectory tags like `CanonCameraSettings` are extracted as raw arrays, 
 ### Critical Research Questions (Must Answer Before Implementation)
 
 1. **ProcessBinaryData Feature Scope**:
+
    - What percentage of ExifTool's binary tables are "simple" (basic offsets + formats) vs "complex" (hooks, conditions, runtime logic)?
    - Which specific binary tables contain the 6 target image extraction tags?
    - What are the key ProcessBinaryData patterns that require exact ExifTool translation?
 
 2. **Integration Complexity**:
+
    - How difficult is it to modify the tag kit generator to detect and integrate binary data tables?
    - What are the integration points between ProcessBinaryData extraction and tag kit PrintConv conversion?
    - Are there any conflicts between existing manual implementations and potential generated ones?
@@ -489,10 +527,11 @@ Canon subdirectory tags like `CanonCameraSettings` are extracted as raw arrays, 
 
 ### Legacy Context (Preserved for Reference)
 
-The original P11 plan focused on manually implementing Canon ShotInfo/Processing parsers. Our research revealed this approach was addressing symptoms rather than the root cause - the missing ProcessBinaryData pipeline infrastructure. 
+The original P11 plan focused on manually implementing Canon ShotInfo/Processing parsers. Our research revealed this approach was addressing symptoms rather than the root cause - the missing ProcessBinaryData pipeline infrastructure.
 
 **Key Tables Identified**:
-- **Canon ShotInfo** (`Canon.pm:2851`): AutoISO, BaseISO, MeasuredEV with complex ValueConv expressions  
+
+- **Canon ShotInfo** (`Canon.pm:2851`): AutoISO, BaseISO, MeasuredEV with complex ValueConv expressions
 - **Canon Processing** (`Canon.pm:5087`): ToneCurve, Sharpness, SharpnessFrequency with negative offsets
 - **Canon CRWParam**: Needs investigation for CRW format specifics
 
@@ -503,11 +542,13 @@ These tables will be implemented using the new 3-phase approach once the Process
 ### Phase 1 Prerequisites (Research & Infrastructure Setup)
 
 1. **ExifTool ProcessBinaryData Expertise**:
+
    - Deep understanding of `third-party/exiftool/lib/Image/ExifTool.pm` ProcessBinaryData function
    - Knowledge of binary data features: formats, offsets, conditions, hooks, negative offsets
    - See `third-party/exiftool/doc/concepts/PROCESS_PROC.md` for background
 
 2. **Codegen Pipeline Familiarity**:
+
    - Understanding of extraction framework in `codegen/extractors/`
    - Experience with `process_binary_data.pl` extractor (currently unused)
    - Knowledge of tag kit generation system
@@ -529,7 +570,7 @@ These tables will be implemented using the new 3-phase approach once the Process
 **Before any implementation work**, verify the current status:
 
 1. **NO process_binary_data.json configs exist** in `codegen/config/*/`
-2. **NO binary_data_tables.rs files exist** in `src/generated/*/`  
+2. **NO binary_data_tables.rs files exist** in `src/generated/*/`
 3. **ProcessBinaryData pipeline has never been activated** - this is the root cause
 
 The existing note about "check for existing extractions" is **obsolete** - there are none. The pipeline needs to be built from scratch.
@@ -537,6 +578,7 @@ The existing note about "check for existing extractions" is **obsolete** - there
 ## Testing Strategy
 
 ### Unit Tests
+
 - Create test cases for each binary parser function
 - Use known byte sequences with expected output values
 - Example:
@@ -550,11 +592,13 @@ The existing note about "check for existing extractions" is **obsolete** - there
   ```
 
 ### Integration Tests
-- Test with real camera files (test-images/canon/*.CR2)
+
+- Test with real camera files (test-images/canon/\*.CR2)
 - Compare output with ExifTool using `cargo run --bin compare-with-exiftool`
 - Ensure no regression in already-working ColorData extraction
 
 ### Manual Testing
+
 ```bash
 # Test specific image
 cargo run test-images/canon/Canon_T3i.CR2 | grep -E "(ProcessingInfo|CanonShotInfo|CRWParam)"
@@ -566,12 +610,15 @@ cargo run test-images/canon/Canon_T3i.CR2 | grep -E "(ProcessingInfo|CanonShotIn
 ## Success Criteria & Quality Gates
 
 ### Definition of Done
+
 1. **Functionality**:
+
    - ProcessingInfo, CanonShotInfo, CRWParam show individual tag values, not arrays
    - Values match ExifTool output exactly (use compare-with-exiftool tool)
    - No regression in ColorData or other working subdirectories
 
 2. **Code Quality**:
+
    - All parser functions follow ExifTool logic exactly (Trust ExifTool principle)
    - Comments reference ExifTool source locations
    - No manual lookup tables - use codegen for everything
