@@ -45,10 +45,10 @@ fn main() {
                 .action(clap::ArgAction::Append),
         )
         .arg(
-            Arg::new("supported-only")
-                .help("Only compare supported tags from config/supported_tags_final.json")
-                .long("supported-only")
-                .short('s')
+            Arg::new("all")
+                .help("Compare all tags (default: only supported tags from config/supported_tags.json)")
+                .long("all")
+                .short('a')
                 .action(clap::ArgAction::SetTrue),
         )
         .arg(
@@ -75,12 +75,20 @@ fn main() {
         .get_many::<String>("filter")
         .map(|values| values.map(|s| s.as_str()).collect())
         .unwrap_or_default();
-    let supported_only = matches.get_flag("supported-only");
+    let all_tags = matches.get_flag("all");
+    let supported_only = !all_tags; // Default to supported tags only
     let json_output = matches.get_flag("json");
     let verbose = matches.get_flag("verbose");
 
     // Run both tools
-    println!("🔍 Comparing {} with ExifTool...", file_path);
+    if supported_only {
+        println!(
+            "🔍 Comparing {} with ExifTool (supported tags only)...",
+            file_path
+        );
+    } else {
+        println!("🔍 Comparing {} with ExifTool (all tags)...", file_path);
+    }
 
     let exiftool_result = run_exiftool(file_path);
     let exif_oxide_result = run_exif_oxide(file_path);
@@ -145,6 +153,7 @@ fn main() {
             DifferenceType::Missing => report.missing_tags.push(diff),
             DifferenceType::TypeMismatch => report.type_mismatches.push(diff),
             DifferenceType::OnlyInOurs => report.only_in_ours.push(diff),
+            DifferenceType::DependencyFailure => report.missing_tags.push(diff), // Treat as missing
         }
     }
 
