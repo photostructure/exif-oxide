@@ -38,6 +38,7 @@ pub mod runtime;
 pub mod tiff_types;
 pub mod tiff_utils;
 pub mod types;
+pub mod utils;
 pub mod value_extraction;
 pub mod xmp;
 
