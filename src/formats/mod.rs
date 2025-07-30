@@ -6,6 +6,7 @@
 mod avif;
 mod detection;
 mod gif;
+mod iptc;
 mod jpeg;
 mod png;
 mod tiff;
@@ -15,8 +16,10 @@ pub use detection::{
     detect_file_format, detect_file_format_from_path, get_format_properties, FileFormat,
 };
 pub use gif::{create_gif_tag_entries, parse_gif_screen_descriptor, ScreenDescriptor};
+pub use iptc::{parse_iptc_from_app13, parse_iptc_metadata};
 pub use jpeg::{
-    extract_jpeg_exif, extract_jpeg_xmp, scan_jpeg_segments, JpegSegment, JpegSegmentInfo, SofData,
+    extract_jpeg_exif, extract_jpeg_iptc, extract_jpeg_xmp, scan_jpeg_segments, JpegSegment,
+    JpegSegmentInfo, SofData,
 };
 pub use tiff::{extract_tiff_exif, extract_tiff_xmp, get_tiff_endianness, validate_tiff_format};
 
@@ -519,16 +522,68 @@ pub fn extract_metadata(
                     }
                 }
 
+                // Extract IPTC data from APP13 segments (Adobe Photoshop Image Resource Blocks)
+                reader.seek(SeekFrom::Start(0))?;
+                match extract_jpeg_iptc(&mut reader) {
+                    Ok(iptc_tags) => {
+                        let iptc_count = iptc_tags.len();
+                        if !iptc_tags.is_empty() {
+                            // Convert IPTC tags to TagEntry format and add to collection
+                            for (tag_name, tag_value) in iptc_tags {
+                                tag_entries.push(TagEntry {
+                                    group: "IPTC".to_string(),
+                                    group1: "IPTC".to_string(),
+                                    name: tag_name
+                                        .strip_prefix("IPTC:")
+                                        .unwrap_or(&tag_name)
+                                        .to_string(),
+                                    value: tag_value.clone(),
+                                    print: tag_value,
+                                });
+                            }
+
+                            // Add IPTC detection status
+                            tags.insert(
+                                "System:IptcDetectionStatus".to_string(),
+                                TagValue::String(format!(
+                                    "IPTC data found in APP13 segment ({} tags extracted)",
+                                    iptc_count
+                                )),
+                            );
+                        } else {
+                            // No IPTC data found
+                            tags.insert(
+                                "System:IptcDetectionStatus".to_string(),
+                                "No IPTC data found in JPEG".into(),
+                            );
+                        }
+                    }
+                    Err(e) if e.to_string().contains("No APP13 segment") => {
+                        // No APP13 segment found (not an error)
+                        tags.insert(
+                            "System:IptcDetectionStatus".to_string(),
+                            "No APP13 segment found in JPEG".into(),
+                        );
+                    }
+                    Err(e) => {
+                        // Real error scanning for IPTC
+                        tags.insert(
+                            "Warning:IptcScanError".to_string(),
+                            TagValue::string(format!("Error scanning for IPTC: {e}")),
+                        );
+                    }
+                }
+
                 // Extract XMP data (handles both regular and Extended XMP)
                 reader.seek(SeekFrom::Start(0))?;
                 match extract_jpeg_xmp(&mut reader) {
                     Ok(xmp_data) => {
-                        // Process XMP data with XmpProcessor
+                        // Process XMP data with XmpProcessor - individual tag extraction
                         let mut xmp_processor = XmpProcessor::new();
-                        match xmp_processor.process_xmp_data(&xmp_data) {
-                            Ok(xmp_entry) => {
-                                // Add structured XMP TagEntry
-                                tag_entries.push(xmp_entry);
+                        match xmp_processor.process_xmp_data_individual(&xmp_data) {
+                            Ok(xmp_tag_entries) => {
+                                // Add individual XMP TagEntry objects ("XMP:TagName" format)
+                                tag_entries.extend(xmp_tag_entries);
 
                                 // Add XMP detection status
                                 tags.insert(
@@ -689,12 +744,12 @@ pub fn extract_metadata(
                 // Check for XMP data in TIFF IFD0
                 match extract_tiff_xmp(&tiff_data) {
                     Ok(Some(xmp_data)) => {
-                        // Process XMP data with XmpProcessor
+                        // Process XMP data with XmpProcessor - individual tag extraction
                         let mut xmp_processor = XmpProcessor::new();
-                        match xmp_processor.process_xmp_data(&xmp_data) {
-                            Ok(xmp_entry) => {
-                                // Add structured XMP TagEntry
-                                tag_entries.push(xmp_entry);
+                        match xmp_processor.process_xmp_data_individual(&xmp_data) {
+                            Ok(xmp_tag_entries) => {
+                                // Add individual XMP TagEntry objects ("XMP:TagName" format)
+                                tag_entries.extend(xmp_tag_entries);
 
                                 // Add XMP detection status
                                 tags.insert(
@@ -736,12 +791,12 @@ pub fn extract_metadata(
                 let mut xmp_data = Vec::new();
                 reader.read_to_end(&mut xmp_data)?;
 
-                // Process XMP data with XmpProcessor
+                // Process XMP data with XmpProcessor - individual tag extraction
                 let mut xmp_processor = XmpProcessor::new();
-                match xmp_processor.process_xmp_data(&xmp_data) {
-                    Ok(xmp_entry) => {
-                        // Add structured XMP TagEntry
-                        tag_entries.push(xmp_entry);
+                match xmp_processor.process_xmp_data_individual(&xmp_data) {
+                    Ok(xmp_tag_entries) => {
+                        // Add individual XMP TagEntry objects ("XMP:TagName" format)
+                        tag_entries.extend(xmp_tag_entries);
 
                         // Add XMP detection status
                         tags.insert(
@@ -1221,6 +1276,10 @@ pub fn extract_metadata(
     let mut all_tag_entries = tag_entries;
     all_tag_entries.extend(composite_tags);
 
+    // Apply XMP/EXIF precedence rules following ExifTool's Priority system
+    // This must happen after all tag extraction but before filtering
+    all_tag_entries = apply_exiftool_precedence_rules(all_tag_entries);
+
     // P12: CENTRAL FILTERING CHOKEPOINT - Apply ExifTool-style filtering
     // Matches ExifTool's FoundTag architecture: all tags go through single filtering point
     let filtered_tag_entries = if let Some(filter_opts) = &filter_options {
@@ -1663,9 +1722,248 @@ fn get_unix_ctime(path: &Path) -> Option<u64> {
     }
 }
 
+/// Apply ExifTool-style precedence rules to resolve conflicts between EXIF and XMP tags
+///
+/// Following ExifTool's Priority system:
+/// - EXIF tags generally have Priority 1 (higher)
+/// - XMP tags generally have Priority 0 (lower)
+/// - Higher priority tags override lower priority tags
+/// - Equal priority: most recent (last extracted) wins
+/// - File group tags have highest priority
+///
+/// This ensures that EXIF:Make beats XMP:Make, EXIF:CreateDate beats XMP:CreateDate, etc.
+fn apply_exiftool_precedence_rules(tag_entries: Vec<TagEntry>) -> Vec<TagEntry> {
+    use std::collections::HashMap;
+
+    // Group tags by name to find conflicts
+    let mut tag_groups: HashMap<String, Vec<TagEntry>> = HashMap::new();
+
+    for tag_entry in tag_entries {
+        tag_groups
+            .entry(tag_entry.name.clone())
+            .or_default()
+            .push(tag_entry);
+    }
+
+    let mut resolved_tags = Vec::new();
+
+    for (tag_name, mut conflicting_tags) in tag_groups {
+        if conflicting_tags.len() == 1 {
+            // No conflict - add the single tag
+            resolved_tags.extend(conflicting_tags);
+        } else {
+            // Multiple tags with same name - apply precedence rules
+
+            // Sort by priority (highest first)
+            conflicting_tags.sort_by(|a, b| {
+                get_tag_priority(&a.group, &a.name)
+                    .cmp(&get_tag_priority(&b.group, &b.name))
+                    .reverse()
+            });
+
+            // Take the highest priority tag as the winner
+            if let Some(winner) = conflicting_tags.first() {
+                resolved_tags.push(winner.clone());
+
+                // TODO: Optionally add lower priority tags as numbered duplicates (e.g., "Make (1)")
+                // This would require checking if duplicates are requested (like ExifTool's -a flag)
+                // For now, we follow the default ExifTool behavior of only showing the highest priority tag
+            }
+
+            // Debug logging for precedence decisions
+            if conflicting_tags.len() > 1 {
+                let winner_group = &conflicting_tags[0].group;
+                let loser_groups: Vec<String> = conflicting_tags[1..]
+                    .iter()
+                    .map(|t| t.group.clone())
+                    .collect();
+                tracing::debug!(
+                    "Tag precedence: {} - winner: {}, overridden: {:?}",
+                    tag_name,
+                    winner_group,
+                    loser_groups
+                );
+            }
+        }
+    }
+
+    resolved_tags
+}
+
+/// Get ExifTool-style priority for a tag based on its group
+/// Higher numbers = higher priority (will override lower priority tags)
+fn get_tag_priority(group: &str, tag_name: &str) -> u8 {
+    match group {
+        // File group has highest priority (cannot be overridden)
+        "File" => 10,
+
+        // EXIF groups have high priority (Priority 1 in ExifTool)
+        "EXIF" | "ExifIFD" | "IFD0" | "IFD1" => 5,
+
+        // MakerNotes have high priority
+        "MakerNotes" | "Canon" | "Nikon" | "Sony" | "Olympus" | "Panasonic" => 5,
+
+        // Composite tags have variable priority - most are high
+        "Composite" => 4,
+
+        // APP segments have moderate priority
+        "APP" | "APP1" | "APP13" => 3,
+
+        // XMP has variable priority - some tags are high priority, most are low
+        "XMP" => {
+            if is_xmp_high_priority_tag(tag_name) {
+                2 // Higher than normal XMP but still lower than EXIF
+            } else {
+                1 // Low priority (Priority 0 in ExifTool) - won't override EXIF
+            }
+        }
+
+        // Other formats have moderate priority
+        "IPTC" => 2,
+        "QuickTime" => 3,
+        "PNG" | "GIF" => 3,
+        "RIFF" => 3,
+
+        // Default priority for unknown groups
+        _ => 2,
+    }
+}
+
+/// Check if an XMP tag should have higher priority than normal XMP tags
+/// Some XMP tags are more authoritative than their EXIF counterparts
+fn is_xmp_high_priority_tag(tag_name: &str) -> bool {
+    match tag_name {
+        // XMP rights and attribution tags are more authoritative
+        "License" | "AttributionName" | "AttributionURL" | "UseGuidelines" => true,
+
+        // XMP region and people tags have no EXIF equivalent
+        "RegionList" | "PersonInImage" | "PersonInImageName" => true,
+
+        // XMP hierarchical keywords are more structured than EXIF keywords
+        "HierarchicalKeywords" | "HierarchicalSubject" => true,
+
+        // Most other XMP tags defer to EXIF
+        _ => false,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_xmp_exif_precedence_rules() {
+        // Test that EXIF tags take precedence over XMP tags following ExifTool behavior
+        let exif_tag = TagEntry {
+            group: "EXIF".to_string(),
+            group1: "EXIF".to_string(),
+            name: "Make".to_string(),
+            value: TagValue::String("Canon".to_string()),
+            print: TagValue::String("Canon".to_string()),
+        };
+
+        let xmp_tag = TagEntry {
+            group: "XMP".to_string(),
+            group1: "XMP".to_string(),
+            name: "Make".to_string(),
+            value: TagValue::String("Nikon".to_string()),
+            print: TagValue::String("Nikon".to_string()),
+        };
+
+        let file_tag = TagEntry {
+            group: "File".to_string(),
+            group1: "File".to_string(),
+            name: "ImageWidth".to_string(),
+            value: TagValue::U16(3000),
+            print: TagValue::U16(3000),
+        };
+
+        let xmp_imagewidth = TagEntry {
+            group: "XMP".to_string(),
+            group1: "XMP".to_string(),
+            name: "ImageWidth".to_string(),
+            value: TagValue::U16(2000),
+            print: TagValue::U16(2000),
+        };
+
+        let tags = vec![exif_tag, xmp_tag, file_tag, xmp_imagewidth];
+        let resolved = apply_exiftool_precedence_rules(tags);
+
+        // Should have 2 tags total (Make and ImageWidth)
+        assert_eq!(resolved.len(), 2);
+
+        // Find Make tag - should be EXIF version (Canon), not XMP version (Nikon)
+        let make_tag = resolved.iter().find(|t| t.name == "Make");
+        assert!(
+            make_tag.is_some(),
+            "Should have Make tag after precedence resolution"
+        );
+        if let Some(tag) = make_tag {
+            assert_eq!(tag.group, "EXIF", "EXIF:Make should win over XMP:Make");
+            assert_eq!(
+                tag.value.as_string(),
+                Some("Canon"),
+                "Should have EXIF value"
+            );
+        }
+
+        // Find ImageWidth tag - should be File version (3000), not XMP version (2000)
+        let width_tag = resolved.iter().find(|t| t.name == "ImageWidth");
+        assert!(
+            width_tag.is_some(),
+            "Should have ImageWidth tag after precedence resolution"
+        );
+        if let Some(tag) = width_tag {
+            assert_eq!(
+                tag.group, "File",
+                "File:ImageWidth should win over XMP:ImageWidth"
+            );
+            assert_eq!(tag.value.as_u16(), Some(3000), "Should have File value");
+        }
+    }
+
+    #[test]
+    fn test_xmp_high_priority_tags() {
+        // Test that certain XMP tags have higher priority due to being more authoritative
+        let exif_keywords = TagEntry {
+            group: "EXIF".to_string(),
+            group1: "EXIF".to_string(),
+            name: "Keywords".to_string(),
+            value: TagValue::String("simple keywords".to_string()),
+            print: TagValue::String("simple keywords".to_string()),
+        };
+
+        let xmp_hierarchical = TagEntry {
+            group: "XMP".to_string(),
+            group1: "XMP".to_string(),
+            name: "HierarchicalKeywords".to_string(),
+            value: TagValue::Array(vec![TagValue::String("Nature|Wildlife".to_string())]),
+            print: TagValue::Array(vec![TagValue::String("Nature|Wildlife".to_string())]),
+        };
+
+        let tags = vec![exif_keywords, xmp_hierarchical];
+        let resolved = apply_exiftool_precedence_rules(tags);
+
+        // Should have both tags since they have different names
+        assert_eq!(resolved.len(), 2);
+
+        // Verify both tags are present
+        assert!(resolved.iter().any(|t| t.name == "Keywords"));
+        assert!(resolved.iter().any(|t| t.name == "HierarchicalKeywords"));
+    }
+
+    #[test]
+    fn test_precedence_priority_values() {
+        // Test that priority values follow ExifTool's hierarchy
+        assert!(get_tag_priority("File", "ImageWidth") > get_tag_priority("EXIF", "ImageWidth"));
+        assert!(get_tag_priority("EXIF", "Make") > get_tag_priority("XMP", "Make"));
+        assert!(get_tag_priority("Canon", "LensModel") > get_tag_priority("XMP", "LensModel"));
+        assert!(get_tag_priority("Composite", "Aperture") > get_tag_priority("XMP", "Aperture"));
+
+        // Test XMP high priority tags
+        assert!(get_tag_priority("XMP", "License") > get_tag_priority("XMP", "CreateDate"));
+        assert!(get_tag_priority("XMP", "RegionList") > get_tag_priority("XMP", "Rating"));
+    }
 
     #[test]
     fn test_extract_metadata_nonexistent_file() {
