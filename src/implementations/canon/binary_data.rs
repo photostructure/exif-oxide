@@ -109,6 +109,39 @@ pub fn create_camera_settings_table() -> HashMap<u32, CanonCameraSettingsTag> {
         },
     );
 
+    // ExifTool: Canon.pm:2463-2475 tag 23 MaxFocalLength
+    // ValueConv => '$val / ($$self{FocalUnits} || 1)', PrintConv => '"$val mm"'
+    table.insert(
+        23,
+        CanonCameraSettingsTag {
+            index: 23,
+            name: "MaxFocalLength".to_string(),
+            print_conv: None, // PrintConv applied via registry: "$val mm"
+        },
+    );
+
+    // ExifTool: Canon.pm:2476-2488 tag 24 MinFocalLength
+    // ValueConv => '$val / ($$self{FocalUnits} || 1)', PrintConv => '"$val mm"'
+    table.insert(
+        24,
+        CanonCameraSettingsTag {
+            index: 24,
+            name: "MinFocalLength".to_string(),
+            print_conv: None, // PrintConv applied via registry: "$val mm"
+        },
+    );
+
+    // ExifTool: Canon.pm:2489 tag 25 FocalUnits (DATAMEMBER)
+    // Used by MinFocalLength and MaxFocalLength ValueConv
+    table.insert(
+        25,
+        CanonCameraSettingsTag {
+            index: 25,
+            name: "FocalUnits".to_string(),
+            print_conv: None, // Special formatting in extract_camera_settings
+        },
+    );
+
     table
 }
 
@@ -136,6 +169,14 @@ pub fn extract_camera_settings(
         offset, size
     );
 
+    // Extract FocalUnits first for dependent conversions
+    // ExifTool: Canon.pm:2489 DATAMEMBER => [ 22, 25 ] - FocalUnits at offset 25
+    let focal_units = extract_focal_units_from_camera_settings(data, offset, size, byte_order)?;
+    debug!(
+        "Canon CameraSettings FocalUnits = {} (for dependent conversions)",
+        focal_units
+    );
+
     // Process defined tags
     for (&index, tag_def) in &table {
         // ExifTool: Canon.pm:2169 FIRST_ENTRY => 1 (1-indexed)
@@ -159,15 +200,51 @@ pub fn extract_camera_settings(
         // Extract int16s value (signed 16-bit integer)
         let raw_value = byte_order.read_u16(data, data_offset)? as i16;
 
-        // Apply PrintConv if available
-        let final_value = if let Some(print_conv) = &tag_def.print_conv {
-            if let Some(converted) = print_conv.get(&raw_value) {
-                TagValue::String(converted.clone())
-            } else {
-                TagValue::I16(raw_value)
+        // Apply ValueConv for FocalUnits-dependent tags first
+        // ExifTool: Canon.pm:2463-2480 ValueConv => '$val / ($$self{FocalUnits} || 1)'
+        let converted_value = match tag_def.name.as_str() {
+            "MinFocalLength" | "MaxFocalLength" => {
+                // Apply FocalUnits conversion: value / (focal_units || 1)
+                let focal_divisor = if focal_units != 0.0 { focal_units } else { 1.0 };
+                let converted = raw_value as f64 / focal_divisor;
+                debug!(
+                    "Canon {} ValueConv: {} / {} = {}",
+                    tag_def.name, raw_value, focal_divisor, converted
+                );
+                TagValue::F64(converted)
             }
-        } else {
-            TagValue::I16(raw_value)
+            "FocalUnits" => {
+                // FocalUnits should be formatted for display
+                // ExifTool shows it as "1/mm" or similar based on the value
+                if raw_value == 1 {
+                    TagValue::String("1/mm".to_string())
+                } else if raw_value > 0 {
+                    TagValue::String(format!("{}/mm", raw_value))
+                } else {
+                    TagValue::I16(raw_value)
+                }
+            }
+            _ => TagValue::I16(raw_value), // Other tags use raw values
+        };
+
+        // Apply PrintConv from the local table for non-focal-length tags
+        let final_value = match tag_def.name.as_str() {
+            "MinFocalLength" | "MaxFocalLength" => {
+                // These use the converted F64 value directly - PrintConv will be applied by registry
+                converted_value
+            }
+            _ => {
+                // Apply PrintConv lookup table for other tags
+                if let Some(print_conv) = &tag_def.print_conv {
+                    if let Some(converted) = print_conv.get(&raw_value) {
+                        TagValue::String(converted.clone())
+                    } else {
+                        converted_value
+                    }
+                } else {
+                    converted_value
+                }
+            }
         };
 
         debug!(
@@ -1258,6 +1335,53 @@ pub fn find_canon_camera_settings_tag(
     ))
 }
 
+/// Extract FocalUnits value from Canon CameraSettings for dependent conversions
+/// ExifTool: Canon.pm:2489 DATAMEMBER => [ 22, 25 ] - FocalUnits at offset 25
+/// Used by MinFocalLength and MaxFocalLength ValueConv: '$val / ($$self{FocalUnits} || 1)'
+fn extract_focal_units_from_camera_settings(
+    data: &[u8],
+    offset: usize,
+    size: usize,
+    byte_order: ByteOrder,
+) -> Result<f64> {
+    let format_size = 2; // int16s = 2 bytes
+    let focal_units_index = 25; // ExifTool: Canon.pm offset 25
+
+    // ExifTool: Canon.pm:2169 FIRST_ENTRY => 1 (1-indexed)
+    let entry_offset = (focal_units_index - 1) as usize * format_size;
+
+    if entry_offset + format_size > size {
+        debug!(
+            "FocalUnits at index {} beyond data bounds, using fallback",
+            focal_units_index
+        );
+        return Ok(1.0); // ExifTool fallback: || 1
+    }
+
+    let data_offset = offset + entry_offset;
+    if data_offset + format_size > data.len() {
+        debug!(
+            "FocalUnits data offset {:#x} beyond buffer bounds, using fallback",
+            data_offset
+        );
+        return Ok(1.0); // ExifTool fallback: || 1
+    }
+
+    // Extract int16s value (signed 16-bit integer)
+    let raw_focal_units = byte_order.read_u16(data, data_offset)? as i16;
+
+    // Apply ExifTool's || 1 fallback logic
+    if raw_focal_units <= 0 {
+        debug!(
+            "FocalUnits value {} <= 0, using fallback 1.0",
+            raw_focal_units
+        );
+        Ok(1.0)
+    } else {
+        Ok(raw_focal_units as f64)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1689,6 +1813,43 @@ mod tests {
     }
 
     #[test]
+    fn test_apply_camera_settings_print_conv() {
+        use crate::implementations::canon::apply_camera_settings_print_conv;
+        use crate::types::TagValue;
+
+        // Test MacroMode PrintConv
+        let raw_value = TagValue::I16(1);
+        let result = apply_camera_settings_print_conv("MacroMode", &raw_value);
+        println!("MacroMode PrintConv: {:?} -> {:?}", raw_value, result);
+
+        // For debugging: also test with tag ID directly
+        use crate::expressions::ExpressionEvaluator;
+        use crate::generated::Canon_pm::tag_kit;
+        let mut evaluator = ExpressionEvaluator::new();
+        let mut errors = Vec::new();
+        let mut warnings = Vec::new();
+        let direct_result =
+            tag_kit::apply_print_conv(1, &raw_value, &mut evaluator, &mut errors, &mut warnings);
+        println!(
+            "Direct tag ID 1 PrintConv: {:?} -> {:?}",
+            raw_value, direct_result
+        );
+        println!("Errors: {:?}", errors);
+        println!("Warnings: {:?}", warnings);
+
+        // Check if tag ID 1 is in CANON_PM_TAG_KITS
+        use crate::generated::Canon_pm::tag_kit::CANON_PM_TAG_KITS;
+        if let Some(tag_def) = CANON_PM_TAG_KITS.get(&1) {
+            println!(
+                "Tag ID 1 found in CANON_PM_TAG_KITS: name={}, print_conv={:?}",
+                tag_def.name, tag_def.print_conv
+            );
+        } else {
+            println!("Tag ID 1 NOT found in CANON_PM_TAG_KITS");
+        }
+    }
+
+    #[test]
     fn test_extract_camera_settings_basic() {
         // Create test data: two int16s values
         let test_data = vec![0x00, 0x01, 0x00, 0x02]; // [1, 2] in big-endian
@@ -1703,10 +1864,18 @@ mod tests {
         assert!(tags.contains_key("MakerNotes:SelfTimer"));
 
         // MacroMode value 1 should be converted to "Macro"
-        if let Some(TagValue::String(value)) = tags.get("MakerNotes:MacroMode") {
-            assert_eq!(value, "Macro");
+        if let Some(value) = tags.get("MakerNotes:MacroMode") {
+            println!("MacroMode value: {:?}", value);
+            if let TagValue::String(s) = value {
+                assert_eq!(s, "Macro");
+            } else {
+                panic!(
+                    "MacroMode should be converted to string, but got: {:?}",
+                    value
+                );
+            }
         } else {
-            panic!("MacroMode should be converted to string");
+            panic!("MacroMode tag not found in results");
         }
 
         // SelfTimer value 2 should remain as I16 (no PrintConv for value 2)
