@@ -8,6 +8,16 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 use std::process::Command;
 use std::sync::Mutex;
+use crate::expression_compiler::CompiledExpression;
+
+/// Classification of ValueConv expressions for code generation
+#[derive(Debug, Clone)]
+pub enum ValueConvType {
+    /// Simple arithmetic expression that can be compiled to inline code
+    CompiledExpression(CompiledExpression),
+    /// Complex expression requiring a custom function
+    CustomFunction(&'static str, &'static str), // (module_path, function_name)
+}
 
 // Cache for normalized expressions to avoid repeated subprocess calls
 static NORMALIZATION_CACHE: LazyLock<Mutex<HashMap<String, String>>> = 
@@ -427,6 +437,48 @@ fn find_normalize_script() -> Option<std::path::PathBuf> {
     None
 }
 
+/// Classify a ValueConv expression for code generation
+/// 
+/// Determines whether an expression can be compiled to inline arithmetic code
+/// or requires a custom function implementation.
+pub fn classify_valueconv_expression(expr: &str, module: &str) -> ValueConvType {
+    // First check if it's a compilable arithmetic expression
+    if CompiledExpression::is_compilable(expr) {
+        match CompiledExpression::compile(expr) {
+            Ok(compiled) => return ValueConvType::CompiledExpression(compiled),
+            Err(_) => {
+                // Fall through to custom function lookup
+                eprintln!("Warning: Expression '{}' looked compilable but failed compilation", expr);
+            }
+        }
+    }
+    
+    // Look up custom function in registry
+    if let Some((module_path, func_name)) = lookup_valueconv(expr, module) {
+        ValueConvType::CustomFunction(module_path, func_name)
+    } else {
+        // Fallback - treat as unregistered custom function
+        // This preserves existing behavior for unknown expressions
+        ValueConvType::CustomFunction("crate::implementations::missing", "missing_value_conv")
+    }
+}
+
+/// Get a list of all simple arithmetic expressions that can be compiled
+/// Used for documentation and debugging
+pub fn get_compilable_expressions() -> Vec<&'static str> {
+    let mut compilable = Vec::new();
+    
+    // Check all expressions in the registry
+    for &expr in VALUECONV_REGISTRY.keys() {
+        if CompiledExpression::is_compilable(expr) {
+            compilable.push(expr);
+        }
+    }
+    
+    compilable.sort();
+    compilable
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -697,6 +749,50 @@ mod tests {
         if !normalization_issues.is_empty() {
             panic!("Registry contains keys that need normalization:\n{}", 
                    normalization_issues.join("\n"));
+        }
+    }
+    
+    #[test]
+    fn test_classify_valueconv_expression() {
+        // Test simple arithmetic expressions get compiled
+        match classify_valueconv_expression("$val / 8", "Canon_pm") {
+            ValueConvType::CompiledExpression(_) => {},
+            _ => panic!("Expected compiled expression"),
+        }
+        
+        match classify_valueconv_expression("($val - 104) / 8", "Nikon_pm") {
+            ValueConvType::CompiledExpression(_) => {},
+            _ => panic!("Expected compiled expression"),
+        }
+        
+        // Test complex expressions get custom functions
+        match classify_valueconv_expression("$val ? 10 / $val : 0", "Sony_pm") {
+            ValueConvType::CustomFunction(_, _) => {},
+            _ => panic!("Expected custom function"),
+        }
+        
+        match classify_valueconv_expression("exp($val / 32 * log(2)) * 100", "Canon_pm") {
+            ValueConvType::CustomFunction(_, _) => {},
+            _ => panic!("Expected custom function"),
+        }
+    }
+    
+    #[test]
+    fn test_get_compilable_expressions() {
+        let compilable = get_compilable_expressions();
+        
+        // Should include simple arithmetic expressions
+        assert!(compilable.contains(&"$val / 8"));
+        assert!(compilable.contains(&"$val * 100"));
+        assert!(compilable.contains(&"($val-104)/8"));
+        
+        // Should not include complex expressions
+        assert!(!compilable.contains(&"$val ? 10 / $val : 0"));
+        assert!(!compilable.contains(&"exp($val / 32 * log(2)) * 100"));
+        
+        println!("Found {} compilable expressions", compilable.len());
+        for expr in &compilable[..5.min(compilable.len())] {
+            println!("  - {}", expr);
         }
     }
 }
