@@ -7,13 +7,12 @@ use std::io::{Read, Seek, SeekFrom};
 pub const TAG_COMPRESSION: u16 = 0x0103;
 pub const TAG_MAKE: u16 = 0x010F;
 pub const TAG_MODEL: u16 = 0x0110;
-pub const TAG_NEF_LINEARIZATION_TABLE: u16 = 0x96; // ExifTool Nikon.pm
 
 /// TIFF compression values
 pub const COMPRESSION_JPEG: u16 = 6;
 
 /// Read a TIFF IFD and extract specific tag values
-/// Returns (compression, has_nef_linearization_table)
+/// Returns (compression, has_nef_linearization_table) - Note: has_nef_linearization_table is deprecated and always false
 pub fn read_tiff_ifd0_info<R: Read + Seek>(reader: &mut R) -> Option<(Option<u16>, bool)> {
     let mut header = [0u8; 8];
     reader.seek(SeekFrom::Start(0)).ok()?;
@@ -50,7 +49,6 @@ pub fn read_tiff_ifd0_info<R: Read + Seek>(reader: &mut R) -> Option<(Option<u16
     };
 
     let mut compression = None;
-    let mut has_nef_linearization = false;
 
     // Read each directory entry (12 bytes each)
     for _ in 0..entry_count {
@@ -63,22 +61,17 @@ pub fn read_tiff_ifd0_info<R: Read + Seek>(reader: &mut R) -> Option<(Option<u16
             u16::from_be_bytes([entry[0], entry[1]])
         };
 
-        match tag {
-            TAG_COMPRESSION => {
-                // Type should be SHORT (3) and count should be 1
-                let value_offset = if little_endian {
-                    u16::from_le_bytes([entry[8], entry[9]])
-                } else {
-                    u16::from_be_bytes([entry[8], entry[9]])
-                };
-                compression = Some(value_offset);
-            }
-            TAG_NEF_LINEARIZATION_TABLE => {
-                has_nef_linearization = true;
-            }
-            _ => {}
+        if tag == TAG_COMPRESSION {
+            // Type should be SHORT (3) and count should be 1
+            let value_offset = if little_endian {
+                u16::from_le_bytes([entry[8], entry[9]])
+            } else {
+                u16::from_be_bytes([entry[8], entry[9]])
+            };
+            compression = Some(value_offset);
         }
     }
 
-    Some((compression, has_nef_linearization))
+    // Return compression value and false for has_nef_linearization (deprecated)
+    Some((compression, false))
 }
