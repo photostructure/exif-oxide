@@ -326,7 +326,23 @@ impl ExifReader {
                     // Handle byte arrays (count > 1)
                     let values =
                         value_extraction::extract_byte_array_value(&self.data, &entry, byte_order)?;
-                    TagValue::U8Array(values)
+
+                    // Special case: ApplicationNotes (0x02bc) should be converted to UTF-8 string
+                    // ExifTool treats this as XMP metadata, not a raw byte array
+                    if entry.tag_id == 0x02bc {
+                        match String::from_utf8(values) {
+                            Ok(utf8_string) => TagValue::String(utf8_string),
+                            Err(_) => {
+                                // If UTF-8 conversion fails, fall back to byte array
+                                warn!("ApplicationNotes tag 0x02bc contains invalid UTF-8, storing as byte array");
+                                TagValue::U8Array(value_extraction::extract_byte_array_value(
+                                    &self.data, &entry, byte_order,
+                                )?)
+                            }
+                        }
+                    } else {
+                        TagValue::U8Array(values)
+                    }
                 };
 
                 // Store raw value to avoid double conversion - conversions are applied in get_all_tag_entries
