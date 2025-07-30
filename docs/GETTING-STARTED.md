@@ -99,7 +99,7 @@ Keep these in mind throughout development:
 
 - [design/API-DESIGN.md](design/API-DESIGN.md) - Public API structure
 - [CODEGEN.md](CODEGEN.md) - Code generation system
-- [design/PRINTCONV-DESIGN-DECISIONS.md](design/PRINTCONV-DESIGN-DECISIONS.md) - Why we diverge from ExifTool's JSON output
+- [guides/PRINTCONV-VALUECONV-GUIDE.md](guides/PRINTCONV-VALUECONV-GUIDE.md) - PrintConv/ValueConv implementation guide and design decisions
 
 ### Development Guides
 

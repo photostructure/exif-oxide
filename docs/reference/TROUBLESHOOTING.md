@@ -82,6 +82,46 @@ This tells you exactly what needs to be implemented.
 - Missing ValueConv/PrintConv implementation
 - Wrong format interpretation
 
+### Issue: Wrong File Type / MIME Type Detection
+
+**Symptoms:**
+
+- File type doesn't match ExifTool
+- Wrong MIME type reported
+- NEF/NRW confusion
+
+**Debug Steps:**
+
+1. **Check ExifTool's detection:**
+
+   ```bash
+   # See what file type ExifTool detects
+   exiftool -FileType -MIMEType image.nef
+   
+   # Check compression values in all IFDs
+   exiftool -a -n -Compression -G1 image.nef
+   
+   # Check for NEFLinearizationTable
+   exiftool -NEFLinearizationTable image.nef
+   ```
+
+2. **Understand detection approaches:**
+   - ExifTool uses complex content analysis with multi-stage overrides
+   - exif-oxide trusts file extensions for NEF/NRW files (by design)
+   - Check IFD0 compression values to understand the file structure
+
+3. **Design Decisions:**
+   - **NEF/NRW**: We trust file extensions (predictable behavior)
+   - This avoids false positives from incomplete content analysis
+   - See [MANUFACTURER-FACTS.md](MANUFACTURER-FACTS.md#22-nef-vs-nrw-file-type-detection) for rationale
+
+**Common Causes:**
+
+- Relying only on file extension
+- Not checking IFD0 compression
+- Missing content-based overrides
+- Can't access MakerNotes data for detection
+
 ### Issue: Offset Calculation Errors
 
 **Symptoms:**
