@@ -45,6 +45,9 @@ static PRINTCONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
     m.insert("fnumber_print_conv", ("crate::implementations::print_conv", "fnumber_print_conv"));
     m.insert("exposuretime_print_conv", ("crate::implementations::print_conv", "exposuretime_print_conv"));
     m.insert("focallength_print_conv", ("crate::implementations::print_conv", "focallength_print_conv"));
+    
+    // Canon focal length formatting - ExifTool Canon.pm PrintConv: "$val mm"
+    m.insert("\"$val mm\"", ("crate::implementations::print_conv", "focal_length_mm_print_conv"));
     m.insert("lensinfo_print_conv", ("crate::implementations::print_conv", "lensinfo_print_conv"));
     m.insert("iso_print_conv", ("crate::implementations::print_conv", "iso_print_conv"));
     m.insert("orientation_print_conv", ("crate::implementations::print_conv", "orientation_print_conv"));
@@ -134,6 +137,30 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
     m.insert("exposuretime_value_conv", ("crate::implementations::value_conv", "exposuretime_value_conv"));
     m.insert("focallength_value_conv", ("crate::implementations::value_conv", "focallength_value_conv"));
     
+    // Common simple patterns found in supported tags
+    m.insert("$val=~s/ +$//; $val", ("crate::implementations::value_conv", "trim_whitespace_value_conv"));
+    m.insert("$val=~s/^.*: //;$val", ("crate::implementations::value_conv", "remove_prefix_colon_value_conv"));
+    m.insert("$val * 100", ("crate::implementations::value_conv", "multiply_100_value_conv"));
+    m.insert("$val / 8", ("crate::implementations::value_conv", "divide_8_value_conv"));
+    m.insert("$val / 256", ("crate::implementations::value_conv", "divide_256_value_conv"));
+    m.insert("$val - 5", ("crate::implementations::value_conv", "subtract_5_value_conv"));
+    m.insert("$val + 3", ("crate::implementations::value_conv", "add_3_value_conv"));
+    m.insert("2 ** (-$val/3)", ("crate::implementations::value_conv", "power_neg_div_3_value_conv"));
+    m.insert("$val/6", ("crate::implementations::value_conv", "divide_6_value_conv"));
+    m.insert("($val-104)/8", ("crate::implementations::value_conv", "subtract_104_divide_8_value_conv"));
+    m.insert("$val ? 10 / $val : 0", ("crate::implementations::value_conv", "reciprocal_10_value_conv"));
+    m.insert("$val ? 2 ** (6 - $val/8) : 0", ("crate::implementations::value_conv", "sony_exposure_time_value_conv"));
+    m.insert("$val ? exp(($val/8-6)*log(2))*100 : $val", ("crate::implementations::value_conv", "sony_iso_value_conv"));
+    m.insert("2 ** (($val/8 - 1) / 2)", ("crate::implementations::value_conv", "sony_fnumber_value_conv"));
+    m.insert("Image::ExifTool::Exif::ExifDate($val)", ("crate::implementations::value_conv", "exif_date_value_conv"));
+    
+    // ExifTool function calls for datetime conversions
+    m.insert("require Image::ExifTool::XMP;\nreturn Image::ExifTool::XMP::ConvertXMPDate($val);", ("crate::implementations::value_conv", "xmp_date_value_conv"));
+    
+    // String processing patterns
+    m.insert("length($val) > 32 ? \\$val : $val", ("crate::implementations::value_conv", "reference_long_string_value_conv"));
+    m.insert("length($val) > 64 ? \\$val : $val", ("crate::implementations::value_conv", "reference_very_long_string_value_conv"));
+    
     m
 });
 
@@ -171,17 +198,28 @@ pub fn lookup_printconv(expr: &str, module: &str) -> Option<(&'static str, &'sta
 
 /// Look up ValueConv implementation by Perl expression
 pub fn lookup_valueconv(expr: &str, module: &str) -> Option<(&'static str, &'static str)> {
-    // Normalize the expression for consistent lookup
-    let normalized_expr = normalize_expression(expr);
+    // First try exact match (more efficient and avoids normalization issues)
+    if let Some(value) = VALUECONV_REGISTRY.get(expr) {
+        return Some(*value);
+    }
     
-    // Same module-scoped logic as PrintConv
+    // Try module-scoped exact match
     let normalized_module = module.replace("_pm", "");
-    let scoped_key = format!("{}::{}", normalized_module, normalized_expr);
-    
+    let scoped_key = format!("{}::{}", normalized_module, expr);
     if let Some(value) = VALUECONV_REGISTRY.get(scoped_key.as_str()) {
         return Some(*value);
     }
     
+    // Fall back to normalization for complex expressions
+    let normalized_expr = normalize_expression(expr);
+    
+    // Try normalized module-scoped lookup
+    let normalized_scoped_key = format!("{}::{}", normalized_module, normalized_expr);
+    if let Some(value) = VALUECONV_REGISTRY.get(normalized_scoped_key.as_str()) {
+        return Some(*value);
+    }
+    
+    // Try normalized global lookup
     VALUECONV_REGISTRY.get(normalized_expr.as_str()).copied()
 }
 
