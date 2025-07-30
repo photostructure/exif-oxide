@@ -332,6 +332,25 @@ pub fn normalize_for_comparison(mut data: Value, _is_exiftool: bool) -> Value {
                 *lens_serial = Value::String(n.to_string());
             }
         }
+
+        // Normalize nondeterministic composite tags
+        // ExifTool exhibits nondeterministic behavior for some composite tags due to Perl's 
+        // hash randomization. The most notable case is Nikon's LensID where multiple lens 
+        // variants can match, causing the order to vary between runs.
+        //
+        // Example: "AF-P DX Nikkor 18-55mm f/3.5-5.6G VR or AF-P DX Nikkor 18-55mm f/3.5-5.6G"
+        //       vs "AF-P DX Nikkor 18-55mm f/3.5-5.6G or AF-P DX Nikkor 18-55mm f/3.5-5.6G VR"
+        //
+        // For consistent comparison, we sort the alternatives alphabetically.
+        if let Some(lens_id) = obj.get_mut("Composite:LensID") {
+            if let Value::String(lens_str) = lens_id {
+                if lens_str.contains(" or ") {
+                    let mut parts: Vec<&str> = lens_str.split(" or ").collect();
+                    parts.sort();
+                    *lens_id = Value::String(parts.join(" or "));
+                }
+            }
+        }
     }
 
     data
