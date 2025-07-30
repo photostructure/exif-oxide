@@ -1651,7 +1651,7 @@ fn is_file_group_tag(tag_name: &str) -> bool {
 #[cfg(not(any(target_os = "windows", target_os = "macos")))]
 fn get_unix_ctime(path: &Path) -> Option<u64> {
     use std::os::unix::fs::MetadataExt;
-    
+
     // Get Unix metadata to access ctime
     match std::fs::metadata(path) {
         Ok(metadata) => {
