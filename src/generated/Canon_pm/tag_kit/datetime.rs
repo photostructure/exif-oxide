@@ -106,7 +106,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("$val / 10"),
+            value_conv: Some("canon_div_10_value_conv"),
             subdirectory: None,
         }),
         (5, TagKitDef {

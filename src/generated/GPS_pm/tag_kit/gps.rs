@@ -82,7 +82,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("$val =~ tr/ /./; $val"),
+            print_conv: PrintConvType::Expression(r"$val =~ tr/ /./; $val"),
             value_conv: None,
             subdirectory: None,
         }),
@@ -215,7 +215,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1)"),
-            value_conv: Some("Image::ExifTool::GPS::ToDegrees($val)"),
+            value_conv: Some("gps_coordinate_value_conv"),
             subdirectory: None,
         }),
         (20, TagKitDef {
@@ -226,7 +226,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1)"),
-            value_conv: Some("Image::ExifTool::GPS::ToDegrees($val)"),
+            value_conv: Some("gps_coordinate_value_conv"),
             subdirectory: None,
         }),
         (21, TagKitDef {
@@ -248,7 +248,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1)"),
-            value_conv: Some("Image::ExifTool::GPS::ToDegrees($val)"),
+            value_conv: Some("gps_coordinate_value_conv"),
             subdirectory: None,
         }),
         (23, TagKitDef {
@@ -325,7 +325,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: Some("when writing, time is stripped off if present, after adjusting date/time to\n            UTC if time includes a timezone.  Format is YYYY:mm:dd"),
             print_conv: PrintConvType::None,
-            value_conv: Some("Image::ExifTool::Exif::ExifDate($val)"),
+            value_conv: Some("exif_date_value_conv"),
             subdirectory: None,
         }),
         (3, TagKitDef {
@@ -369,7 +369,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1)"),
-            value_conv: Some("Image::ExifTool::GPS::ToDegrees($val)"),
+            value_conv: Some("gps_coordinate_value_conv"),
             subdirectory: None,
         }),
         (5, TagKitDef {
@@ -390,7 +390,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("$val =~ /^(inf|undef)$/ ? $val : \"$val m\""),
+            print_conv: PrintConvType::Expression(r#"$val =~ /^(inf|undef)$/ ? $val : "$val m""#),
             value_conv: None,
             subdirectory: None,
         }),
@@ -402,7 +402,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: Some("UTC time of GPS fix.  When writing, date is stripped off if present, and\n            time is adjusted to UTC if it includes a timezone"),
             print_conv: PrintConvType::Expression("Image::ExifTool::GPS::PrintTimeStamp($val)"),
-            value_conv: Some("Image::ExifTool::GPS::ConvertTimeStamp($val)"),
+            value_conv: Some("gpstimestamp_value_conv"),
             subdirectory: None,
         }),
         (8, TagKitDef {

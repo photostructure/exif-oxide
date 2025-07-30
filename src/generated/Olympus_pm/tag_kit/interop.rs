@@ -249,7 +249,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("$val=sprintf(\"%x\",$val);$val=~s/(.{3})$/\\.$1/;$val"),
+            print_conv: PrintConvType::Expression(r#"$val=sprintf("%x",$val);$val=~s/(.{3})$/\.$1/;$val"#),
             value_conv: None,
             subdirectory: None,
         }),
@@ -613,7 +613,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::Expression("sprintf(\"%.1f\",$val)"),
-            value_conv: Some("2 ** ($val / 2)"),
+            value_conv: Some("apex_aperture_value_conv"),
             subdirectory: None,
         }),
         (4099, TagKitDef {

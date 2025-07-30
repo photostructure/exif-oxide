@@ -78,7 +78,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("for some camera models such as the FZ30 this may be an internal production\n            reference number and not the actual firmware version"),
-            print_conv: PrintConvType::Expression("$val=~tr/ /./; $val"),
+            print_conv: PrintConvType::Expression(r"$val=~tr/ /./; $val"),
             value_conv: Some("$val=~/[\\0-\\x2f]/ ? join(\" \",unpack(\"C*\",$val)) : $val"),
             subdirectory: None,
         }),

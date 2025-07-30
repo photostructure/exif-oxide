@@ -55,40 +55,117 @@ pub enum SubDirectoryType {
 
 /// All tag kits for Canon_pm
 pub static CANON_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
+    let mut map: HashMap<u32, TagKitDef> = HashMap::new();
 
     // color tags
     for (id, tag_def) in color::get_color_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // core tags
     for (id, tag_def) in core::get_core_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // datetime tags
     for (id, tag_def) in datetime::get_datetime_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // document tags
     for (id, tag_def) in document::get_document_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // interop tags
     for (id, tag_def) in interop::get_interop_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // other tags
     for (id, tag_def) in other::get_other_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // thumbnail tags
     for (id, tag_def) in thumbnail::get_thumbnail_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
@@ -175,64 +252,1247 @@ fn process_canon_camerasettings(
         "process_canon_camerasettings called with {} bytes",
         data.len()
     );
-    // Use existing manual implementation from canon/binary_data.rs
-    use crate::implementations::canon::binary_data::extract_camera_settings;
+    let mut tags = Vec::new();
 
-    // Call the manual implementation
-    let result_map = extract_camera_settings(data, 0, data.len(), byte_order)?;
+    // Canon CameraSettings uses int16s format with FIRST_ENTRY = 1
+    let entry_size = 2;
+    let first_entry = 1;
 
-    // Convert HashMap<String, TagValue> to Vec<(String, TagValue)>
-    let tags: Vec<(String, TagValue)> = result_map.into_iter().collect();
+    // MacroMode at offset 1
+    {
+        let byte_offset = ((1i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    2 => "Normal",
+                    1 => "Macro",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "MacroMode".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
 
-    tracing::debug!("Manual implementation extracted {} tags", tags.len());
+    // SelfTimer at offset 2
+    {
+        let byte_offset = ((2i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                tags.push(("SelfTimer".to_string(), TagValue::I16(value)));
+            }
+        }
+    }
+
+    // Quality at offset 3
+    {
+        let byte_offset = ((3i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    -1 => "n/a",
+                    2 => "Normal",
+                    3 => "Fine",
+                    5 => "Superfine",
+                    131 => "Standard (RAW)",
+                    1 => "Economy",
+                    130 => "Light (RAW)",
+                    4 => "RAW",
+                    7 => "CRAW",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "Quality".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // CanonFlashMode at offset 4
+    {
+        let byte_offset = ((4i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    -1 => "n/a",
+                    5 => "Red-eye reduction (Auto)",
+                    6 => "Red-eye reduction (On)",
+                    2 => "On",
+                    0 => "Off",
+                    1 => "Auto",
+                    3 => "Red-eye reduction",
+                    4 => "Slow-sync",
+                    16 => "External flash",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "CanonFlashMode".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // ContinuousDrive at offset 5
+    {
+        let byte_offset = ((5i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    3 => "Continuous, Speed Priority",
+                    8 => "Continuous, High+",
+                    5 => "Continuous, High",
+                    9 => "Single, Silent",
+                    4 => "Continuous, Low",
+                    1 => "Continuous",
+                    2 => "Movie",
+                    10 => "Continuous, Silent",
+                    0 => "Single",
+                    6 => "Silent Single",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "ContinuousDrive".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // FocusMode at offset 7
+    {
+        let byte_offset = ((7i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    256 => "One-shot AF (Live View)",
+                    1 => "AI Servo AF",
+                    258 => "AI Focus AF (Live View)",
+                    512 => "Movie Snap Focus",
+                    5 => "Continuous",
+                    0 => "One-shot AF",
+                    16 => "Pan Focus",
+                    2 => "AI Focus AF",
+                    257 => "AI Servo AF (Live View)",
+                    3 => "Manual Focus (3)",
+                    4 => "Single",
+                    519 => "Movie Servo AF",
+                    6 => "Manual Focus (6)",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "FocusMode".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // RecordMode at offset 9
+    {
+        let byte_offset = ((9i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    12 => "CR3",
+                    9 => "MOV",
+                    4 => "TIF",
+                    6 => "CR2",
+                    13 => "CR3+JPEG",
+                    2 => "CRW+THM",
+                    15 => "CR3+HIF",
+                    1 => "JPEG",
+                    10 => "MP4",
+                    5 => "TIF+JPEG",
+                    7 => "CR2+JPEG",
+                    3 => "AVI+THM",
+                    14 => "HIF",
+                    11 => "CRM",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "RecordMode".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // CanonImageSize at offset 10
+    {
+        let byte_offset = ((10i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    10 => "Medium Widescreen",
+                    8 => "Postcard",
+                    -1 => "n/a",
+                    5 => "Medium 1",
+                    1 => "Medium",
+                    7 => "Medium 3",
+                    2 => "Small",
+                    130 => "Small Movie",
+                    9 => "Widescreen",
+                    129 => "Medium Movie",
+                    0 => "Large",
+                    137 => "1280x720 Movie",
+                    16 => "Small 3",
+                    6 => "Medium 2",
+                    128 => "640x480 Movie",
+                    14 => "Small 1",
+                    142 => "1920x1080 Movie",
+                    143 => "4096x2160 Movie",
+                    15 => "Small 2",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "CanonImageSize".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // EasyMode at offset 11
+    {
+        let byte_offset = ((11i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    18 => "Foliage",
+                    50 => "Best Image Selection",
+                    25 => "Night Snapshot",
+                    30 => "Color Accent",
+                    7 => "Sepia",
+                    47 => "Fisheye Effect",
+                    49 => "High-speed Burst",
+                    5 => "Night",
+                    23 => "Snow",
+                    265 => "Low Light 2",
+                    13 => "Vivid",
+                    261 => "Sunset",
+                    31 => "Color Swap",
+                    15 => "Flash Off",
+                    35 => "Creative Light Effect",
+                    38 => "Creative Auto",
+                    45 => "Smile",
+                    24 => "Kids & Pets",
+                    22 => "Underwater",
+                    32 => "Aquarium",
+                    56 => "Blur Reduction",
+                    8 => "Portrait",
+                    84 => "HDR Art Standard",
+                    11 => "Black & White",
+                    46 => "Wink Self-timer",
+                    85 => "HDR Art Vivid",
+                    55 => "Discreet",
+                    43 => "Poster Effect",
+                    53 => "Movie Digest",
+                    12 => "Pan focus",
+                    57 => "Monochrome",
+                    10 => "Macro",
+                    60 => "High-speed Burst HQ",
+                    52 => "Handheld Night Scene",
+                    54 => "Live View Control",
+                    14 => "Neutral",
+                    19 => "Indoor",
+                    34 => "ISO 6400",
+                    44 => "Face Self-timer",
+                    59 => "Scene Intelligent Auto",
+                    28 => "Movie Snap",
+                    40 => "Low Light",
+                    36 => "Easy",
+                    0 => "Full auto",
+                    37 => "Quick Shot",
+                    48 => "Miniature Effect",
+                    41 => "Nostalgic",
+                    61 => "Smooth Skin",
+                    264 => "Surface",
+                    68 => "Food",
+                    58 => "Toy Camera Effect",
+                    29 => "Super Macro 2",
+                    263 => "Night Scene",
+                    20 => "Fireworks",
+                    1 => "Manual",
+                    259 => "Night+",
+                    2 => "Landscape",
+                    33 => "ISO 3200",
+                    4 => "Slow shutter",
+                    3 => "Fast shutter",
+                    21 => "Beach",
+                    257 => "Spotlight",
+                    39 => "Zoom Blur",
+                    9 => "Sports",
+                    258 => "Night 2",
+                    62 => "Soft Focus",
+                    6 => "Gray Scale",
+                    17 => "Super Macro",
+                    27 => "My Colors",
+                    51 => "High Dynamic Range",
+                    93 => "HDR Art Bold",
+                    42 => "Super Vivid",
+                    260 => "Super Night",
+                    26 => "Digital Macro",
+                    16 => "Long Shutter",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "EasyMode".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // DigitalZoom at offset 12
+    {
+        let byte_offset = ((12i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    2 => "4x",
+                    0 => "None",
+                    1 => "2x",
+                    3 => "Other",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "DigitalZoom".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // Contrast at offset 13
+    {
+        let byte_offset = ((13i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    0 => "Normal",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "Contrast".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // Saturation at offset 14
+    {
+        let byte_offset = ((14i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    0 => "Normal",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "Saturation".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // Sharpness at offset 15
+    {
+        let byte_offset = ((15i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                tags.push(("Sharpness".to_string(), TagValue::I16(value)));
+            }
+        }
+    }
+
+    // CameraISO at offset 16
+    {
+        let byte_offset = ((16i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                tags.push(("CameraISO".to_string(), TagValue::I16(value)));
+            }
+        }
+    }
+
+    // MeteringMode at offset 17
+    {
+        let byte_offset = ((17i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    2 => "Average",
+                    4 => "Partial",
+                    0 => "Default",
+                    1 => "Spot",
+                    3 => "Evaluative",
+                    5 => "Center-weighted average",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "MeteringMode".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // FocusRange at offset 18
+    {
+        let byte_offset = ((18i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    1 => "Auto",
+                    2 => "Not Known",
+                    5 => "Close",
+                    7 => "Far Range",
+                    10 => "Infinity",
+                    8 => "Pan Focus",
+                    0 => "Manual",
+                    9 => "Super Macro",
+                    4 => "Very Close",
+                    6 => "Middle Range",
+                    3 => "Macro",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "FocusRange".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // AFPoint at offset 19
+    {
+        let byte_offset = ((19i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    12288 => "None (MF)",
+                    8197 => "Manual AF point selection",
+                    12291 => "Center",
+                    16385 => "Auto AF point selection",
+                    12292 => "Left",
+                    12289 => "Auto AF point selection",
+                    12290 => "Right",
+                    16390 => "Face Detect",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "AFPoint".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // CanonExposureMode at offset 20
+    {
+        let byte_offset = ((20i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    3 => "Aperture-priority AE",
+                    0 => "Easy",
+                    7 => "Bulb",
+                    6 => "M-Dep",
+                    1 => "Program AE",
+                    5 => "Depth-of-field AE",
+                    2 => "Shutter speed priority AE",
+                    4 => "Manual",
+                    8 => "Flexible-priority AE",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "CanonExposureMode".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // LensType at offset 22
+    {
+        let byte_offset = ((22i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    4146 => "Canon EF-S 18-55mm f/3.5-5.6 IS STM",
+                    198 => "Canon EF 50mm f/1.4 USM or Other Lens",
+                    178 => "Canon EF 28-135mm f/3.5-5.6 IS",
+                    0 => "Canon EF 70-300mm f/4-5.6 IS II USM",
+                    18 => "Canon EF 28-70mm f/3.5-4.5",
+                    127 => "Canon TS-E 90mm f/2.8 or Tamron Lens",
+                    368 => "Sigma 14-24mm f/2.8 DG HSM | A or other Sigma Lens",
+                    81 => "Canon TS-E 90mm f/2.8L Macro",
+                    209 => "Canon EF 55-200mm f/4.5-5.6",
+                    24 => "Canon EF 35-80mm f/4-5.6 Power Zoom",
+                    33 => "Voigtlander or Carl Zeiss Lens",
+                    4 => "Canon EF 35-105mm f/3.5-4.5 or Sigma Lens",
+                    232 => "Canon EF 70-300mm f/4.5-5.6 DO IS USM",
+                    757 => "Canon EF 400mm f/2.8L IS III USM",
+                    21 => "Canon EF 80-200mm f/2.8L",
+                    63 => "Irix 30mm F1.4 Dragonfly",
+                    144 => "Canon EF 35-135mm f/4-5.6 USM",
+                    226 => "Canon EF 70-200mm f/2.8L IS USM + 2x",
+                    54 => "Canon EF-S 55-250mm f/4-5.6 IS II",
+                    753 => "Canon EF 85mm f/1.4L IS USM",
+                    20 => "Canon EF 100-200mm f/4.5A",
+                    163 => "Canon EF 300mm f/4L",
+                    135 => "Canon EF 200mm f/1.8L USM",
+                    231 => "Canon EF 17-40mm f/4L USM or Sigma Lens",
+                    136 => "Canon EF 300mm f/2.8L USM",
+                    151 => "Canon EF 200mm f/2.8L USM",
+                    508 => "Canon EF 11-24mm f/4L USM or Tamron Lens",
+                    95 => "Canon TS-E 24mm f/3.5L II",
+                    125 => "Canon TS-E 24mm f/3.5L",
+                    7 => "Canon EF 100-300mm f/5.6L",
+                    4143 => "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens",
+                    51 => "Canon EF-S 18-135mm f/3.5-5.6 IS",
+                    22 => "Canon EF 20-35mm f/2.8L or Tokina Lens",
+                    13 => "Canon EF 15mm f/2.8 Fisheye",
+                    166 => "Canon EF 70-200mm f/2.8L USM + 1.4x",
+                    169 => "Canon EF 17-35mm f/2.8L USM or Sigma Lens",
+                    245 => "Canon EF 70-200mm f/4L IS USM + 2.8x",
+                    141 => "Canon EF 500mm f/4.5L USM",
+                    496 => "Canon EF 200-400mm f/4L IS USM",
+                    29 => "Canon EF 50mm f/1.8 II",
+                    246 => "Canon EF 16-35mm f/2.8L II USM",
+                    161 => "Canon EF 28-70mm f/2.8L USM or Other Lens",
+                    154 => "Canon EF 20mm f/2.8 USM or Zeiss Lens",
+                    187 => "Canon EF 70-200mm f/4L USM + 1.4x",
+                    17 => "Canon EF 35-70mm f/3.5-4.5A",
+                    224 => "Canon EF 70-200mm f/2.8L IS USM",
+                    4148 => "Canon EF-S 55-250mm f/4-5.6 IS STM",
+                    239 => "Canon EF 85mm f/1.2L II USM or Rokinon Lens",
+                    162 => "Canon EF 200mm f/2.8L USM",
+                    171 => "Canon EF 300mm f/4L USM",
+                    4157 => "Canon EF-M 18-150mm f/3.5-6.3 IS STM",
+                    138 => "Canon EF 28-80mm f/2.8-4L",
+                    117 => "Tamron 35-150mm f/2.8-4.0 Di VC OSD (A043) or other Tamron Lens",
+                    42 => "Canon EF 28-200mm f/3.5-5.6 or Tamron Lens",
+                    243 => "Canon EF 70-200mm f/4L IS USM + 1.4x",
+                    3 => "Canon EF 135mm f/2.8 Soft",
+                    488 => "Canon EF-S 15-85mm f/3.5-5.6 IS USM",
+                    37 => "Canon EF 35-80mm f/4-5.6 or Tamron Lens",
+                    240 => "Canon EF-S 17-55mm f/2.8 IS USM or Sigma Lens",
+                    43 => "Canon EF 28-105mm f/4-5.6",
+                    225 => "Canon EF 70-200mm f/2.8L IS USM + 1.4x",
+                    202 => "Canon EF 28-80mm f/3.5-5.6 USM IV",
+                    229 => "Canon EF 16-35mm f/2.8L USM",
+                    145 => "Canon EF 100-300mm f/4.5-5.6 USM",
+                    35 => "Canon EF 35-80mm f/4-5.6",
+                    199 => "Canon EF 28-80mm f/3.5-5.6 USM",
+                    184 => "Canon EF 400mm f/2.8L USM + 2x",
+                    754 => "Canon EF 70-200mm f/4L IS II USM",
+                    182 => "Canon EF 100-400mm f/4.5-5.6L IS USM + 2x or Sigma Lens",
+                    82 => "Canon TS-E 135mm f/4L Macro",
+                    167 => "Canon EF 70-200mm f/2.8L USM + 2x",
+                    181 => "Canon EF 100-400mm f/4.5-5.6L IS USM + 1.4x or Sigma Lens",
+                    175 => "Canon EF 400mm f/2.8L USM",
+                    758 => "Canon EF 600mm f/4L IS III USM",
+                    46 => "Canon EF 28-90mm f/4-5.6",
+                    180 => "Canon EF 35mm f/1.4L USM or Other Lens",
+                    196 => "Canon EF 75-300mm f/4-5.6 USM",
+                    201 => "Canon EF 28-80mm f/3.5-5.6 USM",
+                    190 => "Canon EF 100mm f/2.8 Macro USM",
+                    200 => "Canon EF 75-300mm f/4-5.6 USM",
+                    210 => "Canon EF 28-90mm f/4-5.6 USM",
+                    236 => "Canon EF-S 60mm f/2.8 Macro USM",
+                    132 => "Canon EF 1200mm f/5.6L USM",
+                    490 => "Canon EF 8-15mm f/4L Fisheye USM",
+                    749 => "Canon EF 100-400mm f/4.5-5.6L IS II USM + 2x or Tamron Lens",
+                    193 => "Canon EF 35-80mm f/4-5.6 USM",
+                    493 => "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM",
+                    747 => "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens",
+                    150 => "Canon EF 14mm f/2.8L USM or Sigma Lens",
+                    4145 => "Canon EF-M 22mm f/2 STM",
+                    213 => "Canon EF 90-300mm f/4.5-5.6 USM or Tamron Lens",
+                    499 => "Canon EF 200-400mm f/4L IS USM + 1.4x",
+                    748 => "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x or Tamron Lens",
+                    164 => "Canon EF 400mm f/5.6L",
+                    131 => "Canon EF 28-80mm f/2.8-4L USM or Sigma Lens",
+                    130 => "Canon EF 50mm f/1.0L USM",
+                    4154 => "Canon EF-S 24mm f/2.8 STM",
+                    172 => "Canon EF 400mm f/5.6L USM or Sigma Lens",
+                    4147 => "Canon EF-M 11-22mm f/4-5.6 IS STM",
+                    9 => "Canon EF 70-210mm f/4",
+                    147 => "Canon EF 35-135mm f/4-5.6 USM",
+                    235 => "Canon EF-S 10-22mm f/3.5-4.5 USM",
+                    53 => "Canon EF-S 18-55mm f/3.5-5.6 III",
+                    10 => "Canon EF 50mm f/2.5 Macro or Sigma Lens",
+                    146 => "Canon EF 70-210mm f/3.5-4.5 USM",
+                    52 => "Canon EF-S 18-55mm f/3.5-5.6 IS II",
+                    1 => "Canon EF 50mm f/1.8",
+                    195 => "Canon EF 35-105mm f/4.5-5.6 USM",
+                    4160 => "Canon EF-S 35mm f/2.8 Macro IS STM",
+                    752 => "Canon EF 24-105mm f/4L IS II USM",
+                    60 => "Irix 11mm f/4 or 15mm f/2.4",
+                    185 => "Canon EF 600mm f/4L IS USM",
+                    251 => "Canon EF 70-200mm f/2.8L IS II USM",
+                    160 => "Canon EF 20-35mm f/3.5-4.5 USM or Tamron or Tokina Lens",
+                    30 => "Canon EF 35-105mm f/4.5-5.6",
+                    94 => "Canon TS-E 17mm f/4L",
+                    188 => "Canon EF 70-200mm f/4L USM + 2x",
+                    506 => "Canon EF 400mm f/4 DO IS II USM",
+                    140 => "Canon EF 500mm f/4.5L USM",
+                    215 => "Canon EF 55-200mm f/4.5-5.6 II USM",
+                    168 => "Canon EF 28mm f/1.8 USM or Sigma Lens",
+                    5 => "Canon EF 35-70mm f/3.5-4.5",
+                    183 => "Canon EF 100-400mm f/4.5-5.6L IS USM or Sigma Lens",
+                    106 => "Rokinon SP / Samyang XP 35mm f/1.2",
+                    124 => "Canon MP-E 65mm f/2.8 1-5x Macro Photo",
+                    27 => "Canon EF 35-80mm f/4-5.6",
+                    186 => "Canon EF 70-200mm f/4L USM",
+                    237 => "Canon EF 24-105mm f/4L IS USM",
+                    11 => "Canon EF 35mm f/2",
+                    220 => "Yongnuo YN 50mm f/1.8",
+                    155 => "Canon EF 85mm f/1.8 USM or Sigma Lens",
+                    494 => "Canon EF 600mm f/4L IS II USM",
+                    31 => "Canon EF 75-300mm f/4-5.6 or Tamron Lens",
+                    26 => "Canon EF 100mm f/2.8 Macro or Other Lens",
+                    112 => "Sigma 28mm f/1.5 FF High-speed Prime or other Sigma Lens",
+                    170 => "Canon EF 200mm f/2.8L II USM or Sigma Lens",
+                    504 => "Canon EF 24-70mm f/4L IS USM",
+                    244 => "Canon EF 70-200mm f/4L IS USM + 2x",
+                    -1 => "n/a",
+                    32 => "Canon EF 24mm f/2.8 or Sigma Lens",
+                    191 => "Canon EF 400mm f/4 DO IS or Sigma Lens",
+                    2 => "Canon EF 28mm f/2.8 or Sigma Lens",
+                    149 => "Canon EF 100mm f/2 USM",
+                    40 => "Canon EF 28-80mm f/3.5-5.6",
+                    48 => "Canon EF-S 18-55mm f/3.5-5.6 IS",
+                    129 => "Canon EF 300mm f/2.8L USM",
+                    214 => "Canon EF-S 18-55mm f/3.5-5.6 USM",
+                    211 => "Canon EF 28-200mm f/3.5-5.6 USM",
+                    143 => "Canon EF 500mm f/4L IS USM or Sigma Lens",
+                    4153 => "Canon EF-M 15-45mm f/3.5-6.3 IS STM",
+                    28 => "Canon EF 80-200mm f/4.5-5.6 or Tamron Lens",
+                    4142 => "Canon EF-S 18-135mm f/3.5-5.6 IS STM",
+                    176 => "Canon EF 24-85mm f/3.5-4.5 USM",
+                    49 => "Canon EF-S 55-250mm f/4-5.6 IS",
+                    156 => "Canon EF 28-105mm f/3.5-4.5 USM or Tamron Lens",
+                    23 => "Canon EF 35-105mm f/3.5-4.5",
+                    212 => "Canon EF 28-105mm f/4-5.6 USM",
+                    491 => "Canon EF 300mm f/2.8L IS II USM or Tamron Lens",
+                    624 => "Sigma 70-200mm f/2.8 DG OS HSM | S or other Sigma Lens",
+                    139 => "Canon EF 400mm f/2.8L USM",
+                    507 => "Canon EF 16-35mm f/4L IS USM",
+                    50 => "Canon EF-S 18-200mm f/3.5-5.6 IS",
+                    36 => "Canon EF 38-76mm f/4.5-5.6",
+                    152 => "Canon EF 300mm f/4L IS USM or Sigma Lens",
+                    16 => "Canon EF 35-135mm f/3.5-4.5",
+                    505 => "Canon EF 35mm f/2 IS USM",
+                    197 => "Canon EF 75-300mm f/4-5.6 IS USM or Sigma Lens",
+                    4208 => "Sigma 56mm f/1.4 DC DN | C or other Sigma Lens",
+                    241 => "Canon EF 50mm f/1.2L USM",
+                    750 => "Canon EF 35mm f/1.4L II USM or Tamron Lens",
+                    249 => "Canon EF 800mm f/5.6L IS USM",
+                    189 => "Canon EF 70-200mm f/4L USM + 2.8x",
+                    492 => "Canon EF 400mm f/2.8L IS II USM",
+                    502 => "Canon EF 28mm f/2.8 IS USM or Tamron Lens",
+                    173 => "Canon EF 180mm Macro f/3.5L USM or Sigma Lens",
+                    227 => "Canon EF 70-200mm f/2.8L IS USM + 2.8x",
+                    126 => "Canon TS-E 45mm f/2.8",
+                    4156 => "Canon EF 50mm f/1.8 STM",
+                    103 => "Samyang AF 14mm f/2.8 EF or Rokinon Lens",
+                    233 => "Canon EF 28-300mm f/3.5-5.6L IS USM",
+                    248 => "Canon EF 200mm f/2L IS USM or Sigma Lens",
+                    4155 => "Canon EF-M 28mm f/3.5 Macro IS STM",
+                    1136 => "Sigma 24-70mm f/2.8 DG OS HSM | A",
+                    38 => "Canon EF 80-200mm f/4.5-5.6 II",
+                    254 => "Canon EF 100mm f/2.8L Macro IS USM or Tamron Lens",
+                    4150 => "Canon EF-S 10-18mm f/4.5-5.6 IS STM",
+                    253 => "Canon EF 70-200mm f/2.8L IS II USM + 2x",
+                    495 => "Canon EF 24-70mm f/2.8L II USM or Sigma Lens",
+                    247 => "Canon EF 14mm f/2.8L II USM",
+                    238 => "Canon EF 70-300mm f/4-5.6 IS USM",
+                    252 => "Canon EF 70-200mm f/2.8L IS II USM + 1.4x",
+                    255 => "Sigma 24-105mm f/4 DG OS HSM | A or Other Lens",
+                    39 => "Canon EF 75-300mm f/4-5.6",
+                    4144 => "Canon EF 40mm f/2.8 STM",
+                    142 => "Canon EF 300mm f/2.8L IS USM",
+                    4152 => "Canon EF 24-105mm f/3.5-5.6 IS STM",
+                    14 => "Canon EF 50-200mm f/3.5-4.5L",
+                    4159 => "Canon EF-M 32mm f/1.4 STM",
+                    6 => "Canon EF 28-70mm f/3.5-4.5 or Sigma or Tokina Lens",
+                    242 => "Canon EF 70-200mm f/4L IS USM",
+                    25 => "Canon EF 35-80mm f/4-5.6 Power Zoom",
+                    194 => "Canon EF 80-200mm f/4.5-5.6 USM",
+                    8 => "Canon EF 100-300mm f/5.6 or Sigma or Tokina Lens",
+                    4149 => "Canon EF-M 55-200mm f/4.5-6.3 IS STM",
+                    165 => "Canon EF 70-200mm f/2.8L USM",
+                    228 => "Canon EF 28-105mm f/3.5-4.5 USM",
+                    489 => "Canon EF 70-300mm f/4-5.6L IS USM",
+                    503 => "Canon EF 24mm f/2.8 IS USM",
+                    148 => "Canon EF 28-80mm f/3.5-5.6 USM",
+                    177 => "Canon EF 300mm f/4L IS USM",
+                    137 => "Canon EF 85mm f/1.2L USM or Sigma or Tamron Lens",
+                    179 => "Canon EF 24mm f/1.4L USM",
+                    80 => "Canon TS-E 50mm f/2.8L Macro",
+                    41 => "Canon EF 28-90mm f/4-5.6",
+                    234 => "Canon EF-S 17-85mm f/4-5.6 IS USM or Tokina Lens",
+                    44 => "Canon EF 90-300mm f/4.5-5.6",
+                    751 => "Canon EF 16-35mm f/2.8L III USM",
+                    47 => "Zeiss Milvus 35mm f/2 or 50mm f/2",
+                    174 => "Canon EF 135mm f/2L USM or Other Lens",
+                    217 => "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD",
+                    230 => "Canon EF 24-70mm f/2.8L USM",
+                    250 => "Canon EF 24mm f/1.4L II USM or Sigma Lens",
+                    4158 => "Canon EF-S 18-55mm f/4-5.6 IS STM",
+                    134 => "Canon EF 600mm f/4L IS USM",
+                    15 => "Canon EF 50-200mm f/3.5-4.5",
+                    45 => "Canon EF-S 18-55mm f/3.5-5.6 [II]",
+                    208 => "Canon EF 22-55mm f/4-5.6 USM",
+                    153 => "Canon EF 35-350mm f/3.5-5.6L USM or Sigma or Tamron Lens",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "LensType".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // MaxFocalLength at offset 23
+    {
+        let byte_offset = ((23i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                tags.push(("MaxFocalLength".to_string(), TagValue::I16(value)));
+            }
+        }
+    }
+
+    // MinFocalLength at offset 24
+    {
+        let byte_offset = ((24i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                tags.push(("MinFocalLength".to_string(), TagValue::I16(value)));
+            }
+        }
+    }
+
+    // FocalUnits at offset 25
+    {
+        let byte_offset = ((25i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                tags.push(("FocalUnits".to_string(), TagValue::I16(value)));
+            }
+        }
+    }
+
+    // MaxAperture at offset 26
+    {
+        let byte_offset = ((26i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                tags.push(("MaxAperture".to_string(), TagValue::I16(value)));
+            }
+        }
+    }
+
+    // MinAperture at offset 27
+    {
+        let byte_offset = ((27i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                tags.push(("MinAperture".to_string(), TagValue::I16(value)));
+            }
+        }
+    }
+
+    // FlashActivity at offset 28
+    {
+        let byte_offset = ((28i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                tags.push(("FlashActivity".to_string(), TagValue::I16(value)));
+            }
+        }
+    }
+
+    // FlashBits at offset 29
+    {
+        let byte_offset = ((29i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    0 => "(none)",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "FlashBits".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // FocusContinuous at offset 32
+    {
+        let byte_offset = ((32i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    1 => "Continuous",
+                    8 => "Manual",
+                    0 => "Single",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "FocusContinuous".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // AESetting at offset 33
+    {
+        let byte_offset = ((33i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    0 => "Normal AE",
+                    1 => "Exposure Compensation",
+                    4 => "No AE",
+                    2 => "AE Lock",
+                    3 => "AE Lock + Exposure Comp.",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "AESetting".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // ImageStabilization at offset 34
+    {
+        let byte_offset = ((34i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    4 => "Dynamic",
+                    2 => "Shoot Only",
+                    256 => "Off (2)",
+                    3 => "Panning",
+                    257 => "On (2)",
+                    259 => "Panning (2)",
+                    0 => "Off",
+                    260 => "Dynamic (2)",
+                    1 => "On",
+                    258 => "Shoot Only (2)",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "ImageStabilization".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // DisplayAperture at offset 35
+    {
+        let byte_offset = ((35i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                tags.push(("DisplayAperture".to_string(), TagValue::I16(value)));
+            }
+        }
+    }
+
+    // ZoomSourceWidth at offset 36
+    {
+        let byte_offset = ((36i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                tags.push(("ZoomSourceWidth".to_string(), TagValue::I16(value)));
+            }
+        }
+    }
+
+    // ZoomTargetWidth at offset 37
+    {
+        let byte_offset = ((37i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                tags.push(("ZoomTargetWidth".to_string(), TagValue::I16(value)));
+            }
+        }
+    }
+
+    // SpotMeteringMode at offset 39
+    {
+        let byte_offset = ((39i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    0 => "Center",
+                    1 => "AF Point",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "SpotMeteringMode".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // PhotoEffect at offset 40
+    {
+        let byte_offset = ((40i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    6 => "Custom",
+                    1 => "Vivid",
+                    4 => "Sepia",
+                    3 => "Smooth",
+                    0 => "Off",
+                    100 => "My Color Data",
+                    2 => "Neutral",
+                    5 => "B&W",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "PhotoEffect".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // ManualFlashOutput at offset 41
+    {
+        let byte_offset = ((41i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    0 => "n/a",
+                    1280 => "Full",
+                    32767 => "n/a",
+                    1284 => "Low",
+                    1282 => "Medium",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "ManualFlashOutput".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // ColorTone at offset 42
+    {
+        let byte_offset = ((42i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    0 => "Normal",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "ColorTone".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // SRAWQuality at offset 46
+    {
+        let byte_offset = ((46i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    2 => "sRAW2 (sRAW)",
+                    0 => "n/a",
+                    1 => "sRAW1 (mRAW)",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "SRAWQuality".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // FocusBracketing at offset 50
+    {
+        let byte_offset = ((50i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    0 => "Disable",
+                    1 => "Enable",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "FocusBracketing".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // Clarity at offset 51
+    {
+        let byte_offset = ((51i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    0 => "CODE_REFERENCE_SANITIZED",
+                    32767 => "n/a",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "Clarity".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
+    // HDR-PQ at offset 52
+    {
+        let byte_offset = ((52i32 - first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            if let Ok(value) = read_int16s(
+                &data[byte_offset..byte_offset + entry_size as usize],
+                byte_order,
+            ) {
+                let formatted = match value {
+                    0 => "Off",
+                    -1 => "n/a",
+                    1 => "On",
+                    _ => "Unknown",
+                };
+                tags.push((
+                    "HDR-PQ".to_string(),
+                    TagValue::String(formatted.to_string()),
+                ));
+            }
+        }
+    }
+
     Ok(tags)
 }
-
 fn process_canon_focallength(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
-    tracing::debug!("process_canon_focallength called with {} bytes", data.len());
-    // Use existing manual implementation from canon/binary_data.rs
-    use crate::implementations::canon::binary_data::extract_focal_length;
+    let mut tags = Vec::new();
+    // FocalType at offset 0
 
-    // Call the manual implementation
-    let result_map = extract_focal_length(data, 0, data.len(), byte_order)?;
+    // FocalLength at offset 1
 
-    // Convert HashMap<String, TagValue> to Vec<(String, TagValue)>
-    let tags: Vec<(String, TagValue)> = result_map.into_iter().collect();
-
-    tracing::debug!("Manual implementation extracted {} tags", tags.len());
     Ok(tags)
 }
 
 fn process_canon_shotinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    tracing::debug!("process_canon_shotinfo called with {} bytes", data.len());
-    // Use existing manual implementation from canon/binary_data.rs
-    use crate::implementations::canon::binary_data::extract_shot_info;
+    let mut tags = Vec::new();
+    // AutoISO at offset 1
 
-    // Call the manual implementation
-    let result_map = extract_shot_info(data, 0, data.len(), byte_order)?;
+    // OpticalZoomCode at offset 10
 
-    // Convert HashMap<String, TagValue> to Vec<(String, TagValue)>
-    let tags: Vec<(String, TagValue)> = result_map.into_iter().collect();
+    // CameraTemperature at offset 12
 
-    tracing::debug!("Manual implementation extracted {} tags", tags.len());
+    // FlashGuideNumber at offset 13
+
+    // AFPointsInFocus at offset 14
+
+    // FlashExposureComp at offset 15
+
+    // AutoExposureBracketing at offset 16
+
+    // AEBBracketValue at offset 17
+
+    // ControlMode at offset 18
+
+    // FocusDistanceUpper at offset 19
+    if data.len() >= 38 {
+        // TODO: Handle format int16u
+    }
+
+    // BaseISO at offset 2
+
+    // FocusDistanceLower at offset 20
+    if data.len() >= 40 {
+        // TODO: Handle format int16u
+    }
+
+    // FNumber at offset 21
+
+    // MeasuredEV2 at offset 23
+
+    // BulbDuration at offset 24
+
+    // CameraType at offset 26
+
+    // AutoRotate at offset 27
+
+    // NDFilter at offset 28
+
+    // SelfTimer2 at offset 29
+
+    // MeasuredEV at offset 3
+
+    // FlashOutput at offset 33
+
+    // TargetAperture at offset 4
+
+    // TargetExposureTime at offset 5
+
+    // ExposureCompensation at offset 6
+
+    // WhiteBalance at offset 7
+
+    // SlowShutter at offset 8
+
+    // SequenceNumber at offset 9
+
     Ok(tags)
 }
 
 fn process_canon_panorama(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    tracing::debug!("process_canon_panorama called with {} bytes", data.len());
-    // Use existing manual implementation from canon/binary_data.rs
-    use crate::implementations::canon::binary_data::extract_panorama;
+    let mut tags = Vec::new();
+    // PanoramaDirection at offset 5
 
-    // Call the manual implementation
-    let result_map = extract_panorama(data, 0, data.len(), byte_order)?;
-
-    // Convert HashMap<String, TagValue> to Vec<(String, TagValue)>
-    let tags: Vec<(String, TagValue)> = result_map.into_iter().collect();
-
-    tracing::debug!("Manual implementation extracted {} tags", tags.len());
     Ok(tags)
 }
 
@@ -2595,17 +3855,9 @@ fn process_canon_afinfo(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(Strin
 }
 
 fn process_canon_mycolors(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
-    tracing::debug!("process_canon_mycolors called with {} bytes", data.len());
-    // Use existing manual implementation from canon/binary_data.rs
-    use crate::implementations::canon::binary_data::extract_my_colors;
+    let mut tags = Vec::new();
+    // MyColorMode at offset 2
 
-    // Call the manual implementation
-    let result_map = extract_my_colors(data, 0, data.len(), byte_order)?;
-
-    // Convert HashMap<String, TagValue> to Vec<(String, TagValue)>
-    let tags: Vec<(String, TagValue)> = result_map.into_iter().collect();
-
-    tracing::debug!("Manual implementation extracted {} tags", tags.len());
     Ok(tags)
 }
 
@@ -4115,19 +5367,66 @@ fn process_canon_measuredcolor(
     data: &[u8],
     byte_order: ByteOrder,
 ) -> Result<Vec<(String, TagValue)>> {
+    tracing::debug!(
+        "process_canon_measuredcolor called with {} bytes",
+        data.len()
+    );
+    use crate::generated::Canon_pm::measuredcolor_binary_data::{
+        CanonMeasuredColorTable, MEASUREDCOLOR_TAGS,
+    };
+
+    let table = CanonMeasuredColorTable::new();
     let mut tags = Vec::new();
-    // MeasuredRGGB at offset 1
-    if data.len() >= 8 {
-        if let Ok(values) = read_int16u_array(&data[0..8], byte_order, 4) {
-            let value_str = values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            tags.push(("MeasuredRGGB".to_string(), TagValue::String(value_str)));
+
+    let entry_size = match table.default_format {
+        "int16s" | "int16u" => 2,
+        "int32s" | "int32u" => 4,
+        _ => 2, // Default to 2 bytes
+    };
+
+    tracing::debug!(
+        "MeasuredcolorBinaryData: format={}, first_entry={}, {} tag definitions",
+        table.default_format,
+        table.first_entry,
+        MEASUREDCOLOR_TAGS.len()
+    );
+
+    for (&offset, &tag_name) in MEASUREDCOLOR_TAGS.iter() {
+        let byte_offset = ((offset as i32 - table.first_entry) * entry_size) as usize;
+        if byte_offset + entry_size as usize <= data.len() {
+            let tag_value = match entry_size {
+                2 => {
+                    let raw_u16 = byte_order.read_u16(data, byte_offset)?;
+                    if table.default_format.contains("int16s") {
+                        TagValue::I32(raw_u16 as i16 as i32)
+                    } else {
+                        TagValue::U16(raw_u16)
+                    }
+                }
+                4 => {
+                    let raw_u32 = byte_order.read_u32(data, byte_offset)?;
+                    if table.default_format.contains("int32s") {
+                        TagValue::I32(raw_u32 as i32)
+                    } else {
+                        TagValue::U32(raw_u32)
+                    }
+                }
+                _ => continue,
+            };
+            tracing::debug!("Extracted tag {}: {} = {}", offset, tag_name, tag_value);
+            tags.push((tag_name.to_string(), tag_value));
+        } else {
+            tracing::debug!(
+                "Skipping tag {} ({}): offset {} exceeds data length {}",
+                offset,
+                tag_name,
+                byte_offset,
+                data.len()
+            );
         }
     }
 
+    tracing::debug!("process_canon_measuredcolor extracted {} tags", tags.len());
     Ok(tags)
 }
 
@@ -11447,13 +12746,20 @@ pub fn apply_print_conv(
     warnings: &mut Vec<String>,
 ) -> TagValue {
     match tag_id {
+        1 => crate::implementations::print_conv::focal_length_mm_print_conv(value),
+        2 => crate::implementations::print_conv::canon_selftimer_print_conv(value),
         3 => crate::implementations::print_conv::decimal_2_print_conv(value),
         4 => crate::implementations::print_conv::exposuretime_print_conv(value),
         5 => crate::implementations::print_conv::exposuretime_print_conv(value),
         6 => crate::implementations::print_conv::print_fraction(value),
+        10 => crate::implementations::print_conv::focal_length_mm_print_conv(value),
+        14 => crate::implementations::print_conv::focal_length_mm_print_conv(value),
         15 => crate::implementations::print_conv::print_fraction(value),
+        16 => crate::implementations::print_conv::focal_length_mm_print_conv(value),
         17 => crate::implementations::print_conv::print_fraction(value),
         22 => crate::implementations::print_conv::exposuretime_print_conv(value),
+        23 => crate::implementations::print_conv::focal_length_mm_print_conv(value),
+        24 => crate::implementations::print_conv::focal_length_mm_print_conv(value),
         16409 => crate::implementations::print_conv::lensinfo_print_conv(value),
         _ => {
             // Fall back to shared handling
@@ -11478,7 +12784,42 @@ pub fn apply_value_conv(
     value: &TagValue,
     _errors: &mut Vec<String>,
 ) -> Result<TagValue> {
-    Ok(value.clone())
+    match tag_id {
+        1 => crate::implementations::value_conv::canon_auto_iso_value_conv(value),
+        2 => crate::implementations::value_conv::canon_base_iso_value_conv(value),
+        3 => crate::implementations::value_conv::canon_div_32_plus_5_value_conv(value),
+        11 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        19 => crate::implementations::value_conv::canon_div_100_value_conv(value),
+        20 => crate::implementations::value_conv::canon_div_100_value_conv(value),
+        21 => crate::implementations::value_conv::canon_div_100_value_conv(value),
+        24 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        29 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        35 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        161 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        162 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        163 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        164 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        178 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        179 => crate::implementations::value_conv::reference_very_long_string_value_conv(value),
+        _ => {
+            // Fall back to missing handler for unknown expressions
+            if let Some(tag_kit) = CANON_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Canon",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+    }
 }
 
 /// Check if a tag has subdirectory processing

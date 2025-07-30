@@ -95,6 +95,8 @@ static PRINT_CONV_42: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
 static PRINT_CONV_43: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0 0 0 0".to_string(), "n/a (JPEG)");
+    map.insert("12 0 0 0".to_string(), "12");
+    map.insert("14 0 0 0".to_string(), "14");
     map.insert("16 16 16 0".to_string(), "16 x 3");
     map.insert("8 8 8 0".to_string(), "8 x 3");
     map
@@ -2649,6 +2651,7 @@ static PRINT_CONV_164: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_165: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("0".to_string(), "0");
     map.insert("1".to_string(), "0.1 m");
     map.insert("10".to_string(), "1.0 m");
     map.insert("11".to_string(), "1.1 m");
@@ -3270,6 +3273,7 @@ static PRINT_CONV_218: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_219: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("0".to_string(), "0");
     map.insert("1".to_string(), "0.1 m");
     map.insert("10".to_string(), "1.0 m");
     map.insert("11".to_string(), "1.1 m");
@@ -5474,6 +5478,7 @@ static PRINT_CONV_293: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_294: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("0".to_string(), "0");
     map.insert("1".to_string(), "0.1 m");
     map.insert("10".to_string(), "1.0 m");
     map.insert("11".to_string(), "1.1 m");
@@ -6174,6 +6179,7 @@ static PRINT_CONV_358: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_359: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("0".to_string(), "0");
     map.insert("1".to_string(), "0.1 m");
     map.insert("10".to_string(), "1.0 m");
     map.insert("11".to_string(), "1.1 m");
@@ -6693,7 +6699,24 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("$_ = $val ? Image::ExifTool::DecodeBits($val,\n            {\n                0 => 'MF',\n                1 => 'D',\n                2 => 'G',\n                3 => 'VR',\n                4 => '1', #PH\n                5 => 'FT-1', #PH/IB\n                6 => 'E', #PH (electromagnetic aperture mechanism)\n                7 => 'AF-P', #PH/IB\n            }) : 'AF';\n            # remove commas and change \"D G\" to just \"G\"\n            s/,//g; s/\\bD G\\b/G/;\n            s/ E\\b// and s/^(G )?/E /;      # put \"E\" at the start instead of \"G\"\n            s/ 1// and $_ = \"1 $_\";         # put \"1\" at start\n            s/FT-1 // and $_ .= ' FT-1';    # put \"FT-1\" at end\n            return $_;\n        "),
+            print_conv: PrintConvType::Expression(r#"$_ = $val ? Image::ExifTool::DecodeBits($val,
+            {
+                0 => 'MF',
+                1 => 'D',
+                2 => 'G',
+                3 => 'VR',
+                4 => '1', #PH
+                5 => 'FT-1', #PH/IB
+                6 => 'E', #PH (electromagnetic aperture mechanism)
+                7 => 'AF-P', #PH/IB
+            }) : 'AF';
+            # remove commas and change "D G" to just "G"
+            s/,//g; s/\bD G\b/G/;
+            s/ E\b// and s/^(G )?/E /;      # put "E" at the start instead of "G"
+            s/ 1// and $_ = "1 $_";         # put "1" at start
+            s/FT-1 // and $_ .= ' FT-1';    # put "FT-1" at end
+            return $_;
+        "#),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6770,7 +6793,26 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("for the D70, Bit 5 = Unused LE-NR Slowdown"),
-            print_conv: PrintConvType::Expression("\n            $_ = '';\n            unless ($val & 0x87) {\n                return 'Single-Frame' unless $val;\n                $_ = 'Single-Frame, ';\n            }\n            return $_ . Image::ExifTool::DecodeBits($val,\n            {\n                0 => 'Continuous',\n                1 => 'Delay',\n                2 => 'PC Control',\n                3 => 'Self-timer', #forum6281 (NC)\n                4 => 'Exposure Bracketing',\n                5 => $$self{Model}=~/D70\\b/ ? 'Unused LE-NR Slowdown' : 'Auto ISO',\n                6 => 'White-Balance Bracketing',\n                7 => 'IR Control',\n                8 => 'D-Lighting Bracketing', #forum6281 (NC)\n                11 => 'Pre-capture', #28  Z9 pre-release burst\n            });\n        "),
+            print_conv: PrintConvType::Expression(r"
+            $_ = '';
+            unless ($val & 0x87) {
+                return 'Single-Frame' unless $val;
+                $_ = 'Single-Frame, ';
+            }
+            return $_ . Image::ExifTool::DecodeBits($val,
+            {
+                0 => 'Continuous',
+                1 => 'Delay',
+                2 => 'PC Control',
+                3 => 'Self-timer', #forum6281 (NC)
+                4 => 'Exposure Bracketing',
+                5 => $$self{Model}=~/D70\b/ ? 'Unused LE-NR Slowdown' : 'Auto ISO',
+                6 => 'White-Balance Bracketing',
+                7 => 'IR Control',
+                8 => 'D-Lighting Bracketing', #forum6281 (NC)
+                11 => 'Pre-capture', #28  Z9 pre-release burst
+            });
+        "),
             value_conv: None,
             subdirectory: None,
         }),
@@ -7507,7 +7549,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("$val=~s/ / x /;\"$val um\""),
+            print_conv: PrintConvType::Expression(r#"$val=~s/ / x /;"$val um""#),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8024,7 +8066,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("$val !~ /undef/ ?  Image::ExifTool::Exif::PrintFraction($val) : \"n/a\" "),
+            print_conv: PrintConvType::Expression(r#"$val !~ /undef/ ?  Image::ExifTool::Exif::PrintFraction($val) : "n/a" "#),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8641,7 +8683,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_52),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (342, TagKitDef {
@@ -8652,7 +8694,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_53),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (432, TagKitDef {
@@ -8905,7 +8947,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_76),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (744, TagKitDef {
@@ -8927,7 +8969,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_78),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (820, TagKitDef {
@@ -10445,7 +10487,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("$val - 5"),
+            value_conv: Some("subtract_5_value_conv"),
             subdirectory: None,
         }),
         (1456, TagKitDef {
@@ -10676,7 +10718,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
-            value_conv: Some("$val/6"),
+            value_conv: Some("divide_6_value_conv"),
             subdirectory: None,
         }),
         (430, TagKitDef {
@@ -10687,7 +10729,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_165),
-            value_conv: Some("$val + 3"),
+            value_conv: Some("add_3_value_conv"),
             subdirectory: None,
         }),
         (434, TagKitDef {
@@ -10698,7 +10740,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val>0.99 ? \"Full\" : sprintf(\"%.1f%%\",$val*100)"),
-            value_conv: Some("2 ** (-$val/3)"),
+            value_conv: Some("power_neg_div_3_value_conv"),
             subdirectory: None,
         }),
         (444, TagKitDef {
@@ -10819,7 +10861,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_176),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (618, TagKitDef {
@@ -10841,7 +10883,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_178),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (696, TagKitDef {
@@ -11303,7 +11345,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_213),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (346, TagKitDef {
@@ -11314,7 +11356,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_214),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (436, TagKitDef {
@@ -11369,7 +11411,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
-            value_conv: Some("$val/6"),
+            value_conv: Some("divide_6_value_conv"),
             subdirectory: None,
         }),
         (450, TagKitDef {
@@ -11380,7 +11422,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_219),
-            value_conv: Some("$val + 3"),
+            value_conv: Some("add_3_value_conv"),
             subdirectory: None,
         }),
         (454, TagKitDef {
@@ -11391,7 +11433,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val>0.99 ? \"Full\" : sprintf(\"%.1f%%\",$val*100)"),
-            value_conv: Some("2 ** (-$val/3)"),
+            value_conv: Some("power_neg_div_3_value_conv"),
             subdirectory: None,
         }),
         (548, TagKitDef {
@@ -11534,7 +11576,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_232),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (660, TagKitDef {
@@ -11556,7 +11598,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_234),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (72, TagKitDef {
@@ -12678,7 +12720,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_288),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (346, TagKitDef {
@@ -12689,7 +12731,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_289),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (436, TagKitDef {
@@ -12744,7 +12786,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
-            value_conv: Some("$val/6"),
+            value_conv: Some("divide_6_value_conv"),
             subdirectory: None,
         }),
         (450, TagKitDef {
@@ -12755,7 +12797,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_294),
-            value_conv: Some("$val + 3"),
+            value_conv: Some("add_3_value_conv"),
             subdirectory: None,
         }),
         (454, TagKitDef {
@@ -12766,7 +12808,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val>0.99 ? \"Full\" : sprintf(\"%.1f%%\",$val*100)"),
-            value_conv: Some("2 ** (-$val/3)"),
+            value_conv: Some("power_neg_div_3_value_conv"),
             subdirectory: None,
         }),
         (548, TagKitDef {
@@ -12942,7 +12984,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_310),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (660, TagKitDef {
@@ -12964,7 +13006,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_312),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (72, TagKitDef {
@@ -13558,7 +13600,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_353),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (718, TagKitDef {
@@ -13624,7 +13666,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_359),
-            value_conv: Some("$val + 3"),
+            value_conv: Some("add_3_value_conv"),
             subdirectory: None,
         }),
         (734, TagKitDef {
@@ -13635,7 +13677,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val>0.99 ? \"Full\" : sprintf(\"%.1f%%\",$val*100)"),
-            value_conv: Some("2 ** (-$val/3)"),
+            value_conv: Some("power_neg_div_3_value_conv"),
             subdirectory: None,
         }),
         (742, TagKitDef {
@@ -13679,7 +13721,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
-            value_conv: Some("$val/6"),
+            value_conv: Some("divide_6_value_conv"),
             subdirectory: None,
         }),
         (754, TagKitDef {
@@ -13690,7 +13732,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val>0.99 ? \"Full\" : sprintf(\"%.1f%%\",$val*100)"),
-            value_conv: Some("2 ** (-$val/3)"),
+            value_conv: Some("power_neg_div_3_value_conv"),
             subdirectory: None,
         }),
         (832, TagKitDef {
@@ -14020,7 +14062,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val>0.99 ? \"Full\" : sprintf(\"%.1f%%\",$val*100)"),
-            value_conv: Some("2 ** (-$val/3)"),
+            value_conv: Some("power_neg_div_3_value_conv"),
             subdirectory: None,
         }),
         (346, TagKitDef {
@@ -14064,7 +14106,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
-            value_conv: Some("$val/6"),
+            value_conv: Some("divide_6_value_conv"),
             subdirectory: None,
         }),
         (358, TagKitDef {
@@ -14075,7 +14117,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val>0.99 ? \"Full\" : sprintf(\"%.1f%%\",$val*100)"),
-            value_conv: Some("2 ** (-$val/3)"),
+            value_conv: Some("power_neg_div_3_value_conv"),
             subdirectory: None,
         }),
         (502, TagKitDef {
@@ -14130,7 +14172,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Simple(&PRINT_CONV_389),
-            value_conv: Some("($val-104)/8"),
+            value_conv: Some("subtract_104_divide_8_value_conv"),
             subdirectory: None,
         }),
         (568, TagKitDef {

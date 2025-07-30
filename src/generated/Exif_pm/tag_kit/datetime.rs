@@ -135,7 +135,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: Some("fractional seconds for ModifyDate"),
             print_conv: PrintConvType::None,
-            value_conv: Some("$val=~s/ +$//; $val"),
+            value_conv: Some("trim_whitespace_value_conv"),
             subdirectory: None,
         }),
         (37521, TagKitDef {
@@ -146,7 +146,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: Some("fractional seconds for DateTimeOriginal"),
             print_conv: PrintConvType::None,
-            value_conv: Some("$val=~s/ +$//; $val"),
+            value_conv: Some("trim_whitespace_value_conv"),
             subdirectory: None,
         }),
         (37522, TagKitDef {
@@ -157,7 +157,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: Some("fractional seconds for CreateDate"),
             print_conv: PrintConvType::None,
-            value_conv: Some("$val=~s/ +$//; $val"),
+            value_conv: Some("trim_whitespace_value_conv"),
             subdirectory: None,
         }),
         (42082, TagKitDef {
@@ -189,7 +189,47 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("\n            my @a = map hex, split /[. ]+/, $val;\n            my @v;\n            while (@a >= 8) {\n                my $str = sprintf(\"%.2x:%.2x:%.2x.%.2x\", $a[3]&0x3f,\n                                 $a[2]&0x7f, $a[1]&0x7f, $a[0]&0x3f);\n                if ($a[3] & 0x80) { # date+timezone exist if BGF2 is set\n                    my $tz = $a[7] & 0x3f;\n                    my $bz = sprintf('%.2x', $tz);\n                    $bz = 100 if $bz =~ /[a-f]/i; # not BCD\n                    if ($bz < 26) {\n                        $tz = ($bz < 13 ? 0 : 26) - $bz;\n                    } elsif ($bz == 32) {\n                        $tz = 12.75;\n                    } elsif ($bz >= 28 and $bz <= 31) {\n                        $tz = 0;    # UTC\n                    } elsif ($bz < 100) {\n                        undef $tz;  # undefined or user-defined\n                    } elsif ($tz < 0x20) {\n                        $tz = (($tz < 0x10 ? 10 : 20) - $tz) - 0.5;\n                    } else {\n                        $tz = (($tz < 0x30 ? 53 : 63) - $tz) + 0.5;\n                    }\n                    if ($a[7] & 0x80) { # MJD format (/w UTC time)\n                        my ($h,$m,$s,$f) = split /[:.]/, $str;\n                        my $jday = sprintf('%x%.2x%.2x', reverse @a[4..6]);\n                        $str = ConvertUnixTime(($jday - 40587) * 24 * 3600\n                                 + ((($h+$tz) * 60) + $m) * 60 + $s) . \".$f\";\n                        $str =~ s/^(\\d+):(\\d+):(\\d+) /$1-$2-${3}T/;\n                    } else { # YYMMDD (Note: CinemaDNG 1.1 example seems wrong)\n                        my $yr = sprintf('%.2x',$a[6]) + 1900;\n                        $yr += 100 if $yr < 1970;\n                        $str = sprintf('%d-%.2x-%.2xT%s',$yr,$a[5],$a[4],$str);\n                    }\n                    $str .= TimeZoneString($tz*60) if defined $tz;\n                }\n                push @v, $str;\n                splice @a, 0, 8;\n            }\n            join ' ', @v;\n        "),
+            print_conv: PrintConvType::Expression(r#"
+            my @a = map hex, split /[. ]+/, $val;
+            my @v;
+            while (@a >= 8) {
+                my $str = sprintf("%.2x:%.2x:%.2x.%.2x", $a[3]&0x3f,
+                                 $a[2]&0x7f, $a[1]&0x7f, $a[0]&0x3f);
+                if ($a[3] & 0x80) { # date+timezone exist if BGF2 is set
+                    my $tz = $a[7] & 0x3f;
+                    my $bz = sprintf('%.2x', $tz);
+                    $bz = 100 if $bz =~ /[a-f]/i; # not BCD
+                    if ($bz < 26) {
+                        $tz = ($bz < 13 ? 0 : 26) - $bz;
+                    } elsif ($bz == 32) {
+                        $tz = 12.75;
+                    } elsif ($bz >= 28 and $bz <= 31) {
+                        $tz = 0;    # UTC
+                    } elsif ($bz < 100) {
+                        undef $tz;  # undefined or user-defined
+                    } elsif ($tz < 0x20) {
+                        $tz = (($tz < 0x10 ? 10 : 20) - $tz) - 0.5;
+                    } else {
+                        $tz = (($tz < 0x30 ? 53 : 63) - $tz) + 0.5;
+                    }
+                    if ($a[7] & 0x80) { # MJD format (/w UTC time)
+                        my ($h,$m,$s,$f) = split /[:.]/, $str;
+                        my $jday = sprintf('%x%.2x%.2x', reverse @a[4..6]);
+                        $str = ConvertUnixTime(($jday - 40587) * 24 * 3600
+                                 + ((($h+$tz) * 60) + $m) * 60 + $s) . ".$f";
+                        $str =~ s/^(\d+):(\d+):(\d+) /$1-$2-${3}T/;
+                    } else { # YYMMDD (Note: CinemaDNG 1.1 example seems wrong)
+                        my $yr = sprintf('%.2x',$a[6]) + 1900;
+                        $yr += 100 if $yr < 1970;
+                        $str = sprintf('%d-%.2x-%.2xT%s',$yr,$a[5],$a[4],$str);
+                    }
+                    $str .= TimeZoneString($tz*60) if defined $tz;
+                }
+                push @v, $str;
+                splice @a, 0, 8;
+            }
+            join ' ', @v;
+        "#),
             value_conv: Some("\n            my @a = split ' ', $val;\n            my @v;\n            push @v, join('.', map { sprintf('%.2x',$_) } splice(@a,0,8)) while @a >= 8;\n            join ' ', @v;\n        "),
             subdirectory: None,
         }),

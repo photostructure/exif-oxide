@@ -1545,7 +1545,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("Image::ExifTool::Exif::PrintFNumber($val)"),
-            value_conv: Some("2 ** (($val/8 - 1) / 2)"),
+            value_conv: Some("sony_fnumber_value_conv"),
             subdirectory: None,
         }),
         (2, TagKitDef {
@@ -1611,7 +1611,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("\"$val K\""),
-            value_conv: Some("$val * 100"),
+            value_conv: Some("multiply_100_value_conv"),
             subdirectory: None,
         }),
         (8, TagKitDef {
@@ -1633,7 +1633,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("Image::ExifTool::Exif::PrintFNumber($val)"),
-            value_conv: Some("2 ** (($val/8 - 1) / 2)"),
+            value_conv: Some("sony_fnumber_value_conv"),
             subdirectory: None,
         }),
         (2, TagKitDef {
@@ -1688,7 +1688,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("\"$val K\""),
-            value_conv: Some("$val * 100"),
+            value_conv: Some("multiply_100_value_conv"),
             subdirectory: None,
         }),
         (7, TagKitDef {
@@ -1721,7 +1721,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("used only in M and A exposure modes"),
             print_conv: PrintConvType::Expression("Image::ExifTool::Exif::PrintFNumber($val)"),
-            value_conv: Some("2 ** (($val/8 - 1) / 2)"),
+            value_conv: Some("sony_fnumber_value_conv"),
             subdirectory: None,
         }),
         (10, TagKitDef {
@@ -2260,7 +2260,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("file number in burst sequence"),
             print_conv: PrintConvType::None,
-            value_conv: Some("$val + 1"),
+            value_conv: Some("canon_plus_1_value_conv"),
             subdirectory: None,
         }),
         (4392, TagKitDef {
@@ -2458,7 +2458,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("file number in burst sequence"),
             print_conv: PrintConvType::None,
-            value_conv: Some("$val + 1"),
+            value_conv: Some("canon_plus_1_value_conv"),
             subdirectory: None,
         }),
         (4356, TagKitDef {
@@ -2656,7 +2656,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("file number in burst sequence"),
             print_conv: PrintConvType::None,
-            value_conv: Some("$val + 1"),
+            value_conv: Some("canon_plus_1_value_conv"),
             subdirectory: None,
         }),
         (4480, TagKitDef {
@@ -2832,7 +2832,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("file number in burst sequence"),
             print_conv: PrintConvType::None,
-            value_conv: Some("$val + 1"),
+            value_conv: Some("canon_plus_1_value_conv"),
             subdirectory: None,
         }),
         (4444, TagKitDef {
@@ -3030,7 +3030,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
-            value_conv: Some("$val / 10"),
+            value_conv: Some("canon_div_10_value_conv"),
             subdirectory: None,
         }),
         (4730, TagKitDef {
@@ -3041,7 +3041,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
-            value_conv: Some("$val / 10"),
+            value_conv: Some("canon_div_10_value_conv"),
             subdirectory: None,
         }),
         (4732, TagKitDef {
@@ -3052,7 +3052,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
-            value_conv: Some("$val / 10"),
+            value_conv: Some("canon_div_10_value_conv"),
             subdirectory: None,
         }),
         (4736, TagKitDef {
@@ -3261,7 +3261,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
-            value_conv: Some("$val / 10"),
+            value_conv: Some("canon_div_10_value_conv"),
             subdirectory: None,
         }),
         (4406, TagKitDef {
@@ -3272,7 +3272,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
-            value_conv: Some("$val / 10"),
+            value_conv: Some("canon_div_10_value_conv"),
             subdirectory: None,
         }),
         (4408, TagKitDef {
@@ -3283,7 +3283,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
-            value_conv: Some("$val / 10"),
+            value_conv: Some("canon_div_10_value_conv"),
             subdirectory: None,
         }),
         (4412, TagKitDef {

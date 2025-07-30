@@ -15,8 +15,13 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    
-    HashMap::new()
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "0.1");
+    map.insert("2".to_string(), "0.001");
+    map.insert("3".to_string(), "0.0001");
+    map.insert("4".to_string(), "0.00001");
+    map.insert("5".to_string(), "1e-6");
+    map
 });
 
 /// Get tag definitions for document category
@@ -88,7 +93,7 @@ pub fn get_document_tags() -> Vec<(u32, TagKitDef)> {
                 writable: false,
                 notes: None,
                 print_conv: PrintConvType::None,
-                value_conv: Some("length($val) > 32 ? \\$val : $val"),
+                value_conv: Some("reference_long_string_value_conv"),
                 subdirectory: None,
             },
         ),
@@ -102,7 +107,7 @@ pub fn get_document_tags() -> Vec<(u32, TagKitDef)> {
                 writable: false,
                 notes: None,
                 print_conv: PrintConvType::None,
-                value_conv: Some("length($val) > 32 ? \\$val : $val"),
+                value_conv: Some("reference_long_string_value_conv"),
                 subdirectory: None,
             },
         ),

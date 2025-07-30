@@ -598,7 +598,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("actual ISO used = BaseISO * AutoISO / 100"),
             print_conv: PrintConvType::Expression("sprintf(\"%.0f\",$val)"),
-            value_conv: Some("exp($val/32*log(2))*100"),
+            value_conv: Some("canon_auto_iso_value_conv"),
             subdirectory: None,
         }),
         (10, TagKitDef {
@@ -620,7 +620,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("sprintf(\"%.0f\",$val)"),
-            value_conv: Some("exp($val/32*log(2))*100/32"),
+            value_conv: Some("canon_base_iso_value_conv"),
             subdirectory: None,
         }),
         (3, TagKitDef {
@@ -631,7 +631,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("this is the Canon name for what could better be called MeasuredLV, and\n            should be close to the calculated LightValue for a proper exposure with most\n            models"),
             print_conv: PrintConvType::Expression("sprintf(\"%.2f\",$val)"),
-            value_conv: Some("$val / 32 + 5"),
+            value_conv: Some("canon_div_32_plus_5_value_conv"),
             subdirectory: None,
         }),
         (4, TagKitDef {
@@ -708,7 +708,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("these focal plane sizes are only valid for some models, and are affected by\n                digital zoom if applied"),
             print_conv: PrintConvType::Expression("sprintf(\"%.2f mm\",$val)"),
-            value_conv: Some("$val * 25.4 / 1000"),
+            value_conv: Some("canon_millimeter_value_conv"),
             subdirectory: None,
         }),
         (2, TagKitDef {
@@ -730,7 +730,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("sprintf(\"%.2f mm\",$val)"),
-            value_conv: Some("$val * 25.4 / 1000"),
+            value_conv: Some("canon_millimeter_value_conv"),
             subdirectory: None,
         }),
         (3, TagKitDef {
@@ -762,8 +762,8 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Expression("$_=$val,s/(\\d+)(\\d{4})/$1-$2/,$_"),
-            value_conv: Some("(($val&0xffc0)>>6)*10000+(($val>>16)&0xff)+(($val&0x3f)<<8)"),
+            print_conv: PrintConvType::Expression(r"$_=$val,s/(\d+)(\d{4})/$1-$2/,$_"),
+            value_conv: Some("canon_directory_number_value_conv"),
             subdirectory: None,
         }),
         (1, TagKitDef {
@@ -773,7 +773,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("the location of the upper 4 bits of the directory number is a mystery for\n                the EOS 30D, so the reported directory number will be incorrect for original\n                images with a directory number of 164 or greater"),
-            print_conv: PrintConvType::Expression("$_=$val,s/(\\d+)(\\d{4})/$1-$2/,$_"),
+            print_conv: PrintConvType::Expression(r"$_=$val,s/(\d+)(\d{4})/$1-$2/,$_"),
             value_conv: Some("\n                my $d = ($val & 0xffc00) >> 10;\n                # we know there are missing bits if directory number is < 100\n                $d += 0x40 while $d < 100;  # (repair the damage as best we can)\n                return $d*10000 + (($val&0x3ff)<<4) + (($val>>20)&0x0f);\n            "),
             subdirectory: None,
         }),
@@ -796,7 +796,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("there are reports that the ShutterCount changed when loading a settings file\n                on the 1DSmkII"),
             print_conv: PrintConvType::None,
-            value_conv: Some("($val>>16)|(($val&0xffff)<<16)"),
+            value_conv: Some("canon_file_number_value_conv"),
             subdirectory: None,
         }),
         (3, TagKitDef {
@@ -1136,7 +1136,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("$_=$val,s/(\\d+)(\\d{4})/$1-$2/,$_"),
+            print_conv: PrintConvType::Expression(r"$_=$val,s/(\d+)(\d{4})/$1-$2/,$_"),
             value_conv: None,
             subdirectory: None,
         }),
@@ -1379,7 +1379,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("\"Case $val\""),
-            value_conv: Some("$val + 1"),
+            value_conv: Some("canon_plus_1_value_conv"),
             subdirectory: None,
         }),
         (10, TagKitDef {

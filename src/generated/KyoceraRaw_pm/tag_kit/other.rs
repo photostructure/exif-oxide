@@ -15,8 +15,21 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    
-    HashMap::new()
+    let mut map = HashMap::new();
+    map.insert("10".to_string(), "50");
+    map.insert("11".to_string(), "64");
+    map.insert("12".to_string(), "80");
+    map.insert("13".to_string(), "100");
+    map.insert("14".to_string(), "125");
+    map.insert("15".to_string(), "160");
+    map.insert("16".to_string(), "200");
+    map.insert("17".to_string(), "250");
+    map.insert("18".to_string(), "320");
+    map.insert("19".to_string(), "400");
+    map.insert("7".to_string(), "25");
+    map.insert("8".to_string(), "32");
+    map.insert("9".to_string(), "40");
+    map
 });
 
 /// Get tag definitions for other category

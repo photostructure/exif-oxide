@@ -97,7 +97,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
-            value_conv: Some("$val ? 2 ** (6 - $val/8) : 0"),
+            value_conv: Some("sony_exposure_time_value_conv"),
             subdirectory: None,
         }),
         (0, TagKitDef {
@@ -108,7 +108,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
-            value_conv: Some("$val ? 2 ** (6 - $val/8) : 0"),
+            value_conv: Some("sony_exposure_time_value_conv"),
             subdirectory: None,
         }),
         (33, TagKitDef {
@@ -119,7 +119,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("A450, A500 and A550"),
             print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
-            value_conv: Some("$val ? 2 ** (6 - $val/8) : 0"),
+            value_conv: Some("sony_exposure_time_value_conv"),
             subdirectory: None,
         }),
         (35, TagKitDef {
@@ -130,7 +130,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("NEX-3/5/5C"),
             print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
-            value_conv: Some("$val ? 2 ** (6 - $val/8) : 0"),
+            value_conv: Some("sony_exposure_time_value_conv"),
             subdirectory: None,
         }),
         (39, TagKitDef {
@@ -141,7 +141,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("models other than the A450, A500, A550 and NEX-3/5/5C"),
             print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
-            value_conv: Some("$val ? 2 ** (6 - $val/8) : 0"),
+            value_conv: Some("sony_exposure_time_value_conv"),
             subdirectory: None,
         }),
         (6, TagKitDef {

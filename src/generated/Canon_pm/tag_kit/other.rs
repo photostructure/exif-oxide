@@ -3621,7 +3621,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("$val / 10"),
+            value_conv: Some("canon_div_10_value_conv"),
             subdirectory: None,
         }),
         (39, TagKitDef {
@@ -3797,7 +3797,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("FocusDistance tags are only extracted if FocusDistanceUpper is non-zero"),
             print_conv: PrintConvType::Expression("$val > 655.345 ? \"inf\" : \"$val m\""),
-            value_conv: Some("$val / 100"),
+            value_conv: Some("canon_div_100_value_conv"),
             subdirectory: None,
         }),
         (20, TagKitDef {
@@ -3808,7 +3808,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val > 655.345 ? \"inf\" : \"$val m\""),
-            value_conv: Some("$val / 100"),
+            value_conv: Some("canon_div_100_value_conv"),
             subdirectory: None,
         }),
         (21, TagKitDef {
@@ -3841,7 +3841,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("$val / 10"),
+            value_conv: Some("canon_div_10_value_conv"),
             subdirectory: None,
         }),
         (26, TagKitDef {
@@ -3951,7 +3951,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val > 655.345 ? \"inf\" : \"$val m\""),
-            value_conv: Some("$val / 100"),
+            value_conv: Some("canon_div_100_value_conv"),
             subdirectory: None,
         }),
         (21, TagKitDef {
@@ -3962,7 +3962,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$val > 655.345 ? \"inf\" : \"$val m\""),
-            value_conv: Some("$val / 100"),
+            value_conv: Some("canon_div_100_value_conv"),
             subdirectory: None,
         }),
         (23, TagKitDef {
@@ -4985,7 +4985,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("length($val) > 64 ? \\$val : $val"),
+            value_conv: Some("reference_very_long_string_value_conv"),
             subdirectory: None,
         }),
         (162, TagKitDef {
@@ -4996,7 +4996,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("length($val) > 64 ? \\$val : $val"),
+            value_conv: Some("reference_very_long_string_value_conv"),
             subdirectory: None,
         }),
         (163, TagKitDef {
@@ -5007,7 +5007,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("length($val) > 64 ? \\$val : $val"),
+            value_conv: Some("reference_very_long_string_value_conv"),
             subdirectory: None,
         }),
         (16385, TagKitDef {
@@ -5216,7 +5216,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("length($val) > 64 ? \\$val : $val"),
+            value_conv: Some("reference_very_long_string_value_conv"),
             subdirectory: None,
         }),
         (16400, TagKitDef {
@@ -5469,7 +5469,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("length($val) > 64 ? \\$val : $val"),
+            value_conv: Some("reference_very_long_string_value_conv"),
             subdirectory: None,
         }),
         (179, TagKitDef {
@@ -5480,7 +5480,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("length($val) > 64 ? \\$val : $val"),
+            value_conv: Some("reference_very_long_string_value_conv"),
             subdirectory: None,
         }),
         (18, TagKitDef {
@@ -5578,7 +5578,13 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("\n            my $rev = sprintf(\"%.8x\", $val);\n            my ($rel, $v1, $v2, $r1, $r2) = ($rev =~ /^(.)(.)(..)0?(.+)(..)$/);\n            my %r = ( a => 'Alpha ', b => 'Beta ', '0' => '' );\n            $rel = defined $r{$rel} ? $r{$rel} : \"Unknown($rel) \";\n            return \"$rel$v1.$v2 rev $r1.$r2\",\n        "),
+            print_conv: PrintConvType::Expression(r#"
+            my $rev = sprintf("%.8x", $val);
+            my ($rel, $v1, $v2, $r1, $r2) = ($rev =~ /^(.)(.)(..)0?(.+)(..)$/);
+            my %r = ( a => 'Alpha ', b => 'Beta ', '0' => '' );
+            $rel = defined $r{$rel} ? $r{$rel} : "Unknown($rel) ";
+            return "$rel$v1.$v2 rev $r1.$r2",
+        "#),
             value_conv: None,
             subdirectory: None,
         }),
@@ -5777,7 +5783,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("$val / 10"),
+            value_conv: Some("canon_div_10_value_conv"),
             subdirectory: None,
         }),
         (12, TagKitDef {
@@ -5810,7 +5816,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("$val / 10"),
+            value_conv: Some("canon_div_10_value_conv"),
             subdirectory: None,
         }),
         (0, TagKitDef {

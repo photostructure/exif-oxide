@@ -808,7 +808,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("$val=sprintf(\"%x\",$val);$val=~s/(.{3})$/\\.$1/;$val"),
+            print_conv: PrintConvType::Expression(r#"$val=sprintf("%x",$val);$val=~s/(.{3})$/\.$1/;$val"#),
             value_conv: None,
             subdirectory: None,
         }),
@@ -918,7 +918,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("$val=sprintf(\"%x\",$val);$val=~s/(.{3})$/\\.$1/;$val"),
+            print_conv: PrintConvType::Expression(r#"$val=sprintf("%x",$val);$val=~s/(.{3})$/\.$1/;$val"#),
             value_conv: None,
             subdirectory: None,
         }),
@@ -1039,7 +1039,15 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("3 numbers: 1. CS Value, 2. Min, 3. Max"),
-            print_conv: PrintConvType::Expression("\n            my ($a,$b,$c)=split ' ',$val;\n            if ($self->{Model} =~ /^E-1\\b/) {\n                $a-=$b; $c-=$b;\n                return \"CS$a (min CS0, max CS$c)\";\n            } else {\n                return \"$a (min $b, max $c)\";\n            }\n        "),
+            print_conv: PrintConvType::Expression(r#"
+            my ($a,$b,$c)=split ' ',$val;
+            if ($self->{Model} =~ /^E-1\b/) {
+                $a-=$b; $c-=$b;
+                return "CS$a (min CS0, max CS$c)";
+            } else {
+                return "$a (min $b, max $c)";
+            }
+        "#),
             value_conv: None,
             subdirectory: None,
         }),
@@ -1369,7 +1377,75 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("2, 3, 5 or  numbers: 1. Mode, 2. Shot number, 3. Mode bits, 5. Shutter mode,\n            6. Shooting mode (E-M1 II and later models)"),
-            print_conv: PrintConvType::Expression("\n            my ($a,$b,$c,$d,$e,$f) = split ' ',$val;\n            if ($b) {\n                $b = ', Shot ' . $b;\n            } else {\n                $b = '';\n            }\n            if (not defined $e or $e == 4) {   #KG: personally, I'd like to skip 'Electronic shutter' since this is the defacto default setting\n                $e = '';\n            } else {\n                $e = '; ' . ({ 0 => 'Mechanical shutter' , 2 => 'Anti-shock' }->{$e} || \"Unknown ($e)\");\n            }\n            if ($a == 5 and defined $c) {\n                $a = DecodeBits($c, { #6\n                    0 => 'AE',\n                    1 => 'WB',\n                    2 => 'FL',\n                    3 => 'MF',\n                    4 => 'ISO', #forum8906\n                    5 => 'AE Auto', #forum8906\n                    6 => 'Focus', #PH\n                }) . ' Bracketing';\n                $a =~ s/, /+/g;\n            } elsif ($f) { #25\n                  # for newer models (E-M1 and later) look at byte 6 for other shooting modes\n                  my %f = (\n                      # Mechanical shutter modes\n                      0x01 => 'Single Shot',\n                      0x02 => 'Sequential L',\n                      0x03 => 'Sequential H',\n                      0x07 => 'Sequential',\n                      # Anti-shock modes\n                      0x11 => 'Single Shot',\n                      0x12 => 'Sequential L',\n                      0x13 => 'Sequential H',\n                      0x14 => 'Self-Timer 12 sec',\n                      0x15 => 'Self-Timer 2 sec',\n                      0x16 => 'Custom Self-Timer',\n                      0x17 => 'Sequential',\n                      # Electronical shutter modes\n                      0x21 => 'Single Shot',\n                      0x22 => 'Sequential L',\n                      0x23 => 'Sequential H',\n                      0x24 => 'Self-Timer 2 sec',\n                      0x25 => 'Self-Timer 12 sec',\n                      0x26 => 'Custom Self-Timer',\n                      0x27 => 'Sequential',\n                      0x28 => 'Sequential SH1',\n                      0x29 => 'Sequential SH2',\n                      0x30 => 'HighRes Shot',  # only E-M models\n                      0x41 => 'ProCap H',\n                      0x42 => 'ProCap L',\n                      0x43 => 'ProCap',\n                      0x48 => 'ProCap SH1',\n                      0x49 => 'ProCap SH2',\n                  );\n                  $a = $f{$f} || \"Unknown ($f)\";\n            } else {\n                  my %a = (\n                      0 => 'Single Shot',\n                      1 => 'Continuous Shooting',\n                      2 => 'Exposure Bracketing',\n                      3 => 'White Balance Bracketing',\n                      4 => 'Exposure+WB Bracketing', #6\n                  );\n                  $a = $a{$a} || \"Unknown ($a)\";\n            }\n            return \"$a$b$e\";\n        "),
+            print_conv: PrintConvType::Expression(r#"
+            my ($a,$b,$c,$d,$e,$f) = split ' ',$val;
+            if ($b) {
+                $b = ', Shot ' . $b;
+            } else {
+                $b = '';
+            }
+            if (not defined $e or $e == 4) {   #KG: personally, I'd like to skip 'Electronic shutter' since this is the defacto default setting
+                $e = '';
+            } else {
+                $e = '; ' . ({ 0 => 'Mechanical shutter' , 2 => 'Anti-shock' }->{$e} || "Unknown ($e)");
+            }
+            if ($a == 5 and defined $c) {
+                $a = DecodeBits($c, { #6
+                    0 => 'AE',
+                    1 => 'WB',
+                    2 => 'FL',
+                    3 => 'MF',
+                    4 => 'ISO', #forum8906
+                    5 => 'AE Auto', #forum8906
+                    6 => 'Focus', #PH
+                }) . ' Bracketing';
+                $a =~ s/, /+/g;
+            } elsif ($f) { #25
+                  # for newer models (E-M1 and later) look at byte 6 for other shooting modes
+                  my %f = (
+                      # Mechanical shutter modes
+                      0x01 => 'Single Shot',
+                      0x02 => 'Sequential L',
+                      0x03 => 'Sequential H',
+                      0x07 => 'Sequential',
+                      # Anti-shock modes
+                      0x11 => 'Single Shot',
+                      0x12 => 'Sequential L',
+                      0x13 => 'Sequential H',
+                      0x14 => 'Self-Timer 12 sec',
+                      0x15 => 'Self-Timer 2 sec',
+                      0x16 => 'Custom Self-Timer',
+                      0x17 => 'Sequential',
+                      # Electronical shutter modes
+                      0x21 => 'Single Shot',
+                      0x22 => 'Sequential L',
+                      0x23 => 'Sequential H',
+                      0x24 => 'Self-Timer 2 sec',
+                      0x25 => 'Self-Timer 12 sec',
+                      0x26 => 'Custom Self-Timer',
+                      0x27 => 'Sequential',
+                      0x28 => 'Sequential SH1',
+                      0x29 => 'Sequential SH2',
+                      0x30 => 'HighRes Shot',  # only E-M models
+                      0x41 => 'ProCap H',
+                      0x42 => 'ProCap L',
+                      0x43 => 'ProCap',
+                      0x48 => 'ProCap SH1',
+                      0x49 => 'ProCap SH2',
+                  );
+                  $a = $f{$f} || "Unknown ($f)";
+            } else {
+                  my %a = (
+                      0 => 'Single Shot',
+                      1 => 'Continuous Shooting',
+                      2 => 'Exposure Bracketing',
+                      3 => 'White Balance Bracketing',
+                      4 => 'Exposure+WB Bracketing', #6
+                  );
+                  $a = $a{$a} || "Unknown ($a)";
+            }
+            return "$a$b$e";
+        "#),
             value_conv: None,
             subdirectory: None,
         }),
@@ -1436,7 +1512,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::Expression("\"$val kPa\""),
-            value_conv: Some("$val / 10"),
+            value_conv: Some("canon_div_10_value_conv"),
             subdirectory: None,
         }),
         (2305, TagKitDef {
@@ -1446,7 +1522,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("$val=~s/(\\S+) (\\S+)/$1 m, $2 ft/; $val"),
+            print_conv: PrintConvType::Expression(r"$val=~s/(\S+) (\S+)/$1 m, $2 ft/; $val"),
             value_conv: Some("my @a=split(\" \",$val); $_ /= 10 foreach @a; \"@a\""),
             subdirectory: None,
         }),
@@ -1578,7 +1654,10 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("coordinates expressed as a percent"),
-            print_conv: PrintConvType::Expression("\n            return 'n/a' if $val =~ /undef/;\n            sprintf(\"(%d%%,%d%%) (%d%%,%d%%)\", map {$_ * 100} split(\" \",$val));\n        "),
+            print_conv: PrintConvType::Expression(r#"
+            return 'n/a' if $val =~ /undef/;
+            sprintf("(%d%%,%d%%) (%d%%,%d%%)", map {$_ * 100} split(" ",$val));
+        "#),
             value_conv: Some("$val =~ s/\\S* //; $val"),
             subdirectory: None,
         }),
@@ -1963,7 +2042,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("$val=~s/ 0 0$//; \"$val C\""),
+            print_conv: PrintConvType::Expression(r#"$val=~s/ 0 0$//; "$val C""#),
             value_conv: None,
             subdirectory: None,
         }),
@@ -1985,7 +2064,10 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("\n            $val =~ /^\\0{4}/ ? 'Off' : 'On, ' .\n            (unpack('x44C',$val) & 0x01 ? 'Mode 1' : 'Mode 2')\n        "),
+            print_conv: PrintConvType::Expression(r"
+            $val =~ /^\0{4}/ ? 'Off' : 'On, ' .
+            (unpack('x44C',$val) & 0x01 ? 'Mode 1' : 'Mode 2')
+        "),
             value_conv: None,
             subdirectory: None,
         }),
@@ -2656,7 +2738,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("$val=~/\\./ or $val.=\".0\"; $val"),
+            print_conv: PrintConvType::Expression(r#"$val=~/\./ or $val.=".0"; $val"#),
             value_conv: None,
             subdirectory: None,
         }),
