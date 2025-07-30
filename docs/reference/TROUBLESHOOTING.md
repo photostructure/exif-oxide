@@ -266,6 +266,50 @@ This tells you exactly what needs to be implemented.
 - Inefficient lookup table access
 - Unnecessary memory allocations
 
+### Issue: ExifTool Nondeterministic Output
+
+**Symptoms:**
+
+- Compatibility tests fail intermittently 
+- Same image produces different outputs between ExifTool runs
+- "A or B" vs "B or A" differences in composite tags
+
+**Debug Steps:**
+
+1. **Identify nondeterministic tags:**
+
+   ```bash
+   # Run ExifTool multiple times to see if output varies
+   for i in {1..5}; do
+       exiftool -j image.jpg > output_$i.json
+   done
+   diff output_1.json output_2.json
+   ```
+
+2. **Check for known nondeterministic patterns:**
+   - `Composite:LensID` with Nikon cameras (most common)
+   - Any composite tag showing "X or Y" alternatives
+   - Tags involving pattern matching in ExifTool's Perl code
+
+3. **Understand the root cause:**
+   - Perl's hash randomization (introduced in Perl 5.18 for security)
+   - Affects ExifTool's composite tag calculations with ambiguous matches
+   - See [NONDETERMINISM.md](../../third-party/exiftool/doc/concepts/NONDETERMINISM.md) for details
+
+**Common Causes:**
+
+- ExifTool's hash key iteration order varies between runs
+- Multiple lens/camera variants match the same pattern
+- Nikon lens identification ambiguity is the primary case
+
+**Solutions:**
+
+Our compatibility system automatically normalizes nondeterministic patterns by sorting alternatives alphabetically:
+- `"AF-P DX Nikkor 18-55mm f/3.5-5.6G VR or AF-P DX Nikkor 18-55mm f/3.5-5.6G"` 
+- `"AF-P DX Nikkor 18-55mm f/3.5-5.6G or AF-P DX Nikkor 18-55mm f/3.5-5.6G VR"`
+
+Both normalize to the alphabetically sorted version for consistent comparison.
+
 ### Issue: Test Failures
 
 **Symptoms:**
