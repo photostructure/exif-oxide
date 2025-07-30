@@ -736,6 +736,108 @@ pub fn extract_jpeg_exif<R: Read + Seek>(mut reader: R) -> Result<Vec<u8>> {
     }
 }
 
+/// Extract IPTC data from JPEG APP13 segments
+///
+/// This function scans JPEG segments for APP13 segments containing Adobe Photoshop
+/// Image Resource Blocks with IPTC data (Resource ID 0x0404).
+pub fn extract_jpeg_iptc<R: Read + Seek>(
+    mut reader: R,
+) -> Result<std::collections::HashMap<String, crate::types::TagValue>> {
+    use crate::formats::parse_iptc_from_app13;
+    use std::collections::HashMap;
+
+    reader.seek(SeekFrom::Start(0))?;
+
+    // Read JPEG header
+    let mut header = [0u8; 2];
+    reader.read_exact(&mut header)?;
+
+    if header != [0xFF, 0xD8] {
+        return Err(ExifError::InvalidFormat(
+            "Not a valid JPEG file".to_string(),
+        ));
+    }
+
+    let mut combined_iptc_tags = HashMap::new();
+
+    // Scan for APP13 segments
+    loop {
+        let mut marker_bytes = [0u8; 2];
+        match reader.read_exact(&mut marker_bytes) {
+            Ok(_) => {}
+            Err(_) => break, // End of file
+        }
+
+        if marker_bytes[0] != 0xFF {
+            return Err(ExifError::InvalidFormat("Invalid JPEG marker".to_string()));
+        }
+
+        let marker = marker_bytes[1];
+
+        // Check for end of image or start of scan
+        if marker == 0xD9 || marker == 0xDA {
+            break;
+        }
+
+        // Skip segments without length
+        if marker == 0xD0
+            || marker == 0xD1
+            || marker == 0xD2
+            || marker == 0xD3
+            || marker == 0xD4
+            || marker == 0xD5
+            || marker == 0xD6
+            || marker == 0xD7
+            || marker == 0x01
+        {
+            continue;
+        }
+
+        // Read segment length
+        let mut length_bytes = [0u8; 2];
+        reader.read_exact(&mut length_bytes)?;
+        let length = u16::from_be_bytes(length_bytes) as usize;
+
+        if length < 2 {
+            return Err(ExifError::InvalidFormat(
+                "Invalid segment length".to_string(),
+            ));
+        }
+
+        // Check if this is an APP13 segment (0xED)
+        if marker == 0xED {
+            // Read APP13 segment data
+            let mut app13_data = vec![0u8; length - 2]; // Subtract 2 for length bytes
+            reader.read_exact(&mut app13_data)?;
+
+            // Try to parse IPTC from this APP13 segment
+            match parse_iptc_from_app13(&app13_data) {
+                Ok(iptc_tags) => {
+                    if !iptc_tags.is_empty() {
+                        // Merge IPTC tags from this segment
+                        combined_iptc_tags.extend(iptc_tags);
+                    }
+                }
+                Err(e) => {
+                    // Log error but continue scanning for other APP13 segments
+                    tracing::debug!("Failed to parse IPTC from APP13 segment: {}", e);
+                }
+            }
+        } else {
+            // Skip other segments
+            reader.seek(SeekFrom::Current((length - 2) as i64))?;
+        }
+    }
+
+    if combined_iptc_tags.is_empty() {
+        Err(ExifError::InvalidFormat(
+            "No APP13 segment with IPTC data found".to_string(),
+        ))
+    } else {
+        Ok(combined_iptc_tags)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
