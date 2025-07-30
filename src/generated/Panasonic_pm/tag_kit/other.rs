@@ -956,7 +956,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::Expression("sprintf(\"%.1f kPa\",$val)"),
-            value_conv: Some("$val / 10"),
+            value_conv: Some("canon_div_10_value_conv"),
             subdirectory: None,
         }),
         (137, TagKitDef {
@@ -1044,7 +1044,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: Some("converted to degrees of clockwise camera rotation"),
             print_conv: PrintConvType::None,
-            value_conv: Some("$val / 10"),
+            value_conv: Some("canon_div_10_value_conv"),
             subdirectory: None,
         }),
         (145, TagKitDef {
@@ -1384,7 +1384,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("relative to size of image.  \"n/a\" for manual focus"),
-            print_conv: PrintConvType::Expression("$val =~ /^4194303.999/ ? \"n/a\" : $val"),
+            print_conv: PrintConvType::Expression(r#"$val =~ /^4194303.999/ ? "n/a" : $val"#),
             value_conv: None,
             subdirectory: None,
         }),
@@ -1648,7 +1648,11 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("this number is unique, and contains the date of manufacture, but is not the\n            same as the number printed on the camera body"),
-            print_conv: PrintConvType::Expression("\n            return $val unless $val=~/^([A-Z][0-9A-Z]{2})(\\d{2})(\\d{2})(\\d{2})(\\d{4})/;\n            my $yr = $2 + ($2 < 70 ? 2000 : 1900);\n            return \"($1) $yr:$3:$4 no. $5\";\n        "),
+            print_conv: PrintConvType::Expression(r#"
+            return $val unless $val=~/^([A-Z][0-9A-Z]{2})(\d{2})(\d{2})(\d{2})(\d{4})/;
+            my $yr = $2 + ($2 < 70 ? 2000 : 1900);
+            return "($1) $yr:$3:$4 no. $5";
+        "#),
             value_conv: None,
             subdirectory: None,
         }),
@@ -2078,7 +2082,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("$val=~s/ +$//; $val"),
+            value_conv: Some("trim_whitespace_value_conv"),
             subdirectory: None,
         }),
         (82, TagKitDef {
@@ -2089,7 +2093,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("$val=~s/ +$//; $val"),
+            value_conv: Some("trim_whitespace_value_conv"),
             subdirectory: None,
         }),
         (83, TagKitDef {
@@ -2100,7 +2104,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("$val=~s/ +$//; $val"),
+            value_conv: Some("trim_whitespace_value_conv"),
             subdirectory: None,
         }),
         (84, TagKitDef {
@@ -2111,7 +2115,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("$val=~s/ +$//; $val"),
+            value_conv: Some("trim_whitespace_value_conv"),
             subdirectory: None,
         }),
         (89, TagKitDef {
@@ -2143,7 +2147,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("$val=~tr/ /./; $val"),
+            print_conv: PrintConvType::Expression(r"$val=~tr/ /./; $val"),
             value_conv: None,
             subdirectory: None,
         }),

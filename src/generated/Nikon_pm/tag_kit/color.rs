@@ -188,6 +188,7 @@ static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
 
 static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("0".to_string(), "0");
     map.insert("1".to_string(), "0.1 m");
     map.insert("10".to_string(), "1.0 m");
     map.insert("11".to_string(), "1.1 m");
@@ -269,7 +270,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 writable: false,
                 notes: None,
                 print_conv: PrintConvType::Simple(&PRINT_CONV_2),
-                value_conv: Some("($val-104)/8"),
+                value_conv: Some("subtract_104_divide_8_value_conv"),
                 subdirectory: None,
             },
         ),
@@ -283,7 +284,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 writable: false,
                 notes: None,
                 print_conv: PrintConvType::Simple(&PRINT_CONV_3),
-                value_conv: Some("($val-104)/8"),
+                value_conv: Some("subtract_104_divide_8_value_conv"),
                 subdirectory: None,
             },
         ),
@@ -423,7 +424,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 writable: false,
                 notes: None,
                 print_conv: PrintConvType::Simple(&PRINT_CONV_13),
-                value_conv: Some("$val + 3"),
+                value_conv: Some("add_3_value_conv"),
                 subdirectory: None,
             },
         ),

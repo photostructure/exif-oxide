@@ -56,45 +56,133 @@ pub enum SubDirectoryType {
 
 /// All tag kits for Sony_pm
 pub static SONY_PM_TAG_KITS: LazyLock<HashMap<u32, TagKitDef>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
+    let mut map: HashMap<u32, TagKitDef> = HashMap::new();
 
     // camera tags
     for (id, tag_def) in camera::get_camera_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // color tags
     for (id, tag_def) in color::get_color_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // core tags
     for (id, tag_def) in core::get_core_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // datetime tags
     for (id, tag_def) in datetime::get_datetime_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // exif_specific tags
     for (id, tag_def) in exif_specific::get_exif_specific_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // interop tags
     for (id, tag_def) in interop::get_interop_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // other tags
     for (id, tag_def) in other::get_other_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
     // thumbnail tags
     for (id, tag_def) in thumbnail::get_thumbnail_tags() {
+        // Priority insertion: preserve existing entries with subdirectory processors
+        match map.get(&id) {
+            Some(existing) if existing.subdirectory.is_some() => {
+                // Keep existing tag if it has a subdirectory processor
+                if tag_def.subdirectory.is_none() {
+                    // Skip this tag - existing one is more important
+                    continue;
+                }
+            }
+            _ => {}
+        }
         map.insert(id, tag_def);
     }
 
@@ -5249,7 +5337,66 @@ pub fn apply_value_conv(
     value: &TagValue,
     _errors: &mut Vec<String>,
 ) -> Result<TagValue> {
-    Ok(value.clone())
+    match tag_id {
+        0 => crate::implementations::value_conv::sony_exposure_time_value_conv(value),
+        1 => crate::implementations::value_conv::sony_fnumber_value_conv(value),
+        4 => crate::implementations::value_conv::canon_plus_1_value_conv(value),
+        6 => crate::implementations::value_conv::multiply_100_value_conv(value),
+        7 => crate::implementations::value_conv::multiply_100_value_conv(value),
+        11 => crate::implementations::value_conv::multiply_100_value_conv(value),
+        12 => crate::implementations::value_conv::multiply_100_value_conv(value),
+        14 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        20 => crate::implementations::value_conv::sony_iso_value_conv(value),
+        22 => crate::implementations::value_conv::sony_iso_value_conv(value),
+        23 => crate::implementations::value_conv::multiply_100_value_conv(value),
+        31 => crate::implementations::value_conv::sony_iso_value_conv(value),
+        32 => crate::implementations::value_conv::sony_fnumber_value_conv(value),
+        33 => crate::implementations::value_conv::sony_exposure_time_value_conv(value),
+        34 => crate::implementations::value_conv::sony_fnumber_value_conv(value),
+        35 => crate::implementations::value_conv::sony_exposure_time_value_conv(value),
+        36 => crate::implementations::value_conv::divide_8_value_conv(value),
+        37 => crate::implementations::value_conv::sony_iso_value_conv(value),
+        38 => crate::implementations::value_conv::divide_8_value_conv(value),
+        39 => crate::implementations::value_conv::sony_exposure_time_value_conv(value),
+        40 => crate::implementations::value_conv::sony_exposure_time_value_conv(value),
+        41 => crate::implementations::value_conv::sony_fnumber_value_conv(value),
+        42 => crate::implementations::value_conv::divide_8_value_conv(value),
+        44 => crate::implementations::value_conv::divide_8_value_conv(value),
+        47 => crate::implementations::value_conv::sony_exposure_time_value_conv(value),
+        48 => crate::implementations::value_conv::sony_fnumber_value_conv(value),
+        109 => crate::implementations::value_conv::sony_iso_value_conv(value),
+        111 => crate::implementations::value_conv::sony_iso_value_conv(value),
+        778 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        780 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        782 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        812 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        814 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        816 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        4404 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        4406 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        4408 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        4728 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        4730 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        4732 => crate::implementations::value_conv::canon_div_10_value_conv(value),
+        _ => {
+            // Fall back to missing handler for unknown expressions
+            if let Some(tag_kit) = SONY_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "Sony",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
+    }
 }
 
 /// Check if a tag has subdirectory processing

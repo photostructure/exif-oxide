@@ -347,7 +347,7 @@ pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("length($val) > 32 ? \\$val : $val"),
+            value_conv: Some("reference_long_string_value_conv"),
             subdirectory: None,
         }),
         (273, TagKitDef {
@@ -457,7 +457,7 @@ pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: Some("length($val) > 32 ? \\$val : $val"),
+            value_conv: Some("reference_long_string_value_conv"),
             subdirectory: None,
         }),
         (279, TagKitDef {

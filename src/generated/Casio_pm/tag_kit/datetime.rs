@@ -16,17 +16,31 @@ use std::sync::LazyLock;
 
 /// Get tag definitions for datetime category
 pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
-    vec![
-        (21, TagKitDef {
+    vec![(
+        21,
+        TagKitDef {
             id: 21,
             name: "FirmwareDate",
             format: "undef",
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Expression("\n            $_ = $val;\n            if (/^(\\d{2})(\\d{2})\\0\\0(\\d{2})(\\d{2})\\0\\0(\\d{2})(.{2})\\0{2}$/) {\n                my $yr = $1 + ($1 < 70 ? 2000 : 1900);\n                my $sec = $6;\n                $val = \"$yr:$2:$3 $4:$5\";\n                $val .= \":$sec\" if $sec=~/^\\d{2}$/;\n                return $val;\n            }\n            tr/\\0/./;  s/\\.+$//;\n            return \"Unknown ($_)\";\n        "),
+            print_conv: PrintConvType::Expression(
+                r#"
+            $_ = $val;
+            if (/^(\d{2})(\d{2})\0\0(\d{2})(\d{2})\0\0(\d{2})(.{2})\0{2}$/) {
+                my $yr = $1 + ($1 < 70 ? 2000 : 1900);
+                my $sec = $6;
+                $val = "$yr:$2:$3 $4:$5";
+                $val .= ":$sec" if $sec=~/^\d{2}$/;
+                return $val;
+            }
+            tr/\0/./;  s/\.+$//;
+            return "Unknown ($_)";
+        "#,
+            ),
             value_conv: None,
             subdirectory: None,
-        }),
-    ]
+        },
+    )]
 }

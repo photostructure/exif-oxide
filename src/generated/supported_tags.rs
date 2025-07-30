@@ -7,10 +7,10 @@
 pub const SUPPORTED_TAG_COUNT: usize = 0;
 
 /// Total number of supported composite tags
-pub const SUPPORTED_COMPOSITE_TAG_COUNT: usize = 32;
+pub const SUPPORTED_COMPOSITE_TAG_COUNT: usize = 61;
 
 /// Total number of all supported tags
-pub const TOTAL_SUPPORTED_TAG_COUNT: usize = 32;
+pub const TOTAL_SUPPORTED_TAG_COUNT: usize = 61;
 
 /// All supported standard tag names
 pub const SUPPORTED_TAG_NAMES: &[&str] = &[];
@@ -19,36 +19,61 @@ pub const SUPPORTED_TAG_NAMES: &[&str] = &[];
 pub const SUPPORTED_COMPOSITE_TAG_NAMES: &[&str] = &[
     "2",
     "Aperture",
+    "AutoFocus",
+    "AvgBitrate",
     "BlueBalance",
+    "CDDBDiscPlayTime",
+    "CDDBDiscTracks",
     "CFAPattern",
     "CircleOfConfusion",
+    "ConditionalFEC",
+    "ContrastDetectAF",
     "DateTimeOriginal",
+    "DigitalZoom",
+    "DriveMode",
+    "FileNumber",
+    "FlashType",
     "FocalLength35efl",
     "GPSAltitude",
+    "GPSAltitude2",
+    "GPSAltitudeRef",
+    "GPSAltitudeRef2",
     "GPSDateTime",
     "GPSDestLatitude",
     "GPSDestLongitude",
     "GPSLatitude",
+    "GPSLatitude2",
     "GPSLongitude",
+    "GPSLongitude2",
     "GPSPosition",
     "HyperfocalDistance",
     "ImageSize",
     "JpgFromRaw",
+    "Lens",
+    "Lens35efl",
     "LensID",
+    "LensSpec",
     "LightValue",
     "Megapixels",
+    "OriginalDecisionData",
     "OtherImage",
+    "PhaseDetectAF",
     "PreviewImage",
     "PreviewImageSize",
     "PreviewJXL",
     "RedBalance",
+    "RedEyeReduction",
+    "Rotation",
     "ScaleFactor35efl",
+    "ShootingMode",
+    "ShutterCurtainHack",
     "ShutterSpeed",
     "SubSecCreateDate",
     "SubSecDateTimeOriginal",
     "SubSecModifyDate",
     "ThumbnailImage",
     "ThumbnailTIFF",
+    "WB_RGGBLevels",
 ];
 
 /// Tag counts by group
