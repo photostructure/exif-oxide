@@ -4,7 +4,7 @@
 
 use anyhow::Result;
 use std::fs;
-use std::collections::HashMap;
+use std::collections::{HashMap, BTreeMap};
 use std::time::Instant;
 use crate::common::{escape_string, format_rust_string};
 use crate::schemas::tag_kit::{TagKitExtraction, TagKit, ExtractedTable};
@@ -1837,7 +1837,7 @@ fn generate_canon_camerasettings_parser(code: &mut String, table_name: &str) -> 
                     if let Some(print_conv_data) = print_conv["data"].as_object() {
                         code.push_str(&format!("                let formatted = match value {{\n"));
                         // Group fractional keys by their base integer value
-                        let mut grouped_keys: HashMap<i16, Vec<(&String, &serde_json::Value)>> = HashMap::new();
+                        let mut grouped_keys: BTreeMap<i16, Vec<(&String, &serde_json::Value)>> = BTreeMap::new();
                         for (key, val) in print_conv_data {
                             let key_val = parse_fractional_key_as_i16(key);
                             grouped_keys.entry(key_val).or_insert_with(Vec::new).push((key, val));
