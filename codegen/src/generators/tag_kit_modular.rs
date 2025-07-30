@@ -9,7 +9,7 @@ use std::time::Instant;
 use crate::common::{escape_string, format_rust_string};
 use crate::schemas::tag_kit::{TagKitExtraction, TagKit, ExtractedTable};
 use super::tag_kit_split::{split_tag_kits, TagCategory};
-use crate::conv_registry::{lookup_printconv, lookup_valueconv, lookup_tag_specific_printconv};
+use crate::conv_registry::{lookup_printconv, lookup_valueconv, lookup_tag_specific_printconv, classify_valueconv_expression, ValueConvType};
 use serde::Deserialize;
 use tracing::{debug, info};
 
@@ -292,44 +292,88 @@ fn generate_value_conv_function(
             });
     }
     
-    // Now collect all tags that need ValueConv (lookups will be fast with cached normalization)
+    // Now collect and classify all tags that need ValueConv 
     // Use HashMap to deduplicate by tag_id (keep first occurrence)
-    let mut tag_convs_map: std::collections::HashMap<u32, (String, String)> = std::collections::HashMap::new();
+    let mut tag_function_convs: std::collections::HashMap<u32, (String, String)> = std::collections::HashMap::new();
+    let mut tag_compiled_convs: std::collections::HashMap<u32, crate::expression_compiler::CompiledExpression> = std::collections::HashMap::new();
     
     for tag_kit in &extraction.tag_kits {
         let tag_id = parse_fractional_key_as_u32(&tag_kit.tag_id);
         
         // Skip if we already have a ValueConv for this tag_id
-        if tag_convs_map.contains_key(&tag_id) {
+        if tag_function_convs.contains_key(&tag_id) || tag_compiled_convs.contains_key(&tag_id) {
             continue;
         }
         
         // Check if tag has ValueConv
         if let Some(value_conv_expr) = &tag_kit.value_conv {
-            if let Some((module_path, func_name)) = lookup_valueconv(value_conv_expr, module_name) {
-                tag_convs_map.insert(tag_id, (module_path.to_string(), func_name.to_string()));
+            // Use new classification system
+            match classify_valueconv_expression(value_conv_expr, module_name) {
+                ValueConvType::CompiledExpression(compiled_expr) => {
+                    debug!("Compiling arithmetic expression for tag {}: {}", tag_kit.name, value_conv_expr);
+                    tag_compiled_convs.insert(tag_id, compiled_expr);
+                }
+                ValueConvType::CustomFunction(module_path, func_name) => {
+                    tag_function_convs.insert(tag_id, (module_path.to_string(), func_name.to_string()));
+                }
             }
         }
     }
     
-    // Convert to sorted Vec for deterministic output
-    let mut tag_convs: Vec<(u32, String, String)> = tag_convs_map
+    // Convert to sorted Vecs for deterministic output
+    let mut function_convs: Vec<(u32, String, String)> = tag_function_convs
         .into_iter()
         .map(|(id, (module_path, func_name))| (id, module_path, func_name))
         .collect();
+    function_convs.sort_by_key(|(id, _, _)| *id);
     
-    if tag_convs.is_empty() {
-        // No ValueConv functions - return value unchanged
+    let mut compiled_convs: Vec<(u32, crate::expression_compiler::CompiledExpression)> = tag_compiled_convs
+        .into_iter()
+        .collect();
+    compiled_convs.sort_by_key(|(id, _)| *id);
+    
+    if function_convs.is_empty() && compiled_convs.is_empty() {
+        // No ValueConv processing needed - return value unchanged
         code.push_str("    Ok(value.clone())\n");
     } else {
-        // Generate optimized match with direct function calls
+        // Generate optimized match with both function calls and inline arithmetic
         code.push_str("    match tag_id {\n");
         
-        // Sort by tag_id for deterministic output
-        tag_convs.sort_by_key(|(id, _, _)| *id);
+        // Generate function call cases
+        for (tag_id, module_path, func_name) in function_convs {
+            if func_name == "missing_value_conv" {
+                // Special case: missing_value_conv needs 5 arguments (tag_id, tag_name, group, expr, value)
+                code.push_str(&format!("        {tag_id} => {{\n"));
+                code.push_str(&format!("            if let Some(tag_kit) = {const_name}.get(&tag_id) {{\n"));
+                code.push_str("                if let Some(expr) = tag_kit.value_conv {\n");
+                code.push_str(&format!("                    Ok({}::{}(tag_id, &tag_kit.name, \"{}\", expr, value))\n", module_path, func_name, module_name_to_group(module_name)));
+                code.push_str("                } else {\n");
+                code.push_str("                    Ok(value.clone())\n");
+                code.push_str("                }\n");
+                code.push_str("            } else {\n");
+                code.push_str("                Ok(value.clone())\n");
+                code.push_str("            }\n");
+                code.push_str("        },\n");
+            } else {
+                code.push_str(&format!("        {tag_id} => {}::{}(value),\n", module_path, func_name));
+            }
+        }
         
-        for (tag_id, module_path, func_name) in tag_convs {
-            code.push_str(&format!("        {tag_id} => {}::{}(value),\n", module_path, func_name));
+        // Generate compiled expression cases (inline arithmetic)
+        for (tag_id, compiled_expr) in compiled_convs {
+            let inline_code = compiled_expr.generate_rust_code();
+            code.push_str(&format!("        {tag_id} => {{\n"));
+            code.push_str(&format!("            // Compiled arithmetic: {}\n", compiled_expr.original_expr));
+            
+            // Indent the generated code properly
+            for line in inline_code.lines() {
+                if !line.trim().is_empty() {
+                    code.push_str(&format!("            {}\n", line));
+                } else {
+                    code.push_str("\n");
+                }
+            }
+            code.push_str("        },\n");
         }
         
         code.push_str("        _ => {\n");

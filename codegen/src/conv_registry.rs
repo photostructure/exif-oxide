@@ -124,11 +124,6 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
     // Canon ValueConv expressions (normalized)
     m.insert("exp($val / 32 * log(2)) * 100", ("crate::implementations::value_conv", "canon_auto_iso_value_conv"));
     m.insert("exp($val / 32 * log(2)) * 100 / 32", ("crate::implementations::value_conv", "canon_base_iso_value_conv"));
-    m.insert("$val / 32 + 5", ("crate::implementations::value_conv", "canon_div_32_plus_5_value_conv"));
-    m.insert("$val / 10", ("crate::implementations::value_conv", "canon_div_10_value_conv"));
-    m.insert("$val / 100", ("crate::implementations::value_conv", "canon_div_100_value_conv"));
-    m.insert("$val + 1", ("crate::implementations::value_conv", "canon_plus_1_value_conv"));
-    m.insert("$val * 25.4 / 1000", ("crate::implementations::value_conv", "canon_millimeter_value_conv"));
     m.insert("($val >> 16) | (($val & 0xffff) << 16)", ("crate::implementations::value_conv", "canon_file_number_value_conv"));
     m.insert("(($val & 0xffc0) >> 6) * 10000 + (($val >> 16) & 0xff) + (($val & 0x3f) << 8)", ("crate::implementations::value_conv", "canon_directory_number_value_conv"));
 
@@ -150,14 +145,7 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
     // Common simple patterns found in supported tags
     m.insert("$val=~s/ +$//; $val", ("crate::implementations::value_conv", "trim_whitespace_value_conv"));
     m.insert("$val=~s/^.*: //;$val", ("crate::implementations::value_conv", "remove_prefix_colon_value_conv"));
-    m.insert("$val * 100", ("crate::implementations::value_conv", "multiply_100_value_conv"));
-    m.insert("$val / 8", ("crate::implementations::value_conv", "divide_8_value_conv"));
-    m.insert("$val / 256", ("crate::implementations::value_conv", "divide_256_value_conv"));
-    m.insert("$val - 5", ("crate::implementations::value_conv", "subtract_5_value_conv"));
-    m.insert("$val + 3", ("crate::implementations::value_conv", "add_3_value_conv"));
     m.insert("2 ** (-$val/3)", ("crate::implementations::value_conv", "power_neg_div_3_value_conv"));
-    m.insert("$val/6", ("crate::implementations::value_conv", "divide_6_value_conv"));
-    m.insert("($val-104)/8", ("crate::implementations::value_conv", "subtract_104_divide_8_value_conv"));
     m.insert("$val ? 10 / $val : 0", ("crate::implementations::value_conv", "reciprocal_10_value_conv"));
     m.insert("$val ? 2 ** (6 - $val/8) : 0", ("crate::implementations::value_conv", "sony_exposure_time_value_conv"));
     m.insert("$val ? exp(($val/8-6)*log(2))*100 : $val", ("crate::implementations::value_conv", "sony_iso_value_conv"));
