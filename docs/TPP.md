@@ -128,6 +128,31 @@ Include this section if there are specific techniques, patterns, or consideratio
 - **Performance notes**: [Any optimization considerations]
 - **ExifTool translation notes**: [Specific perl → rust patterns to follow]
 
+## Integration Requirements
+
+**CRITICAL**: Building without integrating is failure. Don't accept tasks that build "shelf-ware."
+
+Every feature must include:
+- [ ] **Activation**: Feature is enabled/used by default where appropriate
+- [ ] **Consumption**: Existing code paths actively use the new capability  
+- [ ] **Measurement**: Can prove the feature is working via metrics/output changes
+- [ ] **Cleanup**: Old approach is deprecated/removed, obsolete code deleted
+
+**Red Flag Check**: If a task seems like "build a tool/module but don't wire it anywhere," ask for clarity. We're not writing tools to sit on a shelf - everything must get us closer to "ExifTool in Rust for PhotoStructure."
+
+## Working Definition of "Complete"
+
+*Use these criteria to evaluate your own work - adapt to your specific context:*
+
+A feature is complete when:
+- ✅ **System behavior changes** - something works differently/better than before
+- ✅ **Default usage** - new capability is used automatically, not opt-in  
+- ✅ **Old path removed** - previous workarounds/hacks are eliminated
+- ❌ Code exists but isn't used *(example: "parser implemented but codegen still uses old logic")*
+- ❌ Feature works "if you call it directly" *(example: "new API exists but nothing calls it")*
+
+*Note: These are evaluation guidelines, not literal requirements for every task.*
+
 ## Prerequisites
 
 - [Dependency] → [TPP link] → verify with `[command/test]`
