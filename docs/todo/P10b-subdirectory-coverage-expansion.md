@@ -8,47 +8,42 @@
 
 ## MANDATORY READING
 
-These are relevant, mandatory, prerequisite reading for every task:
+- [CLAUDE.md](../CLAUDE.md) - Project-wide rules
+- [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md) - Core principle #1
 
-- [@CLAUDE.md](../CLAUDE.md)
-- [@docs/TRUST-EXIFTOOL.md](../docs/TRUST-EXIFTOOL.md).
+## ⚠️ CRITICAL: Assume Concurrent Edits
+
+Several engineers work on the **same source tree** simultaneously. If you encounter a build error that isn't near code you wrote:
+
+1. **STOP IMMEDIATELY**
+2. Tell the user about the error
+3. Wait for user to fix and give you the all-clear
 
 ## DO NOT BLINDLY FOLLOW THIS PLAN
 
-Building the wrong thing (because you made an assumption or misunderstood something) is **much** more expensive than asking for guidance or clarity.
+**Red flags = STOP and ask:**
 
-The authors tried their best, but also assume there will be aspects of this plan that may be odd, confusing, or unintuitive to you. Communication is hard!
+- "Optimize" or "improve" ExifTool logic (violates trust principle)
+- Debugging >1 hour (you're probably on wrong path)
+- Would break tests (tests are sacred)
+- Confused about approach (clarification prevents waste)
 
-**FIRSTLY**, follow and study **all** referenced source and documentation. Ultrathink, analyze, and critique the given overall TPP and the current task breakdown.
-
-If anything doesn't make sense, or if there are alternatives that may be more optimal, ask clarifying questions. We all want to drive to the best solution and are delighted to help clarify issues and discuss alternatives. DON'T BE SHY!
+Building the wrong thing costs 10x more than asking questions.
 
 ## KEEP THIS UPDATED
 
-This TPP is a living document. **MAKE UPDATES AS YOU WORK**. Be concise. Avoid lengthy prose!
+Update as you work:
 
-**What to Update:**
+- 🟢 **Done**: [Task] → [commit/file link]
+- 🟡 **WIP**: [Task] → [current blocker]
+- 🔴 **Blocked**: [Task] → [what's needed]
+- 🔍 **Found**: [Discovery] → [why it matters]
 
-- 🔍 **Discoveries**: Add findings with links to source code/docs (in relevant sections)
-- 🤔 **Decisions**: Document WHY you chose approach A over B (in "Work Completed")
-- ⚠️ **Surprises**: Note unexpected behavior or assumptions that were wrong (in "Gotchas")
-- ✅ **Progress**: Move completed items from "Remaining Tasks" to "Work Completed"
-- 🚧 **Blockers**: Add new prerequisites or dependencies you discover
+Rules:
 
-**When to Update:**
-
-- After each research session (even if you found nothing - document that!)
-- When you realize the original approach won't work
-- When you discover critical context not in the original TPP
-- Before context switching to another task
-
-**Keep the content tight**
-
-- If there were code examples that are now implemented, replace the code with a link to the final source.
-- If there is a lengthy discussion that resulted in failure or is now better encoded in source, summarize and link to the final source.
-- Remember: the `ReadTool` doesn't love reading files longer than 500 lines, and that can cause dangerous omissions of context.
-
-The Engineers of Tomorrow are interested in your discoveries, not just your final code!
+1. Task is ONLY done when 100% complete + tested
+2. Every task needs automated test proving it works
+3. Completed TPPs → `docs/done/YYYYMMDD-PXX-description.md`
 
 ## Background & Context
 
@@ -77,12 +72,14 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
 ### Current Architecture
 
 **Working Components**:
+
 - Tag kit extracts subdirectory definitions with conditions
 - Code generator creates binary data parsers
 - Runtime integration processes subdirectory tags
 - OR condition parser handles `$count == 1273 or $count == 1275`
 
 **Missing Components**:
+
 - Model regex matching (`$$self{Model} =~ /EOS 5D/`)
 - Value pointer patterns (`$$valPt =~ /^\xae/`)
 - Format checks (`$format eq "int32u"`)
@@ -94,17 +91,20 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
 ### Infrastructure (95% Complete)
 
 ✅ **Tag Kit Subdirectory Support**:
+
 - Enhanced extractor detects and extracts SubDirectory references
 - Schema supports SubDirectoryInfo with extracted tables
 - Code generator creates binary data parsing functions
 - Runtime integration in Canon module works correctly
 
 ✅ **OR Condition Fix**:
+
 - Parser handles `$count == X or $count == Y` patterns
 - Canon T3i ColorData6 now correctly parsed
 - Both `or` and `||` operators supported
 
 ✅ **Discovery Tool**:
+
 - Found 1,865 subdirectories (2.5x initial estimate)
 - Classifies patterns: simple (61.6%), binary_data (38.4%)
 - Generates coverage reports and CI integration
@@ -112,22 +112,26 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
 ### Phase 1: Enhanced Condition Parsing (COMPLETED 2025-07-25)
 
 ✅ **Task 1.1: Extended Count Condition Parser**
+
 - Implemented `parse_subdirectory_condition()` in `tag_kit_modular.rs`
 - Handles count comparisons with OR conditions
 - Generates proper match arms for dispatch
 
 ✅ **Task 1.2: Model Regex Pattern Support**
+
 - Created `SubdirectoryCondition` enum with Model, Count, Format, Runtime variants
 - Implemented `ModelPattern` struct with regex and negation support
 - Parser detects `$$self{Model}` patterns and extracts regex
 - Generates TODO comments for runtime evaluation (temporary)
 
 ✅ **Task 1.3: Format Check Support**
+
 - Added `FormatPattern` struct for format equality checks
 - Parser handles `$format eq "type"` patterns
 - Generates TODO comments for runtime evaluation (temporary)
 
 ✅ **Additional Work: Cross-Module Reference Handling**
+
 - Created `analyze_cross_module_refs.pl` - found 402 cross-module references
 - Built `shared_tables.pl` to extract commonly referenced tables
 - Enhanced generator to detect cross-module references with `is_cross_module_reference()`
@@ -140,6 +144,7 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
 ### Phase 4: Systematic Coverage Expansion (COMPLETED 2025-07-25) ✅
 
 **Task 4.1: Coverage Tracking Dashboard** ✅
+
 - Created `coverage_dashboard.pl` - comprehensive analysis of all 217 ExifTool modules
 - Identifies high-priority modules based on `required: true` tags from `tag-metadata.json`
 - Priority scoring: 50 points per required tag + subdirectory bonuses
@@ -147,6 +152,7 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
 - Outputs markdown, JSON, and HTML formats for integration
 
 **Task 4.2: Semi-Automated Config Generation** ✅
+
 - Created `auto_config_gen.pl` - generates `tag_kit.json` configurations automatically
 - Analyzes ExifTool modules to extract table structures and subdirectory patterns
 - Handles multiple table declaration formats (`%table = (` and `%Image::ExifTool::Module::table = (`)
@@ -154,15 +160,17 @@ The Engineers of Tomorrow are interested in your discoveries, not just your fina
 - Generated configs for high-priority modules: XMP, IPTC, MWG, FlashPix, RIFF, PDF, PNG
 
 **Task 4.3: Low-Hanging Fruit Module Implementation** ✅
+
 - **XMP**: 63 required tags - highest priority module config generated
-- **IPTC**: 6 required tags + subdirectory support - config generated  
+- **IPTC**: 6 required tags + subdirectory support - config generated
 - **MWG**: 3 required tags (Metadata Working Group) - config generated
 - **FlashPix**: 16 subdirectories with cross-module references - config generated
 - **RIFF**: 4 required tags for multimedia files - config generated
-- **PDF**: High subdirectory count for document metadata - config generated  
+- **PDF**: High subdirectory count for document metadata - config generated
 - **PNG**: Image format support with required tags - config generated
 
 **Phase 4 Results:**
+
 - **Priority-Based Selection**: Modules with `required: true` tags get 50 points each
 - **20+ new configurations** generated for highest-priority modules
 - **Enhanced Pattern Recognition**: Supports both standard and full-path table declarations
@@ -184,9 +192,10 @@ Created expanded Sony configuration with 27 tables covering all major Sony camer
 Created comprehensive QuickTime configuration covering 20 major tables (Movie, Track, Meta, ItemList, UserData, etc.). Successfully extracted 371 tags with 123 subdirectory references. Coverage increased from 0% to 15.3% (28/183 implemented). Generated 70 subdirectory processing functions.
 
 **Phase 2 Results:**
+
 - **Total coverage improvement**: From 8.95% to 10.79% overall
 - **Nikon**: 218 subdirectories → 1 implemented (0.5% coverage)
-- **Sony**: 95 subdirectories → 4 implemented (4.2% coverage) 
+- **Sony**: 95 subdirectories → 4 implemented (4.2% coverage)
 - **QuickTime**: 183 subdirectories → 28 implemented (15.3% coverage)
 - **Overall**: 1,872 total → 202 implemented (10.79% coverage)
 
@@ -195,27 +204,32 @@ Created comprehensive QuickTime configuration covering 20 major tables (Movie, T
 ### Phase 3: Runtime Evaluation System ✅ (COMPLETED 2025-07-25)
 
 **Task 3.1: Create basic runtime condition evaluator** ✅
+
 - Implemented `SubdirectoryConditionEvaluator` with comprehensive condition parsing
 - Supports all major ExifTool condition patterns including special patterns, numeric comparisons
 - Includes regex caching for performance optimization
 
 **Task 3.2: Implement $valPt binary pattern matching** ✅
+
 - Handles `$$valPt =~ /pattern/` conditions with multiple data representations (binary, hex, text)
 - Supports both standard and negated pattern matching (`$$valPt !~ /pattern/`)
 - Includes comprehensive test coverage for binary pattern detection
 
 **Task 3.3: Implement $self{Make} and $self{Model} matching** ✅
+
 - Supports both regex (`=~`) and exact (`eq`) matching for camera metadata
 - Handles `$$self{Model} =~ /EOS R5/` and `$$self{Make} eq 'Canon'` patterns
 - Full integration with subdirectory context system
 
 **Task 3.4: Integrate runtime evaluation with tag kit subdirectory dispatch** ✅
+
 - Created `RuntimeSubdirectoryDispatcher` for dynamic condition evaluation during processing
 - Implemented enhanced processor pattern maintaining backward compatibility with existing code
 - Added helper functions for seamless EXIF metadata integration
 - Provides wrapper functionality for existing processors
 
 **Implementation Architecture:**
+
 ```rust
 // Core runtime evaluation system at src/runtime/
 pub struct SubdirectoryConditionEvaluator {
@@ -224,7 +238,7 @@ pub struct SubdirectoryConditionEvaluator {
 
 pub struct SubdirectoryContext {
     pub val_ptr: Option<Vec<u8>>,      // $$valPt binary data
-    pub make: Option<String>,          // $$self{Make} 
+    pub make: Option<String>,          // $$self{Make}
     pub model: Option<String>,         // $$self{Model}
     pub format: Option<String>,        // Format conditions
     pub count: Option<usize>,          // Count conditions
@@ -239,6 +253,7 @@ pub struct RuntimeSubdirectoryDispatcher {
 ```
 
 **Coverage Impact:**
+
 - Phase 3 enables dynamic runtime evaluation for complex subdirectory conditions
 - Provides foundation for handling $$valPt patterns (common in Sony, Olympus)
 - Supports $$self{Model/Make} patterns (common in Canon, Nikon)
@@ -250,6 +265,7 @@ pub struct RuntimeSubdirectoryDispatcher {
 **Current State**: `make compat` provides foundation but gaps exist for subdirectory-specific validation
 
 **Task 5.1: Enhanced ExifTool Compatibility Testing** [PARTIALLY SATISFIED]
+
 - ✅ **Existing**: `make compat` generates ExifTool reference snapshots and compares values
 - ✅ **Existing**: Tests against 20+ file formats with supported tags validation
 - ❌ **Gap**: No subdirectory-specific validation - tests only top-level tag compatibility
@@ -257,12 +273,14 @@ pub struct RuntimeSubdirectoryDispatcher {
 - ❌ **Gap**: No automated detection of subdirectory parsing failures
 
 **Task 5.2: Module-Specific Coverage Validation** [NOT SATISFIED]
+
 - ❌ **Missing**: Per-module subdirectory extraction validation
-- ❌ **Missing**: Automated testing of newly generated tag_kit configs  
+- ❌ **Missing**: Automated testing of newly generated tag_kit configs
 - ❌ **Missing**: Validation that subdirectory conditions are being evaluated correctly
 - ❌ **Missing**: Detection of stub functions that need implementation
 
 **Task 5.3: Coverage Metrics Integration** [PARTIALLY SATISFIED]
+
 - ✅ **Existing**: `make subdirectory-coverage` generates reports
 - ❌ **Gap**: Coverage metrics not integrated into CI pipeline
 - ❌ **Gap**: No regression detection for coverage decreases
@@ -270,19 +288,19 @@ pub struct RuntimeSubdirectoryDispatcher {
 
 **Gap Analysis Summary:**
 
-| Component | `make compat` Status | Phase 5 Requirement | Gap |
-|-----------|---------------------|---------------------|-----|
-| **ExifTool Comparison** | ✅ Comprehensive | Top-level tag validation | ❌ Subdirectory-specific validation |
-| **File Format Coverage** | ✅ 20+ formats | Broad compatibility | ❌ New module validation |  
-| **Value Normalization** | ✅ Handles formatting diffs | Accurate comparison | ❌ Binary subdirectory data |
-| **Coverage Tracking** | ❌ None | Progress monitoring | ❌ CI integration |
-| **Regression Detection** | ❌ None | Quality assurance | ❌ Automated alerts |
-| **Module Testing** | ❌ None | Config validation | ❌ Auto-generated configs |
+| Component                | `make compat` Status        | Phase 5 Requirement      | Gap                                 |
+| ------------------------ | --------------------------- | ------------------------ | ----------------------------------- |
+| **ExifTool Comparison**  | ✅ Comprehensive            | Top-level tag validation | ❌ Subdirectory-specific validation |
+| **File Format Coverage** | ✅ 20+ formats              | Broad compatibility      | ❌ New module validation            |
+| **Value Normalization**  | ✅ Handles formatting diffs | Accurate comparison      | ❌ Binary subdirectory data         |
+| **Coverage Tracking**    | ❌ None                     | Progress monitoring      | ❌ CI integration                   |
+| **Regression Detection** | ❌ None                     | Quality assurance        | ❌ Automated alerts                 |
+| **Module Testing**       | ❌ None                     | Config validation        | ❌ Auto-generated configs           |
 
 **Required Enhancements for Phase 5:**
 
 1. **Subdirectory-Aware Testing**: Extend compatibility tests to validate subdirectory extraction
-2. **Generated Config Validation**: Automatically test newly created tag_kit configurations  
+2. **Generated Config Validation**: Automatically test newly created tag_kit configurations
 3. **Coverage CI Integration**: Add coverage metrics to CI pipeline with failure thresholds
 4. **Binary Data Validation**: Compare subdirectory binary parsing output with ExifTool
 5. **Stub Function Detection**: Identify and track unimplemented subdirectory processors
@@ -315,6 +333,7 @@ fn test_model_condition_parsing() {
 ### Integration Tests
 
 For each manufacturer:
+
 1. Extract known subdirectory tag with ExifTool
 2. Extract with exif-oxide
 3. Compare values (must match exactly)
@@ -329,6 +348,7 @@ For each manufacturer:
 ## Success Criteria & Quality Gates
 
 ### Phase 1 Success (COMPLETED)
+
 - [x] Model regex patterns parse correctly
 - [x] Format checks generate proper code
 - [x] 90% of conditions handled (10% runtime fallback)
@@ -337,12 +357,14 @@ For each manufacturer:
 - [x] All compilation errors resolved
 
 ### Phase 2 Success
+
 - [x] Nikon coverage: 0.5% (1/218 subdirectories implemented) - Foundation established
-- [x] Sony coverage: 4.2% (4/95 subdirectories implemented) - Exceeds 3.2% baseline  
+- [x] Sony coverage: 4.2% (4/95 subdirectories implemented) - Exceeds 3.2% baseline
 - [x] QuickTime coverage: 15.3% (28/183 subdirectories implemented) - Exceeds 15% target
 - [x] Tag kit configurations created for all three high-priority manufacturers
 
 ### Overall Success
+
 - [ ] Total coverage reaches 50% (935+ subdirectories)
 - [ ] No performance regression
 - [ ] ExifTool compatibility maintained
@@ -353,6 +375,7 @@ For each manufacturer:
 ### Condition Pattern Complexity
 
 **The 80/20 Rule**: 80% of conditions are simple patterns we can handle at codegen time:
+
 - Count comparisons: 40% of all conditions
 - Model matches: 30% of conditions
 - Format checks: 10% of conditions
@@ -361,6 +384,7 @@ For each manufacturer:
 ### Sony's $$valPt Patterns
 
 Sony uses binary signatures extensively. Key insight: These are checking magic bytes at data start:
+
 - `^\xHH` checks first byte
 - Character classes `[\\x01\\x02\\x10]` check for any of these bytes
 - Often combined with model checks
@@ -378,6 +402,7 @@ Already fixed, but remember: ExifTool uses negative offsets to reference from EN
 ### ExifTool Updates
 
 Monthly ExifTool releases may add new patterns. Design for extensibility:
+
 - Unknown patterns → runtime evaluation
 - Log new patterns for future codegen support
 - Maintain backward compatibility
@@ -385,16 +410,19 @@ Monthly ExifTool releases may add new patterns. Design for extensibility:
 ## Risk Mitigation
 
 ### Complex Pattern Risk
+
 - **Risk**: Some patterns too complex for simple parsing
 - **Mitigation**: Runtime evaluation fallback
 - **Monitoring**: Track runtime evaluation usage
 
 ### Performance Risk
+
 - **Risk**: Runtime evaluation slows extraction
 - **Mitigation**: Optimize common patterns at codegen
 - **Measurement**: Benchmark before/after
 
 ### Test Coverage Risk
+
 - **Risk**: Lack of test images for validation
 - **Mitigation**: Community partnerships, gradual rollout
 - **Validation**: ExifTool comparison on available images
