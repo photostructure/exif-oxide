@@ -209,71 +209,6 @@ pub fn canon_base_iso_value_conv(value: &TagValue) -> Result<TagValue> {
     }
 }
 
-/// Canon simple division: $val / 32 + 5
-///
-/// ExifTool: lib/Image/ExifTool/Canon.pm various tags
-/// Formula: $val / 32 + 5
-pub fn canon_div_32_plus_5_value_conv(value: &TagValue) -> Result<TagValue> {
-    match value.as_f64() {
-        Some(val) => Ok(TagValue::F64(val / 32.0 + 5.0)),
-        None => Err(ExifError::ParseError(
-            "Canon division conversion requires numeric value".to_string(),
-        )),
-    }
-}
-
-/// Canon simple division: $val / 10
-///
-/// ExifTool: lib/Image/ExifTool/Canon.pm various tags
-/// Formula: $val / 10
-pub fn canon_div_10_value_conv(value: &TagValue) -> Result<TagValue> {
-    match value.as_f64() {
-        Some(val) => Ok(TagValue::F64(val / 10.0)),
-        None => Err(ExifError::ParseError(
-            "Canon division conversion requires numeric value".to_string(),
-        )),
-    }
-}
-
-/// Canon simple division: $val / 100
-///
-/// ExifTool: lib/Image/ExifTool/Canon.pm various tags
-/// Formula: $val / 100
-pub fn canon_div_100_value_conv(value: &TagValue) -> Result<TagValue> {
-    match value.as_f64() {
-        Some(val) => Ok(TagValue::F64(val / 100.0)),
-        None => Err(ExifError::ParseError(
-            "Canon division conversion requires numeric value".to_string(),
-        )),
-    }
-}
-
-/// Canon addition: $val + 1
-///
-/// ExifTool: lib/Image/ExifTool/Canon.pm various tags
-/// Formula: $val + 1
-pub fn canon_plus_1_value_conv(value: &TagValue) -> Result<TagValue> {
-    match value.as_f64() {
-        Some(val) => Ok(TagValue::F64(val + 1.0)),
-        None => Err(ExifError::ParseError(
-            "Canon addition conversion requires numeric value".to_string(),
-        )),
-    }
-}
-
-/// Canon millimeter conversion: $val * 25.4 / 1000
-///
-/// ExifTool: lib/Image/ExifTool/Canon.pm sensor size conversions
-/// Formula: $val * 25.4 / 1000 (converts from unknown units to millimeters)
-pub fn canon_millimeter_value_conv(value: &TagValue) -> Result<TagValue> {
-    match value.as_f64() {
-        Some(val) => Ok(TagValue::F64(val * 25.4 / 1000.0)),
-        None => Err(ExifError::ParseError(
-            "Canon millimeter conversion requires numeric value".to_string(),
-        )),
-    }
-}
-
 /// Canon bit shift operations for file numbers: ($val>>16)|(($val&0xffff)<<16)
 ///
 /// ExifTool: lib/Image/ExifTool/Canon.pm FileNumber ValueConv
@@ -363,74 +298,11 @@ pub fn trim_whitespace_value_conv(value: &TagValue) -> Result<TagValue> {
     }
 }
 
-/// Multiply value by 100
-/// ExifTool pattern: $val * 100
-pub fn multiply_100_value_conv(value: &TagValue) -> Result<TagValue> {
-    match value.as_f64() {
-        Some(val) => Ok(TagValue::F64(val * 100.0)),
-        None => Ok(value.clone()),
-    }
-}
-
-/// Divide value by 8
-/// ExifTool pattern: $val / 8
-pub fn divide_8_value_conv(value: &TagValue) -> Result<TagValue> {
-    match value.as_f64() {
-        Some(val) => Ok(TagValue::F64(val / 8.0)),
-        None => Ok(value.clone()),
-    }
-}
-
-/// Divide value by 256
-/// ExifTool pattern: $val / 256
-pub fn divide_256_value_conv(value: &TagValue) -> Result<TagValue> {
-    match value.as_f64() {
-        Some(val) => Ok(TagValue::F64(val / 256.0)),
-        None => Ok(value.clone()),
-    }
-}
-
-/// Subtract 5 from value
-/// ExifTool pattern: $val - 5
-pub fn subtract_5_value_conv(value: &TagValue) -> Result<TagValue> {
-    match value.as_f64() {
-        Some(val) => Ok(TagValue::F64(val - 5.0)),
-        None => Ok(value.clone()),
-    }
-}
-
-/// Add 3 to value
-/// ExifTool pattern: $val + 3
-pub fn add_3_value_conv(value: &TagValue) -> Result<TagValue> {
-    match value.as_f64() {
-        Some(val) => Ok(TagValue::F64(val + 3.0)),
-        None => Ok(value.clone()),
-    }
-}
-
 /// Power function: 2 ** (-$val/3)
 /// ExifTool pattern: 2 ** (-$val/3)
 pub fn power_neg_div_3_value_conv(value: &TagValue) -> Result<TagValue> {
     match value.as_f64() {
         Some(val) => Ok(TagValue::F64(2.0_f64.powf(-val / 3.0))),
-        None => Ok(value.clone()),
-    }
-}
-
-/// Divide value by 6
-/// ExifTool pattern: $val/6
-pub fn divide_6_value_conv(value: &TagValue) -> Result<TagValue> {
-    match value.as_f64() {
-        Some(val) => Ok(TagValue::F64(val / 6.0)),
-        None => Ok(value.clone()),
-    }
-}
-
-/// Subtract 104 and divide by 8
-/// ExifTool pattern: ($val-104)/8
-pub fn subtract_104_divide_8_value_conv(value: &TagValue) -> Result<TagValue> {
-    match value.as_f64() {
-        Some(val) => Ok(TagValue::F64((val - 104.0) / 8.0)),
         None => Ok(value.clone()),
     }
 }
