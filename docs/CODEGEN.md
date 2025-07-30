@@ -305,23 +305,92 @@ Add entries to `TAG_SPECIFIC_PRINTCONV` when:
 3. **Override Standard Expression**: When a tag needs special handling despite having a standard expression
 4. **DRY Principle**: Universal tags that work the same across all modules
 
-#### ValueConv Expression Registry
+#### ValueConv Expression System
 
-ValueConv functions convert raw tag values to logical values. The registry system automatically maps Perl expressions to Rust functions:
+ValueConv functions convert raw tag values to logical values. The system uses a hybrid approach combining inline code generation for simple arithmetic with custom functions for complex expressions.
 
-**Registry Setup** (`codegen/src/conv_registry.rs`):
+**Expression Classification** (`codegen/src/conv_registry.rs`):
+
+```rust
+#[derive(Debug, Clone, PartialEq)]
+pub enum ValueConvType {
+    Compilable,     // Simple arithmetic - generates inline code
+    Function,       // Complex logic - uses custom function
+}
+
+/// Classify ValueConv expressions for codegen processing
+pub fn classify_valueconv_expression(expr: &str) -> ValueConvType {
+    use crate::expression_compiler::ExpressionCompiler;
+    
+    let compiler = ExpressionCompiler::new();
+    if compiler.is_compilable(expr) {
+        ValueConvType::Compilable  // Generate inline arithmetic
+    } else {
+        ValueConvType::Function   // Use custom function
+    }
+}
+```
+
+**Arithmetic Expression Compiler** (`codegen/src/expression_compiler.rs`):
+
+The system includes a complete Shunting Yard algorithm implementation that compiles simple arithmetic expressions at codegen time:
+
+```rust
+/// Compile arithmetic expressions to inline Rust code
+/// Examples: "$val / 8" → "val / 8.0", "($val-104)/8" → "(val - 104.0) / 8.0"
+pub fn try_generate_simple_arithmetic(expr: &str) -> Option<String> {
+    // Parse expression using Shunting Yard algorithm
+    let tokens = self.tokenize_expression(expr)?;
+    let rpn = self.shunting_yard(&tokens)?;
+    
+    // Generate direct arithmetic for simple cases
+    if self.is_simple_arithmetic(&rpn) {
+        return Some(self.generate_direct_arithmetic(&rpn));
+    }
+    
+    None // Fall back to stack-based evaluation for complex cases
+}
+```
+
+**Generated Code Examples**:
+
+```rust
+// Instead of function call:
+0x1234 => divide_8_value_conv(value)
+
+// Generate inline arithmetic:
+0x1234 => {
+    match value.as_f64() {
+        Some(val) => Ok(TagValue::F64(val / 8.0)),
+        None => Ok(value.clone()),
+    }
+}
+```
+
+**Expression Categories**:
+
+- **Compilable (12 expressions)**: Simple arithmetic like `$val * 100`, `$val / 8`, `($val-104)/8`
+- **Custom Functions (11+ expressions)**: Complex logic like `2 ** (-$val/3)`, `$val ? 10 / $val : 0`
+
+**Benefits of Inline Generation**:
+
+- **Performance**: Direct arithmetic beats function call overhead
+- **Maintainability**: No individual functions to maintain for each arithmetic pattern
+- **Type Safety**: All generated code uses proper f64 arithmetic with `.0` literals
+- **Zero Dependencies**: No runtime parsing or expression evaluation
+
+**Complex ValueConv Registry** (`codegen/src/conv_registry.rs`):
 
 ```rust
 static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'static str)>> = LazyLock::new(|| {
     let mut m = HashMap::new();
     
-    // Simple arithmetic patterns
-    m.insert("$val * 100", ("crate::implementations::value_conv", "multiply_100_value_conv"));
-    m.insert("$val / 8", ("crate::implementations::value_conv", "divide_8_value_conv"));
+    // Complex expressions that need custom functions
+    m.insert("2 ** (-$val/3)", ("crate::implementations::value_conv", "power_neg_div_3_value_conv"));
+    m.insert("$val ? 10 / $val : 0", ("crate::implementations::value_conv", "reciprocal_10_value_conv"));
     
     // String processing patterns  
     m.insert("$val=~s/ +$//; $val", ("crate::implementations::value_conv", "trim_whitespace_value_conv"));
-    m.insert("$val=~s/^.*: //;$val", ("crate::implementations::value_conv", "remove_prefix_colon_value_conv"));
     
     // GPS coordinate conversion
     m.insert("gpslatitude_value_conv", ("crate::implementations::value_conv", "gps_coordinate_value_conv"));
@@ -330,25 +399,13 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
 });
 ```
 
-**Function Implementation** (`src/implementations/value_conv.rs`):
-
-```rust
-/// Multiply value by 100 - ExifTool pattern: $val * 100
-pub fn multiply_100_value_conv(value: &TagValue) -> Result<TagValue> {
-    match value.as_f64() {
-        Some(val) => Ok(TagValue::F64(val * 100.0)),
-        None => Ok(value.clone()),
-    }
-}
-```
-
 **How to Add New Patterns**:
 
-1. **Add registry entry**: Map Perl expression to function name in `VALUECONV_REGISTRY`
-2. **Implement function**: Create function in `src/implementations/value_conv.rs` with signature `fn(value: &TagValue) -> Result<TagValue>`
-3. **Regenerate**: Run `make codegen` - expressions automatically become function names
+1. **Simple arithmetic**: Just add to tag kit config - automatically compiled to inline code
+2. **Complex expressions**: Add registry entry and implement custom function in `src/implementations/value_conv.rs`
+3. **Regenerate**: Run `make codegen` - expressions automatically become inline code or function names
 
-The system tries exact matches first (efficient), then normalized expressions for complex cases.
+The system automatically determines whether to generate inline arithmetic or use custom functions based on expression complexity.
 
 ### 4. Adding Simple Extraction Types
 

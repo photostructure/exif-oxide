@@ -114,11 +114,18 @@ impl CompiledExpression {
     fn try_generate_simple_arithmetic(&self) -> Option<String> {
         if self.rpn_tokens.len() == 3 {
             if let [RpnToken::Variable, RpnToken::Number(n), RpnToken::Operator(op)] = &self.rpn_tokens[..] {
+                // Format number as floating-point literal to ensure proper f64 arithmetic
+                let n_str = if n.fract() == 0.0 {
+                    format!("{:.1}", n) // Add .0 to integers like 8 -> 8.0
+                } else {
+                    n.to_string() // Keep decimals as-is like 25.4 -> 25.4
+                };
+                
                 let rust_op = match op {
-                    OpType::Add => format!("val + {}", n),
-                    OpType::Subtract => format!("val - {}", n),
-                    OpType::Multiply => format!("val * {}", n),
-                    OpType::Divide => format!("val / {}", n),
+                    OpType::Add => format!("val + {}", n_str),
+                    OpType::Subtract => format!("val - {}", n_str),
+                    OpType::Multiply => format!("val * {}", n_str),
+                    OpType::Divide => format!("val / {}", n_str),
                 };
                 
                 return Some(format!(
@@ -143,7 +150,13 @@ impl CompiledExpression {
                     code.push_str("            stack.push(val);\n");
                 }
                 RpnToken::Number(n) => {
-                    code.push_str(&format!("            stack.push({});\n", n));
+                    // Format number as floating-point literal to ensure proper f64 arithmetic
+                    let n_str = if n.fract() == 0.0 {
+                        format!("{:.1}", n) // Add .0 to integers like 8 -> 8.0
+                    } else {
+                        n.to_string() // Keep decimals as-is like 25.4 -> 25.4
+                    };
+                    code.push_str(&format!("            stack.push({});\n", n_str));
                 }
                 RpnToken::Operator(op) => {
                     code.push_str("            let b = stack.pop().unwrap();\n");
