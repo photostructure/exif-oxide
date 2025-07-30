@@ -23,10 +23,21 @@ use tracing::{debug, warn};
 
 /// Generate a single print conv entry for a HashMap
 pub fn generate_print_conv_entry(code: &mut String, key: &str, value: &serde_json::Value) {
-    if let Some(val_str) = value.as_str() {
-        code.push_str(&format!("    map.insert(\"{}\".to_string(), \"{}\");\n", 
-            crate::common::escape_string(key), 
-            crate::common::escape_string(val_str)));
+    match value {
+        serde_json::Value::String(val_str) => {
+            code.push_str(&format!("    map.insert(\"{}\".to_string(), \"{}\");\n", 
+                crate::common::escape_string(key), 
+                crate::common::escape_string(val_str)));
+        },
+        serde_json::Value::Number(num) => {
+            // Handle numeric values by converting them to strings
+            code.push_str(&format!("    map.insert(\"{}\".to_string(), \"{}\");\n", 
+                crate::common::escape_string(key), 
+                num.to_string()));
+        },
+        _ => {
+            // Skip other types (arrays, objects, booleans, null)
+        }
     }
 }
 
@@ -839,11 +850,7 @@ fn generate_tag_kit_category_module(
                     code.push_str("    let mut map = HashMap::new();\n");
                     
                     for (key, value) in data_obj {
-                        if let Some(val_str) = value.as_str() {
-                            code.push_str(&format!("    map.insert(\"{}\".to_string(), \"{}\");\n", 
-                                crate::common::escape_string(key), 
-                                crate::common::escape_string(val_str)));
-                        }
+                        generate_print_conv_entry(&mut code, key, value);
                     }
                     
                     code.push_str("    map\n");
