@@ -34,9 +34,8 @@ pub fn generate_supported_tags(
     code.push_str("/// All supported standard tag names\n");
     code.push_str("pub const SUPPORTED_TAG_NAMES: &[&str] = &[\n");
     
-    let mut sorted_tags: Vec<_> = tags.iter().map(|t| &t.name).collect();
-    sorted_tags.sort();
-    for name in sorted_tags {
+    let unique_tags: std::collections::BTreeSet<_> = tags.iter().map(|t| &t.name).collect();
+    for name in unique_tags {
         code.push_str(&format!("    \"{name}\",\n"));
     }
     
@@ -46,9 +45,8 @@ pub fn generate_supported_tags(
     code.push_str("/// All supported composite tag names\n");
     code.push_str("pub const SUPPORTED_COMPOSITE_TAG_NAMES: &[&str] = &[\n");
     
-    let mut sorted_composite: Vec<_> = composite_tags.iter().map(|t| &t.name).collect();
-    sorted_composite.sort();
-    for name in sorted_composite {
+    let unique_composite: std::collections::BTreeSet<_> = composite_tags.iter().map(|t| &t.name).collect();
+    for name in unique_composite {
         code.push_str(&format!("    \"{name}\",\n"));
     }
     
