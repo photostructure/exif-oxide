@@ -48,6 +48,7 @@ ExifTool is the industry standard for metadata extraction, but modern antivirus 
 - **JSON-only output**: Always outputs JSON (no text mode)
 - **Mainstream tags**: Focuses on ~500-1000 most common tags vs ExifTool's 15,000+
 - **No geolocation**: Excludes ExifTool's GPS coordinate lookup features
+- **File type detection**: Trusts file extensions for NEF/NRW distinction (ExifTool uses content analysis)
 - **No write patterns**: No pattern-match replacements for tag updates
 - **No custom configuration**: ExifTool has a rich featureset for custom tag extraction and rendering. We're not porting that over.
 - **Unknown tags omitted**: Tags marked as "Unknown" in ExifTool are filtered out by default (ExifTool shows these with the `-u` flag)
