@@ -161,23 +161,77 @@ impl Serialize for TagValue {
             TagValue::U32Array(arr) => arr.serialize(serializer),
             TagValue::F64Array(arr) => arr.serialize(serializer),
             TagValue::Rational(num, denom) => {
-                // Serialize rational as 2-element array [numerator, denominator]
-                vec![*num, *denom].serialize(serializer)
+                // ExifTool: GetRational64u automatically divides numerator by denominator
+                // lib/Image/ExifTool.pm:6017-6023 - returns RoundFloat($ratNumer / $ratDenom, 10)
+                if *denom == 0 {
+                    // ExifTool: returns 'inf' for division by zero with non-zero numerator
+                    if *num == 0 {
+                        serializer.serialize_str("undef") // ExifTool: 0/0 case
+                    } else {
+                        serializer.serialize_str("inf") // ExifTool: n/0 case
+                    }
+                } else {
+                    // ExifTool: Normal case - divide and serialize as float with 10 significant digits
+                    let result = *num as f64 / *denom as f64;
+                    serializer.serialize_f64(result)
+                }
             }
             TagValue::SRational(num, denom) => {
-                // Serialize signed rational as 2-element array [numerator, denominator]
-                vec![*num, *denom].serialize(serializer)
+                // ExifTool: GetRational64s automatically divides numerator by denominator (signed version)
+                // lib/Image/ExifTool.pm:6017-6023 - same logic as GetRational64u but for signed values
+                if *denom == 0 {
+                    // ExifTool: returns 'inf' for division by zero with non-zero numerator
+                    if *num == 0 {
+                        serializer.serialize_str("undef") // ExifTool: 0/0 case
+                    } else {
+                        serializer.serialize_str("inf") // ExifTool: n/0 case
+                    }
+                } else {
+                    // ExifTool: Normal case - divide and serialize as float
+                    let result = *num as f64 / *denom as f64;
+                    serializer.serialize_f64(result)
+                }
             }
             TagValue::RationalArray(arr) => {
-                // Serialize as array of 2-element arrays
-                let converted: Vec<Vec<u32>> =
-                    arr.iter().map(|(num, denom)| vec![*num, *denom]).collect();
+                // ExifTool: Convert each rational to decimal like GetRational64u
+                let converted: Vec<serde_json::Value> = arr
+                    .iter()
+                    .map(|(num, denom)| {
+                        if *denom == 0 {
+                            if *num == 0 {
+                                serde_json::Value::String("undef".to_string())
+                            } else {
+                                serde_json::Value::String("inf".to_string())
+                            }
+                        } else {
+                            serde_json::Value::Number(
+                                serde_json::Number::from_f64(*num as f64 / *denom as f64)
+                                    .unwrap_or_else(|| serde_json::Number::from(0)),
+                            )
+                        }
+                    })
+                    .collect();
                 converted.serialize(serializer)
             }
             TagValue::SRationalArray(arr) => {
-                // Serialize as array of 2-element arrays
-                let converted: Vec<Vec<i32>> =
-                    arr.iter().map(|(num, denom)| vec![*num, *denom]).collect();
+                // ExifTool: Convert each signed rational to decimal like GetRational64s
+                let converted: Vec<serde_json::Value> = arr
+                    .iter()
+                    .map(|(num, denom)| {
+                        if *denom == 0 {
+                            if *num == 0 {
+                                serde_json::Value::String("undef".to_string())
+                            } else {
+                                serde_json::Value::String("inf".to_string())
+                            }
+                        } else {
+                            serde_json::Value::Number(
+                                serde_json::Number::from_f64(*num as f64 / *denom as f64)
+                                    .unwrap_or_else(|| serde_json::Number::from(0)),
+                            )
+                        }
+                    })
+                    .collect();
                 converted.serialize(serializer)
             }
             TagValue::Binary(data) => data.serialize(serializer),
