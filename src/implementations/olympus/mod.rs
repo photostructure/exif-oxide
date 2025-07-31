@@ -107,22 +107,367 @@ fn find_olympus_tag_id_by_name(tag_name: &str) -> Option<u32> {
     None
 }
 
-/// Process Olympus subdirectory tags using the generic subdirectory processing system
+/// Process Equipment subdirectory data using ExifTool's dual format logic
+/// ExifTool: Olympus.pm lines 1170-1190 - Equipment format condition processing
+///
+/// Equipment data can be in two formats:
+/// - Binary format (old cameras like E-1, E-300): malformed undef/string data
+/// - IFD format (newer cameras): standard TIFF IFD structure
+pub fn process_equipment_subdirectory(
+    data: &[u8],
+    byte_order: crate::tiff_types::ByteOrder,
+) -> crate::types::Result<Vec<(String, crate::types::TagValue)>> {
+    use crate::tiff_types::{IfdEntry, TiffFormat};
+    use crate::types::TagValue;
+    use crate::value_extraction::{extract_ascii_value, extract_long_value, extract_short_value};
+    use tracing::{debug, warn};
+
+    debug!("Processing Equipment subdirectory: {} bytes", data.len());
+
+    // Detect format based on data structure (ExifTool's format condition logic)
+    let tiff_format = detect_equipment_format(data);
+    debug!("Detected Equipment format: {}", tiff_format);
+
+    // ExifTool format condition: $format ne "ifd" and $format ne "int32u"
+    // If format is NOT ifd/int32u, use binary Equipment processing
+    // If format IS ifd/int32u, use EquipmentIFD (standard IFD) processing
+    let use_binary_format = tiff_format != "ifd" && tiff_format != "int32u";
+
+    if use_binary_format {
+        debug!(
+            "Using binary Equipment processing for format: {}",
+            tiff_format
+        );
+        // TODO: Implement binary Equipment parsing for old cameras (E-1, E-300)
+        // This requires handling the malformed subdirectory format that ExifTool mentions
+        warn!("Binary Equipment format not yet implemented - this affects older Olympus cameras");
+        return Ok(vec![]);
+    }
+
+    debug!("Using IFD Equipment processing for format: {}", tiff_format);
+
+    // Process as standard TIFF IFD structure
+    let mut equipment_tags = Vec::new();
+
+    if data.len() < 2 {
+        warn!("Equipment IFD data too short: {} bytes", data.len());
+        return Ok(equipment_tags);
+    }
+
+    // Parse IFD entry count
+    let entry_count = byte_order.read_u16(data, 0)?;
+    debug!("Equipment IFD contains {} entries", entry_count);
+
+    if data.len() < (2 + entry_count as usize * 12) {
+        warn!(
+            "Equipment IFD truncated: need {} bytes, have {}",
+            2 + entry_count as usize * 12,
+            data.len()
+        );
+        return Ok(equipment_tags);
+    }
+
+    // Process each IFD entry
+    for i in 0..entry_count {
+        let entry_offset = 2 + (i as usize * 12);
+
+        match IfdEntry::parse_with_context(data, entry_offset, byte_order, true) {
+            Ok(entry) => {
+                let tag_name = get_equipment_tag_name(entry.tag_id);
+                debug!(
+                    "Equipment tag 0x{:04x} ({}): format={:?}, count={}, offset=0x{:08x}",
+                    entry.tag_id, tag_name, entry.format, entry.count, entry.value_or_offset
+                );
+
+                // Extract tag value based on TIFF format
+                let tag_value = match entry.format {
+                    TiffFormat::Ascii => {
+                        match extract_ascii_value(data, &entry, byte_order, entry.tag_id) {
+                            Ok(s) => TagValue::String(s),
+                            Err(e) => {
+                                warn!(
+                                    "Failed to extract ASCII value for Equipment tag 0x{:04x}: {}",
+                                    entry.tag_id, e
+                                );
+                                continue;
+                            }
+                        }
+                    }
+                    TiffFormat::Short => match extract_short_value(data, &entry, byte_order) {
+                        Ok(val) => TagValue::U16(val),
+                        Err(e) => {
+                            warn!(
+                                "Failed to extract short value for Equipment tag 0x{:04x}: {}",
+                                entry.tag_id, e
+                            );
+                            continue;
+                        }
+                    },
+                    TiffFormat::Long => match extract_long_value(data, &entry, byte_order) {
+                        Ok(val) => TagValue::U32(val),
+                        Err(e) => {
+                            warn!(
+                                "Failed to extract long value for Equipment tag 0x{:04x}: {}",
+                                entry.tag_id, e
+                            );
+                            continue;
+                        }
+                    },
+                    TiffFormat::Undefined => {
+                        // Handle undefined format as byte array (common for Equipment data)
+                        if entry.count <= 4 {
+                            // Data is inline in the offset field
+                            let bytes = entry.value_or_offset.to_le_bytes();
+                            let actual_bytes = &bytes[..entry.count.min(4) as usize];
+                            TagValue::U8Array(actual_bytes.to_vec())
+                        } else {
+                            // Data is at offset location
+                            if (entry.value_or_offset as usize + entry.count as usize) <= data.len()
+                            {
+                                let start = entry.value_or_offset as usize;
+                                let end = start + entry.count as usize;
+                                TagValue::U8Array(data[start..end].to_vec())
+                            } else {
+                                warn!("Equipment undefined data out of bounds: offset={}, count={}, data_len={}", 
+                                     entry.value_or_offset, entry.count, data.len());
+                                continue;
+                            }
+                        }
+                    }
+                    _ => {
+                        debug!(
+                            "Unsupported Equipment tag format: {:?} for tag 0x{:04x}",
+                            entry.format, entry.tag_id
+                        );
+                        continue;
+                    }
+                };
+
+                debug!("Extracted Equipment tag '{}': {:?}", tag_name, tag_value);
+                equipment_tags.push((tag_name, tag_value));
+            }
+            Err(e) => {
+                warn!("Failed to parse Equipment IFD entry {}: {}", i, e);
+                continue;
+            }
+        }
+    }
+
+    debug!(
+        "Equipment IFD processing complete: {} tags extracted",
+        equipment_tags.len()
+    );
+    Ok(equipment_tags)
+}
+
+/// Detect Equipment format based on data structure
+/// ExifTool: Implements format condition evaluation
+fn detect_equipment_format(data: &[u8]) -> String {
+    if data.len() < 2 {
+        return "unknown".to_string();
+    }
+
+    // Check if it looks like a valid IFD structure
+    // IFD starts with entry count (typically 1-50 for Equipment)
+    let entry_count = u16::from_le_bytes([data[0], data[1]]);
+
+    // Equipment IFDs typically have 5-25 entries
+    if entry_count > 0 && entry_count <= 50 {
+        let expected_size = 2 + (entry_count as usize * 12) + 4; // entries + next IFD offset
+        if data.len() >= expected_size - 4 {
+            // Allow missing next IFD offset
+            // Additional validation: check if IFD entries look valid
+            if validate_ifd_structure(data, entry_count) {
+                return "ifd".to_string();
+            }
+        }
+    }
+
+    // If it doesn't look like IFD, assume binary format (old cameras)
+    "undef".to_string()
+}
+
+/// Generate synthetic ID for Equipment tags
+/// Creates unique IDs in the synthetic range (0x8000-0xFFFF) for Equipment tags
+fn generate_equipment_synthetic_id(tag_name: &str) -> u16 {
+    use std::collections::hash_map::DefaultHasher;
+    use std::hash::{Hash, Hasher};
+
+    // Create a hash from the tag name
+    let mut hasher = DefaultHasher::new();
+    "Olympus::Equipment".hash(&mut hasher);
+    tag_name.hash(&mut hasher);
+    let hash = hasher.finish();
+
+    // Map to synthetic ID range (0x8000-0xFFFF)
+    0x8000 | ((hash & 0x7FFF) as u16)
+}
+
+/// Validate IFD structure for Equipment data
+fn validate_ifd_structure(data: &[u8], entry_count: u16) -> bool {
+    if data.len() < 2 + (entry_count as usize * 12) {
+        return false;
+    }
+
+    // Check first few IFD entries for valid tag IDs and formats
+    for i in 0..entry_count.min(3) {
+        let entry_offset = 2 + (i as usize * 12);
+        if entry_offset + 12 > data.len() {
+            return false;
+        }
+
+        let tag_id = u16::from_le_bytes([data[entry_offset], data[entry_offset + 1]]);
+        let format = u16::from_le_bytes([data[entry_offset + 2], data[entry_offset + 3]]);
+
+        // Equipment tags are typically in ranges 0x000-0x1003
+        if tag_id > 0x1003 {
+            return false;
+        }
+
+        // Check for valid TIFF format
+        if format == 0 || format > 12 {
+            return false;
+        }
+    }
+
+    true
+}
+
+/// Get Equipment tag name from tag ID
+/// ExifTool: Olympus.pm Equipment table lines 1588-1769
+fn get_equipment_tag_name(tag_id: u16) -> String {
+    match tag_id {
+        0x000 => "EquipmentVersion".to_string(),
+        0x100 => "CameraType2".to_string(),
+        0x101 => "SerialNumber".to_string(),
+        0x102 => "InternalSerialNumber".to_string(),
+        0x103 => "FocalPlaneDiagonal".to_string(),
+        0x104 => "BodyFirmwareVersion".to_string(),
+        0x201 => "LensType".to_string(),
+        0x202 => "LensSerialNumber".to_string(),
+        0x203 => "LensModel".to_string(),
+        0x204 => "LensFirmwareVersion".to_string(),
+        0x205 => "MaxApertureAtMinFocal".to_string(),
+        0x206 => "MaxApertureAtMaxFocal".to_string(),
+        0x207 => "MinFocalLength".to_string(),
+        0x208 => "MaxFocalLength".to_string(),
+        0x20a => "MaxAperture".to_string(),
+        0x20b => "LensProperties".to_string(),
+        0x301 => "Extender".to_string(),
+        0x302 => "ExtenderSerialNumber".to_string(),
+        0x303 => "ExtenderModel".to_string(),
+        0x304 => "ExtenderFirmwareVersion".to_string(),
+        0x1000 => "FlashType".to_string(),
+        0x1001 => "FlashModel".to_string(),
+        0x1002 => "FlashFirmwareVersion".to_string(),
+        0x1003 => "FlashSerialNumber".to_string(),
+        _ => format!("Tag_{:04x}", tag_id), // Unknown Equipment tag
+    }
+}
+
+/// Get Olympus tag name from synthetic tag ID used in MakerNotes namespace
+/// This maps the synthetic Equipment tag IDs back to their proper names
+pub fn get_olympus_tag_name(tag_id: u16) -> Option<String> {
+    match tag_id {
+        // Synthetic Equipment tag IDs (defined in src/exif/ifd.rs:167-169)
+        0xF100 => Some("CameraType2".to_string()), // Equipment 0x100
+        0xF101 => Some("SerialNumber".to_string()), // Equipment 0x101
+        0xF201 => Some("LensType".to_string()),    // Equipment 0x201
+        _ => None,                                 // Not an Olympus synthetic tag
+    }
+}
+
+/// Process Olympus subdirectory tags with custom Equipment processing
 /// ExifTool: Olympus.pm SubDirectory processing for binary data expansion
+///
+/// This function handles Equipment (0x2010) subdirectory processing directly
+/// to bypass the stubbed generated code and provide proper tag name resolution.
 pub fn process_olympus_subdirectory_tags(
     exif_reader: &mut crate::exif::ExifReader,
 ) -> crate::types::Result<()> {
     use crate::exif::subdirectory_processing::process_subdirectories_with_printconv;
     use crate::generated::Olympus_pm::tag_kit;
+    use crate::tiff_types::ByteOrder;
+    use crate::types::TagValue;
     use tracing::debug;
 
-    debug!("Processing Olympus subdirectory tags using generic system");
+    debug!("Processing Olympus subdirectory tags with custom Equipment handling");
+
+    // First, handle Equipment subdirectory (0x2010) directly to bypass generated stub
+    if let Some(equipment_tag) = exif_reader.get_tag_across_namespaces(0x2010) {
+        debug!("Found Equipment tag (0x2010), processing with custom handler");
+
+        if let TagValue::Binary(equipment_data) | TagValue::U8Array(equipment_data) = equipment_tag
+        {
+            debug!(
+                "Equipment tag contains {} bytes of binary data",
+                equipment_data.len()
+            );
+
+            // Get byte order from TIFF header
+            let byte_order = exif_reader
+                .header
+                .as_ref()
+                .map(|h| h.byte_order)
+                .unwrap_or(ByteOrder::LittleEndian);
+
+            // Process Equipment subdirectory with our custom processor
+            match process_equipment_subdirectory(equipment_data, byte_order) {
+                Ok(equipment_tags) => {
+                    debug!(
+                        "Custom Equipment processor extracted {} tags",
+                        equipment_tags.len()
+                    );
+
+                    // Store Equipment tags with proper namespace and synthetic IDs
+                    for (tag_name, tag_value) in equipment_tags {
+                        // Generate synthetic ID for Equipment tag
+                        let synthetic_id = generate_equipment_synthetic_id(&tag_name);
+
+                        debug!(
+                            "Storing Equipment tag '{}' with synthetic ID 0x{:04x}: {:?}",
+                            tag_name, synthetic_id, tag_value
+                        );
+
+                        // Store with Olympus namespace for proper grouping
+                        let source_info = crate::types::TagSourceInfo::new(
+                            "Olympus".to_string(),
+                            "Olympus".to_string(),
+                            "Olympus::Equipment".to_string(),
+                        );
+
+                        exif_reader.store_tag_with_precedence(synthetic_id, tag_value, source_info);
+
+                        // Also store the tag name mapping for proper output
+                        let full_tag_name = format!("Olympus:{}", tag_name);
+                        exif_reader
+                            .synthetic_tag_names
+                            .insert(synthetic_id, full_tag_name);
+                    }
+                }
+                Err(e) => {
+                    debug!("Custom Equipment processor failed: {}", e);
+                }
+            }
+        } else {
+            debug!(
+                "Equipment tag exists but is not binary data: {:?}",
+                equipment_tag
+            );
+        }
+    } else {
+        debug!("No Equipment tag (0x2010) found");
+    }
+
+    // Then continue with regular subdirectory processing for other tags
+    debug!("Processing remaining Olympus subdirectory tags using generic system");
 
     // Use the generic subdirectory processing with Olympus-specific functions
+    // Fix Group1 assignment: Use "Olympus" as namespace for group1="Olympus" instead of "MakerNotes"
     process_subdirectories_with_printconv(
         exif_reader,
         "Olympus",
-        "MakerNotes",
+        "Olympus",
         tag_kit::has_subdirectory,
         tag_kit::process_subdirectory,
         tag_kit::apply_print_conv,
