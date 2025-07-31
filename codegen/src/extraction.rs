@@ -198,6 +198,7 @@ fn parse_all_module_configs(module_config_dir: &Path) -> Result<Vec<ModuleConfig
     // Look for all supported config files using patterns
     let config_patterns = [
         "simple_table.json",
+        "simple_array.json",
         "file_type_lookup.json", 
         "regex_patterns.json",
         "boolean_set.json",
@@ -307,6 +308,21 @@ fn try_parse_single_config(config_path: &Path) -> Result<Option<ModuleConfig>> {
             tables.iter()
                 .filter_map(|table| table["table_name"].as_str())
                 .map(|name| name.trim_start_matches('%').to_string())
+                .collect()
+        },
+        "simple_array.json" => {
+            // For simple arrays, extract array names from the arrays field
+            let arrays = config["arrays"].as_array()
+                .ok_or_else(|| anyhow::anyhow!("Missing 'arrays' field in {}", config_path.display()))?;
+            
+            if arrays.is_empty() {
+                return Ok(None);
+            }
+            
+            // Extract array expressions (keep full expressions for perl script)
+            arrays.iter()
+                .filter_map(|array| array["array_name"].as_str())
+                .map(|name| name.to_string()) // Keep full expression like "@xlat[0]"
                 .collect()
         },
         _ => {

@@ -17,6 +17,7 @@ use Exporter 'import';
 our @EXPORT_OK = qw(
     load_module_from_file
     get_package_hash
+    get_package_array
     load_json_config
     load_tag_metadata
     is_mainstream_tag
@@ -100,6 +101,53 @@ sub get_package_hash {
     }
     
     return $hash_ref;
+}
+
+#------------------------------------------------------------------------------
+# Get a reference to a package array variable
+#------------------------------------------------------------------------------
+sub get_package_array {
+    my ($module_name, $array_expr) = @_;
+    
+    # Clean up array expression (remove @ prefix if present)
+    $array_expr =~ s/^@//;
+    
+    # Handle complex array expressions through eval for maximum flexibility
+    # This supports patterns like: xlat[0], xlat[1], obj->{prop}, etc.
+    no strict 'refs';
+    
+    # First try: evaluate as symbolic reference for indexed arrays like xlat[0]
+    if ($array_expr =~ /^(\w+)\[(\d+)\]$/) {
+        my ($base_name, $index) = ($1, $2);
+        my $array_ref = eval "\\\@{$module_name" . "::" . "$base_name}";
+        
+        if ($array_ref && ref($array_ref) eq 'ARRAY' && defined $array_ref->[$index]) {
+            # Return reference to the specific sub-array
+            return $array_ref->[$index];
+        }
+    }
+    
+    # Second try: simple array reference without indexing
+    my $simple_array_ref = eval "\\\@{$module_name" . "::" . "$array_expr}";
+    if ($simple_array_ref && ref($simple_array_ref) eq 'ARRAY' && @$simple_array_ref) {
+        return $simple_array_ref;
+    }
+    
+    # Third try: evaluate the complete expression as-is for complex cases
+    # This handles expressions like $obj->{prop}, more complex perl
+    my $complex_ref = eval "package $module_name; \\\@{$array_expr}";
+    if ($complex_ref && ref($complex_ref) eq 'ARRAY' && @$complex_ref) {
+        return $complex_ref;
+    }
+    
+    # Try without module prefix for global arrays
+    $simple_array_ref = eval "\\\@{\"::" . "$array_expr\"}";
+    if ($simple_array_ref && ref($simple_array_ref) eq 'ARRAY' && @$simple_array_ref) {
+        return $simple_array_ref;
+    }
+    
+    warn "Array $array_expr not found or empty in module $module_name\n";
+    return;
 }
 
 #------------------------------------------------------------------------------
