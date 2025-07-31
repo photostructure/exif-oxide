@@ -422,7 +422,7 @@ pub fn process_standard_nikon_tags(
                         let final_value =
                             apply_nikon_print_conv(entry.tag_id, tag_value, tag_table);
 
-                        // Store the tag with proper namespace
+                        // Store the tag with proper namespace for Group1="Nikon"
                         let tag_source = reader.create_tag_source_info("Nikon");
                         reader.store_tag_with_precedence(entry.tag_id, final_value, tag_source);
 
