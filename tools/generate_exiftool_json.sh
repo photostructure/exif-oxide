@@ -20,7 +20,7 @@ SUPPORTED_TAGS=$(cat "$PROJECT_ROOT/config/supported_tags.json")
 
 # Supported file extensions for compatibility testing
 # Add new extensions here as support is added
-SUPPORTED_EXTENSIONS=("jpg" "jpeg" "orf" "raw" "mrw" "rw2" "cr2" "arw" "sr2" "srf" "png" "gif" "tif" "tiff" "avif" "dng" "heic" "heif" "webp")
+SUPPORTED_EXTENSIONS=("3fr" "arw" "avif" "cr2" "cr3" "dng" "gif" "heic" "heif" "jpeg" "jpg" "jxl" "mov" "mrw" "nef" "orf" "pef" "png" "raf" "raw" "rw2" "sr2" "srf" "tif" "tiff" "webp" "x3f")
 
 echo "Generating ExifTool reference snapshots for exif-oxide compatibility testing"
 echo "Project root: $PROJECT_ROOT"
