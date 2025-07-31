@@ -14,6 +14,52 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+static PRINT_CONV_38: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("102".to_string(), "ISO Hi 3.0");
+    map.insert("108".to_string(), "ISO Hi 4.0");
+    map.insert("114".to_string(), "ISO Hi 5.0");
+    map.insert("36".to_string(), "ISO 200");
+    map.insert("38".to_string(), "ISO 250");
+    map.insert("39".to_string(), "ISO 280");
+    map.insert("40".to_string(), "ISO 320");
+    map.insert("42".to_string(), "ISO 400");
+    map.insert("44".to_string(), "ISO 500");
+    map.insert("45".to_string(), "ISO 560");
+    map.insert("46".to_string(), "ISO 640");
+    map.insert("48".to_string(), "ISO 800");
+    map.insert("50".to_string(), "ISO 1000");
+    map.insert("51".to_string(), "ISO 1100");
+    map.insert("52".to_string(), "ISO 1250");
+    map.insert("54".to_string(), "ISO 1600");
+    map.insert("56".to_string(), "ISO 2000");
+    map.insert("57".to_string(), "ISO 2200");
+    map.insert("58".to_string(), "ISO 2500");
+    map.insert("60".to_string(), "ISO 3200");
+    map.insert("62".to_string(), "ISO 4000");
+    map.insert("63".to_string(), "ISO 4500");
+    map.insert("64".to_string(), "ISO 5000");
+    map.insert("66".to_string(), "ISO 6400");
+    map.insert("68".to_string(), "ISO 8000");
+    map.insert("69".to_string(), "ISO 9000");
+    map.insert("70".to_string(), "ISO 10000");
+    map.insert("72".to_string(), "ISO 12800");
+    map.insert("74".to_string(), "ISO 16000");
+    map.insert("75".to_string(), "ISO 18000");
+    map.insert("76".to_string(), "ISO 20000");
+    map.insert("78".to_string(), "ISO 25600");
+    map.insert("80".to_string(), "ISO 32000");
+    map.insert("81".to_string(), "ISO 36000");
+    map.insert("82".to_string(), "ISO 40000");
+    map.insert("84".to_string(), "ISO 51200");
+    map.insert("86".to_string(), "ISO Hi 0.3");
+    map.insert("87".to_string(), "ISO Hi 0.5");
+    map.insert("88".to_string(), "ISO Hi 0.7");
+    map.insert("90".to_string(), "ISO Hi 1.0");
+    map.insert("96".to_string(), "ISO Hi 2.0");
+    map
+});
+
 /// Get tag definitions for interop category
 pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
     vec![
@@ -141,6 +187,48 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 writable: true,
                 notes: None,
                 print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            4,
+            TagKitDef {
+                id: 4,
+                name: "PitchAngle",
+                format: "fixed32u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("converted to degrees of upward camera tilt"),
+                print_conv: PrintConvType::Expression("sprintf(\"%.1f\", $val)"),
+                value_conv: Some("$val <= 180 ? $val : $val - 360"),
+                subdirectory: None,
+            },
+        ),
+        (
+            8,
+            TagKitDef {
+                id: 8,
+                name: "YawAngle",
+                format: "fixed32u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("the camera yaw angle when shooting in portrait orientation"),
+                print_conv: PrintConvType::Expression("sprintf(\"%.1f\", $val)"),
+                value_conv: Some("$val <= 180 ? $val : $val - 360"),
+                subdirectory: None,
+            },
+        ),
+        (
+            5,
+            TagKitDef {
+                id: 5,
+                name: "ISOAutoHiLimit",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_38),
                 value_conv: None,
                 subdirectory: None,
             },

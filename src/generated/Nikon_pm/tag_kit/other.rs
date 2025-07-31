@@ -14,7 +14,7 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_36: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_39: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Did Not Fire");
     map.insert("1".to_string(), "Fired, Manual");
@@ -26,7 +26,7 @@ static PRINT_CONV_36: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_37: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_40: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Lossy (type 1)");
     map.insert("10".to_string(), "Packed 14 bits");
@@ -43,7 +43,7 @@ static PRINT_CONV_37: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_38: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_41: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Minimal");
@@ -55,14 +55,14 @@ static PRINT_CONV_38: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_39: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_42: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_40: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_43: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "sRGB");
     map.insert("2".to_string(), "Adobe RGB");
@@ -70,14 +70,14 @@ static PRINT_CONV_40: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_41: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_44: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_42: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_45: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -92,7 +92,7 @@ static PRINT_CONV_42: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_43: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_46: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0 0 0 0".to_string(), "n/a (JPEG)");
     map.insert("12 0 0 0".to_string(), "12");
@@ -102,7 +102,7 @@ static PRINT_CONV_43: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_44: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_47: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -111,7 +111,7 @@ static PRINT_CONV_44: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_45: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_48: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Mechanical");
     map.insert("16".to_string(), "Electronic");
@@ -123,7 +123,7 @@ static PRINT_CONV_45: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_46: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_49: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Large");
     map.insert("2".to_string(), "Medium");
@@ -131,32 +131,10 @@ static PRINT_CONV_46: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_47: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_50: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Size Priority");
     map.insert("3".to_string(), "Optimal Quality");
-    map
-});
-
-static PRINT_CONV_48: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map.insert("2".to_string(), "On (Series)");
-    map
-});
-
-static PRINT_CONV_49: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_50: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
     map
 });
 
@@ -164,46 +142,32 @@ static PRINT_CONV_51: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
+    map.insert("2".to_string(), "On (Series)");
     map
 });
 
 static PRINT_CONV_52: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "ISO 64");
-    map.insert("1".to_string(), "ISO 80");
-    map.insert("10".to_string(), "ISO 640");
-    map.insert("11".to_string(), "ISO 800");
-    map.insert("12".to_string(), "ISO 1000");
-    map.insert("13".to_string(), "ISO 1250");
-    map.insert("14".to_string(), "ISO 1600");
-    map.insert("15".to_string(), "ISO 2000");
-    map.insert("16".to_string(), "ISO 2500");
-    map.insert("17".to_string(), "ISO 3200");
-    map.insert("18".to_string(), "ISO 4000");
-    map.insert("19".to_string(), "ISO 5000");
-    map.insert("2".to_string(), "ISO 100");
-    map.insert("20".to_string(), "ISO 6400");
-    map.insert("21".to_string(), "ISO 8000");
-    map.insert("22".to_string(), "ISO 10000");
-    map.insert("23".to_string(), "ISO 12800");
-    map.insert("24".to_string(), "ISO 16000");
-    map.insert("25".to_string(), "ISO 20000");
-    map.insert("26".to_string(), "ISO 25600");
-    map.insert("27".to_string(), "ISO Hi 0.3");
-    map.insert("28".to_string(), "ISO Hi 0.7");
-    map.insert("29".to_string(), "ISO Hi 1.0");
-    map.insert("3".to_string(), "ISO 125");
-    map.insert("32".to_string(), "ISO Hi 2.0");
-    map.insert("4".to_string(), "ISO 160");
-    map.insert("5".to_string(), "ISO 200");
-    map.insert("6".to_string(), "ISO 250");
-    map.insert("7".to_string(), "ISO 320");
-    map.insert("8".to_string(), "ISO 400");
-    map.insert("9".to_string(), "ISO 500");
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
     map
 });
 
 static PRINT_CONV_53: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_54: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_55: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO 64");
     map.insert("1".to_string(), "ISO 80");
@@ -239,7 +203,43 @@ static PRINT_CONV_53: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_54: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_56: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "ISO 64");
+    map.insert("1".to_string(), "ISO 80");
+    map.insert("10".to_string(), "ISO 640");
+    map.insert("11".to_string(), "ISO 800");
+    map.insert("12".to_string(), "ISO 1000");
+    map.insert("13".to_string(), "ISO 1250");
+    map.insert("14".to_string(), "ISO 1600");
+    map.insert("15".to_string(), "ISO 2000");
+    map.insert("16".to_string(), "ISO 2500");
+    map.insert("17".to_string(), "ISO 3200");
+    map.insert("18".to_string(), "ISO 4000");
+    map.insert("19".to_string(), "ISO 5000");
+    map.insert("2".to_string(), "ISO 100");
+    map.insert("20".to_string(), "ISO 6400");
+    map.insert("21".to_string(), "ISO 8000");
+    map.insert("22".to_string(), "ISO 10000");
+    map.insert("23".to_string(), "ISO 12800");
+    map.insert("24".to_string(), "ISO 16000");
+    map.insert("25".to_string(), "ISO 20000");
+    map.insert("26".to_string(), "ISO 25600");
+    map.insert("27".to_string(), "ISO Hi 0.3");
+    map.insert("28".to_string(), "ISO Hi 0.7");
+    map.insert("29".to_string(), "ISO Hi 1.0");
+    map.insert("3".to_string(), "ISO 125");
+    map.insert("32".to_string(), "ISO Hi 2.0");
+    map.insert("4".to_string(), "ISO 160");
+    map.insert("5".to_string(), "ISO 200");
+    map.insert("6".to_string(), "ISO 250");
+    map.insert("7".to_string(), "ISO 320");
+    map.insert("8".to_string(), "ISO 400");
+    map.insert("9".to_string(), "ISO 500");
+    map
+});
+
+static PRINT_CONV_57: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -248,21 +248,21 @@ static PRINT_CONV_54: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_55: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_58: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_56: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_59: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_57: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_60: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "TTL");
     map.insert("1".to_string(), "Auto External Flash");
@@ -272,7 +272,7 @@ static PRINT_CONV_57: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_58: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_61: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Pinpoint");
     map.insert("1".to_string(), "Single");
@@ -287,7 +287,7 @@ static PRINT_CONV_58: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_59: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_62: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Normal");
@@ -295,7 +295,7 @@ static PRINT_CONV_59: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_60: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_63: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "AE/Flash");
     map.insert("1".to_string(), "AE");
@@ -305,7 +305,7 @@ static PRINT_CONV_60: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_61: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_64: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Disabled");
     map.insert("2".to_string(), "2F");
@@ -317,7 +317,7 @@ static PRINT_CONV_61: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_62: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_65: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "0.3");
     map.insert("1".to_string(), "0.5");
@@ -334,7 +334,7 @@ static PRINT_CONV_62: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_63: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_66: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
@@ -342,7 +342,7 @@ static PRINT_CONV_63: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_64: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_67: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Overflow");
     map.insert("1".to_string(), "Backup");
@@ -351,7 +351,7 @@ static PRINT_CONV_64: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_65: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_68: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "Extra High");
@@ -361,7 +361,7 @@ static PRINT_CONV_65: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_66: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_69: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Large (8256x5504)");
     map.insert("1".to_string(), "Medium (6192x4128)");
@@ -369,14 +369,14 @@ static PRINT_CONV_66: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_67: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_70: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_68: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_71: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Auto");
@@ -388,7 +388,7 @@ static PRINT_CONV_68: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_69: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_72: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Small");
     map.insert("1".to_string(), "Medium");
@@ -396,14 +396,14 @@ static PRINT_CONV_69: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_70: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_73: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "SDR");
     map.insert("1".to_string(), "HLG");
     map
 });
 
-static PRINT_CONV_71: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_74: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Mode 1");
@@ -412,14 +412,14 @@ static PRINT_CONV_71: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_72: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_75: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_73: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_76: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "CH");
@@ -431,14 +431,14 @@ static PRINT_CONV_73: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_74: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_77: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "FX");
     map.insert("1".to_string(), "DX");
     map
 });
 
-static PRINT_CONV_75: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_78: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "H.264 8-bit (MP4)");
     map.insert("2".to_string(), "H.265 8-bit (MOV)");
@@ -449,7 +449,7 @@ static PRINT_CONV_75: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_76: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_79: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO 64");
     map.insert("1".to_string(), "ISO 80");
@@ -485,14 +485,14 @@ static PRINT_CONV_76: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_77: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_80: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_78: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_81: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO 64");
     map.insert("1".to_string(), "ISO 80");
@@ -528,7 +528,7 @@ static PRINT_CONV_78: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_79: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_82: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("2".to_string(), "Low");
@@ -538,7 +538,7 @@ static PRINT_CONV_79: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_80: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_83: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -547,7 +547,7 @@ static PRINT_CONV_80: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_81: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_84: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "50Hz");
@@ -555,7 +555,7 @@ static PRINT_CONV_81: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_82: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_85: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Matrix");
     map.insert("1".to_string(), "Center");
@@ -564,7 +564,7 @@ static PRINT_CONV_82: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_83: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_86: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Manual");
     map.insert("1".to_string(), "AF-S");
@@ -573,7 +573,7 @@ static PRINT_CONV_83: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_84: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_87: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Pinpoint");
     map.insert("1".to_string(), "Single");
@@ -588,7 +588,7 @@ static PRINT_CONV_84: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_85: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_88: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Normal");
@@ -596,14 +596,14 @@ static PRINT_CONV_85: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_86: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_89: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_87: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_90: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Auto");
@@ -611,45 +611,17 @@ static PRINT_CONV_87: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_88: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_89: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Wide Range");
-    map.insert("1".to_string(), "Vocal Range");
-    map
-});
-
-static PRINT_CONV_90: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
 static PRINT_CONV_91: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("1".to_string(), "1920x1080");
-    map.insert("2".to_string(), "3840x2160");
-    map.insert("3".to_string(), "7680x4320");
-    map.insert("7".to_string(), "5376x3024");
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
     map
 });
 
 static PRINT_CONV_92: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "120p");
-    map.insert("1".to_string(), "100p");
-    map.insert("2".to_string(), "60p");
-    map.insert("3".to_string(), "50p");
-    map.insert("4".to_string(), "30p");
-    map.insert("5".to_string(), "25p");
-    map.insert("6".to_string(), "24p");
+    map.insert("0".to_string(), "Wide Range");
+    map.insert("1".to_string(), "Vocal Range");
     map
 });
 
@@ -662,20 +634,22 @@ static PRINT_CONV_93: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
 
 static PRINT_CONV_94: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
+    map.insert("1".to_string(), "1920x1080");
+    map.insert("2".to_string(), "3840x2160");
+    map.insert("3".to_string(), "7680x4320");
+    map.insert("7".to_string(), "5376x3024");
     map
 });
 
 static PRINT_CONV_95: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Auto");
-    map.insert("2".to_string(), "People");
-    map.insert("3".to_string(), "Animals");
-    map.insert("4".to_string(), "Vehicles");
-    map.insert("5".to_string(), "Birds");
-    map.insert("6".to_string(), "Airplanes");
+    map.insert("0".to_string(), "120p");
+    map.insert("1".to_string(), "100p");
+    map.insert("2".to_string(), "60p");
+    map.insert("3".to_string(), "50p");
+    map.insert("4".to_string(), "30p");
+    map.insert("5".to_string(), "25p");
+    map.insert("6".to_string(), "24p");
     map
 });
 
@@ -687,6 +661,32 @@ static PRINT_CONV_96: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
 });
 
 static PRINT_CONV_97: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_98: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Auto");
+    map.insert("2".to_string(), "People");
+    map.insert("3".to_string(), "Animals");
+    map.insert("4".to_string(), "Vehicles");
+    map.insert("5".to_string(), "Birds");
+    map.insert("6".to_string(), "Airplanes");
+    map
+});
+
+static PRINT_CONV_99: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_100: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "-5");
     map.insert("1".to_string(), "-4");
@@ -706,7 +706,7 @@ static PRINT_CONV_97: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_98: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_101: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("15".to_string(), "Portuguese");
     map.insert("4".to_string(), "English");
@@ -715,94 +715,10 @@ static PRINT_CONV_98: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_99: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_102: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_100: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("104".to_string(), "f/4.5");
-    map.insert("112".to_string(), "f/5.0");
-    map.insert("12".to_string(), "f/1.2");
-    map.insert("120".to_string(), "f/5.6");
-    map.insert("128".to_string(), "f/6.3");
-    map.insert("136".to_string(), "f/7.1");
-    map.insert("144".to_string(), "f/8");
-    map.insert("156".to_string(), "f/9.5");
-    map.insert("168".to_string(), "f/11");
-    map.insert("180".to_string(), "f/13");
-    map.insert("188".to_string(), "f/15");
-    map.insert("192".to_string(), "f/16");
-    map.insert("204".to_string(), "f/19");
-    map.insert("216".to_string(), "f/22");
-    map.insert("24".to_string(), "f/1.4");
-    map.insert("313".to_string(), "N/A");
-    map.insert("40".to_string(), "f/1.8");
-    map.insert("48".to_string(), "f/2.0");
-    map.insert("64".to_string(), "f/2.5");
-    map.insert("72".to_string(), "f/2.8");
-    map.insert("84".to_string(), "f/3.3");
-    map.insert("88".to_string(), "f/3.5");
-    map.insert("96".to_string(), "f/4.0");
-    map
-});
-
-static PRINT_CONV_101: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("104".to_string(), "f/4.5");
-    map.insert("112".to_string(), "f/5.0");
-    map.insert("12".to_string(), "f/1.2");
-    map.insert("120".to_string(), "f/5.6");
-    map.insert("128".to_string(), "f/6.3");
-    map.insert("136".to_string(), "f/7.1");
-    map.insert("144".to_string(), "f/8");
-    map.insert("156".to_string(), "f/9.5");
-    map.insert("168".to_string(), "f/11");
-    map.insert("180".to_string(), "f/13");
-    map.insert("188".to_string(), "f/15");
-    map.insert("192".to_string(), "f/16");
-    map.insert("204".to_string(), "f/19");
-    map.insert("216".to_string(), "f/22");
-    map.insert("24".to_string(), "f/1.4");
-    map.insert("313".to_string(), "N/A");
-    map.insert("40".to_string(), "f/1.8");
-    map.insert("48".to_string(), "f/2.0");
-    map.insert("64".to_string(), "f/2.5");
-    map.insert("72".to_string(), "f/2.8");
-    map.insert("84".to_string(), "f/3.3");
-    map.insert("88".to_string(), "f/3.5");
-    map.insert("96".to_string(), "f/4.0");
-    map
-});
-
-static PRINT_CONV_102: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("104".to_string(), "f/4.5");
-    map.insert("112".to_string(), "f/5.0");
-    map.insert("12".to_string(), "f/1.2");
-    map.insert("120".to_string(), "f/5.6");
-    map.insert("128".to_string(), "f/6.3");
-    map.insert("136".to_string(), "f/7.1");
-    map.insert("144".to_string(), "f/8");
-    map.insert("156".to_string(), "f/9.5");
-    map.insert("168".to_string(), "f/11");
-    map.insert("180".to_string(), "f/13");
-    map.insert("188".to_string(), "f/15");
-    map.insert("192".to_string(), "f/16");
-    map.insert("204".to_string(), "f/19");
-    map.insert("216".to_string(), "f/22");
-    map.insert("24".to_string(), "f/1.4");
-    map.insert("313".to_string(), "N/A");
-    map.insert("40".to_string(), "f/1.8");
-    map.insert("48".to_string(), "f/2.0");
-    map.insert("64".to_string(), "f/2.5");
-    map.insert("72".to_string(), "f/2.8");
-    map.insert("84".to_string(), "f/3.3");
-    map.insert("88".to_string(), "f/3.5");
-    map.insert("96".to_string(), "f/4.0");
     map
 });
 
@@ -1284,33 +1200,96 @@ static PRINT_CONV_119: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_120: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("104".to_string(), "f/4.5");
+    map.insert("112".to_string(), "f/5.0");
+    map.insert("12".to_string(), "f/1.2");
+    map.insert("120".to_string(), "f/5.6");
+    map.insert("128".to_string(), "f/6.3");
+    map.insert("136".to_string(), "f/7.1");
+    map.insert("144".to_string(), "f/8");
+    map.insert("156".to_string(), "f/9.5");
+    map.insert("168".to_string(), "f/11");
+    map.insert("180".to_string(), "f/13");
+    map.insert("188".to_string(), "f/15");
+    map.insert("192".to_string(), "f/16");
+    map.insert("204".to_string(), "f/19");
+    map.insert("216".to_string(), "f/22");
+    map.insert("24".to_string(), "f/1.4");
+    map.insert("313".to_string(), "N/A");
+    map.insert("40".to_string(), "f/1.8");
+    map.insert("48".to_string(), "f/2.0");
+    map.insert("64".to_string(), "f/2.5");
+    map.insert("72".to_string(), "f/2.8");
+    map.insert("84".to_string(), "f/3.3");
+    map.insert("88".to_string(), "f/3.5");
+    map.insert("96".to_string(), "f/4.0");
+    map
+});
+
+static PRINT_CONV_121: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("104".to_string(), "f/4.5");
+    map.insert("112".to_string(), "f/5.0");
+    map.insert("12".to_string(), "f/1.2");
+    map.insert("120".to_string(), "f/5.6");
+    map.insert("128".to_string(), "f/6.3");
+    map.insert("136".to_string(), "f/7.1");
+    map.insert("144".to_string(), "f/8");
+    map.insert("156".to_string(), "f/9.5");
+    map.insert("168".to_string(), "f/11");
+    map.insert("180".to_string(), "f/13");
+    map.insert("188".to_string(), "f/15");
+    map.insert("192".to_string(), "f/16");
+    map.insert("204".to_string(), "f/19");
+    map.insert("216".to_string(), "f/22");
+    map.insert("24".to_string(), "f/1.4");
+    map.insert("313".to_string(), "N/A");
+    map.insert("40".to_string(), "f/1.8");
+    map.insert("48".to_string(), "f/2.0");
+    map.insert("64".to_string(), "f/2.5");
+    map.insert("72".to_string(), "f/2.8");
+    map.insert("84".to_string(), "f/3.3");
+    map.insert("88".to_string(), "f/3.5");
+    map.insert("96".to_string(), "f/4.0");
+    map
+});
+
+static PRINT_CONV_122: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("104".to_string(), "f/4.5");
+    map.insert("112".to_string(), "f/5.0");
+    map.insert("12".to_string(), "f/1.2");
+    map.insert("120".to_string(), "f/5.6");
+    map.insert("128".to_string(), "f/6.3");
+    map.insert("136".to_string(), "f/7.1");
+    map.insert("144".to_string(), "f/8");
+    map.insert("156".to_string(), "f/9.5");
+    map.insert("168".to_string(), "f/11");
+    map.insert("180".to_string(), "f/13");
+    map.insert("188".to_string(), "f/15");
+    map.insert("192".to_string(), "f/16");
+    map.insert("204".to_string(), "f/19");
+    map.insert("216".to_string(), "f/22");
+    map.insert("24".to_string(), "f/1.4");
+    map.insert("313".to_string(), "N/A");
+    map.insert("40".to_string(), "f/1.8");
+    map.insert("48".to_string(), "f/2.0");
+    map.insert("64".to_string(), "f/2.5");
+    map.insert("72".to_string(), "f/2.8");
+    map.insert("84".to_string(), "f/3.3");
+    map.insert("88".to_string(), "f/3.5");
+    map.insert("96".to_string(), "f/4.0");
+    map
+});
+
+static PRINT_CONV_123: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "4320p");
     map.insert("2".to_string(), "2160p");
     map.insert("3".to_string(), "1080p");
     map.insert("4".to_string(), "1080i");
     map.insert("5".to_string(), "720p");
-    map
-});
-
-static PRINT_CONV_121: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_122: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Disable Release");
-    map.insert("1".to_string(), "Enable Release");
-    map
-});
-
-static PRINT_CONV_123: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
     map
 });
 
@@ -1323,12 +1302,33 @@ static PRINT_CONV_124: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_125: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("0".to_string(), "Disable Release");
+    map.insert("1".to_string(), "Enable Release");
+    map
+});
+
+static PRINT_CONV_126: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_127: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_128: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
     map.insert("0".to_string(), "Stays Open");
     map.insert("1".to_string(), "Closes");
     map
 });
 
-static PRINT_CONV_126: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_129: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("15".to_string(), "Portuguese");
     map.insert("4".to_string(), "English");
@@ -1337,7 +1337,7 @@ static PRINT_CONV_126: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_127: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_130: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "-5");
     map.insert("1".to_string(), "-4");
@@ -1357,14 +1357,14 @@ static PRINT_CONV_127: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_128: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_131: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_129: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_132: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "4320p");
@@ -1372,27 +1372,6 @@ static PRINT_CONV_129: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map.insert("3".to_string(), "1080p");
     map.insert("4".to_string(), "1080i");
     map.insert("5".to_string(), "720p");
-    map
-});
-
-static PRINT_CONV_130: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_131: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Disable Release");
-    map.insert("1".to_string(), "Enable Release");
-    map
-});
-
-static PRINT_CONV_132: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
     map
 });
 
@@ -1405,8 +1384,8 @@ static PRINT_CONV_133: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_134: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Stays Open");
-    map.insert("1".to_string(), "Closes");
+    map.insert("0".to_string(), "Disable Release");
+    map.insert("1".to_string(), "Enable Release");
     map
 });
 
@@ -1414,11 +1393,32 @@ static PRINT_CONV_135: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
-    map.insert("2".to_string(), "On (Series)");
     map
 });
 
 static PRINT_CONV_136: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_137: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Stays Open");
+    map.insert("1".to_string(), "Closes");
+    map
+});
+
+static PRINT_CONV_138: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map.insert("2".to_string(), "On (Series)");
+    map
+});
+
+static PRINT_CONV_139: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "4");
     map.insert("1".to_string(), "8");
@@ -1427,7 +1427,7 @@ static PRINT_CONV_136: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_137: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_140: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "1 s");
@@ -1435,363 +1435,6 @@ static PRINT_CONV_137: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map.insert("3".to_string(), "3 s");
     map.insert("4".to_string(), "5 s");
     map.insert("5".to_string(), "10 s");
-    map
-});
-
-static PRINT_CONV_138: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "None");
-    map.insert("1".to_string(), "Preview");
-    map.insert("10".to_string(), "Flash Disable/Enable");
-    map.insert("100".to_string(), "Photo Flicker Reduction");
-    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
-    map.insert("103".to_string(), "Start Series Playback");
-    map.insert("104".to_string(), "View Assist");
-    map.insert("105".to_string(), "Hi-Res Zoom+");
-    map.insert("106".to_string(), "Hi-Res Zoom-");
-    map.insert("108".to_string(), "Override Other Cameras");
-    map.insert(
-        "109".to_string(),
-        "DISP - Cycle Information Display (shooting)",
-    );
-    map.insert("11".to_string(), "Bracketing Burst");
-    map.insert(
-        "110".to_string(),
-        "DISP - Cycle Information Display (playback)",
-    );
-    map.insert("111".to_string(), "Resume Shooting");
-    map.insert("112".to_string(), "Switch Eyes");
-    map.insert("113".to_string(), "Power Zoom +");
-    map.insert("114".to_string(), "Power Zoom -");
-    map.insert("115".to_string(), "Delete");
-    map.insert("116".to_string(), "Pixel Shift Shooting");
-    map.insert("117".to_string(), "Cycle AF-area Mode");
-    map.insert("119".to_string(), "Focus Limiter");
-    map.insert("12".to_string(), "+NEF(RAW)");
-    map.insert("120".to_string(), "Jump to Source Image");
-    map.insert("121".to_string(), "Raw Processing (Current)");
-    map.insert("122".to_string(), "Raw Processing (Multiple)");
-    map.insert("123".to_string(), "Trim");
-    map.insert("124".to_string(), "Resize (Current)");
-    map.insert("125".to_string(), "Resize (Multiple)");
-    map.insert("126".to_string(), "D-Lighting");
-    map.insert("127".to_string(), "Straighten");
-    map.insert("128".to_string(), "Distortion Control");
-    map.insert("129".to_string(), "Perspective Control");
-    map.insert("130".to_string(), "Monochrome");
-    map.insert("131".to_string(), "Overlay (Add)");
-    map.insert("132".to_string(), "Lighten");
-    map.insert("133".to_string(), "Darken");
-    map.insert("134".to_string(), "Motion Blend");
-    map.insert("135".to_string(), "Cycle Monitor Mode");
-    map.insert("18".to_string(), "Virtual Horizon");
-    map.insert("19".to_string(), "Synchronized Release");
-    map.insert("20".to_string(), "My Menu");
-    map.insert("21".to_string(), "My Menu Top Item");
-    map.insert("22".to_string(), "Playback");
-    map.insert("23".to_string(), "Rating");
-    map.insert("24".to_string(), "Protect");
-    map.insert("25".to_string(), "Zoom");
-    map.insert("26".to_string(), "Focus Peaking");
-    map.insert("27".to_string(), "Flash Mode/Compensation");
-    map.insert("28".to_string(), "Image Area");
-    map.insert("3".to_string(), "FV Lock");
-    map.insert("30".to_string(), "Non-CPU Lens");
-    map.insert("31".to_string(), "Active-D Lighting");
-    map.insert("32".to_string(), "Exposure Delay Mode");
-    map.insert("33".to_string(), "1 Stop Speed/Aperture");
-    map.insert("34".to_string(), "White Balance");
-    map.insert("35".to_string(), "Metering");
-    map.insert("36".to_string(), "Auto Bracketing");
-    map.insert("37".to_string(), "Multiple Exposure");
-    map.insert("38".to_string(), "HDR Overlay");
-    map.insert("39".to_string(), "Picture Control");
-    map.insert("4".to_string(), "AE/AF Lock");
-    map.insert("40".to_string(), "Quality");
-    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
-    map.insert("42".to_string(), "Select Center Focus Point");
-    map.insert("44".to_string(), "Record Movie");
-    map.insert("45".to_string(), "Thumbnail On/Off");
-    map.insert("46".to_string(), "View Histograms");
-    map.insert("47".to_string(), "Choose Folder");
-    map.insert("48".to_string(), "Power Aperture (Open)");
-    map.insert("49".to_string(), "Power Aperture (Close)");
-    map.insert("5".to_string(), "AE Lock Only");
-    map.insert("52".to_string(), "Microphone Sensitivity");
-    map.insert("53".to_string(), "Release Mode");
-    map.insert("57".to_string(), "Preset Focus Point");
-    map.insert("58".to_string(), "AE/AWB Lock (hold)");
-    map.insert("59".to_string(), "AF-AreaMode");
-    map.insert("6".to_string(), "AE Lock (reset on release)");
-    map.insert("60".to_string(), "AF-AreaMode + AF-On");
-    map.insert("61".to_string(), "Recall Shooting Functions");
-    map.insert("64".to_string(), "Filtered Playback");
-    map.insert("65".to_string(), "Same as AF-On");
-    map.insert("66".to_string(), "Voice Memo");
-    map.insert("7".to_string(), "AE Lock (hold)");
-    map.insert("70".to_string(), "Photo Shooting Bank");
-    map.insert("71".to_string(), "ISO");
-    map.insert("72".to_string(), "Shooting Mode");
-    map.insert("73".to_string(), "Exposure Compensation");
-    map.insert("76".to_string(), "Silent Mode");
-    map.insert("78".to_string(), "LiveView Information");
-    map.insert("79".to_string(), "AWB Lock (hold)");
-    map.insert("8".to_string(), "AF Lock Only");
-    map.insert("80".to_string(), "Grid Display");
-    map.insert("81".to_string(), "Starlight View");
-    map.insert("82".to_string(), "Select To Send (PC)");
-    map.insert("83".to_string(), "Select To Send (FTP)");
-    map.insert("84".to_string(), "Pattern Tone Range");
-    map.insert("85".to_string(), "Control Lock");
-    map.insert("86".to_string(), "Save Focus Position");
-    map.insert("87".to_string(), "Recall Focus Position");
-    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
-    map.insert("89".to_string(), "Set Picture Control (HLG)");
-    map.insert("9".to_string(), "AF-On");
-    map.insert("90".to_string(), "Skin Softening");
-    map.insert("91".to_string(), "Portrait Impression Balance");
-    map.insert("92".to_string(), "Fast AF-On");
-    map.insert("97".to_string(), "High Frequency Flicker Reduction");
-    map.insert("98".to_string(), "Switch FX/DX");
-    map.insert("99".to_string(), "View Mode (Photo LV)");
-    map
-});
-
-static PRINT_CONV_139: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "None");
-    map.insert("1".to_string(), "Preview");
-    map.insert("10".to_string(), "Flash Disable/Enable");
-    map.insert("100".to_string(), "Photo Flicker Reduction");
-    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
-    map.insert("103".to_string(), "Start Series Playback");
-    map.insert("104".to_string(), "View Assist");
-    map.insert("105".to_string(), "Hi-Res Zoom+");
-    map.insert("106".to_string(), "Hi-Res Zoom-");
-    map.insert("108".to_string(), "Override Other Cameras");
-    map.insert(
-        "109".to_string(),
-        "DISP - Cycle Information Display (shooting)",
-    );
-    map.insert("11".to_string(), "Bracketing Burst");
-    map.insert(
-        "110".to_string(),
-        "DISP - Cycle Information Display (playback)",
-    );
-    map.insert("111".to_string(), "Resume Shooting");
-    map.insert("112".to_string(), "Switch Eyes");
-    map.insert("113".to_string(), "Power Zoom +");
-    map.insert("114".to_string(), "Power Zoom -");
-    map.insert("115".to_string(), "Delete");
-    map.insert("116".to_string(), "Pixel Shift Shooting");
-    map.insert("117".to_string(), "Cycle AF-area Mode");
-    map.insert("119".to_string(), "Focus Limiter");
-    map.insert("12".to_string(), "+NEF(RAW)");
-    map.insert("120".to_string(), "Jump to Source Image");
-    map.insert("121".to_string(), "Raw Processing (Current)");
-    map.insert("122".to_string(), "Raw Processing (Multiple)");
-    map.insert("123".to_string(), "Trim");
-    map.insert("124".to_string(), "Resize (Current)");
-    map.insert("125".to_string(), "Resize (Multiple)");
-    map.insert("126".to_string(), "D-Lighting");
-    map.insert("127".to_string(), "Straighten");
-    map.insert("128".to_string(), "Distortion Control");
-    map.insert("129".to_string(), "Perspective Control");
-    map.insert("130".to_string(), "Monochrome");
-    map.insert("131".to_string(), "Overlay (Add)");
-    map.insert("132".to_string(), "Lighten");
-    map.insert("133".to_string(), "Darken");
-    map.insert("134".to_string(), "Motion Blend");
-    map.insert("135".to_string(), "Cycle Monitor Mode");
-    map.insert("18".to_string(), "Virtual Horizon");
-    map.insert("19".to_string(), "Synchronized Release");
-    map.insert("20".to_string(), "My Menu");
-    map.insert("21".to_string(), "My Menu Top Item");
-    map.insert("22".to_string(), "Playback");
-    map.insert("23".to_string(), "Rating");
-    map.insert("24".to_string(), "Protect");
-    map.insert("25".to_string(), "Zoom");
-    map.insert("26".to_string(), "Focus Peaking");
-    map.insert("27".to_string(), "Flash Mode/Compensation");
-    map.insert("28".to_string(), "Image Area");
-    map.insert("3".to_string(), "FV Lock");
-    map.insert("30".to_string(), "Non-CPU Lens");
-    map.insert("31".to_string(), "Active-D Lighting");
-    map.insert("32".to_string(), "Exposure Delay Mode");
-    map.insert("33".to_string(), "1 Stop Speed/Aperture");
-    map.insert("34".to_string(), "White Balance");
-    map.insert("35".to_string(), "Metering");
-    map.insert("36".to_string(), "Auto Bracketing");
-    map.insert("37".to_string(), "Multiple Exposure");
-    map.insert("38".to_string(), "HDR Overlay");
-    map.insert("39".to_string(), "Picture Control");
-    map.insert("4".to_string(), "AE/AF Lock");
-    map.insert("40".to_string(), "Quality");
-    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
-    map.insert("42".to_string(), "Select Center Focus Point");
-    map.insert("44".to_string(), "Record Movie");
-    map.insert("45".to_string(), "Thumbnail On/Off");
-    map.insert("46".to_string(), "View Histograms");
-    map.insert("47".to_string(), "Choose Folder");
-    map.insert("48".to_string(), "Power Aperture (Open)");
-    map.insert("49".to_string(), "Power Aperture (Close)");
-    map.insert("5".to_string(), "AE Lock Only");
-    map.insert("52".to_string(), "Microphone Sensitivity");
-    map.insert("53".to_string(), "Release Mode");
-    map.insert("57".to_string(), "Preset Focus Point");
-    map.insert("58".to_string(), "AE/AWB Lock (hold)");
-    map.insert("59".to_string(), "AF-AreaMode");
-    map.insert("6".to_string(), "AE Lock (reset on release)");
-    map.insert("60".to_string(), "AF-AreaMode + AF-On");
-    map.insert("61".to_string(), "Recall Shooting Functions");
-    map.insert("64".to_string(), "Filtered Playback");
-    map.insert("65".to_string(), "Same as AF-On");
-    map.insert("66".to_string(), "Voice Memo");
-    map.insert("7".to_string(), "AE Lock (hold)");
-    map.insert("70".to_string(), "Photo Shooting Bank");
-    map.insert("71".to_string(), "ISO");
-    map.insert("72".to_string(), "Shooting Mode");
-    map.insert("73".to_string(), "Exposure Compensation");
-    map.insert("76".to_string(), "Silent Mode");
-    map.insert("78".to_string(), "LiveView Information");
-    map.insert("79".to_string(), "AWB Lock (hold)");
-    map.insert("8".to_string(), "AF Lock Only");
-    map.insert("80".to_string(), "Grid Display");
-    map.insert("81".to_string(), "Starlight View");
-    map.insert("82".to_string(), "Select To Send (PC)");
-    map.insert("83".to_string(), "Select To Send (FTP)");
-    map.insert("84".to_string(), "Pattern Tone Range");
-    map.insert("85".to_string(), "Control Lock");
-    map.insert("86".to_string(), "Save Focus Position");
-    map.insert("87".to_string(), "Recall Focus Position");
-    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
-    map.insert("89".to_string(), "Set Picture Control (HLG)");
-    map.insert("9".to_string(), "AF-On");
-    map.insert("90".to_string(), "Skin Softening");
-    map.insert("91".to_string(), "Portrait Impression Balance");
-    map.insert("92".to_string(), "Fast AF-On");
-    map.insert("97".to_string(), "High Frequency Flicker Reduction");
-    map.insert("98".to_string(), "Switch FX/DX");
-    map.insert("99".to_string(), "View Mode (Photo LV)");
-    map
-});
-
-static PRINT_CONV_140: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "None");
-    map.insert("1".to_string(), "Preview");
-    map.insert("10".to_string(), "Flash Disable/Enable");
-    map.insert("100".to_string(), "Photo Flicker Reduction");
-    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
-    map.insert("103".to_string(), "Start Series Playback");
-    map.insert("104".to_string(), "View Assist");
-    map.insert("105".to_string(), "Hi-Res Zoom+");
-    map.insert("106".to_string(), "Hi-Res Zoom-");
-    map.insert("108".to_string(), "Override Other Cameras");
-    map.insert(
-        "109".to_string(),
-        "DISP - Cycle Information Display (shooting)",
-    );
-    map.insert("11".to_string(), "Bracketing Burst");
-    map.insert(
-        "110".to_string(),
-        "DISP - Cycle Information Display (playback)",
-    );
-    map.insert("111".to_string(), "Resume Shooting");
-    map.insert("112".to_string(), "Switch Eyes");
-    map.insert("113".to_string(), "Power Zoom +");
-    map.insert("114".to_string(), "Power Zoom -");
-    map.insert("115".to_string(), "Delete");
-    map.insert("116".to_string(), "Pixel Shift Shooting");
-    map.insert("117".to_string(), "Cycle AF-area Mode");
-    map.insert("119".to_string(), "Focus Limiter");
-    map.insert("12".to_string(), "+NEF(RAW)");
-    map.insert("120".to_string(), "Jump to Source Image");
-    map.insert("121".to_string(), "Raw Processing (Current)");
-    map.insert("122".to_string(), "Raw Processing (Multiple)");
-    map.insert("123".to_string(), "Trim");
-    map.insert("124".to_string(), "Resize (Current)");
-    map.insert("125".to_string(), "Resize (Multiple)");
-    map.insert("126".to_string(), "D-Lighting");
-    map.insert("127".to_string(), "Straighten");
-    map.insert("128".to_string(), "Distortion Control");
-    map.insert("129".to_string(), "Perspective Control");
-    map.insert("130".to_string(), "Monochrome");
-    map.insert("131".to_string(), "Overlay (Add)");
-    map.insert("132".to_string(), "Lighten");
-    map.insert("133".to_string(), "Darken");
-    map.insert("134".to_string(), "Motion Blend");
-    map.insert("135".to_string(), "Cycle Monitor Mode");
-    map.insert("18".to_string(), "Virtual Horizon");
-    map.insert("19".to_string(), "Synchronized Release");
-    map.insert("20".to_string(), "My Menu");
-    map.insert("21".to_string(), "My Menu Top Item");
-    map.insert("22".to_string(), "Playback");
-    map.insert("23".to_string(), "Rating");
-    map.insert("24".to_string(), "Protect");
-    map.insert("25".to_string(), "Zoom");
-    map.insert("26".to_string(), "Focus Peaking");
-    map.insert("27".to_string(), "Flash Mode/Compensation");
-    map.insert("28".to_string(), "Image Area");
-    map.insert("3".to_string(), "FV Lock");
-    map.insert("30".to_string(), "Non-CPU Lens");
-    map.insert("31".to_string(), "Active-D Lighting");
-    map.insert("32".to_string(), "Exposure Delay Mode");
-    map.insert("33".to_string(), "1 Stop Speed/Aperture");
-    map.insert("34".to_string(), "White Balance");
-    map.insert("35".to_string(), "Metering");
-    map.insert("36".to_string(), "Auto Bracketing");
-    map.insert("37".to_string(), "Multiple Exposure");
-    map.insert("38".to_string(), "HDR Overlay");
-    map.insert("39".to_string(), "Picture Control");
-    map.insert("4".to_string(), "AE/AF Lock");
-    map.insert("40".to_string(), "Quality");
-    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
-    map.insert("42".to_string(), "Select Center Focus Point");
-    map.insert("44".to_string(), "Record Movie");
-    map.insert("45".to_string(), "Thumbnail On/Off");
-    map.insert("46".to_string(), "View Histograms");
-    map.insert("47".to_string(), "Choose Folder");
-    map.insert("48".to_string(), "Power Aperture (Open)");
-    map.insert("49".to_string(), "Power Aperture (Close)");
-    map.insert("5".to_string(), "AE Lock Only");
-    map.insert("52".to_string(), "Microphone Sensitivity");
-    map.insert("53".to_string(), "Release Mode");
-    map.insert("57".to_string(), "Preset Focus Point");
-    map.insert("58".to_string(), "AE/AWB Lock (hold)");
-    map.insert("59".to_string(), "AF-AreaMode");
-    map.insert("6".to_string(), "AE Lock (reset on release)");
-    map.insert("60".to_string(), "AF-AreaMode + AF-On");
-    map.insert("61".to_string(), "Recall Shooting Functions");
-    map.insert("64".to_string(), "Filtered Playback");
-    map.insert("65".to_string(), "Same as AF-On");
-    map.insert("66".to_string(), "Voice Memo");
-    map.insert("7".to_string(), "AE Lock (hold)");
-    map.insert("70".to_string(), "Photo Shooting Bank");
-    map.insert("71".to_string(), "ISO");
-    map.insert("72".to_string(), "Shooting Mode");
-    map.insert("73".to_string(), "Exposure Compensation");
-    map.insert("76".to_string(), "Silent Mode");
-    map.insert("78".to_string(), "LiveView Information");
-    map.insert("79".to_string(), "AWB Lock (hold)");
-    map.insert("8".to_string(), "AF Lock Only");
-    map.insert("80".to_string(), "Grid Display");
-    map.insert("81".to_string(), "Starlight View");
-    map.insert("82".to_string(), "Select To Send (PC)");
-    map.insert("83".to_string(), "Select To Send (FTP)");
-    map.insert("84".to_string(), "Pattern Tone Range");
-    map.insert("85".to_string(), "Control Lock");
-    map.insert("86".to_string(), "Save Focus Position");
-    map.insert("87".to_string(), "Recall Focus Position");
-    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
-    map.insert("89".to_string(), "Set Picture Control (HLG)");
-    map.insert("9".to_string(), "AF-On");
-    map.insert("90".to_string(), "Skin Softening");
-    map.insert("91".to_string(), "Portrait Impression Balance");
-    map.insert("92".to_string(), "Fast AF-On");
-    map.insert("97".to_string(), "High Frequency Flicker Reduction");
-    map.insert("98".to_string(), "Switch FX/DX");
-    map.insert("99".to_string(), "View Mode (Photo LV)");
     map
 });
 
@@ -2273,8 +1916,120 @@ static PRINT_CONV_144: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_145: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Preview");
+    map.insert("10".to_string(), "Flash Disable/Enable");
+    map.insert("100".to_string(), "Photo Flicker Reduction");
+    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
+    map.insert("103".to_string(), "Start Series Playback");
+    map.insert("104".to_string(), "View Assist");
+    map.insert("105".to_string(), "Hi-Res Zoom+");
+    map.insert("106".to_string(), "Hi-Res Zoom-");
+    map.insert("108".to_string(), "Override Other Cameras");
+    map.insert(
+        "109".to_string(),
+        "DISP - Cycle Information Display (shooting)",
+    );
+    map.insert("11".to_string(), "Bracketing Burst");
+    map.insert(
+        "110".to_string(),
+        "DISP - Cycle Information Display (playback)",
+    );
+    map.insert("111".to_string(), "Resume Shooting");
+    map.insert("112".to_string(), "Switch Eyes");
+    map.insert("113".to_string(), "Power Zoom +");
+    map.insert("114".to_string(), "Power Zoom -");
+    map.insert("115".to_string(), "Delete");
+    map.insert("116".to_string(), "Pixel Shift Shooting");
+    map.insert("117".to_string(), "Cycle AF-area Mode");
+    map.insert("119".to_string(), "Focus Limiter");
+    map.insert("12".to_string(), "+NEF(RAW)");
+    map.insert("120".to_string(), "Jump to Source Image");
+    map.insert("121".to_string(), "Raw Processing (Current)");
+    map.insert("122".to_string(), "Raw Processing (Multiple)");
+    map.insert("123".to_string(), "Trim");
+    map.insert("124".to_string(), "Resize (Current)");
+    map.insert("125".to_string(), "Resize (Multiple)");
+    map.insert("126".to_string(), "D-Lighting");
+    map.insert("127".to_string(), "Straighten");
+    map.insert("128".to_string(), "Distortion Control");
+    map.insert("129".to_string(), "Perspective Control");
+    map.insert("130".to_string(), "Monochrome");
+    map.insert("131".to_string(), "Overlay (Add)");
+    map.insert("132".to_string(), "Lighten");
+    map.insert("133".to_string(), "Darken");
+    map.insert("134".to_string(), "Motion Blend");
+    map.insert("135".to_string(), "Cycle Monitor Mode");
+    map.insert("18".to_string(), "Virtual Horizon");
+    map.insert("19".to_string(), "Synchronized Release");
+    map.insert("20".to_string(), "My Menu");
+    map.insert("21".to_string(), "My Menu Top Item");
+    map.insert("22".to_string(), "Playback");
+    map.insert("23".to_string(), "Rating");
+    map.insert("24".to_string(), "Protect");
+    map.insert("25".to_string(), "Zoom");
+    map.insert("26".to_string(), "Focus Peaking");
+    map.insert("27".to_string(), "Flash Mode/Compensation");
+    map.insert("28".to_string(), "Image Area");
+    map.insert("3".to_string(), "FV Lock");
+    map.insert("30".to_string(), "Non-CPU Lens");
+    map.insert("31".to_string(), "Active-D Lighting");
+    map.insert("32".to_string(), "Exposure Delay Mode");
+    map.insert("33".to_string(), "1 Stop Speed/Aperture");
+    map.insert("34".to_string(), "White Balance");
+    map.insert("35".to_string(), "Metering");
+    map.insert("36".to_string(), "Auto Bracketing");
+    map.insert("37".to_string(), "Multiple Exposure");
+    map.insert("38".to_string(), "HDR Overlay");
+    map.insert("39".to_string(), "Picture Control");
+    map.insert("4".to_string(), "AE/AF Lock");
+    map.insert("40".to_string(), "Quality");
+    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
+    map.insert("42".to_string(), "Select Center Focus Point");
+    map.insert("44".to_string(), "Record Movie");
+    map.insert("45".to_string(), "Thumbnail On/Off");
+    map.insert("46".to_string(), "View Histograms");
+    map.insert("47".to_string(), "Choose Folder");
+    map.insert("48".to_string(), "Power Aperture (Open)");
+    map.insert("49".to_string(), "Power Aperture (Close)");
+    map.insert("5".to_string(), "AE Lock Only");
+    map.insert("52".to_string(), "Microphone Sensitivity");
+    map.insert("53".to_string(), "Release Mode");
+    map.insert("57".to_string(), "Preset Focus Point");
+    map.insert("58".to_string(), "AE/AWB Lock (hold)");
+    map.insert("59".to_string(), "AF-AreaMode");
+    map.insert("6".to_string(), "AE Lock (reset on release)");
+    map.insert("60".to_string(), "AF-AreaMode + AF-On");
+    map.insert("61".to_string(), "Recall Shooting Functions");
+    map.insert("64".to_string(), "Filtered Playback");
+    map.insert("65".to_string(), "Same as AF-On");
+    map.insert("66".to_string(), "Voice Memo");
+    map.insert("7".to_string(), "AE Lock (hold)");
+    map.insert("70".to_string(), "Photo Shooting Bank");
+    map.insert("71".to_string(), "ISO");
+    map.insert("72".to_string(), "Shooting Mode");
+    map.insert("73".to_string(), "Exposure Compensation");
+    map.insert("76".to_string(), "Silent Mode");
+    map.insert("78".to_string(), "LiveView Information");
+    map.insert("79".to_string(), "AWB Lock (hold)");
+    map.insert("8".to_string(), "AF Lock Only");
+    map.insert("80".to_string(), "Grid Display");
+    map.insert("81".to_string(), "Starlight View");
+    map.insert("82".to_string(), "Select To Send (PC)");
+    map.insert("83".to_string(), "Select To Send (FTP)");
+    map.insert("84".to_string(), "Pattern Tone Range");
+    map.insert("85".to_string(), "Control Lock");
+    map.insert("86".to_string(), "Save Focus Position");
+    map.insert("87".to_string(), "Recall Focus Position");
+    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
+    map.insert("89".to_string(), "Set Picture Control (HLG)");
+    map.insert("9".to_string(), "AF-On");
+    map.insert("90".to_string(), "Skin Softening");
+    map.insert("91".to_string(), "Portrait Impression Balance");
+    map.insert("92".to_string(), "Fast AF-On");
+    map.insert("97".to_string(), "High Frequency Flicker Reduction");
+    map.insert("98".to_string(), "Switch FX/DX");
+    map.insert("99".to_string(), "View Mode (Photo LV)");
     map
 });
 
@@ -2520,41 +2275,261 @@ static PRINT_CONV_148: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
-    map.insert("2".to_string(), "On (Series)");
     map
 });
 
 static PRINT_CONV_149: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("15".to_string(), "Portuguese");
-    map.insert("4".to_string(), "English");
-    map.insert("5".to_string(), "Spanish");
-    map.insert("7".to_string(), "French");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Preview");
+    map.insert("10".to_string(), "Flash Disable/Enable");
+    map.insert("100".to_string(), "Photo Flicker Reduction");
+    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
+    map.insert("103".to_string(), "Start Series Playback");
+    map.insert("104".to_string(), "View Assist");
+    map.insert("105".to_string(), "Hi-Res Zoom+");
+    map.insert("106".to_string(), "Hi-Res Zoom-");
+    map.insert("108".to_string(), "Override Other Cameras");
+    map.insert(
+        "109".to_string(),
+        "DISP - Cycle Information Display (shooting)",
+    );
+    map.insert("11".to_string(), "Bracketing Burst");
+    map.insert(
+        "110".to_string(),
+        "DISP - Cycle Information Display (playback)",
+    );
+    map.insert("111".to_string(), "Resume Shooting");
+    map.insert("112".to_string(), "Switch Eyes");
+    map.insert("113".to_string(), "Power Zoom +");
+    map.insert("114".to_string(), "Power Zoom -");
+    map.insert("115".to_string(), "Delete");
+    map.insert("116".to_string(), "Pixel Shift Shooting");
+    map.insert("117".to_string(), "Cycle AF-area Mode");
+    map.insert("119".to_string(), "Focus Limiter");
+    map.insert("12".to_string(), "+NEF(RAW)");
+    map.insert("120".to_string(), "Jump to Source Image");
+    map.insert("121".to_string(), "Raw Processing (Current)");
+    map.insert("122".to_string(), "Raw Processing (Multiple)");
+    map.insert("123".to_string(), "Trim");
+    map.insert("124".to_string(), "Resize (Current)");
+    map.insert("125".to_string(), "Resize (Multiple)");
+    map.insert("126".to_string(), "D-Lighting");
+    map.insert("127".to_string(), "Straighten");
+    map.insert("128".to_string(), "Distortion Control");
+    map.insert("129".to_string(), "Perspective Control");
+    map.insert("130".to_string(), "Monochrome");
+    map.insert("131".to_string(), "Overlay (Add)");
+    map.insert("132".to_string(), "Lighten");
+    map.insert("133".to_string(), "Darken");
+    map.insert("134".to_string(), "Motion Blend");
+    map.insert("135".to_string(), "Cycle Monitor Mode");
+    map.insert("18".to_string(), "Virtual Horizon");
+    map.insert("19".to_string(), "Synchronized Release");
+    map.insert("20".to_string(), "My Menu");
+    map.insert("21".to_string(), "My Menu Top Item");
+    map.insert("22".to_string(), "Playback");
+    map.insert("23".to_string(), "Rating");
+    map.insert("24".to_string(), "Protect");
+    map.insert("25".to_string(), "Zoom");
+    map.insert("26".to_string(), "Focus Peaking");
+    map.insert("27".to_string(), "Flash Mode/Compensation");
+    map.insert("28".to_string(), "Image Area");
+    map.insert("3".to_string(), "FV Lock");
+    map.insert("30".to_string(), "Non-CPU Lens");
+    map.insert("31".to_string(), "Active-D Lighting");
+    map.insert("32".to_string(), "Exposure Delay Mode");
+    map.insert("33".to_string(), "1 Stop Speed/Aperture");
+    map.insert("34".to_string(), "White Balance");
+    map.insert("35".to_string(), "Metering");
+    map.insert("36".to_string(), "Auto Bracketing");
+    map.insert("37".to_string(), "Multiple Exposure");
+    map.insert("38".to_string(), "HDR Overlay");
+    map.insert("39".to_string(), "Picture Control");
+    map.insert("4".to_string(), "AE/AF Lock");
+    map.insert("40".to_string(), "Quality");
+    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
+    map.insert("42".to_string(), "Select Center Focus Point");
+    map.insert("44".to_string(), "Record Movie");
+    map.insert("45".to_string(), "Thumbnail On/Off");
+    map.insert("46".to_string(), "View Histograms");
+    map.insert("47".to_string(), "Choose Folder");
+    map.insert("48".to_string(), "Power Aperture (Open)");
+    map.insert("49".to_string(), "Power Aperture (Close)");
+    map.insert("5".to_string(), "AE Lock Only");
+    map.insert("52".to_string(), "Microphone Sensitivity");
+    map.insert("53".to_string(), "Release Mode");
+    map.insert("57".to_string(), "Preset Focus Point");
+    map.insert("58".to_string(), "AE/AWB Lock (hold)");
+    map.insert("59".to_string(), "AF-AreaMode");
+    map.insert("6".to_string(), "AE Lock (reset on release)");
+    map.insert("60".to_string(), "AF-AreaMode + AF-On");
+    map.insert("61".to_string(), "Recall Shooting Functions");
+    map.insert("64".to_string(), "Filtered Playback");
+    map.insert("65".to_string(), "Same as AF-On");
+    map.insert("66".to_string(), "Voice Memo");
+    map.insert("7".to_string(), "AE Lock (hold)");
+    map.insert("70".to_string(), "Photo Shooting Bank");
+    map.insert("71".to_string(), "ISO");
+    map.insert("72".to_string(), "Shooting Mode");
+    map.insert("73".to_string(), "Exposure Compensation");
+    map.insert("76".to_string(), "Silent Mode");
+    map.insert("78".to_string(), "LiveView Information");
+    map.insert("79".to_string(), "AWB Lock (hold)");
+    map.insert("8".to_string(), "AF Lock Only");
+    map.insert("80".to_string(), "Grid Display");
+    map.insert("81".to_string(), "Starlight View");
+    map.insert("82".to_string(), "Select To Send (PC)");
+    map.insert("83".to_string(), "Select To Send (FTP)");
+    map.insert("84".to_string(), "Pattern Tone Range");
+    map.insert("85".to_string(), "Control Lock");
+    map.insert("86".to_string(), "Save Focus Position");
+    map.insert("87".to_string(), "Recall Focus Position");
+    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
+    map.insert("89".to_string(), "Set Picture Control (HLG)");
+    map.insert("9".to_string(), "AF-On");
+    map.insert("90".to_string(), "Skin Softening");
+    map.insert("91".to_string(), "Portrait Impression Balance");
+    map.insert("92".to_string(), "Fast AF-On");
+    map.insert("97".to_string(), "High Frequency Flicker Reduction");
+    map.insert("98".to_string(), "Switch FX/DX");
+    map.insert("99".to_string(), "View Mode (Photo LV)");
     map
 });
 
 static PRINT_CONV_150: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Preview");
+    map.insert("10".to_string(), "Flash Disable/Enable");
+    map.insert("100".to_string(), "Photo Flicker Reduction");
+    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
+    map.insert("103".to_string(), "Start Series Playback");
+    map.insert("104".to_string(), "View Assist");
+    map.insert("105".to_string(), "Hi-Res Zoom+");
+    map.insert("106".to_string(), "Hi-Res Zoom-");
+    map.insert("108".to_string(), "Override Other Cameras");
+    map.insert(
+        "109".to_string(),
+        "DISP - Cycle Information Display (shooting)",
+    );
+    map.insert("11".to_string(), "Bracketing Burst");
+    map.insert(
+        "110".to_string(),
+        "DISP - Cycle Information Display (playback)",
+    );
+    map.insert("111".to_string(), "Resume Shooting");
+    map.insert("112".to_string(), "Switch Eyes");
+    map.insert("113".to_string(), "Power Zoom +");
+    map.insert("114".to_string(), "Power Zoom -");
+    map.insert("115".to_string(), "Delete");
+    map.insert("116".to_string(), "Pixel Shift Shooting");
+    map.insert("117".to_string(), "Cycle AF-area Mode");
+    map.insert("119".to_string(), "Focus Limiter");
+    map.insert("12".to_string(), "+NEF(RAW)");
+    map.insert("120".to_string(), "Jump to Source Image");
+    map.insert("121".to_string(), "Raw Processing (Current)");
+    map.insert("122".to_string(), "Raw Processing (Multiple)");
+    map.insert("123".to_string(), "Trim");
+    map.insert("124".to_string(), "Resize (Current)");
+    map.insert("125".to_string(), "Resize (Multiple)");
+    map.insert("126".to_string(), "D-Lighting");
+    map.insert("127".to_string(), "Straighten");
+    map.insert("128".to_string(), "Distortion Control");
+    map.insert("129".to_string(), "Perspective Control");
+    map.insert("130".to_string(), "Monochrome");
+    map.insert("131".to_string(), "Overlay (Add)");
+    map.insert("132".to_string(), "Lighten");
+    map.insert("133".to_string(), "Darken");
+    map.insert("134".to_string(), "Motion Blend");
+    map.insert("135".to_string(), "Cycle Monitor Mode");
+    map.insert("18".to_string(), "Virtual Horizon");
+    map.insert("19".to_string(), "Synchronized Release");
+    map.insert("20".to_string(), "My Menu");
+    map.insert("21".to_string(), "My Menu Top Item");
+    map.insert("22".to_string(), "Playback");
+    map.insert("23".to_string(), "Rating");
+    map.insert("24".to_string(), "Protect");
+    map.insert("25".to_string(), "Zoom");
+    map.insert("26".to_string(), "Focus Peaking");
+    map.insert("27".to_string(), "Flash Mode/Compensation");
+    map.insert("28".to_string(), "Image Area");
+    map.insert("3".to_string(), "FV Lock");
+    map.insert("30".to_string(), "Non-CPU Lens");
+    map.insert("31".to_string(), "Active-D Lighting");
+    map.insert("32".to_string(), "Exposure Delay Mode");
+    map.insert("33".to_string(), "1 Stop Speed/Aperture");
+    map.insert("34".to_string(), "White Balance");
+    map.insert("35".to_string(), "Metering");
+    map.insert("36".to_string(), "Auto Bracketing");
+    map.insert("37".to_string(), "Multiple Exposure");
+    map.insert("38".to_string(), "HDR Overlay");
+    map.insert("39".to_string(), "Picture Control");
+    map.insert("4".to_string(), "AE/AF Lock");
+    map.insert("40".to_string(), "Quality");
+    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
+    map.insert("42".to_string(), "Select Center Focus Point");
+    map.insert("44".to_string(), "Record Movie");
+    map.insert("45".to_string(), "Thumbnail On/Off");
+    map.insert("46".to_string(), "View Histograms");
+    map.insert("47".to_string(), "Choose Folder");
+    map.insert("48".to_string(), "Power Aperture (Open)");
+    map.insert("49".to_string(), "Power Aperture (Close)");
+    map.insert("5".to_string(), "AE Lock Only");
+    map.insert("52".to_string(), "Microphone Sensitivity");
+    map.insert("53".to_string(), "Release Mode");
+    map.insert("57".to_string(), "Preset Focus Point");
+    map.insert("58".to_string(), "AE/AWB Lock (hold)");
+    map.insert("59".to_string(), "AF-AreaMode");
+    map.insert("6".to_string(), "AE Lock (reset on release)");
+    map.insert("60".to_string(), "AF-AreaMode + AF-On");
+    map.insert("61".to_string(), "Recall Shooting Functions");
+    map.insert("64".to_string(), "Filtered Playback");
+    map.insert("65".to_string(), "Same as AF-On");
+    map.insert("66".to_string(), "Voice Memo");
+    map.insert("7".to_string(), "AE Lock (hold)");
+    map.insert("70".to_string(), "Photo Shooting Bank");
+    map.insert("71".to_string(), "ISO");
+    map.insert("72".to_string(), "Shooting Mode");
+    map.insert("73".to_string(), "Exposure Compensation");
+    map.insert("76".to_string(), "Silent Mode");
+    map.insert("78".to_string(), "LiveView Information");
+    map.insert("79".to_string(), "AWB Lock (hold)");
+    map.insert("8".to_string(), "AF Lock Only");
+    map.insert("80".to_string(), "Grid Display");
+    map.insert("81".to_string(), "Starlight View");
+    map.insert("82".to_string(), "Select To Send (PC)");
+    map.insert("83".to_string(), "Select To Send (FTP)");
+    map.insert("84".to_string(), "Pattern Tone Range");
+    map.insert("85".to_string(), "Control Lock");
+    map.insert("86".to_string(), "Save Focus Position");
+    map.insert("87".to_string(), "Recall Focus Position");
+    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
+    map.insert("89".to_string(), "Set Picture Control (HLG)");
+    map.insert("9".to_string(), "AF-On");
+    map.insert("90".to_string(), "Skin Softening");
+    map.insert("91".to_string(), "Portrait Impression Balance");
+    map.insert("92".to_string(), "Fast AF-On");
+    map.insert("97".to_string(), "High Frequency Flicker Reduction");
+    map.insert("98".to_string(), "Switch FX/DX");
+    map.insert("99".to_string(), "View Mode (Photo LV)");
     map
 });
 
 static PRINT_CONV_151: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Auto");
-    map.insert("1".to_string(), "4320p");
-    map.insert("2".to_string(), "2160p");
-    map.insert("3".to_string(), "1080p");
-    map.insert("4".to_string(), "1080i");
-    map.insert("5".to_string(), "720p");
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map.insert("2".to_string(), "On (Series)");
     map
 });
 
 static PRINT_CONV_152: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
+    map.insert("15".to_string(), "Portuguese");
+    map.insert("4".to_string(), "English");
+    map.insert("5".to_string(), "Spanish");
+    map.insert("7".to_string(), "French");
     map
 });
 
@@ -2567,8 +2542,12 @@ static PRINT_CONV_153: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_154: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Disable Release");
-    map.insert("1".to_string(), "Enable Release");
+    map.insert("0".to_string(), "Auto");
+    map.insert("1".to_string(), "4320p");
+    map.insert("2".to_string(), "2160p");
+    map.insert("3".to_string(), "1080p");
+    map.insert("4".to_string(), "1080i");
+    map.insert("5".to_string(), "720p");
     map
 });
 
@@ -2588,15 +2567,15 @@ static PRINT_CONV_156: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_157: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
+    map.insert("0".to_string(), "Disable Release");
+    map.insert("1".to_string(), "Enable Release");
     map
 });
 
 static PRINT_CONV_158: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Stays Open");
-    map.insert("1".to_string(), "Closes");
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
     map
 });
 
@@ -2609,19 +2588,15 @@ static PRINT_CONV_159: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_160: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "FX");
-    map.insert("1".to_string(), "DX");
-    map.insert("4".to_string(), "16:9");
-    map.insert("8".to_string(), "1:1");
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
     map
 });
 
 static PRINT_CONV_161: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Low");
-    map.insert("2".to_string(), "Normal");
-    map.insert("3".to_string(), "High");
+    map.insert("0".to_string(), "Stays Open");
+    map.insert("1".to_string(), "Closes");
     map
 });
 
@@ -2634,12 +2609,37 @@ static PRINT_CONV_162: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_163: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("0".to_string(), "FX");
+    map.insert("1".to_string(), "DX");
+    map.insert("4".to_string(), "16:9");
+    map.insert("8".to_string(), "1:1");
+    map
+});
+
+static PRINT_CONV_164: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Low");
+    map.insert("2".to_string(), "Normal");
+    map.insert("3".to_string(), "High");
+    map
+});
+
+static PRINT_CONV_165: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_164: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_166: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_167: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "TTL");
     map.insert("1".to_string(), "Auto External Flash");
@@ -2649,7 +2649,7 @@ static PRINT_CONV_164: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_165: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_168: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "0");
     map.insert("1".to_string(), "0.1 m");
@@ -2692,7 +2692,7 @@ static PRINT_CONV_165: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_166: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_169: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Group");
     map.insert("1".to_string(), "Quick Wireless");
@@ -2700,7 +2700,7 @@ static PRINT_CONV_166: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_167: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_170: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Optical AWL");
@@ -2709,7 +2709,7 @@ static PRINT_CONV_167: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_168: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_171: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Disabled");
     map.insert("2".to_string(), "2F");
@@ -2721,7 +2721,7 @@ static PRINT_CONV_168: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_169: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_172: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "0.3");
     map.insert("1".to_string(), "0.5");
@@ -2738,7 +2738,7 @@ static PRINT_CONV_169: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_170: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_173: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Overflow");
     map.insert("1".to_string(), "Backup");
@@ -2747,14 +2747,14 @@ static PRINT_CONV_170: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_171: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_174: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_172: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_175: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Auto");
@@ -2766,7 +2766,7 @@ static PRINT_CONV_172: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_173: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_176: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Small");
     map.insert("1".to_string(), "Medium");
@@ -2774,14 +2774,14 @@ static PRINT_CONV_173: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_174: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_177: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "FX");
     map.insert("1".to_string(), "DX");
     map
 });
 
-static PRINT_CONV_175: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_178: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "H.264 8-bit (MP4)");
     map.insert("2".to_string(), "H.265 8-bit (MOV)");
@@ -2792,7 +2792,7 @@ static PRINT_CONV_175: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_176: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_179: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO 64");
     map.insert("1".to_string(), "ISO 80");
@@ -2828,14 +2828,14 @@ static PRINT_CONV_176: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_177: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_180: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_178: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_181: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO 64");
     map.insert("1".to_string(), "ISO 80");
@@ -2871,7 +2871,7 @@ static PRINT_CONV_178: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_179: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_182: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("2".to_string(), "Low");
@@ -2881,7 +2881,7 @@ static PRINT_CONV_179: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_180: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_183: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -2890,7 +2890,7 @@ static PRINT_CONV_180: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_181: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_184: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "50Hz");
@@ -2898,7 +2898,7 @@ static PRINT_CONV_181: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_182: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_185: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Matrix");
     map.insert("1".to_string(), "Center");
@@ -2907,7 +2907,7 @@ static PRINT_CONV_182: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_183: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_186: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Manual");
     map.insert("1".to_string(), "AF-S");
@@ -2916,7 +2916,7 @@ static PRINT_CONV_183: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_184: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_187: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Pinpoint");
     map.insert("1".to_string(), "Single");
@@ -2931,7 +2931,7 @@ static PRINT_CONV_184: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_185: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_188: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Normal");
@@ -2939,14 +2939,14 @@ static PRINT_CONV_185: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_186: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_189: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_187: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_190: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Auto");
@@ -2954,28 +2954,28 @@ static PRINT_CONV_187: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_188: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_191: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_189: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_192: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Wide Range");
     map.insert("1".to_string(), "Vocal Range");
     map
 });
 
-static PRINT_CONV_190: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_193: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_191: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_194: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "SDR");
     map.insert("1".to_string(), "HLG");
@@ -2983,7 +2983,7 @@ static PRINT_CONV_191: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_192: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_195: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "1920x1080");
     map.insert("2".to_string(), "3840x2160");
@@ -2992,7 +2992,7 @@ static PRINT_CONV_192: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_193: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_196: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "120p");
     map.insert("1".to_string(), "100p");
@@ -3004,21 +3004,21 @@ static PRINT_CONV_193: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_194: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_197: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_195: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_198: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_196: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_199: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Auto");
@@ -3030,7 +3030,7 @@ static PRINT_CONV_196: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_197: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_200: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("15".to_string(), "Portuguese");
     map.insert("4".to_string(), "English");
@@ -3039,7 +3039,7 @@ static PRINT_CONV_197: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_198: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_201: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "-5");
     map.insert("1".to_string(), "-4");
@@ -3059,32 +3059,6 @@ static PRINT_CONV_198: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_199: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_200: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map.insert("2".to_string(), "On (Series)");
-    map
-});
-
-static PRINT_CONV_201: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Auto");
-    map.insert("1".to_string(), "4320p");
-    map.insert("2".to_string(), "2160p");
-    map.insert("3".to_string(), "1080p");
-    map.insert("4".to_string(), "1080i");
-    map.insert("5".to_string(), "720p");
-    map
-});
-
 static PRINT_CONV_202: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
@@ -3096,13 +3070,18 @@ static PRINT_CONV_203: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
+    map.insert("2".to_string(), "On (Series)");
     map
 });
 
 static PRINT_CONV_204: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Disable Release");
-    map.insert("1".to_string(), "Enable Release");
+    map.insert("0".to_string(), "Auto");
+    map.insert("1".to_string(), "4320p");
+    map.insert("2".to_string(), "2160p");
+    map.insert("3".to_string(), "1080p");
+    map.insert("4".to_string(), "1080i");
+    map.insert("5".to_string(), "720p");
     map
 });
 
@@ -3122,15 +3101,15 @@ static PRINT_CONV_206: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_207: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
+    map.insert("0".to_string(), "Disable Release");
+    map.insert("1".to_string(), "Enable Release");
     map
 });
 
 static PRINT_CONV_208: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Stays Open");
-    map.insert("1".to_string(), "Closes");
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
     map
 });
 
@@ -3143,19 +3122,15 @@ static PRINT_CONV_209: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_210: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "None");
-    map.insert("1".to_string(), "0.3 Sec");
-    map.insert("2".to_string(), "0.5 Sec");
-    map.insert("3".to_string(), "1 Sec");
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
     map
 });
 
 static PRINT_CONV_211: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "1 Sec");
-    map.insert("1".to_string(), "2 Sec");
-    map.insert("2".to_string(), "3 Sec");
-    map.insert("3".to_string(), "Max");
+    map.insert("0".to_string(), "Stays Open");
+    map.insert("1".to_string(), "Closes");
     map
 });
 
@@ -3168,41 +3143,30 @@ static PRINT_CONV_212: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_213: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "ISO 64");
-    map.insert("1".to_string(), "ISO 80");
-    map.insert("10".to_string(), "ISO 640");
-    map.insert("11".to_string(), "ISO 800");
-    map.insert("12".to_string(), "ISO 1000");
-    map.insert("13".to_string(), "ISO 1250");
-    map.insert("14".to_string(), "ISO 1600");
-    map.insert("15".to_string(), "ISO 2000");
-    map.insert("16".to_string(), "ISO 2500");
-    map.insert("17".to_string(), "ISO 3200");
-    map.insert("18".to_string(), "ISO 4000");
-    map.insert("19".to_string(), "ISO 5000");
-    map.insert("2".to_string(), "ISO 100");
-    map.insert("20".to_string(), "ISO 6400");
-    map.insert("21".to_string(), "ISO 8000");
-    map.insert("22".to_string(), "ISO 10000");
-    map.insert("23".to_string(), "ISO 12800");
-    map.insert("24".to_string(), "ISO 16000");
-    map.insert("25".to_string(), "ISO 20000");
-    map.insert("26".to_string(), "ISO 25600");
-    map.insert("27".to_string(), "ISO Hi 0.3");
-    map.insert("28".to_string(), "ISO Hi 0.7");
-    map.insert("29".to_string(), "ISO Hi 1.0");
-    map.insert("3".to_string(), "ISO 125");
-    map.insert("32".to_string(), "ISO Hi 2.0");
-    map.insert("4".to_string(), "ISO 160");
-    map.insert("5".to_string(), "ISO 200");
-    map.insert("6".to_string(), "ISO 250");
-    map.insert("7".to_string(), "ISO 320");
-    map.insert("8".to_string(), "ISO 400");
-    map.insert("9".to_string(), "ISO 500");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "0.3 Sec");
+    map.insert("2".to_string(), "0.5 Sec");
+    map.insert("3".to_string(), "1 Sec");
     map
 });
 
 static PRINT_CONV_214: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "1 Sec");
+    map.insert("1".to_string(), "2 Sec");
+    map.insert("2".to_string(), "3 Sec");
+    map.insert("3".to_string(), "Max");
+    map
+});
+
+static PRINT_CONV_215: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_216: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO 64");
     map.insert("1".to_string(), "ISO 80");
@@ -3238,7 +3202,43 @@ static PRINT_CONV_214: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_215: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_217: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "ISO 64");
+    map.insert("1".to_string(), "ISO 80");
+    map.insert("10".to_string(), "ISO 640");
+    map.insert("11".to_string(), "ISO 800");
+    map.insert("12".to_string(), "ISO 1000");
+    map.insert("13".to_string(), "ISO 1250");
+    map.insert("14".to_string(), "ISO 1600");
+    map.insert("15".to_string(), "ISO 2000");
+    map.insert("16".to_string(), "ISO 2500");
+    map.insert("17".to_string(), "ISO 3200");
+    map.insert("18".to_string(), "ISO 4000");
+    map.insert("19".to_string(), "ISO 5000");
+    map.insert("2".to_string(), "ISO 100");
+    map.insert("20".to_string(), "ISO 6400");
+    map.insert("21".to_string(), "ISO 8000");
+    map.insert("22".to_string(), "ISO 10000");
+    map.insert("23".to_string(), "ISO 12800");
+    map.insert("24".to_string(), "ISO 16000");
+    map.insert("25".to_string(), "ISO 20000");
+    map.insert("26".to_string(), "ISO 25600");
+    map.insert("27".to_string(), "ISO Hi 0.3");
+    map.insert("28".to_string(), "ISO Hi 0.7");
+    map.insert("29".to_string(), "ISO Hi 1.0");
+    map.insert("3".to_string(), "ISO 125");
+    map.insert("32".to_string(), "ISO Hi 2.0");
+    map.insert("4".to_string(), "ISO 160");
+    map.insert("5".to_string(), "ISO 200");
+    map.insert("6".to_string(), "ISO 250");
+    map.insert("7".to_string(), "ISO 320");
+    map.insert("8".to_string(), "ISO 400");
+    map.insert("9".to_string(), "ISO 500");
+    map
+});
+
+static PRINT_CONV_218: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -3247,21 +3247,21 @@ static PRINT_CONV_215: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_216: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_219: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_217: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_220: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_218: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_221: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "TTL");
     map.insert("1".to_string(), "Auto External Flash");
@@ -3271,7 +3271,7 @@ static PRINT_CONV_218: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_219: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_222: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "0");
     map.insert("1".to_string(), "0.1 m");
@@ -3314,7 +3314,7 @@ static PRINT_CONV_219: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_220: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_223: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Pinpoint");
     map.insert("1".to_string(), "Single");
@@ -3329,7 +3329,7 @@ static PRINT_CONV_220: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_221: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_224: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Normal");
@@ -3337,7 +3337,7 @@ static PRINT_CONV_221: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_222: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_225: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "AE/Flash");
     map.insert("1".to_string(), "AE");
@@ -3347,7 +3347,7 @@ static PRINT_CONV_222: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_223: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_226: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Disabled");
     map.insert("2".to_string(), "2F");
@@ -3359,7 +3359,7 @@ static PRINT_CONV_223: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_224: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_227: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "0.3");
     map.insert("1".to_string(), "0.5");
@@ -3376,39 +3376,12 @@ static PRINT_CONV_224: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_225: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_228: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Overflow");
     map.insert("1".to_string(), "Backup");
     map.insert("2".to_string(), "NEF Primary + JPG Secondary");
     map.insert("3".to_string(), "JPG Primary + JPG Secondary");
-    map
-});
-
-static PRINT_CONV_226: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_227: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Auto");
-    map.insert("2".to_string(), "People");
-    map.insert("3".to_string(), "Animals");
-    map.insert("4".to_string(), "Vehicles");
-    map.insert("5".to_string(), "Birds");
-    map.insert("6".to_string(), "Airplanes");
-    map
-});
-
-static PRINT_CONV_228: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Small");
-    map.insert("1".to_string(), "Medium");
-    map.insert("2".to_string(), "Large");
     map
 });
 
@@ -3421,12 +3394,39 @@ static PRINT_CONV_229: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_230: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Auto");
+    map.insert("2".to_string(), "People");
+    map.insert("3".to_string(), "Animals");
+    map.insert("4".to_string(), "Vehicles");
+    map.insert("5".to_string(), "Birds");
+    map.insert("6".to_string(), "Airplanes");
+    map
+});
+
+static PRINT_CONV_231: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Small");
+    map.insert("1".to_string(), "Medium");
+    map.insert("2".to_string(), "Large");
+    map
+});
+
+static PRINT_CONV_232: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_233: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
     map.insert("0".to_string(), "FX");
     map.insert("1".to_string(), "DX");
     map
 });
 
-static PRINT_CONV_231: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_234: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "H.264 8-bit (MP4)");
     map.insert("2".to_string(), "H.265 8-bit (MOV)");
@@ -3437,7 +3437,7 @@ static PRINT_CONV_231: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_232: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_235: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO 64");
     map.insert("1".to_string(), "ISO 80");
@@ -3473,14 +3473,14 @@ static PRINT_CONV_232: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_233: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_236: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_234: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_237: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO 64");
     map.insert("1".to_string(), "ISO 80");
@@ -3516,7 +3516,7 @@ static PRINT_CONV_234: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_235: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_238: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "CH");
@@ -3528,7 +3528,7 @@ static PRINT_CONV_235: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_236: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_239: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("2".to_string(), "Low");
@@ -3538,7 +3538,7 @@ static PRINT_CONV_236: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_237: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_240: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -3547,7 +3547,7 @@ static PRINT_CONV_237: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_238: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_241: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "50Hz");
@@ -3555,7 +3555,7 @@ static PRINT_CONV_238: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_239: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_242: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Matrix");
     map.insert("1".to_string(), "Center");
@@ -3564,7 +3564,7 @@ static PRINT_CONV_239: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_240: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_243: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Manual");
     map.insert("1".to_string(), "AF-S");
@@ -3573,7 +3573,7 @@ static PRINT_CONV_240: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_241: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_244: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Pinpoint");
     map.insert("1".to_string(), "Single");
@@ -3588,7 +3588,7 @@ static PRINT_CONV_241: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_242: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_245: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Normal");
@@ -3596,14 +3596,14 @@ static PRINT_CONV_242: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_243: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_246: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_244: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_247: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Auto");
@@ -3611,28 +3611,28 @@ static PRINT_CONV_244: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_245: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_248: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_246: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_249: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Wide Range");
     map.insert("1".to_string(), "Vocal Range");
     map
 });
 
-static PRINT_CONV_247: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_250: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_248: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_251: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "SDR");
     map.insert("1".to_string(), "HLG");
@@ -3640,7 +3640,7 @@ static PRINT_CONV_248: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_249: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_252: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "1920x1080");
     map.insert("2".to_string(), "3840x2160");
@@ -3649,7 +3649,7 @@ static PRINT_CONV_249: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_250: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_253: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "120p");
     map.insert("1".to_string(), "100p");
@@ -3658,32 +3658,6 @@ static PRINT_CONV_250: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map.insert("4".to_string(), "30p");
     map.insert("5".to_string(), "25p");
     map.insert("6".to_string(), "24p");
-    map
-});
-
-static PRINT_CONV_251: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_252: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_253: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Auto");
-    map.insert("2".to_string(), "People");
-    map.insert("3".to_string(), "Animals");
-    map.insert("4".to_string(), "Vehicles");
-    map.insert("5".to_string(), "Birds");
-    map.insert("6".to_string(), "Airplanes");
     map
 });
 
@@ -3696,6 +3670,32 @@ static PRINT_CONV_254: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_255: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_256: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Auto");
+    map.insert("2".to_string(), "People");
+    map.insert("3".to_string(), "Animals");
+    map.insert("4".to_string(), "Vehicles");
+    map.insert("5".to_string(), "Birds");
+    map.insert("6".to_string(), "Airplanes");
+    map
+});
+
+static PRINT_CONV_257: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_258: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
     map.insert("15".to_string(), "Portuguese");
     map.insert("4".to_string(), "English");
     map.insert("5".to_string(), "Spanish");
@@ -3703,7 +3703,7 @@ static PRINT_CONV_255: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_256: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_259: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "-5");
     map.insert("1".to_string(), "-4");
@@ -3723,32 +3723,6 @@ static PRINT_CONV_256: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_257: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_258: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map.insert("2".to_string(), "On (Series)");
-    map
-});
-
-static PRINT_CONV_259: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Auto");
-    map.insert("1".to_string(), "4320p");
-    map.insert("2".to_string(), "2160p");
-    map.insert("3".to_string(), "1080p");
-    map.insert("4".to_string(), "1080i");
-    map.insert("5".to_string(), "720p");
-    map
-});
-
 static PRINT_CONV_260: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
@@ -3760,13 +3734,18 @@ static PRINT_CONV_261: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
+    map.insert("2".to_string(), "On (Series)");
     map
 });
 
 static PRINT_CONV_262: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Disable Release");
-    map.insert("1".to_string(), "Enable Release");
+    map.insert("0".to_string(), "Auto");
+    map.insert("1".to_string(), "4320p");
+    map.insert("2".to_string(), "2160p");
+    map.insert("3".to_string(), "1080p");
+    map.insert("4".to_string(), "1080i");
+    map.insert("5".to_string(), "720p");
     map
 });
 
@@ -3786,25 +3765,22 @@ static PRINT_CONV_264: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_265: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
+    map.insert("0".to_string(), "Disable Release");
+    map.insert("1".to_string(), "Enable Release");
     map
 });
 
 static PRINT_CONV_266: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Stays Open");
-    map.insert("1".to_string(), "Closes");
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
     map
 });
 
 static PRINT_CONV_267: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "1");
-    map.insert("1".to_string(), "2");
-    map.insert("2".to_string(), "3");
-    map.insert("3".to_string(), "4");
-    map.insert("4".to_string(), "5");
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
     map
 });
 
@@ -3817,6 +3793,30 @@ static PRINT_CONV_268: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_269: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("0".to_string(), "Stays Open");
+    map.insert("1".to_string(), "Closes");
+    map
+});
+
+static PRINT_CONV_270: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "1");
+    map.insert("1".to_string(), "2");
+    map.insert("2".to_string(), "3");
+    map.insert("3".to_string(), "4");
+    map.insert("4".to_string(), "5");
+    map
+});
+
+static PRINT_CONV_271: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_272: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
     map.insert("0".to_string(), "None");
     map.insert("1".to_string(), "0.3 Sec");
     map.insert("2".to_string(), "0.5 Sec");
@@ -3824,7 +3824,7 @@ static PRINT_CONV_269: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_270: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_273: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "1 Sec");
     map.insert("1".to_string(), "2 Sec");
@@ -3833,358 +3833,119 @@ static PRINT_CONV_270: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_271: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "None");
-    map.insert("1".to_string(), "Preview");
-    map.insert("10".to_string(), "Flash Disable/Enable");
-    map.insert("100".to_string(), "Photo Flicker Reduction");
-    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
-    map.insert("103".to_string(), "Start Series Playback");
-    map.insert("104".to_string(), "View Assist");
-    map.insert("105".to_string(), "Hi-Res Zoom+");
-    map.insert("106".to_string(), "Hi-Res Zoom-");
-    map.insert("108".to_string(), "Override Other Cameras");
-    map.insert(
-        "109".to_string(),
-        "DISP - Cycle Information Display (shooting)",
-    );
-    map.insert("11".to_string(), "Bracketing Burst");
-    map.insert(
-        "110".to_string(),
-        "DISP - Cycle Information Display (playback)",
-    );
-    map.insert("111".to_string(), "Resume Shooting");
-    map.insert("112".to_string(), "Switch Eyes");
-    map.insert("113".to_string(), "Power Zoom +");
-    map.insert("114".to_string(), "Power Zoom -");
-    map.insert("115".to_string(), "Delete");
-    map.insert("116".to_string(), "Save and Load Power Zoom Position");
-    map.insert("117".to_string(), "Cycle AF-area Mode");
-    map.insert("118".to_string(), "Raw Processing (Current)");
-    map.insert("119".to_string(), "Raw Processing (Multiple)");
-    map.insert("12".to_string(), "+NEF(RAW)");
-    map.insert("120".to_string(), "Trim");
-    map.insert("121".to_string(), "Resize (Current)");
-    map.insert("122".to_string(), "Resize (Multiple)");
-    map.insert("123".to_string(), "D-Lighting");
-    map.insert("124".to_string(), "Straighten");
-    map.insert("125".to_string(), "Distortion Control");
-    map.insert("126".to_string(), "Perspective Control");
-    map.insert("127".to_string(), "Monochrome");
-    map.insert("128".to_string(), "Overlay (Add)");
-    map.insert("129".to_string(), "Lighten");
-    map.insert("130".to_string(), "Darken");
-    map.insert("131".to_string(), "Motion Blend");
-    map.insert("18".to_string(), "Virtual Horizon");
-    map.insert("19".to_string(), "Synchronized Release");
-    map.insert("20".to_string(), "My Menu");
-    map.insert("21".to_string(), "My Menu Top Item");
-    map.insert("22".to_string(), "Playback");
-    map.insert("23".to_string(), "Rating");
-    map.insert("24".to_string(), "Protect");
-    map.insert("25".to_string(), "Zoom");
-    map.insert("26".to_string(), "Focus Peaking");
-    map.insert("27".to_string(), "Flash Mode/Compensation");
-    map.insert("28".to_string(), "Image Area");
-    map.insert("3".to_string(), "FV Lock");
-    map.insert("30".to_string(), "Non-CPU Lens");
-    map.insert("31".to_string(), "Active-D Lighting");
-    map.insert("32".to_string(), "Exposure Delay Mode");
-    map.insert("33".to_string(), "1 Stop Speed/Aperture");
-    map.insert("34".to_string(), "White Balance");
-    map.insert("35".to_string(), "Metering");
-    map.insert("36".to_string(), "Auto Bracketing");
-    map.insert("37".to_string(), "Multiple Exposure");
-    map.insert("38".to_string(), "HDR Overlay");
-    map.insert("39".to_string(), "Picture Control");
-    map.insert("4".to_string(), "AE/AF Lock");
-    map.insert("40".to_string(), "Quality");
-    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
-    map.insert("42".to_string(), "Select Center Focus Point");
-    map.insert("44".to_string(), "Record Movie");
-    map.insert("45".to_string(), "Thumbnail On/Off");
-    map.insert("46".to_string(), "View Histograms");
-    map.insert("47".to_string(), "Choose Folder");
-    map.insert("48".to_string(), "Power Aperture (Open)");
-    map.insert("49".to_string(), "Power Aperture (Close)");
-    map.insert("5".to_string(), "AE Lock Only");
-    map.insert("52".to_string(), "Microphone Sensitivity");
-    map.insert("53".to_string(), "Release Mode");
-    map.insert("57".to_string(), "Preset Focus Point");
-    map.insert("58".to_string(), "AE/AWB Lock (hold)");
-    map.insert("59".to_string(), "AF-AreaMode");
-    map.insert("6".to_string(), "AE Lock (reset on release)");
-    map.insert("60".to_string(), "AF-AreaMode + AF-On");
-    map.insert("61".to_string(), "Recall Shooting Functions");
-    map.insert("64".to_string(), "Filtered Playback");
-    map.insert("65".to_string(), "Same as AF-On");
-    map.insert("66".to_string(), "Voice Memo");
-    map.insert("7".to_string(), "AE Lock (hold)");
-    map.insert("70".to_string(), "Photo Shooting Bank");
-    map.insert("71".to_string(), "ISO");
-    map.insert("72".to_string(), "Shooting Mode");
-    map.insert("73".to_string(), "Exposure Compensation");
-    map.insert("76".to_string(), "Silent Mode");
-    map.insert("78".to_string(), "LiveView Information");
-    map.insert("79".to_string(), "AWB Lock (hold)");
-    map.insert("8".to_string(), "AF Lock Only");
-    map.insert("80".to_string(), "Grid Display");
-    map.insert("81".to_string(), "Starlight View");
-    map.insert("82".to_string(), "Select To Send (PC)");
-    map.insert("83".to_string(), "Select To Send (FTP)");
-    map.insert("84".to_string(), "Pattern Tone Range");
-    map.insert("85".to_string(), "Control Lock");
-    map.insert("86".to_string(), "Save Focus Position");
-    map.insert("87".to_string(), "Recall Focus Position");
-    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
-    map.insert("89".to_string(), "Set Picture Control (HLG)");
-    map.insert("9".to_string(), "AF-On");
-    map.insert("90".to_string(), "Skin Softening");
-    map.insert("91".to_string(), "Portrait Impression Balance");
-    map.insert("92".to_string(), "Fast AF-On");
-    map.insert("97".to_string(), "High Frequency Flicker Reduction");
-    map.insert("98".to_string(), "Switch FX/DX");
-    map.insert("99".to_string(), "View Mode (Photo LV)");
-    map
-});
-
-static PRINT_CONV_272: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "None");
-    map.insert("1".to_string(), "Preview");
-    map.insert("10".to_string(), "Flash Disable/Enable");
-    map.insert("100".to_string(), "Photo Flicker Reduction");
-    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
-    map.insert("103".to_string(), "Start Series Playback");
-    map.insert("104".to_string(), "View Assist");
-    map.insert("105".to_string(), "Hi-Res Zoom+");
-    map.insert("106".to_string(), "Hi-Res Zoom-");
-    map.insert("108".to_string(), "Override Other Cameras");
-    map.insert(
-        "109".to_string(),
-        "DISP - Cycle Information Display (shooting)",
-    );
-    map.insert("11".to_string(), "Bracketing Burst");
-    map.insert(
-        "110".to_string(),
-        "DISP - Cycle Information Display (playback)",
-    );
-    map.insert("111".to_string(), "Resume Shooting");
-    map.insert("112".to_string(), "Switch Eyes");
-    map.insert("113".to_string(), "Power Zoom +");
-    map.insert("114".to_string(), "Power Zoom -");
-    map.insert("115".to_string(), "Delete");
-    map.insert("116".to_string(), "Save and Load Power Zoom Position");
-    map.insert("117".to_string(), "Cycle AF-area Mode");
-    map.insert("118".to_string(), "Raw Processing (Current)");
-    map.insert("119".to_string(), "Raw Processing (Multiple)");
-    map.insert("12".to_string(), "+NEF(RAW)");
-    map.insert("120".to_string(), "Trim");
-    map.insert("121".to_string(), "Resize (Current)");
-    map.insert("122".to_string(), "Resize (Multiple)");
-    map.insert("123".to_string(), "D-Lighting");
-    map.insert("124".to_string(), "Straighten");
-    map.insert("125".to_string(), "Distortion Control");
-    map.insert("126".to_string(), "Perspective Control");
-    map.insert("127".to_string(), "Monochrome");
-    map.insert("128".to_string(), "Overlay (Add)");
-    map.insert("129".to_string(), "Lighten");
-    map.insert("130".to_string(), "Darken");
-    map.insert("131".to_string(), "Motion Blend");
-    map.insert("18".to_string(), "Virtual Horizon");
-    map.insert("19".to_string(), "Synchronized Release");
-    map.insert("20".to_string(), "My Menu");
-    map.insert("21".to_string(), "My Menu Top Item");
-    map.insert("22".to_string(), "Playback");
-    map.insert("23".to_string(), "Rating");
-    map.insert("24".to_string(), "Protect");
-    map.insert("25".to_string(), "Zoom");
-    map.insert("26".to_string(), "Focus Peaking");
-    map.insert("27".to_string(), "Flash Mode/Compensation");
-    map.insert("28".to_string(), "Image Area");
-    map.insert("3".to_string(), "FV Lock");
-    map.insert("30".to_string(), "Non-CPU Lens");
-    map.insert("31".to_string(), "Active-D Lighting");
-    map.insert("32".to_string(), "Exposure Delay Mode");
-    map.insert("33".to_string(), "1 Stop Speed/Aperture");
-    map.insert("34".to_string(), "White Balance");
-    map.insert("35".to_string(), "Metering");
-    map.insert("36".to_string(), "Auto Bracketing");
-    map.insert("37".to_string(), "Multiple Exposure");
-    map.insert("38".to_string(), "HDR Overlay");
-    map.insert("39".to_string(), "Picture Control");
-    map.insert("4".to_string(), "AE/AF Lock");
-    map.insert("40".to_string(), "Quality");
-    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
-    map.insert("42".to_string(), "Select Center Focus Point");
-    map.insert("44".to_string(), "Record Movie");
-    map.insert("45".to_string(), "Thumbnail On/Off");
-    map.insert("46".to_string(), "View Histograms");
-    map.insert("47".to_string(), "Choose Folder");
-    map.insert("48".to_string(), "Power Aperture (Open)");
-    map.insert("49".to_string(), "Power Aperture (Close)");
-    map.insert("5".to_string(), "AE Lock Only");
-    map.insert("52".to_string(), "Microphone Sensitivity");
-    map.insert("53".to_string(), "Release Mode");
-    map.insert("57".to_string(), "Preset Focus Point");
-    map.insert("58".to_string(), "AE/AWB Lock (hold)");
-    map.insert("59".to_string(), "AF-AreaMode");
-    map.insert("6".to_string(), "AE Lock (reset on release)");
-    map.insert("60".to_string(), "AF-AreaMode + AF-On");
-    map.insert("61".to_string(), "Recall Shooting Functions");
-    map.insert("64".to_string(), "Filtered Playback");
-    map.insert("65".to_string(), "Same as AF-On");
-    map.insert("66".to_string(), "Voice Memo");
-    map.insert("7".to_string(), "AE Lock (hold)");
-    map.insert("70".to_string(), "Photo Shooting Bank");
-    map.insert("71".to_string(), "ISO");
-    map.insert("72".to_string(), "Shooting Mode");
-    map.insert("73".to_string(), "Exposure Compensation");
-    map.insert("76".to_string(), "Silent Mode");
-    map.insert("78".to_string(), "LiveView Information");
-    map.insert("79".to_string(), "AWB Lock (hold)");
-    map.insert("8".to_string(), "AF Lock Only");
-    map.insert("80".to_string(), "Grid Display");
-    map.insert("81".to_string(), "Starlight View");
-    map.insert("82".to_string(), "Select To Send (PC)");
-    map.insert("83".to_string(), "Select To Send (FTP)");
-    map.insert("84".to_string(), "Pattern Tone Range");
-    map.insert("85".to_string(), "Control Lock");
-    map.insert("86".to_string(), "Save Focus Position");
-    map.insert("87".to_string(), "Recall Focus Position");
-    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
-    map.insert("89".to_string(), "Set Picture Control (HLG)");
-    map.insert("9".to_string(), "AF-On");
-    map.insert("90".to_string(), "Skin Softening");
-    map.insert("91".to_string(), "Portrait Impression Balance");
-    map.insert("92".to_string(), "Fast AF-On");
-    map.insert("97".to_string(), "High Frequency Flicker Reduction");
-    map.insert("98".to_string(), "Switch FX/DX");
-    map.insert("99".to_string(), "View Mode (Photo LV)");
-    map
-});
-
-static PRINT_CONV_273: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "None");
-    map.insert("1".to_string(), "Preview");
-    map.insert("10".to_string(), "Flash Disable/Enable");
-    map.insert("100".to_string(), "Photo Flicker Reduction");
-    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
-    map.insert("103".to_string(), "Start Series Playback");
-    map.insert("104".to_string(), "View Assist");
-    map.insert("105".to_string(), "Hi-Res Zoom+");
-    map.insert("106".to_string(), "Hi-Res Zoom-");
-    map.insert("108".to_string(), "Override Other Cameras");
-    map.insert(
-        "109".to_string(),
-        "DISP - Cycle Information Display (shooting)",
-    );
-    map.insert("11".to_string(), "Bracketing Burst");
-    map.insert(
-        "110".to_string(),
-        "DISP - Cycle Information Display (playback)",
-    );
-    map.insert("111".to_string(), "Resume Shooting");
-    map.insert("112".to_string(), "Switch Eyes");
-    map.insert("113".to_string(), "Power Zoom +");
-    map.insert("114".to_string(), "Power Zoom -");
-    map.insert("115".to_string(), "Delete");
-    map.insert("116".to_string(), "Save and Load Power Zoom Position");
-    map.insert("117".to_string(), "Cycle AF-area Mode");
-    map.insert("118".to_string(), "Raw Processing (Current)");
-    map.insert("119".to_string(), "Raw Processing (Multiple)");
-    map.insert("12".to_string(), "+NEF(RAW)");
-    map.insert("120".to_string(), "Trim");
-    map.insert("121".to_string(), "Resize (Current)");
-    map.insert("122".to_string(), "Resize (Multiple)");
-    map.insert("123".to_string(), "D-Lighting");
-    map.insert("124".to_string(), "Straighten");
-    map.insert("125".to_string(), "Distortion Control");
-    map.insert("126".to_string(), "Perspective Control");
-    map.insert("127".to_string(), "Monochrome");
-    map.insert("128".to_string(), "Overlay (Add)");
-    map.insert("129".to_string(), "Lighten");
-    map.insert("130".to_string(), "Darken");
-    map.insert("131".to_string(), "Motion Blend");
-    map.insert("18".to_string(), "Virtual Horizon");
-    map.insert("19".to_string(), "Synchronized Release");
-    map.insert("20".to_string(), "My Menu");
-    map.insert("21".to_string(), "My Menu Top Item");
-    map.insert("22".to_string(), "Playback");
-    map.insert("23".to_string(), "Rating");
-    map.insert("24".to_string(), "Protect");
-    map.insert("25".to_string(), "Zoom");
-    map.insert("26".to_string(), "Focus Peaking");
-    map.insert("27".to_string(), "Flash Mode/Compensation");
-    map.insert("28".to_string(), "Image Area");
-    map.insert("3".to_string(), "FV Lock");
-    map.insert("30".to_string(), "Non-CPU Lens");
-    map.insert("31".to_string(), "Active-D Lighting");
-    map.insert("32".to_string(), "Exposure Delay Mode");
-    map.insert("33".to_string(), "1 Stop Speed/Aperture");
-    map.insert("34".to_string(), "White Balance");
-    map.insert("35".to_string(), "Metering");
-    map.insert("36".to_string(), "Auto Bracketing");
-    map.insert("37".to_string(), "Multiple Exposure");
-    map.insert("38".to_string(), "HDR Overlay");
-    map.insert("39".to_string(), "Picture Control");
-    map.insert("4".to_string(), "AE/AF Lock");
-    map.insert("40".to_string(), "Quality");
-    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
-    map.insert("42".to_string(), "Select Center Focus Point");
-    map.insert("44".to_string(), "Record Movie");
-    map.insert("45".to_string(), "Thumbnail On/Off");
-    map.insert("46".to_string(), "View Histograms");
-    map.insert("47".to_string(), "Choose Folder");
-    map.insert("48".to_string(), "Power Aperture (Open)");
-    map.insert("49".to_string(), "Power Aperture (Close)");
-    map.insert("5".to_string(), "AE Lock Only");
-    map.insert("52".to_string(), "Microphone Sensitivity");
-    map.insert("53".to_string(), "Release Mode");
-    map.insert("57".to_string(), "Preset Focus Point");
-    map.insert("58".to_string(), "AE/AWB Lock (hold)");
-    map.insert("59".to_string(), "AF-AreaMode");
-    map.insert("6".to_string(), "AE Lock (reset on release)");
-    map.insert("60".to_string(), "AF-AreaMode + AF-On");
-    map.insert("61".to_string(), "Recall Shooting Functions");
-    map.insert("64".to_string(), "Filtered Playback");
-    map.insert("65".to_string(), "Same as AF-On");
-    map.insert("66".to_string(), "Voice Memo");
-    map.insert("7".to_string(), "AE Lock (hold)");
-    map.insert("70".to_string(), "Photo Shooting Bank");
-    map.insert("71".to_string(), "ISO");
-    map.insert("72".to_string(), "Shooting Mode");
-    map.insert("73".to_string(), "Exposure Compensation");
-    map.insert("76".to_string(), "Silent Mode");
-    map.insert("78".to_string(), "LiveView Information");
-    map.insert("79".to_string(), "AWB Lock (hold)");
-    map.insert("8".to_string(), "AF Lock Only");
-    map.insert("80".to_string(), "Grid Display");
-    map.insert("81".to_string(), "Starlight View");
-    map.insert("82".to_string(), "Select To Send (PC)");
-    map.insert("83".to_string(), "Select To Send (FTP)");
-    map.insert("84".to_string(), "Pattern Tone Range");
-    map.insert("85".to_string(), "Control Lock");
-    map.insert("86".to_string(), "Save Focus Position");
-    map.insert("87".to_string(), "Recall Focus Position");
-    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
-    map.insert("89".to_string(), "Set Picture Control (HLG)");
-    map.insert("9".to_string(), "AF-On");
-    map.insert("90".to_string(), "Skin Softening");
-    map.insert("91".to_string(), "Portrait Impression Balance");
-    map.insert("92".to_string(), "Fast AF-On");
-    map.insert("97".to_string(), "High Frequency Flicker Reduction");
-    map.insert("98".to_string(), "Switch FX/DX");
-    map.insert("99".to_string(), "View Mode (Photo LV)");
-    map
-});
-
 static PRINT_CONV_274: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Always");
-    map.insert("1".to_string(), "Only When Flash Not Used");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Preview");
+    map.insert("10".to_string(), "Flash Disable/Enable");
+    map.insert("100".to_string(), "Photo Flicker Reduction");
+    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
+    map.insert("103".to_string(), "Start Series Playback");
+    map.insert("104".to_string(), "View Assist");
+    map.insert("105".to_string(), "Hi-Res Zoom+");
+    map.insert("106".to_string(), "Hi-Res Zoom-");
+    map.insert("108".to_string(), "Override Other Cameras");
+    map.insert(
+        "109".to_string(),
+        "DISP - Cycle Information Display (shooting)",
+    );
+    map.insert("11".to_string(), "Bracketing Burst");
+    map.insert(
+        "110".to_string(),
+        "DISP - Cycle Information Display (playback)",
+    );
+    map.insert("111".to_string(), "Resume Shooting");
+    map.insert("112".to_string(), "Switch Eyes");
+    map.insert("113".to_string(), "Power Zoom +");
+    map.insert("114".to_string(), "Power Zoom -");
+    map.insert("115".to_string(), "Delete");
+    map.insert("116".to_string(), "Save and Load Power Zoom Position");
+    map.insert("117".to_string(), "Cycle AF-area Mode");
+    map.insert("118".to_string(), "Raw Processing (Current)");
+    map.insert("119".to_string(), "Raw Processing (Multiple)");
+    map.insert("12".to_string(), "+NEF(RAW)");
+    map.insert("120".to_string(), "Trim");
+    map.insert("121".to_string(), "Resize (Current)");
+    map.insert("122".to_string(), "Resize (Multiple)");
+    map.insert("123".to_string(), "D-Lighting");
+    map.insert("124".to_string(), "Straighten");
+    map.insert("125".to_string(), "Distortion Control");
+    map.insert("126".to_string(), "Perspective Control");
+    map.insert("127".to_string(), "Monochrome");
+    map.insert("128".to_string(), "Overlay (Add)");
+    map.insert("129".to_string(), "Lighten");
+    map.insert("130".to_string(), "Darken");
+    map.insert("131".to_string(), "Motion Blend");
+    map.insert("18".to_string(), "Virtual Horizon");
+    map.insert("19".to_string(), "Synchronized Release");
+    map.insert("20".to_string(), "My Menu");
+    map.insert("21".to_string(), "My Menu Top Item");
+    map.insert("22".to_string(), "Playback");
+    map.insert("23".to_string(), "Rating");
+    map.insert("24".to_string(), "Protect");
+    map.insert("25".to_string(), "Zoom");
+    map.insert("26".to_string(), "Focus Peaking");
+    map.insert("27".to_string(), "Flash Mode/Compensation");
+    map.insert("28".to_string(), "Image Area");
+    map.insert("3".to_string(), "FV Lock");
+    map.insert("30".to_string(), "Non-CPU Lens");
+    map.insert("31".to_string(), "Active-D Lighting");
+    map.insert("32".to_string(), "Exposure Delay Mode");
+    map.insert("33".to_string(), "1 Stop Speed/Aperture");
+    map.insert("34".to_string(), "White Balance");
+    map.insert("35".to_string(), "Metering");
+    map.insert("36".to_string(), "Auto Bracketing");
+    map.insert("37".to_string(), "Multiple Exposure");
+    map.insert("38".to_string(), "HDR Overlay");
+    map.insert("39".to_string(), "Picture Control");
+    map.insert("4".to_string(), "AE/AF Lock");
+    map.insert("40".to_string(), "Quality");
+    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
+    map.insert("42".to_string(), "Select Center Focus Point");
+    map.insert("44".to_string(), "Record Movie");
+    map.insert("45".to_string(), "Thumbnail On/Off");
+    map.insert("46".to_string(), "View Histograms");
+    map.insert("47".to_string(), "Choose Folder");
+    map.insert("48".to_string(), "Power Aperture (Open)");
+    map.insert("49".to_string(), "Power Aperture (Close)");
+    map.insert("5".to_string(), "AE Lock Only");
+    map.insert("52".to_string(), "Microphone Sensitivity");
+    map.insert("53".to_string(), "Release Mode");
+    map.insert("57".to_string(), "Preset Focus Point");
+    map.insert("58".to_string(), "AE/AWB Lock (hold)");
+    map.insert("59".to_string(), "AF-AreaMode");
+    map.insert("6".to_string(), "AE Lock (reset on release)");
+    map.insert("60".to_string(), "AF-AreaMode + AF-On");
+    map.insert("61".to_string(), "Recall Shooting Functions");
+    map.insert("64".to_string(), "Filtered Playback");
+    map.insert("65".to_string(), "Same as AF-On");
+    map.insert("66".to_string(), "Voice Memo");
+    map.insert("7".to_string(), "AE Lock (hold)");
+    map.insert("70".to_string(), "Photo Shooting Bank");
+    map.insert("71".to_string(), "ISO");
+    map.insert("72".to_string(), "Shooting Mode");
+    map.insert("73".to_string(), "Exposure Compensation");
+    map.insert("76".to_string(), "Silent Mode");
+    map.insert("78".to_string(), "LiveView Information");
+    map.insert("79".to_string(), "AWB Lock (hold)");
+    map.insert("8".to_string(), "AF Lock Only");
+    map.insert("80".to_string(), "Grid Display");
+    map.insert("81".to_string(), "Starlight View");
+    map.insert("82".to_string(), "Select To Send (PC)");
+    map.insert("83".to_string(), "Select To Send (FTP)");
+    map.insert("84".to_string(), "Pattern Tone Range");
+    map.insert("85".to_string(), "Control Lock");
+    map.insert("86".to_string(), "Save Focus Position");
+    map.insert("87".to_string(), "Recall Focus Position");
+    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
+    map.insert("89".to_string(), "Set Picture Control (HLG)");
+    map.insert("9".to_string(), "AF-On");
+    map.insert("90".to_string(), "Skin Softening");
+    map.insert("91".to_string(), "Portrait Impression Balance");
+    map.insert("92".to_string(), "Fast AF-On");
+    map.insert("97".to_string(), "High Frequency Flicker Reduction");
+    map.insert("98".to_string(), "Switch FX/DX");
+    map.insert("99".to_string(), "View Mode (Photo LV)");
     map
 });
 
@@ -4306,17 +4067,124 @@ static PRINT_CONV_275: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_276: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Hold");
-    map.insert("1".to_string(), "Focus Point");
-    map.insert("2".to_string(), "Face Priority");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Preview");
+    map.insert("10".to_string(), "Flash Disable/Enable");
+    map.insert("100".to_string(), "Photo Flicker Reduction");
+    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
+    map.insert("103".to_string(), "Start Series Playback");
+    map.insert("104".to_string(), "View Assist");
+    map.insert("105".to_string(), "Hi-Res Zoom+");
+    map.insert("106".to_string(), "Hi-Res Zoom-");
+    map.insert("108".to_string(), "Override Other Cameras");
+    map.insert(
+        "109".to_string(),
+        "DISP - Cycle Information Display (shooting)",
+    );
+    map.insert("11".to_string(), "Bracketing Burst");
+    map.insert(
+        "110".to_string(),
+        "DISP - Cycle Information Display (playback)",
+    );
+    map.insert("111".to_string(), "Resume Shooting");
+    map.insert("112".to_string(), "Switch Eyes");
+    map.insert("113".to_string(), "Power Zoom +");
+    map.insert("114".to_string(), "Power Zoom -");
+    map.insert("115".to_string(), "Delete");
+    map.insert("116".to_string(), "Save and Load Power Zoom Position");
+    map.insert("117".to_string(), "Cycle AF-area Mode");
+    map.insert("118".to_string(), "Raw Processing (Current)");
+    map.insert("119".to_string(), "Raw Processing (Multiple)");
+    map.insert("12".to_string(), "+NEF(RAW)");
+    map.insert("120".to_string(), "Trim");
+    map.insert("121".to_string(), "Resize (Current)");
+    map.insert("122".to_string(), "Resize (Multiple)");
+    map.insert("123".to_string(), "D-Lighting");
+    map.insert("124".to_string(), "Straighten");
+    map.insert("125".to_string(), "Distortion Control");
+    map.insert("126".to_string(), "Perspective Control");
+    map.insert("127".to_string(), "Monochrome");
+    map.insert("128".to_string(), "Overlay (Add)");
+    map.insert("129".to_string(), "Lighten");
+    map.insert("130".to_string(), "Darken");
+    map.insert("131".to_string(), "Motion Blend");
+    map.insert("18".to_string(), "Virtual Horizon");
+    map.insert("19".to_string(), "Synchronized Release");
+    map.insert("20".to_string(), "My Menu");
+    map.insert("21".to_string(), "My Menu Top Item");
+    map.insert("22".to_string(), "Playback");
+    map.insert("23".to_string(), "Rating");
+    map.insert("24".to_string(), "Protect");
+    map.insert("25".to_string(), "Zoom");
+    map.insert("26".to_string(), "Focus Peaking");
+    map.insert("27".to_string(), "Flash Mode/Compensation");
+    map.insert("28".to_string(), "Image Area");
+    map.insert("3".to_string(), "FV Lock");
+    map.insert("30".to_string(), "Non-CPU Lens");
+    map.insert("31".to_string(), "Active-D Lighting");
+    map.insert("32".to_string(), "Exposure Delay Mode");
+    map.insert("33".to_string(), "1 Stop Speed/Aperture");
+    map.insert("34".to_string(), "White Balance");
+    map.insert("35".to_string(), "Metering");
+    map.insert("36".to_string(), "Auto Bracketing");
+    map.insert("37".to_string(), "Multiple Exposure");
+    map.insert("38".to_string(), "HDR Overlay");
+    map.insert("39".to_string(), "Picture Control");
+    map.insert("4".to_string(), "AE/AF Lock");
+    map.insert("40".to_string(), "Quality");
+    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
+    map.insert("42".to_string(), "Select Center Focus Point");
+    map.insert("44".to_string(), "Record Movie");
+    map.insert("45".to_string(), "Thumbnail On/Off");
+    map.insert("46".to_string(), "View Histograms");
+    map.insert("47".to_string(), "Choose Folder");
+    map.insert("48".to_string(), "Power Aperture (Open)");
+    map.insert("49".to_string(), "Power Aperture (Close)");
+    map.insert("5".to_string(), "AE Lock Only");
+    map.insert("52".to_string(), "Microphone Sensitivity");
+    map.insert("53".to_string(), "Release Mode");
+    map.insert("57".to_string(), "Preset Focus Point");
+    map.insert("58".to_string(), "AE/AWB Lock (hold)");
+    map.insert("59".to_string(), "AF-AreaMode");
+    map.insert("6".to_string(), "AE Lock (reset on release)");
+    map.insert("60".to_string(), "AF-AreaMode + AF-On");
+    map.insert("61".to_string(), "Recall Shooting Functions");
+    map.insert("64".to_string(), "Filtered Playback");
+    map.insert("65".to_string(), "Same as AF-On");
+    map.insert("66".to_string(), "Voice Memo");
+    map.insert("7".to_string(), "AE Lock (hold)");
+    map.insert("70".to_string(), "Photo Shooting Bank");
+    map.insert("71".to_string(), "ISO");
+    map.insert("72".to_string(), "Shooting Mode");
+    map.insert("73".to_string(), "Exposure Compensation");
+    map.insert("76".to_string(), "Silent Mode");
+    map.insert("78".to_string(), "LiveView Information");
+    map.insert("79".to_string(), "AWB Lock (hold)");
+    map.insert("8".to_string(), "AF Lock Only");
+    map.insert("80".to_string(), "Grid Display");
+    map.insert("81".to_string(), "Starlight View");
+    map.insert("82".to_string(), "Select To Send (PC)");
+    map.insert("83".to_string(), "Select To Send (FTP)");
+    map.insert("84".to_string(), "Pattern Tone Range");
+    map.insert("85".to_string(), "Control Lock");
+    map.insert("86".to_string(), "Save Focus Position");
+    map.insert("87".to_string(), "Recall Focus Position");
+    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
+    map.insert("89".to_string(), "Set Picture Control (HLG)");
+    map.insert("9".to_string(), "AF-On");
+    map.insert("90".to_string(), "Skin Softening");
+    map.insert("91".to_string(), "Portrait Impression Balance");
+    map.insert("92".to_string(), "Fast AF-On");
+    map.insert("97".to_string(), "High Frequency Flicker Reduction");
+    map.insert("98".to_string(), "Switch FX/DX");
+    map.insert("99".to_string(), "View Mode (Photo LV)");
     map
 });
 
 static PRINT_CONV_277: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Hold");
-    map.insert("1".to_string(), "Focus Point");
-    map.insert("2".to_string(), "Face Priority");
+    map.insert("0".to_string(), "Always");
+    map.insert("1".to_string(), "Only When Flash Not Used");
     map
 });
 
@@ -4438,233 +4306,17 @@ static PRINT_CONV_278: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_279: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "None");
-    map.insert("1".to_string(), "Preview");
-    map.insert("10".to_string(), "Flash Disable/Enable");
-    map.insert("100".to_string(), "Photo Flicker Reduction");
-    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
-    map.insert("103".to_string(), "Start Series Playback");
-    map.insert("104".to_string(), "View Assist");
-    map.insert("105".to_string(), "Hi-Res Zoom+");
-    map.insert("106".to_string(), "Hi-Res Zoom-");
-    map.insert("108".to_string(), "Override Other Cameras");
-    map.insert(
-        "109".to_string(),
-        "DISP - Cycle Information Display (shooting)",
-    );
-    map.insert("11".to_string(), "Bracketing Burst");
-    map.insert(
-        "110".to_string(),
-        "DISP - Cycle Information Display (playback)",
-    );
-    map.insert("111".to_string(), "Resume Shooting");
-    map.insert("112".to_string(), "Switch Eyes");
-    map.insert("113".to_string(), "Power Zoom +");
-    map.insert("114".to_string(), "Power Zoom -");
-    map.insert("115".to_string(), "Delete");
-    map.insert("116".to_string(), "Save and Load Power Zoom Position");
-    map.insert("117".to_string(), "Cycle AF-area Mode");
-    map.insert("118".to_string(), "Raw Processing (Current)");
-    map.insert("119".to_string(), "Raw Processing (Multiple)");
-    map.insert("12".to_string(), "+NEF(RAW)");
-    map.insert("120".to_string(), "Trim");
-    map.insert("121".to_string(), "Resize (Current)");
-    map.insert("122".to_string(), "Resize (Multiple)");
-    map.insert("123".to_string(), "D-Lighting");
-    map.insert("124".to_string(), "Straighten");
-    map.insert("125".to_string(), "Distortion Control");
-    map.insert("126".to_string(), "Perspective Control");
-    map.insert("127".to_string(), "Monochrome");
-    map.insert("128".to_string(), "Overlay (Add)");
-    map.insert("129".to_string(), "Lighten");
-    map.insert("130".to_string(), "Darken");
-    map.insert("131".to_string(), "Motion Blend");
-    map.insert("18".to_string(), "Virtual Horizon");
-    map.insert("19".to_string(), "Synchronized Release");
-    map.insert("20".to_string(), "My Menu");
-    map.insert("21".to_string(), "My Menu Top Item");
-    map.insert("22".to_string(), "Playback");
-    map.insert("23".to_string(), "Rating");
-    map.insert("24".to_string(), "Protect");
-    map.insert("25".to_string(), "Zoom");
-    map.insert("26".to_string(), "Focus Peaking");
-    map.insert("27".to_string(), "Flash Mode/Compensation");
-    map.insert("28".to_string(), "Image Area");
-    map.insert("3".to_string(), "FV Lock");
-    map.insert("30".to_string(), "Non-CPU Lens");
-    map.insert("31".to_string(), "Active-D Lighting");
-    map.insert("32".to_string(), "Exposure Delay Mode");
-    map.insert("33".to_string(), "1 Stop Speed/Aperture");
-    map.insert("34".to_string(), "White Balance");
-    map.insert("35".to_string(), "Metering");
-    map.insert("36".to_string(), "Auto Bracketing");
-    map.insert("37".to_string(), "Multiple Exposure");
-    map.insert("38".to_string(), "HDR Overlay");
-    map.insert("39".to_string(), "Picture Control");
-    map.insert("4".to_string(), "AE/AF Lock");
-    map.insert("40".to_string(), "Quality");
-    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
-    map.insert("42".to_string(), "Select Center Focus Point");
-    map.insert("44".to_string(), "Record Movie");
-    map.insert("45".to_string(), "Thumbnail On/Off");
-    map.insert("46".to_string(), "View Histograms");
-    map.insert("47".to_string(), "Choose Folder");
-    map.insert("48".to_string(), "Power Aperture (Open)");
-    map.insert("49".to_string(), "Power Aperture (Close)");
-    map.insert("5".to_string(), "AE Lock Only");
-    map.insert("52".to_string(), "Microphone Sensitivity");
-    map.insert("53".to_string(), "Release Mode");
-    map.insert("57".to_string(), "Preset Focus Point");
-    map.insert("58".to_string(), "AE/AWB Lock (hold)");
-    map.insert("59".to_string(), "AF-AreaMode");
-    map.insert("6".to_string(), "AE Lock (reset on release)");
-    map.insert("60".to_string(), "AF-AreaMode + AF-On");
-    map.insert("61".to_string(), "Recall Shooting Functions");
-    map.insert("64".to_string(), "Filtered Playback");
-    map.insert("65".to_string(), "Same as AF-On");
-    map.insert("66".to_string(), "Voice Memo");
-    map.insert("7".to_string(), "AE Lock (hold)");
-    map.insert("70".to_string(), "Photo Shooting Bank");
-    map.insert("71".to_string(), "ISO");
-    map.insert("72".to_string(), "Shooting Mode");
-    map.insert("73".to_string(), "Exposure Compensation");
-    map.insert("76".to_string(), "Silent Mode");
-    map.insert("78".to_string(), "LiveView Information");
-    map.insert("79".to_string(), "AWB Lock (hold)");
-    map.insert("8".to_string(), "AF Lock Only");
-    map.insert("80".to_string(), "Grid Display");
-    map.insert("81".to_string(), "Starlight View");
-    map.insert("82".to_string(), "Select To Send (PC)");
-    map.insert("83".to_string(), "Select To Send (FTP)");
-    map.insert("84".to_string(), "Pattern Tone Range");
-    map.insert("85".to_string(), "Control Lock");
-    map.insert("86".to_string(), "Save Focus Position");
-    map.insert("87".to_string(), "Recall Focus Position");
-    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
-    map.insert("89".to_string(), "Set Picture Control (HLG)");
-    map.insert("9".to_string(), "AF-On");
-    map.insert("90".to_string(), "Skin Softening");
-    map.insert("91".to_string(), "Portrait Impression Balance");
-    map.insert("92".to_string(), "Fast AF-On");
-    map.insert("97".to_string(), "High Frequency Flicker Reduction");
-    map.insert("98".to_string(), "Switch FX/DX");
-    map.insert("99".to_string(), "View Mode (Photo LV)");
+    map.insert("0".to_string(), "Hold");
+    map.insert("1".to_string(), "Focus Point");
+    map.insert("2".to_string(), "Face Priority");
     map
 });
 
 static PRINT_CONV_280: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "None");
-    map.insert("1".to_string(), "Preview");
-    map.insert("10".to_string(), "Flash Disable/Enable");
-    map.insert("100".to_string(), "Photo Flicker Reduction");
-    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
-    map.insert("103".to_string(), "Start Series Playback");
-    map.insert("104".to_string(), "View Assist");
-    map.insert("105".to_string(), "Hi-Res Zoom+");
-    map.insert("106".to_string(), "Hi-Res Zoom-");
-    map.insert("108".to_string(), "Override Other Cameras");
-    map.insert(
-        "109".to_string(),
-        "DISP - Cycle Information Display (shooting)",
-    );
-    map.insert("11".to_string(), "Bracketing Burst");
-    map.insert(
-        "110".to_string(),
-        "DISP - Cycle Information Display (playback)",
-    );
-    map.insert("111".to_string(), "Resume Shooting");
-    map.insert("112".to_string(), "Switch Eyes");
-    map.insert("113".to_string(), "Power Zoom +");
-    map.insert("114".to_string(), "Power Zoom -");
-    map.insert("115".to_string(), "Delete");
-    map.insert("116".to_string(), "Save and Load Power Zoom Position");
-    map.insert("117".to_string(), "Cycle AF-area Mode");
-    map.insert("118".to_string(), "Raw Processing (Current)");
-    map.insert("119".to_string(), "Raw Processing (Multiple)");
-    map.insert("12".to_string(), "+NEF(RAW)");
-    map.insert("120".to_string(), "Trim");
-    map.insert("121".to_string(), "Resize (Current)");
-    map.insert("122".to_string(), "Resize (Multiple)");
-    map.insert("123".to_string(), "D-Lighting");
-    map.insert("124".to_string(), "Straighten");
-    map.insert("125".to_string(), "Distortion Control");
-    map.insert("126".to_string(), "Perspective Control");
-    map.insert("127".to_string(), "Monochrome");
-    map.insert("128".to_string(), "Overlay (Add)");
-    map.insert("129".to_string(), "Lighten");
-    map.insert("130".to_string(), "Darken");
-    map.insert("131".to_string(), "Motion Blend");
-    map.insert("18".to_string(), "Virtual Horizon");
-    map.insert("19".to_string(), "Synchronized Release");
-    map.insert("20".to_string(), "My Menu");
-    map.insert("21".to_string(), "My Menu Top Item");
-    map.insert("22".to_string(), "Playback");
-    map.insert("23".to_string(), "Rating");
-    map.insert("24".to_string(), "Protect");
-    map.insert("25".to_string(), "Zoom");
-    map.insert("26".to_string(), "Focus Peaking");
-    map.insert("27".to_string(), "Flash Mode/Compensation");
-    map.insert("28".to_string(), "Image Area");
-    map.insert("3".to_string(), "FV Lock");
-    map.insert("30".to_string(), "Non-CPU Lens");
-    map.insert("31".to_string(), "Active-D Lighting");
-    map.insert("32".to_string(), "Exposure Delay Mode");
-    map.insert("33".to_string(), "1 Stop Speed/Aperture");
-    map.insert("34".to_string(), "White Balance");
-    map.insert("35".to_string(), "Metering");
-    map.insert("36".to_string(), "Auto Bracketing");
-    map.insert("37".to_string(), "Multiple Exposure");
-    map.insert("38".to_string(), "HDR Overlay");
-    map.insert("39".to_string(), "Picture Control");
-    map.insert("4".to_string(), "AE/AF Lock");
-    map.insert("40".to_string(), "Quality");
-    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
-    map.insert("42".to_string(), "Select Center Focus Point");
-    map.insert("44".to_string(), "Record Movie");
-    map.insert("45".to_string(), "Thumbnail On/Off");
-    map.insert("46".to_string(), "View Histograms");
-    map.insert("47".to_string(), "Choose Folder");
-    map.insert("48".to_string(), "Power Aperture (Open)");
-    map.insert("49".to_string(), "Power Aperture (Close)");
-    map.insert("5".to_string(), "AE Lock Only");
-    map.insert("52".to_string(), "Microphone Sensitivity");
-    map.insert("53".to_string(), "Release Mode");
-    map.insert("57".to_string(), "Preset Focus Point");
-    map.insert("58".to_string(), "AE/AWB Lock (hold)");
-    map.insert("59".to_string(), "AF-AreaMode");
-    map.insert("6".to_string(), "AE Lock (reset on release)");
-    map.insert("60".to_string(), "AF-AreaMode + AF-On");
-    map.insert("61".to_string(), "Recall Shooting Functions");
-    map.insert("64".to_string(), "Filtered Playback");
-    map.insert("65".to_string(), "Same as AF-On");
-    map.insert("66".to_string(), "Voice Memo");
-    map.insert("7".to_string(), "AE Lock (hold)");
-    map.insert("70".to_string(), "Photo Shooting Bank");
-    map.insert("71".to_string(), "ISO");
-    map.insert("72".to_string(), "Shooting Mode");
-    map.insert("73".to_string(), "Exposure Compensation");
-    map.insert("76".to_string(), "Silent Mode");
-    map.insert("78".to_string(), "LiveView Information");
-    map.insert("79".to_string(), "AWB Lock (hold)");
-    map.insert("8".to_string(), "AF Lock Only");
-    map.insert("80".to_string(), "Grid Display");
-    map.insert("81".to_string(), "Starlight View");
-    map.insert("82".to_string(), "Select To Send (PC)");
-    map.insert("83".to_string(), "Select To Send (FTP)");
-    map.insert("84".to_string(), "Pattern Tone Range");
-    map.insert("85".to_string(), "Control Lock");
-    map.insert("86".to_string(), "Save Focus Position");
-    map.insert("87".to_string(), "Recall Focus Position");
-    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
-    map.insert("89".to_string(), "Set Picture Control (HLG)");
-    map.insert("9".to_string(), "AF-On");
-    map.insert("90".to_string(), "Skin Softening");
-    map.insert("91".to_string(), "Portrait Impression Balance");
-    map.insert("92".to_string(), "Fast AF-On");
-    map.insert("97".to_string(), "High Frequency Flicker Reduction");
-    map.insert("98".to_string(), "Switch FX/DX");
-    map.insert("99".to_string(), "View Mode (Photo LV)");
+    map.insert("0".to_string(), "Hold");
+    map.insert("1".to_string(), "Focus Point");
+    map.insert("2".to_string(), "Face Priority");
     map
 });
 
@@ -5366,48 +5018,360 @@ static PRINT_CONV_286: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_287: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Preview");
+    map.insert("10".to_string(), "Flash Disable/Enable");
+    map.insert("100".to_string(), "Photo Flicker Reduction");
+    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
+    map.insert("103".to_string(), "Start Series Playback");
+    map.insert("104".to_string(), "View Assist");
+    map.insert("105".to_string(), "Hi-Res Zoom+");
+    map.insert("106".to_string(), "Hi-Res Zoom-");
+    map.insert("108".to_string(), "Override Other Cameras");
+    map.insert(
+        "109".to_string(),
+        "DISP - Cycle Information Display (shooting)",
+    );
+    map.insert("11".to_string(), "Bracketing Burst");
+    map.insert(
+        "110".to_string(),
+        "DISP - Cycle Information Display (playback)",
+    );
+    map.insert("111".to_string(), "Resume Shooting");
+    map.insert("112".to_string(), "Switch Eyes");
+    map.insert("113".to_string(), "Power Zoom +");
+    map.insert("114".to_string(), "Power Zoom -");
+    map.insert("115".to_string(), "Delete");
+    map.insert("116".to_string(), "Save and Load Power Zoom Position");
+    map.insert("117".to_string(), "Cycle AF-area Mode");
+    map.insert("118".to_string(), "Raw Processing (Current)");
+    map.insert("119".to_string(), "Raw Processing (Multiple)");
+    map.insert("12".to_string(), "+NEF(RAW)");
+    map.insert("120".to_string(), "Trim");
+    map.insert("121".to_string(), "Resize (Current)");
+    map.insert("122".to_string(), "Resize (Multiple)");
+    map.insert("123".to_string(), "D-Lighting");
+    map.insert("124".to_string(), "Straighten");
+    map.insert("125".to_string(), "Distortion Control");
+    map.insert("126".to_string(), "Perspective Control");
+    map.insert("127".to_string(), "Monochrome");
+    map.insert("128".to_string(), "Overlay (Add)");
+    map.insert("129".to_string(), "Lighten");
+    map.insert("130".to_string(), "Darken");
+    map.insert("131".to_string(), "Motion Blend");
+    map.insert("18".to_string(), "Virtual Horizon");
+    map.insert("19".to_string(), "Synchronized Release");
+    map.insert("20".to_string(), "My Menu");
+    map.insert("21".to_string(), "My Menu Top Item");
+    map.insert("22".to_string(), "Playback");
+    map.insert("23".to_string(), "Rating");
+    map.insert("24".to_string(), "Protect");
+    map.insert("25".to_string(), "Zoom");
+    map.insert("26".to_string(), "Focus Peaking");
+    map.insert("27".to_string(), "Flash Mode/Compensation");
+    map.insert("28".to_string(), "Image Area");
+    map.insert("3".to_string(), "FV Lock");
+    map.insert("30".to_string(), "Non-CPU Lens");
+    map.insert("31".to_string(), "Active-D Lighting");
+    map.insert("32".to_string(), "Exposure Delay Mode");
+    map.insert("33".to_string(), "1 Stop Speed/Aperture");
+    map.insert("34".to_string(), "White Balance");
+    map.insert("35".to_string(), "Metering");
+    map.insert("36".to_string(), "Auto Bracketing");
+    map.insert("37".to_string(), "Multiple Exposure");
+    map.insert("38".to_string(), "HDR Overlay");
+    map.insert("39".to_string(), "Picture Control");
+    map.insert("4".to_string(), "AE/AF Lock");
+    map.insert("40".to_string(), "Quality");
+    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
+    map.insert("42".to_string(), "Select Center Focus Point");
+    map.insert("44".to_string(), "Record Movie");
+    map.insert("45".to_string(), "Thumbnail On/Off");
+    map.insert("46".to_string(), "View Histograms");
+    map.insert("47".to_string(), "Choose Folder");
+    map.insert("48".to_string(), "Power Aperture (Open)");
+    map.insert("49".to_string(), "Power Aperture (Close)");
+    map.insert("5".to_string(), "AE Lock Only");
+    map.insert("52".to_string(), "Microphone Sensitivity");
+    map.insert("53".to_string(), "Release Mode");
+    map.insert("57".to_string(), "Preset Focus Point");
+    map.insert("58".to_string(), "AE/AWB Lock (hold)");
+    map.insert("59".to_string(), "AF-AreaMode");
+    map.insert("6".to_string(), "AE Lock (reset on release)");
+    map.insert("60".to_string(), "AF-AreaMode + AF-On");
+    map.insert("61".to_string(), "Recall Shooting Functions");
+    map.insert("64".to_string(), "Filtered Playback");
+    map.insert("65".to_string(), "Same as AF-On");
+    map.insert("66".to_string(), "Voice Memo");
+    map.insert("7".to_string(), "AE Lock (hold)");
+    map.insert("70".to_string(), "Photo Shooting Bank");
+    map.insert("71".to_string(), "ISO");
+    map.insert("72".to_string(), "Shooting Mode");
+    map.insert("73".to_string(), "Exposure Compensation");
+    map.insert("76".to_string(), "Silent Mode");
+    map.insert("78".to_string(), "LiveView Information");
+    map.insert("79".to_string(), "AWB Lock (hold)");
+    map.insert("8".to_string(), "AF Lock Only");
+    map.insert("80".to_string(), "Grid Display");
+    map.insert("81".to_string(), "Starlight View");
+    map.insert("82".to_string(), "Select To Send (PC)");
+    map.insert("83".to_string(), "Select To Send (FTP)");
+    map.insert("84".to_string(), "Pattern Tone Range");
+    map.insert("85".to_string(), "Control Lock");
+    map.insert("86".to_string(), "Save Focus Position");
+    map.insert("87".to_string(), "Recall Focus Position");
+    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
+    map.insert("89".to_string(), "Set Picture Control (HLG)");
+    map.insert("9".to_string(), "AF-On");
+    map.insert("90".to_string(), "Skin Softening");
+    map.insert("91".to_string(), "Portrait Impression Balance");
+    map.insert("92".to_string(), "Fast AF-On");
+    map.insert("97".to_string(), "High Frequency Flicker Reduction");
+    map.insert("98".to_string(), "Switch FX/DX");
+    map.insert("99".to_string(), "View Mode (Photo LV)");
     map
 });
 
 static PRINT_CONV_288: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "ISO 64");
-    map.insert("1".to_string(), "ISO 80");
-    map.insert("10".to_string(), "ISO 640");
-    map.insert("11".to_string(), "ISO 800");
-    map.insert("12".to_string(), "ISO 1000");
-    map.insert("13".to_string(), "ISO 1250");
-    map.insert("14".to_string(), "ISO 1600");
-    map.insert("15".to_string(), "ISO 2000");
-    map.insert("16".to_string(), "ISO 2500");
-    map.insert("17".to_string(), "ISO 3200");
-    map.insert("18".to_string(), "ISO 4000");
-    map.insert("19".to_string(), "ISO 5000");
-    map.insert("2".to_string(), "ISO 100");
-    map.insert("20".to_string(), "ISO 6400");
-    map.insert("21".to_string(), "ISO 8000");
-    map.insert("22".to_string(), "ISO 10000");
-    map.insert("23".to_string(), "ISO 12800");
-    map.insert("24".to_string(), "ISO 16000");
-    map.insert("25".to_string(), "ISO 20000");
-    map.insert("26".to_string(), "ISO 25600");
-    map.insert("27".to_string(), "ISO Hi 0.3");
-    map.insert("28".to_string(), "ISO Hi 0.7");
-    map.insert("29".to_string(), "ISO Hi 1.0");
-    map.insert("3".to_string(), "ISO 125");
-    map.insert("32".to_string(), "ISO Hi 2.0");
-    map.insert("4".to_string(), "ISO 160");
-    map.insert("5".to_string(), "ISO 200");
-    map.insert("6".to_string(), "ISO 250");
-    map.insert("7".to_string(), "ISO 320");
-    map.insert("8".to_string(), "ISO 400");
-    map.insert("9".to_string(), "ISO 500");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Preview");
+    map.insert("10".to_string(), "Flash Disable/Enable");
+    map.insert("100".to_string(), "Photo Flicker Reduction");
+    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
+    map.insert("103".to_string(), "Start Series Playback");
+    map.insert("104".to_string(), "View Assist");
+    map.insert("105".to_string(), "Hi-Res Zoom+");
+    map.insert("106".to_string(), "Hi-Res Zoom-");
+    map.insert("108".to_string(), "Override Other Cameras");
+    map.insert(
+        "109".to_string(),
+        "DISP - Cycle Information Display (shooting)",
+    );
+    map.insert("11".to_string(), "Bracketing Burst");
+    map.insert(
+        "110".to_string(),
+        "DISP - Cycle Information Display (playback)",
+    );
+    map.insert("111".to_string(), "Resume Shooting");
+    map.insert("112".to_string(), "Switch Eyes");
+    map.insert("113".to_string(), "Power Zoom +");
+    map.insert("114".to_string(), "Power Zoom -");
+    map.insert("115".to_string(), "Delete");
+    map.insert("116".to_string(), "Save and Load Power Zoom Position");
+    map.insert("117".to_string(), "Cycle AF-area Mode");
+    map.insert("118".to_string(), "Raw Processing (Current)");
+    map.insert("119".to_string(), "Raw Processing (Multiple)");
+    map.insert("12".to_string(), "+NEF(RAW)");
+    map.insert("120".to_string(), "Trim");
+    map.insert("121".to_string(), "Resize (Current)");
+    map.insert("122".to_string(), "Resize (Multiple)");
+    map.insert("123".to_string(), "D-Lighting");
+    map.insert("124".to_string(), "Straighten");
+    map.insert("125".to_string(), "Distortion Control");
+    map.insert("126".to_string(), "Perspective Control");
+    map.insert("127".to_string(), "Monochrome");
+    map.insert("128".to_string(), "Overlay (Add)");
+    map.insert("129".to_string(), "Lighten");
+    map.insert("130".to_string(), "Darken");
+    map.insert("131".to_string(), "Motion Blend");
+    map.insert("18".to_string(), "Virtual Horizon");
+    map.insert("19".to_string(), "Synchronized Release");
+    map.insert("20".to_string(), "My Menu");
+    map.insert("21".to_string(), "My Menu Top Item");
+    map.insert("22".to_string(), "Playback");
+    map.insert("23".to_string(), "Rating");
+    map.insert("24".to_string(), "Protect");
+    map.insert("25".to_string(), "Zoom");
+    map.insert("26".to_string(), "Focus Peaking");
+    map.insert("27".to_string(), "Flash Mode/Compensation");
+    map.insert("28".to_string(), "Image Area");
+    map.insert("3".to_string(), "FV Lock");
+    map.insert("30".to_string(), "Non-CPU Lens");
+    map.insert("31".to_string(), "Active-D Lighting");
+    map.insert("32".to_string(), "Exposure Delay Mode");
+    map.insert("33".to_string(), "1 Stop Speed/Aperture");
+    map.insert("34".to_string(), "White Balance");
+    map.insert("35".to_string(), "Metering");
+    map.insert("36".to_string(), "Auto Bracketing");
+    map.insert("37".to_string(), "Multiple Exposure");
+    map.insert("38".to_string(), "HDR Overlay");
+    map.insert("39".to_string(), "Picture Control");
+    map.insert("4".to_string(), "AE/AF Lock");
+    map.insert("40".to_string(), "Quality");
+    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
+    map.insert("42".to_string(), "Select Center Focus Point");
+    map.insert("44".to_string(), "Record Movie");
+    map.insert("45".to_string(), "Thumbnail On/Off");
+    map.insert("46".to_string(), "View Histograms");
+    map.insert("47".to_string(), "Choose Folder");
+    map.insert("48".to_string(), "Power Aperture (Open)");
+    map.insert("49".to_string(), "Power Aperture (Close)");
+    map.insert("5".to_string(), "AE Lock Only");
+    map.insert("52".to_string(), "Microphone Sensitivity");
+    map.insert("53".to_string(), "Release Mode");
+    map.insert("57".to_string(), "Preset Focus Point");
+    map.insert("58".to_string(), "AE/AWB Lock (hold)");
+    map.insert("59".to_string(), "AF-AreaMode");
+    map.insert("6".to_string(), "AE Lock (reset on release)");
+    map.insert("60".to_string(), "AF-AreaMode + AF-On");
+    map.insert("61".to_string(), "Recall Shooting Functions");
+    map.insert("64".to_string(), "Filtered Playback");
+    map.insert("65".to_string(), "Same as AF-On");
+    map.insert("66".to_string(), "Voice Memo");
+    map.insert("7".to_string(), "AE Lock (hold)");
+    map.insert("70".to_string(), "Photo Shooting Bank");
+    map.insert("71".to_string(), "ISO");
+    map.insert("72".to_string(), "Shooting Mode");
+    map.insert("73".to_string(), "Exposure Compensation");
+    map.insert("76".to_string(), "Silent Mode");
+    map.insert("78".to_string(), "LiveView Information");
+    map.insert("79".to_string(), "AWB Lock (hold)");
+    map.insert("8".to_string(), "AF Lock Only");
+    map.insert("80".to_string(), "Grid Display");
+    map.insert("81".to_string(), "Starlight View");
+    map.insert("82".to_string(), "Select To Send (PC)");
+    map.insert("83".to_string(), "Select To Send (FTP)");
+    map.insert("84".to_string(), "Pattern Tone Range");
+    map.insert("85".to_string(), "Control Lock");
+    map.insert("86".to_string(), "Save Focus Position");
+    map.insert("87".to_string(), "Recall Focus Position");
+    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
+    map.insert("89".to_string(), "Set Picture Control (HLG)");
+    map.insert("9".to_string(), "AF-On");
+    map.insert("90".to_string(), "Skin Softening");
+    map.insert("91".to_string(), "Portrait Impression Balance");
+    map.insert("92".to_string(), "Fast AF-On");
+    map.insert("97".to_string(), "High Frequency Flicker Reduction");
+    map.insert("98".to_string(), "Switch FX/DX");
+    map.insert("99".to_string(), "View Mode (Photo LV)");
     map
 });
 
 static PRINT_CONV_289: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Preview");
+    map.insert("10".to_string(), "Flash Disable/Enable");
+    map.insert("100".to_string(), "Photo Flicker Reduction");
+    map.insert("101".to_string(), "Filtered Playback (Select Criteria)");
+    map.insert("103".to_string(), "Start Series Playback");
+    map.insert("104".to_string(), "View Assist");
+    map.insert("105".to_string(), "Hi-Res Zoom+");
+    map.insert("106".to_string(), "Hi-Res Zoom-");
+    map.insert("108".to_string(), "Override Other Cameras");
+    map.insert(
+        "109".to_string(),
+        "DISP - Cycle Information Display (shooting)",
+    );
+    map.insert("11".to_string(), "Bracketing Burst");
+    map.insert(
+        "110".to_string(),
+        "DISP - Cycle Information Display (playback)",
+    );
+    map.insert("111".to_string(), "Resume Shooting");
+    map.insert("112".to_string(), "Switch Eyes");
+    map.insert("113".to_string(), "Power Zoom +");
+    map.insert("114".to_string(), "Power Zoom -");
+    map.insert("115".to_string(), "Delete");
+    map.insert("116".to_string(), "Save and Load Power Zoom Position");
+    map.insert("117".to_string(), "Cycle AF-area Mode");
+    map.insert("118".to_string(), "Raw Processing (Current)");
+    map.insert("119".to_string(), "Raw Processing (Multiple)");
+    map.insert("12".to_string(), "+NEF(RAW)");
+    map.insert("120".to_string(), "Trim");
+    map.insert("121".to_string(), "Resize (Current)");
+    map.insert("122".to_string(), "Resize (Multiple)");
+    map.insert("123".to_string(), "D-Lighting");
+    map.insert("124".to_string(), "Straighten");
+    map.insert("125".to_string(), "Distortion Control");
+    map.insert("126".to_string(), "Perspective Control");
+    map.insert("127".to_string(), "Monochrome");
+    map.insert("128".to_string(), "Overlay (Add)");
+    map.insert("129".to_string(), "Lighten");
+    map.insert("130".to_string(), "Darken");
+    map.insert("131".to_string(), "Motion Blend");
+    map.insert("18".to_string(), "Virtual Horizon");
+    map.insert("19".to_string(), "Synchronized Release");
+    map.insert("20".to_string(), "My Menu");
+    map.insert("21".to_string(), "My Menu Top Item");
+    map.insert("22".to_string(), "Playback");
+    map.insert("23".to_string(), "Rating");
+    map.insert("24".to_string(), "Protect");
+    map.insert("25".to_string(), "Zoom");
+    map.insert("26".to_string(), "Focus Peaking");
+    map.insert("27".to_string(), "Flash Mode/Compensation");
+    map.insert("28".to_string(), "Image Area");
+    map.insert("3".to_string(), "FV Lock");
+    map.insert("30".to_string(), "Non-CPU Lens");
+    map.insert("31".to_string(), "Active-D Lighting");
+    map.insert("32".to_string(), "Exposure Delay Mode");
+    map.insert("33".to_string(), "1 Stop Speed/Aperture");
+    map.insert("34".to_string(), "White Balance");
+    map.insert("35".to_string(), "Metering");
+    map.insert("36".to_string(), "Auto Bracketing");
+    map.insert("37".to_string(), "Multiple Exposure");
+    map.insert("38".to_string(), "HDR Overlay");
+    map.insert("39".to_string(), "Picture Control");
+    map.insert("4".to_string(), "AE/AF Lock");
+    map.insert("40".to_string(), "Quality");
+    map.insert("41".to_string(), "Focus Mode/AF AreaMode");
+    map.insert("42".to_string(), "Select Center Focus Point");
+    map.insert("44".to_string(), "Record Movie");
+    map.insert("45".to_string(), "Thumbnail On/Off");
+    map.insert("46".to_string(), "View Histograms");
+    map.insert("47".to_string(), "Choose Folder");
+    map.insert("48".to_string(), "Power Aperture (Open)");
+    map.insert("49".to_string(), "Power Aperture (Close)");
+    map.insert("5".to_string(), "AE Lock Only");
+    map.insert("52".to_string(), "Microphone Sensitivity");
+    map.insert("53".to_string(), "Release Mode");
+    map.insert("57".to_string(), "Preset Focus Point");
+    map.insert("58".to_string(), "AE/AWB Lock (hold)");
+    map.insert("59".to_string(), "AF-AreaMode");
+    map.insert("6".to_string(), "AE Lock (reset on release)");
+    map.insert("60".to_string(), "AF-AreaMode + AF-On");
+    map.insert("61".to_string(), "Recall Shooting Functions");
+    map.insert("64".to_string(), "Filtered Playback");
+    map.insert("65".to_string(), "Same as AF-On");
+    map.insert("66".to_string(), "Voice Memo");
+    map.insert("7".to_string(), "AE Lock (hold)");
+    map.insert("70".to_string(), "Photo Shooting Bank");
+    map.insert("71".to_string(), "ISO");
+    map.insert("72".to_string(), "Shooting Mode");
+    map.insert("73".to_string(), "Exposure Compensation");
+    map.insert("76".to_string(), "Silent Mode");
+    map.insert("78".to_string(), "LiveView Information");
+    map.insert("79".to_string(), "AWB Lock (hold)");
+    map.insert("8".to_string(), "AF Lock Only");
+    map.insert("80".to_string(), "Grid Display");
+    map.insert("81".to_string(), "Starlight View");
+    map.insert("82".to_string(), "Select To Send (PC)");
+    map.insert("83".to_string(), "Select To Send (FTP)");
+    map.insert("84".to_string(), "Pattern Tone Range");
+    map.insert("85".to_string(), "Control Lock");
+    map.insert("86".to_string(), "Save Focus Position");
+    map.insert("87".to_string(), "Recall Focus Position");
+    map.insert("88".to_string(), "Recall Shooting Functions (Hold)");
+    map.insert("89".to_string(), "Set Picture Control (HLG)");
+    map.insert("9".to_string(), "AF-On");
+    map.insert("90".to_string(), "Skin Softening");
+    map.insert("91".to_string(), "Portrait Impression Balance");
+    map.insert("92".to_string(), "Fast AF-On");
+    map.insert("97".to_string(), "High Frequency Flicker Reduction");
+    map.insert("98".to_string(), "Switch FX/DX");
+    map.insert("99".to_string(), "View Mode (Photo LV)");
+    map
+});
+
+static PRINT_CONV_290: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_291: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO 64");
     map.insert("1".to_string(), "ISO 80");
@@ -5443,7 +5407,43 @@ static PRINT_CONV_289: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_290: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_292: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "ISO 64");
+    map.insert("1".to_string(), "ISO 80");
+    map.insert("10".to_string(), "ISO 640");
+    map.insert("11".to_string(), "ISO 800");
+    map.insert("12".to_string(), "ISO 1000");
+    map.insert("13".to_string(), "ISO 1250");
+    map.insert("14".to_string(), "ISO 1600");
+    map.insert("15".to_string(), "ISO 2000");
+    map.insert("16".to_string(), "ISO 2500");
+    map.insert("17".to_string(), "ISO 3200");
+    map.insert("18".to_string(), "ISO 4000");
+    map.insert("19".to_string(), "ISO 5000");
+    map.insert("2".to_string(), "ISO 100");
+    map.insert("20".to_string(), "ISO 6400");
+    map.insert("21".to_string(), "ISO 8000");
+    map.insert("22".to_string(), "ISO 10000");
+    map.insert("23".to_string(), "ISO 12800");
+    map.insert("24".to_string(), "ISO 16000");
+    map.insert("25".to_string(), "ISO 20000");
+    map.insert("26".to_string(), "ISO 25600");
+    map.insert("27".to_string(), "ISO Hi 0.3");
+    map.insert("28".to_string(), "ISO Hi 0.7");
+    map.insert("29".to_string(), "ISO Hi 1.0");
+    map.insert("3".to_string(), "ISO 125");
+    map.insert("32".to_string(), "ISO Hi 2.0");
+    map.insert("4".to_string(), "ISO 160");
+    map.insert("5".to_string(), "ISO 200");
+    map.insert("6".to_string(), "ISO 250");
+    map.insert("7".to_string(), "ISO 320");
+    map.insert("8".to_string(), "ISO 400");
+    map.insert("9".to_string(), "ISO 500");
+    map
+});
+
+static PRINT_CONV_293: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -5452,21 +5452,21 @@ static PRINT_CONV_290: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_291: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_294: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_292: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_295: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_293: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_296: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "TTL");
     map.insert("1".to_string(), "Auto External Flash");
@@ -5476,7 +5476,7 @@ static PRINT_CONV_293: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_294: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_297: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "0");
     map.insert("1".to_string(), "0.1 m");
@@ -5519,7 +5519,7 @@ static PRINT_CONV_294: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_295: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_298: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Pinpoint");
     map.insert("1".to_string(), "Single");
@@ -5534,7 +5534,7 @@ static PRINT_CONV_295: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_296: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_299: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Normal");
@@ -5542,7 +5542,7 @@ static PRINT_CONV_296: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_297: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_300: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "AE/Flash");
     map.insert("1".to_string(), "AE");
@@ -5552,7 +5552,7 @@ static PRINT_CONV_297: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_298: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_301: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Disabled");
     map.insert("2".to_string(), "2F");
@@ -5564,7 +5564,7 @@ static PRINT_CONV_298: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_299: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_302: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "0.3");
     map.insert("1".to_string(), "0.5");
@@ -5581,7 +5581,7 @@ static PRINT_CONV_299: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_300: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_303: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
@@ -5589,7 +5589,7 @@ static PRINT_CONV_300: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_301: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_304: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Overflow");
     map.insert("1".to_string(), "Backup");
@@ -5598,7 +5598,7 @@ static PRINT_CONV_301: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_302: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_305: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "Extra High");
@@ -5608,38 +5608,11 @@ static PRINT_CONV_302: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_303: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_306: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Large (8256x5504)");
     map.insert("1".to_string(), "Medium (6192x4128)");
     map.insert("2".to_string(), "Small (4128x2752)");
-    map
-});
-
-static PRINT_CONV_304: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_305: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Auto");
-    map.insert("2".to_string(), "People");
-    map.insert("3".to_string(), "Animals");
-    map.insert("4".to_string(), "Vehicles");
-    map.insert("5".to_string(), "Birds");
-    map.insert("6".to_string(), "Airplanes");
-    map
-});
-
-static PRINT_CONV_306: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Small");
-    map.insert("1".to_string(), "Medium");
-    map.insert("2".to_string(), "Large");
     map
 });
 
@@ -5652,12 +5625,39 @@ static PRINT_CONV_307: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_308: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Auto");
+    map.insert("2".to_string(), "People");
+    map.insert("3".to_string(), "Animals");
+    map.insert("4".to_string(), "Vehicles");
+    map.insert("5".to_string(), "Birds");
+    map.insert("6".to_string(), "Airplanes");
+    map
+});
+
+static PRINT_CONV_309: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Small");
+    map.insert("1".to_string(), "Medium");
+    map.insert("2".to_string(), "Large");
+    map
+});
+
+static PRINT_CONV_310: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_311: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
     map.insert("0".to_string(), "FX");
     map.insert("1".to_string(), "DX");
     map
 });
 
-static PRINT_CONV_309: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_312: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "H.264 8-bit (MP4)");
     map.insert("2".to_string(), "H.265 8-bit (MOV)");
@@ -5668,7 +5668,7 @@ static PRINT_CONV_309: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_310: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_313: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO 64");
     map.insert("1".to_string(), "ISO 80");
@@ -5704,14 +5704,14 @@ static PRINT_CONV_310: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_311: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_314: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_312: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_315: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO 64");
     map.insert("1".to_string(), "ISO 80");
@@ -5747,7 +5747,7 @@ static PRINT_CONV_312: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_313: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_316: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "CH");
@@ -5759,7 +5759,7 @@ static PRINT_CONV_313: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_314: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_317: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("2".to_string(), "Low");
@@ -5769,7 +5769,7 @@ static PRINT_CONV_314: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_315: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_318: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -5778,7 +5778,7 @@ static PRINT_CONV_315: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_316: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_319: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "50Hz");
@@ -5786,7 +5786,7 @@ static PRINT_CONV_316: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_317: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_320: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Matrix");
     map.insert("1".to_string(), "Center");
@@ -5795,7 +5795,7 @@ static PRINT_CONV_317: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_318: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_321: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Manual");
     map.insert("1".to_string(), "AF-S");
@@ -5804,7 +5804,7 @@ static PRINT_CONV_318: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_319: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_322: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Pinpoint");
     map.insert("1".to_string(), "Single");
@@ -5819,7 +5819,7 @@ static PRINT_CONV_319: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_320: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_323: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Normal");
@@ -5827,14 +5827,14 @@ static PRINT_CONV_320: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_321: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_324: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_322: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_325: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Auto");
@@ -5842,28 +5842,28 @@ static PRINT_CONV_322: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_323: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_326: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_324: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_327: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Wide Range");
     map.insert("1".to_string(), "Vocal Range");
     map
 });
 
-static PRINT_CONV_325: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_328: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_326: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_329: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "SDR");
     map.insert("1".to_string(), "HLG");
@@ -5871,7 +5871,7 @@ static PRINT_CONV_326: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_327: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_330: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "1920x1080");
     map.insert("2".to_string(), "3840x2160");
@@ -5880,7 +5880,7 @@ static PRINT_CONV_327: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_328: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_331: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "120p");
     map.insert("1".to_string(), "100p");
@@ -5889,32 +5889,6 @@ static PRINT_CONV_328: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map.insert("4".to_string(), "30p");
     map.insert("5".to_string(), "25p");
     map.insert("6".to_string(), "24p");
-    map
-});
-
-static PRINT_CONV_329: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_330: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_331: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Auto");
-    map.insert("2".to_string(), "People");
-    map.insert("3".to_string(), "Animals");
-    map.insert("4".to_string(), "Vehicles");
-    map.insert("5".to_string(), "Birds");
-    map.insert("6".to_string(), "Airplanes");
     map
 });
 
@@ -5928,20 +5902,46 @@ static PRINT_CONV_332: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 static PRINT_CONV_333: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "All");
-    map.insert("2".to_string(), "Wide (L)");
-    map.insert("3".to_string(), "Wide (S)");
+    map.insert("1".to_string(), "On");
     map
 });
 
 static PRINT_CONV_334: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
+    map.insert("1".to_string(), "Auto");
+    map.insert("2".to_string(), "People");
+    map.insert("3".to_string(), "Animals");
+    map.insert("4".to_string(), "Vehicles");
+    map.insert("5".to_string(), "Birds");
+    map.insert("6".to_string(), "Airplanes");
     map
 });
 
 static PRINT_CONV_335: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_336: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "All");
+    map.insert("2".to_string(), "Wide (L)");
+    map.insert("3".to_string(), "Wide (S)");
+    map
+});
+
+static PRINT_CONV_337: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_338: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On (4x)");
@@ -5949,7 +5949,7 @@ static PRINT_CONV_335: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_336: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_339: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "H.264 8-bit (MP4)");
     map.insert("2".to_string(), "H.265 8-bit (MOV)");
@@ -5960,7 +5960,7 @@ static PRINT_CONV_336: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_337: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_340: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "1920x1080");
     map.insert("2".to_string(), "3840x2160");
@@ -5969,7 +5969,7 @@ static PRINT_CONV_337: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_338: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_341: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "240p");
     map.insert("1".to_string(), "200p");
@@ -5983,7 +5983,7 @@ static PRINT_CONV_338: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_339: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_342: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("15".to_string(), "Portuguese");
     map.insert("4".to_string(), "English");
@@ -5992,7 +5992,7 @@ static PRINT_CONV_339: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_340: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_343: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "-5");
     map.insert("1".to_string(), "-4");
@@ -6012,31 +6012,10 @@ static PRINT_CONV_340: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_341: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_344: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Disable Release");
     map.insert("1".to_string(), "Enable Release");
-    map
-});
-
-static PRINT_CONV_342: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_343: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_344: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
     map
 });
 
@@ -6057,12 +6036,7 @@ static PRINT_CONV_346: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 static PRINT_CONV_347: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "CH");
-    map.insert("2".to_string(), "CH*");
-    map.insert("3".to_string(), "C30");
-    map.insert("4".to_string(), "C120");
-    map.insert("5".to_string(), "C60");
-    map.insert("6".to_string(), "C15");
+    map.insert("1".to_string(), "On");
     map
 });
 
@@ -6070,7 +6044,6 @@ static PRINT_CONV_348: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
-    map.insert("2".to_string(), "On (Series)");
     map
 });
 
@@ -6084,7 +6057,12 @@ static PRINT_CONV_349: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 static PRINT_CONV_350: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
+    map.insert("1".to_string(), "CH");
+    map.insert("2".to_string(), "CH*");
+    map.insert("3".to_string(), "C30");
+    map.insert("4".to_string(), "C120");
+    map.insert("5".to_string(), "C60");
+    map.insert("6".to_string(), "C15");
     map
 });
 
@@ -6092,6 +6070,7 @@ static PRINT_CONV_351: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
+    map.insert("2".to_string(), "On (Series)");
     map
 });
 
@@ -6103,6 +6082,27 @@ static PRINT_CONV_352: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 });
 
 static PRINT_CONV_353: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_354: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_355: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_356: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("10".to_string(), "ISO 640");
     map.insert("11".to_string(), "ISO 800");
@@ -6137,28 +6137,28 @@ static PRINT_CONV_353: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_354: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_355: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_356: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
 static PRINT_CONV_357: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_358: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_359: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_360: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Matrix");
     map.insert("1".to_string(), "Center");
@@ -6167,7 +6167,7 @@ static PRINT_CONV_357: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_358: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_361: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "TTL");
     map.insert("1".to_string(), "Auto External Flash");
@@ -6177,7 +6177,7 @@ static PRINT_CONV_358: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_359: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_362: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "0");
     map.insert("1".to_string(), "0.1 m");
@@ -6220,7 +6220,7 @@ static PRINT_CONV_359: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_360: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_363: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Optical AWL");
@@ -6229,7 +6229,7 @@ static PRINT_CONV_360: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_361: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_364: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Group");
     map.insert("1".to_string(), "Quick Wireless");
@@ -6237,7 +6237,7 @@ static PRINT_CONV_361: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_362: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_365: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "TTL");
     map.insert("1".to_string(), "Manual");
@@ -6246,7 +6246,7 @@ static PRINT_CONV_362: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_363: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_366: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Pinpoint");
     map.insert("1".to_string(), "Single");
@@ -6261,7 +6261,7 @@ static PRINT_CONV_363: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_364: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_367: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Normal");
@@ -6269,7 +6269,7 @@ static PRINT_CONV_364: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_365: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_368: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "AE/Flash");
     map.insert("1".to_string(), "AE");
@@ -6279,7 +6279,7 @@ static PRINT_CONV_365: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_366: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_369: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Disabled");
     map.insert("2".to_string(), "2F");
@@ -6291,7 +6291,7 @@ static PRINT_CONV_366: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_367: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_370: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "0.3");
     map.insert("1".to_string(), "0.5");
@@ -6308,7 +6308,7 @@ static PRINT_CONV_367: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_368: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_371: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
@@ -6316,7 +6316,7 @@ static PRINT_CONV_368: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_369: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_372: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Overflow");
     map.insert("1".to_string(), "Backup");
@@ -6325,7 +6325,7 @@ static PRINT_CONV_369: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_370: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_373: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "Extra High");
@@ -6335,7 +6335,7 @@ static PRINT_CONV_370: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_371: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_374: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Large (6048x4032)");
     map.insert("1".to_string(), "Medium (4528x3024)");
@@ -6343,7 +6343,7 @@ static PRINT_CONV_371: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_372: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_375: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Auto");
@@ -6355,7 +6355,7 @@ static PRINT_CONV_372: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_373: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_376: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Small");
     map.insert("1".to_string(), "Medium");
@@ -6363,43 +6363,19 @@ static PRINT_CONV_373: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_374: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_377: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "SDR");
     map.insert("1".to_string(), "HLG");
     map
 });
 
-static PRINT_CONV_375: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_378: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Mode 1");
     map.insert("2".to_string(), "Mode 2");
     map.insert("3".to_string(), "Mode 3");
-    map
-});
-
-static PRINT_CONV_376: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_377: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map.insert("2".to_string(), "On (Series)");
-    map
-});
-
-static PRINT_CONV_378: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "4");
-    map.insert("1".to_string(), "8");
-    map.insert("2".to_string(), "16");
-    map.insert("3".to_string(), "32");
     map
 });
 
@@ -6414,17 +6390,41 @@ static PRINT_CONV_380: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
+    map.insert("2".to_string(), "On (Series)");
     map
 });
 
 static PRINT_CONV_381: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "4");
+    map.insert("1".to_string(), "8");
+    map.insert("2".to_string(), "16");
+    map.insert("3".to_string(), "32");
+    map
+});
+
+static PRINT_CONV_382: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_382: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_383: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_384: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_385: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Optical AWL");
@@ -6433,7 +6433,7 @@ static PRINT_CONV_382: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_383: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_386: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Group");
     map.insert("1".to_string(), "Quick Wireless");
@@ -6441,7 +6441,7 @@ static PRINT_CONV_383: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_384: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_387: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "TTL");
     map.insert("1".to_string(), "Manual");
@@ -6450,7 +6450,7 @@ static PRINT_CONV_384: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_385: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_388: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "1920x1080");
     map.insert("2".to_string(), "3840x2160");
@@ -6459,7 +6459,7 @@ static PRINT_CONV_385: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_386: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_389: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "120p");
     map.insert("1".to_string(), "100p");
@@ -6471,7 +6471,7 @@ static PRINT_CONV_386: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_387: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_390: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On (4x)");
@@ -6479,14 +6479,14 @@ static PRINT_CONV_387: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_388: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_391: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "MOV");
     map.insert("1".to_string(), "MP4");
     map
 });
 
-static PRINT_CONV_389: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_392: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO 64");
     map.insert("1".to_string(), "ISO 80");
@@ -6522,7 +6522,7 @@ static PRINT_CONV_389: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_390: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_393: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("2".to_string(), "Low");
@@ -6532,46 +6532,46 @@ static PRINT_CONV_390: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_391: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Low");
-    map.insert("2".to_string(), "Normal");
-    map.insert("3".to_string(), "High");
-    map
-});
-
-static PRINT_CONV_392: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Low");
-    map.insert("2".to_string(), "Normal");
-    map.insert("3".to_string(), "High");
-    map
-});
-
-static PRINT_CONV_393: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "No");
-    map.insert("1".to_string(), "Yes");
-    map
-});
-
 static PRINT_CONV_394: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
+    map.insert("1".to_string(), "Low");
+    map.insert("2".to_string(), "Normal");
+    map.insert("3".to_string(), "High");
     map
 });
 
 static PRINT_CONV_395: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
+    map.insert("1".to_string(), "Low");
+    map.insert("2".to_string(), "Normal");
+    map.insert("3".to_string(), "High");
     map
 });
 
 static PRINT_CONV_396: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No");
+    map.insert("1".to_string(), "Yes");
+    map
+});
+
+static PRINT_CONV_397: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_398: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_399: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Manual");
     map.insert("1".to_string(), "AF-S");
@@ -6580,7 +6580,7 @@ static PRINT_CONV_396: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_397: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_400: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On (Normal)");
@@ -6588,21 +6588,21 @@ static PRINT_CONV_397: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_398: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_401: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No");
     map.insert("1".to_string(), "Yes");
     map
 });
 
-static PRINT_CONV_399: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_402: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_400: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_403: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Continuous Low");
     map.insert("1".to_string(), "Continuous High");
@@ -6612,7 +6612,7 @@ static PRINT_CONV_400: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_401: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_404: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "Daylight");
@@ -6620,6 +6620,101 @@ static PRINT_CONV_401: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map.insert("3".to_string(), "Fluorescent");
     map.insert("4".to_string(), "Tungsten");
     map.insert("5".to_string(), "Manual");
+    map
+});
+
+static PRINT_CONV_405: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "AE Bracketing Disabled");
+    map.insert("129".to_string(), "+3F0.3");
+    map.insert("130".to_string(), "-3F0.3");
+    map.insert("131".to_string(), "+2F0.3");
+    map.insert("132".to_string(), "-2F0.3");
+    map.insert("133".to_string(), "3F0.3");
+    map.insert("134".to_string(), "5F0.3");
+    map.insert("135".to_string(), "7F0.3");
+    map.insert("136".to_string(), "9F0.3");
+    map.insert("145".to_string(), "+3F0.5");
+    map.insert("146".to_string(), "-3F0.5");
+    map.insert("147".to_string(), "+2F0.5");
+    map.insert("148".to_string(), "-2F0.5");
+    map.insert("149".to_string(), "3F0.5");
+    map.insert("150".to_string(), "5F0.5");
+    map.insert("151".to_string(), "7F0.5");
+    map.insert("152".to_string(), "9F0.5");
+    map.insert("161".to_string(), "+3F0.7");
+    map.insert("162".to_string(), "-3F0.7");
+    map.insert("163".to_string(), "+2F0.7");
+    map.insert("164".to_string(), "-2F0.7");
+    map.insert("165".to_string(), "3F0.7");
+    map.insert("166".to_string(), "5F0.7");
+    map.insert("167".to_string(), "7F0.7");
+    map.insert("168".to_string(), "9F0.7");
+    map.insert("177".to_string(), "+3F1");
+    map.insert("178".to_string(), "-3F1");
+    map.insert("179".to_string(), "+2F1");
+    map.insert("180".to_string(), "-2F1");
+    map.insert("181".to_string(), "3F1");
+    map.insert("182".to_string(), "5F1");
+    map.insert("183".to_string(), "7F1");
+    map.insert("184".to_string(), "9F1");
+    map.insert("193".to_string(), "+3F2");
+    map.insert("194".to_string(), "-3F2");
+    map.insert("195".to_string(), "+2F2");
+    map.insert("196".to_string(), "-2F2");
+    map.insert("197".to_string(), "3F2");
+    map.insert("198".to_string(), "5F2");
+    map.insert("209".to_string(), "+3F3");
+    map.insert("210".to_string(), "-3F3");
+    map.insert("211".to_string(), "+2F3");
+    map.insert("212".to_string(), "-2F3");
+    map.insert("213".to_string(), "3F3");
+    map.insert("214".to_string(), "5F3");
+    map.insert("32".to_string(), "AE Bracketing Disabled");
+    map.insert("48".to_string(), "AE Bracketing Disabled");
+    map.insert("64".to_string(), "AE Bracketing Disabled");
+    map.insert("80".to_string(), "AE Bracketing Disabled");
+    map
+});
+
+static PRINT_CONV_406: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "WB Bracketing Disabled");
+    map.insert("1".to_string(), "b3F 1");
+    map.insert("16".to_string(), "0F 2");
+    map.insert("17".to_string(), "b3F 2");
+    map.insert("18".to_string(), "A3F 2");
+    map.insert("19".to_string(), "b2F 2");
+    map.insert("2".to_string(), "A3F 1");
+    map.insert("20".to_string(), "A2F 2");
+    map.insert("21".to_string(), "3F 2");
+    map.insert("22".to_string(), "5F 2");
+    map.insert("23".to_string(), "7F 2");
+    map.insert("24".to_string(), "9F 2");
+    map.insert("3".to_string(), "b2F 1");
+    map.insert("32".to_string(), "0F 3");
+    map.insert("33".to_string(), "b3F 3");
+    map.insert("34".to_string(), "A3F 3");
+    map.insert("35".to_string(), "b2F 3");
+    map.insert("36".to_string(), "A2F 3");
+    map.insert("37".to_string(), "3F 3");
+    map.insert("38".to_string(), "5F 3");
+    map.insert("39".to_string(), "7F 3");
+    map.insert("4".to_string(), "A2F 1");
+    map.insert("40".to_string(), "9F 3");
+    map.insert("5".to_string(), "3F 1");
+    map.insert("6".to_string(), "5F 1");
+    map.insert("7".to_string(), "7F 1");
+    map.insert("8".to_string(), "9F 1");
+    map
+});
+
+static PRINT_CONV_407: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Matrix");
+    map.insert("1".to_string(), "Center");
+    map.insert("2".to_string(), "Spot");
+    map.insert("3".to_string(), "Highlight");
     map
 });
 
@@ -6760,7 +6855,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_36),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_39),
             value_conv: None,
             subdirectory: None,
         }),
@@ -7241,7 +7336,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_37),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_40),
             value_conv: None,
             subdirectory: None,
         }),
@@ -7824,7 +7919,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_38),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_41),
             value_conv: None,
             subdirectory: None,
         }),
@@ -7978,7 +8073,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_39),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_42),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8121,7 +8216,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_40),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_43),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8143,7 +8238,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_41),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_44),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8165,7 +8260,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_42),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_45),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8319,7 +8414,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_43),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_46),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8341,7 +8436,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_44),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_47),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8385,7 +8480,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_45),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_48),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8451,7 +8546,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_46),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_49),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8473,7 +8568,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_47),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_50),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8539,7 +8634,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_48),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_51),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8616,7 +8711,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_49),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_52),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8627,7 +8722,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_50),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_53),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8671,7 +8766,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_51),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_54),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8682,7 +8777,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_52),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_55),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -8693,7 +8788,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_53),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_56),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -8704,7 +8799,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_54),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_57),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8715,7 +8810,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_55),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_58),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8726,7 +8821,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_56),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_59),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8737,7 +8832,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_57),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_60),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8748,7 +8843,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_58),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_61),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8759,7 +8854,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_59),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_62),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8770,7 +8865,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_60),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_63),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8781,7 +8876,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("AE and/or Flash Bracketing"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_61),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_64),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8792,7 +8887,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("AE and/or Flash Bracketing"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_62),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_65),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8803,7 +8898,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_63),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_66),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8814,7 +8909,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_64),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_67),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8825,7 +8920,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_65),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_68),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8836,7 +8931,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_66),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_69),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8847,7 +8942,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_67),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_70),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8858,7 +8953,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_68),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_71),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8869,7 +8964,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_69),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_72),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8880,7 +8975,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_70),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_73),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8891,7 +8986,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_71),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_74),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8902,7 +8997,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_72),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_75),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8913,7 +9008,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_73),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_76),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8924,7 +9019,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_74),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_77),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8935,7 +9030,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_75),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_78),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8946,7 +9041,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_76),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_79),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -8957,7 +9052,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_77),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_80),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8968,7 +9063,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_78),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_81),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -8979,7 +9074,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_79),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_82),
             value_conv: None,
             subdirectory: None,
         }),
@@ -8990,7 +9085,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_80),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_83),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9001,7 +9096,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_81),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_84),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9012,7 +9107,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_82),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_85),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9023,7 +9118,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_83),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_86),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9034,7 +9129,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_84),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_87),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9045,7 +9140,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_85),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_88),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9056,7 +9151,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_86),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_89),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9067,7 +9162,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_87),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_90),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9089,7 +9184,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_88),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_91),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9100,7 +9195,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_89),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_92),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9111,7 +9206,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_90),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_93),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9122,7 +9217,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_91),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_94),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9133,7 +9228,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_92),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_95),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9144,7 +9239,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_93),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_96),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9155,7 +9250,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_94),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_97),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9166,7 +9261,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_95),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_98),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9177,7 +9272,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_96),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_99),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9199,7 +9294,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_97),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_100),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9210,7 +9305,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_98),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_101),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9221,7 +9316,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_99),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_102),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9452,7 +9547,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_100),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_103),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9463,7 +9558,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_101),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_104),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9474,7 +9569,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_102),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_105),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9485,7 +9580,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_103),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_106),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9496,7 +9591,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_104),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_107),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9507,7 +9602,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_105),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_108),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9518,7 +9613,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_106),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_109),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9529,7 +9624,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_107),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_110),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9540,7 +9635,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_108),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_111),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9551,7 +9646,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_109),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_112),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9562,7 +9657,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_110),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_113),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9573,7 +9668,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_111),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_114),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9584,7 +9679,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_112),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_115),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9595,7 +9690,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_113),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_116),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9606,7 +9701,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_114),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_117),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9617,7 +9712,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_115),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_118),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9628,7 +9723,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_116),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_119),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9639,7 +9734,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_117),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_120),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9650,7 +9745,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_118),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_121),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9661,7 +9756,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_119),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_122),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9672,7 +9767,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_120),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_123),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9683,7 +9778,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_121),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_124),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9694,7 +9789,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_122),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_125),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9705,7 +9800,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_123),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_126),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9716,7 +9811,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_124),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_127),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9727,7 +9822,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_125),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_128),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9760,7 +9855,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_126),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_129),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9771,7 +9866,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_127),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_130),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9782,7 +9877,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_128),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_131),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10233,7 +10328,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_129),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_132),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10244,7 +10339,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_130),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_133),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10255,7 +10350,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_131),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_134),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10266,7 +10361,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_132),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_135),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10277,7 +10372,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_133),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_136),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10288,7 +10383,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_134),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_137),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10299,7 +10394,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_135),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_138),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10310,7 +10405,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_136),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_139),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10321,7 +10416,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_137),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_140),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10332,7 +10427,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_138),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_141),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10343,7 +10438,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_139),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_142),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10354,7 +10449,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_140),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_143),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10365,7 +10460,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_141),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_144),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10376,7 +10471,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_142),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_145),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10387,7 +10482,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_143),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_146),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10398,7 +10493,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_144),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_147),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10409,7 +10504,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_145),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_148),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10420,7 +10515,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_146),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_149),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10431,7 +10526,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_147),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_150),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10453,7 +10548,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_148),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_151),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10475,7 +10570,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_149),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_152),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10497,7 +10592,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_150),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_153),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10508,7 +10603,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_151),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_154),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10519,7 +10614,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_152),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_155),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10530,7 +10625,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_153),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_156),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10541,7 +10636,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_154),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_157),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10552,7 +10647,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_155),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_158),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10563,7 +10658,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_156),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_159),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10574,7 +10669,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_157),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_160),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10585,7 +10680,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_158),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_161),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10651,7 +10746,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_159),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_162),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10662,7 +10757,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_160),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_163),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10673,7 +10768,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_161),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_164),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10684,7 +10779,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_162),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_165),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10695,7 +10790,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_163),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_166),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10706,7 +10801,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_164),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_167),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10728,7 +10823,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_165),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_168),
             value_conv: Some("$val + 3"),
             subdirectory: None,
         }),
@@ -10750,7 +10845,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_166),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_169),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10761,7 +10856,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_167),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_170),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10772,7 +10867,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("AE and/or Flash Bracketing"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_168),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_171),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10783,7 +10878,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("AE and/or Flash Bracketing"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_169),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_172),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10794,7 +10889,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_170),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_173),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10805,7 +10900,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_171),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_174),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10816,7 +10911,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_172),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_175),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10827,7 +10922,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_173),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_176),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10838,7 +10933,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_174),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_177),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10849,7 +10944,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_175),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_178),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10860,7 +10955,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_176),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_179),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -10871,7 +10966,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_177),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_180),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10882,7 +10977,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_178),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_181),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -10893,7 +10988,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_179),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_182),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10904,7 +10999,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_180),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_183),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10915,7 +11010,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_181),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_184),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10926,7 +11021,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_182),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_185),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10937,7 +11032,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_183),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_186),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10948,7 +11043,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_184),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_187),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10959,7 +11054,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_185),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_188),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10970,7 +11065,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_186),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_189),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10981,7 +11076,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_187),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_190),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11003,7 +11098,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_188),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_191),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11014,7 +11109,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_189),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_192),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11025,7 +11120,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_190),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_193),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11036,7 +11131,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_191),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_194),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11047,7 +11142,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_192),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_195),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11058,7 +11153,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_193),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_196),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11069,7 +11164,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_194),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_197),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11080,7 +11175,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_195),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_198),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11091,7 +11186,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_196),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_199),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11113,7 +11208,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_197),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_200),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11124,7 +11219,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_198),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_201),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11135,7 +11230,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_199),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_202),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11146,7 +11241,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_200),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_203),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11168,7 +11263,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_201),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_204),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11179,7 +11274,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_202),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_205),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11190,7 +11285,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_203),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_206),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11201,7 +11296,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_204),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_207),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11212,7 +11307,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_205),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_208),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11223,7 +11318,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_206),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_209),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11234,7 +11329,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_207),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_210),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11245,7 +11340,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_208),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_211),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11256,7 +11351,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_209),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_212),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11267,7 +11362,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_210),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_213),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11278,7 +11373,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_211),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_214),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11333,7 +11428,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_212),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_215),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11344,7 +11439,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_213),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_216),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -11355,7 +11450,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_214),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_217),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -11366,7 +11461,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_215),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_218),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11377,7 +11472,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_216),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_219),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11388,7 +11483,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_217),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_220),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11399,7 +11494,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_218),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_221),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11421,7 +11516,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_219),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_222),
             value_conv: Some("$val + 3"),
             subdirectory: None,
         }),
@@ -11443,7 +11538,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_220),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_223),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11454,7 +11549,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_221),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_224),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11465,7 +11560,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_222),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_225),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11476,7 +11571,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("AE and/or Flash Bracketing"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_223),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_226),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11487,7 +11582,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("AE and/or Flash Bracketing"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_224),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_227),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11498,7 +11593,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_225),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_228),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11509,7 +11604,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_226),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_229),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11520,7 +11615,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_227),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_230),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11531,7 +11626,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_228),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_231),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11542,7 +11637,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_229),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_232),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11553,7 +11648,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_230),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_233),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11564,7 +11659,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_231),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_234),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11575,7 +11670,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_232),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_235),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -11586,7 +11681,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_233),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_236),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11597,7 +11692,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_234),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_237),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -11608,7 +11703,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_235),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_238),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11619,7 +11714,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_236),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_239),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11630,7 +11725,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_237),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_240),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11641,7 +11736,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_238),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_241),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11652,7 +11747,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_239),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_242),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11663,7 +11758,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_240),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_243),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11674,7 +11769,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_241),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_244),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11685,7 +11780,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_242),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_245),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11696,7 +11791,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_243),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_246),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11707,7 +11802,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_244),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_247),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11729,7 +11824,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_245),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_248),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11740,7 +11835,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_246),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_249),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11751,7 +11846,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_247),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_250),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11762,7 +11857,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_248),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_251),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11773,7 +11868,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_249),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_252),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11784,7 +11879,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_250),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_253),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11795,7 +11890,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_251),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_254),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11806,7 +11901,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_252),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_255),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11817,7 +11912,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_253),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_256),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11828,7 +11923,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_254),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_257),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11850,7 +11945,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_255),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_258),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11861,7 +11956,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_256),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_259),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11872,7 +11967,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_257),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_260),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11905,7 +12000,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_258),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_261),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12345,7 +12440,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_259),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_262),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12356,7 +12451,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_260),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_263),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12367,7 +12462,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_261),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_264),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12378,7 +12473,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_262),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_265),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12389,7 +12484,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_263),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_266),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12400,7 +12495,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_264),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_267),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12411,7 +12506,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_265),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_268),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12422,7 +12517,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_266),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_269),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12433,7 +12528,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_267),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_270),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12444,7 +12539,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_268),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_271),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12455,7 +12550,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_269),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_272),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12466,7 +12561,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_270),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_273),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12477,7 +12572,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_271),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_274),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12488,7 +12583,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_272),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_275),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12499,7 +12594,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_273),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_276),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12510,7 +12605,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_274),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_277),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12521,7 +12616,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_275),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_278),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12554,7 +12649,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_276),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_279),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12565,7 +12660,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_277),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_280),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12576,7 +12671,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_278),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_281),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12587,7 +12682,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_279),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_282),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12598,7 +12693,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_280),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_283),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12609,7 +12704,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_281),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_284),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12620,7 +12715,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_282),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_285),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12631,7 +12726,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_283),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_286),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12642,7 +12737,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_284),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_287),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12653,7 +12748,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_285),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_288),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12664,7 +12759,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_286),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_289),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12708,7 +12803,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_287),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_290),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12719,7 +12814,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_288),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_291),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -12730,7 +12825,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_289),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_292),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -12741,7 +12836,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_290),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_293),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12752,7 +12847,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_291),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_294),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12763,7 +12858,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_292),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_295),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12774,7 +12869,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_293),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_296),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12796,7 +12891,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_294),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_297),
             value_conv: Some("$val + 3"),
             subdirectory: None,
         }),
@@ -12818,7 +12913,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_295),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_298),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12829,7 +12924,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_296),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_299),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12840,7 +12935,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_297),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_300),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12851,7 +12946,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("AE and/or Flash Bracketing"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_298),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_301),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12862,7 +12957,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("AE and/or Flash Bracketing"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_299),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_302),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12873,7 +12968,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_300),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_303),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12884,7 +12979,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_301),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_304),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12895,7 +12990,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_302),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_305),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12906,7 +13001,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_303),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_306),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12917,7 +13012,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_304),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_307),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12928,7 +13023,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_305),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_308),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12939,7 +13034,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_306),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_309),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12950,7 +13045,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_307),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_310),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12961,7 +13056,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_308),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_311),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12972,7 +13067,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_309),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_312),
             value_conv: None,
             subdirectory: None,
         }),
@@ -12983,7 +13078,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_310),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_313),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -12994,7 +13089,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_311),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_314),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13005,7 +13100,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_312),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_315),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -13016,7 +13111,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_313),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_316),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13027,7 +13122,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_314),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_317),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13038,7 +13133,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_315),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_318),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13049,7 +13144,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_316),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_319),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13060,7 +13155,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_317),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_320),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13071,7 +13166,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_318),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_321),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13082,7 +13177,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_319),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_322),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13093,7 +13188,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_320),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_323),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13104,7 +13199,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_321),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_324),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13115,7 +13210,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_322),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_325),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13137,7 +13232,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_323),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_326),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13148,7 +13243,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_324),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_327),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13159,7 +13254,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_325),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_328),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13170,7 +13265,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_326),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_329),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13181,7 +13276,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_327),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_330),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13192,7 +13287,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_328),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_331),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13203,7 +13298,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_329),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_332),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13214,7 +13309,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_330),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_333),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13225,7 +13320,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_331),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_334),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13236,7 +13331,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_332),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_335),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13258,7 +13353,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_333),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_336),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13269,7 +13364,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_334),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_337),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13280,7 +13375,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_335),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_338),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13291,7 +13386,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_336),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_339),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13302,7 +13397,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_337),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_340),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13313,7 +13408,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_338),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_341),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13335,7 +13430,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_339),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_342),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13346,7 +13441,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_340),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_343),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13357,7 +13452,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_341),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_344),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13368,7 +13463,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_342),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_345),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13379,7 +13474,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_343),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_346),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13390,7 +13485,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_344),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_347),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13401,7 +13496,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_345),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_348),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13412,7 +13507,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_346),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_349),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13434,7 +13529,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_347),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_350),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13445,7 +13540,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_348),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_351),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13522,7 +13617,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_349),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_352),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13533,7 +13628,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_350),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_353),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13577,7 +13672,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_351),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_354),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13588,7 +13683,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_352),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_355),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13599,7 +13694,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_353),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_356),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -13610,7 +13705,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_354),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_357),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13621,7 +13716,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_355),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_358),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13632,7 +13727,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_356),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_359),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13643,7 +13738,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_357),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_360),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13654,7 +13749,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_358),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_361),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13665,7 +13760,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_359),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_362),
             value_conv: Some("$val + 3"),
             subdirectory: None,
         }),
@@ -13687,7 +13782,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_360),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_363),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13698,7 +13793,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_361),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_364),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13709,7 +13804,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_362),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_365),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13742,7 +13837,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_363),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_366),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13753,7 +13848,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_364),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_367),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13764,7 +13859,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_365),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_368),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13775,7 +13870,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("AE and/or Flash Bracketing"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_366),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_369),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13786,7 +13881,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("AE and/or Flash Bracketing"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_367),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_370),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13797,7 +13892,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_368),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_371),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13808,7 +13903,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_369),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_372),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13819,7 +13914,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_370),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_373),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13830,7 +13925,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_371),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_374),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13841,7 +13936,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_372),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_375),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13852,7 +13947,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_373),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_376),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13863,7 +13958,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_374),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_377),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13874,7 +13969,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_375),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_378),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13885,7 +13980,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_376),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_379),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13896,7 +13991,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_377),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_380),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13907,7 +14002,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_378),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_381),
             value_conv: None,
             subdirectory: None,
         }),
@@ -13995,7 +14090,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_379),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_382),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14006,7 +14101,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_380),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_383),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14050,7 +14145,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_381),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_384),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14072,7 +14167,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_382),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_385),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14083,7 +14178,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_383),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_386),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14094,7 +14189,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_384),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_387),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14127,7 +14222,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_385),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_388),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14138,7 +14233,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_386),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_389),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14149,7 +14244,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_387),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_390),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14160,7 +14255,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_388),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_391),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14171,7 +14266,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_389),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_392),
             value_conv: Some("($val-104)/8"),
             subdirectory: None,
         }),
@@ -14182,7 +14277,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_390),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_393),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14193,7 +14288,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_391),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_394),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14204,7 +14299,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_392),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_395),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14215,7 +14310,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_393),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_396),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14226,7 +14321,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_394),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_397),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14237,7 +14332,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_395),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_398),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14248,7 +14343,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_396),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_399),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14259,7 +14354,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_397),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_400),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14270,7 +14365,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_398),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_401),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14281,7 +14376,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_399),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_402),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14303,7 +14398,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_400),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_403),
             value_conv: Some("$$self{SingleFrame} == 0 ? 5 : $val"),
             subdirectory: None,
         }),
@@ -14413,7 +14508,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_401),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_404),
             value_conv: None,
             subdirectory: None,
         }),
@@ -14425,6 +14520,50 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "RollAngle",
+            format: "fixed32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("converted to degrees of clockwise camera roll"),
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f\", $val)"),
+            value_conv: Some("$val <= 180 ? $val : $val - 360"),
+            subdirectory: None,
+        }),
+        (15, TagKitDef {
+            id: 15,
+            name: "AEBracketingSteps",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_405),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "WBBracketingSteps",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_406),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (23, TagKitDef {
+            id: 23,
+            name: "NikonMeteringMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_407),
             value_conv: None,
             subdirectory: None,
         }),

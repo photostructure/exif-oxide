@@ -1,0 +1,83 @@
+{
+  "extractor": "tag_kit.pl",
+  "source": "third-party/exiftool/lib/Image/ExifTool/MIE.pm",
+  "description": "MIE (Media Information Exchange) tag definitions with comprehensive subdirectory coverage",
+  "tables": [
+    {
+      "table_name": "Main",
+      "description": "MIE main tag table - entry point with SubfileType, MIEVersion, and Meta subdirectory"
+    },
+    {
+      "table_name": "Meta",
+      "description": "MIE meta information group - central hub with Audio, Camera, Document, Geo, Image, MakerNotes, Preview, Thumbnail, Video subdirectories"
+    },
+    {
+      "table_name": "Doc",
+      "description": "MIE document information - main document/image/file description"
+    },
+    {
+      "table_name": "Geo",
+      "description": "MIE geographic location information with GPS and UTM subdirectories"
+    },
+    {
+      "table_name": "GPS",
+      "description": "MIE GPS information - altitude, latitude, longitude, coordinate system"
+    },
+    {
+      "table_name": "UTM",
+      "description": "MIE UTM coordinate system information"
+    },
+    {
+      "table_name": "Image",
+      "description": "MIE image information - dimensions, color space, compression"
+    },
+    {
+      "table_name": "Preview",
+      "description": "MIE preview image information"
+    },
+    {
+      "table_name": "Thumbnail",
+      "description": "MIE thumbnail image information"
+    },
+    {
+      "table_name": "Audio",
+      "description": "MIE audio information - codec, sample rate, channels"
+    },
+    {
+      "table_name": "Video",
+      "description": "MIE video information - codec, frame rate, dimensions"
+    },
+    {
+      "table_name": "Camera",
+      "description": "MIE camera information with Flash, Lens, Orientation subdirectories - exposure, ISO, settings"
+    },
+    {
+      "table_name": "Orient",
+      "description": "MIE orientation information - rotation, perspective correction"
+    },
+    {
+      "table_name": "Lens",
+      "description": "MIE lens information with Extender subdirectory - focal length, aperture, zoom"
+    },
+    {
+      "table_name": "Extender",
+      "description": "MIE lens extender information - magnification, make, model"
+    },
+    {
+      "table_name": "Flash",
+      "description": "MIE flash information - power, mode, sync speed"
+    },
+    {
+      "table_name": "MakerNotes",
+      "description": "MIE maker notes with Canon subdirectory and various manufacturer Unknown tables"
+    },
+    {
+      "table_name": "Canon",
+      "description": "MIE Canon-specific information with CanonVRD data"
+    },
+    {
+      "table_name": "Unknown",
+      "description": "MIE unknown/generic maker notes for unsupported manufacturers"
+    }
+  ]
+}

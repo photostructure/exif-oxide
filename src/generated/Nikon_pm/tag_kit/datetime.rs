@@ -14,7 +14,7 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_19: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_20: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Date & Time");
@@ -23,7 +23,7 @@ static PRINT_CONV_19: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_20: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_21: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("-12".to_string(), "15 s");
     map.insert("-15".to_string(), "Auto");
@@ -75,35 +75,6 @@ static PRINT_CONV_20: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map.insert("7".to_string(), "1/5 s");
     map.insert("8".to_string(), "1/6 s");
     map.insert("9".to_string(), "1/8 s");
-    map
-});
-
-static PRINT_CONV_21: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("10".to_string(), "+05:45 (Kathmandu)");
-    map.insert("11".to_string(), "+05:30 (New Dehli)");
-    map.insert("12".to_string(), "+05:00 (Islamabad)");
-    map.insert("13".to_string(), "+04:30 (Kabul)");
-    map.insert("14".to_string(), "+04:00 (Abu Dhabi)");
-    map.insert("15".to_string(), "+03:30 (Tehran)");
-    map.insert("16".to_string(), "+03:00 (Moscow, Nairobi)");
-    map.insert("17".to_string(), "+02:00 (Athens, Helsinki)");
-    map.insert("18".to_string(), "+01:00 (Madrid, Paris, Berlin)");
-    map.insert("19".to_string(), "+00:00 (London)");
-    map.insert("20".to_string(), "-01:00 (Azores)");
-    map.insert("21".to_string(), "-02:00 (Fernando de Noronha)");
-    map.insert("22".to_string(), "-03:00 (Buenos Aires, Sao Paulo)");
-    map.insert("23".to_string(), "-03:30 (Newfoundland)");
-    map.insert("24".to_string(), "-04:00 (Manaus, Caracas)");
-    map.insert("25".to_string(), "-05:00 (New York, Toronto, Lima)");
-    map.insert("26".to_string(), "-06:00 (Chicago, Mexico City)");
-    map.insert("27".to_string(), "-07:00 (Denver)");
-    map.insert("28".to_string(), "-08:00 (Los Angeles, Vancouver)");
-    map.insert("29".to_string(), "-09:00 (Anchorage)");
-    map.insert("3".to_string(), "+10:00 (Sydney)");
-    map.insert("30".to_string(), "-10:00 (Hawaii)");
-    map.insert("5".to_string(), "+09:00 (Tokyo)");
-    map.insert("6".to_string(), "+08:00 (Beijing, Honk Kong, Sinapore)");
     map
 });
 
@@ -167,145 +138,174 @@ static PRINT_CONV_23: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
 
 static PRINT_CONV_24: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("-12".to_string(), "15 s");
-    map.insert("-15".to_string(), "Auto");
-    map.insert("-3".to_string(), "2 s");
-    map.insert("-6".to_string(), "4 s");
-    map.insert("-9".to_string(), "8 s");
-    map.insert("0".to_string(), "1 s");
-    map.insert("1".to_string(), "1/1.3 s");
-    map.insert("10".to_string(), "1/10 s");
-    map.insert("11".to_string(), "1/13 s");
-    map.insert("12".to_string(), "1/15 s");
-    map.insert("13".to_string(), "1/20 s");
-    map.insert("14".to_string(), "1/25 s");
-    map.insert("15".to_string(), "1/30 s");
-    map.insert("16".to_string(), "1/40 s");
-    map.insert("17".to_string(), "1/50 s");
-    map.insert("18".to_string(), "1/60 s");
-    map.insert("19".to_string(), "1/80 s");
-    map.insert("2".to_string(), "1/1.6 s");
-    map.insert("20".to_string(), "1/100 s");
-    map.insert("21".to_string(), "1/120 s");
-    map.insert("22".to_string(), "1/160 s");
-    map.insert("23".to_string(), "1/200 s");
-    map.insert("24".to_string(), "1/250 s");
-    map.insert("25".to_string(), "1/320 s");
-    map.insert("26".to_string(), "1/400 s");
-    map.insert("27".to_string(), "1/500 s");
-    map.insert("28".to_string(), "1/640 s");
-    map.insert("29".to_string(), "1/800 s");
-    map.insert("3".to_string(), "1/2 s");
-    map.insert("30".to_string(), "1/1000 s");
-    map.insert("31".to_string(), "1/1250 s");
-    map.insert("32".to_string(), "1/1600 s");
-    map.insert("33".to_string(), "1/2000 s");
-    map.insert("34".to_string(), "1/2500 s");
-    map.insert("35".to_string(), "1/3200 s");
-    map.insert("36".to_string(), "1/4000 s");
-    map.insert("37".to_string(), "1/5000 s");
-    map.insert("37.5".to_string(), "1/6000 s");
-    map.insert("38".to_string(), "1/6400 s");
-    map.insert("39".to_string(), "1/8000 s");
-    map.insert("4".to_string(), "1/2.5 s");
-    map.insert("40".to_string(), "1/10000 s");
-    map.insert("40.5".to_string(), "1/12000 s");
-    map.insert("41".to_string(), "1/13000 s");
-    map.insert("42".to_string(), "1/16000 s");
-    map.insert("5".to_string(), "1/3 s");
-    map.insert("6".to_string(), "1/4 s");
-    map.insert("7".to_string(), "1/5 s");
-    map.insert("8".to_string(), "1/6 s");
-    map.insert("9".to_string(), "1/8 s");
+    map.insert("10".to_string(), "+05:45 (Kathmandu)");
+    map.insert("11".to_string(), "+05:30 (New Dehli)");
+    map.insert("12".to_string(), "+05:00 (Islamabad)");
+    map.insert("13".to_string(), "+04:30 (Kabul)");
+    map.insert("14".to_string(), "+04:00 (Abu Dhabi)");
+    map.insert("15".to_string(), "+03:30 (Tehran)");
+    map.insert("16".to_string(), "+03:00 (Moscow, Nairobi)");
+    map.insert("17".to_string(), "+02:00 (Athens, Helsinki)");
+    map.insert("18".to_string(), "+01:00 (Madrid, Paris, Berlin)");
+    map.insert("19".to_string(), "+00:00 (London)");
+    map.insert("20".to_string(), "-01:00 (Azores)");
+    map.insert("21".to_string(), "-02:00 (Fernando de Noronha)");
+    map.insert("22".to_string(), "-03:00 (Buenos Aires, Sao Paulo)");
+    map.insert("23".to_string(), "-03:30 (Newfoundland)");
+    map.insert("24".to_string(), "-04:00 (Manaus, Caracas)");
+    map.insert("25".to_string(), "-05:00 (New York, Toronto, Lima)");
+    map.insert("26".to_string(), "-06:00 (Chicago, Mexico City)");
+    map.insert("27".to_string(), "-07:00 (Denver)");
+    map.insert("28".to_string(), "-08:00 (Los Angeles, Vancouver)");
+    map.insert("29".to_string(), "-09:00 (Anchorage)");
+    map.insert("3".to_string(), "+10:00 (Sydney)");
+    map.insert("30".to_string(), "-10:00 (Hawaii)");
+    map.insert("5".to_string(), "+09:00 (Tokyo)");
+    map.insert("6".to_string(), "+08:00 (Beijing, Honk Kong, Sinapore)");
     map
 });
 
 static PRINT_CONV_25: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("10".to_string(), "+05:45 (Kathmandu)");
-    map.insert("11".to_string(), "+05:30 (New Dehli)");
-    map.insert("12".to_string(), "+05:00 (Islamabad)");
-    map.insert("13".to_string(), "+04:30 (Kabul)");
-    map.insert("14".to_string(), "+04:00 (Abu Dhabi)");
-    map.insert("15".to_string(), "+03:30 (Tehran)");
-    map.insert("16".to_string(), "+03:00 (Moscow, Nairobi)");
-    map.insert("17".to_string(), "+02:00 (Athens, Helsinki)");
-    map.insert("18".to_string(), "+01:00 (Madrid, Paris, Berlin)");
-    map.insert("19".to_string(), "+00:00 (London)");
-    map.insert("20".to_string(), "-01:00 (Azores)");
-    map.insert("21".to_string(), "-02:00 (Fernando de Noronha)");
-    map.insert("22".to_string(), "-03:00 (Buenos Aires, Sao Paulo)");
-    map.insert("23".to_string(), "-03:30 (Newfoundland)");
-    map.insert("24".to_string(), "-04:00 (Manaus, Caracas)");
-    map.insert("25".to_string(), "-05:00 (New York, Toronto, Lima)");
-    map.insert("26".to_string(), "-06:00 (Chicago, Mexico City)");
-    map.insert("27".to_string(), "-07:00 (Denver)");
-    map.insert("28".to_string(), "-08:00 (Los Angeles, Vancouver)");
-    map.insert("29".to_string(), "-09:00 (Anchorage)");
-    map.insert("3".to_string(), "+10:00 (Sydney)");
-    map.insert("30".to_string(), "-10:00 (Hawaii)");
-    map.insert("5".to_string(), "+09:00 (Tokyo)");
-    map.insert("6".to_string(), "+08:00 (Beijing, Honk Kong, Sinapore)");
+    map.insert("-12".to_string(), "15 s");
+    map.insert("-15".to_string(), "Auto");
+    map.insert("-3".to_string(), "2 s");
+    map.insert("-6".to_string(), "4 s");
+    map.insert("-9".to_string(), "8 s");
+    map.insert("0".to_string(), "1 s");
+    map.insert("1".to_string(), "1/1.3 s");
+    map.insert("10".to_string(), "1/10 s");
+    map.insert("11".to_string(), "1/13 s");
+    map.insert("12".to_string(), "1/15 s");
+    map.insert("13".to_string(), "1/20 s");
+    map.insert("14".to_string(), "1/25 s");
+    map.insert("15".to_string(), "1/30 s");
+    map.insert("16".to_string(), "1/40 s");
+    map.insert("17".to_string(), "1/50 s");
+    map.insert("18".to_string(), "1/60 s");
+    map.insert("19".to_string(), "1/80 s");
+    map.insert("2".to_string(), "1/1.6 s");
+    map.insert("20".to_string(), "1/100 s");
+    map.insert("21".to_string(), "1/120 s");
+    map.insert("22".to_string(), "1/160 s");
+    map.insert("23".to_string(), "1/200 s");
+    map.insert("24".to_string(), "1/250 s");
+    map.insert("25".to_string(), "1/320 s");
+    map.insert("26".to_string(), "1/400 s");
+    map.insert("27".to_string(), "1/500 s");
+    map.insert("28".to_string(), "1/640 s");
+    map.insert("29".to_string(), "1/800 s");
+    map.insert("3".to_string(), "1/2 s");
+    map.insert("30".to_string(), "1/1000 s");
+    map.insert("31".to_string(), "1/1250 s");
+    map.insert("32".to_string(), "1/1600 s");
+    map.insert("33".to_string(), "1/2000 s");
+    map.insert("34".to_string(), "1/2500 s");
+    map.insert("35".to_string(), "1/3200 s");
+    map.insert("36".to_string(), "1/4000 s");
+    map.insert("37".to_string(), "1/5000 s");
+    map.insert("37.5".to_string(), "1/6000 s");
+    map.insert("38".to_string(), "1/6400 s");
+    map.insert("39".to_string(), "1/8000 s");
+    map.insert("4".to_string(), "1/2.5 s");
+    map.insert("40".to_string(), "1/10000 s");
+    map.insert("40.5".to_string(), "1/12000 s");
+    map.insert("41".to_string(), "1/13000 s");
+    map.insert("42".to_string(), "1/16000 s");
+    map.insert("5".to_string(), "1/3 s");
+    map.insert("6".to_string(), "1/4 s");
+    map.insert("7".to_string(), "1/5 s");
+    map.insert("8".to_string(), "1/6 s");
+    map.insert("9".to_string(), "1/8 s");
     map
 });
 
 static PRINT_CONV_26: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("-12".to_string(), "15 s");
-    map.insert("-15".to_string(), "Auto");
-    map.insert("-3".to_string(), "2 s");
-    map.insert("-6".to_string(), "4 s");
-    map.insert("-9".to_string(), "8 s");
-    map.insert("0".to_string(), "1 s");
-    map.insert("1".to_string(), "1/1.3 s");
-    map.insert("10".to_string(), "1/10 s");
-    map.insert("11".to_string(), "1/13 s");
-    map.insert("12".to_string(), "1/15 s");
-    map.insert("13".to_string(), "1/20 s");
-    map.insert("14".to_string(), "1/25 s");
-    map.insert("15".to_string(), "1/30 s");
-    map.insert("16".to_string(), "1/40 s");
-    map.insert("17".to_string(), "1/50 s");
-    map.insert("18".to_string(), "1/60 s");
-    map.insert("19".to_string(), "1/80 s");
-    map.insert("2".to_string(), "1/1.6 s");
-    map.insert("20".to_string(), "1/100 s");
-    map.insert("21".to_string(), "1/120 s");
-    map.insert("22".to_string(), "1/160 s");
-    map.insert("23".to_string(), "1/200 s");
-    map.insert("24".to_string(), "1/250 s");
-    map.insert("25".to_string(), "1/320 s");
-    map.insert("26".to_string(), "1/400 s");
-    map.insert("27".to_string(), "1/500 s");
-    map.insert("28".to_string(), "1/640 s");
-    map.insert("29".to_string(), "1/800 s");
-    map.insert("3".to_string(), "1/2 s");
-    map.insert("30".to_string(), "1/1000 s");
-    map.insert("31".to_string(), "1/1250 s");
-    map.insert("32".to_string(), "1/1600 s");
-    map.insert("33".to_string(), "1/2000 s");
-    map.insert("34".to_string(), "1/2500 s");
-    map.insert("35".to_string(), "1/3200 s");
-    map.insert("36".to_string(), "1/4000 s");
-    map.insert("37".to_string(), "1/5000 s");
-    map.insert("37.5".to_string(), "1/6000 s");
-    map.insert("38".to_string(), "1/6400 s");
-    map.insert("39".to_string(), "1/8000 s");
-    map.insert("4".to_string(), "1/2.5 s");
-    map.insert("40".to_string(), "1/10000 s");
-    map.insert("40.5".to_string(), "1/12000 s");
-    map.insert("41".to_string(), "1/13000 s");
-    map.insert("42".to_string(), "1/16000 s");
-    map.insert("5".to_string(), "1/3 s");
-    map.insert("6".to_string(), "1/4 s");
-    map.insert("7".to_string(), "1/5 s");
-    map.insert("8".to_string(), "1/6 s");
-    map.insert("9".to_string(), "1/8 s");
+    map.insert("10".to_string(), "+05:45 (Kathmandu)");
+    map.insert("11".to_string(), "+05:30 (New Dehli)");
+    map.insert("12".to_string(), "+05:00 (Islamabad)");
+    map.insert("13".to_string(), "+04:30 (Kabul)");
+    map.insert("14".to_string(), "+04:00 (Abu Dhabi)");
+    map.insert("15".to_string(), "+03:30 (Tehran)");
+    map.insert("16".to_string(), "+03:00 (Moscow, Nairobi)");
+    map.insert("17".to_string(), "+02:00 (Athens, Helsinki)");
+    map.insert("18".to_string(), "+01:00 (Madrid, Paris, Berlin)");
+    map.insert("19".to_string(), "+00:00 (London)");
+    map.insert("20".to_string(), "-01:00 (Azores)");
+    map.insert("21".to_string(), "-02:00 (Fernando de Noronha)");
+    map.insert("22".to_string(), "-03:00 (Buenos Aires, Sao Paulo)");
+    map.insert("23".to_string(), "-03:30 (Newfoundland)");
+    map.insert("24".to_string(), "-04:00 (Manaus, Caracas)");
+    map.insert("25".to_string(), "-05:00 (New York, Toronto, Lima)");
+    map.insert("26".to_string(), "-06:00 (Chicago, Mexico City)");
+    map.insert("27".to_string(), "-07:00 (Denver)");
+    map.insert("28".to_string(), "-08:00 (Los Angeles, Vancouver)");
+    map.insert("29".to_string(), "-09:00 (Anchorage)");
+    map.insert("3".to_string(), "+10:00 (Sydney)");
+    map.insert("30".to_string(), "-10:00 (Hawaii)");
+    map.insert("5".to_string(), "+09:00 (Tokyo)");
+    map.insert("6".to_string(), "+08:00 (Beijing, Honk Kong, Sinapore)");
     map
 });
 
 static PRINT_CONV_27: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("-12".to_string(), "15 s");
+    map.insert("-15".to_string(), "Auto");
+    map.insert("-3".to_string(), "2 s");
+    map.insert("-6".to_string(), "4 s");
+    map.insert("-9".to_string(), "8 s");
+    map.insert("0".to_string(), "1 s");
+    map.insert("1".to_string(), "1/1.3 s");
+    map.insert("10".to_string(), "1/10 s");
+    map.insert("11".to_string(), "1/13 s");
+    map.insert("12".to_string(), "1/15 s");
+    map.insert("13".to_string(), "1/20 s");
+    map.insert("14".to_string(), "1/25 s");
+    map.insert("15".to_string(), "1/30 s");
+    map.insert("16".to_string(), "1/40 s");
+    map.insert("17".to_string(), "1/50 s");
+    map.insert("18".to_string(), "1/60 s");
+    map.insert("19".to_string(), "1/80 s");
+    map.insert("2".to_string(), "1/1.6 s");
+    map.insert("20".to_string(), "1/100 s");
+    map.insert("21".to_string(), "1/120 s");
+    map.insert("22".to_string(), "1/160 s");
+    map.insert("23".to_string(), "1/200 s");
+    map.insert("24".to_string(), "1/250 s");
+    map.insert("25".to_string(), "1/320 s");
+    map.insert("26".to_string(), "1/400 s");
+    map.insert("27".to_string(), "1/500 s");
+    map.insert("28".to_string(), "1/640 s");
+    map.insert("29".to_string(), "1/800 s");
+    map.insert("3".to_string(), "1/2 s");
+    map.insert("30".to_string(), "1/1000 s");
+    map.insert("31".to_string(), "1/1250 s");
+    map.insert("32".to_string(), "1/1600 s");
+    map.insert("33".to_string(), "1/2000 s");
+    map.insert("34".to_string(), "1/2500 s");
+    map.insert("35".to_string(), "1/3200 s");
+    map.insert("36".to_string(), "1/4000 s");
+    map.insert("37".to_string(), "1/5000 s");
+    map.insert("37.5".to_string(), "1/6000 s");
+    map.insert("38".to_string(), "1/6400 s");
+    map.insert("39".to_string(), "1/8000 s");
+    map.insert("4".to_string(), "1/2.5 s");
+    map.insert("40".to_string(), "1/10000 s");
+    map.insert("40.5".to_string(), "1/12000 s");
+    map.insert("41".to_string(), "1/13000 s");
+    map.insert("42".to_string(), "1/16000 s");
+    map.insert("5".to_string(), "1/3 s");
+    map.insert("6".to_string(), "1/4 s");
+    map.insert("7".to_string(), "1/5 s");
+    map.insert("8".to_string(), "1/6 s");
+    map.insert("9".to_string(), "1/8 s");
+    map
+});
+
+static PRINT_CONV_28: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
     map.insert("10".to_string(), "+05:45 (Kathmandu)");
     map.insert("11".to_string(), "+05:30 (New Dehli)");
     map.insert("12".to_string(), "+05:00 (Islamabad)");
@@ -333,7 +333,7 @@ static PRINT_CONV_27: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_28: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_29: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("-12".to_string(), "15 s");
     map.insert("-15".to_string(), "Auto");
@@ -388,7 +388,7 @@ static PRINT_CONV_28: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_29: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_30: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("10".to_string(), "+05:45 (Kathmandu)");
     map.insert("11".to_string(), "+05:30 (New Dehli)");
@@ -414,6 +414,48 @@ static PRINT_CONV_29: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map.insert("30".to_string(), "-10:00 (Hawaii)");
     map.insert("5".to_string(), "+09:00 (Tokyo)");
     map.insert("6".to_string(), "+08:00 (Beijing, Honk Kong, Sinapore)");
+    map
+});
+
+static PRINT_CONV_31: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "1/4000 s");
+    map.insert("1".to_string(), "1/3200 s");
+    map.insert("10".to_string(), "1/400 s");
+    map.insert("11".to_string(), "1/320 s");
+    map.insert("12".to_string(), "1/250 s");
+    map.insert("13".to_string(), "1/200 s");
+    map.insert("14".to_string(), "1/160 s");
+    map.insert("15".to_string(), "1/125 s");
+    map.insert("16".to_string(), "1/100 s");
+    map.insert("17".to_string(), "1/80 s");
+    map.insert("18".to_string(), "1/60 s");
+    map.insert("19".to_string(), "1/50 s");
+    map.insert("2".to_string(), "1/2500 s");
+    map.insert("20".to_string(), "1/40 s");
+    map.insert("21".to_string(), "1/30 s");
+    map.insert("22".to_string(), "1/15 s");
+    map.insert("23".to_string(), "1/8 s");
+    map.insert("24".to_string(), "1/4 s");
+    map.insert("25".to_string(), "1/2 s");
+    map.insert("26".to_string(), "1 s");
+    map.insert("27".to_string(), "2 s");
+    map.insert("28".to_string(), "4 s");
+    map.insert("29".to_string(), "8 s");
+    map.insert("3".to_string(), "1/2000 s");
+    map.insert("30".to_string(), "15 s");
+    map.insert("31".to_string(), "30 s");
+    map.insert("32".to_string(), "Auto (Slowest)");
+    map.insert("33".to_string(), "Auto (Slower)");
+    map.insert("34".to_string(), "Auto");
+    map.insert("35".to_string(), "Auto (Faster)");
+    map.insert("36".to_string(), "Auto (Fastest)");
+    map.insert("4".to_string(), "1/1600 s");
+    map.insert("5".to_string(), "1/1250 s");
+    map.insert("6".to_string(), "1/1000 s");
+    map.insert("7".to_string(), "1/800 s");
+    map.insert("8".to_string(), "1/640 s");
+    map.insert("9".to_string(), "1/500 s");
     map
 });
 
@@ -429,7 +471,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: Some("feature to imprint date/time on image"),
-                print_conv: PrintConvType::Simple(&PRINT_CONV_19),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_20),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -473,7 +515,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_20),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_21),
                 value_conv: Some("$val / 8"),
                 subdirectory: None,
             },
@@ -487,7 +529,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_21),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_22),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -501,7 +543,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_22),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_23),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -515,7 +557,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_23),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_24),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -529,7 +571,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_24),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_25),
                 value_conv: Some("$val / 8"),
                 subdirectory: None,
             },
@@ -543,7 +585,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_25),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_26),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -557,7 +599,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_26),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_27),
                 value_conv: Some("$val / 8"),
                 subdirectory: None,
             },
@@ -571,7 +613,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_27),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_28),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -585,7 +627,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_28),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_29),
                 value_conv: Some("$val / 8"),
                 subdirectory: None,
             },
@@ -599,7 +641,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_29),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_30),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -617,6 +659,20 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                     "Image::ExifTool::Exif::PrintExposureTime($val)",
                 ),
                 value_conv: Some("reciprocal_10_value_conv"),
+                subdirectory: None,
+            },
+        ),
+        (
+            4,
+            TagKitDef {
+                id: 4,
+                name: "ISOAutoShutterTime",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_31),
+                value_conv: None,
                 subdirectory: None,
             },
         ),

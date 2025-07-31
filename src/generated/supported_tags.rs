@@ -7,10 +7,10 @@
 pub const SUPPORTED_TAG_COUNT: usize = 0;
 
 /// Total number of supported composite tags
-pub const SUPPORTED_COMPOSITE_TAG_COUNT: usize = 61;
+pub const SUPPORTED_COMPOSITE_TAG_COUNT: usize = 72;
 
 /// Total number of all supported tags
-pub const TOTAL_SUPPORTED_TAG_COUNT: usize = 61;
+pub const TOTAL_SUPPORTED_TAG_COUNT: usize = 72;
 
 /// All supported standard tag names
 pub const SUPPORTED_TAG_NAMES: &[&str] = &[];
@@ -19,6 +19,7 @@ pub const SUPPORTED_TAG_NAMES: &[&str] = &[];
 pub const SUPPORTED_COMPOSITE_TAG_NAMES: &[&str] = &[
     "2",
     "Aperture",
+    "AudioBitrate",
     "AutoFocus",
     "AvgBitrate",
     "BlueBalance",
@@ -31,6 +32,9 @@ pub const SUPPORTED_COMPOSITE_TAG_NAMES: &[&str] = &[
     "DateTimeOriginal",
     "DigitalZoom",
     "DriveMode",
+    "Duration",
+    "Duration2",
+    "ExtenderStatus",
     "FileNumber",
     "FlashType",
     "FocalLength35efl",
@@ -53,6 +57,7 @@ pub const SUPPORTED_COMPOSITE_TAG_NAMES: &[&str] = &[
     "Lens35efl",
     "LensID",
     "LensSpec",
+    "LensType",
     "LightValue",
     "Megapixels",
     "OriginalDecisionData",
@@ -74,6 +79,7 @@ pub const SUPPORTED_COMPOSITE_TAG_NAMES: &[&str] = &[
     "ThumbnailImage",
     "ThumbnailTIFF",
     "WB_RGGBLevels",
+    "ZoomedPreviewImage",
 ];
 
 /// Tag counts by group

@@ -5056,6 +5056,54 @@ pub fn process_tag_0x3000_subdirectory(
     process_sony_shotinfo(data, byte_order)
 }
 
+pub fn process_tag_0x7240_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x7240_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x7241_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x7241_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
+pub fn process_tag_0x7250_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    use tracing::debug;
+    // TODO: Accept model and format parameters when runtime integration supports it
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x7250_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    Ok(vec![])
+}
+
 pub fn process_tag_0x900b_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,

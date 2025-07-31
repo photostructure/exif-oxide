@@ -20,7 +20,13 @@ pub mod GPS_pm;
 #[allow(non_snake_case)]
 pub mod IPTC_pm;
 #[allow(non_snake_case)]
+pub mod Jpeg2000_pm;
+#[allow(non_snake_case)]
 pub mod KyoceraRaw_pm;
+#[allow(non_snake_case)]
+pub mod MIE_pm;
+#[allow(non_snake_case)]
+pub mod Matroska_pm;
 #[allow(non_snake_case)]
 pub mod MinoltaRaw_pm;
 #[allow(non_snake_case)]
@@ -33,6 +39,8 @@ pub mod PNG_pm;
 pub mod PanasonicRaw_pm;
 #[allow(non_snake_case)]
 pub mod Panasonic_pm;
+#[allow(non_snake_case)]
+pub mod Pentax_pm;
 #[allow(non_snake_case)]
 pub mod QuickTime_pm;
 #[allow(non_snake_case)]

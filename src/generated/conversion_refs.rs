@@ -11,6 +11,7 @@ pub static PRINT_CONV_REFS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     let mut set = HashSet::new();
     set.insert("2_print_conv");
     set.insert("aperture_print_conv");
+    set.insert("audiobitrate_print_conv");
     set.insert("autofocus_print_conv");
     set.insert("avgbitrate_print_conv");
     set.insert("bluebalance_print_conv");
@@ -22,6 +23,9 @@ pub static PRINT_CONV_REFS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     set.insert("datetimeoriginal_print_conv");
     set.insert("digitalzoom_print_conv");
     set.insert("drivemode_print_conv");
+    set.insert("duration2_print_conv");
+    set.insert("duration_print_conv");
+    set.insert("extenderstatus_print_conv");
     set.insert("filenumber_print_conv");
     set.insert("flashtype_print_conv");
     set.insert("focallength35efl_print_conv");
@@ -43,6 +47,7 @@ pub static PRINT_CONV_REFS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     set.insert("lens_print_conv");
     set.insert("lensid_print_conv");
     set.insert("lensspec_print_conv");
+    set.insert("lenstype_print_conv");
     set.insert("lightvalue_print_conv");
     set.insert("megapixels_print_conv");
     set.insert("phasedetectaf_print_conv");
@@ -63,6 +68,7 @@ pub static VALUE_CONV_REFS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     let mut set = HashSet::new();
     set.insert("2_value_conv");
     set.insert("aperture_value_conv");
+    set.insert("audiobitrate_value_conv");
     set.insert("autofocus_value_conv");
     set.insert("bluebalance_value_conv");
     set.insert("cddbdiscplaytime_value_conv");
@@ -73,6 +79,8 @@ pub static VALUE_CONV_REFS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     set.insert("contrastdetectaf_value_conv");
     set.insert("datetimeoriginal_value_conv");
     set.insert("drivemode_value_conv");
+    set.insert("duration_value_conv");
+    set.insert("extenderstatus_value_conv");
     set.insert("filenumber_value_conv");
     set.insert("flashtype_value_conv");
     set.insert("focallength35efl_value_conv");
@@ -94,6 +102,7 @@ pub static VALUE_CONV_REFS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     set.insert("lens_value_conv");
     set.insert("lensid_value_conv");
     set.insert("lensspec_value_conv");
+    set.insert("lenstype_value_conv");
     set.insert("lightvalue_value_conv");
     set.insert("megapixels_value_conv");
     set.insert("phasedetectaf_value_conv");

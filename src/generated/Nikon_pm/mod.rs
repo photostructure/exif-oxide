@@ -12,6 +12,8 @@ pub mod meteringmodez7;
 pub mod nefcompression;
 pub mod nikonlensids;
 pub mod tag_kit;
+pub mod xlat_0;
+pub mod xlat_1;
 
 // Re-export all lookup functions and constants
 pub use afpoints105::*;
@@ -23,3 +25,5 @@ pub use meteringmodez7::*;
 pub use nefcompression::*;
 pub use nikonlensids::*;
 pub use tag_kit::*;
+pub use xlat_0::*;
+pub use xlat_1::*;

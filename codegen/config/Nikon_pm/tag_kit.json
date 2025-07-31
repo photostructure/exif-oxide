@@ -54,6 +54,22 @@
     {
       "table_name": "MOV",
       "description": "Nikon MOV video tags"
+    },
+    {
+      "table_name": "OrientationInfo",
+      "description": "Orientation information for various Nikon models"
+    },
+    {
+      "table_name": "SettingsInfoD810",
+      "description": "Settings information for D810 series cameras"
+    },
+    {
+      "table_name": "BracketingInfoD810", 
+      "description": "Bracketing information for D810 series cameras"
+    },
+    {
+      "table_name": "ISOAutoInfoD810",
+      "description": "ISO auto information for D810 series cameras"
     }
   ]
 }

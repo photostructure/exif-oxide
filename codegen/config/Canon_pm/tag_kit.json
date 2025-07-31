@@ -130,6 +130,18 @@
     {
       "table_name": "ColorDataUnknown",
       "description": "Canon color data for unknown camera models"
+    },
+    {
+      "table_name": "PSInfo2",
+      "description": "Canon picture style info version 2 - advanced filter effects and toning"
+    },
+    {
+      "table_name": "ColorCalib",
+      "description": "Canon color calibration data"
+    },
+    {
+      "table_name": "ColorCalib2", 
+      "description": "Canon color calibration data version 2"
     }
   ]
 }

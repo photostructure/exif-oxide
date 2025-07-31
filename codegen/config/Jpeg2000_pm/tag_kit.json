@@ -1,0 +1,35 @@
+{
+  "extractor": "tag_kit.pl",
+  "source": "third-party/exiftool/lib/Image/ExifTool/Jpeg2000.pm",
+  "description": "JPEG 2000 tag definitions with box structure and C2PA/JUMBF metadata support",
+  "tables": [
+    {
+      "table_name": "Main",
+      "description": "Main JPEG 2000 box table with subdirectory support for JP2, JXL, and C2PA JUMBF metadata"
+    },
+    {
+      "table_name": "ImageHeader", 
+      "description": "JPEG 2000 image header information including dimensions and compression"
+    },
+    {
+      "table_name": "FileType",
+      "description": "JPEG 2000 file type identification with brand information"
+    },
+    {
+      "table_name": "CaptureResolution",
+      "description": "JPEG 2000 capture resolution specifications with units"
+    },
+    {
+      "table_name": "DisplayResolution", 
+      "description": "JPEG 2000 display resolution specifications with units"
+    },
+    {
+      "table_name": "ColorSpec",
+      "description": "JPEG 2000 color specification including ICC profiles and color spaces"
+    },
+    {
+      "table_name": "JUMD",
+      "description": "JUMBF description box for C2PA content authenticity metadata"
+    }
+  ]
+}
