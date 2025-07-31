@@ -70,39 +70,42 @@ After extensive analysis of ExifTool's source code, I've identified the critical
 **Current Implementation**: We have a stateful `ExifReader` object in `src/exif/mod.rs:31-67` that closely mirrors ExifTool's `$self`
 
 ```rust
-// Current implementation in src/exif/mod.rs:31-67
+// Current implementation in src/exif/mod.rs:36-79
 pub struct ExifReader {
     // Core state - equivalent to ExifTool's member variables
-    pub(crate) processed: HashMap<u64, String>,            // ✅ PROCESSED hash (ExifTool $$self{PROCESSED})
-    pub(crate) extracted_tags: HashMap<u16, TagValue>,     // ✅ VALUE hash equivalent
-    pub(crate) data_members: HashMap<String, DataMemberValue>, // ✅ DataMember storage
-
-    // Processing context
-    pub(crate) path: Vec<String>,                           // ✅ PATH stack (ExifTool $$self{PATH})
-    pub(crate) base: u64,                                   // ✅ Current base offset
+    pub(crate) extracted_tags: HashMap<(u16, String), TagValue>, // ✅ VALUE hash with namespace
+    pub(crate) tag_sources: HashMap<(u16, String), TagSourceInfo>, // ✅ Enhanced conflict resolution
     pub(crate) header: Option<TiffHeader>,                  // ✅ TIFF header with byte order
+    pub(crate) data: Vec<u8>,                              // ✅ Raw EXIF data buffer
+    pub(crate) warnings: Vec<String>,                       // ✅ Parse errors (non-fatal)
 
-    // Advanced features beyond the original proposal
-    pub(crate) tag_sources: HashMap<u16, TagSourceInfo>,   // 🆕 Enhanced conflict resolution
-    pub(crate) processor_dispatch: ProcessorDispatch,      // 🆕 PROCESS_PROC system
-    pub(crate) composite_tags: HashMap<String, TagValue>,  // 🆕 Composite tag computation
-    pub(crate) original_file_type: Option<String>,         // 🆕 File type detection
-    pub(crate) overridden_file_type: Option<String>,       // 🆕 Content-based override
+    // Stateful processing features
+    pub(crate) processed: HashMap<u64, String>,            // ✅ PROCESSED hash (ExifTool $$self{PROCESSED})
+    pub(crate) path: Vec<String>,                          // ✅ PATH stack (ExifTool $$self{PATH})
+    pub(crate) data_members: HashMap<String, DataMemberValue>, // ✅ DataMember storage
+    pub(crate) base: u64,                                  // ✅ Current base offset
+    pub(crate) processor_dispatch: ProcessorDispatch,      // ✅ PROCESS_PROC system
+    pub(crate) maker_notes_original_offset: Option<usize>, // ✅ MakerNotes offset tracking
+    pub(crate) composite_tags: HashMap<String, TagValue>,  // ✅ Composite tag computation
+    pub(crate) original_file_type: Option<String>,         // ✅ File type detection
+    pub(crate) overridden_file_type: Option<String>,       // ✅ Content-based override
+    pub(crate) synthetic_tag_names: HashMap<u16, String>,  // ✅ Synthetic tag ID mapping
 }
 ```
 
 **Implementation Analysis**:
 
 - ✅ **Fully implemented** - ExifTool's stateful approach with memory safety
-- 🆕 **Enhanced** - Additional features beyond ExifTool (tag source tracking, processor dispatch)
-- 📍 **Reference** - See `src/exif/mod.rs:69-88` for initialization logic
+- ✅ **Namespace-aware storage** - Tags stored with (tag_id, namespace) keys for conflict resolution
+- ✅ **Enhanced source tracking** - TagSourceInfo includes namespace, IFD name, and processor context
+- 📍 **Reference** - See `src/exif/mod.rs:88-107` for initialization logic
 
 #### DataMember Resolution Strategy ✅ **IMPLEMENTED**
 
 **Current Implementation**: Sequential processing with dependency tracking exists in the processor system
 
 ```rust
-// Current DataMember support in ExifReader (src/exif/mod.rs:53)
+// Current DataMember support in ExifReader (src/exif/mod.rs:59)
 pub struct ExifReader {
     // ...
     pub(crate) data_members: HashMap<String, DataMemberValue>,  // ✅ Implemented
@@ -111,15 +114,15 @@ pub struct ExifReader {
 
 // The data_members field stores resolved values for use by dependent tags.
 // Specific processing logic is handled by the processor dispatch system
-// in src/exif/processors.rs and binary_data processing modules.
+// and subdirectory processing modules.
 ```
 
 **Implementation Status**:
 
-- ✅ **DataMember storage** - HashMap for storing resolved dependency values  
+- ✅ **DataMember storage** - HashMap for storing resolved dependency values
 - ✅ **Processor dispatch** - System for handling different directory types
 - 📍 **Reference** - See `src/exif/binary_data.rs` for binary data processing
-- 📍 **Reference** - See `src/exif/processors.rs` for processor implementations
+- 📍 **Reference** - See `src/exif/subdirectory_processing.rs` for subdirectory implementations
 
 **Note**: The specific two-phase processing pattern shown in the original proposal represents an approach that could be implemented within the existing processor framework as needed for specific manufacturers requiring complex DataMember dependencies.
 
@@ -172,7 +175,7 @@ impl ExifReader {
 **Current Implementation**: Single-threaded per Reader, thread-safe for multiple readers
 
 ```rust
-// Current ExifReader design (src/exif/mod.rs:69-88)
+// Current ExifReader design (src/exif/mod.rs:88-107)
 impl ExifReader {
     pub fn new() -> Self {
         Self {
@@ -181,19 +184,22 @@ impl ExifReader {
             header: None,
             data: Vec::new(),
             warnings: Vec::new(),
+            // Milestone 5: Initialize stateful features
             processed: HashMap::new(),
             path: Vec::new(),
             data_members: HashMap::new(),
             base: 0,
             processor_dispatch: ProcessorDispatch::default(),
+            maker_notes_original_offset: None,
             composite_tags: HashMap::new(),
             original_file_type: None,
             overridden_file_type: None,
+            synthetic_tag_names: HashMap::new(),
         }
     }
 }
 
-// Thread safety is achieved through the high-level API in src/formats/mod.rs:32
+// Thread safety is achieved through the high-level API in src/formats/mod.rs
 // Each call to extract_metadata creates its own processing context
 ```
 
@@ -201,7 +207,7 @@ impl ExifReader {
 
 - ✅ **Single-threaded design** - Each ExifReader is stateful and not thread-safe
 - ✅ **Parallel processing** - Achieved by creating separate ExifReader instances
-- 📍 **API Reference** - See `src/formats/mod.rs:32` for the public `extract_metadata` function
+- 📍 **API Reference** - See `src/formats/mod.rs:63` for the public `extract_metadata` function
 - 📍 **Usage Pattern** - Each file processing gets its own reader instance
 
 ## Section 2: Offset Calculation Systems
@@ -212,9 +218,9 @@ impl ExifReader {
 
 ExifTool has a sophisticated offset calculation system that handles various base offset schemes used by different manufacturers. We need a design that can handle this complexity without introducing novel parsing logic.
 
-### 2.2 Update from Milestone 14
+### 2.2 Implementation Approach
 
-We haven't adopted this yet, but Milestone 17 (RAW Format Support) and Milestone 22 (Advanced Write Support) will need it incrementally. See Offset Management Complexity Analysis in $REPO_ROOT/docs/done/MILESTONE-14-Nikon.md for why simpler offset schemes suffice for some manufacturers like Nikon.
+Offset management is implemented incrementally through manufacturer-specific milestones. Simple schemes suffice for some manufacturers (like Nikon), while others require sophisticated base fixing algorithms.
 
 ### 2.3 Research Summary: ExifTool's Offset Management Architecture
 
@@ -321,12 +327,14 @@ Based on ExifTool's proven architecture, our current implementation provides:
 ##### Current Offset Management ✅ **PARTIALLY IMPLEMENTED**
 
 ```rust
-// Current DirectoryInfo structure (src/types/mod.rs via re-exports)
+// Current DirectoryInfo structure (src/types/metadata.rs)
 pub struct DirectoryInfo {
-    pub data_pos: u32,     // ✅ File position of data block
-    pub dir_start: u32,    // ✅ Directory start offset  
-    pub base: u64,         // ✅ Base offset for pointers
-    // Additional fields in actual implementation
+    pub name: String,        // ✅ Directory name for debugging and PATH tracking
+    pub dir_start: usize,    // ✅ Start offset of directory within data
+    pub dir_len: usize,      // ✅ Length of directory data
+    pub base: u64,          // ✅ Base offset for pointer calculations (ExifTool's Base)
+    pub data_pos: u64,      // ✅ File position of data block (ExifTool's DataPos)
+    pub allow_reprocess: bool, // ✅ Whether this directory allows reprocessing
 }
 
 // Current ExifReader offset tracking (src/exif/mod.rs:55)
@@ -338,176 +346,46 @@ pub struct ExifReader {
 
 // TIFF header management (src/tiff_types.rs)
 pub struct TiffHeader {
-    pub byte_order: Endian,    // ✅ Byte order tracking
-    pub magic: u16,            // ✅ TIFF validation
-    pub ifd_offset: u32,       // ✅ First IFD location
+    pub byte_order: ByteOrder, // ✅ Byte order tracking
+    pub magic: u16,           // ✅ TIFF validation (42 for TIFF, 85 for RW2)
+    pub ifd0_offset: u32,     // ✅ Offset to first IFD
 }
 ```
 
 **Implementation Status**:
+
 - ✅ **Basic offset tracking** - DirectoryInfo and base offset management
-- ✅ **TIFF header handling** - Byte order and validation  
+- ✅ **TIFF header handling** - Byte order and validation
 - ✅ **Endianness support** - Throughout the parsing pipeline
 - 🔄 **Advanced manufacturer-specific offset fixing** - Planned for manufacturer-specific milestones
 - 📍 **Reference** - See `src/tiff_types.rs` for TIFF structures
 
 ##### Manufacturer-Specific Offset Managers 🔄 **PLANNED**
 
-These represent future implementations following exif-oxide's manual implementation pattern:
+Manufacturer-specific offset handling is implemented through dedicated modules:
 
-```rust
-/// Canon-specific offset management
-/// ExifTool reference: Canon.pm, MakerNotes.pm GetMakerNoteOffset
-pub mod canon {
-    pub fn detect_offset_scheme(model: &str) -> CanonOffsetScheme {
-        match model {
-            m if m.contains("20D") || m.contains("350D") => CanonOffsetScheme::SixByte,
-            m if m.contains("PowerShot") => CanonOffsetScheme::SixteenByte,
-            m if m.contains("FV") || m.contains("OPTURA") => CanonOffsetScheme::TwentyEightByte,
-            _ => CanonOffsetScheme::FourByte,
-        }
-    }
+- **Canon**: 4, 6, 16, or 28 byte offsets depending on model
+- **Nikon**: TIFF header at offset 0x0a from maker note start
+- **Sony**: Offset 0 or 4 depending on model era
+- **Others**: Added incrementally based on milestone requirements
 
-    pub fn fix_maker_note_base(
-        ctx: &mut DirectoryContext,
-        maker_note_data: &[u8],
-        scheme: CanonOffsetScheme,
-    ) -> Result<(), ExifError> {
-        // Manual port of Canon-specific FixBase logic
-        // References: MakerNotes.pm:1257-1459
+##### Offset Validation System 🔄 **PLANNED**
 
-        // 1. Validate TIFF footer
-        if let Some(footer_offset) = validate_canon_footer(maker_note_data)? {
-            ctx.base = footer_offset;
-            return Ok(());
-        }
+Offset validation following ExifTool's approach:
 
-        // 2. Apply scheme-specific offset
-        let expected_offset = match scheme {
-            CanonOffsetScheme::FourByte => 4,
-            CanonOffsetScheme::SixByte => 6,
-            CanonOffsetScheme::SixteenByte => 16,
-            CanonOffsetScheme::TwentyEightByte => 28,
-        };
+- File bounds checking
+- Directory overlap detection
+- Value overlap prevention
+- Absolute offset calculations
 
-        // 3. Validate and adjust
-        if validate_offset_scheme(ctx, expected_offset)? {
-            ctx.base += expected_offset;
-        }
+##### Expression Evaluation Strategy 🔄 **PLANNED**
 
-        Ok(())
-    }
-}
+Base offset calculation patterns replace Perl eval() with pattern matching:
 
-/// Nikon-specific offset management
-pub mod nikon {
-    pub fn process_encrypted_section(/* ... */) { /* ... */ }
-    pub fn fix_nikon_base(/* ... */) { /* ... */ }
-}
-```
-
-##### Offset Validation System
-
-```rust
-/// Offset validation following ExifTool's approach
-pub struct OffsetValidator {
-    file_size: u32,
-    processed_ranges: Vec<(u32, u32)>, // (start, length) pairs
-}
-
-impl OffsetValidator {
-    pub fn validate_value_offset(
-        &mut self,
-        ctx: &DirectoryContext,
-        offset: u32,
-        size: u32,
-        tag_name: &str,
-    ) -> Result<(), ExifError> {
-        let absolute_offset = ctx.absolute_offset(offset);
-
-        // ExifTool validation patterns from Exif.pm:6390+
-
-        // 1. Check file bounds
-        if absolute_offset + size > self.file_size {
-            return Err(ExifError::invalid_offset(tag_name, absolute_offset));
-        }
-
-        // 2. Check for overlaps with directory
-        let dir_start = ctx.absolute_offset(ctx.dir_start);
-        let dir_end = dir_start + calculate_ifd_size(ctx.data, ctx.dir_start)?;
-
-        if offset_ranges_overlap(absolute_offset, size, dir_start, dir_end - dir_start) {
-            return Err(ExifError::minor(format!("Value for {} overlaps IFD", tag_name)));
-        }
-
-        // 3. Check for overlaps with previous values
-        for (prev_start, prev_size) in &self.processed_ranges {
-            if offset_ranges_overlap(absolute_offset, size, *prev_start, *prev_size) {
-                return Err(ExifError::minor(format!("Value for {} overlaps previous value", tag_name)));
-            }
-        }
-
-        self.processed_ranges.push((absolute_offset, size));
-        Ok(())
-    }
-}
-```
-
-##### Expression Evaluation Strategy
-
-Instead of eval(), use pattern matching:
-
-```rust
-/// Base offset calculation patterns from ExifTool SubDirectory definitions
-#[derive(Debug, Clone)]
-pub enum BaseCalculation {
-    /// Standard: same as parent directory
-    Inherit,
-
-    /// Fixed offset: Base = parent_base + offset
-    Fixed(i32),
-
-    /// Relative to subdirectory start: Base = subdirectory_start
-    RelativeToStart,
-
-    /// Relative to parent: Base = parent_base + subdirectory_start + offset
-    RelativeToParent(i32),
-
-    /// Manufacturer-specific calculation
-    Custom(CustomBaseCalc),
-}
-
-#[derive(Debug, Clone)]
-pub enum CustomBaseCalc {
-    /// Leica M8: different for DNG vs JPEG
-    LeicaM8,
-
-    /// Canon: use TIFF footer
-    CanonFooter,
-
-    /// Nikon: TIFF header at offset 0x0a
-    NikonTiffHeader,
-}
-
-impl BaseCalculation {
-    pub fn calculate(
-        &self,
-        parent_base: u32,
-        subdirectory_start: u32,
-        context: &ProcessingContext,
-    ) -> Result<u32, ExifError> {
-        match self {
-            Self::Inherit => Ok(parent_base),
-            Self::Fixed(offset) => Ok((parent_base as i32 + offset) as u32),
-            Self::RelativeToStart => Ok(subdirectory_start),
-            Self::RelativeToParent(offset) => {
-                Ok((parent_base as i32 + subdirectory_start as i32 + offset) as u32)
-            }
-            Self::Custom(calc) => calc.calculate(parent_base, subdirectory_start, context),
-        }
-    }
-}
-```
+- **Inherit**: Use parent directory base
+- **Fixed**: Parent base + fixed offset
+- **RelativeToStart**: Relative to subdirectory start
+- **Custom**: Manufacturer-specific calculations (Canon footer, Nikon TIFF header, etc.)
 
 #### Implementation Strategy and Current Status
 
@@ -519,7 +397,7 @@ impl BaseCalculation {
 
 ##### Phase 2: Manufacturer-Specific Implementations 🔄 **IN PROGRESS**
 
-1. **Canon**: Planned for Canon-specific milestone  
+1. **Canon**: Planned for Canon-specific milestone
 2. **Nikon**: Basic support exists, encryption support planned
 3. **Sony**: Planned for Sony-specific milestone
 4. **Others**: Driven by milestone requirements and test coverage
@@ -527,7 +405,7 @@ impl BaseCalculation {
 ##### Phase 3: Advanced Features 🔄 **PLANNED**
 
 1. Entry-based offset detection and handling
-2. Complex base calculation patterns  
+2. Complex base calculation patterns
 3. Write support with offset fixup
 
 ## Section 3: Integration Between State & Offsets
@@ -539,32 +417,33 @@ impl BaseCalculation {
 Our current state management and offset calculation systems are integrated as follows:
 
 ```rust
-// Current integration pattern in ExifReader (conceptual - specific implementations 
+// Current integration pattern in ExifReader (conceptual - specific implementations
 // are distributed across src/exif/ifd.rs and src/exif/processors.rs)
 
 impl ExifReader {
     // The ExifReader contains both state management and offset tracking:
     pub(crate) processed: HashMap<u64, String>,     // ✅ Recursion prevention
-    pub(crate) path: Vec<String>,                   // ✅ Directory hierarchy  
+    pub(crate) path: Vec<String>,                   // ✅ Directory hierarchy
     pub(crate) base: u64,                          // ✅ Offset calculations
-    
+
     // Actual subdirectory processing combines these elements
     // See src/exif/ifd.rs for IFD processing implementations
     // See src/exif/processors.rs for specific directory processors
 }
 
-// The integration happens through the processor dispatch system where:
+// The integration happens through the processing pipeline where:
 // 1. PROCESSED tracking prevents infinite loops during recursion
-// 2. PATH management maintains current directory context  
+// 2. PATH management maintains current directory context
 // 3. Base offset calculations ensure correct pointer resolution
 // 4. DirectoryInfo carries the offset context between processing levels
 ```
 
 **Current Implementation References**:
+
 - 📍 **IFD Processing** - `src/exif/ifd.rs` - Core directory processing logic
-- 📍 **Processor Dispatch** - `src/exif/processors.rs` - Manufacturer-specific processing  
-- 📍 **State Management** - `src/exif/mod.rs:45-56` - PROCESSED and PATH tracking
-- 📍 **Offset Types** - `src/types/` - DirectoryInfo and related structures
+- 📍 **Subdirectory Processing** - `src/exif/subdirectory_processing.rs` - Subdirectory and binary data handling
+- 📍 **State Management** - `src/exif/mod.rs:52-66` - PROCESSED and PATH tracking
+- 📍 **Offset Types** - `src/types/metadata.rs` - DirectoryInfo and related structures
 
 ### 3.2 Key Design Principles
 
@@ -581,7 +460,7 @@ Following exif-oxide's architecture principles and [TRUST-EXIFTOOL.md](../TRUST-
 This state and offset management system integrates with our current architecture:
 
 - ✅ **Processor Dispatch**: Manufacturer-specific processors handle different directory types
-- ✅ **Registry System**: Runtime registration of PrintConv/ValueConv implementations  
+- ✅ **Registry System**: Runtime registration of PrintConv/ValueConv implementations
 - ✅ **Graceful Degradation**: Error handling preserves extracted data when processing fails
 - ✅ **Implementation Tracking**: Missing implementations logged for milestone planning
 
@@ -591,7 +470,7 @@ The state and offset management systems are core parts of the ExifReader, with m
 
 1. **Phase 1**: ✅ **COMPLETED** - Basic stateful reader with PROCESSED hash implemented
 2. **Phase 2**: ✅ **COMPLETED** - VALUE hash equivalent and directory context management
-3. **Phase 3**: ✅ **FOUNDATION** - DataMember dependency resolution infrastructure exists  
+3. **Phase 3**: ✅ **FOUNDATION** - DataMember dependency resolution infrastructure exists
 4. **Phase 4**: ✅ **COMPLETED** - Comprehensive error handling and graceful degradation
 5. **Phase 5**: 🔄 **IN PROGRESS** - Manufacturer-specific offset managers (milestone-driven)
 6. **Phase 6**: 🔮 **PLANNED** - Advanced offset validation and fixing (write support milestone)
@@ -601,7 +480,7 @@ The state and offset management systems are core parts of the ExifReader, with m
 Our current architecture maintains behavioral compatibility with ExifTool while leveraging Rust's safety features:
 
 - ✅ **Memory safety**: No risk of dangling pointers or use-after-free
-- ✅ **Error handling**: Explicit Result types with graceful degradation vs Perl's undefined behavior  
+- ✅ **Error handling**: Explicit Result types with graceful degradation vs Perl's undefined behavior
 - ✅ **Performance**: Zero-cost abstractions and optimized parsing vs Perl's runtime overhead
 - ✅ **Maintainability**: Strong typing and module organization vs Perl's dynamic typing
 

@@ -12,6 +12,8 @@ Welcome to exif-oxide! This guide gets you productive quickly by focusing on the
 
 **Key takeaway:** We translate ExifTool exactly - we don't "improve" or "simplify" its parsing logic.
 
+**What is ExifTool?** ExifTool is a 25-year-old Perl library that reads/writes metadata from image, audio, and video files. It's the de facto standard because it handles thousands of proprietary formats and manufacturer quirks that have accumulated over decades of digital photography. Every line of ExifTool code exists for a reason - usually to work around a specific camera's bug or non-standard behavior.
+
 Then skim [ARCHITECTURE.md](ARCHITECTURE.md) for the system overview. Focus on:
 
 - The extract → generate → implement cycle
@@ -30,10 +32,10 @@ Read [guides/EXIFTOOL-GUIDE.md](guides/EXIFTOOL-GUIDE.md) sections 1-3:
 
 ### 3. Development Setup (5 minutes)
 
-Read [guides/DEVELOPMENT-GUIDE.md](guides/DEVELOPMENT-GUIDE.md) sections 1-2:
+Follow the TPP-driven development workflow:
 
-- **Section 1:** The extract-generate-implement cycle
-- **Section 2:** Using `--show-missing` to find what needs implementation
+- **Create TPPs:** Write Technical Project Plans for coherent feature sets using [TPP.md](TPP.md)
+- **Use `--show-missing`:** Let it guide your implementation priorities
 
 Then run your first test:
 
@@ -54,7 +56,7 @@ After the 15-minute foundation, pick your path based on your task:
 
 ### 🔧 **I'm implementing a specific tag/conversion**
 
-→ Continue with [guides/DEVELOPMENT-GUIDE.md](guides/DEVELOPMENT-GUIDE.md) section 4 (implementation workflow)
+→ Write a TPP using [TPP.md](TPP.md) template to plan your implementation
 → Reference [guides/EXIFTOOL-GUIDE.md](guides/EXIFTOOL-GUIDE.md) sections 4-5 as needed
 
 ### 🏗️ **I'm working on core architecture**
@@ -74,7 +76,7 @@ After the 15-minute foundation, pick your path based on your task:
 
 ### 🧪 **I'm working on tests**
 
-→ Read [guides/DEVELOPMENT-GUIDE.md](guides/DEVELOPMENT-GUIDE.md) section 2 (testing strategy)
+→ Follow the test-driven debugging workflow in [TDD.md](TDD.md)
 → Check test image collection in `test-images/` vs `third-party/exiftool/t/images/`
 
 ## Essential Principles
@@ -86,6 +88,8 @@ Keep these in mind throughout development:
 3. **Document everything** - Include ExifTool source references (file:line)
 4. **Ask clarifying questions** - The user expects this for complex tasks
 5. **Use runtime fallback** - Missing implementations return raw values, never panic
+6. **Watch for codegen opportunities** - Manually-maintained lookup tables should use the simple table extraction framework
+7. **Keep files focused** - Files >500 lines should be refactored into smaller, focused modules
 
 ## Quick Reference Links
 
@@ -104,7 +108,7 @@ Keep these in mind throughout development:
 ### Development Guides
 
 - [guides/EXIFTOOL-GUIDE.md](guides/EXIFTOOL-GUIDE.md) - Complete ExifTool reference
-- [guides/DEVELOPMENT-GUIDE.md](guides/DEVELOPMENT-GUIDE.md) - Daily development workflow
+- [TPP.md](TPP.md) - Technical Project Plan template for feature development
 - [guides/CORE-ARCHITECTURE.md](guides/CORE-ARCHITECTURE.md) - State management & offset calculations
 
 ### Reference Materials
@@ -112,6 +116,15 @@ Keep these in mind throughout development:
 - [reference/SUPPORTED-FORMATS.md](reference/SUPPORTED-FORMATS.md) - File formats and MIME types
 - [reference/MANUFACTURER-FACTS.md](reference/MANUFACTURER-FACTS.md) - Manufacturer-specific quirks
 - [reference/TROUBLESHOOTING.md](reference/TROUBLESHOOTING.md) - Debugging guide
+
+## Generated Code Policy
+
+**Generated Rust code is committed to git** while intermediate files are ignored:
+
+- **Commit**: Final Rust code in `src/generated/` (tags.rs, conversion_refs.rs, etc.)
+- **Ignore**: Intermediate files in `codegen/generated/` (tag_tables.json, etc.)
+
+**When to regenerate**: After modifying extraction scripts, updating ExifTool, or adding new configurations. Run `make codegen` then commit the updated `src/generated/` files.
 
 ## Getting Help
 

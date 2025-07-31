@@ -113,7 +113,7 @@ ExifTool Source → [Rust Orchestration] → Perl Extractors → JSON → Genera
 4. **Implement**: Port complex logic manually
 5. **Validate**: Test against ExifTool output
 
-See [guides/DEVELOPMENT-GUIDE.md](guides/DEVELOPMENT-GUIDE.md) for detailed steps.
+See [TPP.md](TPP.md) for detailed task planning and [GETTING-STARTED.md](GETTING-STARTED.md) for development workflow.
 
 ## Implementation Status
 
@@ -184,8 +184,7 @@ Binary data uses streaming references:
 
 ### Guides
 
-- [Engineer's Guide](ENGINEER-GUIDE.md) - Getting started with the codebase
-- [Development Guide](guides/DEVELOPMENT-GUIDE.md) - Development workflow and best practices
+- [Getting Started](GETTING-STARTED.md) - Getting started with the codebase and development workflow
 - [ExifTool Guide](guides/EXIFTOOL-GUIDE.md) - Complete guide to working with ExifTool source
 
 ### Milestones
