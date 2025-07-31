@@ -1,9 +1,9 @@
 # Build artifacts
-/target
-/codegen/target
+/target/
+/codegen/target/
 
 # Generated code from ExifTool
-/codegen/generated
+/codegen/generated/
 
 # Coverage reports
 /codegen/coverage/
@@ -33,5 +33,4 @@ Thumbs.db
 
 # Debug files
 *.pdb
-third-party/exif-oxide-node
-.gitignore
+/third-party/exif-oxide-node/
