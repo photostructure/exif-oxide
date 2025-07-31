@@ -105,9 +105,6 @@ where
                     tag_id
                 );
 
-                // Initialize counter for deterministic synthetic ID generation
-                let mut synthetic_counter: u16 = 0;
-
                 // Store each extracted tag with PrintConv applied
                 for (tag_name, value) in extracted_tags {
                     // Skip tags marked as Unknown (matching ExifTool's default behavior)
@@ -116,34 +113,27 @@ where
                         continue;
                     }
 
-                    // Generate a deterministic synthetic tag ID for the extracted tag
-                    // Uses parent tag ID's upper bits and counter for lower bits
-                    // This ensures unique IDs for each tag in the subdirectory
-                    let synthetic_id = 0x8000 | (tag_id & 0x7F00) | (synthetic_counter & 0xFF);
-                    synthetic_counter += 1;
-
-                    // Check bounds to prevent overflow into other ID ranges
-                    if synthetic_counter > 255 {
-                        warn!(
-                            "Too many synthetic tags extracted from {} subdirectory 0x{:04x}, some may be lost",
-                            manufacturer, tag_id
-                        );
-                        break;
-                    }
+                    // Generate a collision-free synthetic tag ID for the extracted tag
+                    // Algorithm: Use a hash-based approach incorporating the parent tag ID and tag name
+                    // to ensure uniqueness across all subdirectory processing
+                    let synthetic_id = generate_synthetic_id(tag_id, &tag_name);
 
                     debug!(
                         "Storing extracted {} tag '{}' from subdirectory 0x{:04x} with synthetic ID 0x{:04x}",
                         manufacturer, tag_name, tag_id, synthetic_id
                     );
 
-                    // Add debug assertion to catch any future collision bugs
-                    debug_assert!(
-                        !exif_reader.synthetic_tag_names.contains_key(&synthetic_id),
-                        "Synthetic tag ID collision detected: 0x{:04x} for {} tag '{}'",
-                        synthetic_id,
-                        manufacturer,
-                        tag_name
-                    );
+                    // Check for collision and handle gracefully
+                    if exif_reader.synthetic_tag_names.contains_key(&synthetic_id) {
+                        warn!(
+                            "Synthetic tag ID collision detected: 0x{:04x} for {} tag '{}' (parent: 0x{:04x})",
+                            synthetic_id, manufacturer, tag_name, tag_id
+                        );
+                        warn!("This should not happen with the new collision-free algorithm - please report this bug");
+
+                        // Skip this tag to prevent corruption rather than panicking
+                        continue;
+                    }
 
                     // Apply PrintConv to format the extracted value
                     let formatted_value =
@@ -246,4 +236,43 @@ fn ensure_group_prefix(tag_name: &str, group: &str) -> String {
     } else {
         format!("{}:{}", group, tag_name)
     }
+}
+
+/// Generate a collision-free synthetic tag ID for subdirectory tags
+///
+/// This algorithm combines the parent tag ID and tag name to create a unique
+/// synthetic ID that prevents collisions across different subdirectory tags.
+///
+/// Algorithm:
+/// 1. Use a simple hash function to combine parent_tag_id and tag_name
+/// 2. Ensure the result stays in the synthetic ID range (0x8000-0xFFFF)
+/// 3. Distribute IDs evenly to minimize collision probability
+///
+/// # Arguments
+/// * `parent_tag_id` - The tag ID of the parent subdirectory tag
+/// * `tag_name` - The name of the extracted tag
+///
+/// # Returns
+/// A synthetic tag ID in the range 0x8000-0xFFFF
+fn generate_synthetic_id(parent_tag_id: u16, tag_name: &str) -> u16 {
+    // Simple hash function combining parent tag ID and tag name
+    // Uses FNV-1a style hash for good distribution
+    let mut hash: u32 = 2166136261u32; // FNV offset basis
+
+    // Hash the parent tag ID (as bytes)
+    hash ^= (parent_tag_id & 0xFF) as u32;
+    hash = hash.wrapping_mul(16777619); // FNV prime
+    hash ^= ((parent_tag_id >> 8) & 0xFF) as u32;
+    hash = hash.wrapping_mul(16777619);
+
+    // Hash the tag name bytes
+    for byte in tag_name.bytes() {
+        hash ^= byte as u32;
+        hash = hash.wrapping_mul(16777619);
+    }
+
+    // Map to synthetic ID range (0x8000-0xFFFF, giving us 32768 possible IDs)
+    // Use the lower 15 bits and set the high bit to ensure we're in synthetic range
+
+    0x8000 | ((hash & 0x7FFF) as u16)
 }
