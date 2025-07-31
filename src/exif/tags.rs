@@ -96,24 +96,29 @@ impl ExifReader {
             "ExifIFD" => "EXIF", // ExifIFD tags belong to EXIF group (Group0) in ExifTool
             "InteropIFD" => "EXIF",
             "MakerNotes" => "MakerNotes",
-            // Manufacturer-specific MakerNotes IFDs should use MakerNotes namespace
-            // ExifTool: Canon.pm, Nikon.pm, Sony.pm, etc. all use MakerNotes group
-            name if name.starts_with("Canon") => "MakerNotes",
-            name if name.starts_with("Nikon") => "MakerNotes",
-            name if name.starts_with("Sony") => "MakerNotes",
-            name if name.starts_with("Olympus") => "MakerNotes",
-            name if name.starts_with("Panasonic") => "MakerNotes",
-            name if name.starts_with("Fujifilm") => "MakerNotes",
+            // Manufacturer-specific MakerNotes IFDs should use manufacturer namespace for Group1 assignment
+            // ExifTool: Canon.pm tags get group1="Canon", Nikon.pm tags get group1="Nikon", etc.
+            name if name.starts_with("Canon") => "Canon",
+            name if name.starts_with("Nikon") => "Nikon",
+            name if name.starts_with("Sony") => "Sony",
+            name if name.starts_with("Olympus") => "Olympus",
+            name if name.starts_with("Panasonic") => "Panasonic",
+            name if name.starts_with("Fujifilm") => "Fujifilm",
             // RAW format-specific IFDs (maintain existing behavior)
             "KyoceraRaw" => "EXIF", // Kyocera RAW uses EXIF group
             _ => "EXIF",            // Default to EXIF for unknown IFDs
         };
 
-        let processor_name = if namespace == "MakerNotes" {
-            // For MakerNotes, use a generic MakerNotes processor name
-            "MakerNotes".to_string()
-        } else {
-            "Exif".to_string()
+        let processor_name = match namespace {
+            "MakerNotes" => "MakerNotes".to_string(),
+            // Manufacturer-specific MakerNotes processors
+            "Canon" => "Canon".to_string(),
+            "Nikon" => "Nikon".to_string(),
+            "Sony" => "Sony".to_string(),
+            "Olympus" => "Olympus".to_string(),
+            "Panasonic" => "Panasonic".to_string(),
+            "Fujifilm" => "Fujifilm".to_string(),
+            _ => "Exif".to_string(),
         };
 
         TagSourceInfo::new(namespace.to_string(), ifd_name.to_string(), processor_name)
@@ -176,12 +181,24 @@ impl ExifReader {
                 // For GPS coordinates, we want to use our manual registry functions
                 let print = match tag_def.name {
                     "GPSLatitude" => {
-                        use crate::registry;
-                        registry::apply_print_conv("gpslatitude_print_conv", &value)
+                        // Note: Keep raw EXIF GPS coordinates unsigned - sign handling happens in composite tags
+                        // ExifTool: Raw GPS coordinates in EXIF are always positive rationals
+                        // Convert rational to decimal if needed (unsigned, for composite tag consumption)
+                        if let Some(rational) = value.as_rational() {
+                            TagValue::F64(rational.0 as f64 / rational.1 as f64)
+                        } else {
+                            value.clone()
+                        }
                     }
                     "GPSLongitude" => {
-                        use crate::registry;
-                        registry::apply_print_conv("gpslongitude_print_conv", &value)
+                        // Note: Keep raw EXIF GPS coordinates unsigned - sign handling happens in composite tags
+                        // ExifTool: Raw GPS coordinates in EXIF are always positive rationals
+                        // Convert rational to decimal if needed (unsigned, for composite tag consumption)
+                        if let Some(rational) = value.as_rational() {
+                            TagValue::F64(rational.0 as f64 / rational.1 as f64)
+                        } else {
+                            value.clone()
+                        }
                     }
                     "GPSDestLatitude" => {
                         use crate::registry;

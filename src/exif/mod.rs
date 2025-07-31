@@ -206,12 +206,22 @@ impl ExifReader {
     ) -> String {
         use crate::generated::Exif_pm::tag_kit::EXIF_PM_TAG_KITS;
         use crate::generated::GPS_pm::tag_kit::GPS_PM_TAG_KITS;
+        use crate::generated::Sony_pm::tag_kit::SONY_PM_TAG_KITS;
 
         // Check if this tag originated from GPS IFD
         if let Some(source) = source_info {
             if source.ifd_name == "GPS" {
                 // For GPS IFD tags, check GPS tag kit first
                 if let Some(tag_def) = GPS_PM_TAG_KITS.get(&(tag_id as u32)) {
+                    return tag_def.name.to_string();
+                }
+            }
+            
+            // Check for Sony MakerNotes tags
+            // Sony tags may have namespace "Sony" or "MakerNotes" depending on extraction path
+            if source.namespace == "Sony" || source.namespace == "MakerNotes" {
+                // For Sony or MakerNotes tags, check Sony tag kit first
+                if let Some(tag_def) = SONY_PM_TAG_KITS.get(&(tag_id as u32)) {
                     return tag_def.name.to_string();
                 }
             }
@@ -312,9 +322,14 @@ impl ExifReader {
                 // Map internal namespace to ExifTool-compatible Group0
                 // ExifTool: GPS.pm:52 GROUPS => { 0 => 'EXIF', 1 => 'GPS', 2 => 'Location' }
                 // GPS tags use "GPS" namespace internally for collision resolution but display as Group0="EXIF"
+                // Manufacturer MakerNotes use manufacturer namespace internally but display as Group0="MakerNotes"
                 let display_group = match namespace.as_str() {
                     "GPS" => "EXIF", // GPS tags have Group0="EXIF" per ExifTool GPS.pm:52
-                    other => other,  // Keep other namespaces as-is
+                    // Manufacturer MakerNotes tags display as "MakerNotes" group per ExifTool output
+                    "Canon" | "Nikon" | "Sony" | "Olympus" | "Panasonic" | "Fujifilm" => {
+                        "MakerNotes"
+                    }
+                    other => other, // Keep other namespaces as-is
                 };
                 (display_group.to_string(), tag_name)
             };
@@ -359,6 +374,7 @@ impl ExifReader {
         use crate::generated::GPS_pm::tag_kit::GPS_PM_TAG_KITS;
         use crate::generated::COMPOSITE_TAGS;
         use crate::implementations::canon;
+        use crate::implementations::olympus;
         use crate::implementations::sony;
         use crate::types::TagEntry;
 
@@ -398,6 +414,8 @@ impl ExifReader {
                                 "Canon" => canon::get_canon_tag_name(tag_id)
                                     .unwrap_or_else(|| format!("Tag_{tag_id:04X}")),
                                 "Sony" => sony::get_sony_tag_name(tag_id)
+                                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}")),
+                                "MakerNotes" => olympus::get_olympus_tag_name(tag_id)
                                     .unwrap_or_else(|| format!("Tag_{tag_id:04X}")),
                                 _ => format!("Tag_{tag_id:04X}"),
                             }
@@ -541,9 +559,14 @@ impl ExifReader {
                 };
                 // Map internal namespace to ExifTool-compatible Group0 for TagEntry
                 // ExifTool: GPS.pm:52 GROUPS => { 0 => 'EXIF', 1 => 'GPS', 2 => 'Location' }
+                // Manufacturer MakerNotes use manufacturer namespace internally but display as Group0="MakerNotes"
                 let display_group = match namespace.as_str() {
                     "GPS" => "EXIF", // GPS tags have Group0="EXIF" per ExifTool GPS.pm:52
-                    other => other,  // Keep other namespaces as-is
+                    // Manufacturer MakerNotes tags display as "MakerNotes" group per ExifTool output
+                    "Canon" | "Nikon" | "Sony" | "Olympus" | "Panasonic" | "Fujifilm" => {
+                        "MakerNotes"
+                    }
+                    other => other, // Keep other namespaces as-is
                 };
                 (display_group, name, def)
             };

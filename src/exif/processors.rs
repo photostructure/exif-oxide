@@ -65,11 +65,12 @@ impl ExifReader {
                     );
                     Some(processor)
                 } else {
-                    // Fall back to standard EXIF processing if manufacturer not detected
+                    // Return None to trigger fallback to existing processing
+                    // This allows Canon and other manufacturers to use their direct processing functions
                     debug!(
-                        "No manufacturer detected for MakerNotes, using standard EXIF processing"
+                        "No processor registry match for MakerNotes, will use fallback processing"
                     );
-                    Some("Exif".to_string())
+                    None
                 }
             }
             // Manufacturer-specific subdirectories use manufacturer processors
@@ -90,9 +91,33 @@ impl ExifReader {
             return (processor, HashMap::new());
         }
 
-        // 3. Final fallback to EXIF
-        // Phase 5: Simplified - no table-level processor lookup needed
-        debug!("Using default EXIF processor for {}", dir_name);
+        // 3. Check processor registry for registered processors
+        // This allows manufacturer-specific processors like Canon to be found
+        let context = match self.create_processor_context(dir_name, &HashMap::new()) {
+            Ok(ctx) => ctx,
+            Err(_) => {
+                debug!(
+                    "Failed to create processor context, using default EXIF processor for {}",
+                    dir_name
+                );
+                return ("Exif".to_string(), HashMap::new());
+            }
+        };
+
+        let registry = get_global_registry();
+        if let Some((processor_key, _)) = registry.find_best_processor(&context) {
+            debug!(
+                "Found registered processor {} for directory {}",
+                processor_key, dir_name
+            );
+            return (processor_key.to_string(), HashMap::new());
+        }
+
+        // 4. Final fallback to EXIF
+        debug!(
+            "No registered processor found, using default EXIF processor for {}",
+            dir_name
+        );
         ("Exif".to_string(), HashMap::new())
     }
 
@@ -450,8 +475,12 @@ impl ExifReader {
 
         // ExifTool: lib/Image/ExifTool/MakerNotes.pm:60-68 Canon detection
         if canon::detect_canon_signature(make) {
-            debug!("Detected Canon MakerNote signature");
-            return Some("Canon::Main".to_string());
+            debug!(
+                "Detected Canon MakerNote signature - using fallback to direct Canon processing"
+            );
+            // Return None to force fallback to direct Canon processing
+            // This ensures process_canon_makernotes() is called for Main table extraction
+            return None;
         }
 
         // ExifTool: lib/Image/ExifTool/MakerNotes.pm:152-163 Nikon detection
@@ -649,6 +678,7 @@ impl ExifReader {
     /// Fall back to existing processing when processor registry fails
     /// This ensures compatibility during the transition period
     fn fallback_to_existing_processing(&mut self, dir_info: &DirectoryInfo) -> Result<()> {
+        debug!("=== FALLBACK PROCESSING CALLED ===");
         debug!("Using fallback processing for directory {}", dir_info.name);
 
         // Use the existing processing logic as fallback
@@ -664,6 +694,19 @@ impl ExifReader {
                     canon::process_canon_makernotes(self, dir_info.dir_start, dir_info.dir_len)
                 } else if nikon::detect_nikon_signature(make) {
                     nikon::process_nikon_makernotes(self, dir_info.dir_start)
+                } else if sony::is_sony_makernote(make, "") {
+                    // Sony MakerNotes processing - call Sony subdirectory processing
+                    debug!("Detected Sony MakerNotes for Make: '{}' - calling Sony subdirectory processing", make);
+                    debug!(
+                        "Sony MakerNotes directory start: {:#x}, length: {}",
+                        dir_info.dir_start, dir_info.dir_len
+                    );
+                    let result = sony::process_sony_subdirectory_tags(self);
+                    debug!("Sony subdirectory processing result: {:?}", result.is_ok());
+                    if let Err(ref e) = result {
+                        debug!("Sony subdirectory processing error: {}", e);
+                    }
+                    result
                 } else if make.to_lowercase().starts_with("minolta")
                     || make.to_lowercase().starts_with("konica minolta")
                 {

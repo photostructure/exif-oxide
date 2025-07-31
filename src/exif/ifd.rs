@@ -29,6 +29,7 @@ impl ExifReader {
     ) -> Result<()> {
         use crate::implementations::olympus::{detect_olympus_signature, is_olympus_makernote};
         use crate::implementations::ricoh::{detect_ricoh_signature, is_ricoh_makernote};
+        use crate::implementations::sony::{detect_sony_signature, is_sony_makernote};
 
         let offset = entry.value_or_offset as usize;
         let size = entry.count as usize;
@@ -41,7 +42,15 @@ impl ExifReader {
         let make = self
             .get_tag_across_namespaces(0x010F) // Make tag
             .and_then(|v| v.as_string())
-            .unwrap_or_default();
+            .unwrap_or_default()
+            .to_string();
+
+        // Extract model from Model tag for signature detection
+        let model = self
+            .get_tag_across_namespaces(0x0110) // Model tag
+            .and_then(|v| v.as_string())
+            .unwrap_or_default()
+            .to_string();
 
         debug!(
             "Processing UNDEFINED subdirectory tag {:#x} (MakerNotes) from {}: offset={:#x}, size={}, make='{}'",
@@ -63,7 +72,7 @@ impl ExifReader {
         let mut _adjusted_base = 0i64;
 
         // Detect manufacturer signatures and apply offset adjustments
-        if let Some(signature) = detect_olympus_signature(make, &maker_notes_data) {
+        if let Some(signature) = detect_olympus_signature(&make, &maker_notes_data) {
             let data_offset = signature.data_offset();
             let base_offset = signature.base_offset();
 
@@ -74,7 +83,7 @@ impl ExifReader {
                 "Detected Olympus signature: {:?}, data_offset: {}, base_offset: {}, adjusted_offset: {:#x}",
                 signature, data_offset, base_offset, adjusted_offset
             );
-        } else if let Some(signature) = detect_ricoh_signature(make, &maker_notes_data) {
+        } else if let Some(signature) = detect_ricoh_signature(&make, &maker_notes_data) {
             let data_offset = signature.data_offset();
             let base_offset = signature.base_offset();
 
@@ -85,13 +94,28 @@ impl ExifReader {
                 "Detected RICOH signature: {:?}, data_offset: {}, base_offset: {}, adjusted_offset: {:#x}",
                 signature, data_offset, base_offset, adjusted_offset
             );
-        } else if is_olympus_makernote(make) {
+        } else if is_olympus_makernote(&make) {
             // Fallback for Olympus cameras without proper signature
             debug!("Olympus camera detected via Make field but no signature found, using default offset");
-        } else if is_ricoh_makernote(make) {
+        } else if is_ricoh_makernote(&make) {
             // Fallback for RICOH cameras without recognized signature
             debug!(
                 "RICOH camera detected via Make field but no signature found, using default offset"
+            );
+        } else if let Some(signature) = detect_sony_signature(&make, &maker_notes_data) {
+            let data_offset = signature.data_offset();
+
+            adjusted_offset = offset + data_offset;
+            _adjusted_base = 0; // Sony signatures don't use base offset
+
+            debug!(
+                "Detected Sony signature: {:?}, data_offset: {}, adjusted_offset: {:#x}",
+                signature, data_offset, adjusted_offset
+            );
+        } else if is_sony_makernote(&make, &model) {
+            // Fallback for Sony cameras without recognized signature
+            debug!(
+                "Sony camera detected via Make field but no signature found, using default offset"
             );
         }
 
@@ -117,8 +141,68 @@ impl ExifReader {
             "About to call process_subdirectory_tag for MakerNotes with make='{}'",
             make
         );
-        self.process_subdirectory_tag(entry.tag_id, adjusted_offset as u32, tag_name, Some(size))?;
-        debug!("Completed process_subdirectory_tag for MakerNotes");
+
+        // Manufacturer-specific MakerNotes processing based on Make field
+        // ExifTool: MakerNotes.pm conditional dispatch based on $$self{Make}
+        if make.starts_with("Canon") {
+            debug!("Detected Canon camera, calling Canon-specific MakerNotes processing");
+            // Call Canon-specific processing directly
+            // ExifTool: Canon.pm Main table processing
+            crate::implementations::canon::process_canon_makernotes(self, adjusted_offset, size)?;
+        } else if make.starts_with("OLYMPUS") || make == "OM Digital Solutions" {
+            debug!("Detected Olympus camera, calling MakerNotes conditional dispatch");
+
+            // Use the MakerNotes conditional dispatch system instead of generic processing
+            // This matches ExifTool's signature-based dispatch in MakerNotes.pm
+            let makernotes_result =
+                crate::implementations::makernotes::process_makernotes_conditional_dispatch(
+                    &maker_notes_data,
+                    self.header.as_ref().unwrap().byte_order,
+                )?;
+
+            // Store the extracted MakerNotes tags
+            for (tag_name, tag_value) in makernotes_result {
+                // Use synthetic tag IDs for Olympus namespace tags
+                let synthetic_tag_id = match tag_name.as_str() {
+                    "CameraType2" => 0xF100,  // Synthetic tag for Equipment 0x100
+                    "SerialNumber" => 0xF101, // Synthetic tag for Equipment 0x101
+                    "LensType" => 0xF201,     // Synthetic tag for Equipment 0x201
+                    _ => continue,            // Skip other tags for now
+                };
+
+                debug!("Storing Olympus tag: {} -> {:?}", tag_name, tag_value);
+                let source_info = self.create_tag_source_info("MakerNotes");
+                self.store_tag_with_precedence(synthetic_tag_id, tag_value, source_info);
+            }
+        } else if make.starts_with("SONY") || is_sony_makernote(&make, &model) {
+            debug!("Detected Sony camera, calling Sony-specific MakerNotes processing");
+            // First process the MakerNotes IFD to extract raw tag values with Sony namespace
+            // ExifTool: Sony.pm Main table processing
+            // Fix Group1 assignment: Use "Sony" as ifd_name for group1="Sony" instead of "MakerNotes"
+            debug!(
+                "Processing Sony MakerNotes as standard IFD at offset {:#x}",
+                adjusted_offset
+            );
+            self.parse_ifd(adjusted_offset, "Sony")?;
+
+            // Then apply Sony subdirectory processing to extract subdirectory data
+            // ExifTool: Sony.pm SubDirectory processing for binary data expansion (Tag2010, Tag9050, AFInfo, etc.)
+            debug!(
+                "Calling Sony subdirectory processing for Tag2010, Tag9050, AFInfo and other binary sections"
+            );
+            crate::implementations::sony::process_sony_subdirectory_tags(self)?;
+        } else {
+            // Fall back to generic tag kit processing for other manufacturers
+            debug!("Non-Canon/Olympus camera, using generic MakerNotes processing");
+            self.process_subdirectory_tag(
+                entry.tag_id,
+                adjusted_offset as u32,
+                tag_name,
+                Some(size),
+            )?;
+        }
+
+        debug!("Completed MakerNotes processing for make='{}'", make);
 
         // Don't store raw binary MakerNotes data - the subdirectory processing should have extracted the manufacturer-specific tags
         // ExifTool: MakerNotes are processed as subdirectories, not stored as raw binary data
