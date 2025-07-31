@@ -86,9 +86,8 @@ fn test_synthetic_id_generation_uniqueness() {
 
     for (parent_tag_id, tag_names) in test_cases {
         for (counter, tag_name) in tag_names.into_iter().enumerate() {
-            let counter = counter as u16;
             // Use the OLD algorithm that causes collisions
-            let old_synthetic_id = 0x8000 | (parent_tag_id & 0x7F00) | (counter & 0xFF);
+            let old_synthetic_id = 0x8000 | (parent_tag_id & 0x7F00) | ((counter as u16) & 0xFF);
 
             println!(
                 "Parent 0x{:04x}, tag '{}', counter {}: synthetic ID 0x{:04x}",
