@@ -59,9 +59,8 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
 
         if is_sony && is_camera_info {
             ProcessorCapability::Perfect
-        } else if is_sony {
-            ProcessorCapability::Good
         } else {
+            // Sony processors should only handle their specific tables, not generic MakerNotes
             ProcessorCapability::Incompatible
         }
     }
@@ -228,9 +227,8 @@ impl BinaryDataProcessor for SonyTag9050Processor {
 
         if is_sony && is_tag9050 {
             ProcessorCapability::Perfect
-        } else if is_sony {
-            ProcessorCapability::Good
         } else {
+            // Sony processors should only handle their specific tables, not generic MakerNotes
             ProcessorCapability::Incompatible
         }
     }
@@ -306,9 +304,8 @@ impl BinaryDataProcessor for SonyAFInfoProcessor {
 
         if is_sony && is_af_info {
             ProcessorCapability::Perfect
-        } else if is_sony {
-            ProcessorCapability::Good
         } else {
+            // Sony processors should only handle their specific tables, not generic MakerNotes
             ProcessorCapability::Incompatible
         }
     }
@@ -426,9 +423,8 @@ impl BinaryDataProcessor for SonyTag2010Processor {
 
         if is_sony && is_tag2010 {
             ProcessorCapability::Perfect
-        } else if is_sony {
-            ProcessorCapability::Good
         } else {
+            // Sony processors should only handle their specific tables, not generic MakerNotes
             ProcessorCapability::Incompatible
         }
     }
@@ -502,9 +498,8 @@ impl BinaryDataProcessor for SonyCameraSettingsProcessor {
 
         if is_sony && is_camera_settings {
             ProcessorCapability::Perfect
-        } else if is_sony {
-            ProcessorCapability::Good
         } else {
+            // Sony processors should only handle their specific tables, not generic MakerNotes
             ProcessorCapability::Incompatible
         }
     }
@@ -729,9 +724,8 @@ impl BinaryDataProcessor for SonyShotInfoProcessor {
 
         if is_sony && is_shot_info {
             ProcessorCapability::Perfect
-        } else if is_sony {
-            ProcessorCapability::Good
         } else {
+            // Sony processors should only handle their specific tables, not generic MakerNotes
             ProcessorCapability::Incompatible
         }
     }
