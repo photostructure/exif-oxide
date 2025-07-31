@@ -1,0 +1,20 @@
+{
+  "source": "third-party/exiftool/lib/Image/ExifTool/Nikon.pm",
+  "description": "Nikon cryptographic decryption arrays from ExifTool",
+  "arrays": [
+    {
+      "array_name": "xlat[0]",
+      "constant_name": "XLAT_0",
+      "element_type": "u8",
+      "size": 256,
+      "description": "First XLAT decryption table (256 u8 elements)"
+    },
+    {
+      "array_name": "xlat[1]",
+      "constant_name": "XLAT_1", 
+      "element_type": "u8",
+      "size": 256,
+      "description": "Second XLAT decryption table (256 u8 elements)"
+    }
+  ]
+}

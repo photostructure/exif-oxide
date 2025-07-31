@@ -168,6 +168,7 @@ fn setup_perl_environment(cmd: &mut Command) {
 
 // Re-export all extractor implementations
 mod simple_table;
+mod simple_array;
 mod tag_kit;
 mod runtime_table;
 mod file_type;
@@ -177,6 +178,7 @@ mod tag_table_structure;
 mod stubs;
 
 pub use simple_table::SimpleTableExtractor;
+pub use simple_array::SimpleArrayExtractor;
 pub use tag_kit::TagKitExtractor;
 pub use runtime_table::RuntimeTableExtractor;
 pub use file_type::FileTypeLookupExtractor;
@@ -193,6 +195,7 @@ pub use stubs::{
 pub fn all_extractors() -> Vec<Box<dyn Extractor>> {
     vec![
         Box::new(SimpleTableExtractor),
+        Box::new(SimpleArrayExtractor),
         Box::new(TagKitExtractor),
         Box::new(RuntimeTableExtractor),
         Box::new(FileTypeLookupExtractor),

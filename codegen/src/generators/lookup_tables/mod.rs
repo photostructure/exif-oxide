@@ -6,6 +6,7 @@
 //! These are straightforward mappings from numeric or string keys to descriptive values.
 
 pub mod standard;
+pub mod static_array;
 pub mod inline_printconv;
 pub mod runtime;
 
@@ -72,6 +73,95 @@ fn process_simple_table_config(
             }
         })
     })
+}
+
+/// Process simple_array.json configuration
+fn process_simple_array_config(
+    config_dir: &Path,
+    _module_name: &str,
+    output_dir: &Path,
+) -> Result<Vec<String>> {
+    debug!("🔍 Checking for simple_array.json in: {}", config_dir.display());
+    config_processor::process_config_if_exists(config_dir, "simple_array.json", |config| {
+        debug!("📊 Found simple_array.json, processing arrays...");
+        process_array_config(config, |array_config| {
+            let array_name = array_config["array_name"].as_str().unwrap_or("");
+            debug!("  🔧 Processing array: {}", array_name);
+            
+            // Convert array expression to filename (same logic as perl script)
+            let mut filename = array_name.to_string();
+            filename = filename.trim_start_matches('@').to_string(); // Remove @ prefix
+            filename = filename.replace('[', "_").replace(']', "");   // xlat[0] -> xlat_0
+            
+            // Convert camelCase to snake_case
+            let mut result = String::new();
+            for (i, ch) in filename.chars().enumerate() {
+                if ch.is_uppercase() && i > 0 {
+                    result.push('_');
+                }
+                result.push(ch.to_lowercase().next().unwrap_or(ch));
+            }
+            
+            // Clean up filename
+            result = result.chars()
+                .map(|c| if c.is_alphanumeric() || c == '_' { c } else { '_' })
+                .collect::<String>()
+                .trim_start_matches('_')
+                .to_string(); 
+                
+            let array_file = format!("{}.json", result);
+            
+            // Look for extracted array file in simple_arrays subdirectory
+            let array_path = path_utils::get_extract_dir("simple_arrays").join(&array_file);
+            
+            debug!("    📂 Looking for simple array file: {} at path: {:?}", array_name, array_path);
+            
+            if array_path.exists() {
+                debug!("    ✅ Found array file, loading and generating...");
+                // Load and generate
+                let array_data: static_array::ExtractedArray = config_processor::load_extracted_json(&array_path)?;
+                
+                let constant_name = array_config["constant_name"].as_str().unwrap_or("ARRAY");
+                let element_type = array_config["element_type"].as_str().unwrap_or("u8");
+                let expected_size = array_config["size"].as_u64().map(|s| s as usize);
+                
+                let file_name = generate_static_array_file(
+                    &array_data,
+                    constant_name,
+                    element_type,
+                    expected_size,
+                    output_dir
+                )?;
+                debug!("    🎯 Generated static array file: {}", file_name);
+                Ok(Some(file_name))
+            } else {
+                warn!("❌ Simple array file not found for {}: {:?}", array_name, array_path);
+                Ok(None)
+            }
+        })
+    })
+}
+
+/// Process a configuration that contains an "arrays" field
+/// TODO: Rename "arrays" field to "targets" and merge with process_tables_config for DRY
+fn process_array_config<F>(
+    config: serde_json::Value,
+    array_processor: F,
+) -> Result<Vec<String>>
+where
+    F: Fn(&serde_json::Value) -> Result<Option<String>>,
+{
+    let mut generated_files = Vec::new();
+    
+    if let Some(arrays) = config["arrays"].as_array() {
+        for array_config in arrays {
+            if let Some(file_name) = array_processor(array_config)? {
+                generated_files.push(file_name);
+            }
+        }
+    }
+    
+    Ok(generated_files)
 }
 
 /// Process boolean_set.json configuration
@@ -163,6 +253,12 @@ pub fn process_config_directory(
     let simple_table_files = process_simple_table_config(config_dir, module_name, extracted_tables, &module_output_dir)?;
     generated_files.extend(simple_table_files);
     has_content |= !generated_files.is_empty();
+    
+    // Process simple_array configuration
+    let simple_array_files = process_simple_array_config(config_dir, module_name, &module_output_dir)?;
+    let simple_array_count = simple_array_files.len();
+    generated_files.extend(simple_array_files);
+    has_content |= simple_array_count > 0;
     
     // Process boolean_set configuration
     let boolean_set_files = process_boolean_set_config(config_dir, module_name, &module_output_dir)?;
@@ -337,6 +433,56 @@ fn generate_table_file(
         .with_source_module(&extracted_table.source.module)
         .with_standard_imports()
         .with_content(table_code)
+        .write_to_file(&file_path)
+}
+
+/// Generate individual file for a static array
+fn generate_static_array_file(
+    array_data: &static_array::ExtractedArray,
+    constant_name: &str,
+    element_type: &str,
+    expected_size: Option<usize>,
+    output_dir: &Path,
+) -> Result<String> {
+    let array_code = static_array::generate_static_array(
+        array_data,
+        constant_name,
+        element_type,
+        expected_size,
+    )?;
+    
+    // Generate filename from the original array expression (user requested)
+    // Use same logic as process_simple_array_config for consistency
+    let mut filename = array_data.source.array_expr.clone();
+    filename = filename.trim_start_matches('@').to_string(); // Remove @ prefix
+    filename = filename.replace('[', "_").replace(']', "");   // xlat[0] -> xlat_0
+    
+    // Convert camelCase to snake_case
+    let mut result = String::new();
+    for (i, ch) in filename.chars().enumerate() {
+        if ch.is_uppercase() && i > 0 {
+            result.push('_');
+        }
+        result.push(ch.to_lowercase().next().unwrap_or(ch));
+    }
+    
+    // Clean up filename - same logic as in process_simple_array_config
+    result = result.chars()
+        .map(|c| if c.is_alphanumeric() || c == '_' { c } else { '_' })
+        .collect::<String>()
+        .trim_start_matches('_')
+        .to_string(); 
+    
+    let file_name = result;
+    let file_path = output_dir.join(format!("{file_name}.rs"));
+    
+    let description = format!("Static array {} extracted from ExifTool {}", 
+                             constant_name, array_data.source.module);
+    
+    file_generation::FileGenerator::new(description)
+        .with_source_module(&array_data.source.module)
+        .with_source_table(&array_data.source.array_expr)
+        .with_content(array_code)
         .write_to_file(&file_path)
 }
 

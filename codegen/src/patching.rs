@@ -40,11 +40,26 @@ pub fn patch_module(module_path: &Path, variables: &[String]) -> Result<()> {
         variables.join(", ")
     );
     
-    // Compile regex patterns once
+    // Compile regex patterns once - support both hash and array variables
     let patterns: Vec<_> = variables.iter()
         .map(|var| {
-            let pattern = format!(r"^(\s*)my(\s+%{}\s*=)", regex::escape(var));
-            Regex::new(&pattern)
+            // Detect variable type from prefix and create appropriate pattern
+            if var.starts_with('@') || var.contains('[') {
+                // Array variable: @xlat, xlat[0], etc.
+                let clean_var = var.trim_start_matches('@');
+                // Extract base array name from expressions like "xlat[0]" -> "xlat"
+                let base_var = if let Some(bracket_pos) = clean_var.find('[') {
+                    &clean_var[..bracket_pos]
+                } else {
+                    clean_var
+                };
+                let pattern = format!(r"^(\s*)my(\s+@{}\s*=)", regex::escape(base_var));
+                Regex::new(&pattern)
+            } else {
+                // Hash variable (default): %canonWhiteBalance, etc.
+                let pattern = format!(r"^(\s*)my(\s+%{}\s*=)", regex::escape(var));
+                Regex::new(&pattern)
+            }
         })
         .collect::<Result<Vec<_>, _>>()?;
     
@@ -64,7 +79,10 @@ pub fn patch_module(module_path: &Path, variables: &[String]) -> Result<()> {
             let old_line = patched_line.clone();
             patched_line = pattern.replace(&patched_line, "${1}our${2}").to_string();
             if patched_line != old_line {
-                debug!("    Converted 'my %{}' to 'our %{}'", var, var);
+                // Determine variable type for debug message
+                let var_type = if var.starts_with('@') || var.contains('[') { "@" } else { "%" };
+                let clean_var = var.trim_start_matches('@');
+                debug!("    Converted 'my {}{}' to 'our {}{}'", var_type, clean_var, var_type, clean_var);
                 any_changes = true;
             }
         }

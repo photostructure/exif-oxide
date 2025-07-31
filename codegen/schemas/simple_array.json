@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Simple Array Configuration",
+  "description": "Configuration for basic array extraction from ExifTool modules",
+  "type": "object",
+  "properties": {
+    "source": {
+      "type": "string",
+      "description": "Path to ExifTool source file (relative to repository root, e.g., 'third-party/exiftool/lib/Image/ExifTool/Nikon.pm')",
+      "pattern": "^third-party/exiftool/"
+    },
+    "description": {
+      "type": "string",
+      "description": "Overview of what these arrays contain"
+    },
+    "arrays": {
+      "type": "array",
+      "description": "List of arrays to extract from the ExifTool source",
+      "items": {
+        "type": "object",
+        "properties": {
+          "array_name": {
+            "type": "string",
+            "description": "ExifTool array expression (e.g., '@xlat[0]', '@afPoints231', '$obj->{prop}')"
+          },
+          "constant_name": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "description": "Rust constant name (e.g., XLAT_0, AF_POINTS_231)"
+          },
+          "element_type": {
+            "type": "string",
+            "enum": ["u8", "u16", "u32", "i8", "i16", "i32", "f32", "f64", "&'static str"],
+            "description": "Rust type for array elements"
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000,
+            "description": "Expected number of elements in the array (for validation)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Documentation for this specific array"
+          }
+        },
+        "required": ["array_name", "constant_name", "element_type"],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "required": ["source", "arrays"],
+  "additionalProperties": false
+}
