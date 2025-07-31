@@ -407,13 +407,11 @@ impl DispatchRule for SonyDispatchRule {
         // Sony-specific processor selection logic based on ExifTool Sony.pm
         match context.table_name.as_str() {
             "MakerNotes" => {
-                // Select Sony AFInfo processor for general MakerNotes processing
-                // ExifTool: Sony.pm processes MakerNotes for Sony cameras
-                debug!("Sony dispatch: selecting AFInfo processor for MakerNotes");
-                candidates
-                    .iter()
-                    .find(|(key, _, _)| key.namespace == "Sony" && key.processor_name == "AFInfo")
-                    .map(|(key, processor, _)| (key.clone(), processor.clone()))
+                // For Sony MakerNotes, use standard IFD parsing to process ALL binary data sections sequentially
+                // ExifTool: Sony.pm processes MakerNotes as standard IFD to find all tags (0x2010, 0x9050, 0x940e, etc.)
+                // This allows sequential processing of Tag2010 variants, Tag9050 variants, AFInfo, and other sections
+                debug!("Sony dispatch: MakerNotes should use standard IFD parsing to process all binary data sections sequentially");
+                None
             }
 
             "CameraInfo" | "Sony:CameraInfo" => {
