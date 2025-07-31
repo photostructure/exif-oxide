@@ -87,7 +87,7 @@ subdirectory-coverage:
 	@echo "📊 Generating SubDirectory coverage report..."
 	@mkdir -p codegen/coverage
 	@cd codegen/extractors && perl subdirectory_discovery.pl --json 2>/dev/null > ../coverage/subdirectory_coverage.json
-	@cd codegen/extractors && perl subdirectory_discovery.pl --markdown 2>/dev/null > ../../docs/reference/SUBDIRECTORY-COVERAGE.md
+	@cd codegen/extractors && perl subdirectory_discovery.pl --markdown 2>/dev/null > ../../docs/generated/SUBDIRECTORY-COVERAGE.md
 	@coverage=$$(jq '.summary.coverage_percentage' codegen/coverage/subdirectory_coverage.json); \
 	echo "SubDirectory coverage: $$coverage%"
 
@@ -96,7 +96,7 @@ check-subdirectory-coverage: subdirectory-coverage
 	@coverage=$$(jq -r '.summary.coverage_percentage' codegen/coverage/subdirectory_coverage.json | cut -d. -f1); \
 	if [ "$$coverage" -lt 80 ]; then \
 		echo "⚠️  Warning: SubDirectory coverage is only $${coverage}%"; \
-		echo "   See docs/reference/SUBDIRECTORY-COVERAGE.md for details"; \
+		echo "   See docs/generated/SUBDIRECTORY-COVERAGE.md for details"; \
 	else \
 		echo "✅ SubDirectory coverage is $${coverage}%"; \
 	fi
