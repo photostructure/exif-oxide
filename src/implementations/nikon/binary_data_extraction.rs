@@ -218,7 +218,7 @@ fn extract_d850_menu_settings(reader: &mut ExifReader, data: &[u8], offset: usiz
 /// Extract D850 MoreSettings tags (subdirectory 1)
 /// ExifTool: D850 ShotInfo MoreSettings section
 fn extract_d850_more_settings(reader: &mut ExifReader, data: &[u8], offset: usize) -> Result<()> {
-    let byte_order = ByteOrder::LittleEndian;
+    let _byte_order = ByteOrder::LittleEndian;
 
     // Extract exposure information
     if let Ok(exposure_mode) = extract_u8_at(data, offset + 0x08) {
@@ -251,7 +251,7 @@ fn extract_d850_more_settings(reader: &mut ExifReader, data: &[u8], offset: usiz
 /// Extract D850 CustomSettings tags (subdirectory 2)
 /// ExifTool: D850 ShotInfo CustomSettings section  
 fn extract_d850_custom_settings(reader: &mut ExifReader, data: &[u8], offset: usize) -> Result<()> {
-    let byte_order = ByteOrder::LittleEndian;
+    let _byte_order = ByteOrder::LittleEndian;
 
     // Extract custom function settings
     if let Ok(af_area_mode) = extract_u8_at(data, offset + 0x04) {
@@ -277,7 +277,7 @@ fn extract_d850_orientation_info(
     data: &[u8],
     offset: usize,
 ) -> Result<()> {
-    let byte_order = ByteOrder::LittleEndian;
+    let _byte_order = ByteOrder::LittleEndian;
 
     // Extract orientation information
     if let Ok(rotation) = extract_u8_at(data, offset) {
@@ -347,7 +347,7 @@ fn extract_z8_sequence_info(reader: &mut ExifReader, data: &[u8], offset: usize)
 
 /// Extract Z8 AutoCaptureInfo tags (subdirectory 1)
 fn extract_z8_auto_capture_info(reader: &mut ExifReader, data: &[u8], offset: usize) -> Result<()> {
-    let byte_order = ByteOrder::LittleEndian;
+    let _byte_order = ByteOrder::LittleEndian;
 
     // Extract auto capture settings
     if let Ok(capture_mode) = extract_u8_at(data, offset + 0x04) {
@@ -368,7 +368,7 @@ fn extract_z8_auto_capture_info(reader: &mut ExifReader, data: &[u8], offset: us
 
 /// Extract Z8 OrientationInfo tags (subdirectory 2)
 fn extract_z8_orientation_info(reader: &mut ExifReader, data: &[u8], offset: usize) -> Result<()> {
-    let byte_order = ByteOrder::LittleEndian;
+    let _byte_order = ByteOrder::LittleEndian;
 
     // Extract orientation information (similar to D850 but different offsets)
     if let Ok(rotation) = extract_u8_at(data, offset) {
@@ -459,7 +459,7 @@ fn extract_z9_sequence_info(reader: &mut ExifReader, data: &[u8], offset: usize)
 
 /// Extract Z9 VideoInfo tags (subdirectory 1)
 fn extract_z9_video_info(reader: &mut ExifReader, data: &[u8], offset: usize) -> Result<()> {
-    let byte_order = ByteOrder::LittleEndian;
+    let _byte_order = ByteOrder::LittleEndian;
 
     // Extract video-specific information
     if let Ok(video_mode) = extract_u8_at(data, offset + 0x06) {
@@ -477,7 +477,7 @@ fn extract_z9_video_info(reader: &mut ExifReader, data: &[u8], offset: usize) ->
 
 /// Extract Z9 OrientationInfo tags (subdirectory 2)
 fn extract_z9_orientation_info(reader: &mut ExifReader, data: &[u8], offset: usize) -> Result<()> {
-    let byte_order = ByteOrder::LittleEndian;
+    let _byte_order = ByteOrder::LittleEndian;
 
     // Extract orientation information (similar pattern to other models)
     if let Ok(rotation) = extract_u8_at(data, offset) {
@@ -518,7 +518,7 @@ fn extract_z9_menu_info(reader: &mut ExifReader, data: &[u8], offset: usize) -> 
 
 /// Extract Z9 HighSpeedInfo tags (subdirectory 4)
 fn extract_z9_highspeed_info(reader: &mut ExifReader, data: &[u8], offset: usize) -> Result<()> {
-    let byte_order = ByteOrder::LittleEndian;
+    let _byte_order = ByteOrder::LittleEndian;
 
     // Extract high-speed capture information
     if let Ok(burst_rate) = extract_u8_at(data, offset + 0x08) {
@@ -563,7 +563,7 @@ fn extract_z7_shotinfo_tags(
 
 /// Extract Z7 AFInfo tags (subdirectory 0)
 fn extract_z7_af_info(reader: &mut ExifReader, data: &[u8], offset: usize) -> Result<()> {
-    let byte_order = ByteOrder::LittleEndian;
+    let _byte_order = ByteOrder::LittleEndian;
 
     // Extract hybrid AF information
     if let Ok(af_mode) = extract_u8_at(data, offset + 0x04) {
@@ -601,7 +601,7 @@ fn extract_z7_menu_info(reader: &mut ExifReader, data: &[u8], offset: usize) -> 
 
 /// Extract Z7 OrientationInfo tags (subdirectory 2)
 fn extract_z7_orientation_info(reader: &mut ExifReader, data: &[u8], offset: usize) -> Result<()> {
-    let byte_order = ByteOrder::LittleEndian;
+    let _byte_order = ByteOrder::LittleEndian;
 
     // Extract orientation information
     if let Ok(rotation) = extract_u8_at(data, offset) {

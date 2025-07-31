@@ -7,79 +7,23 @@
 use std::collections::HashMap;
 
 /// PrintConv function for Nikon Quality tag
-/// ExifTool: Nikon.pm Quality PrintConv hash
+/// ExifTool: Nikon.pm line 1808 - Quality is stored as string values (Writable => 'string')
 pub fn nikon_quality_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    let quality_map: HashMap<i32, &str> = [
-        (1, "VGA Basic"),
-        (2, "VGA Normal"),
-        (3, "VGA Fine"),
-        (4, "SXGA Basic"),
-        (5, "SXGA Normal"),
-        (6, "SXGA Fine"),
-        (7, "XGA Basic"),
-        (8, "XGA Normal"),
-        (9, "XGA Fine"),
-        (10, "UXGA Basic"),
-        (11, "UXGA Normal"),
-        (12, "UXGA Fine"),
-    ]
-    .iter()
-    .cloned()
-    .collect();
-
-    // Convert TagValue to i32 - handle different integer types
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        _ => return Ok(format!("Unknown ({value})")),
-    };
-
-    Ok(quality_map.get(&val).unwrap_or(&"Unknown").to_string())
+    // ExifTool: Quality tag stores string values directly, no numeric PrintConv mapping exists
+    match value {
+        crate::types::TagValue::String(s) => Ok(s.clone()),
+        _ => Ok(format!("{value}")),
+    }
 }
 
 /// PrintConv function for Nikon WhiteBalance tag
-/// ExifTool: Nikon.pm WhiteBalance PrintConv hash
+/// ExifTool: Nikon.pm line 1809 - WhiteBalance is stored as string values (Writable => 'string')
 pub fn nikon_white_balance_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // TODO: This manual HashMap should be moved to codegen infrastructure
-    // Add to codegen/config/Nikon_pm/simple_table.json:
-    // {
-    //   "hash_name": "%nikonWhiteBalance",
-    //   "constant_name": "NIKON_WHITE_BALANCE",
-    //   "key_type": "u8",
-    //   "description": "Nikon white balance settings"
-    // }
-    // Then use: crate::generated::Nikon_pm::lookup_nikon_white_balance
-
-    let wb_map: HashMap<i32, &str> = [
-        (0, "Auto"),
-        (1, "Preset"),
-        (2, "Daylight"),
-        (3, "Incandescent"),
-        (4, "Fluorescent"),
-        (5, "Cloudy"),
-        (6, "Speedlight"),
-        (7, "Shade"),
-        (8, "Choose Color Temp"),
-        (9, "Kelvin"),
-    ]
-    .iter()
-    .cloned()
-    .collect();
-
-    // Convert TagValue to i32 - handle different integer types
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        _ => return Ok(format!("Unknown ({value})")),
-    };
-
-    Ok(wb_map.get(&val).unwrap_or(&"Unknown").to_string())
+    // ExifTool: WhiteBalance tag stores string values directly, no numeric PrintConv mapping exists
+    match value {
+        crate::types::TagValue::String(s) => Ok(s.clone()),
+        _ => Ok(format!("{value}")),
+    }
 }
 
 /// PrintConv function for Nikon ISO tag
@@ -107,7 +51,10 @@ pub fn nikon_iso_conv(value: &crate::types::TagValue) -> Result<String, String> 
                 _ => return Ok(format!("ISO {value}")),
             };
 
-            // ExifTool: isoAutoHiLimitZ7 hash mapping (lines 1105-1123)
+            // 🚨 HIGH TRANSCRIPTION ERROR RISK: Manual 30-entry array from ExifTool lines 1099-1124
+            // ExifTool source: %isoAutoHiLimitZ7 with ValueConv formula '($val-104)/8'
+            // TODO: This should be extracted with specialized codegen for complex tag definitions
+            // VALIDATION REQUIRED: Compare against ExifTool output before using in production
             let iso_map: HashMap<i32, &str> = [
                 (0, "ISO 64"),
                 (1, "ISO 80"),
@@ -168,11 +115,8 @@ pub fn nikon_color_mode_conv(value: &crate::types::TagValue) -> Result<String, S
                 _ => return Ok(format!("{value}")),
             };
 
-            // ExifTool: Basic color mode mapping for legacy numeric values
-            let color_mode_map: HashMap<i32, &str> =
-                [(1, "Color"), (2, "Monochrome")].iter().cloned().collect();
-
-            Ok(color_mode_map.get(&val).unwrap_or(&"Unknown").to_string())
+            // ExifTool: ColorMode tag stores string values directly
+            Ok(format!("{val}"))
         }
     }
 }
@@ -250,22 +194,8 @@ pub fn nikon_flash_setting_conv(value: &crate::types::TagValue) -> Result<String
                 _ => return Ok(format!("{value}")),
             };
 
-            // ExifTool: Basic flash setting mapping based on comment examples
-            let flash_setting_map: HashMap<i32, &str> = [
-                (0, "Normal"),
-                (1, "Slow"),
-                (2, "Rear Slow"),
-                (3, "RED-EYE"),
-                (4, "RED-EYE SLOW"),
-            ]
-            .iter()
-            .cloned()
-            .collect();
-
-            Ok(flash_setting_map
-                .get(&val)
-                .unwrap_or(&"Unknown")
-                .to_string())
+            // ExifTool: FlashSetting is stored as string values directly, no numeric mapping exists
+            Ok(format!("{val}"))
         }
     }
 }
@@ -379,30 +309,8 @@ pub fn nikon_scene_mode_conv(value: &crate::types::TagValue) -> Result<String, S
                 _ => return Ok(format!("{value}")),
             };
 
-            // ExifTool: Scene mode mapping based on comment examples
-            let scene_mode_map: HashMap<i32, &str> = [
-                (0, "None"),
-                (1, "PORTRAIT"),
-                (2, "PARTY/INDOOR"),
-                (3, "NIGHT PORTRAIT"),
-                (4, "BEACH/SNOW"),
-                (5, "LANDSCAPE"),
-                (6, "SUNSET"),
-                (7, "NIGHT SCENE"),
-                (8, "MUSEUM"),
-                (9, "FIREWORKS"),
-                (10, "CLOSE UP"),
-                (11, "COPY"),
-                (12, "BACK LIGHT"),
-                (13, "PANORAMA ASSIST"),
-                (14, "SPORT"),
-                (15, "DAWN/DUSK"),
-            ]
-            .iter()
-            .cloned()
-            .collect();
-
-            Ok(scene_mode_map.get(&val).unwrap_or(&"Unknown").to_string())
+            // ExifTool: SceneMode is stored as string values directly, no numeric mapping exists
+            Ok(format!("{val}"))
         }
     }
 }
@@ -439,23 +347,36 @@ mod tests {
 
     #[test]
     fn test_quality_conversion() {
+        // ExifTool: Quality tag is Writable => 'string' (line 1808) - no PrintConv mapping
         let value = TagValue::I32(3);
         let result = nikon_quality_conv(&value).unwrap();
-        assert_eq!(result, "VGA Fine");
+        assert_eq!(result, "3"); // String passthrough of raw value
+
+        // Test string quality value
+        let string_value = TagValue::String("FINE".to_string());
+        let result = nikon_quality_conv(&string_value).unwrap();
+        assert_eq!(result, "FINE");
     }
 
     #[test]
     fn test_white_balance_conversion() {
+        // ExifTool: WhiteBalance tag is Writable => 'string' (line 1809) - no PrintConv mapping
         let value = TagValue::I32(2);
         let result = nikon_white_balance_conv(&value).unwrap();
-        assert_eq!(result, "Daylight");
+        assert_eq!(result, "2"); // String passthrough of raw value
+
+        // Test string white balance value
+        let string_value = TagValue::String("Auto".to_string());
+        let result = nikon_white_balance_conv(&string_value).unwrap();
+        assert_eq!(result, "Auto");
     }
 
     #[test]
     fn test_unknown_quality_conversion() {
+        // ExifTool: Quality tag uses string passthrough - no "Unknown" conversion
         let value = TagValue::I32(999);
         let result = nikon_quality_conv(&value).unwrap();
-        assert_eq!(result, "Unknown");
+        assert_eq!(result, "999"); // Raw value as string
     }
 
     #[test]
@@ -512,14 +433,14 @@ mod tests {
         let result = nikon_color_mode_conv(&color_string).unwrap();
         assert_eq!(result, "MODE1");
 
-        // Test numeric color mode for legacy cameras
+        // ExifTool: ColorMode tag is Writable => 'string' (line 1807) - no PrintConv mapping
         let color_numeric = TagValue::I32(1);
         let result = nikon_color_mode_conv(&color_numeric).unwrap();
-        assert_eq!(result, "Color");
+        assert_eq!(result, "1"); // String passthrough of raw value
 
         let monochrome = TagValue::I32(2);
         let result = nikon_color_mode_conv(&monochrome).unwrap();
-        assert_eq!(result, "Monochrome");
+        assert_eq!(result, "2"); // String passthrough of raw value
     }
 
     #[test]
