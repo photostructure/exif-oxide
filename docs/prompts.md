@@ -2,13 +2,13 @@
 
 We need to stop now and hand that work off to another engineer. Please output a technical project plan, using our style guide, @docs/TPP.md, to ensure the next engineer succeeds at completing your incomplete tasks. As the style guide states, include a description of the issue being addressed, code and docs they should study, issues you've already addressed, success criteria, and any other tribal knowledge that you can pass down to help them to help them succeed. Ultrathink.
 
-# Low context
+# Handoff
 
-We're going to have to stop now. Please update your technical project plan (TPP) using our style guide, @docs/TPP.md. Your goal is to ensure the next engineer succeeds in picking up where you just left off. Include a description of the issues being addressed, code and docs they should study, issues and tasks you've already addressed, success criteria, and any other context or tribal knowledge that you can pass down to help them to complete your tasks. Please correct any glaring inaccuracies that you find in the TPP. Include any refactorings you considered to improve the code you visited as possible future work to consider. If you don't remember what TPP you're working off of, **please ask**.
+We're stopping work now. Please update your technical project plan (TPP) using our style guide, @docs/TPP.md. Your goal is to ensure the next engineer succeeds in picking up where you left off. Include: issue description, relevant code/docs to study, completed tasks, success criteria, and context needed to complete remaining work. Correct any inaccuracies you find. Include refactoring ideas as future work. If you don't remember which TPP you're working on, **please ask**.
 
 # When the initial plan is hand-wavy
 
-That's really great analysis! As this touches pivotal architectural underpinnings for this project, it warrants in-depth research and study. For anything "hand-wavy" or uncertain, check source, check docs, check generated code, and, most importantly, check ExifTool source. Ultrathink and re-analyze. Consider alternative approaches, weigh their pros and cons, and hybridize our current plan with those improvements. Take care not to expand scope without asking if it is still relevant to the tasks at hand. Also, make sure you've reviewed relevant planned and "completed" TPPs in docs/todo and docs/done for additional historical or future planning context (there may be opportunities to clarify or coordinate effort in pending TPPs).
+That's really great analysis! Since this touches core architecture, it needs thorough research. For anything unclear or uncertain, verify against source code, docs, generated code, and ExifTool source. Ultrathink and re-analyze. Consider alternative approaches, weighing pros and cons to improve our plan. Don't expand scope without asking if it's relevant. Review TPPs in docs/todo and docs/done for context and coordination opportunities.
 
 # Refining an existing TPP
 
@@ -16,19 +16,19 @@ Let's do more due diligence research, analysis, and planning for the work descri
 
 # Starting work on a TPP
 
-Let's work through the tasks listed in 📄 -- note that this work requires a TON of pre-study to get this addressed. Read every referenced source and doc, carefully validate and re-analyze the current situation, problem, and solution before starting. In this initial planning phase, please run relevant tooling and tests to validate the current state of the code. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. Ultrathink.
+Let's work through the tasks in 📄 -- this requires extensive preparation. Read every referenced source and doc, carefully validate and re-analyze the current situation, problem, and solution before starting. In this planning phase, run relevant tooling and tests to validate current code state. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. Ultrathink.
 
 # Continuing work on a TPP
 
-Let's continue work through the tasks listed in 📄 -- note that this work requires a TON of pre-study to get this addressed. Read every referenced source and doc, carefully validate and re-analyze the current situation, problem, and solution before starting. Any marked progress in the TPP should be considered circumspect: prior engineers may have recorded their progress a bit... ehm, "optimistically," so we need to validate the state of the world before continuing by studying code and running relevant tooling and tests. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines.
+Let's continue the tasks in 📄 -- this requires extensive preparation. Read every referenced source and doc, validate and re-analyze before starting. Prior engineers may have incorrectly stated that tasks were complete when they are not, or forgot to update as progress was made, so verify and validate the actual state by studying code and running tests. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines.
 
 # Validating and continuing work on a (probably complete) TPP
 
-Validate the tasks listed in 📄 -- this is critical infra, so we have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. Prior engineers may have recorded their progress a bit "optimistically" or flat-out lied, so everything should be circumspect. Update and improve the TPP using this style guide: @docs/TPP.md. We want to complete the work in this TPP, so if, after your planning and research phase, there are incomplete tasks found, we want you to work on them.
+Validate the tasks listed in 📄 -- this is critical infra, so we have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. Prior engineers may have incorrectly stated that tasks were complete when they are not, or forgot to update as progress was made, so verify everything carefully. Update and improve the TPP using this style guide: @docs/TPP.md. We want to complete the work in this TPP, so if, after your planning and research phase, there are incomplete tasks found, we want you to work on them.
 
 # Validating a completed TPP
 
-Validate the tasks listed in 📄 -- this is critical infra, so we have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. Prior engineers may have recorded their progress a bit "optimistically" or flat-out lied, so everything should be circumspect. Update and improve the TPP using this style guide: @docs/TPP.md. If all the tasks are complete, please update the TPP to reflect this, and move the document into `docs/done/$YYYYMMDD-${tpp_basename}` (check the current date with `date` -- we're in TZ `America/Los_Angeles`)
+Validate the tasks in 📄 -- this is critical infra with a large time budget for research and validation. Work step by step and show your work. Prior engineers may have incorrectly stated that tasks were complete when they are not, so verify everything carefully. Update the TPP using @docs/TPP.md style guide. If all tasks are complete, update the TPP and move it to `docs/done/$YYYYMMDD-${tpp_basename}` (use current date in America/Los_Angeles timezone).
 
 # When the robots need a reminder
 
