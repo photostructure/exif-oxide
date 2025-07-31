@@ -1,215 +1,235 @@
-# Technical Project Plan: Sony Required Tags Implementation
+# Technical Project Plan: Sony Required Tags Integration
 
 ## Project Overview
 
-- **Goal**: Implement support for all Sony-specific required tags from PhotoStructure's tag-metadata.json
-- **Problem**: Need comprehensive support for Sony MakerNotes tags marked as required, including encrypted data
+- **Goal**: Integrate existing Sony tag_kit system with runtime extraction to enable SonyExposureTime, SonyFNumber, and SonyISO tags
+- **Problem**: Complete Sony infrastructure exists but is disconnected from main processing pipeline
+- **Constraints**: Must implement ExifTool-compatible encryption without changing ExifTool's logic
 
-## Background & Context
+---
 
-- PhotoStructure requires proper Sony tag extraction for photo management
-- Sony uses complex encrypted MakerNotes requiring special handling
-- Many standard tags have Sony-specific variants with additional precision/data
-- Current implementation extracts ~40 tags but missing critical required ones
+## ⚠️ CRITICAL REMINDERS
 
-## Technical Foundation
+If you read this document, you **MUST** read and follow [CLAUDE.md](../CLAUDE.md) as well as [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md):
 
-- **Key files**:
-  - `src/implementations/sony/mod.rs` - Main Sony processor
-  - `src/implementations/sony/encryption.rs` - Decryption logic
-  - `src/generated/Sony_pm/` - Generated lookup tables
-  - `third-party/exiftool/lib/Image/ExifTool/Sony.pm` - ExifTool source
-- **Documentation**:
-  - `docs/todo/P3-MILESTONE-17e-Sony-RAW.md` - Sony implementation status
-  - `third-party/exiftool/doc/modules/Sony.md` - Sony module overview
+- **Trust ExifTool** (Translate and cite references, but using codegen is preferred)
+- **Ask clarifying questions** (Maximize "velocity made good")
+- **Assume Concurrent Edits** (STOP if you find a compilation error that isn't related to your work)
+- **Don't edit generated code** (read [CODEGEN.md](CODEGEN.md) if you find yourself wanting to edit `src/generated/**.*rs`)
+- **Keep documentation current** (so update this TPP with status updates, and any novel context that will be helpful to future engineers that are tasked with completing this TPP. Do not use hyperbolic "DRAMATIC IMPROVEMENT"/"GROUNDBREAKING PROGRESS" styled updates -- that causes confusion and partially-completed low-quality work)
+
+**NOTE**: These rules prevent build breaks, data corruption, and wasted effort across the team. 
+
+If you are found violating any topics in these sections, **your work will be immediately halted, reverted, and you will be dismissed from the team.**
+
+Honest. RTFM.
+
+---
+
+## Context & Foundation
+
+### System Overview
+
+- **Sony tag_kit system**: Comprehensive tag extraction from ExifTool Sony.pm with 600+ tags across 9 categories (camera, color, core, datetime, etc.)
+- **Subdirectory processing**: Generic binary data extraction system with Sony-specific functions that exist but aren't wired to main pipeline
+- **ExifTool integration**: Complete codegen infrastructure that has successfully extracted all Sony metadata structures
+
+### Key Interactions
+
+- **Tag_kit → Runtime**: Generated tag definitions reference value conversion functions that don't exist yet
+- **Subdirectory processing → Main pipeline**: Sony function exists but is never called during EXIF extraction
+- **Encryption → Binary data**: ExifTool has two encryption algorithms (simple substitution + LFSR) that need Rust implementation
+
+### Key Concepts & Domain Knowledge
+
+- **Sony MakerNotes encryption**: Two-tier system - simple substitution cipher for 0x94xx tags, complex LFSR for SR2SubIFD
+- **Binary data extraction**: Sony uses ProcessBinaryData tables extensively - Tag2010 variants (a-j) and Tag9050 variants (a-d) contain the required tags
+- **Value conversion formulas**: Sony uses specific mathematical formulas for exposure calculations that differ from standard EXIF
+
+### Surprising Context
+
+- **Infrastructure already exists**: 95% of Sony support is already implemented through codegen - just needs integration
+- **Only 3 tags currently extracted**: Despite having hundreds of tags available, main pipeline only processes 3 basic Sony tags
+- **Subdirectory processing works**: The generic subdirectory system successfully processes Canon/Nikon but Sony integration was never completed
+- **ExifTool provides exact algorithms**: Both encryption functions are fully documented with hardcoded translation tables
+- **Tag_kit references missing functions**: Generated code calls `sony_exposure_time_value_conv` but function doesn't exist
+
+### Foundation Documents
+
+- **ExifTool source**: `/third-party/exiftool/lib/Image/ExifTool/Sony.pm` lines 11343-11419 contain complete encryption implementation
+- **Generated metadata**: `/src/generated/Sony_pm/tag_kit/` contains all extracted Sony tag definitions
+- **Sony module overview**: `/third-party/exiftool/doc/modules/Sony.md` explains encryption system and processing flow
+- **Start here**: `/src/implementations/sony/mod.rs` - subdirectory processing function exists but isn't called
+
+### Prerequisites
+
+- **Knowledge assumed**: Understanding of TIFF/EXIF structure, binary data processing, and ExifTool processing flow
+- **Setup required**: Test Sony ARW/JPEG files available in `test-images/sony/` directory
+
+**Context Quality Check**: Can a new engineer understand WHY this approach is needed after reading this section?
 
 ## Work Completed
 
-- ✅ Basic Sony MakerNotes detection
-- ✅ Encryption/decryption infrastructure (framework exists, needs implementation)
-- ✅ Some binary data sections parsing (7 of 139 ProcessBinaryData sections)
-  - ✅ SonyAFInfoProcessor - Autofocus data (tag 0x940e)
-  - ✅ SonyCameraInfoProcessor - Camera info (tag 0x0010)
-  - ✅ SonyCameraSettingsProcessor - Basic settings (tag 0x0114)
-  - ✅ SonyShotInfoProcessor - Shot metadata (tag 0x3000)
-  - ⚠️ SonyTag9050Processor - Stub only, needs decryption
-  - ⚠️ SonyTag2010Processor - Stub only, needs decryption
-- ✅ Generated lookup tables for various Sony tables (322 PrintConv entries)
-- ✅ Sony tag naming system working (shows "Sony:AFType" not "EXIF:Tag_927C")
-- ✅ ProcessBinaryData integration complete in RAW handler
-- ⚠️ Standard EXIF tags extracting (ISO, ExposureTime, FNumber) but not Sony-specific variants
+- ✅ **Complete tag_kit extraction** → Sony.pm fully processed with 600+ tags across 9 semantic categories
+- ✅ **Subdirectory processing function** → `process_sony_subdirectory_tags()` implemented using generic system
+- ✅ **Sony tag naming integration** → Tag ID to name lookup working ("Sony:AFType" vs "Tag_927C")
+- ✅ **Binary data table generation** → CameraSettings, ShotInfo, Tag2010 variants all detected and configured
+- ✅ **MakerNotes namespace** → Sony tags correctly assigned to "MakerNotes" group
+- ✅ **Test infrastructure** → Multiple Sony ARW/JPEG files available for validation
+- ✅ **ExifTool encryption algorithms documented** → Both Decipher() and Decrypt() functions fully mapped
 
 ## Remaining Tasks
 
-### High Priority - Sony-Specific Required Tags (3 tags)
+### 1. Task: Wire Sony subdirectory processing into main extraction pipeline
 
-1. **SonyExposureTime** (freq 0.010)
-   - Located in encrypted MakerNotes, specifically in:
-     - **Tag9050a** (Sony.pm lines 7568-7574) - offset 0x003a, int16u format
-     - **Tag9050b** (Sony.pm lines 7850-7856) - offset 0x0046, int16u format  
-     - **Tag9050c** (Sony.pm lines 8163-8169) - offset 0x0046, int16u format
-     - **Tag9050d** (Sony.pm lines 8245-8251) - offset 0x001a, int16u format
-   - Format: `ValueConv => '$val ? 2 ** (16 - $val/256) : 0'`
-   - May have higher precision than standard ExposureTime
-   - Requires Tag9050 processor implementation with decryption
+**Success Criteria**: `process_sony_subdirectory_tags()` is called during Sony MakerNotes processing and extracts binary data
+**Approach**: Integrate Sony subdirectory processing call into main EXIF processing flow where other manufacturers are handled
+**Dependencies**: None - function exists and works
 
-2. **SonyFNumber** (freq 0.011)
-   - Sony's proprietary F-number format, found in:
-     - **Tag9050a** (Sony.pm lines 7576-7582) - offset 0x003c, int16u format
-     - **Tag9050b** (Sony.pm lines 7858-7864) - offset 0x0048, int16u format
-     - **Tag9050c** (Sony.pm lines 8171-8177) - offset 0x0048, int16u format
-     - **Tag9050d** (Sony.pm lines 8253-8259) - offset 0x001c, int16u format
-     - **Tag9416** (Sony.pm lines 8919-8925) - offset 0x0010, int16u format (for DSC models excluded)
-   - Format: `ValueConv => '2 ** (($val/256 - 16) / 2)'`
-   - May include lens-specific corrections
-   - Requires Tag9050/Tag9416 processor implementation
+**Success Patterns**:
+- ✅ Sony subdirectory processing called during main extraction
+- ✅ Binary data from Sony MakerNotes directories gets processed
+- ✅ Debug logging shows "Sony subdirectory processing completed"
 
-3. **SonyISO** (freq 0.022)
-   - Located in various positions depending on model:
-     - **Tag2010b** (Sony.pm lines 6466-6471) - offset 0x1218, int16u format
-     - **Tag2010c** (Sony.pm lines 6536-6541) - offset 0x11f4, int16u format
-     - **Tag2010d** (Sony.pm lines 6600-6605) - offset 0x1270, int16u format
-     - **Tag2010e** (Sony.pm lines 6669-6674) - offset 0x1254, int16u format (specific models)
-     - **Tag2010e** (Sony.pm lines 6678-6683) - offset 0x1258, int16u format (DSC-RX1/RX1R)
-     - **Tag2010f** (Sony.pm lines 6715-6720) - offset 0x1280, int16u format
-     - **Tag2010g** (Sony.pm lines 6869-6874) - offset 0x113c, int16u format
-     - **Tag2010h** (Sony.pm lines 6951-6956) - offset 0x0344, int16u format
-     - **Tag2010i** (Sony.pm lines 7092-7097) - offset 0x0346, int16u format
-     - **Tag2010j** (Sony.pm lines 7241-7246) - offset 0x0320, int16u format
-     - **Tag9416** (Sony.pm lines 8887-8892) - offset 0x0004, int16u format
-   - Format: `ValueConv => '100 * 2**(16 - $val/256)'`
-   - Requires Tag2010/Tag9416 processor implementation with model detection
+### 2. Task: Implement Sony encryption algorithms from ExifTool
 
-### Medium Priority - Standard MakerNotes Tags Sony Populates
+**Success Criteria**: Rust implementations of `Decipher()` and `Decrypt()` functions that match ExifTool behavior exactly
+**Approach**: Translate ExifTool Sony.pm lines 11343-11419 to Rust, preserving exact algorithms including hardcoded translation tables
+**Dependencies**: None - ExifTool source provides complete implementation
 
-**High Frequency Tags (>50%):**
-- **ExposureTime** (freq 0.990) - Standard location + Sony variants
-- **FNumber** (freq 0.970) - Multiple locations in Sony data
-- **FocalLength** (freq 0.950) - Including lens corrections
-- **ISO** (freq 0.890) - Consolidate from multiple sources
-- **ShutterSpeed** (freq 0.860) - Format from APEX values
-- **Aperture** (freq 0.850) - Calculate from FNumber
+**Success Patterns**:
+- ✅ Simple substitution cipher working for 0x94xx tags (uses hardcoded translation table)
+- ✅ LFSR-based decryption working for SR2SubIFD data (complex 127-pad array algorithm)
+- ✅ Encrypted binary data successfully decrypted and processed
 
-**Lens Information:**
-- **LensID** (freq 0.200) - Complex Sony lens identification
-- **LensType** (freq 0.180) - From various binary sections
-- **Lens** (freq 0.150) - Full lens description
-- **LensModel** (freq 0.100) - E-mount and A-mount lenses
-- **LensInfo** (freq 0.086) - Min/max specifications
-- **LensSpec** (freq 0.039) - Formatted specification
+### 3. Task: Create missing Sony value conversion functions
 
-**Other Required Tags:**
-- **SerialNumber** (freq 0.130) - Camera body serial
-- **InternalSerialNumber** (freq 0.150) - Internal ID
-- **FileNumber** (freq 0.130) - Image counter
-- **CameraID** (freq 0.068) - Model-specific ID
-- **DateTimeUTC** (freq 0.007) - From Sony timestamps
-- **Software** (freq 0.600) - Firmware version
+**Success Criteria**: `sony_exposure_time_value_conv` and `sony_fnumber_value_conv` functions exist and produce ExifTool-compatible values
+**Approach**: Implement value conversion formulas found in ExifTool Sony.pm for ExposureTime and FNumber calculations
+**Dependencies**: Must examine actual ExifTool ValueConv expressions for Sony tags
 
-### Low Priority - Location and Metadata
+**Success Patterns**:
+- ✅ ExposureTime values calculated using Sony-specific formula
+- ✅ FNumber values calculated using Sony-specific formula  
+- ✅ Generated tag_kit code can successfully call these functions
 
-- **Categories** (freq 0.051) - If supported by model
-- **Title** (freq 0.021) - User-defined title
-- **City** (freq 0.010) - GPS location data
-- **Country** (freq 0.010) - GPS location data
+### 4. Task: Complete binary data extraction for int16u formats
+
+**Success Criteria**: Binary data processors extract actual int16u values instead of showing "TODO: Handle format int16u"
+**Approach**: Implement int16u reading in binary data processing with proper byte order handling
+**Dependencies**: Encryption implementation (some binary data is encrypted)
+
+**Success Patterns**:
+- ✅ Tag2010 and Tag9050 variants extract actual numeric values
+- ✅ SonyExposureTime, SonyFNumber, SonyISO tags appear in extraction output
+- ✅ Values match ExifTool output for same files
+
+### 5. RESEARCH: Validate Sony value conversion formulas in ExifTool source
+
+**Objective**: Find exact ValueConv expressions for Sony ExposureTime/FNumber tags in Sony.pm
+**Success Criteria**: Document actual formulas used by ExifTool for Sony-specific calculations
+**Done When**: Value conversion formulas identified and documented with ExifTool source line references
+
+**Task Quality Check**: Can another engineer pick up any task and complete it without asking clarifying questions?
+
+## Implementation Guidance
+
+### Recommended Patterns
+
+- **Encryption implementation**: Use ExifTool's exact translation table approach - hardcoded byte arrays for performance
+- **Value conversion functions**: Follow same pattern as existing Canon/Nikon value conversion functions in `src/implementations/value_conv.rs`
+- **Binary data processing**: Leverage existing int16u reading patterns from Canon/Nikon processors
+- **Integration approach**: Mirror Canon subdirectory processing integration in main EXIF pipeline
+
+### Tools to Leverage
+
+- **Compare-with-exiftool binary**: Use for validation - compares normalized values to avoid formatting differences
+- **Generated tag_kit definitions**: All Sony metadata structures already extracted - just need runtime integration
+- **Existing subdirectory processing system**: Generic system already handles Canon/Nikon - Sony just needs wiring
+- **Test image collection**: Comprehensive Sony ARW/JPEG files for validation across different camera models
+
+### Architecture Considerations
+
+- **Don't modify generated code**: All changes go in `src/implementations/` - never edit `src/generated/`
+- **Preserve ExifTool compatibility**: Value output must match ExifTool exactly (use same formulas)
+- **Follow encryption patterns**: ExifTool has two distinct algorithms - implement both exactly as specified
+- **Binary data safety**: Ensure proper bounds checking when reading encrypted binary data
+
+### Performance Notes
+
+- **Encryption overhead**: Simple substitution cipher is fast, LFSR decryption is more complex but still efficient
+- **Tag_kit lookup**: Generated HashMap lookups are O(1) - no performance concerns
+- **Binary data processing**: Most Sony cameras have <100KB of MakerNotes data - processing is fast
+
+### ExifTool Translation Notes
+
+- **Preserve exact algorithms**: Don't "optimize" ExifTool's encryption - it handles real-world camera quirks
+- **Use hardcoded translation tables**: ExifTool provides 246-byte translation table - copy exactly
+- **Maintain byte order awareness**: Sony uses little-endian but this varies by data structure
+- **Handle encryption variants**: Different camera models use different encryption keys/methods
+
+## Integration Requirements
+
+**CRITICAL**: Building without integrating is failure. Don't accept tasks that build "shelf-ware."
+
+Every feature must include:
+- [ ] **Activation**: Sony subdirectory processing enabled by default in main extraction pipeline
+- [ ] **Consumption**: Encrypted binary data is automatically decrypted and processed during normal EXIF extraction
+- [ ] **Measurement**: Can verify Sony tag extraction by comparing tag count before/after integration
+- [ ] **Cleanup**: Remove "TODO: Handle format int16u" comments, replace with actual value extraction
+
+**Red Flag Check**: If a task seems like "build encryption functions but don't use them," ask for clarity. We're not writing tools to sit on a shelf - everything must get us closer to "ExifTool in Rust for PhotoStructure."
+
+## Working Definition of "Complete"
+
+*Use these criteria to evaluate your own work - adapt to your specific context:*
+
+A feature is complete when:
+- ✅ **System behavior changes** - Sony tag extraction increases from 3 to 100+ tags
+- ✅ **Default usage** - Sony MakerNotes processing happens automatically during normal extraction
+- ✅ **Old path removed** - "TODO" comments eliminated, actual value extraction implemented
+- ❌ Code exists but isn't used *(example: "encryption functions implemented but subdirectory processing still disabled")*
+- ❌ Feature works "if you call it directly" *(example: "Sony functions exist but main pipeline doesn't call them")*
+
+*Note: These are evaluation guidelines, not literal requirements for every task.*
 
 ## Prerequisites
 
-- **Tag Kit Migration**: Complete [tag kit migration and retrofit](../done/20250723-tag-kit-migration-and-retrofit.md) for Sony module
-  - Sony already has inline_printconv config that needs migration
-  - This ensures consistent tag extraction approach
-- Complete encryption/decryption for all Sony formats
-  - Simple substitution cipher for 0x94xx tags (Decipher function)
-  - LFSR-based encryption for SR2SubIFD (Decrypt function)
-- Model detection for camera-specific processing
-  - Already have model detection in place
-  - Need to map models to specific Tag2010 variants (a-j)
-- ~~Fix namespace assignment for Sony tags~~ ✅ COMPLETED
+- Sony tag_kit system → P13-sony-required-tags → verify with `ls src/generated/Sony_pm/tag_kit/`
+- Generic subdirectory processing → [CORE-ARCHITECTURE.md](../guides/CORE-ARCHITECTURE.md) → verify with existing Canon integration
 
-## Testing Strategy
+## Testing
 
-- Test with multiple Sony camera models (A7III, A7RIV, RX100, etc.)
-- Verify encryption/decryption working correctly
-- Compare with ExifTool output using compare tool
-- Check both JPEG and ARW (RAW) files
+- **Unit**: Test encryption/decryption functions with known binary data samples
+- **Integration**: Verify Sony tag extraction on ARW/JPEG files from different camera models
+- **Manual check**: Run `cargo run --bin exif-oxide test-images/sony/a7_iii.arw` and confirm SonyExposureTime, SonyFNumber, SonyISO appear
 
-## Success Criteria
+## Definition of Done
 
-- All 3 Sony-specific required tags extracting
-- Standard required tags populated correctly
-- Encryption/decryption working for all models
-- PrintConv producing human-readable values
-- Namespace correctly set to "MakerNotes:"
+- [ ] `cargo t sony` passes (if Sony-specific tests exist)
+- [ ] `make precommit` clean
+- [ ] SonyExposureTime, SonyFNumber, SonyISO tags appear in extraction output
+- [ ] Sony tag count increases from 3 to 100+ tags
+- [ ] ExifTool compatibility validated with compare-with-exiftool tool
 
-## Implementation Details
+## Additional Gotchas & Tribal Knowledge
 
-### ProcessBinaryData Sections Needed
+**Format**: Surprise → Why → Solution (Focus on positive guidance)
 
-For the 3 Sony-specific required tags, we need these processors:
+- **Sony subdirectory processing exists but isn't called** → Integration was never completed → Wire into main EXIF processing pipeline
+- **Tag_kit references missing functions** → Value conversion functions never implemented → Create referenced functions in value_conv.rs
+- **Generated binary data says "TODO"** → Binary data extraction incomplete → Implement int16u reading with proper byte order
+- **ExifTool has exact encryption algorithms** → Just need Rust translation → Copy hardcoded translation tables and algorithms exactly
+- **Only 3 Sony tags extracted despite hundreds available** → Main pipeline bypasses Sony-specific processing → Enable subdirectory processing integration
+- **Encryption looks complex but isn't** → ExifTool provides complete implementation → Two functions: simple substitution + LFSR algorithm
 
-1. **Tag2010 Processor Enhancement**
-   - Current stub needs full implementation with decryption
-   - Multiple variants (a-j) based on camera model
-   - Contains SonyISO at different offsets per variant
-   - Model detection logic from Sony.pm lines 1055-1289
+**Note**: Most gotchas should be captured in the "Surprising Context" section above.
 
-2. **Tag9050 Processor Enhancement**  
-   - Current stub needs decryption support
-   - Contains SonyExposureTime and SonyFNumber
-   - 4 variants (a-d) with different offsets
-   - Encrypted data requires ProcessEnciphered handling
+## Quick Debugging
 
-3. **Tag9416 Processor** (new)
-   - Contains alternate SonyISO, SonyFNumber locations
-   - Used by newer models
-   - Shares similar structure with Tag9050
+Stuck? Try these:
 
-### Decryption Implementation
-
-From ExifTool Sony.pm (lines 11341-11379):
-
-```perl
-# Decipher (for 0x94xx tags)
-# Simple substitution cipher based on offset
-my $key = $start + $offset;
-foreach (@vals) {
-    $_ = ($_ - $key) & 0xff;
-    $key = $_; 
-}
-
-# Decrypt (for SR2SubIFD)
-# LFSR-based encryption with 128-bit key
-# More complex, used for SR2 format
-```
-
-## Gotchas & Tribal Knowledge
-
-### Sony Encryption
-- **Multiple Algorithms**: Different models use different encryption
-- **Key Generation**: Based on camera model, serial number, and other factors
-- **Encrypted Sections**: Not all MakerNotes data is encrypted
-- **Format Changes**: Encryption format changes between camera generations
-
-### Tag Locations
-- **Tag9400**: Common location for exposure data (encrypted)
-- **Tag9404**: Alternative location in newer models
-- **CameraSettings**: Unencrypted basic settings
-- **Multiple Copies**: Same data may appear in multiple locations
-
-### Lens Detection
-- **E-mount vs A-mount**: Different ID schemes
-- **Third-Party**: May not report correctly
-- **Adapted Lenses**: Special handling needed
-- **Sony Lens Database**: Much larger than Canon/Nikon
-
-### Value Extraction
-- **Byte Order**: Can vary within MakerNotes
-- **Rational Values**: Often stored differently than standard EXIF
-- **Model Dependencies**: Tag locations vary significantly by model
-- **Firmware Versions**: Same model may have different layouts
-
-### Special Processing
-- **Focus Information**: Complex multi-point data
-- **Color Information**: Model-specific formats
-- **Video Metadata**: Different structure than stills
-- **Panorama Data**: Special tags for sweep panorama
+1. `cargo run --bin exif-oxide test-images/sony/a7_iii.arw | grep Sony | wc -l` - Count current Sony tags
+2. `rg "process_sony_subdirectory" src/` - Check if Sony subdirectory processing is called
+3. `rg "sony_exposure_time_value_conv" src/implementations/` - Verify value conversion functions exist
+4. `exiftool -j -struct -G test-images/sony/a7_iii.arw | jq 'keys' | grep -i sony` - Compare with ExifTool
