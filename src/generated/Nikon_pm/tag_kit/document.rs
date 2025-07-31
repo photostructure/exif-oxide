@@ -14,22 +14,6 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_30: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "A");
-    map.insert("1".to_string(), "B");
-    map.insert("2".to_string(), "C");
-    map.insert("3".to_string(), "D");
-    map
-});
-
-static PRINT_CONV_31: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
 static PRINT_CONV_32: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "A");
@@ -62,6 +46,22 @@ static PRINT_CONV_35: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
+static PRINT_CONV_36: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "A");
+    map.insert("1".to_string(), "B");
+    map.insert("2".to_string(), "C");
+    map.insert("3".to_string(), "D");
+    map
+});
+
+static PRINT_CONV_37: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
 /// Get tag definitions for document category
 pub fn get_document_tags() -> Vec<(u32, TagKitDef)> {
     vec![
@@ -74,7 +74,7 @@ pub fn get_document_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_30),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_32),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -83,34 +83,6 @@ pub fn get_document_tags() -> Vec<(u32, TagKitDef)> {
             288,
             TagKitDef {
                 id: 288,
-                name: "ExtendedMenuBanks",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_31),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            290,
-            TagKitDef {
-                id: 290,
-                name: "PhotoShootingMenuBank",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_32),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            292,
-            TagKitDef {
-                id: 292,
                 name: "ExtendedMenuBanks",
                 format: "unknown",
                 groups: HashMap::new(),
@@ -145,6 +117,34 @@ pub fn get_document_tags() -> Vec<(u32, TagKitDef)> {
                 writable: false,
                 notes: None,
                 print_conv: PrintConvType::Simple(&PRINT_CONV_35),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            290,
+            TagKitDef {
+                id: 290,
+                name: "PhotoShootingMenuBank",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_36),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            292,
+            TagKitDef {
+                id: 292,
+                name: "ExtendedMenuBanks",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_37),
                 value_conv: None,
                 subdirectory: None,
             },
