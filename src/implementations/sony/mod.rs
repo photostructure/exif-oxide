@@ -37,10 +37,11 @@ pub fn process_sony_subdirectory_tags(exif_reader: &mut ExifReader) -> Result<()
     debug!("Processing Sony subdirectory tags using generic system");
 
     // Use the generic subdirectory processing with Sony-specific functions
+    // Fix Group1 assignment: Use "Sony" as namespace for group1="Sony" instead of "MakerNotes"
     process_subdirectories_with_printconv(
         exif_reader,
         "Sony",
-        "MakerNotes",
+        "Sony",
         tag_kit::has_subdirectory,
         tag_kit::process_subdirectory,
         tag_kit::apply_print_conv,
