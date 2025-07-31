@@ -46,6 +46,13 @@ We're trying to match ExifTool output with these options: `exiftool -j -struct -
 
 Always add a comment with the source filename, line number, and if applicable, the function or variable name that the code is derived from.
 
+### 5. Allowed deviations
+
+We should limit the discrepancies between our output and ExifTool to:
+
+1. GPS: We should always render GPSLongitude and GPSLatitude in decimal format to minimize client parsing.
+2. Internal inconsistencies: some fields have inconsistent string and numeric rendering within ExifTool, depending on source -- if the field is clearly numeric, we don't need to return a string just to match ExifTool, for example. 
+
 ## Corollary: Chesterton's Fence
 
 Before you remove a seemingly useless piece of code, you must first understand why it was put there. In ExifTool's case, you probably CAN'T understand why (it might be handling a camera model you've never heard of, discontinued 15 years ago, but still used by someone). Therefore, you MUST NOT remove it.
