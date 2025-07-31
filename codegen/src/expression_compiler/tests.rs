@@ -1,334 +1,11 @@
-//! Expression compiler for ValueConv arithmetic expressions
+//! Comprehensive integration tests for the expression compiler
 //!
-//! This module provides compile-time parsing and code generation for simple
-//! arithmetic expressions found in ExifTool ValueConv patterns. Uses the
-//! Shunting Yard algorithm to convert infix expressions to Rust code.
-
-use std::fmt;
-
-type Number = f64;
-
-/// A compiled arithmetic expression that can generate Rust code
-#[derive(Debug, Clone)]
-pub struct CompiledExpression {
-    pub original_expr: String,
-    pub rpn_tokens: Vec<RpnToken>,
-}
-
-/// Token in Reverse Polish Notation
-#[derive(Debug, Clone, PartialEq)]
-pub enum RpnToken {
-    Variable,           // Represents $val
-    Number(Number),     // Numeric constant
-    Operator(OpType),   // Arithmetic operator
-}
-
-/// Arithmetic operator types
-#[derive(Debug, Copy, Clone, PartialEq)]
-pub enum OpType {
-    Add,
-    Subtract, 
-    Multiply,
-    Divide,
-}
-
-/// Internal token used during parsing
-#[derive(Debug, Clone, PartialEq)]
-enum ParseToken {
-    Variable,
-    Number(Number),
-    Operator(Operator),
-    LeftParen,
-    RightParen,
-}
-
-/// Operator with precedence and associativity
-#[derive(Debug, Copy, Clone, PartialEq)]
-struct Operator {
-    op_type: OpType,
-    precedence: u8,
-    is_left_associative: bool,
-}
-
-impl Operator {
-    fn new(op_type: OpType, precedence: u8, is_left_associative: bool) -> Self {
-        Self { op_type, precedence, is_left_associative }
-    }
-}
-
-/// Helper trait for stack operations
-trait Stack<T> {
-    fn top(&self) -> Option<&T>;
-}
-
-impl<T> Stack<T> for Vec<T> {
-    fn top(&self) -> Option<&T> {
-        self.last()
-    }
-}
-
-impl fmt::Display for OpType {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            OpType::Add => write!(f, "+"),
-            OpType::Subtract => write!(f, "-"),
-            OpType::Multiply => write!(f, "*"),
-            OpType::Divide => write!(f, "/"),
-        }
-    }
-}
-
-impl CompiledExpression {
-    /// Parse an ExifTool arithmetic expression into a compiled form
-    /// 
-    /// Supports: $val, numbers, +, -, *, /, parentheses
-    /// Examples: "$val / 8", "($val - 104) / 8", "$val * 25.4 / 1000"
-    pub fn compile(expr: &str) -> Result<Self, String> {
-        let tokens = tokenize(expr)?;
-        let rpn_tokens = shunting_yard(tokens)?;
-        
-        Ok(CompiledExpression {
-            original_expr: expr.to_string(),
-            rpn_tokens,
-        })
-    }
-    
-    /// Generate Rust code that evaluates this expression
-    /// 
-    /// Returns code like: `match value.as_f64() { Some(val) => Ok(TagValue::F64(val / 8.0)), None => Ok(value.clone()) }`
-    pub fn generate_rust_code(&self) -> String {
-        if self.rpn_tokens.is_empty() {
-            return "Ok(value.clone())".to_string();
-        }
-        
-        // For simple expressions, generate direct arithmetic
-        if let Some(simple_code) = self.try_generate_simple_arithmetic() {
-            return simple_code;
-        }
-        
-        // For complex expressions, generate stack-based evaluation
-        self.generate_stack_evaluation()
-    }
-    
-    /// Try to generate direct arithmetic for simple cases like "$val / 8"
-    fn try_generate_simple_arithmetic(&self) -> Option<String> {
-        if self.rpn_tokens.len() == 3 {
-            if let [RpnToken::Variable, RpnToken::Number(n), RpnToken::Operator(op)] = &self.rpn_tokens[..] {
-                // Format number as floating-point literal to ensure proper f64 arithmetic
-                let n_str = if n.fract() == 0.0 {
-                    format!("{:.1}", n) // Add .0 to integers like 8 -> 8.0
-                } else {
-                    n.to_string() // Keep decimals as-is like 25.4 -> 25.4
-                };
-                
-                let rust_op = match op {
-                    OpType::Add => format!("val + {}", n_str),
-                    OpType::Subtract => format!("val - {}", n_str),
-                    OpType::Multiply => format!("val * {}", n_str),
-                    OpType::Divide => format!("val / {}", n_str),
-                };
-                
-                return Some(format!(
-                    "match value.as_f64() {{\n        Some(val) => Ok(TagValue::F64({})),\n        None => Ok(value.clone()),\n    }}",
-                    rust_op
-                ));
-            }
-        }
-        None
-    }
-    
-    /// Generate stack-based evaluation for complex expressions
-    fn generate_stack_evaluation(&self) -> String {
-        let mut code = String::new();
-        code.push_str("match value.as_f64() {\n");
-        code.push_str("        Some(val) => {\n");
-        code.push_str("            let mut stack = Vec::new();\n");
-        
-        for token in &self.rpn_tokens {
-            match token {
-                RpnToken::Variable => {
-                    code.push_str("            stack.push(val);\n");
-                }
-                RpnToken::Number(n) => {
-                    // Format number as floating-point literal to ensure proper f64 arithmetic
-                    let n_str = if n.fract() == 0.0 {
-                        format!("{:.1}", n) // Add .0 to integers like 8 -> 8.0
-                    } else {
-                        n.to_string() // Keep decimals as-is like 25.4 -> 25.4
-                    };
-                    code.push_str(&format!("            stack.push({});\n", n_str));
-                }
-                RpnToken::Operator(op) => {
-                    code.push_str("            let b = stack.pop().unwrap();\n");
-                    code.push_str("            let a = stack.pop().unwrap();\n");
-                    let operation = match op {
-                        OpType::Add => "a + b",
-                        OpType::Subtract => "a - b", 
-                        OpType::Multiply => "a * b",
-                        OpType::Divide => "a / b",
-                    };
-                    code.push_str(&format!("            stack.push({});\n", operation));
-                }
-            }
-        }
-        
-        code.push_str("            Ok(TagValue::F64(stack[0]))\n");
-        code.push_str("        },\n");
-        code.push_str("        None => Ok(value.clone()),\n");
-        code.push_str("    }");
-        
-        code
-    }
-    
-    /// Check if this expression can be compiled (simple arithmetic only)
-    pub fn is_compilable(expr: &str) -> bool {
-        // Quick checks for obviously non-compilable expressions
-        if expr.contains('?') || expr.contains("exp") || expr.contains("log") || 
-           expr.contains("**") || expr.contains("abs") || expr.contains("IsFloat") ||
-           expr.contains("=~") || expr.contains("&") || expr.contains("|") ||
-           expr.contains(">>") || expr.contains("<<") {
-            return false;
-        }
-        
-        // Try to compile - if it works, it's compilable
-        Self::compile(expr).is_ok()
-    }
-}
-
-/// Tokenize an expression string into parse tokens
-fn tokenize(expr: &str) -> Result<Vec<ParseToken>, String> {
-    let mut tokens = Vec::new();
-    let mut chars = expr.chars().peekable();
-    
-    while let Some(ch) = chars.next() {
-        match ch {
-            ' ' | '\t' => continue, // Skip whitespace
-            
-            '$' => {
-                // Expect "val" after $
-                let val_chars: String = chars.by_ref().take(3).collect();
-                if val_chars == "val" {
-                    tokens.push(ParseToken::Variable);
-                } else {
-                    return Err(format!("Expected 'val' after '$', found '{}'", val_chars));
-                }
-            }
-            
-            '0'..='9' => {
-                // Parse number (including decimals like 25.4)
-                let mut number_str = String::new();
-                number_str.push(ch);
-                
-                while let Some(&next_ch) = chars.peek() {
-                    if next_ch.is_ascii_digit() || next_ch == '.' {
-                        number_str.push(chars.next().unwrap());
-                    } else {
-                        break;
-                    }
-                }
-                
-                let number: f64 = number_str.parse()
-                    .map_err(|_| format!("Invalid number: {}", number_str))?;
-                tokens.push(ParseToken::Number(number));
-            }
-            
-            '+' => tokens.push(ParseToken::Operator(Operator::new(OpType::Add, 1, true))),
-            '-' => tokens.push(ParseToken::Operator(Operator::new(OpType::Subtract, 1, true))),
-            '*' => tokens.push(ParseToken::Operator(Operator::new(OpType::Multiply, 2, true))),
-            '/' => tokens.push(ParseToken::Operator(Operator::new(OpType::Divide, 2, true))),
-            '(' => tokens.push(ParseToken::LeftParen),
-            ')' => tokens.push(ParseToken::RightParen),
-            
-            _ => return Err(format!("Unexpected character: '{}'", ch)),
-        }
-    }
-    
-    Ok(tokens)
-}
-
-/// Convert infix tokens to RPN using Shunting Yard algorithm
-fn shunting_yard(tokens: Vec<ParseToken>) -> Result<Vec<RpnToken>, String> {
-    if tokens.is_empty() {
-        return Err("Empty expression".to_string());
-    }
-    
-    let mut output = Vec::new();
-    let mut operators = Vec::new();
-    
-    for token in tokens {
-        match token {
-            ParseToken::Variable => output.push(RpnToken::Variable),
-            ParseToken::Number(n) => output.push(RpnToken::Number(n)),
-            
-            ParseToken::LeftParen => operators.push(token),
-            
-            ParseToken::RightParen => {
-                if !tilt_until(&mut operators, &mut output, ParseToken::LeftParen) {
-                    return Err("Mismatched ')'".to_string());
-                }
-            }
-            
-            ParseToken::Operator(op) => {
-                while let Some(top) = operators.top() {
-                    match top {
-                        ParseToken::LeftParen => break,
-                        ParseToken::Operator(top_op) => {
-                            let should_pop = top_op.precedence > op.precedence ||
-                                (top_op.precedence == op.precedence && op.is_left_associative);
-                            
-                            if should_pop {
-                                if let Some(ParseToken::Operator(popped_op)) = operators.pop() {
-                                    output.push(RpnToken::Operator(popped_op.op_type));
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-                        _ => return Err("Invalid token on operator stack".to_string()),
-                    }
-                }
-                operators.push(token);
-            }
-        }
-    }
-    
-    // Pop remaining operators
-    if tilt_until(&mut operators, &mut output, ParseToken::LeftParen) {
-        return Err("Mismatched '('".to_string());
-    }
-    
-    // Validate that we have a complete expression
-    // Simple check: must have at least one operand and proper operator count
-    let operands = output.iter().filter(|t| matches!(t, RpnToken::Variable | RpnToken::Number(_))).count();
-    let operators = output.iter().filter(|t| matches!(t, RpnToken::Operator(_))).count();
-    
-    if operands == 0 {
-        return Err("Expression must contain at least one operand".to_string());
-    }
-    
-    if operands != operators + 1 {
-        return Err("Invalid expression: operator/operand mismatch".to_string());
-    }
-    
-    Ok(output)
-}
-
-/// Helper function to pop operators until a stop token is found
-fn tilt_until(operators: &mut Vec<ParseToken>, output: &mut Vec<RpnToken>, stop: ParseToken) -> bool {
-    while let Some(token) = operators.pop() {
-        if token == stop {
-            return true;
-        }
-        if let ParseToken::Operator(op) = token {
-            output.push(RpnToken::Operator(op.op_type));
-        }
-    }
-    false
-}
+//! These tests cover the full compilation pipeline from expression strings
+//! to generated Rust code, including edge cases and error conditions.
 
 #[cfg(test)]
-mod tests {
-    use super::*;
+mod integration_tests {
+    use super::super::*;
     
     #[test]
     fn test_simple_division() {
@@ -366,13 +43,105 @@ mod tests {
     }
     
     #[test]
+    fn test_int_function() {
+        // Test int() function with simple expression
+        let expr = CompiledExpression::compile("int($val)").unwrap();
+        assert_eq!(expr.rpn_tokens, vec![
+            RpnToken::Variable,
+            RpnToken::Function(FuncType::Int)
+        ]);
+        
+        // Test int() with arithmetic: int($val * 1000 / 25.4 + 0.5)
+        let expr = CompiledExpression::compile("int($val * 1000 / 25.4 + 0.5)").unwrap();
+        assert_eq!(expr.rpn_tokens, vec![
+            RpnToken::Variable,
+            RpnToken::Number(1000.0),
+            RpnToken::Operator(OpType::Multiply),
+            RpnToken::Number(25.4),
+            RpnToken::Operator(OpType::Divide),
+            RpnToken::Number(0.5),
+            RpnToken::Operator(OpType::Add),
+            RpnToken::Function(FuncType::Int)
+        ]);
+        
+        // Test code generation for int()
+        let expr = CompiledExpression::compile("int($val)").unwrap();
+        let code = expr.generate_rust_code();
+        assert!(code.contains("val.trunc()"));
+    }
+    
+    #[test]
+    fn test_exp_function() {
+        // Test exp() function: exp($val/32*log(2))*100
+        let expr = CompiledExpression::compile("exp($val/32*log(2))*100").unwrap();
+        assert_eq!(expr.rpn_tokens, vec![
+            RpnToken::Variable,
+            RpnToken::Number(32.0),
+            RpnToken::Operator(OpType::Divide),
+            RpnToken::Number(2.0),
+            RpnToken::Function(FuncType::Log),
+            RpnToken::Operator(OpType::Multiply),
+            RpnToken::Function(FuncType::Exp),
+            RpnToken::Number(100.0),
+            RpnToken::Operator(OpType::Multiply)
+        ]);
+        
+        // Test code generation for exp()
+        let expr = CompiledExpression::compile("exp($val)").unwrap();
+        let code = expr.generate_rust_code();
+        assert!(code.contains("val.exp()"));
+    }
+    
+    #[test]
+    fn test_log_function() {
+        // Test log() function: 32*log($val/100)/log(2)
+        let expr = CompiledExpression::compile("32*log($val/100)/log(2)").unwrap();
+        assert_eq!(expr.rpn_tokens, vec![
+            RpnToken::Number(32.0),
+            RpnToken::Variable,
+            RpnToken::Number(100.0),
+            RpnToken::Operator(OpType::Divide),
+            RpnToken::Function(FuncType::Log),
+            RpnToken::Operator(OpType::Multiply),
+            RpnToken::Number(2.0),
+            RpnToken::Function(FuncType::Log),
+            RpnToken::Operator(OpType::Divide)
+        ]);
+        
+        // Test code generation for log()
+        let expr = CompiledExpression::compile("log($val)").unwrap();
+        let code = expr.generate_rust_code();
+        assert!(code.contains("val.ln()"));
+    }
+    
+    #[test]
+    fn test_function_combinations() {
+        // Test real-world example: int($val * 1000 / 25.4 + 0.5)
+        let expr = CompiledExpression::compile("int($val * 1000 / 25.4 + 0.5)").unwrap();
+        let code = expr.generate_rust_code();
+        assert!(code.contains("stack.push(val)"));
+        assert!(code.contains("stack.push(1000"));
+        assert!(code.contains("stack.push(25.4)"));
+        assert!(code.contains("stack.push(0.5)"));
+        assert!(code.contains("a * b"));
+        assert!(code.contains("a / b"));
+        assert!(code.contains("a + b"));
+        assert!(code.contains("b.trunc()"));
+    }
+
+    #[test]
     fn test_is_compilable() {
         assert!(CompiledExpression::is_compilable("$val / 8"));
         assert!(CompiledExpression::is_compilable("($val - 104) / 8"));
         assert!(CompiledExpression::is_compilable("$val * 25.4 / 1000"));
         
+        // Functions are now supported
+        assert!(CompiledExpression::is_compilable("exp($val / 32 * log(2))"));
+        assert!(CompiledExpression::is_compilable("int($val)"));
+        assert!(CompiledExpression::is_compilable("log($val)"));
+        
+        // These should still not be compilable
         assert!(!CompiledExpression::is_compilable("$val ? 10 / $val : 0"));
-        assert!(!CompiledExpression::is_compilable("exp($val / 32 * log(2))"));
         assert!(!CompiledExpression::is_compilable("2 ** (-$val/3)"));
     }
     
@@ -614,9 +383,16 @@ mod tests {
         assert!(CompiledExpression::is_compilable("$val / 32 + 5"));
         assert!(CompiledExpression::is_compilable("($val + 2) * 3"));
         
+        // Should be compilable (functions)
+        assert!(CompiledExpression::is_compilable("int($val)"));
+        assert!(CompiledExpression::is_compilable("exp($val)"));
+        assert!(CompiledExpression::is_compilable("log($val)"));
+        assert!(CompiledExpression::is_compilable("int($val * 1000 / 25.4 + 0.5)"));
+        assert!(CompiledExpression::is_compilable("32*log($val/100)/log(2)"));
+        assert!(CompiledExpression::is_compilable("exp($val/32*log(2))*100"));
+        
         // Should NOT be compilable (complex expressions)
         assert!(!CompiledExpression::is_compilable("$val ? 10 / $val : 0"));
-        assert!(!CompiledExpression::is_compilable("exp($val / 32 * log(2))"));
         assert!(!CompiledExpression::is_compilable("2 ** (-$val/3)"));
         assert!(!CompiledExpression::is_compilable("IsFloat($val) && abs($val) < 100"));
         assert!(!CompiledExpression::is_compilable("$val =~ s/ +$//"));
