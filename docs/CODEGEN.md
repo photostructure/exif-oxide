@@ -1049,6 +1049,5 @@ code.push_str(&format!("//! Timestamp: {}", source.extracted_at));
 
 - [API-DESIGN.md](API-DESIGN.md) - Public API structure and TagValue design
 - [PROCESSOR-DISPATCH.md](../guides/PROCESSOR-DISPATCH.md) - Advanced processor dispatch
-- [ENGINEER-GUIDE.md](../ENGINEER-GUIDE.md) - Practical implementation guide  
+- [GETTING-STARTED.md](../GETTING-STARTED.md) - Practical implementation guide  
 - [ARCHITECTURE.md](../ARCHITECTURE.md) - High-level system overview
-- [DEVELOPMENT-GUIDE.md](../guides/DEVELOPMENT-GUIDE.md) - Development workflow and best practices
