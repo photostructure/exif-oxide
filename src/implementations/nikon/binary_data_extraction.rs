@@ -280,7 +280,7 @@ fn extract_d850_orientation_info(
     let byte_order = ByteOrder::LittleEndian;
 
     // Extract orientation information
-    if let Ok(rotation) = extract_u8_at(data, offset + 0x00) {
+    if let Ok(rotation) = extract_u8_at(data, offset) {
         let tag_source = reader.create_tag_source_info("Nikon ShotInfo");
         reader.store_tag_with_precedence(
             0x2105, // Synthetic tag for D850 CameraOrientation from ShotInfo
@@ -371,7 +371,7 @@ fn extract_z8_orientation_info(reader: &mut ExifReader, data: &[u8], offset: usi
     let byte_order = ByteOrder::LittleEndian;
 
     // Extract orientation information (similar to D850 but different offsets)
-    if let Ok(rotation) = extract_u8_at(data, offset + 0x00) {
+    if let Ok(rotation) = extract_u8_at(data, offset) {
         let tag_source = reader.create_tag_source_info("Nikon ShotInfo");
         reader.store_tag_with_precedence(
             0x2112, // Synthetic tag for Z8 CameraOrientation from ShotInfo
@@ -480,7 +480,7 @@ fn extract_z9_orientation_info(reader: &mut ExifReader, data: &[u8], offset: usi
     let byte_order = ByteOrder::LittleEndian;
 
     // Extract orientation information (similar pattern to other models)
-    if let Ok(rotation) = extract_u8_at(data, offset + 0x00) {
+    if let Ok(rotation) = extract_u8_at(data, offset) {
         let tag_source = reader.create_tag_source_info("Nikon ShotInfo");
         reader.store_tag_with_precedence(
             0x2122, // Synthetic tag for Z9 CameraOrientation from ShotInfo
@@ -604,7 +604,7 @@ fn extract_z7_orientation_info(reader: &mut ExifReader, data: &[u8], offset: usi
     let byte_order = ByteOrder::LittleEndian;
 
     // Extract orientation information
-    if let Ok(rotation) = extract_u8_at(data, offset + 0x00) {
+    if let Ok(rotation) = extract_u8_at(data, offset) {
         let tag_source = reader.create_tag_source_info("Nikon ShotInfo");
         reader.store_tag_with_precedence(
             0x2132, // Synthetic tag for Z7 CameraOrientation from ShotInfo

@@ -1,186 +1,203 @@
-# Technical Project Plan: Olympus Required Tags Support
-
-**Related Milestone:** P3-MILESTONE-17c-Olympus-RAW
+# Technical Project Plan: Olympus Equipment Tag Extraction
 
 ## Project Overview
 
-- **Goal:** Support all "required: true" tags in tag-metadata.json for Olympus JPEG and RAW files
-- **Problem:** Current implementation extracts only ~50% of required tags for Olympus images due to infrastructure gaps and missing implementations
+- **Goal**: Extract critical Equipment subdirectory tags (CameraType2, LensType, SerialNumber) from Olympus images to enable proper camera/lens identification
+- **Problem**: Equipment IFD processor is stubbed, preventing extraction of 6 most critical required tags despite 90% infrastructure being complete
+- **Constraints**: Must maintain namespace-aware storage, follow ExifTool's dual binary/IFD Equipment format exactly
 
-## Background & Context
+---
 
-- PhotoStructure requires 124 tags marked as "required: true" for proper functionality
-- Olympus images contain these tags across multiple groups: EXIF, MakerNotes (including Equipment subdirectory), Composite, File
-- Current blocking issues prevent extraction of critical manufacturer-specific tags
+## ⚠️ CRITICAL REMINDERS
 
-## Technical Foundation
+If you read this document, you **MUST** read and follow [CLAUDE.md](../CLAUDE.md) as well as [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md):
 
-### Key Codebases
-- `src/exif/tags.rs` - Tag storage system (currently uses HashMap<u16, TagValue>)
-- `src/exif/ifd.rs` - IFD parsing and Equipment tag resolution
-- `src/processor_registry/dispatch.rs` - Olympus-specific dispatch rules
-- `src/implementations/olympus/` - Olympus-specific implementations
-- `src/generated/Olympus_pm/` - Generated code from ExifTool extraction
+- **Trust ExifTool** (Translate and cite references, but using codegen is preferred)
+- **Ask clarifying questions** (Maximize "velocity made good")
+- **Assume Concurrent Edits** (STOP if you find a compilation error that isn't related to your work)
+- **Don't edit generated code** (read [CODEGEN.md](CODEGEN.md) if you find yourself wanting to edit `src/generated/**.*rs`)
+- **Keep documentation current** (so update this TPP with status updates, and any novel context that will be helpful to future engineers that are tasked with completing this TPP. Do not use hyperbolic "DRAMATIC IMPROVEMENT"/"GROUNDBREAKING PROGRESS" styled updates -- that causes confusion and partially-completed low-quality work)
 
-### Documentation
-- `docs/todo/P3-MILESTONE-17c-Olympus-RAW.md` - Parent milestone tracking
-- `docs/TRUST-EXIFTOOL.md` - Critical: We translate ExifTool logic exactly
-- `third-party/exiftool/doc/modules/Olympus.md` - ExifTool Olympus module overview
+**NOTE**: These rules prevent build breaks, data corruption, and wasted effort across the team. 
 
-### ExifTool References
-- `third-party/exiftool/lib/Image/ExifTool/Olympus.pm` - Source of truth
-- Equipment table at line ~1590
-- Main table with 576+ tag definitions
-- olympusLensTypes hash with 200+ lens definitions
+If you are found violating any topics in these sections, **your work will be immediately halted, reverted, and you will be dismissed from the team.**
+
+Honest. RTFM.
+
+---
+
+## Context & Foundation
+
+### System Overview
+
+- **Namespace-aware tag storage**: `HashMap<(u16, String), TagValue>` system fully implemented, resolves tag ID conflicts between EXIF and MakerNotes contexts
+- **Tag kit system**: Unified extraction with 8 comprehensive Olympus tag tables (Equipment, CameraSettings, FocusInfo, etc.) - all generated code in place
+- **Equipment subdirectory**: ExifTool's dual binary/IFD format (0x2010) containing camera/lens identification tags - **core blocker is stubbed IFD processor**
+- **Composite tag infrastructure**: Ready to implement LensID lookups using existing 138+ entry olympusLensTypes database
+
+### Key Concepts & Domain Knowledge
+
+- **Equipment subdirectory (0x2010)**: Critical container for camera/lens identification using TIFF IFD structure. Contains CameraType2 (0x100), SerialNumber (0x101), LensType (0x201) among others
+- **Dual format processing**: ExifTool handles Equipment as binary data OR TIFF IFD depending on format detection - requires conditional processing
+- **LensType encoding**: 6-byte array → hex string conversion → olympusLensTypes lookup for human-readable lens names
+- **Namespace separation**: Equipment tags use "MakerNotes" namespace to avoid conflicts with standard EXIF tags of same IDs
+
+### Surprising Context
+
+- **90% infrastructure complete**: Tag kit migration, namespace storage, generated lookup tables all working - only Equipment IFD parsing is missing
+- **Raw data extraction works**: We already extract 32 MakerNotes tags (Tag_0000 through Tag_2050) but in binary format, not processed through Equipment IFD structure
+- **Generated code ready**: All Equipment tag definitions exist in `src/generated/Olympus_pm/tag_kit/` with proper tag names and PrintConv lookups
+- **Composite system ready**: LensID computation just needs Equipment LensType data to query existing olympusLensTypes database
+
+### Foundation Documents
+
+- **ExifTool source**: `third-party/exiftool/lib/Image/ExifTool/Olympus.pm:1170-1190` (dual format Equipment definition), lines 1588-1769 (Equipment tag table)
+- **Generated tag kits**: `src/generated/Olympus_pm/tag_kit/mod.rs` - OLYMPUS_PM_TAG_KITS with all tag definitions
+- **Current stub**: `src/generated/Olympus_pm/tag_kit/mod.rs:process_tag_0x2010_subdirectory` returns empty vector
+- **Namespace implementation**: `src/exif/tags.rs` - store_tag_with_precedence() with conflict resolution
+
+### Prerequisites
+
+- **Generated code system**: Tag kit extraction and modular tag_kit structure operational
+- **Namespace storage**: Tag ID conflict resolution working with (tag_id, namespace) keys
+- **TIFF IFD parsing**: Standard IFD parsing utilities available in exif module
 
 ## Work Completed
 
-### Infrastructure
-- ✅ MakerNotes IFD parsing fixed (was using binary processor)
-- ✅ Equipment subdirectory discovery at tag 0x2010
-- ✅ Equipment IFD parsing (extracts 25 entries)
-- ✅ Equipment codegen integration (generates lookup functions)
-- ✅ Basic EXIF tag extraction for standard tags
-
-### Generated Code
-- ✅ `equipment_tag_structure.rs` - Equipment tag name lookups
-- ✅ `olympuslenstypes.rs` - Lens type database (200+ entries)
-- ✅ `olympuscameratypes.rs` - Camera model lookups
-- ✅ Various inline PrintConv tables for subdirectories
+- ✅ **Namespace-aware storage** → implemented `HashMap<(u16, String), TagValue>` resolving tag ID conflicts between contexts
+- ✅ **Tag kit migration** → completed unified tag extraction with 8 Olympus tag tables replacing legacy inline_printconv approach
+- ✅ **Generated infrastructure** → 138+ lens database, camera types, all lookup tables generated and available
+- ✅ **Raw MakerNotes extraction** → 32 tags extracted from Equipment subdirectory but not processed through IFD structure
+- ✅ **Composite tag framework** → infrastructure ready for LensID computation using existing olympusLensTypes
 
 ## Remaining Tasks
 
-### 1. Fix Tag ID Conflict System (CRITICAL BLOCKER)
-**Blocks:** ~20 required tags including CameraType2, SerialNumber, LensType
+### 1. Task: Implement Equipment IFD Parser
 
-**Problem:** Current HashMap<u16, TagValue> storage prevents tags with same ID from different contexts
-- Equipment 0x0100 (CameraType2) conflicts with EXIF 0x0100 (ImageWidth)
-- Equipment 0x0101 (SerialNumber) conflicts with EXIF 0x0101 (ImageHeight)
+**Success Criteria**: `process_tag_0x2010_subdirectory` parses TIFF IFD structure and extracts Equipment tags with proper tag IDs and names
 
-**Implementation:**
-```rust
-// Change from:
-extracted_tags: HashMap<u16, TagValue>
-// To:
-extracted_tags: HashMap<(String, u16), TagValue>  // (namespace, tag_id)
-```
+**Approach**: 
+- Replace stub implementation with TIFF IFD parsing logic
+- Handle ExifTool's dual binary/IFD format detection
+- Extract individual Equipment tags (CameraType2, SerialNumber, LensType) with proper tag IDs
 
-**Files to update:**
-- `src/exif/tags.rs:16-55` - store_tag_with_precedence() method
-- `src/exif/mod.rs:37` - extracted_tags field definition
-- All code accessing extracted_tags (search for `.get(&tag_id)`)
+**Dependencies**: None - all infrastructure in place
 
-### 2. Olympus MakerNotes Required Tags
+**Success Patterns**:
+- ✅ Equipment tags extracted with proper names ("CameraType2", "LensType", "SerialNumber")
+- ✅ Raw binary format (Tag_0100, Tag_0101, Tag_0201) replaced with meaningful names
+- ✅ Test shows 6+ Equipment tags instead of 0
 
-**High Priority Equipment Tags:**
-- `CameraID` (0x0209) - freq 0.068, required [BLOCKED by conflict system]
-- `CameraType2` (0x0100) - Model name [BLOCKED by conflict system]  
-- `SerialNumber` (0x0101) - Camera serial [BLOCKED by conflict system]
-- `LensType` (0x0201) - freq 0.18, required [BLOCKED by conflict system]
-- `DateTimeUTC` (0x1001) - freq 0.007, required
+### 2. Task: Connect Equipment Tag Name Resolution
 
-**Implementation Notes:**
-- All Equipment tags already have codegen support
-- Just need namespace-aware storage to access them
+**Success Criteria**: Equipment tag IDs correctly resolve to proper names using generated tag kit definitions
 
-### 3. Standard EXIF Tags (Olympus writes these)
+**Approach**:
+- Link Equipment IFD tag extraction to OLYMPUS_PM_TAG_KITS lookup
+- Ensure Equipment tags use "MakerNotes" namespace for proper conflict resolution
+- Apply PrintConv processing for camera type and lens type lookups
 
-**Missing Required Tags:**
-- `Copyright` (0x8298) - freq 0.20, required
-- `Artist` (0x013b) - Empty but required field
-- `ExifVersion` (0x9000) - Usually "0230"
-- `SubSecTime` (0x9290) - freq 0.083, required
-- `UserComment` (0x9286) - Often empty
+**Dependencies**: Task 1 (Equipment IFD Parser)
 
-**Implementation:** Add to EXIF tag definitions in generated code
+**Success Patterns**:
+- ✅ CameraType2 shows "E-M10MarkIII" instead of binary data
+- ✅ SerialNumber shows "BHXA00022" instead of Tag_0101
+- ✅ LensType shows hex format "0 21 10" ready for olympusLensTypes lookup
 
-### 4. Composite Tag Calculations
+### 3. Task: Implement LensID Composite Calculation
 
-**High Priority:**
-- `Aperture` - Calculate from FNumber (freq 0.85)
-- `ShutterSpeed` - Format ExposureTime (freq 0.86)
-- `LensID` - Lookup from LensType using olympusLensTypes (freq 0.20)
-- `SubSecDateTimeOriginal` - Combine DateTimeOriginal + SubSecTime
+**Success Criteria**: LensID composite tag computes human-readable lens names using Equipment LensType data
 
-**Implementation:** Add composite tag registry entries
+**Approach**: 
+- Add LensID to composite tag dispatcher using Equipment:LensType dependency
+- Implement lens lookup logic matching ExifTool's olympusLensTypes conversion
+- Handle LensType hex format (6 bytes → "0 21 10" → "Olympus M.Zuiko Digital ED 14-42mm F3.5-5.6 EZ")
 
-### 5. File System Metadata
+**Dependencies**: Task 2 (Equipment Tag Name Resolution)
 
-**Missing Tags:**
-- `FilePermissions` - Use std::fs::metadata()
-- `FileAccessDate` - Use metadata.accessed()
-- `FileInodeChangeDate` - Unix-specific, use metadata.created()
+**Success Patterns**:
+- ✅ LensID composite shows full lens name from olympusLensTypes database
+- ✅ Handles both Olympus and third-party lenses (Sigma, Panasonic/Leica, Tamron)
+- ✅ Fallback to raw LensType value for unknown lenses
 
-### 6. GPS Tags (Lower frequency but required)
+### 4. Task: Add Equipment Integration Tests
 
-**Tags to implement:**
-- `GPSLatitude/Longitude` - Convert from rational degrees
-- `GPSAltitude` - Handle above/below sea level  
-- `GPSDateTime` - Combine GPSDateStamp + GPSTimeStamp
+**Success Criteria**: Comprehensive test suite validates Equipment tag extraction across different Olympus camera models
 
-## Prerequisites
+**Approach**:
+- Create tests using existing Olympus test images (E-M10 Mark III, OM-5, TG-7)
+- Validate critical Equipment tags are extracted with proper names and values
+- Compare output with ExifTool for accuracy verification
 
-- Complete namespace-aware tag storage implementation
-- Fix codegen processing order (Main table before subdirectories)
-- **Tag Kit Migration**: Complete [tag kit migration and retrofit](../done/20250723-tag-kit-migration-and-retrofit.md) for Olympus module
-  - Olympus has inline_printconv config that needs migration
-  - Ensures consistent extraction approach across all modules
+**Dependencies**: Task 2 (Equipment Tag Name Resolution)
 
-## Testing Strategy
+**Success Patterns**:
+- ✅ Tests pass with 6+ Equipment tags extracted for each camera model
+- ✅ Values match ExifTool output for camera identification
+- ✅ No regressions in existing EXIF tag extraction
 
-### Unit Tests
-- Test Equipment tag extraction with known values
-- Verify tag conflict resolution
-- Test composite tag calculations
+## Integration Requirements
 
-### Integration Tests
-- Compare output with ExifTool using compare-with-exiftool tool
-- Test both JPEG (C2000Z.jpg) and ORF (test.orf) files
-- Verify all required tags present in output
+**CRITICAL**: Building without integrating is failure. Don't accept equipment extraction that doesn't improve user experience.
 
-### Test Commands
-```bash
-# Check Equipment tags extracted correctly
-RUST_LOG=debug cargo run -- test-images/olympus/test.orf 2>&1 | grep -E "(CameraType2|SerialNumber|LensType)"
+Every feature must include:
+- [x] **Activation**: Equipment processing enabled by default in Olympus pipeline
+- [x] **Consumption**: Equipment tags accessible to composite calculations and output formatting  
+- [x] **Measurement**: Test output shows meaningful Equipment tag names instead of binary Tag_XXXX format
+- [x] **Cleanup**: Raw binary tag representation removed, Equipment tags show proper human-readable names
 
-# Compare with ExifTool
-cargo run --bin compare-with-exiftool test-images/olympus/test.orf
+**Red Flag Check**: If Equipment tags still show as "Tag_0100" or binary data, the integration is incomplete.
 
-# Verify no tag conflicts
-RUST_LOG=debug cargo run -- test-images/olympus/test.orf 2>&1 | grep "Ignoring.*priority"
-```
+## Working Definition of "Complete"
 
-## Success Criteria & Quality Gates
+A feature is complete when:
+- ✅ **System behavior changes** - Olympus images show "LensType" instead of "Tag_0201"
+- ✅ **Default usage** - Equipment tags extracted automatically for all Olympus images, no opt-in required  
+- ✅ **Old path removed** - Binary Tag_XXXX format eliminated for Equipment section
+- ❌ Code exists but shows raw binary (example: "Equipment extraction implemented but still shows Tag_0100")
+- ❌ Feature works "if you look carefully" (example: "Equipment data available but not in main output")
 
-- All 124 required tags extractable from Olympus test images
-- No tag ID conflicts between EXIF and MakerNotes
-- Output matches ExifTool -j -struct -G format
-- All existing tests continue to pass
-- Performance remains within 10% of current baseline
+## Testing
+
+- **Unit**: Test Equipment IFD parsing with synthetic Equipment data
+- **Integration**: Verify Equipment tags extracted from real Olympus ORF/JPEG files
+- **Manual check**: Run `cargo run -- test-images/olympus/e_m10_mk_iii.jpg` and confirm CameraType2, LensType, SerialNumber visible
+
+## Definition of Done
+
+- [ ] `cargo t olympus_equipment` passes
+- [ ] `make precommit` clean
+- [ ] Equipment tags show proper names in Olympus image output
+- [ ] ExifTool comparison shows matching Equipment tag values
+- [ ] No binary Tag_XXXX format for Equipment section
 
 ## Gotchas & Tribal Knowledge
 
-### Tag Conflict Architecture
-- This issue affects ALL manufacturers, not just Olympus
-- Canon, Nikon, Sony all have similar subdirectory conflicts
-- Solution must be generic, not Olympus-specific
+### Equipment Dual Format Architecture
+- **Equipment format detection**: ExifTool uses conditional processing - format "ifd" vs binary data require different parsing
+- **ByteOrder Unknown**: ExifTool auto-detects endianness from TIFF magic bytes when ByteOrder => 'Unknown' specified
+- **IFD vs Binary**: Modern cameras use TIFF IFD structure, legacy may use binary data format
 
-### Equipment Subdirectory
-- Tag 0x2010 can be either offset (IFD) or binary data
-- Must check format to determine processing method
-- Equipment has WRITE_PROC => WriteExif (it's an IFD structure)
+### LensType Hex Encoding
+- **6-byte format**: `[Make, Unknown, Model, Sub-model, Unknown, Unknown]` where only bytes 0, 2, 3 used for lookup
+- **Hex conversion**: `sprintf("%x %.2x %.2x", @a[0,2,3])` produces keys like "0 01 00", "1 05 10", "2 15 10"
+- **Manufacturer codes**: 0=Olympus, 1=Sigma, 2=Panasonic/Leica, 5=Tamron in first hex digit
 
-### Lens Type Complexities
-- LensType combines manufacturer code + lens ID
-- Some lenses share IDs across manufacturers
-- Teleconverter detection affects lens identification
+### Namespace Separation Critical
+- **Tag ID conflicts**: Equipment CameraType2 (0x100) conflicts with EXIF ImageWidth (0x100)
+- **Namespace requirement**: Equipment tags MUST use "MakerNotes" namespace to avoid storage conflicts
+- **Priority handling**: ExifTool behavior preserved with proper namespace-aware precedence rules
 
-### Olympus-Specific Quirks
-- MakerNotes start with "OLYMPUS\0II\x03\0"
-- Some models use different MakerNote structures
-- Art filters affect various tag interpretations
+### Generated Code Integration
+- **Tag kit ready**: All Equipment tag definitions exist in generated code with proper names and PrintConv
+- **Stub replacement**: Only the Equipment IFD processor stub needs implementation - all supporting infrastructure complete
+- **Testing framework**: Existing Olympus test images available for comprehensive validation across camera models
 
-### Common Mistakes
-- Don't assume tag names match between Main and Equipment tables
-- Equipment BodyFirmwareVersion != Main FirmwareVersion  
-- Some tags are duplicated with different meanings
+## Quick Debugging
+
+Stuck? Try these:
+
+1. `RUST_LOG=debug cargo run -- test-images/olympus/e_m10_mk_iii.jpg 2>&1 | grep Equipment` - See Equipment processing
+2. `cargo run --bin compare-with-exiftool test-images/olympus/e_m10_mk_iii.jpg | grep -E "(CameraType2|LensType|SerialNumber)"` - Compare critical Equipment tags
+3. `rg "process_tag_0x2010" src/` - Find Equipment processor implementation
+4. `git log -S "Equipment" --oneline` - Track Equipment-related changes
