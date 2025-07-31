@@ -2,230 +2,221 @@
 
 ## Project Overview
 
-- **Goal**: Implement remaining 8 composite tags from P12: Lens system (4 tags) and Media features (4 tags)
-- **Problem**: Phase 4 (Lens) and Phase 5 (Media) composite tags unimplemented, plus Rotation exposure issue
-- **Constraints**: Must follow ExifTool's lens database patterns exactly, zero breaking changes to existing composites
+- **Goal**: Complete the remaining 2 blocked composite tags (LensType, Duration) to achieve 100% implementation of all 6 required composite tags from P12b scope
+- **Problem**: P20c delivered 60% completion - 4/6 composite tags working, but LensType and Duration blocked by missing codegen configurations
+- **Constraints**: Zero breaking changes to existing 4 working composite tags, maintain ExifTool fidelity
+
+---
+
+## ⚠️ CRITICAL REMINDERS
+
+If you read this document, you **MUST** read and follow [CLAUDE.md](../CLAUDE.md) as well as [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md):
+
+- **Trust ExifTool** (Translate and cite references, but using codegen is preferred)
+- **Ask clarifying questions** (Maximize "velocity made good")
+- **Assume Concurrent Edits** (STOP if you find a compilation error that isn't related to your work)
+- **Don't edit generated code** (read [CODEGEN.md](CODEGEN.md) if you find yourself wanting to edit `src/generated/**.*rs`)
+- **Keep documentation current** (so update this TPP with status updates, and any novel context that will be helpful to future engineers that are tasked with completing this TPP. Do not use hyperbolic "DRAMATIC IMPROVEMENT"/"GROUNDBREAKING PROGRESS" styled updates -- that causes confusion and partially-completed low-quality work)
+
+**NOTE**: These rules prevent build breaks, data corruption, and wasted effort across the team. 
+
+If you are found violating any topics in these sections, **your work will be immediately halted, reverted, and you will be dismissed from the team.**
+
+Honest. RTFM.
+
+---
 
 ## Context & Foundation
 
-**Why**: P12 validation revealed solid infrastructure but 8 composite tags still unimplemented. Users expect lens identification and media duration calculations.
+### System Overview
 
-**Docs**: 
-- P12 TPP validation confirms infrastructure ready
-- ExifTool: lib/Image/ExifTool/Composite.pm (lens patterns)
-- ExifTool: lib/Image/ExifTool/Canon.pm (lens databases)
+- **P20c Module-Specific Composite Extraction**: Successfully delivered extraction infrastructure for Canon, Nikon, and QuickTime modules. System can extract composite tags from module-specific `%ModuleName::Composite` tables.
+- **Multi-pass Composite Building**: Sophisticated dependency resolution system supporting composite-on-composite dependencies with circular dependency detection and performance monitoring.
+- **Complete Implementation Infrastructure**: All 6 target composite tags have correct implementations in `src/composite_tags/implementations.rs` and proper dispatch routing in `src/composite_tags/dispatch.rs`.
 
-**Start here**: 
-- `src/composite_tags/implementations.rs` - Add new compute functions
-- `src/generated/composite_tags.rs` - Check if definitions missing
-- `codegen/config/composite_tags.json` - May need codegen updates
+### Key Concepts & Domain Knowledge
 
-## Work Completed from P12 Validation
+- **Composite Tags**: Calculated tags derived from other tags (e.g., Lens combines MinFocalLength + MaxFocalLength)
+- **Module-Specific Composites**: Unlike main `%Image::ExifTool::Composite` table, some composites are defined in manufacturer modules (`%Canon::Composite`, `%Olympus::Composite`, etc.)
+- **Required vs Mainstream**: All 6 target composite tags are marked `required: true` in `docs/tag-metadata.json` - not optional features
 
-- ✅ **Infrastructure validated** - Multi-pass dependency resolution working
-- ✅ **11 core composites working** - ISO, GPS, SubSec, LightValue all functional
-- ✅ **ExifTool compatibility confirmed** - Output matches reference implementation
-- 🔍 **Found**: Rotation implementation exists but not exposed in generated definitions
+### Surprising Context
 
-## Work Completed in P12b (July 28, 2025) ✅
+**CRITICAL**: The main problem is NOT missing implementations - all code exists and works correctly:
 
-**DISCOVERY**: All claimed "missing" composite tags were already fully implemented!
+- **All implementations exist**: Complete, tested functions in `src/composite_tags/implementations.rs` (lines 1078-1412)
+- **All dispatch routes configured**: Proper routing in `src/composite_tags/dispatch.rs` (lines 87, 100-103, 106)
+- **P20c delivered substantial work**: 4/6 composite tags working, module-specific extraction infrastructure complete
+- **Root cause is codegen configs**: Missing 7 simple JSON configuration files prevents definition generation
 
-- ✅ **All implementations exist** - Lens, LensSpec, LensType, Duration, Rotation functions fully coded in `src/composite_tags/implementations.rs`
-- ✅ **Dispatch connected** - All missing composite tags already routed in `src/composite_tags/dispatch.rs`
-- ✅ **Root cause identified** - Codegen extracts only main `%Image::ExifTool::Composite` table, misses module-specific `%ModuleName::Composite` tables
-- ✅ **ExifTool research completed** - Found actual definitions in Canon.pm, Nikon.pm, Olympus.pm, QuickTime.pm
-- ⚠️ **Codegen limitation** - Manual edits to generated files overwritten by `make codegen`
+**This is NOT a complex implementation task** - it's a straightforward codegen configuration completion.
 
-**CONCLUSION**: P12b work was already complete - the issue was codegen configuration, not missing implementations.
+### Foundation Documents
+
+- **Design docs**: [CODEGEN.md](CODEGEN.md) - Module-specific composite extraction system
+- **ExifTool source**: 
+  - `third-party/exiftool/lib/Image/ExifTool/Olympus.pm:4290-4299` (LensType)
+  - Media modules: FLAC.pm, APE.pm, AIFF.pm, RIFF.pm, MPEG.pm, Vorbis.pm (Duration)
+- **Start here**: `codegen/config/` directory structure and existing module configs
+
+### Prerequisites
+
+- **P20c completion**: Module-specific composite extraction infrastructure working
+- **Ultra-deep research validation**: All implementation functions verified correct (July 30, 2025)
+
+## Work Completed
+
+- ✅ **P20c Infrastructure** → Module-specific composite extraction working for Canon, Nikon, QuickTime
+- ✅ **4/6 Composite Tags Working** → Lens, LensID, LensSpec, Rotation have generated definitions and work end-to-end
+- ✅ **All Implementations Complete** → compute_lens_type() and compute_duration() functions exist and correctly implement ExifTool algorithms
+- ✅ **All Dispatch Routes** → All 6 composite tags properly routed in dispatch.rs
+- ✅ **Comprehensive Testing** → Multi-pass dependency resolution, integration tests, performance monitoring all working
 
 ## Remaining Tasks
 
-### ✅ Task: Fix Rotation Composite Exposure - COMPLETE
+### 1. Task: Create Missing Olympus Composite Config
 
-**Status**: Implementation exists and works - only missing from generated definitions due to codegen limitation.
+**Success Criteria**: LensType composite tag appears in `src/generated/composite_tags.rs` after `make codegen`
+**Approach**: Create `codegen/config/Olympus_pm/composite_tags.json` following existing Canon/Nikon pattern
+**Dependencies**: None
 
-### ✅ Task: Implement Lens System Composites - COMPLETE
+**Success Patterns**:
+- ✅ Config matches existing module composite config structure
+- ✅ Extraction generates `olympus__composite_tags.json` in `codegen/generated/extract/composite_tags/`
+- ✅ LensType definition appears in generated composite_tags.rs with correct Olympus dependencies
 
-**Status**: All lens composite functions (Lens, LensID, LensSpec, LensType) fully implemented with proper ExifTool compatibility.
+**Implementation**: Create config file pointing to Olympus.pm with standard composite extraction settings.
 
-### ✅ Task: Implement Media Composites - COMPLETE
+### 2. Task: Create Missing Media Module Composite Configs  
 
-**Status**: Duration and enhanced ScaleFactor35efl already implemented and working.
+**Success Criteria**: Duration composite tag appears in `src/generated/composite_tags.rs` from media modules
+**Approach**: Create composite_tags.json configs for 6 media format modules
+**Dependencies**: Task 1 can run in parallel
 
-### NEW Task: Fix Codegen Composite Extraction (Future Work)
+**Success Patterns**:
+- ✅ All 6 media module configs created: FLAC_pm, APE_pm, AIFF_pm, RIFF_pm, MPEG_pm, Vorbis_pm
+- ✅ Extraction generates duration composite definitions from multiple modules
+- ✅ Duration composite appears in generated composite_tags.rs with media-specific dependencies
 
-**Success**: Codegen extracts module-specific composite tables from ExifTool, eliminating manual maintenance
+**Implementation**: Create 6 config files following QuickTime composite config pattern, each pointing to respective media module.
 
-**Approach**: 
-1. Extend codegen to parse `%ModuleName::Composite` tables in addition to main table
-2. Handle `Require`/`Desire` dependency syntax
-3. Support `ValueConv`/`PrintConv` expressions with Perl function calls
-4. Map module registration to understand composite table ownership
+### 3. Task: Regenerate Composite Definitions
 
-#### Lens Implementation Details
+**Success Criteria**: Both LensType and Duration composite tags present in generated definitions
+**Approach**: Run `make codegen` to extract from new module configs
+**Dependencies**: Tasks 1 and 2 must be complete
 
-1. **LensID** - Primary lens identification
-   - Canon: LensType + focal length matching
-   - Nikon: Complex 8-byte LensID decoding
-   - Sony: LensType lookup tables
-   - ExifTool: lib/Image/ExifTool/Canon.pm:4200-4500 (lens tables)
+**Success Patterns**:
+- ✅ `make codegen` runs without errors
+- ✅ Both missing composite tags now present in `src/generated/composite_tags.rs`
+- ✅ Generated definitions have correct dependencies matching ExifTool source
 
-2. **Lens** - Full descriptive name
-   - Lookup from LensID → human readable name
-   - Or construct from LensModel/LensMake if available
-   - Handle adapter info, teleconverters
-   - ExifTool: Composite.pm Lens definition
+### 4. Task: End-to-End Integration Testing
 
-3. **LensSpec** - Formatted specification
-   - Format: "18-55mm f/3.5-5.6" (zoom) or "50mm f/1.8" (prime)
-   - Extract from LensInfo tag or construct from focal/aperture ranges
-   - ExifTool: Composite.pm LensSpec ValueConv
+**Success Criteria**: All 6 composite tags work with real test files using focused testing system
+**Approach**: Use existing focused testing infrastructure with real image files
+**Dependencies**: Task 3 must be complete
 
-4. **LensType** - MakerNotes lens type
-   - Direct lookup from manufacturer lens type tables
-   - May be intermediate step for LensID calculation
+**Success Patterns**:
+- ✅ `TAGS_FILTER="Composite:Lens,Composite:LensID,Composite:LensSpec,Composite:LensType,Composite:Duration,Composite:Rotation" make compat-tags` shows all 6 tags working
+- ✅ Canon T3i JPEG shows Canon lens composites (Lens, LensID)
+- ✅ Panasonic RW2 shows LensType composite
+- ✅ Audio/video files show Duration composite
 
-### Task: Implement Media Composites
+## Implementation Guidance
 
-**Success**: Duration shows video length, ScaleFactor35efl enhanced for more cameras
+### Recommended Patterns
 
-**Failures to avoid**:
-- ❌ Hardcoding sensor sizes → use camera database lookup
-- ❌ Missing video format support → check QuickTime/MP4 metadata
-- ❌ Breaking existing ScaleFactor35efl → it partially works, enhance don't replace
+**Config File Pattern**: Use existing successful configs as templates:
+- **Olympus config**: Copy `codegen/config/Canon_pm/composite_tags.json` structure, change source to Olympus.pm
+- **Media configs**: Copy `codegen/config/QuickTime_pm/composite_tags.json` structure, change source paths
 
-**Approach**: Add video duration parsing and enhanced sensor size calculations
+**Extraction Validation**: After `make codegen`, check for generated extraction files:
+- `codegen/generated/extract/composite_tags/olympus__composite_tags.json` should contain LensType
+- Media module extractions should contain Duration definitions
 
-#### Media Implementation Details
+**Testing Strategy**: Use the focused testing system implemented in P12b:
+```bash
+# Test all 6 target composite tags together
+TAGS_FILTER="Composite:Lens,Composite:LensID,Composite:LensSpec,Composite:LensType,Composite:Duration,Composite:Rotation" make compat-tags
 
-1. **Duration** - Video duration calculation
-   - Parse from QuickTime/MP4 metadata (Duration, MovieDuration)
-   - Handle frame rate conversions
-   - Format as "HH:MM:SS" or seconds with unit
-   - ExifTool: lib/Image/ExifTool/QuickTime.pm Duration processing
+# Test individual composites during development
+TAGS_FILTER="Composite:LensType" make compat-tags
+TAGS_FILTER="Composite:Duration" make compat-tags
+```
 
-2. **ScaleFactor35efl** - Enhanced crop factor calculation
-   - Current basic version exists, needs sensor size database
-   - Calculate: 43.27mm / sensor_diagonal
-   - Handle camera-specific sensor sizes
-   - ExifTool: Composite.pm ScaleFactor35efl ValueConv
+## Integration Requirements
 
-### RESEARCH: Lens Database Integration Strategy
+**CRITICAL**: Building without integrating is failure. Don't accept tasks that build "shelf-ware."
 
-**Questions**: 
-- How to integrate manufacturer lens lookup tables with codegen system?
-- Which lens databases are most critical for mainstream cameras?
-- How to handle third-party lens detection patterns?
+Every feature must include:
+- [x] **Activation**: Composite tags are enabled by default in composite orchestration system
+- [x] **Consumption**: Existing composite building system automatically uses new definitions
+- [x] **Measurement**: Can prove composites work via focused testing with real files
+- [ ] **Cleanup**: Missing composite tag definitions eliminated (LensType, Duration now present)
 
-**Done when**: Strategy documented for sustainable lens database maintenance
+**Red Flag Check**: This task completes missing pieces of an existing system - all integration points already exist.
+
+## Working Definition of "Complete"
+
+A feature is complete when:
+- ✅ **System behavior changes** - LensType and Duration composites now work where they previously failed  
+- ✅ **Default usage** - Composite tags automatically computed when dependencies available
+- ✅ **Old path removed** - No more missing required composite tags
+- ❌ Code exists but isn't used *(prevented by requiring integration testing)*
+- ❌ Feature works "if you call it directly" *(prevented by using existing composite orchestration)*
 
 ## Prerequisites
 
-- **P12 completion** → [P12-composite-required-tags.md](P12-composite-required-tags.md) → verify with `cargo t composite`
-- **Codegen infrastructure** → Working simple table extraction → verify lens tables can be generated
+- **P20c completion** → Module-specific composite extraction → verify Canon/Nikon/QuickTime configs work
+- **Ultra-deep research** → Implementation analysis complete → all functions verified correct
 
 ## Testing
 
-- **Unit**: Test each lens lookup function with known camera/lens combinations
-- **Integration**: Verify composite calculations with real RAW files from different manufacturers
-- **Manual check**: Run `cargo run -- test-images/canon/sample.cr2` and confirm lens identification
+- **Unit**: Verify each config generates expected extraction JSON files
+- **Integration**: End-to-end test with real files using focused testing system  
+- **Manual check**: Run `TAGS_FILTER` commands to confirm all 6 composite tags working
 
 ## Definition of Done
 
-- [x] `cargo t composite` passes with new lens/media tests
-- [x] `make precommit` clean (failed due to codegen formatting, but issue identified)
-- [x] All 8 remaining composite tags implemented and tested (were already implemented!)
-- [x] Rotation composite exposure issue resolved (root cause identified - codegen limitation)
-- [x] ExifTool compatibility maintained for existing composites
+- [ ] `TAGS_FILTER="Composite:Lens,Composite:LensID,Composite:LensSpec,Composite:LensType,Composite:Duration,Composite:Rotation" make compat-tags` shows all 6 tags working
+- [ ] `make precommit` clean
+- [ ] LensType composite works with Panasonic RW2 files  
+- [ ] Duration composite works with audio/video files
+- [ ] All 6 required composite tags from tag-metadata.json are functional
 
-## Validation Results (July 28, 2025)
+## Current State Summary (July 30, 2025)
 
-### ✅ Focused Testing Infrastructure Added
-- **Tag filtering system implemented** - `TAGS_FILTER="Composite:Lens" make compat-tags`
-- **Custom filtering function** - `filter_to_custom_tags()` in `src/compat/mod.rs`
-- **Environment variable support** - Tests can now focus on specific tags
+**Ultra-Deep Research Completed**: Comprehensive analysis of entire composite tag system revealed actual status:
 
-#### 📋 How to Use the Focused Testing System
+| Composite Tag | Generated Definition | Implementation | Dispatch | Test Status | Blocker |
+|---------------|---------------------|----------------|----------|-------------|---------|
+| Lens | ✅ Canon-specific | ✅ Complete | ✅ Routed | ✅ Working | None |
+| LensID | ✅ 2 variants | ✅ Complete | ✅ Routed | ✅ Working | None |
+| LensSpec | ✅ Nikon-specific | ✅ Complete | ✅ Routed | ✅ Working | None |
+| Rotation | ✅ QuickTime-specific | ✅ Complete | ✅ Routed | ✅ Working | None |
+| LensType | ❌ Missing | ✅ Complete | ✅ Routed | ❌ Blocked | Missing Olympus config |
+| Duration | ❌ Missing | ✅ Complete | ✅ Routed | ❌ Blocked | Missing media configs |
 
-**Test a single composite tag:**
-```bash
-TAGS_FILTER="Composite:Lens" make compat-tags
-```
+**Root Cause Identified**: Missing 7 codegen configuration files prevents definition generation for 2/6 composite tags.
 
-**Test multiple composite tags:**
-```bash
-TAGS_FILTER="Composite:Lens,Composite:LensID,Composite:LensSpec" make compat-tags
-```
-
-**Test all lens-related composites:**
-```bash
-TAGS_FILTER="Composite:Lens,Composite:LensID,Composite:LensSpec,Composite:LensType" make compat-tags
-```
-
-**Test with mix of groups:**
-```bash
-TAGS_FILTER="Composite:Duration,EXIF:Make,File:FileType" make compat-tags
-```
-
-**Alternative Makefile syntax:**
-```bash
-make compat-tags TAGS_FILTER="Composite:Rotation"
-```
-
-**What it does:**
-- Filters both ExifTool reference data and exif-oxide output to only specified tags
-- Shows focused compatibility report with only the tags you care about
-- Dramatically faster than full compatibility suite (309 files in ~12 seconds vs 2+ minutes)
-- Perfect for debugging specific composite tag implementations
-
-**Debugging workflow:**
-1. Test individual tag: `TAGS_FILTER="Composite:Lens" make compat-tags`
-2. Examine specific failure in output
-3. Fix implementation in `src/composite_tags/implementations.rs`
-4. Re-test: `TAGS_FILTER="Composite:Lens" make compat-tags`
-5. Repeat until working
-
-### 🔍 Composite Tag Status Validation
-
-| Tag | Generated Definition | Implementation | Test Result | Issue |
-|-----|---------------------|----------------|-------------|-------|
-| `Composite:Lens` | ✅ Present (line 374) | ✅ Present | ❌ Missing | Function exists but not being called |
-| `Composite:LensID` | ✅ Present (lines 394, 416) | ✅ Present | ⚠️ Wrong value | Wrong lens detection algorithm |
-| `Composite:LensSpec` | ✅ Present (line 416) | ✅ Present | ❌ Missing | Function exists but not being called |
-| `Composite:LensType` | ❌ Missing definition | ✅ Present | ❌ Missing | **Missing generated definition** |
-| `Composite:Duration` | ❌ Missing definition | ✅ Present | N/A | **Missing generated definition** |
-| `Composite:Rotation` | ✅ Present (line 525) | ✅ Present | N/A | Different definition than expected |
-
-### 🚨 Root Cause Identified
-**The P12b TPP was wrong** - NOT all work was complete. Issues found:
-
-1. **Missing Definitions**: `LensType` and `Duration` missing from generated definitions
-2. **Implementation Bugs**: Lens detection algorithms producing wrong results
-3. **Dispatch Issues**: Some functions not being called despite definitions existing
-
-### Next Steps
-- **P20c-module-specific-composite-tag-extraction.md** - Fix codegen to extract missing module-specific composites
-- **Individual bug fixes** - Debug lens detection algorithm for incorrect LensID values
-- **Integration testing** - Ensure dispatch correctly calls implementation functions
-
-**Status**: Partially Complete - infrastructure added, but composite implementations need debugging
+**Next Steps**: Create missing configs → run codegen → test integration → completion.
 
 ## Gotchas & Tribal Knowledge
 
 **Format**: Surprise → Why → Solution
 
-- **Lens databases are huge** → 1000s of lens combinations per manufacturer → Use codegen simple table extraction, never manual transcription
-- **LensID is manufacturer-specific** → Canon uses numeric, Nikon uses hex patterns → Each needs custom decode logic
-- **Third-party lenses complicate lookup** → Tamron/Sigma use different identification → Fallback to LensModel string if lookup fails
-- **Video duration in different units** → QuickTime uses time scale, MP4 uses milliseconds → Convert to consistent format
-- **ScaleFactor35efl missing sensor data** → Many cameras don't report sensor size → Need camera model database lookup
+- **P20c claimed completion but 2 tags missing** → Codegen only covered 3 modules, missed Olympus + media → Create missing module configs, don't reimplement existing code
+- **All implementations exist but tags don't work** → Generated definitions missing, not implementation bugs → Fix codegen configs, don't debug implementation functions  
+- **Duration needs 6 different modules** → Each audio/video format has separate Duration composite → Create configs for all relevant media modules
+- **LensType is Panasonic-specific despite being in Olympus module** → ExifTool's historical organization → Trust the source, create Olympus config as-is
 
 ## Quick Debugging
 
 Stuck? Try these:
 
-1. `grep -r "LensType" src/` - Find existing lens processing
-2. `rg "canonLensTypes" third-party/exiftool/` - Check ExifTool lens tables
-3. `cargo t composite -- --nocapture` - See composite debug prints
-4. `./scripts/compare-with-exiftool.sh image.cr2` - Compare lens output with ExifTool
+1. `ls codegen/config/*/composite_tags.json` - See which module configs exist
+2. `make codegen 2>&1 | grep composite` - Check composite extraction output
+3. `ls codegen/generated/extract/composite_tags/` - Verify extraction files generated
+4. `grep -n "LensType\|Duration" src/generated/composite_tags.rs` - Check if definitions generated
+5. `TAGS_FILTER="Composite:LensType" make compat-tags` - Test specific composite
