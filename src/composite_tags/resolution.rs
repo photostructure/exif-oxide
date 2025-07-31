@@ -175,6 +175,43 @@ pub fn resolve_tag_dependency(
         }
     }
 
+    // Step 3.5: Handle GPS/EXIF group equivalence
+    // ExifTool: GPS tags have Group0=EXIF, Group1=GPS, making them accessible as both
+    // "GPS:GPSTagName" and "EXIF:GPSTagName" - lib/Image/ExifTool/GPS.pm:52
+    if tag_name.starts_with("GPS:") {
+        // Try EXIF: prefix for GPS: requests (GPS:GPSLatitude -> EXIF:GPSLatitude)
+        let exif_tag_name = tag_name.replace("GPS:", "EXIF:");
+        trace!(
+            "GPS/EXIF equivalence: Looking for {} as {}",
+            tag_name,
+            exif_tag_name
+        );
+        if let Some(value) = available_tags.get(&exif_tag_name) {
+            trace!(
+                "GPS/EXIF equivalence: Found {} -> {}",
+                tag_name,
+                exif_tag_name
+            );
+            return Some(value.clone());
+        }
+    } else if tag_name.starts_with("EXIF:GPS") {
+        // Try GPS: prefix for EXIF: requests (EXIF:GPSLatitude -> GPS:GPSLatitude)
+        let gps_tag_name = tag_name.replace("EXIF:", "GPS:");
+        trace!(
+            "EXIF/GPS equivalence: Looking for {} as {}",
+            tag_name,
+            gps_tag_name
+        );
+        if let Some(value) = available_tags.get(&gps_tag_name) {
+            trace!(
+                "EXIF/GPS equivalence: Found {} -> {}",
+                tag_name,
+                gps_tag_name
+            );
+            return Some(value.clone());
+        }
+    }
+
     // Step 4: Try manual computation for special cases
     // This handles cases like "ISO" where ExifTool would find EXIF:ISO tag 0x8827
     // but we want to provide consolidated ISO from multiple sources
