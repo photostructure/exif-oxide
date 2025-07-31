@@ -1,0 +1,18 @@
+{
+  "SourceFile": "third-party/exiftool/t/images/Sigma.x3f",
+  "File:FileSize": 1464,
+  "ExifTool:ExifToolVersion": 13.31,
+  "File:FileName": "Sigma.x3f",
+  "File:Directory": "third-party/exiftool/t/images",
+  "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
+  "File:FileType": "X3F",
+  "File:FileTypeExtension": "x3f",
+  "File:MIMEType": "image/x-sigma-x3f",
+  "Composite:Aperture": 8.4,
+  "Composite:ShutterSpeed": "1/108",
+  "Composite:ImageSize": "2268x1512",
+  "Composite:LensID": "Sigma 15-30mm F3.5-4.5 EX DG Aspherical",
+  "Composite:Megapixels": 3.4
+}

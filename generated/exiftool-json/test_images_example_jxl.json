@@ -1,0 +1,17 @@
+{
+  "SourceFile": "test-images/example.jxl",
+  "File:FileSize": 420610,
+  "ExifTool:ExifToolVersion": 13.31,
+  "File:FileName": "example.jxl",
+  "File:Directory": "test-images",
+  "File:FileModifyDate": "2025:07:28 13:52:53-07:00",
+  "File:FileInodeChangeDate": "2025:07:28 13:52:53-07:00",
+  "File:FilePermissions": "-rw-rw-r--",
+  "File:FileType": "JXL",
+  "File:FileTypeExtension": "jxl",
+  "File:MIMEType": "image/jxl",
+  "File:ImageWidth": 896,
+  "File:ImageHeight": 1080,
+  "Composite:ImageSize": "896x1080",
+  "Composite:Megapixels": 0.968
+}

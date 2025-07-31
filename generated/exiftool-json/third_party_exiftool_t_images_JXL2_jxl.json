@@ -1,0 +1,17 @@
+{
+  "SourceFile": "third-party/exiftool/t/images/JXL2.jxl",
+  "File:FileSize": 395,
+  "ExifTool:ExifToolVersion": 13.31,
+  "File:FileName": "JXL2.jxl",
+  "File:Directory": "third-party/exiftool/t/images",
+  "File:FileModifyDate": "2025:06:30 12:33:09-07:00",
+  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FilePermissions": "-rwxrwxr-x",
+  "File:FileType": "JXL",
+  "File:FileTypeExtension": "jxl",
+  "File:MIMEType": "image/jxl",
+  "File:ImageWidth": 200,
+  "File:ImageHeight": 130,
+  "Composite:ImageSize": "200x130",
+  "Composite:Megapixels": 0.026
+}
