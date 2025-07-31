@@ -122,7 +122,7 @@ Dual-licensed under commercial license and GNU Affero General Public License v3.
 
 ### Essential Reading
 
-- [ENGINEER-GUIDE.md](docs/ENGINEER-GUIDE.md) - Start here for new contributors
+- [GETTING-STARTED.md](docs/GETTING-STARTED.md) - Start here for new contributors
 - [ARCHITECTURE.md](docs/ARCHITECTURE.md) - System design and philosophy
 - [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md) - **Critical**: Our #1 development rule
 - [MILESTONES.md](docs/MILESTONES.md) - Current development roadmap
