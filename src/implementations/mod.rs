@@ -5,6 +5,7 @@
 
 pub mod canon;
 pub mod generic;
+pub mod makernotes;
 pub mod minolta_raw;
 pub mod missing;
 pub mod nikon;
