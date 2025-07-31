@@ -2,398 +2,252 @@
 
 ## Project Overview
 
-**Goal**: Expand subdirectory coverage from 8.95% to 50%+ by systematically implementing missing condition patterns and manufacturer configurations.
+- **Goal**: Expand subdirectory coverage from 12.23% (229/1872) to 50%+ by implementing missing configurations for high-impact zero-coverage modules
+- **Problem**: Critical modules like Exif (122 subdirs), DNG (94), JPEG (64), Pentax (51), Matroska (48) have 0% coverage, preventing meaningful metadata extraction from common file formats
+- **Constraints**: Must maintain ExifTool compatibility, leverage existing mature tag kit architecture, no performance regression
 
-**Problem Statement**: The subdirectory discovery tool found 1,865 SubDirectory patterns, but only 167 (8.95%) are implemented. This causes exif-oxide to output raw binary arrays instead of meaningful tags for most manufacturer-specific data.
+---
 
-## Background & Context
+## ⚠️ CRITICAL REMINDERS
 
-### Why This Work Is Needed
+If you read this document, you **MUST** read and follow [CLAUDE.md](../CLAUDE.md) as well as [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md):
 
-- **Current State**: Only Canon (46.3%) and XMP (97.5%) have decent coverage
-- **User Impact**: Raw arrays like `ColorData1: [10, 789, 1024, ...]` instead of `WB_RGGBLevelsAsShot: "2241 1024 1024 1689"`
-- **Scale**: 1,698 missing subdirectories across 100+ modules
-- **Infrastructure Ready**: Tag kit subdirectory support is 95% complete - just needs configs and enhanced parsing
+- **Trust ExifTool** (Translate and cite references, but using codegen is preferred)
+- **Ask clarifying questions** (Maximize "velocity made good")
+- **Assume Concurrent Edits** (STOP if you find a compilation error that isn't related to your work)
+- **Don't edit generated code** (read [CODEGEN.md](CODEGEN.md) if you find yourself wanting to edit `src/generated/**.*rs`)
+- **Keep documentation current** (so update this TPP with status updates, and any novel context that will be helpful to future engineers that are tasked with completing this TPP. Do not use hyperbolic "DRAMATIC IMPROVEMENT"/"GROUNDBREAKING PROGRESS" styled updates -- that causes confusion and partially-completed low-quality work)
 
-### Related Documentation
+**NOTE**: These rules prevent build breaks, data corruption, and wasted effort across the team. 
 
-- [SUBDIRECTORY-CONDITIONS.md](../guides/SUBDIRECTORY-CONDITIONS.md) - Comprehensive pattern catalog
-- [SUBDIRECTORY-COVERAGE.md](../reference/SUBDIRECTORY-COVERAGE.md) - Current coverage metrics
-- [20250724-tag-kit-subdirectory-support.md](../done/20250724-tag-kit-subdirectory-support.md) - Infrastructure implementation
+If you are found violating any topics in these sections, **your work will be immediately halted, reverted, and you will be dismissed from the team.**
 
-## Technical Foundation
+Honest. RTFM.
 
-### Key Codebases
+---
 
-- `codegen/src/generators/tag_kit_modular.rs` - Condition parser and code generator
-- `codegen/extractors/tag_kit.pl` - Subdirectory extraction (working)
-- `codegen/extractors/subdirectory_discovery.pl` - Coverage analysis tool
-- `third-party/exiftool/lib/Image/ExifTool/*.pm` - Source modules
+## Context & Foundation
 
-### Current Architecture
+### System Overview
 
-**Working Components**:
+- **Tag Kit Architecture**: Production-ready system generating binary data processors from ExifTool source. Produces working functions like `process_canon_camerasettings()` that extract meaningful tags (`MacroMode: "Macro"`, `SelfTimer: 10`) from raw binary arrays.
+- **Runtime Evaluation System**: Fully implemented at `src/runtime/` with `SubdirectoryConditionEvaluator` handling complex patterns (`$$valPt =~ /pattern/`, `$$self{Model} =~ /EOS/`, `$count == N`) for dynamic subdirectory dispatch.
+- **Subdirectory Processing Pipeline**: Generic `process_subdirectories_with_printconv()` architecture connects binary extraction with PrintConv formatting, used by Canon implementation to transform raw arrays into human-readable values.
 
-- Tag kit extracts subdirectory definitions with conditions
-- Code generator creates binary data parsers
-- Runtime integration processes subdirectory tags
-- OR condition parser handles `$count == 1273 or $count == 1275`
+### Key Concepts & Domain Knowledge
 
-**Missing Components**:
+- **Subdirectory Coverage**: Measures implementation of ExifTool's SubDirectory references that parse binary data structures within maker notes and metadata
+- **Binary Data Processing**: Converts raw byte arrays (e.g., `ColorData1: [10, 789, 1024, ...]`) into structured tags (e.g., `WB_RGGBLevelsAsShot: "2241 1024 1024 1689"`)
+- **Cross-Module References**: 402 subdirectories reference tables from other modules, requiring stub generation and shared table extraction
+- **Required Tags**: 130 tags marked `required: true` in `docs/tag-metadata.json` drive priority decisions
 
-- Model regex matching (`$$self{Model} =~ /EOS 5D/`)
-- Value pointer patterns (`$$valPt =~ /^\xae/`)
-- Format checks (`$format eq "int32u"`)
-- Complex boolean logic (AND/OR combinations)
-- Field existence checks
+### Surprising Context
+
+**CRITICAL**: The subdirectory infrastructure is mature and production-ready, not experimental:
+
+- **Working Implementations Exist**: Canon module shows 51.0% coverage (75/147) with real binary data extraction producing meaningful tags
+- **Runtime System Complete**: `src/runtime/condition_evaluator.rs` handles complex ExifTool condition patterns with regex caching and binary pattern matching
+- **Coverage Measurement Limitations**: The 12.23% metric only checks for text mentions in configs/generated files, not functional correctness of processors
+- **High-Impact Zero Coverage**: Modules like Exif (122 subdirs) represent 6.5% potential coverage gain but have no implementation
+
+**Counter-Intuitive Reality**: Many "missing" features are actually complete - the gap is in configuration generation for high-impact modules, not core architecture.
+
+### Foundation Documents
+
+- **Working Architecture**: `src/generated/Canon_pm/tag_kit/mod.rs:11552` - Real subdirectory processors
+- **Runtime Integration**: `src/exif/subdirectory_processing.rs` - Generic processing pipeline
+- **Coverage Analysis**: `docs/generated/SUBDIRECTORY-COVERAGE.md` - Current state metrics
+- **ExifTool Source**: `third-party/exiftool/lib/Image/ExifTool/*.pm` - Original subdirectory definitions
+
+### Prerequisites
+
+- **Knowledge Assumed**: Tag kit system architecture, ExifTool subdirectory patterns, binary data formats
+- **Setup Required**: Working `make codegen` environment, test image collection for validation
+
+**Context Quality Check**: Engineers should understand that this is config generation work on mature infrastructure, not greenfield development.
 
 ## Work Completed
 
-### Infrastructure (95% Complete)
-
-✅ **Tag Kit Subdirectory Support**:
-
-- Enhanced extractor detects and extracts SubDirectory references
-- Schema supports SubDirectoryInfo with extracted tables
-- Code generator creates binary data parsing functions
-- Runtime integration in Canon module works correctly
-
-✅ **OR Condition Fix**:
-
-- Parser handles `$count == X or $count == Y` patterns
-- Canon T3i ColorData6 now correctly parsed
-- Both `or` and `||` operators supported
-
-✅ **Discovery Tool**:
-
-- Found 1,865 subdirectories (2.5x initial estimate)
-- Classifies patterns: simple (61.6%), binary_data (38.4%)
-- Generates coverage reports and CI integration
-
-### Phase 1: Enhanced Condition Parsing (COMPLETED 2025-07-25)
-
-✅ **Task 1.1: Extended Count Condition Parser**
-
-- Implemented `parse_subdirectory_condition()` in `tag_kit_modular.rs`
-- Handles count comparisons with OR conditions
-- Generates proper match arms for dispatch
-
-✅ **Task 1.2: Model Regex Pattern Support**
-
-- Created `SubdirectoryCondition` enum with Model, Count, Format, Runtime variants
-- Implemented `ModelPattern` struct with regex and negation support
-- Parser detects `$$self{Model}` patterns and extracts regex
-- Generates TODO comments for runtime evaluation (temporary)
-
-✅ **Task 1.3: Format Check Support**
-
-- Added `FormatPattern` struct for format equality checks
-- Parser handles `$format eq "type"` patterns
-- Generates TODO comments for runtime evaluation (temporary)
-
-✅ **Additional Work: Cross-Module Reference Handling**
-
-- Created `analyze_cross_module_refs.pl` - found 402 cross-module references
-- Built `shared_tables.pl` to extract commonly referenced tables
-- Enhanced generator to detect cross-module references with `is_cross_module_reference()`
-- Generates stub functions for missing same-module tables
-- All compilation errors resolved
-- Coverage increased from 8.95% to 9.19% (172/1872)
-
-## Completed Work
-
-### Phase 4: Systematic Coverage Expansion (COMPLETED 2025-07-25) ✅
-
-**Task 4.1: Coverage Tracking Dashboard** ✅
-
-- Created `coverage_dashboard.pl` - comprehensive analysis of all 217 ExifTool modules
-- Identifies high-priority modules based on `required: true` tags from `tag-metadata.json`
-- Priority scoring: 50 points per required tag + subdirectory bonuses
-- Top priorities: XMP (63 required tags), EXIF (41), MakerNotes (37), QuickTime (17)
-- Outputs markdown, JSON, and HTML formats for integration
-
-**Task 4.2: Semi-Automated Config Generation** ✅
-
-- Created `auto_config_gen.pl` - generates `tag_kit.json` configurations automatically
-- Analyzes ExifTool modules to extract table structures and subdirectory patterns
-- Handles multiple table declaration formats (`%table = (` and `%Image::ExifTool::Module::table = (`)
-- Classifies subdirectory complexity (simple/medium/complex) and implementation strategy
-- Generated configs for high-priority modules: XMP, IPTC, MWG, FlashPix, RIFF, PDF, PNG
-
-**Task 4.3: Low-Hanging Fruit Module Implementation** ✅
-
-- **XMP**: 63 required tags - highest priority module config generated
-- **IPTC**: 6 required tags + subdirectory support - config generated
-- **MWG**: 3 required tags (Metadata Working Group) - config generated
-- **FlashPix**: 16 subdirectories with cross-module references - config generated
-- **RIFF**: 4 required tags for multimedia files - config generated
-- **PDF**: High subdirectory count for document metadata - config generated
-- **PNG**: Image format support with required tags - config generated
-
-**Phase 4 Results:**
-
-- **Priority-Based Selection**: Modules with `required: true` tags get 50 points each
-- **20+ new configurations** generated for highest-priority modules
-- **Enhanced Pattern Recognition**: Supports both standard and full-path table declarations
-- **Implementation Roadmap**: Clear guidance for systematic expansion
-- **Foundation for Phase 5**: All tools in place for continuous validation
-
-### Phase 2: High-Impact Manufacturer Configs (COMPLETED 2025-07-25)
-
-**Task 2.1: Nikon Tag Kit Config (218 subdirectories)** ✅
-
-Created comprehensive Nikon configuration with 27 tables including Main, Type2, Type3, CameraSettings variants, ShotInfo tables, and model-specific tables. Successfully extracted 757 tag kits with proper subdirectory support.
-
-**Task 2.2: Sony Tag Kit Config (95 subdirectories)** ✅
-
-Created expanded Sony configuration with 27 tables covering all major Sony camera lines (DSLR-A, SLT-A, NEX, ILCE, DSC, ZV series). Generated 11 tag kit files with focus on subdirectory-containing tables. Coverage increased from 3.2% to 4.2%.
-
-**Task 2.3: QuickTime Tag Kit Config (182 subdirectories)** ✅
-
-Created comprehensive QuickTime configuration covering 20 major tables (Movie, Track, Meta, ItemList, UserData, etc.). Successfully extracted 371 tags with 123 subdirectory references. Coverage increased from 0% to 15.3% (28/183 implemented). Generated 70 subdirectory processing functions.
-
-**Phase 2 Results:**
-
-- **Total coverage improvement**: From 8.95% to 10.79% overall
-- **Nikon**: 218 subdirectories → 1 implemented (0.5% coverage)
-- **Sony**: 95 subdirectories → 4 implemented (4.2% coverage)
-- **QuickTime**: 183 subdirectories → 28 implemented (15.3% coverage)
-- **Overall**: 1,872 total → 202 implemented (10.79% coverage)
+- ✅ **Tag Kit Subdirectory Infrastructure** → Chose production-ready architecture over experimental approach because proven with Canon implementation
+- ✅ **Runtime Evaluation System** → Completed July 25, 2025 with full condition pattern support at `src/runtime/`
+- ✅ **Cross-Module Reference Handling** → Rejected direct perl parsing due to complexity, implemented stub generation approach
+- ✅ **Canon Implementation Proof** → Achieved 51.0% coverage (75/147) demonstrating architecture effectiveness
+- ✅ **Coverage Measurement Tools** → Built `subdirectory_discovery.pl` and dashboard integration for progress tracking
 
 ## Remaining Tasks
 
-### Phase 3: Runtime Evaluation System ✅ (COMPLETED 2025-07-25)
+### 1. Task: Generate Exif Module Tag Kit Configuration
 
-**Task 3.1: Create basic runtime condition evaluator** ✅
+**Success Criteria**: `codegen/config/Exif_pm/tag_kit.json` exists and generates working subdirectory processors for EXIF metadata tags
+**Approach**: Use `auto_config_gen.pl` to analyze `third-party/exiftool/lib/Image/ExifTool/Exif.pm` and extract subdirectory patterns
+**Dependencies**: None - infrastructure complete
 
-- Implemented `SubdirectoryConditionEvaluator` with comprehensive condition parsing
-- Supports all major ExifTool condition patterns including special patterns, numeric comparisons
-- Includes regex caching for performance optimization
+**Success Patterns**:
+- ✅ Config generates compilation-ready Rust code
+- ✅ Subdirectory processors extract meaningful tags from test images  
+- ✅ Coverage report shows Exif module >5% implementation
+- ✅ ExifTool comparison tests pass for extracted tags
 
-**Task 3.2: Implement $valPt binary pattern matching** ✅
+### 2. Task: Generate DNG Module Tag Kit Configuration
 
-- Handles `$$valPt =~ /pattern/` conditions with multiple data representations (binary, hex, text)
-- Supports both standard and negated pattern matching (`$$valPt !~ /pattern/`)
-- Includes comprehensive test coverage for binary pattern detection
+**Success Criteria**: DNG format metadata extraction working with subdirectory processing
+**Approach**: Extract from `DNG.pm` focusing on binary data tables and conditional processing
+**Dependencies**: Exif module complete (DNG extends EXIF)
 
-**Task 3.3: Implement $self{Make} and $self{Model} matching** ✅
+**Success Patterns**:
+- ✅ Adobe DNG files produce proper metadata extraction
+- ✅ RAW preview/thumbnail data processing functional
+- ✅ Coverage increase of ~5% (94 subdirectories)
 
-- Supports both regex (`=~`) and exact (`eq`) matching for camera metadata
-- Handles `$$self{Model} =~ /EOS R5/` and `$$self{Make} eq 'Canon'` patterns
-- Full integration with subdirectory context system
+### 3. Task: Generate JPEG Module Tag Kit Configuration  
 
-**Task 3.4: Integrate runtime evaluation with tag kit subdirectory dispatch** ✅
+**Success Criteria**: JPEG metadata segments processed through subdirectory system
+**Approach**: Focus on JPEG.pm APP segment processing and embedded metadata
+**Dependencies**: None - mostly independent processing
 
-- Created `RuntimeSubdirectoryDispatcher` for dynamic condition evaluation during processing
-- Implemented enhanced processor pattern maintaining backward compatibility with existing code
-- Added helper functions for seamless EXIF metadata integration
-- Provides wrapper functionality for existing processors
+**Success Patterns**:
+- ✅ JPEG files show improved metadata extraction
+- ✅ APP segment subdirectories correctly parsed
+- ✅ Coverage increase of ~3.4% (64 subdirectories)
 
-**Implementation Architecture:**
+### 4. RESEARCH: Prioritize Remaining Zero-Coverage Modules
 
-```rust
-// Core runtime evaluation system at src/runtime/
-pub struct SubdirectoryConditionEvaluator {
-    regex_cache: HashMap<String, Regex>,
-}
+**Objective**: Identify next highest-impact modules after Exif/DNG/JPEG implementation
+**Success Criteria**: Ranked list of modules by impact score (subdirectory_count × required_tag_weight)
+**Done When**: Clear priority order for Pentax, Matroska, and other major modules established
 
-pub struct SubdirectoryContext {
-    pub val_ptr: Option<Vec<u8>>,      // $$valPt binary data
-    pub make: Option<String>,          // $$self{Make}
-    pub model: Option<String>,         // $$self{Model}
-    pub format: Option<String>,        // Format conditions
-    pub count: Option<usize>,          // Count conditions
-    pub byte_order: ByteOrder,
-    pub metadata: HashMap<String, TagValue>,
-}
+## Implementation Guidance
 
-// Integration with tag kit dispatch
-pub struct RuntimeSubdirectoryDispatcher {
-    condition_evaluator: SubdirectoryConditionEvaluator,
-}
-```
+**Recommended Patterns**:
+- Use existing `auto_config_gen.pl` for initial config generation rather than manual creation
+- Validate generated processors with real image files, not synthetic data
+- Follow Canon implementation pattern in `src/implementations/*/mod.rs` for integration
+- Generate cross-module reference stubs proactively to prevent compilation errors
 
-**Coverage Impact:**
+**Tools to Leverage**:
+- `codegen/extractors/auto_config_gen.pl` - Automated configuration generation
+- `make subdirectory-coverage` - Progress tracking and validation
+- `cargo run --bin compare-with-exiftool` - ExifTool compatibility validation
+- `codegen/extractors/subdirectory_discovery.pl` - Gap analysis
 
-- Phase 3 enables dynamic runtime evaluation for complex subdirectory conditions
-- Provides foundation for handling $$valPt patterns (common in Sony, Olympus)
-- Supports $$self{Model/Make} patterns (common in Canon, Nikon)
-- Ready for Phase 4 systematic expansion across all manufacturer modules
-- Test coverage: 10 comprehensive tests covering all condition types
+**Architecture Considerations**:
+- Subdirectory processors are pure functions: `fn(data: &[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>`
+- PrintConv application happens after binary extraction in generic processing pipeline
+- Cross-module references require shared table extraction or stub generation
+- Runtime condition evaluation should be last resort - prefer compile-time pattern matching
 
-### Phase 5: Continuous Validation System [MEDIUM CONFIDENCE]
+**Performance Notes**:
+- Binary data processing is CPU-intensive - profile large files during implementation
+- Regex compilation caching in runtime evaluator prevents performance degradation
+- Subdirectory processing happens once per tag - not performance critical path
 
-**Current State**: `make compat` provides foundation but gaps exist for subdirectory-specific validation
+**ExifTool Translation Notes**:
+- `%table = ( ... )` patterns in ExifTool become `process_*` functions in our system
+- Binary data offsets use signed arithmetic for ExifTool compatibility (negative offsets reference from end)
+- Condition patterns `$count == N` become Rust match arms in dispatcher functions
 
-**Task 5.1: Enhanced ExifTool Compatibility Testing** [PARTIALLY SATISFIED]
+## Integration Requirements
 
-- ✅ **Existing**: `make compat` generates ExifTool reference snapshots and compares values
-- ✅ **Existing**: Tests against 20+ file formats with supported tags validation
-- ❌ **Gap**: No subdirectory-specific validation - tests only top-level tag compatibility
-- ❌ **Gap**: Missing validation for newly generated configs (XMP, IPTC, MWG, etc.)
-- ❌ **Gap**: No automated detection of subdirectory parsing failures
+**CRITICAL**: Building without integrating is failure. Don't accept tasks that build "shelf-ware."
 
-**Task 5.2: Module-Specific Coverage Validation** [NOT SATISFIED]
+Every feature must include:
+- [x] **Activation**: Generated tag kit configs automatically used by manufacturer processors
+- [x] **Consumption**: Generic subdirectory processing pipeline consumes generated functions  
+- [x] **Measurement**: Coverage reports and ExifTool comparison show functional improvement
+- [x] **Cleanup**: No manual binary data processing needed - tag kit handles all cases
 
-- ❌ **Missing**: Per-module subdirectory extraction validation
-- ❌ **Missing**: Automated testing of newly generated tag_kit configs
-- ❌ **Missing**: Validation that subdirectory conditions are being evaluated correctly
-- ❌ **Missing**: Detection of stub functions that need implementation
+**Red Flag Check**: If subdirectory processors generate but aren't called by manufacturer implementations, integration is incomplete.
 
-**Task 5.3: Coverage Metrics Integration** [PARTIALLY SATISFIED]
+## Working Definition of "Complete"
 
-- ✅ **Existing**: `make subdirectory-coverage` generates reports
-- ❌ **Gap**: Coverage metrics not integrated into CI pipeline
-- ❌ **Gap**: No regression detection for coverage decreases
-- ❌ **Gap**: No tracking of required tag implementation progress
-
-**Gap Analysis Summary:**
-
-| Component                | `make compat` Status        | Phase 5 Requirement      | Gap                                 |
-| ------------------------ | --------------------------- | ------------------------ | ----------------------------------- |
-| **ExifTool Comparison**  | ✅ Comprehensive            | Top-level tag validation | ❌ Subdirectory-specific validation |
-| **File Format Coverage** | ✅ 20+ formats              | Broad compatibility      | ❌ New module validation            |
-| **Value Normalization**  | ✅ Handles formatting diffs | Accurate comparison      | ❌ Binary subdirectory data         |
-| **Coverage Tracking**    | ❌ None                     | Progress monitoring      | ❌ CI integration                   |
-| **Regression Detection** | ❌ None                     | Quality assurance        | ❌ Automated alerts                 |
-| **Module Testing**       | ❌ None                     | Config validation        | ❌ Auto-generated configs           |
-
-**Required Enhancements for Phase 5:**
-
-1. **Subdirectory-Aware Testing**: Extend compatibility tests to validate subdirectory extraction
-2. **Generated Config Validation**: Automatically test newly created tag_kit configurations
-3. **Coverage CI Integration**: Add coverage metrics to CI pipeline with failure thresholds
-4. **Binary Data Validation**: Compare subdirectory binary parsing output with ExifTool
-5. **Stub Function Detection**: Identify and track unimplemented subdirectory processors
+A module subdirectory implementation is complete when:
+- ✅ **System behavior changes** - Real image files produce different/better metadata extraction
+- ✅ **Default usage** - Manufacturer processor automatically uses generated subdirectory functions
+- ✅ **Old path removed** - No raw binary arrays displayed for tags with working processors
+- ❌ Config exists but processors not integrated *(example: "tag_kit.json created but Canon.pm still shows raw arrays")*
+- ❌ Processors compile but aren't called *(example: "process_exif_gps generated but never invoked")*
 
 ## Prerequisites
 
-- Understanding of tag kit architecture (see completed work)
-- Familiarity with Perl regex syntax
-- Access to test images from various manufacturers
+- Understanding of tag kit architecture → Review `src/generated/Canon_pm/tag_kit/mod.rs` working examples
+- ExifTool source familiarity → Read relevant `*.pm` files for target modules
+- Test image access → Collect representative files for each target format
 
-## Testing Strategy
+## Testing
 
-### Unit Tests
+- **Unit**: Test binary data processors with known input/output pairs from ExifTool
+- **Integration**: Verify end-to-end extraction on real camera files produces correct metadata
+- **Manual check**: Run `cargo run --bin compare-with-exiftool test.jpg` and confirm subdirectory tag alignment
 
-```rust
-#[test]
-fn test_model_condition_parsing() {
-    let condition = "$$self{Model} =~ /\\b(450D|REBEL XSi|Kiss X2)\\b/";
-    let parsed = parse_subdirectory_conditions(condition);
-    match parsed {
-        SubdirectoryCondition::Model(pattern) => {
-            assert_eq!(pattern.regex, "\\b(450D|REBEL XSi|Kiss X2)\\b");
-            assert!(!pattern.negated);
-        }
-        _ => panic!("Expected model condition"),
-    }
-}
-```
+## Definition of Done
 
-### Integration Tests
-
-For each manufacturer:
-
-1. Extract known subdirectory tag with ExifTool
-2. Extract with exif-oxide
-3. Compare values (must match exactly)
-
-### Test Images
-
-- Canon: Use existing T3i test (working baseline)
-- Nikon: Need D7000, Z9 samples for CustomSettings
-- Sony: Need A7R IV for Tag9400x variants
-- QuickTime: Any modern video file
+- [ ] `cargo t subdirectory` passes - all subdirectory processing tests working
+- [ ] `make precommit` clean - no linting, compilation, or test errors
+- [ ] Coverage reaches 35%+ (current 12.23% + target modules ~23%) measured by subdirectory implementation
+- [ ] ExifTool compatibility maintained for all existing functionality
+- [ ] At least 3 zero-coverage high-impact modules (Exif, DNG, JPEG) producing working subdirectory extraction
 
 ## Success Criteria & Quality Gates
 
-### Phase 1 Success (COMPLETED)
-
-- [x] Model regex patterns parse correctly
-- [x] Format checks generate proper code
-- [x] 90% of conditions handled (10% runtime fallback)
-- [x] All existing Canon tests still pass
-- [x] Cross-module references handled gracefully
-- [x] All compilation errors resolved
-
-### Phase 2 Success
-
-- [x] Nikon coverage: 0.5% (1/218 subdirectories implemented) - Foundation established
-- [x] Sony coverage: 4.2% (4/95 subdirectories implemented) - Exceeds 3.2% baseline
-- [x] QuickTime coverage: 15.3% (28/183 subdirectories implemented) - Exceeds 15% target
-- [x] Tag kit configurations created for all three high-priority manufacturers
-
 ### Overall Success
 
-- [ ] Total coverage reaches 50% (935+ subdirectories)
-- [ ] No performance regression
-- [ ] ExifTool compatibility maintained
-- [ ] CI tracks coverage metrics
+- [ ] **Coverage Target**: Reach 50% subdirectory coverage (935+ implemented)
+- [ ] **Quality Maintained**: No ExifTool compatibility regressions
+- [ ] **Performance Preserved**: No >10% slowdown in metadata extraction
+- [ ] **Architecture Validated**: Generic subdirectory processing proven with 5+ manufacturers
+
+### Module-Specific Success
+
+- [ ] **Exif Module**: 122 subdirectories → 30+ implemented (>25% coverage)
+- [ ] **DNG Module**: 94 subdirectories → 20+ implemented (>20% coverage)  
+- [ ] **JPEG Module**: 64 subdirectories → 15+ implemented (>23% coverage)
+- [ ] **Integration Verified**: All generated processors called by manufacturer implementations
 
 ## Gotchas & Tribal Knowledge
 
-### Condition Pattern Complexity
+**Coverage Measurement Caveats**: The 12.23% coverage metric only checks text mentions, not functional correctness. Real coverage may be lower due to:
+- Generated stubs that return empty results
+- Cross-module references generating TODO comments
+- Processors that compile but aren't integrated into manufacturer modules
 
-**The 80/20 Rule**: 80% of conditions are simple patterns we can handle at codegen time:
+**ExifTool Source Complexity**: Module analysis reveals:
+- Binary data tables use complex offset calculations with negative indices
+- Condition patterns range from simple count checks to complex binary signature matching
+- Cross-module references require careful dependency ordering during generation
 
-- Count comparisons: 40% of all conditions
-- Model matches: 30% of conditions
-- Format checks: 10% of conditions
-- Complex expressions: 20% need runtime evaluation
+**Configuration Generation Pitfalls**:
+- Auto-generated configs may miss complex conditional logic
+- Large tables (>100 entries) can cause compilation slowdowns
+- Some ExifTool patterns don't translate directly to Rust match statements
 
-### Sony's $$valPt Patterns
-
-Sony uses binary signatures extensively. Key insight: These are checking magic bytes at data start:
-
-- `^\xHH` checks first byte
-- Character classes `[\\x01\\x02\\x10]` check for any of these bytes
-- Often combined with model checks
-
-### Negative Offsets
-
-Already fixed, but remember: ExifTool uses negative offsets to reference from END of data. The fix in `tag_kit_modular.rs` handles this correctly with signed arithmetic.
-
-### Performance Considerations
-
-- Model regex matching: Cache compiled regexes
-- Runtime evaluation: Only as last resort
-- Condition checking: Happens once per tag extraction
-
-### ExifTool Updates
-
-Monthly ExifTool releases may add new patterns. Design for extensibility:
-
-- Unknown patterns → runtime evaluation
-- Log new patterns for future codegen support
-- Maintain backward compatibility
+**Integration Anti-Patterns**:
+- Adding tag_kit config without updating manufacturer processor integration
+- Generating processors that compile but never get called
+- Assuming text-based coverage metrics represent functional capability
 
 ## Risk Mitigation
 
-### Complex Pattern Risk
+### Module Complexity Risk
+- **Risk**: Some modules have patterns too complex for current generators
+- **Mitigation**: Focus on high-impact binary data tables first, defer complex conditional logic
+- **Monitoring**: Track percentage of generated vs stubbed processors per module
 
-- **Risk**: Some patterns too complex for simple parsing
-- **Mitigation**: Runtime evaluation fallback
-- **Monitoring**: Track runtime evaluation usage
+### Performance Risk  
+- **Risk**: Large subdirectory counts could slow metadata extraction
+- **Mitigation**: Profile with representative image collections, optimize hot paths
+- **Measurement**: Benchmark extraction time before/after each major module addition
 
-### Performance Risk
-
-- **Risk**: Runtime evaluation slows extraction
-- **Mitigation**: Optimize common patterns at codegen
-- **Measurement**: Benchmark before/after
-
-### Test Coverage Risk
-
-- **Risk**: Lack of test images for validation
-- **Mitigation**: Community partnerships, gradual rollout
-- **Validation**: ExifTool comparison on available images
+### Quality Risk
+- **Risk**: Generated processors may not match ExifTool behavior exactly
+- **Mitigation**: Comprehensive ExifTool comparison testing on diverse image collection
+- **Validation**: Manual verification of key tags from each implemented module
 
 ## Implementation Order
 
-1. **Start with Phase 1**: Enhanced parsing gives immediate value
-2. **Nikon first in Phase 2**: Highest subdirectory count
-3. **Sony for $$valPt patterns**: Proves runtime capability
-4. **QuickTime for simple cases**: Quick wins
-5. **Iterate based on user feedback**: Focus on real-world usage
+1. **Start with Exif Module**: Highest subdirectory count (122) and most universal impact
+2. **DNG second**: Builds on EXIF foundation, high subdirectory count (94)
+3. **JPEG for breadth**: Different processing patterns, good validation target (64 subdirs)
+4. **Pentax for manufacturer diversity**: Prove architecture works across camera brands
+5. **Iterate based on coverage metrics**: Focus on modules providing highest coverage gains
 
-This plan builds on the 95% complete subdirectory infrastructure to systematically expand coverage, focusing on pragmatic solutions that handle the majority of patterns while maintaining ExifTool compatibility.
+This plan builds on the mature subdirectory infrastructure to systematically expand coverage by targeting high-impact zero-coverage modules, focusing on configuration generation rather than architecture development.
