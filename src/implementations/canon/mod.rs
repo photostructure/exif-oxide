@@ -44,8 +44,6 @@ pub fn process_canon_makernotes(
     dir_start: usize,
     size: usize,
 ) -> Result<()> {
-    use crate::types::DirectoryInfo;
-
     debug!(
         "Processing Canon MakerNotes: start={:#x}, size={}",
         dir_start, size
@@ -55,19 +53,15 @@ pub fn process_canon_makernotes(
     // ExifTool: Canon.pm Main table processes Canon tags as subdirectories
     // Key insight: Canon tags need Canon-specific processors, not generic TIFF processing
 
-    // First, process as standard IFD to extract the raw Canon tag structure
-    let dir_info = DirectoryInfo {
-        name: "Canon".to_string(),
-        dir_start,
-        dir_len: size,
-        base: exif_reader.base,
-        data_pos: 0,
-        allow_reprocess: true,
-    };
-
-    // Process the Canon MakerNotes IFD to extract individual Canon tags
-    // This extracts the basic Canon tag structure (tag IDs and data)
-    exif_reader.process_subdirectory(&dir_info)?;
+    // Process Canon MakerNotes as a standard IFD (not through processor dispatch)
+    // ExifTool: Canon MakerNotes are processed as standard IFD with Canon-specific tag handling
+    // Trust ExifTool: Canon.pm line ~145 ProcessDirectory($et, $tagTablePtr, $dirInfo)
+    // Fix Group1 assignment: Use "Canon" directory name to get group1="Canon" instead of "MakerNotes"
+    debug!(
+        "Processing Canon MakerNotes as standard IFD at offset {:#x}",
+        dir_start
+    );
+    exif_reader.parse_ifd(dir_start, "Canon")?;
 
     // Apply Canon-specific PrintConv processing to main Canon table tags
     // ExifTool: Canon.pm Main table PrintConv entries need manual application
@@ -738,7 +732,7 @@ fn apply_canon_main_table_print_conv(exif_reader: &mut crate::exif::ExifReader) 
     for (&(tag_id, ref namespace), tag_value) in &exif_reader.extracted_tags {
         // Only process tags that have Canon source info (MakerNotes namespace)
         if let Some(source_info) = exif_reader.tag_sources.get(&(tag_id, namespace.clone())) {
-            if source_info.namespace == "MakerNotes" && source_info.ifd_name.starts_with("Canon") {
+            if source_info.namespace == "MakerNotes" && namespace == "MakerNotes" {
                 match tag_id {
                     0x10 => {
                         // CanonModelID - apply generated lookup table
@@ -863,10 +857,11 @@ fn process_canon_subdirectory_tags(exif_reader: &mut crate::exif::ExifReader) ->
     debug!("Processing Canon subdirectory tags using generic system");
 
     // Use the generic subdirectory processing with Canon-specific functions
+    // Fix Group1 assignment: Use "Canon" as namespace for group1="Canon" instead of "MakerNotes"
     process_subdirectories_with_printconv(
         exif_reader,
         "Canon",
-        "MakerNotes",
+        "Canon",
         tag_kit::has_subdirectory,
         tag_kit::process_subdirectory,
         tag_kit::apply_print_conv,
