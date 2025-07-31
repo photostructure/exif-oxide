@@ -3378,7 +3378,9 @@ pub fn process_tag_0x0_subdirectory(
         count
     );
 
-    Ok(vec![])
+    match count {
+        _ => Ok(vec![]), // No matching variant
+    }
 }
 
 pub fn process_tag_0x11_subdirectory(
@@ -3411,7 +3413,15 @@ pub fn process_tag_0x14_subdirectory(
         count
     );
 
-    Ok(vec![])
+    match count {
+        // Format condition not yet supported: $format eq \"undef\" and $count == 2560
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalanceA
+        // Runtime condition not yet supported: $$valPt =~ /^NRW 0100/
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalanceB
+        // Runtime condition not yet supported: $$valPt =~ /^NRW /
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalanceC
+        _ => Ok(vec![]), // No matching variant
+    }
 }
 
 pub fn process_tag_0x1f_subdirectory(
@@ -3461,7 +3471,15 @@ pub fn process_tag_0x23_subdirectory(
         count
     );
 
-    Ok(vec![])
+    match count {
+        // Runtime condition not yet supported: $$valPt =~ /^01/
+        // Would dispatch to: Image::ExifTool::Nikon::PictureControl
+        // Runtime condition not yet supported: $$valPt =~ /^02/
+        // Would dispatch to: Image::ExifTool::Nikon::PictureControl2
+        // Runtime condition not yet supported: $$valPt =~ /^03/
+        // Would dispatch to: Image::ExifTool::Nikon::PictureControl3
+        _ => Ok(vec![]), // No matching variant
+    }
 }
 
 pub fn process_tag_0x24_subdirectory(
@@ -3562,7 +3580,11 @@ pub fn process_tag_0x35_subdirectory(
         count
     );
 
-    Ok(vec![])
+    match count {
+        // Runtime condition not yet supported: $count != 6
+        // Would dispatch to: Image::ExifTool::Nikon::HDRInfo
+        _ => Ok(vec![]), // No matching variant
+    }
 }
 
 pub fn process_tag_0x39_subdirectory(
@@ -3647,7 +3669,11 @@ pub fn process_tag_0x88_subdirectory(
         count
     );
 
-    Ok(vec![])
+    match count {
+        // Model condition not yet supported: $$self{Model} =~ /^NIKON D/i
+        // Would dispatch to: Image::ExifTool::Nikon::AFInfo
+        _ => Ok(vec![]), // No matching variant
+    }
 }
 
 pub fn process_tag_0x91_subdirectory(
@@ -3763,7 +3789,33 @@ pub fn process_tag_0x97_subdirectory(
         count
     );
 
-    Ok(vec![])
+    match count {
+        // Runtime condition not yet supported: $$valPt =~ /^0100/
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalance1
+        // Runtime condition not yet supported: $$valPt =~ /^0102/
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalance2
+        // Runtime condition not yet supported: $$valPt =~ /^0103/
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalance3
+        // Runtime condition not yet supported: $$valPt =~ /^0205/
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalance2
+        // Runtime condition not yet supported: $$valPt =~ /^02(09|12|14)/
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalance4
+        // Runtime condition not yet supported: $$valPt =~ /^02(\\d{2})/ and $1 < 11
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalance2
+        // Runtime condition not yet supported: $$valPt =~ /^0211/
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalance4
+        // Runtime condition not yet supported: $$valPt =~ /^0213/
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalance2
+        // Runtime condition not yet supported: $$valPt =~ /^021[567]/
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalance4
+        // Runtime condition not yet supported: $$valPt =~ /^02(19|2[1234])/
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalance2
+        // Runtime condition not yet supported: $$valPt =~ /^0(220|6)/
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalanceUnknown
+        // Runtime condition not yet supported: $$valPt =~ /^0(18|[248])/
+        // Would dispatch to: Image::ExifTool::Nikon::ColorBalanceUnknown2
+        _ => Ok(vec![]), // No matching variant
+    }
 }
 
 pub fn process_tag_0x98_subdirectory(
@@ -3779,7 +3831,25 @@ pub fn process_tag_0x98_subdirectory(
         count
     );
 
-    Ok(vec![])
+    match count {
+        // Runtime condition not yet supported: $$valPt =~ /^0100/
+        // Would dispatch to: Image::ExifTool::Nikon::LensData00
+        // Runtime condition not yet supported: $$valPt =~ /^0101/
+        // Would dispatch to: Image::ExifTool::Nikon::LensData01
+        // Runtime condition not yet supported: $$valPt =~ /^020[1-3]/
+        // Would dispatch to: Image::ExifTool::Nikon::LensData01
+        // Runtime condition not yet supported: $$valPt =~ /^0204/
+        // Would dispatch to: Image::ExifTool::Nikon::LensData0204
+        // Runtime condition not yet supported: $$valPt =~ /^040[01]/
+        // Would dispatch to: Image::ExifTool::Nikon::LensData0400
+        // Runtime condition not yet supported: $$valPt =~ /^0402/
+        // Would dispatch to: Image::ExifTool::Nikon::LensData0402
+        // Runtime condition not yet supported: $$valPt =~ /^0403/
+        // Would dispatch to: Image::ExifTool::Nikon::LensData0403
+        // Runtime condition not yet supported: $$valPt =~ /^080[012]/
+        // Would dispatch to: Image::ExifTool::Nikon::LensData0800
+        _ => Ok(vec![]), // No matching variant
+    }
 }
 
 pub fn process_tag_0xa8_subdirectory(
@@ -3795,7 +3865,21 @@ pub fn process_tag_0xa8_subdirectory(
         count
     );
 
-    Ok(vec![])
+    match count {
+        // Runtime condition not yet supported: $$valPt =~ /^010[01]/
+        // Would dispatch to: Image::ExifTool::Nikon::FlashInfo0100
+        // Runtime condition not yet supported: $$valPt =~ /^0102/
+        // Would dispatch to: Image::ExifTool::Nikon::FlashInfo0102
+        // Runtime condition not yet supported: $$valPt =~ /^010[345]/
+        // Would dispatch to: Image::ExifTool::Nikon::FlashInfo0103
+        // Runtime condition not yet supported: $$valPt =~ /^0106/
+        // Would dispatch to: Image::ExifTool::Nikon::FlashInfo0106
+        // Runtime condition not yet supported: $$valPt =~ /^010[78]/
+        // Would dispatch to: Image::ExifTool::Nikon::FlashInfo0107
+        // Runtime condition not yet supported: $$valPt =~ /^030[01]/
+        // Would dispatch to: Image::ExifTool::Nikon::FlashInfo0300
+        _ => Ok(vec![]), // No matching variant
+    }
 }
 
 pub fn process_tag_0xb0_subdirectory(
@@ -3811,7 +3895,15 @@ pub fn process_tag_0xb0_subdirectory(
         count
     );
 
-    Ok(vec![])
+    match count {
+        // Runtime condition not yet supported: $$valPt =~ /^0100/
+        // Would dispatch to: Image::ExifTool::Nikon::MultiExposure
+        // Runtime condition not yet supported: $$valPt =~ /^0101/
+        // Would dispatch to: Image::ExifTool::Nikon::MultiExposure
+        // Runtime condition not yet supported: $$valPt =~ /^010[23]/
+        // Would dispatch to: Image::ExifTool::Nikon::MultiExposure2
+        _ => Ok(vec![]), // No matching variant
+    }
 }
 
 pub fn process_tag_0xb7_subdirectory(
@@ -3827,7 +3919,19 @@ pub fn process_tag_0xb7_subdirectory(
         count
     );
 
-    Ok(vec![])
+    match count {
+        // Runtime condition not yet supported: $$valPt =~ /^0100/
+        // Would dispatch to: Image::ExifTool::Nikon::AFInfo2V0100
+        // Runtime condition not yet supported: $$valPt =~ /^0101/
+        // Would dispatch to: Image::ExifTool::Nikon::AFInfo2V0101
+        // Runtime condition not yet supported: $$valPt =~ /^020[01]/
+        // Would dispatch to: Image::ExifTool::Nikon::AFInfo2V0200
+        // Runtime condition not yet supported: $$valPt =~ /^030[01]/
+        // Would dispatch to: Image::ExifTool::Nikon::AFInfo2V0300
+        // Runtime condition not yet supported: $$valPt =~ /^040[012]/
+        // Would dispatch to: Image::ExifTool::Nikon::AFInfo2V0400
+        _ => Ok(vec![]), // No matching variant
+    }
 }
 
 pub fn process_tag_0xb8_subdirectory(
@@ -3843,7 +3947,11 @@ pub fn process_tag_0xb8_subdirectory(
         count
     );
 
-    Ok(vec![])
+    match count {
+        // Model condition not yet supported: if (length($$valPt) >= 0) { my ($dir, $file) = unpack('x6vv', $$valPt); my $littleEndian = ($dir >= 100 and $dir <= 999 and $file <= 9999); ($dir, $file) = unpack('x6nn', $$valPt); my $bigEndian = ($dir >= 100 and $dir <= 999 and $file <= 9999); return $littleEndian if $littleEndian xor $bigEndian; } return $$self{Model} =~ /^NIKON (D4S|D750|D810|D3300|D5200|D5300|D5500|D7100)$/;
+        // Would dispatch to: Image::ExifTool::Nikon::FileInfo
+        _ => Ok(vec![]), // No matching variant
+    }
 }
 
 pub fn process_tag_0xb9_subdirectory(
@@ -3945,7 +4053,9 @@ pub fn process_tag_0x34f_subdirectory(
         count
     );
 
-    Ok(vec![])
+    match count {
+        _ => Ok(vec![]), // No matching variant
+    }
 }
 
 pub fn process_tag_0x3af_subdirectory(
@@ -3961,7 +4071,9 @@ pub fn process_tag_0x3af_subdirectory(
         count
     );
 
-    Ok(vec![])
+    match count {
+        _ => Ok(vec![]), // No matching variant
+    }
 }
 
 pub fn process_tag_0x4e7_subdirectory(
@@ -4065,7 +4177,11 @@ pub fn process_tag_0xe13_subdirectory(
         count
     );
 
-    Ok(vec![])
+    match count {
+        // Runtime condition not yet supported: $self->Options(\"ExtractEmbedded\")
+        // Would dispatch to: Image::ExifTool::NikonCapture::Main
+        _ => Ok(vec![]), // No matching variant
+    }
 }
 
 pub fn process_tag_0xe1d_subdirectory(
