@@ -57,7 +57,6 @@ If you skip this step, your work will likely be spurious, wrong, and rejected.
 
 - [ARCHITECTURE.md](docs/ARCHITECTURE.md) - High-level system overview and philosophy
 - [MILESTONES.md](docs/MILESTONES.md) - Active development milestones
-- [ENGINEER-GUIDE.md](docs/ENGINEER-GUIDE.md) - Starting point for new contributors
 - [EXCLUDED-TAGS.md](docs/EXCLUDED-TAGS.md) - Tags excluded from implementation scope
 - [TPP.md](docs/TPP.md) - Technical Project Plan template with priority naming conventions
 
@@ -71,7 +70,6 @@ If you skip this step, your work will likely be spurious, wrong, and rejected.
 
 - [GETTING-STARTED.md](docs/GETTING-STARTED.md) - Quick start guide for new contributors
 - [CORE-ARCHITECTURE.md](docs/guides/CORE-ARCHITECTURE.md) - Core system architecture and offset management
-- [DEVELOPMENT-GUIDE.md](docs/guides/DEVELOPMENT-GUIDE.md) - Development workflow and best practices
 - [EXIFTOOL-GUIDE.md](docs/guides/EXIFTOOL-GUIDE.md) - Complete guide to working with ExifTool source
 - [PROCESSOR-DISPATCH.md](docs/guides/PROCESSOR-DISPATCH.md) - Processor dispatch strategy
 
