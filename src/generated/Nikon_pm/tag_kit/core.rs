@@ -14,26 +14,19 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_15: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_15: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "A");
-    map.insert("1".to_string(), "B");
-    map.insert("2".to_string(), "C");
-    map.insert("3".to_string(), "D");
     map
 });
 
 static PRINT_CONV_16: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
+    map.insert("0".to_string(), "A");
+    map.insert("1".to_string(), "B");
+    map.insert("2".to_string(), "C");
+    map.insert("3".to_string(), "D");
     map
 });
 
@@ -45,6 +38,13 @@ static PRINT_CONV_17: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
 });
 
 static PRINT_CONV_18: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_19: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
@@ -63,7 +63,7 @@ pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_14),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_15),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -77,7 +77,7 @@ pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_15),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_16),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -87,36 +87,6 @@ pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
             TagKitDef {
                 id: 276,
                 name: "ExtendedMenuBanks",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_16),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            256,
-            TagKitDef {
-                id: 256,
-                name: "FocusShiftInterval",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Expression(
-                    "$val == 1? \"1 Second\" : sprintf(\"%.0f Seconds\",$val)",
-                ),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            260,
-            TagKitDef {
-                id: 260,
-                name: "FocusShiftExposureLock",
                 format: "unknown",
                 groups: HashMap::new(),
                 writable: false,
@@ -152,6 +122,36 @@ pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
                 writable: false,
                 notes: None,
                 print_conv: PrintConvType::Simple(&PRINT_CONV_18),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            256,
+            TagKitDef {
+                id: 256,
+                name: "FocusShiftInterval",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Expression(
+                    "$val == 1? \"1 Second\" : sprintf(\"%.0f Seconds\",$val)",
+                ),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            260,
+            TagKitDef {
+                id: 260,
+                name: "FocusShiftExposureLock",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_19),
                 value_conv: None,
                 subdirectory: None,
             },

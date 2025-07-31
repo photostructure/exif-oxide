@@ -1,0 +1,51 @@
+{
+  "extractor": "tag_kit.pl",
+  "source": "third-party/exiftool/lib/Image/ExifTool/Pentax.pm",
+  "description": "Pentax tag definitions with embedded PrintConv implementations",
+  "tables": [
+    {
+      "table_name": "Main",
+      "description": "Main Pentax maker notes table"
+    },
+    {
+      "table_name": "SRInfo",
+      "description": "Pentax shake reduction information"
+    },
+    {
+      "table_name": "SRInfo2",
+      "description": "Pentax shake reduction information version 2"
+    },
+    {
+      "table_name": "FaceInfo", 
+      "description": "Pentax face detection information"
+    },
+    {
+      "table_name": "AWBInfo",
+      "description": "Pentax auto white balance information"
+    },
+    {
+      "table_name": "TimeInfo",
+      "description": "Pentax time information and world time settings"
+    },
+    {
+      "table_name": "LensCorr",
+      "description": "Pentax lens correction information"
+    },
+    {
+      "table_name": "CameraSettings",
+      "description": "Pentax camera settings and configuration"
+    },
+    {
+      "table_name": "CameraSettingsUnknown",
+      "description": "Pentax camera settings for unknown models"
+    },
+    {
+      "table_name": "AEInfo",
+      "description": "Pentax auto-exposure information"
+    },
+    {
+      "table_name": "LensRec",
+      "description": "Pentax lens recording information"
+    }
+  ]
+}

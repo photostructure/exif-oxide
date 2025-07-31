@@ -114,6 +114,10 @@
     {
       "table_name": "Tag202a",
       "description": "Sony newer camera models additional tags (subdirectory reference)"
+    },
+    {
+      "table_name": "SR2Private",
+      "description": "Sony SR2 private data for RAW files (subdirectory reference)"
     }
   ]
 }

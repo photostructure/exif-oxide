@@ -3379,6 +3379,161 @@ static PRINT_CONV_109: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
+static PRINT_CONV_110: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("-559038737".to_string(), "n/a");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Yellow");
+    map.insert("2".to_string(), "Orange");
+    map.insert("3".to_string(), "Red");
+    map.insert("4".to_string(), "Green");
+    map
+});
+
+static PRINT_CONV_111: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("-559038737".to_string(), "n/a");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Sepia");
+    map.insert("2".to_string(), "Blue");
+    map.insert("3".to_string(), "Purple");
+    map.insert("4".to_string(), "Green");
+    map
+});
+
+static PRINT_CONV_112: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("-559038737".to_string(), "n/a");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Yellow");
+    map.insert("2".to_string(), "Orange");
+    map.insert("3".to_string(), "Red");
+    map.insert("4".to_string(), "Green");
+    map
+});
+
+static PRINT_CONV_113: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("-559038737".to_string(), "n/a");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Sepia");
+    map.insert("2".to_string(), "Blue");
+    map.insert("3".to_string(), "Purple");
+    map.insert("4".to_string(), "Green");
+    map
+});
+
+static PRINT_CONV_114: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("-559038737".to_string(), "n/a");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Yellow");
+    map.insert("2".to_string(), "Orange");
+    map.insert("3".to_string(), "Red");
+    map.insert("4".to_string(), "Green");
+    map
+});
+
+static PRINT_CONV_115: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("-559038737".to_string(), "n/a");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Sepia");
+    map.insert("2".to_string(), "Blue");
+    map.insert("3".to_string(), "Purple");
+    map.insert("4".to_string(), "Green");
+    map
+});
+
+static PRINT_CONV_116: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("-559038737".to_string(), "n/a");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Yellow");
+    map.insert("2".to_string(), "Orange");
+    map.insert("3".to_string(), "Red");
+    map.insert("4".to_string(), "Green");
+    map
+});
+
+static PRINT_CONV_117: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("-559038737".to_string(), "n/a");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Sepia");
+    map.insert("2".to_string(), "Blue");
+    map.insert("3".to_string(), "Purple");
+    map.insert("4".to_string(), "Green");
+    map
+});
+
+static PRINT_CONV_118: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("-559038737".to_string(), "n/a");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Yellow");
+    map.insert("2".to_string(), "Orange");
+    map.insert("3".to_string(), "Red");
+    map.insert("4".to_string(), "Green");
+    map
+});
+
+static PRINT_CONV_119: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("-559038737".to_string(), "n/a");
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Sepia");
+    map.insert("2".to_string(), "Blue");
+    map.insert("3".to_string(), "Purple");
+    map.insert("4".to_string(), "Green");
+    map
+});
+
+static PRINT_CONV_120: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("129".to_string(), "Standard");
+    map.insert("130".to_string(), "Portrait");
+    map.insert("131".to_string(), "Landscape");
+    map.insert("132".to_string(), "Neutral");
+    map.insert("133".to_string(), "Faithful");
+    map.insert("134".to_string(), "Monochrome");
+    map.insert("135".to_string(), "Auto");
+    map.insert("65".to_string(), "PC 1");
+    map.insert("66".to_string(), "PC 2");
+    map.insert("67".to_string(), "PC 3");
+    map
+});
+
+static PRINT_CONV_121: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("129".to_string(), "Standard");
+    map.insert("130".to_string(), "Portrait");
+    map.insert("131".to_string(), "Landscape");
+    map.insert("132".to_string(), "Neutral");
+    map.insert("133".to_string(), "Faithful");
+    map.insert("134".to_string(), "Monochrome");
+    map.insert("135".to_string(), "Auto");
+    map.insert("65".to_string(), "PC 1");
+    map.insert("66".to_string(), "PC 2");
+    map.insert("67".to_string(), "PC 3");
+    map
+});
+
+static PRINT_CONV_122: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("129".to_string(), "Standard");
+    map.insert("130".to_string(), "Portrait");
+    map.insert("131".to_string(), "Landscape");
+    map.insert("132".to_string(), "Neutral");
+    map.insert("133".to_string(), "Faithful");
+    map.insert("134".to_string(), "Monochrome");
+    map.insert("135".to_string(), "Auto");
+    map.insert("65".to_string(), "PC 1");
+    map.insert("66".to_string(), "PC 2");
+    map.insert("67".to_string(), "PC 3");
+    map
+});
+
 /// Get tag definitions for other category
 pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
     vec![
@@ -12350,6 +12505,963 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ContrastStandard",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (100, TagKitDef {
+            id: 100,
+            name: "SharpnessFaithful",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (104, TagKitDef {
+            id: 104,
+            name: "SaturationFaithful",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (108, TagKitDef {
+            id: 108,
+            name: "ColorToneFaithful",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (112, TagKitDef {
+            id: 112,
+            name: "FilterEffectFaithful",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (116, TagKitDef {
+            id: 116,
+            name: "ToningEffectFaithful",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "ColorToneStandard",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (120, TagKitDef {
+            id: 120,
+            name: "ContrastMonochrome",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (124, TagKitDef {
+            id: 124,
+            name: "SharpnessMonochrome",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (128, TagKitDef {
+            id: 128,
+            name: "SaturationMonochrome",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (132, TagKitDef {
+            id: 132,
+            name: "ColorToneMonochrome",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (136, TagKitDef {
+            id: 136,
+            name: "FilterEffectMonochrome",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_110),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (140, TagKitDef {
+            id: 140,
+            name: "ToningEffectMonochrome",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_111),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (144, TagKitDef {
+            id: 144,
+            name: "ContrastAuto",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (148, TagKitDef {
+            id: 148,
+            name: "SharpnessAuto",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (152, TagKitDef {
+            id: 152,
+            name: "SaturationAuto",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (156, TagKitDef {
+            id: 156,
+            name: "ColorToneAuto",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "FilterEffectStandard",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (160, TagKitDef {
+            id: 160,
+            name: "FilterEffectAuto",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_112),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (164, TagKitDef {
+            id: 164,
+            name: "ToningEffectAuto",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_113),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (168, TagKitDef {
+            id: 168,
+            name: "ContrastUserDef1",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (172, TagKitDef {
+            id: 172,
+            name: "SharpnessUserDef1",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (176, TagKitDef {
+            id: 176,
+            name: "SaturationUserDef1",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (180, TagKitDef {
+            id: 180,
+            name: "ColorToneUserDef1",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (184, TagKitDef {
+            id: 184,
+            name: "FilterEffectUserDef1",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_114),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (188, TagKitDef {
+            id: 188,
+            name: "ToningEffectUserDef1",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_115),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (192, TagKitDef {
+            id: 192,
+            name: "ContrastUserDef2",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (196, TagKitDef {
+            id: 196,
+            name: "SharpnessUserDef2",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "ToningEffectStandard",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (200, TagKitDef {
+            id: 200,
+            name: "SaturationUserDef2",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (204, TagKitDef {
+            id: 204,
+            name: "ColorToneUserDef2",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (208, TagKitDef {
+            id: 208,
+            name: "FilterEffectUserDef2",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_116),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (212, TagKitDef {
+            id: 212,
+            name: "ToningEffectUserDef2",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_117),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (216, TagKitDef {
+            id: 216,
+            name: "ContrastUserDef3",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (220, TagKitDef {
+            id: 220,
+            name: "SharpnessUserDef3",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (224, TagKitDef {
+            id: 224,
+            name: "SaturationUserDef3",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (228, TagKitDef {
+            id: 228,
+            name: "ColorToneUserDef3",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (232, TagKitDef {
+            id: 232,
+            name: "FilterEffectUserDef3",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_118),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (236, TagKitDef {
+            id: 236,
+            name: "ToningEffectUserDef3",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_119),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "ContrastPortrait",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (240, TagKitDef {
+            id: 240,
+            name: "UserDef1PictureStyle",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_120),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (242, TagKitDef {
+            id: 242,
+            name: "UserDef2PictureStyle",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_121),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (244, TagKitDef {
+            id: 244,
+            name: "UserDef3PictureStyle",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_122),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (28, TagKitDef {
+            id: 28,
+            name: "SharpnessPortrait",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32, TagKitDef {
+            id: 32,
+            name: "SaturationPortrait",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (36, TagKitDef {
+            id: 36,
+            name: "ColorTonePortrait",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (40, TagKitDef {
+            id: 40,
+            name: "FilterEffectPortrait",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (44, TagKitDef {
+            id: 44,
+            name: "ToningEffectPortrait",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (48, TagKitDef {
+            id: 48,
+            name: "ContrastLandscape",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (52, TagKitDef {
+            id: 52,
+            name: "SharpnessLandscape",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (56, TagKitDef {
+            id: 56,
+            name: "SaturationLandscape",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (60, TagKitDef {
+            id: 60,
+            name: "ColorToneLandscape",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (64, TagKitDef {
+            id: 64,
+            name: "FilterEffectLandscape",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (68, TagKitDef {
+            id: 68,
+            name: "ToningEffectLandscape",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (72, TagKitDef {
+            id: 72,
+            name: "ContrastNeutral",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (76, TagKitDef {
+            id: 76,
+            name: "SharpnessNeutral",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (80, TagKitDef {
+            id: 80,
+            name: "SaturationNeutral",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (84, TagKitDef {
+            id: 84,
+            name: "ColorToneNeutral",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (88, TagKitDef {
+            id: 88,
+            name: "FilterEffectNeutral",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (92, TagKitDef {
+            id: 92,
+            name: "ToningEffectNeutral",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (96, TagKitDef {
+            id: 96,
+            name: "ContrastFaithful",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "CameraColorCalibration01",
+            format: "int16s[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "CameraColorCalibration04",
+            format: "int16s[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "CameraColorCalibration05",
+            format: "int16s[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "CameraColorCalibration06",
+            format: "int16s[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "CameraColorCalibration07",
+            format: "int16s[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (28, TagKitDef {
+            id: 28,
+            name: "CameraColorCalibration08",
+            format: "int16s[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32, TagKitDef {
+            id: 32,
+            name: "CameraColorCalibration09",
+            format: "int16s[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (36, TagKitDef {
+            id: 36,
+            name: "CameraColorCalibration10",
+            format: "int16s[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (40, TagKitDef {
+            id: 40,
+            name: "CameraColorCalibration11",
+            format: "int16s[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (44, TagKitDef {
+            id: 44,
+            name: "CameraColorCalibration12",
+            format: "int16s[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (48, TagKitDef {
+            id: 48,
+            name: "CameraColorCalibration13",
+            format: "int16s[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (52, TagKitDef {
+            id: 52,
+            name: "CameraColorCalibration14",
+            format: "int16s[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (56, TagKitDef {
+            id: 56,
+            name: "CameraColorCalibration15",
+            format: "int16s[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "CameraColorCalibration01",
+            format: "int16s[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (15, TagKitDef {
+            id: 15,
+            name: "CameraColorCalibration04",
+            format: "int16s[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "CameraColorCalibration05",
+            format: "int16s[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (25, TagKitDef {
+            id: 25,
+            name: "CameraColorCalibration06",
+            format: "int16s[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30, TagKitDef {
+            id: 30,
+            name: "CameraColorCalibration07",
+            format: "int16s[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (35, TagKitDef {
+            id: 35,
+            name: "CameraColorCalibration08",
+            format: "int16s[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (40, TagKitDef {
+            id: 40,
+            name: "CameraColorCalibration09",
+            format: "int16s[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (45, TagKitDef {
+            id: 45,
+            name: "CameraColorCalibration10",
+            format: "int16s[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (50, TagKitDef {
+            id: 50,
+            name: "CameraColorCalibration11",
+            format: "int16s[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (55, TagKitDef {
+            id: 55,
+            name: "CameraColorCalibration12",
+            format: "int16s[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (60, TagKitDef {
+            id: 60,
+            name: "CameraColorCalibration13",
+            format: "int16s[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (65, TagKitDef {
+            id: 65,
+            name: "CameraColorCalibration14",
+            format: "int16s[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d %4d (%dK)\", split(\" \",$val))"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (70, TagKitDef {
+            id: 70,
+            name: "CameraColorCalibration15",
+            format: "int16s[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%4d %4d %4d %4d (%dK)\", split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
