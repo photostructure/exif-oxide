@@ -27,7 +27,9 @@
 //! - `tests.rs` - Comprehensive unit tests for all components
 
 pub mod af_processing;
+pub mod binary_data_extraction;
 pub mod detection;
+pub mod encrypted_processing;
 pub mod encryption;
 pub mod ifd;
 pub mod lens_database;
@@ -37,6 +39,10 @@ pub mod tags;
 // Re-export commonly used functions for easier access
 pub use af_processing::{process_nikon_af_info, NikonAfSystem};
 pub use detection::{detect_nikon_format, detect_nikon_signature};
+pub use encrypted_processing::{
+    process_encrypted_colorbalance, process_encrypted_lensdata, process_encrypted_shotinfo,
+    NikonCameraModel,
+};
 pub use encryption::{process_encrypted_sections, NikonEncryptionKeys};
 pub use ifd::{prescan_for_encryption_keys, process_standard_nikon_tags};
 pub use lens_database::lookup_nikon_lens;
@@ -98,7 +104,7 @@ pub fn process_nikon_makernotes(reader: &mut ExifReader, offset: usize) -> Resul
     ifd::process_standard_nikon_tags(reader, base_offset, &encryption_keys)?;
 
     // Phase 6: Process encrypted sections (Phase 2 implementation)
-    encryption::process_encrypted_sections(reader, base_offset, &encryption_keys)?;
+    encryption::process_encrypted_sections(reader, base_offset, &mut encryption_keys)?;
 
     Ok(())
 }
@@ -126,10 +132,11 @@ pub fn process_nikon_subdirectory_tags(exif_reader: &mut ExifReader) -> Result<(
     debug!("Processing Nikon subdirectory tags using generic system");
 
     // Use the generic subdirectory processing with Nikon-specific functions
+    // Fix Group1 assignment: Use "Nikon" as namespace for group1="Nikon" instead of "MakerNotes"
     process_subdirectories_with_printconv(
         exif_reader,
         "Nikon",
-        "MakerNotes",
+        "Nikon",
         tag_kit::has_subdirectory,
         tag_kit::process_subdirectory,
         tag_kit::apply_print_conv,

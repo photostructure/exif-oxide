@@ -18,6 +18,63 @@ use crate::tiff_types::{ByteOrder, IfdEntry};
 use crate::types::{Result, TagValue};
 use tracing::{debug, trace, warn};
 
+/// XOR decryption lookup tables from ExifTool Nikon.pm (ref 4)
+/// ExifTool: @xlat arrays lines 13505-13538
+static XLAT: [[u8; 256]; 2] = [
+    // xlat[0] - first lookup table
+    [
+        0xc1, 0xbf, 0x6d, 0x0d, 0x59, 0xc5, 0x13, 0x9d, 0x83, 0x61, 0x6b, 0x4f, 0xc7, 0x7f, 0x3d,
+        0x3d, 0x53, 0x59, 0xe3, 0xc7, 0xe9, 0x2f, 0x95, 0xa7, 0x95, 0x1f, 0xdf, 0x7f, 0x2b, 0x29,
+        0xc7, 0x0d, 0xdf, 0x07, 0xef, 0x71, 0x89, 0x3d, 0x13, 0x3d, 0x3b, 0x13, 0xfb, 0x0d, 0x89,
+        0xc1, 0x65, 0x1f, 0xb3, 0x0d, 0x6b, 0x29, 0xe3, 0xfb, 0xef, 0xa3, 0x6b, 0x47, 0x7f, 0x95,
+        0x35, 0xa7, 0x47, 0x4f, 0xc7, 0xf1, 0x59, 0x95, 0x35, 0x11, 0x29, 0x61, 0xf1, 0x3d, 0xb3,
+        0x2b, 0x0d, 0x43, 0x89, 0xc1, 0x9d, 0x9d, 0x89, 0x65, 0xf1, 0xe9, 0xdf, 0xbf, 0x3d, 0x7f,
+        0x53, 0x97, 0xe5, 0xe9, 0x95, 0x17, 0x1d, 0x3d, 0x8b, 0xfb, 0xc7, 0xe3, 0x67, 0xa7, 0x07,
+        0xf1, 0x71, 0xa7, 0x53, 0xb5, 0x29, 0x89, 0xe5, 0x2b, 0xa7, 0x17, 0x29, 0xe9, 0x4f, 0xc5,
+        0x65, 0x6d, 0x6b, 0xef, 0x0d, 0x89, 0x49, 0x2f, 0xb3, 0x43, 0x53, 0x65, 0x1d, 0x49, 0xa3,
+        0x13, 0x89, 0x59, 0xef, 0x6b, 0xef, 0x65, 0x1d, 0x0b, 0x59, 0x13, 0xe3, 0x4f, 0x9d, 0xb3,
+        0x29, 0x43, 0x2b, 0x07, 0x1d, 0x95, 0x59, 0x59, 0x47, 0xfb, 0xe5, 0xe9, 0x61, 0x47, 0x2f,
+        0x35, 0x7f, 0x17, 0x7f, 0xef, 0x7f, 0x95, 0x95, 0x71, 0xd3, 0xa3, 0x0b, 0x71, 0xa3, 0xad,
+        0x0b, 0x3b, 0xb5, 0xfb, 0xa3, 0xbf, 0x4f, 0x83, 0x1d, 0xad, 0xe9, 0x2f, 0x71, 0x65, 0xa3,
+        0xe5, 0x07, 0x35, 0x3d, 0x0d, 0xb5, 0xe9, 0xe5, 0x47, 0x3b, 0x9d, 0xef, 0x35, 0xa3, 0xbf,
+        0xb3, 0xdf, 0x53, 0xd3, 0x97, 0x53, 0x49, 0x71, 0x07, 0x35, 0x61, 0x71, 0x2f, 0x43, 0x2f,
+        0x11, 0xdf, 0x17, 0x97, 0xfb, 0x95, 0x3b, 0x7f, 0x6b, 0xd3, 0x25, 0xbf, 0xad, 0xc7, 0xc5,
+        0xc5, 0xb5, 0x8b, 0xef, 0x2f, 0xd3, 0x07, 0x6b, 0x25, 0x49, 0x95, 0x25, 0x49, 0x6d, 0x71,
+        0xc7,
+    ],
+    // xlat[1] - second lookup table
+    [
+        0xa7, 0xbc, 0xc9, 0xad, 0x91, 0xdf, 0x85, 0xe5, 0xd4, 0x78, 0xd5, 0x17, 0x46, 0x7c, 0x29,
+        0x4c, 0x4d, 0x03, 0xe9, 0x25, 0x68, 0x11, 0x86, 0xb3, 0xbd, 0xf7, 0x6f, 0x61, 0x22, 0xa2,
+        0x26, 0x34, 0x2a, 0xbe, 0x1e, 0x46, 0x14, 0x68, 0x9d, 0x44, 0x18, 0xc2, 0x40, 0xf4, 0x7e,
+        0x5f, 0x1b, 0xad, 0x0b, 0x94, 0xb6, 0x67, 0xb4, 0x0b, 0xe1, 0xea, 0x95, 0x9c, 0x66, 0xdc,
+        0xe7, 0x5d, 0x6c, 0x05, 0xda, 0xd5, 0xdf, 0x7a, 0xef, 0xf6, 0xdb, 0x1f, 0x82, 0x4c, 0xc0,
+        0x68, 0x47, 0xa1, 0xbd, 0xee, 0x39, 0x50, 0x56, 0x4a, 0xdd, 0xdf, 0xa5, 0xf8, 0xc6, 0xda,
+        0xca, 0x90, 0xca, 0x01, 0x42, 0x9d, 0x8b, 0x0c, 0x73, 0x43, 0x75, 0x05, 0x94, 0xde, 0x24,
+        0xb3, 0x80, 0x34, 0xe5, 0x2c, 0xdc, 0x9b, 0x3f, 0xca, 0x33, 0x45, 0xd0, 0xdb, 0x5f, 0xf5,
+        0x52, 0xc3, 0x21, 0xda, 0xe2, 0x22, 0x72, 0x6b, 0x3e, 0xd0, 0x5b, 0xa8, 0x87, 0x8c, 0x06,
+        0x5d, 0x0f, 0xdd, 0x09, 0x19, 0x93, 0xd0, 0xb9, 0xfc, 0x8b, 0x0f, 0x84, 0x60, 0x33, 0x1c,
+        0x9b, 0x45, 0xf1, 0xf0, 0xa3, 0x94, 0x3a, 0x12, 0x77, 0x33, 0x4d, 0x44, 0x78, 0x28, 0x3c,
+        0x9e, 0xfd, 0x65, 0x57, 0x16, 0x94, 0x6b, 0xfb, 0x59, 0xd0, 0xc8, 0x22, 0x36, 0xdb, 0xd2,
+        0x63, 0x98, 0x43, 0xa1, 0x04, 0x87, 0x86, 0xf7, 0xa6, 0x26, 0xbb, 0xd6, 0x59, 0x4d, 0xbf,
+        0x6a, 0x2e, 0xaa, 0x2b, 0xef, 0xe6, 0x78, 0xb6, 0x4e, 0xe0, 0x2f, 0xdc, 0x7c, 0xbe, 0x57,
+        0x19, 0x32, 0x7e, 0x2a, 0xd0, 0xb8, 0xba, 0x29, 0x00, 0x3c, 0x52, 0x7d, 0xa8, 0x49, 0x3b,
+        0x2d, 0xeb, 0x25, 0x49, 0xfa, 0xa3, 0xaa, 0x39, 0xa7, 0xc5, 0xa7, 0x50, 0x11, 0x36, 0xfb,
+        0xc6, 0x67, 0x4a, 0xf5, 0xa5, 0x12, 0x65, 0x7e, 0xb0, 0xdf, 0xaf, 0x4e, 0xb3, 0x61, 0x7f,
+        0x2f,
+    ],
+];
+
+/// Nikon decryption state management
+/// ExifTool: $ci0, $cj0, $ck0, $decryptStart variables (lines 13540, 13566-13568)
+#[derive(Debug, Clone)]
+pub struct NikonDecryptionState {
+    pub ci0: u8,
+    pub cj0: u8,
+    pub ck0: u8,
+    pub decrypt_start: Option<usize>,
+}
+
 /// Nikon encryption key management system
 /// ExifTool: Nikon.pm encryption key storage and validation
 #[derive(Debug, Clone)]
@@ -37,6 +94,10 @@ pub struct NikonEncryptionKeys {
     /// Additional encryption parameters (future use)
     /// ExifTool: Various model-specific encryption parameters
     pub additional_params: std::collections::HashMap<String, String>,
+
+    /// Decryption state for continuous processing
+    /// ExifTool: Global variables $ci0, $cj0, $ck0, $decryptStart
+    pub decryption_state: Option<NikonDecryptionState>,
 }
 
 impl NikonEncryptionKeys {
@@ -49,6 +110,7 @@ impl NikonEncryptionKeys {
             shutter_count: None,
             camera_model: model,
             additional_params: std::collections::HashMap::new(),
+            decryption_state: None,
         }
     }
 
@@ -108,51 +170,206 @@ impl NikonEncryptionKeys {
     pub fn get_parameter(&self, key: &str) -> Option<&str> {
         self.additional_params.get(key).map(|s| s.as_str())
     }
+
+    /// Get numeric serial key for decryption
+    /// ExifTool: SerialKey function (lines 13594-13601)
+    pub fn get_serial_key_numeric(&self) -> Option<u32> {
+        match &self.serial_number {
+            Some(serial) => {
+                // Use serial number as key if integral
+                if let Ok(numeric) = serial.parse::<u32>() {
+                    Some(numeric)
+                } else {
+                    // Model-specific defaults for non-numeric serials
+                    if self.camera_model.contains("D50") {
+                        Some(0x22)
+                    } else {
+                        Some(0x60) // D200, D40X, etc
+                    }
+                }
+            }
+            None => None,
+        }
+    }
 }
 
-/// ProcessNikonEncrypted skeleton - detection and key validation only
-/// ExifTool: Nikon.pm ProcessNikonEncrypted function (Phase 1: detection only)
+/// Decrypt Nikon data block using XOR algorithm
+/// ExifTool: Decrypt function (lines 13554-13588)  
+///
+/// Inputs: data block, start offset, number of bytes, serial key, count key, decryption state
+/// Returns: decrypted data block
+///
+/// Notes: First call must provide serial/count keys for initialization.
+/// Subsequent calls continue decryption from previous state.
+pub fn decrypt_nikon_data(
+    data: &[u8],
+    start: usize,
+    len: Option<usize>,
+    serial: Option<u32>,
+    count: Option<u32>,
+    state: &mut Option<NikonDecryptionState>,
+) -> Result<Vec<u8>> {
+    use crate::types::ExifError;
+
+    let max_len = data.len().saturating_sub(start);
+    let len = len.unwrap_or(max_len).min(max_len);
+
+    if len == 0 || start >= data.len() {
+        return Ok(data.to_vec());
+    }
+
+    // Initialize decryption parameters if serial/count provided
+    if let (Some(serial), Some(count)) = (serial, count) {
+        debug!(
+            "Initializing Nikon decryption with serial={}, count={}",
+            serial, count
+        );
+
+        // ExifTool: key generation (lines 13564-13568)
+        let mut key = 0u32;
+        for i in 0..4 {
+            key ^= (count >> (i * 8)) & 0xff;
+        }
+
+        let ci0 = XLAT[0][(serial & 0xff) as usize];
+        let cj0 = XLAT[1][(key & 0xff) as usize];
+        let ck0 = 0x60u8;
+
+        *state = Some(NikonDecryptionState {
+            ci0,
+            cj0,
+            ck0,
+            decrypt_start: Some(start),
+        });
+
+        trace!(
+            "Nikon decryption initialized: ci0={:#x}, cj0={:#x}, ck0={:#x}",
+            ci0,
+            cj0,
+            ck0
+        );
+    }
+
+    // Get current decryption state
+    let decrypt_state = state
+        .as_ref()
+        .ok_or_else(|| ExifError::ParseError("Nikon decryption not initialized".to_string()))?;
+
+    // Calculate decryption parameters for this position
+    // ExifTool: lines 13571-13579
+    let (mut cj, mut ck) = if let Some(decrypt_start) = decrypt_state.decrypt_start {
+        if start != decrypt_start {
+            // Calculate offset-adjusted parameters
+            let n = start.saturating_sub(decrypt_start) as u32;
+            let cj_offset = (decrypt_state.ci0 as u32
+                * (n * decrypt_state.ck0 as u32 + (n * (n.saturating_sub(1))) / 2))
+                & 0xff;
+            let cj = ((decrypt_state.cj0 as u32 + cj_offset) & 0xff) as u8;
+            let ck = ((decrypt_state.ck0 as u32 + n) & 0xff) as u8;
+            (cj, ck)
+        } else {
+            (decrypt_state.cj0, decrypt_state.ck0)
+        }
+    } else {
+        (decrypt_state.cj0, decrypt_state.ck0)
+    };
+
+    // Perform XOR decryption
+    // ExifTool: lines 13580-13587
+    let mut result = data.to_vec();
+    let ci0 = decrypt_state.ci0;
+
+    for i in 0..len {
+        if start + i >= result.len() {
+            break;
+        }
+
+        cj = ((cj as u32 + ci0 as u32 * ck as u32) & 0xff) as u8;
+        ck = ((ck as u32 + 1) & 0xff) as u8;
+        result[start + i] ^= cj;
+    }
+
+    trace!("Nikon decryption completed: {} bytes processed", len);
+    Ok(result)
+}
+
+/// Process Nikon encrypted data with actual decryption
+/// ExifTool: Nikon.pm ProcessNikonEncrypted function (lines 13892-14011)
 pub fn process_nikon_encrypted(
     reader: &mut crate::exif::ExifReader,
     data: &[u8],
-    keys: &NikonEncryptionKeys,
-) -> crate::types::Result<()> {
-    debug!("Processing Nikon encrypted data (Phase 1: detection only)");
+    keys: &mut NikonEncryptionKeys,
+) -> crate::types::Result<Vec<u8>> {
+    debug!("Processing Nikon encrypted data with decryption");
 
     if data.is_empty() {
         warn!("No encrypted data to process");
-        return Ok(());
+        return Ok(data.to_vec());
     }
 
-    // Phase 1: Detect and report encryption status
-    let tag_source = reader.create_tag_source_info("MakerNotes");
-
-    let status = if keys.has_required_keys() {
-        debug!("Nikon encrypted section detected with valid keys");
-        format!(
-            "Encrypted data detected (keys available: serial={}, count={}, decryption not implemented)",
-            keys.get_serial_key().unwrap_or("none"),
-            keys.get_count_key().map(|c| c.to_string()).unwrap_or("none".to_string())
-        )
-    } else {
-        debug!("Nikon encrypted section detected without keys");
-        "Encrypted data detected (keys required for decryption)".to_string()
+    // Check if we have required keys
+    let (serial, count) = match (keys.get_serial_key_numeric(), keys.get_count_key()) {
+        (Some(serial), Some(count)) => {
+            debug!(
+                "Nikon decryption keys available: serial={}, count={}",
+                serial, count
+            );
+            (serial, count)
+        }
+        _ => {
+            warn!("Cannot decrypt Nikon information - missing keys");
+            let tag_source = reader.create_tag_source_info("MakerNotes");
+            reader.store_tag_with_precedence(
+                0x00FE, // Custom tag for encryption status
+                TagValue::String(
+                    "Encrypted data detected (keys required for decryption)".to_string(),
+                ),
+                tag_source,
+            );
+            return Ok(data.to_vec()); // Return original data
+        }
     };
 
+    // Validate serial number and count format (ExifTool: lines 13898-13910)
+    let serial_str = keys.get_serial_key().unwrap_or("");
+    let count_str = count.to_string();
+
+    if !serial_str.chars().all(|c| c.is_ascii_digit())
+        || !count_str.chars().all(|c| c.is_ascii_digit())
+    {
+        let msg = if !serial_str.chars().all(|c| c.is_ascii_digit()) {
+            "invalid SerialNumber"
+        } else {
+            "invalid ShutterCount"
+        };
+        warn!("Can't decrypt Nikon information ({} key)", msg);
+        return Ok(data.to_vec());
+    }
+
+    // Perform decryption using our decrypt function
+    let decrypted = decrypt_nikon_data(
+        data,
+        0,    // start at beginning
+        None, // decrypt all data
+        Some(serial),
+        Some(count),
+        &mut keys.decryption_state,
+    )?;
+
+    debug!("Nikon data decryption completed successfully");
+
+    // Store decryption status for debugging
+    let tag_source = reader.create_tag_source_info("MakerNotes");
     reader.store_tag_with_precedence(
-        0x00FE, // Use a custom tag ID for encryption detection
-        crate::types::TagValue::String(status),
+        0x00FF, // Custom tag for encryption summary
+        TagValue::String(format!(
+            "Data decrypted successfully (serial={}, count={})",
+            serial, count
+        )),
         tag_source,
     );
 
-    // TODO: Phase 2+ implementation will add actual decryption here
-    // This will include:
-    // - Model-specific decryption algorithms
-    // - Serial number and shutter count key derivation
-    // - Encrypted data block processing
-    // - Re-encryption for write support
-
-    Ok(())
+    Ok(decrypted)
 }
 
 /// Validate encryption keys for specific camera model
@@ -189,7 +406,7 @@ pub fn validate_encryption_keys(keys: &NikonEncryptionKeys, model: &str) -> Resu
 pub fn process_encrypted_sections(
     reader: &mut ExifReader,
     base_offset: usize,
-    keys: &NikonEncryptionKeys,
+    keys: &mut NikonEncryptionKeys,
 ) -> Result<()> {
     trace!(
         "Processing encrypted Nikon sections at offset {:#x}",
@@ -267,25 +484,59 @@ pub fn process_encrypted_sections(
 
             trace!("Found encrypted tag {:#x} at entry {}", entry.tag_id, index);
 
-            // Store information about the encrypted tag
-            let tag_source = reader.create_tag_source_info("Nikon");
-            let tag_info = if keys.has_required_keys() {
-                format!(
-                    "Encrypted tag {:#x} (keys available, decryption not implemented)",
-                    entry.tag_id
-                )
-            } else {
-                format!(
-                    "Encrypted tag {:#x} (keys required for decryption)",
-                    entry.tag_id
-                )
-            };
+            // Process the encrypted section if we have keys and data
+            if keys.has_required_keys() {
+                let data_offset = entry.value_or_offset as usize;
+                let data_len = entry.count as usize;
 
-            reader.store_tag_with_precedence(
-                0x1000 + entry.tag_id, // Use offset to avoid conflicts
-                TagValue::String(tag_info),
-                tag_source,
-            );
+                if data_offset + data_len <= data.len() {
+                    let section_data = &data[data_offset..data_offset + data_len];
+
+                    // Dispatch to appropriate processing function based on tag ID
+                    let process_result = match entry.tag_id {
+                        0x0091 => {
+                            // ShotInfo - use model-specific processing
+                            crate::implementations::nikon::encrypted_processing::process_encrypted_shotinfo(
+                                reader, section_data, keys
+                            )
+                        }
+                        0x0098 => {
+                            // LensData
+                            crate::implementations::nikon::encrypted_processing::process_encrypted_lensdata(
+                                reader, section_data, keys
+                            )
+                        }
+                        0x0097 => {
+                            // ColorBalance
+                            crate::implementations::nikon::encrypted_processing::process_encrypted_colorbalance(
+                                reader, section_data, keys
+                            )
+                        }
+                        _ => {
+                            // Other encrypted tags - use generic decryption
+                            process_nikon_encrypted(reader, section_data, keys).map(|_| ())
+                        }
+                    };
+
+                    if let Err(e) = process_result {
+                        warn!("Failed to process encrypted tag {:#x}: {}", entry.tag_id, e);
+                    }
+                } else {
+                    trace!("Encrypted tag {:#x} data beyond bounds (offset: {:#x}, len: {}, data_len: {})", 
+                           entry.tag_id, data_offset, data_len, data.len());
+                }
+            } else {
+                // Store placeholder when keys not available
+                let tag_source = reader.create_tag_source_info("Nikon");
+                reader.store_tag_with_precedence(
+                    0x1000 + entry.tag_id, // Use offset to avoid conflicts
+                    TagValue::String(format!(
+                        "Encrypted tag {:#x} (keys required for decryption)",
+                        entry.tag_id
+                    )),
+                    tag_source,
+                );
+            }
         }
     }
 
@@ -423,5 +674,197 @@ mod tests {
 
         let result = validate_encryption_keys(&keys, "NIKON Z 9");
         assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_serial_key_numeric_conversion() {
+        // Test numeric serial number
+        let mut keys = NikonEncryptionKeys::new("NIKON D850".to_string());
+        keys.store_serial_key("12345678".to_string());
+        assert_eq!(keys.get_serial_key_numeric(), Some(12345678));
+
+        // Test D50 model-specific default
+        let mut keys_d50 = NikonEncryptionKeys::new("NIKON D50".to_string());
+        keys_d50.store_serial_key("non-numeric".to_string());
+        assert_eq!(keys_d50.get_serial_key_numeric(), Some(0x22));
+
+        // Test other model default
+        let mut keys_d200 = NikonEncryptionKeys::new("NIKON D200".to_string());
+        keys_d200.store_serial_key("non-numeric".to_string());
+        assert_eq!(keys_d200.get_serial_key_numeric(), Some(0x60));
+    }
+
+    #[test]
+    fn test_nikon_decrypt_basic() {
+        // Test data - simple pattern that should decrypt predictably
+        let test_data = vec![0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0];
+        let serial: u32 = 12345678;
+        let count: u32 = 1000;
+        let mut state = None;
+
+        let result = decrypt_nikon_data(&test_data, 0, None, Some(serial), Some(count), &mut state);
+
+        assert!(result.is_ok());
+        let decrypted = result.unwrap();
+
+        // Verify data was modified (XOR should change values)
+        assert_ne!(decrypted, test_data);
+        assert_eq!(decrypted.len(), test_data.len());
+
+        // Verify state was initialized
+        assert!(state.is_some());
+        let decrypt_state = state.unwrap();
+        assert_eq!(decrypt_state.ci0, XLAT[0][(serial & 0xff) as usize]);
+    }
+
+    #[test]
+    fn test_nikon_decrypt_state_management() {
+        let test_data = vec![0x12, 0x34, 0x56, 0x78];
+        let serial: u32 = 12345678;
+        let count: u32 = 2000;
+        let mut state = None;
+
+        // First decryption initializes state
+        let result1 = decrypt_nikon_data(
+            &test_data,
+            0,
+            Some(2),
+            Some(serial),
+            Some(count),
+            &mut state,
+        );
+        assert!(result1.is_ok());
+        assert!(state.is_some());
+
+        // Second decryption continues from state
+        let result2 = decrypt_nikon_data(
+            &test_data,
+            2,
+            Some(2),
+            None, // No keys needed for continuation
+            None,
+            &mut state,
+        );
+        assert!(result2.is_ok());
+    }
+
+    #[test]
+    fn test_nikon_decrypt_empty_data() {
+        let empty_data = vec![];
+        let mut state = None;
+
+        let result = decrypt_nikon_data(&empty_data, 0, None, Some(12345), Some(1000), &mut state);
+
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), empty_data);
+    }
+
+    #[test]
+    fn test_nikon_decrypt_without_initialization() {
+        let test_data = vec![0x12, 0x34, 0x56, 0x78];
+        let mut state = None;
+
+        // Try to decrypt without providing keys
+        let result = decrypt_nikon_data(&test_data, 0, None, None, None, &mut state);
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_nikon_decrypt_key_generation() {
+        // Test the key generation algorithm matches ExifTool
+        let serial: u32 = 0x12345678;
+        let count: u32 = 0xabcdef01;
+        let mut state = None;
+
+        let test_data = vec![0x00]; // Single byte for minimal test
+        let result = decrypt_nikon_data(&test_data, 0, None, Some(serial), Some(count), &mut state);
+
+        assert!(result.is_ok());
+        assert!(state.is_some());
+
+        let decrypt_state = state.unwrap();
+
+        // Verify ci0 uses serial with XLAT[0]
+        assert_eq!(decrypt_state.ci0, XLAT[0][(serial & 0xff) as usize]);
+
+        // Verify key calculation: key = count[0] ^ count[1] ^ count[2] ^ count[3]
+        let expected_key = (count & 0xff)
+            ^ ((count >> 8) & 0xff)
+            ^ ((count >> 16) & 0xff)
+            ^ ((count >> 24) & 0xff);
+        assert_eq!(decrypt_state.cj0, XLAT[1][(expected_key & 0xff) as usize]);
+
+        // Verify ck0 initialization
+        assert_eq!(decrypt_state.ck0, 0x60);
+    }
+
+    #[test]
+    fn test_nikon_decrypt_offset_calculation() {
+        let test_data = vec![0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88];
+        let serial: u32 = 1000;
+        let count: u32 = 500;
+        let mut state = None;
+
+        // Decrypt from start
+        let result1 = decrypt_nikon_data(
+            &test_data,
+            0,
+            Some(4),
+            Some(serial),
+            Some(count),
+            &mut state,
+        );
+        assert!(result1.is_ok());
+
+        // Decrypt from middle with offset calculation
+        let result2 = decrypt_nikon_data(
+            &test_data,
+            4,
+            Some(4),
+            None, // Continue from state
+            None,
+            &mut state,
+        );
+        assert!(result2.is_ok());
+
+        // Both results should be different from original
+        let decrypted1 = result1.unwrap();
+        let decrypted2 = result2.unwrap();
+
+        assert_ne!(&decrypted1[0..4], &test_data[0..4]);
+        assert_ne!(&decrypted2[4..8], &test_data[4..8]);
+    }
+
+    #[test]
+    fn test_xlat_tables_consistency() {
+        // Verify XLAT tables have correct size and are not all zeros
+        assert_eq!(XLAT[0].len(), 256);
+        assert_eq!(XLAT[1].len(), 256);
+
+        // Check that tables are not empty (should have varied values)
+        let xlat0_sum: u32 = XLAT[0].iter().map(|&x| x as u32).sum();
+        let xlat1_sum: u32 = XLAT[1].iter().map(|&x| x as u32).sum();
+
+        assert!(xlat0_sum > 0);
+        assert!(xlat1_sum > 0);
+
+        // Tables should be different
+        assert_ne!(XLAT[0].to_vec(), XLAT[1].to_vec());
+    }
+
+    #[test]
+    fn test_encrypted_tag_detection() {
+        // Test known encrypted tags
+        assert!(is_encrypted_nikon_tag(0x0088)); // AFInfo
+        assert!(is_encrypted_nikon_tag(0x0091)); // ShotInfo
+        assert!(is_encrypted_nikon_tag(0x0097)); // ColorBalance
+        assert!(is_encrypted_nikon_tag(0x0098)); // LensData
+        assert!(is_encrypted_nikon_tag(0x00A8)); // FlashInfo
+
+        // Test non-encrypted tags
+        assert!(!is_encrypted_nikon_tag(0x0001)); // Version
+        assert!(!is_encrypted_nikon_tag(0x0002)); // ISO
+        assert!(!is_encrypted_nikon_tag(0x001d)); // SerialNumber
     }
 }
