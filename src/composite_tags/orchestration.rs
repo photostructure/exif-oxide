@@ -86,7 +86,32 @@ pub fn resolve_and_compute_composites(
         );
 
         for composite_def in pending_composites {
-            if can_build_composite(composite_def, &available_tags, &built_composites) {
+            // Skip if this composite has already been successfully built
+            // ExifTool: Only the first successful definition is used per tag name
+            if built_composites.contains(composite_def.name) {
+                trace!("Skipping {} - already built", composite_def.name);
+                continue;
+            }
+
+            // Debug GPS composite tags specifically
+            if composite_def.name.starts_with("GPS") {
+                trace!(
+                    "Processing GPS composite {} with dependencies: require={:?}, desire={:?}",
+                    composite_def.name,
+                    composite_def.require,
+                    composite_def.desire
+                );
+            }
+
+            let can_build = can_build_composite(composite_def, &available_tags, &built_composites);
+            if composite_def.name.starts_with("GPS") {
+                trace!(
+                    "GPS composite {} can_build_composite result: {}",
+                    composite_def.name,
+                    can_build
+                );
+            }
+            if can_build {
                 // All dependencies available - build the composite
                 if let Some(computed_value) =
                     compute_composite_tag(composite_def, &available_tags, &built_composites)
@@ -108,6 +133,13 @@ pub fn resolve_and_compute_composites(
 
                     debug!("Built composite tag: {} (pass {})", composite_name, pass);
                     progress_made = true;
+                } else {
+                    // Dependencies available but computation failed - try next definition with same name
+                    trace!(
+                        "Failed to compute {} - will try next definition if available",
+                        composite_def.name
+                    );
+                    deferred_composites.push(composite_def);
                 }
             } else {
                 // Dependencies not available - defer for next pass
