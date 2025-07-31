@@ -59,12 +59,12 @@ pub fn get_normalization_rules() -> HashMap<&'static str, NormalizationRule> {
 
     // SubSec* tags - convert numbers to strings for consistency
     // ExifTool outputs as numbers, exif-oxide outputs as strings
-    rules.insert("EXIF:SubSecTime", NormalizationRule::NumberToString);
-    rules.insert(
-        "EXIF:SubSecTimeDigitized",
-        NormalizationRule::NumberToString,
-    );
-    rules.insert("EXIF:SubSecTimeOriginal", NormalizationRule::NumberToString);
+    // rules.insert("EXIF:SubSecTime", NormalizationRule::NumberToString);
+    // rules.insert(
+    //     "EXIF:SubSecTimeDigitized",
+    //     NormalizationRule::NumberToString,
+    // );
+    // rules.insert("EXIF:SubSecTimeOriginal", NormalizationRule::NumberToString);
 
     // GIF PixelAspectRatio - clean unnecessary precision: 1.0 -> 1
     rules.insert(
@@ -334,8 +334,8 @@ pub fn normalize_for_comparison(mut data: Value, _is_exiftool: bool) -> Value {
         }
 
         // Normalize nondeterministic composite tags
-        // ExifTool exhibits nondeterministic behavior for some composite tags due to Perl's 
-        // hash randomization. The most notable case is Nikon's LensID where multiple lens 
+        // ExifTool exhibits nondeterministic behavior for some composite tags due to Perl's
+        // hash randomization. The most notable case is Nikon's LensID where multiple lens
         // variants can match, causing the order to vary between runs.
         //
         // Example: "AF-P DX Nikkor 18-55mm f/3.5-5.6G VR or AF-P DX Nikkor 18-55mm f/3.5-5.6G"
