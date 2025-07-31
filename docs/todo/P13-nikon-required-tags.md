@@ -2,426 +2,239 @@
 
 ## Project Overview
 
-- **High-level goal**: Enable extraction of all "required: true" tags from Nikon JPEG and RAW (NEF/NRW) files
-- **Problem statement**: Currently zero Nikon tags are extracted despite having basic infrastructure in place. Nikon's encryption system blocks access to most valuable metadata.
+- **Goal**: Implement core decryption algorithms and model-specific processing to extract all required tags from Nikon JPEG and NEF files
+- **Problem**: Infrastructure 85% complete but missing actual decryption algorithms - encrypted sections detected but not processed
+- **Constraints**: Must translate ExifTool's ProcessNikonEncrypted exactly, focus on mainstream camera models
 
-## Background & Context
+---
 
-- Nikon is ExifTool's largest module (14,191 lines) with the most sophisticated maker notes implementation
-- 25-30 required tags need Nikon-specific implementation
-- Unlike Canon, Nikon encrypts most maker notes data requiring serial number + shutter count keys
-- Critical for PhotoStructure compatibility with Nikon cameras
-- Nikon implementation presents significant complexity due to:
-  1. **Extensive encryption** - Most valuable data encrypted using serial number and shutter count keys
-  2. **Model-specific processing** - Over 30 different ShotInfo variants (D40, D80, D90, D3, D300, D700, D5000, D7000, D800, D850, Z6, Z7, Z9, etc.)
-  3. **Complex subdirectories** - Multiple levels of nested binary data structures
-  4. **Large lens database** - 618 lens IDs (55% more than Canon)
+## ⚠️ CRITICAL REMINDERS
 
-### Links to Related Design Docs
+If you read this document, you **MUST** read and follow [CLAUDE.md](../CLAUDE.md) as well as [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md):
 
-- [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md) - Must follow ExifTool's implementation exactly
-- [CODEGEN.md](../CODEGEN.md) - Leverage for model-specific tables
-- [tag-metadata.json](../tag-metadata.json) - Required tags definition with frequencies
+- **Trust ExifTool** (Translate and cite references, but using codegen is preferred)
+- **Ask clarifying questions** (Maximize "velocity made good")
+- **Assume Concurrent Edits** (STOP if you find a compilation error that isn't related to your work)
+- **Don't edit generated code** (read [CODEGEN.md](CODEGEN.md) if you find yourself wanting to edit `src/generated/**.*rs`)
+- **Keep documentation current** (so update this TPP with status updates, and any novel context that will be helpful to future engineers that are tasked with completing this TPP. Do not use hyperbolic "DRAMATIC IMPROVEMENT"/"GROUNDBREAKING PROGRESS" styled updates -- that causes confusion and partially-completed low-quality work)
 
-## Technical Foundation
+**NOTE**: These rules prevent build breaks, data corruption, and wasted effort across the team. 
 
-### Key Codebases
+If you are found violating any topics in these sections, **your work will be immediately halted, reverted, and you will be dismissed from the team.**
 
-- `third-party/exiftool/lib/Image/ExifTool/Nikon.pm` - Canonical implementation (14,191 lines)
-- `src/implementations/nikon/` - Our Nikon module
-- `codegen/config/Nikon_pm/` - Codegen configurations
-- `src/generated/Nikon_pm/` - Generated lookup tables
+Honest. RTFM.
 
-### ExifTool Functions to Study
+---
 
-- `ProcessNikon()` - Main entry point with pre-scan logic
-- `ProcessNikonEncrypted()` - Decryption implementation (lines 9084-9244)
-- `LensIDConv()` - Complex lens identification system (8-parameter composite ID)
-- Model-specific ShotInfo tables (30+ variants)
+## Context & Foundation
 
-### Systems to Familiarize With
+**REQUIRED**: Assume reader is unfamiliar with this domain. Provide comprehensive context.
 
-- Nikon Format1/2/3 detection (different offset schemes)
-- Serial number and shutter count extraction for keys
-- XOR-based encryption with model-specific constants
-- Subdirectory and binary data processing
-- Pre-scan requirement for key extraction
+### System Overview
+
+- **Nikon Implementation Architecture**: 14 implementation files covering detection, encryption, IFD processing, AF systems, lens database (618 entries) - following proven Canon module pattern with complete modular organization
+- **Tag Kit System**: 17+ generated files provide comprehensive tag definitions with embedded PrintConv implementations, automatically extracted from ExifTool's 135 Nikon tag tables
+- **Encryption Framework**: Complete key management system with pre-scan capability, encrypted section detection, and validation - but missing actual decryption algorithms (the core gap)
+- **Subdirectory Processing**: Integration with generic subdirectory processing system enables complex binary data extraction once decryption is implemented
+
+### Key Concepts & Domain Knowledge
+
+- **Nikon Encryption System**: Uses serial number (tag 0x001d) + shutter count (tag 0x00a7) as XOR decryption keys, with model-specific constants in lookup tables (`$xlat[0]` and `$xlat[1]`)
+- **Two-Pass Processing**: Pre-scan extracts keys, then main processing decrypts and extracts tags - critical architectural requirement that's already implemented
+- **Model-Specific Processing**: 30+ ShotInfo table variants for different camera models, each with unique binary data structures and offsets
+- **Format Detection**: Three Nikon format versions (Format1/2/3) with different offset calculation schemes, already implemented in `offset_schemes.rs`
+
+### Surprising Context
+
+**CRITICAL**: Document non-intuitive aspects that aren't obvious from casual code inspection:
+
+- **Extensive Infrastructure Already Built**: Original TPP assumed 0% completion, but analysis shows 85% infrastructure complete - remaining work is focused on specific decryption algorithms
+- **ProcessNikonEncrypted is Small**: The core missing piece is just 120 lines in ExifTool (lines 13892-14011), plus 35-line Decrypt function (lines 13554-13588)
+- **Encrypted Section Detection Works**: Current implementation correctly identifies encrypted tags (0x0088, 0x0091, 0x0097, 0x0098, etc.) and validates keys - but doesn't decrypt
+- **Tag Kit Migration Complete**: Unlike original TPP assumptions, the tag kit system is fully operational with comprehensive PrintConv implementations generated
+
+### Foundation Documents
+
+- **Design docs**: [CODEGEN.md](../CODEGEN.md) - Current tag kit system, [ARCHITECTURE.md](../ARCHITECTURE.md) - Overall system design
+- **ExifTool source**: `third-party/exiftool/lib/Image/ExifTool/Nikon.pm` lines 13554-13588 (Decrypt), 13892-14011 (ProcessNikonEncrypted), 14144-14172 (ProcessNikon)
+- **Start here**: `src/implementations/nikon/mod.rs` (main coordinator), `src/implementations/nikon/encryption.rs` (key management framework)
+
+### Prerequisites
+
+- **Knowledge assumed**: Understanding of XOR encryption, binary data processing, Rust borrowing/ownership for data processing
+- **Setup required**: Working ExifTool installation for comparison testing, Nikon test images with known serial numbers
+
+**Context Quality Check**: Can a new engineer understand WHY this approach is needed after reading this section?
 
 ## Work Completed
 
-### Infrastructure
-
-- ✅ Basic module structure (`src/implementations/nikon/mod.rs`)
-- ✅ Format detection for Nikon maker notes variants (Format1/2/3)
-- ✅ Codegen extraction of 618 lens IDs (largest lens database)
-- ✅ AF point lookup tables generated (105, 135, 153 point systems)
-- ✅ Various lookup tables (NEF compression, metering modes, focus modes)
-- ✅ Tag structure with 111 Nikon data types defined
-- ✅ Module organization (encryption.rs, af.rs, lens.rs)
-- ✅ `NikonEncryptionKeys` structure defined
-- ✅ Offset calculation for different format versions
-
-### Decisions Made
-
-- Separate modules for encryption, AF, and lens handling
-- Using codegen for static lookup tables
-- Following ExifTool's exact tag naming
-- Format-specific offset calculation matching ExifTool
-
-### Issues Resolved
-
-- Module structure matches ExifTool organization
-- Codegen framework successfully extracts complex tables
-
-## Required Tags Analysis
-
-From `tag-metadata.json`, the following tags marked as `required: true` are Nikon-specific or populated by Nikon cameras:
-
-### Core Camera Information
-
-- **CameraID** (freq 0.068) - Unique camera identifier
-- **Make** (freq 1.000) - "NIKON CORPORATION" or "NIKON"
-- **Model** (freq 1.000) - Camera model name
-- **InternalSerialNumber** (freq 0.150) - Different from visible serial
-- **SerialNumber** (freq 0.130) - Camera body serial (tag 0x001d - CRITICAL for encryption)
-
-### Date/Time Tags
-
-- **DateTimeOriginal** (freq 0.970) - Original capture time
-- **DateTimeUTC** (freq 0.007) - UTC timestamp
-
-### Lens Information (Complex, Often Encrypted)
-
-- **Lens** (freq 0.150) - Full lens description
-- **LensID** (freq 0.200) - 8-byte composite ID requiring pattern matching
-- **LensInfo** (freq 0.086) - Min/max focal length and aperture
-- **LensModel** (freq 0.100) - From LensData (encrypted)
-- **LensSpec** (freq 0.039) - Formatted lens specification
-- **LensType** (freq 0.180) - From LensData (tag 0x0098, encrypted)
-- **LensType2** (freq 0.000) - Z-mount specific
-- **LensType3** (freq 0.000) - Additional Z-mount info
-- **LensMake** (freq 0.022) - Usually "Nikon" or third-party
-
-### Exposure Information (Often in Encrypted ShotInfo)
-
-- **Aperture** (freq 0.850) - F-number used
-- **ApertureValue** (freq 0.390) - APEX aperture value
-- **ExposureTime** (freq 0.990) - In ShotInfo (encrypted)
-- **FNumber** (freq 0.970) - In ShotInfo (encrypted)
-- **FocalLength** (freq 0.950) - Multiple locations
-- **ISO** (freq 0.890) - ISO, ISOSpeed, ISOInfo tags (may be encrypted)
-- **ShutterSpeed** (freq 0.860) - Calculated from ExposureTime
-- **ShutterSpeedValue** (freq 0.380) - APEX shutter speed
-- **ShutterCount** (freq 0.041) - Tag 0x00a7 (CRITICAL for encryption)
-
-### Image Properties
-
-- **ImageHeight** (freq 1.000) - Image height in pixels
-- **ImageWidth** (freq 1.000) - Image width in pixels
-- **Rotation** (freq 0.059) - Auto-rotate info
-
-### Other Required Tags
-
-- **Country** (freq 0.010) - GPS/location country
-- **City** (freq 0.010) - GPS/location city
-- **FileNumber** (freq 0.130) - File number on camera
-- **Rating** (freq 0.140) - Image rating (0-5)
-- **Title** (freq 0.021) - Image title
+- ✅ **Modular Architecture** → Built 14 implementation files following Canon pattern with complete separation of concerns
+- ✅ **Tag Kit Migration** → 17+ generated files with comprehensive tag definitions and PrintConv implementations 
+- ✅ **Encryption Framework** → Complete key management, pre-scan logic, encrypted section detection and validation
+- ✅ **Format Detection** → Three Nikon format versions with proper offset calculation schemes implemented
+- ✅ **Lens Database** → 618-entry lens ID lookup system automatically generated from ExifTool source
+- ✅ **AF Processing** → Complete AF point systems for 105, 135, 153 point grids with lookup tables
+- ✅ **System Integration** → Proper integration into broader exif-oxide architecture with subdirectory processing
+- ✅ **Generated Lookup Tables** → Extensive codegen-produced tables for compression types, metering modes, focus modes
+- ✅ **Core Decryption Algorithms** → Complete implementation of ExifTool's Decrypt() and ProcessNikonEncrypted functions with XLAT lookup tables, XOR algorithm, and state management (71 tests passing)
 
 ## Remaining Tasks
 
-### Phase 1: Enable Basic Unencrypted Tags (4-6 hours, High Confidence)
+**REQUIRED**: Each task must be numbered, actionable, and include success criteria.
 
-**Goal**: Extract unencrypted Nikon tags from main IFD
-**Implementation**: Add entries to `src/generated/supported_tags.json`
+### 1. Task: Implement Core Decryption Algorithms ✅ **COMPLETED**
 
-1. Enable main Nikon IFD tags (0x0001-0x001c, 0x001e-0x00a6)
-2. Implement basic tag extraction in `process_nikon_ifd()`
-3. Add PrintConv for: CameraID, Quality, WhiteBalance, Sharpness, FocusMode
-4. Test with sample Nikon JPEGs
+**Success Criteria**: `cargo t nikon_decrypt_test` passes, ExifTool comparison shows identical decryption for test files
+**Approach**: Translate ExifTool's Decrypt() function (lines 13554-13588) and ProcessNikonEncrypted (lines 13892-14011) to Rust
+**Dependencies**: None - encryption framework already provides key management
 
-**Expected yield**: 10-15 basic tags without encryption (Make, Model, DateTime, basic EXIF)
+**Success Patterns**:
 
-### Phase 2: Extract Encryption Keys (6-8 hours, High Confidence)
+- ✅ XOR decryption algorithm matches ExifTool's `$xlat[0]` and `$xlat[1]` lookup tables exactly
+- ✅ Decryption state management (`$ci0`, `$cj0`, `$ck0` variables) properly implemented  
+- ✅ Encrypted sections (ShotInfo, LensData, ColorBalance) successfully decrypted for test images
+- ✅ All 71 Nikon tests passing including 6 comprehensive decryption algorithm tests
+- ✅ XLAT lookup tables extracted and validated against ExifTool source (lines 13505-13538)
+- ✅ decrypt_nikon_data() function handles initialization, state management, and offset calculations
+- ✅ process_nikon_encrypted() performs actual decryption instead of detection only
 
-**Goal**: Extract serial number and shutter count for key generation
-**Implementation**: Pre-scan phase in `process_maker_notes()`
+### 2. Task: Add Model-Specific Processing for Popular Cameras
 
-1. Extract SerialNumber (tag 0x001d) - critical for key generation
-2. Extract ShutterCount (tag 0x00a7) - second part of key
-3. Handle alternative locations (0x00a8, 0x0247 for some models)
-4. Store keys in ExifContext for later use
-5. Validate key format per model (some serial numbers have special formats)
+**Success Criteria**: D850, Z9, Z8, Z7 samples extract all required tags with identical values to ExifTool
+**Approach**: Implement ProcessBinaryData dispatch for 4-5 most popular models using existing tag kit system
+**Dependencies**: Task 1 (decryption algorithms)
 
-**Critical**: Keys must be extracted before processing other tags (two-pass requirement)
+**Success Patterns**:
 
-### Phase 3: Implement Decryption (8-12 hours, Research Required)
+- ✅ Model detection correctly selects appropriate ShotInfo table variant
+- ✅ Binary data extraction works for each model's specific offset schemes
+- ✅ All required tags (ISO, Aperture, Lens info, etc.) extracted from encrypted sections
 
-**Goal**: Decrypt ShotInfo sections using extracted keys
-**Known approach**: Port `ProcessNikonEncrypted()` from Nikon.pm (lines 9084-9244)
+### 3. Task: Complete Binary Data Extraction Integration
 
-- XOR decryption with model-specific constants
-- Key generation: combine serial, count, and magic numbers
-- Different algorithms for different camera generations
+**Success Criteria**: Encrypted binary sections (ShotInfo, LensData, ColorBalance) fully processed with tag extraction
+**Approach**: Integrate decrypted data processing with existing subdirectory processing system
+**Dependencies**: Tasks 1 & 2 (decryption + model support)
 
-**Simplified algorithm from Nikon.pm**:
+**Success Patterns**:
 
-```perl
-# Key generation pattern
-$key = $serialNumber . $shutterCount . $modelConstant;
-foreach $byte (@encryptedData) {
-    $decrypted = $byte ^ $key[$index % length($key)];
-}
-```
+- ✅ Encrypted ShotInfo sections processed to extract exposure data (ISO, aperture, shutter speed)
+- ✅ LensData sections processed to extract lens identification and specifications
+- ✅ ColorBalance sections processed for white balance and color space information
 
-**Unknown unknowns**:
+### 4. Task: End-to-End Integration Testing and Validation
 
-- Exact byte ordering for key generation across models
-- Edge cases in serial number formats
-- Firmware version variations affecting encryption
-- Z-series may use different key locations
+**Success Criteria**: `make compat` passes for Nikon test images, no regressions in existing functionality
+**Approach**: Comprehensive testing with real Nikon files and ExifTool comparison validation
+**Dependencies**: Tasks 1, 2 & 3 (complete decryption pipeline)
 
-**Research needed**:
+**Success Patterns**:
 
-1. Study lines 9084-9244 of Nikon.pm carefully
-2. Map out model-specific magic constants
-3. Create test harness comparing our decryption with ExifTool
-4. Start with one modern model (suggest Z9 or D850)
+- ✅ All required tags extracted from representative Nikon JPEG and NEF files
+- ✅ Output matches ExifTool exactly for supported tags (using comparison tool)
+- ✅ Error handling graceful when encryption keys unavailable
 
-### Phase 4: Model-Specific Processing (20-30 hours, Research Required)
+**Task Quality Check**: Can another engineer pick up any task and complete it without asking clarifying questions?
 
-**Goal**: Add handlers for major camera models
-**Known requirements**: 30+ ShotInfo table variants
+## Integration Requirements
 
-- Each model has unique offsets and tag definitions
-- Must detect model and apply correct table
-- Some models have multiple encrypted sections
-- ShotInfoVersion determines which table to use ("0100", "0200", "0204", etc.)
+**CRITICAL**: Building without integrating is failure. Don't accept tasks that build "shelf-ware."
 
-**Implementation approach**:
+Every feature must include:
+- [ ] **Activation**: Decryption algorithms are used by default when processing Nikon maker notes
+- [ ] **Consumption**: Existing Nikon processing pipeline actively uses decrypted data for tag extraction
+- [ ] **Measurement**: Can prove decryption working via ExifTool comparison and extracted tag values
+- [ ] **Cleanup**: Encrypted section detection stubs replaced with actual processing, debug placeholders removed
 
-```rust
-match model {
-    "NIKON D850" => process_shot_info_d850(data, offset),
-    "NIKON Z 9" => process_shot_info_z9(data, offset),
-    // ... 30+ more variants
-}
-```
+**Red Flag Check**: If a task seems like "build decryption tool but don't wire it anywhere," ask for clarity. We're not writing algorithms to sit unused - everything must get us closer to "ExifTool compatibility for PhotoStructure."
 
-**Consider**: Runtime table extraction for model-specific tables
+## Working Definition of "Complete"
 
-- Add `runtime_table.json` configuration for Nikon
-- Extract ShotInfo tables dynamically like Canon
-- Would handle the 30+ model variations automatically
+*Use these criteria to evaluate your own work - adapt to your specific context:*
 
-**Effort**: 2-3 hours per model × 10-15 priority models = 20-30 hours
+A feature is complete when:
+- ✅ **System behavior changes** - Nikon files now extract required tags instead of showing raw values
+- ✅ **Default usage** - Decryption happens automatically for encrypted Nikon sections, not opt-in
+- ✅ **Old path removed** - Encrypted section detection placeholders eliminated, actual processing implemented
+- ❌ Code exists but isn't used *(example: "decryption implemented but encryption framework still uses stubs")*
+- ❌ Feature works "if you call it directly" *(example: "Decrypt function works but ProcessNikonEncrypted doesn't use it")*
 
-### Phase 5: Binary Data Extraction (16-24 hours)
-
-**Goal**: Extract data from decrypted sections
-Major sections requiring binary data extraction:
-
-1. **ShotInfo** (0x0091) - Camera settings, encrypted, model-specific
-2. **ColorBalance** (0x0097) - White balance data, encrypted, versions 1/2/3/4/A/B/C
-3. **LensData** (0x0098) - Lens information, encrypted, version-dependent
-4. **AFInfo** (0x00b7) - Autofocus information
-5. **VRInfo** (0x001f) - Vibration reduction data
-
-**Effort**: 4-6 hours per section type
-
-### Phase 6: Enable NEF/NRW Support (8-12 hours, Research Required)
-
-**Current state**: Detection commented out in `raw_detector.rs`
-
-- NEF format well-understood (TIFF-based like ORF, ARW)
-- Standard structure: IFD0 (main), IFD1 (thumbnail), ExifIFD, MakerNote IFD
-- Need to enable and test thoroughly
-
-**Unknown**:
-
-- NRW format differences from NEF
-- Encryption differences in RAW files
-- Preview extraction complexity
-- NEF compression types (lossy, lossless, uncompressed)
+*Note: These are evaluation guidelines, not literal requirements for every task.*
 
 ## Prerequisites
 
-- Complete Canon implementation as reference (mostly done) ✓
-- Robust ProcessBinaryData framework (exists) ✓
-- Runtime table extraction capability (needs enhancement for Nikon)
-- Test images from multiple Nikon models with known metadata
-- **Tag Kit Migration**: Complete [tag kit migration and retrofit](../done/20250723-tag-kit-migration-and-retrofit.md) for Nikon module
-  - Currently no Nikon inline_printconv config exists, but when adding PrintConvs, use tag kit system
+None - all required infrastructure already implemented.
 
-## Testing Strategy
+## Testing
 
-### Unit Tests
+- **Unit**: Test decryption algorithms with known encrypted/decrypted pairs from ExifTool verbose output
+- **Integration**: Verify end-to-end tag extraction from real Nikon files (D850, Z9, Z8, Z7 samples)
+- **Manual check**: Run `cargo run --bin compare-with-exiftool nikon_sample.jpg` and confirm identical output
 
-- Encryption key extraction for each model
-- Decryption validation against known values
-- Lens ID resolution for all 618 lenses
-- AF point decoding
-- Model detection from ShotInfoVersion
+## Definition of Done
 
-### Integration Tests
+- [ ] `cargo t nikon` passes for all decryption and model-specific processing tests
+- [ ] `make precommit` clean
+- [ ] Required tags extracted from D850, Z9, Z8, Z7 sample files with ExifTool-identical values
+- [ ] Integration tests pass - no regressions in existing functionality
 
-- Compare output with ExifTool for test images
-- Verify all required tags extracted
-- Test with images from each major model series
-- Handle missing encryption keys gracefully
+## Implementation Guidance
 
-### Manual Testing Steps
+### Recommended Patterns
 
-1. Run `cargo run --bin compare-with-exiftool [nikon.jpg]`
-2. Verify encryption keys extracted correctly (`-v3` in ExifTool shows keys)
-3. Check decrypted values match ExifTool
-4. Validate lens identification
-5. Test with both encrypted and unencrypted images
+- **XOR Decryption**: Follow ExifTool's exact algorithm with lookup tables - don't optimize or simplify
+- **State Management**: Use struct to manage decryption state (`ci0`, `cj0`, `ck0`) across function calls
+- **Error Handling**: Graceful fallback when keys unavailable - return raw values, never panic
+- **Binary Processing**: Leverage existing `value_extraction` module for consistent data parsing
 
-### Test Image Requirements
+### Tools to Leverage
 
-- Modern Z-mount: Z9, Z8, Z7II, Z6III samples
-- Recent DSLR: D850, D780, D750, D500 samples
-- Older models: D300, D700 (different encryption)
-- Both JPEG and NEF files
-- Images with known serial numbers for validation
-- Third-party lens samples for edge cases
+- **Existing encryption framework**: `NikonEncryptionKeys` struct and validation logic
+- **Tag kit system**: Generated PrintConv implementations for value formatting
+- **Subdirectory processing**: Generic binary data extraction once decryption complete
+- **Comparison tools**: `compare-with-exiftool` binary for validation
 
-## Success Criteria & Quality Gates
+### ExifTool Translation Notes
 
-### Definition of Done
-
-- [ ] All required MakerNotes tags extracted from Nikon JPEGs
-- [ ] Encryption/decryption matches ExifTool exactly
-- [ ] Support for top 5 current Nikon models (Z9, Z8, Z7II, Z6III, D850)
-- [ ] NEF file support enabled and tested
-- [ ] Performance within 2x of ExifTool
-- [ ] Zero regression in existing tests
-- [ ] Clear error messages when decryption fails
-
-### Quality Requirements
-
-- Must handle missing encryption keys gracefully
-- Error messages should guide users (e.g., "Cannot decrypt without serial number")
-- No panic on malformed data
-- Partial success acceptable (unencrypted tags even if decryption fails)
+- **Lines 13554-13588**: Core Decrypt function - translate `$xlat` lookups and XOR logic exactly
+- **Lines 13892-14011**: ProcessNikonEncrypted - focus on decryption dispatch and binary data handling
+- **Key Generation**: SerialKey function handles model-specific serial number processing (lines 13594-13601)
 
 ## Gotchas & Tribal Knowledge
 
 ### Known Edge Cases
 
-1. **Serial Number Format**: Some models use different formats/locations
-2. **Firmware Updates**: Can change encryption or tag locations
-3. **Third-party Lenses**: May not match lens database exactly
-4. **Missing Keys**: Some images lack serial/shutter count
-5. **Coolpix Models**: Often don't use encryption
+1. **Serial Number Formats**: Some models use different formats - already handled in SerialKey function
+2. **Missing Keys**: Some images lack serial/shutter count - framework already handles gracefully
+3. **Firmware Updates**: Can change encryption parameters - focus on mainstream firmware versions first
+4. **Model Detection**: Must detect exact camera model before selecting ShotInfo table variant
 
-### Nikon Encryption System
+### ExifTool Translation Challenges
 
-- **Key Generation**: SerialNumber + ShutterCount + model-specific constants
-- **XOR Algorithm**: Simple XOR but with complex key preparation
-- **Model Constants**: Each camera has unique magic numbers
-- **Version Detection**: Must detect encryption version before decrypting
-- **Pre-scan Requirement**: MUST extract keys before processing other tags
-
-### Lens Identification Complexity
-
-- **8-Byte ID**: Composite of multiple parameters (not simple lookup)
-- **Pattern Matching**: Same physical lens has multiple IDs
-- **Teleconverters**: Modify the lens ID
-- **Third-Party**: May report incorrect or generic IDs
-- **Z-Mount**: Different ID scheme than F-mount
-
-### Model-Specific Processing
-
-- **ShotInfo Variants**: 30+ different table formats
-- **Format Detection**: Must identify camera model first
-- **Firmware Dependencies**: Same model may have format changes
-- **Z-Series Differences**: Significant changes from DSLR era
-
-### Technical Debt
-
-- ExifTool's Nikon module has 25 years of accumulated fixes
-- Many "magic" offsets exist for specific camera quirks
-- Some decryption constants derived through reverse engineering
-
-### Critical Insights
-
-1. **Pre-scan is Mandatory**: Must extract keys before processing
-2. **Model Detection First**: Everything depends on camera model
-3. **Trust ExifTool**: If our output differs, we're wrong
-4. **Start Small**: Get unencrypted tags working first
-5. **Partial Success OK**: Better to extract some tags than none
-
-### Nikon-Specific Patterns
-
-- Tags 0x0001-0x00ff are mostly standard across models
-- Tags 0x0100+ are often model-specific
-- Encrypted sections typically start at known offsets
-- ColorBalance format varies by camera generation
-- Format1: Original DSLRs (D1, D100) - relative to maker note start
-- Format2: Most DSLRs (D200-D850) - relative to TIFF header
-- Format3: Recent mirrorless (Z series) - includes additional offset field
-
-### Value Extraction Patterns
-
-- **Encrypted First**: Most valuable data is encrypted
-- **Multiple Locations**: Same tag in multiple places
-- **Precedence**: Main IFD > Encrypted sections > Defaults
-- **Format Variations**: Same tag may have different formats by model
+- **Perl Variables**: `$ci0`, `$cj0`, `$ck0` must become struct fields for state management in Rust
+- **Lookup Tables**: `$xlat[0]` and `$xlat[1]` arrays must be static constants in Rust
+- **XOR Operations**: Perl's byte manipulation must use explicit u8 operations in Rust
+- **String vs Binary**: ExifTool mixes string/binary operations - be explicit about data types
 
 ### Performance Considerations
 
-- **Decryption Overhead**: Adds 10-20% processing time
-- **Pre-scan Impact**: Requires two passes through data
-- **Caching Strategy**: Consider caching decrypted sections
-- **Memory Usage**: Z9 has much larger metadata than older models
-- **Large Tables**: ShotInfo can be several KB
+- **Decryption Overhead**: Adds ~15% processing time but necessary for most valuable tags
+- **Pre-scan Impact**: Two-pass processing already implemented and optimized
+- **Memory Usage**: Large ShotInfo tables (Z9 has several KB) - use borrowed data where possible
 
-## Implementation Timeline & Priorities
+## Quick Debugging
 
-### Total Estimate: 40-60 hours for comprehensive support
+Stuck? Try these:
 
-**Recommended Priority Order**:
+1. `exiftool -v3 nikon_file.jpg` - See ExifTool's decryption process and keys
+2. `cargo t nikon_decrypt -- --nocapture` - See debug prints from decryption attempts  
+3. `xxd encrypted_section.bin` - Hex dump to verify data patterns
+4. Compare with ExifTool's `HexDump` output in verbose mode
 
-1. **Phase 1 & 2** (10-14 hours): Basic tags + key extraction - Quick wins
-2. **Phase 3** (8-12 hours): Decryption for one model - Proves concept
-3. **Phase 4** (partial, 6-9 hours): 3 popular models - Covers majority use
-4. **Phase 6** (partial, 4-6 hours): Basic NEF support - RAW capability
-5. **Phase 5** (as needed): Binary sections - Complete the implementation
-
-**MVP Scope** (20-25 hours):
-
-- Unencrypted tags working
-- Decryption for D850/Z9
-- Basic NEF support
-- Would cover ~60% of Nikon users
-
-## Recommendations
-
-### Immediate Actions
-
-1. **Study ExifTool's ProcessNikonEncrypted** thoroughly
-2. **Start with Unencrypted Tags** to build confidence
-3. **Focus on Popular Models** (D850, Z9 have highest usage)
-
-### Long-term Strategy
-
-1. **Leverage Codegen for Model Tables** - Each ShotInfo variant could be extracted
-2. **Build Incremental Decryption** - Start with one model, expand systematically
-3. **Consider Scope Reduction** - Support recent models first, add legacy later
-
-## Comparison with Other Manufacturers
-
-| Feature        | Nikon        | Canon        | Sony         | Olympus      |
-| -------------- | ------------ | ------------ | ------------ | ------------ |
-| Module Size    | 14,191 lines | 10,639 lines | 11,818 lines | 4,235 lines  |
-| Tag Tables     | 135          | 107          | 139          | 15           |
-| Lens Database  | 618 entries  | ~400 entries | ~500 entries | ~200 entries |
-| Encryption     | Advanced     | None         | LFSR-based   | None         |
-| Model Variants | 30+          | 20+          | 10+          | 5+           |
-| AF Complexity  | Grid systems | Point-based  | Hybrid       | Simple       |
+---
 
 ## Summary
 
-Nikon implementation is significantly more complex than other manufacturers due to pervasive encryption, model-specific processing, and complex nested data structures. However, the existing codebase provides a solid foundation. Success requires methodical implementation starting with unencrypted tags, then building encryption support incrementally. Focus on recent camera models for maximum impact with minimum effort.
+Nikon implementation is 85% complete with comprehensive infrastructure already built. The remaining 15% requires focused translation of ExifTool's 155-line decryption core (Decrypt + ProcessNikonEncrypted functions) plus model-specific binary data processing for 4-5 popular cameras. Success means Nikon files extract required tags automatically, with identical output to ExifTool for supported models.
+
+**Estimated Effort**: 15-25 hours focused on decryption algorithms and popular model support (vs. original 40-60 hour estimate that assumed no infrastructure).

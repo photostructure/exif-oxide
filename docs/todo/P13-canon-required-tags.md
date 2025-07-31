@@ -2,238 +2,232 @@
 
 ## Project Overview
 
-- **Goal**: Implement support for all Canon-specific required tags from PhotoStructure's tag-metadata.json
-- **Problem**: Currently supporting 54/232 Canon MakerNotes tags (23%), need to prioritize required tags for PhotoStructure compatibility
+- **Goal**: Fix corrupted Canon tag extraction and implement all required Canon tags from tag-metadata.json  
+- **Problem**: Canon Main table processing is fundamentally broken - firmware versions show garbage, model IDs have wrong format, required tags missing entirely
+- **Constraints**: Must exactly follow ExifTool's Canon.pm processing logic without "improvements"
 
-## Background & Context
+---
 
-- PhotoStructure has identified 124 "required" tags across all manufacturers
-- 10 tags are explicitly Canon-specific, plus ~19 MakerNotes tags that Canon populates
-- Current Canon implementation extracts 54 tags but missing critical required ones
+## ⚠️ CRITICAL REMINDERS
 
-## Technical Foundation
+If you read this document, you **MUST** read and follow [CLAUDE.md](../CLAUDE.md) as well as [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md):
 
-- **Key files**:
-  - `src/implementations/canon/mod.rs` - Main Canon processor
-  - `src/implementations/canon/binary_data.rs` - Binary data extractors
-  - `src/generated/Canon_pm/` - Generated lookup tables
-  - `third-party/exiftool/lib/Image/ExifTool/Canon.pm` - ExifTool source
-- **Documentation**:
-  - `docs/todo/P3-MILESTONE-17d-Canon-RAW.md` - Current Canon status
-  - `third-party/exiftool/doc/modules/Canon.md` - Canon module overview
+- **Trust ExifTool** (Translate and cite references, but using codegen is preferred)
+- **Ask clarifying questions** (Maximize "velocity made good")
+- **Assume Concurrent Edits** (STOP if you find a compilation error that isn't related to your work)
+- **Don't edit generated code** (read [CODEGEN.md](CODEGEN.md) if you find yourself wanting to edit `src/generated/**.*rs`)
+- **Keep documentation current** (so update this TPP with status updates, and any novel context that will be helpful to future engineers)
+
+**NOTE**: These rules prevent build breaks, data corruption, and wasted effort across the team. 
+
+If you are found violating any topics in these sections, **your work will be immediately halted, reverted, and you will be dismissed from the team.**
+
+Honest. RTFM.
+
+---
+
+## Context & Foundation
+
+**REQUIRED**: Canon is ExifTool's most complex module with 107 tag tables and model-specific processing.
+
+### System Overview
+
+- **Canon Main table (%Canon::Main)**: Primary dispatcher with 200+ tags including all required tags like FileNumber (0x8), CanonModelID (0x10), InternalSerialNumber (0x96)
+- **Canon tag kit system**: Generated Rust code from Canon.pm table extraction, handling PrintConv expressions and subdirectory processing
+- **Canon binary data**: Complex subdirectories (CameraSettings, ShotInfo, ColorData) with model-specific validation and offset schemes
+- **Current implementation**: `src/implementations/canon/mod.rs` coordinates processing but Main table extraction is corrupted
+
+### Key Concepts & Domain Knowledge
+
+- **Canon MakerNotes structure**: Standard IFD with Canon-specific tag processing and absolute/relative offset mixing
+- **Tag kit vs Main table**: Generated tag kit handles subdirectories, but basic Main table tags (strings, int32u) need direct processing  
+- **Model-specific processing**: Camera info tables vary by firmware version, requiring "FirmwareVersionLookAhead" detection
+- **PrintConv expressions**: Perl expressions like `'$_=$val,s/(\d+)(\d{4})/$1-$2/,$_'` for FileNumber formatting must be evaluated exactly
+
+### Surprising Context
+
+**CRITICAL**: Document non-intuitive aspects discovered during research:
+
+- **Canon offset schemes**: Mix absolute file offsets and relative-to-MakerNote offsets in same IFD - violates TIFF standard but required for Canon compatibility
+- **String corruption source**: Our binary data extraction shows `"Unknown (���)"` for firmware version indicating byte order or offset calculation errors  
+- **Model ID disaster**: ExifTool shows `"EOS Rebel T3i / 600D / Kiss X5"` but we show `"2147483647 mm"` - wrong lookup table and format applied
+- **Tag kit ID mismatch**: Generated tag kit uses different IDs than Canon Main table, causing extraction conflicts
+- **Required vs generated mismatch**: tag-metadata.json marks FileNumber as required (freq 0.13) but it's missing entirely from our output
+- **Firmware dependency complexity**: Tag locations shift based on firmware version requiring dynamic validation
+
+### Foundation Documents
+
+- **Design docs**: [API-DESIGN.md](../design/API-DESIGN.md) for TagEntry structure, [CODEGEN.md](../CODEGEN.md) for tag kit system
+- **ExifTool source**: `third-party/exiftool/lib/Image/ExifTool/Canon.pm` Main table line ~1375, CameraSettings line ~2166
+- **Canon module overview**: `third-party/exiftool/doc/modules/Canon.md` - comprehensive structure documentation  
+- **Start here**: `src/implementations/canon/mod.rs` process_canon_makernotes() function and `src/generated/Canon_pm/tag_kit/mod.rs`
+
+### Prerequisites
+
+- **Knowledge assumed**: Understanding of TIFF IFD structure, MakerNotes processing, binary data extraction patterns
+- **Setup required**: Canon test images in `test-images/canon/`, ExifTool installed for comparison testing
+
+**Context Quality Check**: A new engineer can understand WHY Canon processing is complex and why exact ExifTool translation is critical.
 
 ## Work Completed
 
-- ✅ SHORT array extraction fixed
-- ✅ Binary data processors integrated (CameraSettings, FocalLength, ShotInfo, AFInfo2)
-- ✅ Namespace assignment fixed (Canon tags now in "MakerNotes:" group)
-- ✅ Basic PrintConv infrastructure working
-- ✅ 54 Canon MakerNotes tags extracting
+- ✅ **Canon tag kit generation** → chose automated extraction over manual translation because ExifTool releases monthly updates
+- ✅ **Binary data infrastructure** → implemented CameraSettings, ShotInfo, AFInfo processors following ExifTool patterns
+- ✅ **MakerNotes namespace** → Canon tags properly grouped under "MakerNotes:" prefix for PhotoStructure compatibility
+- ✅ **Test infrastructure** → Canon test images available and comparison tools working
 
 ## Remaining Tasks
 
-### High Priority - Canon-Specific Required Tags (10 tags)
+### 1. Task: Fix Canon Main Table Tag Extraction Corruption
 
-1. **FileNumber** (0x0008)
+**Success Criteria**: 
+- `cargo run test-images/canon/eos_rebel_t3i.cr2 | grep CanonFirmwareVersion` shows `"Firmware Version 1.0.1"` not `"Unknown (���)"`
+- `cargo run test-images/canon/eos_rebel_t3i.cr2 | grep CanonModelID` shows `"EOS Rebel T3i / 600D / Kiss X5"` not `"2147483647 mm"`
+- No corrupted string data or wrong format applications
 
-   - Already in Canon::Main table
-   - Add to `apply_canon_main_table_print_conv()`
-   - No special processing needed
+**Approach**: 
+1. Debug binary data extraction in `src/implementations/canon/mod.rs` process_canon_makernotes()
+2. Verify byte order handling and offset calculations for Main table tags
+3. Check if generated canonModelID lookup table is corrupted or lookup logic broken
+4. Compare our IFD parsing with ExifTool's Main table processing logic
 
-2. **InternalSerialNumber** (0x0096)
+**Dependencies**: None - this is blocking other Canon work
 
-   - Part of Canon::Main table
-   - May need decoding via `ProcessSerialData()`
-   - Check Canon.pm line ~2700 for format
+**Success Patterns**:
+- ✅ String tags show readable text, not garbage characters
+- ✅ Model ID uses correct lookup table and returns human-readable camera name
+- ✅ Firmware version parsed as simple string without format conversion errors
 
-3. **LensType** (from LensInfo binary data)
+### 2. Task: Implement Missing FileNumber Tag (Required, Freq 0.13)
 
-   - Complex lens ID calculation
-   - Already have `canonLensTypes` lookup table generated
-   - Need to integrate with teleconverter detection
+**Success Criteria**: 
+- `cargo run test-images/canon/eos_rebel_t3i.cr2 | grep FileNumber` returns formatted value like `"123-4567"`
+- ExifTool comparison shows identical FileNumber format
+- Tag appears in default output without special flags
 
-4. **CameraID** (various locations)
+**Approach**:
+1. Verify FileNumber (0x8) extraction from Canon Main table
+2. Implement PrintConv expression `'$_=$val,s/(\d+)(\d{4})/$1-$2/,$_'` evaluation  
+3. Ensure tag is marked as Group 2 'Image' per ExifTool specification
+4. Test with multiple Canon images to verify directory-file numbering
 
-   - Model-specific extraction
-   - Check CameraInfo tables for each model
+**Dependencies**: Task 1 (Main table extraction must work first)
 
-5. **AFPointAreaExpansion**, **PreviewButton**, **AssignFuncButton**, **MenuButtonReturn**
+**Success Patterns**:
+- ✅ FileNumber appears in JSON output under MakerNotes group
+- ✅ Format matches ExifTool exactly (directory-file format with hyphen)
+- ✅ Value updates correctly for different Canon images
 
-   - From CustomFunctions binary data sections
-   - Need model-specific CustomFunctions processors
+### 3. RESEARCH: Investigate LensType Extraction Complexity
 
-6. **ZoneMatching**
-   - Part of processing/color data
-   - Check ColorData sections
+**Objective**: Understand why LensType shows in our output but needs verification against ExifTool accuracy
+**Success Criteria**: Document all Canon LensType extraction locations and methods used by ExifTool
+**Done When**: Clear mapping of CameraSettings vs CameraInfo vs Main table LensType sources with model dependencies
 
-### Medium Priority - Universal MakerNotes Tags Canon Provides
+ExifTool shows: `"Canon EF 24-105mm f/4L IS USM"` for test image - verify our extraction matches exactly.
 
-These tags from MakerNotes group that Canon cameras populate:
+### 4. Task: Implement InternalSerialNumber Tag (Required per PhotoStructure)
 
-**High Frequency Tags (>50%):**
+**Success Criteria**:
+- `cargo run test-images/canon/eos_rebel_t3i.cr2 | grep InternalSerialNumber` shows `"ZA0740300"`  
+- Matches ExifTool output exactly
+- ValueConv processing removes trailing 0xFF bytes per Canon.pm specification
 
-- **ExposureTime** (freq 0.990) - In ShotInfo/CameraSettings
-- **FNumber** (freq 0.970) - In CameraSettings/ShotInfo
-- **FocalLength** (freq 0.950) - Already extracting
-- **ISO** (freq 0.890) - BaseISO, AutoISO already extracting
-- **ShutterSpeed** (freq 0.860) - Need APEX conversion
-- **Aperture** (freq 0.850) - Already extracting
-- **ApertureValue** (freq 0.390) - APEX value
-- **ShutterSpeedValue** (freq 0.380) - APEX value
+**Approach**:
+1. Extract from Main table 0x96 with proper string processing
+2. Implement ValueConv: `'$val=~s/\xff+$//; $val'` for trailing cleanup
+3. Handle model-specific conditions (EOS 5D uses SerialInfo subdirectory)
+4. Verify string encoding and null termination handling
 
-**Lens Information:**
+**Dependencies**: Task 1 (Main table extraction)
 
-- **LensID** (freq 0.200) - Complex calculation with teleconverter
-- **LensType** (freq 0.180) - From binary data
-- **Lens** (freq 0.150) - Full lens description
-- **LensModel** (freq 0.100) - Lens model name
-- **LensInfo** (freq 0.086) - Min/max focal length and aperture
-- **LensSpec** (freq 0.039) - Formatted specification
-- **LensMake** (freq 0.022) - Usually "Canon"
+**Success Patterns**:
+- ✅ Serial number matches camera body exactly
+- ✅ No trailing garbage or 0xFF bytes in output
+- ✅ Model-specific processing routes correctly
 
-**Other Required Tags:**
+### 5. Task: Research and Document CameraID Requirements
 
-- **SerialNumber** (freq 0.130) - Camera body serial
-- **InternalSerialNumber** (freq 0.150) - Internal ID
-- **FileNumber** (freq 0.130) - Image counter
-- **CameraID** (freq 0.068) - Camera-specific ID
-- **Categories** (freq 0.051) - Tag categories
-- **Title** (freq 0.021) - Image title
-- **City** (freq 0.010) - Location city
-- **Country** (freq 0.010) - Location country
-- **DateTimeUTC** (freq 0.007) - UTC timestamp
+**Success Criteria**: Complete analysis of CameraID extraction requirements across Canon camera models  
+**Approach**: Study Canon CameraInfo tables and model-specific extraction patterns
+**Dependencies**: None - research task
 
-### Low Priority - Standard Tags Canon Writes
+**Success Patterns**:
+- ✅ Document all CameraInfo table locations for CameraID
+- ✅ Identify model detection requirements  
+- ✅ Map firmware version dependencies
 
-Canon cameras write these standard EXIF tags:
+## Implementation Guidance
 
-- **Copyright** (0x8298)
-- **ImageDescription** (0x010E)
-- **XPKeywords**, **XPSubject**, **XPTitle** (Windows XP tags)
+### ExifTool Translation Notes
+
+**Canon offset handling pattern**:
+```perl
+# ExifTool Canon.pm uses mixed offset schemes
+IsOffset => '$val and $$et{FILE_TYPE} ne "JPEG"'  # Absolute for some tags
+# vs relative-to-MakerNote for others
+```
+
+**String extraction with cleanup**:
+```perl  
+RawConv => '$val=~/^.{4}([^\0]+)/s ? $1 : undef'  # Skip 4-byte header
+ValueConv => '$val=~s/\xff+$//; $val'              # Remove trailing 0xFF
+```
+
+**Model-specific conditionals**:
+```perl
+Condition => '$$self{Model} =~ /EOS 5D/'  # Route by camera model
+```
+
+### Tools to Leverage
+
+- **Existing Canon processors**: `extract_camera_settings()`, `extract_shot_info()` in `src/implementations/canon/binary_data.rs`
+- **Tag kit system**: Generated PrintConv expressions in `src/generated/Canon_pm/tag_kit/`
+- **Comparison tool**: `cargo run --bin compare-with-exiftool image.jpg` for validation
+- **Debug logging**: `tracing::debug!()` calls throughout Canon processing for investigation
+
+### Architecture Considerations
+
+- **Main table vs tag kit separation**: Basic types (string, int32u) process directly, complex subdirectories use tag kit
+- **PrintConv evaluation**: Perl expressions must be evaluated in Rust expression evaluator system
+- **Model detection**: Camera model and firmware version determine processing paths
+- **Precedence handling**: Main table tags override subdirectory tags when conflicts occur
+
+## Integration Requirements
+
+**CRITICAL**: Building without integrating is failure. Don't accept shelf-ware.
+
+Every Canon tag implementation must include:
+- [ ] **Activation**: Tag extraction enabled by default in Canon MakerNotes processing
+- [ ] **Consumption**: Tags appear in standard `cargo run image.jpg` output without special flags  
+- [ ] **Measurement**: Can verify tag presence with `grep TagName` on output
+- [ ] **Cleanup**: Remove manual workarounds, obsolete extraction code deleted
+
+**Red Flag Check**: If implementation requires special flags or doesn't appear in default output, integration failed.
+
+## Working Definition of "Complete"
+
+A Canon tag is complete when:
+- ✅ **System behavior changes** - tag appears in JSON output for Canon images
+- ✅ **Default usage** - extraction works automatically, not opt-in
+- ✅ **Old path removed** - no "Unknown" values or corruption artifacts remain  
+- ❌ Code exists but shows corrupted data *(example: "Unknown (���)" firmware version)*
+- ❌ Feature works "if you call it directly" *(example: "tag kit has entry but Main table broken")*
 
 ## Prerequisites
 
-- Fix PrintConv type mismatches (I16 → u8 conversions)
-- Verify generated Canon lookup tables are correct (not Olympus)
-- Model detection for camera-specific processing
+- **P10a EXIF Foundation** → [EXIF foundation TPP](P10a-exif-foundation.md) → verify with `cargo t exif_basic`
 
-## Testing Strategy
+## Testing
 
-- Use `Canon_T3i.CR2` test image
-- Compare with ExifTool output: `cargo run --bin compare-with-exiftool`
-- Verify required tags present in output
-- Check PrintConv human-readable values
+- **Unit**: Test Canon Main table extraction with `cargo t canon_main_table`
+- **Integration**: Verify end-to-end with `cargo run test-images/canon/eos_rebel_t3i.cr2`
+- **Manual check**: Compare with ExifTool using `cargo run --bin compare-with-exiftool test-images/canon/eos_rebel_t3i.cr2`
 
-## Success Criteria & Quality Gates
+## Definition of Done
 
-### You are NOT done until this is done:
-
-1. **All Canon Required Tags Extracting**:
-
-   - [ ] 10 Canon-specific required tags from tag-metadata.json implemented
-   - [ ] All Canon MakerNotes tags properly namespaced as "MakerNotes:"
-   - [ ] PrintConv producing human-readable values where applicable
-
-2. **Canon MakerNotes Tags Missing from Compatibility Tests**:
-
-   ```json
-   Critical Canon tags currently missing:
-   - "MakerNotes:CameraID"        // Camera-specific identification
-   - "MakerNotes:LensType"        // Full lens description
-   - "MakerNotes:FileNumber"      // Image counter
-   - "MakerNotes:InternalSerialNumber" // Internal camera ID
-   - "MakerNotes:ISO"             // Canon CameraISO tag
-   - "MakerNotes:Categories"      // Image categories
-   - "MakerNotes:City"            // Location city name
-   - "MakerNotes:Country"         // Location country
-   - "MakerNotes:Title"           // Image title
-   - "MakerNotes:DateTimeUTC"     // UTC timestamp
-   ```
-
-3. **Binary Data Integration** (Canon stores most data in binary sections):
-
-   - [ ] CameraSettings binary data processor working
-   - [ ] ShotInfo binary data processor working
-   - [ ] AFInfo2 binary data processor working
-   - [ ] LensInfo calculation from binary data
-
-4. **Specific Tag Validation** (must be added to `config/supported_tags.json` and pass `make compat-force`):
-
-   ```bash
-   # All these Canon MakerNotes tags must be present:
-   - "MakerNotes:CameraID"
-   - "MakerNotes:LensType"
-   - "MakerNotes:FileNumber"
-   - "MakerNotes:InternalSerialNumber"
-   - "MakerNotes:ExposureTime"    // Canon-specific exposure processing
-   - "MakerNotes:FNumber"         // Canon-specific aperture processing
-   - "MakerNotes:FocalLength"     // Canon-specific focal length
-   - "MakerNotes:ISO"             // Canon CameraISO
-   - "MakerNotes:Categories"
-   - "MakerNotes:City"
-   - "MakerNotes:Country"
-   - "MakerNotes:Title"
-   - "MakerNotes:DateTimeUTC"
-   ```
-
-5. **Validation Commands**:
-
-   ```bash
-   # Test with Canon images:
-   cargo run --bin compare-with-exiftool test-images/canon/Canon_T3i.CR2 MakerNotes:
-   cargo run --bin compare-with-exiftool test-images/canon/canon_cr2.cr2 MakerNotes:
-
-   # After implementing Canon tags:
-   make compat-force                        # Regenerate reference files
-   make compat-test | grep "MakerNotes:"    # Check Canon compatibility
-
-   # Target: All Canon required tags extracting with human-readable values
-   ```
-
-6. **Manual Validation** (Test with Canon Files):
-   - **Canon CR2/CR3**: Verify lens identification and camera settings
-   - **Canon JPEG**: Confirm MakerNotes extraction from JPEG files
-   - **Multiple Canon Models**: Test across EOS, PowerShot, etc.
-   - **Lens Detection**: Verify LensType calculation with teleconverter detection
-
-### Prerequisites & Dependencies:
-
-- **P10a EXIF Foundation** - MUST be complete first (Canon references EXIF data)
-- **Binary Data Infrastructure** - Canon uses complex binary data structures
-- **Generated Lookup Tables** - Ensure Canon lookup tables are generated correctly (not Olympus)
-
-### Quality Gates Definition:
-
-- **Compatibility Test Threshold**: <3 Canon-related failures in `make compat-test`
-- **Binary Data Coverage**: All major Canon binary sections (CameraSettings, ShotInfo) processing
-- **Lens Identification**: LensType calculation working for at least Canon EF/RF lenses
-
-## Gotchas & Tribal Knowledge
-
-### Canon-Specific Quirks
-
-- **Absolute Offsets**: Canon uses absolute file offsets, not relative to MakerNote start
-- **Binary Data Format**: Most tags in binary data sections (CameraSettings, ShotInfo, etc.)
-- **SHORT Arrays**: Canon stores many values as arrays of 16-bit integers
-- **Model Dependencies**: Processing varies significantly between camera generations
-
-### Lens Identification
-
-- **LensType Calculation**: Complex formula involving focal length and teleconverter flags
-- **Teleconverter Detection**: Check bit flags in lens data to detect 1.4x/2x converters
-- **Third-Party Lenses**: May report incorrect or generic lens types
-- **RF vs EF Lenses**: Different ID ranges for mirrorless RF mount
-
-### Value Extraction Issues
-
-- **Type Mismatches**: Binary extractors return I16 but PrintConv lookups expect u8
-- **APEX Conversions**: ShutterSpeed = 2^(-ShutterSpeedValue), Aperture = 2^(ApertureValue/2)
-- **Multiple Locations**: Same tag may appear in CameraSettings, ShotInfo, and Main table
-- **Precedence**: Use first found value, typically Main > CameraSettings > ShotInfo
-
-### Special Processing
-
-- **SerialNumber**: May need decoding via ProcessSerialData()
-- **ISO**: Check multiple locations (BaseISO, AutoISO, ISO tags)
-- **CustomFunctions**: Format varies by camera model group
-- **ColorData**: Different versions for different camera generations
+- [ ] `cargo run test-images/canon/eos_rebel_t3i.cr2 | grep -v "Unknown\|���"` shows no corruption
+- [ ] `make precommit` clean  
+- [ ] FileNumber, CanonModelID, CanonFirmwareVersion, InternalSerialNumber all extract correctly
+- [ ] ExifTool comparison shows <5 tag differences for Canon images
+- [ ] All Canon required tags from tag-metadata.json implemented or documented as future work
