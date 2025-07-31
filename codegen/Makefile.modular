@@ -42,6 +42,7 @@ check-extractors:
 	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/composite_tags.pl >/dev/null 2>&1
 	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/file_type_lookup.pl >/dev/null 2>&1
 	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/regex_patterns.pl >/dev/null 2>&1
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/simple_array.pl >/dev/null 2>&1
 	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/simple_table.pl >/dev/null 2>&1
 	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && perl -c extractors/tag_tables.pl >/dev/null 2>&1
 

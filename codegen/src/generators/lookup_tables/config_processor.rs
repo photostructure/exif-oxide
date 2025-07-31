@@ -33,6 +33,7 @@ where
 }
 
 /// Process a configuration that contains a "tables" array
+/// TODO: Rename "tables" field to "targets" and merge with process_array_config for DRY
 pub fn process_tables_config<F>(
     config: Value,
     table_processor: F,
