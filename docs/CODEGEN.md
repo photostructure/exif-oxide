@@ -120,9 +120,11 @@ src/
 │   │   ├── charnum.rs            # Character number lookup
 │   │   ├── stdxlatns.rs          # Standard translation namespace
 │   │   └── mod.rs                # Re-exports all XMP tables
-│   ├── Nikon_pm/                 # Nikon.pm extractions
+│   ├── Nikon_pm/                 # Nikon.pm extractions (including static arrays)
 │   │   ├── nikonlensids.rs       # Lens ID lookup
-│   │   └── mod.rs                # Re-exports all Nikon tables
+│   │   ├── xlat_0.rs             # XLAT encryption array [0] (256 bytes)
+│   │   ├── xlat_1.rs             # XLAT encryption array [1] (256 bytes)  
+│   │   └── mod.rs                # Re-exports all Nikon tables and arrays
 │   ├── Exif_pm/                  # Exif.pm extractions
 │   │   ├── orientation.rs        # Orientation lookup
 │   │   └── mod.rs                # Re-exports all Exif tables
@@ -407,7 +409,68 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
 
 The system automatically determines whether to generate inline arithmetic or use custom functions based on expression complexity.
 
-### 4. Adding Simple Extraction Types
+### 4. Adding Simple Array Extraction
+
+**Step 1: Add Array Configuration**
+
+```json
+// In codegen/config/Nikon_pm/simple_array.json
+{
+  "description": "Nikon XLAT arrays for encryption/decryption",
+  "arrays": [
+    {
+      "array_name": "xlat[0]",
+      "constant_name": "XLAT_0",
+      "element_type": "u8",
+      "size": 256,
+      "description": "First XLAT encryption array"
+    },
+    {
+      "array_name": "xlat[1]", 
+      "constant_name": "XLAT_1",
+      "element_type": "u8",
+      "size": 256,
+      "description": "Second XLAT encryption array"
+    }
+  ]
+}
+```
+
+**Step 2: Generate and Use**
+
+```bash
+# Regenerate code (auto-patches ExifTool modules)
+make codegen
+
+# Use in implementation
+use crate::generated::Nikon_pm::{XLAT_0, XLAT_1};
+
+// Direct array indexing (fastest)
+let decrypted_byte = XLAT_0[encrypted_value as usize];
+
+// Bounds-checked access
+if let Some(&decrypted_byte) = XLAT_0.get(encrypted_value as usize) {
+    // Safe access
+}
+```
+
+**Complex Expression Support**: The simple_array extractor handles arbitrary Perl expressions:
+
+- **Indexed arrays**: `xlat[0]`, `xlat[1]`, `rggb[2]`
+- **Simple arrays**: `@afPointNames`, `@lensMounts`
+- **Complex expressions**: `%widget->payload`, `@{$hash{key}}`
+
+**Validation**: Arrays are validated for byte-perfect accuracy:
+
+```bash
+# Perl validation script
+perl codegen/scripts/validate_arrays.pl config/Nikon_pm/simple_array.json
+
+# Rust integration tests  
+cargo test --test simple_array_integration
+```
+
+### 5. Adding Simple Extraction Types
 
 **Step 1: Add to Configuration**
 
@@ -538,6 +601,15 @@ The codegen system includes multiple specialized extractors, each serving a spec
 - **`tag_definitions.pl`** - ⚠️ DEPRECATED - Extracts tags with frequency filtering
   - Being replaced: Tag kit provides complete bundles instead of function references
 
+#### Static Array Extractors
+
+- **`simple_array.pl`** ⭐ - Extracts static arrays for performance-critical operations
+  - Purpose: Direct array indexing for cryptographic operations and large lookups
+  - Example: Nikon XLAT encryption arrays, AF point name arrays
+  - When to use: **Always** for ExifTool arrays needing direct indexing vs key-value lookup
+  - Features: Complex expression support (`xlat[0]`, `%widget->payload`), byte-perfect accuracy
+  - Output: Static Rust arrays (`[u8; 256]`) with O(1) direct access
+
 #### Lookup Table Extractors
 
 - **`simple_table.pl`** - Extracts standalone key-value lookup tables
@@ -592,11 +664,12 @@ The codegen system includes multiple specialized extractors, each serving a spec
 #### Quick Decision Guide
 
 1. **Extracting tags with their PrintConvs?** → Use `tag_kit.pl`
-2. **Extracting standalone lookup tables?** → Use `simple_table.pl`
-3. **Extracting binary data structures?** → Use `process_binary_data.pl`
-4. **Need runtime HashMap creation?** → Use `runtime_table.pl`
-5. **Extracting boolean sets?** → Use `boolean_set.pl`
-6. **Extracting composite tags?** → Use `composite_tags.pl`
+2. **Extracting static arrays for direct indexing?** → Use `simple_array.pl` ⭐ 
+3. **Extracting standalone lookup tables?** → Use `simple_table.pl`
+4. **Extracting binary data structures?** → Use `process_binary_data.pl`
+5. **Need runtime HashMap creation?** → Use `runtime_table.pl`
+6. **Extracting boolean sets?** → Use `boolean_set.pl`
+7. **Extracting composite tags?** → Use `composite_tags.pl`
 
 For detailed extractor comparisons and examples, see [EXTRACTOR-GUIDE.md](../reference/EXTRACTOR-GUIDE.md).
 
@@ -1036,7 +1109,7 @@ code.push_str(&format!("//! Timestamp: {}", source.extracted_at));
 
 - **50+ Conversion Functions**: Core EXIF, GPS, and manufacturer PrintConv/ValueConv
 - **Canon Support**: AF info, binary data, offset schemes, TIFF footer processing
-- **Nikon Support**: AF processing, encryption, lens database, IFD handling
+- **Nikon Support**: AF processing, encryption, lens database, IFD handling, XLAT arrays
 - **Sony Support**: Basic manufacturer-specific processing
 - **File Detection**: Magic number patterns, MIME types, extension lookup
 - **Generated Integration**: Source-file-based organization with functional splitting
@@ -1044,6 +1117,7 @@ code.push_str(&format!("//! Timestamp: {}", source.extracted_at));
 - **Scalable Architecture**: Modular code generation supporting 300+ lookup tables
 - **Semantic Organization**: Tags grouped by logical categories (core, camera, GPS, etc.)
 - **Build Performance**: Smaller files improve IDE response and compilation speed
+- **Static Array Framework**: Direct array indexing for cryptographic operations with byte-perfect accuracy
 
 ## Related Documentation
 
