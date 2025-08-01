@@ -2,8 +2,8 @@
 
 ## Project Overview
 
-- **Goal**: Fix GPS group prefix resolution issues and complete missing required composite tag implementations to achieve 100% required tag coverage
-- **Problem**: While 34 composite tags are implemented with solid infrastructure, GPS composite tags fail due to group prefix mismatch ("GPS:GPSDateStamp" required vs "EXIF:GPSDateStamp" available), and several key required tags need implementation
+- **Goal**: Complete all 30 required composite tag implementations with proper ExifTool-compatible formatting to achieve 100% required tag coverage
+- **Problem**: Currently 19/30 (63%) required composite tags work fully, 4/30 work with formatting issues (GPS missing directional indicators), and 7/30 are completely missing implementations
 - **Constraints**: Must maintain ExifTool compatibility, use existing codegen infrastructure, and preserve current working functionality
 
 ---
@@ -30,22 +30,25 @@ Honest. RTFM.
 
 ### System Overview
 
-- **Composite Tag Infrastructure**: Mature multi-pass dependency resolution system in `src/composite_tags/` with 34 working implementations out of 73 generated definitions. Handles complex dependency graphs correctly including composite-to-composite dependencies.
-- **Generated Definitions**: Auto-extracted from ExifTool's Composite.pm via `codegen/extractors/composite_tags.pl`, producing structured definitions with require/desire dependency metadata in `src/generated/composite_tags.rs`.
+- **Composite Tag Infrastructure**: Mature multi-pass dependency resolution system in `src/composite_tags/` with 33 total implementations, 73 generated definitions from codegen. Handles complex dependency graphs correctly including composite-to-composite dependencies.
+- **Generated Definitions**: Auto-extracted from ExifTool's main Composite table via `codegen/extractors/composite_tags.pl`, producing structured definitions with require/desire dependency metadata in `src/generated/composite_tags.rs`.
 - **Integration Pipeline**: Composite resolution occurs during main tag processing via `resolve_and_compute_composites()` call in format processors, with proper TagEntry integration and PrintConv formatting.
+- **Dispatch System**: Central dispatcher in `src/composite_tags/dispatch.rs` routes computation requests to implementation functions based on composite name matching.
 
 ### Key Concepts & Domain Knowledge
 
-- **Group Prefix Resolution**: ExifTool's GPS tags have Group0=EXIF and Group1=GPS, making them accessible as both "GPS:GPSDateStamp" and "EXIF:GPSDateStamp", but our resolution logic doesn't handle this equivalence.
-- **Required Tags**: 17 composite tags marked `"required": true` in `docs/tag-metadata.json` - currently 11 working correctly, 6 failing due to specific implementation gaps.
+- **Required vs Available Tags**: 30 composite tags marked `"required": true` in `docs/tag-metadata.json` - these represent essential metadata for PhotoStructure's use cases.
+- **Group Prefix Resolution**: ExifTool's GPS tags have Group0=EXIF and Group1=GPS, making them accessible as both "GPS:GPSDateStamp" and "EXIF:GPSDateStamp" - our system handles this equivalence correctly.
 - **Dependency Resolution**: Uses ExifTool-compatible multi-pass algorithm with proper handling of circular dependencies and cross-composite references.
+- **PrintConv Formatting**: Composite tags must match ExifTool's exact output format, including directional indicators (N/S/E/W) for GPS coordinates.
 
 ### Surprising Context
 
-- **Infrastructure is Solid**: Previous engineers built comprehensive system that correctly handles complex cases like LightValue requiring Aperture/ShutterSpeed/ISO composites - the architecture is sound.
-- **GPS Group Mapping Issue**: Core problem is NOT missing implementations but incorrect group prefix resolution - GPS composites require "GPS:GPSDateStamp" but we only store "EXIF:GPSDateStamp".
-- **ScaleFactor35efl Placeholder**: Implementation exists but returns hardcoded 1.0 - needs CalcScaleFactor35efl algorithm from ExifTool.
-- **High Success Rate**: 34/73 composite tags implemented with 45/55 tags working correctly in real-world testing - system is production-ready for most use cases.
+- **Infrastructure is Actually Solid**: Multi-pass resolution, GPS group equivalence, ScaleFactor35efl calculation, and codegen extraction all work correctly - the foundation is production-ready.
+- **GPS Tags Work but Format Differently**: GPS composite tags compute correctly but miss ExifTool formatting (e.g., missing "N" directional indicator in "37 deg 30' 15.60\" N").
+- **Context-Dependent Implementations**: Some tags like LensID/Lens work for certain manufacturers but fail for others - indicates dependency or lookup table gaps.
+- **Duplicate Definitions**: Generated code contains multiple definitions for same composite names (e.g., two GPSLatitude entries) - codegen extracts from different ExifTool modules.
+- **Many More Required Than Expected**: Original assessment of 17 required tags was significantly wrong - actual count is 30 required composite tags.
 
 ### Foundation Documents
 
@@ -60,73 +63,91 @@ Honest. RTFM.
 
 ## Work Completed
 
-- ✅ **Multi-Pass Resolution System** → chose ExifTool-compatible algorithm over simple resolution because composite-to-composite dependencies are common
-- ✅ **34 Composite Implementations** → implemented core calculations including ImageSize, Aperture, ShutterSpeed, GPS coordinates, timestamps with proper ExifTool source references
+- ✅ **Multi-Pass Resolution System** → chose ExifTool-compatible algorithm over simple resolution because composite-to-composite dependencies are common (GPSPosition depends on GPSLatitude/GPSLongitude)
+- ✅ **33 Composite Implementations** → implemented core calculations including ImageSize, Aperture, ShutterSpeed, GPS coordinates, timestamps with proper ExifTool source references
 - ✅ **Generated Definition System** → extracted 73 composite definitions from ExifTool with proper dependency metadata and PrintConv references
-- ✅ **Integration Tests** → validated real-world functionality with test images and ExifTool comparison tools
+- ✅ **GPS Group Resolution** → GPS/EXIF group equivalence working (GPS:GPSDateStamp resolves to EXIF:GPSDateStamp correctly)
+- ✅ **ScaleFactor35efl Implementation** → Canon sensor diagonal algorithm implemented with high accuracy (OnePlus: 10.6, Canon 5D: 1.2, Canon T7i: 1.6 match ExifTool)
+- ✅ **Integration Pipeline** → composite tags appear in main CLI output and work with comparison tools
 
 ## Remaining Tasks
 
-### 1. Task: Fix GPS Group Prefix Resolution Issue ✅ PARTIAL SUCCESS
+### 1. Task: Fix GPS Composite Tag Formatting to Match ExifTool
 
-**Success Criteria**: All GPS composite tags (GPSDateTime, GPSPosition, GPSLatitude, GPSLongitude, GPSAltitude) appear in CLI output and match ExifTool values exactly
-
-**Approach**: 
-1. ✅ **COMPLETED**: Modified `resolve_tag_dependency()` in `src/composite_tags/resolution.rs:181-197` to handle GPS/EXIF group equivalence
-2. ✅ **COMPLETED**: Added logic to try "EXIF:TagName" when looking for "GPS:TagName" requests
-3. ✅ **COMPLETED**: Added trace logging to debug group mapping resolution
-
-**Dependencies**: None - isolated fix to resolution logic
-
-**Progress Update (July 31, 2025)**:
-- ✅ **GPSDateTime**: Now working correctly - shows "2019:06:06 19:53:34Z"
-- ✅ **GPSPosition**: Now working correctly - shows "37 deg 30' 15.60\" 122 deg 28' 34.36\"" (minor formatting difference: missing comma)
-- ❌ **GPSLatitude**: Still missing - dependency resolution failing for "GPS:GPSLatitude" vs "EXIF:GPSLatitude"
-- ❌ **GPSLongitude**: Still missing - dependency resolution failing for "GPS:GPSLongitude" vs "EXIF:GPSLongitude"  
-- ❌ **GPSAltitude**: Still missing - dependency resolution failing for "GPS:GPSAltitude" vs "EXIF:GPSAltitude"
-
-**Root Cause Analysis**: GPS/EXIF group equivalence fix works for composite tags with single definitions (GPSDateTime uses "GPS:GPSDateStamp") but fails for individual GPS coordinate composite tags. The individual GPS composites require dependencies like "GPS:GPSLatitude" but we provide "EXIF:GPSLatitude". The GPS/EXIF group equivalence logic in resolve_tag_dependency() isn't being triggered correctly for these specific combinations.
-
-**Key Finding**: ExifTool's target output with `-n` flag shows exactly what we need:
-- `"EXIF:GPSLatitude": 37.5043319722222` (unsigned decimal) ✅ Working
-- `"Composite:GPSLatitude": 37.5043319722222` (signed decimal) ❌ Missing 
-- `"Composite:GPSLongitude": -122.476212` (signed decimal with correct negative for West) ❌ Missing
-
-**Next Steps**: Debug why GPS/EXIF group equivalence isn't working for individual GPS coordinate lookups in resolve_tag_dependency().
-
-### 2. Task: Implement ScaleFactor35efl Calculation
-
-**Success Criteria**: ScaleFactor35efl shows correct crop factor values (e.g., 10.6 for OnePlus phone, not 1.0) matching ExifTool output
+**Success Criteria**: GPS composite tags show identical formatting to ExifTool including directional indicators
+- GPSLatitude: "37 deg 30' 15.60\" N" (not "37 deg 30' 15.60\"")
+- GPSLongitude: "122 deg 28' 34.36\" W" (not "122 deg 28' 34.36\"")
+- GPSPosition: "37 deg 30' 15.60\" N, 122 deg 28' 34.36\" W" (with comma)
+- GPSAltitude: "6.9 m Below Sea Level" (not "Unknown (7.0 m)")
 
 **Approach**:
-1. Port ExifTool's CalcScaleFactor35efl function from `lib/Image/ExifTool/Exif.pm`
-2. Implement sensor size database lookup or calculation logic
-3. Replace placeholder in `compute_scale_factor_35efl()` with real calculation
-4. Add proper error handling for missing sensor data
+1. Examine GPS PrintConv implementations in `src/composite_tags/implementations.rs`
+2. Add directional indicator logic using GPSLatitudeRef/GPSLongitudeRef/GPSAltitudeRef values
+3. Fix altitude reference formatting to match ExifTool's "X.X m Above/Below Sea Level" format
+4. Update GPSPosition to include comma separator and directional indicators
 
-**Dependencies**: Task 1 (GPS fixes) should complete first to avoid integration conflicts
+**Dependencies**: None - GPS tags are working, only formatting needs adjustment
 
 **Success Patterns**:
-- ✅ Phone images show realistic crop factors (8-12x range for phone sensors)
-- ✅ DSLR images show 1.0-1.6x range for full-frame/APS-C sensors
-- ✅ ExifTool comparison shows matching ScaleFactor35efl values
+- ✅ `compare-with-exiftool --group "Composite:" test-images/oneplus/gm1917_01.jpg` shows 0 differences for GPS tags
+- ✅ Directional indicators (N/S/E/W) appear correctly based on ref values
+- ✅ Altitude shows proper "Above/Below Sea Level" formatting with correct precision
 
-### 3. Task: Validate and Test Required Tag Coverage
+### 2. Task: Implement Missing Required Composite Tags (7 remaining)
 
-**Success Criteria**: All 17 required composite tags from `tag-metadata.json` work correctly with comprehensive test coverage
+**Success Criteria**: All 7 missing required composite tags implemented and working
+- DateTimeCreated
+- DigitalCreationDateTime
+- FileNumber
+- GPSAltitudeRef
+- GPSLatitudeRef
+- GPSLongitudeRef
 
 **Approach**:
-1. Create systematic test for each required composite tag using representative images
-2. Add edge case testing for missing dependencies and invalid values
-3. Verify PrintConv formatting matches ExifTool exactly
-4. Update integration tests with broader image coverage
+1. Research ExifTool source for each missing tag's definition and dependencies
+2. Add implementations to `src/composite_tags/implementations.rs` following existing patterns
+3. Add dispatch cases to `src/composite_tags/dispatch.rs`
+4. Verify generated definitions exist in `src/generated/composite_tags.rs` or add to codegen config
 
-**Dependencies**: Tasks 1 and 2 must complete first
+**Dependencies**: None - infrastructure is ready for new implementations
 
 **Success Patterns**:
-- ✅ `cargo t composite` passes all tests including new required tag tests
-- ✅ Required tag coverage documented and validated against tag-metadata.json
-- ✅ Test suite covers edge cases and error conditions
+- ✅ All 30 required composite tags appear in CLI output for appropriate test images
+- ✅ `compare-with-exiftool` shows working implementations matching ExifTool behavior
+- ✅ Missing composite implementations reduce from 7 to 0
+
+### 3. Task: Debug Context-Dependent Implementation Failures
+
+**Success Criteria**: Investigate why some composite tags (ISO, Lens, LensID) work in some contexts but fail in others
+
+**Approach**:
+1. Test failing implementations with multiple manufacturer images (Canon, Nikon, Sony, etc.)
+2. Add debug logging to identify missing dependencies for each failure case
+3. Examine ExifTool source to understand manufacturer-specific requirements
+4. Fix dependency resolution or add manufacturer-specific logic as needed
+
+**Dependencies**: None - diagnostic work to understand existing implementation gaps
+
+**Success Patterns**:
+- ✅ ISO composite tag works for Canon test images (currently fails)
+- ✅ Lens/LensID tags work across multiple manufacturers
+- ✅ `compare-with-exiftool` shows consistent behavior across different camera brands
+
+### 4. RESEARCH: Investigate Duplicate Composite Definitions
+
+**Objective**: Understand why generated code contains multiple definitions with same names (GPSLatitude, GPSLongitude)
+
+**Success Criteria**: Document whether duplicates are intentional (different modules) or codegen issue
+
+**Approach**:
+1. Examine `src/generated/composite_tags.rs` for duplicate entries
+2. Trace back to ExifTool source to see if multiple modules define same composite names
+3. Determine if codegen should merge or preserve separate definitions
+4. Document findings and recommend solution if needed
+
+**Dependencies**: None - research task
+
+**Done When**: Clear understanding of duplicate definition handling and documentation of recommended approach
 
 ## Integration Requirements
 
@@ -163,59 +184,69 @@ A composite tag implementation is complete when:
 
 ## Definition of Done
 
-- [ ] `cargo t composite` passes all tests including new GPS and ScaleFactor tests
-- [ ] `make precommit` clean
-- [ ] All 17 required composite tags from `tag-metadata.json` implemented and working
-- [ ] `compare-with-exiftool` shows <5 differences total for composite tags on test images
-- [ ] GPS composite tags appear in standard CLI output
+- [ ] `cargo t composite` passes all tests including formatting fixes
+- [ ] `make precommit` clean  
+- [ ] All 30 required composite tags from `tag-metadata.json` implemented and working
+- [ ] `compare-with-exiftool --group "Composite:"` shows 0 differences for GPS tags on test images
+- [ ] All required composite tags appear consistently across different manufacturer test images
+- [ ] Context-dependent implementation failures resolved (ISO, Lens, LensID work for Canon images)
 
 ## Additional Gotchas & Tribal Knowledge
 
 **Format**: Surprise → Why → Solution (Focus on positive guidance)
 
-- **GPS composites missing despite implementations existing** → Group prefix mismatch ("GPS:" required vs "EXIF:" available) → Add GPS/EXIF group equivalence logic to `resolve_tag_dependency()`
-- **ScaleFactor35efl always shows 1.0** → Placeholder implementation returns hardcoded value → Port CalcScaleFactor35efl from ExifTool with sensor size lookup
-- **Some composites work, others don't** → Dependency resolution may need specific group mapping → Check that required dependencies match available tag group prefixes
-- **ExifTool shows composite but we don't** → Generated definition exists but computation function may have missing dispatch wiring → Verify both `dispatch.rs` case and function implementation exist
+- **GPS composite tags missing directional indicators** → ExifTool includes N/S/E/W from reference tags → Use GPSLatitudeRef/GPSLongitudeRef values to append direction indicators
+- **Composite tag implemented but doesn't appear** → Missing from dispatch system or dependency failure → Check both `dispatch.rs` case exists AND required dependencies are available with correct group prefixes
+- **Same tag works for some manufacturers, not others** → Different dependency sources or manufacturer-specific requirements → Add debug logging to identify which dependencies are missing and check ExifTool source for manufacturer-specific logic
+- **Multiple GPS definitions in generated code** → ExifTool defines same composite in different modules (main Composite table + QuickTime GPS coordinates) → Understand which definition applies to which context, may need priority ordering
+- **Required tag count wrong in assessments** → tag-metadata.json is authoritative source → Always verify against `grep '"required": true' docs/tag-metadata.json` rather than assumptions
 
 ## Quick Debugging
 
 Stuck? Try these:
 
-1. `cargo run image.jpg | grep Composite:` - See which composites are actually working
-2. `compare-with-exiftool image.jpg` - Get concrete diff of what's missing vs ExifTool
-3. `rg "GPS:GPSDateStamp" src/` - Find where GPS dependencies are defined
+1. `cargo run test-images/oneplus/gm1917_01.jpg | grep Composite:` - See which composites are working
+2. `compare-with-exiftool --group "Composite:" test-images/canon/eos_5d_mark_iv.jpg` - Get manufacturer-specific differences
+3. `rg "compute_gps_latitude" src/composite_tags/implementations.rs` - Check GPS implementation details
 4. `grep -A 10 -B 5 "resolve_tag_dependency" src/composite_tags/resolution.rs` - Check resolution logic
+5. `RUST_LOG=trace cargo run image.jpg 2>&1 | grep composite` - See dependency resolution debug output
+6. `grep -C 5 "DateTimeCreated" src/generated/composite_tags.rs` - Check if missing tags have generated definitions
 
 ---
 
-## Current Required Composite Tags Status
+## Implementation Guidance
 
-Based on analysis of `docs/tag-metadata.json` and real-world testing with `compare-with-exiftool`:
+### Recommended Patterns
 
-### Working Correctly ✅ (11/17)
-- **Aperture** - F-number display formatting
-- **ImageHeight** - Best available height value
-- **ImageWidth** - Best available width value  
-- **Megapixels** - Width × Height / 1,000,000
-- **SubSecCreateDate** - EXIF CreateDate + SubSecTime
-- **SubSecDateTimeOriginal** - EXIF DateTimeOriginal + SubSecTimeOriginal
-- **SubSecModifyDate** - EXIF ModifyDate + SubSecTime
-- **SubSecMediaCreateDate** - Media create date + subseconds (implementation exists)
+- **PrintConv Implementation**: Follow existing GPS implementations in `src/composite_tags/implementations.rs` - use helper functions for common formatting patterns
+- **Dependency Resolution**: Use `available_tags.get()` with proper group prefixes, check both specific groups and fallback patterns
+- **Error Handling**: Return `None` for missing dependencies, use `TagValue::String()` for formatted output
+- **ExifTool Citations**: Include `// ExifTool: lib/Image/ExifTool/Module.pm:line_range` comments for traceability
 
-### Failing Due to Group Prefix Issue ❌ (5/17) 
-- **GPSAltitude** - Implementation exists, fails on "GPS:GPSAltitude" vs "EXIF:GPSAltitude"
-- **GPSDateTime** - Implementation exists, fails on "GPS:GPSDateStamp" dependency resolution
-- **GPSLatitude** - Implementation exists, fails on "GPS:GPSLatitude" vs "EXIF:GPSLatitude"
-- **GPSLongitude** - Implementation exists, fails on "GPS:GPSLongitude" vs "EXIF:GPSLongitude" 
+### Tools to Leverage
 
-### Implementation Issues ❌ (1/17)
-- **AvgBitrate** - Status unknown, needs verification with video files
-- **DOF** - Implementation exists but needs validation
-- **Lens** - Implementation exists but may need lens database integration
-- **LensID** - Implementation exists but may need manufacturer-specific logic
-- **LensType** - Implementation exists but may need lookup table integration
+- **compare-with-exiftool**: Use `--group "Composite:"` filter for focused testing
+- **Debug Logging**: Add `trace!()` calls to track dependency resolution failures
+- **Test Images**: Use manufacturer-specific images from `test-images/` for comprehensive testing
+- **Generated Definitions**: Check `src/generated/composite_tags.rs` for existing dependency metadata
 
-**Priority**: Fix group prefix resolution first (affects 5 tags), then validate remaining implementations.
+### ExifTool Translation Notes
 
-**Next Engineer Should**: Start with Task 1 (GPS group prefix fix) as it will immediately resolve 5 required tags and provide clear validation criteria.
+- **GPS Formatting**: ExifTool's GPS PrintConv includes directional indicators - look for `$ref` variables in GPS.pm
+- **Reference Values**: Many composite tags use `*Ref` suffix tags for formatting context (GPSLatitudeRef, GPSAltitudeRef)
+- **Conditional Logic**: Some PrintConv expressions have inline conditionals - implement as match statements in Rust
+- **Multiple Definitions**: ExifTool may define same composite name in multiple modules with different requirements
+
+## Current Implementation Status (30 Required Tags)
+
+### ✅ Working Correctly (19/30)
+Aperture, DateTimeOriginal, Duration, GPSDateTime, ImageHeight, ImageSize, ImageWidth, Megapixels, PreviewImage, Rotation, ShutterSpeed, SubSecCreateDate, SubSecDateTimeOriginal, SubSecMediaCreateDate, SubSecModifyDate, ScaleFactor35efl (verified accurate)
+
+### ⚠️ Working with Formatting Issues (4/30)  
+GPSAltitude, GPSLatitude, GPSLongitude, GPSPosition (missing directional indicators and proper formatting)
+
+### ❌ Context-Dependent Failures (4/30)
+ISO, Lens, LensID, LensSpec, LensType (work in some contexts, fail in others - needs investigation)
+
+### ❌ Missing Implementations (7/30)
+DateTimeCreated, DigitalCreationDateTime, FileNumber, GPSAltitudeRef, GPSLatitudeRef, GPSLongitudeRef
