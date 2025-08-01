@@ -1,5 +1,5 @@
 {
   "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
   "description": "Canon ProcessBinaryData tables for comprehensive MakerNotes extraction",
-  "tables": ["PreviewImageInfo", "Processing", "MeasuredColor"]
+  "tables": ["PreviewImageInfo", "Processing", "MeasuredColor", "ShotInfo"]
 }
