@@ -1,8 +1,12 @@
 # Make a new TPP
 
-We need to stop now and hand that work off to another engineer. Please output a technical project plan, using our style guide, @docs/TPP.md, to ensure the next engineer succeeds at completing your incomplete tasks. As the style guide states, include a description of the issue being addressed, code and docs they should study, issues you've already addressed, success criteria, and any other tribal knowledge that you can pass down to help them to help them succeed. Ultrathink.
+Please output a technical project plan, using our style guide, @docs/TPP.md, to hand this work off to another engineer. As the style guide states, include a description of the issue being addressed, code and docs they should study, relevant research you conducted, issues you've already addressed, success criteria, and any other tribal knowledge that you can pass down to help them to help them succeed. Ultrathink.
 
-# Handoff
+# Update TPP
+
+Please update your technical project plan (TPP) with your progress. Use our style guide, @docs/TPP.md. Please add any novel, additional context that could help the next engineer complete this work.
+
+# Handoff (before compaction)
 
 We're stopping work now. Please update your technical project plan (TPP) using our style guide, @docs/TPP.md. Your goal is to ensure the next engineer succeeds in picking up where you left off. Include: issue description, relevant code/docs to study, completed tasks, success criteria, and context needed to complete remaining work. Correct any inaccuracies you find. Include refactoring ideas as future work. If you don't remember which TPP you're working on, **please ask**.
 
@@ -34,4 +38,6 @@ Validate the tasks in 📄 -- this is critical infra with a large time budget fo
 
 Remember: do not invent heuristics! @docs/TRUST-EXIFTOOL.md !
 
----
+# Fix a test or bug
+
+Fixing this bug will require in-depth understanding of both how our code and ExifTool \_\_\_\_. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. Ultrathink and read relevant source and documentation before planning your solution.
