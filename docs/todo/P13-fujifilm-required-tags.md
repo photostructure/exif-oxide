@@ -67,6 +67,10 @@ Honest. RTFM.
 - ✅ **File type detection** → Fujifilm RAF format properly detected in file_type_lookup
 - ✅ **Basic codegen infrastructure** → FujiFilm.pm partially extracted with model detection and binary data modules
 - ✅ **Format support foundation** → RAF format listed in SUPPORTED-FORMATS.md
+- ✅ **MakerNotes conditional dispatch** → Added FujiFilm signature detection ("FUJIFILM"/"GENERALE") to src/implementations/makernotes.rs following ExifTool MakerNotes.pm specification with 8-byte header skip and LittleEndian processing
+- ✅ **Tag kit system implementation** → Generated comprehensive FujiFilm tag kit with 100+ tag definitions including PrintConv lookup tables from FujiFilm.pm Main table
+- ✅ **IFD parsing integration** → Implemented parse_fujifilm_ifd() with proper tag name resolution using generated tag kit, handles TIFF IFD structure with format-specific value extraction
+- ✅ **EXIF pipeline integration** → FujiFilm processor integrated into MakerNotes 0x927C processing chain with proper namespace handling
 
 ## Remaining Tasks
 
