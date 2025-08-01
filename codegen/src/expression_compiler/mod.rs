@@ -48,32 +48,49 @@ pub mod codegen;
 pub mod tests;
 
 // Re-export the main API
-pub use types::{CompiledExpression, RpnToken, OpType, FuncType};
+pub use types::{CompiledExpression, AstNode, OpType, CompType, FuncType};
 use tokenizer::tokenize;
-use parser::shunting_yard;
+// Remove the conflicting use statement - we'll call parser functions directly
 
 impl CompiledExpression {
-    /// Parse an ExifTool arithmetic expression into a compiled form
+    /// Parse an ExifTool expression into AST form
     /// 
-    /// Supports: $val, numbers, +, -, *, /, parentheses, int(), exp(), log()
-    /// Examples: "$val / 8", "($val - 104) / 8", "int($val * 1000 / 25.4 + 0.5)"
+    /// Supports: $val, numbers, +, -, *, /, comparisons, ternary (?:), int(), exp(), log()
+    /// Examples: "$val / 8", "$val >= 0 ? $val : undef", "int($val * 1000 / 25.4 + 0.5)"
     pub fn compile(expr: &str) -> Result<Self, String> {
         let tokens = tokenize(expr)?;
-        let rpn_tokens = shunting_yard(tokens)?;
+        let ast = crate::expression_compiler::parser::parse_expression(tokens)?;
         
         Ok(CompiledExpression {
             original_expr: expr.to_string(),
-            rpn_tokens,
+            ast: Box::new(ast),
         })
     }
     
-    /// Check if this expression can be compiled (arithmetic and supported functions)
+    /// Check if this expression can be compiled (supports ternary, arithmetic, sprintf, and string concatenation)
     pub fn is_compilable(expr: &str) -> bool {
-        // Quick checks for obviously non-compilable expressions
-        if expr.contains('?') || expr.contains("**") || expr.contains("abs") || 
+        // Quick checks for obviously non-compilable expressions  
+        if expr.contains("**") || expr.contains("abs") || 
            expr.contains("IsFloat") || expr.contains("=~") || expr.contains("&") || 
            expr.contains("|") || expr.contains(">>") || expr.contains("<<") {
             return false;
+        }
+        
+        // ExifTool function calls should be handled by conv_registry, not expression compiler
+        if expr.contains("Image::ExifTool::") {
+            return false;
+        }
+        
+        // Check for supported sprintf patterns
+        if expr.contains("sprintf(") {
+            // sprintf patterns are compilable
+            return Self::compile(expr).is_ok();
+        }
+        
+        // Check for string concatenation patterns
+        if expr.contains(" . ") {
+            // String concatenation is compilable
+            return Self::compile(expr).is_ok();
         }
         
         // Try to compile - if it works, it's compilable
