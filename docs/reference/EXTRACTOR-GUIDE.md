@@ -124,6 +124,7 @@ This approach handles complex modules like Canon (17 tables) while maintaining t
 | Extractor               | Purpose                      | Input Pattern                  | Output                         | Status         | When to Use                  |
 | ----------------------- | ---------------------------- | ------------------------------ | ------------------------------ | -------------- | ---------------------------- |
 | **tag_kit.pl** ⭐       | **Complete tag definitions** | Any tag table                  | **Tag bundles with PrintConv** | **PRODUCTION** | **PRIMARY: Always for tags** |
+| **simple_array.pl** ⭐  | **Static array extraction**  | **Array expressions**          | **Static Rust arrays**        | **PRODUCTION** | **Cryptographic/lookup arrays** |
 | simple_table.pl         | Standalone lookups           | `%hashName = (...)`            | Static HashMap                 | Active         | Manufacturer lookups         |
 | runtime_table.pl        | Runtime HashMaps             | ProcessBinaryData tables       | HashMap creators               | Active         | Binary data with conditions  |
 | process_binary_data.pl  | Binary structures            | Tables with `%binaryDataAttrs` | Binary parsing info            | Active         | Fixed binary layouts         |
@@ -221,6 +222,121 @@ static PRINT_CONV_73: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
 - Creates dependency on manual registry maintenance
 - Function reference approach prone to registry bugs
 - Tag kit embeds everything needed for tag processing in unified bundles
+
+### Static Arrays
+
+#### simple_array.pl ⭐ (PRODUCTION READY)
+
+**Status**: **PRODUCTION READY** - Successfully processing cryptographic arrays with byte-perfect accuracy
+
+**Purpose**: Extract static arrays from ExifTool modules for performance-critical operations like cryptographic decryption.
+
+**ExifTool Pattern**:
+
+```perl
+# Multi-dimensional arrays
+my @xlat = (
+    [ 0xc1,0xbf,0x6d,0x0d,0x59,0xc5,0x13,0x9d... ],  # xlat[0] - 256 bytes
+    [ 0xa7,0xbc,0xc9,0xad,0x91,0xdf,0x85,0xe5... ]   # xlat[1] - 256 bytes  
+);
+
+# Simple arrays  
+my @afPointNames = ('Center', 'Top', 'Bottom', 'Mid-left', 'Mid-right');
+```
+
+**Generated Output**:
+
+```rust
+// src/generated/Nikon_pm/xlat_0.rs
+pub static XLAT_0: [u8; 256] = [
+    193, 191, 109, 13, 89, 197, 19, 157, // 0xc1, 0xbf, 0x6d, 0x0d...
+    // ... 248 more bytes with exact values
+];
+
+// src/generated/Nikon_pm/xlat_1.rs  
+pub static XLAT_1: [u8; 256] = [
+    167, 188, 201, 173, 145, 223, 133, 229, // 0xa7, 0xbc, 0xc9, 0xad...
+    // ... 248 more bytes with exact values
+];
+```
+
+**Key Features**:
+
+- **Complex Expression Support**: Handles `xlat[0]`, `xlat[1]`, `%widget->payload`, and arbitrary Perl expressions
+- **Performance Optimized**: Generates static arrays instead of HashMaps for O(1) direct indexing
+- **Cryptographic Accuracy**: Byte-perfect extraction validated against ExifTool source
+- **Thread-Safe**: Static arrays accessible from multiple threads without locks
+- **Config-Driven**: JSON schema supports array_name, element_type, size, constant_name
+- **Validation Pipeline**: Comprehensive Perl validation script + Rust integration tests
+
+**Configuration Example**:
+
+```json
+// codegen/config/Nikon_pm/simple_array.json
+{
+  "description": "Nikon XLAT arrays for encryption/decryption",
+  "arrays": [
+    {
+      "array_name": "xlat[0]",
+      "constant_name": "XLAT_0", 
+      "element_type": "u8",
+      "size": 256,
+      "description": "First XLAT encryption array"
+    },
+    {
+      "array_name": "xlat[1]",
+      "constant_name": "XLAT_1",
+      "element_type": "u8", 
+      "size": 256,
+      "description": "Second XLAT encryption array"
+    }
+  ]
+}
+```
+
+**Runtime Usage**:
+
+```rust
+use crate::generated::Nikon_pm::{XLAT_0, XLAT_1};
+
+// Direct array indexing (fastest)
+let decrypted_byte = XLAT_0[encrypted_value as usize];
+
+// Bounds-checked access
+if let Some(&decrypted_byte) = XLAT_0.get(encrypted_value as usize) {
+    // Safe access
+}
+
+// Array properties
+assert_eq!(XLAT_0.len(), 256);  // Known at compile time
+```
+
+**When to Use**:
+
+- **Cryptographic operations** requiring exact byte arrays (decryption/encryption)
+- **Performance-critical lookups** where HashMap overhead matters
+- **Multi-dimensional arrays** like `xlat[0]`, `xlat[1]` from ExifTool
+- **Large lookup arrays** where static allocation is preferable
+- **Any ExifTool array** that needs direct indexing instead of key-value lookup
+
+**Validation System**:
+
+The pipeline includes comprehensive validation ensuring generated arrays exactly match ExifTool:
+
+```bash
+# Perl validation script
+perl codegen/scripts/validate_arrays.pl config/Nikon_pm/simple_array.json
+
+# Rust integration tests
+cargo test --test simple_array_integration
+```
+
+**Architecture Integration**:
+
+- **SimpleArrayExtractor** trait for Rust orchestration
+- **Patching system** converts `my @array` to `our @array` for extraction  
+- **Static array generator** creates clean Rust code without wrapper functions
+- **Modular output** integrates with existing generated code structure
 
 ### Lookup Tables
 
@@ -352,6 +468,9 @@ Start: What are you extracting?
 ├─ Tag definitions (ANY module/table)?
 │  └─ ⭐ Use tag_kit.pl ✓ (PRIMARY SYSTEM)
 │
+├─ Static arrays for performance/crypto (@array, xlat[0], etc.)?
+│  └─ ⭐ Use simple_array.pl ✓ (CRYPTOGRAPHIC ACCURACY)
+│
 ├─ Standalone lookup table (%hashName, not in tag def)?
 │  └─ Use simple_table.pl
 │
@@ -374,7 +493,7 @@ Start: What are you extracting?
    └─ Check specialized extractors (file_type_lookup, etc.)
 ```
 
-**Rule of Thumb**: If it's a tag table in ExifTool, use `tag_kit.pl`. Everything else uses specialized extractors.
+**Rule of Thumb**: If it's a tag table in ExifTool, use `tag_kit.pl`. If it's an array needing direct indexing, use `simple_array.pl`. Everything else uses specialized extractors.
 
 ## Common Pitfalls
 

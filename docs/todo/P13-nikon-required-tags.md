@@ -212,6 +212,35 @@ Honest. RTFM.
 
 **Manual Array Status**: The "manual 512-byte arrays" mentioned in encryption.rs were **already replaced with generated code** during earlier implementation work. Current code imports from generated modules, not manual constants.
 
+### 7. Task: Fix Failing AF Processing Tests **✅ COMPLETED**
+
+**Success Criteria**: Resolve 2 failing tests in `nikon::af_processing` for missing encrypted tags (0x0088, 0x0098)
+**Approach**: Fix namespace inconsistencies in AF processing functions
+**Dependencies**: Task 6 (codegen research complete)
+
+**Context**: AF processing tests were failing because functions used "Nikon" namespace instead of "MakerNotes" namespace expected by tests and used by other Nikon processing functions.
+
+**✅ RESOLUTION COMPLETED**:
+
+**Root Cause**: Namespace inconsistency in AF processing functions:
+- AF functions used `create_tag_source_info("Nikon")` → "Nikon" namespace
+- Tests expected `(tag_id, "MakerNotes".to_string())` key format
+- Other Nikon functions correctly use `create_tag_source_info("MakerNotes")`
+
+**Resolution Actions**:
+- ✅ **Fixed all AF processing functions** - Updated to use consistent "MakerNotes" namespace
+- ✅ **process_nikon_af_info()** - Fixed tag 0x0088 (AF Info version)
+- ✅ **process_af_info_v0300()** - Fixed tags 0x0098, 0x0099 (Subject detection)
+- ✅ **process_z_series_af_grid()** - Fixed tags 0x009A, 0x009B, 0x009C (AF coordinates)
+- ✅ **Unknown version handling** - Fixed fallback tag 0x0088
+
+**Test Results**: All 6 AF processing tests now pass:
+- ✅ `test_af_info_version_extraction` (was failing)
+- ✅ `test_z_series_subject_detection` (was failing)
+- ✅ 4 existing tests continue to pass
+
+**Impact**: Immediate CI/development workflow improvement with consistent ExifTool-compatible group name handling.
+
 **Task Quality Check**: Can another engineer pick up any task and complete it without asking clarifying questions?
 
 ## Integration Requirements
@@ -293,6 +322,7 @@ None - all required infrastructure already implemented.
 **Estimated Original Effort**: 40-60 hours (assumed no infrastructure)  
 **Actual Effort**: ~25 hours (85% infrastructure already existed)
 **Research Discovery**: Simple array extraction was already complete - no additional work needed
+7. **Test Suite Reliability**: Fixed AF processing test failures for improved CI/development workflow
 
 ## Implementation Guidance
 
