@@ -49,14 +49,49 @@ pub struct BinaryDataTag {
     pub name: String,
     #[serde(default)]
     pub simple: bool,
+    #[serde(default)]
+    pub conditional: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub format: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub condition: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub variants: Option<Vec<TagVariant>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub print_conv: Option<Vec<PrintConvEntry>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub print_conv_expr: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub value_conv: Option<String>,
+    #[serde(default)]
+    pub writable: bool,
+    #[serde(default)]
+    pub unknown: bool,
+    #[serde(default)]
+    pub binary: bool,
+    #[serde(default)]
+    pub hidden: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub notes: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct TagVariant {
+    pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub condition: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub format: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub print_conv: Option<Vec<PrintConvEntry>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub print_conv_expr: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub value_conv: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub priority: Option<i32>,
     #[serde(default)]
     pub writable: bool,
     #[serde(default)]
@@ -135,7 +170,17 @@ pub fn generate_process_binary_data(data: &ProcessBinaryDataExtraction) -> Resul
     
     // Add imports
     code.push_str("use std::collections::HashMap;\n");
-    code.push_str("use std::sync::LazyLock;\n\n");
+    code.push_str("use std::sync::LazyLock;\n");
+    
+    // Add conditional imports if needed
+    let has_conditional_tags = data.table_data.tags.iter()
+        .any(|tag| tag.conditional && tag.variants.is_some());
+    
+    if has_conditional_tags {
+        code.push_str("use crate::types::{BinaryDataTag, BinaryDataTagVariant};\n");
+    }
+    
+    code.push_str("\n");
     
     // Generate table structure
     let struct_name = format!("{}{}Table", data.manufacturer, data.table_data.table_name);
@@ -190,6 +235,84 @@ pub fn generate_process_binary_data(data: &ProcessBinaryDataExtraction) -> Resul
     
     code.push_str("    map\n");
     code.push_str("});\n\n");
+    
+    // Generate conditional variants for tags that have them
+    let conditional_tags: Vec<&BinaryDataTag> = data.table_data.tags.iter()
+        .filter(|tag| tag.conditional && tag.variants.is_some())
+        .collect();
+    
+    if !conditional_tags.is_empty() {
+        
+        code.push_str(&format!(
+            "/// Conditional variants for {} {}\n",
+            data.manufacturer, data.table_data.table_name
+        ));
+        code.push_str(&format!(
+            "pub static {}_VARIANTS: LazyLock<HashMap<u16, BinaryDataTag>> = LazyLock::new(|| {{\n",
+            data.table_data.table_name.to_uppercase()
+        ));
+        code.push_str("    let mut map = HashMap::new();\n");
+        
+        for tag in &conditional_tags {
+            if let Some(variants) = &tag.variants {
+                code.push_str(&format!("    // Tag {}: {} (conditional)\n", tag.offset_decimal, tag.name));
+                code.push_str(&format!("    map.insert({}, BinaryDataTag {{\n", tag.offset_decimal));
+                code.push_str(&format!("        name: \"{}\".to_string(),\n", tag.name));
+                code.push_str("        variants: vec![\n");
+                
+                for variant in variants {
+                    code.push_str("            BinaryDataTagVariant {\n");
+                    code.push_str(&format!("                name: \"{}\".to_string(),\n", variant.name));
+                    
+                    if let Some(condition) = &variant.condition {
+                        code.push_str(&format!("                condition: Some(\"{}\".to_string()),\n", escape_string(condition)));
+                    } else {
+                        code.push_str("                condition: None,\n");
+                    }
+                    
+                    code.push_str("                format_spec: None,\n");
+                    code.push_str("                format: None,\n");
+                    code.push_str("                mask: None,\n");
+                    code.push_str("                print_conv: None,\n");
+                    
+                    if let Some(value_conv) = &variant.value_conv {
+                        code.push_str(&format!("                value_conv: Some(\"{}\".to_string()),\n", escape_string(value_conv)));
+                    } else {
+                        code.push_str("                value_conv: None,\n");
+                    }
+                    
+                    if let Some(print_conv_expr) = &variant.print_conv_expr {
+                        code.push_str(&format!("                print_conv_expr: Some(\"{}\".to_string()),\n", escape_string(print_conv_expr)));
+                    } else {
+                        code.push_str("                print_conv_expr: None,\n");
+                    }
+                    
+                    code.push_str("                data_member: None,\n");
+                    code.push_str("                group: None,\n");
+                    
+                    if let Some(priority) = variant.priority {
+                        code.push_str(&format!("                priority: Some({}),\n", priority));
+                    } else {
+                        code.push_str("                priority: None,\n");
+                    }
+                    
+                    code.push_str("            },\n");
+                }
+                
+                code.push_str("        ],\n");
+                code.push_str("        format_spec: None,\n");
+                code.push_str("        format: None,\n");
+                code.push_str("        mask: None,\n");
+                code.push_str("        print_conv: None,\n");
+                code.push_str("        data_member: None,\n");
+                code.push_str("        group: None,\n");
+                code.push_str("    });\n\n");
+            }
+        }
+        
+        code.push_str("    map\n");
+        code.push_str("});\n\n");
+    }
     
     // Generate format mapping for complex tags
     let complex_tags: Vec<&BinaryDataTag> = data.table_data.tags.iter()
@@ -263,6 +386,19 @@ pub fn generate_process_binary_data(data: &ProcessBinaryDataExtraction) -> Resul
     code.push_str("    pub fn get_offsets(&self) -> Vec<u16> {\n");
     code.push_str(&format!("        {}_TAGS.keys().copied().collect()\n", data.table_data.table_name.to_uppercase()));
     code.push_str("    }\n");
+    
+    // Add conditional variant lookup if needed
+    if !conditional_tags.is_empty() {
+        code.push_str("\n    /// Get conditional variants for a tag if available\n");
+        code.push_str("    pub fn get_conditional_tag(&self, offset: u16) -> Option<&BinaryDataTag> {\n");
+        code.push_str(&format!("        {}_VARIANTS.get(&offset)\n", data.table_data.table_name.to_uppercase()));
+        code.push_str("    }\n");
+        
+        code.push_str("\n    /// Check if a tag has conditional variants\n");
+        code.push_str("    pub fn is_conditional(&self, offset: u16) -> bool {\n");
+        code.push_str(&format!("        {}_VARIANTS.contains_key(&offset)\n", data.table_data.table_name.to_uppercase()));
+        code.push_str("    }\n");
+    }
     
     code.push_str("}\n\n");
     
