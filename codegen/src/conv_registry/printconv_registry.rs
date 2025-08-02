@@ -10,13 +10,6 @@ use std::sync::LazyLock;
 static PRINTCONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'static str)>> = LazyLock::new(|| {
     let mut m = HashMap::new();
     
-    // Common sprintf patterns
-    m.insert("sprintf(\"%.1f mm\", $val)", ("crate::implementations::print_conv", "focallength_print_conv"));
-    m.insert("sprintf(\"%.1f\", $val)", ("crate::implementations::print_conv", "decimal_1_print_conv"));
-    m.insert("sprintf(\"%.2f\", $val)", ("crate::implementations::print_conv", "decimal_2_print_conv"));
-    m.insert("sprintf(\"%+d\", $val)", ("crate::implementations::print_conv", "signed_int_print_conv"));
-    m.insert("sprintf(\"%.3f mm\", $val)", ("crate::implementations::print_conv", "focal_length_3_decimals_print_conv"));
-    
     // Conditional expressions
     m.insert("$val =~ /^(inf|undef)$/ ? $val : \"$val m\"", ("crate::implementations::print_conv", "gpsaltitude_print_conv"));
     
@@ -39,8 +32,6 @@ static PRINTCONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
     m.insert("exposuretime_print_conv", ("crate::implementations::print_conv", "exposuretime_print_conv"));
     m.insert("focallength_print_conv", ("crate::implementations::print_conv", "focallength_print_conv"));
     
-    // Canon focal length formatting - ExifTool Canon.pm PrintConv: "$val mm"
-    m.insert("\"$val mm\"", ("crate::implementations::print_conv", "focal_length_mm_print_conv"));
     m.insert("lensinfo_print_conv", ("crate::implementations::print_conv", "lensinfo_print_conv"));
     m.insert("iso_print_conv", ("crate::implementations::print_conv", "iso_print_conv"));
     m.insert("orientation_print_conv", ("crate::implementations::print_conv", "orientation_print_conv"));
