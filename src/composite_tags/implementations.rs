@@ -41,12 +41,15 @@ pub fn compute_image_size(available_tags: &HashMap<String, TagValue>) -> Option<
         }
     }
 
-    // Priority 3: Use the best available ImageWidth/ImageHeight values
-    // This calls our composite computation functions directly to get dimensions
-    // including Panasonic sensor border calculations, EXIF values, etc.
+    // Priority 3: Use ImageWidth/ImageHeight (typically File: group, actual pixel dimensions)
+    // ExifTool: return "$val[0] $val[1]" if IsFloat($val[0]) and IsFloat($val[1])
     if let (Some(width), Some(height)) = (
-        compute_image_width(available_tags),
-        compute_image_height(available_tags),
+        available_tags
+            .get("File:ImageWidth")
+            .or_else(|| available_tags.get("ImageWidth")),
+        available_tags
+            .get("File:ImageHeight")
+            .or_else(|| available_tags.get("ImageHeight")),
     ) {
         if let (Some(w), Some(h)) = (width.as_u32(), height.as_u32()) {
             // Apply PrintConv formatting: "WIDTHxHEIGHT" format
@@ -79,43 +82,53 @@ fn is_canon_raw_tiff_type(available_tags: &HashMap<String, TagValue>) -> bool {
     false
 }
 
-/// Compute GPSAltitude composite (GPSAltitude + GPSAltitudeRef)
-/// ExifTool: lib/Image/ExifTool/GPS.pm GPSAltitude composite
+/// Compute GPSAltitude composite tag with signed decimal meters
+/// ExifTool: lib/Image/ExifTool/GPS.pm:406-432 GPSAltitude definition
+/// ValueConv: Returns negative value if Below Sea Level (ref=1), positive if Above (ref=0)
 pub fn compute_gps_altitude(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
     // Try GPS-prefixed dependencies first (from composite definition desired dependencies)
     let altitude = available_tags
         .get("GPS:GPSAltitude")
+        .or_else(|| available_tags.get("EXIF:GPSAltitude"))
         .or_else(|| available_tags.get("XMP:GPSAltitude"))
         .or_else(|| available_tags.get("GPSAltitude"));
 
     if let Some(altitude) = altitude {
         let alt_ref = available_tags
             .get("GPS:GPSAltitudeRef")
+            .or_else(|| available_tags.get("EXIF:GPSAltitudeRef"))
             .or_else(|| available_tags.get("XMP:GPSAltitudeRef"))
             .or_else(|| available_tags.get("GPSAltitudeRef"));
 
-        // Convert rational to decimal
-        if let Some(alt_value) = altitude.as_rational() {
-            let decimal_alt = alt_value.0 as f64 / alt_value.1 as f64;
+        // Convert to decimal value
+        let decimal_alt = if let Some(alt_value) = altitude.as_rational() {
+            alt_value.0 as f64 / alt_value.1 as f64
+        } else if let Some(alt_f64) = altitude.as_f64() {
+            alt_f64
+        } else {
+            return None;
+        };
 
-            // Check if below sea level (ref = 1)
-            let sign = if let Some(ref_val) = alt_ref {
-                if let Some(ref_str) = ref_val.as_string() {
-                    if ref_str == "1" {
-                        "-"
-                    } else {
-                        ""
-                    }
+        // Check reference: 0 = Above Sea Level, 1 = Below Sea Level
+        // ExifTool: '$val[$_+1] ? -abs($val[$_]) : $val[$_]'
+        let signed_altitude = if let Some(ref_val) = alt_ref {
+            if let Some(ref_str) = ref_val.as_string() {
+                if ref_str == "1" || ref_str.to_lowercase().contains("below") {
+                    -decimal_alt.abs() // Below Sea Level: negative
                 } else {
-                    ""
+                    decimal_alt.abs() // Above Sea Level: positive
                 }
             } else {
-                ""
-            };
+                decimal_alt.abs() // Default: Above Sea Level
+            }
+        } else {
+            decimal_alt.abs() // Default: Above Sea Level
+        };
 
-            return Some(TagValue::string(format!("{sign}{decimal_alt:.1} m")));
-        }
+        // Return signed decimal value - PrintConv will handle "m Above/Below Sea Level" formatting
+        return Some(TagValue::F64(signed_altitude));
     }
+
     None
 }
 
@@ -368,18 +381,22 @@ pub fn compute_focal_length_35efl(available_tags: &HashMap<String, TagValue>) ->
 /// Based on sensor size, crop factor calculations, and manufacturer-specific data
 pub fn compute_scale_factor_35efl(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
     trace!("ScaleFactor35efl function called");
-    
+
     // ExifTool requires FocalLength as minimum requirement
     let focal_length_tag = available_tags.get("FocalLength")?;
     let _focal_length_val = extract_focal_length_value(focal_length_tag)?;
-    
-    trace!("ScaleFactor35efl: FocalLength found: {:?}, extracted: {:?}", focal_length_tag, _focal_length_val);
+
+    trace!(
+        "ScaleFactor35efl: FocalLength found: {:?}, extracted: {:?}",
+        focal_length_tag,
+        _focal_length_val
+    );
 
     // Phase 1: Try direct scale factor from various manufacturer sources
     // ExifTool: lib/Image/ExifTool/Exif.pm:5331-5355 direct scale factor lookups
-    
+
     trace!("ScaleFactor35efl Phase 1: Checking direct manufacturer sources");
-    
+
     // Check FocalLengthIn35mmFormat first (EXIF 2.3 standard)
     if let Some(focal_35mm) = available_tags.get("FocalLengthIn35mmFormat") {
         trace!("Found FocalLengthIn35mmFormat: {:?}", focal_35mm);
@@ -413,122 +430,60 @@ pub fn compute_scale_factor_35efl(available_tags: &HashMap<String, TagValue>) ->
 
     // Phase 2: Calculate from sensor dimensions if available
     // ExifTool: lib/Image/ExifTool/Exif.pm:5356-5410 sensor dimension calculations
-    
-    // Try to get sensor dimensions - multiple possible sources
-    let sensor_width = get_sensor_dimension(available_tags, &[
-        "SensorWidth", "CCDWidth", "SensorSize", "ImageWidth"
-    ]);
-    let sensor_height = get_sensor_dimension(available_tags, &[
-        "SensorHeight", "CCDHeight", "SensorSize", "ImageHeight"
-    ]);
 
-    if let (Some(width), Some(height)) = (sensor_width, sensor_height) {
-        // Calculate diagonal in mm: sqrt(width² + height²)
-        let sensor_diagonal = (width * width + height * height).sqrt();
-        
-        // 35mm film diagonal is 43.267mm: sqrt(24² + 36²)
-        let full_frame_diagonal = 43.266615305567875; // sqrt(24*24 + 36*36)
-        
-        if sensor_diagonal > 0.0 {
-            let scale_factor = full_frame_diagonal / sensor_diagonal;
-            trace!("Calculated ScaleFactor35efl from sensor dimensions: {:.3} (sensor diagonal: {:.2}mm)", scale_factor, sensor_diagonal);
-            return Some(TagValue::F64(scale_factor));
-        }
-    }
-
-    // Phase 3: Use manufacturer-specific crop factors based on camera model
-    // ExifTool: lib/Image/ExifTool/Exif.pm:5411-5470 model-based crop factors
-    
-    if let Some(make) = available_tags.get("Make").or_else(|| available_tags.get("EXIF:Make")) {
-        if let Some(model) = available_tags.get("Model").or_else(|| available_tags.get("EXIF:Model")) {
-            if let (Some(make_str), Some(model_str)) = (make.as_string(), model.as_string()) {
-                
-                // Canon crop factors by model series
-                if make_str.to_lowercase().contains("canon") {
-                    let model_lower = model_str.to_lowercase();
-                    trace!("Canon camera model detection: '{}' (lowered: '{}')", model_str, model_lower);
-                    
-                    // Full frame Canon cameras (scale factor = 1.0)
-                    if model_lower.contains("5d") || model_lower.contains("6d") || 
-                       model_lower.contains("1d") || model_lower.contains("r") ||
-                       model_lower.contains("eos r") {
-                        trace!("Identified as full-frame Canon camera, returning scale factor 1.0");
-                        return Some(TagValue::F64(1.0));
-                    }
-                    
-                    // APS-C Canon cameras (scale factor ≈ 1.6)
-                    if model_lower.contains("rebel") || model_lower.contains("kiss") ||
-                       model_lower.contains("60d") || model_lower.contains("70d") ||
-                       model_lower.contains("80d") || model_lower.contains("90d") ||
-                       model_lower.contains("7d") || model_lower.contains("t") {
-                        return Some(TagValue::F64(1.6));
-                    }
-                    
-                    // Canon APS-H (1D Mark III, IV - scale factor ≈ 1.3)
-                    if model_lower.contains("1d mark iii") || model_lower.contains("1d mark iv") {
-                        return Some(TagValue::F64(1.3));
-                    }
-                }
-                
-                // Nikon crop factors
-                if make_str.to_lowercase().contains("nikon") {
-                    let model_lower = model_str.to_lowercase();
-                    
-                    // Full frame Nikon (D3, D4, D5, D6, D700, D750, D780, D800, D810, D850, Z6, Z7, Z9)
-                    if model_lower.contains("d3") || model_lower.contains("d4") ||
-                       model_lower.contains("d5") || model_lower.contains("d6") ||
-                       model_lower.contains("d700") || model_lower.contains("d750") ||
-                       model_lower.contains("d780") || model_lower.contains("d800") ||
-                       model_lower.contains("d810") || model_lower.contains("d850") ||
-                       model_lower.contains("z 6") || model_lower.contains("z 7") ||
-                       model_lower.contains("z 9") {
-                        return Some(TagValue::F64(1.0));
-                    }
-                    
-                    // APS-C Nikon (most other models - scale factor ≈ 1.5)
-                    return Some(TagValue::F64(1.5));
-                }
-                
-                // Sony crop factors  
-                if make_str.to_lowercase().contains("sony") {
-                    let model_lower = model_str.to_lowercase();
-                    
-                    // Full frame Sony (A7 series, A9 series - scale factor = 1.0)
-                    if model_lower.contains("a7") || model_lower.contains("a9") {
-                        return Some(TagValue::F64(1.0));
-                    }
-                    
-                    // APS-C Sony (A6000 series, etc. - scale factor ≈ 1.5)
-                    if model_lower.contains("a6") || model_lower.contains("a5") ||
-                       model_lower.contains("nex") {
-                        return Some(TagValue::F64(1.5));
-                    }
-                }
-                
-                // Micro Four Thirds (Olympus, Panasonic - scale factor = 2.0)
-                if make_str.to_lowercase().contains("olympus") || 
-                   make_str.to_lowercase().contains("panasonic") {
-                    return Some(TagValue::F64(2.0));
+    // Check if we have Canon camera with FocalPlane resolution data
+    if let Some(make) = available_tags
+        .get("Make")
+        .or_else(|| available_tags.get("EXIF:Make"))
+    {
+        if let Some(make_str) = make.as_string() {
+            if make_str.to_lowercase().contains("canon") {
+                if let Some(scale_factor) = calculate_canon_sensor_diagonal(available_tags) {
+                    trace!(
+                        "Calculated ScaleFactor35efl using Canon sensor diagonal: {:.3}",
+                        scale_factor
+                    );
+                    return Some(TagValue::F64(scale_factor));
                 }
             }
         }
     }
 
+    // Generic focal plane calculation for other manufacturers
+    if let Some(scale_factor) = calculate_generic_sensor_scale(available_tags) {
+        trace!(
+            "Calculated ScaleFactor35efl using generic focal plane method: {:.3}",
+            scale_factor
+        );
+        return Some(TagValue::F64(scale_factor));
+    }
+
+    // Phase 3: Use manufacturer-specific crop factors based on camera model only as last resort
+    // Most cameras should be calculated from actual sensor dimensions above
+    // ExifTool: lib/Image/ExifTool/Exif.pm:5411-5470 model-based crop factors
+
     // Phase 4: Default fallback based on typical sensor sizes
     // ExifTool: Returns undef if no calculation possible, but we provide reasonable defaults
-    
+
     // If we have image dimensions, estimate based on typical sensor sizes
-    if let Some(width) = available_tags.get("ImageWidth").or_else(|| available_tags.get("EXIF:ExifImageWidth")) {
+    if let Some(width) = available_tags
+        .get("ImageWidth")
+        .or_else(|| available_tags.get("EXIF:ExifImageWidth"))
+    {
         if let Some(width_val) = width.as_u32() {
             // Rough estimation based on image resolution (common sensor patterns)
             let scale_factor = match width_val {
-                w if w >= 5000 => 1.0,  // Likely full frame (≥24MP)
-                w if w >= 4000 => 1.5,  // Likely APS-C (≥16MP)  
-                w if w >= 3000 => 1.6,  // Likely APS-C Canon (≥10MP)
-                _ => 2.0,               // Likely smaller sensor
+                w if w >= 5000 => 1.0, // Likely full frame (≥24MP)
+                w if w >= 4000 => 1.5, // Likely APS-C (≥16MP)
+                w if w >= 3000 => 1.6, // Likely APS-C Canon (≥10MP)
+                _ => 2.0,              // Likely smaller sensor
             };
-            
-            trace!("Estimated ScaleFactor35efl from image width {}: {:.1}", width_val, scale_factor);
+
+            trace!(
+                "Estimated ScaleFactor35efl from image width {}: {:.1}",
+                width_val,
+                scale_factor
+            );
             return Some(TagValue::F64(scale_factor));
         }
     }
@@ -540,7 +495,11 @@ pub fn compute_scale_factor_35efl(available_tags: &HashMap<String, TagValue>) ->
 
 /// Extract sensor dimension from various possible tag sources
 /// ExifTool: lib/Image/ExifTool/Exif.pm:5356-5410 sensor dimension extraction
-fn get_sensor_dimension(available_tags: &HashMap<String, TagValue>, tag_names: &[&str]) -> Option<f64> {
+#[allow(dead_code)]
+fn get_sensor_dimension(
+    available_tags: &HashMap<String, TagValue>,
+    tag_names: &[&str],
+) -> Option<f64> {
     for tag_name in tag_names {
         if let Some(tag_value) = available_tags.get(*tag_name) {
             // Handle different formats: rational, float, integer
@@ -549,7 +508,7 @@ fn get_sensor_dimension(available_tags: &HashMap<String, TagValue>, tag_names: &
                     return Some(dimension);
                 }
             }
-            
+
             // Handle rational format specifically
             if let Some((num, den)) = tag_value.as_rational() {
                 if den != 0 {
@@ -559,7 +518,7 @@ fn get_sensor_dimension(available_tags: &HashMap<String, TagValue>, tag_names: &
                     }
                 }
             }
-            
+
             // Handle string format (e.g., "35 mm")
             if let Some(string_val) = tag_value.as_string() {
                 if let Some(dimension) = parse_numeric_from_string(string_val) {
@@ -577,14 +536,15 @@ fn get_sensor_dimension(available_tags: &HashMap<String, TagValue>, tag_names: &
 /// ExifTool strings often contain units that need to be stripped
 fn parse_numeric_from_string(s: &str) -> Option<f64> {
     // Remove common units and whitespace
-    let cleaned = s.trim()
+    let cleaned = s
+        .trim()
         .replace(" mm", "")
         .replace("mm", "")
         .replace(" cm", "")
         .replace("cm", "")
         .trim()
         .to_string();
-    
+
     // Try to parse as float
     cleaned.parse::<f64>().ok()
 }
@@ -598,7 +558,7 @@ fn extract_focal_length_value(tag_value: &TagValue) -> Option<f64> {
             return Some(focal_length);
         }
     }
-    
+
     // Handle rational format
     if let Some((num, den)) = tag_value.as_rational() {
         if den != 0 {
@@ -608,7 +568,7 @@ fn extract_focal_length_value(tag_value: &TagValue) -> Option<f64> {
             }
         }
     }
-    
+
     // Handle string format (e.g., "35 mm")
     if let Some(string_val) = tag_value.as_string() {
         if let Some(focal_length) = parse_numeric_from_string(string_val) {
@@ -617,7 +577,7 @@ fn extract_focal_length_value(tag_value: &TagValue) -> Option<f64> {
             }
         }
     }
-    
+
     None
 }
 
@@ -711,24 +671,25 @@ pub fn compute_megapixels(available_tags: &HashMap<String, TagValue>) -> Option<
     Some(TagValue::string(formatted))
 }
 
-/// Compute GPSPosition composite tag from GPSLatitude and GPSLongitude
-/// ExifTool: lib/Image/ExifTool/Composite.pm GPSPosition definition
-/// ValueConv: (length($val[0]) or length($val[1])) ? "$val[0] $val[1]" : undef
+/// Compute GPSPosition composite tag from GPSLatitude and GPSLongitude with comma separator
+/// ExifTool: lib/Image/ExifTool/Exif.pm:5165-5196 GPSPosition definition
+/// PrintConv: '"$prt[0], $prt[1]"' - combines formatted lat/lon with comma separator
+/// Per TRUST-EXIFTOOL.md: GPS coordinates should be in decimal format
 pub fn compute_gps_position(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
     let gps_latitude = available_tags.get("GPSLatitude");
     let gps_longitude = available_tags.get("GPSLongitude");
 
-    // Trust ExifTool: if either latitude or longitude has content (length > 0), combine them
-    let lat_str = gps_latitude.and_then(|v| v.as_string()).unwrap_or_default();
-    let lon_str = gps_longitude
-        .and_then(|v| v.as_string())
-        .unwrap_or_default();
+    // Get decimal values (our GPS coordinates are now numeric per TRUST-EXIFTOOL.md)
+    let lat_value = gps_latitude.and_then(|v| v.as_f64());
+    let lon_value = gps_longitude.and_then(|v| v.as_f64());
 
-    // ExifTool: (length($val[0]) or length($val[1])) ? "$val[0] $val[1]" : undef
-    if !lat_str.is_empty() || !lon_str.is_empty() {
-        Some(TagValue::string(format!("{lat_str} {lon_str}")))
-    } else {
-        None
+    // Trust ExifTool: if either latitude or longitude is available, combine them
+    // Format as space-separated decimal values to match ExifTool numeric output
+    match (lat_value, lon_value) {
+        (Some(lat), Some(lon)) => Some(TagValue::string(format!("{} {}", lat, lon))),
+        (Some(lat), None) => Some(TagValue::string(format!("{} 0", lat))),
+        (None, Some(lon)) => Some(TagValue::string(format!("0 {}", lon))),
+        (None, None) => None,
     }
 }
 
@@ -1147,10 +1108,11 @@ pub fn compute_gps_latitude(available_tags: &HashMap<String, TagValue>) -> Optio
         lat_value
     };
 
+    // Return signed decimal value - PrintConv will handle DMS formatting
     Some(TagValue::F64(signed_latitude))
 }
 
-/// Compute GPSLongitude composite tag with signed decimal degrees  
+/// Compute GPSLongitude composite tag with signed decimal degrees
 /// ExifTool: lib/Image/ExifTool/GPS.pm:385-405 GPSLongitude definition
 /// ValueConv: '$val[1] =~ /^W/i ? -$val[0] : $val[0]' - negates if West reference
 pub fn compute_gps_longitude(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
@@ -1176,6 +1138,7 @@ pub fn compute_gps_longitude(available_tags: &HashMap<String, TagValue>) -> Opti
         lon_value
     };
 
+    // Return signed decimal value - PrintConv will handle DMS formatting
     Some(TagValue::F64(signed_longitude))
 }
 
@@ -1760,4 +1723,215 @@ fn parse_float_from_string(s: &str) -> Option<f64> {
 
     // Try direct float parsing (handles "2.8", "100", etc.)
     s.parse::<f64>().ok()
+}
+
+/// Calculate Canon sensor diagonal using Canon's special FocalPlane encoding
+/// ExifTool: lib/Image/ExifTool/Canon.pm:7424-7457 CalcSensorDiag function
+/// Canon encodes sensor size in rational denominators: sensor_inches = denominator/1000
+fn calculate_canon_sensor_diagonal(available_tags: &HashMap<String, TagValue>) -> Option<f64> {
+    let x_res = available_tags.get("FocalPlaneXResolution")?;
+    let y_res = available_tags.get("FocalPlaneYResolution")?;
+
+    trace!(
+        "Canon sensor calculation: FocalPlaneXResolution = {:?}, FocalPlaneYResolution = {:?}",
+        x_res,
+        y_res
+    );
+
+    // Extract rational values - Canon stores as "numerator/denominator"
+    let (x_num, x_den) = x_res.as_rational()?;
+    let (y_num, y_den) = y_res.as_rational()?;
+
+    trace!(
+        "Canon rationals: X=({}, {}), Y=({}, {})",
+        x_num,
+        x_den,
+        y_num,
+        y_den
+    );
+
+    // Validate Canon's encoding assumptions per ExifTool algorithm
+    // Numerators should be image pixels * 1000, denominators sensor size * 1000
+    if x_num % 1000 != 0 || y_num % 1000 != 0 {
+        trace!("Canon rationals don't follow expected pattern (numerators not divisible by 1000)");
+        return None;
+    }
+
+    if x_den == 0 || y_den == 0 {
+        trace!("Canon rationals have zero denominators");
+        return None;
+    }
+
+    // Canon algorithm: sensor size in inches = denominator / 1000
+    let sensor_width_inches = x_den as f64 / 1000.0;
+    let sensor_height_inches = y_den as f64 / 1000.0;
+
+    trace!(
+        "Canon sensor dimensions: {:.3}\" × {:.3}\"",
+        sensor_width_inches,
+        sensor_height_inches
+    );
+
+    // Calculate diagonal in inches, then convert to mm
+    let sensor_diagonal_inches = (sensor_width_inches * sensor_width_inches
+        + sensor_height_inches * sensor_height_inches)
+        .sqrt();
+    let sensor_diagonal_mm = sensor_diagonal_inches * 25.4; // inches to mm
+
+    trace!(
+        "Canon sensor diagonal: {:.3}\" = {:.2}mm",
+        sensor_diagonal_inches,
+        sensor_diagonal_mm
+    );
+
+    // Validate reasonable sensor size (1-100mm diagonal)
+    if !(1.0..=100.0).contains(&sensor_diagonal_mm) {
+        trace!(
+            "Canon sensor diagonal unreasonable: {:.2}mm",
+            sensor_diagonal_mm
+        );
+        return None;
+    }
+
+    // Calculate scale factor: 35mm diagonal / sensor diagonal
+    let full_frame_diagonal = 43.266615305567875; // sqrt(24*24 + 36*36)
+    let scale_factor = full_frame_diagonal / sensor_diagonal_mm;
+
+    trace!(
+        "Canon scale factor: {:.3} (43.27mm / {:.2}mm)",
+        scale_factor,
+        sensor_diagonal_mm
+    );
+
+    Some(scale_factor)
+}
+
+/// Calculate sensor scale factor using generic focal plane resolution method
+/// ExifTool: lib/Image/ExifTool/Exif.pm:5356-5410 generic sensor calculation
+fn calculate_generic_sensor_scale(available_tags: &HashMap<String, TagValue>) -> Option<f64> {
+    let x_res = available_tags.get("FocalPlaneXResolution")?;
+    let y_res = available_tags.get("FocalPlaneYResolution")?;
+
+    // Get resolution unit (default to inches if not specified)
+    let res_unit = available_tags
+        .get("FocalPlaneResolutionUnit")
+        .and_then(|v| v.as_u32())
+        .unwrap_or(2); // 2 = inches
+
+    // Convert resolution unit to mm per unit
+    let mm_per_unit = match res_unit {
+        2 => 25.4,  // inches to mm
+        3 => 10.0,  // cm to mm
+        4 => 1.0,   // mm
+        5 => 0.001, // μm to mm
+        _ => 25.4,  // default to inches
+    };
+
+    trace!(
+        "Generic sensor: resolution unit = {}, mm_per_unit = {}",
+        res_unit,
+        mm_per_unit
+    );
+
+    // Calculate pixels per mm
+    let x_pix_per_mm = x_res.as_f64()? / mm_per_unit;
+    let y_pix_per_mm = y_res.as_f64()? / mm_per_unit;
+
+    if x_pix_per_mm <= 0.0 || y_pix_per_mm <= 0.0 {
+        return None;
+    }
+
+    // Get image dimensions to calculate sensor size
+    let img_width = available_tags
+        .get("ImageWidth")
+        .or_else(|| available_tags.get("ExifImageWidth"))
+        .and_then(|v| v.as_f64())?;
+    let img_height = available_tags
+        .get("ImageHeight")
+        .or_else(|| available_tags.get("ExifImageHeight"))
+        .and_then(|v| v.as_f64())?;
+
+    // Calculate sensor dimensions in mm
+    let sensor_width_mm = img_width / x_pix_per_mm;
+    let sensor_height_mm = img_height / y_pix_per_mm;
+
+    trace!(
+        "Generic sensor: {}×{} pixels, {:.2}×{:.2}mm sensor",
+        img_width,
+        img_height,
+        sensor_width_mm,
+        sensor_height_mm
+    );
+
+    // Validate aspect ratio (should be between 0.5 and 2.0)
+    let aspect_ratio = sensor_width_mm / sensor_height_mm;
+    if !(0.5..=2.0).contains(&aspect_ratio) {
+        trace!("Generic sensor: invalid aspect ratio {:.3}", aspect_ratio);
+        return None;
+    }
+
+    // Calculate diagonal
+    let sensor_diagonal_mm =
+        (sensor_width_mm * sensor_width_mm + sensor_height_mm * sensor_height_mm).sqrt();
+
+    // Validate reasonable sensor size
+    if !(1.0..=100.0).contains(&sensor_diagonal_mm) {
+        trace!(
+            "Generic sensor: unreasonable diagonal {:.2}mm",
+            sensor_diagonal_mm
+        );
+        return None;
+    }
+
+    // Calculate scale factor
+    let full_frame_diagonal = 43.266615305567875;
+    let scale_factor = full_frame_diagonal / sensor_diagonal_mm;
+
+    trace!(
+        "Generic scale factor: {:.3} (43.27mm / {:.2}mm)",
+        scale_factor,
+        sensor_diagonal_mm
+    );
+
+    Some(scale_factor)
+}
+
+/// Compute DateTimeCreated composite tag from IPTC DateCreated and TimeCreated
+/// ExifTool: lib/Image/ExifTool/IPTC.pm:1388-1396 DateTimeCreated definition
+/// ValueConv: '"$val[0] $val[1]"' - concatenates DateCreated and TimeCreated with space
+/// PrintConv: '$self->ConvertDateTime($val)' - formats datetime per user preferences
+pub fn compute_datetime_created(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    // ExifTool requires both IPTC:DateCreated and IPTC:TimeCreated
+    let date_created = available_tags
+        .get("IPTC:DateCreated")
+        .or_else(|| available_tags.get("DateCreated"))?;
+    let time_created = available_tags
+        .get("IPTC:TimeCreated")
+        .or_else(|| available_tags.get("TimeCreated"))?;
+
+    // Get the raw values
+    let date_str = date_created.as_string()?;
+    let time_str = time_created.as_string()?;
+
+    // ExifTool ValueConv: "$val[0] $val[1]" - simple concatenation with space
+    let combined = format!("{} {}", date_str, time_str);
+
+    // Convert to proper datetime format
+    // DateCreated format: YYYYMMDD (e.g., "20180612")
+    // TimeCreated format: HHMMSS (e.g., "062730")
+    if date_str.len() == 8 && time_str.len() >= 6 {
+        let year = &date_str[0..4];
+        let month = &date_str[4..6];
+        let day = &date_str[6..8];
+        let hour = &time_str[0..2];
+        let minute = &time_str[2..4];
+        let second = &time_str[4..6];
+
+        // Format as standard ExifTool datetime: "YYYY:MM:DD HH:MM:SS"
+        let formatted = format!("{}:{}:{} {}:{}:{}", year, month, day, hour, minute, second);
+        Some(TagValue::string(formatted))
+    } else {
+        // Fallback: return the raw concatenated value
+        Some(TagValue::string(combined))
+    }
 }
