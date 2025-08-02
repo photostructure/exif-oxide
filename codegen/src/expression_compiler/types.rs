@@ -38,16 +38,10 @@ pub enum AstNode {
     ExifToolFunction { name: String, arg: Box<AstNode> },
     /// Sprintf function call with format string and arguments
     Sprintf { format_string: String, args: Vec<Box<AstNode>> },
+    /// Unary minus operation
+    UnaryMinus { operand: Box<AstNode> },
 }
 
-/// Token in Reverse Polish Notation
-#[derive(Debug, Clone, PartialEq)]
-pub enum RpnToken {
-    Variable,           // Represents $val
-    Number(Number),     // Numeric constant
-    Operator(OpType),   // Arithmetic operator
-    Function(FuncType), // Math function call
-}
 
 /// Arithmetic operator types
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -56,6 +50,7 @@ pub enum OpType {
     Subtract, 
     Multiply,
     Divide,
+    Power,       // Power operation (Perl's ** operator)
     Concatenate, // String concatenation (Perl's . operator)
 }
 
@@ -95,6 +90,7 @@ pub enum ParseToken {
     Sprintf,      // sprintf function call
     ExifToolFunction(String), // Image::ExifTool::Module::Function
     Comma,        // , (internal parsing token, not exposed in AST)
+    UnaryMinus,   // - (unary minus operator)
 }
 
 /// Comparison operator with precedence
@@ -124,16 +120,6 @@ impl CompOperator {
     }
 }
 
-/// Helper trait for stack operations
-pub trait Stack<T> {
-    fn top(&self) -> Option<&T>;
-}
-
-impl<T> Stack<T> for Vec<T> {
-    fn top(&self) -> Option<&T> {
-        self.last()
-    }
-}
 
 impl fmt::Display for OpType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -142,6 +128,7 @@ impl fmt::Display for OpType {
             OpType::Subtract => write!(f, "-"),
             OpType::Multiply => write!(f, "*"),
             OpType::Divide => write!(f, "/"),
+            OpType::Power => write!(f, "**"),
             OpType::Concatenate => write!(f, "."),
         }
     }

@@ -163,8 +163,7 @@ mod integration_tests {
         assert!(CompiledExpression::is_compilable("\"Error: \" . $val"));
         assert!(CompiledExpression::is_compilable("\"$val\" . \" mm\""));
         
-        // Complex patterns should still not be compilable
-        assert!(!CompiledExpression::is_compilable("2 ** (-$val/3)"));
+        // Complex patterns should still not be compilable (except power with unary minus, which we now support)
         assert!(!CompiledExpression::is_compilable("abs($val)"));
         assert!(!CompiledExpression::is_compilable("IsFloat($val) && $val < 100"));
         assert!(!CompiledExpression::is_compilable("$val =~ s/ +$//"));
@@ -292,7 +291,7 @@ mod integration_tests {
         
         // Should NOT be compilable (complex/unsupported expressions)
         let non_compilable = vec![
-            "2 ** (-$val/3)", "abs($val)", "IsFloat($val) && $val < 100",
+            "abs($val)", "IsFloat($val) && $val < 100",
             "$val =~ s/ +$//", "$val & 0xffc0", "$val >> 6", "$val << 8",
             "$val +", "($val", "",  // Invalid syntax
         ];
@@ -695,6 +694,65 @@ mod integration_tests {
     }
     
     #[test]
+    fn test_failing_registry_patterns() {
+        // Test patterns from the failing conv_registry test
+        let failing_patterns = vec![
+            "$val ? exp(($val/8-6)*log(2))*100 : $val",  // Complex ternary with exp/log - should be compilable!
+            "2 ** (($val/8 - 1) / 2)",  // Power operations not supported  
+            "$val ? 2 ** (6 - $val/8) : 0",  // Power operations not supported
+            "$val=~s/ +$//; $val",  // Regex operations not supported
+            "2 ** (-$val/3)",  // Power operations not supported
+        ];
+        
+        for pattern in &failing_patterns {
+            println!("Testing registry pattern: {}", pattern);
+            let is_compilable = CompiledExpression::is_compilable(pattern);
+            println!("  is_compilable: {}", is_compilable);
+            
+            if is_compilable {
+                match CompiledExpression::compile(pattern) {
+                    Ok(expr) => {
+                        println!("  ✅ Compiled successfully");
+                        let code = expr.generate_rust_code();
+                        println!("  Generated: {}", code);
+                    }
+                    Err(e) => {
+                        println!("  ❌ Compilation failed: {}", e);
+                    }
+                }
+            } else {
+                println!("  ❌ Not compilable (expected for regex/power operations)");
+            }
+        }
+    }
+
+    #[test]
+    fn test_string_interpolation_debug() {
+        // Debug string interpolation patterns
+        let patterns = vec![
+            "\"$val mm\"",
+            "\"$val\"",
+            "\"hello $val world\"",
+        ];
+        
+        for pattern in patterns {
+            println!("Testing pattern: {}", pattern);
+            match CompiledExpression::compile(pattern) {
+                Ok(expr) => {
+                    println!("  ✅ Compiled successfully");
+                    println!("  AST: {:?}", expr.ast);
+                    let code = expr.generate_rust_code();
+                    println!("  Generated: {}", code);
+                }
+                Err(e) => {
+                    println!("  ❌ Failed: {}", e);
+                }
+            }
+            println!("  is_compilable: {}", CompiledExpression::is_compilable(pattern));
+        }
+    }
+    
+    #[test]
     fn test_registry_patterns_obsolescence() {
         // Test patterns that should be compilable and thus obsolete in conv_registry
         let registry_patterns = vec![
@@ -705,9 +763,9 @@ mod integration_tests {
             ("sprintf(\"%+d\", $val)", true),
             ("sprintf(\"%.3f mm\", $val)", true),
             
-            // Simple string expressions - raw strings are NOT compilable  
-            ("\"$val mm\"", false),  // This is a raw string literal, not an expression
-            ("$val . \" mm\"", true),  // This would be the compilable concatenation form
+            // String interpolation expressions - now supported!
+            ("\"$val mm\"", true),  // String interpolation (equivalent to format!("{} mm", val))
+            ("$val . \" mm\"", true),  // String concatenation (also works)
             
             // Complex regex expressions - these might not be compilable yet
             ("$val =~ /^(inf|undef)$/ ? $val : \"$val m\"", false), // regex not supported
@@ -729,5 +787,296 @@ mod integration_tests {
                 }
             }
         }
+    }
+    
+    // ================================
+    // POWER OPERATION TESTS
+    // ================================
+    
+    #[test]
+    fn test_simple_power_operation() {
+        // Test basic power operation: 2**3
+        let expr = CompiledExpression::compile("2**3").unwrap();
+        
+        // Verify AST structure
+        match expr.ast.as_ref() {
+            AstNode::BinaryOp { op, left, right } => {
+                assert_eq!(*op, OpType::Power);
+                assert!(matches!(left.as_ref(), AstNode::Number(2.0)));
+                assert!(matches!(right.as_ref(), AstNode::Number(3.0)));
+            }
+            _ => panic!("Expected power operation")
+        }
+        
+        // Verify code generation - debug the actual output
+        let code = expr.generate_rust_code();
+        println!("Generated code for 2**3: {}", code);
+        assert!(code.contains("2.0_f64.powf(3.0_f64)"));
+    }
+    
+    #[test]
+    fn test_power_right_associativity() {
+        // Test right associativity: 2**3**2 should be 2**(3**2) = 512, not (2**3)**2 = 64
+        let expr = CompiledExpression::compile("2**3**2").unwrap();
+        
+        // Verify AST structure: should be Power(2, Power(3, 2))
+        match expr.ast.as_ref() {
+            AstNode::BinaryOp { op, left, right } => {
+                assert_eq!(*op, OpType::Power);
+                assert!(matches!(left.as_ref(), AstNode::Number(2.0)));
+                // Right side should be another power operation
+                match right.as_ref() {
+                    AstNode::BinaryOp { op: OpType::Power, left: inner_left, right: inner_right } => {
+                        assert!(matches!(inner_left.as_ref(), AstNode::Number(3.0)));
+                        assert!(matches!(inner_right.as_ref(), AstNode::Number(2.0)));
+                    }
+                    _ => panic!("Expected nested power operation")
+                }
+            }
+            _ => panic!("Expected power operation")
+        }
+        
+        // Debug the actual output
+        let code = expr.generate_rust_code();
+        println!("Generated code for 2**3**2: {}", code);
+        assert!(code.contains("2.0_f64.powf((3.0_f64.powf(2.0_f64)))")); 
+    }
+    
+    #[test]
+    fn test_power_with_variable() {
+        // Test power with variable: 2**$val
+        let expr = CompiledExpression::compile("2**$val").unwrap();
+        
+        match expr.ast.as_ref() {
+            AstNode::BinaryOp { op, left, right } => {
+                assert_eq!(*op, OpType::Power);
+                assert!(matches!(left.as_ref(), AstNode::Number(2.0)));
+                assert!(matches!(right.as_ref(), AstNode::Variable));
+            }
+            _ => panic!("Expected power operation")
+        }
+        
+        let code = expr.generate_rust_code();
+        assert!(code.contains("2.0_f64.powf(val)"));
+    }
+    
+    #[test]
+    fn test_negative_power() {
+        // Test negative power: 2**(-$val) - common APEX pattern
+        let expr = CompiledExpression::compile("2**(-$val)").unwrap();
+        
+        match expr.ast.as_ref() {
+            AstNode::BinaryOp { op, left, right } => {
+                assert_eq!(*op, OpType::Power);
+                assert!(matches!(left.as_ref(), AstNode::Number(2.0)));
+                // Right side should be unary minus of variable
+                match right.as_ref() {
+                    AstNode::UnaryMinus { operand } => {
+                        assert!(matches!(operand.as_ref(), AstNode::Variable));
+                    }
+                    _ => panic!("Expected unary minus of variable")
+                }
+            }
+            _ => panic!("Expected power operation")
+        }
+        
+        let code = expr.generate_rust_code();
+        assert!(code.contains("2.0_f64.powf((-val))"));
+    }
+    
+    #[test]
+    fn test_complex_power_expression() {
+        // Test complex expression: 2**(($val/8 - 1)/2) - Sony F-number pattern
+        let expr = CompiledExpression::compile("2**(($val/8 - 1)/2)").unwrap();
+        
+        // Should parse correctly with proper precedence
+        match expr.ast.as_ref() {
+            AstNode::BinaryOp { op: OpType::Power, left, right } => {
+                assert!(matches!(left.as_ref(), AstNode::Number(2.0)));
+                // Right side should be complex expression
+                match right.as_ref() {
+                    AstNode::BinaryOp { op: OpType::Divide, .. } => {
+                        // Detailed structure verification would be very verbose
+                        // The key is that it parses without error
+                    }
+                    _ => panic!("Expected division in power exponent")
+                }
+            }
+            _ => panic!("Expected power operation")
+        }
+        
+        let code = expr.generate_rust_code();
+        assert!(code.contains(".powf("));
+        assert!(code.contains("val / 8"));
+    }
+    
+    #[test]
+    fn test_power_precedence() {
+        // Test precedence: 2*3**2 should be 2*(3**2) = 18, not (2*3)**2 = 36
+        let expr = CompiledExpression::compile("2*3**2").unwrap();
+        
+        // Should parse as Multiply(2, Power(3, 2))
+        match expr.ast.as_ref() {
+            AstNode::BinaryOp { op: OpType::Multiply, left, right } => {
+                assert!(matches!(left.as_ref(), AstNode::Number(2.0)));
+                match right.as_ref() {
+                    AstNode::BinaryOp { op: OpType::Power, left: base, right: exp } => {
+                        assert!(matches!(base.as_ref(), AstNode::Number(3.0)));
+                        assert!(matches!(exp.as_ref(), AstNode::Number(2.0)));
+                    }
+                    _ => panic!("Expected power operation on right side")
+                }
+            }
+            _ => panic!("Expected multiplication")
+        }
+    }
+    
+    #[test]
+    fn test_power_in_ternary() {
+        // Test power in ternary: $val ? 2**(-$val/3) : 0
+        let expr = CompiledExpression::compile("$val ? 2**(-$val/3) : 0").unwrap();
+        
+        match expr.ast.as_ref() {
+            AstNode::TernaryOp { condition, true_expr, false_expr } => {
+                assert!(matches!(condition.as_ref(), AstNode::Variable));
+                assert!(matches!(false_expr.as_ref(), AstNode::Number(0.0)));
+                
+                // True expression should be power operation
+                match true_expr.as_ref() {
+                    AstNode::BinaryOp { op: OpType::Power, .. } => {
+                        // Power operation is present
+                    }
+                    _ => panic!("Expected power operation in true branch")
+                }
+            }
+            _ => panic!("Expected ternary operation")
+        }
+        
+        let code = expr.generate_rust_code();
+        assert!(code.contains("if val != 0.0"));
+        assert!(code.contains(".powf("));
+    }
+    
+    #[test]
+    fn test_apex_shutter_speed_pattern() {
+        // Test real ExifTool pattern: 2**(-$val) for APEX shutter speed
+        let expr = CompiledExpression::compile("2**(-$val)").unwrap();
+        let code = expr.generate_rust_code();
+        
+        // Should generate valid Rust code
+        assert!(code.contains("match value.as_f64()"));
+        assert!(code.contains("2.0_f64.powf((-val))"));
+        assert!(code.contains("Some(val) => Ok(TagValue::F64("));
+    }
+    
+    #[test]
+    fn test_sony_exposure_pattern() {
+        // Test Sony pattern: $val ? 2**(6 - $val/8) : 0
+        let expr = CompiledExpression::compile("$val ? 2**(6 - $val/8) : 0").unwrap();
+        let code = expr.generate_rust_code();
+        
+        // Should compile to ternary with power operation
+        assert!(code.contains("if val != 0.0"));
+        assert!(code.contains("2.0_f64.powf((6.0_f64 - (val / 8.0_f64)))"));
+    }
+    
+    #[test]
+    fn test_is_compilable_with_power() {
+        // Power operations should now be considered compilable
+        assert!(CompiledExpression::is_compilable("2**3"));
+        assert!(CompiledExpression::is_compilable("$val**2"));
+        assert!(CompiledExpression::is_compilable("2**$val"));
+        assert!(CompiledExpression::is_compilable("2**(-$val)"));
+        assert!(CompiledExpression::is_compilable("2**(6 - $val/8)"));
+        assert!(CompiledExpression::is_compilable("$val ? 2**(-$val/3) : 0"));
+        
+        // Complex power expressions should be compilable
+        assert!(CompiledExpression::is_compilable("2**(($val/8 - 1)/2)"));
+        assert!(CompiledExpression::is_compilable("100 * 2**(16 - $val/256)"));
+    }
+    
+    // ================================
+    // UNARY MINUS OPERATION TESTS
+    // ================================
+    
+    #[test]
+    fn test_simple_unary_minus() {
+        // Test basic unary minus: -$val
+        let expr = CompiledExpression::compile("-$val").unwrap();
+        
+        // Verify AST structure
+        match expr.ast.as_ref() {
+            AstNode::UnaryMinus { operand } => {
+                assert!(matches!(operand.as_ref(), AstNode::Variable));
+            }
+            _ => panic!("Expected unary minus operation")
+        }
+        
+        // Verify code generation
+        let code = expr.generate_rust_code();
+        assert!(code.contains("TagValue::F64(-val)"));
+    }
+    
+    #[test]
+    fn test_unary_minus_with_numbers() {
+        // Test unary minus with number: -42
+        let expr = CompiledExpression::compile("-42").unwrap();
+        
+        match expr.ast.as_ref() {
+            AstNode::UnaryMinus { operand } => {
+                assert!(matches!(operand.as_ref(), AstNode::Number(42.0)));
+            }
+            _ => panic!("Expected unary minus operation")
+        }
+        
+        let code = expr.generate_rust_code();
+        assert!(code.contains("TagValue::F64(-42.0_f64)"));
+    }
+    
+    #[test]
+    fn test_unary_minus_precedence() {
+        // Test that unary minus binds tighter than multiplication: -$val * 2
+        let expr = CompiledExpression::compile("-$val * 2").unwrap();
+        
+        match expr.ast.as_ref() {
+            AstNode::BinaryOp { op: OpType::Multiply, left, right } => {
+                // Left should be unary minus of variable
+                assert!(matches!(left.as_ref(), AstNode::UnaryMinus { .. }));
+                // Right should be number 2
+                assert!(matches!(right.as_ref(), AstNode::Number(2.0)));
+            }
+            _ => panic!("Expected multiplication with unary minus on left")
+        }
+    }
+    
+    #[test]
+    fn test_unary_minus_in_expressions() {
+        // Test various contexts where unary minus should work
+        let test_cases = vec![
+            "-$val",                    // Simple unary minus
+            "(-$val)",                  // Parentheses
+            "-$val + 5",                // In arithmetic
+            "$val * (-2)",              // In function argument
+            "$val >= 0 ? $val : -$val", // In ternary
+        ];
+        
+        for expr_str in test_cases {
+            let expr = CompiledExpression::compile(expr_str).unwrap();
+            let code = expr.generate_rust_code();
+            
+            // Should generate working code
+            assert!(code.contains("match value.as_f64()"));
+            println!("✅ Compiled: {} -> valid code", expr_str);
+        }
+    }
+    
+    #[test]
+    fn test_is_compilable_with_unary_minus() {
+        // Unary minus should be considered compilable
+        assert!(CompiledExpression::is_compilable("-$val"));
+        assert!(CompiledExpression::is_compilable("-42"));
+        assert!(CompiledExpression::is_compilable("2**(-$val)"));
+        assert!(CompiledExpression::is_compilable("-$val * 2"));
+        assert!(CompiledExpression::is_compilable("$val ? -$val : $val"));
     }
 }

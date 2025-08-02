@@ -1,21 +1,23 @@
 //! Expression compiler for ValueConv arithmetic expressions
 //!
-//! This module provides compile-time parsing and code generation for simple
-//! arithmetic expressions found in ExifTool ValueConv patterns. Uses the
-//! Shunting Yard algorithm to convert infix expressions to Rust code.
+//! This module provides compile-time parsing and code generation for
+//! arithmetic expressions found in ExifTool ValueConv patterns. Uses an
+//! AST-based approach with recursive descent parsing.
 //!
 //! # Architecture
 //!
 //! The compilation pipeline consists of several stages:
 //!
 //! 1. **Tokenization** (`tokenizer.rs`) - Parse expression strings into tokens
-//! 2. **Parsing** (`parser.rs`) - Convert infix tokens to RPN using Shunting Yard algorithm
-//! 3. **Code Generation** (`codegen.rs`) - Generate optimized Rust code from RPN tokens
+//! 2. **Parsing** (`parser.rs`) - Convert infix tokens to AST using recursive descent parsing
+//! 3. **Code Generation** (`codegen.rs`) - Generate optimized Rust code from AST
 //! 4. **Types** (`types.rs`) - Core data types shared across modules
 //!
 //! # Supported Features
 //!
 //! - Basic arithmetic: `+`, `-`, `*`, `/`
+//! - Power operations: `**` (right-associative)
+//! - Unary minus: `-$val`, `-42`
 //! - Parentheses for grouping: `(`, `)`
 //! - Math functions: `int()`, `exp()`, `log()`
 //! - Variable substitution: `$val`
@@ -34,6 +36,10 @@
 //! let expr = CompiledExpression::compile("int($val * 1000 / 25.4 + 0.5)").unwrap();
 //! let code = expr.generate_rust_code();
 //!
+//! // Power operations and unary minus
+//! let expr = CompiledExpression::compile("2**(-$val)").unwrap();
+//! let code = expr.generate_rust_code();
+//!
 //! // Complex expressions
 //! let expr = CompiledExpression::compile("exp($val/32*log(2))*100").unwrap();
 //! let code = expr.generate_rust_code();
@@ -50,6 +56,7 @@ pub mod tests;
 // Re-export the main API
 pub use types::{CompiledExpression, AstNode, OpType, CompType, FuncType};
 use tokenizer::tokenize;
+use crate::conv_registry::valueconv_registry::lookup_valueconv;
 // Remove the conflicting use statement - we'll call parser functions directly
 
 impl CompiledExpression {
@@ -67,10 +74,10 @@ impl CompiledExpression {
         })
     }
     
-    /// Check if this expression can be compiled (supports ternary, arithmetic, sprintf, and string concatenation)
+    /// Check if this expression can be compiled (supports all implemented features)
     pub fn is_compilable(expr: &str) -> bool {
         // Quick checks for obviously non-compilable expressions  
-        if expr.contains("**") || expr.contains("abs") || 
+        if expr.contains("abs") || 
            expr.contains("IsFloat") || expr.contains("=~") || expr.contains("&") || 
            expr.contains("|") || expr.contains(">>") || expr.contains("<<") {
             return false;

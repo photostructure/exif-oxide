@@ -45,6 +45,7 @@ impl CompiledExpression {
                     OpType::Subtract => format!("TagValue::F64({} - {})", left_expr, right_expr),
                     OpType::Multiply => format!("TagValue::F64({} * {})", left_expr, right_expr),
                     OpType::Divide => format!("TagValue::F64({} / {})", left_expr, right_expr),
+                    OpType::Power => format!("TagValue::F64({}.powf({}))", left_expr, right_expr),
                     OpType::Concatenate => format!("TagValue::String(format!(\"{{}}{{}}\", {}, {}))", left_expr, right_expr),
                 }
             }
@@ -120,6 +121,10 @@ impl CompiledExpression {
                        rust_format, 
                        arg_exprs.join(", "))
             }
+            AstNode::UnaryMinus { operand } => {
+                let operand_expr = self.generate_value_expression(operand);
+                format!("TagValue::F64(-{})", operand_expr)
+            }
         }
     }
     
@@ -136,6 +141,7 @@ impl CompiledExpression {
                     OpType::Subtract => format!("({} - {})", left_expr, right_expr),
                     OpType::Multiply => format!("({} * {})", left_expr, right_expr),
                     OpType::Divide => format!("({} / {})", left_expr, right_expr),
+                    OpType::Power => format!("({}.powf({}))", left_expr, right_expr),
                     OpType::Concatenate => format!("format!(\"{{}}{{}}\", {}, {})", left_expr, right_expr),
                 }
             }
@@ -210,6 +216,10 @@ impl CompiledExpression {
             }
             AstNode::Undefined => "0.0".to_string(), // undef in numeric context is 0
             AstNode::Sprintf { .. } => "0.0".to_string(), // sprintf produces strings, not numbers
+            AstNode::UnaryMinus { operand } => {
+                let operand_expr = self.generate_value_expression(operand);
+                format!("(-{})", operand_expr)
+            }
         }
     }
     
