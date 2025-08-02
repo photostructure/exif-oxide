@@ -58,32 +58,35 @@ use Perl::Tidy;
 my $input = do { local $/; <STDIN> };
 
 # Check if this is batch mode (contains our delimiter)
-if ($input =~ /\n\n\n\n/) {
+if ( $input =~ /\n\n\n\n/ ) {
+
     # Batch mode: split by delimiter, process each expression, rejoin
     my @expressions = split /\n\n\n\n/, $input, -1;
     my @normalized;
-    
+
     for my $expr (@expressions) {
-        next if $expr eq '';  # Skip empty expressions
+        next if $expr eq '';    # Skip empty expressions
         my $formatted;
         Perl::Tidy::perltidy(
-            source => \$expr, 
-            destination => \$formatted, 
-            argv => '-npro -pt=2 -bt=2 -sbt=2 -ci=0'
+            source      => \$expr,
+            destination => \$formatted,
+            argv        => '-npro -pt=2 -bt=2 -sbt=2 -ci=0'
         );
+
         # Remove trailing newline that perltidy adds
         chomp $formatted;
         push @normalized, $formatted;
     }
-    
-    print join("\n\n\n\n", @normalized);
-} else {
+
+    print join( "\n\n\n\n", @normalized );
+}
+else {
     # Single expression mode (backward compatibility)
     my $formatted;
     Perl::Tidy::perltidy(
-        source => \$input, 
-        destination => \$formatted, 
-        argv => '-npro -pt=2 -bt=2 -sbt=2 -ci=0'
+        source      => \$input,
+        destination => \$formatted,
+        argv        => '-npro -pt=2 -bt=2 -sbt=2 -ci=0'
     );
     print $formatted;
 }
