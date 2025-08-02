@@ -33,8 +33,34 @@ pub fn tokenize(expr: &str) -> Result<Vec<ParseToken>, String> {
             }
             
             '+' => tokens.push(ParseToken::Operator(Operator::new(OpType::Add, 1, true))),
-            '-' => tokens.push(ParseToken::Operator(Operator::new(OpType::Subtract, 1, true))),
-            '*' => tokens.push(ParseToken::Operator(Operator::new(OpType::Multiply, 2, true))),
+            '-' => {
+                // Check if this is unary minus based on context
+                let is_unary = match tokens.last() {
+                    None => true, // Start of expression
+                    Some(ParseToken::LeftParen) => true, // After opening parenthesis
+                    Some(ParseToken::Operator(_)) => true, // After another operator
+                    Some(ParseToken::Comparison(_)) => true, // After comparison operator
+                    Some(ParseToken::Question) => true, // After ? in ternary
+                    Some(ParseToken::Colon) => true, // After : in ternary
+                    Some(ParseToken::Comma) => true, // After comma in function call
+                    _ => false, // After operand (number, variable, etc.)
+                };
+                
+                if is_unary {
+                    tokens.push(ParseToken::UnaryMinus);
+                } else {
+                    tokens.push(ParseToken::Operator(Operator::new(OpType::Subtract, 1, true)));
+                }
+            }
+            '*' => {
+                // Check for ** power operator
+                if chars.peek() == Some(&'*') {
+                    chars.next(); // consume second '*'
+                    tokens.push(ParseToken::Operator(Operator::new(OpType::Power, 4, false))); // Right-associative, high precedence
+                } else {
+                    tokens.push(ParseToken::Operator(Operator::new(OpType::Multiply, 2, true)));
+                }
+            }
             '/' => tokens.push(ParseToken::Operator(Operator::new(OpType::Divide, 2, true))),
             '.' => tokens.push(ParseToken::Operator(Operator::new(OpType::Concatenate, 1, true))),
             
