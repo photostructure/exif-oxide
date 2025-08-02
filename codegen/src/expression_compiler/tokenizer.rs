@@ -162,8 +162,9 @@ fn parse_identifier(first_char: char, chars: &mut Peekable<Chars>) -> Result<Par
     let mut identifier = String::new();
     identifier.push(first_char);
     
+    // Parse the full identifier including :: separators for ExifTool functions
     while let Some(&next_ch) = chars.peek() {
-        if next_ch.is_ascii_alphabetic() {
+        if next_ch.is_ascii_alphabetic() || next_ch == ':' {
             identifier.push(chars.next().unwrap());
         } else {
             break;
@@ -182,7 +183,13 @@ fn parse_identifier(first_char: char, chars: &mut Peekable<Chars>) -> Result<Par
             "int" => return Ok(ParseToken::Function(FuncType::Int)),
             "exp" => return Ok(ParseToken::Function(FuncType::Exp)),
             "log" => return Ok(ParseToken::Function(FuncType::Log)),
-            _ => return Err(format!("Unknown function: '{}'", identifier)),
+            _ => {
+                // Check if it's an ExifTool function pattern
+                if identifier.starts_with("Image::ExifTool::") {
+                    return Ok(ParseToken::ExifToolFunction(identifier));
+                }
+                return Err(format!("Unknown function: '{}'", identifier));
+            }
         };
     }
     
@@ -313,6 +320,39 @@ mod tests {
         
         if let ParseToken::String(s) = &tokens[2] {
             assert_eq!(s, "%.1f mm");
+        }
+    }
+    
+    #[test]
+    fn test_exiftool_function_expression() {
+        let tokens = tokenize("Image::ExifTool::Exif::PrintExposureTime($val)").unwrap();
+        assert_eq!(tokens.len(), 4);
+        assert!(matches!(tokens[0], ParseToken::ExifToolFunction(_)));
+        assert!(matches!(tokens[1], ParseToken::LeftParen));
+        assert!(matches!(tokens[2], ParseToken::Variable));
+        assert!(matches!(tokens[3], ParseToken::RightParen));
+        
+        if let ParseToken::ExifToolFunction(func_name) = &tokens[0] {
+            assert_eq!(func_name, "Image::ExifTool::Exif::PrintExposureTime");
+        }
+    }
+    
+    #[test]
+    fn test_various_exiftool_functions() {
+        let test_cases = vec![
+            "Image::ExifTool::Exif::PrintFNumber($val)",
+            "Image::ExifTool::GPS::ToDegrees($val)", 
+            "Image::ExifTool::Canon::LensType($val)",
+        ];
+        
+        for expr in test_cases {
+            let tokens = tokenize(expr).unwrap();
+            assert_eq!(tokens.len(), 4);
+            assert!(matches!(tokens[0], ParseToken::ExifToolFunction(_)));
+            
+            if let ParseToken::ExifToolFunction(func_name) = &tokens[0] {
+                assert!(func_name.starts_with("Image::ExifTool::"));
+            }
         }
     }
 }

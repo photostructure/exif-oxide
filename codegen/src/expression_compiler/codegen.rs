@@ -106,6 +106,10 @@ impl CompiledExpression {
                 };
                 format!("TagValue::F64({})", rust_func)
             }
+            AstNode::ExifToolFunction { name, arg } => {
+                // Generate ExifTool function call with conv_registry lookup
+                self.generate_exiftool_function_call(name, arg)
+            }
             AstNode::Sprintf { format_string, args } => {
                 // Convert Perl sprintf format to Rust format! syntax
                 let rust_format = convert_perl_sprintf_to_rust(format_string);
@@ -142,6 +146,11 @@ impl CompiledExpression {
                     FuncType::Exp => format!("{}.exp()", arg_expr),
                     FuncType::Log => format!("{}.ln()", arg_expr),
                 }
+            }
+            AstNode::ExifToolFunction { .. } => {
+                // ExifTool functions produce TagValue, not raw numeric values
+                // In value context, we'll return 0.0 as fallback
+                "0.0".to_string()
             }
             AstNode::String { value, has_interpolation } => {
                 if *has_interpolation {
@@ -201,7 +210,37 @@ impl CompiledExpression {
             }
             AstNode::Undefined => "0.0".to_string(), // undef in numeric context is 0
             AstNode::Sprintf { .. } => "0.0".to_string(), // sprintf produces strings, not numbers
-            _ => "0.0".to_string(), // Fallback for any remaining unsupported expressions
+        }
+    }
+    
+    /// Generate ExifTool function call with conv_registry lookup
+    fn generate_exiftool_function_call(&self, name: &str, arg: &AstNode) -> String {
+        let arg_expr = self.generate_value_expression(arg);
+        
+        // Try to look up the function in conv_registry
+        // For now, we'll generate a lookup call - this will be enhanced with actual conv_registry integration
+        let function_expr = format!("{}($val)", name);
+        
+        // Check if this is a known function pattern in conv_registry
+        match name {
+            "Image::ExifTool::Exif::PrintExposureTime" => {
+                format!("crate::implementations::print_conv::exposuretime_print_conv(&TagValue::F64({}))", arg_expr)
+            }
+            "Image::ExifTool::Exif::PrintFNumber" => {
+                format!("crate::implementations::print_conv::fnumber_print_conv(&TagValue::F64({}))", arg_expr)
+            }
+            "Image::ExifTool::Exif::PrintFraction" => {
+                format!("crate::implementations::print_conv::print_fraction(&TagValue::F64({}))", arg_expr)
+            }
+            _ => {
+                // For unknown functions, generate a fallback call to missing_print_conv
+                // This maintains the --show-missing functionality
+                format!(
+                    "crate::implementations::missing::missing_print_conv(\
+                        0, \"{}\", \"Expression\", \"{}\", &TagValue::F64({}))",
+                    name, function_expr, arg_expr
+                )
+            }
         }
     }
 }
