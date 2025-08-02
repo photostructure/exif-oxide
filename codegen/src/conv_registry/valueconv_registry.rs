@@ -41,13 +41,13 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
     m.insert("focallength_value_conv", ("crate::implementations::value_conv", "focallength_value_conv"));
     
     // Common simple patterns found in supported tags
-    m.insert("$val=~s/ +$//; $val", ("crate::implementations::value_conv", "trim_whitespace_value_conv"));
-    m.insert("$val=~s/^.*: //;$val", ("crate::implementations::value_conv", "remove_prefix_colon_value_conv"));
-    m.insert("2 ** (-$val/3)", ("crate::implementations::value_conv", "power_neg_div_3_value_conv"));
+    m.insert("$val =~ s/ +$//;\n$val", ("crate::implementations::value_conv", "trim_whitespace_value_conv"));
+    m.insert("$val =~ s/^.*: //;\n$val", ("crate::implementations::value_conv", "remove_prefix_colon_value_conv"));
+    m.insert("2**(-$val / 3)", ("crate::implementations::value_conv", "power_neg_div_3_value_conv"));
     m.insert("$val ? 10 / $val : 0", ("crate::implementations::value_conv", "reciprocal_10_value_conv"));
-    m.insert("$val ? 2 ** (6 - $val/8) : 0", ("crate::implementations::value_conv", "sony_exposure_time_value_conv"));
-    m.insert("$val ? exp(($val/8-6)*log(2))*100 : $val", ("crate::implementations::value_conv", "sony_iso_value_conv"));
-    m.insert("2 ** (($val/8 - 1) / 2)", ("crate::implementations::value_conv", "sony_fnumber_value_conv"));
+    m.insert("$val ? 2**(6 - $val / 8) : 0", ("crate::implementations::value_conv", "sony_exposure_time_value_conv"));
+    // REMOVED: "$val ? exp(($val/8-6)*log(2))*100 : $val" - now compiled automatically by expression compiler
+    m.insert("2**(($val / 8 - 1) / 2)", ("crate::implementations::value_conv", "sony_fnumber_value_conv"));
     m.insert("Image::ExifTool::Exif::ExifDate($val)", ("crate::implementations::value_conv", "exif_date_value_conv"));
     
     // ExifTool function calls for datetime conversions
