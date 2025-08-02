@@ -1,6 +1,6 @@
 # Make a new TPP
 
-Please output a technical project plan, using our style guide, @docs/TPP.md, to hand this work off to another engineer. As the style guide states, include a description of the issue being addressed, code and docs they should study, relevant research you conducted, issues you've already addressed, success criteria, and any other tribal knowledge that you can pass down to help them to help them succeed. Ultrathink.
+Excellent research. Please write a technical project plan, using our style guide, @docs/TPP.md, to docs/todo/... so we can hand this work off to another engineer. As the style guide states, include a description of the issue being addressed, code and docs they should study, relevant research you conducted, issues you've already addressed, success criteria, and any other tribal knowledge that you can pass down to help them to help them succeed. Ultrathink.
 
 # Update TPP
 
