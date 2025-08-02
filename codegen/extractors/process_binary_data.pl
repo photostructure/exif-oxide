@@ -177,6 +177,9 @@ sub extract_binary_data_tags {
         if (ref $tag_info eq 'HASH') {
             # Complex tag definition
             extract_complex_tag_info($tag_data, $tag_info);
+        } elsif (ref $tag_info eq 'ARRAY') {
+            # Conditional array of tag definitions - create variants
+            extract_conditional_tag_info($tag_data, $tag_info);
         } else {
             # Simple tag name
             $tag_data->{name} = $tag_info;
@@ -233,4 +236,94 @@ sub extract_complex_tag_info {
     $tag_data->{notes} = $tag_info->{Notes} if $tag_info->{Notes};
     
     return;
+}
+
+#------------------------------------------------------------------------------
+# Extract conditional tag information from array of variants
+#------------------------------------------------------------------------------
+sub extract_conditional_tag_info {
+    my ($tag_data, $tag_info_array) = @_;
+    
+    # Extract variants array - each element is a different condition
+    my @variants;
+    
+    for my $variant_info (@$tag_info_array) {
+        next unless ref $variant_info eq 'HASH';
+        
+        my $variant_data = {};
+        
+        # Essential fields for each variant
+        $variant_data->{name} = $variant_info->{Name} if $variant_info->{Name};
+        if ($variant_info->{Condition}) {
+            $variant_data->{condition} = translate_condition($variant_info->{Condition});
+        }
+        $variant_data->{format} = $variant_info->{Format} if $variant_info->{Format};
+        
+        # Print conversion for this variant
+        if ($variant_info->{PrintConv}) {
+            if (ref $variant_info->{PrintConv} eq 'HASH') {
+                # Convert hash to simpler structure
+                my @print_conv_entries;
+                for my $key (sort keys %{$variant_info->{PrintConv}}) {
+                    push @print_conv_entries, { key => $key, value => $variant_info->{PrintConv}->{$key} };
+                }
+                $variant_data->{print_conv} = \@print_conv_entries;
+            } else {
+                # String expression
+                $variant_data->{print_conv_expr} = $variant_info->{PrintConv};
+            }
+        }
+        
+        # Value conversion expression
+        $variant_data->{value_conv} = $variant_info->{ValueConv} if $variant_info->{ValueConv};
+        
+        # Priority for this variant (lower = higher priority)
+        $variant_data->{priority} = $variant_info->{Priority} if defined $variant_info->{Priority};
+        
+        # Flags and attributes for this variant
+        $variant_data->{writable} = \1 if $variant_info->{Writable};
+        $variant_data->{unknown} = \1 if $variant_info->{Unknown};
+        $variant_data->{binary} = \1 if $variant_info->{Binary};
+        $variant_data->{hidden} = \1 if $variant_info->{Hidden};
+        
+        # Description and notes for this variant
+        $variant_data->{description} = $variant_info->{Description} if $variant_info->{Description};
+        $variant_data->{notes} = $variant_info->{Notes} if $variant_info->{Notes};
+        
+        push @variants, $variant_data if $variant_data->{name};
+    }
+    
+    if (@variants) {
+        # Use the name from the first variant as the main name
+        $tag_data->{name} = $variants[0]->{name};
+        $tag_data->{variants} = \@variants;
+        $tag_data->{conditional} = \1;  # JSON boolean true - flag this as conditional
+    }
+    
+    return;
+}
+
+#------------------------------------------------------------------------------
+# Translate ExifTool condition format to our expression system format
+#------------------------------------------------------------------------------
+sub translate_condition {
+    my ($condition) = @_;
+    
+    # Translate ExifTool's $$self{Model} format to our $model format
+    # ExifTool: $$self{Model} =~ /\b(20D|350D)\b/
+    # Our format: $model =~ /(20D|350D)/
+    
+    # Handle $$self{Model} -> $model
+    $condition =~ s/\$\$self\{Model\}/\$model/g;
+    
+    # Handle $$self{Make} -> $manufacturer  
+    $condition =~ s/\$\$self\{Make\}/\$manufacturer/g;
+    
+    # Handle $$self{Manufacturer} -> $manufacturer
+    $condition =~ s/\$\$self\{Manufacturer\}/\$manufacturer/g;
+    
+    # Remove \b word boundaries - our regex engine handles this differently
+    $condition =~ s/\\b//g;
+    
+    return $condition;
 }

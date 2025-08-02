@@ -76,9 +76,15 @@ impl CompiledExpression {
             return false;
         }
         
-        // ExifTool function calls should be handled by conv_registry, not expression compiler
+        // Check for simple ExifTool function calls (single argument)
         if expr.contains("Image::ExifTool::") {
-            return false;
+            // Allow simple function calls like Image::ExifTool::Exif::PrintExposureTime($val)
+            // but reject complex patterns like Image::ExifTool::GPS::ToDMS($self, $val, 1, "N")
+            if expr.matches(',').count() > 0 || expr.contains("$self") {
+                return false; // Complex patterns not supported
+            }
+            // Try to compile - if it works, it's compilable
+            return Self::compile(expr).is_ok();
         }
         
         // Check for supported sprintf patterns
@@ -95,5 +101,13 @@ impl CompiledExpression {
         
         // Try to compile - if it works, it's compilable
         Self::compile(expr).is_ok()
+    }
+    
+    /// Test helper to check multiple expressions at once
+    #[cfg(test)]
+    pub fn test_multiple_is_compilable(expressions: &[&str]) -> Vec<(String, bool)> {
+        expressions.iter()
+            .map(|expr| (expr.to_string(), Self::is_compilable(expr)))
+            .collect()
     }
 }

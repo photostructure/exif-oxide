@@ -170,10 +170,13 @@ mod integration_tests {
         assert!(!CompiledExpression::is_compilable("$val =~ s/ +$//"));
         assert!(!CompiledExpression::is_compilable("$val & 0xffc0"));
         
-        // ExifTool function calls should be handled by conv_registry, not expression compiler
-        assert!(!CompiledExpression::is_compilable("Image::ExifTool::Exif::PrintExposureTime($val)"));
-        assert!(!CompiledExpression::is_compilable("Image::ExifTool::Exif::PrintFNumber($val)"));
-        assert!(!CompiledExpression::is_compilable("Image::ExifTool::GPS::ToDegrees($val)"));
+        // Simple ExifTool function calls are now supported
+        assert!(CompiledExpression::is_compilable("Image::ExifTool::Exif::PrintExposureTime($val)"));
+        assert!(CompiledExpression::is_compilable("Image::ExifTool::Exif::PrintFNumber($val)"));
+        assert!(CompiledExpression::is_compilable("Image::ExifTool::GPS::ToDegrees($val)"));
+        
+        // Complex ExifTool function calls with multiple arguments are not supported
+        assert!(!CompiledExpression::is_compilable("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")"));
     }
     
     #[test]
@@ -627,5 +630,104 @@ mod integration_tests {
         assert!(CompiledExpression::is_compilable("$val . \" m\""));
         assert!(CompiledExpression::is_compilable("\"Error: \" . $val"));
         assert!(CompiledExpression::is_compilable("\"$val\" . \" mm\""));
+    }
+    
+    #[test]
+    fn test_exiftool_function_compilation() {
+        // Test ExifTool function call compilation
+        let expr = CompiledExpression::compile("Image::ExifTool::Exif::PrintExposureTime($val)").unwrap();
+        
+        // Verify AST structure
+        match expr.ast.as_ref() {
+            AstNode::ExifToolFunction { name, arg } => {
+                assert_eq!(name, "Image::ExifTool::Exif::PrintExposureTime");
+                assert!(matches!(arg.as_ref(), AstNode::Variable));
+            }
+            _ => panic!("Expected ExifToolFunction AST node")
+        }
+        
+        // Verify code generation
+        let code = expr.generate_rust_code();
+        assert!(code.contains("exposuretime_print_conv"));
+        assert!(code.contains("match value.as_f64()"));
+    }
+    
+    #[test]
+    fn test_exiftool_function_codegen() {
+        // Test known ExifTool functions generate direct calls
+        let test_cases = vec![
+            ("Image::ExifTool::Exif::PrintExposureTime($val)", "exposuretime_print_conv"),
+            ("Image::ExifTool::Exif::PrintFNumber($val)", "fnumber_print_conv"),
+            ("Image::ExifTool::Exif::PrintFraction($val)", "print_fraction"),
+        ];
+        
+        for (input, expected_func) in test_cases {
+            let expr = CompiledExpression::compile(input).unwrap();
+            let code = expr.generate_rust_code();
+            assert!(code.contains(expected_func), 
+                   "Expected {} in generated code for {}: {}", expected_func, input, code);
+        }
+    }
+    
+    #[test]
+    fn test_exiftool_function_unknown_fallback() {
+        // Test unknown ExifTool function generates fallback
+        let expr = CompiledExpression::compile("Image::ExifTool::Unknown::SomeFunction($val)").unwrap();
+        let code = expr.generate_rust_code();
+        
+        // Should generate fallback to missing_print_conv
+        assert!(code.contains("missing_print_conv"));
+        assert!(code.contains("Unknown::SomeFunction"));
+    }
+    
+    #[test]
+    fn test_exiftool_function_is_compilable() {
+        // Simple single-argument ExifTool functions should be compilable
+        assert!(CompiledExpression::is_compilable("Image::ExifTool::Exif::PrintExposureTime($val)"));
+        assert!(CompiledExpression::is_compilable("Image::ExifTool::Exif::PrintFNumber($val)"));
+        assert!(CompiledExpression::is_compilable("Image::ExifTool::GPS::ToDegrees($val)"));
+        assert!(CompiledExpression::is_compilable("Image::ExifTool::Custom::Unknown($val)"));
+        
+        // Complex multi-argument functions should not be compilable
+        assert!(!CompiledExpression::is_compilable("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")"));
+        assert!(!CompiledExpression::is_compilable("Image::ExifTool::Exif::SomeFunc($val, $extra)"));
+        assert!(!CompiledExpression::is_compilable("Image::ExifTool::Test::WithSelf($self)"));
+    }
+    
+    #[test]
+    fn test_registry_patterns_obsolescence() {
+        // Test patterns that should be compilable and thus obsolete in conv_registry
+        let registry_patterns = vec![
+            // sprintf patterns that should be compilable
+            ("sprintf(\"%.1f mm\", $val)", true),
+            ("sprintf(\"%.1f\", $val)", true),
+            ("sprintf(\"%.2f\", $val)", true),
+            ("sprintf(\"%+d\", $val)", true),
+            ("sprintf(\"%.3f mm\", $val)", true),
+            
+            // Simple string expressions - raw strings are NOT compilable  
+            ("\"$val mm\"", false),  // This is a raw string literal, not an expression
+            ("$val . \" mm\"", true),  // This would be the compilable concatenation form
+            
+            // Complex regex expressions - these might not be compilable yet
+            ("$val =~ /^(inf|undef)$/ ? $val : \"$val m\"", false), // regex not supported
+        ];
+        
+        let results = CompiledExpression::test_multiple_is_compilable(
+            &registry_patterns.iter().map(|(expr, _)| *expr).collect::<Vec<_>>()
+        );
+        
+        for ((pattern, expected), (_, actual)) in registry_patterns.iter().zip(results.iter()) {
+            if *expected {
+                assert!(actual, "Pattern should be compilable: {}", pattern);
+                println!("✅ OBSOLETE in registry: {}", pattern);
+            } else {
+                if *actual {
+                    println!("⚠️  Unexpectedly compilable: {}", pattern);
+                } else {
+                    println!("❌ Still needs registry: {}", pattern);
+                }
+            }
+        }
     }
 }

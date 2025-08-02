@@ -34,6 +34,8 @@ pub enum AstNode {
     TernaryOp { condition: Box<AstNode>, true_expr: Box<AstNode>, false_expr: Box<AstNode> },
     /// Function call
     FunctionCall { func: FuncType, arg: Box<AstNode> },
+    /// ExifTool function call (Image::ExifTool::Module::Function)
+    ExifToolFunction { name: String, arg: Box<AstNode> },
     /// Sprintf function call with format string and arguments
     Sprintf { format_string: String, args: Vec<Box<AstNode>> },
 }
@@ -91,6 +93,7 @@ pub enum ParseToken {
     Question,     // ?
     Colon,        // :
     Sprintf,      // sprintf function call
+    ExifToolFunction(String), // Image::ExifTool::Module::Function
     Comma,        // , (internal parsing token, not exposed in AST)
 }
 

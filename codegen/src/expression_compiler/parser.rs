@@ -11,13 +11,14 @@ pub fn parse_expression(tokens: Vec<ParseToken>) -> Result<AstNode, String> {
         return Err("Empty expression".to_string());
     }
     
-    // Check if this expression contains ternary, comparison, sprintf, or string concatenation operators
+    // Check if this expression contains ternary, comparison, sprintf, ExifTool functions, or string concatenation operators
     let has_ternary = tokens.iter().any(|t| matches!(t, ParseToken::Question | ParseToken::Colon));
     let has_comparison = tokens.iter().any(|t| matches!(t, ParseToken::Comparison(_)));
     let has_sprintf = tokens.iter().any(|t| matches!(t, ParseToken::Sprintf));
+    let has_exiftool_function = tokens.iter().any(|t| matches!(t, ParseToken::ExifToolFunction(_)));
     let has_concatenation = tokens.iter().any(|t| matches!(t, ParseToken::Operator(op) if op.op_type == OpType::Concatenate));
     
-    if has_ternary || has_comparison || has_sprintf || has_concatenation {
+    if has_ternary || has_comparison || has_sprintf || has_exiftool_function || has_concatenation {
         // Use recursive descent parser for complex expressions
         let mut parser = Parser::new(tokens);
         parser.parse_ternary_expression()
@@ -167,6 +168,25 @@ impl Parser {
                     arg: Box::new(arg)
                 })
             }
+            Some(ParseToken::ExifToolFunction(func_name)) => {
+                let func_name = func_name.clone();
+                if !matches!(self.current_token(), Some(ParseToken::LeftParen)) {
+                    return Err("Expected '(' after ExifTool function name".to_string());
+                }
+                self.advance(); // consume '('
+                
+                let arg = self.parse_ternary_expression()?;
+                
+                if !matches!(self.current_token(), Some(ParseToken::RightParen)) {
+                    return Err("Expected ')' after ExifTool function argument".to_string());
+                }
+                self.advance(); // consume ')'
+                
+                Ok(AstNode::ExifToolFunction {
+                    name: func_name,
+                    arg: Box::new(arg)
+                })
+            }
             Some(ParseToken::Sprintf) => {
                 if !matches!(self.current_token(), Some(ParseToken::LeftParen)) {
                     return Err("Expected '(' after sprintf".to_string());
@@ -274,6 +294,7 @@ pub fn shunting_yard(tokens: Vec<ParseToken>) -> Result<Vec<RpnToken>, String> {
             ParseToken::Question => return Err("Ternary operators not yet supported in RPN compatibility mode".to_string()),
             ParseToken::Colon => return Err("Ternary operators not yet supported in RPN compatibility mode".to_string()),
             ParseToken::Sprintf => return Err("Sprintf function not yet supported in RPN compatibility mode".to_string()),
+            ParseToken::ExifToolFunction(_) => return Err("ExifTool functions not yet supported in RPN compatibility mode".to_string()),
             ParseToken::Comma => return Err("Comma-separated arguments not yet supported in RPN compatibility mode".to_string()),
             
             ParseToken::Function(_func_type) => {
