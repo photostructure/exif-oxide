@@ -13,6 +13,7 @@ fmt-check:
 # Format code
 fmt:
 	cargo fmt --all
+	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && find . -name "*.pl" -not -path "./third-party/*" -exec ~/perl5/bin/perltidy -b {} \;
 
 # Run clippy (Rust linter)
 lint:

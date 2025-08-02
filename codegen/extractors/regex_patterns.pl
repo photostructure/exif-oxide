@@ -18,22 +18,22 @@ use lib "$Bin/../lib";
 use lib "$Bin/../../third-party/exiftool/lib";
 
 use ExifToolExtract qw(
-    load_module_from_file
-    get_package_hash
-    format_json_output
+  load_module_from_file
+  get_package_hash
+  format_json_output
 );
 
 # Check arguments - take explicit module path and hash name
-if (@ARGV < 2) {
-    die "Usage: $0 <module_path> <hash_name>\n" .
-        "Example: $0 ../third-party/exiftool/lib/Image/ExifTool.pm %magicNumber\n";
+if ( @ARGV < 2 ) {
+    die "Usage: $0 <module_path> <hash_name>\n"
+      . "Example: $0 ../third-party/exiftool/lib/Image/ExifTool.pm %magicNumber\n";
 }
 
 my $module_path = shift @ARGV;
-my $hash_name = shift @ARGV;
+my $hash_name   = shift @ARGV;
 
 # Validate module path
-unless (-f $module_path) {
+unless ( -f $module_path ) {
     die "Error: Module file not found: $module_path\n";
 }
 
@@ -46,7 +46,7 @@ unless ($module_name) {
 }
 
 # Get package hash
-my $hash_ref = get_package_hash($module_name, $hash_name);
+my $hash_ref = get_package_hash( $module_name, $hash_name );
 unless ($hash_ref) {
     die "Error: Hash $hash_name not found in module\n";
 }
@@ -55,33 +55,34 @@ unless ($hash_ref) {
 my @patterns;
 my $total_count = 0;
 
-for my $file_type (sort keys %$hash_ref) {
+for my $file_type ( sort keys %$hash_ref ) {
     my $pattern = $hash_ref->{$file_type};
     $total_count++;
-    
+
     # Create pattern entry
     # Store the raw pattern string as-is for the Rust side to process
     # The historical document (20250715-regex-pattern-extraction.md) shows
     # this approach was working successfully before. The Rust side handles
     # pattern processing with RegexBuilder::new().unicode(false).
-    
-    push @patterns, {
+
+    push @patterns,
+      {
         file_type => $file_type,
-        pattern => $pattern,
-        source => {
+        pattern   => $pattern,
+        source    => {
             module => $module_path,
-            hash => $hash_name,
+            hash   => $hash_name,
         },
-    };
+      };
 }
 
 print STDERR "  Extracted $total_count magic number patterns\n";
 
 # Output JSON
 my $output = {
-    extracted_at => scalar(gmtime()) . " GMT",
+    extracted_at   => scalar( gmtime() ) . " GMT",
     magic_patterns => \@patterns,
-    stats => {
+    stats          => {
         total_patterns => $total_count,
     },
 };
