@@ -110,7 +110,18 @@ pub fn run_exiftool(file_path: &str) -> Result<Value, Box<dyn std::error::Error>
     use std::process::Command;
 
     let output = Command::new("exiftool")
-        .args(["-j", "-struct", "-G", file_path])
+        .args([
+            "-j",
+            "-struct",
+            "-G",
+            "-GPSLatitude#",
+            "-GPSLongitude#",
+            "-GPSAltitude#",
+            "-GPSPosition#",
+            "-FileSize#", // Numeric format per tools/generate_exiftool_json.sh
+            "-all",
+            file_path,
+        ])
         .output()?;
 
     if !output.status.success() {
