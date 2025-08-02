@@ -74,6 +74,18 @@ Honest. RTFM.
 - ✅ **Power operations implementation** → added `**` operator with right-associative precedence, uses Rust `.powf()` for APEX calculations
 - ✅ **Unary minus support** → context-aware tokenizer distinguishes `-` as unary vs binary, enables expressions like `2**(-$val)`
 - ✅ **Registry pattern obsolescence** → power expressions now auto-compile instead of requiring manual conv_registry entries
+- ✅ **Legacy RPN code removal** → simplified expression parser to always use AST, removed ~400 lines of unused RPN fallback code
+
+## Status Summary
+
+**Progress**: 1 of 5 tasks complete (20%)
+- ✅ **Task 1**: Power operations and unary minus - COMPLETE with 13+ tests passing
+- ❌ **Task 2**: Regex operations - NOT STARTED (no AST nodes, tests, or parser support)
+- ❌ **Task 3**: Bitwise operations - NOT STARTED (no AST nodes, tests, or parser support)  
+- ❌ **Task 4**: Multi-argument function research - NOT STARTED (no research document)
+- ❌ **Task 5**: Tag kit integration - NOT STARTED (not integrated into codegen pipeline)
+
+**Next Priority**: Task 2 (Regex Operations) - Required for firmware version parsing and string cleanup patterns.
 
 ## Remaining Tasks
 
@@ -95,7 +107,9 @@ Honest. RTFM.
 
 **Registry Obsolescence**: Power expressions like `2**(-$val/3)` now auto-compile, eliminating need for manual conv_registry entries
 
-### 2. Task: Implement Regex Operations (`s///`, `tr///`)
+### 2. Task: Implement Regex Operations (`s///`, `tr///`) - NOT STARTED
+
+**Current Status**: No implementation exists. Need to create AST nodes, parser support, and code generation.
 
 **Success Criteria**:
 - Olympus firmware parsing works: `s/(.{3})$/\.$1/` inserts decimal point correctly
@@ -109,7 +123,7 @@ Honest. RTFM.
 - Support `tr///` transliteration operations
 - Handle regex context and return values correctly (modified string vs match count)
 
-**Dependencies**: Task 1 (power operations have higher priority)
+**Dependencies**: Task 1 (power operations) ✅ COMPLETE
 
 **Success Patterns**:
 - ✅ Case-insensitive flag `/i` works correctly
@@ -117,7 +131,9 @@ Honest. RTFM.
 - ✅ Transliteration `tr/a-fA-F0-9//dc` keeps only hex characters
 - ✅ Regex compilation errors produce clear diagnostic messages
 
-### 3. Task: Implement Bitwise Operations (`&`, `|`, `>>`, `<<`)
+### 3. Task: Implement Bitwise Operations (`&`, `|`, `>>`, `<<`) - NOT STARTED
+
+**Current Status**: No implementation exists. Need to create AST nodes, parser support, and code generation.
 
 **Success Criteria**:
 - Version extraction works: `sprintf("%d.%.4d",$val >> 16, $val & 0xffff)` splits packed version
@@ -131,14 +147,16 @@ Honest. RTFM.
 - Generate Rust code using built-in bitwise operations
 - Handle integer type conversions and overflow behavior
 
-**Dependencies**: Task 1 (power operations)
+**Dependencies**: Task 1 (power operations) ✅ COMPLETE
 
 **Success Patterns**:
 - ✅ Operator precedence matches Perl: `<<` and `>>` bind tighter than `&` and `|`
 - ✅ Right shift handles signed/unsigned correctly based on context
 - ✅ Bit masking with hex constants (`0xffff`) works correctly
 
-### 4. RESEARCH: Complex Multi-argument ExifTool Functions
+### 4. RESEARCH: Complex Multi-argument ExifTool Functions - NOT STARTED
+
+**Current Status**: No research conducted. Need to analyze ExifTool functions used in supported tags.
 
 **Objective**: Determine implementation strategy for GPS coordinate functions and other multi-argument ExifTool utilities that appear in supported tags
 
@@ -156,7 +174,9 @@ Honest. RTFM.
 - String processing: `Decode()`, `ConvertDateTime()` - widespread usage
 - Binary data: `pack()`, `unpack()` - manufacturer-specific processing
 
-### 5. Task: Integration with Tag Kit Code Generation
+### 5. Task: Integration with Tag Kit Code Generation - NOT STARTED
+
+**Current Status**: Expression compiler exists but is not integrated into tag kit generation pipeline. Generated code still contains string expressions.
 
 **Success Criteria**:
 - All expressions in `src/generated/*/tag_kit/*.rs` compile and execute correctly
@@ -170,7 +190,7 @@ Honest. RTFM.
 - Add error handling for unsupported expressions (fallback to string representation)
 - Update generated code templates to include necessary imports
 
-**Dependencies**: Tasks 1-3 (all basic operations implemented)
+**Dependencies**: Tasks 1-4 (need more operations before integration)
 
 **Success Patterns**:
 - ✅ Generated Rust code is readable and efficient
