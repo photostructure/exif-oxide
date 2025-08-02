@@ -199,6 +199,37 @@ impl ExifReader {
 
     /// Lookup tag name by source information to resolve tag ID conflicts
     /// (e.g., tag 0x0002 is GPSLatitude in GPS IFD, InteropVersion in InteropIFD)
+    /// Generate TAG_PREFIX name for unknown tags based on source namespace
+    /// Implements ExifTool's TAG_PREFIX mechanism (ExifTool.pm:4468-4479)
+    /// Unknown tags get manufacturer prefix: Sony_0x2000, Canon_0x1234, etc.
+    fn generate_tag_prefix_name(tag_id: u16, source_info: Option<&TagSourceInfo>) -> String {
+        tracing::debug!(
+            "generate_tag_prefix_name: tag_id=0x{:04x}, source_info={:?}",
+            tag_id,
+            source_info
+        );
+        if let Some(source) = source_info {
+            let result = match source.namespace.as_str() {
+                "Canon" => format!("Canon_0x{tag_id:04X}"),
+                "Sony" => format!("Sony_0x{tag_id:04X}"),
+                "Nikon" => format!("Nikon_0x{tag_id:04X}"),
+                "Olympus" => format!("Olympus_0x{tag_id:04X}"),
+                "Panasonic" => format!("Panasonic_0x{tag_id:04X}"),
+                "Fujifilm" => format!("Fujifilm_0x{tag_id:04X}"),
+                _ => format!("Tag_{tag_id:04X}"),
+            };
+            tracing::debug!(
+                "generate_tag_prefix_name: generated tag name '{}' for namespace '{}'",
+                result,
+                source.namespace
+            );
+            result
+        } else {
+            tracing::debug!("generate_tag_prefix_name: no source info, using Tag_{:04X}", tag_id);
+            format!("Tag_{tag_id:04X}")
+        }
+    }
+
     fn lookup_tag_name_by_source(
         &self,
         tag_id: u16,
@@ -249,7 +280,7 @@ impl ExifReader {
                     .get(&(tag_id as u32))
                     .map(|tag_def| tag_def.name.to_string())
             })
-            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+            .unwrap_or_else(|| Self::generate_tag_prefix_name(tag_id, source_info))
     }
 
     /// Get all extracted tags with their names (conversions already applied during extraction)
