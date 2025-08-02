@@ -24,7 +24,7 @@ Let's work through the tasks in ✏️ -- this requires extensive preparation. R
 
 # Starting work on a TPP that's solid
 
-Let's work through the tasks in ✏️ -- this requires extensive preparation. Read every referenced source and doc, carefully validate the current situation, problem, and solution before starting. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. Ultrathink.  
+Let's work through the tasks in ✏️ -- this requires extensive preparation. Read every referenced source and doc, carefully validate the current situation, problem, and solution before starting. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. Ultrathink.
 
 # Continuing work on a TPP
 
@@ -32,11 +32,11 @@ Let's continue the tasks in ✏️ -- this requires extensive preparation. Read 
 
 # Validating and continuing work on a (probably complete) TPP
 
-Validate the tasks listed in ✏️ -- this is critical infra, so we have a large time budget for research, planning, analysis, and validation for this work. Read **all** referenced documentation, and all relevant source code. Work step by step and show your work. Prior engineers may have incorrectly stated that tasks were complete when they are not, or forgot to update as progress was made, so verify everything carefully. Update and improve the TPP using this style guide: @docs/TPP.md. We want to complete the work in this TPP, so if, after your planning and research phase, there are incomplete tasks found, we want you to work on them.  Ultrathink.
+Validate the tasks listed in ✏️ -- this is critical infra, so we have a large time budget for research, planning, analysis, and validation for this work. Read **all** referenced documentation, and all relevant source code. Work step by step and show your work. Prior engineers may have incorrectly stated that tasks were complete when they are not, or forgot to update as progress was made, so verify everything carefully. Update and improve the TPP using this style guide: @docs/TPP.md. We want to complete the work in this TPP, so if, after your planning and research phase, there are incomplete tasks found, we want you to work on them. Ultrathink.
 
 # Validating a completed TPP
 
-Validate the tasks in ✏️ -- this is critical infra with a large time budget for research and validation. Read **all** referenced documentation, and all relevant source code. Work step by step and show your work. Prior engineers may have incorrectly stated that tasks were complete when they are not, so verify everything carefully. Update the TPP using @docs/TPP.md style guide. If all tasks are complete, update the TPP and move it to `docs/done/$YYYYMMDD-${tpp_basename}` (use current date in America/Los_Angeles timezone).  Ultrathink.
+Validate the tasks and their state of completion in ✏️ -- this is critical infra with a large time budget for research and validation. Read **all** referenced documentation, and all relevant source code. Work step by step and show your work. Prior engineers may have incorrectly stated that tasks were complete when they are not, so verify everything carefully. Update the TPP using @docs/TPP.md style guide. If all tasks are complete, update the TPP and move it to `docs/done/$YYYYMMDD-${tpp_basename}` (use current date in America/Los_Angeles timezone). Ultrathink.
 
 # When the robots need a reminder
 
@@ -44,4 +44,4 @@ Remember: do not invent heuristics! @docs/TRUST-EXIFTOOL.md !
 
 # Fix a test or bug
 
-Fixing this bug will require in-depth understanding of both how our code and ExifTool ✏️. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. Ultrathink and read relevant source and documentation before planning your solution.
+Fixing this bug will require in-depth understanding of both how our code and ExifTool ✏️. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. Read **all** referenced documentation, and all relevant source code before planning your solution. Ultrathink.
