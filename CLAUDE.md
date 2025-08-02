@@ -2,8 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with exif-oxide.
 
-Today's date is (at least) July 30, 2025. Honest, you can check with `date`, although we're in `America/Los_Angeles`, not UTC.
-
 ## 🚨 CRITICAL: ALWAYS USE ABSOLUTE PATHS 🚨
 
 **NEVER use `cd ..` or `cd ../..` - there have been devastating mistakes due to directory confusion.**
@@ -49,7 +47,7 @@ There are several other engineers working _on the same copy of the source tree_ 
 
 ## Essential Documentation
 
-This project has many non-intuitive aspects. Before starting any task, **READ THE RELEVANT DOCUMENTATION**. 
+This project has many non-intuitive aspects. Before starting any task, **READ THE RELEVANT DOCUMENTATION**.
 
 If you skip this step, your work will likely be spurious, wrong, and rejected.
 
