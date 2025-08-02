@@ -1,0 +1,11 @@
+{
+  "extractor": "tag_kit.pl",
+  "source": "third-party/exiftool/lib/Image/ExifTool/FujiFilm.pm",
+  "description": "FujiFilm main MakerNotes tag definitions with embedded PrintConv implementations",
+  "tables": [
+    {
+      "table_name": "Main",
+      "description": "FujiFilm main MakerNotes tag table with inline PrintConv definitions (~100+ tags)"
+    }
+  ]
+}
