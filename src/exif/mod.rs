@@ -208,6 +208,12 @@ impl ExifReader {
         use crate::generated::GPS_pm::tag_kit::GPS_PM_TAG_KITS;
         use crate::generated::Sony_pm::tag_kit::SONY_PM_TAG_KITS;
 
+        tracing::debug!(
+            "lookup_tag_name_by_source: tag_id=0x{:x}, source_info={:?}",
+            tag_id,
+            source_info
+        );
+
         // Check if this tag originated from GPS IFD
         if let Some(source) = source_info {
             if source.ifd_name == "GPS" {
@@ -216,13 +222,20 @@ impl ExifReader {
                     return tag_def.name.to_string();
                 }
             }
-            
+
             // Check for Sony MakerNotes tags
             // Sony tags may have namespace "Sony" or "MakerNotes" depending on extraction path
             if source.namespace == "Sony" || source.namespace == "MakerNotes" {
                 // For Sony or MakerNotes tags, check Sony tag kit first
                 if let Some(tag_def) = SONY_PM_TAG_KITS.get(&(tag_id as u32)) {
+                    tracing::debug!("Found Sony tag name for 0x{:x}: {}", tag_id, tag_def.name);
                     return tag_def.name.to_string();
+                } else {
+                    tracing::debug!(
+                        "Sony tag 0x{:x} not found in SONY_PM_TAG_KITS, namespace: {}",
+                        tag_id,
+                        source.namespace
+                    );
                 }
             }
         }
@@ -269,12 +282,23 @@ impl ExifReader {
                     }
                 } else {
                     // Fall back to manufacturer-specific names for other synthetic IDs
+                    // Implements ExifTool's TAG_PREFIX mechanism (ExifTool.pm:4468-4479)
+                    // Unknown tags get manufacturer prefix: Sony_0x2000, Canon_0x1234, etc.
                     let tag_name = if let Some(_source_info) = source_info {
                         match namespace.as_str() {
                             "Canon" => canon::get_canon_tag_name(tag_id)
-                                .unwrap_or_else(|| format!("Tag_{tag_id:04X}")),
+                                .unwrap_or_else(|| format!("Canon_0x{tag_id:04X}")),
                             "Sony" => sony::get_sony_tag_name(tag_id)
-                                .unwrap_or_else(|| format!("Tag_{tag_id:04X}")),
+                                .unwrap_or_else(|| format!("Sony_0x{tag_id:04X}")),
+                            "Nikon" => {
+                                // Add Nikon TAG_PREFIX support when needed
+                                format!("Nikon_0x{tag_id:04X}")
+                            }
+                            "Olympus" => {
+                                // Add Olympus TAG_PREFIX support when needed
+                                format!("Olympus_0x{tag_id:04X}")
+                            }
+                            // Add other manufacturers as needed
                             _ => format!("Tag_{tag_id:04X}"),
                         }
                     } else {
@@ -386,7 +410,7 @@ impl ExifReader {
             let source_info = self.tag_sources.get(&(tag_id, namespace.clone()));
 
             // Look up tag name and group, handling synthetic tags properly
-            let (group_name, base_tag_name, _tag_def) = if tag_id >= 0xC000 {
+            let (raw_group_name, base_tag_name, _tag_def) = if tag_id >= 0xC000 {
                 // Check synthetic tag names mapping first for Canon binary data tags
                 if let Some(synthetic_name) = self.synthetic_tag_names.get(&tag_id) {
                     // Parse the full "Group:TagName" format from synthetic_tag_names
@@ -557,18 +581,18 @@ impl ExifReader {
                         }
                     }
                 };
-                // Map internal namespace to ExifTool-compatible Group0 for TagEntry
-                // ExifTool: GPS.pm:52 GROUPS => { 0 => 'EXIF', 1 => 'GPS', 2 => 'Location' }
-                // Manufacturer MakerNotes use manufacturer namespace internally but display as Group0="MakerNotes"
-                let display_group = match namespace.as_str() {
-                    "GPS" => "EXIF", // GPS tags have Group0="EXIF" per ExifTool GPS.pm:52
-                    // Manufacturer MakerNotes tags display as "MakerNotes" group per ExifTool output
-                    "Canon" | "Nikon" | "Sony" | "Olympus" | "Panasonic" | "Fujifilm" => {
-                        "MakerNotes"
-                    }
-                    other => other, // Keep other namespaces as-is
-                };
-                (display_group, name, def)
+                (namespace.as_str(), name, def)
+            };
+
+            // Map internal namespace to ExifTool-compatible Group0 for TagEntry
+            // ExifTool: GPS.pm:52 GROUPS => { 0 => 'EXIF', 1 => 'GPS', 2 => 'Location' }
+            // Manufacturer MakerNotes use manufacturer namespace internally but display as Group0="MakerNotes"
+            // Apply this mapping to ALL tags (both synthetic and regular) for consistency
+            let group_name = match raw_group_name {
+                "GPS" => "EXIF", // GPS tags have Group0="EXIF" per ExifTool GPS.pm:52
+                // Manufacturer MakerNotes tags display as "MakerNotes" group per ExifTool output
+                "Canon" | "Nikon" | "Sony" | "Olympus" | "Panasonic" | "Fujifilm" => "MakerNotes",
+                other => other, // Keep other namespaces as-is
             };
 
             // Apply conversions to get both value and print
@@ -577,7 +601,7 @@ impl ExifReader {
                 .map(|s| s.ifd_name.as_str())
                 .unwrap_or("");
 
-            let (value, print) = self.apply_conversions(raw_value, tag_id, ifd_name);
+            let (value, print) = self.apply_conversions(raw_value, tag_id, ifd_name, source_info);
 
             // Get group1 value using TagSourceInfo with special handling for IFD pointer tags
             let group1_name = if let Some(source_info) = source_info {

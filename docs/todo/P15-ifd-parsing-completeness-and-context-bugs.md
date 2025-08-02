@@ -81,42 +81,57 @@ Honest. RTFM.
 
 **REQUIRED**: Each task must be numbered, actionable, and include success criteria.
 
-### 1. Task: Fix Sony Namespace Assignment During Subdirectory Processing
+### 1. Task: Implement TAG_PREFIX Mechanism for Sony Unknown Tag Naming
 
-**Success Criteria**: Sony tags show proper names like "SonyExposureTime" instead of "MakerNotes:Tag_2000", `cargo run --bin exif-oxide third-party/exiftool/t/images/Sony.jpg | grep -c Tag_` shows 0 instead of 8
-**Approach**: Fix namespace assignment in `create_tag_source_info()` or Sony subdirectory processing to preserve "Sony" namespace instead of defaulting to "MakerNotes"
-**Dependencies**: None - builds on existing Sony signature detection
+**Success Criteria**: Sony unknown tags show proper names like `MakerNotes:Sony_0x2000` instead of `MakerNotes:Tag_2000`, `cargo run --bin exif-oxide third-party/exiftool/t/images/Sony.jpg | grep Tag_` shows 0 instead of 8
+**Approach**: Implement ExifTool's TAG_PREFIX mechanism by adding manufacturer prefixes to tag table definitions and modifying unknown tag name generation
+**Dependencies**: None - builds on existing Sony signature detection and subdirectory processing
+
+**Implementation Plan**:
+1. **Add TAG_PREFIX field** to tag table trait/struct definitions 
+2. **Update Sony::Main table** to include `TAG_PREFIX = "Sony"`
+3. **Modify unknown tag naming logic** in `src/exif/mod.rs:285-290` to check for TAG_PREFIX
+4. **Generate manufacturer-specific names** following ExifTool pattern: `${prefix}_0x${hex}` for unknown numeric tag IDs
+
+**Technical Details**:
+- **ExifTool Reference**: `ExifTool.pm:3419-3426` (TAG_PREFIX auto-generation), `ExifTool.pm:4468-4479` (unknown tag naming)
+- **Key Files**: `src/exif/mod.rs` (unknown tag generation), `src/implementations/sony/mod.rs` (Sony table definition)
+- **Pattern**: Auto-derive TAG_PREFIX from module name (`Sony::Main` → `TAG_PREFIX = "Sony"`)
 
 **Success Patterns**:
 
-- ✅ Sony MakerNotes tags show proper names: "SonyExposureTime", "SonyFNumber", etc.
-- ✅ Two-phase Sony processing (main IFD + subdirectories) maintains Sony namespace throughout
-- ✅ `apply_conversions()` Sony condition triggers correctly with preserved namespace
-- ✅ No regressions in existing Canon/Nikon/Olympus processing functionality
+- ✅ Unknown Sony tags show manufacturer-specific names: `MakerNotes:Sony_0x2000` instead of `MakerNotes:Tag_2000`
+- ✅ TAG_PREFIX mechanism works for all manufacturers (Sony, Canon, Nikon, etc.)
+- ✅ Known Sony tags continue working with proper names and PrintConv/ValueConv processing
+- ✅ No regressions in existing Canon/Nikon/Olympus unknown tag handling
 
-**Root Cause Identified**: Namespace assignment in subdirectory processing phase defaults to "MakerNotes" instead of preserving manufacturer-specific namespace from main IFD detection.
+**Root Cause Identified**: Missing TAG_PREFIX mechanism - ExifTool automatically generates manufacturer-specific prefixes for unknown tags based on module paths, but our implementation lacks this system.
 
-**VALIDATION FINDINGS (August 1, 2025)**:
+**VALIDATION FINDINGS (August 2, 2025)**:
 
-**✅ Sony Context Bug Confirmed**: Root cause verified - namespace assignment defaults to "MakerNotes" during Sony subdirectory processing instead of preserving "Sony" namespace from initial detection.
+**✅ Root Cause Identified**: Sony namespace assignment issue is caused by **missing TAG_PREFIX mechanism**. ExifTool automatically generates manufacturer-specific prefixes for unknown tags (e.g., `Sony_0x2000`), but our implementation lacks this system.
 
-**❌ Major TPP Claims Corrected**:
-- **ExifIFD Tests**: `test_exif_ifd_group_assignment` is **PASSING**, not failing as documented
-- **Exif_pm Config**: **EXISTS** at `codegen/config/Exif_pm/tag_kit.json`, contrary to "Missing: No Exif_pm config" claim
-- **Context Assignment**: Most namespace switching works correctly; Sony is specific edge case, not systemic failure
+**📋 Research Results**:
+- **Sony Issue**: 8 `MakerNotes:Tag_xxxx` entries should be `MakerNotes:Sony_0xxxxx` like ExifTool
+- **ExifTool Mechanism**: TAG_PREFIX auto-generated from module paths (`Image::ExifTool::Sony::Main` → `TAG_PREFIX = "Sony"`)
+- **Unknown Tag Generation**: ExifTool's `GetTagInfo()` creates `${prefix}_0x${hex}` for unknown numeric tag IDs
+- **Location**: `ExifTool.pm:3419-3426` (TAG_PREFIX generation), `ExifTool.pm:4468-4479` (unknown tag naming)
 
-**✅ Infrastructure Status Confirmed**:
-- GPS IFD namespace resolution working correctly
-- ExifIFD architecture functional with passing tests
-- 51% Canon coverage demonstrates subdirectory processing effectiveness
-- Sophisticated context system handles complex manufacturer scenarios successfully
+**✅ Infrastructure Status Validated**:
+- **ExifIFD Tests**: PASSING (5 test files in `tests/` directory)
+- **Exif_pm Config**: EXISTS at `codegen/config/Exif_pm/tag_kit.json`  
+- **GPS IFD**: Namespace infrastructure working correctly
+- **Sony Processing**: MakerNotes detection and subdirectory processing functional
+- **Context Assignment**: Most namespace switching works; Sony is specific TAG_PREFIX gap
 
-**🔍 Remaining Work Identified**:
-- **Primary Issue**: Sony namespace assignment in `create_tag_source_info()` during subdirectory processing 
-- **Secondary**: DNG config generation for RAW metadata support (94 subdirs = 5% coverage potential)
-- **Validation**: Need evidence-based testing of any other claimed context issues
+**🔧 Technical Solution Identified**:
+- **Add TAG_PREFIX to tag table definitions** (e.g., Sony::Main should have `TAG_PREFIX = "Sony"`)
+- **Modify unknown tag naming** in `src/exif/mod.rs` around lines 285-290 to use manufacturer prefixes
+- **Implement manufacturer-aware generation** similar to ExifTool's `GetTagInfo()` logic
 
-**Status**: Issues are narrower and more specific than originally documented. Infrastructure is solid; remaining work is targeted fixes rather than architectural overhaul.
+**❌ DNG Status**: Configuration missing (no `codegen/config/*DNG*` found) - secondary priority
+
+**Status**: This is a well-scoped implementation task requiring ExifTool's TAG_PREFIX logic addition to existing Sony MakerNotes processing.
 
 ### 2. Task: Generate DNG Module Configuration for RAW Metadata Support
 
@@ -293,17 +308,18 @@ This TPP focuses on **completeness and edge case resolution** rather than archit
 
 ### **Immediate Tasks with Specific Success Criteria**
 
-**Task 1 - Fix Sony Namespace Assignment Issue**:
-- ✅ **CONDITION IMPLEMENTED**: Fixed condition in `apply_conversions()` to check both `ifd_name == "Sony"` AND `source_info.namespace == "Sony"`  
-- ❌ **CORE ISSUE CONFIRMED**: Namespace assignment during Sony MakerNotes processing defaults to "MakerNotes" instead of "Sony"
-- **Root Cause**: Two-phase Sony processing (main IFD + subdirectories) - namespace gets reset during subdirectory phase
-- **Current Status**: 8 `Tag_xxxx` entries still showing instead of proper Sony names
-- **Next Steps**: Fix namespace assignment in `create_tag_source_info()` at lines 90-110 in `src/exif/tags.rs`
+**Task 1 - Implement TAG_PREFIX Mechanism for Sony Unknown Tags**:
+- ✅ **ROOT CAUSE IDENTIFIED**: Missing TAG_PREFIX mechanism - ExifTool auto-generates manufacturer prefixes for unknown tags
+- ❌ **CURRENT STATUS**: 8 `MakerNotes:Tag_xxxx` entries should be `MakerNotes:Sony_0xxxxx` 
+- **ExifTool Pattern**: `Image::ExifTool::Sony::Main` → `TAG_PREFIX = "Sony"` → unknown tag 0x2000 becomes `Sony_0x2000`
+- **Implementation Required**: Add TAG_PREFIX field to tag tables and modify unknown tag name generation
 - **Validation Commands**: 
   - `cargo run --bin exif-oxide third-party/exiftool/t/images/Sony.jpg | grep -c Tag_` should show 0 instead of 8
+  - `cargo run --bin exif-oxide third-party/exiftool/t/images/Sony.jpg | grep Sony_0x` should show manufacturer-prefixed names
 - **Target Files**: 
-  - `src/exif/tags.rs:90-110` - `create_tag_source_info()` namespace logic (manufacturer-specific namespace preservation)
-  - Alternative: `src/implementations/sony/mod.rs` - Sony subdirectory processing preservation
+  - `src/exif/mod.rs:285-290` - Unknown tag name generation logic (add TAG_PREFIX support)
+  - `src/implementations/sony/mod.rs` - Sony table definition (add TAG_PREFIX field)
+  - Tag table trait/struct definitions (add TAG_PREFIX field)
 
 **Task 2 - Generate DNG Configuration**:
 - **Target**: Create `codegen/config/DNG_pm/tag_kit.json` (94 subdirs = 5% coverage increase)
