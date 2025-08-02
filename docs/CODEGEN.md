@@ -225,21 +225,28 @@ pub fn canon_wb_print_conv(value: &TagValue) -> TagValue {
 }
 ```
 
-### 3. Tag-Specific Registry System
+### 3. Tag-Specific Registry System + Expression Compiler
 
-The PrintConv/ValueConv system uses a three-tier lookup hierarchy to map tags to their conversion functions:
+The PrintConv/ValueConv system uses a four-tier lookup hierarchy to map tags to their conversion functions:
 
-#### Three-Tier Lookup System
+#### Four-Tier Lookup System (Updated P17)
 
 1. **Module::Tag Lookup** (highest priority)
    - Module-specific implementations for tags that behave differently per manufacturer
    - Example: `Canon_pm::WhiteBalance` → `canon_white_balance_print_conv`
 
-2. **Expression Lookup** (second priority)
-   - Maps Perl expressions to conversion functions
-   - Example: `sprintf("%.1f mm",$val)` → `focallength_print_conv`
+2. **🎉 NEW: Expression Compiler** (automatic compilation)
+   - **Compiles most expressions automatically** - no manual registry entries needed
+   - **sprintf patterns**: `sprintf("%.1f mm",$val)` → generates `format!("{:.1} mm", val)` directly
+   - **ExifTool functions**: `Image::ExifTool::Exif::PrintFNumber($val)` → direct call to `fnumber_print_conv(val)`
+   - **Ternary expressions**: `$val >= 0 ? $val : undef` → generates `if val >= 0.0 { val } else { undef }`
+   - **String interpolation**: `"$val mm"` → generates `format!("{} mm", val)`
 
-3. **Universal Tag Lookup** (fallback)
+3. **Expression Registry Fallback** (third priority)
+   - **Only for non-compilable expressions** - regex operations, power operations (`2 ** x`)
+   - Example: `$val =~ /^(inf|undef)$/ ? $val : "$val m"` → `gpsaltitude_print_conv`
+
+4. **Universal Tag Lookup** (fallback)
    - Tags that work the same across all modules
    - Example: `Flash` → `flash_print_conv` (works for all manufacturers)
 
