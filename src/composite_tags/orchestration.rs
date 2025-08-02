@@ -47,9 +47,21 @@ pub fn apply_composite_conversions(
 
     let value = computed_value.clone();
 
-    // Apply PrintConv if present to get human-readable string
+    // Per TRUST-EXIFTOOL.md: GPS coordinates should always be in decimal format
+    // Skip PrintConv for GPS coordinate composite tags to return decimal values
+    let is_gps_coordinate = matches!(
+        composite_def.name,
+        "GPSLatitude" | "GPSLongitude" | "GPSPosition" | "GPSAltitude"
+    );
+
+    // Apply PrintConv if present to get human-readable string (except for GPS coordinates)
     let print = if let Some(print_conv_ref) = composite_def.print_conv_ref {
-        registry::apply_print_conv(print_conv_ref, &value)
+        if is_gps_coordinate {
+            // Return decimal value for GPS coordinates per project requirements
+            value.clone()
+        } else {
+            registry::apply_print_conv(print_conv_ref, &value)
+        }
     } else {
         value.clone()
     };
