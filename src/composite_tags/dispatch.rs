@@ -69,6 +69,7 @@ pub fn compute_composite_tag(
 
         // New implementations for common composite tags
         "Aperture" => compute_aperture(&resolved_dependencies),
+        "DateTimeCreated" => compute_datetime_created(&resolved_dependencies),
         "DateTimeOriginal" => compute_datetime_original(&resolved_dependencies),
         "FocalLength35efl" => compute_focal_length_35efl(&resolved_dependencies),
         "ScaleFactor35efl" => compute_scale_factor_35efl(&resolved_dependencies),
