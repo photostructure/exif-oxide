@@ -131,10 +131,8 @@ impl ExifReader {
         // Process MakerNotes as subdirectory with adjusted offset
         let tag_name = "MakerNotes";
         debug!(
-            "Processing SubDirectory: {} -> {} at offset {:#x}",
-            format!("Tag_{:x}", entry.tag_id),
-            tag_name,
-            adjusted_offset
+            "Processing SubDirectory: Tag_{:04X} -> {} at offset {:#x}",
+            entry.tag_id, tag_name, adjusted_offset
         );
 
         debug!(
@@ -861,8 +859,15 @@ impl ExifReader {
             return tag_def.name.to_string();
         }
 
-        // Default name if not found
-        format!("Tag_{:04X}", tag_id)
+        // Default name if not found - use TAG_PREFIX mechanism
+        // Create basic source info from IFD name for manufacturer context
+        let source_info = crate::types::TagSourceInfo {
+            namespace: ifd_name.to_string(),
+            ifd_name: ifd_name.to_string(),
+            priority: crate::types::SourcePriority::Exif,
+            processor_name: "IFD".to_string(),
+        };
+        Self::generate_tag_prefix_name(tag_id, Some(&source_info))
     }
 
     /// Try resolving tag using conditional tag resolution with full entry context
