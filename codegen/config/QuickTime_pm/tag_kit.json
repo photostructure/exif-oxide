@@ -1,87 +1,87 @@
 {
-    "extractor": "tag_kit.pl",
-    "source": "third-party/exiftool/lib/Image/ExifTool/QuickTime.pm",
-    "description": "QuickTime/MP4 tag definitions with extensive subdirectory support",
-    "tables": [
-        {
-            "table_name": "Main",
-            "description": "Main QuickTime atom table with top-level containers"
-        },
-        {
-            "table_name": "Movie",
-            "description": "Movie atom container with metadata and track references"
-        },
-        {
-            "table_name": "Track",
-            "description": "Track-specific metadata and media information"
-        },
-        {
-            "table_name": "Media",
-            "description": "Media box containing track media headers and info"
-        },
-        {
-            "table_name": "UserData",
-            "description": "User data atoms with various metadata formats"
-        },
-        {
-            "table_name": "Meta",
-            "description": "Metadata container with item lists and handlers"
-        },
-        {
-            "table_name": "ItemList",
-            "description": "iTunes-style metadata tags"
-        },
-        {
-            "table_name": "Keys",
-            "description": "Key-value metadata pairs"
-        },
-        {
-            "table_name": "SampleTable",
-            "description": "Sample description tables for audio/video/hint tracks"
-        },
-        {
-            "table_name": "VisualSampleDesc",
-            "description": "Visual sample descriptions for video tracks"
-        },
-        {
-            "table_name": "AudioSampleDesc",
-            "description": "Audio sample descriptions"
-        },
-        {
-            "table_name": "MediaInfo",
-            "description": "Media information container"
-        },
-        {
-            "table_name": "Handler",
-            "description": "Media handler information"
-        },
-        {
-            "table_name": "ItemProp",
-            "description": "Item properties for HEIF/AVIF images"
-        },
-        {
-            "table_name": "ItemPropCont",
-            "description": "Item property container"
-        },
-        {
-            "table_name": "sv3d",
-            "description": "Spherical video metadata"
-        },
-        {
-            "table_name": "proj",
-            "description": "Projection information for 360 video"
-        },
-        {
-            "table_name": "Profile",
-            "description": "File/audio/video profile information"
-        },
-        {
-            "table_name": "MovieFragment",
-            "description": "Movie fragment atoms for streaming"
-        },
-        {
-            "table_name": "TrackFragment",
-            "description": "Track fragment information"
-        }
-    ]
+  "$schema": "../../schemas/tag_kit.json",
+  "source": "third-party/exiftool/lib/Image/ExifTool/QuickTime.pm",
+  "description": "QuickTime/MP4 tag definitions with extensive subdirectory support",
+  "tables": [
+    {
+      "table_name": "Main",
+      "description": "Main QuickTime atom table with top-level containers"
+    },
+    {
+      "table_name": "Movie",
+      "description": "Movie atom container with metadata and track references"
+    },
+    {
+      "table_name": "Track",
+      "description": "Track-specific metadata and media information"
+    },
+    {
+      "table_name": "Media",
+      "description": "Media box containing track media headers and info"
+    },
+    {
+      "table_name": "UserData",
+      "description": "User data atoms with various metadata formats"
+    },
+    {
+      "table_name": "Meta",
+      "description": "Metadata container with item lists and handlers"
+    },
+    {
+      "table_name": "ItemList",
+      "description": "iTunes-style metadata tags"
+    },
+    {
+      "table_name": "Keys",
+      "description": "Key-value metadata pairs"
+    },
+    {
+      "table_name": "SampleTable",
+      "description": "Sample description tables for audio/video/hint tracks"
+    },
+    {
+      "table_name": "VisualSampleDesc",
+      "description": "Visual sample descriptions for video tracks"
+    },
+    {
+      "table_name": "AudioSampleDesc",
+      "description": "Audio sample descriptions"
+    },
+    {
+      "table_name": "MediaInfo",
+      "description": "Media information container"
+    },
+    {
+      "table_name": "Handler",
+      "description": "Media handler information"
+    },
+    {
+      "table_name": "ItemProp",
+      "description": "Item properties for HEIF/AVIF images"
+    },
+    {
+      "table_name": "ItemPropCont",
+      "description": "Item property container"
+    },
+    {
+      "table_name": "sv3d",
+      "description": "Spherical video metadata"
+    },
+    {
+      "table_name": "proj",
+      "description": "Projection information for 360 video"
+    },
+    {
+      "table_name": "Profile",
+      "description": "File/audio/video profile information"
+    },
+    {
+      "table_name": "MovieFragment",
+      "description": "Movie fragment atoms for streaming"
+    },
+    {
+      "table_name": "TrackFragment",
+      "description": "Track fragment information"
+    }
+  ]
 }

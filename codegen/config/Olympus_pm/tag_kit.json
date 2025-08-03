@@ -1,5 +1,5 @@
 {
-  "extractor": "tag_kit.pl",
+  "$schema": "../../schemas/tag_kit.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/Olympus.pm",
   "description": "Olympus tag definitions with embedded PrintConv implementations",
   "tables": [
@@ -8,7 +8,7 @@
       "description": "Olympus equipment information (0x2010) - camera and lens identification"
     },
     {
-      "table_name": "CameraSettings", 
+      "table_name": "CameraSettings",
       "description": "Olympus camera settings (0x2020) - exposure, focus, metering modes"
     },
     {

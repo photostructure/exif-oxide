@@ -1,5 +1,5 @@
 {
-  "extractor": "tag_kit.pl",
+  "$schema": "../../schemas/tag_kit.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/FujiFilm.pm",
   "description": "FujiFilm main MakerNotes tag definitions with embedded PrintConv implementations",
   "tables": [

@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/simple_table.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/Sony.pm",
   "description": "Sony module lookup tables for camera settings, AF points, and modes",
   "tables": [

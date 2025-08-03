@@ -1,5 +1,5 @@
 {
-  "extractor": "tag_kit.pl",
+  "$schema": "../../schemas/tag_kit.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/Nikon.pm",
   "description": "Nikon tag definitions with embedded PrintConv implementations",
   "tables": [
@@ -8,7 +8,7 @@
       "description": "Main Nikon maker notes table with subdirectory references"
     },
     {
-      "table_name": "Type2", 
+      "table_name": "Type2",
       "description": "Type2 table for newer Nikon cameras"
     },
     {
@@ -24,7 +24,7 @@
       "description": "Z8 menu settings version 1"
     },
     {
-      "table_name": "MenuSettingsZ8v2", 
+      "table_name": "MenuSettingsZ8v2",
       "description": "Z8 menu settings version 2"
     },
     {
@@ -64,7 +64,7 @@
       "description": "Settings information for D810 series cameras"
     },
     {
-      "table_name": "BracketingInfoD810", 
+      "table_name": "BracketingInfoD810",
       "description": "Bracketing information for D810 series cameras"
     },
     {

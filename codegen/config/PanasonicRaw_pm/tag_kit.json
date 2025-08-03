@@ -1,5 +1,5 @@
 {
-  "extractor": "tag_kit.pl",
+  "$schema": "../../schemas/tag_kit.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/PanasonicRaw.pm",
   "description": "Complete tag definitions for Panasonic RAW format with embedded PrintConvs",
   "tables": [

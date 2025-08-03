@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/boolean_set.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/PNG.pm",
   "description": "PNG chunk type boolean sets for fast membership testing",
   "tables": [
@@ -9,14 +10,14 @@
       "description": "PNG chunks containing image data (IDAT, JDAT, JDAA)"
     },
     {
-      "hash_name": "%isTxtChunk", 
+      "hash_name": "%isTxtChunk",
       "constant_name": "PNG_TEXT_CHUNKS",
       "key_type": "String",
       "description": "PNG chunks containing text metadata (tEXt, zTXt, iTXt, eXIf)"
     },
     {
       "hash_name": "%noLeapFrog",
-      "constant_name": "PNG_NO_LEAPFROG_CHUNKS", 
+      "constant_name": "PNG_NO_LEAPFROG_CHUNKS",
       "key_type": "String",
       "description": "PNG chunks that shouldn't be moved across during editing"
     }
