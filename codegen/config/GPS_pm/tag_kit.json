@@ -1,5 +1,5 @@
 {
-  "extractor": "tag_kit.pl",
+  "$schema": "../../schemas/tag_kit.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/GPS.pm",
   "description": "Tag kits with embedded PrintConv for GPS tags",
   "tables": [

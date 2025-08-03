@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/simple_table.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/PanasonicRaw.pm",
   "description": "PanasonicRaw module lookup tables for white balance and compression",
   "tables": [

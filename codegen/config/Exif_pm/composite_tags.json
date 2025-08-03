@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/composite_tags.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/Exif.pm",
   "description": "EXIF composite tag definitions",
   "table": "Composite",

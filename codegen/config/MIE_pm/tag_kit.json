@@ -1,5 +1,5 @@
 {
-  "extractor": "tag_kit.pl",
+  "$schema": "../../schemas/tag_kit.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/MIE.pm",
   "description": "MIE (Media Information Exchange) tag definitions with comprehensive subdirectory coverage",
   "tables": [
