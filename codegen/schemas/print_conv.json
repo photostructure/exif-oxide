@@ -4,6 +4,10 @@
   "description": "Configuration for inline PrintConv extractions from tag tables",
   "type": "object",
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
     "source": {
       "type": "string",
       "description": "Path to ExifTool source file relative to repo root",
@@ -19,6 +23,10 @@
       "items": {
         "type": "object",
         "properties": {
+          "$schema": {
+            "type": "string",
+            "description": "JSON Schema reference"
+          },
           "hash_name": {
             "type": "string",
             "pattern": "^%\\w+$",
@@ -31,7 +39,14 @@
           },
           "key_type": {
             "type": "string",
-            "enum": ["u8", "u16", "u32", "i8", "i16", "i32"],
+            "enum": [
+              "u8",
+              "u16",
+              "u32",
+              "i8",
+              "i16",
+              "i32"
+            ],
             "description": "Rust type for keys"
           },
           "description": {
@@ -39,11 +54,17 @@
             "description": "Documentation for this PrintConv table"
           }
         },
-        "required": ["hash_name", "constant_name", "key_type"],
+        "required": [
+          "hash_name",
+          "constant_name",
+          "key_type"
+        ],
         "additionalProperties": false
       }
     }
   },
-  "required": ["tables"],
+  "required": [
+    "tables"
+  ],
   "additionalProperties": false
 }

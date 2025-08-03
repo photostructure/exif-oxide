@@ -4,6 +4,10 @@
   "description": "Configuration for regex pattern string extraction",
   "type": "object",
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
     "source": {
       "type": "string",
       "description": "Path to ExifTool source file relative to repo root",
@@ -19,6 +23,10 @@
       "items": {
         "type": "object",
         "properties": {
+          "$schema": {
+            "type": "string",
+            "description": "JSON Schema reference"
+          },
           "hash_name": {
             "type": "string",
             "pattern": "^%\\w+$",
@@ -34,11 +42,16 @@
             "description": "Documentation for this pattern table"
           }
         },
-        "required": ["hash_name", "constant_name"],
+        "required": [
+          "hash_name",
+          "constant_name"
+        ],
         "additionalProperties": false
       }
     }
   },
-  "required": ["tables"],
+  "required": [
+    "tables"
+  ],
   "additionalProperties": false
 }

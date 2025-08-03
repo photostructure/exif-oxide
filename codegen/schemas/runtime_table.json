@@ -4,6 +4,10 @@
   "description": "Configuration for runtime-evaluated ProcessBinaryData table extraction",
   "type": "object",
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
     "source": {
       "type": "string",
       "description": "Path to ExifTool source file (relative to repository root, e.g., 'third-party/exiftool/lib/Image/ExifTool/Canon.pm')",
@@ -19,6 +23,10 @@
       "items": {
         "type": "object",
         "properties": {
+          "$schema": {
+            "type": "string",
+            "description": "JSON Schema reference"
+          },
           "table_name": {
             "type": "string",
             "pattern": "^%\\w+$",
@@ -31,13 +39,21 @@
           },
           "processing_mode": {
             "type": "string",
-            "enum": ["runtime_conditions", "static_fallback", "hybrid"],
+            "enum": [
+              "runtime_conditions",
+              "static_fallback",
+              "hybrid"
+            ],
             "default": "runtime_conditions",
             "description": "How to handle conditional logic and runtime dependencies"
           },
           "format_handling": {
-            "type": "string", 
-            "enum": ["dynamic", "static", "inferred"],
+            "type": "string",
+            "enum": [
+              "dynamic",
+              "static",
+              "inferred"
+            ],
             "default": "dynamic",
             "description": "How to handle variable format specifications"
           },
@@ -47,7 +63,7 @@
             "description": "Extract model-specific conditional logic from Condition fields"
           },
           "data_member_deps": {
-            "type": "boolean", 
+            "type": "boolean",
             "default": true,
             "description": "Extract DataMember dependencies for variable-length processing"
           },
@@ -61,11 +77,17 @@
             "description": "Documentation for this specific table"
           }
         },
-        "required": ["table_name", "function_name"],
+        "required": [
+          "table_name",
+          "function_name"
+        ],
         "additionalProperties": false
       }
     }
   },
-  "required": ["source", "tables"],
+  "required": [
+    "source",
+    "tables"
+  ],
   "additionalProperties": false
 }

@@ -4,6 +4,10 @@
   "description": "Configuration for extracting tag definitions from ExifTool tag tables",
   "type": "object",
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
     "source": {
       "type": "string",
       "description": "Path to ExifTool source file (relative to repository root, e.g., 'third-party/exiftool/lib/Image/ExifTool/Exif.pm')",
@@ -21,6 +25,10 @@
       "type": "object",
       "description": "Filtering criteria for tag extraction",
       "properties": {
+        "$schema": {
+          "type": "string",
+          "description": "JSON Schema reference"
+        },
         "frequency_threshold": {
           "type": "number",
           "minimum": 0,
@@ -42,6 +50,9 @@
       "additionalProperties": false
     }
   },
-  "required": ["source", "table"],
+  "required": [
+    "source",
+    "table"
+  ],
   "additionalProperties": false
 }

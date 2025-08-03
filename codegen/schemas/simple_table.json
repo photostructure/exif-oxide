@@ -4,6 +4,10 @@
   "description": "Configuration for basic key-value lookup table extraction",
   "type": "object",
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
     "source": {
       "type": "string",
       "description": "Path to ExifTool source file (relative to repository root, e.g., 'third-party/exiftool/lib/Image/ExifTool/Canon.pm')",
@@ -31,12 +35,30 @@
           },
           "key_type": {
             "type": "string",
-            "enum": ["u8", "u16", "u32", "i8", "i16", "i32", "String"],
+            "enum": [
+              "u8",
+              "u16",
+              "u32",
+              "i8",
+              "i16",
+              "i32",
+              "String"
+            ],
             "description": "Rust type for hash keys"
           },
           "value_type": {
             "type": "string",
-            "enum": ["&'static str", "u8", "u16", "u32", "i8", "i16", "i32", "f32", "f64"],
+            "enum": [
+              "&'static str",
+              "u8",
+              "u16",
+              "u32",
+              "i8",
+              "i16",
+              "i32",
+              "f32",
+              "f64"
+            ],
             "default": "&'static str",
             "description": "Rust type for hash values"
           },
@@ -45,11 +67,18 @@
             "description": "Documentation for this specific table"
           }
         },
-        "required": ["hash_name", "constant_name", "key_type"],
+        "required": [
+          "hash_name",
+          "constant_name",
+          "key_type"
+        ],
         "additionalProperties": false
       }
     }
   },
-  "required": ["source", "tables"],
+  "required": [
+    "source",
+    "tables"
+  ],
   "additionalProperties": false
 }
