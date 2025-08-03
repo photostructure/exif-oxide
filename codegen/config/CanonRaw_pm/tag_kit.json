@@ -1,0 +1,47 @@
+{
+   "description" : "CanonRaw format tag definitions",
+   "tables" : [
+      {
+         "description" : "DecoderTable tag definitions",
+         "table_name" : "DecoderTable"
+      },
+      {
+         "description" : "ExposureInfo tag definitions",
+         "table_name" : "ExposureInfo"
+      },
+      {
+         "description" : "FlashInfo tag definitions",
+         "table_name" : "FlashInfo"
+      },
+      {
+         "table_name" : "ImageFormat",
+         "description" : "ImageFormat tag definitions"
+      },
+      {
+         "table_name" : "ImageInfo",
+         "description" : "ImageInfo tag definitions"
+      },
+      {
+         "description" : "Main tag definitions",
+         "table_name" : "Main"
+      },
+      {
+         "description" : "MakeModel tag definitions",
+         "table_name" : "MakeModel"
+      },
+      {
+         "description" : "RawJpgInfo tag definitions",
+         "table_name" : "RawJpgInfo"
+      },
+      {
+         "table_name" : "TimeStamp",
+         "description" : "TimeStamp tag definitions"
+      },
+      {
+         "table_name" : "WhiteSample",
+         "description" : "WhiteSample tag definitions"
+      }
+   ],
+   "$schema" : "../../schemas/tag_kit.json",
+   "source" : "third-party/exiftool/lib/Image/ExifTool/CanonRaw.pm"
+}

@@ -1,35 +1,51 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "source": "third-party/exiftool/lib/Image/ExifTool/Jpeg2000.pm",
-  "description": "JPEG 2000 tag definitions with box structure and C2PA/JUMBF metadata support",
-  "tables": [
-    {
-      "table_name": "Main",
-      "description": "Main JPEG 2000 box table with subdirectory support for JP2, JXL, and C2PA JUMBF metadata"
-    },
-    {
-      "table_name": "ImageHeader",
-      "description": "JPEG 2000 image header information including dimensions and compression"
-    },
-    {
-      "table_name": "FileType",
-      "description": "JPEG 2000 file type identification with brand information"
-    },
-    {
-      "table_name": "CaptureResolution",
-      "description": "JPEG 2000 capture resolution specifications with units"
-    },
-    {
-      "table_name": "DisplayResolution",
-      "description": "JPEG 2000 display resolution specifications with units"
-    },
-    {
-      "table_name": "ColorSpec",
-      "description": "JPEG 2000 color specification including ICC profiles and color spaces"
-    },
-    {
-      "table_name": "JUMD",
-      "description": "JUMBF description box for C2PA content authenticity metadata"
-    }
-  ]
+   "$schema" : "../../schemas/tag_kit.json",
+   "source" : "third-party/exiftool/lib/Image/ExifTool/Jpeg2000.pm",
+   "description" : "Jpeg2000 format tag definitions",
+   "tables" : [
+      {
+         "description" : "CaptureResolution tag definitions",
+         "table_name" : "CaptureResolution"
+      },
+      {
+         "table_name" : "ColorSpec",
+         "description" : "The table below contains tags in the color specification (colr) box."
+      },
+      {
+         "table_name" : "DisplayResolution",
+         "description" : "DisplayResolution tag definitions"
+      },
+      {
+         "description" : "FileType tag definitions",
+         "table_name" : "FileType"
+      },
+      {
+         "table_name" : "ImageHeader",
+         "description" : "ImageHeader tag definitions"
+      },
+      {
+         "table_name" : "JUMD",
+         "description" : "Information extracted from the JUMBF description box."
+      },
+      {
+         "description" : "The tags below are found in JPEG 2000 images and the C2PA CAI JUMBF metadata in various file types (see below).",
+         "table_name" : "Main"
+      },
+      {
+         "table_name" : "j2cMarker",
+         "description" : "j2cMarker tag definitions"
+      },
+      {
+         "description" : "jp2Map tag definitions",
+         "table_name" : "jp2Map"
+      },
+      {
+         "description" : "jxlMap tag definitions",
+         "table_name" : "jxlMap"
+      },
+      {
+         "description" : "resolutionUnit tag definitions",
+         "table_name" : "resolutionUnit"
+      }
+   ]
 }

@@ -1,15 +1,31 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "source": "third-party/exiftool/lib/Image/ExifTool/Casio.pm",
-  "description": "Casio camera tag definitions",
-  "tables": [
-    {
-      "table_name": "Main",
-      "description": "Main Casio camera tag table"
-    },
-    {
-      "table_name": "Type2",
-      "description": "Casio Type2 camera tags"
-    }
-  ]
+   "source" : "third-party/exiftool/lib/Image/ExifTool/Casio.pm",
+   "tables" : [
+      {
+         "table_name" : "AVI",
+         "description" : "This information is found in Casio GV-10 AVI videos."
+      },
+      {
+         "description" : "Face-detect tags extracted from models such as the EX-H5.",
+         "table_name" : "FaceInfo1"
+      },
+      {
+         "description" : "Face-detect tags extracted from models such as the EX-H20G and EX-ZR100.",
+         "table_name" : "FaceInfo2"
+      },
+      {
+         "description" : "Main tag definitions",
+         "table_name" : "Main"
+      },
+      {
+         "description" : "This information is found in the APP1 QVCI segment of JPEG images from the Casio QV-7000SX.",
+         "table_name" : "QVCI"
+      },
+      {
+         "description" : "Type2 tag definitions",
+         "table_name" : "Type2"
+      }
+   ],
+   "description" : "Casio format tag definitions",
+   "$schema" : "../../schemas/tag_kit.json"
 }

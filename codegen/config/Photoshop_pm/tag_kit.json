@@ -1,0 +1,67 @@
+{
+   "description" : "Photoshop format tag definitions",
+   "$schema" : "../../schemas/tag_kit.json",
+   "source" : "third-party/exiftool/lib/Image/ExifTool/Photoshop.pm",
+   "tables" : [
+      {
+         "description" : "These tags relate only to the appearance of a channel.",
+         "table_name" : "ChannelOptions"
+      },
+      {
+         "table_name" : "DocumentData",
+         "description" : "DocumentData tag definitions"
+      },
+      {
+         "description" : "This information is found in the PSD file header.",
+         "table_name" : "Header"
+      },
+      {
+         "table_name" : "ImageData",
+         "description" : "ImageData tag definitions"
+      },
+      {
+         "description" : "JPEG_Quality tag definitions",
+         "table_name" : "JPEG_Quality"
+      },
+      {
+         "description" : "Tags extracted from Photoshop layer information.",
+         "table_name" : "Layers"
+      },
+      {
+         "table_name" : "Main",
+         "description" : "Main tag definitions"
+      },
+      {
+         "table_name" : "PixelInfo",
+         "description" : "PixelInfo tag definitions"
+      },
+      {
+         "table_name" : "PrintScaleInfo",
+         "description" : "PrintScaleInfo tag definitions"
+      },
+      {
+         "table_name" : "Resolution",
+         "description" : "Resolution tag definitions"
+      },
+      {
+         "table_name" : "SliceInfo",
+         "description" : "SliceInfo tag definitions"
+      },
+      {
+         "table_name" : "Unknown",
+         "description" : "Unknown tag definitions"
+      },
+      {
+         "table_name" : "VersionInfo",
+         "description" : "VersionInfo tag definitions"
+      },
+      {
+         "table_name" : "printFlags",
+         "description" : "printFlags tag definitions"
+      },
+      {
+         "description" : "psdMap tag definitions",
+         "table_name" : "psdMap"
+      }
+   ]
+}

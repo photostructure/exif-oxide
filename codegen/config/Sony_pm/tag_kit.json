@@ -1,123 +1,375 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "source": "third-party/exiftool/lib/Image/ExifTool/Sony.pm",
-  "description": "Sony tag definitions with embedded PrintConv implementations for Phase 2 subdirectory coverage expansion",
-  "tables": [
-    {
-      "table_name": "Main",
-      "description": "Sony main tag table - quality, white balance, flash modes (62 PrintConv entries)"
-    },
-    {
-      "table_name": "CameraInfo",
-      "description": "Sony camera information for A700/A850/A900 models (subdirectory reference)"
-    },
-    {
-      "table_name": "CameraInfo2",
-      "description": "Sony camera information for A200/A300/A350/A230/A290/A330/A380/A390 models (subdirectory reference)"
-    },
-    {
-      "table_name": "CameraInfo3",
-      "description": "Sony camera information for A33/A35/A55V/A450/A500/A550/A560/A580/NEX models (subdirectory reference)"
-    },
-    {
-      "table_name": "CameraInfoUnknown",
-      "description": "Sony camera information fallback table (subdirectory reference)"
-    },
-    {
-      "table_name": "CameraSettings",
-      "description": "Sony camera settings for A200/A300/A350/A700/A850/A900 models (subdirectory reference)"
-    },
-    {
-      "table_name": "CameraSettings2",
-      "description": "Sony camera settings for A230/A290/A330/A380/A390 series (subdirectory reference)"
-    },
-    {
-      "table_name": "CameraSettings3",
-      "description": "Sony camera settings for A560/A580/A33/A35/A55/NEX models (subdirectory reference)"
-    },
-    {
-      "table_name": "CameraSettingsUnknown",
-      "description": "Sony camera settings fallback table (subdirectory reference)"
-    },
-    {
-      "table_name": "ExtraInfo",
-      "description": "Sony extra information for A850/A900 models (subdirectory reference)"
-    },
-    {
-      "table_name": "ExtraInfo2",
-      "description": "Sony extra information for A230/A290/A330/A380/A390 models (subdirectory reference)"
-    },
-    {
-      "table_name": "ExtraInfo3",
-      "description": "Sony extra information for A450/A500/A550/A560/A580/A33/A35/A55/NEX models (subdirectory reference)"
-    },
-    {
-      "table_name": "FocusInfo",
-      "description": "Sony autofocus information for A200/A230/A290/A300/A330/A350/A380/A390/A700/A850/A900 models (subdirectory reference)"
-    },
-    {
-      "table_name": "MoreInfo",
-      "description": "Sony additional information for A450/A500/A550/A560/A580/A33/A35/A55/NEX models (subdirectory reference)"
-    },
-    {
-      "table_name": "MoreSettings",
-      "description": "Sony extended camera configuration options (subdirectory reference)"
-    },
-    {
-      "table_name": "Panorama",
-      "description": "Sony panorama mode information (subdirectory reference)"
-    },
-    {
-      "table_name": "ShotInfo",
-      "description": "Sony shot information metadata (subdirectory reference)"
-    },
-    {
-      "table_name": "HiddenInfo",
-      "description": "Sony hidden information block (subdirectory reference)"
-    },
-    {
-      "table_name": "Tag2010a",
-      "description": "Sony NEX-5N specific tags (subdirectory reference)"
-    },
-    {
-      "table_name": "Tag2010b",
-      "description": "Sony SLT-A65/A77/NEX-7/VG20E/Lunar specific tags (subdirectory reference)"
-    },
-    {
-      "table_name": "Tag2010c",
-      "description": "Sony SLT-A37/A57/NEX-F3 specific tags (subdirectory reference)"
-    },
-    {
-      "table_name": "Tag2010d",
-      "description": "Sony DSC compact camera specific tags (subdirectory reference)"
-    },
-    {
-      "table_name": "Tag2010e",
-      "description": "Sony SLT-A99/ILCE/NEX/DSC-RX series specific tags (subdirectory reference)"
-    },
-    {
-      "table_name": "Tag2010f",
-      "description": "Sony DSC-RX100M2/QX10/QX100 specific tags (subdirectory reference)"
-    },
-    {
-      "table_name": "Tag2010g",
-      "description": "Sony DSC-QX30/RX10/RX100M3/ILCE/ILCA series specific tags (subdirectory reference)"
-    },
-    {
-      "table_name": "Tag2010h",
-      "description": "Sony DSC-RX0/RX1RM2/RX10M2/ILCE/ILCA newer models specific tags (subdirectory reference)"
-    },
-    {
-      "table_name": "Tag2010i",
-      "description": "Sony ILCE/DSC/ZV latest models specific tags (subdirectory reference)"
-    },
-    {
-      "table_name": "Tag202a",
-      "description": "Sony newer camera models additional tags (subdirectory reference)"
-    },
-    {
-      "table_name": "SR2Private",
-      "description": "Sony SR2 private data for RAW files (subdirectory reference)"
-    }
-  ]
+   "$schema" : "../../schemas/tag_kit.json",
+   "description" : "Sony format tag definitions",
+   "tables" : [
+      {
+         "description" : "These tags are currently extracted for SLT models only.",
+         "table_name" : "AFInfo"
+      },
+      {
+         "table_name" : "AFStatus15",
+         "description" : "AF Status information for models with 15-point AF."
+      },
+      {
+         "description" : "AF Status information for models with 19-point AF.",
+         "table_name" : "AFStatus19"
+      },
+      {
+         "table_name" : "AFStatus79",
+         "description" : "AF Status information for models with 79-point AF."
+      },
+      {
+         "table_name" : "CameraInfo",
+         "description" : "Camera information for the A700, A850 and A900."
+      },
+      {
+         "description" : "Camera information for the DSLR-A200, A230, A290, A300, A330, A350, A380 and A390.",
+         "table_name" : "CameraInfo2"
+      },
+      {
+         "description" : "Camera information stored by the A33, A35, A55, A450, A500, A550, A560, A580, NEX-3/5/5C/C3 and VG10E.",
+         "table_name" : "CameraInfo3"
+      },
+      {
+         "table_name" : "CameraInfoUnknown",
+         "description" : "CameraInfoUnknown tag definitions"
+      },
+      {
+         "table_name" : "CameraSettings",
+         "description" : "Camera settings for the A200, A300, A350, A700, A850 and A900."
+      },
+      {
+         "description" : "Camera settings for the A230, A290, A330, A380 and A390.",
+         "table_name" : "CameraSettings2"
+      },
+      {
+         "table_name" : "CameraSettings3",
+         "description" : "Camera settings for models such as the A33, A35, A55, A450, A500, A550, A560, A580, NEX-3, NEX-5, NEX-C3 and NEX-VG10E."
+      },
+      {
+         "table_name" : "CameraSettingsUnknown",
+         "description" : "CameraSettingsUnknown tag definitions"
+      },
+      {
+         "description" : "Composite tag definitions",
+         "table_name" : "Composite"
+      },
+      {
+         "description" : "Maker notes found in images from some Sony Ericsson phones.",
+         "table_name" : "Ericsson"
+      },
+      {
+         "description" : "Extra hardware information for the A850 and A900.",
+         "table_name" : "ExtraInfo"
+      },
+      {
+         "table_name" : "ExtraInfo2",
+         "description" : "Extra hardware information for the A230/290/330/380/390."
+      },
+      {
+         "description" : "Extra hardware information for the A33, A35, A55, A450, A500, A550, A560, A580 and NEX-3/5/C3/VG10.",
+         "table_name" : "ExtraInfo3"
+      },
+      {
+         "description" : "FaceInfo tag definitions",
+         "table_name" : "FaceInfo"
+      },
+      {
+         "description" : "FaceInfo1 tag definitions",
+         "table_name" : "FaceInfo1"
+      },
+      {
+         "description" : "FaceInfo2 tag definitions",
+         "table_name" : "FaceInfo2"
+      },
+      {
+         "description" : "FaceInfoA tag definitions",
+         "table_name" : "FaceInfoA"
+      },
+      {
+         "table_name" : "FocusInfo",
+         "description" : "More camera settings and focus information decoded for models such as the A200, A230, A290, A300, A330, A350, A380, A390, A700, A850 and A900."
+      },
+      {
+         "table_name" : "HiddenInfo",
+         "description" : "HiddenInfo tag definitions"
+      },
+      {
+         "table_name" : "ISOInfo",
+         "description" : "ISOInfo tag definitions"
+      },
+      {
+         "table_name" : "Main",
+         "description" : "The following information has been decoded from the MakerNotes of Sony cameras."
+      },
+      {
+         "description" : "Information possibly related to metering.",
+         "table_name" : "MeterInfo"
+      },
+      {
+         "description" : "Information possibly related to metering.",
+         "table_name" : "MeterInfo9"
+      },
+      {
+         "description" : "More camera settings information decoded for the A450, A500, A550, A560, A580, A33, A35, A55, NEX-3/5/C3 and VG10E.",
+         "table_name" : "MoreInfo"
+      },
+      {
+         "table_name" : "MoreInfo0201",
+         "description" : "MoreInfo0201 tag definitions"
+      },
+      {
+         "description" : "MoreInfo0401 tag definitions",
+         "table_name" : "MoreInfo0401"
+      },
+      {
+         "description" : "MoreSettings tag definitions",
+         "table_name" : "MoreSettings"
+      },
+      {
+         "table_name" : "PIC",
+         "description" : "The TextInfo data is extracted as a block to preserve the formatting, and some of the more interesting information is extracted as separate tags."
+      },
+      {
+         "table_name" : "PMP",
+         "description" : "These tags are written in the proprietary-format header of PMP images from the DSC-F1."
+      },
+      {
+         "description" : "Tags found in panorama images from various Sony DSC, NEX, SLT and DSLR cameras.",
+         "table_name" : "Panorama"
+      },
+      {
+         "table_name" : "SR2DataIFD",
+         "description" : "SR2DataIFD tag definitions"
+      },
+      {
+         "table_name" : "SR2Private",
+         "description" : "The SR2 format uses the DNGPrivateData tag to reference a private IFD containing these tags."
+      },
+      {
+         "description" : "SR2SubIFD tag definitions",
+         "table_name" : "SR2SubIFD"
+      },
+      {
+         "table_name" : "SRF",
+         "description" : "The maker notes in SRF (Sony Raw Format) images contain 7 IFD's with family 1 group names SRF0 through SRF6."
+      },
+      {
+         "table_name" : "SRF2",
+         "description" : "These tags are found in the SRF2 through SRF5 IFD's."
+      },
+      {
+         "description" : "ShotInfo tag definitions",
+         "table_name" : "ShotInfo"
+      },
+      {
+         "description" : "Valid for NEX-5N.",
+         "table_name" : "Tag2010a"
+      },
+      {
+         "description" : "Valid for SLT-A65/A77, NEX-7/VG20E.",
+         "table_name" : "Tag2010b"
+      },
+      {
+         "table_name" : "Tag2010c",
+         "description" : "Valid for SLT-A37/A57 and NEX-F3."
+      },
+      {
+         "description" : "Valid for DSC-HX10V/HX20V/HX200V/TX66/TX200V/TX300V/WX50/WX100/WX150, but not valid for panorama images.",
+         "table_name" : "Tag2010d"
+      },
+      {
+         "description" : "Valid for SLT-A58/A99, ILCE-3000/3500, NEX-3N/5R/5T/6/VG30E/VG900, DSC-RX100, DSC-RX1/RX1R.",
+         "table_name" : "Tag2010e"
+      },
+      {
+         "description" : "Valid for DSC-RX100M2, DSC-QX10/QX100.",
+         "table_name" : "Tag2010f"
+      },
+      {
+         "table_name" : "Tag2010g",
+         "description" : "Valid for DSC-HX60V/HX350/HX400V/QX30/RX10/RX100M3/WX220/WX350, ILCE-7/7R/7S/7M2/5000/5100/6000/QX1, ILCA-68/77M2."
+      },
+      {
+         "description" : "Valid for DSC-HX80/HX90V/RX0/RX1RM2/RX10M2/RX10M3/RX100M4/RX100M5/WX500, ILCE-6300/6500/7RM2/7SM2, ILCA-99M2.",
+         "table_name" : "Tag2010h"
+      },
+      {
+         "table_name" : "Tag2010i",
+         "description" : "Valid for ILCE-6100/6400/6600/7C/7M3/7RM3/7RM4/9/9M2, DSC-RX0M2/RX10M4/RX100M6/ RX100M5A/RX100M7/HX99."
+      },
+      {
+         "description" : "Tag202a tag definitions",
+         "table_name" : "Tag202a"
+      },
+      {
+         "table_name" : "Tag900b",
+         "description" : "Tag900b tag definitions"
+      },
+      {
+         "table_name" : "Tag9050a",
+         "description" : "Data for tags 0x9050, 0x94xx and 0x2010 is encrypted by a simple substitution cipher, but the deciphered values are listed below."
+      },
+      {
+         "table_name" : "Tag9050b",
+         "description" : "Valid from July 2015 for ILCE-6100/6300/6400/6500/6600/7C/7M3/7RM2/7RM3/7RM4/ 7SM2/9/9M2, ILCA-99M2."
+      },
+      {
+         "table_name" : "Tag9050c",
+         "description" : "Valid from July 2020 for ILCE-1/7SM3, ILME-FX3."
+      },
+      {
+         "description" : "Valid for ILCE-6700/7CM2/7CR/ZV-E1.",
+         "table_name" : "Tag9050d"
+      },
+      {
+         "table_name" : "Tag9400a",
+         "description" : "Tag9400a tag definitions"
+      },
+      {
+         "description" : "Valid for NEX-3N, ILCE-3000/3500, SLT-A58, DSC-WX60, DSC-WX300, DSC-RX100M2, DSC-HX50V, DSC-QX10/QX100.",
+         "table_name" : "Tag9400b"
+      },
+      {
+         "table_name" : "Tag9400c",
+         "description" : "Valid for DSC-HX60V/HX80/HX90V/HX99/HX350/HX400V/QX30/RX0/RX1RM2/RX10/ RX10M2/RX10M3/RX10M4/RX100M3/RX100M4/RX100M5/RX100M5A/RX100M6/RX100M7/WX220/ WX350/WX500, ILCE-1/7/7C/7R/7S/7M2/7M3/7RM2/7RM3/7RM4/7SM2/7SM3/9/9M2/5000/ 5100/6000/6100/6300/6400/6500/6600/QX1, ILCA-68/77M2/99M2."
+      },
+      {
+         "description" : "Tag9401 tag definitions",
+         "table_name" : "Tag9401"
+      },
+      {
+         "description" : "Tag9402 tag definitions",
+         "table_name" : "Tag9402"
+      },
+      {
+         "table_name" : "Tag9403",
+         "description" : "Tag9403 tag definitions"
+      },
+      {
+         "table_name" : "Tag9404a",
+         "description" : "Tag9404a tag definitions"
+      },
+      {
+         "table_name" : "Tag9404b",
+         "description" : "Tag9404b tag definitions"
+      },
+      {
+         "description" : "Tag9404c tag definitions",
+         "table_name" : "Tag9404c"
+      },
+      {
+         "description" : "Valid for SLT, NEX, ILCE-3000/3500 and several DSC models.",
+         "table_name" : "Tag9405a"
+      },
+      {
+         "description" : "Valid for DSC-HX60V/HX80/HX90V/HX99/HX350/HX400V/QX30/RX0/RX10/RX10M2/ RX10M3/RX10M4/RX100M3/RX100M4/RX100M5/RX100M5A/RX100M6/RX100M7/WX220/WX350, ILCE-7/7M2/7M3/7R/7RM2/7RM3/7RM4/7S/7SM2/9/9M2/5000/5100/6000/6100/6300/ 6400/6500/6600/QX1, ILCA-68/77M2/99M2.",
+         "table_name" : "Tag9405b"
+      },
+      {
+         "description" : "Tag9406 tag definitions",
+         "table_name" : "Tag9406"
+      },
+      {
+         "description" : "Tag9406b tag definitions",
+         "table_name" : "Tag9406b"
+      },
+      {
+         "description" : "These tags are currently extracted for SLT models only.",
+         "table_name" : "Tag940a"
+      },
+      {
+         "description" : "E-mount cameras only.",
+         "table_name" : "Tag940c"
+      },
+      {
+         "table_name" : "Tag940e",
+         "description" : "E-mount models."
+      },
+      {
+         "description" : "Valid for the ILCE-1/6700/7CM2/7CR/7M4/7RM5/7SM3/9M3, ILME-FX3/FX30, ZV-E1/E10M2.",
+         "table_name" : "Tag9416"
+      },
+      {
+         "table_name" : "afPoint15",
+         "description" : "afPoint15 tag definitions"
+      },
+      {
+         "table_name" : "afPoint19",
+         "description" : "afPoint19 tag definitions"
+      },
+      {
+         "table_name" : "afPoints79",
+         "description" : "afPoints79 tag definitions"
+      },
+      {
+         "description" : "afPoints79_940e tag definitions",
+         "table_name" : "afPoints79_940e"
+      },
+      {
+         "table_name" : "afPoints99M2",
+         "description" : "afPoints99M2 tag definitions"
+      },
+      {
+         "description" : "binaryDataAttrs tag definitions",
+         "table_name" : "binaryDataAttrs"
+      },
+      {
+         "description" : "exposureComp2010 tag definitions",
+         "table_name" : "exposureComp2010"
+      },
+      {
+         "description" : "gain2010 tag definitions",
+         "table_name" : "gain2010"
+      },
+      {
+         "table_name" : "isoSetting2010",
+         "description" : "isoSetting2010 tag definitions"
+      },
+      {
+         "table_name" : "rtmd",
+         "description" : "These tags are extracted from the 'rtmd' timed metadata of MP4 videos from some models when the L<ExtractEmbedded|."
+      },
+      {
+         "table_name" : "sequenceFileNumber",
+         "description" : "sequenceFileNumber tag definitions"
+      },
+      {
+         "table_name" : "sequenceImageNumber",
+         "description" : "sequenceImageNumber tag definitions"
+      },
+      {
+         "table_name" : "sonyDateTime2010",
+         "description" : "sonyDateTime2010 tag definitions"
+      },
+      {
+         "table_name" : "sonyExposureProgram",
+         "description" : "sonyExposureProgram tag definitions"
+      },
+      {
+         "table_name" : "sonyExposureProgram2",
+         "description" : "sonyExposureProgram2 tag definitions"
+      },
+      {
+         "table_name" : "sonyExposureProgram3",
+         "description" : "sonyExposureProgram3 tag definitions"
+      },
+      {
+         "description" : "sonyLensTypes tag definitions",
+         "table_name" : "sonyLensTypes"
+      },
+      {
+         "table_name" : "sonyLensTypes2",
+         "description" : "sonyLensTypes2 tag definitions"
+      },
+      {
+         "description" : "unknownCipherData tag definitions",
+         "table_name" : "unknownCipherData"
+      },
+      {
+         "table_name" : "whiteBalanceSetting",
+         "description" : "whiteBalanceSetting tag definitions"
+      }
+   ],
+   "source" : "third-party/exiftool/lib/Image/ExifTool/Sony.pm"
 }

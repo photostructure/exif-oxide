@@ -1,11 +1,63 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "source": "third-party/exiftool/lib/Image/ExifTool/Exif.pm",
-  "description": "EXIF tag definitions with embedded PrintConv implementations",
-  "tables": [
-    {
-      "table_name": "Main",
-      "description": "Main EXIF tag table including standard TIFF/EXIF tags"
-    }
-  ]
+   "$schema" : "../../schemas/tag_kit.json",
+   "description" : "Exif format tag definitions",
+   "tables" : [
+      {
+         "table_name" : "Composite",
+         "description" : "Composite tag definitions"
+      },
+      {
+         "description" : "Main tag definitions",
+         "table_name" : "Main"
+      },
+      {
+         "description" : "Unknown tag definitions",
+         "table_name" : "Unknown"
+      },
+      {
+         "table_name" : "compression",
+         "description" : "compression tag definitions"
+      },
+      {
+         "table_name" : "flash",
+         "description" : "flash tag definitions"
+      },
+      {
+         "table_name" : "formatNumber",
+         "description" : "formatNumber tag definitions"
+      },
+      {
+         "table_name" : "intFormat",
+         "description" : "intFormat tag definitions"
+      },
+      {
+         "table_name" : "lightSource",
+         "description" : "lightSource tag definitions"
+      },
+      {
+         "table_name" : "opcodeInfo",
+         "description" : "opcodeInfo tag definitions"
+      },
+      {
+         "description" : "orientation tag definitions",
+         "table_name" : "orientation"
+      },
+      {
+         "description" : "photometricInterpretation tag definitions",
+         "table_name" : "photometricInterpretation"
+      },
+      {
+         "table_name" : "sampleFormat",
+         "description" : "sampleFormat tag definitions"
+      },
+      {
+         "table_name" : "saveForValidate",
+         "description" : "saveForValidate tag definitions"
+      },
+      {
+         "table_name" : "subfileType",
+         "description" : "subfileType tag definitions"
+      }
+   ],
+   "source" : "third-party/exiftool/lib/Image/ExifTool/Exif.pm"
 }

@@ -1,15 +1,27 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "source": "third-party/exiftool/lib/Image/ExifTool/DNG.pm",
-  "description": "Adobe DNG format tag definitions",
-  "tables": [
-    {
-      "table_name": "AdobeData",
-      "description": "Adobe DNG private data table with maker note subdirectories"
-    },
-    {
-      "table_name": "OriginalRaw",
-      "description": "Original raw file data tags"
-    }
-  ]
+   "source" : "third-party/exiftool/lib/Image/ExifTool/DNG.pm",
+   "$schema" : "../../schemas/tag_kit.json",
+   "tables" : [
+      {
+         "table_name" : "AdobeData",
+         "description" : "This information is found in the \"Adobe\" DNGPrivateData."
+      },
+      {
+         "table_name" : "ImageSeq",
+         "description" : "ImageSeq tag definitions"
+      },
+      {
+         "table_name" : "OriginalRaw",
+         "description" : "This table defines tags extracted from the DNG OriginalRawFileData information."
+      },
+      {
+         "description" : "ProfileDynamicRange tag definitions",
+         "table_name" : "ProfileDynamicRange"
+      },
+      {
+         "table_name" : "copy",
+         "description" : "copy tag definitions"
+      }
+   ],
+   "description" : "DNG format tag definitions"
 }

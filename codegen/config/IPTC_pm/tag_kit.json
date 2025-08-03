@@ -1,15 +1,43 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "source": "third-party/exiftool/lib/Image/ExifTool/IPTC.pm",
-  "description": "IPTC tag definitions with embedded PrintConv implementations",
-  "tables": [
-    {
-      "table_name": "ApplicationRecord",
-      "description": "IPTC ApplicationRecord (Record 2) containing core metadata like keywords, caption, location"
-    },
-    {
-      "table_name": "EnvelopeRecord",
-      "description": "IPTC EnvelopeRecord (Record 1) containing file envelope information like format and character sets"
-    }
-  ]
+   "tables" : [
+      {
+         "description" : "ApplicationRecord tag definitions",
+         "table_name" : "ApplicationRecord"
+      },
+      {
+         "description" : "Composite tag definitions",
+         "table_name" : "Composite"
+      },
+      {
+         "description" : "EnvelopeRecord tag definitions",
+         "table_name" : "EnvelopeRecord"
+      },
+      {
+         "table_name" : "FotoStation",
+         "description" : "FotoStation tag definitions"
+      },
+      {
+         "table_name" : "Main",
+         "description" : "Main tag definitions"
+      },
+      {
+         "table_name" : "NewsPhoto",
+         "description" : "NewsPhoto tag definitions"
+      },
+      {
+         "table_name" : "PreObjectData",
+         "description" : "PreObjectData tag definitions"
+      },
+      {
+         "description" : "fileFormat tag definitions",
+         "table_name" : "fileFormat"
+      },
+      {
+         "description" : "isStandardIPTC tag definitions",
+         "table_name" : "isStandardIPTC"
+      }
+   ],
+   "$schema" : "../../schemas/tag_kit.json",
+   "description" : "IPTC format tag definitions",
+   "source" : "third-party/exiftool/lib/Image/ExifTool/IPTC.pm"
 }
