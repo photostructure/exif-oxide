@@ -730,10 +730,59 @@ fn apply_canon_main_table_print_conv(exif_reader: &mut crate::exif::ExifReader) 
 
     // Find Canon tags that need PrintConv processing
     for (&(tag_id, ref namespace), tag_value) in &exif_reader.extracted_tags {
-        // Only process tags that have Canon source info (MakerNotes namespace)
+        // Only process tags that have Canon source info (Canon namespace)
         if let Some(source_info) = exif_reader.tag_sources.get(&(tag_id, namespace.clone())) {
-            if source_info.namespace == "MakerNotes" && namespace == "MakerNotes" {
+            if source_info.namespace == "Canon" && namespace == "Canon" {
                 match tag_id {
+                    0x1 => {
+                        // Canon Main table - extract FileNumber from position 8
+                        // ExifTool: Canon.pm Main table, position 8 = FileNumber
+                        if let TagValue::U16Array(main_table) = tag_value {
+                            debug!(
+                                "Processing Canon Main table with {} entries",
+                                main_table.len()
+                            );
+
+                            // FileNumber is at position 8 (0-indexed)
+                            if main_table.len() > 8 && main_table[8] != 0 {
+                                let raw_file_number = main_table[8] as u32;
+                                debug!(
+                                    "Canon Main table position 8 (FileNumber): {}",
+                                    raw_file_number
+                                );
+
+                                // Apply FileNumber PrintConv: $_=$val,s/(\d+)(\d{4})/$1-$2/,$_
+                                // Convert 1007632 -> "100-7632"
+                                let file_number_str = format!("{}", raw_file_number);
+                                let formatted_file_number = if file_number_str.len() >= 4 {
+                                    let (prefix, suffix) =
+                                        file_number_str.split_at(file_number_str.len() - 4);
+                                    format!("{}-{}", prefix, suffix)
+                                } else {
+                                    file_number_str
+                                };
+
+                                debug!(
+                                    "Canon FileNumber: {} -> {}",
+                                    raw_file_number, formatted_file_number
+                                );
+
+                                // Add FileNumber as a separate tag using Canon tag ID 0x8
+                                // ExifTool: Canon.pm Main table, tag 0x8 = FileNumber
+                                let file_number_tag_id = 0x8; // Canon tag ID for FileNumber
+                                tags_to_update.push((
+                                    (file_number_tag_id, "Canon".to_string()),
+                                    TagValue::String(formatted_file_number.clone()),
+                                ));
+
+                                // Also store in MakerNotes namespace for compatibility with ExifTool output
+                                tags_to_update.push((
+                                    (file_number_tag_id, "MakerNotes".to_string()),
+                                    TagValue::String(formatted_file_number),
+                                ));
+                            }
+                        }
+                    }
                     0x10 => {
                         // CanonModelID - apply generated lookup table
                         // ExifTool: Canon.pm CanonModelID PrintConv
