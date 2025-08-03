@@ -1,0 +1,144 @@
+//! Integration test for Canon ShotInfo conditional variants
+
+use exif_oxide::formats::FileFormat;
+use exif_oxide::generated::Canon_pm::shotinfo_binary_data::*;
+use exif_oxide::processor_registry::ProcessorContext;
+use std::collections::HashMap;
+
+#[test]
+fn test_canon_shotinfo_conditional_variants() {
+    // Create the Canon ShotInfo table
+    let table = CanonShotInfoTable::new();
+
+    // Check if ExposureTime (offset 22) has conditional variants
+    let offset = 22u16; // ExposureTime
+    assert!(
+        table.is_conditional(offset),
+        "ExposureTime should have conditional variants"
+    );
+
+    let conditional_tag = table
+        .get_conditional_tag(offset)
+        .expect("Should get conditional tag for ExposureTime");
+
+    assert_eq!(conditional_tag.variants.len(), 2, "Should have 2 variants");
+
+    // Test Canon 20D context - should match conditional variant
+    let canonical_20d_context = ProcessorContext {
+        file_format: FileFormat::Jpeg,
+        manufacturer: Some("Canon".to_string()),
+        model: Some("Canon EOS 20D".to_string()),
+        firmware: None,
+        format_version: None,
+        table_name: "Canon::ShotInfo".to_string(),
+        tag_id: None,
+        directory_path: Vec::new(),
+        data_offset: 0,
+        parent_tags: HashMap::new(),
+        parameters: HashMap::new(),
+        byte_order: None,
+        base_offset: 0,
+        data_size: None,
+    };
+
+    let variant_20d = conditional_tag
+        .get_active_variant(&canonical_20d_context)
+        .expect("Should get active variant for Canon 20D");
+
+    assert_eq!(variant_20d.name, "ExposureTime");
+    assert!(
+        variant_20d.condition.is_some(),
+        "20D should match conditional variant"
+    );
+
+    let value_conv_20d = variant_20d
+        .value_conv
+        .as_ref()
+        .expect("20D variant should have ValueConv");
+    assert!(
+        value_conv_20d.contains("*1000/32"),
+        "20D should use *1000/32 conversion, got: {}",
+        value_conv_20d
+    );
+
+    // Test Canon 350D context - should also match conditional variant
+    let canonical_350d_context = ProcessorContext {
+        file_format: FileFormat::Jpeg,
+        manufacturer: Some("Canon".to_string()),
+        model: Some("Canon EOS 350D DIGITAL".to_string()),
+        firmware: None,
+        format_version: None,
+        table_name: "Canon::ShotInfo".to_string(),
+        tag_id: None,
+        directory_path: Vec::new(),
+        data_offset: 0,
+        parent_tags: HashMap::new(),
+        parameters: HashMap::new(),
+        byte_order: None,
+        base_offset: 0,
+        data_size: None,
+    };
+
+    let variant_350d = conditional_tag
+        .get_active_variant(&canonical_350d_context)
+        .expect("Should get active variant for Canon 350D");
+
+    assert!(
+        variant_350d.condition.is_some(),
+        "350D should match conditional variant"
+    );
+
+    let value_conv_350d = variant_350d
+        .value_conv
+        .as_ref()
+        .expect("350D variant should have ValueConv");
+    assert!(
+        value_conv_350d.contains("*1000/32"),
+        "350D should use *1000/32 conversion, got: {}",
+        value_conv_350d
+    );
+
+    // Test Canon 5D context - should match default variant
+    let canonical_5d_context = ProcessorContext {
+        file_format: FileFormat::Jpeg,
+        manufacturer: Some("Canon".to_string()),
+        model: Some("Canon EOS 5D".to_string()),
+        firmware: None,
+        format_version: None,
+        table_name: "Canon::ShotInfo".to_string(),
+        tag_id: None,
+        directory_path: Vec::new(),
+        data_offset: 0,
+        parent_tags: HashMap::new(),
+        parameters: HashMap::new(),
+        byte_order: None,
+        base_offset: 0,
+        data_size: None,
+    };
+
+    let variant_5d = conditional_tag
+        .get_active_variant(&canonical_5d_context)
+        .expect("Should get active variant for Canon 5D");
+
+    assert!(
+        variant_5d.condition.is_none(),
+        "5D should match default variant"
+    );
+
+    let value_conv_5d = variant_5d
+        .value_conv
+        .as_ref()
+        .expect("5D variant should have ValueConv");
+    assert!(
+        !value_conv_5d.contains("*1000/32"),
+        "5D should NOT use *1000/32 conversion, got: {}",
+        value_conv_5d
+    );
+
+    // Verify both variants have same PrintConv
+    assert_eq!(variant_20d.print_conv_expr, variant_5d.print_conv_expr);
+    assert_eq!(
+        variant_20d.print_conv_expr,
+        Some("Image::ExifTool::Exif::PrintExposureTime($val)".to_string())
+    );
+}
