@@ -17,7 +17,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CODEGEN_DIR="$(dirname "$SCRIPT_DIR")"
 cd "$CODEGEN_DIR"
 
-EXIFTOOL_LIB="../third-party/exiftool/lib/Image/ExifTool"
+EXIFTOOL_LIB="$(cd ../third-party/exiftool/lib/Image/ExifTool && pwd)"
 PATCHER="./scripts/patch_exiftool_modules_universal.pl"
 CONFIG_FILE="../config/exiftool_modules.json"
 
@@ -50,7 +50,7 @@ readarray -t FORMAT_MODULES < <(jq -r '.modules.format[]' "$CONFIG_FILE")
 # Function to patch a module
 patch_module() {
   local module="$1"
-  local module_path="$EXIFTOOL_LIB/$module"
+  local module_path="${EXIFTOOL_LIB}${module}"
 
   if [ ! -f "$module_path" ]; then
     echo "⚠️  Skipping $module (not found)"
@@ -60,17 +60,20 @@ patch_module() {
   perl "$PATCHER" "$module_path"
 }
 
+# Patch ExifTool.pm:
+patch_module ".pm" &
+
 # Patch all modules
 for module in "${CORE_MODULES[@]}"; do
-  patch_module "$module" &
+  patch_module "/$module" &
 done
 
 for module in "${MANUFACTURER_MODULES[@]}"; do
-  patch_module "$module" &
+  patch_module "/$module" &
 done
 
 for module in "${FORMAT_MODULES[@]}"; do
-  patch_module "$module" &
+  patch_module "/$module" &
 done
 
 wait
