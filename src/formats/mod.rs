@@ -1737,12 +1737,19 @@ fn apply_exiftool_precedence_rules(tag_entries: Vec<TagEntry>) -> Vec<TagEntry> 
 
     // Group tags by name to find conflicts
     let mut tag_groups: HashMap<String, Vec<TagEntry>> = HashMap::new();
+    let mut exempt_tags: Vec<TagEntry> = Vec::new();
 
     for tag_entry in tag_entries {
-        tag_groups
-            .entry(tag_entry.name.clone())
-            .or_default()
-            .push(tag_entry);
+        // GPS coordinate tags should not be subject to precedence rules
+        // ExifTool shows both EXIF:GPSLatitude and Composite:GPSLatitude
+        if is_gps_coordinate_tag(&tag_entry.name) {
+            exempt_tags.push(tag_entry);
+        } else {
+            tag_groups
+                .entry(tag_entry.name.clone())
+                .or_default()
+                .push(tag_entry);
+        }
     }
 
     let mut resolved_tags = Vec::new();
@@ -1787,7 +1794,16 @@ fn apply_exiftool_precedence_rules(tag_entries: Vec<TagEntry>) -> Vec<TagEntry> 
         }
     }
 
+    // Add exempt tags (GPS coordinates) that bypass precedence rules
+    resolved_tags.extend(exempt_tags);
+
     resolved_tags
+}
+
+/// Check if a tag is a GPS coordinate tag that should bypass precedence rules
+/// ExifTool shows both EXIF and Composite versions of GPS coordinate tags
+fn is_gps_coordinate_tag(tag_name: &str) -> bool {
+    matches!(tag_name, "GPSLatitude" | "GPSLongitude" | "GPSAltitude")
 }
 
 /// Get ExifTool-style priority for a tag based on its group
