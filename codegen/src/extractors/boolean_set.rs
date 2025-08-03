@@ -22,9 +22,6 @@ impl Extractor for BooleanSetExtractor {
         "boolean_sets"
     }
     
-    fn requires_patching(&self) -> bool {
-        true // Boolean sets need patching to expose my-scoped variables
-    }
     
     fn handles_config(&self, config_type: &str) -> bool {
         config_type == "boolean_set"

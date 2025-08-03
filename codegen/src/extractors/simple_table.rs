@@ -19,9 +19,6 @@ impl Extractor for SimpleTableExtractor {
         "simple_tables"
     }
     
-    fn requires_patching(&self) -> bool {
-        true // Simple tables need patching to expose my-scoped variables
-    }
     
     fn handles_config(&self, config_type: &str) -> bool {
         config_type == "simple_table"

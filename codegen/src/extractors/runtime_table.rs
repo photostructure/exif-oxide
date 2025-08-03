@@ -19,9 +19,6 @@ impl Extractor for RuntimeTableExtractor {
         "runtime_tables"
     }
     
-    fn requires_patching(&self) -> bool {
-        false // Runtime tables don't need patching
-    }
     
     fn handles_config(&self, config_type: &str) -> bool {
         config_type == "runtime_table"
