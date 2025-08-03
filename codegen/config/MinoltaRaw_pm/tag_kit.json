@@ -1,5 +1,5 @@
 {
-  "extractor": "tag_kit.pl",
+  "$schema": "../../schemas/tag_kit.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/MinoltaRaw.pm",
   "description": "Minolta RAW tag definitions with embedded PrintConv implementations from MRW block definitions",
   "tables": [
@@ -8,7 +8,7 @@
       "description": "Minolta PRD block - storage method, bayer pattern (4 PrintConv entries)"
     },
     {
-      "table_name": "RIF", 
+      "table_name": "RIF",
       "description": "Minolta RIF block - program mode, ISO, zone matching (~20 PrintConv entries)"
     }
   ]

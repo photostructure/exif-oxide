@@ -5,6 +5,11 @@
   "output": {
     "enum_name": "OlympusEquipmentDataType",
     "include_metadata": true,
-    "generate_methods": ["tag_id", "from_tag_id", "name", "groups"]
+    "generate_methods": [
+      "tag_id",
+      "from_tag_id",
+      "name",
+      "groups"
+    ]
   }
 }

@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/file_type_lookup.json",
   "source": "third-party/exiftool/lib/Image/ExifTool.pm",
   "description": "ExifTool file type detection with discriminated unions and aliases",
   "tables": [

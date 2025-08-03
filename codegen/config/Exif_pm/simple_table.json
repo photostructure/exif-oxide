@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/simple_table.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/Exif.pm",
   "description": "EXIF module lookup tables for standard EXIF tag values",
   "tables": [

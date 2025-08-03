@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/runtime_table.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
   "description": "Canon ProcessBinaryData tables requiring runtime evaluation",
   "tables": [

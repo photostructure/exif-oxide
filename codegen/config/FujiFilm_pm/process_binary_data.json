@@ -4,6 +4,10 @@
   "table": "FFMV",
   "output": {
     "struct_name": "FujiFilmFFMVTable",
-    "generate_methods": ["get_tag_name", "get_format", "get_offsets"]
+    "generate_methods": [
+      "get_tag_name",
+      "get_format",
+      "get_offsets"
+    ]
   }
 }

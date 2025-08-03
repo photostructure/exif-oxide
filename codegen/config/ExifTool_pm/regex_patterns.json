@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/regex_patterns.json",
   "source": "third-party/exiftool/lib/Image/ExifTool.pm",
   "description": "Regex patterns for file type detection",
   "tables": [

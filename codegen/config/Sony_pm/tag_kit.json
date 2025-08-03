@@ -1,5 +1,5 @@
 {
-  "extractor": "tag_kit.pl",
+  "$schema": "../../schemas/tag_kit.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/Sony.pm",
   "description": "Sony tag definitions with embedded PrintConv implementations for Phase 2 subdirectory coverage expansion",
   "tables": [
@@ -12,7 +12,7 @@
       "description": "Sony camera information for A700/A850/A900 models (subdirectory reference)"
     },
     {
-      "table_name": "CameraInfo2", 
+      "table_name": "CameraInfo2",
       "description": "Sony camera information for A200/A300/A350/A230/A290/A330/A380/A390 models (subdirectory reference)"
     },
     {
@@ -28,7 +28,7 @@
       "description": "Sony camera settings for A200/A300/A350/A700/A850/A900 models (subdirectory reference)"
     },
     {
-      "table_name": "CameraSettings2", 
+      "table_name": "CameraSettings2",
       "description": "Sony camera settings for A230/A290/A330/A380/A390 series (subdirectory reference)"
     },
     {

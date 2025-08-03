@@ -1,11 +1,12 @@
 {
+  "$schema": "../../schemas/boolean_set.json",
   "source": "third-party/exiftool/lib/Image/ExifTool.pm",
   "description": "ExifTool core boolean sets for file type detection and processing",
   "tables": [
     {
       "hash_name": "%weakMagic",
       "constant_name": "WEAK_MAGIC_FILE_TYPES",
-      "key_type": "String", 
+      "key_type": "String",
       "description": "File types with weak magic number recognition (MP3)"
     },
     {
@@ -15,7 +16,7 @@
       "description": "File types that can be created from scratch (XMP, ICC, MIE, VRD, etc.)"
     },
     {
-      "hash_name": "%processType", 
+      "hash_name": "%processType",
       "constant_name": "PROCESS_DETERMINED_TYPES",
       "key_type": "String",
       "description": "File types determined by process proc during FastScan == 3"
@@ -23,7 +24,7 @@
     {
       "hash_name": "%isPC",
       "constant_name": "PC_OPERATING_SYSTEMS",
-      "key_type": "String", 
+      "key_type": "String",
       "description": "Operating systems that use PC-style file paths"
     }
   ]

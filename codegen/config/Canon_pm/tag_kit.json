@@ -1,5 +1,5 @@
 {
-  "extractor": "tag_kit.pl",
+  "$schema": "../../schemas/tag_kit.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
   "description": "Canon tag definitions with embedded PrintConv implementations",
   "tables": [
@@ -60,7 +60,7 @@
       "description": "Canon processing settings - tone curve, sharpness frequency"
     },
     {
-      "table_name": "ModifiedInfo", 
+      "table_name": "ModifiedInfo",
       "description": "Canon modified processing information - modified tone curve and sharpness"
     },
     {
@@ -84,7 +84,7 @@
       "description": "Canon color data for 20D and 350D"
     },
     {
-      "table_name": "ColorData2", 
+      "table_name": "ColorData2",
       "description": "Canon color data for 1DmkII and 1DSmkII"
     },
     {
@@ -140,7 +140,7 @@
       "description": "Canon color calibration data"
     },
     {
-      "table_name": "ColorCalib2", 
+      "table_name": "ColorCalib2",
       "description": "Canon color calibration data version 2"
     }
   ]

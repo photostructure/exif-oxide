@@ -9,7 +9,7 @@
       "description": "Canon focus mode settings",
       "inline_definition": {
         "0": "One-shot AF",
-        "1": "AI Servo AF", 
+        "1": "AI Servo AF",
         "2": "AI Focus AF",
         "3": "Manual Focus (3)",
         "4": "Single",
@@ -64,7 +64,7 @@
     },
     {
       "hash_name": "canonFlashMode",
-      "constant_name": "CANON_FLASH_MODE", 
+      "constant_name": "CANON_FLASH_MODE",
       "key_type": "i8",
       "description": "Canon flash mode settings",
       "inline_definition": {

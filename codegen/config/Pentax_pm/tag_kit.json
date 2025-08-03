@@ -1,5 +1,5 @@
 {
-  "extractor": "tag_kit.pl",
+  "$schema": "../../schemas/tag_kit.json",
   "source": "third-party/exiftool/lib/Image/ExifTool/Pentax.pm",
   "description": "Pentax tag definitions with embedded PrintConv implementations",
   "tables": [
@@ -16,7 +16,7 @@
       "description": "Pentax shake reduction information version 2"
     },
     {
-      "table_name": "FaceInfo", 
+      "table_name": "FaceInfo",
       "description": "Pentax face detection information"
     },
     {

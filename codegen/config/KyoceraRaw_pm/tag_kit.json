@@ -1,4 +1,5 @@
 {
+  "$schema": "../../schemas/tag_kit.json",
   "description": "Complete Kyocera RAW tag definitions with embedded PrintConvs",
   "source": "third-party/exiftool/lib/Image/ExifTool/KyoceraRaw.pm",
   "tables": [
