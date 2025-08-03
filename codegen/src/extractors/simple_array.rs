@@ -19,9 +19,6 @@ impl Extractor for SimpleArrayExtractor {
         "simple_arrays"
     }
     
-    fn requires_patching(&self) -> bool {
-        true // Simple arrays need patching to expose my-scoped variables
-    }
     
     fn handles_config(&self, config_type: &str) -> bool {
         config_type == "simple_array"

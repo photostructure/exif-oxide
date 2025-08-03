@@ -142,6 +142,84 @@ src/
     └── capability.rs            # Capability assessment
 ```
 
+## Config Philosophy
+
+**CRITICAL**: Configuration files specify **WHAT** to extract, not extracted data itself.
+
+### Simple Config Principle
+
+**✅ CORRECT** - Simple declarative config (10-20 lines):
+```json
+{
+  "extractor": "tag_kit.pl",
+  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
+  "description": "Canon camera tag definitions",
+  "tables": [
+    {
+      "table_name": "CameraSettings",
+      "description": "Canon camera settings with inline PrintConv"
+    }
+  ]
+}
+```
+
+**❌ WRONG** - Config containing extracted data (100+ lines):
+```json
+{
+  "tag_kits": [
+    {
+      "name": "CanonCameraSettings",
+      "tags": [
+        {"tag_id": "1", "name": "MacroMode", "format": "int16s"},
+        {"tag_id": "2", "name": "SelfTimer", "format": "int16s"},
+        // ... 500+ more lines of extracted data
+      ]
+    }
+  ]
+}
+```
+
+### Architecture Flow
+
+**Correct**: Config → Extractor → Generated Code
+1. **Simple config** specifies tables to extract
+2. **Extractor** runs during `make codegen` 
+3. **Generated code** contains the extracted data structures
+
+**Broken**: Config → Extractor → Config → Extractor (circular dependency)
+1. Script generates config containing extracted data
+2. Config becomes the data source instead of ExifTool
+3. Updates require regenerating configs instead of updating source
+
+### Validation Rules
+
+- **Config files should be <100 lines** - if larger, you're doing extraction in config instead of letting extractors do their job
+- **Configs should be human-readable and git-diffable** - engineers should understand what's being extracted
+- **Configs describe intent** ("extract Canon camera settings"), **not implementation** (actual tag structures)
+- **Source of truth remains ExifTool** - configs just point to what to extract
+
+### Tools & Workflow
+
+**Standard Workflow for New Modules**:
+1. **Universal Patching**: `./scripts/patch_all_modules.sh` (patches all modules at once)
+2. **Config Generation**: `perl scripts/auto_config_gen.pl ../third-party/exiftool/lib/Image/ExifTool/ModuleName.pm`
+3. **Code Generation**: `make codegen`
+
+**Individual Tools**:
+- `scripts/patch_all_modules.sh` - **Recommended**: Patches all ExifTool modules for symbol table access
+- `scripts/auto_config_gen.pl` - Symbol table introspection to generate simple configs (finds ALL tables)
+- `scripts/patch_exiftool_modules_universal.pl` - Individual module patching (used by auto_config_gen.pl)
+- Expression parser - Handles most conversion logic automatically
+- PrintConv/ValueConv registry - Handles exotic conversion cases only
+
+**Key Benefits of Universal Patching**:
+- **Complete Discovery**: Finds ALL tag tables (171 tables in Nikon vs ~10 manually)
+- **Zero Maintenance**: Once patched, always accessible for symbol table introspection
+- **Safe & Reversible**: Only converts top-level `my` to `our`, semantically equivalent
+- **Eliminates Manual Errors**: No more missing tables or transcription mistakes
+
+**Remember**: Universal patching + simple configs + powerful extractors = comprehensive, maintainable architecture.
+
 ## Daily Development Workflow
 
 ### 1. Adding New PrintConv/ValueConv Functions
@@ -972,7 +1050,7 @@ cd codegen && cargo run --release
 make check-schemas
 
 # Syntax checking
-make check-extractors
+make check-perl
 
 # Clean generated files
 make clean
@@ -1009,7 +1087,7 @@ make precommit          # Full validation including schema checks
 
 ```bash
 make clean              # Clean all generated files
-make check-extractors   # Check Perl script syntax
+make check-perl         # Check Perl script syntax
 ```
 
 ## Performance Characteristics

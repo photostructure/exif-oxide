@@ -19,11 +19,12 @@ use warnings;
 use FindBin qw($Bin);
 use File::Basename;
 use File::Path qw(make_path);
+use File::Spec;
 use JSON;
 use Getopt::Long;
 
 # Add ExifTool lib directory to @INC
-use lib "$Bin/../third-party/exiftool/lib";
+use lib "$Bin/../../third-party/exiftool/lib";
 
 my $output_dir;
 my $help = 0;
@@ -40,15 +41,33 @@ if ( $help || @ARGV != 1 ) {
 
 my $module_path = $ARGV[0];
 
-# Validate module path
+# Resolve module path - if just module name given, construct full path
 unless ( -f $module_path ) {
-    die "Error: Module file not found: $module_path\n";
+    my $constructed_path;
+
+    # Special case for main ExifTool module
+    if ( $module_path eq 'ExifTool' ) {
+        $constructed_path =
+          "$Bin/../../third-party/exiftool/lib/Image/ExifTool.pm";
+    }
+    else {
+# Regular module (e.g., "DNG" -> "third-party/exiftool/lib/Image/ExifTool/DNG.pm")
+        $constructed_path =
+          "$Bin/../../third-party/exiftool/lib/Image/ExifTool/$module_path.pm";
+    }
+
+    if ( -f $constructed_path ) {
+        $module_path = $constructed_path;
+    }
+    else {
+        die "Error: Module file not found: $module_path\n";
+    }
 }
 
 # Extract module info
 my ( $module_name, $module_dir, $module_ext ) =
   fileparse( $module_path, qr/\.[^.]*/ );
-my $config_dir = $output_dir || "../config/${module_name}_pm";
+my $config_dir = $output_dir || "$Bin/../config/${module_name}_pm";
 
 print "Analyzing $module_path...\n";
 
@@ -61,11 +80,12 @@ if ( !@$tables ) {
 
 print "Found " . scalar(@$tables) . " tag tables:\n";
 foreach my $table (@$tables) {
-    print "  - $table->{table_name} ($table->{entry_count} entries)\n";
+    print "  - $table->{table_name}\n";
 }
 
 # Generate simple config
 my $config = {
+    '$schema'   => "../../schemas/tag_kit.json",
     extractor   => "tag_kit.pl",
     source      => "third-party/exiftool/lib/Image/ExifTool/${module_name}.pm",
     description => "${module_name} format tag definitions",
@@ -113,17 +133,17 @@ sub discover_tag_tables {
 
         # Check if it looks like a tag table
         if ( is_tag_table($hash_ref) ) {
-            my $entry_count = count_tag_entries($hash_ref);
-
             push @tables,
               {
                 table_name  => $symbol_name,
                 description =>
-                  generate_table_description( $symbol_name, $hash_ref ),
-                entry_count => $entry_count
+                  generate_table_description( $symbol_name, $hash_ref )
               };
         }
     }
+
+    # Sort tables alphabetically by table_name for deterministic output
+    @tables = sort { $a->{table_name} cmp $b->{table_name} } @tables;
 
     return \@tables;
 }
@@ -165,19 +185,19 @@ sub count_tag_entries {
 sub generate_table_description {
     my ( $table_name, $hash ) = @_;
 
-    # Use NOTES if available
-    if ( exists $hash->{NOTES} ) {
-        my $notes = $hash->{NOTES};
+    # Try NOTES (first sentence) then TABLE_DESC
+    for my $source ( ( $hash->{NOTES} // '' ) =~ /^([^.]+\.)/ ? $1 : (),
+        $hash->{TABLE_DESC} // '' )
+    {
+        next unless $source;    # Skip empty sources
 
-        # Extract first sentence
-        if ( $notes =~ /^([^.]+\.)/ ) {
-            return $1;
-        }
-    }
+# Normalize whitespace: trim leading/trailing, collapse all whitespace including newlines
+        my $normalized = $source;
+        $normalized =~ s/^\s+|\s+$//g;    # trim leading/trailing whitespace
+        $normalized =~ s/\s+/ /g
+          ;    # collapse all whitespace (including newlines) to single spaces
 
-    # Use TABLE_DESC if available
-    if ( exists $hash->{TABLE_DESC} ) {
-        return $hash->{TABLE_DESC};
+        return $normalized if $normalized;
     }
 
     return "$table_name tag definitions";
@@ -194,7 +214,7 @@ sub patch_module_if_needed {
     print "  Patching $module_path to make variables accessible...\n";
 
     # Run the universal patcher
-    my $patcher = "$Bin/scripts/patch_exiftool_modules_universal.pl";
+    my $patcher = "$Bin/patch_exiftool_modules_universal.pl";
     system( "perl", $patcher, $module_path ) == 0
       or die "Failed to patch $module_path\n";
 }

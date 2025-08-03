@@ -68,11 +68,6 @@ sub convert_all_my_to_package_variables {
     # Perform the conversions
     if ( $content =~ s/^(\s*)my(\s+[%@]\w+\s*=)/$1our$2/gm ) {
         $modified = 1;
-
-        # Report what was converted
-        foreach my $var (@conversions) {
-            print STDERR "  Converted 'my $var' to 'our $var'\n";
-        }
     }
 
     if ($modified) {
@@ -96,28 +91,14 @@ sub convert_all_my_to_package_variables {
 
 # Main logic
 sub main {
-    print "Checking $module_path...\n";
 
     # Check if already converted
     if ( has_been_converted($module_path) ) {
-        print "  Already converted, skipping\n";
         return;
     }
 
-    print
-      "  Converting ALL 'my' hash/array variables to package variables...\n";
-
     # Convert the variables
     my $modified = convert_all_my_to_package_variables($module_path);
-
-    if ($modified) {
-        print "  Successfully converted $module_path\n";
-    }
-    else {
-        print "  No variables to convert in $module_path\n";
-    }
-
-    print "Universal patching complete!\n";
 }
 
 main();

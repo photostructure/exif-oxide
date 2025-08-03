@@ -13,9 +13,13 @@
 
 set -e
 
-EXIFTOOL_LIB="../../third-party/exiftool/lib/Image/ExifTool"
-PATCHER="./patch_exiftool_modules_universal.pl"
-CONFIG_FILE="../../config/exiftool_modules.json"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CODEGEN_DIR="$(dirname "$SCRIPT_DIR")"
+cd "$CODEGEN_DIR"
+
+EXIFTOOL_LIB="../third-party/exiftool/lib/Image/ExifTool"
+PATCHER="./scripts/patch_exiftool_modules_universal.pl"
+CONFIG_FILE="../config/exiftool_modules.json"
 
 if [ ! -f "$PATCHER" ]; then
   echo "Error: $PATCHER not found"
@@ -38,9 +42,6 @@ if ! command -v jq >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "🔧 Starting universal patching of ExifTool modules..."
-echo
-
 # Load module lists from shared configuration
 readarray -t CORE_MODULES < <(jq -r '.modules.core[]' "$CONFIG_FILE")
 readarray -t MANUFACTURER_MODULES < <(jq -r '.modules.manufacturer[]' "$CONFIG_FILE")
@@ -56,31 +57,20 @@ patch_module() {
     return
   fi
 
-  echo "🔄 Patching $module..."
   perl "$PATCHER" "$module_path"
-  echo
 }
 
 # Patch all modules
-echo "📦 Patching core modules..."
 for module in "${CORE_MODULES[@]}"; do
-  patch_module "$module"
+  patch_module "$module" &
 done
 
-echo "📸 Patching manufacturer modules..."
 for module in "${MANUFACTURER_MODULES[@]}"; do
-  patch_module "$module"
+  patch_module "$module" &
 done
 
-echo "📁 Patching format modules..."
 for module in "${FORMAT_MODULES[@]}"; do
-  patch_module "$module"
+  patch_module "$module" &
 done
 
-echo "✅ Universal patching complete!"
-echo
-echo "Next steps:"
-echo "  1. Run 'perl ./auto_config_gen.pl ../../third-party/exiftool/lib/Image/ExifTool/ModuleName.pm' to generate configs"
-echo "  2. Use 'make codegen' to generate code from configs"
-echo "  3. Test with representative files"
-echo
+wait

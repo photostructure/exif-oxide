@@ -21,9 +21,6 @@ impl Extractor for TagKitExtractor {
         "tag_kits"
     }
     
-    fn requires_patching(&self) -> bool {
-        false // Tag kit doesn't need patching
-    }
     
     fn handles_config(&self, config_type: &str) -> bool {
         config_type == "tag_kit"

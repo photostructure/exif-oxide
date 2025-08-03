@@ -23,10 +23,6 @@ pub trait Extractor: Send + Sync {
     /// Output subdirectory under generated/extract/
     fn output_subdir(&self) -> &'static str;
     
-    /// Whether this extractor requires patching ExifTool modules
-    fn requires_patching(&self) -> bool {
-        false
-    }
     
     /// Check if this extractor handles the given config type
     fn handles_config(&self, config_type: &str) -> bool;
