@@ -45,9 +45,15 @@ pub fn build_available_tags_map(
                         .get(&(tag_id as u32))
                         .map(|tag_def| tag_def.name.to_string())
                 })
-                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                .unwrap_or_else(|| {
+                    // Use TAG_PREFIX mechanism for unknown tags
+                    let source_info = tag_sources.get(&tag_id);
+                    crate::exif::ExifReader::generate_tag_prefix_name(tag_id, source_info)
+                })
         } else {
-            format!("Tag_{tag_id:04X}")
+            // Use TAG_PREFIX mechanism for non-EXIF tags
+            let source_info = tag_sources.get(&tag_id);
+            crate::exif::ExifReader::generate_tag_prefix_name(tag_id, source_info)
         };
 
         // Add with group prefix (e.g., "GPS:GPSLatitude")
