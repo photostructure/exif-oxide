@@ -202,7 +202,7 @@ impl ExifReader {
     /// Generate TAG_PREFIX name for unknown tags based on source namespace
     /// Implements ExifTool's TAG_PREFIX mechanism (ExifTool.pm:4468-4479)
     /// Unknown tags get manufacturer prefix: Sony_0x2000, Canon_0x1234, etc.
-    fn generate_tag_prefix_name(tag_id: u16, source_info: Option<&TagSourceInfo>) -> String {
+    pub fn generate_tag_prefix_name(tag_id: u16, source_info: Option<&TagSourceInfo>) -> String {
         tracing::debug!(
             "generate_tag_prefix_name: tag_id=0x{:04x}, source_info={:?}",
             tag_id,
@@ -225,7 +225,10 @@ impl ExifReader {
             );
             result
         } else {
-            tracing::debug!("generate_tag_prefix_name: no source info, using Tag_{:04X}", tag_id);
+            tracing::debug!(
+                "generate_tag_prefix_name: no source info, using Tag_{:04X}",
+                tag_id
+            );
             format!("Tag_{tag_id:04X}")
         }
     }
@@ -313,29 +316,23 @@ impl ExifReader {
                     }
                 } else {
                     // Fall back to manufacturer-specific names for other synthetic IDs
-                    // Implements ExifTool's TAG_PREFIX mechanism (ExifTool.pm:4468-4479)
+                    // Use the TAG_PREFIX mechanism (ExifTool.pm:4468-4479)
                     // Unknown tags get manufacturer prefix: Sony_0x2000, Canon_0x1234, etc.
                     let tag_name = if let Some(_source_info) = source_info {
+                        // Try manufacturer-specific lookup first, then TAG_PREFIX fallback
                         match namespace.as_str() {
-                            "Canon" => canon::get_canon_tag_name(tag_id)
-                                .unwrap_or_else(|| format!("Canon_0x{tag_id:04X}")),
-                            "Sony" => sony::get_sony_tag_name(tag_id)
-                                .unwrap_or_else(|| format!("Sony_0x{tag_id:04X}")),
-                            "Nikon" => {
-                                // Add Nikon TAG_PREFIX support when needed
-                                format!("Nikon_0x{tag_id:04X}")
-                            }
-                            "Olympus" => {
-                                // Add Olympus TAG_PREFIX support when needed
-                                format!("Olympus_0x{tag_id:04X}")
-                            }
-                            // Add other manufacturers as needed
-                            _ => format!("Tag_{tag_id:04X}"),
+                            "Canon" => canon::get_canon_tag_name(tag_id).unwrap_or_else(|| {
+                                Self::generate_tag_prefix_name(tag_id, source_info)
+                            }),
+                            "Sony" => sony::get_sony_tag_name(tag_id).unwrap_or_else(|| {
+                                Self::generate_tag_prefix_name(tag_id, source_info)
+                            }),
+                            _ => Self::generate_tag_prefix_name(tag_id, source_info),
                         }
                     } else {
-                        // No source info, try Canon as fallback (historical behavior)
+                        // No source info, try Canon as fallback (historical behavior), then generic TAG_PREFIX
                         canon::get_canon_tag_name(tag_id)
-                            .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                            .unwrap_or_else(|| Self::generate_tag_prefix_name(tag_id, None))
                     };
 
                     (namespace.clone(), tag_name)
@@ -363,7 +360,9 @@ impl ExifReader {
                                         .get(&(tag_id as u32))
                                         .map(|tag_def| tag_def.name.to_string())
                                 })
-                                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                                .unwrap_or_else(|| {
+                                    Self::generate_tag_prefix_name(tag_id, source_info)
+                                })
                         }
                     } else {
                         // Regular EXIF tags for other formats - use source-aware tag table lookup
@@ -463,21 +462,25 @@ impl ExifReader {
                     {
                         (namespace.as_str(), conditional_name, None)
                     } else {
-                        // Fall back to manufacturer-specific tag names
+                        // Fall back to manufacturer-specific tag names using TAG_PREFIX mechanism
                         let tag_name = if let Some(_source_info) = source_info {
                             match namespace.as_str() {
-                                "Canon" => canon::get_canon_tag_name(tag_id)
-                                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}")),
-                                "Sony" => sony::get_sony_tag_name(tag_id)
-                                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}")),
+                                "Canon" => canon::get_canon_tag_name(tag_id).unwrap_or_else(|| {
+                                    Self::generate_tag_prefix_name(tag_id, source_info)
+                                }),
+                                "Sony" => sony::get_sony_tag_name(tag_id).unwrap_or_else(|| {
+                                    Self::generate_tag_prefix_name(tag_id, source_info)
+                                }),
                                 "MakerNotes" => olympus::get_olympus_tag_name(tag_id)
-                                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}")),
-                                _ => format!("Tag_{tag_id:04X}"),
+                                    .unwrap_or_else(|| {
+                                        Self::generate_tag_prefix_name(tag_id, source_info)
+                                    }),
+                                _ => Self::generate_tag_prefix_name(tag_id, source_info),
                             }
                         } else {
-                            // No source info, try Canon as fallback (historical behavior)
+                            // No source info, try Canon as fallback, then use TAG_PREFIX
                             canon::get_canon_tag_name(tag_id)
-                                .unwrap_or_else(|| format!("Tag_{tag_id:04X}"))
+                                .unwrap_or_else(|| Self::generate_tag_prefix_name(tag_id, None))
                         };
 
                         (namespace.as_str(), tag_name, None)
@@ -546,7 +549,9 @@ impl ExifReader {
                                                 .get(&(tag_id as u32))
                                                 .map(|def| def.name.to_string())
                                         })
-                                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                        .unwrap_or_else(|| {
+                                            Self::generate_tag_prefix_name(tag_id, source_info)
+                                        });
                                     (name, None)
                                 }
 
@@ -560,7 +565,9 @@ impl ExifReader {
                                                 .get(&(tag_id as u32))
                                                 .map(|def| def.name.to_string())
                                         })
-                                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                        .unwrap_or_else(|| {
+                                            Self::generate_tag_prefix_name(tag_id, source_info)
+                                        });
                                     (name, None)
                                 }
                             };
@@ -576,7 +583,9 @@ impl ExifReader {
                                 // Use Kyocera-specific tag name lookup
                                 let kyocera_tag_name = crate::raw::get_kyocera_tag_name(tag_id)
                                     .map(|name| name.to_string())
-                                    .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                    .unwrap_or_else(|| {
+                                        Self::generate_tag_prefix_name(tag_id, Some(source_info))
+                                    });
                                 (kyocera_tag_name, None)
                             } else if source_info.ifd_name == "IFD0"
                                 && self.original_file_type.as_deref() == Some("RW2")
@@ -586,7 +595,12 @@ impl ExifReader {
                                 let panasonic_tag_name =
                                     crate::raw::formats::panasonic::get_panasonic_tag_name(tag_id)
                                         .map(|name| name.to_string())
-                                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                        .unwrap_or_else(|| {
+                                            Self::generate_tag_prefix_name(
+                                                tag_id,
+                                                Some(source_info),
+                                            )
+                                        });
                                 (panasonic_tag_name, None)
                             } else {
                                 // Check for manufacturer-specific maker note tags
@@ -595,20 +609,34 @@ impl ExifReader {
                                 {
                                     // Use Canon-specific tag name lookup for Canon maker note tags
                                     let canon_tag_name = canon::get_canon_tag_name(tag_id)
-                                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                        .unwrap_or_else(|| {
+                                            Self::generate_tag_prefix_name(
+                                                tag_id,
+                                                Some(source_info),
+                                            )
+                                        });
                                     (canon_tag_name, None)
                                 } else if source_info.ifd_name.starts_with("Sony") {
                                     // Use Sony-specific tag name lookup for Sony maker note tags
                                     let sony_tag_name = sony::get_sony_tag_name(tag_id)
-                                        .unwrap_or_else(|| format!("Tag_{tag_id:04X}"));
+                                        .unwrap_or_else(|| {
+                                            Self::generate_tag_prefix_name(
+                                                tag_id,
+                                                Some(source_info),
+                                            )
+                                        });
                                     (sony_tag_name, None)
                                 } else {
-                                    // Other maker note tags
-                                    (format!("Tag_{tag_id:04X}"), None)
+                                    // Other maker note tags - use TAG_PREFIX mechanism
+                                    (
+                                        Self::generate_tag_prefix_name(tag_id, Some(source_info)),
+                                        None,
+                                    )
                                 }
                             }
                         } else {
-                            (format!("Tag_{tag_id:04X}"), None)
+                            // No source info - use TAG_PREFIX mechanism
+                            (Self::generate_tag_prefix_name(tag_id, None), None)
                         }
                     }
                 };
