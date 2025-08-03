@@ -4,6 +4,10 @@
   "description": "Configuration for basic array extraction from ExifTool modules",
   "type": "object",
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
     "source": {
       "type": "string",
       "description": "Path to ExifTool source file (relative to repository root, e.g., 'third-party/exiftool/lib/Image/ExifTool/Nikon.pm')",
@@ -19,6 +23,10 @@
       "items": {
         "type": "object",
         "properties": {
+          "$schema": {
+            "type": "string",
+            "description": "JSON Schema reference"
+          },
           "array_name": {
             "type": "string",
             "description": "ExifTool array expression (e.g., '@xlat[0]', '@afPoints231', '$obj->{prop}')"
@@ -30,7 +38,17 @@
           },
           "element_type": {
             "type": "string",
-            "enum": ["u8", "u16", "u32", "i8", "i16", "i32", "f32", "f64", "&'static str"],
+            "enum": [
+              "u8",
+              "u16",
+              "u32",
+              "i8",
+              "i16",
+              "i32",
+              "f32",
+              "f64",
+              "&'static str"
+            ],
             "description": "Rust type for array elements"
           },
           "size": {
@@ -44,12 +62,19 @@
             "description": "Documentation for this specific array"
           }
         },
-        "required": ["array_name", "constant_name", "element_type"],
+        "required": [
+          "array_name",
+          "constant_name",
+          "element_type"
+        ],
         "additionalProperties": false
       },
       "minItems": 1
     }
   },
-  "required": ["source", "arrays"],
+  "required": [
+    "source",
+    "arrays"
+  ],
   "additionalProperties": false
 }

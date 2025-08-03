@@ -4,6 +4,10 @@
   "description": "Configuration for set membership tables (HashSet generation)",
   "type": "object",
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
     "source": {
       "type": "string",
       "description": "Path to ExifTool source file relative to repo root",
@@ -31,7 +35,10 @@
           },
           "key_type": {
             "type": "string",
-            "enum": ["String", "&'static str"],
+            "enum": [
+              "String",
+              "&'static str"
+            ],
             "default": "String",
             "description": "Rust type for set elements"
           },
@@ -40,11 +47,16 @@
             "description": "Documentation for this set"
           }
         },
-        "required": ["hash_name", "constant_name"],
+        "required": [
+          "hash_name",
+          "constant_name"
+        ],
         "additionalProperties": false
       }
     }
   },
-  "required": ["tables"],
+  "required": [
+    "tables"
+  ],
   "additionalProperties": false
 }
