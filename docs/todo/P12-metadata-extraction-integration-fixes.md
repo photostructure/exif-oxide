@@ -132,7 +132,7 @@ let table = CanonProcessingTable::new();
 ### 4. Task: Generate Missing Module Configurations
 
 **Success Criteria**: Exif, DNG, JPEG modules have working tag kit configurations, subdirectory coverage increases from 13% to 25%+
-**Approach**: Use proven `auto_config_gen.pl` to generate configurations for high-impact zero-coverage modules
+**Approach**: Use fixed `scripts/auto_config_gen.pl` (symbol table introspection) to generate simple configurations for high-impact zero-coverage modules
 **Dependencies**: Tasks 1-3 (compilation and Canon pattern working to validate new configs)
 
 **Success Patterns**:

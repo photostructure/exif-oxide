@@ -380,3 +380,50 @@ Stuck? Try these:
 4. `cargo run --bin exif-oxide test-images/dng/sample.dng` - Should extract metadata after DNG config generation
 5. `rg "create_tag_source_info" src/ -A 10 -B 5` - Find namespace assignment logic for Sony fix
 6. `./codegen/extractors/auto_config_gen.pl third-party/exiftool/lib/Image/ExifTool/DNG.pm` - Generate DNG configuration
+
+
+## Current test failures that need to be researched and addressed
+
+     Running tests/exif_ifd_validation_tests.rs (target/debug/deps/exif_ifd_validation_tests-1576505fae031c93)
+
+running 7 tests
+test test_flashpix_version_validation ... ok
+test test_exif_ifd_processing_warnings ... ok
+test test_exif_ifd_datetime_validation ... ok
+test test_exif_version_requirement ... ok
+test test_mandatory_exif_ifd_tags ... FAILED
+test test_color_space_validation ... FAILED
+test test_exif_image_dimensions_validation ... ok
+
+failures:
+
+---- test_mandatory_exif_ifd_tags stdout ----
+✅ ExifVersion found: String("0230")
+✅ FlashpixVersion found: String("0100")
+✅ ColorSpace found: U16(1)
+
+thread 'test_mandatory_exif_ifd_tags' panicked at tests/exif_ifd_validation_tests.rs:527:13:
+assertion `left == right` failed: ColorSpace should have group='EXIF'
+  left: "MakerNotes"
+ right: "EXIF"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- test_color_space_validation stdout ----
+ColorSpace found: U16(1) (group: MakerNotes, group1: Canon)
+✅ Valid ColorSpace: 1 (sRGB)
+
+thread 'test_color_space_validation' panicked at tests/exif_ifd_validation_tests.rs:222:9:
+assertion `left == right` failed: ColorSpace should have group1='ExifIFD'
+  left: "Canon"
+ right: "ExifIFD"
+
+
+failures:
+    test_color_space_validation
+    test_mandatory_exif_ifd_tags
+
+test result: FAILED. 5 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `--test exif_ifd_validation_tests`
+make: *** [Makefile:42: test] Error 101
+

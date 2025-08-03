@@ -106,7 +106,7 @@ Honest. RTFM.
 ### 2. Task: Create DNG Module Tag Kit Configuration
 
 **Success Criteria**: DNG format metadata extraction working with subdirectory processing
-**Approach**: Create `codegen/config/DNG_pm/tag_kit.json` from scratch using `auto_config_gen.pl` on `DNG.pm`
+**Approach**: Create `codegen/config/DNG_pm/tag_kit.json` using `scripts/auto_config_gen.pl` (fixed version using symbol table introspection)
 **Dependencies**: Exif module complete (DNG extends EXIF)
 **Current Status**: No DNG module exists - needs creation from zero, not generation from existing
 
@@ -118,7 +118,7 @@ Honest. RTFM.
 ### 3. Task: Create JPEG Module Tag Kit Configuration  
 
 **Success Criteria**: JPEG metadata segments processed through subdirectory system
-**Approach**: Create `codegen/config/JPEG_pm/tag_kit.json` from scratch using `auto_config_gen.pl` on `JPEG.pm`
+**Approach**: Create `codegen/config/JPEG_pm/tag_kit.json` using `scripts/auto_config_gen.pl` (fixed version using symbol table introspection)
 **Dependencies**: None - mostly independent processing
 **Current Status**: No JPEG module exists - needs creation from zero, not generation from existing
 
@@ -165,7 +165,7 @@ Honest. RTFM.
 - **Research first**: Use exiftool-researcher agent to understand module structure before implementation
 
 **Tools to Leverage**:
-- `codegen/extractors/auto_config_gen.pl` - Automated configuration generation
+- `codegen/scripts/auto_config_gen.pl` - Simple config generation using symbol table introspection
 - `make subdirectory-coverage` - Progress tracking and validation
 - `cargo run --bin compare-with-exiftool` - ExifTool compatibility validation
 - `codegen/extractors/subdirectory_discovery.pl` - Gap analysis
