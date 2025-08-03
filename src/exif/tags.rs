@@ -134,10 +134,12 @@ impl ExifReader {
         raw_value: &TagValue,
         tag_id: u16,
         ifd_name: &str,
+        source_info: Option<&TagSourceInfo>,
     ) -> (TagValue, TagValue) {
         use crate::expressions::ExpressionEvaluator;
         use crate::generated::Exif_pm::tag_kit;
         use crate::generated::GPS_pm::tag_kit as gps_tag_kit;
+        use crate::generated::Sony_pm::tag_kit as sony_tag_kit;
 
         let mut value = raw_value.clone();
 
@@ -250,6 +252,77 @@ impl ExifReader {
                 (value, print)
             } else {
                 // No tag definition found, return raw value for both
+                (value.clone(), value)
+            }
+        } else if ifd_name == "Sony"
+            || (source_info.is_some() && source_info.unwrap().namespace == "Sony")
+        {
+            // Debug logging for Sony context detection
+            debug!(
+                "Sony context check - ifd_name: '{}', source_info: {:?}",
+                ifd_name,
+                source_info.map(|si| format!(
+                    "namespace: '{}', ifd_name: '{}'",
+                    si.namespace, si.ifd_name
+                ))
+            );
+            // For Sony IFD, check Sony tag kit
+            if let Some(tag_def) = sony_tag_kit::SONY_PM_TAG_KITS.get(&(tag_id as u32)) {
+                debug!(
+                    "Found Sony tag definition for tag 0x{:04x}: {}",
+                    tag_id, tag_def.name
+                );
+                // Apply ValueConv first (if present) using generated function
+                if tag_def.value_conv.is_some() {
+                    let mut value_conv_errors = Vec::new();
+                    match sony_tag_kit::apply_value_conv(
+                        tag_id as u32,
+                        &value,
+                        &mut value_conv_errors,
+                    ) {
+                        Ok(converted) => {
+                            debug!(
+                                "Applied ValueConv to Sony tag 0x{:04x}: {:?} -> {:?}",
+                                tag_id, value, converted
+                            );
+                            value = converted;
+                        }
+                        Err(e) => {
+                            debug!(
+                                "Failed to apply ValueConv to Sony tag 0x{:04x}: {}",
+                                tag_id, e
+                            );
+                        }
+                    }
+                }
+
+                // Apply PrintConv second (if present) to get display value
+                let mut evaluator = ExpressionEvaluator::new();
+                let mut errors = Vec::new();
+                let mut warnings = Vec::new();
+
+                let print = sony_tag_kit::apply_print_conv(
+                    tag_id as u32,
+                    &value,
+                    &mut evaluator,
+                    &mut errors,
+                    &mut warnings,
+                );
+
+                // Log any warnings (but suppress if we successfully applied fallback)
+                if print == value {
+                    for warning in warnings {
+                        debug!(
+                            "PrintConv warning for Sony tag 0x{:04x}: {}",
+                            tag_id, warning
+                        );
+                    }
+                }
+
+                (value, print)
+            } else {
+                // No Sony tag definition found, return raw value for both
+                debug!("Sony tag 0x{:04x} not found in SONY_PM_TAG_KITS", tag_id);
                 (value.clone(), value)
             }
         } else {
