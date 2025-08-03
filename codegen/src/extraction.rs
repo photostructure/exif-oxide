@@ -11,7 +11,6 @@ use std::sync::Mutex;
 use std::time::Instant;
 use tracing::{debug, info, warn};
 
-use crate::patching;
 use crate::extractors::find_extractor;
 use crate::config::load_extracted_tables_with_config;
 use crate::generators::lookup_tables;
@@ -379,16 +378,6 @@ fn process_module_config(config: &ModuleConfig, extract_base: &Path) -> Result<(
     let path_resolution_time = start.elapsed().as_secs_f64();
     debug!("        📁 Path resolution in {:.3}s", path_resolution_time);
     
-    // Only patch if the extractor requires it
-    let patching_time = if extractor.requires_patching() {
-        let start = Instant::now();
-        patching::patch_module(&module_path, &config.hash_names)?;
-        let elapsed = start.elapsed().as_secs_f64();
-        debug!("        🩹 Patching completed in {:.3}s", elapsed);
-        elapsed
-    } else {
-        0.0
-    };
     
     // Execute the extraction
     let start = Instant::now();
@@ -397,8 +386,8 @@ fn process_module_config(config: &ModuleConfig, extract_base: &Path) -> Result<(
     debug!("        🚀 Extraction completed in {:.3}s", extraction_time);
     
     let total_config_time = config_start.elapsed().as_secs_f64();
-    info!("      📋 {} timing breakdown: lookup={:.3}s, path={:.3}s, patch={:.3}s, extract={:.3}s, total={:.3}s",
-          config.module_name, extractor_lookup_time, path_resolution_time, patching_time, extraction_time, total_config_time);
+    info!("      📋 {} timing breakdown: lookup={:.3}s, path={:.3}s, extract={:.3}s, total={:.3}s",
+          config.module_name, extractor_lookup_time, path_resolution_time, extraction_time, total_config_time);
     
     Ok(())
 }
