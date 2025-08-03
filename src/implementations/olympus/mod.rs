@@ -361,7 +361,7 @@ fn get_equipment_tag_name(tag_id: u16) -> String {
         0x1001 => "FlashModel".to_string(),
         0x1002 => "FlashFirmwareVersion".to_string(),
         0x1003 => "FlashSerialNumber".to_string(),
-        _ => format!("Tag_{:04x}", tag_id), // Unknown Equipment tag
+        _ => format!("Olympus_0x{:04X}", tag_id), // Unknown Equipment tag
     }
 }
 
