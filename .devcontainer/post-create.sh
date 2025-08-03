@@ -8,7 +8,7 @@ cd /workspace
 
 # Fix any remaining permission issues
 if [ -d "/usr/local/cargo/registry" ]; then
-    sudo chown -R $(whoami):$(whoami) /usr/local/cargo/registry 2>/dev/null || true
+  sudo chown -R $(whoami):$(whoami) /usr/local/cargo/registry 2>/dev/null || true
 fi
 
 # Set up local Perl environment
@@ -17,16 +17,16 @@ eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
 
 # Set up Claude if it exists in the mounted directory
 if [ -d "$HOME/.claude/local/node_modules/.bin" ]; then
-    echo "🤖 Setting up Claude..."
-    # Create a wrapper script that uses the correct path
-    mkdir -p $HOME/bin
-    cat > $HOME/bin/claude << 'EOF'
+  echo "🤖 Setting up Claude..."
+  # Create a wrapper script that uses the correct path
+  mkdir -p $HOME/bin
+  cat >$HOME/bin/claude <<'EOF'
 #!/bin/bash
 exec "$HOME/.claude/local/node_modules/.bin/claude" "$@"
 EOF
-    chmod +x $HOME/bin/claude
-    echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
-    echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc
+  chmod +x $HOME/bin/claude
+  echo 'export PATH="$HOME/bin:$PATH"' >>~/.bashrc
+  echo 'export PATH="$HOME/bin:$PATH"' >>~/.zshrc
 fi
 
 # Run the project's Perl setup
