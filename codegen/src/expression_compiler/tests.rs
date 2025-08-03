@@ -839,7 +839,7 @@ mod integration_tests {
         // Debug the actual output
         let code = expr.generate_rust_code();
         println!("Generated code for 2**3**2: {}", code);
-        assert!(code.contains("2.0_f64.powf((3.0_f64.powf(2.0_f64)))")); 
+        assert!(code.contains("2.0_f64.powf(3.0_f64.powf(2.0_f64))")); 
     }
     
     #[test]
@@ -881,7 +881,7 @@ mod integration_tests {
         }
         
         let code = expr.generate_rust_code();
-        assert!(code.contains("2.0_f64.powf((-val))"));
+        assert!(code.contains("2.0_f64.powf(-val)"));
     }
     
     #[test]
@@ -965,7 +965,7 @@ mod integration_tests {
         
         // Should generate valid Rust code
         assert!(code.contains("match value.as_f64()"));
-        assert!(code.contains("2.0_f64.powf((-val))"));
+        assert!(code.contains("2.0_f64.powf(-val)"));
         assert!(code.contains("Some(val) => Ok(TagValue::F64("));
     }
     
@@ -977,7 +977,7 @@ mod integration_tests {
         
         // Should compile to ternary with power operation
         assert!(code.contains("if val != 0.0"));
-        assert!(code.contains("2.0_f64.powf((6.0_f64 - (val / 8.0_f64)))"));
+        assert!(code.contains("2.0_f64.powf(6.0_f64 - val / 8.0_f64)"));
     }
     
     #[test]
@@ -1078,5 +1078,251 @@ mod integration_tests {
         assert!(CompiledExpression::is_compilable("2**(-$val)"));
         assert!(CompiledExpression::is_compilable("-$val * 2"));
         assert!(CompiledExpression::is_compilable("$val ? -$val : $val"));
+    }
+    
+    // ================================
+    // REGEX OPERATION TESTS
+    // ================================
+    
+    #[test]
+    fn test_regex_substitution_compilation() {
+        let test_cases = vec![
+            "s/Alpha/a/i",           // Case-insensitive substitution
+            "s/\\0+$//",             // Remove null terminators
+            "s/(.{3})$/\\.$1/",      // Insert decimal point
+        ];
+        
+        for expr in test_cases {
+            let result = CompiledExpression::compile(expr);
+            assert!(result.is_ok(), "Failed to compile regex: {}", expr);
+            
+            let compiled = result.unwrap();
+            let code = compiled.generate_rust_code();
+            assert!(code.contains("regex::Regex"), "Generated code should use regex crate");
+            assert!(code.contains("TagValue::String"), "Regex should produce string results");
+        }
+    }
+    
+    #[test]
+    fn test_transliteration_compilation() {
+        let test_cases = vec![
+            "tr/a-fA-F0-9//dc",      // Keep only hex characters
+            "tr/ABC/abc/",           // Simple character replacement
+        ];
+        
+        for expr in test_cases {
+            let result = CompiledExpression::compile(expr);
+            assert!(result.is_ok(), "Failed to compile transliteration: {}", expr);
+            
+            let compiled = result.unwrap();
+            let code = compiled.generate_rust_code();
+            assert!(code.contains("TagValue::String"), "Transliteration should produce string results");
+        }
+    }
+    
+    #[test]
+    fn test_regex_substitution_ast() {
+        let expr = CompiledExpression::compile("s/Alpha/a/i").unwrap();
+        
+        match expr.ast.as_ref() {
+            AstNode::RegexSubstitution { target, pattern, replacement, flags } => {
+                assert!(matches!(target.as_ref(), AstNode::Variable));
+                assert_eq!(pattern, "Alpha");
+                assert_eq!(replacement, "a");
+                assert_eq!(flags, "i");
+            }
+            _ => panic!("Expected RegexSubstitution AST node")
+        }
+    }
+    
+    #[test]
+    fn test_transliteration_delete_complement() {
+        // Test tr/a-fA-F0-9//dc pattern (keep only hex characters)
+        let expr = CompiledExpression::compile("tr/a-fA-F0-9//dc").unwrap();
+        
+        match expr.ast.as_ref() {
+            AstNode::Transliteration { target, search_list, replace_list, flags } => {
+                assert!(matches!(target.as_ref(), AstNode::Variable));
+                assert_eq!(search_list, "a-fA-F0-9");
+                assert_eq!(replace_list, "");
+                assert_eq!(flags, "dc");
+            }
+            _ => panic!("Expected Transliteration AST node")
+        }
+        
+        let code = expr.generate_rust_code();
+        assert!(code.contains("keep_chars.contains(c)"));
+        assert!(code.contains("filter"));
+    }
+    
+    #[test]
+    fn test_olympus_firmware_pattern() {
+        // Test real Olympus pattern: s/(.{3})$/\.$1/
+        let expr = CompiledExpression::compile("s/(.{3})$/\\.$1/").unwrap();
+        let code = expr.generate_rust_code();
+        
+        assert!(code.contains("regex::Regex"));
+        assert!(code.contains("replace("));
+        assert!(code.contains("TagValue::String"));
+    }
+    
+    #[test]
+    fn test_regex_is_compilable() {
+        // Regex operations should be considered compilable
+        assert!(CompiledExpression::is_compilable("s/Alpha/a/i"));
+        assert!(CompiledExpression::is_compilable("s/\\0+$//"));
+        assert!(CompiledExpression::is_compilable("s/(.{3})$/\\.$1/"));
+        assert!(CompiledExpression::is_compilable("tr/a-fA-F0-9//dc"));
+        assert!(CompiledExpression::is_compilable("tr/ABC/abc/"));
+    }
+    
+    // ================================
+    // BITWISE OPERATION TESTS
+    // ================================
+    
+    #[test]
+    fn test_bitwise_and_compilation() {
+        let expr = CompiledExpression::compile("$val & 0xffff").unwrap();
+        
+        // Verify AST structure
+        match expr.ast.as_ref() {
+            AstNode::BinaryOp { op, left, right } => {
+                assert_eq!(*op, OpType::BitwiseAnd);
+                assert!(matches!(left.as_ref(), AstNode::Variable));
+                // Right side should be a hex number (parsed as decimal for now)
+            }
+            _ => panic!("Expected bitwise AND operation")
+        }
+        
+        let code = expr.generate_rust_code();
+        assert!(code.contains("as i64"));  // Should convert to integers
+        assert!(code.contains("&"));       // Should use bitwise AND
+        assert!(code.contains("as f64"));  // Should convert back to f64
+    }
+    
+    #[test]
+    fn test_right_shift_compilation() {
+        let expr = CompiledExpression::compile("$val >> 16").unwrap();
+        
+        match expr.ast.as_ref() {
+            AstNode::BinaryOp { op, left, right } => {
+                assert_eq!(*op, OpType::RightShift);
+                assert!(matches!(left.as_ref(), AstNode::Variable));
+                assert!(matches!(right.as_ref(), AstNode::Number(16.0)));
+            }
+            _ => panic!("Expected right shift operation")
+        }
+        
+        let code = expr.generate_rust_code();
+        assert!(code.contains(">>"));
+        assert!(code.contains("as i64"));
+    }
+    
+    #[test]
+    fn test_version_extraction_pattern() {
+        // Test real ExifTool pattern: sprintf("%d.%.4d",$val >> 16, $val & 0xffff) 
+        // For now, just test the bitwise operations part
+        let expr1 = CompiledExpression::compile("$val >> 16").unwrap();
+        let expr2 = CompiledExpression::compile("$val & 65535").unwrap(); // 0xffff as decimal
+        
+        let code1 = expr1.generate_rust_code();
+        let code2 = expr2.generate_rust_code();
+        
+        assert!(code1.contains(">>"));
+        assert!(code2.contains("&"));
+        assert!(code1.contains("16.0_f64"));
+        assert!(code2.contains("65535.0_f64"));
+    }
+    
+    #[test]
+    fn test_multi_flag_extraction() {
+        // Test pattern: (($val >> 13) & 0x7) - extract 3-bit field
+        let expr = CompiledExpression::compile("($val >> 13) & 7").unwrap();
+        
+        // Should parse as AND of (shift) and number
+        match expr.ast.as_ref() {
+            AstNode::BinaryOp { op: OpType::BitwiseAnd, left, right } => {
+                // Left should be shift operation
+                assert!(matches!(left.as_ref(), AstNode::BinaryOp { op: OpType::RightShift, .. }));
+                // Right should be number 7 (0x7)
+                assert!(matches!(right.as_ref(), AstNode::Number(7.0)));
+            }
+            _ => panic!("Expected AND of shift and number")
+        }
+        
+        let code = expr.generate_rust_code();
+        assert!(code.contains(">>"));
+        assert!(code.contains("&"));
+        assert!(code.contains("13.0_f64"));
+        assert!(code.contains("7.0_f64"));
+    }
+    
+    #[test]
+    fn test_bitwise_precedence() {
+        // Test precedence: shifts should bind tighter than & and |
+        // Expression: $val & 0xff << 8 should be $val & (0xff << 8)
+        let expr = CompiledExpression::compile("$val & 255 << 8").unwrap();
+        
+        // Should parse as AND of variable and (shift of number)
+        match expr.ast.as_ref() {
+            AstNode::BinaryOp { op: OpType::BitwiseAnd, left, right } => {
+                assert!(matches!(left.as_ref(), AstNode::Variable));
+                // Right should be left shift operation
+                assert!(matches!(right.as_ref(), AstNode::BinaryOp { op: OpType::LeftShift, .. }));
+            }
+            _ => panic!("Expected AND with shift having higher precedence")
+        }
+    }
+    
+    #[test]
+    fn test_all_bitwise_operations() {
+        let test_cases = vec![
+            ("$val & 255", OpType::BitwiseAnd),
+            ("$val | 128", OpType::BitwiseOr),
+            ("$val << 4", OpType::LeftShift),
+            ("$val >> 2", OpType::RightShift),
+        ];
+        
+        for (expr_str, expected_op) in test_cases {
+            let expr = CompiledExpression::compile(expr_str).unwrap();
+            
+            match expr.ast.as_ref() {
+                AstNode::BinaryOp { op, .. } => {
+                    assert_eq!(*op, expected_op, "Failed for expression: {}", expr_str);
+                }
+                _ => panic!("Expected binary operation for: {}", expr_str)
+            }
+            
+            let code = expr.generate_rust_code();
+            assert!(code.contains("as i64"), "Should convert to i64 for: {}", expr_str);
+            assert!(code.contains("as f64"), "Should convert back to f64 for: {}", expr_str);
+        }
+    }
+    
+    #[test]
+    fn test_bitwise_is_compilable() {
+        // Bitwise operations should be considered compilable
+        assert!(CompiledExpression::is_compilable("$val & 0xffff"));
+        assert!(CompiledExpression::is_compilable("$val | 128"));
+        assert!(CompiledExpression::is_compilable("$val << 4"));
+        assert!(CompiledExpression::is_compilable("$val >> 16"));
+        assert!(CompiledExpression::is_compilable("($val >> 13) & 7"));
+        assert!(CompiledExpression::is_compilable("$val & 255 << 8"));
+    }
+    
+    #[test]
+    fn test_array_indexing_not_compilable() {
+        // Array indexing expressions should be rejected by the compiler
+        // These are used in composite tags and require special handling
+        assert!(!CompiledExpression::is_compilable("\"$val[0] $val[1]\""));
+        assert!(!CompiledExpression::is_compilable("\"$val[0] $val[1] $val[2]\""));
+        assert!(!CompiledExpression::is_compilable("$val[0]"));
+        assert!(!CompiledExpression::is_compilable("$val[1] + $val[2]"));
+        assert!(!CompiledExpression::is_compilable("sprintf(\"%s %s\", $val[0], $val[1])"));
+        
+        // Regular $val expressions should still be compilable
+        assert!(CompiledExpression::is_compilable("$val + 1"));
+        assert!(CompiledExpression::is_compilable("\"$val m\""));
+        assert!(CompiledExpression::is_compilable("sprintf(\"%.1f\", $val)"));
     }
 }

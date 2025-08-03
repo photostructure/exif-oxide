@@ -721,7 +721,7 @@ fn generate_mod_file(
     
     // Type alias to fix clippy::type_complexity warning
     code.push_str("/// Type alias for subdirectory processor function\n");
-    code.push_str("pub type SubDirectoryProcessor = fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>;\n\n");
+    code.push_str("pub type SubDirectoryProcessor = fn(&[u8], ByteOrder, Option<&str>) -> Result<Vec<(String, TagValue)>>;\n\n");
     
     // SubDirectory type enum
     code.push_str("#[derive(Debug, Clone)]\n");
@@ -922,6 +922,7 @@ fn generate_mod_file(
     code.push_str("    tag_id: u32,\n");
     code.push_str("    value: &TagValue,\n");
     code.push_str("    byte_order: ByteOrder,\n");
+    code.push_str("    model: Option<&str>,\n");
     code.push_str(") -> Result<HashMap<String, TagValue>> {\n");
     code.push_str("    use tracing::debug;\n");
     code.push_str("    let mut result = HashMap::new();\n");
@@ -950,7 +951,7 @@ fn generate_mod_file(
     code.push_str("            \n");
     code.push_str("            debug!(\"Calling processor with {} bytes\", bytes.len());\n");
     code.push_str("            // Process subdirectory and collect all extracted tags\n");
-    code.push_str("            match processor(&bytes, byte_order) {\n");
+    code.push_str("            match processor(&bytes, byte_order, model) {\n");
     code.push_str("                Ok(extracted_tags) => {\n");
     code.push_str("                    debug!(\"Processor returned {} tags\", extracted_tags.len());\n");
     code.push_str("                    for (name, value) in extracted_tags {\n");
@@ -1261,9 +1262,18 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
                         
                         // Generate bounds check based on offset type
                         if byte_offset < 0 {
-                            code.push_str(&format!("if {offset_var_name}_offset + {total_size} <= data.len() {{\n"));
+                            if total_size == 1 {
+                                code.push_str(&format!("if {offset_var_name}_offset < data.len() {{\n"));
+                            } else {
+                                code.push_str(&format!("if {offset_var_name}_offset + {total_size} <= data.len() {{\n"));
+                            }
                         } else {
-                            code.push_str(&format!("    if data.len() >= {} {{\n", byte_offset as usize + total_size));
+                            let required_len = byte_offset as usize + total_size;
+                            if required_len == 1 {
+                                code.push_str("    if !data.is_empty() {\n");
+                            } else {
+                                code.push_str(&format!("    if data.len() >= {} {{\n", required_len));
+                            }
                         }
                         
                         match base_format {
@@ -1313,9 +1323,18 @@ fn generate_binary_parser(code: &mut String, fn_name: &str, table: &ExtractedTab
                 
                 // Generate bounds check based on offset type
                 if byte_offset < 0 {
-                    code.push_str(&format!("if {offset_var_name}_offset + {value_size} <= data.len() {{\n"));
+                    if value_size == 1 {
+                        code.push_str(&format!("if {offset_var_name}_offset < data.len() {{\n"));
+                    } else {
+                        code.push_str(&format!("if {offset_var_name}_offset + {value_size} <= data.len() {{\n"));
+                    }
                 } else {
-                    code.push_str(&format!("    if data.len() >= {} {{\n", byte_offset as usize + value_size));
+                    let required_len = byte_offset as usize + value_size;
+                    if required_len == 1 {
+                        code.push_str("    if !data.is_empty() {\n");
+                    } else {
+                        code.push_str(&format!("    if data.len() >= {} {{\n", required_len));
+                    }
                 }
                 
                 match format.as_str() {
@@ -1512,9 +1531,10 @@ fn generate_subdirectory_dispatcher(
     current_module: &str,
     _shared_tables: &SharedTablesData,
 ) -> Result<()> {
-    code.push_str(&format!("pub fn process_tag_{tag_id:#x}_subdirectory(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {{\n"));
+    code.push_str(&format!("pub fn process_tag_{tag_id:#x}_subdirectory(data: &[u8], byte_order: ByteOrder, model: Option<&str>) -> Result<Vec<(String, TagValue)>> {{\n"));
     code.push_str("    use tracing::debug;\n");
-    code.push_str("    // TODO: Accept model and format parameters when runtime integration supports it\n");
+    code.push_str("    use crate::expressions::ExpressionEvaluator;\n");
+    code.push_str("    use crate::processor_registry::ProcessorContext;\n");
     
     // Determine the format for count calculation (usually int16s for Canon)
     let format_size = 2; // Default to int16s
@@ -1563,9 +1583,48 @@ fn generate_subdirectory_dispatcher(
             code.push_str(&format!("    process_{table_fn_name}(data, byte_order)\n"));
         }
     } else {
-        // For now, only generate count-based matching
-        // Model and format conditions will be added when runtime supports them
-        code.push_str("    match count {\n");
+        // Handle model conditions first (before count-based matching)
+        for variant in &collection.variants {
+            if let Some(condition_str) = &variant.condition {
+                let condition = parse_subdirectory_condition(condition_str);
+                
+                if let SubdirectoryCondition::Model(_pattern) = condition {
+                    // Generate runtime model evaluation using MILESTONE-17 infrastructure
+                    // ExifTool: Model conditions like $$self{Model} =~ /EOS 5D$/ 
+                    let escaped = escape_string(condition_str);
+                    
+                    if is_cross_module_reference(&variant.table_name, current_module) {
+                        // Cross-module reference - add comment for now
+                        code.push_str(&format!("    // Cross-module model condition: {escaped}\n"));
+                        code.push_str(&format!("    // Would dispatch to: {}\n", variant.table_name));
+                    } else {
+                        let table_fn_name = variant.table_name
+                            .replace("Image::ExifTool::", "")
+                            .replace("::", "_")
+                            .to_lowercase();
+                        
+                        // Generate model evaluation code using proven MILESTONE-17 pattern
+                        code.push_str(&format!("    // Model condition: {escaped}\n"));
+                        code.push_str("    if let Some(model) = &model {\n");
+                        code.push_str("        let mut evaluator = ExpressionEvaluator::new();\n");
+                        code.push_str("        let processor_context = ProcessorContext::default()\n");
+                        code.push_str("            .with_model(model.to_string());\n");
+                        code.push_str(&format!("        if evaluator.evaluate_context_condition(&processor_context, \"{escaped}\").unwrap_or(false) {{\n"));
+                        
+                        // Escape curly braces in debug message to prevent format string errors
+                        let escaped_for_debug = escaped.replace("{", "{{").replace("}", "}}");
+                        code.push_str(&format!("            debug!(\"Model condition matched: {escaped_for_debug} for {table_fn_name}\");\n"));
+                        code.push_str(&format!("            return process_{table_fn_name}(data, byte_order);\n"));
+                        code.push_str("        }\n");
+                        code.push_str("    }\n");
+                    }
+                }
+            }
+        }
+        
+        // Handle count-based conditions - but only generate match if we have actual count conditions
+        let mut count_match_arms = String::new();
+        let mut has_actual_count_conditions = false;
         
         for variant in &collection.variants {
             if let Some(condition_str) = &variant.condition {
@@ -1573,14 +1632,15 @@ fn generate_subdirectory_dispatcher(
                 
                 match condition {
                     SubdirectoryCondition::Count(counts) => {
+                        has_actual_count_conditions = true;
                         if is_cross_module_reference(&variant.table_name, current_module) {
                             // Cross-module reference - add comment
                             for count_val in counts {
-                                code.push_str(&format!("        {count_val} => {{\n"));
-                                code.push_str(&format!("            // Cross-module reference to {}\n", variant.table_name));
-                                code.push_str("            // TODO: Implement cross-module subdirectory support\n");
-                                code.push_str("            Ok(vec![])\n");
-                                code.push_str("        }\n");
+                                count_match_arms.push_str(&format!("        {count_val} => {{\n"));
+                                count_match_arms.push_str(&format!("            // Cross-module reference to {}\n", variant.table_name));
+                                count_match_arms.push_str("            // TODO: Implement cross-module subdirectory support\n");
+                                count_match_arms.push_str("            Ok(vec![])\n");
+                                count_match_arms.push_str("        }\n");
                             }
                         } else {
                             let table_fn_name = variant.table_name
@@ -1589,37 +1649,42 @@ fn generate_subdirectory_dispatcher(
                                 .to_lowercase();
                                 
                             for count_val in counts {
-                                code.push_str(&format!("        {count_val} => {{\n"));
-                                code.push_str(&format!("            debug!(\"Matched count {count_val} for variant {table_fn_name}\");\n"));
-                                code.push_str(&format!("            process_{table_fn_name}(data, byte_order)\n"));
-                                code.push_str("        }\n");
+                                count_match_arms.push_str(&format!("        {count_val} => {{\n"));
+                                count_match_arms.push_str(&format!("            debug!(\"Matched count {count_val} for variant {table_fn_name}\");\n"));
+                                count_match_arms.push_str(&format!("            process_{table_fn_name}(data, byte_order)\n"));
+                                count_match_arms.push_str("        }\n");
                             }
                         }
                     }
                     SubdirectoryCondition::Model(_pattern) => {
-                        // Add as comment for now
-                        let escaped = escape_string(condition_str);
-                        code.push_str(&format!("        // Model condition not yet supported: {escaped}\n"));
-                        code.push_str(&format!("        // Would dispatch to: {}\n", variant.table_name));
+                        // Already handled above - skip
                     }
                     SubdirectoryCondition::Format(_pattern) => {
                         // Add as comment for now
                         let escaped = escape_string(condition_str);
-                        code.push_str(&format!("        // Format condition not yet supported: {escaped}\n"));
-                        code.push_str(&format!("        // Would dispatch to: {}\n", variant.table_name));
+                        code.push_str(&format!("    // Format condition not yet supported: {escaped}\n"));
+                        code.push_str(&format!("    // Would dispatch to: {}\n", variant.table_name));
                     }
                     SubdirectoryCondition::Runtime(runtime_str) => {
                         // Add as comment for now
                         let escaped = escape_string(&runtime_str);
-                        code.push_str(&format!("        // Runtime condition not yet supported: {escaped}\n"));
-                        code.push_str(&format!("        // Would dispatch to: {}\n", variant.table_name));
+                        code.push_str(&format!("    // Runtime condition not yet supported: {escaped}\n"));
+                        code.push_str(&format!("    // Would dispatch to: {}\n", variant.table_name));
                     }
                 }
             }
         }
         
-        code.push_str("        _ => Ok(vec![]), // No matching variant\n");
-        code.push_str("    }\n");
+        if has_actual_count_conditions {
+            // Only generate match statement if we have actual count conditions
+            code.push_str("    match count {\n");
+            code.push_str(&count_match_arms);
+            code.push_str("        _ => Ok(vec![]), // No matching variant\n");
+            code.push_str("    }\n");
+        } else {
+            // No count conditions - just return empty vector directly
+            code.push_str("    Ok(vec![])\n");
+        }
     }
     code.push_str("}\n\n");
     
