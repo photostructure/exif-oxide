@@ -210,6 +210,33 @@ impl Parser {
                     args
                 })
             }
+            Some(ParseToken::RegexSubstitution { pattern, replacement, flags }) => {
+                let pattern = pattern.clone();
+                let replacement = replacement.clone();
+                let flags = flags.clone();
+                
+                // For now, regex operates on the variable - in full implementation
+                // this would need to handle complex expressions as targets
+                Ok(AstNode::RegexSubstitution {
+                    target: Box::new(AstNode::Variable),
+                    pattern,
+                    replacement,
+                    flags
+                })
+            }
+            Some(ParseToken::Transliteration { search_list, replace_list, flags }) => {
+                let search_list = search_list.clone();
+                let replace_list = replace_list.clone();
+                let flags = flags.clone();
+                
+                // For now, transliteration operates on the variable
+                Ok(AstNode::Transliteration {
+                    target: Box::new(AstNode::Variable),
+                    search_list,
+                    replace_list,
+                    flags
+                })
+            }
             Some(ParseToken::LeftParen) => {
                 let expr = self.parse_ternary_expression()?;
                 if !matches!(self.current_token(), Some(ParseToken::RightParen)) {

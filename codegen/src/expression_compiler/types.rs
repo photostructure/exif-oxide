@@ -40,6 +40,20 @@ pub enum AstNode {
     Sprintf { format_string: String, args: Vec<Box<AstNode>> },
     /// Unary minus operation
     UnaryMinus { operand: Box<AstNode> },
+    /// Regex substitution operation (s/pattern/replacement/flags)
+    RegexSubstitution { 
+        target: Box<AstNode>, 
+        pattern: String, 
+        replacement: String, 
+        flags: String 
+    },
+    /// Transliteration operation (tr/searchlist/replacelist/flags)
+    Transliteration { 
+        target: Box<AstNode>, 
+        search_list: String, 
+        replace_list: String, 
+        flags: String 
+    },
 }
 
 
@@ -52,6 +66,11 @@ pub enum OpType {
     Divide,
     Power,       // Power operation (Perl's ** operator)
     Concatenate, // String concatenation (Perl's . operator)
+    // Bitwise operations
+    BitwiseAnd,  // & (bitwise AND)
+    BitwiseOr,   // | (bitwise OR)
+    LeftShift,   // << (left shift)
+    RightShift,  // >> (right shift)
 }
 
 /// Comparison operator types for ternary conditions
@@ -91,6 +110,10 @@ pub enum ParseToken {
     ExifToolFunction(String), // Image::ExifTool::Module::Function
     Comma,        // , (internal parsing token, not exposed in AST)
     UnaryMinus,   // - (unary minus operator)
+    /// Regex substitution s/pattern/replacement/flags
+    RegexSubstitution { pattern: String, replacement: String, flags: String },
+    /// Transliteration tr/searchlist/replacelist/flags
+    Transliteration { search_list: String, replace_list: String, flags: String },
 }
 
 /// Comparison operator with precedence
@@ -130,6 +153,10 @@ impl fmt::Display for OpType {
             OpType::Divide => write!(f, "/"),
             OpType::Power => write!(f, "**"),
             OpType::Concatenate => write!(f, "."),
+            OpType::BitwiseAnd => write!(f, "&"),
+            OpType::BitwiseOr => write!(f, "|"),
+            OpType::LeftShift => write!(f, "<<"),
+            OpType::RightShift => write!(f, ">>"),
         }
     }
 }

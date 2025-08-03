@@ -56,7 +56,6 @@ pub mod tests;
 // Re-export the main API
 pub use types::{CompiledExpression, AstNode, OpType, CompType, FuncType};
 use tokenizer::tokenize;
-use crate::conv_registry::valueconv_registry::lookup_valueconv;
 // Remove the conflicting use statement - we'll call parser functions directly
 
 impl CompiledExpression {
@@ -78,8 +77,13 @@ impl CompiledExpression {
     pub fn is_compilable(expr: &str) -> bool {
         // Quick checks for obviously non-compilable expressions  
         if expr.contains("abs") || 
-           expr.contains("IsFloat") || expr.contains("=~") || expr.contains("&") || 
-           expr.contains("|") || expr.contains(">>") || expr.contains("<<") {
+           expr.contains("IsFloat") || expr.contains("=~") {
+            return false;
+        }
+        
+        // Check for array indexing patterns like $val[0], $val[1], etc.
+        // These are used in composite tags and require special handling
+        if expr.contains("$val[") {
             return false;
         }
         
@@ -90,7 +94,8 @@ impl CompiledExpression {
             if expr.matches(',').count() > 0 || expr.contains("$self") {
                 return false; // Complex patterns not supported
             }
-            // Try to compile - if it works, it's compilable
+            
+            // Try to compile - registry delegation is handled at higher level in classify_valueconv_expression
             return Self::compile(expr).is_ok();
         }
         
