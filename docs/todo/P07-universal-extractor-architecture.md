@@ -30,10 +30,32 @@ Honest. RTFM.
 
 ### System Overview
 
-- **Current codegen system**: Mix of 10+ Perl extractors (`tag_kit.pl`, `simple_table.pl`, etc.) with manual JSON configs specifying what to extract from ExifTool modules, generating focused Rust code for specific patterns
+- **Current codegen system**: **67 JSON configs** across 40+ modules with **11 actively used Perl extractors** (`tag_kit.pl`, `simple_table.pl`, etc.) specifying what to extract from ExifTool modules, generating focused Rust code for specific patterns
+- **Config distribution**: TagKit (31 configs), CompositeTag (13), SimpleTable (8), others (15) - creates massive maintenance burden
 - **Universal patching**: Recent improvement using `codegen/scripts/patch_all_modules.sh` to convert all `my` variables to `our` variables in ExifTool modules for symbol table access
-- **ExifTool compatibility pipeline**: `make compat` tests 167 required tags across 303 files - currently 76 perfect correlation, 91 missing tags
+- **ExifTool compatibility pipeline**: `make compat` tests 167 required tags across 303 files - currently 76 perfect correlation, **91 missing tags (54% failure rate)**
 - **Strategy dispatch pattern**: Existing conv_registry and expression_compiler systems use strategy patterns to recognize and handle different conversion types
+
+### Complete Inventory of Production Extraction Types (11 active types)
+
+**High-Volume Extractors:**
+1. **`TagKitExtractor`** (31 configs) → Complex tag definitions with embedded PrintConv expressions
+2. **`CompositeTagsExtractor`** (13 configs) → Composite tags with require/desire dependencies  
+3. **`SimpleTableExtractor`** (8 configs) → Basic HashMap lookups with LazyLock initialization
+
+**Medium-Volume Extractors:**
+4. **`TagTableStructureExtractor`** (3 configs) → Manufacturer table structure enums
+5. **`ProcessBinaryDataExtractor`** (3 configs) → Binary data parsing table definitions
+6. **`BooleanSetExtractor`** (2 configs) → Membership testing sets (PNG_pm, ExifTool_pm)
+
+**Specialized Single-Use Extractors:**
+7. **`SimpleArrayExtractor`** (1 config) → Static byte arrays for cryptographic operations (Nikon XLAT)
+8. **`RuntimeTableExtractor`** (1 config) → Runtime HashMap creation with conditional logic
+9. **`RegexPatternsExtractor`** (1 config) → Magic number patterns for file detection
+10. **`ModelDetectionExtractor`** (1 config) → Camera model pattern recognition
+11. **`FileTypeLookupExtractor`** (1 config) → File type detection with discriminated unions
+
+**Unused Extractors** (implemented but no configs): `InlinePrintConvExtractor`, `TagDefinitionsExtractor`
 
 ### Key Concepts & Domain Knowledge
 
@@ -47,12 +69,13 @@ Honest. RTFM.
 
 **CRITICAL**: Document non-intuitive aspects that aren't obvious from casual code inspection:
 
-- **Config files prevent complete extraction**: The biggest impediment to ExifTool compatibility is that our configs only specify what we *think* we need, not what ExifTool actually exposes - missing configs = missing tags forever
+- **67 config files prevent complete extraction**: The biggest impediment to ExifTool compatibility is that our configs only specify what we *think* we need, not what ExifTool actually exposes - missing configs = missing tags forever
 - **Perl symbol table is the source of truth**: ExifTool modules expose everything via symbol tables after universal patching, making configs redundant - we can discover everything ExifTool knows automatically
-- **Multiple extractors create artificial boundaries**: Having separate `tag_kit.pl`, `simple_table.pl`, etc. creates false distinctions - the same ExifTool data could be handled by multiple extraction strategies depending on recognition patterns
-- **JSON streaming prevents memory issues**: ExifTool modules can expose thousands of hashes/arrays - JSON Lines format allows processing arbitrarily large symbol table dumps without memory constraints  
+- **11 extractors create artificial boundaries**: Having separate `tag_kit.pl`, `simple_table.pl`, etc. creates false distinctions - the same ExifTool data could be handled by multiple extraction strategies depending on recognition patterns
+- **JSON streaming prevents memory issues**: ExifTool modules can expose thousands of hashes/arrays (Canon.pm has 500+ symbols) - JSON Lines format allows processing arbitrarily large symbol table dumps without memory constraints  
 - **Cross-module dependencies exist**: Some ExifTool patterns reference data from other modules (e.g., shared lookup tables) - stateful processing enables dependency resolution across the entire extraction pipeline
 - **Pattern recognition is more reliable than categorization**: Instead of trying to categorize ExifTool data upfront, let strategies examine actual data structure and decide if they can handle it
+- **Post-processing is critical**: Each extractor type produces completely different output structures - universal system must replicate all 11 output patterns exactly
 
 ### Foundation Documents
 
@@ -126,26 +149,46 @@ Honest. RTFM.
 
 **Dependencies**: None
 
-### Task B: Rust Strategy Recognition System
+### Task B: Rust Strategy Recognition System with Complete Type Coverage
 
 **Success Criteria**:
 - [ ] **Implementation**: Strategy trait and dispatcher → `codegen/src/strategies/mod.rs` implements `ExtractionStrategy` trait and `StrategyDispatcher`
 - [ ] **Integration**: Main pipeline uses strategy system → `codegen/src/main.rs:145` processes universal extractor output through strategy dispatcher
-- [ ] **Core strategies implemented**: At least 4 strategies → `SimpleTableStrategy`, `TagKitStrategy`, `BooleanSetStrategy`, `ArrayStrategy` in `codegen/src/strategies/`
+- [ ] **All 11 strategies implemented**: Complete coverage → All production extraction types in `codegen/src/strategies/`
 - [ ] **Unit tests**: `cargo t test_strategy_recognition` validates confidence levels and pattern matching
 - [ ] **Manual validation**: `RUST_LOG=debug cargo run` shows strategy recognition decisions for each symbol
 - [ ] **Cleanup**: N/A - additive system
 - [ ] **Documentation**: Strategy system documented → `codegen/src/strategies/README.md` explains pattern recognition approach
 
+**Required Strategy Implementations** (must handle all 11 production patterns):
+- `SimpleTableStrategy` → HashMap lookups (8 configs)
+- `TagKitStrategy` → Complex tag definitions (31 configs) 
+- `CompositeTagStrategy` → Dependencies and calculations (13 configs)
+- `BooleanSetStrategy` → Membership testing (2 configs)
+- `ArrayStrategy` → Static arrays (1 config)
+- `BinaryDataStrategy` → Binary parsing tables (3 configs)
+- `FileTypeStrategy` → File detection (1 config)
+- `RuntimeTableStrategy` → Conditional HashMap creation (1 config)
+- `RegexPatternStrategy` → Magic numbers (1 config)
+- `ModelDetectionStrategy` → Camera patterns (1 config)
+- `TagTableStructureStrategy` → Enums (3 configs)
+
 **Implementation Details**:
 ```rust
 trait ExtractionStrategy {
-    fn can_handle(&self, data: &JsonValue) -> ConfidenceLevel; 
+    fn can_handle(&self, data: &JsonValue, context: &ExtractionContext) -> ConfidenceLevel; 
     fn extract(&mut self, data: &JsonValue, context: &mut ExtractionContext) -> Result<()>;
-    fn finish_file(&mut self) -> Result<()>;
+    fn finish_file(&mut self, file_path: &str) -> Result<()>;
     fn finish_codegen(&mut self) -> Result<Vec<GeneratedFile>>;
 }
 ```
+
+**Post-Processing Requirement**: Each strategy's `finish_codegen()` must:
+- Generate **identical file structures** to current system (exact API compatibility)
+- Handle **cross-module dependencies** (shared lookups generated once)
+- Maintain **module organization** (Canon_pm/, tag_kit/ subdirectories)
+- Preserve **function signatures** for existing consumers
+- Include proper **Rust documentation** and ExifTool source references
 
 **Integration Strategy**: Process JSON Lines stream through strategy dispatcher, let highest-confidence strategy handle each symbol
 
@@ -248,11 +291,38 @@ None - this is fundamental architecture work that other improvements depend on
 
 ## Implementation Guidance
 
+### Generated Code Output Patterns (must preserve exactly)
+
+**`SimpleTableStrategy`** → `canonwhitebalance.rs`:
+```rust
+static CANON_WHITE_BALANCE_DATA: &[(u8, &'static str)] = &[...];
+pub static CANON_WHITE_BALANCE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(...);
+pub fn lookup_canon_white_balance(key: u8) -> Option<&'static str> { ... }
+```
+
+**`BooleanSetStrategy`** → `isdatchunk.rs`:
+```rust
+pub static PNG_DATA_CHUNKS: LazyLock<HashMap<String, bool>> = LazyLock::new(...);
+pub fn lookup_isdatchunk(key: &String) -> bool { PNG_DATA_CHUNKS.contains_key(key) }
+```
+
+**`TagKitStrategy`** → `tag_kit/core.rs`:
+```rust
+static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(...);
+// Complex PrintConv mappings with inline expressions vs function references
+```
+
+**`ArrayStrategy`** → `xlat_0.rs`:
+```rust
+pub static XLAT_0: [u8; 256] = [193, 191, 109, ...]; // Direct indexing for crypto
+```
+
 ### Recommended Patterns
 
 - **JSON Lines streaming**: Use `serde_json::Deserializer::from_reader()` with `BufReader` for memory-efficient processing
 - **Strategy confidence levels**: Use numeric confidence scores (0-100) instead of enums for tie-breaking
 - **Graceful degradation**: Unknown patterns should generate placeholder code with warnings, not fail extraction
+- **Complete post-processing**: Every strategy must fully implement `finish_codegen()` to produce final Rust files
 
 ### Tools to Leverage
 
@@ -275,6 +345,10 @@ None - this is fundamental architecture work that other improvements depend on
 - **Universal extraction will find previously unknown patterns** → May discover ExifTool data types we haven't seen before → Strategy system designed to be extensible for new patterns
 - **Golden dataset is temporary validation tool** → Archive current `src/generated/` before starting, delete after successful migration → Don't let it become permanent fixture
 - **Superset validation allows exploration** → Universal extraction may generate additional useful code beyond current configs → Test allows additions but prevents losses
+- **67 configs create maintenance nightmare** → Every ExifTool release potentially requires updating dozens of configs → Universal extraction eliminates this entirely
+- **Post-processing complexity is the real challenge** → Universal extraction is straightforward Perl, but each of the 11 strategies must replicate exact output patterns → Most implementation effort will be in `finish_codegen()` methods
+- **Strategy recognition patterns** → HashMap = SimpleTable, membership test = BooleanSet, tag definitions with PrintConv = TagKit, static arrays = Array, etc.
+- **Module organization must be preserved** → Canon_pm/ directories, tag_kit/ subdirectories, exact function names → Any API changes break existing consumers
 
 ## Quick Debugging
 
