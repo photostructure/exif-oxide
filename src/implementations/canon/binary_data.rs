@@ -810,15 +810,15 @@ pub fn create_canon_af_info_table() -> BinaryDataTable {
     // ExifTool: Canon.pm:4450 '0 => { Name => 'NumAFPoints' }'
     table.tags.insert(
         0,
-        BinaryDataTag {
-            name: "NumAFPoints".to_string(),
-            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
-            format: Some(BinaryDataFormat::Int16u),
-            mask: None,
-            print_conv: None,
-            data_member: Some("NumAFPoints".to_string()), // This becomes a DataMember
-            group: Some(0),                               // MakerNotes group
-        },
+        BinaryDataTag::from_legacy(
+            "NumAFPoints".to_string(),
+            Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            Some(BinaryDataFormat::Int16u),
+            None,
+            None,
+            Some("NumAFPoints".to_string()), // This becomes a DataMember
+            Some(0),                         // MakerNotes group
+        ),
     );
     table.data_member_tags.push(0);
 
@@ -826,153 +826,153 @@ pub fn create_canon_af_info_table() -> BinaryDataTable {
     // ExifTool: Canon.pm:4453 '1 => { Name => 'ValidAFPoints' }'
     table.tags.insert(
         1,
-        BinaryDataTag {
-            name: "ValidAFPoints".to_string(),
-            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
-            format: Some(BinaryDataFormat::Int16u),
-            mask: None,
-            print_conv: None,
-            data_member: None,
-            group: Some(0), // MakerNotes group
-        },
+        BinaryDataTag::from_legacy(
+            "ValidAFPoints".to_string(),
+            Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            Some(BinaryDataFormat::Int16u),
+            None,
+            None,
+            None,
+            Some(0), // MakerNotes group
+        ),
     );
 
     // CanonImageWidth (sequence 2)
     table.tags.insert(
         2,
-        BinaryDataTag {
-            name: "CanonImageWidth".to_string(),
-            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
-            format: Some(BinaryDataFormat::Int16u),
-            mask: None,
-            print_conv: None,
-            data_member: None,
-            group: Some(2), // Camera group
-        },
+        BinaryDataTag::from_legacy(
+            "CanonImageWidth".to_string(),
+            Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            Some(BinaryDataFormat::Int16u),
+            None,
+            None,
+            None,
+            Some(2), // Camera group
+        ),
     );
 
     // CanonImageHeight (sequence 3)
     table.tags.insert(
         3,
-        BinaryDataTag {
-            name: "CanonImageHeight".to_string(),
-            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
-            format: Some(BinaryDataFormat::Int16u),
-            mask: None,
-            print_conv: None,
-            data_member: None,
-            group: Some(2), // Camera group
-        },
+        BinaryDataTag::from_legacy(
+            "CanonImageHeight".to_string(),
+            Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            Some(BinaryDataFormat::Int16u),
+            None,
+            None,
+            None,
+            Some(2), // Camera group
+        ),
     );
 
     // AFImageWidth (sequence 4)
     table.tags.insert(
         4,
-        BinaryDataTag {
-            name: "AFImageWidth".to_string(),
-            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
-            format: Some(BinaryDataFormat::Int16u),
-            mask: None,
-            print_conv: None,
-            data_member: None,
-            group: Some(0), // MakerNotes group
-        },
+        BinaryDataTag::from_legacy(
+            "AFImageWidth".to_string(),
+            Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            Some(BinaryDataFormat::Int16u),
+            None,
+            None,
+            None,
+            Some(0), // MakerNotes group
+        ),
     );
 
     // AFImageHeight (sequence 5)
     table.tags.insert(
         5,
-        BinaryDataTag {
-            name: "AFImageHeight".to_string(),
-            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
-            format: Some(BinaryDataFormat::Int16u),
-            mask: None,
-            print_conv: None,
-            data_member: None,
-            group: Some(0), // MakerNotes group
-        },
+        BinaryDataTag::from_legacy(
+            "AFImageHeight".to_string(),
+            Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            Some(BinaryDataFormat::Int16u),
+            None,
+            None,
+            None,
+            Some(0), // MakerNotes group
+        ),
     );
 
     // AFAreaWidth (sequence 6)
     table.tags.insert(
         6,
-        BinaryDataTag {
-            name: "AFAreaWidth".to_string(),
-            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
-            format: Some(BinaryDataFormat::Int16u),
-            mask: None,
-            print_conv: None,
-            data_member: None,
-            group: Some(0), // MakerNotes group
-        },
+        BinaryDataTag::from_legacy(
+            "AFAreaWidth".to_string(),
+            Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            Some(BinaryDataFormat::Int16u),
+            None,
+            None,
+            None,
+            Some(0), // MakerNotes group
+        ),
     );
 
     // AFAreaHeight (sequence 7)
     table.tags.insert(
         7,
-        BinaryDataTag {
-            name: "AFAreaHeight".to_string(),
-            format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
-            format: Some(BinaryDataFormat::Int16u),
-            mask: None,
-            print_conv: None,
-            data_member: None,
-            group: Some(0), // MakerNotes group
-        },
+        BinaryDataTag::from_legacy(
+            "AFAreaHeight".to_string(),
+            Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            Some(BinaryDataFormat::Int16u),
+            None,
+            None,
+            None,
+            Some(0), // MakerNotes group
+        ),
     );
 
     // AFAreaXPositions (sequence 8) - Variable-length array sized by NumAFPoints
     // ExifTool: Canon.pm:4474 'Format => int16s[$val{0}]'
     table.tags.insert(
         8,
-        BinaryDataTag {
-            name: "AFAreaXPositions".to_string(),
-            format_spec: Some(FormatSpec::Array {
+        BinaryDataTag::from_legacy(
+            "AFAreaXPositions".to_string(),
+            Some(FormatSpec::Array {
                 base_format: BinaryDataFormat::Int16s,
                 count_expr: "$val{0}".to_string(), // References NumAFPoints at sequence 0
             }),
-            format: None, // Will be resolved at runtime
-            mask: None,
-            print_conv: None,
-            data_member: None,
-            group: Some(0), // MakerNotes group
-        },
+            None, // Will be resolved at runtime
+            None,
+            None,
+            None,
+            Some(0), // MakerNotes group
+        ),
     );
 
     // AFAreaYPositions (sequence 9) - Variable-length array sized by NumAFPoints
     // ExifTool: Canon.pm:4477 'Format => int16s[$val{0}]'
     table.tags.insert(
         9,
-        BinaryDataTag {
-            name: "AFAreaYPositions".to_string(),
-            format_spec: Some(FormatSpec::Array {
+        BinaryDataTag::from_legacy(
+            "AFAreaYPositions".to_string(),
+            Some(FormatSpec::Array {
                 base_format: BinaryDataFormat::Int16s,
                 count_expr: "$val{0}".to_string(), // References NumAFPoints at sequence 0
             }),
-            format: None, // Will be resolved at runtime
-            mask: None,
-            print_conv: None,
-            data_member: None,
-            group: Some(0), // MakerNotes group
-        },
+            None, // Will be resolved at runtime
+            None,
+            None,
+            None,
+            Some(0), // MakerNotes group
+        ),
     );
 
     // AFPointsInFocus (sequence 10) - Complex expression with bit array size calculation
     // ExifTool: Canon.pm:4480 'Format => int16s[int(($val{0}+15)/16)]'
     table.tags.insert(
         10,
-        BinaryDataTag {
-            name: "AFPointsInFocus".to_string(),
-            format_spec: Some(FormatSpec::Array {
+        BinaryDataTag::from_legacy(
+            "AFPointsInFocus".to_string(),
+            Some(FormatSpec::Array {
                 base_format: BinaryDataFormat::Int16s,
                 count_expr: "int(($val{0}+15)/16)".to_string(), // Ceiling division for bit arrays
             }),
-            format: None, // Will be resolved at runtime
-            mask: None,
-            print_conv: None,
-            data_member: None,
-            group: Some(0), // MakerNotes group
-        },
+            None, // Will be resolved at runtime
+            None,
+            None,
+            None,
+            Some(0), // MakerNotes group
+        ),
     );
 
     // Analyze dependencies to establish processing order
@@ -1001,69 +1001,69 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
     // ExifTool: Canon.pm:2172-2178 tag 1 MacroMode
     table.tags.insert(
         1,
-        BinaryDataTag {
-            name: "MacroMode".to_string(),
-            format_spec: None, // Uses table default
-            format: None,      // Uses table default
-            mask: None,
-            print_conv: {
+        BinaryDataTag::from_legacy(
+            "MacroMode".to_string(),
+            None, // Uses table default
+            None, // Uses table default
+            None,
+            {
                 let mut conv = HashMap::new();
                 conv.insert(1u32, "Macro".to_string());
                 conv.insert(2u32, "Normal".to_string());
                 Some(conv)
             },
-            data_member: None,
-            group: Some(0), // MakerNotes group
-        },
+            None,
+            Some(0), // MakerNotes group
+        ),
     );
 
     // ExifTool: Canon.pm:2179-2191 tag 2 SelfTimer
     table.tags.insert(
         2,
-        BinaryDataTag {
-            name: "SelfTimer".to_string(),
-            format_spec: None,
-            format: None,
-            mask: None,
-            print_conv: {
+        BinaryDataTag::from_legacy(
+            "SelfTimer".to_string(),
+            None,
+            None,
+            None,
+            {
                 let mut conv = HashMap::new();
                 conv.insert(0u32, "Off".to_string());
                 Some(conv)
             },
-            data_member: None,
-            group: Some(0), // MakerNotes group
-        },
+            None,
+            Some(0), // MakerNotes group
+        ),
     );
 
     // ExifTool: Canon.pm:2196-2209 tag 4 CanonFlashMode
     table.tags.insert(
         4,
-        BinaryDataTag {
-            name: "CanonFlashMode".to_string(),
-            format_spec: None,
-            format: None,
-            mask: None,
-            print_conv: {
+        BinaryDataTag::from_legacy(
+            "CanonFlashMode".to_string(),
+            None,
+            None,
+            None,
+            {
                 let mut conv = HashMap::new();
                 conv.insert(0u32, "Off".to_string());
                 conv.insert(1u32, "Auto".to_string());
                 conv.insert(2u32, "On".to_string());
                 Some(conv)
             },
-            data_member: None,
-            group: Some(0), // MakerNotes group
-        },
+            None,
+            Some(0), // MakerNotes group
+        ),
     );
 
     // ExifTool: Canon.pm:2228-2240 tag 7 FocusMode
     table.tags.insert(
         7,
-        BinaryDataTag {
-            name: "FocusMode".to_string(),
-            format_spec: None,
-            format: None,
-            mask: None,
-            print_conv: {
+        BinaryDataTag::from_legacy(
+            "FocusMode".to_string(),
+            None,
+            None,
+            None,
+            {
                 let mut conv = HashMap::new();
                 conv.insert(0u32, "One-shot AF".to_string());
                 conv.insert(1u32, "AI Servo AF".to_string());
@@ -1071,9 +1071,9 @@ pub fn create_canon_camera_settings_table() -> BinaryDataTable {
                 conv.insert(3u32, "Manual Focus (3)".to_string());
                 Some(conv)
             },
-            data_member: None,
-            group: Some(0), // MakerNotes group
-        },
+            None,
+            Some(0), // MakerNotes group
+        ),
     );
 
     table
@@ -1649,32 +1649,32 @@ mod tests {
         // Tag 0: StringLength (DataMember) = 5
         table.tags.insert(
             0,
-            BinaryDataTag {
-                name: "StringLength".to_string(),
-                format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
-                format: Some(BinaryDataFormat::Int16u),
-                mask: None,
-                print_conv: None,
-                data_member: Some("StringLength".to_string()),
-                group: Some(0), // MakerNotes group
-            },
+            BinaryDataTag::from_legacy(
+                "StringLength".to_string(),
+                Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+                Some(BinaryDataFormat::Int16u),
+                None,
+                None,
+                Some("StringLength".to_string()),
+                Some(0), // MakerNotes group
+            ),
         );
         table.data_member_tags.push(0);
 
         // Tag 1: VariableString = string[$val{0}] (5 characters)
         table.tags.insert(
             1,
-            BinaryDataTag {
-                name: "VariableString".to_string(),
-                format_spec: Some(FormatSpec::StringWithLength {
+            BinaryDataTag::from_legacy(
+                "VariableString".to_string(),
+                Some(FormatSpec::StringWithLength {
                     length_expr: "$val{0}".to_string(),
                 }),
-                format: None,
-                mask: None,
-                print_conv: None,
-                data_member: None,
-                group: Some(0), // MakerNotes group
-            },
+                None,
+                None,
+                None,
+                None,
+                Some(0), // MakerNotes group
+            ),
         );
 
         table.analyze_dependencies();
@@ -1737,33 +1737,33 @@ mod tests {
         // Tag 0: Count = 0
         table.tags.insert(
             0,
-            BinaryDataTag {
-                name: "Count".to_string(),
-                format_spec: Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
-                format: Some(BinaryDataFormat::Int16u),
-                mask: None,
-                print_conv: None,
-                data_member: Some("Count".to_string()),
-                group: Some(0), // MakerNotes group
-            },
+            BinaryDataTag::from_legacy(
+                "Count".to_string(),
+                Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+                Some(BinaryDataFormat::Int16u),
+                None,
+                None,
+                Some("Count".to_string()),
+                Some(0), // MakerNotes group
+            ),
         );
         table.data_member_tags.push(0);
 
         // Tag 1: EmptyArray = int16s[$val{0}] (0 elements)
         table.tags.insert(
             1,
-            BinaryDataTag {
-                name: "EmptyArray".to_string(),
-                format_spec: Some(FormatSpec::Array {
+            BinaryDataTag::from_legacy(
+                "EmptyArray".to_string(),
+                Some(FormatSpec::Array {
                     base_format: BinaryDataFormat::Int16s,
                     count_expr: "$val{0}".to_string(),
                 }),
-                format: None,
-                mask: None,
-                print_conv: None,
-                data_member: None,
-                group: Some(0), // MakerNotes group
-            },
+                None,
+                None,
+                None,
+                None,
+                Some(0), // MakerNotes group
+            ),
         );
 
         table.analyze_dependencies();
