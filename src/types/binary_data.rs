@@ -416,8 +416,13 @@ pub struct BinaryDataTable {
 /// ExifTool: Tag info hash structure
 #[derive(Debug, Clone)]
 pub struct BinaryDataTag {
-    /// Tag name
+    /// Tag name (for simple tags) or name of first variant (for conditional arrays)
     pub name: String,
+    /// Conditional variants for this tag
+    /// ExifTool: Array of tag definitions with different conditions
+    /// For simple tags, this contains a single variant with no condition
+    pub variants: Vec<BinaryDataTagVariant>,
+    /// Legacy fields for backward compatibility - TODO: Remove once all code migrated
     /// Data format specification (may contain expressions)
     /// ExifTool: Format field can be "int16s" or "int16s[$val{0}]"
     pub format_spec: Option<FormatSpec>,
@@ -434,6 +439,40 @@ pub struct BinaryDataTag {
     /// Group assignment for this tag (e.g., 0 for MakerNotes, 2 for Camera)
     /// ExifTool: Individual tags can override the table's default group
     pub group: Option<u8>,
+}
+
+/// Individual variant of a binary data tag with optional condition
+/// ExifTool: Single tag definition that may be part of a conditional array
+#[derive(Debug, Clone)]
+pub struct BinaryDataTagVariant {
+    /// Tag name for this variant
+    pub name: String,
+    /// Condition for when this variant applies
+    /// ExifTool: Condition => '$self{Model} =~ /\b(20D|350D)\b/' or None for default
+    pub condition: Option<String>,
+    /// Data format specification (may contain expressions)
+    /// ExifTool: Format field can be "int16s" or "int16s[$val{0}]"
+    pub format_spec: Option<FormatSpec>,
+    /// Legacy format field for backward compatibility
+    pub format: Option<BinaryDataFormat>,
+    /// Bit mask for extracting value
+    pub mask: Option<u32>,
+    /// PrintConv lookup table
+    pub print_conv: Option<HashMap<u32, String>>,
+    /// ValueConv expression for value conversion
+    /// ExifTool: ValueConv => 'exp($val/32*log(2))*100'
+    pub value_conv: Option<String>,
+    /// PrintConv expression for display conversion
+    /// ExifTool: PrintConv => 'sprintf("%.0f",$val)'
+    pub print_conv_expr: Option<String>,
+    /// DataMember name if this tag should be stored for later use
+    /// ExifTool: DataMember => 'Name' in tag definition
+    pub data_member: Option<String>,
+    /// Group assignment for this variant
+    pub group: Option<u8>,
+    /// Priority for this variant (lower = higher priority)
+    /// ExifTool: Priority => 0
+    pub priority: Option<i32>,
 }
 
 impl Default for BinaryDataTable {
@@ -486,6 +525,16 @@ impl BinaryDataTable {
     /// Check if a tag needs expression evaluation
     pub fn tag_needs_evaluation(&self, index: u32) -> bool {
         if let Some(tag) = self.tags.get(&index) {
+            // Check variants first (new system)
+            if !tag.variants.is_empty() {
+                return tag.variants.iter().any(|variant| {
+                    variant
+                        .format_spec
+                        .as_ref()
+                        .is_some_and(|spec| spec.needs_evaluation())
+                });
+            }
+            // Legacy system fallback
             if let Some(format_spec) = &tag.format_spec {
                 return format_spec.needs_evaluation();
             }
@@ -494,8 +543,23 @@ impl BinaryDataTable {
     }
 
     /// Get effective format for a tag (format_spec takes precedence)
+    /// For conditional tags, returns the format of the first variant
     pub fn get_tag_format_spec(&self, index: u32) -> Option<FormatSpec> {
         if let Some(tag) = self.tags.get(&index) {
+            // Check variants first (new system)
+            if !tag.variants.is_empty() {
+                if let Some(first_variant) = tag.variants.first() {
+                    if let Some(format_spec) = &first_variant.format_spec {
+                        return Some(format_spec.clone());
+                    }
+                    if let Some(format) = &first_variant.format {
+                        return Some(FormatSpec::Fixed(*format));
+                    }
+                }
+                // Use table default for variants
+                return Some(FormatSpec::Fixed(self.default_format));
+            }
+            // Legacy system fallback
             if let Some(format_spec) = &tag.format_spec {
                 return Some(format_spec.clone());
             }
@@ -506,5 +570,293 @@ impl BinaryDataTable {
             return Some(FormatSpec::Fixed(self.default_format));
         }
         None
+    }
+}
+
+impl BinaryDataTag {
+    /// Get the active variant for this tag based on processor context
+    /// ExifTool: Evaluates Condition fields to select appropriate variant
+    pub fn get_active_variant(&self, context: &ProcessorContext) -> Option<&BinaryDataTagVariant> {
+        // If we have variants, evaluate them
+        if !self.variants.is_empty() {
+            for variant in &self.variants {
+                if let Some(condition) = &variant.condition {
+                    // Evaluate condition against context (camera model, etc.)
+                    if evaluate_condition(condition, context) {
+                        return Some(variant);
+                    }
+                } else {
+                    // No condition = default variant, use if no conditioned variants match
+                    return Some(variant);
+                }
+            }
+            // If no variant matches, return the first one as fallback
+            return self.variants.first();
+        }
+
+        // Legacy: create a variant from the old structure
+        None
+    }
+
+    /// Create a simple tag with a single variant (for backward compatibility)
+    pub fn simple(name: String) -> Self {
+        Self {
+            name: name.clone(),
+            variants: vec![BinaryDataTagVariant {
+                name,
+                condition: None,
+                format_spec: None,
+                format: None,
+                mask: None,
+                print_conv: None,
+                value_conv: None,
+                print_conv_expr: None,
+                data_member: None,
+                group: None,
+                priority: None,
+            }],
+            // Legacy fields
+            format_spec: None,
+            format: None,
+            mask: None,
+            print_conv: None,
+            data_member: None,
+            group: None,
+        }
+    }
+
+    /// Create a tag from legacy fields (for backward compatibility)
+    /// This automatically creates a single variant from the legacy structure
+    pub fn from_legacy(
+        name: String,
+        format_spec: Option<FormatSpec>,
+        format: Option<BinaryDataFormat>,
+        mask: Option<u32>,
+        print_conv: Option<HashMap<u32, String>>,
+        data_member: Option<String>,
+        group: Option<u8>,
+    ) -> Self {
+        Self {
+            name: name.clone(),
+            variants: vec![BinaryDataTagVariant {
+                name,
+                condition: None,
+                format_spec: format_spec.clone(),
+                format,
+                mask,
+                print_conv: print_conv.clone(),
+                value_conv: None,
+                print_conv_expr: None,
+                data_member: data_member.clone(),
+                group,
+                priority: None,
+            }],
+            // Keep legacy fields for backward compatibility
+            format_spec,
+            format,
+            mask,
+            print_conv, // Keep for backward compatibility
+            data_member,
+            group,
+        }
+    }
+}
+
+/// Evaluate a condition string against processor context
+/// ExifTool: Condition evaluation like '$self{Model} =~ /\b(20D|350D)\b/'
+fn evaluate_condition(condition: &str, context: &ProcessorContext) -> bool {
+    use crate::expressions::ExpressionEvaluator;
+
+    // Create expression evaluator
+    let mut evaluator = ExpressionEvaluator::new();
+
+    // Try to evaluate as boolean condition
+    match evaluator.evaluate_context_condition(context, condition) {
+        Ok(result) => result,
+        Err(_) => {
+            // If evaluation fails, log a warning and return false
+            tracing::debug!("Failed to evaluate condition: {}", condition);
+            false
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::processor_registry::ProcessorContext;
+
+    #[test]
+    fn test_conditional_array_exposure_time() {
+        // Test conditional array support for Canon ShotInfo ExposureTime
+        // Reference: Canon.pm tag 22 with condition for 20D/350D vs other models
+        // This validates the ExposureTime behavior mentioned in the transcript
+
+        // Create a BinaryDataTag with conditional variants for ExposureTime
+        let exposure_time_tag = BinaryDataTag {
+            name: "ExposureTime".to_string(),
+            variants: vec![
+                // Variant 1: For 20D/350D models (includes *1000/32)
+                BinaryDataTagVariant {
+                    name: "ExposureTime".to_string(),
+                    condition: Some("$model =~ /(20D|350D|REBEL XT|Kiss Digital N)/".to_string()),
+                    format_spec: None,
+                    format: None,
+                    mask: None,
+                    print_conv: None,
+                    value_conv: Some(
+                        "exp(-Image::ExifTool::Canon::CanonEv($val)*log(2))*1000/32".to_string(),
+                    ),
+                    print_conv_expr: Some(
+                        "Image::ExifTool::Exif::PrintExposureTime($val)".to_string(),
+                    ),
+                    data_member: None,
+                    group: None,
+                    priority: Some(0),
+                },
+                // Variant 2: For other models (no *1000/32)
+                BinaryDataTagVariant {
+                    name: "ExposureTime".to_string(),
+                    condition: None, // Default fallback
+                    format_spec: None,
+                    format: None,
+                    mask: None,
+                    print_conv: None,
+                    value_conv: Some(
+                        "exp(-Image::ExifTool::Canon::CanonEv($val)*log(2))".to_string(),
+                    ),
+                    print_conv_expr: Some(
+                        "Image::ExifTool::Exif::PrintExposureTime($val)".to_string(),
+                    ),
+                    data_member: None,
+                    group: None,
+                    priority: Some(0),
+                },
+            ],
+            // Legacy fields for backward compatibility
+            format_spec: None,
+            format: None,
+            mask: None,
+            print_conv: None,
+            data_member: None,
+            group: None,
+        };
+
+        use crate::formats::FileFormat;
+
+        // Test context for Canon 20D (should match first variant)
+        let canon_20d_context = ProcessorContext {
+            file_format: FileFormat::Jpeg,
+            manufacturer: Some("Canon".to_string()),
+            model: Some("Canon EOS 20D".to_string()),
+            firmware: None,
+            format_version: None,
+            table_name: "Canon::ShotInfo".to_string(),
+            tag_id: None,
+            directory_path: Vec::new(),
+            data_offset: 0,
+            parent_tags: std::collections::HashMap::new(),
+            parameters: std::collections::HashMap::new(),
+            byte_order: None,
+            base_offset: 0,
+            data_size: None,
+        };
+
+        // Test context for Canon 5D (should match second variant - default)
+        let canon_5d_context = ProcessorContext {
+            file_format: FileFormat::Jpeg,
+            manufacturer: Some("Canon".to_string()),
+            model: Some("Canon EOS 5D".to_string()),
+            firmware: None,
+            format_version: None,
+            table_name: "Canon::ShotInfo".to_string(),
+            tag_id: None,
+            directory_path: Vec::new(),
+            data_offset: 0,
+            parent_tags: std::collections::HashMap::new(),
+            parameters: std::collections::HashMap::new(),
+            byte_order: None,
+            base_offset: 0,
+            data_size: None,
+        };
+
+        // Get active variant for 20D - should match the conditional variant
+        let variant_20d = exposure_time_tag.get_active_variant(&canon_20d_context);
+        assert!(variant_20d.is_some(), "Should find a variant for Canon 20D");
+
+        let variant_20d = variant_20d.unwrap();
+        assert_eq!(variant_20d.name, "ExposureTime");
+        assert!(
+            variant_20d.condition.is_some(),
+            "20D should match conditional variant"
+        );
+        assert!(
+            variant_20d
+                .value_conv
+                .as_ref()
+                .unwrap()
+                .contains("*1000/32"),
+            "20D variant should include *1000/32 conversion"
+        );
+
+        // Get active variant for 5D - should match the default variant
+        let variant_5d = exposure_time_tag.get_active_variant(&canon_5d_context);
+        assert!(variant_5d.is_some(), "Should find a variant for Canon 5D");
+
+        let variant_5d = variant_5d.unwrap();
+        assert_eq!(variant_5d.name, "ExposureTime");
+        assert!(
+            variant_5d.condition.is_none(),
+            "5D should match default variant"
+        );
+        assert!(
+            !variant_5d.value_conv.as_ref().unwrap().contains("*1000/32"),
+            "5D variant should NOT include *1000/32 conversion"
+        );
+
+        // Verify that both variants have the same print conversion
+        assert_eq!(variant_20d.print_conv_expr, variant_5d.print_conv_expr);
+        assert_eq!(
+            variant_20d.print_conv_expr,
+            Some("Image::ExifTool::Exif::PrintExposureTime($val)".to_string())
+        );
+    }
+
+    #[test]
+    fn test_simple_tag_creation() {
+        // Test the simple tag creation helper
+        let simple_tag = BinaryDataTag::simple("TestTag".to_string());
+
+        assert_eq!(simple_tag.name, "TestTag");
+        assert_eq!(simple_tag.variants.len(), 1);
+        assert_eq!(simple_tag.variants[0].name, "TestTag");
+        assert!(simple_tag.variants[0].condition.is_none());
+    }
+
+    #[test]
+    fn test_from_legacy_creation() {
+        // Test the from_legacy helper
+        let mut print_conv = HashMap::new();
+        print_conv.insert(1u32, "On".to_string());
+        print_conv.insert(0u32, "Off".to_string());
+
+        let legacy_tag = BinaryDataTag::from_legacy(
+            "TestTag".to_string(),
+            Some(FormatSpec::Fixed(BinaryDataFormat::Int16u)),
+            Some(BinaryDataFormat::Int16u),
+            None,
+            Some(print_conv.clone()),
+            Some("TestMember".to_string()),
+            Some(0),
+        );
+
+        assert_eq!(legacy_tag.name, "TestTag");
+        assert_eq!(legacy_tag.variants.len(), 1);
+        assert_eq!(legacy_tag.variants[0].name, "TestTag");
+        assert_eq!(legacy_tag.variants[0].print_conv, Some(print_conv));
+        assert_eq!(
+            legacy_tag.variants[0].data_member,
+            Some("TestMember".to_string())
+        );
     }
 }
