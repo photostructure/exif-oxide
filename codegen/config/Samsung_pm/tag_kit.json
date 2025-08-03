@@ -1,0 +1,79 @@
+{
+   "tables" : [
+      {
+         "description" : "APP5 tag definitions",
+         "table_name" : "APP5"
+      },
+      {
+         "table_name" : "Composite",
+         "description" : "Composite tag definitions"
+      },
+      {
+         "description" : "DualShotExtra tag definitions",
+         "table_name" : "DualShotExtra"
+      },
+      {
+         "table_name" : "IFD",
+         "description" : "This is a standard-format IFD found in the maker notes of some Samsung models, except that the entry count is a 4-byte integer and the offsets are relative to the end of the IFD."
+      },
+      {
+         "table_name" : "INFO",
+         "description" : "This information is found in MP4 videos from Samsung models such as the SMX-C20N."
+      },
+      {
+         "table_name" : "MP4",
+         "description" : "This information is found in Samsung MP4 videos from models such as the WP10."
+      },
+      {
+         "table_name" : "Main",
+         "description" : "Tags found in the binary \"STMN\" format maker notes written by a number of Samsung models."
+      },
+      {
+         "description" : "Camera orientation information written by the Gear 360 (SM-C200).",
+         "table_name" : "OrientationInfo"
+      },
+      {
+         "table_name" : "PictureWizard",
+         "description" : "PictureWizard tag definitions"
+      },
+      {
+         "description" : "SingleShotMeta tag definitions",
+         "table_name" : "SingleShotMeta"
+      },
+      {
+         "description" : "Thumbnail tag definitions",
+         "table_name" : "Thumbnail"
+      },
+      {
+         "table_name" : "Thumbnail2",
+         "description" : "Thumbnail2 tag definitions"
+      },
+      {
+         "table_name" : "Trailer",
+         "description" : "Tags extracted from the SEFT trailer of JPEG and PNG images written when using certain features (such as \"Sound & Shot\" or \"Shot & More\") from Samsung models such as the Galaxy S4 and Tab S, and from the 'sefd' atom in HEIC images from models such as the S10+."
+      },
+      {
+         "table_name" : "Type2",
+         "description" : "Tags found in the EXIF-format maker notes of newer Samsung models."
+      },
+      {
+         "table_name" : "samsungLensTypes",
+         "description" : "samsungLensTypes tag definitions"
+      },
+      {
+         "description" : "This information is found in the @sec atom of Samsung MP4 videos from models such as the WB30F.",
+         "table_name" : "sec"
+      },
+      {
+         "table_name" : "smta",
+         "description" : "This information is found in the smta atom of Samsung MP4 videos from models such as the Galaxy S4."
+      },
+      {
+         "description" : "This information is found in the svss atom of Samsung MP4 videos from models such as the Galaxy S4.",
+         "table_name" : "svss"
+      }
+   ],
+   "description" : "Samsung format tag definitions",
+   "$schema" : "../../schemas/tag_kit.json",
+   "source" : "third-party/exiftool/lib/Image/ExifTool/Samsung.pm"
+}

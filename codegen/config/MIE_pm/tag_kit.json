@@ -1,83 +1,95 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "source": "third-party/exiftool/lib/Image/ExifTool/MIE.pm",
-  "description": "MIE (Media Information Exchange) tag definitions with comprehensive subdirectory coverage",
-  "tables": [
-    {
-      "table_name": "Main",
-      "description": "MIE main tag table - entry point with SubfileType, MIEVersion, and Meta subdirectory"
-    },
-    {
-      "table_name": "Meta",
-      "description": "MIE meta information group - central hub with Audio, Camera, Document, Geo, Image, MakerNotes, Preview, Thumbnail, Video subdirectories"
-    },
-    {
-      "table_name": "Doc",
-      "description": "MIE document information - main document/image/file description"
-    },
-    {
-      "table_name": "Geo",
-      "description": "MIE geographic location information with GPS and UTM subdirectories"
-    },
-    {
-      "table_name": "GPS",
-      "description": "MIE GPS information - altitude, latitude, longitude, coordinate system"
-    },
-    {
-      "table_name": "UTM",
-      "description": "MIE UTM coordinate system information"
-    },
-    {
-      "table_name": "Image",
-      "description": "MIE image information - dimensions, color space, compression"
-    },
-    {
-      "table_name": "Preview",
-      "description": "MIE preview image information"
-    },
-    {
-      "table_name": "Thumbnail",
-      "description": "MIE thumbnail image information"
-    },
-    {
-      "table_name": "Audio",
-      "description": "MIE audio information - codec, sample rate, channels"
-    },
-    {
-      "table_name": "Video",
-      "description": "MIE video information - codec, frame rate, dimensions"
-    },
-    {
-      "table_name": "Camera",
-      "description": "MIE camera information with Flash, Lens, Orientation subdirectories - exposure, ISO, settings"
-    },
-    {
-      "table_name": "Orient",
-      "description": "MIE orientation information - rotation, perspective correction"
-    },
-    {
-      "table_name": "Lens",
-      "description": "MIE lens information with Extender subdirectory - focal length, aperture, zoom"
-    },
-    {
-      "table_name": "Extender",
-      "description": "MIE lens extender information - magnification, make, model"
-    },
-    {
-      "table_name": "Flash",
-      "description": "MIE flash information - power, mode, sync speed"
-    },
-    {
-      "table_name": "MakerNotes",
-      "description": "MIE maker notes with Canon subdirectory and various manufacturer Unknown tables"
-    },
-    {
-      "table_name": "Canon",
-      "description": "MIE Canon-specific information with CanonVRD data"
-    },
-    {
-      "table_name": "Unknown",
-      "description": "MIE unknown/generic maker notes for unsupported manufacturers"
-    }
-  ]
+   "description" : "MIE format tag definitions",
+   "$schema" : "../../schemas/tag_kit.json",
+   "tables" : [
+      {
+         "description" : "For the Audio group (and any other group containing a 'data' element), tags refer to the contained data if present, otherwise they refer to the main SubfileData.",
+         "table_name" : "Audio"
+      },
+      {
+         "table_name" : "Camera",
+         "description" : "Camera tag definitions"
+      },
+      {
+         "table_name" : "Canon",
+         "description" : "Canon tag definitions"
+      },
+      {
+         "table_name" : "Doc",
+         "description" : "Information describing the main document, image or file."
+      },
+      {
+         "description" : "Extender tag definitions",
+         "table_name" : "Extender"
+      },
+      {
+         "description" : "Flash tag definitions",
+         "table_name" : "Flash"
+      },
+      {
+         "table_name" : "GPS",
+         "description" : "GPS tag definitions"
+      },
+      {
+         "table_name" : "Geo",
+         "description" : "Information related to geographic location."
+      },
+      {
+         "table_name" : "Image",
+         "description" : "Image tag definitions"
+      },
+      {
+         "table_name" : "Lens",
+         "description" : "All recorded lens parameters (focal length, aperture, etc) include the effects of the extender if present."
+      },
+      {
+         "description" : "MIE is a flexible format which may be used as a stand-alone meta information format, for encapsulation of other files and information, or as a trailer appended to other file formats.",
+         "table_name" : "Main"
+      },
+      {
+         "description" : "MIE maker notes are contained within separate groups for each manufacturer to avoid name conflicts.",
+         "table_name" : "MakerNotes"
+      },
+      {
+         "table_name" : "Meta",
+         "description" : "Meta tag definitions"
+      },
+      {
+         "table_name" : "Orient",
+         "description" : "These tags describe the camera orientation."
+      },
+      {
+         "table_name" : "Preview",
+         "description" : "Preview tag definitions"
+      },
+      {
+         "table_name" : "Thumbnail",
+         "description" : "Thumbnail tag definitions"
+      },
+      {
+         "table_name" : "UTM",
+         "description" : "UTM tag definitions"
+      },
+      {
+         "description" : "Unknown tag definitions",
+         "table_name" : "Unknown"
+      },
+      {
+         "description" : "Video tag definitions",
+         "table_name" : "Video"
+      },
+      {
+         "table_name" : "mieFormat",
+         "description" : "mieFormat tag definitions"
+      },
+      {
+         "table_name" : "mieMap",
+         "description" : "mieMap tag definitions"
+      },
+      {
+         "table_name" : "tableDefaults",
+         "description" : "tableDefaults tag definitions"
+      }
+   ],
+   "source" : "third-party/exiftool/lib/Image/ExifTool/MIE.pm"
 }

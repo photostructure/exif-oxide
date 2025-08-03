@@ -1,11 +1,39 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "source": "third-party/exiftool/lib/Image/ExifTool/PanasonicRaw.pm",
-  "description": "Complete tag definitions for Panasonic RAW format with embedded PrintConvs",
-  "tables": [
-    {
-      "table_name": "Main",
-      "description": "Panasonic RAW main table - includes Compression, Orientation, Multishot, CFAPattern tags with PrintConvs"
-    }
-  ]
+   "tables" : [
+      {
+         "description" : "CameraIFD tag definitions",
+         "table_name" : "CameraIFD"
+      },
+      {
+         "description" : "Composite tag definitions",
+         "table_name" : "Composite"
+      },
+      {
+         "description" : "Lens distortion correction information.",
+         "table_name" : "DistortionInfo"
+      },
+      {
+         "description" : "These tags are found in IFD0 of Panasonic/Leica RAW, RW2 and RWL images.",
+         "table_name" : "Main"
+      },
+      {
+         "table_name" : "WBInfo",
+         "description" : "WBInfo tag definitions"
+      },
+      {
+         "table_name" : "WBInfo2",
+         "description" : "WBInfo2 tag definitions"
+      },
+      {
+         "description" : "jpgFromRawMap tag definitions",
+         "table_name" : "jpgFromRawMap"
+      },
+      {
+         "table_name" : "panasonicWhiteBalance",
+         "description" : "panasonicWhiteBalance tag definitions"
+      }
+   ],
+   "description" : "PanasonicRaw format tag definitions",
+   "$schema" : "../../schemas/tag_kit.json",
+   "source" : "third-party/exiftool/lib/Image/ExifTool/PanasonicRaw.pm"
 }

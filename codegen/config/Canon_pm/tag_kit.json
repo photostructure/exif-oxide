@@ -1,147 +1,491 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "source": "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
-  "description": "Canon tag definitions with embedded PrintConv implementations",
-  "tables": [
-    {
-      "table_name": "CameraSettings",
-      "description": "Canon camera settings tag table with inline PrintConv definitions"
-    },
-    {
-      "table_name": "ShotInfo",
-      "description": "Canon shot information tag table"
-    },
-    {
-      "table_name": "FocalLength",
-      "description": "Canon focal length information"
-    },
-    {
-      "table_name": "Panorama",
-      "description": "Canon panorama settings"
-    },
-    {
-      "table_name": "FileInfo",
-      "description": "Canon file information"
-    },
-    {
-      "table_name": "CameraInfo1D",
-      "description": "Canon 1D camera information"
-    },
-    {
-      "table_name": "AFInfo",
-      "description": "Canon autofocus information"
-    },
-    {
-      "table_name": "AFInfo2",
-      "description": "Canon autofocus information version 2"
-    },
-    {
-      "table_name": "Main",
-      "description": "Canon main maker notes table"
-    },
-    {
-      "table_name": "MyColors",
-      "description": "Canon My Colors settings"
-    },
-    {
-      "table_name": "FaceDetect1",
-      "description": "Canon face detection information"
-    },
-    {
-      "table_name": "FaceDetect2",
-      "description": "Canon face detection information version 2"
-    },
-    {
-      "table_name": "TimeInfo",
-      "description": "Canon time information - timezone cities (34 PrintConv entries)"
-    },
-    {
-      "table_name": "Processing",
-      "description": "Canon processing settings - tone curve, sharpness frequency"
-    },
-    {
-      "table_name": "ModifiedInfo",
-      "description": "Canon modified processing information - modified tone curve and sharpness"
-    },
-    {
-      "table_name": "Ambience",
-      "description": "Canon ambience modes - 9 artistic processing modes"
-    },
-    {
-      "table_name": "ContrastInfo",
-      "description": "Canon contrast information - intelligent contrast settings"
-    },
-    {
-      "table_name": "PSInfo",
-      "description": "Canon picture style info - filter effects, toning for monochrome"
-    },
-    {
-      "table_name": "AFConfig",
-      "description": "Canon AF configuration - advanced autofocus settings for modern bodies"
-    },
-    {
-      "table_name": "ColorData1",
-      "description": "Canon color data for 20D and 350D"
-    },
-    {
-      "table_name": "ColorData2",
-      "description": "Canon color data for 1DmkII and 1DSmkII"
-    },
-    {
-      "table_name": "ColorData3",
-      "description": "Canon color data table 3"
-    },
-    {
-      "table_name": "ColorData4",
-      "description": "Canon color data table 4"
-    },
-    {
-      "table_name": "ColorData5",
-      "description": "Canon color data table 5"
-    },
-    {
-      "table_name": "ColorData6",
-      "description": "Canon color data table 6"
-    },
-    {
-      "table_name": "ColorData7",
-      "description": "Canon color data table 7"
-    },
-    {
-      "table_name": "ColorData8",
-      "description": "Canon color data table 8"
-    },
-    {
-      "table_name": "ColorData9",
-      "description": "Canon color data table 9"
-    },
-    {
-      "table_name": "ColorData10",
-      "description": "Canon color data table 10"
-    },
-    {
-      "table_name": "ColorData11",
-      "description": "Canon color data table 11"
-    },
-    {
-      "table_name": "ColorData12",
-      "description": "Canon color data table 12"
-    },
-    {
-      "table_name": "ColorDataUnknown",
-      "description": "Canon color data for unknown camera models"
-    },
-    {
-      "table_name": "PSInfo2",
-      "description": "Canon picture style info version 2 - advanced filter effects and toning"
-    },
-    {
-      "table_name": "ColorCalib",
-      "description": "Canon color calibration data"
-    },
-    {
-      "table_name": "ColorCalib2",
-      "description": "Canon color calibration data version 2"
-    }
-  ]
+   "tables" : [
+      {
+         "description" : "AFConfig tag definitions",
+         "table_name" : "AFConfig"
+      },
+      {
+         "table_name" : "AFInfo",
+         "description" : "Auto-focus information used by many older Canon models."
+      },
+      {
+         "description" : "Newer version of the AFInfo record containing much of the same information (and coordinate confusion) as the older version.",
+         "table_name" : "AFInfo2"
+      },
+      {
+         "table_name" : "AFMicroAdj",
+         "description" : "AFMicroAdj tag definitions"
+      },
+      {
+         "description" : "Ambience tag definitions",
+         "table_name" : "Ambience"
+      },
+      {
+         "table_name" : "AspectInfo",
+         "description" : "AspectInfo tag definitions"
+      },
+      {
+         "description" : "CCTP tag definitions",
+         "table_name" : "CCTP"
+      },
+      {
+         "description" : "CDI1 tag definitions",
+         "table_name" : "CDI1"
+      },
+      {
+         "table_name" : "CMP1",
+         "description" : "CMP1 tag definitions"
+      },
+      {
+         "description" : "CNOP tag definitions",
+         "table_name" : "CNOP"
+      },
+      {
+         "description" : "Canon-specific QuickTime tags found in the CNTH atom of MOV/MP4 videos from some cameras.",
+         "table_name" : "CNTH"
+      },
+      {
+         "description" : "Canon Timed MetaData tags found in CR3 images.",
+         "table_name" : "CTMD"
+      },
+      {
+         "description" : "CameraInfo tags for the EOS 1000D.",
+         "table_name" : "CameraInfo1000D"
+      },
+      {
+         "description" : "Information in the \"CameraInfo\" records is tricky to decode because the encodings are very different than in other Canon records (even sometimes switching endianness between values within a single camera), plus there is considerable variation in format from model to model.",
+         "table_name" : "CameraInfo1D"
+      },
+      {
+         "table_name" : "CameraInfo1DX",
+         "description" : "CameraInfo tags for the EOS 1D X."
+      },
+      {
+         "description" : "CameraInfo tags for the 1DmkII and 1DSmkII.",
+         "table_name" : "CameraInfo1DmkII"
+      },
+      {
+         "table_name" : "CameraInfo1DmkIII",
+         "description" : "CameraInfo tags for the 1DmkIII and 1DSmkIII."
+      },
+      {
+         "table_name" : "CameraInfo1DmkIIN",
+         "description" : "CameraInfo tags for the 1DmkIIN."
+      },
+      {
+         "table_name" : "CameraInfo1DmkIV",
+         "description" : "CameraInfo tags for the EOS 1D Mark IV."
+      },
+      {
+         "table_name" : "CameraInfo40D",
+         "description" : "CameraInfo tags for the EOS 40D."
+      },
+      {
+         "table_name" : "CameraInfo450D",
+         "description" : "CameraInfo tags for the EOS 450D."
+      },
+      {
+         "table_name" : "CameraInfo500D",
+         "description" : "CameraInfo tags for the EOS 500D."
+      },
+      {
+         "description" : "CameraInfo tags for the EOS 50D.",
+         "table_name" : "CameraInfo50D"
+      },
+      {
+         "table_name" : "CameraInfo550D",
+         "description" : "CameraInfo tags for the EOS 550D."
+      },
+      {
+         "description" : "CameraInfo tags for the EOS 5D.",
+         "table_name" : "CameraInfo5D"
+      },
+      {
+         "description" : "CameraInfo tags for the EOS 5D Mark II.",
+         "table_name" : "CameraInfo5DmkII"
+      },
+      {
+         "table_name" : "CameraInfo5DmkIII",
+         "description" : "CameraInfo tags for the EOS 5D Mark III."
+      },
+      {
+         "description" : "CameraInfo tags for the EOS 600D and 1100D.",
+         "table_name" : "CameraInfo600D"
+      },
+      {
+         "description" : "CameraInfo tags for the EOS 60D and 1200D.",
+         "table_name" : "CameraInfo60D"
+      },
+      {
+         "description" : "CameraInfo tags for the EOS 650D and 700D.",
+         "table_name" : "CameraInfo650D"
+      },
+      {
+         "description" : "CameraInfo tags for the EOS 6D.",
+         "table_name" : "CameraInfo6D"
+      },
+      {
+         "table_name" : "CameraInfo70D",
+         "description" : "CameraInfo tags for the EOS 70D."
+      },
+      {
+         "table_name" : "CameraInfo750D",
+         "description" : "CameraInfo tags for the EOS 750D and 760D."
+      },
+      {
+         "table_name" : "CameraInfo7D",
+         "description" : "CameraInfo tags for the EOS 7D."
+      },
+      {
+         "table_name" : "CameraInfo80D",
+         "description" : "CameraInfo tags for the EOS 80D."
+      },
+      {
+         "table_name" : "CameraInfoG5XII",
+         "description" : "CameraInfo tags for the PowerShot G5 X Mark II."
+      },
+      {
+         "table_name" : "CameraInfoPowerShot",
+         "description" : "CameraInfo tags for PowerShot models such as the A450, A460, A550, A560, A570, A630, A640, A650, A710, A720, G7, G9, S5, SD40, SD750, SD800, SD850, SD870, SD900, SD950, SD1000, SX100 and TX1."
+      },
+      {
+         "description" : "CameraInfo tags for PowerShot models such as the A470, A480, A490, A495, A580, A590, A1000, A1100, A2000, A2100, A3000, A3100, D10, E1, G10, G11, S90, S95, SD770, SD780, SD790, SD880, SD890, SD940, SD960, SD970, SD980, SD990, SD1100, SD1200, SD1300, SD1400, SD3500, SD4000, SD4500, SX1, SX10, SX20, SX110, SX120, SX130, SX200 and SX210.",
+         "table_name" : "CameraInfoPowerShot2"
+      },
+      {
+         "description" : "CameraInfo tags for the EOS R5 and R6.",
+         "table_name" : "CameraInfoR6"
+      },
+      {
+         "table_name" : "CameraInfoR6m2",
+         "description" : "CameraInfo tags for the EOS R6 Mark II."
+      },
+      {
+         "description" : "CameraInfoUnknown tag definitions",
+         "table_name" : "CameraInfoUnknown"
+      },
+      {
+         "table_name" : "CameraInfoUnknown16",
+         "description" : "CameraInfoUnknown16 tag definitions"
+      },
+      {
+         "table_name" : "CameraInfoUnknown32",
+         "description" : "Unknown CameraInfo tags are divided into 3 tables based on format size."
+      },
+      {
+         "description" : "CameraSettings tag definitions",
+         "table_name" : "CameraSettings"
+      },
+      {
+         "table_name" : "ColorBalance",
+         "description" : "These tags are used by the 10D and 300D."
+      },
+      {
+         "table_name" : "ColorCalib",
+         "description" : "Camera color calibration data."
+      },
+      {
+         "table_name" : "ColorCalib2",
+         "description" : "B, C, A, D, Temperature."
+      },
+      {
+         "description" : "ColorCoefs tag definitions",
+         "table_name" : "ColorCoefs"
+      },
+      {
+         "table_name" : "ColorCoefs2",
+         "description" : "ColorCoefs2 tag definitions"
+      },
+      {
+         "description" : "These tags are used by the 20D and 350D.",
+         "table_name" : "ColorData1"
+      },
+      {
+         "description" : "These tags are used by the R5, R5 and EOS 1DXmkIII.",
+         "table_name" : "ColorData10"
+      },
+      {
+         "table_name" : "ColorData11",
+         "description" : "ColorData11 tag definitions"
+      },
+      {
+         "description" : "ColorData12 tag definitions",
+         "table_name" : "ColorData12"
+      },
+      {
+         "table_name" : "ColorData2",
+         "description" : "These tags are used by the 1DmkII and 1DSmkII."
+      },
+      {
+         "table_name" : "ColorData3",
+         "description" : "These tags are used by the 1DmkIIN, 5D, 30D and 400D."
+      },
+      {
+         "description" : "These tags are used by the 1DmkIII, 1DSmkIII, 1DmkIV, 5DmkII, 7D, 40D, 50D, 60D, 450D, 500D, 550D, 1000D and 1100D.",
+         "table_name" : "ColorData4"
+      },
+      {
+         "table_name" : "ColorData5",
+         "description" : "These tags are used by many EOS M and PowerShot models."
+      },
+      {
+         "table_name" : "ColorData6",
+         "description" : "These tags are used by the EOS 600D and 1200D."
+      },
+      {
+         "table_name" : "ColorData7",
+         "description" : "These tags are used by the EOS 1DX, 5DmkIII, 6D, 7DmkII, 100D, 650D, 700D, 8000D, M and M2."
+      },
+      {
+         "table_name" : "ColorData8",
+         "description" : "These tags are used by the EOS 1DXmkII, 5DS, 5DSR, 5DmkIV, 6DmkII, 77D, 80D, 200D, 800D, 1300D, 2000D, 4000D and 9000D."
+      },
+      {
+         "description" : "ColorData9 tag definitions",
+         "table_name" : "ColorData9"
+      },
+      {
+         "table_name" : "ColorDataUnknown",
+         "description" : "ColorDataUnknown tag definitions"
+      },
+      {
+         "table_name" : "ColorInfo",
+         "description" : "ColorInfo tag definitions"
+      },
+      {
+         "table_name" : "Composite",
+         "description" : "Composite tag definitions"
+      },
+      {
+         "description" : "ContrastInfo tag definitions",
+         "table_name" : "ContrastInfo"
+      },
+      {
+         "table_name" : "CropInfo",
+         "description" : "CropInfo tag definitions"
+      },
+      {
+         "description" : "ExifInfo tag definitions",
+         "table_name" : "ExifInfo"
+      },
+      {
+         "table_name" : "ExposureInfo",
+         "description" : "ExposureInfo tag definitions"
+      },
+      {
+         "table_name" : "FaceDetect1",
+         "description" : "FaceDetect1 tag definitions"
+      },
+      {
+         "description" : "FaceDetect2 tag definitions",
+         "table_name" : "FaceDetect2"
+      },
+      {
+         "table_name" : "FaceDetect3",
+         "description" : "FaceDetect3 tag definitions"
+      },
+      {
+         "table_name" : "FileInfo",
+         "description" : "FileInfo tag definitions"
+      },
+      {
+         "description" : "Information about creative filter settings.",
+         "table_name" : "FilterInfo"
+      },
+      {
+         "table_name" : "Flags",
+         "description" : "Flags tag definitions"
+      },
+      {
+         "description" : "FocalInfo tag definitions",
+         "table_name" : "FocalInfo"
+      },
+      {
+         "table_name" : "FocalLength",
+         "description" : "FocalLength tag definitions"
+      },
+      {
+         "table_name" : "HDRInfo",
+         "description" : "HDRInfo tag definitions"
+      },
+      {
+         "table_name" : "IAD1",
+         "description" : "IAD1 tag definitions"
+      },
+      {
+         "table_name" : "LensInfo",
+         "description" : "LensInfo tag definitions"
+      },
+      {
+         "description" : "LevelInfo tag definitions",
+         "table_name" : "LevelInfo"
+      },
+      {
+         "description" : "This information is new in images from the EOS 7D.",
+         "table_name" : "LightingOpt"
+      },
+      {
+         "description" : "LogInfo tag definitions",
+         "table_name" : "LogInfo"
+      },
+      {
+         "table_name" : "Main",
+         "description" : "Main tag definitions"
+      },
+      {
+         "table_name" : "MeasuredColor",
+         "description" : "MeasuredColor tag definitions"
+      },
+      {
+         "description" : "ModifiedInfo tag definitions",
+         "table_name" : "ModifiedInfo"
+      },
+      {
+         "description" : "Tags written by some Canon cameras when recording video.",
+         "table_name" : "MovieInfo"
+      },
+      {
+         "table_name" : "MultiExp",
+         "description" : "MultiExp tag definitions"
+      },
+      {
+         "description" : "MyColors tag definitions",
+         "table_name" : "MyColors"
+      },
+      {
+         "description" : "Custom picture style information for various models.",
+         "table_name" : "PSInfo"
+      },
+      {
+         "description" : "Custom picture style information for the EOS 5DmkIII, 60D, 600D and 1100D.",
+         "table_name" : "PSInfo2"
+      },
+      {
+         "description" : "Panorama tag definitions",
+         "table_name" : "Panorama"
+      },
+      {
+         "table_name" : "PreviewImageInfo",
+         "description" : "PreviewImageInfo tag definitions"
+      },
+      {
+         "table_name" : "Processing",
+         "description" : "Processing tag definitions"
+      },
+      {
+         "table_name" : "RawBurstInfo",
+         "description" : "RawBurstInfo tag definitions"
+      },
+      {
+         "description" : "SensorInfo tag definitions",
+         "table_name" : "SensorInfo"
+      },
+      {
+         "description" : "SerialInfo tag definitions",
+         "table_name" : "SerialInfo"
+      },
+      {
+         "table_name" : "ShotInfo",
+         "description" : "ShotInfo tag definitions"
+      },
+      {
+         "table_name" : "Skip",
+         "description" : "Information found in the \"skip\" atom of Canon MOV videos."
+      },
+      {
+         "table_name" : "TimeInfo",
+         "description" : "TimeInfo tag definitions"
+      },
+      {
+         "description" : "UnknownD30 tag definitions",
+         "table_name" : "UnknownD30"
+      },
+      {
+         "description" : "UnknownIFD tag definitions",
+         "table_name" : "UnknownIFD"
+      },
+      {
+         "description" : "This information is found in images from newer EOS models.",
+         "table_name" : "VignettingCorr"
+      },
+      {
+         "description" : "VignettingCorr2 tag definitions",
+         "table_name" : "VignettingCorr2"
+      },
+      {
+         "table_name" : "VignettingCorrUnknown",
+         "description" : "Vignetting correction from PowerShot models."
+      },
+      {
+         "description" : "WB tags for the Canon G9.",
+         "table_name" : "WBInfo"
+      },
+      {
+         "description" : "binaryDataAttrs tag definitions",
+         "table_name" : "binaryDataAttrs"
+      },
+      {
+         "table_name" : "canonImageSize",
+         "description" : "canonImageSize tag definitions"
+      },
+      {
+         "description" : "canonLensTypes tag definitions",
+         "table_name" : "canonLensTypes"
+      },
+      {
+         "description" : "canonModelID tag definitions",
+         "table_name" : "canonModelID"
+      },
+      {
+         "table_name" : "canonQuality",
+         "description" : "canonQuality tag definitions"
+      },
+      {
+         "table_name" : "canonWhiteBalance",
+         "description" : "canonWhiteBalance tag definitions"
+      },
+      {
+         "description" : "ciCameraTemperature tag definitions",
+         "table_name" : "ciCameraTemperature"
+      },
+      {
+         "table_name" : "ciExposureTime",
+         "description" : "ciExposureTime tag definitions"
+      },
+      {
+         "description" : "ciFNumber tag definitions",
+         "table_name" : "ciFNumber"
+      },
+      {
+         "description" : "ciFocalLength tag definitions",
+         "table_name" : "ciFocalLength"
+      },
+      {
+         "description" : "ciISO tag definitions",
+         "table_name" : "ciISO"
+      },
+      {
+         "table_name" : "ciMacroMagnification",
+         "description" : "ciMacroMagnification tag definitions"
+      },
+      {
+         "description" : "focusDistanceByteSwap tag definitions",
+         "table_name" : "focusDistanceByteSwap"
+      },
+      {
+         "description" : "pictureStyles tag definitions",
+         "table_name" : "pictureStyles"
+      },
+      {
+         "description" : "userDefStyles tag definitions",
+         "table_name" : "userDefStyles"
+      },
+      {
+         "description" : "Tags extracted from the uuid atom of MP4 videos from cameras such as the SX280, and CR3 images from cameras such as the EOS M50.",
+         "table_name" : "uuid"
+      }
+   ],
+   "source" : "third-party/exiftool/lib/Image/ExifTool/Canon.pm",
+   "description" : "Canon format tag definitions",
+   "$schema" : "../../schemas/tag_kit.json"
 }

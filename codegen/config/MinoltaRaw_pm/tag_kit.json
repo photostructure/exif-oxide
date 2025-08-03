@@ -1,15 +1,23 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "source": "third-party/exiftool/lib/Image/ExifTool/MinoltaRaw.pm",
-  "description": "Minolta RAW tag definitions with embedded PrintConv implementations from MRW block definitions",
-  "tables": [
-    {
-      "table_name": "PRD",
-      "description": "Minolta PRD block - storage method, bayer pattern (4 PrintConv entries)"
-    },
-    {
-      "table_name": "RIF",
-      "description": "Minolta RIF block - program mode, ISO, zone matching (~20 PrintConv entries)"
-    }
-  ]
+   "$schema" : "../../schemas/tag_kit.json",
+   "tables" : [
+      {
+         "table_name" : "Main",
+         "description" : "These tags are used in Minolta RAW format (MRW) images."
+      },
+      {
+         "description" : "PRD tag definitions",
+         "table_name" : "PRD"
+      },
+      {
+         "table_name" : "RIF",
+         "description" : "RIF tag definitions"
+      },
+      {
+         "description" : "WBG tag definitions",
+         "table_name" : "WBG"
+      }
+   ],
+   "description" : "MinoltaRaw format tag definitions",
+   "source" : "third-party/exiftool/lib/Image/ExifTool/MinoltaRaw.pm"
 }

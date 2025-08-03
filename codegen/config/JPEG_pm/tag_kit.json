@@ -1,0 +1,63 @@
+{
+   "$schema" : "../../schemas/tag_kit.json",
+   "description" : "JPEG format tag definitions",
+   "source" : "third-party/exiftool/lib/Image/ExifTool/JPEG.pm",
+   "tables" : [
+      {
+         "description" : "This information may be found in APP0 of JPEG image data from AVI videos.",
+         "table_name" : "AVI1"
+      },
+      {
+         "table_name" : "Adobe",
+         "description" : "The APP14 \"Adobe\" segment stores image encoding information for DCT filters."
+      },
+      {
+         "table_name" : "AdobeCM",
+         "description" : "The APP13 \"Adobe_CM\" segment presumably contains color management information, but the meaning of the data is currently unknown."
+      },
+      {
+         "table_name" : "EPPIM",
+         "description" : "APP6 is used in by the Toshiba PDR-M700 to store a TIFF structure containing PrintIM information."
+      },
+      {
+         "description" : "APP15 is used by GraphicConverter to store JPEG quality.",
+         "table_name" : "GraphConv"
+      },
+      {
+         "description" : "Information extracted from APP11 of a JPEG-HDR image.",
+         "table_name" : "HDR"
+      },
+      {
+         "table_name" : "HDRGainInfo",
+         "description" : "HDRGainInfo tag definitions"
+      },
+      {
+         "description" : "Tags found in JPEG Stereo (JPS) images.",
+         "table_name" : "JPS"
+      },
+      {
+         "description" : "This table lists information extracted by ExifTool from JPEG images.",
+         "table_name" : "Main"
+      },
+      {
+         "description" : "Tags found in the XML metadata of the APP9 \"Media Jukebox\" segment.",
+         "table_name" : "MediaJukebox"
+      },
+      {
+         "table_name" : "NITF",
+         "description" : "Information in APP6 used by the National Imagery Transmission Format."
+      },
+      {
+         "table_name" : "Ocad",
+         "description" : "Tags extracted from the JPEG APP0 \"Ocad\" segment (found in Photobucket images)."
+      },
+      {
+         "table_name" : "SOF",
+         "description" : "This information is extracted from the JPEG Start Of Frame segment."
+      },
+      {
+         "description" : "This information is found in APP8 of SPIFF-style JPEG images (the \"official\" yet rarely used JPEG file format standard: Still Picture Interchange File Format).",
+         "table_name" : "SPIFF"
+      }
+   ]
+}

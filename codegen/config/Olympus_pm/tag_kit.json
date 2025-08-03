@@ -1,39 +1,143 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "source": "third-party/exiftool/lib/Image/ExifTool/Olympus.pm",
-  "description": "Olympus tag definitions with embedded PrintConv implementations",
-  "tables": [
-    {
-      "table_name": "Equipment",
-      "description": "Olympus equipment information (0x2010) - camera and lens identification"
-    },
-    {
-      "table_name": "CameraSettings",
-      "description": "Olympus camera settings (0x2020) - exposure, focus, metering modes"
-    },
-    {
-      "table_name": "RawDevelopment",
-      "description": "Olympus raw development settings (0x2030) - color space, processing engine"
-    },
-    {
-      "table_name": "RawDevelopment2",
-      "description": "Olympus additional raw development parameters (0x2031)"
-    },
-    {
-      "table_name": "ImageProcessing",
-      "description": "Olympus image processing settings (0x2040) - art filters, processing"
-    },
-    {
-      "table_name": "FocusInfo",
-      "description": "Olympus autofocus information (0x2050) - AF points, focus areas"
-    },
-    {
-      "table_name": "RawInfo",
-      "description": "Olympus RAW file specific information (0x3000)"
-    },
-    {
-      "table_name": "Main",
-      "description": "Olympus main maker notes table - scene modes, flash, WB, sharpness (~40 PrintConv entries)"
-    }
-  ]
+   "tables" : [
+      {
+         "description" : "AFInfo tag definitions",
+         "table_name" : "AFInfo"
+      },
+      {
+         "description" : "AFTargetInfo tag definitions",
+         "table_name" : "AFTargetInfo"
+      },
+      {
+         "table_name" : "AVI",
+         "description" : "This information is found in Olympus AVI videos."
+      },
+      {
+         "table_name" : "CameraSettings",
+         "description" : "CameraSettings tag definitions"
+      },
+      {
+         "description" : "Composite tag definitions",
+         "table_name" : "Composite"
+      },
+      {
+         "table_name" : "DSS",
+         "description" : "Information extracted from DSS/DS2 files and the ID3 XOLY frame of MP3 files written by some Olympus voice recorders."
+      },
+      {
+         "description" : "Equipment tag definitions",
+         "table_name" : "Equipment"
+      },
+      {
+         "description" : "Some FE models write a large number of tags here, but most of this information remains unknown.",
+         "table_name" : "FETags"
+      },
+      {
+         "description" : "FocusInfo tag definitions",
+         "table_name" : "FocusInfo"
+      },
+      {
+         "table_name" : "ImageProcessing",
+         "description" : "ImageProcessing tag definitions"
+      },
+      {
+         "table_name" : "MOV1",
+         "description" : "This information is found in MOV videos from Olympus models such as the D540Z, D595Z, FE100, FE110, FE115, FE170 and FE200."
+      },
+      {
+         "table_name" : "MOV2",
+         "description" : "This information is found in MOV videos from Olympus models such as the FE120, FE140 and FE190."
+      },
+      {
+         "table_name" : "MOV3",
+         "description" : "QuickTime information found in the TAGS atom of MOV videos from the E-M5."
+      },
+      {
+         "description" : "This information is found in MP4 videos from Olympus models such as the u7040 and u9010.",
+         "table_name" : "MP4"
+      },
+      {
+         "table_name" : "Main",
+         "description" : "Main tag definitions"
+      },
+      {
+         "table_name" : "MovableInfo",
+         "description" : "MovableInfo tag definitions"
+      },
+      {
+         "description" : "Tags found in the OLYM atom of MP4 videos from the TG-810.",
+         "table_name" : "OLYM"
+      },
+      {
+         "table_name" : "OLYM2",
+         "description" : "OLYM2 tag definitions"
+      },
+      {
+         "description" : "RawDevSubIFD tag definitions",
+         "table_name" : "RawDevSubIFD"
+      },
+      {
+         "description" : "RawDevelopment tag definitions",
+         "table_name" : "RawDevelopment"
+      },
+      {
+         "description" : "RawDevelopment2 tag definitions",
+         "table_name" : "RawDevelopment2"
+      },
+      {
+         "table_name" : "RawInfo",
+         "description" : "These tags are found only in ORF images of some models (eg."
+      },
+      {
+         "table_name" : "SubjectDetectInfo",
+         "description" : "Subject Detection for OM cameras."
+      },
+      {
+         "table_name" : "TextInfo",
+         "description" : "This information is in text format (similar to APP12 information, but with spaces instead of linefeeds)."
+      },
+      {
+         "table_name" : "Thumbnail",
+         "description" : "Thumbnail tag definitions"
+      },
+      {
+         "table_name" : "UnknownInfo",
+         "description" : "UnknownInfo tag definitions"
+      },
+      {
+         "table_name" : "WAV",
+         "description" : "This information is found in WAV files from Olympus PCM linear recorders like the LS-5, LS-10, LS-11."
+      },
+      {
+         "description" : "filters tag definitions",
+         "table_name" : "filters"
+      },
+      {
+         "table_name" : "olympusCameraTypes",
+         "description" : "olympusCameraTypes tag definitions"
+      },
+      {
+         "table_name" : "prms",
+         "description" : "Information extracted from the \"prms\" atom in MOV videos from Olympus models such as the OM E-M5."
+      },
+      {
+         "table_name" : "scrn",
+         "description" : "Information extracted from the \"scrn\" atom of Olympus MP4 videos."
+      },
+      {
+         "table_name" : "scrn2",
+         "description" : "scrn2 tag definitions"
+      },
+      {
+         "description" : "Information extracted from the \"thmb\" atom of Olympus MP4 videos.",
+         "table_name" : "thmb"
+      },
+      {
+         "description" : "thmb2 tag definitions",
+         "table_name" : "thmb2"
+      }
+   ],
+   "source" : "third-party/exiftool/lib/Image/ExifTool/Olympus.pm",
+   "$schema" : "../../schemas/tag_kit.json",
+   "description" : "Olympus format tag definitions"
 }
