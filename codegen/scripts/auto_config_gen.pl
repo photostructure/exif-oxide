@@ -86,7 +86,6 @@ foreach my $table (@$tables) {
 # Generate simple config
 my $config = {
     '$schema'   => "../../schemas/tag_kit.json",
-    extractor   => "tag_kit.pl",
     source      => "third-party/exiftool/lib/Image/ExifTool/${module_name}.pm",
     description => "${module_name} format tag definitions",
     tables      => $tables
