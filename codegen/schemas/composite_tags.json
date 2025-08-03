@@ -4,6 +4,10 @@
   "description": "Configuration for extracting composite tag definitions from ExifTool",
   "type": "object",
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
     "source": {
       "type": "string",
       "description": "Path to ExifTool source file (relative to repository root, e.g., 'third-party/exiftool/lib/Image/ExifTool.pm')",
@@ -35,6 +39,9 @@
       "additionalProperties": false
     }
   },
-  "required": ["source", "table"],
+  "required": [
+    "source",
+    "table"
+  ],
   "additionalProperties": false
 }
