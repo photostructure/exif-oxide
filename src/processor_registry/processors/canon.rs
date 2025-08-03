@@ -17,6 +17,14 @@ use crate::types::{Result, TagValue};
 use std::collections::HashMap;
 use tracing::debug;
 
+/// Type alias for tag kit processor functions
+type TagKitProcessor = fn(
+    u32,
+    &TagValue,
+    crate::tiff_types::ByteOrder,
+    Option<&str>,
+) -> Result<HashMap<String, TagValue>>;
+
 /// Canon Serial Data processor using existing implementation
 ///
 /// Processes Canon camera serial data using the existing `canon::binary_data`
@@ -386,11 +394,7 @@ fn extract_makernotes_via_tag_kit(
     data_offset: usize,
     byte_order: crate::tiff_types::ByteOrder,
     manufacturer: &str,
-    tag_kit_processor: fn(
-        u32,
-        &TagValue,
-        crate::tiff_types::ByteOrder,
-    ) -> Result<HashMap<String, TagValue>>,
+    tag_kit_processor: TagKitProcessor,
 ) -> Result<HashMap<String, TagValue>> {
     use crate::implementations::nikon::ifd::extract_tag_value;
     use crate::tiff_types::IfdEntry;
@@ -458,7 +462,8 @@ fn extract_makernotes_via_tag_kit(
         };
 
         // First try tag kit for binary data tags (subdirectories)
-        let tag_kit_result = tag_kit_processor(entry.tag_id as u32, &tag_value, byte_order);
+        // TODO: Pass actual model information when available at this processing level
+        let tag_kit_result = tag_kit_processor(entry.tag_id as u32, &tag_value, byte_order, None);
 
         match tag_kit_result {
             Ok(processed_tags) if !processed_tags.is_empty() => {
