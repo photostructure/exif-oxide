@@ -46,7 +46,27 @@ impl CompiledExpression {
                     OpType::Multiply => format!("TagValue::F64({} * {})", left_expr, right_expr),
                     OpType::Divide => format!("TagValue::F64({} / {})", left_expr, right_expr),
                     OpType::Power => format!("TagValue::F64({}.powf({}))", left_expr, right_expr),
-                    OpType::Concatenate => format!("TagValue::String(format!(\"{{}}{{}}\", {}, {}))", left_expr, right_expr),
+                    OpType::Concatenate => {
+                        // Use concatenation chain to avoid nested format! calls
+                        let temp_node = AstNode::BinaryOp { 
+                            op: *op, 
+                            left: left.clone(), 
+                            right: right.clone() 
+                        };
+                        let chain = self.collect_concatenation_chain(&temp_node);
+                        let (format_string, arguments) = self.generate_concatenation_format(&chain, false);
+                        if arguments.is_empty() {
+                            // All string literals
+                            format!("TagValue::String(\"{}\".to_string())", format_string)
+                        } else {
+                            format!("TagValue::String(format!(\"{}\", {}))", format_string, arguments.join(", "))
+                        }
+                    }
+                    // Bitwise operations - convert to integers first, then back to F64
+                    OpType::BitwiseAnd => format!("TagValue::F64((({} as i64) & ({} as i64)) as f64)", left_expr, right_expr),
+                    OpType::BitwiseOr => format!("TagValue::F64((({} as i64) | ({} as i64)) as f64)", left_expr, right_expr),
+                    OpType::LeftShift => format!("TagValue::F64((({} as i64) << ({} as i64)) as f64)", left_expr, right_expr),
+                    OpType::RightShift => format!("TagValue::F64((({} as i64) >> ({} as i64)) as f64)", left_expr, right_expr),
                 }
             }
             AstNode::ComparisonOp { op, left, right } => {
@@ -125,6 +145,14 @@ impl CompiledExpression {
                 let operand_expr = self.generate_value_expression(operand);
                 format!("TagValue::F64(-{})", operand_expr)
             }
+            AstNode::RegexSubstitution { target, pattern, replacement, flags } => {
+                let target_expr = self.generate_ast_expression(target);
+                self.generate_regex_substitution(&target_expr, pattern, replacement, flags)
+            }
+            AstNode::Transliteration { target, search_list, replace_list, flags } => {
+                let target_expr = self.generate_ast_expression(target);
+                self.generate_transliteration(&target_expr, search_list, replace_list, flags)
+            }
         }
     }
     
@@ -142,7 +170,27 @@ impl CompiledExpression {
                     OpType::Multiply => format!("({} * {})", left_expr, right_expr),
                     OpType::Divide => format!("({} / {})", left_expr, right_expr),
                     OpType::Power => format!("({}.powf({}))", left_expr, right_expr),
-                    OpType::Concatenate => format!("format!(\"{{}}{{}}\", {}, {})", left_expr, right_expr),
+                    OpType::Concatenate => {
+                        // Use concatenation chain to avoid nested format! calls
+                        let temp_node = AstNode::BinaryOp { 
+                            op: *op, 
+                            left: left.clone(), 
+                            right: right.clone() 
+                        };
+                        let chain = self.collect_concatenation_chain(&temp_node);
+                        let (format_string, arguments) = self.generate_concatenation_format(&chain, true);
+                        if arguments.is_empty() {
+                            // All string literals
+                            format!("\"{}\"", format_string)
+                        } else {
+                            format!("format!(\"{}\", {})", format_string, arguments.join(", "))
+                        }
+                    }
+                    // Bitwise operations - convert to integers, operate, then back to f64
+                    OpType::BitwiseAnd => format!("((({} as i64) & ({} as i64)) as f64)", left_expr, right_expr),
+                    OpType::BitwiseOr => format!("((({} as i64) | ({} as i64)) as f64)", left_expr, right_expr),
+                    OpType::LeftShift => format!("((({} as i64) << ({} as i64)) as f64)", left_expr, right_expr),
+                    OpType::RightShift => format!("((({} as i64) >> ({} as i64)) as f64)", left_expr, right_expr),
                 }
             }
             AstNode::FunctionCall { func, arg } => {
@@ -220,6 +268,16 @@ impl CompiledExpression {
                 let operand_expr = self.generate_value_expression(operand);
                 format!("(-{})", operand_expr)
             }
+            AstNode::RegexSubstitution { .. } => {
+                // RegexSubstitution produces strings, not numeric values
+                // This shouldn't be called for string-producing operations
+                "0.0".to_string()
+            }
+            AstNode::Transliteration { .. } => {
+                // Transliteration produces strings, not numeric values
+                // This shouldn't be called for string-producing operations
+                "0.0".to_string()
+            }
         }
     }
     
@@ -251,6 +309,175 @@ impl CompiledExpression {
                     name, function_expr, arg_expr
                 )
             }
+        }
+    }
+    
+    /// Generate regex substitution code
+    fn generate_regex_substitution(&self, target_expr: &str, pattern: &str, replacement: &str, flags: &str) -> String {
+        // For now, generate basic regex substitution using the regex crate
+        // This is a simplified implementation - full Perl regex compatibility would need more work
+        let case_insensitive = flags.contains('i');
+        let global = flags.contains('g');
+        
+        if global {
+            format!(
+                "{{
+                    use regex::Regex;
+                    let re = Regex::new({}).unwrap();
+                    let target_str = match {} {{
+                        TagValue::String(s) => s,
+                        TagValue::F64(f) => f.to_string(),
+                        _ => String::new(),
+                    }};
+                    TagValue::String(re.replace_all(&target_str, \"{}\").to_string())
+                }}",
+                if case_insensitive {
+                    format!("r\"(?i){}\"", escape_regex_pattern(pattern))
+                } else {
+                    format!("r\"{}\"", escape_regex_pattern(pattern))
+                },
+                target_expr,
+                escape_replacement_string(replacement)
+            )
+        } else {
+            format!(
+                "{{
+                    use regex::Regex;
+                    let re = Regex::new({}).unwrap();
+                    let target_str = match {} {{
+                        TagValue::String(s) => s,
+                        TagValue::F64(f) => f.to_string(),
+                        _ => String::new(),
+                    }};
+                    TagValue::String(re.replace(&target_str, \"{}\").to_string())
+                }}",
+                if case_insensitive {
+                    format!("r\"(?i){}\"", escape_regex_pattern(pattern))
+                } else {
+                    format!("r\"{}\"", escape_regex_pattern(pattern))
+                },
+                target_expr,
+                escape_replacement_string(replacement)
+            )
+        }
+    }
+    
+    /// Collect a chain of concatenations into a flat list
+    /// This converts nested BinaryOp(Concatenate) into a single list to avoid nested format! calls
+    fn collect_concatenation_chain<'a>(&self, node: &'a AstNode) -> Vec<&'a AstNode> {
+        match node {
+            AstNode::BinaryOp { op: OpType::Concatenate, left, right } => {
+                let mut chain = self.collect_concatenation_chain(left);
+                chain.extend(self.collect_concatenation_chain(right));
+                chain
+            }
+            _ => vec![node]
+        }
+    }
+    
+    /// Generate a format string and arguments for concatenation chain
+    /// Returns (format_string, arguments)
+    fn generate_concatenation_format<'a>(&self, chain: &[&'a AstNode], for_value_context: bool) -> (String, Vec<String>) {
+        let mut format_string = String::new();
+        let mut arguments = Vec::new();
+        
+        for node in chain {
+            match node {
+                AstNode::String { value, has_interpolation } => {
+                    if *has_interpolation {
+                        // Variable interpolation: "$val mm" becomes "{} mm" with val argument
+                        let formatted_value = value.replace("$val", "{}");
+                        format_string.push_str(&formatted_value);
+                        arguments.push("val".to_string());
+                    } else {
+                        // String literal: just append to format string
+                        format_string.push_str(value);
+                    }
+                }
+                _ => {
+                    // Non-string expression: add {} placeholder and generate argument
+                    format_string.push_str("{}");
+                    if for_value_context {
+                        arguments.push(self.generate_value_expression(node));
+                    } else {
+                        // For non-value context, we need to extract the actual value from TagValue
+                        let expr = self.generate_value_expression(node);
+                        arguments.push(expr);
+                    }
+                }
+            }
+        }
+        
+        (format_string, arguments)
+    }
+    
+    /// Generate transliteration code
+    fn generate_transliteration(&self, target_expr: &str, search_list: &str, replace_list: &str, flags: &str) -> String {
+        let complement = flags.contains('c');
+        let delete = flags.contains('d');
+        
+        if delete && complement {
+            // tr/a-fA-F0-9//dc - delete all characters NOT in the search list
+            format!(
+                "{{
+                    let target_str = match {} {{
+                        TagValue::String(s) => s,
+                        TagValue::F64(f) => f.to_string(),
+                        _ => String::new(),
+                    }};
+                    let keep_chars: std::collections::HashSet<char> = \"{}\".chars().collect();
+                    let result: String = target_str.chars()
+                        .filter(|c| keep_chars.contains(c))
+                        .collect();
+                    TagValue::String(result)
+                }}",
+                target_expr,
+                escape_char_class(search_list)
+            )
+        } else if delete {
+            // tr/chars//d - delete specified characters
+            format!(
+                "{{
+                    let target_str = match {} {{
+                        TagValue::String(s) => s,
+                        TagValue::F64(f) => f.to_string(),
+                        _ => String::new(),
+                    }};
+                    let delete_chars: std::collections::HashSet<char> = \"{}\".chars().collect();
+                    let result: String = target_str.chars()
+                        .filter(|c| !delete_chars.contains(c))
+                        .collect();
+                    TagValue::String(result)
+                }}",
+                target_expr,
+                escape_char_class(search_list)
+            )
+        } else {
+            // Basic character replacement
+            format!(
+                "{{
+                    let target_str = match {} {{
+                        TagValue::String(s) => s,
+                        TagValue::F64(f) => f.to_string(),
+                        _ => String::new(),
+                    }};
+                    let search_chars: Vec<char> = \"{}\".chars().collect();
+                    let replace_chars: Vec<char> = \"{}\".chars().collect();
+                    let result: String = target_str.chars()
+                        .map(|c| {{
+                            if let Some(pos) = search_chars.iter().position(|&sc| sc == c) {{
+                                replace_chars.get(pos).copied().unwrap_or(c)
+                            }} else {{
+                                c
+                            }}
+                        }})
+                        .collect();
+                    TagValue::String(result)
+                }}",
+                target_expr,
+                escape_char_class(search_list),
+                escape_char_class(replace_list)
+            )
         }
     }
 }
@@ -348,6 +575,24 @@ fn convert_perl_sprintf_to_rust(perl_format: &str) -> String {
     }
     
     result
+}
+
+/// Escape regex pattern for use in Rust regex::Regex
+fn escape_regex_pattern(pattern: &str) -> String {
+    // Basic escaping - in full implementation would need comprehensive Perl->Rust regex translation
+    pattern.replace("\\", "\\\\").replace("\"", "\\\"")
+}
+
+/// Escape replacement string for use in regex replacement
+fn escape_replacement_string(replacement: &str) -> String {
+    replacement.replace("\\", "\\\\").replace("\"", "\\\"")
+}
+
+/// Escape character class for use in transliteration
+fn escape_char_class(chars: &str) -> String {
+    // Handle character ranges like a-z, A-Z, 0-9
+    // For now, just basic escaping - full implementation would expand ranges
+    chars.replace("\\", "\\\\").replace("\"", "\\\"")
 }
 
 #[cfg(test)]
