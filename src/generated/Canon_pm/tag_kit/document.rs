@@ -14,9 +14,1002 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+static PRINT_CONV_10: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("129".to_string(), "Standard");
+    map.insert("130".to_string(), "Portrait");
+    map.insert("131".to_string(), "Landscape");
+    map.insert("132".to_string(), "Neutral");
+    map.insert("133".to_string(), "Faithful");
+    map.insert("134".to_string(), "Monochrome");
+    map.insert("135".to_string(), "Auto");
+    map.insert("65".to_string(), "PC 1");
+    map.insert("66".to_string(), "PC 2");
+    map.insert("67".to_string(), "PC 3");
+    map
+});
+
+static PRINT_CONV_11: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("-1".to_string(), "n/a");
+    map.insert("1".to_string(), "Canon EF 50mm f/1.8");
+    map.insert("10".to_string(), "Canon EF 50mm f/2.5 Macro or Sigma Lens");
+    map.insert("10.1".to_string(), "Sigma 50mm f/2.8 EX");
+    map.insert("10.2".to_string(), "Sigma 28mm f/1.8");
+    map.insert("10.3".to_string(), "Sigma 105mm f/2.8 Macro EX");
+    map.insert("10.4".to_string(), "Sigma 70mm f/2.8 EX DG Macro EF");
+    map.insert(
+        "103".to_string(),
+        "Samyang AF 14mm f/2.8 EF or Rokinon Lens",
+    );
+    map.insert("103.1".to_string(), "Rokinon SP 14mm f/2.4");
+    map.insert("103.2".to_string(), "Rokinon AF 14mm f/2.8 EF");
+    map.insert("106".to_string(), "Rokinon SP / Samyang XP 35mm f/1.2");
+    map.insert("11".to_string(), "Canon EF 35mm f/2");
+    map.insert(
+        "112".to_string(),
+        "Sigma 28mm f/1.5 FF High-speed Prime or other Sigma Lens",
+    );
+    map.insert("112.1".to_string(), "Sigma 40mm f/1.5 FF High-speed Prime");
+    map.insert("112.2".to_string(), "Sigma 105mm f/1.5 FF High-speed Prime");
+    map.insert("1136".to_string(), "Sigma 24-70mm f/2.8 DG OS HSM | A");
+    map.insert(
+        "117".to_string(),
+        "Tamron 35-150mm f/2.8-4.0 Di VC OSD (A043) or other Tamron Lens",
+    );
+    map.insert("117.1".to_string(), "Tamron SP 35mm f/1.4 Di USD (F045)");
+    map.insert("124".to_string(), "Canon MP-E 65mm f/2.8 1-5x Macro Photo");
+    map.insert("125".to_string(), "Canon TS-E 24mm f/3.5L");
+    map.insert("126".to_string(), "Canon TS-E 45mm f/2.8");
+    map.insert("127".to_string(), "Canon TS-E 90mm f/2.8 or Tamron Lens");
+    map.insert(
+        "127.1".to_string(),
+        "Tamron 18-200mm f/3.5-6.3 Di II VC (B018)",
+    );
+    map.insert("129".to_string(), "Canon EF 300mm f/2.8L USM");
+    map.insert("13".to_string(), "Canon EF 15mm f/2.8 Fisheye");
+    map.insert("130".to_string(), "Canon EF 50mm f/1.0L USM");
+    map.insert(
+        "131".to_string(),
+        "Canon EF 28-80mm f/2.8-4L USM or Sigma Lens",
+    );
+    map.insert(
+        "131.1".to_string(),
+        "Sigma 8mm f/3.5 EX DG Circular Fisheye",
+    );
+    map.insert(
+        "131.2".to_string(),
+        "Sigma 17-35mm f/2.8-4 EX DG Aspherical HSM",
+    );
+    map.insert("131.3".to_string(), "Sigma 17-70mm f/2.8-4.5 DC Macro");
+    map.insert(
+        "131.4".to_string(),
+        "Sigma APO 50-150mm f/2.8 [II] EX DC HSM",
+    );
+    map.insert("131.5".to_string(), "Sigma APO 120-300mm f/2.8 EX DG HSM");
+    map.insert(
+        "131.6".to_string(),
+        "Sigma 4.5mm f/2.8 EX DC HSM Circular Fisheye",
+    );
+    map.insert("131.7".to_string(), "Sigma 70-200mm f/2.8 APO EX HSM");
+    map.insert("131.8".to_string(), "Sigma 28-70mm f/2.8-4 DG");
+    map.insert("132".to_string(), "Canon EF 1200mm f/5.6L USM");
+    map.insert("134".to_string(), "Canon EF 600mm f/4L IS USM");
+    map.insert("135".to_string(), "Canon EF 200mm f/1.8L USM");
+    map.insert("136".to_string(), "Canon EF 300mm f/2.8L USM");
+    map.insert(
+        "136.1".to_string(),
+        "Tamron SP 15-30mm f/2.8 Di VC USD (A012)",
+    );
+    map.insert(
+        "137".to_string(),
+        "Canon EF 85mm f/1.2L USM or Sigma or Tamron Lens",
+    );
+    map.insert("137.1".to_string(), "Sigma 18-50mm f/2.8-4.5 DC OS HSM");
+    map.insert("137.10".to_string(), "Sigma 8-16mm f/4.5-5.6 DC HSM");
+    map.insert(
+        "137.11".to_string(),
+        "Tamron SP 17-50mm f/2.8 XR Di II VC (B005)",
+    );
+    map.insert(
+        "137.12".to_string(),
+        "Tamron SP 60mm f/2 Macro Di II (G005)",
+    );
+    map.insert("137.13".to_string(), "Sigma 10-20mm f/3.5 EX DC HSM");
+    map.insert("137.14".to_string(), "Tamron SP 24-70mm f/2.8 Di VC USD");
+    map.insert("137.15".to_string(), "Sigma 18-35mm f/1.8 DC HSM");
+    map.insert("137.16".to_string(), "Sigma 12-24mm f/4.5-5.6 DG HSM II");
+    map.insert("137.17".to_string(), "Sigma 70-300mm f/4-5.6 DG OS");
+    map.insert("137.2".to_string(), "Sigma 50-200mm f/4-5.6 DC OS HSM");
+    map.insert("137.3".to_string(), "Sigma 18-250mm f/3.5-6.3 DC OS HSM");
+    map.insert("137.4".to_string(), "Sigma 24-70mm f/2.8 IF EX DG HSM");
+    map.insert("137.5".to_string(), "Sigma 18-125mm f/3.8-5.6 DC OS HSM");
+    map.insert(
+        "137.6".to_string(),
+        "Sigma 17-70mm f/2.8-4 DC Macro OS HSM | C",
+    );
+    map.insert("137.7".to_string(), "Sigma 17-50mm f/2.8 OS HSM");
+    map.insert(
+        "137.8".to_string(),
+        "Sigma 18-200mm f/3.5-6.3 DC OS HSM [II]",
+    );
+    map.insert(
+        "137.9".to_string(),
+        "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD (B008)",
+    );
+    map.insert("138".to_string(), "Canon EF 28-80mm f/2.8-4L");
+    map.insert("139".to_string(), "Canon EF 400mm f/2.8L USM");
+    map.insert("14".to_string(), "Canon EF 50-200mm f/3.5-4.5L");
+    map.insert("140".to_string(), "Canon EF 500mm f/4.5L USM");
+    map.insert("141".to_string(), "Canon EF 500mm f/4.5L USM");
+    map.insert("142".to_string(), "Canon EF 300mm f/2.8L IS USM");
+    map.insert(
+        "143".to_string(),
+        "Canon EF 500mm f/4L IS USM or Sigma Lens",
+    );
+    map.insert("143.1".to_string(), "Sigma 17-70mm f/2.8-4 DC Macro OS HSM");
+    map.insert("144".to_string(), "Canon EF 35-135mm f/4-5.6 USM");
+    map.insert("145".to_string(), "Canon EF 100-300mm f/4.5-5.6 USM");
+    map.insert("146".to_string(), "Canon EF 70-210mm f/3.5-4.5 USM");
+    map.insert("147".to_string(), "Canon EF 35-135mm f/4-5.6 USM");
+    map.insert("148".to_string(), "Canon EF 28-80mm f/3.5-5.6 USM");
+    map.insert("149".to_string(), "Canon EF 100mm f/2 USM");
+    map.insert("15".to_string(), "Canon EF 50-200mm f/3.5-4.5");
+    map.insert("150".to_string(), "Canon EF 14mm f/2.8L USM or Sigma Lens");
+    map.insert("150.1".to_string(), "Sigma 20mm EX f/1.8");
+    map.insert("150.2".to_string(), "Sigma 30mm f/1.4 DC HSM");
+    map.insert("150.3".to_string(), "Sigma 24mm f/1.8 DG Macro EX");
+    map.insert("150.4".to_string(), "Sigma 28mm f/1.8 DG Macro EX");
+    map.insert("150.5".to_string(), "Sigma 18-35mm f/1.8 DC HSM | A");
+    map.insert("151".to_string(), "Canon EF 200mm f/2.8L USM");
+    map.insert(
+        "152".to_string(),
+        "Canon EF 300mm f/4L IS USM or Sigma Lens",
+    );
+    map.insert(
+        "152.1".to_string(),
+        "Sigma 12-24mm f/4.5-5.6 EX DG ASPHERICAL HSM",
+    );
+    map.insert("152.2".to_string(), "Sigma 14mm f/2.8 EX Aspherical HSM");
+    map.insert("152.3".to_string(), "Sigma 10-20mm f/4-5.6");
+    map.insert("152.4".to_string(), "Sigma 100-300mm f/4");
+    map.insert("152.5".to_string(), "Sigma 300-800mm f/5.6 APO EX DG HSM");
+    map.insert(
+        "153".to_string(),
+        "Canon EF 35-350mm f/3.5-5.6L USM or Sigma or Tamron Lens",
+    );
+    map.insert("153.1".to_string(), "Sigma 50-500mm f/4-6.3 APO HSM EX");
+    map.insert(
+        "153.2".to_string(),
+        "Tamron AF 28-300mm f/3.5-6.3 XR LD Aspherical [IF] Macro",
+    );
+    map.insert(
+        "153.3".to_string(),
+        "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical [IF] Macro (A14)",
+    );
+    map.insert(
+        "153.4".to_string(),
+        "Tamron 18-250mm f/3.5-6.3 Di II LD Aspherical [IF] Macro",
+    );
+    map.insert("154".to_string(), "Canon EF 20mm f/2.8 USM or Zeiss Lens");
+    map.insert("154.1".to_string(), "Zeiss Milvus 21mm f/2.8");
+    map.insert("154.2".to_string(), "Zeiss Milvus 15mm f/2.8 ZE");
+    map.insert("154.3".to_string(), "Zeiss Milvus 18mm f/2.8 ZE");
+    map.insert("155".to_string(), "Canon EF 85mm f/1.8 USM or Sigma Lens");
+    map.insert("155.1".to_string(), "Sigma 14mm f/1.8 DG HSM | A");
+    map.insert(
+        "156".to_string(),
+        "Canon EF 28-105mm f/3.5-4.5 USM or Tamron Lens",
+    );
+    map.insert(
+        "156.1".to_string(),
+        "Tamron SP 70-300mm f/4-5.6 Di VC USD (A005)",
+    );
+    map.insert(
+        "156.2".to_string(),
+        "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF (176D)",
+    );
+    map.insert("16".to_string(), "Canon EF 35-135mm f/3.5-4.5");
+    map.insert(
+        "160".to_string(),
+        "Canon EF 20-35mm f/3.5-4.5 USM or Tamron or Tokina Lens",
+    );
+    map.insert("160.1".to_string(), "Tamron AF 19-35mm f/3.5-4.5");
+    map.insert("160.2".to_string(), "Tokina AT-X 124 AF Pro DX 12-24mm f/4");
+    map.insert(
+        "160.3".to_string(),
+        "Tokina AT-X 107 AF DX 10-17mm f/3.5-4.5 Fisheye",
+    );
+    map.insert(
+        "160.4".to_string(),
+        "Tokina AT-X 116 AF Pro DX 11-16mm f/2.8",
+    );
+    map.insert(
+        "160.5".to_string(),
+        "Tokina AT-X 11-20 F2.8 PRO DX Aspherical 11-20mm f/2.8",
+    );
+    map.insert(
+        "161".to_string(),
+        "Canon EF 28-70mm f/2.8L USM or Other Lens",
+    );
+    map.insert("161.1".to_string(), "Sigma 24-70mm f/2.8 EX");
+    map.insert("161.2".to_string(), "Sigma 28-70mm f/2.8 EX");
+    map.insert("161.3".to_string(), "Sigma 24-60mm f/2.8 EX DG");
+    map.insert(
+        "161.4".to_string(),
+        "Tamron AF 17-50mm f/2.8 Di-II LD Aspherical",
+    );
+    map.insert("161.5".to_string(), "Tamron 90mm f/2.8");
+    map.insert(
+        "161.6".to_string(),
+        "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF (A05)",
+    );
+    map.insert(
+        "161.7".to_string(),
+        "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro",
+    );
+    map.insert("161.8".to_string(), "Tokina AT-X 24-70mm f/2.8 PRO FX (IF)");
+    map.insert("162".to_string(), "Canon EF 200mm f/2.8L USM");
+    map.insert("163".to_string(), "Canon EF 300mm f/4L");
+    map.insert("164".to_string(), "Canon EF 400mm f/5.6L");
+    map.insert("165".to_string(), "Canon EF 70-200mm f/2.8L USM");
+    map.insert("166".to_string(), "Canon EF 70-200mm f/2.8L USM + 1.4x");
+    map.insert("167".to_string(), "Canon EF 70-200mm f/2.8L USM + 2x");
+    map.insert("168".to_string(), "Canon EF 28mm f/1.8 USM or Sigma Lens");
+    map.insert("168.1".to_string(), "Sigma 50-100mm f/1.8 DC HSM | A");
+    map.insert(
+        "169".to_string(),
+        "Canon EF 17-35mm f/2.8L USM or Sigma Lens",
+    );
+    map.insert("169.1".to_string(), "Sigma 18-200mm f/3.5-6.3 DC OS");
+    map.insert(
+        "169.2".to_string(),
+        "Sigma 15-30mm f/3.5-4.5 EX DG Aspherical",
+    );
+    map.insert("169.3".to_string(), "Sigma 18-50mm f/2.8 Macro");
+    map.insert("169.4".to_string(), "Sigma 50mm f/1.4 EX DG HSM");
+    map.insert("169.5".to_string(), "Sigma 85mm f/1.4 EX DG HSM");
+    map.insert("169.6".to_string(), "Sigma 30mm f/1.4 EX DC HSM");
+    map.insert("169.7".to_string(), "Sigma 35mm f/1.4 DG HSM");
+    map.insert(
+        "169.8".to_string(),
+        "Sigma 35mm f/1.5 FF High-Speed Prime | 017",
+    );
+    map.insert("169.9".to_string(), "Sigma 70mm f/2.8 Macro EX DG");
+    map.insert("17".to_string(), "Canon EF 35-70mm f/3.5-4.5A");
+    map.insert(
+        "170".to_string(),
+        "Canon EF 200mm f/2.8L II USM or Sigma Lens",
+    );
+    map.insert("170.1".to_string(), "Sigma 300mm f/2.8 APO EX DG HSM");
+    map.insert("170.2".to_string(), "Sigma 800mm f/5.6 APO EX DG HSM");
+    map.insert("171".to_string(), "Canon EF 300mm f/4L USM");
+    map.insert("172".to_string(), "Canon EF 400mm f/5.6L USM or Sigma Lens");
+    map.insert("172.1".to_string(), "Sigma 150-600mm f/5-6.3 DG OS HSM | S");
+    map.insert("172.2".to_string(), "Sigma 500mm f/4.5 APO EX DG HSM");
+    map.insert(
+        "173".to_string(),
+        "Canon EF 180mm Macro f/3.5L USM or Sigma Lens",
+    );
+    map.insert("173.1".to_string(), "Sigma 180mm EX HSM Macro f/3.5");
+    map.insert("173.2".to_string(), "Sigma APO Macro 150mm f/2.8 EX DG HSM");
+    map.insert("173.3".to_string(), "Sigma 10mm f/2.8 EX DC Fisheye");
+    map.insert(
+        "173.4".to_string(),
+        "Sigma 15mm f/2.8 EX DG Diagonal Fisheye",
+    );
+    map.insert(
+        "173.5".to_string(),
+        "Venus Laowa 100mm F2.8 2X Ultra Macro APO",
+    );
+    map.insert("174".to_string(), "Canon EF 135mm f/2L USM or Other Lens");
+    map.insert("174.1".to_string(), "Sigma 70-200mm f/2.8 EX DG APO OS HSM");
+    map.insert(
+        "174.2".to_string(),
+        "Sigma 50-500mm f/4.5-6.3 APO DG OS HSM",
+    );
+    map.insert("174.3".to_string(), "Sigma 150-500mm f/5-6.3 APO DG OS HSM");
+    map.insert("174.4".to_string(), "Zeiss Milvus 100mm f/2 Makro");
+    map.insert("174.5".to_string(), "Sigma APO 50-150mm f/2.8 EX DC OS HSM");
+    map.insert(
+        "174.6".to_string(),
+        "Sigma APO 120-300mm f/2.8 EX DG OS HSM",
+    );
+    map.insert("174.7".to_string(), "Sigma 120-300mm f/2.8 DG OS HSM S013");
+    map.insert(
+        "174.8".to_string(),
+        "Sigma 120-400mm f/4.5-5.6 APO DG OS HSM",
+    );
+    map.insert("174.9".to_string(), "Sigma 200-500mm f/2.8 APO EX DG");
+    map.insert("175".to_string(), "Canon EF 400mm f/2.8L USM");
+    map.insert("176".to_string(), "Canon EF 24-85mm f/3.5-4.5 USM");
+    map.insert("177".to_string(), "Canon EF 300mm f/4L IS USM");
+    map.insert("178".to_string(), "Canon EF 28-135mm f/3.5-5.6 IS");
+    map.insert("179".to_string(), "Canon EF 24mm f/1.4L USM");
+    map.insert("18".to_string(), "Canon EF 28-70mm f/3.5-4.5");
+    map.insert("180".to_string(), "Canon EF 35mm f/1.4L USM or Other Lens");
+    map.insert("180.1".to_string(), "Sigma 50mm f/1.4 DG HSM | A");
+    map.insert("180.10".to_string(), "Sigma 20mm f/1.4 DG HSM | A");
+    map.insert("180.2".to_string(), "Sigma 24mm f/1.4 DG HSM | A");
+    map.insert("180.3".to_string(), "Zeiss Milvus 50mm f/1.4");
+    map.insert("180.4".to_string(), "Zeiss Milvus 85mm f/1.4");
+    map.insert("180.5".to_string(), "Zeiss Otus 28mm f/1.4 ZE");
+    map.insert(
+        "180.6".to_string(),
+        "Sigma 24mm f/1.5 FF High-Speed Prime | 017",
+    );
+    map.insert(
+        "180.7".to_string(),
+        "Sigma 50mm f/1.5 FF High-Speed Prime | 017",
+    );
+    map.insert(
+        "180.8".to_string(),
+        "Sigma 85mm f/1.5 FF High-Speed Prime | 017",
+    );
+    map.insert("180.9".to_string(), "Tokina Opera 50mm f/1.4 FF");
+    map.insert(
+        "181".to_string(),
+        "Canon EF 100-400mm f/4.5-5.6L IS USM + 1.4x or Sigma Lens",
+    );
+    map.insert(
+        "181.1".to_string(),
+        "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 1.4x",
+    );
+    map.insert(
+        "182".to_string(),
+        "Canon EF 100-400mm f/4.5-5.6L IS USM + 2x or Sigma Lens",
+    );
+    map.insert(
+        "182.1".to_string(),
+        "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 2x",
+    );
+    map.insert(
+        "183".to_string(),
+        "Canon EF 100-400mm f/4.5-5.6L IS USM or Sigma Lens",
+    );
+    map.insert(
+        "183.1".to_string(),
+        "Sigma 150mm f/2.8 EX DG OS HSM APO Macro",
+    );
+    map.insert("183.2".to_string(), "Sigma 105mm f/2.8 EX DG OS HSM Macro");
+    map.insert(
+        "183.3".to_string(),
+        "Sigma 180mm f/2.8 EX DG OS HSM APO Macro",
+    );
+    map.insert("183.4".to_string(), "Sigma 150-600mm f/5-6.3 DG OS HSM | C");
+    map.insert("183.5".to_string(), "Sigma 150-600mm f/5-6.3 DG OS HSM | S");
+    map.insert("183.6".to_string(), "Sigma 100-400mm f/5-6.3 DG OS HSM");
+    map.insert(
+        "183.7".to_string(),
+        "Sigma 180mm f/3.5 APO Macro EX DG IF HSM",
+    );
+    map.insert("184".to_string(), "Canon EF 400mm f/2.8L USM + 2x");
+    map.insert("185".to_string(), "Canon EF 600mm f/4L IS USM");
+    map.insert("186".to_string(), "Canon EF 70-200mm f/4L USM");
+    map.insert("187".to_string(), "Canon EF 70-200mm f/4L USM + 1.4x");
+    map.insert("188".to_string(), "Canon EF 70-200mm f/4L USM + 2x");
+    map.insert("189".to_string(), "Canon EF 70-200mm f/4L USM + 2.8x");
+    map.insert("190".to_string(), "Canon EF 100mm f/2.8 Macro USM");
+    map.insert("191".to_string(), "Canon EF 400mm f/4 DO IS or Sigma Lens");
+    map.insert("191.1".to_string(), "Sigma 500mm f/4 DG OS HSM");
+    map.insert("193".to_string(), "Canon EF 35-80mm f/4-5.6 USM");
+    map.insert("194".to_string(), "Canon EF 80-200mm f/4.5-5.6 USM");
+    map.insert("195".to_string(), "Canon EF 35-105mm f/4.5-5.6 USM");
+    map.insert("196".to_string(), "Canon EF 75-300mm f/4-5.6 USM");
+    map.insert(
+        "197".to_string(),
+        "Canon EF 75-300mm f/4-5.6 IS USM or Sigma Lens",
+    );
+    map.insert(
+        "197.1".to_string(),
+        "Sigma 18-300mm f/3.5-6.3 DC Macro OS HSM",
+    );
+    map.insert("198".to_string(), "Canon EF 50mm f/1.4 USM or Other Lens");
+    map.insert("198.1".to_string(), "Zeiss Otus 55mm f/1.4 ZE");
+    map.insert("198.2".to_string(), "Zeiss Otus 85mm f/1.4 ZE");
+    map.insert("198.3".to_string(), "Zeiss Milvus 25mm f/1.4");
+    map.insert("198.4".to_string(), "Zeiss Otus 100mm f/1.4");
+    map.insert("198.5".to_string(), "Zeiss Milvus 35mm f/1.4 ZE");
+    map.insert("198.6".to_string(), "Yongnuo YN 35mm f/2");
+    map.insert("199".to_string(), "Canon EF 28-80mm f/3.5-5.6 USM");
+    map.insert("2".to_string(), "Canon EF 28mm f/2.8 or Sigma Lens");
+    map.insert("2.1".to_string(), "Sigma 24mm f/2.8 Super Wide II");
+    map.insert("20".to_string(), "Canon EF 100-200mm f/4.5A");
+    map.insert("200".to_string(), "Canon EF 75-300mm f/4-5.6 USM");
+    map.insert("201".to_string(), "Canon EF 28-80mm f/3.5-5.6 USM");
+    map.insert("202".to_string(), "Canon EF 28-80mm f/3.5-5.6 USM IV");
+    map.insert("208".to_string(), "Canon EF 22-55mm f/4-5.6 USM");
+    map.insert("209".to_string(), "Canon EF 55-200mm f/4.5-5.6");
+    map.insert("21".to_string(), "Canon EF 80-200mm f/2.8L");
+    map.insert("210".to_string(), "Canon EF 28-90mm f/4-5.6 USM");
+    map.insert("211".to_string(), "Canon EF 28-200mm f/3.5-5.6 USM");
+    map.insert("212".to_string(), "Canon EF 28-105mm f/4-5.6 USM");
+    map.insert(
+        "213".to_string(),
+        "Canon EF 90-300mm f/4.5-5.6 USM or Tamron Lens",
+    );
+    map.insert(
+        "213.1".to_string(),
+        "Tamron SP 150-600mm f/5-6.3 Di VC USD (A011)",
+    );
+    map.insert(
+        "213.2".to_string(),
+        "Tamron 16-300mm f/3.5-6.3 Di II VC PZD Macro (B016)",
+    );
+    map.insert("213.3".to_string(), "Tamron SP 35mm f/1.8 Di VC USD (F012)");
+    map.insert("213.4".to_string(), "Tamron SP 45mm f/1.8 Di VC USD (F013)");
+    map.insert("214".to_string(), "Canon EF-S 18-55mm f/3.5-5.6 USM");
+    map.insert("215".to_string(), "Canon EF 55-200mm f/4.5-5.6 II USM");
+    map.insert(
+        "217".to_string(),
+        "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD",
+    );
+    map.insert("22".to_string(), "Canon EF 20-35mm f/2.8L or Tokina Lens");
+    map.insert(
+        "22.1".to_string(),
+        "Tokina AT-X 280 AF Pro 28-80mm f/2.8 Aspherical",
+    );
+    map.insert("220".to_string(), "Yongnuo YN 50mm f/1.8");
+    map.insert("224".to_string(), "Canon EF 70-200mm f/2.8L IS USM");
+    map.insert("225".to_string(), "Canon EF 70-200mm f/2.8L IS USM + 1.4x");
+    map.insert("226".to_string(), "Canon EF 70-200mm f/2.8L IS USM + 2x");
+    map.insert("227".to_string(), "Canon EF 70-200mm f/2.8L IS USM + 2.8x");
+    map.insert("228".to_string(), "Canon EF 28-105mm f/3.5-4.5 USM");
+    map.insert("229".to_string(), "Canon EF 16-35mm f/2.8L USM");
+    map.insert("23".to_string(), "Canon EF 35-105mm f/3.5-4.5");
+    map.insert("230".to_string(), "Canon EF 24-70mm f/2.8L USM");
+    map.insert("231".to_string(), "Canon EF 17-40mm f/4L USM or Sigma Lens");
+    map.insert("231.1".to_string(), "Sigma 12-24mm f/4 DG HSM A016");
+    map.insert("232".to_string(), "Canon EF 70-300mm f/4.5-5.6 DO IS USM");
+    map.insert("233".to_string(), "Canon EF 28-300mm f/3.5-5.6L IS USM");
+    map.insert(
+        "234".to_string(),
+        "Canon EF-S 17-85mm f/4-5.6 IS USM or Tokina Lens",
+    );
+    map.insert("234.1".to_string(), "Tokina AT-X 12-28 PRO DX 12-28mm f/4");
+    map.insert("235".to_string(), "Canon EF-S 10-22mm f/3.5-4.5 USM");
+    map.insert("236".to_string(), "Canon EF-S 60mm f/2.8 Macro USM");
+    map.insert("237".to_string(), "Canon EF 24-105mm f/4L IS USM");
+    map.insert("238".to_string(), "Canon EF 70-300mm f/4-5.6 IS USM");
+    map.insert(
+        "239".to_string(),
+        "Canon EF 85mm f/1.2L II USM or Rokinon Lens",
+    );
+    map.insert("239.1".to_string(), "Rokinon SP 85mm f/1.2");
+    map.insert("24".to_string(), "Canon EF 35-80mm f/4-5.6 Power Zoom");
+    map.insert(
+        "240".to_string(),
+        "Canon EF-S 17-55mm f/2.8 IS USM or Sigma Lens",
+    );
+    map.insert("240.1".to_string(), "Sigma 17-50mm f/2.8 EX DC OS HSM");
+    map.insert("241".to_string(), "Canon EF 50mm f/1.2L USM");
+    map.insert("242".to_string(), "Canon EF 70-200mm f/4L IS USM");
+    map.insert("243".to_string(), "Canon EF 70-200mm f/4L IS USM + 1.4x");
+    map.insert("244".to_string(), "Canon EF 70-200mm f/4L IS USM + 2x");
+    map.insert("245".to_string(), "Canon EF 70-200mm f/4L IS USM + 2.8x");
+    map.insert("246".to_string(), "Canon EF 16-35mm f/2.8L II USM");
+    map.insert("247".to_string(), "Canon EF 14mm f/2.8L II USM");
+    map.insert(
+        "248".to_string(),
+        "Canon EF 200mm f/2L IS USM or Sigma Lens",
+    );
+    map.insert("248.1".to_string(), "Sigma 24-35mm f/2 DG HSM | A");
+    map.insert(
+        "248.2".to_string(),
+        "Sigma 135mm f/2 FF High-Speed Prime | 017",
+    );
+    map.insert("248.3".to_string(), "Sigma 24-35mm f/2.2 FF Zoom | 017");
+    map.insert("248.4".to_string(), "Sigma 135mm f/1.8 DG HSM A017");
+    map.insert("249".to_string(), "Canon EF 800mm f/5.6L IS USM");
+    map.insert("25".to_string(), "Canon EF 35-80mm f/4-5.6 Power Zoom");
+    map.insert(
+        "250".to_string(),
+        "Canon EF 24mm f/1.4L II USM or Sigma Lens",
+    );
+    map.insert("250.1".to_string(), "Sigma 20mm f/1.4 DG HSM | A");
+    map.insert(
+        "250.2".to_string(),
+        "Sigma 20mm f/1.5 FF High-Speed Prime | 017",
+    );
+    map.insert("250.3".to_string(), "Tokina Opera 16-28mm f/2.8 FF");
+    map.insert("250.4".to_string(), "Sigma 85mm f/1.4 DG HSM A016");
+    map.insert("251".to_string(), "Canon EF 70-200mm f/2.8L IS II USM");
+    map.insert("251.1".to_string(), "Canon EF 70-200mm f/2.8L IS III USM");
+    map.insert(
+        "252".to_string(),
+        "Canon EF 70-200mm f/2.8L IS II USM + 1.4x",
+    );
+    map.insert(
+        "252.1".to_string(),
+        "Canon EF 70-200mm f/2.8L IS III USM + 1.4x",
+    );
+    map.insert("253".to_string(), "Canon EF 70-200mm f/2.8L IS II USM + 2x");
+    map.insert(
+        "253.1".to_string(),
+        "Canon EF 70-200mm f/2.8L IS III USM + 2x",
+    );
+    map.insert(
+        "254".to_string(),
+        "Canon EF 100mm f/2.8L Macro IS USM or Tamron Lens",
+    );
+    map.insert(
+        "254.1".to_string(),
+        "Tamron SP 90mm f/2.8 Di VC USD 1:1 Macro (F017)",
+    );
+    map.insert(
+        "255".to_string(),
+        "Sigma 24-105mm f/4 DG OS HSM | A or Other Lens",
+    );
+    map.insert(
+        "255.1".to_string(),
+        "Sigma 180mm f/2.8 EX DG OS HSM APO Macro",
+    );
+    map.insert("255.2".to_string(), "Tamron SP 70-200mm f/2.8 Di VC USD");
+    map.insert("255.3".to_string(), "Yongnuo YN 50mm f/1.8");
+    map.insert("26".to_string(), "Canon EF 100mm f/2.8 Macro or Other Lens");
+    map.insert("26.1".to_string(), "Cosina 100mm f/3.5 Macro AF");
+    map.insert("26.2".to_string(), "Tamron SP AF 90mm f/2.8 Di Macro");
+    map.insert("26.3".to_string(), "Tamron SP AF 180mm f/3.5 Di Macro");
+    map.insert("26.4".to_string(), "Carl Zeiss Planar T* 50mm f/1.4");
+    map.insert(
+        "26.5".to_string(),
+        "Voigtlander APO Lanthar 125mm F2.5 SL Macro",
+    );
+    map.insert("26.6".to_string(), "Carl Zeiss Planar T 85mm f/1.4 ZE");
+    map.insert("27".to_string(), "Canon EF 35-80mm f/4-5.6");
+    map.insert(
+        "28".to_string(),
+        "Canon EF 80-200mm f/4.5-5.6 or Tamron Lens",
+    );
+    map.insert(
+        "28.1".to_string(),
+        "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF",
+    );
+    map.insert(
+        "28.2".to_string(),
+        "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro",
+    );
+    map.insert(
+        "28.3".to_string(),
+        "Tamron AF 70-300mm f/4-5.6 Di LD 1:2 Macro",
+    );
+    map.insert(
+        "28.4".to_string(),
+        "Tamron AF Aspherical 28-200mm f/3.8-5.6",
+    );
+    map.insert("29".to_string(), "Canon EF 50mm f/1.8 II");
+    map.insert("3".to_string(), "Canon EF 135mm f/2.8 Soft");
+    map.insert("30".to_string(), "Canon EF 35-105mm f/4.5-5.6");
+    map.insert("31".to_string(), "Canon EF 75-300mm f/4-5.6 or Tamron Lens");
+    map.insert("31.1".to_string(), "Tamron SP AF 300mm f/2.8 LD IF");
+    map.insert("32".to_string(), "Canon EF 24mm f/2.8 or Sigma Lens");
+    map.insert("32.1".to_string(), "Sigma 15mm f/2.8 EX Fisheye");
+    map.insert("33".to_string(), "Voigtlander or Carl Zeiss Lens");
+    map.insert(
+        "33.1".to_string(),
+        "Voigtlander Ultron 40mm f/2 SLII Aspherical",
+    );
+    map.insert("33.10".to_string(), "Carl Zeiss Distagon T* 35mm f/1.4 ZE");
+    map.insert("33.11".to_string(), "Carl Zeiss Planar T* 50mm f/1.4 ZE");
+    map.insert(
+        "33.12".to_string(),
+        "Carl Zeiss Makro-Planar T* 50mm f/2 ZE",
+    );
+    map.insert(
+        "33.13".to_string(),
+        "Carl Zeiss Makro-Planar T* 100mm f/2 ZE",
+    );
+    map.insert("33.14".to_string(), "Carl Zeiss Apo-Sonnar T* 135mm f/2 ZE");
+    map.insert(
+        "33.2".to_string(),
+        "Voigtlander Color Skopar 20mm f/3.5 SLII Aspherical",
+    );
+    map.insert(
+        "33.3".to_string(),
+        "Voigtlander APO-Lanthar 90mm f/3.5 SLII Close Focus",
+    );
+    map.insert("33.4".to_string(), "Carl Zeiss Distagon T* 15mm f/2.8 ZE");
+    map.insert("33.5".to_string(), "Carl Zeiss Distagon T* 18mm f/3.5 ZE");
+    map.insert("33.6".to_string(), "Carl Zeiss Distagon T* 21mm f/2.8 ZE");
+    map.insert("33.7".to_string(), "Carl Zeiss Distagon T* 25mm f/2 ZE");
+    map.insert("33.8".to_string(), "Carl Zeiss Distagon T* 28mm f/2 ZE");
+    map.insert("33.9".to_string(), "Carl Zeiss Distagon T* 35mm f/2 ZE");
+    map.insert("35".to_string(), "Canon EF 35-80mm f/4-5.6");
+    map.insert("36".to_string(), "Canon EF 38-76mm f/4.5-5.6");
+    map.insert(
+        "368".to_string(),
+        "Sigma 14-24mm f/2.8 DG HSM | A or other Sigma Lens",
+    );
+    map.insert("368.1".to_string(), "Sigma 20mm f/1.4 DG HSM | A");
+    map.insert("368.10".to_string(), "Sigma 35mm f/1.4 DG HSM | A");
+    map.insert("368.11".to_string(), "Sigma 70mm f/2.8 DG Macro");
+    map.insert("368.12".to_string(), "Sigma 18-35mm f/1.8 DC HSM | A");
+    map.insert("368.13".to_string(), "Sigma 24-105mm f/4 DG OS HSM | A");
+    map.insert(
+        "368.14".to_string(),
+        "Sigma 18-300mm f/3.5-6.3 DC Macro OS HSM | C",
+    );
+    map.insert("368.2".to_string(), "Sigma 50mm f/1.4 DG HSM | A");
+    map.insert("368.3".to_string(), "Sigma 40mm f/1.4 DG HSM | A");
+    map.insert(
+        "368.4".to_string(),
+        "Sigma 60-600mm f/4.5-6.3 DG OS HSM | S",
+    );
+    map.insert("368.5".to_string(), "Sigma 28mm f/1.4 DG HSM | A");
+    map.insert("368.6".to_string(), "Sigma 150-600mm f/5-6.3 DG OS HSM | S");
+    map.insert("368.7".to_string(), "Sigma 85mm f/1.4 DG HSM | A");
+    map.insert("368.8".to_string(), "Sigma 105mm f/1.4 DG HSM");
+    map.insert("368.9".to_string(), "Sigma 14-24mm f/2.8 DG HSM");
+    map.insert("36910".to_string(), "Canon EF 70-300mm f/4-5.6 IS II USM");
+    map.insert("36912".to_string(), "Canon EF-S 18-135mm f/3.5-5.6 IS USM");
+    map.insert("37".to_string(), "Canon EF 35-80mm f/4-5.6 or Tamron Lens");
+    map.insert("37.1".to_string(), "Tamron 70-200mm f/2.8 Di LD IF Macro");
+    map.insert(
+        "37.2".to_string(),
+        "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro (A20)",
+    );
+    map.insert(
+        "37.3".to_string(),
+        "Tamron SP AF 17-50mm f/2.8 XR Di II VC LD Aspherical [IF]",
+    );
+    map.insert(
+        "37.4".to_string(),
+        "Tamron AF 18-270mm f/3.5-6.3 Di II VC LD Aspherical [IF] Macro",
+    );
+    map.insert("38".to_string(), "Canon EF 80-200mm f/4.5-5.6 II");
+    map.insert("39".to_string(), "Canon EF 75-300mm f/4-5.6");
+    map.insert("4".to_string(), "Canon EF 35-105mm f/3.5-4.5 or Sigma Lens");
+    map.insert("4.1".to_string(), "Sigma UC Zoom 35-135mm f/4-5.6");
+    map.insert("40".to_string(), "Canon EF 28-80mm f/3.5-5.6");
+    map.insert("41".to_string(), "Canon EF 28-90mm f/4-5.6");
+    map.insert("4142".to_string(), "Canon EF-S 18-135mm f/3.5-5.6 IS STM");
+    map.insert(
+        "4143".to_string(),
+        "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens",
+    );
+    map.insert("4143.1".to_string(), "Tamron 18-200mm f/3.5-6.3 Di III VC");
+    map.insert("4144".to_string(), "Canon EF 40mm f/2.8 STM");
+    map.insert("4145".to_string(), "Canon EF-M 22mm f/2 STM");
+    map.insert("4146".to_string(), "Canon EF-S 18-55mm f/3.5-5.6 IS STM");
+    map.insert("4147".to_string(), "Canon EF-M 11-22mm f/4-5.6 IS STM");
+    map.insert("4148".to_string(), "Canon EF-S 55-250mm f/4-5.6 IS STM");
+    map.insert("4149".to_string(), "Canon EF-M 55-200mm f/4.5-6.3 IS STM");
+    map.insert("4150".to_string(), "Canon EF-S 10-18mm f/4.5-5.6 IS STM");
+    map.insert("4152".to_string(), "Canon EF 24-105mm f/3.5-5.6 IS STM");
+    map.insert("4153".to_string(), "Canon EF-M 15-45mm f/3.5-6.3 IS STM");
+    map.insert("4154".to_string(), "Canon EF-S 24mm f/2.8 STM");
+    map.insert("4155".to_string(), "Canon EF-M 28mm f/3.5 Macro IS STM");
+    map.insert("4156".to_string(), "Canon EF 50mm f/1.8 STM");
+    map.insert("4157".to_string(), "Canon EF-M 18-150mm f/3.5-6.3 IS STM");
+    map.insert("4158".to_string(), "Canon EF-S 18-55mm f/4-5.6 IS STM");
+    map.insert("4159".to_string(), "Canon EF-M 32mm f/1.4 STM");
+    map.insert("4160".to_string(), "Canon EF-S 35mm f/2.8 Macro IS STM");
+    map.insert(
+        "42".to_string(),
+        "Canon EF 28-200mm f/3.5-5.6 or Tamron Lens",
+    );
+    map.insert(
+        "42.1".to_string(),
+        "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro (A20)",
+    );
+    map.insert(
+        "4208".to_string(),
+        "Sigma 56mm f/1.4 DC DN | C or other Sigma Lens",
+    );
+    map.insert("4208.1".to_string(), "Sigma 30mm F1.4 DC DN | C");
+    map.insert("43".to_string(), "Canon EF 28-105mm f/4-5.6");
+    map.insert("44".to_string(), "Canon EF 90-300mm f/4.5-5.6");
+    map.insert("45".to_string(), "Canon EF-S 18-55mm f/3.5-5.6 [II]");
+    map.insert("46".to_string(), "Canon EF 28-90mm f/4-5.6");
+    map.insert("47".to_string(), "Zeiss Milvus 35mm f/2 or 50mm f/2");
+    map.insert("47.1".to_string(), "Zeiss Milvus 50mm f/2 Makro");
+    map.insert("47.2".to_string(), "Zeiss Milvus 135mm f/2 ZE");
+    map.insert("48".to_string(), "Canon EF-S 18-55mm f/3.5-5.6 IS");
+    map.insert("488".to_string(), "Canon EF-S 15-85mm f/3.5-5.6 IS USM");
+    map.insert("489".to_string(), "Canon EF 70-300mm f/4-5.6L IS USM");
+    map.insert("49".to_string(), "Canon EF-S 55-250mm f/4-5.6 IS");
+    map.insert("490".to_string(), "Canon EF 8-15mm f/4L Fisheye USM");
+    map.insert(
+        "491".to_string(),
+        "Canon EF 300mm f/2.8L IS II USM or Tamron Lens",
+    );
+    map.insert(
+        "491.1".to_string(),
+        "Tamron SP 70-200mm f/2.8 Di VC USD G2 (A025)",
+    );
+    map.insert(
+        "491.2".to_string(),
+        "Tamron 18-400mm f/3.5-6.3 Di II VC HLD (B028)",
+    );
+    map.insert(
+        "491.3".to_string(),
+        "Tamron 100-400mm f/4.5-6.3 Di VC USD (A035)",
+    );
+    map.insert("491.4".to_string(), "Tamron 70-210mm f/4 Di VC USD (A034)");
+    map.insert(
+        "491.5".to_string(),
+        "Tamron 70-210mm f/4 Di VC USD (A034) + 1.4x",
+    );
+    map.insert(
+        "491.6".to_string(),
+        "Tamron SP 24-70mm f/2.8 Di VC USD G2 (A032)",
+    );
+    map.insert("492".to_string(), "Canon EF 400mm f/2.8L IS II USM");
+    map.insert(
+        "493".to_string(),
+        "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM",
+    );
+    map.insert("493.1".to_string(), "Canon EF 24-105mm f/4L IS USM");
+    map.insert("494".to_string(), "Canon EF 600mm f/4L IS II USM");
+    map.insert(
+        "495".to_string(),
+        "Canon EF 24-70mm f/2.8L II USM or Sigma Lens",
+    );
+    map.insert("495.1".to_string(), "Sigma 24-70mm f/2.8 DG OS HSM | A");
+    map.insert("496".to_string(), "Canon EF 200-400mm f/4L IS USM");
+    map.insert("499".to_string(), "Canon EF 200-400mm f/4L IS USM + 1.4x");
+    map.insert("5".to_string(), "Canon EF 35-70mm f/3.5-4.5");
+    map.insert("50".to_string(), "Canon EF-S 18-200mm f/3.5-5.6 IS");
+    map.insert(
+        "502".to_string(),
+        "Canon EF 28mm f/2.8 IS USM or Tamron Lens",
+    );
+    map.insert("502.1".to_string(), "Tamron 35mm f/1.8 Di VC USD (F012)");
+    map.insert("503".to_string(), "Canon EF 24mm f/2.8 IS USM");
+    map.insert("504".to_string(), "Canon EF 24-70mm f/4L IS USM");
+    map.insert("505".to_string(), "Canon EF 35mm f/2 IS USM");
+    map.insert("506".to_string(), "Canon EF 400mm f/4 DO IS II USM");
+    map.insert("507".to_string(), "Canon EF 16-35mm f/4L IS USM");
+    map.insert(
+        "508".to_string(),
+        "Canon EF 11-24mm f/4L USM or Tamron Lens",
+    );
+    map.insert(
+        "508.1".to_string(),
+        "Tamron 10-24mm f/3.5-4.5 Di II VC HLD (B023)",
+    );
+    map.insert("51".to_string(), "Canon EF-S 18-135mm f/3.5-5.6 IS");
+    map.insert("52".to_string(), "Canon EF-S 18-55mm f/3.5-5.6 IS II");
+    map.insert("53".to_string(), "Canon EF-S 18-55mm f/3.5-5.6 III");
+    map.insert("54".to_string(), "Canon EF-S 55-250mm f/4-5.6 IS II");
+    map.insert(
+        "6".to_string(),
+        "Canon EF 28-70mm f/3.5-4.5 or Sigma or Tokina Lens",
+    );
+    map.insert("6.1".to_string(), "Sigma 18-50mm f/3.5-5.6 DC");
+    map.insert("6.2".to_string(), "Sigma 18-125mm f/3.5-5.6 DC IF ASP");
+    map.insert("6.3".to_string(), "Tokina AF 193-2 19-35mm f/3.5-4.5");
+    map.insert("6.4".to_string(), "Sigma 28-80mm f/3.5-5.6 II Macro");
+    map.insert("6.5".to_string(), "Sigma 28-300mm f/3.5-6.3 DG Macro");
+    map.insert("60".to_string(), "Irix 11mm f/4 or 15mm f/2.4");
+    map.insert("60.1".to_string(), "Irix 15mm f/2.4");
+    map.insert(
+        "61182".to_string(),
+        "Canon RF 50mm F1.2L USM or other Canon RF Lens",
+    );
+    map.insert("61182.1".to_string(), "Canon RF 24-105mm F4L IS USM");
+    map.insert("61182.10".to_string(), "Canon RF 85mm F2 MACRO IS STM");
+    map.insert("61182.11".to_string(), "Canon RF 600mm F11 IS STM");
+    map.insert("61182.12".to_string(), "Canon RF 600mm F11 IS STM + RF1.4x");
+    map.insert("61182.13".to_string(), "Canon RF 600mm F11 IS STM + RF2x");
+    map.insert("61182.14".to_string(), "Canon RF 800mm F11 IS STM");
+    map.insert("61182.15".to_string(), "Canon RF 800mm F11 IS STM + RF1.4x");
+    map.insert("61182.16".to_string(), "Canon RF 800mm F11 IS STM + RF2x");
+    map.insert("61182.17".to_string(), "Canon RF 24-105mm F4-7.1 IS STM");
+    map.insert(
+        "61182.18".to_string(),
+        "Canon RF 100-500mm F4.5-7.1L IS USM",
+    );
+    map.insert(
+        "61182.19".to_string(),
+        "Canon RF 100-500mm F4.5-7.1L IS USM + RF1.4x",
+    );
+    map.insert("61182.2".to_string(), "Canon RF 28-70mm F2L USM");
+    map.insert(
+        "61182.20".to_string(),
+        "Canon RF 100-500mm F4.5-7.1L IS USM + RF2x",
+    );
+    map.insert("61182.21".to_string(), "Canon RF 70-200mm F4L IS USM");
+    map.insert("61182.22".to_string(), "Canon RF 100mm F2.8L MACRO IS USM");
+    map.insert("61182.23".to_string(), "Canon RF 50mm F1.8 STM");
+    map.insert("61182.24".to_string(), "Canon RF 14-35mm F4L IS USM");
+    map.insert("61182.25".to_string(), "Canon RF-S 18-45mm F4.5-6.3 IS STM");
+    map.insert("61182.26".to_string(), "Canon RF 100-400mm F5.6-8 IS USM");
+    map.insert(
+        "61182.27".to_string(),
+        "Canon RF 100-400mm F5.6-8 IS USM + RF1.4x",
+    );
+    map.insert(
+        "61182.28".to_string(),
+        "Canon RF 100-400mm F5.6-8 IS USM + RF2x",
+    );
+    map.insert(
+        "61182.29".to_string(),
+        "Canon RF-S 18-150mm F3.5-6.3 IS STM",
+    );
+    map.insert("61182.3".to_string(), "Canon RF 35mm F1.8 MACRO IS STM");
+    map.insert("61182.30".to_string(), "Canon RF 24mm F1.8 MACRO IS STM");
+    map.insert("61182.31".to_string(), "Canon RF 16mm F2.8 STM");
+    map.insert("61182.32".to_string(), "Canon RF 400mm F2.8L IS USM");
+    map.insert(
+        "61182.33".to_string(),
+        "Canon RF 400mm F2.8L IS USM + RF1.4x",
+    );
+    map.insert("61182.34".to_string(), "Canon RF 400mm F2.8L IS USM + RF2x");
+    map.insert("61182.35".to_string(), "Canon RF 600mm F4L IS USM");
+    map.insert("61182.36".to_string(), "Canon RF 600mm F4L IS USM + RF1.4x");
+    map.insert("61182.37".to_string(), "Canon RF 600mm F4L IS USM + RF2x");
+    map.insert("61182.38".to_string(), "Canon RF 800mm F5.6L IS USM");
+    map.insert(
+        "61182.39".to_string(),
+        "Canon RF 800mm F5.6L IS USM + RF1.4x",
+    );
+    map.insert("61182.4".to_string(), "Canon RF 85mm F1.2L USM");
+    map.insert("61182.40".to_string(), "Canon RF 800mm F5.6L IS USM + RF2x");
+    map.insert("61182.41".to_string(), "Canon RF 1200mm F8L IS USM");
+    map.insert(
+        "61182.42".to_string(),
+        "Canon RF 1200mm F8L IS USM + RF1.4x",
+    );
+    map.insert("61182.43".to_string(), "Canon RF 1200mm F8L IS USM + RF2x");
+    map.insert(
+        "61182.44".to_string(),
+        "Canon RF 5.2mm F2.8L Dual Fisheye 3D VR",
+    );
+    map.insert("61182.45".to_string(), "Canon RF 15-30mm F4.5-6.3 IS STM");
+    map.insert("61182.46".to_string(), "Canon RF 135mm F1.8 L IS USM");
+    map.insert("61182.47".to_string(), "Canon RF 24-50mm F4.5-6.3 IS STM");
+    map.insert("61182.48".to_string(), "Canon RF-S 55-210mm F5-7.1 IS STM");
+    map.insert("61182.49".to_string(), "Canon RF 100-300mm F2.8L IS USM");
+    map.insert("61182.5".to_string(), "Canon RF 85mm F1.2L USM DS");
+    map.insert(
+        "61182.50".to_string(),
+        "Canon RF 100-300mm F2.8L IS USM + RF1.4x",
+    );
+    map.insert(
+        "61182.51".to_string(),
+        "Canon RF 100-300mm F2.8L IS USM + RF2x",
+    );
+    map.insert("61182.52".to_string(), "Canon RF 10-20mm F4 L IS STM");
+    map.insert("61182.53".to_string(), "Canon RF 28mm F2.8 STM");
+    map.insert("61182.54".to_string(), "Canon RF 24-105mm F2.8 L IS USM Z");
+    map.insert("61182.55".to_string(), "Canon RF-S 10-18mm F4.5-6.3 IS STM");
+    map.insert("61182.56".to_string(), "Canon RF 35mm F1.4 L VCM");
+    map.insert("61182.57".to_string(), "Canon RF 70-200mm F2.8 L IS USM Z");
+    map.insert(
+        "61182.58".to_string(),
+        "Canon RF 70-200mm F2.8 L IS USM Z + RF1.4x",
+    );
+    map.insert(
+        "61182.59".to_string(),
+        "Canon RF 70-200mm F2.8 L IS USM Z + RF2x",
+    );
+    map.insert("61182.6".to_string(), "Canon RF 24-70mm F2.8L IS USM");
+    map.insert("61182.60".to_string(), "Canon RF 16-28mm F2.8 IS STM");
+    map.insert(
+        "61182.61".to_string(),
+        "Canon RF-S 14-30mm F4-6.3 IS STM PZ",
+    );
+    map.insert("61182.62".to_string(), "Canon RF 50mm F1.4 L VCM");
+    map.insert("61182.63".to_string(), "Canon RF 24mm F1.4 L VCM");
+    map.insert("61182.64".to_string(), "Canon RF 20mm F1.4 L VCM");
+    map.insert("61182.7".to_string(), "Canon RF 15-35mm F2.8L IS USM");
+    map.insert("61182.8".to_string(), "Canon RF 24-240mm F4-6.3 IS USM");
+    map.insert("61182.9".to_string(), "Canon RF 70-200mm F2.8L IS USM");
+    map.insert("61491".to_string(), "Canon CN-E 14mm T3.1 L F");
+    map.insert("61492".to_string(), "Canon CN-E 24mm T1.5 L F");
+    map.insert("61494".to_string(), "Canon CN-E 85mm T1.3 L F");
+    map.insert("61495".to_string(), "Canon CN-E 135mm T2.2 L F");
+    map.insert("61496".to_string(), "Canon CN-E 35mm T1.5 L F");
+    map.insert(
+        "624".to_string(),
+        "Sigma 70-200mm f/2.8 DG OS HSM | S or other Sigma Lens",
+    );
+    map.insert("624.1".to_string(), "Sigma 150-600mm f/5-6.3 | C");
+    map.insert("63".to_string(), "Irix 30mm F1.4 Dragonfly");
+    map.insert("65535".to_string(), "n/a");
+    map.insert("7".to_string(), "Canon EF 100-300mm f/5.6L");
+    map.insert(
+        "747".to_string(),
+        "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens",
+    );
+    map.insert(
+        "747.1".to_string(),
+        "Tamron SP 150-600mm f/5-6.3 Di VC USD G2",
+    );
+    map.insert(
+        "748".to_string(),
+        "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x or Tamron Lens",
+    );
+    map.insert(
+        "748.1".to_string(),
+        "Tamron 100-400mm f/4.5-6.3 Di VC USD A035E + 1.4x",
+    );
+    map.insert(
+        "748.2".to_string(),
+        "Tamron 70-210mm f/4 Di VC USD (A034) + 2x",
+    );
+    map.insert(
+        "749".to_string(),
+        "Canon EF 100-400mm f/4.5-5.6L IS II USM + 2x or Tamron Lens",
+    );
+    map.insert(
+        "749.1".to_string(),
+        "Tamron 100-400mm f/4.5-6.3 Di VC USD A035E + 2x",
+    );
+    map.insert(
+        "750".to_string(),
+        "Canon EF 35mm f/1.4L II USM or Tamron Lens",
+    );
+    map.insert("750.1".to_string(), "Tamron SP 85mm f/1.8 Di VC USD (F016)");
+    map.insert("750.2".to_string(), "Tamron SP 45mm f/1.8 Di VC USD (F013)");
+    map.insert("751".to_string(), "Canon EF 16-35mm f/2.8L III USM");
+    map.insert("752".to_string(), "Canon EF 24-105mm f/4L IS II USM");
+    map.insert("753".to_string(), "Canon EF 85mm f/1.4L IS USM");
+    map.insert("754".to_string(), "Canon EF 70-200mm f/4L IS II USM");
+    map.insert("757".to_string(), "Canon EF 400mm f/2.8L IS III USM");
+    map.insert("758".to_string(), "Canon EF 600mm f/4L IS III USM");
+    map.insert(
+        "8".to_string(),
+        "Canon EF 100-300mm f/5.6 or Sigma or Tokina Lens",
+    );
+    map.insert("8.1".to_string(), "Sigma 70-300mm f/4-5.6 [APO] DG Macro");
+    map.insert("8.2".to_string(), "Tokina AT-X 242 AF 24-200mm f/3.5-5.6");
+    map.insert("80".to_string(), "Canon TS-E 50mm f/2.8L Macro");
+    map.insert("81".to_string(), "Canon TS-E 90mm f/2.8L Macro");
+    map.insert("82".to_string(), "Canon TS-E 135mm f/4L Macro");
+    map.insert("9".to_string(), "Canon EF 70-210mm f/4");
+    map.insert("9.1".to_string(), "Sigma 55-200mm f/4-5.6 DC");
+    map.insert("94".to_string(), "Canon TS-E 17mm f/4L");
+    map.insert("95".to_string(), "Canon TS-E 24mm f/3.5L II");
+    map
+});
+
 /// Get tag definitions for document category
 pub fn get_document_tags() -> Vec<(u32, TagKitDef)> {
     vec![
+        (
+            270,
+            TagKitDef {
+                id: 270,
+                name: "UserDef2PictureStyle",
+                format: "int16u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_10),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            295,
+            TagKitDef {
+                id: 295,
+                name: "LensType",
+                format: "int16uRev",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_11),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            299,
+            TagKitDef {
+                id: 299,
+                name: "MaxFocalLength",
+                format: "int16uRev",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Expression("\"$val mm\""),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
         (
             269,
             TagKitDef {

@@ -14,7 +14,2203 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_97: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_126: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Manual");
+    map.insert("2".to_string(), "AF-S");
+    map.insert("3".to_string(), "AF-C");
+    map.insert("4".to_string(), "AF-A");
+    map.insert("6".to_string(), "DMF");
+    map.insert("7".to_string(), "AF-D");
+    map
+});
+
+static PRINT_CONV_127: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "(none)");
+    map
+});
+
+static PRINT_CONV_128: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "(none)");
+    map
+});
+
+static PRINT_CONV_129: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Program AE");
+    map.insert("1".to_string(), "Aperture-priority AE");
+    map.insert("10".to_string(), "Twilight");
+    map.insert("11".to_string(), "Twilight Portrait");
+    map.insert("12".to_string(), "Sunset");
+    map.insert("14".to_string(), "Action (High speed)");
+    map.insert("16".to_string(), "Sports");
+    map.insert("17".to_string(), "Handheld Night Shot");
+    map.insert("18".to_string(), "Anti Motion Blur");
+    map.insert("19".to_string(), "High Sensitivity");
+    map.insert("2".to_string(), "Shutter speed priority AE");
+    map.insert("21".to_string(), "Beach");
+    map.insert("22".to_string(), "Snow");
+    map.insert("23".to_string(), "Fireworks");
+    map.insert("26".to_string(), "Underwater");
+    map.insert("27".to_string(), "Gourmet");
+    map.insert("28".to_string(), "Pet");
+    map.insert("29".to_string(), "Macro");
+    map.insert("3".to_string(), "Manual");
+    map.insert("30".to_string(), "Backlight Correction HDR");
+    map.insert("33".to_string(), "Sweep Panorama");
+    map.insert("36".to_string(), "Background Defocus");
+    map.insert("37".to_string(), "Soft Skin");
+    map.insert("4".to_string(), "Auto");
+    map.insert("42".to_string(), "3D Image");
+    map.insert("43".to_string(), "Cont. Priority AE");
+    map.insert("45".to_string(), "Document");
+    map.insert("46".to_string(), "Party");
+    map.insert("5".to_string(), "iAuto");
+    map.insert("6".to_string(), "Superior Auto");
+    map.insert("7".to_string(), "iAuto+");
+    map.insert("8".to_string(), "Portrait");
+    map.insert("9".to_string(), "Landscape");
+    map
+});
+
+static PRINT_CONV_130: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "B4");
+    map.insert("1".to_string(), "C4");
+    map.insert("10".to_string(), "E3");
+    map.insert("11".to_string(), "F3");
+    map.insert("12".to_string(), "G3");
+    map.insert("13".to_string(), "H3");
+    map.insert("14".to_string(), "B2");
+    map.insert("15".to_string(), "C2");
+    map.insert("16".to_string(), "D2");
+    map.insert("17".to_string(), "E2");
+    map.insert("18".to_string(), "F2");
+    map.insert("19".to_string(), "G2");
+    map.insert("2".to_string(), "D4");
+    map.insert("20".to_string(), "H2");
+    map.insert("21".to_string(), "C1");
+    map.insert("22".to_string(), "D1");
+    map.insert("23".to_string(), "E1");
+    map.insert("24".to_string(), "F1");
+    map.insert("25".to_string(), "G1");
+    map.insert("255".to_string(), "(none)");
+    map.insert("26".to_string(), "A7 Vertical");
+    map.insert("27".to_string(), "A6 Vertical");
+    map.insert("28".to_string(), "A5 Vertical");
+    map.insert("29".to_string(), "C7 Vertical");
+    map.insert("3".to_string(), "E4");
+    map.insert("30".to_string(), "C6 Vertical");
+    map.insert("31".to_string(), "C5 Vertical");
+    map.insert("32".to_string(), "E7 Vertical");
+    map.insert("33".to_string(), "E6 Center Vertical");
+    map.insert("34".to_string(), "E5 Vertical");
+    map.insert("35".to_string(), "G7 Vertical");
+    map.insert("36".to_string(), "G6 Vertical");
+    map.insert("37".to_string(), "G5 Vertical");
+    map.insert("38".to_string(), "I7 Vertical");
+    map.insert("39".to_string(), "I6 Vertical");
+    map.insert("4".to_string(), "F4");
+    map.insert("40".to_string(), "I5 Vertical");
+    map.insert("41".to_string(), "A7");
+    map.insert("42".to_string(), "B7");
+    map.insert("43".to_string(), "C7");
+    map.insert("44".to_string(), "D7");
+    map.insert("45".to_string(), "E7");
+    map.insert("46".to_string(), "F7");
+    map.insert("47".to_string(), "G7");
+    map.insert("48".to_string(), "H7");
+    map.insert("49".to_string(), "I7");
+    map.insert("5".to_string(), "G4");
+    map.insert("50".to_string(), "A6");
+    map.insert("51".to_string(), "B6");
+    map.insert("52".to_string(), "C6");
+    map.insert("53".to_string(), "D6");
+    map.insert("54".to_string(), "E6 Center");
+    map.insert("55".to_string(), "F6");
+    map.insert("56".to_string(), "G6");
+    map.insert("57".to_string(), "H6");
+    map.insert("58".to_string(), "I6");
+    map.insert("59".to_string(), "A5");
+    map.insert("6".to_string(), "H4");
+    map.insert("60".to_string(), "B5");
+    map.insert("61".to_string(), "C5");
+    map.insert("62".to_string(), "D5");
+    map.insert("63".to_string(), "E5");
+    map.insert("64".to_string(), "F5");
+    map.insert("65".to_string(), "G5");
+    map.insert("66".to_string(), "H5");
+    map.insert("67".to_string(), "I5");
+    map.insert("68".to_string(), "C11");
+    map.insert("69".to_string(), "D11");
+    map.insert("7".to_string(), "B3");
+    map.insert("70".to_string(), "E11");
+    map.insert("71".to_string(), "F11");
+    map.insert("72".to_string(), "G11");
+    map.insert("73".to_string(), "B10");
+    map.insert("74".to_string(), "C10");
+    map.insert("75".to_string(), "D10");
+    map.insert("76".to_string(), "E10");
+    map.insert("77".to_string(), "F10");
+    map.insert("78".to_string(), "G10");
+    map.insert("79".to_string(), "H10");
+    map.insert("8".to_string(), "C3");
+    map.insert("80".to_string(), "B9");
+    map.insert("81".to_string(), "C9");
+    map.insert("82".to_string(), "D9");
+    map.insert("83".to_string(), "E9");
+    map.insert("84".to_string(), "F9");
+    map.insert("85".to_string(), "G9");
+    map.insert("86".to_string(), "H9");
+    map.insert("87".to_string(), "B8");
+    map.insert("88".to_string(), "C8");
+    map.insert("89".to_string(), "D8");
+    map.insert("9".to_string(), "D3");
+    map.insert("90".to_string(), "E8");
+    map.insert("91".to_string(), "F8");
+    map.insert("92".to_string(), "G8");
+    map.insert("93".to_string(), "H8");
+    map.insert("94".to_string(), "E6 Center F2.8");
+    map
+});
+
+static PRINT_CONV_131: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "B4");
+    map.insert("1".to_string(), "C4");
+    map.insert("10".to_string(), "E3");
+    map.insert("11".to_string(), "F3");
+    map.insert("12".to_string(), "G3");
+    map.insert("13".to_string(), "H3");
+    map.insert("14".to_string(), "B2");
+    map.insert("15".to_string(), "C2");
+    map.insert("16".to_string(), "D2");
+    map.insert("17".to_string(), "E2");
+    map.insert("18".to_string(), "F2");
+    map.insert("19".to_string(), "G2");
+    map.insert("2".to_string(), "D4");
+    map.insert("20".to_string(), "H2");
+    map.insert("21".to_string(), "C1");
+    map.insert("22".to_string(), "D1");
+    map.insert("23".to_string(), "E1");
+    map.insert("24".to_string(), "F1");
+    map.insert("25".to_string(), "G1");
+    map.insert("255".to_string(), "(none)");
+    map.insert("26".to_string(), "A7 Vertical");
+    map.insert("27".to_string(), "A6 Vertical");
+    map.insert("28".to_string(), "A5 Vertical");
+    map.insert("29".to_string(), "C7 Vertical");
+    map.insert("3".to_string(), "E4");
+    map.insert("30".to_string(), "C6 Vertical");
+    map.insert("31".to_string(), "C5 Vertical");
+    map.insert("32".to_string(), "E7 Vertical");
+    map.insert("33".to_string(), "E6 Center Vertical");
+    map.insert("34".to_string(), "E5 Vertical");
+    map.insert("35".to_string(), "G7 Vertical");
+    map.insert("36".to_string(), "G6 Vertical");
+    map.insert("37".to_string(), "G5 Vertical");
+    map.insert("38".to_string(), "I7 Vertical");
+    map.insert("39".to_string(), "I6 Vertical");
+    map.insert("4".to_string(), "F4");
+    map.insert("40".to_string(), "I5 Vertical");
+    map.insert("41".to_string(), "A7");
+    map.insert("42".to_string(), "B7");
+    map.insert("43".to_string(), "C7");
+    map.insert("44".to_string(), "D7");
+    map.insert("45".to_string(), "E7");
+    map.insert("46".to_string(), "F7");
+    map.insert("47".to_string(), "G7");
+    map.insert("48".to_string(), "H7");
+    map.insert("49".to_string(), "I7");
+    map.insert("5".to_string(), "G4");
+    map.insert("50".to_string(), "A6");
+    map.insert("51".to_string(), "B6");
+    map.insert("52".to_string(), "C6");
+    map.insert("53".to_string(), "D6");
+    map.insert("54".to_string(), "E6 Center");
+    map.insert("55".to_string(), "F6");
+    map.insert("56".to_string(), "G6");
+    map.insert("57".to_string(), "H6");
+    map.insert("58".to_string(), "I6");
+    map.insert("59".to_string(), "A5");
+    map.insert("6".to_string(), "H4");
+    map.insert("60".to_string(), "B5");
+    map.insert("61".to_string(), "C5");
+    map.insert("62".to_string(), "D5");
+    map.insert("63".to_string(), "E5");
+    map.insert("64".to_string(), "F5");
+    map.insert("65".to_string(), "G5");
+    map.insert("66".to_string(), "H5");
+    map.insert("67".to_string(), "I5");
+    map.insert("68".to_string(), "C11");
+    map.insert("69".to_string(), "D11");
+    map.insert("7".to_string(), "B3");
+    map.insert("70".to_string(), "E11");
+    map.insert("71".to_string(), "F11");
+    map.insert("72".to_string(), "G11");
+    map.insert("73".to_string(), "B10");
+    map.insert("74".to_string(), "C10");
+    map.insert("75".to_string(), "D10");
+    map.insert("76".to_string(), "E10");
+    map.insert("77".to_string(), "F10");
+    map.insert("78".to_string(), "G10");
+    map.insert("79".to_string(), "H10");
+    map.insert("8".to_string(), "C3");
+    map.insert("80".to_string(), "B9");
+    map.insert("81".to_string(), "C9");
+    map.insert("82".to_string(), "D9");
+    map.insert("83".to_string(), "E9");
+    map.insert("84".to_string(), "F9");
+    map.insert("85".to_string(), "G9");
+    map.insert("86".to_string(), "H9");
+    map.insert("87".to_string(), "B8");
+    map.insert("88".to_string(), "C8");
+    map.insert("89".to_string(), "D8");
+    map.insert("9".to_string(), "D3");
+    map.insert("90".to_string(), "E8");
+    map.insert("91".to_string(), "F8");
+    map.insert("92".to_string(), "G8");
+    map.insert("93".to_string(), "H8");
+    map.insert("94".to_string(), "E6 Center F2.8");
+    map
+});
+
+static PRINT_CONV_132: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "B4");
+    map.insert("1".to_string(), "C4");
+    map.insert("10".to_string(), "E3");
+    map.insert("11".to_string(), "F3");
+    map.insert("12".to_string(), "G3");
+    map.insert("13".to_string(), "H3");
+    map.insert("14".to_string(), "B2");
+    map.insert("15".to_string(), "C2");
+    map.insert("16".to_string(), "D2");
+    map.insert("17".to_string(), "E2");
+    map.insert("18".to_string(), "F2");
+    map.insert("19".to_string(), "G2");
+    map.insert("2".to_string(), "D4");
+    map.insert("20".to_string(), "H2");
+    map.insert("21".to_string(), "C1");
+    map.insert("22".to_string(), "D1");
+    map.insert("23".to_string(), "E1");
+    map.insert("24".to_string(), "F1");
+    map.insert("25".to_string(), "G1");
+    map.insert("26".to_string(), "A7 Vertical");
+    map.insert("27".to_string(), "A6 Vertical");
+    map.insert("28".to_string(), "A5 Vertical");
+    map.insert("29".to_string(), "C7 Vertical");
+    map.insert("3".to_string(), "E4");
+    map.insert("30".to_string(), "C6 Vertical");
+    map.insert("31".to_string(), "C5 Vertical");
+    map.insert("32".to_string(), "E7 Vertical");
+    map.insert("33".to_string(), "E6 Center Vertical");
+    map.insert("34".to_string(), "E5 Vertical");
+    map.insert("35".to_string(), "G7 Vertical");
+    map.insert("36".to_string(), "G6 Vertical");
+    map.insert("37".to_string(), "G5 Vertical");
+    map.insert("38".to_string(), "I7 Vertical");
+    map.insert("39".to_string(), "I6 Vertical");
+    map.insert("4".to_string(), "F4");
+    map.insert("40".to_string(), "I5 Vertical");
+    map.insert("41".to_string(), "A7");
+    map.insert("42".to_string(), "B7");
+    map.insert("43".to_string(), "C7");
+    map.insert("44".to_string(), "D7");
+    map.insert("45".to_string(), "E7");
+    map.insert("46".to_string(), "F7");
+    map.insert("47".to_string(), "G7");
+    map.insert("48".to_string(), "H7");
+    map.insert("49".to_string(), "I7");
+    map.insert("5".to_string(), "G4");
+    map.insert("50".to_string(), "A6");
+    map.insert("51".to_string(), "B6");
+    map.insert("52".to_string(), "C6");
+    map.insert("53".to_string(), "D6");
+    map.insert("54".to_string(), "E6 Center");
+    map.insert("55".to_string(), "F6");
+    map.insert("56".to_string(), "G6");
+    map.insert("57".to_string(), "H6");
+    map.insert("58".to_string(), "I6");
+    map.insert("59".to_string(), "A5");
+    map.insert("6".to_string(), "H4");
+    map.insert("60".to_string(), "B5");
+    map.insert("61".to_string(), "C5");
+    map.insert("62".to_string(), "D5");
+    map.insert("63".to_string(), "E5");
+    map.insert("64".to_string(), "F5");
+    map.insert("65".to_string(), "G5");
+    map.insert("66".to_string(), "H5");
+    map.insert("67".to_string(), "I5");
+    map.insert("68".to_string(), "C11");
+    map.insert("69".to_string(), "D11");
+    map.insert("7".to_string(), "B3");
+    map.insert("70".to_string(), "E11");
+    map.insert("71".to_string(), "F11");
+    map.insert("72".to_string(), "G11");
+    map.insert("73".to_string(), "B10");
+    map.insert("74".to_string(), "C10");
+    map.insert("75".to_string(), "D10");
+    map.insert("76".to_string(), "E10");
+    map.insert("77".to_string(), "F10");
+    map.insert("78".to_string(), "G10");
+    map.insert("79".to_string(), "H10");
+    map.insert("8".to_string(), "C3");
+    map.insert("80".to_string(), "B9");
+    map.insert("81".to_string(), "C9");
+    map.insert("82".to_string(), "D9");
+    map.insert("83".to_string(), "E9");
+    map.insert("84".to_string(), "F9");
+    map.insert("85".to_string(), "G9");
+    map.insert("86".to_string(), "H9");
+    map.insert("87".to_string(), "B8");
+    map.insert("88".to_string(), "C8");
+    map.insert("89".to_string(), "D8");
+    map.insert("9".to_string(), "D3");
+    map.insert("90".to_string(), "E8");
+    map.insert("91".to_string(), "F8");
+    map.insert("92".to_string(), "G8");
+    map.insert("93".to_string(), "H8");
+    map.insert("94".to_string(), "E6 Center F2.8");
+    map.insert("95".to_string(), "(none)");
+    map
+});
+
+static PRINT_CONV_133: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Wide");
+    map.insert("1".to_string(), "Center");
+    map.insert("2".to_string(), "Flexible Spot");
+    map.insert("3".to_string(), "Zone");
+    map.insert("4".to_string(), "Expanded Flexible Spot");
+    map
+});
+
+static PRINT_CONV_134: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Program AE");
+    map.insert("1".to_string(), "Aperture-priority AE");
+    map.insert("10".to_string(), "Twilight");
+    map.insert("11".to_string(), "Twilight Portrait");
+    map.insert("12".to_string(), "Sunset");
+    map.insert("14".to_string(), "Action (High speed)");
+    map.insert("16".to_string(), "Sports");
+    map.insert("17".to_string(), "Handheld Night Shot");
+    map.insert("18".to_string(), "Anti Motion Blur");
+    map.insert("19".to_string(), "High Sensitivity");
+    map.insert("2".to_string(), "Shutter speed priority AE");
+    map.insert("21".to_string(), "Beach");
+    map.insert("22".to_string(), "Snow");
+    map.insert("23".to_string(), "Fireworks");
+    map.insert("26".to_string(), "Underwater");
+    map.insert("27".to_string(), "Gourmet");
+    map.insert("28".to_string(), "Pet");
+    map.insert("29".to_string(), "Macro");
+    map.insert("3".to_string(), "Manual");
+    map.insert("30".to_string(), "Backlight Correction HDR");
+    map.insert("33".to_string(), "Sweep Panorama");
+    map.insert("36".to_string(), "Background Defocus");
+    map.insert("37".to_string(), "Soft Skin");
+    map.insert("4".to_string(), "Auto");
+    map.insert("42".to_string(), "3D Image");
+    map.insert("43".to_string(), "Cont. Priority AE");
+    map.insert("45".to_string(), "Document");
+    map.insert("46".to_string(), "Party");
+    map.insert("5".to_string(), "iAuto");
+    map.insert("6".to_string(), "Superior Auto");
+    map.insert("7".to_string(), "iAuto+");
+    map.insert("8".to_string(), "Portrait");
+    map.insert("9".to_string(), "Landscape");
+    map
+});
+
+static PRINT_CONV_135: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Manual");
+    map.insert("1".to_string(), "AF-S");
+    map.insert("2".to_string(), "AF-C");
+    map.insert("3".to_string(), "AF-A");
+    map.insert("4".to_string(), "DMF");
+    map
+});
+
+static PRINT_CONV_136: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Auto");
+    map.insert("1".to_string(), "Center");
+    map.insert("10".to_string(), "Far Right");
+    map.insert("11".to_string(), "Far Left");
+    map.insert("2".to_string(), "Top");
+    map.insert("3".to_string(), "Upper-right");
+    map.insert("4".to_string(), "Right");
+    map.insert("5".to_string(), "Lower-right");
+    map.insert("6".to_string(), "Bottom");
+    map.insert("7".to_string(), "Lower-left");
+    map.insert("8".to_string(), "Left");
+    map.insert("9".to_string(), "Upper-left");
+    map
+});
+
+static PRINT_CONV_137: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Upper-left");
+    map.insert("1".to_string(), "Left");
+    map.insert("10".to_string(), "Center (10)");
+    map.insert("11".to_string(), "Center (11)");
+    map.insert("12".to_string(), "Center (12)");
+    map.insert("13".to_string(), "Center (vertical)");
+    map.insert("14".to_string(), "Center (14)");
+    map.insert("15".to_string(), "Top Assist-left");
+    map.insert("16".to_string(), "Top");
+    map.insert("17".to_string(), "Top Assist-right");
+    map.insert("18".to_string(), "Far Right");
+    map.insert("19".to_string(), "Upper-right");
+    map.insert("2".to_string(), "Lower-left");
+    map.insert("20".to_string(), "Right");
+    map.insert("21".to_string(), "Lower-right");
+    map.insert("22".to_string(), "Center F2.8");
+    map.insert("3".to_string(), "Far Left");
+    map.insert("4".to_string(), "Bottom Assist-left");
+    map.insert("5".to_string(), "Bottom");
+    map.insert("6".to_string(), "Bottom Assist-right");
+    map.insert("7".to_string(), "Center (7)");
+    map.insert("8".to_string(), "Center (horizontal)");
+    map.insert("9".to_string(), "Center (9)");
+    map
+});
+
+static PRINT_CONV_138: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Auto");
+    map.insert("1".to_string(), "Center");
+    map.insert("2".to_string(), "Top");
+    map.insert("3".to_string(), "Upper-right");
+    map.insert("4".to_string(), "Right");
+    map.insert("5".to_string(), "Lower-right");
+    map.insert("6".to_string(), "Bottom");
+    map.insert("7".to_string(), "Lower-left");
+    map.insert("8".to_string(), "Left");
+    map.insert("9".to_string(), "Upper-left");
+    map
+});
+
+static PRINT_CONV_139: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Manual");
+    map.insert("1".to_string(), "AF-S");
+    map.insert("2".to_string(), "AF-C");
+    map.insert("3".to_string(), "AF-A");
+    map.insert("4".to_string(), "DMF");
+    map
+});
+
+static PRINT_CONV_140: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Top-right");
+    map.insert("1".to_string(), "Bottom-right");
+    map.insert("2".to_string(), "Bottom");
+    map.insert("3".to_string(), "Middle Horizontal");
+    map.insert("4".to_string(), "Center Vertical");
+    map.insert("5".to_string(), "Top");
+    map.insert("6".to_string(), "Top-left");
+    map.insert("7".to_string(), "Bottom-left");
+    map
+});
+
+static PRINT_CONV_141: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Auto");
+    map.insert("1".to_string(), "Center");
+    map.insert("2".to_string(), "Top");
+    map.insert("3".to_string(), "Upper-right");
+    map.insert("4".to_string(), "Right");
+    map.insert("5".to_string(), "Lower-right");
+    map.insert("6".to_string(), "Bottom");
+    map.insert("7".to_string(), "Lower-left");
+    map.insert("8".to_string(), "Left");
+    map.insert("9".to_string(), "Upper-left");
+    map
+});
+
+static PRINT_CONV_142: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Manual");
+    map.insert("1".to_string(), "AF-S");
+    map.insert("2".to_string(), "AF-C");
+    map.insert("3".to_string(), "AF-A");
+    map
+});
+
+static PRINT_CONV_143: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Top-right");
+    map.insert("1".to_string(), "Bottom-right");
+    map.insert("2".to_string(), "Bottom");
+    map.insert("3".to_string(), "Middle Horizontal");
+    map.insert("4".to_string(), "Center Vertical");
+    map.insert("5".to_string(), "Top");
+    map.insert("6".to_string(), "Top-left");
+    map.insert("7".to_string(), "Bottom-left");
+    map
+});
+
+static PRINT_CONV_144: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Manual - Not confirmed (0)");
+    map.insert("16".to_string(), "AF-C - Confirmed");
+    map.insert("24".to_string(), "AF-C - Not Confirmed");
+    map.insert("4".to_string(), "Manual - Not confirmed (4)");
+    map.insert("64".to_string(), "AF-S - Confirmed");
+    map
+});
+
+static PRINT_CONV_145: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Auto");
+    map.insert("1".to_string(), "Center");
+    map.insert("10".to_string(), "Far Right");
+    map.insert("11".to_string(), "Far Left");
+    map.insert("12".to_string(), "Upper-middle");
+    map.insert("13".to_string(), "Near Right");
+    map.insert("14".to_string(), "Lower-middle");
+    map.insert("15".to_string(), "Near Left");
+    map.insert("2".to_string(), "Top");
+    map.insert("3".to_string(), "Upper-right");
+    map.insert("4".to_string(), "Right");
+    map.insert("5".to_string(), "Lower-right");
+    map.insert("6".to_string(), "Bottom");
+    map.insert("7".to_string(), "Lower-left");
+    map.insert("8".to_string(), "Left");
+    map.insert("9".to_string(), "Upper-left");
+    map
+});
+
+static PRINT_CONV_146: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Manual");
+    map.insert("1".to_string(), "AF-S");
+    map.insert("2".to_string(), "AF-C");
+    map.insert("3".to_string(), "AF-A");
+    map
+});
+
+static PRINT_CONV_147: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Upper-left");
+    map.insert("1".to_string(), "Left");
+    map.insert("10".to_string(), "Center (vertical)");
+    map.insert("11".to_string(), "Bottom (vertical)");
+    map.insert("12".to_string(), "Far Right");
+    map.insert("13".to_string(), "Upper-right");
+    map.insert("14".to_string(), "Right");
+    map.insert("15".to_string(), "Lower-right");
+    map.insert("16".to_string(), "Upper-middle");
+    map.insert("17".to_string(), "Lower-middle");
+    map.insert("2".to_string(), "Lower-left");
+    map.insert("255".to_string(), "(none)");
+    map.insert("3".to_string(), "Far Left");
+    map.insert("4".to_string(), "Top (horizontal)");
+    map.insert("5".to_string(), "Near Right");
+    map.insert("6".to_string(), "Center (horizontal)");
+    map.insert("7".to_string(), "Near Left");
+    map.insert("8".to_string(), "Bottom (horizontal)");
+    map.insert("9".to_string(), "Top (vertical)");
+    map
+});
+
+static PRINT_CONV_148: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_149: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("12".to_string(), "Color Temperature");
+    map.insert("13".to_string(), "Color Filter");
+    map.insert("14".to_string(), "Custom");
+    map.insert("16".to_string(), "Cloudy");
+    map.insert("17".to_string(), "Shade");
+    map.insert("2".to_string(), "Auto");
+    map.insert("4".to_string(), "Daylight");
+    map.insert("5".to_string(), "Fluorescent");
+    map.insert("6".to_string(), "Tungsten");
+    map.insert("7".to_string(), "Flash");
+    map
+});
+
+static PRINT_CONV_150: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Manual");
+    map.insert("1".to_string(), "AF-S");
+    map.insert("2".to_string(), "AF-C");
+    map.insert("3".to_string(), "AF-A");
+    map.insert("4".to_string(), "DMF");
+    map
+});
+
+static PRINT_CONV_151: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Wide");
+    map.insert("1".to_string(), "Local");
+    map.insert("2".to_string(), "Spot");
+    map
+});
+
+static PRINT_CONV_152: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Center");
+    map.insert("10".to_string(), "Far Right");
+    map.insert("11".to_string(), "Far Left");
+    map.insert("2".to_string(), "Top");
+    map.insert("3".to_string(), "Upper-right");
+    map.insert("4".to_string(), "Right");
+    map.insert("5".to_string(), "Lower-right");
+    map.insert("6".to_string(), "Bottom");
+    map.insert("7".to_string(), "Lower-left");
+    map.insert("8".to_string(), "Left");
+    map.insert("9".to_string(), "Upper-left");
+    map
+});
+
+static PRINT_CONV_153: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Autoflash");
+    map.insert("2".to_string(), "Rear Sync");
+    map.insert("3".to_string(), "Wireless");
+    map.insert("4".to_string(), "Fill-flash");
+    map.insert("5".to_string(), "Flash Off");
+    map.insert("6".to_string(), "Slow Sync");
+    map
+});
+
+static PRINT_CONV_154: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Multi-segment");
+    map.insert("2".to_string(), "Center-weighted average");
+    map.insert("4".to_string(), "Spot");
+    map
+});
+
+static PRINT_CONV_155: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Standard");
+    map.insert("2".to_string(), "Advanced Auto");
+    map.insert("3".to_string(), "Advanced Level");
+    map
+});
+
+static PRINT_CONV_156: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Standard");
+    map.insert("11".to_string(), "Neutral");
+    map.insert("12".to_string(), "Clear");
+    map.insert("13".to_string(), "Deep");
+    map.insert("14".to_string(), "Light");
+    map.insert("15".to_string(), "Autumn Leaves");
+    map.insert("16".to_string(), "Sepia");
+    map.insert("2".to_string(), "Vivid");
+    map.insert("3".to_string(), "Portrait");
+    map.insert("4".to_string(), "Landscape");
+    map.insert("5".to_string(), "Sunset");
+    map.insert("6".to_string(), "Night View/Portrait");
+    map.insert("8".to_string(), "B&W");
+    map.insert("9".to_string(), "Adobe RGB");
+    map
+});
+
+static PRINT_CONV_157: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "sRGB");
+    map.insert("1".to_string(), "Adobe RGB");
+    map.insert("5".to_string(), "Adobe RGB (A700)");
+    map
+});
+
+static PRINT_CONV_158: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "ADI");
+    map.insert("1".to_string(), "Pre-flash TTL");
+    map.insert("2".to_string(), "Manual");
+    map
+});
+
+static PRINT_CONV_159: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "AF");
+    map.insert("1".to_string(), "Release");
+    map
+});
+
+static PRINT_CONV_160: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Auto");
+    map.insert("1".to_string(), "Off");
+    map
+});
+
+static PRINT_CONV_161: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "On");
+    map.insert("1".to_string(), "Off");
+    map
+});
+
+static PRINT_CONV_162: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_163: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Low");
+    map.insert("2".to_string(), "High");
+    map.insert("3".to_string(), "Off");
+    map
+});
+
+static PRINT_CONV_164: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Standard");
+    map.insert("11".to_string(), "Neutral");
+    map.insert("129".to_string(), "StyleBox1");
+    map.insert("130".to_string(), "StyleBox2");
+    map.insert("131".to_string(), "StyleBox3");
+    map.insert("132".to_string(), "StyleBox4");
+    map.insert("133".to_string(), "StyleBox5");
+    map.insert("134".to_string(), "StyleBox6");
+    map.insert("2".to_string(), "Vivid");
+    map.insert("3".to_string(), "Portrait");
+    map.insert("4".to_string(), "Landscape");
+    map.insert("5".to_string(), "Sunset");
+    map.insert("7".to_string(), "Night View/Portrait");
+    map.insert("8".to_string(), "B&W");
+    map.insert("9".to_string(), "Adobe RGB");
+    map
+});
+
+static PRINT_CONV_165: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "AF");
+    map.insert("1".to_string(), "Manual");
+    map
+});
+
+static PRINT_CONV_166: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Auto");
+    map.insert("1".to_string(), "Manual");
+    map.insert("16".to_string(), "Portrait");
+    map.insert("17".to_string(), "Sports");
+    map.insert("18".to_string(), "Sunset");
+    map.insert("19".to_string(), "Night Portrait");
+    map.insert("2".to_string(), "Program AE");
+    map.insert("20".to_string(), "Landscape");
+    map.insert("21".to_string(), "Macro");
+    map.insert("3".to_string(), "Aperture-priority AE");
+    map.insert("35".to_string(), "Auto No Flash");
+    map.insert("4".to_string(), "Shutter speed priority AE");
+    map.insert("8".to_string(), "Program Shift A");
+    map.insert("9".to_string(), "Program Shift S");
+    map
+});
+
+static PRINT_CONV_167: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_168: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Did not fire");
+    map.insert("1".to_string(), "Fired");
+    map.insert("2".to_string(), "External Flash, Did not fire");
+    map.insert("3".to_string(), "External Flash, Fired");
+    map
+});
+
+static PRINT_CONV_169: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Horizontal (normal)");
+    map.insert("1".to_string(), "Rotate 90 CW");
+    map.insert("2".to_string(), "Rotate 270 CW");
+    map
+});
+
+static PRINT_CONV_170: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Off");
+    map.insert("2".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_171: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Fired, Autoflash");
+    map.insert("17".to_string(), "Fired, Autoflash, Red-eye reduction");
+    map.insert("18".to_string(), "Fired, Fill-flash, Red-eye reduction");
+    map.insert("2".to_string(), "Fired, Fill-flash");
+    map.insert("3".to_string(), "Fired, Rear Sync");
+    map.insert("34".to_string(), "Fired, Fill-flash, HSS");
+    map.insert("4".to_string(), "Fired, Wireless");
+    map.insert("5".to_string(), "Did not fire");
+    map.insert("6".to_string(), "Fired, Slow Sync");
+    map
+});
+
+static PRINT_CONV_172: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Manual");
+    map.insert("1".to_string(), "AF-S");
+    map.insert("2".to_string(), "AF-C");
+    map.insert("3".to_string(), "AF-A");
+    map.insert("4".to_string(), "DMF");
+    map
+});
+
+static PRINT_CONV_173: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("2".to_string(), "Empty");
+    map.insert("3".to_string(), "Very Low");
+    map.insert("4".to_string(), "Low");
+    map.insert("5".to_string(), "Sufficient");
+    map.insert("6".to_string(), "Full");
+    map
+});
+
+static PRINT_CONV_174: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Not confirmed");
+    map.insert("4".to_string(), "Not confirmed, Tracking");
+    map
+});
+
+static PRINT_CONV_175: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Large");
+    map.insert("2".to_string(), "Medium");
+    map.insert("3".to_string(), "Small");
+    map
+});
+
+static PRINT_CONV_176: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "3:2");
+    map.insert("2".to_string(), "16:9");
+    map
+});
+
+static PRINT_CONV_177: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "RAW");
+    map.insert("16".to_string(), "Extra Fine");
+    map.insert("2".to_string(), "CRAW");
+    map.insert("32".to_string(), "Fine");
+    map.insert("34".to_string(), "RAW + JPEG");
+    map.insert("35".to_string(), "CRAW + JPEG");
+    map.insert("48".to_string(), "Standard");
+    map
+});
+
+static PRINT_CONV_178: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("33".to_string(), "1/3 EV");
+    map.insert("50".to_string(), "1/2 EV");
+    map
+});
+
+static PRINT_CONV_179: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Single Frame");
+    map.insert("10".to_string(), "Remote Commander");
+    map.insert("11".to_string(), "Continuous Self-timer");
+    map.insert("2".to_string(), "Continuous High");
+    map.insert("4".to_string(), "Self-timer 10 sec");
+    map.insert("5".to_string(), "Self-timer 2 sec, Mirror Lock-up");
+    map.insert("7".to_string(), "Continuous Bracketing");
+    map
+});
+
+static PRINT_CONV_180: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Autoflash");
+    map.insert("2".to_string(), "Rear Sync");
+    map.insert("3".to_string(), "Wireless");
+    map.insert("4".to_string(), "Fill-flash");
+    map.insert("5".to_string(), "Flash Off");
+    map.insert("6".to_string(), "Slow Sync");
+    map
+});
+
+static PRINT_CONV_181: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("5".to_string(), "Adobe RGB");
+    map.insert("6".to_string(), "sRGB");
+    map
+});
+
+static PRINT_CONV_182: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("12".to_string(), "Color Temperature");
+    map.insert("13".to_string(), "Color Filter");
+    map.insert("14".to_string(), "Custom");
+    map.insert("16".to_string(), "Cloudy");
+    map.insert("17".to_string(), "Shade");
+    map.insert("2".to_string(), "Auto");
+    map.insert("4".to_string(), "Daylight");
+    map.insert("5".to_string(), "Fluorescent");
+    map.insert("6".to_string(), "Tungsten");
+    map.insert("7".to_string(), "Flash");
+    map
+});
+
+static PRINT_CONV_183: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Manual");
+    map.insert("1".to_string(), "AF-S");
+    map.insert("2".to_string(), "AF-C");
+    map.insert("3".to_string(), "AF-A");
+    map
+});
+
+static PRINT_CONV_184: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Wide");
+    map.insert("1".to_string(), "Local");
+    map.insert("2".to_string(), "Spot");
+    map
+});
+
+static PRINT_CONV_185: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Center");
+    map.insert("2".to_string(), "Top");
+    map.insert("3".to_string(), "Upper-right");
+    map.insert("4".to_string(), "Right");
+    map.insert("5".to_string(), "Lower-right");
+    map.insert("6".to_string(), "Bottom");
+    map.insert("7".to_string(), "Lower-left");
+    map.insert("8".to_string(), "Left");
+    map.insert("9".to_string(), "Upper-left");
+    map
+});
+
+static PRINT_CONV_186: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Multi-segment");
+    map.insert("2".to_string(), "Center-weighted average");
+    map.insert("4".to_string(), "Spot");
+    map
+});
+
+static PRINT_CONV_187: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Standard");
+    map.insert("2".to_string(), "Advanced Auto");
+    map.insert("3".to_string(), "Advanced Level");
+    map
+});
+
+static PRINT_CONV_188: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Standard");
+    map.insert("2".to_string(), "Vivid");
+    map.insert("3".to_string(), "Portrait");
+    map.insert("4".to_string(), "Landscape");
+    map.insert("5".to_string(), "Sunset");
+    map.insert("6".to_string(), "Night View/Portrait");
+    map.insert("8".to_string(), "B&W");
+    map
+});
+
+static PRINT_CONV_189: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "ADI");
+    map.insert("1".to_string(), "Pre-flash TTL");
+    map.insert("2".to_string(), "Manual");
+    map
+});
+
+static PRINT_CONV_190: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_191: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Low");
+    map.insert("2".to_string(), "Normal");
+    map.insert("3".to_string(), "High");
+    map
+});
+
+static PRINT_CONV_192: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Standard");
+    map.insert("2".to_string(), "Vivid");
+    map.insert("3".to_string(), "Portrait");
+    map.insert("4".to_string(), "Landscape");
+    map.insert("5".to_string(), "Sunset");
+    map.insert("7".to_string(), "Night View/Portrait");
+    map.insert("8".to_string(), "B&W");
+    map
+});
+
+static PRINT_CONV_193: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Auto");
+    map.insert("1".to_string(), "Manual");
+    map.insert("16".to_string(), "Portrait");
+    map.insert("17".to_string(), "Sports");
+    map.insert("18".to_string(), "Sunset");
+    map.insert("19".to_string(), "Night Portrait");
+    map.insert("2".to_string(), "Program AE");
+    map.insert("20".to_string(), "Landscape");
+    map.insert("21".to_string(), "Macro");
+    map.insert("3".to_string(), "Aperture-priority AE");
+    map.insert("35".to_string(), "Auto No Flash");
+    map.insert("4".to_string(), "Shutter speed priority AE");
+    map.insert("8".to_string(), "Program Shift A");
+    map.insert("9".to_string(), "Program Shift S");
+    map
+});
+
+static PRINT_CONV_194: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_195: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Did not fire");
+    map.insert("1".to_string(), "Fired");
+    map.insert("2".to_string(), "External Flash, Did not fire");
+    map.insert("3".to_string(), "External Flash, Fired");
+    map
+});
+
+static PRINT_CONV_196: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Horizontal (normal)");
+    map.insert("1".to_string(), "Rotate 90 CW");
+    map.insert("2".to_string(), "Rotate 270 CW");
+    map
+});
+
+static PRINT_CONV_197: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Off");
+    map.insert("2".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_198: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Fired, Autoflash");
+    map.insert("17".to_string(), "Fired, Autoflash, Red-eye reduction");
+    map.insert("18".to_string(), "Fired, Fill-flash, Red-eye reduction");
+    map.insert("2".to_string(), "Fired, Fill-flash");
+    map.insert("3".to_string(), "Fired, Rear Sync");
+    map.insert("34".to_string(), "Fired, Fill-flash, HSS");
+    map.insert("4".to_string(), "Fired, Wireless");
+    map.insert("5".to_string(), "Did not fire");
+    map.insert("6".to_string(), "Fired, Slow Sync");
+    map
+});
+
+static PRINT_CONV_199: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Manual");
+    map.insert("1".to_string(), "AF-S");
+    map.insert("2".to_string(), "AF-C");
+    map.insert("3".to_string(), "AF-A");
+    map
+});
+
+static PRINT_CONV_200: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Not confirmed");
+    map.insert("4".to_string(), "Not confirmed, Tracking");
+    map
+});
+
+static PRINT_CONV_201: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Large");
+    map.insert("2".to_string(), "Medium");
+    map.insert("3".to_string(), "Small");
+    map
+});
+
+static PRINT_CONV_202: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "3:2");
+    map.insert("2".to_string(), "16:9");
+    map
+});
+
+static PRINT_CONV_203: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "RAW");
+    map.insert("16".to_string(), "Extra Fine");
+    map.insert("2".to_string(), "CRAW");
+    map.insert("32".to_string(), "Fine");
+    map.insert("34".to_string(), "RAW + JPEG");
+    map.insert("35".to_string(), "CRAW + JPEG");
+    map.insert("48".to_string(), "Standard");
+    map
+});
+
+static PRINT_CONV_204: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("33".to_string(), "1/3 EV");
+    map.insert("50".to_string(), "1/2 EV");
+    map
+});
+
+static PRINT_CONV_205: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown E-mount lens or other lens");
+    map.insert("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN");
+    map.insert("0.10".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("0.11".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("0.12".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("0.13".to_string(), "Viltrox 85mm F1.8");
+    map.insert("0.2".to_string(), "Sigma 30mm F2.8 [EX] DN");
+    map.insert("0.3".to_string(), "Sigma 60mm F2.8 DN");
+    map.insert("0.4".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("0.5".to_string(), "Tamron 18-200mm F3.5-6.3 Di III VC");
+    map.insert("0.6".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("0.7".to_string(), "Tokina FiRIN 20mm F2 FE MF");
+    map.insert("0.8".to_string(), "Zeiss Touit 12mm F2.8");
+    map.insert("0.9".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("1".to_string(), "Sony LA-EA1 or Sigma MC-11 Adapter");
+    map.insert("13".to_string(), "Samyang AF 35-150mm F2-2.8");
+    map.insert("184".to_string(), "Metabones Canon EF Speed Booster Ultra");
+    map.insert("2".to_string(), "Sony LA-EA2 Adapter");
+    map.insert("20".to_string(), "Samyang AF 35mm F1.4 P FE");
+    map.insert("21".to_string(), "Samyang AF 14-24mm F2.8");
+    map.insert(
+        "234".to_string(),
+        "Metabones Canon EF Smart Adapter Mark IV",
+    );
+    map.insert("239".to_string(), "Metabones Canon EF Speed Booster");
+    map.insert("24593".to_string(), "LA-EA4r MonsterAdapter");
+    map.insert("3".to_string(), "Sony LA-EA3 Adapter");
+    map.insert("32784".to_string(), "Sony E 16mm F2.8");
+    map.insert("32785".to_string(), "Sony E 18-55mm F3.5-5.6 OSS");
+    map.insert("32786".to_string(), "Sony E 55-210mm F4.5-6.3 OSS");
+    map.insert("32787".to_string(), "Sony E 18-200mm F3.5-6.3 OSS");
+    map.insert("32788".to_string(), "Sony E 30mm F3.5 Macro");
+    map.insert(
+        "32789".to_string(),
+        "Sony E 24mm F1.8 ZA or Samyang AF 50mm F1.4",
+    );
+    map.insert("32789.1".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "32790".to_string(),
+        "Sony E 50mm F1.8 OSS or Samyang AF 14mm F2.8",
+    );
+    map.insert("32790.1".to_string(), "Samyang AF 14mm F2.8");
+    map.insert("32791".to_string(), "Sony E 16-70mm F4 ZA OSS");
+    map.insert("32792".to_string(), "Sony E 10-18mm F4 OSS");
+    map.insert("32793".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS");
+    map.insert("32794".to_string(), "Sony FE 35mm F2.8 ZA or Samyang Lens");
+    map.insert("32794.1".to_string(), "Samyang AF 24mm F2.8");
+    map.insert("32794.2".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("32795".to_string(), "Sony FE 24-70mm F4 ZA OSS");
+    map.insert(
+        "32796".to_string(),
+        "Sony FE 85mm F1.8 or Viltrox PFU RBMH 85mm F1.8",
+    );
+    map.insert("32796.1".to_string(), "Viltrox PFU RBMH 85mm F1.8");
+    map.insert("32797".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("32798".to_string(), "Sony E 20mm F2.8");
+    map.insert("32799".to_string(), "Sony E 35mm F1.8 OSS");
+    map.insert("32800".to_string(), "Sony E PZ 18-105mm F4 G OSS");
+    map.insert("32801".to_string(), "Sony FE 12-24mm F4 G");
+    map.insert("32802".to_string(), "Sony FE 90mm F2.8 Macro G OSS");
+    map.insert("32803".to_string(), "Sony E 18-50mm F4-5.6");
+    map.insert("32804".to_string(), "Sony FE 24mm F1.4 GM");
+    map.insert("32805".to_string(), "Sony FE 24-105mm F4 G OSS");
+    map.insert("32807".to_string(), "Sony E PZ 18-200mm F3.5-6.3 OSS");
+    map.insert("32808".to_string(), "Sony FE 55mm F1.8 ZA");
+    map.insert("32810".to_string(), "Sony FE 70-200mm F4 G OSS");
+    map.insert("32811".to_string(), "Sony FE 16-35mm F4 ZA OSS");
+    map.insert("32812".to_string(), "Sony FE 50mm F2.8 Macro");
+    map.insert("32813".to_string(), "Sony FE 28-70mm F3.5-5.6 OSS");
+    map.insert("32814".to_string(), "Sony FE 35mm F1.4 ZA");
+    map.insert("32815".to_string(), "Sony FE 24-240mm F3.5-6.3 OSS");
+    map.insert("32816".to_string(), "Sony FE 28mm F2");
+    map.insert("32817".to_string(), "Sony FE PZ 28-135mm F4 G OSS");
+    map.insert("32819".to_string(), "Sony FE 100mm F2.8 STF GM OSS");
+    map.insert("32820".to_string(), "Sony E PZ 18-110mm F4 G OSS");
+    map.insert("32821".to_string(), "Sony FE 24-70mm F2.8 GM");
+    map.insert("32822".to_string(), "Sony FE 50mm F1.4 ZA");
+    map.insert(
+        "32823".to_string(),
+        "Sony FE 85mm F1.4 GM or Samyang AF 85mm F1.4",
+    );
+    map.insert("32823.1".to_string(), "Samyang AF 85mm F1.4");
+    map.insert("32824".to_string(), "Sony FE 50mm F1.8");
+    map.insert(
+        "32826".to_string(),
+        "Sony FE 21mm F2.8 (SEL28F20 + SEL075UWC)",
+    );
+    map.insert(
+        "32827".to_string(),
+        "Sony FE 16mm F3.5 Fisheye (SEL28F20 + SEL057FEC)",
+    );
+    map.insert("32828".to_string(), "Sony FE 70-300mm F4.5-5.6 G OSS");
+    map.insert("32829".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS");
+    map.insert("32830".to_string(), "Sony FE 70-200mm F2.8 GM OSS");
+    map.insert("32831".to_string(), "Sony FE 16-35mm F2.8 GM");
+    map.insert("32848".to_string(), "Sony FE 400mm F2.8 GM OSS");
+    map.insert("32849".to_string(), "Sony E 18-135mm F3.5-5.6 OSS");
+    map.insert("32850".to_string(), "Sony FE 135mm F1.8 GM");
+    map.insert("32851".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS");
+    map.insert("32852".to_string(), "Sony FE 600mm F4 GM OSS");
+    map.insert("32853".to_string(), "Sony E 16-55mm F2.8 G");
+    map.insert("32854".to_string(), "Sony E 70-350mm F4.5-6.3 G OSS");
+    map.insert("32855".to_string(), "Sony FE C 16-35mm T3.1 G");
+    map.insert("32858".to_string(), "Sony FE 35mm F1.8");
+    map.insert("32859".to_string(), "Sony FE 20mm F1.8 G");
+    map.insert("32860".to_string(), "Sony FE 12-24mm F2.8 GM");
+    map.insert("32862".to_string(), "Sony FE 50mm F1.2 GM");
+    map.insert("32863".to_string(), "Sony FE 14mm F1.8 GM");
+    map.insert("32864".to_string(), "Sony FE 28-60mm F4-5.6");
+    map.insert("32865".to_string(), "Sony FE 35mm F1.4 GM");
+    map.insert("32866".to_string(), "Sony FE 24mm F2.8 G");
+    map.insert("32867".to_string(), "Sony FE 40mm F2.5 G");
+    map.insert("32868".to_string(), "Sony FE 50mm F2.5 G");
+    map.insert("32871".to_string(), "Sony FE PZ 16-35mm F4 G");
+    map.insert("32873".to_string(), "Sony E PZ 10-20mm F4 G");
+    map.insert("32874".to_string(), "Sony FE 70-200mm F2.8 GM OSS II");
+    map.insert("32875".to_string(), "Sony FE 24-70mm F2.8 GM II");
+    map.insert("32876".to_string(), "Sony E 11mm F1.8");
+    map.insert("32877".to_string(), "Sony E 15mm F1.4 G");
+    map.insert("32878".to_string(), "Sony FE 20-70mm F4 G");
+    map.insert("32879".to_string(), "Sony FE 50mm F1.4 GM");
+    map.insert("32880".to_string(), "Sony FE 16mm F1.8 G");
+    map.insert("32881".to_string(), "Sony FE 24-50mm F2.8 G");
+    map.insert("32882".to_string(), "Sony FE 16-25mm F2.8 G");
+    map.insert("32884".to_string(), "Sony FE 70-200mm F4 Macro G OSS II");
+    map.insert("32885".to_string(), "Sony FE 16-35mm F2.8 GM II");
+    map.insert("32886".to_string(), "Sony FE 300mm F2.8 GM OSS");
+    map.insert("32887".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS II");
+    map.insert("32888".to_string(), "Sony FE 85mm F1.4 GM II");
+    map.insert("32889".to_string(), "Sony FE 28-70mm F2 GM");
+    map.insert("32890".to_string(), "Sony FE 400-800mm F6.3-8 G OSS");
+    map.insert("32891".to_string(), "Sony FE 50-150mm F2 GM");
+    map.insert(
+        "33072".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33073".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33076".to_string(),
+        "Sony FE 100mm F2.8 STF GM OSS (macro mode)",
+    );
+    map.insert(
+        "33077".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33078".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33079".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33080".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33081".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33082".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33083".to_string(),
+        "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33084".to_string(),
+        "Sony FE 600mm F4 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33085".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33086".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33087".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33088".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33089".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33090".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33091".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33092".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
+    );
+    map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
+    map.insert(
+        "49201".to_string(),
+        "Zeiss Touit 12mm F2.8 or other Touit lens",
+    );
+    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
+    map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
+    map.insert("49217".to_string(), "Zeiss Batis 85mm F1.8");
+    map.insert("49218".to_string(), "Zeiss Batis 18mm F2.8");
+    map.insert("49219".to_string(), "Zeiss Batis 135mm F2.8");
+    map.insert("49220".to_string(), "Zeiss Batis 40mm F2 CF");
+    map.insert("49232".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("49233".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("49234".to_string(), "Zeiss Loxia 21mm F2.8");
+    map.insert("49235".to_string(), "Zeiss Loxia 85mm F2.4");
+    map.insert("49236".to_string(), "Zeiss Loxia 25mm F2.4");
+    map.insert("49456".to_string(), "Tamron E 18-200mm F3.5-6.3 Di III VC");
+    map.insert("49457".to_string(), "Tamron 28-75mm F2.8 Di III RXD");
+    map.insert("49458".to_string(), "Tamron 17-28mm F2.8 Di III RXD");
+    map.insert("49459".to_string(), "Tamron 35mm F2.8 Di III OSD M1:2");
+    map.insert("49460".to_string(), "Tamron 24mm F2.8 Di III OSD M1:2");
+    map.insert("49461".to_string(), "Tamron 20mm F2.8 Di III OSD M1:2");
+    map.insert("49462".to_string(), "Tamron 70-180mm F2.8 Di III VXD");
+    map.insert("49463".to_string(), "Tamron 28-200mm F2.8-5.6 Di III RXD");
+    map.insert("49464".to_string(), "Tamron 70-300mm F4.5-6.3 Di III RXD");
+    map.insert("49465".to_string(), "Tamron 17-70mm F2.8 Di III-A VC RXD");
+    map.insert("49466".to_string(), "Tamron 150-500mm F5-6.7 Di III VC VXD");
+    map.insert("49467".to_string(), "Tamron 11-20mm F2.8 Di III-A RXD");
+    map.insert(
+        "49468".to_string(),
+        "Tamron 18-300mm F3.5-6.3 Di III-A VC VXD",
+    );
+    map.insert("49469".to_string(), "Tamron 35-150mm F2-F2.8 Di III VXD");
+    map.insert("49470".to_string(), "Tamron 28-75mm F2.8 Di III VXD G2");
+    map.insert(
+        "49471".to_string(),
+        "Tamron 50-400mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49472".to_string(), "Tamron 20-40mm F2.8 Di III VXD");
+    map.insert(
+        "49473".to_string(),
+        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
+    );
+    map.insert("49473.1".to_string(), "Tokina atx-m 85mm F1.8 FE");
+    map.insert("49473.2".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49473.3".to_string(), "Viltrox 56mm F1.4 E");
+    map.insert("49473.4".to_string(), "Viltrox 85mm F1.8 II FE");
+    map.insert(
+        "49474".to_string(),
+        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
+    );
+    map.insert("49474.1".to_string(), "Viltrox 13mm F1.4 E");
+    map.insert("49474.10".to_string(), "Viltrox 20mm F2.8 FE");
+    map.insert("49474.2".to_string(), "Viltrox 16mm F1.8 FE");
+    map.insert("49474.3".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49474.4".to_string(), "Viltrox 24mm F1.8 FE");
+    map.insert("49474.5".to_string(), "Viltrox 28mm F1.8 FE");
+    map.insert("49474.6".to_string(), "Viltrox 33mm F1.4 E");
+    map.insert("49474.7".to_string(), "Viltrox 35mm F1.8 FE");
+    map.insert("49474.8".to_string(), "Viltrox 50mm F1.8 FE");
+    map.insert("49474.9".to_string(), "Viltrox 75mm F1.2 E");
+    map.insert(
+        "49475".to_string(),
+        "Tamron 50-300mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49476".to_string(), "Tamron 28-300mm F4-7.1 Di III VC VXD");
+    map.insert("49477".to_string(), "Tamron 90mm F2.8 Di III Macro VXD");
+    map.insert("49712".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("49713".to_string(), "Tokina FiRIN 100mm F2.8 FE MACRO");
+    map.insert("49714".to_string(), "Tokina atx-m 11-18mm F2.8 E");
+    map.insert("50480".to_string(), "Sigma 30mm F1.4 DC DN | C");
+    map.insert("50481".to_string(), "Sigma 50mm F1.4 DG HSM | A");
+    map.insert(
+        "50482".to_string(),
+        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert("50483".to_string(), "Sigma 18-35mm F1.8 DC HSM | A + MC-11");
+    map.insert("50484".to_string(), "Sigma 24-35mm F2 DG HSM | A + MC-11");
+    map.insert("50485".to_string(), "Sigma 24mm F1.4 DG HSM | A + MC-11");
+    map.insert(
+        "50486".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50487".to_string(), "Sigma 20mm F1.4 DG HSM | A + MC-11");
+    map.insert("50488".to_string(), "Sigma 35mm F1.4 DG HSM | A");
+    map.insert(
+        "50489".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50490".to_string(),
+        "Sigma 120-300mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50492".to_string(),
+        "Sigma 24-105mm F4 DG OS HSM | A + MC-11",
+    );
+    map.insert(
+        "50493".to_string(),
+        "Sigma 17-70mm F2.8-4 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert(
+        "50495".to_string(),
+        "Sigma 50-100mm F1.8 DC HSM | A + MC-11",
+    );
+    map.insert("50499".to_string(), "Sigma 85mm F1.4 DG HSM | A");
+    map.insert(
+        "50501".to_string(),
+        "Sigma 100-400mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50503".to_string(), "Sigma 16mm F1.4 DC DN | C");
+    map.insert("50507".to_string(), "Sigma 105mm F1.4 DG HSM | A");
+    map.insert("50508".to_string(), "Sigma 56mm F1.4 DC DN | C");
+    map.insert(
+        "50512".to_string(),
+        "Sigma 70-200mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert("50513".to_string(), "Sigma 70mm F2.8 DG MACRO | A");
+    map.insert("50514".to_string(), "Sigma 45mm F2.8 DG DN | C");
+    map.insert("50515".to_string(), "Sigma 35mm F1.2 DG DN | A");
+    map.insert("50516".to_string(), "Sigma 14-24mm F2.8 DG DN | A");
+    map.insert("50517".to_string(), "Sigma 24-70mm F2.8 DG DN | A");
+    map.insert("50518".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C");
+    map.insert("50521".to_string(), "Sigma 85mm F1.4 DG DN | A");
+    map.insert("50522".to_string(), "Sigma 105mm F2.8 DG DN MACRO | A");
+    map.insert("50523".to_string(), "Sigma 65mm F2 DG DN | C");
+    map.insert("50524".to_string(), "Sigma 35mm F2 DG DN | C");
+    map.insert("50525".to_string(), "Sigma 24mm F3.5 DG DN | C");
+    map.insert("50526".to_string(), "Sigma 28-70mm F2.8 DG DN | C");
+    map.insert("50527".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S");
+    map.insert("50528".to_string(), "Sigma 35mm F1.4 DG DN | A");
+    map.insert("50529".to_string(), "Sigma 90mm F2.8 DG DN | C");
+    map.insert("50530".to_string(), "Sigma 24mm F2 DG DN | C");
+    map.insert("50531".to_string(), "Sigma 18-50mm F2.8 DC DN | C");
+    map.insert("50532".to_string(), "Sigma 20mm F2 DG DN | C");
+    map.insert("50533".to_string(), "Sigma 16-28mm F2.8 DG DN | C");
+    map.insert("50534".to_string(), "Sigma 20mm F1.4 DG DN | A");
+    map.insert("50535".to_string(), "Sigma 24mm F1.4 DG DN | A");
+    map.insert("50536".to_string(), "Sigma 60-600mm F4.5-6.3 DG DN OS | S");
+    map.insert("50537".to_string(), "Sigma 50mm F2 DG DN | C");
+    map.insert("50538".to_string(), "Sigma 17mm F4 DG DN | C");
+    map.insert("50539".to_string(), "Sigma 50mm F1.4 DG DN | A");
+    map.insert("50540".to_string(), "Sigma 14mm F1.4 DG DN | A");
+    map.insert("50543".to_string(), "Sigma 70-200mm F2.8 DG DN OS | S");
+    map.insert("50544".to_string(), "Sigma 23mm F1.4 DC DN | C");
+    map.insert("50545".to_string(), "Sigma 24-70mm F2.8 DG DN II | A");
+    map.insert("50546".to_string(), "Sigma 500mm F5.6 DG DN OS | S");
+    map.insert("50547".to_string(), "Sigma 10-18mm F2.8 DC DN | C");
+    map.insert(
+        "50548".to_string(),
+        "Sigma 15mm F1.4 DG DN DIAGONAL FISHEYE | A",
+    );
+    map.insert("50549".to_string(), "Sigma 50mm F1.2 DG DN | A");
+    map.insert("50550".to_string(), "Sigma 28-105mm F2.8 DG DN | A");
+    map.insert("50551".to_string(), "Sigma 28-45mm F1.8 DG DN | A");
+    map.insert("50553".to_string(), "Sigma 300-600mm F4 DG OS | S");
+    map.insert(
+        "50992".to_string(),
+        "Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III",
+    );
+    map.insert(
+        "50993".to_string(),
+        "Voigtlander HELIAR-HYPER WIDE 10mm F5.6",
+    );
+    map.insert(
+        "50994".to_string(),
+        "Voigtlander ULTRA WIDE-HELIAR 12mm F5.6 III",
+    );
+    map.insert(
+        "50995".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 65mm F2 Aspherical",
+    );
+    map.insert(
+        "50996".to_string(),
+        "Voigtlander NOKTON 40mm F1.2 Aspherical",
+    );
+    map.insert("50997".to_string(), "Voigtlander NOKTON classic 35mm F1.4");
+    map.insert(
+        "50998".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 110mm F2.5",
+    );
+    map.insert(
+        "50999".to_string(),
+        "Voigtlander COLOR-SKOPAR 21mm F3.5 Aspherical",
+    );
+    map.insert(
+        "51000".to_string(),
+        "Voigtlander NOKTON 50mm F1.2 Aspherical",
+    );
+    map.insert(
+        "51001".to_string(),
+        "Voigtlander NOKTON 21mm F1.4 Aspherical",
+    );
+    map.insert(
+        "51002".to_string(),
+        "Voigtlander APO-LANTHAR 50mm F2 Aspherical",
+    );
+    map.insert(
+        "51003".to_string(),
+        "Voigtlander NOKTON 35mm F1.2 Aspherical SE",
+    );
+    map.insert(
+        "51006".to_string(),
+        "Voigtlander APO-LANTHAR 35mm F2 Aspherical",
+    );
+    map.insert("51007".to_string(), "Voigtlander NOKTON 50mm F1 Aspherical");
+    map.insert(
+        "51008".to_string(),
+        "Voigtlander NOKTON 75mm F1.5 Aspherical",
+    );
+    map.insert(
+        "51009".to_string(),
+        "Voigtlander NOKTON 28mm F1.5 Aspherical",
+    );
+    map.insert("51072".to_string(), "ZEISS Otus ML 50mm F1.4");
+    map.insert("51073".to_string(), "ZEISS Otus ML 85mm F1.4");
+    map.insert("51504".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "51505".to_string(),
+        "Samyang AF 14mm F2.8 or Samyang AF 35mm F2.8",
+    );
+    map.insert("51505.1".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("51507".to_string(), "Samyang AF 35mm F1.4");
+    map.insert("51508".to_string(), "Samyang AF 45mm F1.8");
+    map.insert(
+        "51510".to_string(),
+        "Samyang AF 18mm F2.8 or Samyang AF 35mm F1.8",
+    );
+    map.insert("51510.1".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51512".to_string(), "Samyang AF 75mm F1.8");
+    map.insert("51513".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51514".to_string(), "Samyang AF 24mm F1.8");
+    map.insert("51515".to_string(), "Samyang AF 12mm F2.0");
+    map.insert("51516".to_string(), "Samyang AF 24-70mm F2.8");
+    map.insert("51517".to_string(), "Samyang AF 50mm F1.4 II");
+    map.insert("51518".to_string(), "Samyang AF 135mm F1.8");
+    map.insert("6".to_string(), "Sony LA-EA4 Adapter");
+    map.insert("61569".to_string(), "LAOWA FFII 10mm F2.8 C&D Dreamer");
+    map.insert("61761".to_string(), "Viltrox 28mm F4.5 FE");
+    map.insert("7".to_string(), "Sony LA-EA5 Adapter");
+    map.insert(
+        "78".to_string(),
+        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
+    );
+    map
+});
+
+static PRINT_CONV_206: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("2".to_string(), "RAW");
+    map.insert("4".to_string(), "RAW + JPEG");
+    map.insert("6".to_string(), "Fine");
+    map.insert("7".to_string(), "Standard");
+    map
+});
+
+static PRINT_CONV_207: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Off");
+    map.insert("16".to_string(), "On (Auto)");
+    map.insert("17".to_string(), "On (Manual)");
+    map
+});
+
+static PRINT_CONV_208: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "No");
+    map.insert("16".to_string(), "Yes");
+    map
+});
+
+static PRINT_CONV_209: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "n/a");
+    map.insert("16".to_string(), "40 Segment");
+    map.insert("32".to_string(), "1200-zone Evaluative");
+    map
+});
+
+static PRINT_CONV_210: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "n/a");
+    map.insert("16".to_string(), "Viewfinder");
+    map.insert("33".to_string(), "Focus Check Live View");
+    map.insert("34".to_string(), "Quick AF Live View");
+    map
+});
+
+static PRINT_CONV_211: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "On");
+    map.insert("2".to_string(), "Off");
+    map
+});
+
+static PRINT_CONV_212: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Off");
+    map.insert("2".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_213: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "None");
+    map.insert("2".to_string(), "Off");
+    map.insert("3".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_214: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "n/a");
+    map.insert("1".to_string(), "AF");
+    map.insert("16".to_string(), "Manual");
+    map
+});
+
+static PRINT_CONV_215: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "sRGB");
+    map.insert("2".to_string(), "Adobe RGB");
+    map
+});
+
+static PRINT_CONV_216: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("16".to_string(), "Standard");
+    map.insert("160".to_string(), "Sunset");
+    map.insert("32".to_string(), "Vivid");
+    map.insert("64".to_string(), "Portrait");
+    map.insert("80".to_string(), "Landscape");
+    map.insert("96".to_string(), "B&W");
+    map
+});
+
+static PRINT_CONV_217: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Unknown");
+    map.insert("16".to_string(), "A-mount");
+    map.insert("17".to_string(), "E-mount");
+    map
+});
+
+static PRINT_CONV_218: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("100".to_string(), "Fluorescent (+1)");
+    map.insert("101".to_string(), "Fluorescent (+2)");
+    map.insert("102".to_string(), "Fluorescent (+3)");
+    map.insert("112".to_string(), "Flash (-3)");
+    map.insert("113".to_string(), "Flash (-2)");
+    map.insert("114".to_string(), "Flash (-1)");
+    map.insert("115".to_string(), "Flash (0)");
+    map.insert("116".to_string(), "Flash (+1)");
+    map.insert("117".to_string(), "Flash (+2)");
+    map.insert("118".to_string(), "Flash (+3)");
+    map.insert("16".to_string(), "Auto (-3)");
+    map.insert("163".to_string(), "Custom");
+    map.insert("17".to_string(), "Auto (-2)");
+    map.insert("18".to_string(), "Auto (-1)");
+    map.insert("19".to_string(), "Auto (0)");
+    map.insert("20".to_string(), "Auto (+1)");
+    map.insert("21".to_string(), "Auto (+2)");
+    map.insert("22".to_string(), "Auto (+3)");
+    map.insert("243".to_string(), "Color Temperature/Color Filter");
+    map.insert("32".to_string(), "Daylight (-3)");
+    map.insert("33".to_string(), "Daylight (-2)");
+    map.insert("34".to_string(), "Daylight (-1)");
+    map.insert("35".to_string(), "Daylight (0)");
+    map.insert("36".to_string(), "Daylight (+1)");
+    map.insert("37".to_string(), "Daylight (+2)");
+    map.insert("38".to_string(), "Daylight (+3)");
+    map.insert("48".to_string(), "Shade (-3)");
+    map.insert("49".to_string(), "Shade (-2)");
+    map.insert("50".to_string(), "Shade (-1)");
+    map.insert("51".to_string(), "Shade (0)");
+    map.insert("52".to_string(), "Shade (+1)");
+    map.insert("53".to_string(), "Shade (+2)");
+    map.insert("54".to_string(), "Shade (+3)");
+    map.insert("64".to_string(), "Cloudy (-3)");
+    map.insert("65".to_string(), "Cloudy (-2)");
+    map.insert("66".to_string(), "Cloudy (-1)");
+    map.insert("67".to_string(), "Cloudy (0)");
+    map.insert("68".to_string(), "Cloudy (+1)");
+    map.insert("69".to_string(), "Cloudy (+2)");
+    map.insert("70".to_string(), "Cloudy (+3)");
+    map.insert("80".to_string(), "Tungsten (-3)");
+    map.insert("81".to_string(), "Tungsten (-2)");
+    map.insert("82".to_string(), "Tungsten (-1)");
+    map.insert("83".to_string(), "Tungsten (0)");
+    map.insert("84".to_string(), "Tungsten (+1)");
+    map.insert("85".to_string(), "Tungsten (+2)");
+    map.insert("86".to_string(), "Tungsten (+3)");
+    map.insert("96".to_string(), "Fluorescent (-3)");
+    map.insert("97".to_string(), "Fluorescent (-2)");
+    map.insert("98".to_string(), "Fluorescent (-1)");
+    map.insert("99".to_string(), "Fluorescent (0)");
+    map
+});
+
+static PRINT_CONV_219: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Flash Off");
+    map.insert("16".to_string(), "Autoflash");
+    map.insert("17".to_string(), "Fill-flash");
+    map.insert("18".to_string(), "Slow Sync");
+    map.insert("19".to_string(), "Rear Sync");
+    map.insert("20".to_string(), "Wireless");
+    map
+});
+
+static PRINT_CONV_220: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "ADI Flash");
+    map.insert("2".to_string(), "Pre-flash TTL");
+    map
+});
+
+static PRINT_CONV_221: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Wide");
+    map.insert("2".to_string(), "Spot");
+    map.insert("3".to_string(), "Local");
+    map.insert("4".to_string(), "Flexible");
+    map
+});
+
+static PRINT_CONV_222: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Off");
+    map.insert("16".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_223: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("16".to_string(), "Low");
+    map.insert("17".to_string(), "High");
+    map.insert("19".to_string(), "Auto");
+    map
+});
+
+static PRINT_CONV_224: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("17".to_string(), "Slight Smile");
+    map.insert("18".to_string(), "Normal Smile");
+    map.insert("19".to_string(), "Big Smile");
+    map
+});
+
+static PRINT_CONV_225: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Off");
+    map.insert("16".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_226: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Off");
+    map.insert("16".to_string(), "On (Auto)");
+    map.insert("17".to_string(), "On (Manual)");
+    map
+});
+
+static PRINT_CONV_227: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("33".to_string(), "1 EV");
+    map.insert("34".to_string(), "1.5 EV");
+    map.insert("35".to_string(), "2 EV");
+    map.insert("36".to_string(), "2.5 EV");
+    map.insert("37".to_string(), "3 EV");
+    map.insert("38".to_string(), "3.5 EV");
+    map.insert("39".to_string(), "4 EV");
+    map.insert("40".to_string(), "5 EV");
+    map.insert("41".to_string(), "6 EV");
+    map
+});
+
+static PRINT_CONV_228: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("16".to_string(), "ViewFinder");
+    map.insert("33".to_string(), "Focus Check Live View");
+    map.insert("34".to_string(), "Quick AF Live View");
+    map
+});
+
+static PRINT_CONV_229: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Off");
+    map.insert("16".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_230: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Off");
+    map.insert("16".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_231: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Standard");
+    map.insert("2".to_string(), "Wide");
+    map
+});
+
+static PRINT_CONV_232: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Right");
+    map.insert("2".to_string(), "Left");
+    map.insert("3".to_string(), "Up");
+    map.insert("4".to_string(), "Down");
+    map
+});
+
+static PRINT_CONV_233: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("113".to_string(), "Continuous Bracketing 0.3 EV");
+    map.insert("117".to_string(), "Continuous Bracketing 0.7 EV");
+    map.insert("145".to_string(), "White Balance Bracketing Low");
+    map.insert("146".to_string(), "White Balance Bracketing High");
+    map.insert("16".to_string(), "Single Frame");
+    map.insert("192".to_string(), "Remote Commander");
+    map.insert("209".to_string(), "Continuous - HDR");
+    map.insert("210".to_string(), "Continuous - Multi Frame NR");
+    map.insert("211".to_string(), "Continuous - Handheld Night Shot");
+    map.insert("212".to_string(), "Continuous - Anti Motion Blur");
+    map.insert("213".to_string(), "Continuous - Sweep Panorama");
+    map.insert("214".to_string(), "Continuous - 3D Sweep Panorama");
+    map.insert("33".to_string(), "Continuous High");
+    map.insert("34".to_string(), "Continuous Low");
+    map.insert("48".to_string(), "Speed Priority Continuous");
+    map.insert("81".to_string(), "Self-timer 10 sec");
+    map.insert("82".to_string(), "Self-timer 2 sec, Mirror Lock-up");
+    map
+});
+
+static PRINT_CONV_234: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "n/a");
+    map.insert("1".to_string(), "Off");
+    map.insert("16".to_string(), "On");
+    map.insert("255".to_string(), "None");
+    map
+});
+
+static PRINT_CONV_235: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "n/a");
+    map.insert("1".to_string(), "Phase-detect AF");
+    map.insert("2".to_string(), "Contrast AF");
+    map
+});
+
+static PRINT_CONV_236: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "n/a");
+    map.insert("1".to_string(), "Standard");
+    map.insert("2".to_string(), "Wide");
+    map.insert("3".to_string(), "16:9");
+    map
+});
+
+static PRINT_CONV_237: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "No");
+    map.insert("16".to_string(), "Yes");
+    map
+});
+
+static PRINT_CONV_238: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "n/a");
+    map.insert("16".to_string(), "40 Segment");
+    map.insert("32".to_string(), "1200-zone Evaluative");
+    map
+});
+
+static PRINT_CONV_239: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "n/a");
+    map.insert("16".to_string(), "Viewfinder");
+    map.insert("33".to_string(), "Focus Check Live View");
+    map.insert("34".to_string(), "Quick AF Live View");
+    map
+});
+
+static PRINT_CONV_240: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "On");
+    map.insert("2".to_string(), "Off");
+    map
+});
+
+static PRINT_CONV_241: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Off");
+    map.insert("2".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_242: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "None");
+    map.insert("2".to_string(), "Off");
+    map.insert("3".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_243: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "n/a");
+    map.insert("1".to_string(), "AF");
+    map.insert("16".to_string(), "Manual");
+    map
+});
+
+static PRINT_CONV_244: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("64".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_245: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("64".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_246: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Empty");
+    map.insert("2".to_string(), "Low");
+    map.insert("3".to_string(), "Half full");
+    map.insert("4".to_string(), "Almost full");
+    map.insert("5".to_string(), "Full");
+    map
+});
+
+static PRINT_CONV_247: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("241".to_string(), "Landscape");
+    map.insert("243".to_string(), "Aperture-priority AE");
+    map.insert("245".to_string(), "Portrait");
+    map.insert("246".to_string(), "Auto");
+    map.insert("247".to_string(), "Program AE");
+    map.insert("249".to_string(), "Macro");
+    map.insert("252".to_string(), "Sunset");
+    map.insert("253".to_string(), "Sports");
+    map.insert("255".to_string(), "Manual");
+    map
+});
+
+static PRINT_CONV_248: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("248".to_string(), "No Flash");
+    map.insert("249".to_string(), "Aperture-priority AE");
+    map.insert("250".to_string(), "SCN");
+    map.insert("251".to_string(), "Shutter speed priority AE");
+    map.insert("252".to_string(), "Auto");
+    map.insert("253".to_string(), "Program AE");
+    map.insert("254".to_string(), "Panorama");
+    map.insert("255".to_string(), "Manual");
+    map
+});
+
+static PRINT_CONV_249: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("244".to_string(), "MemoryStick in use, SD card present");
+    map.insert("245".to_string(), "MemoryStick in use, SD slot empty");
+    map.insert("252".to_string(), "SD card in use, MemoryStick present");
+    map.insert("254".to_string(), "SD card in use, MemoryStick slot empty");
+    map
+});
+
+static PRINT_CONV_250: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Horizontal (normal)");
+    map.insert("1".to_string(), "Rotate 90 CW");
+    map.insert("2".to_string(), "Rotate 270 CW");
+    map.insert("3".to_string(), "Rotate 180");
+    map
+});
+
+static PRINT_CONV_251: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Horizontal (normal)");
+    map.insert("1".to_string(), "Rotate 90 CW");
+    map.insert("2".to_string(), "Rotate 270 CW");
+    map.insert("3".to_string(), "Rotate 180");
+    map
+});
+
+static PRINT_CONV_252: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Standard");
+    map.insert("2".to_string(), "Advanced Auto");
+    map.insert("3".to_string(), "Advanced Level");
+    map
+});
+
+static PRINT_CONV_253: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Single Frame");
+    map.insert("10".to_string(), "Remote Commander");
+    map.insert("11".to_string(), "Continuous Self-timer");
+    map.insert("2".to_string(), "Continuous High");
+    map.insert("4".to_string(), "Self-timer 10 sec");
+    map.insert("5".to_string(), "Self-timer 2 sec, Mirror Lock-up");
+    map.insert("7".to_string(), "Continuous Bracketing");
+    map
+});
+
+static PRINT_CONV_254: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Single Frame");
+    map.insert("10".to_string(), "Remote Commander");
+    map.insert("11".to_string(), "Mirror Lock-up");
+    map.insert("18".to_string(), "Continuous Low");
+    map.insert("2".to_string(), "Continuous High");
+    map.insert("24".to_string(), "White Balance Bracketing Low");
+    map.insert("25".to_string(), "D-Range Optimizer Bracketing Low");
+    map.insert("4".to_string(), "Self-timer 10 sec");
+    map.insert("40".to_string(), "White Balance Bracketing High");
+    map.insert("41".to_string(), "D-Range Optimizer Bracketing High");
+    map.insert("5".to_string(), "Self-timer 2 sec, Mirror Lock-up");
+    map.insert("6".to_string(), "Single-frame Bracketing");
+    map.insert("7".to_string(), "Continuous Bracketing");
+    map
+});
+
+static PRINT_CONV_255: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Horizontal (normal)");
+    map.insert("1".to_string(), "Rotate 270 CW");
+    map.insert("2".to_string(), "Rotate 90 CW");
+    map
+});
+
+static PRINT_CONV_256: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_257: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Standard");
+    map.insert("2".to_string(), "Advanced Auto");
+    map.insert("3".to_string(), "Advanced Level");
+    map
+});
+
+static PRINT_CONV_258: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Low");
+    map.insert("2".to_string(), "High");
+    map
+});
+
+static PRINT_CONV_259: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Low");
+    map.insert("2".to_string(), "High");
+    map
+});
+
+static PRINT_CONV_260: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Auto");
+    map.insert("1".to_string(), "Manual");
+    map.insert("16".to_string(), "Portrait");
+    map.insert("17".to_string(), "Sports");
+    map.insert("18".to_string(), "Sunset");
+    map.insert("19".to_string(), "Night Portrait");
+    map.insert("2".to_string(), "Program AE");
+    map.insert("20".to_string(), "Landscape");
+    map.insert("21".to_string(), "Macro");
+    map.insert("3".to_string(), "Aperture-priority AE");
+    map.insert("35".to_string(), "Auto No Flash");
+    map.insert("4".to_string(), "Shutter speed priority AE");
+    map.insert("8".to_string(), "Program Shift A");
+    map.insert("9".to_string(), "Program Shift S");
+    map
+});
+
+static PRINT_CONV_261: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Standard");
+    map.insert("11".to_string(), "Neutral");
+    map.insert("12".to_string(), "Clear");
+    map.insert("13".to_string(), "Deep");
+    map.insert("14".to_string(), "Light");
+    map.insert("15".to_string(), "Autumn Leaves");
+    map.insert("16".to_string(), "Sepia");
+    map.insert("2".to_string(), "Vivid");
+    map.insert("3".to_string(), "Portrait");
+    map.insert("4".to_string(), "Landscape");
+    map.insert("5".to_string(), "Sunset");
+    map.insert("6".to_string(), "Night View/Portrait");
+    map.insert("8".to_string(), "B&W");
+    map.insert("9".to_string(), "Adobe RGB");
+    map
+});
+
+static PRINT_CONV_262: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0 0 0 2".to_string(), "JPEG");
     map.insert("1 0 0 0".to_string(), "SR2");
@@ -34,7 +2230,7 @@ static PRINT_CONV_97: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_98: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_263: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("2".to_string(), "DSC-R1");
     map.insert("256".to_string(), "DSLR-A100");
@@ -144,7 +2340,7 @@ static PRINT_CONV_98: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_99: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_264: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Standard");
     map.insert("1".to_string(), "Portrait");
@@ -174,7 +2370,7 @@ static PRINT_CONV_99: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_100: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_265: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "ISO Setting Used");
     map.insert("1".to_string(), "High Key");
@@ -182,7 +2378,7 @@ static PRINT_CONV_100: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_101: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_266: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Standard");
@@ -201,7 +2397,7 @@ static PRINT_CONV_101: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_102: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_267: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
@@ -209,7 +2405,7 @@ static PRINT_CONV_102: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_103: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_268: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Standard");
     map.insert("1".to_string(), "Vivid");
@@ -240,7 +2436,7 @@ static PRINT_CONV_103: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_104: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_269: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
@@ -249,7 +2445,7 @@ static PRINT_CONV_104: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_105: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_270: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Program AE");
     map.insert("1".to_string(), "Portrait");
@@ -285,7 +2481,7 @@ static PRINT_CONV_105: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_106: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_271: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "AF-S");
     map.insert("2".to_string(), "AF-C");
@@ -294,7 +2490,7 @@ static PRINT_CONV_106: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_107: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_272: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Default");
     map.insert("1".to_string(), "Multi");
@@ -308,7 +2504,7 @@ static PRINT_CONV_107: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_108: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_273: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Multi");
     map.insert("1".to_string(), "Center");
@@ -321,7 +2517,7 @@ static PRINT_CONV_108: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_109: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_274: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Auto");
@@ -329,7 +2525,7 @@ static PRINT_CONV_109: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_110: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_275: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Standard");
     map.insert("1".to_string(), "Fine");
@@ -338,7 +2534,7 @@ static PRINT_CONV_110: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_111: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_276: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("-1".to_string(), "-1/3");
     map.insert("-2".to_string(), "-2/3");
@@ -363,7 +2559,7 @@ static PRINT_CONV_111: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_112: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_277: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Normal");
     map.insert("2".to_string(), "Continuous");
@@ -374,7 +2570,7 @@ static PRINT_CONV_112: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_113: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_278: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On (Continuous)");
@@ -383,7 +2579,7 @@ static PRINT_CONV_113: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_114: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_279: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Manual");
     map.insert("2".to_string(), "AF-S");
@@ -393,7 +2589,7 @@ static PRINT_CONV_114: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_115: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_280: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Standard");
@@ -401,7 +2597,7 @@ static PRINT_CONV_115: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_116: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_281: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Normal");
     map.insert("1".to_string(), "High");
@@ -411,7 +2607,7 @@ static PRINT_CONV_116: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_117: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_282: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
@@ -419,7 +2615,7 @@ static PRINT_CONV_117: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_118: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_283: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("10".to_string(), "Incandescent2");
@@ -438,7 +2634,7 @@ static PRINT_CONV_118: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_119: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_284: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On (unused)");
@@ -449,7 +2645,7 @@ static PRINT_CONV_119: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_120: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_285: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -460,7 +2656,7 @@ static PRINT_CONV_120: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_121: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_286: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
@@ -468,7 +2664,7 @@ static PRINT_CONV_121: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_122: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_287: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Toy Camera");
@@ -509,7 +2705,7 @@ static PRINT_CONV_122: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_123: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_288: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Low");
@@ -519,7 +2715,7 @@ static PRINT_CONV_123: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_124: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_289: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("2".to_string(), "Auto");
@@ -527,7 +2723,7 @@ static PRINT_CONV_124: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_125: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_290: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("2".to_string(), "Auto");
@@ -535,7 +2731,7 @@ static PRINT_CONV_125: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_126: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_291: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("2".to_string(), "Auto");
@@ -543,14 +2739,14 @@ static PRINT_CONV_126: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_127: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_292: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No");
     map.insert("1".to_string(), "Yes");
     map
 });
 
-static PRINT_CONV_128: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_293: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Did not fire");
     map.insert("1".to_string(), "Flash Fired");
@@ -559,14 +2755,14 @@ static PRINT_CONV_128: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_129: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_294: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_130: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_295: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Manual");
     map.insert("2".to_string(), "AF-S");
@@ -577,7 +2773,7 @@ static PRINT_CONV_130: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_131: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_296: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Wide");
     map.insert("4".to_string(), "Local");
@@ -586,7 +2782,7 @@ static PRINT_CONV_131: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_132: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_297: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Wide");
     map.insert("1".to_string(), "Center");
@@ -599,7 +2795,7 @@ static PRINT_CONV_132: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_133: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_298: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Wide");
     map.insert("12".to_string(), "Expanded Flexible Spot");
@@ -609,7 +2805,7 @@ static PRINT_CONV_133: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_134: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_299: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "Center");
@@ -634,7 +2830,7 @@ static PRINT_CONV_134: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_135: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_300: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("-1".to_string(), "Auto");
     map.insert("0".to_string(), "A5");
@@ -719,7 +2915,7 @@ static PRINT_CONV_135: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_136: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_301: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "n/a");
     map.insert("1".to_string(), "Top Left Zone");
@@ -734,7 +2930,7 @@ static PRINT_CONV_136: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_137: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_302: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "n/a");
     map.insert("1".to_string(), "Center Zone");
@@ -749,19 +2945,19 @@ static PRINT_CONV_137: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_138: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_303: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "(none)");
     map
 });
 
-static PRINT_CONV_139: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_304: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "(none)");
     map
 });
 
-static PRINT_CONV_140: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_305: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Face tracking");
@@ -769,26 +2965,26 @@ static PRINT_CONV_140: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_141: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_306: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "(none)");
     map
 });
 
-static PRINT_CONV_142: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_307: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "(none)");
     map
 });
 
-static PRINT_CONV_143: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_308: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Normal");
     map.insert("1".to_string(), "High");
     map
 });
 
-static PRINT_CONV_144: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_309: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0 0".to_string(), "n/a");
     map.insert("1 0".to_string(), "Off");
@@ -798,7 +2994,7 @@ static PRINT_CONV_144: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_145: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_310: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Compressed RAW");
     map.insert("1".to_string(), "Uncompressed RAW");
@@ -807,7 +3003,7 @@ static PRINT_CONV_145: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_146: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_311: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Standard");
     map.insert("1".to_string(), "Ambience");
@@ -815,7 +3011,7 @@ static PRINT_CONV_146: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_147: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_312: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1024".to_string(), "Average");
     map.insert("1280".to_string(), "Highlight");
@@ -826,7 +3022,7 @@ static PRINT_CONV_147: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_148: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_313: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0 0".to_string(), "n/a");
     map.insert("0 1".to_string(), "Standard");
@@ -845,7 +3041,7 @@ static PRINT_CONV_148: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_149: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_314: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "JPEG");
     map.insert("1".to_string(), "HEIF");
@@ -853,1791 +3049,7 @@ static PRINT_CONV_149: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_150: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Manual");
-    map.insert("1".to_string(), "AF-S");
-    map.insert("2".to_string(), "AF-C");
-    map.insert("3".to_string(), "AF-A");
-    map.insert("4".to_string(), "DMF");
-    map
-});
-
-static PRINT_CONV_151: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Auto");
-    map.insert("1".to_string(), "Center");
-    map.insert("10".to_string(), "Far Right");
-    map.insert("11".to_string(), "Far Left");
-    map.insert("2".to_string(), "Top");
-    map.insert("3".to_string(), "Upper-right");
-    map.insert("4".to_string(), "Right");
-    map.insert("5".to_string(), "Lower-right");
-    map.insert("6".to_string(), "Bottom");
-    map.insert("7".to_string(), "Lower-left");
-    map.insert("8".to_string(), "Left");
-    map.insert("9".to_string(), "Upper-left");
-    map
-});
-
-static PRINT_CONV_152: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Upper-left");
-    map.insert("1".to_string(), "Left");
-    map.insert("10".to_string(), "Center (10)");
-    map.insert("11".to_string(), "Center (11)");
-    map.insert("12".to_string(), "Center (12)");
-    map.insert("13".to_string(), "Center (vertical)");
-    map.insert("14".to_string(), "Center (14)");
-    map.insert("15".to_string(), "Top Assist-left");
-    map.insert("16".to_string(), "Top");
-    map.insert("17".to_string(), "Top Assist-right");
-    map.insert("18".to_string(), "Far Right");
-    map.insert("19".to_string(), "Upper-right");
-    map.insert("2".to_string(), "Lower-left");
-    map.insert("20".to_string(), "Right");
-    map.insert("21".to_string(), "Lower-right");
-    map.insert("22".to_string(), "Center F2.8");
-    map.insert("3".to_string(), "Far Left");
-    map.insert("4".to_string(), "Bottom Assist-left");
-    map.insert("5".to_string(), "Bottom");
-    map.insert("6".to_string(), "Bottom Assist-right");
-    map.insert("7".to_string(), "Center (7)");
-    map.insert("8".to_string(), "Center (horizontal)");
-    map.insert("9".to_string(), "Center (9)");
-    map
-});
-
-static PRINT_CONV_153: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Auto");
-    map.insert("1".to_string(), "Center");
-    map.insert("2".to_string(), "Top");
-    map.insert("3".to_string(), "Upper-right");
-    map.insert("4".to_string(), "Right");
-    map.insert("5".to_string(), "Lower-right");
-    map.insert("6".to_string(), "Bottom");
-    map.insert("7".to_string(), "Lower-left");
-    map.insert("8".to_string(), "Left");
-    map.insert("9".to_string(), "Upper-left");
-    map
-});
-
-static PRINT_CONV_154: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Manual");
-    map.insert("1".to_string(), "AF-S");
-    map.insert("2".to_string(), "AF-C");
-    map.insert("3".to_string(), "AF-A");
-    map.insert("4".to_string(), "DMF");
-    map
-});
-
-static PRINT_CONV_155: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Top-right");
-    map.insert("1".to_string(), "Bottom-right");
-    map.insert("2".to_string(), "Bottom");
-    map.insert("3".to_string(), "Middle Horizontal");
-    map.insert("4".to_string(), "Center Vertical");
-    map.insert("5".to_string(), "Top");
-    map.insert("6".to_string(), "Top-left");
-    map.insert("7".to_string(), "Bottom-left");
-    map
-});
-
-static PRINT_CONV_156: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Auto");
-    map.insert("1".to_string(), "Center");
-    map.insert("2".to_string(), "Top");
-    map.insert("3".to_string(), "Upper-right");
-    map.insert("4".to_string(), "Right");
-    map.insert("5".to_string(), "Lower-right");
-    map.insert("6".to_string(), "Bottom");
-    map.insert("7".to_string(), "Lower-left");
-    map.insert("8".to_string(), "Left");
-    map.insert("9".to_string(), "Upper-left");
-    map
-});
-
-static PRINT_CONV_157: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Manual");
-    map.insert("1".to_string(), "AF-S");
-    map.insert("2".to_string(), "AF-C");
-    map.insert("3".to_string(), "AF-A");
-    map
-});
-
-static PRINT_CONV_158: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Top-right");
-    map.insert("1".to_string(), "Bottom-right");
-    map.insert("2".to_string(), "Bottom");
-    map.insert("3".to_string(), "Middle Horizontal");
-    map.insert("4".to_string(), "Center Vertical");
-    map.insert("5".to_string(), "Top");
-    map.insert("6".to_string(), "Top-left");
-    map.insert("7".to_string(), "Bottom-left");
-    map
-});
-
-static PRINT_CONV_159: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Manual - Not confirmed (0)");
-    map.insert("16".to_string(), "AF-C - Confirmed");
-    map.insert("24".to_string(), "AF-C - Not Confirmed");
-    map.insert("4".to_string(), "Manual - Not confirmed (4)");
-    map.insert("64".to_string(), "AF-S - Confirmed");
-    map
-});
-
-static PRINT_CONV_160: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Auto");
-    map.insert("1".to_string(), "Center");
-    map.insert("10".to_string(), "Far Right");
-    map.insert("11".to_string(), "Far Left");
-    map.insert("12".to_string(), "Upper-middle");
-    map.insert("13".to_string(), "Near Right");
-    map.insert("14".to_string(), "Lower-middle");
-    map.insert("15".to_string(), "Near Left");
-    map.insert("2".to_string(), "Top");
-    map.insert("3".to_string(), "Upper-right");
-    map.insert("4".to_string(), "Right");
-    map.insert("5".to_string(), "Lower-right");
-    map.insert("6".to_string(), "Bottom");
-    map.insert("7".to_string(), "Lower-left");
-    map.insert("8".to_string(), "Left");
-    map.insert("9".to_string(), "Upper-left");
-    map
-});
-
-static PRINT_CONV_161: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Manual");
-    map.insert("1".to_string(), "AF-S");
-    map.insert("2".to_string(), "AF-C");
-    map.insert("3".to_string(), "AF-A");
-    map
-});
-
-static PRINT_CONV_162: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Upper-left");
-    map.insert("1".to_string(), "Left");
-    map.insert("10".to_string(), "Center (vertical)");
-    map.insert("11".to_string(), "Bottom (vertical)");
-    map.insert("12".to_string(), "Far Right");
-    map.insert("13".to_string(), "Upper-right");
-    map.insert("14".to_string(), "Right");
-    map.insert("15".to_string(), "Lower-right");
-    map.insert("16".to_string(), "Upper-middle");
-    map.insert("17".to_string(), "Lower-middle");
-    map.insert("2".to_string(), "Lower-left");
-    map.insert("255".to_string(), "(none)");
-    map.insert("3".to_string(), "Far Left");
-    map.insert("4".to_string(), "Top (horizontal)");
-    map.insert("5".to_string(), "Near Right");
-    map.insert("6".to_string(), "Center (horizontal)");
-    map.insert("7".to_string(), "Near Left");
-    map.insert("8".to_string(), "Bottom (horizontal)");
-    map.insert("9".to_string(), "Top (vertical)");
-    map
-});
-
-static PRINT_CONV_163: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_164: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("12".to_string(), "Color Temperature");
-    map.insert("13".to_string(), "Color Filter");
-    map.insert("14".to_string(), "Custom");
-    map.insert("16".to_string(), "Cloudy");
-    map.insert("17".to_string(), "Shade");
-    map.insert("2".to_string(), "Auto");
-    map.insert("4".to_string(), "Daylight");
-    map.insert("5".to_string(), "Fluorescent");
-    map.insert("6".to_string(), "Tungsten");
-    map.insert("7".to_string(), "Flash");
-    map
-});
-
-static PRINT_CONV_165: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Manual");
-    map.insert("1".to_string(), "AF-S");
-    map.insert("2".to_string(), "AF-C");
-    map.insert("3".to_string(), "AF-A");
-    map.insert("4".to_string(), "DMF");
-    map
-});
-
-static PRINT_CONV_166: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Wide");
-    map.insert("1".to_string(), "Local");
-    map.insert("2".to_string(), "Spot");
-    map
-});
-
-static PRINT_CONV_167: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Center");
-    map.insert("10".to_string(), "Far Right");
-    map.insert("11".to_string(), "Far Left");
-    map.insert("2".to_string(), "Top");
-    map.insert("3".to_string(), "Upper-right");
-    map.insert("4".to_string(), "Right");
-    map.insert("5".to_string(), "Lower-right");
-    map.insert("6".to_string(), "Bottom");
-    map.insert("7".to_string(), "Lower-left");
-    map.insert("8".to_string(), "Left");
-    map.insert("9".to_string(), "Upper-left");
-    map
-});
-
-static PRINT_CONV_168: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Autoflash");
-    map.insert("2".to_string(), "Rear Sync");
-    map.insert("3".to_string(), "Wireless");
-    map.insert("4".to_string(), "Fill-flash");
-    map.insert("5".to_string(), "Flash Off");
-    map.insert("6".to_string(), "Slow Sync");
-    map
-});
-
-static PRINT_CONV_169: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Multi-segment");
-    map.insert("2".to_string(), "Center-weighted average");
-    map.insert("4".to_string(), "Spot");
-    map
-});
-
-static PRINT_CONV_170: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Standard");
-    map.insert("2".to_string(), "Advanced Auto");
-    map.insert("3".to_string(), "Advanced Level");
-    map
-});
-
-static PRINT_CONV_171: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Standard");
-    map.insert("11".to_string(), "Neutral");
-    map.insert("12".to_string(), "Clear");
-    map.insert("13".to_string(), "Deep");
-    map.insert("14".to_string(), "Light");
-    map.insert("15".to_string(), "Autumn Leaves");
-    map.insert("16".to_string(), "Sepia");
-    map.insert("2".to_string(), "Vivid");
-    map.insert("3".to_string(), "Portrait");
-    map.insert("4".to_string(), "Landscape");
-    map.insert("5".to_string(), "Sunset");
-    map.insert("6".to_string(), "Night View/Portrait");
-    map.insert("8".to_string(), "B&W");
-    map.insert("9".to_string(), "Adobe RGB");
-    map
-});
-
-static PRINT_CONV_172: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "sRGB");
-    map.insert("1".to_string(), "Adobe RGB");
-    map.insert("5".to_string(), "Adobe RGB (A700)");
-    map
-});
-
-static PRINT_CONV_173: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "ADI");
-    map.insert("1".to_string(), "Pre-flash TTL");
-    map.insert("2".to_string(), "Manual");
-    map
-});
-
-static PRINT_CONV_174: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "AF");
-    map.insert("1".to_string(), "Release");
-    map
-});
-
-static PRINT_CONV_175: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Auto");
-    map.insert("1".to_string(), "Off");
-    map
-});
-
-static PRINT_CONV_176: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "On");
-    map.insert("1".to_string(), "Off");
-    map
-});
-
-static PRINT_CONV_177: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_178: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Normal");
-    map.insert("1".to_string(), "Low");
-    map.insert("2".to_string(), "High");
-    map.insert("3".to_string(), "Off");
-    map
-});
-
-static PRINT_CONV_179: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Standard");
-    map.insert("11".to_string(), "Neutral");
-    map.insert("129".to_string(), "StyleBox1");
-    map.insert("130".to_string(), "StyleBox2");
-    map.insert("131".to_string(), "StyleBox3");
-    map.insert("132".to_string(), "StyleBox4");
-    map.insert("133".to_string(), "StyleBox5");
-    map.insert("134".to_string(), "StyleBox6");
-    map.insert("2".to_string(), "Vivid");
-    map.insert("3".to_string(), "Portrait");
-    map.insert("4".to_string(), "Landscape");
-    map.insert("5".to_string(), "Sunset");
-    map.insert("7".to_string(), "Night View/Portrait");
-    map.insert("8".to_string(), "B&W");
-    map.insert("9".to_string(), "Adobe RGB");
-    map
-});
-
-static PRINT_CONV_180: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "AF");
-    map.insert("1".to_string(), "Manual");
-    map
-});
-
-static PRINT_CONV_181: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Auto");
-    map.insert("1".to_string(), "Manual");
-    map.insert("16".to_string(), "Portrait");
-    map.insert("17".to_string(), "Sports");
-    map.insert("18".to_string(), "Sunset");
-    map.insert("19".to_string(), "Night Portrait");
-    map.insert("2".to_string(), "Program AE");
-    map.insert("20".to_string(), "Landscape");
-    map.insert("21".to_string(), "Macro");
-    map.insert("3".to_string(), "Aperture-priority AE");
-    map.insert("35".to_string(), "Auto No Flash");
-    map.insert("4".to_string(), "Shutter speed priority AE");
-    map.insert("8".to_string(), "Program Shift A");
-    map.insert("9".to_string(), "Program Shift S");
-    map
-});
-
-static PRINT_CONV_182: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_183: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Did not fire");
-    map.insert("1".to_string(), "Fired");
-    map.insert("2".to_string(), "External Flash, Did not fire");
-    map.insert("3".to_string(), "External Flash, Fired");
-    map
-});
-
-static PRINT_CONV_184: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Horizontal (normal)");
-    map.insert("1".to_string(), "Rotate 90 CW");
-    map.insert("2".to_string(), "Rotate 270 CW");
-    map
-});
-
-static PRINT_CONV_185: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Off");
-    map.insert("2".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_186: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Fired, Autoflash");
-    map.insert("17".to_string(), "Fired, Autoflash, Red-eye reduction");
-    map.insert("18".to_string(), "Fired, Fill-flash, Red-eye reduction");
-    map.insert("2".to_string(), "Fired, Fill-flash");
-    map.insert("3".to_string(), "Fired, Rear Sync");
-    map.insert("34".to_string(), "Fired, Fill-flash, HSS");
-    map.insert("4".to_string(), "Fired, Wireless");
-    map.insert("5".to_string(), "Did not fire");
-    map.insert("6".to_string(), "Fired, Slow Sync");
-    map
-});
-
-static PRINT_CONV_187: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Manual");
-    map.insert("1".to_string(), "AF-S");
-    map.insert("2".to_string(), "AF-C");
-    map.insert("3".to_string(), "AF-A");
-    map.insert("4".to_string(), "DMF");
-    map
-});
-
-static PRINT_CONV_188: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("2".to_string(), "Empty");
-    map.insert("3".to_string(), "Very Low");
-    map.insert("4".to_string(), "Low");
-    map.insert("5".to_string(), "Sufficient");
-    map.insert("6".to_string(), "Full");
-    map
-});
-
-static PRINT_CONV_189: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Not confirmed");
-    map.insert("4".to_string(), "Not confirmed, Tracking");
-    map
-});
-
-static PRINT_CONV_190: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Large");
-    map.insert("2".to_string(), "Medium");
-    map.insert("3".to_string(), "Small");
-    map
-});
-
-static PRINT_CONV_191: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "3:2");
-    map.insert("2".to_string(), "16:9");
-    map
-});
-
-static PRINT_CONV_192: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "RAW");
-    map.insert("16".to_string(), "Extra Fine");
-    map.insert("2".to_string(), "CRAW");
-    map.insert("32".to_string(), "Fine");
-    map.insert("34".to_string(), "RAW + JPEG");
-    map.insert("35".to_string(), "CRAW + JPEG");
-    map.insert("48".to_string(), "Standard");
-    map
-});
-
-static PRINT_CONV_193: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("33".to_string(), "1/3 EV");
-    map.insert("50".to_string(), "1/2 EV");
-    map
-});
-
-static PRINT_CONV_194: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Single Frame");
-    map.insert("10".to_string(), "Remote Commander");
-    map.insert("11".to_string(), "Continuous Self-timer");
-    map.insert("2".to_string(), "Continuous High");
-    map.insert("4".to_string(), "Self-timer 10 sec");
-    map.insert("5".to_string(), "Self-timer 2 sec, Mirror Lock-up");
-    map.insert("7".to_string(), "Continuous Bracketing");
-    map
-});
-
-static PRINT_CONV_195: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Autoflash");
-    map.insert("2".to_string(), "Rear Sync");
-    map.insert("3".to_string(), "Wireless");
-    map.insert("4".to_string(), "Fill-flash");
-    map.insert("5".to_string(), "Flash Off");
-    map.insert("6".to_string(), "Slow Sync");
-    map
-});
-
-static PRINT_CONV_196: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("5".to_string(), "Adobe RGB");
-    map.insert("6".to_string(), "sRGB");
-    map
-});
-
-static PRINT_CONV_197: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("12".to_string(), "Color Temperature");
-    map.insert("13".to_string(), "Color Filter");
-    map.insert("14".to_string(), "Custom");
-    map.insert("16".to_string(), "Cloudy");
-    map.insert("17".to_string(), "Shade");
-    map.insert("2".to_string(), "Auto");
-    map.insert("4".to_string(), "Daylight");
-    map.insert("5".to_string(), "Fluorescent");
-    map.insert("6".to_string(), "Tungsten");
-    map.insert("7".to_string(), "Flash");
-    map
-});
-
-static PRINT_CONV_198: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Manual");
-    map.insert("1".to_string(), "AF-S");
-    map.insert("2".to_string(), "AF-C");
-    map.insert("3".to_string(), "AF-A");
-    map
-});
-
-static PRINT_CONV_199: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Wide");
-    map.insert("1".to_string(), "Local");
-    map.insert("2".to_string(), "Spot");
-    map
-});
-
-static PRINT_CONV_200: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Center");
-    map.insert("2".to_string(), "Top");
-    map.insert("3".to_string(), "Upper-right");
-    map.insert("4".to_string(), "Right");
-    map.insert("5".to_string(), "Lower-right");
-    map.insert("6".to_string(), "Bottom");
-    map.insert("7".to_string(), "Lower-left");
-    map.insert("8".to_string(), "Left");
-    map.insert("9".to_string(), "Upper-left");
-    map
-});
-
-static PRINT_CONV_201: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Multi-segment");
-    map.insert("2".to_string(), "Center-weighted average");
-    map.insert("4".to_string(), "Spot");
-    map
-});
-
-static PRINT_CONV_202: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Standard");
-    map.insert("2".to_string(), "Advanced Auto");
-    map.insert("3".to_string(), "Advanced Level");
-    map
-});
-
-static PRINT_CONV_203: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Standard");
-    map.insert("2".to_string(), "Vivid");
-    map.insert("3".to_string(), "Portrait");
-    map.insert("4".to_string(), "Landscape");
-    map.insert("5".to_string(), "Sunset");
-    map.insert("6".to_string(), "Night View/Portrait");
-    map.insert("8".to_string(), "B&W");
-    map
-});
-
-static PRINT_CONV_204: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "ADI");
-    map.insert("1".to_string(), "Pre-flash TTL");
-    map.insert("2".to_string(), "Manual");
-    map
-});
-
-static PRINT_CONV_205: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_206: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Low");
-    map.insert("2".to_string(), "Normal");
-    map.insert("3".to_string(), "High");
-    map
-});
-
-static PRINT_CONV_207: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Standard");
-    map.insert("2".to_string(), "Vivid");
-    map.insert("3".to_string(), "Portrait");
-    map.insert("4".to_string(), "Landscape");
-    map.insert("5".to_string(), "Sunset");
-    map.insert("7".to_string(), "Night View/Portrait");
-    map.insert("8".to_string(), "B&W");
-    map
-});
-
-static PRINT_CONV_208: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Auto");
-    map.insert("1".to_string(), "Manual");
-    map.insert("16".to_string(), "Portrait");
-    map.insert("17".to_string(), "Sports");
-    map.insert("18".to_string(), "Sunset");
-    map.insert("19".to_string(), "Night Portrait");
-    map.insert("2".to_string(), "Program AE");
-    map.insert("20".to_string(), "Landscape");
-    map.insert("21".to_string(), "Macro");
-    map.insert("3".to_string(), "Aperture-priority AE");
-    map.insert("35".to_string(), "Auto No Flash");
-    map.insert("4".to_string(), "Shutter speed priority AE");
-    map.insert("8".to_string(), "Program Shift A");
-    map.insert("9".to_string(), "Program Shift S");
-    map
-});
-
-static PRINT_CONV_209: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_210: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Did not fire");
-    map.insert("1".to_string(), "Fired");
-    map.insert("2".to_string(), "External Flash, Did not fire");
-    map.insert("3".to_string(), "External Flash, Fired");
-    map
-});
-
-static PRINT_CONV_211: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Horizontal (normal)");
-    map.insert("1".to_string(), "Rotate 90 CW");
-    map.insert("2".to_string(), "Rotate 270 CW");
-    map
-});
-
-static PRINT_CONV_212: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Off");
-    map.insert("2".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_213: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Fired, Autoflash");
-    map.insert("17".to_string(), "Fired, Autoflash, Red-eye reduction");
-    map.insert("18".to_string(), "Fired, Fill-flash, Red-eye reduction");
-    map.insert("2".to_string(), "Fired, Fill-flash");
-    map.insert("3".to_string(), "Fired, Rear Sync");
-    map.insert("34".to_string(), "Fired, Fill-flash, HSS");
-    map.insert("4".to_string(), "Fired, Wireless");
-    map.insert("5".to_string(), "Did not fire");
-    map.insert("6".to_string(), "Fired, Slow Sync");
-    map
-});
-
-static PRINT_CONV_214: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Manual");
-    map.insert("1".to_string(), "AF-S");
-    map.insert("2".to_string(), "AF-C");
-    map.insert("3".to_string(), "AF-A");
-    map
-});
-
-static PRINT_CONV_215: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Not confirmed");
-    map.insert("4".to_string(), "Not confirmed, Tracking");
-    map
-});
-
-static PRINT_CONV_216: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Large");
-    map.insert("2".to_string(), "Medium");
-    map.insert("3".to_string(), "Small");
-    map
-});
-
-static PRINT_CONV_217: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "3:2");
-    map.insert("2".to_string(), "16:9");
-    map
-});
-
-static PRINT_CONV_218: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "RAW");
-    map.insert("16".to_string(), "Extra Fine");
-    map.insert("2".to_string(), "CRAW");
-    map.insert("32".to_string(), "Fine");
-    map.insert("34".to_string(), "RAW + JPEG");
-    map.insert("35".to_string(), "CRAW + JPEG");
-    map.insert("48".to_string(), "Standard");
-    map
-});
-
-static PRINT_CONV_219: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("33".to_string(), "1/3 EV");
-    map.insert("50".to_string(), "1/2 EV");
-    map
-});
-
-static PRINT_CONV_220: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Unknown E-mount lens or other lens");
-    map.insert("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN");
-    map.insert("0.10".to_string(), "Zeiss Touit 50mm F2.8 Macro");
-    map.insert("0.11".to_string(), "Zeiss Loxia 50mm F2");
-    map.insert("0.12".to_string(), "Zeiss Loxia 35mm F2");
-    map.insert("0.13".to_string(), "Viltrox 85mm F1.8");
-    map.insert("0.2".to_string(), "Sigma 30mm F2.8 [EX] DN");
-    map.insert("0.3".to_string(), "Sigma 60mm F2.8 DN");
-    map.insert("0.4".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
-    map.insert("0.5".to_string(), "Tamron 18-200mm F3.5-6.3 Di III VC");
-    map.insert("0.6".to_string(), "Tokina FiRIN 20mm F2 FE AF");
-    map.insert("0.7".to_string(), "Tokina FiRIN 20mm F2 FE MF");
-    map.insert("0.8".to_string(), "Zeiss Touit 12mm F2.8");
-    map.insert("0.9".to_string(), "Zeiss Touit 32mm F1.8");
-    map.insert("1".to_string(), "Sony LA-EA1 or Sigma MC-11 Adapter");
-    map.insert("13".to_string(), "Samyang AF 35-150mm F2-2.8");
-    map.insert("184".to_string(), "Metabones Canon EF Speed Booster Ultra");
-    map.insert("2".to_string(), "Sony LA-EA2 Adapter");
-    map.insert("20".to_string(), "Samyang AF 35mm F1.4 P FE");
-    map.insert("21".to_string(), "Samyang AF 14-24mm F2.8");
-    map.insert(
-        "234".to_string(),
-        "Metabones Canon EF Smart Adapter Mark IV",
-    );
-    map.insert("239".to_string(), "Metabones Canon EF Speed Booster");
-    map.insert("24593".to_string(), "LA-EA4r MonsterAdapter");
-    map.insert("3".to_string(), "Sony LA-EA3 Adapter");
-    map.insert("32784".to_string(), "Sony E 16mm F2.8");
-    map.insert("32785".to_string(), "Sony E 18-55mm F3.5-5.6 OSS");
-    map.insert("32786".to_string(), "Sony E 55-210mm F4.5-6.3 OSS");
-    map.insert("32787".to_string(), "Sony E 18-200mm F3.5-6.3 OSS");
-    map.insert("32788".to_string(), "Sony E 30mm F3.5 Macro");
-    map.insert(
-        "32789".to_string(),
-        "Sony E 24mm F1.8 ZA or Samyang AF 50mm F1.4",
-    );
-    map.insert("32789.1".to_string(), "Samyang AF 50mm F1.4");
-    map.insert(
-        "32790".to_string(),
-        "Sony E 50mm F1.8 OSS or Samyang AF 14mm F2.8",
-    );
-    map.insert("32790.1".to_string(), "Samyang AF 14mm F2.8");
-    map.insert("32791".to_string(), "Sony E 16-70mm F4 ZA OSS");
-    map.insert("32792".to_string(), "Sony E 10-18mm F4 OSS");
-    map.insert("32793".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS");
-    map.insert("32794".to_string(), "Sony FE 35mm F2.8 ZA or Samyang Lens");
-    map.insert("32794.1".to_string(), "Samyang AF 24mm F2.8");
-    map.insert("32794.2".to_string(), "Samyang AF 35mm F2.8");
-    map.insert("32795".to_string(), "Sony FE 24-70mm F4 ZA OSS");
-    map.insert(
-        "32796".to_string(),
-        "Sony FE 85mm F1.8 or Viltrox PFU RBMH 85mm F1.8",
-    );
-    map.insert("32796.1".to_string(), "Viltrox PFU RBMH 85mm F1.8");
-    map.insert("32797".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
-    map.insert("32798".to_string(), "Sony E 20mm F2.8");
-    map.insert("32799".to_string(), "Sony E 35mm F1.8 OSS");
-    map.insert("32800".to_string(), "Sony E PZ 18-105mm F4 G OSS");
-    map.insert("32801".to_string(), "Sony FE 12-24mm F4 G");
-    map.insert("32802".to_string(), "Sony FE 90mm F2.8 Macro G OSS");
-    map.insert("32803".to_string(), "Sony E 18-50mm F4-5.6");
-    map.insert("32804".to_string(), "Sony FE 24mm F1.4 GM");
-    map.insert("32805".to_string(), "Sony FE 24-105mm F4 G OSS");
-    map.insert("32807".to_string(), "Sony E PZ 18-200mm F3.5-6.3 OSS");
-    map.insert("32808".to_string(), "Sony FE 55mm F1.8 ZA");
-    map.insert("32810".to_string(), "Sony FE 70-200mm F4 G OSS");
-    map.insert("32811".to_string(), "Sony FE 16-35mm F4 ZA OSS");
-    map.insert("32812".to_string(), "Sony FE 50mm F2.8 Macro");
-    map.insert("32813".to_string(), "Sony FE 28-70mm F3.5-5.6 OSS");
-    map.insert("32814".to_string(), "Sony FE 35mm F1.4 ZA");
-    map.insert("32815".to_string(), "Sony FE 24-240mm F3.5-6.3 OSS");
-    map.insert("32816".to_string(), "Sony FE 28mm F2");
-    map.insert("32817".to_string(), "Sony FE PZ 28-135mm F4 G OSS");
-    map.insert("32819".to_string(), "Sony FE 100mm F2.8 STF GM OSS");
-    map.insert("32820".to_string(), "Sony E PZ 18-110mm F4 G OSS");
-    map.insert("32821".to_string(), "Sony FE 24-70mm F2.8 GM");
-    map.insert("32822".to_string(), "Sony FE 50mm F1.4 ZA");
-    map.insert(
-        "32823".to_string(),
-        "Sony FE 85mm F1.4 GM or Samyang AF 85mm F1.4",
-    );
-    map.insert("32823.1".to_string(), "Samyang AF 85mm F1.4");
-    map.insert("32824".to_string(), "Sony FE 50mm F1.8");
-    map.insert(
-        "32826".to_string(),
-        "Sony FE 21mm F2.8 (SEL28F20 + SEL075UWC)",
-    );
-    map.insert(
-        "32827".to_string(),
-        "Sony FE 16mm F3.5 Fisheye (SEL28F20 + SEL057FEC)",
-    );
-    map.insert("32828".to_string(), "Sony FE 70-300mm F4.5-5.6 G OSS");
-    map.insert("32829".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS");
-    map.insert("32830".to_string(), "Sony FE 70-200mm F2.8 GM OSS");
-    map.insert("32831".to_string(), "Sony FE 16-35mm F2.8 GM");
-    map.insert("32848".to_string(), "Sony FE 400mm F2.8 GM OSS");
-    map.insert("32849".to_string(), "Sony E 18-135mm F3.5-5.6 OSS");
-    map.insert("32850".to_string(), "Sony FE 135mm F1.8 GM");
-    map.insert("32851".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS");
-    map.insert("32852".to_string(), "Sony FE 600mm F4 GM OSS");
-    map.insert("32853".to_string(), "Sony E 16-55mm F2.8 G");
-    map.insert("32854".to_string(), "Sony E 70-350mm F4.5-6.3 G OSS");
-    map.insert("32855".to_string(), "Sony FE C 16-35mm T3.1 G");
-    map.insert("32858".to_string(), "Sony FE 35mm F1.8");
-    map.insert("32859".to_string(), "Sony FE 20mm F1.8 G");
-    map.insert("32860".to_string(), "Sony FE 12-24mm F2.8 GM");
-    map.insert("32862".to_string(), "Sony FE 50mm F1.2 GM");
-    map.insert("32863".to_string(), "Sony FE 14mm F1.8 GM");
-    map.insert("32864".to_string(), "Sony FE 28-60mm F4-5.6");
-    map.insert("32865".to_string(), "Sony FE 35mm F1.4 GM");
-    map.insert("32866".to_string(), "Sony FE 24mm F2.8 G");
-    map.insert("32867".to_string(), "Sony FE 40mm F2.5 G");
-    map.insert("32868".to_string(), "Sony FE 50mm F2.5 G");
-    map.insert("32871".to_string(), "Sony FE PZ 16-35mm F4 G");
-    map.insert("32873".to_string(), "Sony E PZ 10-20mm F4 G");
-    map.insert("32874".to_string(), "Sony FE 70-200mm F2.8 GM OSS II");
-    map.insert("32875".to_string(), "Sony FE 24-70mm F2.8 GM II");
-    map.insert("32876".to_string(), "Sony E 11mm F1.8");
-    map.insert("32877".to_string(), "Sony E 15mm F1.4 G");
-    map.insert("32878".to_string(), "Sony FE 20-70mm F4 G");
-    map.insert("32879".to_string(), "Sony FE 50mm F1.4 GM");
-    map.insert("32880".to_string(), "Sony FE 16mm F1.8 G");
-    map.insert("32881".to_string(), "Sony FE 24-50mm F2.8 G");
-    map.insert("32882".to_string(), "Sony FE 16-25mm F2.8 G");
-    map.insert("32884".to_string(), "Sony FE 70-200mm F4 Macro G OSS II");
-    map.insert("32885".to_string(), "Sony FE 16-35mm F2.8 GM II");
-    map.insert("32886".to_string(), "Sony FE 300mm F2.8 GM OSS");
-    map.insert("32887".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS II");
-    map.insert("32888".to_string(), "Sony FE 85mm F1.4 GM II");
-    map.insert("32889".to_string(), "Sony FE 28-70mm F2 GM");
-    map.insert("32890".to_string(), "Sony FE 400-800mm F6.3-8 G OSS");
-    map.insert("32891".to_string(), "Sony FE 50-150mm F2 GM");
-    map.insert(
-        "33072".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33073".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33076".to_string(),
-        "Sony FE 100mm F2.8 STF GM OSS (macro mode)",
-    );
-    map.insert(
-        "33077".to_string(),
-        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33078".to_string(),
-        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33079".to_string(),
-        "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33080".to_string(),
-        "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33081".to_string(),
-        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33082".to_string(),
-        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33083".to_string(),
-        "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33084".to_string(),
-        "Sony FE 600mm F4 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33085".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33086".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
-    );
-    map.insert(
-        "33087".to_string(),
-        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33088".to_string(),
-        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
-    );
-    map.insert(
-        "33089".to_string(),
-        "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33090".to_string(),
-        "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33091".to_string(),
-        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33092".to_string(),
-        "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
-    );
-    map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
-    map.insert(
-        "49201".to_string(),
-        "Zeiss Touit 12mm F2.8 or other Touit lens",
-    );
-    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
-    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
-    map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
-    map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
-    map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
-    map.insert("49217".to_string(), "Zeiss Batis 85mm F1.8");
-    map.insert("49218".to_string(), "Zeiss Batis 18mm F2.8");
-    map.insert("49219".to_string(), "Zeiss Batis 135mm F2.8");
-    map.insert("49220".to_string(), "Zeiss Batis 40mm F2 CF");
-    map.insert("49232".to_string(), "Zeiss Loxia 50mm F2");
-    map.insert("49233".to_string(), "Zeiss Loxia 35mm F2");
-    map.insert("49234".to_string(), "Zeiss Loxia 21mm F2.8");
-    map.insert("49235".to_string(), "Zeiss Loxia 85mm F2.4");
-    map.insert("49236".to_string(), "Zeiss Loxia 25mm F2.4");
-    map.insert("49456".to_string(), "Tamron E 18-200mm F3.5-6.3 Di III VC");
-    map.insert("49457".to_string(), "Tamron 28-75mm F2.8 Di III RXD");
-    map.insert("49458".to_string(), "Tamron 17-28mm F2.8 Di III RXD");
-    map.insert("49459".to_string(), "Tamron 35mm F2.8 Di III OSD M1:2");
-    map.insert("49460".to_string(), "Tamron 24mm F2.8 Di III OSD M1:2");
-    map.insert("49461".to_string(), "Tamron 20mm F2.8 Di III OSD M1:2");
-    map.insert("49462".to_string(), "Tamron 70-180mm F2.8 Di III VXD");
-    map.insert("49463".to_string(), "Tamron 28-200mm F2.8-5.6 Di III RXD");
-    map.insert("49464".to_string(), "Tamron 70-300mm F4.5-6.3 Di III RXD");
-    map.insert("49465".to_string(), "Tamron 17-70mm F2.8 Di III-A VC RXD");
-    map.insert("49466".to_string(), "Tamron 150-500mm F5-6.7 Di III VC VXD");
-    map.insert("49467".to_string(), "Tamron 11-20mm F2.8 Di III-A RXD");
-    map.insert(
-        "49468".to_string(),
-        "Tamron 18-300mm F3.5-6.3 Di III-A VC VXD",
-    );
-    map.insert("49469".to_string(), "Tamron 35-150mm F2-F2.8 Di III VXD");
-    map.insert("49470".to_string(), "Tamron 28-75mm F2.8 Di III VXD G2");
-    map.insert(
-        "49471".to_string(),
-        "Tamron 50-400mm F4.5-6.3 Di III VC VXD",
-    );
-    map.insert("49472".to_string(), "Tamron 20-40mm F2.8 Di III VXD");
-    map.insert(
-        "49473".to_string(),
-        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
-    );
-    map.insert("49473.1".to_string(), "Tokina atx-m 85mm F1.8 FE");
-    map.insert("49473.2".to_string(), "Viltrox 23mm F1.4 E");
-    map.insert("49473.3".to_string(), "Viltrox 56mm F1.4 E");
-    map.insert("49473.4".to_string(), "Viltrox 85mm F1.8 II FE");
-    map.insert(
-        "49474".to_string(),
-        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
-    );
-    map.insert("49474.1".to_string(), "Viltrox 13mm F1.4 E");
-    map.insert("49474.10".to_string(), "Viltrox 20mm F2.8 FE");
-    map.insert("49474.2".to_string(), "Viltrox 16mm F1.8 FE");
-    map.insert("49474.3".to_string(), "Viltrox 23mm F1.4 E");
-    map.insert("49474.4".to_string(), "Viltrox 24mm F1.8 FE");
-    map.insert("49474.5".to_string(), "Viltrox 28mm F1.8 FE");
-    map.insert("49474.6".to_string(), "Viltrox 33mm F1.4 E");
-    map.insert("49474.7".to_string(), "Viltrox 35mm F1.8 FE");
-    map.insert("49474.8".to_string(), "Viltrox 50mm F1.8 FE");
-    map.insert("49474.9".to_string(), "Viltrox 75mm F1.2 E");
-    map.insert(
-        "49475".to_string(),
-        "Tamron 50-300mm F4.5-6.3 Di III VC VXD",
-    );
-    map.insert("49476".to_string(), "Tamron 28-300mm F4-7.1 Di III VC VXD");
-    map.insert("49477".to_string(), "Tamron 90mm F2.8 Di III Macro VXD");
-    map.insert("49712".to_string(), "Tokina FiRIN 20mm F2 FE AF");
-    map.insert("49713".to_string(), "Tokina FiRIN 100mm F2.8 FE MACRO");
-    map.insert("49714".to_string(), "Tokina atx-m 11-18mm F2.8 E");
-    map.insert("50480".to_string(), "Sigma 30mm F1.4 DC DN | C");
-    map.insert("50481".to_string(), "Sigma 50mm F1.4 DG HSM | A");
-    map.insert(
-        "50482".to_string(),
-        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
-    );
-    map.insert("50483".to_string(), "Sigma 18-35mm F1.8 DC HSM | A + MC-11");
-    map.insert("50484".to_string(), "Sigma 24-35mm F2 DG HSM | A + MC-11");
-    map.insert("50485".to_string(), "Sigma 24mm F1.4 DG HSM | A + MC-11");
-    map.insert(
-        "50486".to_string(),
-        "Sigma 150-600mm F5-6.3 DG OS HSM | C + MC-11",
-    );
-    map.insert("50487".to_string(), "Sigma 20mm F1.4 DG HSM | A + MC-11");
-    map.insert("50488".to_string(), "Sigma 35mm F1.4 DG HSM | A");
-    map.insert(
-        "50489".to_string(),
-        "Sigma 150-600mm F5-6.3 DG OS HSM | S + MC-11",
-    );
-    map.insert(
-        "50490".to_string(),
-        "Sigma 120-300mm F2.8 DG OS HSM | S + MC-11",
-    );
-    map.insert(
-        "50492".to_string(),
-        "Sigma 24-105mm F4 DG OS HSM | A + MC-11",
-    );
-    map.insert(
-        "50493".to_string(),
-        "Sigma 17-70mm F2.8-4 DC MACRO OS HSM | C + MC-11",
-    );
-    map.insert(
-        "50495".to_string(),
-        "Sigma 50-100mm F1.8 DC HSM | A + MC-11",
-    );
-    map.insert("50499".to_string(), "Sigma 85mm F1.4 DG HSM | A");
-    map.insert(
-        "50501".to_string(),
-        "Sigma 100-400mm F5-6.3 DG OS HSM | C + MC-11",
-    );
-    map.insert("50503".to_string(), "Sigma 16mm F1.4 DC DN | C");
-    map.insert("50507".to_string(), "Sigma 105mm F1.4 DG HSM | A");
-    map.insert("50508".to_string(), "Sigma 56mm F1.4 DC DN | C");
-    map.insert(
-        "50512".to_string(),
-        "Sigma 70-200mm F2.8 DG OS HSM | S + MC-11",
-    );
-    map.insert("50513".to_string(), "Sigma 70mm F2.8 DG MACRO | A");
-    map.insert("50514".to_string(), "Sigma 45mm F2.8 DG DN | C");
-    map.insert("50515".to_string(), "Sigma 35mm F1.2 DG DN | A");
-    map.insert("50516".to_string(), "Sigma 14-24mm F2.8 DG DN | A");
-    map.insert("50517".to_string(), "Sigma 24-70mm F2.8 DG DN | A");
-    map.insert("50518".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C");
-    map.insert("50521".to_string(), "Sigma 85mm F1.4 DG DN | A");
-    map.insert("50522".to_string(), "Sigma 105mm F2.8 DG DN MACRO | A");
-    map.insert("50523".to_string(), "Sigma 65mm F2 DG DN | C");
-    map.insert("50524".to_string(), "Sigma 35mm F2 DG DN | C");
-    map.insert("50525".to_string(), "Sigma 24mm F3.5 DG DN | C");
-    map.insert("50526".to_string(), "Sigma 28-70mm F2.8 DG DN | C");
-    map.insert("50527".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S");
-    map.insert("50528".to_string(), "Sigma 35mm F1.4 DG DN | A");
-    map.insert("50529".to_string(), "Sigma 90mm F2.8 DG DN | C");
-    map.insert("50530".to_string(), "Sigma 24mm F2 DG DN | C");
-    map.insert("50531".to_string(), "Sigma 18-50mm F2.8 DC DN | C");
-    map.insert("50532".to_string(), "Sigma 20mm F2 DG DN | C");
-    map.insert("50533".to_string(), "Sigma 16-28mm F2.8 DG DN | C");
-    map.insert("50534".to_string(), "Sigma 20mm F1.4 DG DN | A");
-    map.insert("50535".to_string(), "Sigma 24mm F1.4 DG DN | A");
-    map.insert("50536".to_string(), "Sigma 60-600mm F4.5-6.3 DG DN OS | S");
-    map.insert("50537".to_string(), "Sigma 50mm F2 DG DN | C");
-    map.insert("50538".to_string(), "Sigma 17mm F4 DG DN | C");
-    map.insert("50539".to_string(), "Sigma 50mm F1.4 DG DN | A");
-    map.insert("50540".to_string(), "Sigma 14mm F1.4 DG DN | A");
-    map.insert("50543".to_string(), "Sigma 70-200mm F2.8 DG DN OS | S");
-    map.insert("50544".to_string(), "Sigma 23mm F1.4 DC DN | C");
-    map.insert("50545".to_string(), "Sigma 24-70mm F2.8 DG DN II | A");
-    map.insert("50546".to_string(), "Sigma 500mm F5.6 DG DN OS | S");
-    map.insert("50547".to_string(), "Sigma 10-18mm F2.8 DC DN | C");
-    map.insert(
-        "50548".to_string(),
-        "Sigma 15mm F1.4 DG DN DIAGONAL FISHEYE | A",
-    );
-    map.insert("50549".to_string(), "Sigma 50mm F1.2 DG DN | A");
-    map.insert("50550".to_string(), "Sigma 28-105mm F2.8 DG DN | A");
-    map.insert("50551".to_string(), "Sigma 28-45mm F1.8 DG DN | A");
-    map.insert("50553".to_string(), "Sigma 300-600mm F4 DG OS | S");
-    map.insert(
-        "50992".to_string(),
-        "Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III",
-    );
-    map.insert(
-        "50993".to_string(),
-        "Voigtlander HELIAR-HYPER WIDE 10mm F5.6",
-    );
-    map.insert(
-        "50994".to_string(),
-        "Voigtlander ULTRA WIDE-HELIAR 12mm F5.6 III",
-    );
-    map.insert(
-        "50995".to_string(),
-        "Voigtlander MACRO APO-LANTHAR 65mm F2 Aspherical",
-    );
-    map.insert(
-        "50996".to_string(),
-        "Voigtlander NOKTON 40mm F1.2 Aspherical",
-    );
-    map.insert("50997".to_string(), "Voigtlander NOKTON classic 35mm F1.4");
-    map.insert(
-        "50998".to_string(),
-        "Voigtlander MACRO APO-LANTHAR 110mm F2.5",
-    );
-    map.insert(
-        "50999".to_string(),
-        "Voigtlander COLOR-SKOPAR 21mm F3.5 Aspherical",
-    );
-    map.insert(
-        "51000".to_string(),
-        "Voigtlander NOKTON 50mm F1.2 Aspherical",
-    );
-    map.insert(
-        "51001".to_string(),
-        "Voigtlander NOKTON 21mm F1.4 Aspherical",
-    );
-    map.insert(
-        "51002".to_string(),
-        "Voigtlander APO-LANTHAR 50mm F2 Aspherical",
-    );
-    map.insert(
-        "51003".to_string(),
-        "Voigtlander NOKTON 35mm F1.2 Aspherical SE",
-    );
-    map.insert(
-        "51006".to_string(),
-        "Voigtlander APO-LANTHAR 35mm F2 Aspherical",
-    );
-    map.insert("51007".to_string(), "Voigtlander NOKTON 50mm F1 Aspherical");
-    map.insert(
-        "51008".to_string(),
-        "Voigtlander NOKTON 75mm F1.5 Aspherical",
-    );
-    map.insert(
-        "51009".to_string(),
-        "Voigtlander NOKTON 28mm F1.5 Aspherical",
-    );
-    map.insert("51072".to_string(), "ZEISS Otus ML 50mm F1.4");
-    map.insert("51073".to_string(), "ZEISS Otus ML 85mm F1.4");
-    map.insert("51504".to_string(), "Samyang AF 50mm F1.4");
-    map.insert(
-        "51505".to_string(),
-        "Samyang AF 14mm F2.8 or Samyang AF 35mm F2.8",
-    );
-    map.insert("51505.1".to_string(), "Samyang AF 35mm F2.8");
-    map.insert("51507".to_string(), "Samyang AF 35mm F1.4");
-    map.insert("51508".to_string(), "Samyang AF 45mm F1.8");
-    map.insert(
-        "51510".to_string(),
-        "Samyang AF 18mm F2.8 or Samyang AF 35mm F1.8",
-    );
-    map.insert("51510.1".to_string(), "Samyang AF 35mm F1.8");
-    map.insert("51512".to_string(), "Samyang AF 75mm F1.8");
-    map.insert("51513".to_string(), "Samyang AF 35mm F1.8");
-    map.insert("51514".to_string(), "Samyang AF 24mm F1.8");
-    map.insert("51515".to_string(), "Samyang AF 12mm F2.0");
-    map.insert("51516".to_string(), "Samyang AF 24-70mm F2.8");
-    map.insert("51517".to_string(), "Samyang AF 50mm F1.4 II");
-    map.insert("51518".to_string(), "Samyang AF 135mm F1.8");
-    map.insert("6".to_string(), "Sony LA-EA4 Adapter");
-    map.insert("61569".to_string(), "LAOWA FFII 10mm F2.8 C&D Dreamer");
-    map.insert("61761".to_string(), "Viltrox 28mm F4.5 FE");
-    map.insert("7".to_string(), "Sony LA-EA5 Adapter");
-    map.insert(
-        "78".to_string(),
-        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
-    );
-    map
-});
-
-static PRINT_CONV_221: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("2".to_string(), "RAW");
-    map.insert("4".to_string(), "RAW + JPEG");
-    map.insert("6".to_string(), "Fine");
-    map.insert("7".to_string(), "Standard");
-    map
-});
-
-static PRINT_CONV_222: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Off");
-    map.insert("16".to_string(), "On (Auto)");
-    map.insert("17".to_string(), "On (Manual)");
-    map
-});
-
-static PRINT_CONV_223: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "No");
-    map.insert("16".to_string(), "Yes");
-    map
-});
-
-static PRINT_CONV_224: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "n/a");
-    map.insert("16".to_string(), "40 Segment");
-    map.insert("32".to_string(), "1200-zone Evaluative");
-    map
-});
-
-static PRINT_CONV_225: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "n/a");
-    map.insert("16".to_string(), "Viewfinder");
-    map.insert("33".to_string(), "Focus Check Live View");
-    map.insert("34".to_string(), "Quick AF Live View");
-    map
-});
-
-static PRINT_CONV_226: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "On");
-    map.insert("2".to_string(), "Off");
-    map
-});
-
-static PRINT_CONV_227: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Off");
-    map.insert("2".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_228: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "None");
-    map.insert("2".to_string(), "Off");
-    map.insert("3".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_229: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "n/a");
-    map.insert("1".to_string(), "AF");
-    map.insert("16".to_string(), "Manual");
-    map
-});
-
-static PRINT_CONV_230: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "sRGB");
-    map.insert("2".to_string(), "Adobe RGB");
-    map
-});
-
-static PRINT_CONV_231: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("16".to_string(), "Standard");
-    map.insert("160".to_string(), "Sunset");
-    map.insert("32".to_string(), "Vivid");
-    map.insert("64".to_string(), "Portrait");
-    map.insert("80".to_string(), "Landscape");
-    map.insert("96".to_string(), "B&W");
-    map
-});
-
-static PRINT_CONV_232: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Unknown");
-    map.insert("16".to_string(), "A-mount");
-    map.insert("17".to_string(), "E-mount");
-    map
-});
-
-static PRINT_CONV_233: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("100".to_string(), "Fluorescent (+1)");
-    map.insert("101".to_string(), "Fluorescent (+2)");
-    map.insert("102".to_string(), "Fluorescent (+3)");
-    map.insert("112".to_string(), "Flash (-3)");
-    map.insert("113".to_string(), "Flash (-2)");
-    map.insert("114".to_string(), "Flash (-1)");
-    map.insert("115".to_string(), "Flash (0)");
-    map.insert("116".to_string(), "Flash (+1)");
-    map.insert("117".to_string(), "Flash (+2)");
-    map.insert("118".to_string(), "Flash (+3)");
-    map.insert("16".to_string(), "Auto (-3)");
-    map.insert("163".to_string(), "Custom");
-    map.insert("17".to_string(), "Auto (-2)");
-    map.insert("18".to_string(), "Auto (-1)");
-    map.insert("19".to_string(), "Auto (0)");
-    map.insert("20".to_string(), "Auto (+1)");
-    map.insert("21".to_string(), "Auto (+2)");
-    map.insert("22".to_string(), "Auto (+3)");
-    map.insert("243".to_string(), "Color Temperature/Color Filter");
-    map.insert("32".to_string(), "Daylight (-3)");
-    map.insert("33".to_string(), "Daylight (-2)");
-    map.insert("34".to_string(), "Daylight (-1)");
-    map.insert("35".to_string(), "Daylight (0)");
-    map.insert("36".to_string(), "Daylight (+1)");
-    map.insert("37".to_string(), "Daylight (+2)");
-    map.insert("38".to_string(), "Daylight (+3)");
-    map.insert("48".to_string(), "Shade (-3)");
-    map.insert("49".to_string(), "Shade (-2)");
-    map.insert("50".to_string(), "Shade (-1)");
-    map.insert("51".to_string(), "Shade (0)");
-    map.insert("52".to_string(), "Shade (+1)");
-    map.insert("53".to_string(), "Shade (+2)");
-    map.insert("54".to_string(), "Shade (+3)");
-    map.insert("64".to_string(), "Cloudy (-3)");
-    map.insert("65".to_string(), "Cloudy (-2)");
-    map.insert("66".to_string(), "Cloudy (-1)");
-    map.insert("67".to_string(), "Cloudy (0)");
-    map.insert("68".to_string(), "Cloudy (+1)");
-    map.insert("69".to_string(), "Cloudy (+2)");
-    map.insert("70".to_string(), "Cloudy (+3)");
-    map.insert("80".to_string(), "Tungsten (-3)");
-    map.insert("81".to_string(), "Tungsten (-2)");
-    map.insert("82".to_string(), "Tungsten (-1)");
-    map.insert("83".to_string(), "Tungsten (0)");
-    map.insert("84".to_string(), "Tungsten (+1)");
-    map.insert("85".to_string(), "Tungsten (+2)");
-    map.insert("86".to_string(), "Tungsten (+3)");
-    map.insert("96".to_string(), "Fluorescent (-3)");
-    map.insert("97".to_string(), "Fluorescent (-2)");
-    map.insert("98".to_string(), "Fluorescent (-1)");
-    map.insert("99".to_string(), "Fluorescent (0)");
-    map
-});
-
-static PRINT_CONV_234: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Flash Off");
-    map.insert("16".to_string(), "Autoflash");
-    map.insert("17".to_string(), "Fill-flash");
-    map.insert("18".to_string(), "Slow Sync");
-    map.insert("19".to_string(), "Rear Sync");
-    map.insert("20".to_string(), "Wireless");
-    map
-});
-
-static PRINT_CONV_235: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "ADI Flash");
-    map.insert("2".to_string(), "Pre-flash TTL");
-    map
-});
-
-static PRINT_CONV_236: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Wide");
-    map.insert("2".to_string(), "Spot");
-    map.insert("3".to_string(), "Local");
-    map.insert("4".to_string(), "Flexible");
-    map
-});
-
-static PRINT_CONV_237: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Off");
-    map.insert("16".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_238: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("16".to_string(), "Low");
-    map.insert("17".to_string(), "High");
-    map.insert("19".to_string(), "Auto");
-    map
-});
-
-static PRINT_CONV_239: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("17".to_string(), "Slight Smile");
-    map.insert("18".to_string(), "Normal Smile");
-    map.insert("19".to_string(), "Big Smile");
-    map
-});
-
-static PRINT_CONV_240: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Off");
-    map.insert("16".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_241: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Off");
-    map.insert("16".to_string(), "On (Auto)");
-    map.insert("17".to_string(), "On (Manual)");
-    map
-});
-
-static PRINT_CONV_242: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("33".to_string(), "1 EV");
-    map.insert("34".to_string(), "1.5 EV");
-    map.insert("35".to_string(), "2 EV");
-    map.insert("36".to_string(), "2.5 EV");
-    map.insert("37".to_string(), "3 EV");
-    map.insert("38".to_string(), "3.5 EV");
-    map.insert("39".to_string(), "4 EV");
-    map.insert("40".to_string(), "5 EV");
-    map.insert("41".to_string(), "6 EV");
-    map
-});
-
-static PRINT_CONV_243: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("16".to_string(), "ViewFinder");
-    map.insert("33".to_string(), "Focus Check Live View");
-    map.insert("34".to_string(), "Quick AF Live View");
-    map
-});
-
-static PRINT_CONV_244: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Off");
-    map.insert("16".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_245: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Off");
-    map.insert("16".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_246: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Standard");
-    map.insert("2".to_string(), "Wide");
-    map
-});
-
-static PRINT_CONV_247: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Right");
-    map.insert("2".to_string(), "Left");
-    map.insert("3".to_string(), "Up");
-    map.insert("4".to_string(), "Down");
-    map
-});
-
-static PRINT_CONV_248: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("113".to_string(), "Continuous Bracketing 0.3 EV");
-    map.insert("117".to_string(), "Continuous Bracketing 0.7 EV");
-    map.insert("145".to_string(), "White Balance Bracketing Low");
-    map.insert("146".to_string(), "White Balance Bracketing High");
-    map.insert("16".to_string(), "Single Frame");
-    map.insert("192".to_string(), "Remote Commander");
-    map.insert("209".to_string(), "Continuous - HDR");
-    map.insert("210".to_string(), "Continuous - Multi Frame NR");
-    map.insert("211".to_string(), "Continuous - Handheld Night Shot");
-    map.insert("212".to_string(), "Continuous - Anti Motion Blur");
-    map.insert("213".to_string(), "Continuous - Sweep Panorama");
-    map.insert("214".to_string(), "Continuous - 3D Sweep Panorama");
-    map.insert("33".to_string(), "Continuous High");
-    map.insert("34".to_string(), "Continuous Low");
-    map.insert("48".to_string(), "Speed Priority Continuous");
-    map.insert("81".to_string(), "Self-timer 10 sec");
-    map.insert("82".to_string(), "Self-timer 2 sec, Mirror Lock-up");
-    map
-});
-
-static PRINT_CONV_249: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "n/a");
-    map.insert("1".to_string(), "Off");
-    map.insert("16".to_string(), "On");
-    map.insert("255".to_string(), "None");
-    map
-});
-
-static PRINT_CONV_250: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "n/a");
-    map.insert("1".to_string(), "Phase-detect AF");
-    map.insert("2".to_string(), "Contrast AF");
-    map
-});
-
-static PRINT_CONV_251: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "n/a");
-    map.insert("1".to_string(), "Standard");
-    map.insert("2".to_string(), "Wide");
-    map.insert("3".to_string(), "16:9");
-    map
-});
-
-static PRINT_CONV_252: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "No");
-    map.insert("16".to_string(), "Yes");
-    map
-});
-
-static PRINT_CONV_253: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "n/a");
-    map.insert("16".to_string(), "40 Segment");
-    map.insert("32".to_string(), "1200-zone Evaluative");
-    map
-});
-
-static PRINT_CONV_254: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "n/a");
-    map.insert("16".to_string(), "Viewfinder");
-    map.insert("33".to_string(), "Focus Check Live View");
-    map.insert("34".to_string(), "Quick AF Live View");
-    map
-});
-
-static PRINT_CONV_255: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "On");
-    map.insert("2".to_string(), "Off");
-    map
-});
-
-static PRINT_CONV_256: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Off");
-    map.insert("2".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_257: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "None");
-    map.insert("2".to_string(), "Off");
-    map.insert("3".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_258: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "n/a");
-    map.insert("1".to_string(), "AF");
-    map.insert("16".to_string(), "Manual");
-    map
-});
-
-static PRINT_CONV_259: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("64".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_260: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("64".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_261: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Empty");
-    map.insert("2".to_string(), "Low");
-    map.insert("3".to_string(), "Half full");
-    map.insert("4".to_string(), "Almost full");
-    map.insert("5".to_string(), "Full");
-    map
-});
-
-static PRINT_CONV_262: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("241".to_string(), "Landscape");
-    map.insert("243".to_string(), "Aperture-priority AE");
-    map.insert("245".to_string(), "Portrait");
-    map.insert("246".to_string(), "Auto");
-    map.insert("247".to_string(), "Program AE");
-    map.insert("249".to_string(), "Macro");
-    map.insert("252".to_string(), "Sunset");
-    map.insert("253".to_string(), "Sports");
-    map.insert("255".to_string(), "Manual");
-    map
-});
-
-static PRINT_CONV_263: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("248".to_string(), "No Flash");
-    map.insert("249".to_string(), "Aperture-priority AE");
-    map.insert("250".to_string(), "SCN");
-    map.insert("251".to_string(), "Shutter speed priority AE");
-    map.insert("252".to_string(), "Auto");
-    map.insert("253".to_string(), "Program AE");
-    map.insert("254".to_string(), "Panorama");
-    map.insert("255".to_string(), "Manual");
-    map
-});
-
-static PRINT_CONV_264: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("244".to_string(), "MemoryStick in use, SD card present");
-    map.insert("245".to_string(), "MemoryStick in use, SD slot empty");
-    map.insert("252".to_string(), "SD card in use, MemoryStick present");
-    map.insert("254".to_string(), "SD card in use, MemoryStick slot empty");
-    map
-});
-
-static PRINT_CONV_265: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Horizontal (normal)");
-    map.insert("1".to_string(), "Rotate 90 CW");
-    map.insert("2".to_string(), "Rotate 270 CW");
-    map.insert("3".to_string(), "Rotate 180");
-    map
-});
-
-static PRINT_CONV_266: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Horizontal (normal)");
-    map.insert("1".to_string(), "Rotate 90 CW");
-    map.insert("2".to_string(), "Rotate 270 CW");
-    map.insert("3".to_string(), "Rotate 180");
-    map
-});
-
-static PRINT_CONV_267: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Standard");
-    map.insert("2".to_string(), "Advanced Auto");
-    map.insert("3".to_string(), "Advanced Level");
-    map
-});
-
-static PRINT_CONV_268: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Single Frame");
-    map.insert("10".to_string(), "Remote Commander");
-    map.insert("11".to_string(), "Continuous Self-timer");
-    map.insert("2".to_string(), "Continuous High");
-    map.insert("4".to_string(), "Self-timer 10 sec");
-    map.insert("5".to_string(), "Self-timer 2 sec, Mirror Lock-up");
-    map.insert("7".to_string(), "Continuous Bracketing");
-    map
-});
-
-static PRINT_CONV_269: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Single Frame");
-    map.insert("10".to_string(), "Remote Commander");
-    map.insert("11".to_string(), "Mirror Lock-up");
-    map.insert("18".to_string(), "Continuous Low");
-    map.insert("2".to_string(), "Continuous High");
-    map.insert("24".to_string(), "White Balance Bracketing Low");
-    map.insert("25".to_string(), "D-Range Optimizer Bracketing Low");
-    map.insert("4".to_string(), "Self-timer 10 sec");
-    map.insert("40".to_string(), "White Balance Bracketing High");
-    map.insert("41".to_string(), "D-Range Optimizer Bracketing High");
-    map.insert("5".to_string(), "Self-timer 2 sec, Mirror Lock-up");
-    map.insert("6".to_string(), "Single-frame Bracketing");
-    map.insert("7".to_string(), "Continuous Bracketing");
-    map
-});
-
-static PRINT_CONV_270: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Horizontal (normal)");
-    map.insert("1".to_string(), "Rotate 270 CW");
-    map.insert("2".to_string(), "Rotate 90 CW");
-    map
-});
-
-static PRINT_CONV_271: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_272: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Standard");
-    map.insert("2".to_string(), "Advanced Auto");
-    map.insert("3".to_string(), "Advanced Level");
-    map
-});
-
-static PRINT_CONV_273: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Low");
-    map.insert("2".to_string(), "High");
-    map
-});
-
-static PRINT_CONV_274: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Low");
-    map.insert("2".to_string(), "High");
-    map
-});
-
-static PRINT_CONV_275: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Auto");
-    map.insert("1".to_string(), "Manual");
-    map.insert("16".to_string(), "Portrait");
-    map.insert("17".to_string(), "Sports");
-    map.insert("18".to_string(), "Sunset");
-    map.insert("19".to_string(), "Night Portrait");
-    map.insert("2".to_string(), "Program AE");
-    map.insert("20".to_string(), "Landscape");
-    map.insert("21".to_string(), "Macro");
-    map.insert("3".to_string(), "Aperture-priority AE");
-    map.insert("35".to_string(), "Auto No Flash");
-    map.insert("4".to_string(), "Shutter speed priority AE");
-    map.insert("8".to_string(), "Program Shift A");
-    map.insert("9".to_string(), "Program Shift S");
-    map
-});
-
-static PRINT_CONV_276: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Standard");
-    map.insert("11".to_string(), "Neutral");
-    map.insert("12".to_string(), "Clear");
-    map.insert("13".to_string(), "Deep");
-    map.insert("14".to_string(), "Light");
-    map.insert("15".to_string(), "Autumn Leaves");
-    map.insert("16".to_string(), "Sepia");
-    map.insert("2".to_string(), "Vivid");
-    map.insert("3".to_string(), "Portrait");
-    map.insert("4".to_string(), "Landscape");
-    map.insert("5".to_string(), "Sunset");
-    map.insert("6".to_string(), "Night View/Portrait");
-    map.insert("8".to_string(), "B&W");
-    map.insert("9".to_string(), "Adobe RGB");
-    map
-});
-
-static PRINT_CONV_277: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_315: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Did not fire");
     map.insert("2".to_string(), "External Flash fired (2)");
@@ -2646,7 +3058,7 @@ static PRINT_CONV_277: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_278: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_316: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("121".to_string(), "Fired");
     map.insert("122".to_string(), "Fired");
@@ -2654,7 +3066,7 @@ static PRINT_CONV_278: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_279: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_317: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("136".to_string(), "Did not fire");
     map.insert("167".to_string(), "Fired");
@@ -2662,7 +3074,7 @@ static PRINT_CONV_279: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_280: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_318: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("100".to_string(), "Fluorescent (+1)");
     map.insert("101".to_string(), "Fluorescent (+2)");
@@ -2718,14 +3130,14 @@ static PRINT_CONV_280: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_281: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_319: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "None");
     map.insert("2".to_string(), "External");
     map
 });
 
-static PRINT_CONV_282: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_320: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "None");
     map.insert("1".to_string(), "Built-in");
@@ -2733,7 +3145,7 @@ static PRINT_CONV_282: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_283: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_321: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Flash Off");
     map.insert("16".to_string(), "Autoflash");
@@ -2744,14 +3156,14 @@ static PRINT_CONV_283: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_284: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_322: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Off");
     map.insert("16".to_string(), "On");
     map
 });
 
-static PRINT_CONV_285: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_323: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("16".to_string(), "Low");
     map.insert("17".to_string(), "High");
@@ -2759,7 +3171,7 @@ static PRINT_CONV_285: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_286: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_324: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("17".to_string(), "AF-S");
     map.insert("18".to_string(), "AF-C");
@@ -2769,7 +3181,7 @@ static PRINT_CONV_286: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_287: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_325: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "n/a");
     map.insert("1".to_string(), "Off");
@@ -2778,7 +3190,7 @@ static PRINT_CONV_287: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_288: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_326: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Off");
     map.insert("16".to_string(), "On (Auto)");
@@ -2786,7 +3198,7 @@ static PRINT_CONV_288: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_289: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_327: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("33".to_string(), "1 EV");
     map.insert("34".to_string(), "1.5 EV");
@@ -2800,7 +3212,7 @@ static PRINT_CONV_289: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_290: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_328: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("16".to_string(), "ViewFinder");
     map.insert("33".to_string(), "Focus Check Live View");
@@ -2808,14 +3220,14 @@ static PRINT_CONV_290: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_291: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_329: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Off");
     map.insert("16".to_string(), "On");
     map
 });
 
-static PRINT_CONV_292: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_330: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "n/a");
     map.insert("1".to_string(), "Phase-detect AF");
@@ -2823,1909 +3235,94 @@ static PRINT_CONV_292: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_293: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Horizontal (normal)");
-    map.insert("2".to_string(), "Rotate 180");
-    map.insert("6".to_string(), "Rotate 90 CW");
-    map.insert("8".to_string(), "Rotate 270 CW");
-    map
-});
-
-static PRINT_CONV_294: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Did not fire");
-    map.insert("1".to_string(), "Fired");
-    map
-});
-
-static PRINT_CONV_295: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "AF");
-    map.insert("1".to_string(), "MF");
-    map
-});
-
-static PRINT_CONV_296: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Did not fire");
-    map.insert("1".to_string(), "Fired");
-    map
-});
-
-static PRINT_CONV_297: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "AF");
-    map.insert("1".to_string(), "MF");
-    map
-});
-
-static PRINT_CONV_298: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1".to_string(), "Horizontal (normal)");
-    map.insert("2".to_string(), "Rotate 180");
-    map.insert("6".to_string(), "Rotate 90 CW");
-    map.insert("8".to_string(), "Rotate 270 CW");
-    map
-});
-
-static PRINT_CONV_299: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Did not fire");
-    map.insert("1".to_string(), "Fired");
-    map
-});
-
-static PRINT_CONV_300: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "AF");
-    map.insert("1".to_string(), "MF");
-    map
-});
-
-static PRINT_CONV_301: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Auto");
-    map.insert("3".to_string(), "Lv1");
-    map.insert("4".to_string(), "Lv2");
-    map.insert("5".to_string(), "Lv3");
-    map.insert("6".to_string(), "Lv4");
-    map.insert("7".to_string(), "Lv5");
-    map.insert("8".to_string(), "n/a");
-    map
-});
-
-static PRINT_CONV_302: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Auto");
-    map.insert("3".to_string(), "Lv1");
-    map.insert("4".to_string(), "Lv2");
-    map.insert("5".to_string(), "Lv3");
-    map.insert("6".to_string(), "Lv4");
-    map.insert("7".to_string(), "Lv5");
-    map.insert("8".to_string(), "n/a");
-    map
-});
-
-static PRINT_CONV_303: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Auto");
-    map.insert("3".to_string(), "Lv1");
-    map.insert("4".to_string(), "Lv2");
-    map.insert("5".to_string(), "Lv3");
-    map.insert("6".to_string(), "Lv4");
-    map.insert("7".to_string(), "Lv5");
-    map.insert("8".to_string(), "n/a");
-    map
-});
-
-static PRINT_CONV_304: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Unknown");
-    map.insert("1".to_string(), "APS-C");
-    map.insert("2".to_string(), "Full-frame");
-    map
-});
-
-static PRINT_CONV_305: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Unknown");
-    map.insert("1".to_string(), "A-mount");
-    map.insert("2".to_string(), "E-mount");
-    map
-});
-
-static PRINT_CONV_306: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Unknown E-mount lens or other lens");
-    map.insert("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN");
-    map.insert("0.10".to_string(), "Zeiss Touit 50mm F2.8 Macro");
-    map.insert("0.11".to_string(), "Zeiss Loxia 50mm F2");
-    map.insert("0.12".to_string(), "Zeiss Loxia 35mm F2");
-    map.insert("0.13".to_string(), "Viltrox 85mm F1.8");
-    map.insert("0.2".to_string(), "Sigma 30mm F2.8 [EX] DN");
-    map.insert("0.3".to_string(), "Sigma 60mm F2.8 DN");
-    map.insert("0.4".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
-    map.insert("0.5".to_string(), "Tamron 18-200mm F3.5-6.3 Di III VC");
-    map.insert("0.6".to_string(), "Tokina FiRIN 20mm F2 FE AF");
-    map.insert("0.7".to_string(), "Tokina FiRIN 20mm F2 FE MF");
-    map.insert("0.8".to_string(), "Zeiss Touit 12mm F2.8");
-    map.insert("0.9".to_string(), "Zeiss Touit 32mm F1.8");
-    map.insert("1".to_string(), "Sony LA-EA1 or Sigma MC-11 Adapter");
-    map.insert("13".to_string(), "Samyang AF 35-150mm F2-2.8");
-    map.insert("184".to_string(), "Metabones Canon EF Speed Booster Ultra");
-    map.insert("2".to_string(), "Sony LA-EA2 Adapter");
-    map.insert("20".to_string(), "Samyang AF 35mm F1.4 P FE");
-    map.insert("21".to_string(), "Samyang AF 14-24mm F2.8");
-    map.insert(
-        "234".to_string(),
-        "Metabones Canon EF Smart Adapter Mark IV",
-    );
-    map.insert("239".to_string(), "Metabones Canon EF Speed Booster");
-    map.insert("24593".to_string(), "LA-EA4r MonsterAdapter");
-    map.insert("3".to_string(), "Sony LA-EA3 Adapter");
-    map.insert("32784".to_string(), "Sony E 16mm F2.8");
-    map.insert("32785".to_string(), "Sony E 18-55mm F3.5-5.6 OSS");
-    map.insert("32786".to_string(), "Sony E 55-210mm F4.5-6.3 OSS");
-    map.insert("32787".to_string(), "Sony E 18-200mm F3.5-6.3 OSS");
-    map.insert("32788".to_string(), "Sony E 30mm F3.5 Macro");
-    map.insert(
-        "32789".to_string(),
-        "Sony E 24mm F1.8 ZA or Samyang AF 50mm F1.4",
-    );
-    map.insert("32789.1".to_string(), "Samyang AF 50mm F1.4");
-    map.insert(
-        "32790".to_string(),
-        "Sony E 50mm F1.8 OSS or Samyang AF 14mm F2.8",
-    );
-    map.insert("32790.1".to_string(), "Samyang AF 14mm F2.8");
-    map.insert("32791".to_string(), "Sony E 16-70mm F4 ZA OSS");
-    map.insert("32792".to_string(), "Sony E 10-18mm F4 OSS");
-    map.insert("32793".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS");
-    map.insert("32794".to_string(), "Sony FE 35mm F2.8 ZA or Samyang Lens");
-    map.insert("32794.1".to_string(), "Samyang AF 24mm F2.8");
-    map.insert("32794.2".to_string(), "Samyang AF 35mm F2.8");
-    map.insert("32795".to_string(), "Sony FE 24-70mm F4 ZA OSS");
-    map.insert(
-        "32796".to_string(),
-        "Sony FE 85mm F1.8 or Viltrox PFU RBMH 85mm F1.8",
-    );
-    map.insert("32796.1".to_string(), "Viltrox PFU RBMH 85mm F1.8");
-    map.insert("32797".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
-    map.insert("32798".to_string(), "Sony E 20mm F2.8");
-    map.insert("32799".to_string(), "Sony E 35mm F1.8 OSS");
-    map.insert("32800".to_string(), "Sony E PZ 18-105mm F4 G OSS");
-    map.insert("32801".to_string(), "Sony FE 12-24mm F4 G");
-    map.insert("32802".to_string(), "Sony FE 90mm F2.8 Macro G OSS");
-    map.insert("32803".to_string(), "Sony E 18-50mm F4-5.6");
-    map.insert("32804".to_string(), "Sony FE 24mm F1.4 GM");
-    map.insert("32805".to_string(), "Sony FE 24-105mm F4 G OSS");
-    map.insert("32807".to_string(), "Sony E PZ 18-200mm F3.5-6.3 OSS");
-    map.insert("32808".to_string(), "Sony FE 55mm F1.8 ZA");
-    map.insert("32810".to_string(), "Sony FE 70-200mm F4 G OSS");
-    map.insert("32811".to_string(), "Sony FE 16-35mm F4 ZA OSS");
-    map.insert("32812".to_string(), "Sony FE 50mm F2.8 Macro");
-    map.insert("32813".to_string(), "Sony FE 28-70mm F3.5-5.6 OSS");
-    map.insert("32814".to_string(), "Sony FE 35mm F1.4 ZA");
-    map.insert("32815".to_string(), "Sony FE 24-240mm F3.5-6.3 OSS");
-    map.insert("32816".to_string(), "Sony FE 28mm F2");
-    map.insert("32817".to_string(), "Sony FE PZ 28-135mm F4 G OSS");
-    map.insert("32819".to_string(), "Sony FE 100mm F2.8 STF GM OSS");
-    map.insert("32820".to_string(), "Sony E PZ 18-110mm F4 G OSS");
-    map.insert("32821".to_string(), "Sony FE 24-70mm F2.8 GM");
-    map.insert("32822".to_string(), "Sony FE 50mm F1.4 ZA");
-    map.insert(
-        "32823".to_string(),
-        "Sony FE 85mm F1.4 GM or Samyang AF 85mm F1.4",
-    );
-    map.insert("32823.1".to_string(), "Samyang AF 85mm F1.4");
-    map.insert("32824".to_string(), "Sony FE 50mm F1.8");
-    map.insert(
-        "32826".to_string(),
-        "Sony FE 21mm F2.8 (SEL28F20 + SEL075UWC)",
-    );
-    map.insert(
-        "32827".to_string(),
-        "Sony FE 16mm F3.5 Fisheye (SEL28F20 + SEL057FEC)",
-    );
-    map.insert("32828".to_string(), "Sony FE 70-300mm F4.5-5.6 G OSS");
-    map.insert("32829".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS");
-    map.insert("32830".to_string(), "Sony FE 70-200mm F2.8 GM OSS");
-    map.insert("32831".to_string(), "Sony FE 16-35mm F2.8 GM");
-    map.insert("32848".to_string(), "Sony FE 400mm F2.8 GM OSS");
-    map.insert("32849".to_string(), "Sony E 18-135mm F3.5-5.6 OSS");
-    map.insert("32850".to_string(), "Sony FE 135mm F1.8 GM");
-    map.insert("32851".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS");
-    map.insert("32852".to_string(), "Sony FE 600mm F4 GM OSS");
-    map.insert("32853".to_string(), "Sony E 16-55mm F2.8 G");
-    map.insert("32854".to_string(), "Sony E 70-350mm F4.5-6.3 G OSS");
-    map.insert("32855".to_string(), "Sony FE C 16-35mm T3.1 G");
-    map.insert("32858".to_string(), "Sony FE 35mm F1.8");
-    map.insert("32859".to_string(), "Sony FE 20mm F1.8 G");
-    map.insert("32860".to_string(), "Sony FE 12-24mm F2.8 GM");
-    map.insert("32862".to_string(), "Sony FE 50mm F1.2 GM");
-    map.insert("32863".to_string(), "Sony FE 14mm F1.8 GM");
-    map.insert("32864".to_string(), "Sony FE 28-60mm F4-5.6");
-    map.insert("32865".to_string(), "Sony FE 35mm F1.4 GM");
-    map.insert("32866".to_string(), "Sony FE 24mm F2.8 G");
-    map.insert("32867".to_string(), "Sony FE 40mm F2.5 G");
-    map.insert("32868".to_string(), "Sony FE 50mm F2.5 G");
-    map.insert("32871".to_string(), "Sony FE PZ 16-35mm F4 G");
-    map.insert("32873".to_string(), "Sony E PZ 10-20mm F4 G");
-    map.insert("32874".to_string(), "Sony FE 70-200mm F2.8 GM OSS II");
-    map.insert("32875".to_string(), "Sony FE 24-70mm F2.8 GM II");
-    map.insert("32876".to_string(), "Sony E 11mm F1.8");
-    map.insert("32877".to_string(), "Sony E 15mm F1.4 G");
-    map.insert("32878".to_string(), "Sony FE 20-70mm F4 G");
-    map.insert("32879".to_string(), "Sony FE 50mm F1.4 GM");
-    map.insert("32880".to_string(), "Sony FE 16mm F1.8 G");
-    map.insert("32881".to_string(), "Sony FE 24-50mm F2.8 G");
-    map.insert("32882".to_string(), "Sony FE 16-25mm F2.8 G");
-    map.insert("32884".to_string(), "Sony FE 70-200mm F4 Macro G OSS II");
-    map.insert("32885".to_string(), "Sony FE 16-35mm F2.8 GM II");
-    map.insert("32886".to_string(), "Sony FE 300mm F2.8 GM OSS");
-    map.insert("32887".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS II");
-    map.insert("32888".to_string(), "Sony FE 85mm F1.4 GM II");
-    map.insert("32889".to_string(), "Sony FE 28-70mm F2 GM");
-    map.insert("32890".to_string(), "Sony FE 400-800mm F6.3-8 G OSS");
-    map.insert("32891".to_string(), "Sony FE 50-150mm F2 GM");
-    map.insert(
-        "33072".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33073".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33076".to_string(),
-        "Sony FE 100mm F2.8 STF GM OSS (macro mode)",
-    );
-    map.insert(
-        "33077".to_string(),
-        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33078".to_string(),
-        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33079".to_string(),
-        "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33080".to_string(),
-        "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33081".to_string(),
-        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33082".to_string(),
-        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33083".to_string(),
-        "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33084".to_string(),
-        "Sony FE 600mm F4 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33085".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33086".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
-    );
-    map.insert(
-        "33087".to_string(),
-        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33088".to_string(),
-        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
-    );
-    map.insert(
-        "33089".to_string(),
-        "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33090".to_string(),
-        "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33091".to_string(),
-        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33092".to_string(),
-        "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
-    );
-    map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
-    map.insert(
-        "49201".to_string(),
-        "Zeiss Touit 12mm F2.8 or other Touit lens",
-    );
-    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
-    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
-    map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
-    map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
-    map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
-    map.insert("49217".to_string(), "Zeiss Batis 85mm F1.8");
-    map.insert("49218".to_string(), "Zeiss Batis 18mm F2.8");
-    map.insert("49219".to_string(), "Zeiss Batis 135mm F2.8");
-    map.insert("49220".to_string(), "Zeiss Batis 40mm F2 CF");
-    map.insert("49232".to_string(), "Zeiss Loxia 50mm F2");
-    map.insert("49233".to_string(), "Zeiss Loxia 35mm F2");
-    map.insert("49234".to_string(), "Zeiss Loxia 21mm F2.8");
-    map.insert("49235".to_string(), "Zeiss Loxia 85mm F2.4");
-    map.insert("49236".to_string(), "Zeiss Loxia 25mm F2.4");
-    map.insert("49456".to_string(), "Tamron E 18-200mm F3.5-6.3 Di III VC");
-    map.insert("49457".to_string(), "Tamron 28-75mm F2.8 Di III RXD");
-    map.insert("49458".to_string(), "Tamron 17-28mm F2.8 Di III RXD");
-    map.insert("49459".to_string(), "Tamron 35mm F2.8 Di III OSD M1:2");
-    map.insert("49460".to_string(), "Tamron 24mm F2.8 Di III OSD M1:2");
-    map.insert("49461".to_string(), "Tamron 20mm F2.8 Di III OSD M1:2");
-    map.insert("49462".to_string(), "Tamron 70-180mm F2.8 Di III VXD");
-    map.insert("49463".to_string(), "Tamron 28-200mm F2.8-5.6 Di III RXD");
-    map.insert("49464".to_string(), "Tamron 70-300mm F4.5-6.3 Di III RXD");
-    map.insert("49465".to_string(), "Tamron 17-70mm F2.8 Di III-A VC RXD");
-    map.insert("49466".to_string(), "Tamron 150-500mm F5-6.7 Di III VC VXD");
-    map.insert("49467".to_string(), "Tamron 11-20mm F2.8 Di III-A RXD");
-    map.insert(
-        "49468".to_string(),
-        "Tamron 18-300mm F3.5-6.3 Di III-A VC VXD",
-    );
-    map.insert("49469".to_string(), "Tamron 35-150mm F2-F2.8 Di III VXD");
-    map.insert("49470".to_string(), "Tamron 28-75mm F2.8 Di III VXD G2");
-    map.insert(
-        "49471".to_string(),
-        "Tamron 50-400mm F4.5-6.3 Di III VC VXD",
-    );
-    map.insert("49472".to_string(), "Tamron 20-40mm F2.8 Di III VXD");
-    map.insert(
-        "49473".to_string(),
-        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
-    );
-    map.insert("49473.1".to_string(), "Tokina atx-m 85mm F1.8 FE");
-    map.insert("49473.2".to_string(), "Viltrox 23mm F1.4 E");
-    map.insert("49473.3".to_string(), "Viltrox 56mm F1.4 E");
-    map.insert("49473.4".to_string(), "Viltrox 85mm F1.8 II FE");
-    map.insert(
-        "49474".to_string(),
-        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
-    );
-    map.insert("49474.1".to_string(), "Viltrox 13mm F1.4 E");
-    map.insert("49474.10".to_string(), "Viltrox 20mm F2.8 FE");
-    map.insert("49474.2".to_string(), "Viltrox 16mm F1.8 FE");
-    map.insert("49474.3".to_string(), "Viltrox 23mm F1.4 E");
-    map.insert("49474.4".to_string(), "Viltrox 24mm F1.8 FE");
-    map.insert("49474.5".to_string(), "Viltrox 28mm F1.8 FE");
-    map.insert("49474.6".to_string(), "Viltrox 33mm F1.4 E");
-    map.insert("49474.7".to_string(), "Viltrox 35mm F1.8 FE");
-    map.insert("49474.8".to_string(), "Viltrox 50mm F1.8 FE");
-    map.insert("49474.9".to_string(), "Viltrox 75mm F1.2 E");
-    map.insert(
-        "49475".to_string(),
-        "Tamron 50-300mm F4.5-6.3 Di III VC VXD",
-    );
-    map.insert("49476".to_string(), "Tamron 28-300mm F4-7.1 Di III VC VXD");
-    map.insert("49477".to_string(), "Tamron 90mm F2.8 Di III Macro VXD");
-    map.insert("49712".to_string(), "Tokina FiRIN 20mm F2 FE AF");
-    map.insert("49713".to_string(), "Tokina FiRIN 100mm F2.8 FE MACRO");
-    map.insert("49714".to_string(), "Tokina atx-m 11-18mm F2.8 E");
-    map.insert("50480".to_string(), "Sigma 30mm F1.4 DC DN | C");
-    map.insert("50481".to_string(), "Sigma 50mm F1.4 DG HSM | A");
-    map.insert(
-        "50482".to_string(),
-        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
-    );
-    map.insert("50483".to_string(), "Sigma 18-35mm F1.8 DC HSM | A + MC-11");
-    map.insert("50484".to_string(), "Sigma 24-35mm F2 DG HSM | A + MC-11");
-    map.insert("50485".to_string(), "Sigma 24mm F1.4 DG HSM | A + MC-11");
-    map.insert(
-        "50486".to_string(),
-        "Sigma 150-600mm F5-6.3 DG OS HSM | C + MC-11",
-    );
-    map.insert("50487".to_string(), "Sigma 20mm F1.4 DG HSM | A + MC-11");
-    map.insert("50488".to_string(), "Sigma 35mm F1.4 DG HSM | A");
-    map.insert(
-        "50489".to_string(),
-        "Sigma 150-600mm F5-6.3 DG OS HSM | S + MC-11",
-    );
-    map.insert(
-        "50490".to_string(),
-        "Sigma 120-300mm F2.8 DG OS HSM | S + MC-11",
-    );
-    map.insert(
-        "50492".to_string(),
-        "Sigma 24-105mm F4 DG OS HSM | A + MC-11",
-    );
-    map.insert(
-        "50493".to_string(),
-        "Sigma 17-70mm F2.8-4 DC MACRO OS HSM | C + MC-11",
-    );
-    map.insert(
-        "50495".to_string(),
-        "Sigma 50-100mm F1.8 DC HSM | A + MC-11",
-    );
-    map.insert("50499".to_string(), "Sigma 85mm F1.4 DG HSM | A");
-    map.insert(
-        "50501".to_string(),
-        "Sigma 100-400mm F5-6.3 DG OS HSM | C + MC-11",
-    );
-    map.insert("50503".to_string(), "Sigma 16mm F1.4 DC DN | C");
-    map.insert("50507".to_string(), "Sigma 105mm F1.4 DG HSM | A");
-    map.insert("50508".to_string(), "Sigma 56mm F1.4 DC DN | C");
-    map.insert(
-        "50512".to_string(),
-        "Sigma 70-200mm F2.8 DG OS HSM | S + MC-11",
-    );
-    map.insert("50513".to_string(), "Sigma 70mm F2.8 DG MACRO | A");
-    map.insert("50514".to_string(), "Sigma 45mm F2.8 DG DN | C");
-    map.insert("50515".to_string(), "Sigma 35mm F1.2 DG DN | A");
-    map.insert("50516".to_string(), "Sigma 14-24mm F2.8 DG DN | A");
-    map.insert("50517".to_string(), "Sigma 24-70mm F2.8 DG DN | A");
-    map.insert("50518".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C");
-    map.insert("50521".to_string(), "Sigma 85mm F1.4 DG DN | A");
-    map.insert("50522".to_string(), "Sigma 105mm F2.8 DG DN MACRO | A");
-    map.insert("50523".to_string(), "Sigma 65mm F2 DG DN | C");
-    map.insert("50524".to_string(), "Sigma 35mm F2 DG DN | C");
-    map.insert("50525".to_string(), "Sigma 24mm F3.5 DG DN | C");
-    map.insert("50526".to_string(), "Sigma 28-70mm F2.8 DG DN | C");
-    map.insert("50527".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S");
-    map.insert("50528".to_string(), "Sigma 35mm F1.4 DG DN | A");
-    map.insert("50529".to_string(), "Sigma 90mm F2.8 DG DN | C");
-    map.insert("50530".to_string(), "Sigma 24mm F2 DG DN | C");
-    map.insert("50531".to_string(), "Sigma 18-50mm F2.8 DC DN | C");
-    map.insert("50532".to_string(), "Sigma 20mm F2 DG DN | C");
-    map.insert("50533".to_string(), "Sigma 16-28mm F2.8 DG DN | C");
-    map.insert("50534".to_string(), "Sigma 20mm F1.4 DG DN | A");
-    map.insert("50535".to_string(), "Sigma 24mm F1.4 DG DN | A");
-    map.insert("50536".to_string(), "Sigma 60-600mm F4.5-6.3 DG DN OS | S");
-    map.insert("50537".to_string(), "Sigma 50mm F2 DG DN | C");
-    map.insert("50538".to_string(), "Sigma 17mm F4 DG DN | C");
-    map.insert("50539".to_string(), "Sigma 50mm F1.4 DG DN | A");
-    map.insert("50540".to_string(), "Sigma 14mm F1.4 DG DN | A");
-    map.insert("50543".to_string(), "Sigma 70-200mm F2.8 DG DN OS | S");
-    map.insert("50544".to_string(), "Sigma 23mm F1.4 DC DN | C");
-    map.insert("50545".to_string(), "Sigma 24-70mm F2.8 DG DN II | A");
-    map.insert("50546".to_string(), "Sigma 500mm F5.6 DG DN OS | S");
-    map.insert("50547".to_string(), "Sigma 10-18mm F2.8 DC DN | C");
-    map.insert(
-        "50548".to_string(),
-        "Sigma 15mm F1.4 DG DN DIAGONAL FISHEYE | A",
-    );
-    map.insert("50549".to_string(), "Sigma 50mm F1.2 DG DN | A");
-    map.insert("50550".to_string(), "Sigma 28-105mm F2.8 DG DN | A");
-    map.insert("50551".to_string(), "Sigma 28-45mm F1.8 DG DN | A");
-    map.insert("50553".to_string(), "Sigma 300-600mm F4 DG OS | S");
-    map.insert(
-        "50992".to_string(),
-        "Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III",
-    );
-    map.insert(
-        "50993".to_string(),
-        "Voigtlander HELIAR-HYPER WIDE 10mm F5.6",
-    );
-    map.insert(
-        "50994".to_string(),
-        "Voigtlander ULTRA WIDE-HELIAR 12mm F5.6 III",
-    );
-    map.insert(
-        "50995".to_string(),
-        "Voigtlander MACRO APO-LANTHAR 65mm F2 Aspherical",
-    );
-    map.insert(
-        "50996".to_string(),
-        "Voigtlander NOKTON 40mm F1.2 Aspherical",
-    );
-    map.insert("50997".to_string(), "Voigtlander NOKTON classic 35mm F1.4");
-    map.insert(
-        "50998".to_string(),
-        "Voigtlander MACRO APO-LANTHAR 110mm F2.5",
-    );
-    map.insert(
-        "50999".to_string(),
-        "Voigtlander COLOR-SKOPAR 21mm F3.5 Aspherical",
-    );
-    map.insert(
-        "51000".to_string(),
-        "Voigtlander NOKTON 50mm F1.2 Aspherical",
-    );
-    map.insert(
-        "51001".to_string(),
-        "Voigtlander NOKTON 21mm F1.4 Aspherical",
-    );
-    map.insert(
-        "51002".to_string(),
-        "Voigtlander APO-LANTHAR 50mm F2 Aspherical",
-    );
-    map.insert(
-        "51003".to_string(),
-        "Voigtlander NOKTON 35mm F1.2 Aspherical SE",
-    );
-    map.insert(
-        "51006".to_string(),
-        "Voigtlander APO-LANTHAR 35mm F2 Aspherical",
-    );
-    map.insert("51007".to_string(), "Voigtlander NOKTON 50mm F1 Aspherical");
-    map.insert(
-        "51008".to_string(),
-        "Voigtlander NOKTON 75mm F1.5 Aspherical",
-    );
-    map.insert(
-        "51009".to_string(),
-        "Voigtlander NOKTON 28mm F1.5 Aspherical",
-    );
-    map.insert("51072".to_string(), "ZEISS Otus ML 50mm F1.4");
-    map.insert("51073".to_string(), "ZEISS Otus ML 85mm F1.4");
-    map.insert("51504".to_string(), "Samyang AF 50mm F1.4");
-    map.insert(
-        "51505".to_string(),
-        "Samyang AF 14mm F2.8 or Samyang AF 35mm F2.8",
-    );
-    map.insert("51505.1".to_string(), "Samyang AF 35mm F2.8");
-    map.insert("51507".to_string(), "Samyang AF 35mm F1.4");
-    map.insert("51508".to_string(), "Samyang AF 45mm F1.8");
-    map.insert(
-        "51510".to_string(),
-        "Samyang AF 18mm F2.8 or Samyang AF 35mm F1.8",
-    );
-    map.insert("51510.1".to_string(), "Samyang AF 35mm F1.8");
-    map.insert("51512".to_string(), "Samyang AF 75mm F1.8");
-    map.insert("51513".to_string(), "Samyang AF 35mm F1.8");
-    map.insert("51514".to_string(), "Samyang AF 24mm F1.8");
-    map.insert("51515".to_string(), "Samyang AF 12mm F2.0");
-    map.insert("51516".to_string(), "Samyang AF 24-70mm F2.8");
-    map.insert("51517".to_string(), "Samyang AF 50mm F1.4 II");
-    map.insert("51518".to_string(), "Samyang AF 135mm F1.8");
-    map.insert("6".to_string(), "Sony LA-EA4 Adapter");
-    map.insert("61569".to_string(), "LAOWA FFII 10mm F2.8 C&D Dreamer");
-    map.insert("61761".to_string(), "Viltrox 28mm F4.5 FE");
-    map.insert("7".to_string(), "Sony LA-EA5 Adapter");
-    map.insert(
-        "78".to_string(),
-        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
-    );
-    map
-});
-
-static PRINT_CONV_307: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "No");
-    map.insert("1".to_string(), "Yes");
-    map
-});
-
-static PRINT_CONV_308: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("11".to_string(), "11 (APS-C)");
-    map.insert("16".to_string(), "16 (Full-frame)");
-    map
-});
-
-static PRINT_CONV_309: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "16:9");
-    map.insert("1".to_string(), "4:3");
-    map.insert("2".to_string(), "3:2");
-    map.insert("3".to_string(), "1:1");
-    map.insert("5".to_string(), "Panorama");
-    map
-});
-
-static PRINT_CONV_310: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "16:9");
-    map.insert("1".to_string(), "4:3");
-    map.insert("2".to_string(), "3:2");
-    map.insert("3".to_string(), "1:1");
-    map.insert("5".to_string(), "Panorama");
-    map
-});
-
-static PRINT_CONV_311: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Auto");
-    map.insert("3".to_string(), "Lv1");
-    map.insert("4".to_string(), "Lv2");
-    map.insert("5".to_string(), "Lv3");
-    map.insert("6".to_string(), "Lv4");
-    map.insert("7".to_string(), "Lv5");
-    map.insert("8".to_string(), "n/a");
-    map
-});
-
-static PRINT_CONV_312: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "16:9");
-    map.insert("1".to_string(), "4:3");
-    map.insert("2".to_string(), "3:2");
-    map.insert("3".to_string(), "1:1");
-    map.insert("5".to_string(), "Panorama");
-    map
-});
-
-static PRINT_CONV_313: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Auto");
-    map.insert("3".to_string(), "Lv1");
-    map.insert("4".to_string(), "Lv2");
-    map.insert("5".to_string(), "Lv3");
-    map.insert("6".to_string(), "Lv4");
-    map.insert("7".to_string(), "Lv5");
-    map.insert("8".to_string(), "n/a");
-    map
-});
-
-static PRINT_CONV_314: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Normal");
-    map.insert("1".to_string(), "Continuous");
-    map.insert("2".to_string(), "Bracketing");
-    map.insert("4".to_string(), "Continuous - Burst");
-    map.insert("5".to_string(), "Continuous - Speed/Advance Priority");
-    map.insert("6".to_string(), "Normal - Self-timer");
-    map.insert("9".to_string(), "Single Burst Shooting");
-    map
-});
-
-static PRINT_CONV_315: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Autoflash");
-    map.insert("1".to_string(), "Fill-flash");
-    map.insert("2".to_string(), "Flash Off");
-    map.insert("3".to_string(), "Slow Sync");
-    map.insert("4".to_string(), "Rear Sync");
-    map.insert("6".to_string(), "Wireless");
-    map
-});
-
-static PRINT_CONV_316: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Auto");
-    map.insert("3".to_string(), "Lv1");
-    map.insert("4".to_string(), "Lv2");
-    map.insert("5".to_string(), "Lv3");
-    map.insert("6".to_string(), "Lv4");
-    map.insert("7".to_string(), "Lv5");
-    map.insert("8".to_string(), "n/a");
-    map
-});
-
-static PRINT_CONV_317: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "HDR Auto");
-    map.insert("11".to_string(), "HDR 5 EV");
-    map.insert("13".to_string(), "HDR 6 EV");
-    map.insert("3".to_string(), "HDR 1 EV");
-    map.insert("5".to_string(), "HDR 2 EV");
-    map.insert("7".to_string(), "HDR 3 EV");
-    map.insert("9".to_string(), "HDR 4 EV");
-    map
-});
-
-static PRINT_CONV_318: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Toy Camera");
-    map.insert("10".to_string(), "Rich-tone Monochrome");
-    map.insert("11".to_string(), "Miniature");
-    map.insert("12".to_string(), "Water Color");
-    map.insert("13".to_string(), "Illustration");
-    map.insert("2".to_string(), "Pop Color");
-    map.insert("3".to_string(), "Posterization");
-    map.insert("4".to_string(), "Retro Photo");
-    map.insert("5".to_string(), "Soft High Key");
-    map.insert("6".to_string(), "Partial Color");
-    map.insert("7".to_string(), "High Contrast Monochrome");
-    map.insert("8".to_string(), "Soft Focus");
-    map.insert("9".to_string(), "HDR Painting");
-    map
-});
-
-static PRINT_CONV_319: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "JPEG");
-    map.insert("1".to_string(), "RAW");
-    map.insert("2".to_string(), "RAW + JPEG");
-    map
-});
-
-static PRINT_CONV_320: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Multi-segment");
-    map.insert("2".to_string(), "Center-weighted average");
-    map.insert("3".to_string(), "Spot");
-    map.insert("4".to_string(), "Average");
-    map.insert("5".to_string(), "Highlight");
-    map
-});
-
-static PRINT_CONV_321: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Program AE");
-    map.insert("1".to_string(), "Aperture-priority AE");
-    map.insert("10".to_string(), "Twilight");
-    map.insert("11".to_string(), "Twilight Portrait");
-    map.insert("12".to_string(), "Sunset");
-    map.insert("14".to_string(), "Action (High speed)");
-    map.insert("16".to_string(), "Sports");
-    map.insert("17".to_string(), "Handheld Night Shot");
-    map.insert("18".to_string(), "Anti Motion Blur");
-    map.insert("19".to_string(), "High Sensitivity");
-    map.insert("2".to_string(), "Shutter speed priority AE");
-    map.insert("21".to_string(), "Beach");
-    map.insert("22".to_string(), "Snow");
-    map.insert("23".to_string(), "Fireworks");
-    map.insert("26".to_string(), "Underwater");
-    map.insert("27".to_string(), "Gourmet");
-    map.insert("28".to_string(), "Pet");
-    map.insert("29".to_string(), "Macro");
-    map.insert("3".to_string(), "Manual");
-    map.insert("30".to_string(), "Backlight Correction HDR");
-    map.insert("33".to_string(), "Sweep Panorama");
-    map.insert("36".to_string(), "Background Defocus");
-    map.insert("37".to_string(), "Soft Skin");
-    map.insert("4".to_string(), "Auto");
-    map.insert("42".to_string(), "3D Image");
-    map.insert("43".to_string(), "Cont. Priority AE");
-    map.insert("45".to_string(), "Document");
-    map.insert("46".to_string(), "Party");
-    map.insert("5".to_string(), "iAuto");
-    map.insert("6".to_string(), "Superior Auto");
-    map.insert("7".to_string(), "iAuto+");
-    map.insert("8".to_string(), "Portrait");
-    map.insert("9".to_string(), "Landscape");
-    map
-});
-
-static PRINT_CONV_322: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Unknown");
-    map.insert("1".to_string(), "APS-C");
-    map.insert("2".to_string(), "Full-frame");
-    map
-});
-
-static PRINT_CONV_323: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Unknown");
-    map.insert("1".to_string(), "A-mount");
-    map.insert("2".to_string(), "E-mount");
-    map
-});
-
-static PRINT_CONV_324: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Unknown E-mount lens or other lens");
-    map.insert("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN");
-    map.insert("0.10".to_string(), "Zeiss Touit 50mm F2.8 Macro");
-    map.insert("0.11".to_string(), "Zeiss Loxia 50mm F2");
-    map.insert("0.12".to_string(), "Zeiss Loxia 35mm F2");
-    map.insert("0.13".to_string(), "Viltrox 85mm F1.8");
-    map.insert("0.2".to_string(), "Sigma 30mm F2.8 [EX] DN");
-    map.insert("0.3".to_string(), "Sigma 60mm F2.8 DN");
-    map.insert("0.4".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
-    map.insert("0.5".to_string(), "Tamron 18-200mm F3.5-6.3 Di III VC");
-    map.insert("0.6".to_string(), "Tokina FiRIN 20mm F2 FE AF");
-    map.insert("0.7".to_string(), "Tokina FiRIN 20mm F2 FE MF");
-    map.insert("0.8".to_string(), "Zeiss Touit 12mm F2.8");
-    map.insert("0.9".to_string(), "Zeiss Touit 32mm F1.8");
-    map.insert("1".to_string(), "Sony LA-EA1 or Sigma MC-11 Adapter");
-    map.insert("13".to_string(), "Samyang AF 35-150mm F2-2.8");
-    map.insert("184".to_string(), "Metabones Canon EF Speed Booster Ultra");
-    map.insert("2".to_string(), "Sony LA-EA2 Adapter");
-    map.insert("20".to_string(), "Samyang AF 35mm F1.4 P FE");
-    map.insert("21".to_string(), "Samyang AF 14-24mm F2.8");
-    map.insert(
-        "234".to_string(),
-        "Metabones Canon EF Smart Adapter Mark IV",
-    );
-    map.insert("239".to_string(), "Metabones Canon EF Speed Booster");
-    map.insert("24593".to_string(), "LA-EA4r MonsterAdapter");
-    map.insert("3".to_string(), "Sony LA-EA3 Adapter");
-    map.insert("32784".to_string(), "Sony E 16mm F2.8");
-    map.insert("32785".to_string(), "Sony E 18-55mm F3.5-5.6 OSS");
-    map.insert("32786".to_string(), "Sony E 55-210mm F4.5-6.3 OSS");
-    map.insert("32787".to_string(), "Sony E 18-200mm F3.5-6.3 OSS");
-    map.insert("32788".to_string(), "Sony E 30mm F3.5 Macro");
-    map.insert(
-        "32789".to_string(),
-        "Sony E 24mm F1.8 ZA or Samyang AF 50mm F1.4",
-    );
-    map.insert("32789.1".to_string(), "Samyang AF 50mm F1.4");
-    map.insert(
-        "32790".to_string(),
-        "Sony E 50mm F1.8 OSS or Samyang AF 14mm F2.8",
-    );
-    map.insert("32790.1".to_string(), "Samyang AF 14mm F2.8");
-    map.insert("32791".to_string(), "Sony E 16-70mm F4 ZA OSS");
-    map.insert("32792".to_string(), "Sony E 10-18mm F4 OSS");
-    map.insert("32793".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS");
-    map.insert("32794".to_string(), "Sony FE 35mm F2.8 ZA or Samyang Lens");
-    map.insert("32794.1".to_string(), "Samyang AF 24mm F2.8");
-    map.insert("32794.2".to_string(), "Samyang AF 35mm F2.8");
-    map.insert("32795".to_string(), "Sony FE 24-70mm F4 ZA OSS");
-    map.insert(
-        "32796".to_string(),
-        "Sony FE 85mm F1.8 or Viltrox PFU RBMH 85mm F1.8",
-    );
-    map.insert("32796.1".to_string(), "Viltrox PFU RBMH 85mm F1.8");
-    map.insert("32797".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
-    map.insert("32798".to_string(), "Sony E 20mm F2.8");
-    map.insert("32799".to_string(), "Sony E 35mm F1.8 OSS");
-    map.insert("32800".to_string(), "Sony E PZ 18-105mm F4 G OSS");
-    map.insert("32801".to_string(), "Sony FE 12-24mm F4 G");
-    map.insert("32802".to_string(), "Sony FE 90mm F2.8 Macro G OSS");
-    map.insert("32803".to_string(), "Sony E 18-50mm F4-5.6");
-    map.insert("32804".to_string(), "Sony FE 24mm F1.4 GM");
-    map.insert("32805".to_string(), "Sony FE 24-105mm F4 G OSS");
-    map.insert("32807".to_string(), "Sony E PZ 18-200mm F3.5-6.3 OSS");
-    map.insert("32808".to_string(), "Sony FE 55mm F1.8 ZA");
-    map.insert("32810".to_string(), "Sony FE 70-200mm F4 G OSS");
-    map.insert("32811".to_string(), "Sony FE 16-35mm F4 ZA OSS");
-    map.insert("32812".to_string(), "Sony FE 50mm F2.8 Macro");
-    map.insert("32813".to_string(), "Sony FE 28-70mm F3.5-5.6 OSS");
-    map.insert("32814".to_string(), "Sony FE 35mm F1.4 ZA");
-    map.insert("32815".to_string(), "Sony FE 24-240mm F3.5-6.3 OSS");
-    map.insert("32816".to_string(), "Sony FE 28mm F2");
-    map.insert("32817".to_string(), "Sony FE PZ 28-135mm F4 G OSS");
-    map.insert("32819".to_string(), "Sony FE 100mm F2.8 STF GM OSS");
-    map.insert("32820".to_string(), "Sony E PZ 18-110mm F4 G OSS");
-    map.insert("32821".to_string(), "Sony FE 24-70mm F2.8 GM");
-    map.insert("32822".to_string(), "Sony FE 50mm F1.4 ZA");
-    map.insert(
-        "32823".to_string(),
-        "Sony FE 85mm F1.4 GM or Samyang AF 85mm F1.4",
-    );
-    map.insert("32823.1".to_string(), "Samyang AF 85mm F1.4");
-    map.insert("32824".to_string(), "Sony FE 50mm F1.8");
-    map.insert(
-        "32826".to_string(),
-        "Sony FE 21mm F2.8 (SEL28F20 + SEL075UWC)",
-    );
-    map.insert(
-        "32827".to_string(),
-        "Sony FE 16mm F3.5 Fisheye (SEL28F20 + SEL057FEC)",
-    );
-    map.insert("32828".to_string(), "Sony FE 70-300mm F4.5-5.6 G OSS");
-    map.insert("32829".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS");
-    map.insert("32830".to_string(), "Sony FE 70-200mm F2.8 GM OSS");
-    map.insert("32831".to_string(), "Sony FE 16-35mm F2.8 GM");
-    map.insert("32848".to_string(), "Sony FE 400mm F2.8 GM OSS");
-    map.insert("32849".to_string(), "Sony E 18-135mm F3.5-5.6 OSS");
-    map.insert("32850".to_string(), "Sony FE 135mm F1.8 GM");
-    map.insert("32851".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS");
-    map.insert("32852".to_string(), "Sony FE 600mm F4 GM OSS");
-    map.insert("32853".to_string(), "Sony E 16-55mm F2.8 G");
-    map.insert("32854".to_string(), "Sony E 70-350mm F4.5-6.3 G OSS");
-    map.insert("32855".to_string(), "Sony FE C 16-35mm T3.1 G");
-    map.insert("32858".to_string(), "Sony FE 35mm F1.8");
-    map.insert("32859".to_string(), "Sony FE 20mm F1.8 G");
-    map.insert("32860".to_string(), "Sony FE 12-24mm F2.8 GM");
-    map.insert("32862".to_string(), "Sony FE 50mm F1.2 GM");
-    map.insert("32863".to_string(), "Sony FE 14mm F1.8 GM");
-    map.insert("32864".to_string(), "Sony FE 28-60mm F4-5.6");
-    map.insert("32865".to_string(), "Sony FE 35mm F1.4 GM");
-    map.insert("32866".to_string(), "Sony FE 24mm F2.8 G");
-    map.insert("32867".to_string(), "Sony FE 40mm F2.5 G");
-    map.insert("32868".to_string(), "Sony FE 50mm F2.5 G");
-    map.insert("32871".to_string(), "Sony FE PZ 16-35mm F4 G");
-    map.insert("32873".to_string(), "Sony E PZ 10-20mm F4 G");
-    map.insert("32874".to_string(), "Sony FE 70-200mm F2.8 GM OSS II");
-    map.insert("32875".to_string(), "Sony FE 24-70mm F2.8 GM II");
-    map.insert("32876".to_string(), "Sony E 11mm F1.8");
-    map.insert("32877".to_string(), "Sony E 15mm F1.4 G");
-    map.insert("32878".to_string(), "Sony FE 20-70mm F4 G");
-    map.insert("32879".to_string(), "Sony FE 50mm F1.4 GM");
-    map.insert("32880".to_string(), "Sony FE 16mm F1.8 G");
-    map.insert("32881".to_string(), "Sony FE 24-50mm F2.8 G");
-    map.insert("32882".to_string(), "Sony FE 16-25mm F2.8 G");
-    map.insert("32884".to_string(), "Sony FE 70-200mm F4 Macro G OSS II");
-    map.insert("32885".to_string(), "Sony FE 16-35mm F2.8 GM II");
-    map.insert("32886".to_string(), "Sony FE 300mm F2.8 GM OSS");
-    map.insert("32887".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS II");
-    map.insert("32888".to_string(), "Sony FE 85mm F1.4 GM II");
-    map.insert("32889".to_string(), "Sony FE 28-70mm F2 GM");
-    map.insert("32890".to_string(), "Sony FE 400-800mm F6.3-8 G OSS");
-    map.insert("32891".to_string(), "Sony FE 50-150mm F2 GM");
-    map.insert(
-        "33072".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33073".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33076".to_string(),
-        "Sony FE 100mm F2.8 STF GM OSS (macro mode)",
-    );
-    map.insert(
-        "33077".to_string(),
-        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33078".to_string(),
-        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33079".to_string(),
-        "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33080".to_string(),
-        "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33081".to_string(),
-        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33082".to_string(),
-        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33083".to_string(),
-        "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33084".to_string(),
-        "Sony FE 600mm F4 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33085".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33086".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
-    );
-    map.insert(
-        "33087".to_string(),
-        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33088".to_string(),
-        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
-    );
-    map.insert(
-        "33089".to_string(),
-        "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33090".to_string(),
-        "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33091".to_string(),
-        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33092".to_string(),
-        "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
-    );
-    map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
-    map.insert(
-        "49201".to_string(),
-        "Zeiss Touit 12mm F2.8 or other Touit lens",
-    );
-    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
-    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
-    map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
-    map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
-    map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
-    map.insert("49217".to_string(), "Zeiss Batis 85mm F1.8");
-    map.insert("49218".to_string(), "Zeiss Batis 18mm F2.8");
-    map.insert("49219".to_string(), "Zeiss Batis 135mm F2.8");
-    map.insert("49220".to_string(), "Zeiss Batis 40mm F2 CF");
-    map.insert("49232".to_string(), "Zeiss Loxia 50mm F2");
-    map.insert("49233".to_string(), "Zeiss Loxia 35mm F2");
-    map.insert("49234".to_string(), "Zeiss Loxia 21mm F2.8");
-    map.insert("49235".to_string(), "Zeiss Loxia 85mm F2.4");
-    map.insert("49236".to_string(), "Zeiss Loxia 25mm F2.4");
-    map.insert("49456".to_string(), "Tamron E 18-200mm F3.5-6.3 Di III VC");
-    map.insert("49457".to_string(), "Tamron 28-75mm F2.8 Di III RXD");
-    map.insert("49458".to_string(), "Tamron 17-28mm F2.8 Di III RXD");
-    map.insert("49459".to_string(), "Tamron 35mm F2.8 Di III OSD M1:2");
-    map.insert("49460".to_string(), "Tamron 24mm F2.8 Di III OSD M1:2");
-    map.insert("49461".to_string(), "Tamron 20mm F2.8 Di III OSD M1:2");
-    map.insert("49462".to_string(), "Tamron 70-180mm F2.8 Di III VXD");
-    map.insert("49463".to_string(), "Tamron 28-200mm F2.8-5.6 Di III RXD");
-    map.insert("49464".to_string(), "Tamron 70-300mm F4.5-6.3 Di III RXD");
-    map.insert("49465".to_string(), "Tamron 17-70mm F2.8 Di III-A VC RXD");
-    map.insert("49466".to_string(), "Tamron 150-500mm F5-6.7 Di III VC VXD");
-    map.insert("49467".to_string(), "Tamron 11-20mm F2.8 Di III-A RXD");
-    map.insert(
-        "49468".to_string(),
-        "Tamron 18-300mm F3.5-6.3 Di III-A VC VXD",
-    );
-    map.insert("49469".to_string(), "Tamron 35-150mm F2-F2.8 Di III VXD");
-    map.insert("49470".to_string(), "Tamron 28-75mm F2.8 Di III VXD G2");
-    map.insert(
-        "49471".to_string(),
-        "Tamron 50-400mm F4.5-6.3 Di III VC VXD",
-    );
-    map.insert("49472".to_string(), "Tamron 20-40mm F2.8 Di III VXD");
-    map.insert(
-        "49473".to_string(),
-        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
-    );
-    map.insert("49473.1".to_string(), "Tokina atx-m 85mm F1.8 FE");
-    map.insert("49473.2".to_string(), "Viltrox 23mm F1.4 E");
-    map.insert("49473.3".to_string(), "Viltrox 56mm F1.4 E");
-    map.insert("49473.4".to_string(), "Viltrox 85mm F1.8 II FE");
-    map.insert(
-        "49474".to_string(),
-        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
-    );
-    map.insert("49474.1".to_string(), "Viltrox 13mm F1.4 E");
-    map.insert("49474.10".to_string(), "Viltrox 20mm F2.8 FE");
-    map.insert("49474.2".to_string(), "Viltrox 16mm F1.8 FE");
-    map.insert("49474.3".to_string(), "Viltrox 23mm F1.4 E");
-    map.insert("49474.4".to_string(), "Viltrox 24mm F1.8 FE");
-    map.insert("49474.5".to_string(), "Viltrox 28mm F1.8 FE");
-    map.insert("49474.6".to_string(), "Viltrox 33mm F1.4 E");
-    map.insert("49474.7".to_string(), "Viltrox 35mm F1.8 FE");
-    map.insert("49474.8".to_string(), "Viltrox 50mm F1.8 FE");
-    map.insert("49474.9".to_string(), "Viltrox 75mm F1.2 E");
-    map.insert(
-        "49475".to_string(),
-        "Tamron 50-300mm F4.5-6.3 Di III VC VXD",
-    );
-    map.insert("49476".to_string(), "Tamron 28-300mm F4-7.1 Di III VC VXD");
-    map.insert("49477".to_string(), "Tamron 90mm F2.8 Di III Macro VXD");
-    map.insert("49712".to_string(), "Tokina FiRIN 20mm F2 FE AF");
-    map.insert("49713".to_string(), "Tokina FiRIN 100mm F2.8 FE MACRO");
-    map.insert("49714".to_string(), "Tokina atx-m 11-18mm F2.8 E");
-    map.insert("50480".to_string(), "Sigma 30mm F1.4 DC DN | C");
-    map.insert("50481".to_string(), "Sigma 50mm F1.4 DG HSM | A");
-    map.insert(
-        "50482".to_string(),
-        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
-    );
-    map.insert("50483".to_string(), "Sigma 18-35mm F1.8 DC HSM | A + MC-11");
-    map.insert("50484".to_string(), "Sigma 24-35mm F2 DG HSM | A + MC-11");
-    map.insert("50485".to_string(), "Sigma 24mm F1.4 DG HSM | A + MC-11");
-    map.insert(
-        "50486".to_string(),
-        "Sigma 150-600mm F5-6.3 DG OS HSM | C + MC-11",
-    );
-    map.insert("50487".to_string(), "Sigma 20mm F1.4 DG HSM | A + MC-11");
-    map.insert("50488".to_string(), "Sigma 35mm F1.4 DG HSM | A");
-    map.insert(
-        "50489".to_string(),
-        "Sigma 150-600mm F5-6.3 DG OS HSM | S + MC-11",
-    );
-    map.insert(
-        "50490".to_string(),
-        "Sigma 120-300mm F2.8 DG OS HSM | S + MC-11",
-    );
-    map.insert(
-        "50492".to_string(),
-        "Sigma 24-105mm F4 DG OS HSM | A + MC-11",
-    );
-    map.insert(
-        "50493".to_string(),
-        "Sigma 17-70mm F2.8-4 DC MACRO OS HSM | C + MC-11",
-    );
-    map.insert(
-        "50495".to_string(),
-        "Sigma 50-100mm F1.8 DC HSM | A + MC-11",
-    );
-    map.insert("50499".to_string(), "Sigma 85mm F1.4 DG HSM | A");
-    map.insert(
-        "50501".to_string(),
-        "Sigma 100-400mm F5-6.3 DG OS HSM | C + MC-11",
-    );
-    map.insert("50503".to_string(), "Sigma 16mm F1.4 DC DN | C");
-    map.insert("50507".to_string(), "Sigma 105mm F1.4 DG HSM | A");
-    map.insert("50508".to_string(), "Sigma 56mm F1.4 DC DN | C");
-    map.insert(
-        "50512".to_string(),
-        "Sigma 70-200mm F2.8 DG OS HSM | S + MC-11",
-    );
-    map.insert("50513".to_string(), "Sigma 70mm F2.8 DG MACRO | A");
-    map.insert("50514".to_string(), "Sigma 45mm F2.8 DG DN | C");
-    map.insert("50515".to_string(), "Sigma 35mm F1.2 DG DN | A");
-    map.insert("50516".to_string(), "Sigma 14-24mm F2.8 DG DN | A");
-    map.insert("50517".to_string(), "Sigma 24-70mm F2.8 DG DN | A");
-    map.insert("50518".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C");
-    map.insert("50521".to_string(), "Sigma 85mm F1.4 DG DN | A");
-    map.insert("50522".to_string(), "Sigma 105mm F2.8 DG DN MACRO | A");
-    map.insert("50523".to_string(), "Sigma 65mm F2 DG DN | C");
-    map.insert("50524".to_string(), "Sigma 35mm F2 DG DN | C");
-    map.insert("50525".to_string(), "Sigma 24mm F3.5 DG DN | C");
-    map.insert("50526".to_string(), "Sigma 28-70mm F2.8 DG DN | C");
-    map.insert("50527".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S");
-    map.insert("50528".to_string(), "Sigma 35mm F1.4 DG DN | A");
-    map.insert("50529".to_string(), "Sigma 90mm F2.8 DG DN | C");
-    map.insert("50530".to_string(), "Sigma 24mm F2 DG DN | C");
-    map.insert("50531".to_string(), "Sigma 18-50mm F2.8 DC DN | C");
-    map.insert("50532".to_string(), "Sigma 20mm F2 DG DN | C");
-    map.insert("50533".to_string(), "Sigma 16-28mm F2.8 DG DN | C");
-    map.insert("50534".to_string(), "Sigma 20mm F1.4 DG DN | A");
-    map.insert("50535".to_string(), "Sigma 24mm F1.4 DG DN | A");
-    map.insert("50536".to_string(), "Sigma 60-600mm F4.5-6.3 DG DN OS | S");
-    map.insert("50537".to_string(), "Sigma 50mm F2 DG DN | C");
-    map.insert("50538".to_string(), "Sigma 17mm F4 DG DN | C");
-    map.insert("50539".to_string(), "Sigma 50mm F1.4 DG DN | A");
-    map.insert("50540".to_string(), "Sigma 14mm F1.4 DG DN | A");
-    map.insert("50543".to_string(), "Sigma 70-200mm F2.8 DG DN OS | S");
-    map.insert("50544".to_string(), "Sigma 23mm F1.4 DC DN | C");
-    map.insert("50545".to_string(), "Sigma 24-70mm F2.8 DG DN II | A");
-    map.insert("50546".to_string(), "Sigma 500mm F5.6 DG DN OS | S");
-    map.insert("50547".to_string(), "Sigma 10-18mm F2.8 DC DN | C");
-    map.insert(
-        "50548".to_string(),
-        "Sigma 15mm F1.4 DG DN DIAGONAL FISHEYE | A",
-    );
-    map.insert("50549".to_string(), "Sigma 50mm F1.2 DG DN | A");
-    map.insert("50550".to_string(), "Sigma 28-105mm F2.8 DG DN | A");
-    map.insert("50551".to_string(), "Sigma 28-45mm F1.8 DG DN | A");
-    map.insert("50553".to_string(), "Sigma 300-600mm F4 DG OS | S");
-    map.insert(
-        "50992".to_string(),
-        "Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III",
-    );
-    map.insert(
-        "50993".to_string(),
-        "Voigtlander HELIAR-HYPER WIDE 10mm F5.6",
-    );
-    map.insert(
-        "50994".to_string(),
-        "Voigtlander ULTRA WIDE-HELIAR 12mm F5.6 III",
-    );
-    map.insert(
-        "50995".to_string(),
-        "Voigtlander MACRO APO-LANTHAR 65mm F2 Aspherical",
-    );
-    map.insert(
-        "50996".to_string(),
-        "Voigtlander NOKTON 40mm F1.2 Aspherical",
-    );
-    map.insert("50997".to_string(), "Voigtlander NOKTON classic 35mm F1.4");
-    map.insert(
-        "50998".to_string(),
-        "Voigtlander MACRO APO-LANTHAR 110mm F2.5",
-    );
-    map.insert(
-        "50999".to_string(),
-        "Voigtlander COLOR-SKOPAR 21mm F3.5 Aspherical",
-    );
-    map.insert(
-        "51000".to_string(),
-        "Voigtlander NOKTON 50mm F1.2 Aspherical",
-    );
-    map.insert(
-        "51001".to_string(),
-        "Voigtlander NOKTON 21mm F1.4 Aspherical",
-    );
-    map.insert(
-        "51002".to_string(),
-        "Voigtlander APO-LANTHAR 50mm F2 Aspherical",
-    );
-    map.insert(
-        "51003".to_string(),
-        "Voigtlander NOKTON 35mm F1.2 Aspherical SE",
-    );
-    map.insert(
-        "51006".to_string(),
-        "Voigtlander APO-LANTHAR 35mm F2 Aspherical",
-    );
-    map.insert("51007".to_string(), "Voigtlander NOKTON 50mm F1 Aspherical");
-    map.insert(
-        "51008".to_string(),
-        "Voigtlander NOKTON 75mm F1.5 Aspherical",
-    );
-    map.insert(
-        "51009".to_string(),
-        "Voigtlander NOKTON 28mm F1.5 Aspherical",
-    );
-    map.insert("51072".to_string(), "ZEISS Otus ML 50mm F1.4");
-    map.insert("51073".to_string(), "ZEISS Otus ML 85mm F1.4");
-    map.insert("51504".to_string(), "Samyang AF 50mm F1.4");
-    map.insert(
-        "51505".to_string(),
-        "Samyang AF 14mm F2.8 or Samyang AF 35mm F2.8",
-    );
-    map.insert("51505.1".to_string(), "Samyang AF 35mm F2.8");
-    map.insert("51507".to_string(), "Samyang AF 35mm F1.4");
-    map.insert("51508".to_string(), "Samyang AF 45mm F1.8");
-    map.insert(
-        "51510".to_string(),
-        "Samyang AF 18mm F2.8 or Samyang AF 35mm F1.8",
-    );
-    map.insert("51510.1".to_string(), "Samyang AF 35mm F1.8");
-    map.insert("51512".to_string(), "Samyang AF 75mm F1.8");
-    map.insert("51513".to_string(), "Samyang AF 35mm F1.8");
-    map.insert("51514".to_string(), "Samyang AF 24mm F1.8");
-    map.insert("51515".to_string(), "Samyang AF 12mm F2.0");
-    map.insert("51516".to_string(), "Samyang AF 24-70mm F2.8");
-    map.insert("51517".to_string(), "Samyang AF 50mm F1.4 II");
-    map.insert("51518".to_string(), "Samyang AF 135mm F1.8");
-    map.insert("6".to_string(), "Sony LA-EA4 Adapter");
-    map.insert("61569".to_string(), "LAOWA FFII 10mm F2.8 C&D Dreamer");
-    map.insert("61761".to_string(), "Viltrox 28mm F4.5 FE");
-    map.insert("7".to_string(), "Sony LA-EA5 Adapter");
-    map.insert(
-        "78".to_string(),
-        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
-    );
-    map
-});
-
-static PRINT_CONV_325: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "No");
-    map.insert("1".to_string(), "Yes");
-    map
-});
-
-static PRINT_CONV_326: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("11".to_string(), "11 (APS-C)");
-    map.insert("16".to_string(), "16 (Full-frame)");
-    map
-});
-
-static PRINT_CONV_327: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "16:9");
-    map.insert("1".to_string(), "4:3");
-    map.insert("2".to_string(), "3:2");
-    map.insert("3".to_string(), "1:1");
-    map.insert("5".to_string(), "Panorama");
-    map
-});
-
-static PRINT_CONV_328: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Auto");
-    map.insert("3".to_string(), "Lv1");
-    map.insert("4".to_string(), "Lv2");
-    map.insert("5".to_string(), "Lv3");
-    map.insert("6".to_string(), "Lv4");
-    map.insert("7".to_string(), "Lv5");
-    map.insert("8".to_string(), "n/a");
-    map
-});
-
-static PRINT_CONV_329: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Normal");
-    map.insert("1".to_string(), "Continuous");
-    map.insert("2".to_string(), "Bracketing");
-    map.insert("4".to_string(), "Continuous - Burst");
-    map.insert("5".to_string(), "Continuous - Speed/Advance Priority");
-    map.insert("6".to_string(), "Normal - Self-timer");
-    map.insert("9".to_string(), "Single Burst Shooting");
-    map
-});
-
-static PRINT_CONV_330: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Autoflash");
-    map.insert("1".to_string(), "Fill-flash");
-    map.insert("2".to_string(), "Flash Off");
-    map.insert("3".to_string(), "Slow Sync");
-    map.insert("4".to_string(), "Rear Sync");
-    map.insert("6".to_string(), "Wireless");
-    map
-});
-
 static PRINT_CONV_331: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Auto");
-    map.insert("3".to_string(), "Lv1");
-    map.insert("4".to_string(), "Lv2");
-    map.insert("5".to_string(), "Lv3");
-    map.insert("6".to_string(), "Lv4");
-    map.insert("7".to_string(), "Lv5");
-    map.insert("8".to_string(), "n/a");
+    map.insert("1".to_string(), "Horizontal (normal)");
+    map.insert("2".to_string(), "Rotate 180");
+    map.insert("6".to_string(), "Rotate 90 CW");
+    map.insert("8".to_string(), "Rotate 270 CW");
     map
 });
 
 static PRINT_CONV_332: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "HDR Auto");
-    map.insert("11".to_string(), "HDR 5 EV");
-    map.insert("13".to_string(), "HDR 6 EV");
-    map.insert("3".to_string(), "HDR 1 EV");
-    map.insert("5".to_string(), "HDR 2 EV");
-    map.insert("7".to_string(), "HDR 3 EV");
-    map.insert("9".to_string(), "HDR 4 EV");
+    map.insert("0".to_string(), "Did not fire");
+    map.insert("1".to_string(), "Fired");
     map
 });
 
 static PRINT_CONV_333: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Toy Camera");
-    map.insert("10".to_string(), "Rich-tone Monochrome");
-    map.insert("11".to_string(), "Miniature");
-    map.insert("12".to_string(), "Water Color");
-    map.insert("13".to_string(), "Illustration");
-    map.insert("2".to_string(), "Pop Color");
-    map.insert("3".to_string(), "Posterization");
-    map.insert("4".to_string(), "Retro Photo");
-    map.insert("5".to_string(), "Soft High Key");
-    map.insert("6".to_string(), "Partial Color");
-    map.insert("7".to_string(), "High Contrast Monochrome");
-    map.insert("8".to_string(), "Soft Focus");
-    map.insert("9".to_string(), "HDR Painting");
+    map.insert("0".to_string(), "AF");
+    map.insert("1".to_string(), "MF");
     map
 });
 
 static PRINT_CONV_334: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "JPEG");
-    map.insert("1".to_string(), "RAW");
-    map.insert("2".to_string(), "RAW + JPEG");
+    map.insert("0".to_string(), "Did not fire");
+    map.insert("1".to_string(), "Fired");
     map
 });
 
 static PRINT_CONV_335: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Multi-segment");
-    map.insert("2".to_string(), "Center-weighted average");
-    map.insert("3".to_string(), "Spot");
-    map.insert("4".to_string(), "Average");
-    map.insert("5".to_string(), "Highlight");
+    map.insert("0".to_string(), "AF");
+    map.insert("1".to_string(), "MF");
     map
 });
 
 static PRINT_CONV_336: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Program AE");
-    map.insert("1".to_string(), "Aperture-priority AE");
-    map.insert("10".to_string(), "Twilight");
-    map.insert("11".to_string(), "Twilight Portrait");
-    map.insert("12".to_string(), "Sunset");
-    map.insert("14".to_string(), "Action (High speed)");
-    map.insert("16".to_string(), "Sports");
-    map.insert("17".to_string(), "Handheld Night Shot");
-    map.insert("18".to_string(), "Anti Motion Blur");
-    map.insert("19".to_string(), "High Sensitivity");
-    map.insert("2".to_string(), "Shutter speed priority AE");
-    map.insert("21".to_string(), "Beach");
-    map.insert("22".to_string(), "Snow");
-    map.insert("23".to_string(), "Fireworks");
-    map.insert("26".to_string(), "Underwater");
-    map.insert("27".to_string(), "Gourmet");
-    map.insert("28".to_string(), "Pet");
-    map.insert("29".to_string(), "Macro");
-    map.insert("3".to_string(), "Manual");
-    map.insert("30".to_string(), "Backlight Correction HDR");
-    map.insert("33".to_string(), "Sweep Panorama");
-    map.insert("36".to_string(), "Background Defocus");
-    map.insert("37".to_string(), "Soft Skin");
-    map.insert("4".to_string(), "Auto");
-    map.insert("42".to_string(), "3D Image");
-    map.insert("43".to_string(), "Cont. Priority AE");
-    map.insert("45".to_string(), "Document");
-    map.insert("46".to_string(), "Party");
-    map.insert("5".to_string(), "iAuto");
-    map.insert("6".to_string(), "Superior Auto");
-    map.insert("7".to_string(), "iAuto+");
-    map.insert("8".to_string(), "Portrait");
-    map.insert("9".to_string(), "Landscape");
+    map.insert("1".to_string(), "Horizontal (normal)");
+    map.insert("2".to_string(), "Rotate 180");
+    map.insert("6".to_string(), "Rotate 90 CW");
+    map.insert("8".to_string(), "Rotate 270 CW");
     map
 });
 
 static PRINT_CONV_337: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Unknown");
-    map.insert("1".to_string(), "APS-C");
-    map.insert("2".to_string(), "Full-frame");
+    map.insert("0".to_string(), "Did not fire");
+    map.insert("1".to_string(), "Fired");
     map
 });
 
 static PRINT_CONV_338: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Unknown");
-    map.insert("1".to_string(), "A-mount");
-    map.insert("2".to_string(), "E-mount");
+    map.insert("0".to_string(), "AF");
+    map.insert("1".to_string(), "MF");
     map
 });
 
 static PRINT_CONV_339: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Unknown E-mount lens or other lens");
-    map.insert("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN");
-    map.insert("0.10".to_string(), "Zeiss Touit 50mm F2.8 Macro");
-    map.insert("0.11".to_string(), "Zeiss Loxia 50mm F2");
-    map.insert("0.12".to_string(), "Zeiss Loxia 35mm F2");
-    map.insert("0.13".to_string(), "Viltrox 85mm F1.8");
-    map.insert("0.2".to_string(), "Sigma 30mm F2.8 [EX] DN");
-    map.insert("0.3".to_string(), "Sigma 60mm F2.8 DN");
-    map.insert("0.4".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
-    map.insert("0.5".to_string(), "Tamron 18-200mm F3.5-6.3 Di III VC");
-    map.insert("0.6".to_string(), "Tokina FiRIN 20mm F2 FE AF");
-    map.insert("0.7".to_string(), "Tokina FiRIN 20mm F2 FE MF");
-    map.insert("0.8".to_string(), "Zeiss Touit 12mm F2.8");
-    map.insert("0.9".to_string(), "Zeiss Touit 32mm F1.8");
-    map.insert("1".to_string(), "Sony LA-EA1 or Sigma MC-11 Adapter");
-    map.insert("13".to_string(), "Samyang AF 35-150mm F2-2.8");
-    map.insert("184".to_string(), "Metabones Canon EF Speed Booster Ultra");
-    map.insert("2".to_string(), "Sony LA-EA2 Adapter");
-    map.insert("20".to_string(), "Samyang AF 35mm F1.4 P FE");
-    map.insert("21".to_string(), "Samyang AF 14-24mm F2.8");
-    map.insert(
-        "234".to_string(),
-        "Metabones Canon EF Smart Adapter Mark IV",
-    );
-    map.insert("239".to_string(), "Metabones Canon EF Speed Booster");
-    map.insert("24593".to_string(), "LA-EA4r MonsterAdapter");
-    map.insert("3".to_string(), "Sony LA-EA3 Adapter");
-    map.insert("32784".to_string(), "Sony E 16mm F2.8");
-    map.insert("32785".to_string(), "Sony E 18-55mm F3.5-5.6 OSS");
-    map.insert("32786".to_string(), "Sony E 55-210mm F4.5-6.3 OSS");
-    map.insert("32787".to_string(), "Sony E 18-200mm F3.5-6.3 OSS");
-    map.insert("32788".to_string(), "Sony E 30mm F3.5 Macro");
-    map.insert(
-        "32789".to_string(),
-        "Sony E 24mm F1.8 ZA or Samyang AF 50mm F1.4",
-    );
-    map.insert("32789.1".to_string(), "Samyang AF 50mm F1.4");
-    map.insert(
-        "32790".to_string(),
-        "Sony E 50mm F1.8 OSS or Samyang AF 14mm F2.8",
-    );
-    map.insert("32790.1".to_string(), "Samyang AF 14mm F2.8");
-    map.insert("32791".to_string(), "Sony E 16-70mm F4 ZA OSS");
-    map.insert("32792".to_string(), "Sony E 10-18mm F4 OSS");
-    map.insert("32793".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS");
-    map.insert("32794".to_string(), "Sony FE 35mm F2.8 ZA or Samyang Lens");
-    map.insert("32794.1".to_string(), "Samyang AF 24mm F2.8");
-    map.insert("32794.2".to_string(), "Samyang AF 35mm F2.8");
-    map.insert("32795".to_string(), "Sony FE 24-70mm F4 ZA OSS");
-    map.insert(
-        "32796".to_string(),
-        "Sony FE 85mm F1.8 or Viltrox PFU RBMH 85mm F1.8",
-    );
-    map.insert("32796.1".to_string(), "Viltrox PFU RBMH 85mm F1.8");
-    map.insert("32797".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
-    map.insert("32798".to_string(), "Sony E 20mm F2.8");
-    map.insert("32799".to_string(), "Sony E 35mm F1.8 OSS");
-    map.insert("32800".to_string(), "Sony E PZ 18-105mm F4 G OSS");
-    map.insert("32801".to_string(), "Sony FE 12-24mm F4 G");
-    map.insert("32802".to_string(), "Sony FE 90mm F2.8 Macro G OSS");
-    map.insert("32803".to_string(), "Sony E 18-50mm F4-5.6");
-    map.insert("32804".to_string(), "Sony FE 24mm F1.4 GM");
-    map.insert("32805".to_string(), "Sony FE 24-105mm F4 G OSS");
-    map.insert("32807".to_string(), "Sony E PZ 18-200mm F3.5-6.3 OSS");
-    map.insert("32808".to_string(), "Sony FE 55mm F1.8 ZA");
-    map.insert("32810".to_string(), "Sony FE 70-200mm F4 G OSS");
-    map.insert("32811".to_string(), "Sony FE 16-35mm F4 ZA OSS");
-    map.insert("32812".to_string(), "Sony FE 50mm F2.8 Macro");
-    map.insert("32813".to_string(), "Sony FE 28-70mm F3.5-5.6 OSS");
-    map.insert("32814".to_string(), "Sony FE 35mm F1.4 ZA");
-    map.insert("32815".to_string(), "Sony FE 24-240mm F3.5-6.3 OSS");
-    map.insert("32816".to_string(), "Sony FE 28mm F2");
-    map.insert("32817".to_string(), "Sony FE PZ 28-135mm F4 G OSS");
-    map.insert("32819".to_string(), "Sony FE 100mm F2.8 STF GM OSS");
-    map.insert("32820".to_string(), "Sony E PZ 18-110mm F4 G OSS");
-    map.insert("32821".to_string(), "Sony FE 24-70mm F2.8 GM");
-    map.insert("32822".to_string(), "Sony FE 50mm F1.4 ZA");
-    map.insert(
-        "32823".to_string(),
-        "Sony FE 85mm F1.4 GM or Samyang AF 85mm F1.4",
-    );
-    map.insert("32823.1".to_string(), "Samyang AF 85mm F1.4");
-    map.insert("32824".to_string(), "Sony FE 50mm F1.8");
-    map.insert(
-        "32826".to_string(),
-        "Sony FE 21mm F2.8 (SEL28F20 + SEL075UWC)",
-    );
-    map.insert(
-        "32827".to_string(),
-        "Sony FE 16mm F3.5 Fisheye (SEL28F20 + SEL057FEC)",
-    );
-    map.insert("32828".to_string(), "Sony FE 70-300mm F4.5-5.6 G OSS");
-    map.insert("32829".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS");
-    map.insert("32830".to_string(), "Sony FE 70-200mm F2.8 GM OSS");
-    map.insert("32831".to_string(), "Sony FE 16-35mm F2.8 GM");
-    map.insert("32848".to_string(), "Sony FE 400mm F2.8 GM OSS");
-    map.insert("32849".to_string(), "Sony E 18-135mm F3.5-5.6 OSS");
-    map.insert("32850".to_string(), "Sony FE 135mm F1.8 GM");
-    map.insert("32851".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS");
-    map.insert("32852".to_string(), "Sony FE 600mm F4 GM OSS");
-    map.insert("32853".to_string(), "Sony E 16-55mm F2.8 G");
-    map.insert("32854".to_string(), "Sony E 70-350mm F4.5-6.3 G OSS");
-    map.insert("32855".to_string(), "Sony FE C 16-35mm T3.1 G");
-    map.insert("32858".to_string(), "Sony FE 35mm F1.8");
-    map.insert("32859".to_string(), "Sony FE 20mm F1.8 G");
-    map.insert("32860".to_string(), "Sony FE 12-24mm F2.8 GM");
-    map.insert("32862".to_string(), "Sony FE 50mm F1.2 GM");
-    map.insert("32863".to_string(), "Sony FE 14mm F1.8 GM");
-    map.insert("32864".to_string(), "Sony FE 28-60mm F4-5.6");
-    map.insert("32865".to_string(), "Sony FE 35mm F1.4 GM");
-    map.insert("32866".to_string(), "Sony FE 24mm F2.8 G");
-    map.insert("32867".to_string(), "Sony FE 40mm F2.5 G");
-    map.insert("32868".to_string(), "Sony FE 50mm F2.5 G");
-    map.insert("32871".to_string(), "Sony FE PZ 16-35mm F4 G");
-    map.insert("32873".to_string(), "Sony E PZ 10-20mm F4 G");
-    map.insert("32874".to_string(), "Sony FE 70-200mm F2.8 GM OSS II");
-    map.insert("32875".to_string(), "Sony FE 24-70mm F2.8 GM II");
-    map.insert("32876".to_string(), "Sony E 11mm F1.8");
-    map.insert("32877".to_string(), "Sony E 15mm F1.4 G");
-    map.insert("32878".to_string(), "Sony FE 20-70mm F4 G");
-    map.insert("32879".to_string(), "Sony FE 50mm F1.4 GM");
-    map.insert("32880".to_string(), "Sony FE 16mm F1.8 G");
-    map.insert("32881".to_string(), "Sony FE 24-50mm F2.8 G");
-    map.insert("32882".to_string(), "Sony FE 16-25mm F2.8 G");
-    map.insert("32884".to_string(), "Sony FE 70-200mm F4 Macro G OSS II");
-    map.insert("32885".to_string(), "Sony FE 16-35mm F2.8 GM II");
-    map.insert("32886".to_string(), "Sony FE 300mm F2.8 GM OSS");
-    map.insert("32887".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS II");
-    map.insert("32888".to_string(), "Sony FE 85mm F1.4 GM II");
-    map.insert("32889".to_string(), "Sony FE 28-70mm F2 GM");
-    map.insert("32890".to_string(), "Sony FE 400-800mm F6.3-8 G OSS");
-    map.insert("32891".to_string(), "Sony FE 50-150mm F2 GM");
-    map.insert(
-        "33072".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33073".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33076".to_string(),
-        "Sony FE 100mm F2.8 STF GM OSS (macro mode)",
-    );
-    map.insert(
-        "33077".to_string(),
-        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33078".to_string(),
-        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33079".to_string(),
-        "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33080".to_string(),
-        "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33081".to_string(),
-        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33082".to_string(),
-        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33083".to_string(),
-        "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33084".to_string(),
-        "Sony FE 600mm F4 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33085".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33086".to_string(),
-        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
-    );
-    map.insert(
-        "33087".to_string(),
-        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33088".to_string(),
-        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
-    );
-    map.insert(
-        "33089".to_string(),
-        "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33090".to_string(),
-        "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter",
-    );
-    map.insert(
-        "33091".to_string(),
-        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
-    );
-    map.insert(
-        "33092".to_string(),
-        "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
-    );
-    map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
-    map.insert(
-        "49201".to_string(),
-        "Zeiss Touit 12mm F2.8 or other Touit lens",
-    );
-    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
-    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
-    map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
-    map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
-    map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
-    map.insert("49217".to_string(), "Zeiss Batis 85mm F1.8");
-    map.insert("49218".to_string(), "Zeiss Batis 18mm F2.8");
-    map.insert("49219".to_string(), "Zeiss Batis 135mm F2.8");
-    map.insert("49220".to_string(), "Zeiss Batis 40mm F2 CF");
-    map.insert("49232".to_string(), "Zeiss Loxia 50mm F2");
-    map.insert("49233".to_string(), "Zeiss Loxia 35mm F2");
-    map.insert("49234".to_string(), "Zeiss Loxia 21mm F2.8");
-    map.insert("49235".to_string(), "Zeiss Loxia 85mm F2.4");
-    map.insert("49236".to_string(), "Zeiss Loxia 25mm F2.4");
-    map.insert("49456".to_string(), "Tamron E 18-200mm F3.5-6.3 Di III VC");
-    map.insert("49457".to_string(), "Tamron 28-75mm F2.8 Di III RXD");
-    map.insert("49458".to_string(), "Tamron 17-28mm F2.8 Di III RXD");
-    map.insert("49459".to_string(), "Tamron 35mm F2.8 Di III OSD M1:2");
-    map.insert("49460".to_string(), "Tamron 24mm F2.8 Di III OSD M1:2");
-    map.insert("49461".to_string(), "Tamron 20mm F2.8 Di III OSD M1:2");
-    map.insert("49462".to_string(), "Tamron 70-180mm F2.8 Di III VXD");
-    map.insert("49463".to_string(), "Tamron 28-200mm F2.8-5.6 Di III RXD");
-    map.insert("49464".to_string(), "Tamron 70-300mm F4.5-6.3 Di III RXD");
-    map.insert("49465".to_string(), "Tamron 17-70mm F2.8 Di III-A VC RXD");
-    map.insert("49466".to_string(), "Tamron 150-500mm F5-6.7 Di III VC VXD");
-    map.insert("49467".to_string(), "Tamron 11-20mm F2.8 Di III-A RXD");
-    map.insert(
-        "49468".to_string(),
-        "Tamron 18-300mm F3.5-6.3 Di III-A VC VXD",
-    );
-    map.insert("49469".to_string(), "Tamron 35-150mm F2-F2.8 Di III VXD");
-    map.insert("49470".to_string(), "Tamron 28-75mm F2.8 Di III VXD G2");
-    map.insert(
-        "49471".to_string(),
-        "Tamron 50-400mm F4.5-6.3 Di III VC VXD",
-    );
-    map.insert("49472".to_string(), "Tamron 20-40mm F2.8 Di III VXD");
-    map.insert(
-        "49473".to_string(),
-        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
-    );
-    map.insert("49473.1".to_string(), "Tokina atx-m 85mm F1.8 FE");
-    map.insert("49473.2".to_string(), "Viltrox 23mm F1.4 E");
-    map.insert("49473.3".to_string(), "Viltrox 56mm F1.4 E");
-    map.insert("49473.4".to_string(), "Viltrox 85mm F1.8 II FE");
-    map.insert(
-        "49474".to_string(),
-        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
-    );
-    map.insert("49474.1".to_string(), "Viltrox 13mm F1.4 E");
-    map.insert("49474.10".to_string(), "Viltrox 20mm F2.8 FE");
-    map.insert("49474.2".to_string(), "Viltrox 16mm F1.8 FE");
-    map.insert("49474.3".to_string(), "Viltrox 23mm F1.4 E");
-    map.insert("49474.4".to_string(), "Viltrox 24mm F1.8 FE");
-    map.insert("49474.5".to_string(), "Viltrox 28mm F1.8 FE");
-    map.insert("49474.6".to_string(), "Viltrox 33mm F1.4 E");
-    map.insert("49474.7".to_string(), "Viltrox 35mm F1.8 FE");
-    map.insert("49474.8".to_string(), "Viltrox 50mm F1.8 FE");
-    map.insert("49474.9".to_string(), "Viltrox 75mm F1.2 E");
-    map.insert(
-        "49475".to_string(),
-        "Tamron 50-300mm F4.5-6.3 Di III VC VXD",
-    );
-    map.insert("49476".to_string(), "Tamron 28-300mm F4-7.1 Di III VC VXD");
-    map.insert("49477".to_string(), "Tamron 90mm F2.8 Di III Macro VXD");
-    map.insert("49712".to_string(), "Tokina FiRIN 20mm F2 FE AF");
-    map.insert("49713".to_string(), "Tokina FiRIN 100mm F2.8 FE MACRO");
-    map.insert("49714".to_string(), "Tokina atx-m 11-18mm F2.8 E");
-    map.insert("50480".to_string(), "Sigma 30mm F1.4 DC DN | C");
-    map.insert("50481".to_string(), "Sigma 50mm F1.4 DG HSM | A");
-    map.insert(
-        "50482".to_string(),
-        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
-    );
-    map.insert("50483".to_string(), "Sigma 18-35mm F1.8 DC HSM | A + MC-11");
-    map.insert("50484".to_string(), "Sigma 24-35mm F2 DG HSM | A + MC-11");
-    map.insert("50485".to_string(), "Sigma 24mm F1.4 DG HSM | A + MC-11");
-    map.insert(
-        "50486".to_string(),
-        "Sigma 150-600mm F5-6.3 DG OS HSM | C + MC-11",
-    );
-    map.insert("50487".to_string(), "Sigma 20mm F1.4 DG HSM | A + MC-11");
-    map.insert("50488".to_string(), "Sigma 35mm F1.4 DG HSM | A");
-    map.insert(
-        "50489".to_string(),
-        "Sigma 150-600mm F5-6.3 DG OS HSM | S + MC-11",
-    );
-    map.insert(
-        "50490".to_string(),
-        "Sigma 120-300mm F2.8 DG OS HSM | S + MC-11",
-    );
-    map.insert(
-        "50492".to_string(),
-        "Sigma 24-105mm F4 DG OS HSM | A + MC-11",
-    );
-    map.insert(
-        "50493".to_string(),
-        "Sigma 17-70mm F2.8-4 DC MACRO OS HSM | C + MC-11",
-    );
-    map.insert(
-        "50495".to_string(),
-        "Sigma 50-100mm F1.8 DC HSM | A + MC-11",
-    );
-    map.insert("50499".to_string(), "Sigma 85mm F1.4 DG HSM | A");
-    map.insert(
-        "50501".to_string(),
-        "Sigma 100-400mm F5-6.3 DG OS HSM | C + MC-11",
-    );
-    map.insert("50503".to_string(), "Sigma 16mm F1.4 DC DN | C");
-    map.insert("50507".to_string(), "Sigma 105mm F1.4 DG HSM | A");
-    map.insert("50508".to_string(), "Sigma 56mm F1.4 DC DN | C");
-    map.insert(
-        "50512".to_string(),
-        "Sigma 70-200mm F2.8 DG OS HSM | S + MC-11",
-    );
-    map.insert("50513".to_string(), "Sigma 70mm F2.8 DG MACRO | A");
-    map.insert("50514".to_string(), "Sigma 45mm F2.8 DG DN | C");
-    map.insert("50515".to_string(), "Sigma 35mm F1.2 DG DN | A");
-    map.insert("50516".to_string(), "Sigma 14-24mm F2.8 DG DN | A");
-    map.insert("50517".to_string(), "Sigma 24-70mm F2.8 DG DN | A");
-    map.insert("50518".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C");
-    map.insert("50521".to_string(), "Sigma 85mm F1.4 DG DN | A");
-    map.insert("50522".to_string(), "Sigma 105mm F2.8 DG DN MACRO | A");
-    map.insert("50523".to_string(), "Sigma 65mm F2 DG DN | C");
-    map.insert("50524".to_string(), "Sigma 35mm F2 DG DN | C");
-    map.insert("50525".to_string(), "Sigma 24mm F3.5 DG DN | C");
-    map.insert("50526".to_string(), "Sigma 28-70mm F2.8 DG DN | C");
-    map.insert("50527".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S");
-    map.insert("50528".to_string(), "Sigma 35mm F1.4 DG DN | A");
-    map.insert("50529".to_string(), "Sigma 90mm F2.8 DG DN | C");
-    map.insert("50530".to_string(), "Sigma 24mm F2 DG DN | C");
-    map.insert("50531".to_string(), "Sigma 18-50mm F2.8 DC DN | C");
-    map.insert("50532".to_string(), "Sigma 20mm F2 DG DN | C");
-    map.insert("50533".to_string(), "Sigma 16-28mm F2.8 DG DN | C");
-    map.insert("50534".to_string(), "Sigma 20mm F1.4 DG DN | A");
-    map.insert("50535".to_string(), "Sigma 24mm F1.4 DG DN | A");
-    map.insert("50536".to_string(), "Sigma 60-600mm F4.5-6.3 DG DN OS | S");
-    map.insert("50537".to_string(), "Sigma 50mm F2 DG DN | C");
-    map.insert("50538".to_string(), "Sigma 17mm F4 DG DN | C");
-    map.insert("50539".to_string(), "Sigma 50mm F1.4 DG DN | A");
-    map.insert("50540".to_string(), "Sigma 14mm F1.4 DG DN | A");
-    map.insert("50543".to_string(), "Sigma 70-200mm F2.8 DG DN OS | S");
-    map.insert("50544".to_string(), "Sigma 23mm F1.4 DC DN | C");
-    map.insert("50545".to_string(), "Sigma 24-70mm F2.8 DG DN II | A");
-    map.insert("50546".to_string(), "Sigma 500mm F5.6 DG DN OS | S");
-    map.insert("50547".to_string(), "Sigma 10-18mm F2.8 DC DN | C");
-    map.insert(
-        "50548".to_string(),
-        "Sigma 15mm F1.4 DG DN DIAGONAL FISHEYE | A",
-    );
-    map.insert("50549".to_string(), "Sigma 50mm F1.2 DG DN | A");
-    map.insert("50550".to_string(), "Sigma 28-105mm F2.8 DG DN | A");
-    map.insert("50551".to_string(), "Sigma 28-45mm F1.8 DG DN | A");
-    map.insert("50553".to_string(), "Sigma 300-600mm F4 DG OS | S");
-    map.insert(
-        "50992".to_string(),
-        "Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III",
-    );
-    map.insert(
-        "50993".to_string(),
-        "Voigtlander HELIAR-HYPER WIDE 10mm F5.6",
-    );
-    map.insert(
-        "50994".to_string(),
-        "Voigtlander ULTRA WIDE-HELIAR 12mm F5.6 III",
-    );
-    map.insert(
-        "50995".to_string(),
-        "Voigtlander MACRO APO-LANTHAR 65mm F2 Aspherical",
-    );
-    map.insert(
-        "50996".to_string(),
-        "Voigtlander NOKTON 40mm F1.2 Aspherical",
-    );
-    map.insert("50997".to_string(), "Voigtlander NOKTON classic 35mm F1.4");
-    map.insert(
-        "50998".to_string(),
-        "Voigtlander MACRO APO-LANTHAR 110mm F2.5",
-    );
-    map.insert(
-        "50999".to_string(),
-        "Voigtlander COLOR-SKOPAR 21mm F3.5 Aspherical",
-    );
-    map.insert(
-        "51000".to_string(),
-        "Voigtlander NOKTON 50mm F1.2 Aspherical",
-    );
-    map.insert(
-        "51001".to_string(),
-        "Voigtlander NOKTON 21mm F1.4 Aspherical",
-    );
-    map.insert(
-        "51002".to_string(),
-        "Voigtlander APO-LANTHAR 50mm F2 Aspherical",
-    );
-    map.insert(
-        "51003".to_string(),
-        "Voigtlander NOKTON 35mm F1.2 Aspherical SE",
-    );
-    map.insert(
-        "51006".to_string(),
-        "Voigtlander APO-LANTHAR 35mm F2 Aspherical",
-    );
-    map.insert("51007".to_string(), "Voigtlander NOKTON 50mm F1 Aspherical");
-    map.insert(
-        "51008".to_string(),
-        "Voigtlander NOKTON 75mm F1.5 Aspherical",
-    );
-    map.insert(
-        "51009".to_string(),
-        "Voigtlander NOKTON 28mm F1.5 Aspherical",
-    );
-    map.insert("51072".to_string(), "ZEISS Otus ML 50mm F1.4");
-    map.insert("51073".to_string(), "ZEISS Otus ML 85mm F1.4");
-    map.insert("51504".to_string(), "Samyang AF 50mm F1.4");
-    map.insert(
-        "51505".to_string(),
-        "Samyang AF 14mm F2.8 or Samyang AF 35mm F2.8",
-    );
-    map.insert("51505.1".to_string(), "Samyang AF 35mm F2.8");
-    map.insert("51507".to_string(), "Samyang AF 35mm F1.4");
-    map.insert("51508".to_string(), "Samyang AF 45mm F1.8");
-    map.insert(
-        "51510".to_string(),
-        "Samyang AF 18mm F2.8 or Samyang AF 35mm F1.8",
-    );
-    map.insert("51510.1".to_string(), "Samyang AF 35mm F1.8");
-    map.insert("51512".to_string(), "Samyang AF 75mm F1.8");
-    map.insert("51513".to_string(), "Samyang AF 35mm F1.8");
-    map.insert("51514".to_string(), "Samyang AF 24mm F1.8");
-    map.insert("51515".to_string(), "Samyang AF 12mm F2.0");
-    map.insert("51516".to_string(), "Samyang AF 24-70mm F2.8");
-    map.insert("51517".to_string(), "Samyang AF 50mm F1.4 II");
-    map.insert("51518".to_string(), "Samyang AF 135mm F1.8");
-    map.insert("6".to_string(), "Sony LA-EA4 Adapter");
-    map.insert("61569".to_string(), "LAOWA FFII 10mm F2.8 C&D Dreamer");
-    map.insert("61761".to_string(), "Viltrox 28mm F4.5 FE");
-    map.insert("7".to_string(), "Sony LA-EA5 Adapter");
-    map.insert(
-        "78".to_string(),
-        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
-    );
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
     map
 });
 
 static PRINT_CONV_340: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "No");
-    map.insert("1".to_string(), "Yes");
+    map.insert("0".to_string(), "No Flash");
+    map.insert("1".to_string(), "Fired");
     map
 });
 
 static PRINT_CONV_341: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("11".to_string(), "11 (APS-C)");
-    map.insert("16".to_string(), "16 (Full-frame)");
+    map.insert("0".to_string(), "Horizontal (normal)");
+    map.insert("1".to_string(), "Rotate 270 CW");
+    map.insert("2".to_string(), "Rotate 180");
+    map.insert("3".to_string(), "Rotate 90 CW");
     map
 });
 
 static PRINT_CONV_342: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "16:9");
-    map.insert("1".to_string(), "4:3");
-    map.insert("2".to_string(), "3:2");
-    map.insert("3".to_string(), "1:1");
-    map.insert("5".to_string(), "Panorama");
+    map.insert("23".to_string(), "Standard");
+    map.insert("51".to_string(), "Fine");
+    map.insert("8".to_string(), "Snap Shot");
     map
 });
 
@@ -4744,6 +3341,578 @@ static PRINT_CONV_343: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
 
 static PRINT_CONV_344: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Auto");
+    map.insert("3".to_string(), "Lv1");
+    map.insert("4".to_string(), "Lv2");
+    map.insert("5".to_string(), "Lv3");
+    map.insert("6".to_string(), "Lv4");
+    map.insert("7".to_string(), "Lv5");
+    map.insert("8".to_string(), "n/a");
+    map
+});
+
+static PRINT_CONV_345: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Auto");
+    map.insert("3".to_string(), "Lv1");
+    map.insert("4".to_string(), "Lv2");
+    map.insert("5".to_string(), "Lv3");
+    map.insert("6".to_string(), "Lv4");
+    map.insert("7".to_string(), "Lv5");
+    map.insert("8".to_string(), "n/a");
+    map
+});
+
+static PRINT_CONV_346: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "APS-C");
+    map.insert("2".to_string(), "Full-frame");
+    map
+});
+
+static PRINT_CONV_347: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "A-mount");
+    map.insert("2".to_string(), "E-mount");
+    map
+});
+
+static PRINT_CONV_348: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown E-mount lens or other lens");
+    map.insert("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN");
+    map.insert("0.10".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("0.11".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("0.12".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("0.13".to_string(), "Viltrox 85mm F1.8");
+    map.insert("0.2".to_string(), "Sigma 30mm F2.8 [EX] DN");
+    map.insert("0.3".to_string(), "Sigma 60mm F2.8 DN");
+    map.insert("0.4".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("0.5".to_string(), "Tamron 18-200mm F3.5-6.3 Di III VC");
+    map.insert("0.6".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("0.7".to_string(), "Tokina FiRIN 20mm F2 FE MF");
+    map.insert("0.8".to_string(), "Zeiss Touit 12mm F2.8");
+    map.insert("0.9".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("1".to_string(), "Sony LA-EA1 or Sigma MC-11 Adapter");
+    map.insert("13".to_string(), "Samyang AF 35-150mm F2-2.8");
+    map.insert("184".to_string(), "Metabones Canon EF Speed Booster Ultra");
+    map.insert("2".to_string(), "Sony LA-EA2 Adapter");
+    map.insert("20".to_string(), "Samyang AF 35mm F1.4 P FE");
+    map.insert("21".to_string(), "Samyang AF 14-24mm F2.8");
+    map.insert(
+        "234".to_string(),
+        "Metabones Canon EF Smart Adapter Mark IV",
+    );
+    map.insert("239".to_string(), "Metabones Canon EF Speed Booster");
+    map.insert("24593".to_string(), "LA-EA4r MonsterAdapter");
+    map.insert("3".to_string(), "Sony LA-EA3 Adapter");
+    map.insert("32784".to_string(), "Sony E 16mm F2.8");
+    map.insert("32785".to_string(), "Sony E 18-55mm F3.5-5.6 OSS");
+    map.insert("32786".to_string(), "Sony E 55-210mm F4.5-6.3 OSS");
+    map.insert("32787".to_string(), "Sony E 18-200mm F3.5-6.3 OSS");
+    map.insert("32788".to_string(), "Sony E 30mm F3.5 Macro");
+    map.insert(
+        "32789".to_string(),
+        "Sony E 24mm F1.8 ZA or Samyang AF 50mm F1.4",
+    );
+    map.insert("32789.1".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "32790".to_string(),
+        "Sony E 50mm F1.8 OSS or Samyang AF 14mm F2.8",
+    );
+    map.insert("32790.1".to_string(), "Samyang AF 14mm F2.8");
+    map.insert("32791".to_string(), "Sony E 16-70mm F4 ZA OSS");
+    map.insert("32792".to_string(), "Sony E 10-18mm F4 OSS");
+    map.insert("32793".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS");
+    map.insert("32794".to_string(), "Sony FE 35mm F2.8 ZA or Samyang Lens");
+    map.insert("32794.1".to_string(), "Samyang AF 24mm F2.8");
+    map.insert("32794.2".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("32795".to_string(), "Sony FE 24-70mm F4 ZA OSS");
+    map.insert(
+        "32796".to_string(),
+        "Sony FE 85mm F1.8 or Viltrox PFU RBMH 85mm F1.8",
+    );
+    map.insert("32796.1".to_string(), "Viltrox PFU RBMH 85mm F1.8");
+    map.insert("32797".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("32798".to_string(), "Sony E 20mm F2.8");
+    map.insert("32799".to_string(), "Sony E 35mm F1.8 OSS");
+    map.insert("32800".to_string(), "Sony E PZ 18-105mm F4 G OSS");
+    map.insert("32801".to_string(), "Sony FE 12-24mm F4 G");
+    map.insert("32802".to_string(), "Sony FE 90mm F2.8 Macro G OSS");
+    map.insert("32803".to_string(), "Sony E 18-50mm F4-5.6");
+    map.insert("32804".to_string(), "Sony FE 24mm F1.4 GM");
+    map.insert("32805".to_string(), "Sony FE 24-105mm F4 G OSS");
+    map.insert("32807".to_string(), "Sony E PZ 18-200mm F3.5-6.3 OSS");
+    map.insert("32808".to_string(), "Sony FE 55mm F1.8 ZA");
+    map.insert("32810".to_string(), "Sony FE 70-200mm F4 G OSS");
+    map.insert("32811".to_string(), "Sony FE 16-35mm F4 ZA OSS");
+    map.insert("32812".to_string(), "Sony FE 50mm F2.8 Macro");
+    map.insert("32813".to_string(), "Sony FE 28-70mm F3.5-5.6 OSS");
+    map.insert("32814".to_string(), "Sony FE 35mm F1.4 ZA");
+    map.insert("32815".to_string(), "Sony FE 24-240mm F3.5-6.3 OSS");
+    map.insert("32816".to_string(), "Sony FE 28mm F2");
+    map.insert("32817".to_string(), "Sony FE PZ 28-135mm F4 G OSS");
+    map.insert("32819".to_string(), "Sony FE 100mm F2.8 STF GM OSS");
+    map.insert("32820".to_string(), "Sony E PZ 18-110mm F4 G OSS");
+    map.insert("32821".to_string(), "Sony FE 24-70mm F2.8 GM");
+    map.insert("32822".to_string(), "Sony FE 50mm F1.4 ZA");
+    map.insert(
+        "32823".to_string(),
+        "Sony FE 85mm F1.4 GM or Samyang AF 85mm F1.4",
+    );
+    map.insert("32823.1".to_string(), "Samyang AF 85mm F1.4");
+    map.insert("32824".to_string(), "Sony FE 50mm F1.8");
+    map.insert(
+        "32826".to_string(),
+        "Sony FE 21mm F2.8 (SEL28F20 + SEL075UWC)",
+    );
+    map.insert(
+        "32827".to_string(),
+        "Sony FE 16mm F3.5 Fisheye (SEL28F20 + SEL057FEC)",
+    );
+    map.insert("32828".to_string(), "Sony FE 70-300mm F4.5-5.6 G OSS");
+    map.insert("32829".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS");
+    map.insert("32830".to_string(), "Sony FE 70-200mm F2.8 GM OSS");
+    map.insert("32831".to_string(), "Sony FE 16-35mm F2.8 GM");
+    map.insert("32848".to_string(), "Sony FE 400mm F2.8 GM OSS");
+    map.insert("32849".to_string(), "Sony E 18-135mm F3.5-5.6 OSS");
+    map.insert("32850".to_string(), "Sony FE 135mm F1.8 GM");
+    map.insert("32851".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS");
+    map.insert("32852".to_string(), "Sony FE 600mm F4 GM OSS");
+    map.insert("32853".to_string(), "Sony E 16-55mm F2.8 G");
+    map.insert("32854".to_string(), "Sony E 70-350mm F4.5-6.3 G OSS");
+    map.insert("32855".to_string(), "Sony FE C 16-35mm T3.1 G");
+    map.insert("32858".to_string(), "Sony FE 35mm F1.8");
+    map.insert("32859".to_string(), "Sony FE 20mm F1.8 G");
+    map.insert("32860".to_string(), "Sony FE 12-24mm F2.8 GM");
+    map.insert("32862".to_string(), "Sony FE 50mm F1.2 GM");
+    map.insert("32863".to_string(), "Sony FE 14mm F1.8 GM");
+    map.insert("32864".to_string(), "Sony FE 28-60mm F4-5.6");
+    map.insert("32865".to_string(), "Sony FE 35mm F1.4 GM");
+    map.insert("32866".to_string(), "Sony FE 24mm F2.8 G");
+    map.insert("32867".to_string(), "Sony FE 40mm F2.5 G");
+    map.insert("32868".to_string(), "Sony FE 50mm F2.5 G");
+    map.insert("32871".to_string(), "Sony FE PZ 16-35mm F4 G");
+    map.insert("32873".to_string(), "Sony E PZ 10-20mm F4 G");
+    map.insert("32874".to_string(), "Sony FE 70-200mm F2.8 GM OSS II");
+    map.insert("32875".to_string(), "Sony FE 24-70mm F2.8 GM II");
+    map.insert("32876".to_string(), "Sony E 11mm F1.8");
+    map.insert("32877".to_string(), "Sony E 15mm F1.4 G");
+    map.insert("32878".to_string(), "Sony FE 20-70mm F4 G");
+    map.insert("32879".to_string(), "Sony FE 50mm F1.4 GM");
+    map.insert("32880".to_string(), "Sony FE 16mm F1.8 G");
+    map.insert("32881".to_string(), "Sony FE 24-50mm F2.8 G");
+    map.insert("32882".to_string(), "Sony FE 16-25mm F2.8 G");
+    map.insert("32884".to_string(), "Sony FE 70-200mm F4 Macro G OSS II");
+    map.insert("32885".to_string(), "Sony FE 16-35mm F2.8 GM II");
+    map.insert("32886".to_string(), "Sony FE 300mm F2.8 GM OSS");
+    map.insert("32887".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS II");
+    map.insert("32888".to_string(), "Sony FE 85mm F1.4 GM II");
+    map.insert("32889".to_string(), "Sony FE 28-70mm F2 GM");
+    map.insert("32890".to_string(), "Sony FE 400-800mm F6.3-8 G OSS");
+    map.insert("32891".to_string(), "Sony FE 50-150mm F2 GM");
+    map.insert(
+        "33072".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33073".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33076".to_string(),
+        "Sony FE 100mm F2.8 STF GM OSS (macro mode)",
+    );
+    map.insert(
+        "33077".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33078".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33079".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33080".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33081".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33082".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33083".to_string(),
+        "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33084".to_string(),
+        "Sony FE 600mm F4 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33085".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33086".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33087".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33088".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33089".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33090".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33091".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33092".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
+    );
+    map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
+    map.insert(
+        "49201".to_string(),
+        "Zeiss Touit 12mm F2.8 or other Touit lens",
+    );
+    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
+    map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
+    map.insert("49217".to_string(), "Zeiss Batis 85mm F1.8");
+    map.insert("49218".to_string(), "Zeiss Batis 18mm F2.8");
+    map.insert("49219".to_string(), "Zeiss Batis 135mm F2.8");
+    map.insert("49220".to_string(), "Zeiss Batis 40mm F2 CF");
+    map.insert("49232".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("49233".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("49234".to_string(), "Zeiss Loxia 21mm F2.8");
+    map.insert("49235".to_string(), "Zeiss Loxia 85mm F2.4");
+    map.insert("49236".to_string(), "Zeiss Loxia 25mm F2.4");
+    map.insert("49456".to_string(), "Tamron E 18-200mm F3.5-6.3 Di III VC");
+    map.insert("49457".to_string(), "Tamron 28-75mm F2.8 Di III RXD");
+    map.insert("49458".to_string(), "Tamron 17-28mm F2.8 Di III RXD");
+    map.insert("49459".to_string(), "Tamron 35mm F2.8 Di III OSD M1:2");
+    map.insert("49460".to_string(), "Tamron 24mm F2.8 Di III OSD M1:2");
+    map.insert("49461".to_string(), "Tamron 20mm F2.8 Di III OSD M1:2");
+    map.insert("49462".to_string(), "Tamron 70-180mm F2.8 Di III VXD");
+    map.insert("49463".to_string(), "Tamron 28-200mm F2.8-5.6 Di III RXD");
+    map.insert("49464".to_string(), "Tamron 70-300mm F4.5-6.3 Di III RXD");
+    map.insert("49465".to_string(), "Tamron 17-70mm F2.8 Di III-A VC RXD");
+    map.insert("49466".to_string(), "Tamron 150-500mm F5-6.7 Di III VC VXD");
+    map.insert("49467".to_string(), "Tamron 11-20mm F2.8 Di III-A RXD");
+    map.insert(
+        "49468".to_string(),
+        "Tamron 18-300mm F3.5-6.3 Di III-A VC VXD",
+    );
+    map.insert("49469".to_string(), "Tamron 35-150mm F2-F2.8 Di III VXD");
+    map.insert("49470".to_string(), "Tamron 28-75mm F2.8 Di III VXD G2");
+    map.insert(
+        "49471".to_string(),
+        "Tamron 50-400mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49472".to_string(), "Tamron 20-40mm F2.8 Di III VXD");
+    map.insert(
+        "49473".to_string(),
+        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
+    );
+    map.insert("49473.1".to_string(), "Tokina atx-m 85mm F1.8 FE");
+    map.insert("49473.2".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49473.3".to_string(), "Viltrox 56mm F1.4 E");
+    map.insert("49473.4".to_string(), "Viltrox 85mm F1.8 II FE");
+    map.insert(
+        "49474".to_string(),
+        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
+    );
+    map.insert("49474.1".to_string(), "Viltrox 13mm F1.4 E");
+    map.insert("49474.10".to_string(), "Viltrox 20mm F2.8 FE");
+    map.insert("49474.2".to_string(), "Viltrox 16mm F1.8 FE");
+    map.insert("49474.3".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49474.4".to_string(), "Viltrox 24mm F1.8 FE");
+    map.insert("49474.5".to_string(), "Viltrox 28mm F1.8 FE");
+    map.insert("49474.6".to_string(), "Viltrox 33mm F1.4 E");
+    map.insert("49474.7".to_string(), "Viltrox 35mm F1.8 FE");
+    map.insert("49474.8".to_string(), "Viltrox 50mm F1.8 FE");
+    map.insert("49474.9".to_string(), "Viltrox 75mm F1.2 E");
+    map.insert(
+        "49475".to_string(),
+        "Tamron 50-300mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49476".to_string(), "Tamron 28-300mm F4-7.1 Di III VC VXD");
+    map.insert("49477".to_string(), "Tamron 90mm F2.8 Di III Macro VXD");
+    map.insert("49712".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("49713".to_string(), "Tokina FiRIN 100mm F2.8 FE MACRO");
+    map.insert("49714".to_string(), "Tokina atx-m 11-18mm F2.8 E");
+    map.insert("50480".to_string(), "Sigma 30mm F1.4 DC DN | C");
+    map.insert("50481".to_string(), "Sigma 50mm F1.4 DG HSM | A");
+    map.insert(
+        "50482".to_string(),
+        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert("50483".to_string(), "Sigma 18-35mm F1.8 DC HSM | A + MC-11");
+    map.insert("50484".to_string(), "Sigma 24-35mm F2 DG HSM | A + MC-11");
+    map.insert("50485".to_string(), "Sigma 24mm F1.4 DG HSM | A + MC-11");
+    map.insert(
+        "50486".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50487".to_string(), "Sigma 20mm F1.4 DG HSM | A + MC-11");
+    map.insert("50488".to_string(), "Sigma 35mm F1.4 DG HSM | A");
+    map.insert(
+        "50489".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50490".to_string(),
+        "Sigma 120-300mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50492".to_string(),
+        "Sigma 24-105mm F4 DG OS HSM | A + MC-11",
+    );
+    map.insert(
+        "50493".to_string(),
+        "Sigma 17-70mm F2.8-4 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert(
+        "50495".to_string(),
+        "Sigma 50-100mm F1.8 DC HSM | A + MC-11",
+    );
+    map.insert("50499".to_string(), "Sigma 85mm F1.4 DG HSM | A");
+    map.insert(
+        "50501".to_string(),
+        "Sigma 100-400mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50503".to_string(), "Sigma 16mm F1.4 DC DN | C");
+    map.insert("50507".to_string(), "Sigma 105mm F1.4 DG HSM | A");
+    map.insert("50508".to_string(), "Sigma 56mm F1.4 DC DN | C");
+    map.insert(
+        "50512".to_string(),
+        "Sigma 70-200mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert("50513".to_string(), "Sigma 70mm F2.8 DG MACRO | A");
+    map.insert("50514".to_string(), "Sigma 45mm F2.8 DG DN | C");
+    map.insert("50515".to_string(), "Sigma 35mm F1.2 DG DN | A");
+    map.insert("50516".to_string(), "Sigma 14-24mm F2.8 DG DN | A");
+    map.insert("50517".to_string(), "Sigma 24-70mm F2.8 DG DN | A");
+    map.insert("50518".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C");
+    map.insert("50521".to_string(), "Sigma 85mm F1.4 DG DN | A");
+    map.insert("50522".to_string(), "Sigma 105mm F2.8 DG DN MACRO | A");
+    map.insert("50523".to_string(), "Sigma 65mm F2 DG DN | C");
+    map.insert("50524".to_string(), "Sigma 35mm F2 DG DN | C");
+    map.insert("50525".to_string(), "Sigma 24mm F3.5 DG DN | C");
+    map.insert("50526".to_string(), "Sigma 28-70mm F2.8 DG DN | C");
+    map.insert("50527".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S");
+    map.insert("50528".to_string(), "Sigma 35mm F1.4 DG DN | A");
+    map.insert("50529".to_string(), "Sigma 90mm F2.8 DG DN | C");
+    map.insert("50530".to_string(), "Sigma 24mm F2 DG DN | C");
+    map.insert("50531".to_string(), "Sigma 18-50mm F2.8 DC DN | C");
+    map.insert("50532".to_string(), "Sigma 20mm F2 DG DN | C");
+    map.insert("50533".to_string(), "Sigma 16-28mm F2.8 DG DN | C");
+    map.insert("50534".to_string(), "Sigma 20mm F1.4 DG DN | A");
+    map.insert("50535".to_string(), "Sigma 24mm F1.4 DG DN | A");
+    map.insert("50536".to_string(), "Sigma 60-600mm F4.5-6.3 DG DN OS | S");
+    map.insert("50537".to_string(), "Sigma 50mm F2 DG DN | C");
+    map.insert("50538".to_string(), "Sigma 17mm F4 DG DN | C");
+    map.insert("50539".to_string(), "Sigma 50mm F1.4 DG DN | A");
+    map.insert("50540".to_string(), "Sigma 14mm F1.4 DG DN | A");
+    map.insert("50543".to_string(), "Sigma 70-200mm F2.8 DG DN OS | S");
+    map.insert("50544".to_string(), "Sigma 23mm F1.4 DC DN | C");
+    map.insert("50545".to_string(), "Sigma 24-70mm F2.8 DG DN II | A");
+    map.insert("50546".to_string(), "Sigma 500mm F5.6 DG DN OS | S");
+    map.insert("50547".to_string(), "Sigma 10-18mm F2.8 DC DN | C");
+    map.insert(
+        "50548".to_string(),
+        "Sigma 15mm F1.4 DG DN DIAGONAL FISHEYE | A",
+    );
+    map.insert("50549".to_string(), "Sigma 50mm F1.2 DG DN | A");
+    map.insert("50550".to_string(), "Sigma 28-105mm F2.8 DG DN | A");
+    map.insert("50551".to_string(), "Sigma 28-45mm F1.8 DG DN | A");
+    map.insert("50553".to_string(), "Sigma 300-600mm F4 DG OS | S");
+    map.insert(
+        "50992".to_string(),
+        "Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III",
+    );
+    map.insert(
+        "50993".to_string(),
+        "Voigtlander HELIAR-HYPER WIDE 10mm F5.6",
+    );
+    map.insert(
+        "50994".to_string(),
+        "Voigtlander ULTRA WIDE-HELIAR 12mm F5.6 III",
+    );
+    map.insert(
+        "50995".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 65mm F2 Aspherical",
+    );
+    map.insert(
+        "50996".to_string(),
+        "Voigtlander NOKTON 40mm F1.2 Aspherical",
+    );
+    map.insert("50997".to_string(), "Voigtlander NOKTON classic 35mm F1.4");
+    map.insert(
+        "50998".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 110mm F2.5",
+    );
+    map.insert(
+        "50999".to_string(),
+        "Voigtlander COLOR-SKOPAR 21mm F3.5 Aspherical",
+    );
+    map.insert(
+        "51000".to_string(),
+        "Voigtlander NOKTON 50mm F1.2 Aspherical",
+    );
+    map.insert(
+        "51001".to_string(),
+        "Voigtlander NOKTON 21mm F1.4 Aspherical",
+    );
+    map.insert(
+        "51002".to_string(),
+        "Voigtlander APO-LANTHAR 50mm F2 Aspherical",
+    );
+    map.insert(
+        "51003".to_string(),
+        "Voigtlander NOKTON 35mm F1.2 Aspherical SE",
+    );
+    map.insert(
+        "51006".to_string(),
+        "Voigtlander APO-LANTHAR 35mm F2 Aspherical",
+    );
+    map.insert("51007".to_string(), "Voigtlander NOKTON 50mm F1 Aspherical");
+    map.insert(
+        "51008".to_string(),
+        "Voigtlander NOKTON 75mm F1.5 Aspherical",
+    );
+    map.insert(
+        "51009".to_string(),
+        "Voigtlander NOKTON 28mm F1.5 Aspherical",
+    );
+    map.insert("51072".to_string(), "ZEISS Otus ML 50mm F1.4");
+    map.insert("51073".to_string(), "ZEISS Otus ML 85mm F1.4");
+    map.insert("51504".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "51505".to_string(),
+        "Samyang AF 14mm F2.8 or Samyang AF 35mm F2.8",
+    );
+    map.insert("51505.1".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("51507".to_string(), "Samyang AF 35mm F1.4");
+    map.insert("51508".to_string(), "Samyang AF 45mm F1.8");
+    map.insert(
+        "51510".to_string(),
+        "Samyang AF 18mm F2.8 or Samyang AF 35mm F1.8",
+    );
+    map.insert("51510.1".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51512".to_string(), "Samyang AF 75mm F1.8");
+    map.insert("51513".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51514".to_string(), "Samyang AF 24mm F1.8");
+    map.insert("51515".to_string(), "Samyang AF 12mm F2.0");
+    map.insert("51516".to_string(), "Samyang AF 24-70mm F2.8");
+    map.insert("51517".to_string(), "Samyang AF 50mm F1.4 II");
+    map.insert("51518".to_string(), "Samyang AF 135mm F1.8");
+    map.insert("6".to_string(), "Sony LA-EA4 Adapter");
+    map.insert("61569".to_string(), "LAOWA FFII 10mm F2.8 C&D Dreamer");
+    map.insert("61761".to_string(), "Viltrox 28mm F4.5 FE");
+    map.insert("7".to_string(), "Sony LA-EA5 Adapter");
+    map.insert(
+        "78".to_string(),
+        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
+    );
+    map
+});
+
+static PRINT_CONV_349: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No");
+    map.insert("1".to_string(), "Yes");
+    map
+});
+
+static PRINT_CONV_350: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("11".to_string(), "11 (APS-C)");
+    map.insert("16".to_string(), "16 (Full-frame)");
+    map
+});
+
+static PRINT_CONV_351: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "16:9");
+    map.insert("1".to_string(), "4:3");
+    map.insert("2".to_string(), "3:2");
+    map.insert("3".to_string(), "1:1");
+    map.insert("5".to_string(), "Panorama");
+    map
+});
+
+static PRINT_CONV_352: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "16:9");
+    map.insert("1".to_string(), "4:3");
+    map.insert("2".to_string(), "3:2");
+    map.insert("3".to_string(), "1:1");
+    map.insert("5".to_string(), "Panorama");
+    map
+});
+
+static PRINT_CONV_353: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Auto");
+    map.insert("3".to_string(), "Lv1");
+    map.insert("4".to_string(), "Lv2");
+    map.insert("5".to_string(), "Lv3");
+    map.insert("6".to_string(), "Lv4");
+    map.insert("7".to_string(), "Lv5");
+    map.insert("8".to_string(), "n/a");
+    map
+});
+
+static PRINT_CONV_354: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "16:9");
+    map.insert("1".to_string(), "4:3");
+    map.insert("2".to_string(), "3:2");
+    map.insert("3".to_string(), "1:1");
+    map.insert("5".to_string(), "Panorama");
+    map
+});
+
+static PRINT_CONV_355: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Auto");
+    map.insert("3".to_string(), "Lv1");
+    map.insert("4".to_string(), "Lv2");
+    map.insert("5".to_string(), "Lv3");
+    map.insert("6".to_string(), "Lv4");
+    map.insert("7".to_string(), "Lv5");
+    map.insert("8".to_string(), "n/a");
+    map
+});
+
+static PRINT_CONV_356: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
     map.insert("0".to_string(), "Normal");
     map.insert("1".to_string(), "Continuous");
     map.insert("2".to_string(), "Bracketing");
@@ -4754,7 +3923,1281 @@ static PRINT_CONV_344: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_345: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_357: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Autoflash");
+    map.insert("1".to_string(), "Fill-flash");
+    map.insert("2".to_string(), "Flash Off");
+    map.insert("3".to_string(), "Slow Sync");
+    map.insert("4".to_string(), "Rear Sync");
+    map.insert("6".to_string(), "Wireless");
+    map
+});
+
+static PRINT_CONV_358: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Auto");
+    map.insert("3".to_string(), "Lv1");
+    map.insert("4".to_string(), "Lv2");
+    map.insert("5".to_string(), "Lv3");
+    map.insert("6".to_string(), "Lv4");
+    map.insert("7".to_string(), "Lv5");
+    map.insert("8".to_string(), "n/a");
+    map
+});
+
+static PRINT_CONV_359: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "HDR Auto");
+    map.insert("11".to_string(), "HDR 5 EV");
+    map.insert("13".to_string(), "HDR 6 EV");
+    map.insert("3".to_string(), "HDR 1 EV");
+    map.insert("5".to_string(), "HDR 2 EV");
+    map.insert("7".to_string(), "HDR 3 EV");
+    map.insert("9".to_string(), "HDR 4 EV");
+    map
+});
+
+static PRINT_CONV_360: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Toy Camera");
+    map.insert("10".to_string(), "Rich-tone Monochrome");
+    map.insert("11".to_string(), "Miniature");
+    map.insert("12".to_string(), "Water Color");
+    map.insert("13".to_string(), "Illustration");
+    map.insert("2".to_string(), "Pop Color");
+    map.insert("3".to_string(), "Posterization");
+    map.insert("4".to_string(), "Retro Photo");
+    map.insert("5".to_string(), "Soft High Key");
+    map.insert("6".to_string(), "Partial Color");
+    map.insert("7".to_string(), "High Contrast Monochrome");
+    map.insert("8".to_string(), "Soft Focus");
+    map.insert("9".to_string(), "HDR Painting");
+    map
+});
+
+static PRINT_CONV_361: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "JPEG");
+    map.insert("1".to_string(), "RAW");
+    map.insert("2".to_string(), "RAW + JPEG");
+    map
+});
+
+static PRINT_CONV_362: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Multi-segment");
+    map.insert("2".to_string(), "Center-weighted average");
+    map.insert("3".to_string(), "Spot");
+    map.insert("4".to_string(), "Average");
+    map.insert("5".to_string(), "Highlight");
+    map
+});
+
+static PRINT_CONV_363: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Program AE");
+    map.insert("1".to_string(), "Aperture-priority AE");
+    map.insert("10".to_string(), "Twilight");
+    map.insert("11".to_string(), "Twilight Portrait");
+    map.insert("12".to_string(), "Sunset");
+    map.insert("14".to_string(), "Action (High speed)");
+    map.insert("16".to_string(), "Sports");
+    map.insert("17".to_string(), "Handheld Night Shot");
+    map.insert("18".to_string(), "Anti Motion Blur");
+    map.insert("19".to_string(), "High Sensitivity");
+    map.insert("2".to_string(), "Shutter speed priority AE");
+    map.insert("21".to_string(), "Beach");
+    map.insert("22".to_string(), "Snow");
+    map.insert("23".to_string(), "Fireworks");
+    map.insert("26".to_string(), "Underwater");
+    map.insert("27".to_string(), "Gourmet");
+    map.insert("28".to_string(), "Pet");
+    map.insert("29".to_string(), "Macro");
+    map.insert("3".to_string(), "Manual");
+    map.insert("30".to_string(), "Backlight Correction HDR");
+    map.insert("33".to_string(), "Sweep Panorama");
+    map.insert("36".to_string(), "Background Defocus");
+    map.insert("37".to_string(), "Soft Skin");
+    map.insert("4".to_string(), "Auto");
+    map.insert("42".to_string(), "3D Image");
+    map.insert("43".to_string(), "Cont. Priority AE");
+    map.insert("45".to_string(), "Document");
+    map.insert("46".to_string(), "Party");
+    map.insert("5".to_string(), "iAuto");
+    map.insert("6".to_string(), "Superior Auto");
+    map.insert("7".to_string(), "iAuto+");
+    map.insert("8".to_string(), "Portrait");
+    map.insert("9".to_string(), "Landscape");
+    map
+});
+
+static PRINT_CONV_364: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "APS-C");
+    map.insert("2".to_string(), "Full-frame");
+    map
+});
+
+static PRINT_CONV_365: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "A-mount");
+    map.insert("2".to_string(), "E-mount");
+    map
+});
+
+static PRINT_CONV_366: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown E-mount lens or other lens");
+    map.insert("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN");
+    map.insert("0.10".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("0.11".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("0.12".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("0.13".to_string(), "Viltrox 85mm F1.8");
+    map.insert("0.2".to_string(), "Sigma 30mm F2.8 [EX] DN");
+    map.insert("0.3".to_string(), "Sigma 60mm F2.8 DN");
+    map.insert("0.4".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("0.5".to_string(), "Tamron 18-200mm F3.5-6.3 Di III VC");
+    map.insert("0.6".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("0.7".to_string(), "Tokina FiRIN 20mm F2 FE MF");
+    map.insert("0.8".to_string(), "Zeiss Touit 12mm F2.8");
+    map.insert("0.9".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("1".to_string(), "Sony LA-EA1 or Sigma MC-11 Adapter");
+    map.insert("13".to_string(), "Samyang AF 35-150mm F2-2.8");
+    map.insert("184".to_string(), "Metabones Canon EF Speed Booster Ultra");
+    map.insert("2".to_string(), "Sony LA-EA2 Adapter");
+    map.insert("20".to_string(), "Samyang AF 35mm F1.4 P FE");
+    map.insert("21".to_string(), "Samyang AF 14-24mm F2.8");
+    map.insert(
+        "234".to_string(),
+        "Metabones Canon EF Smart Adapter Mark IV",
+    );
+    map.insert("239".to_string(), "Metabones Canon EF Speed Booster");
+    map.insert("24593".to_string(), "LA-EA4r MonsterAdapter");
+    map.insert("3".to_string(), "Sony LA-EA3 Adapter");
+    map.insert("32784".to_string(), "Sony E 16mm F2.8");
+    map.insert("32785".to_string(), "Sony E 18-55mm F3.5-5.6 OSS");
+    map.insert("32786".to_string(), "Sony E 55-210mm F4.5-6.3 OSS");
+    map.insert("32787".to_string(), "Sony E 18-200mm F3.5-6.3 OSS");
+    map.insert("32788".to_string(), "Sony E 30mm F3.5 Macro");
+    map.insert(
+        "32789".to_string(),
+        "Sony E 24mm F1.8 ZA or Samyang AF 50mm F1.4",
+    );
+    map.insert("32789.1".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "32790".to_string(),
+        "Sony E 50mm F1.8 OSS or Samyang AF 14mm F2.8",
+    );
+    map.insert("32790.1".to_string(), "Samyang AF 14mm F2.8");
+    map.insert("32791".to_string(), "Sony E 16-70mm F4 ZA OSS");
+    map.insert("32792".to_string(), "Sony E 10-18mm F4 OSS");
+    map.insert("32793".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS");
+    map.insert("32794".to_string(), "Sony FE 35mm F2.8 ZA or Samyang Lens");
+    map.insert("32794.1".to_string(), "Samyang AF 24mm F2.8");
+    map.insert("32794.2".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("32795".to_string(), "Sony FE 24-70mm F4 ZA OSS");
+    map.insert(
+        "32796".to_string(),
+        "Sony FE 85mm F1.8 or Viltrox PFU RBMH 85mm F1.8",
+    );
+    map.insert("32796.1".to_string(), "Viltrox PFU RBMH 85mm F1.8");
+    map.insert("32797".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("32798".to_string(), "Sony E 20mm F2.8");
+    map.insert("32799".to_string(), "Sony E 35mm F1.8 OSS");
+    map.insert("32800".to_string(), "Sony E PZ 18-105mm F4 G OSS");
+    map.insert("32801".to_string(), "Sony FE 12-24mm F4 G");
+    map.insert("32802".to_string(), "Sony FE 90mm F2.8 Macro G OSS");
+    map.insert("32803".to_string(), "Sony E 18-50mm F4-5.6");
+    map.insert("32804".to_string(), "Sony FE 24mm F1.4 GM");
+    map.insert("32805".to_string(), "Sony FE 24-105mm F4 G OSS");
+    map.insert("32807".to_string(), "Sony E PZ 18-200mm F3.5-6.3 OSS");
+    map.insert("32808".to_string(), "Sony FE 55mm F1.8 ZA");
+    map.insert("32810".to_string(), "Sony FE 70-200mm F4 G OSS");
+    map.insert("32811".to_string(), "Sony FE 16-35mm F4 ZA OSS");
+    map.insert("32812".to_string(), "Sony FE 50mm F2.8 Macro");
+    map.insert("32813".to_string(), "Sony FE 28-70mm F3.5-5.6 OSS");
+    map.insert("32814".to_string(), "Sony FE 35mm F1.4 ZA");
+    map.insert("32815".to_string(), "Sony FE 24-240mm F3.5-6.3 OSS");
+    map.insert("32816".to_string(), "Sony FE 28mm F2");
+    map.insert("32817".to_string(), "Sony FE PZ 28-135mm F4 G OSS");
+    map.insert("32819".to_string(), "Sony FE 100mm F2.8 STF GM OSS");
+    map.insert("32820".to_string(), "Sony E PZ 18-110mm F4 G OSS");
+    map.insert("32821".to_string(), "Sony FE 24-70mm F2.8 GM");
+    map.insert("32822".to_string(), "Sony FE 50mm F1.4 ZA");
+    map.insert(
+        "32823".to_string(),
+        "Sony FE 85mm F1.4 GM or Samyang AF 85mm F1.4",
+    );
+    map.insert("32823.1".to_string(), "Samyang AF 85mm F1.4");
+    map.insert("32824".to_string(), "Sony FE 50mm F1.8");
+    map.insert(
+        "32826".to_string(),
+        "Sony FE 21mm F2.8 (SEL28F20 + SEL075UWC)",
+    );
+    map.insert(
+        "32827".to_string(),
+        "Sony FE 16mm F3.5 Fisheye (SEL28F20 + SEL057FEC)",
+    );
+    map.insert("32828".to_string(), "Sony FE 70-300mm F4.5-5.6 G OSS");
+    map.insert("32829".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS");
+    map.insert("32830".to_string(), "Sony FE 70-200mm F2.8 GM OSS");
+    map.insert("32831".to_string(), "Sony FE 16-35mm F2.8 GM");
+    map.insert("32848".to_string(), "Sony FE 400mm F2.8 GM OSS");
+    map.insert("32849".to_string(), "Sony E 18-135mm F3.5-5.6 OSS");
+    map.insert("32850".to_string(), "Sony FE 135mm F1.8 GM");
+    map.insert("32851".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS");
+    map.insert("32852".to_string(), "Sony FE 600mm F4 GM OSS");
+    map.insert("32853".to_string(), "Sony E 16-55mm F2.8 G");
+    map.insert("32854".to_string(), "Sony E 70-350mm F4.5-6.3 G OSS");
+    map.insert("32855".to_string(), "Sony FE C 16-35mm T3.1 G");
+    map.insert("32858".to_string(), "Sony FE 35mm F1.8");
+    map.insert("32859".to_string(), "Sony FE 20mm F1.8 G");
+    map.insert("32860".to_string(), "Sony FE 12-24mm F2.8 GM");
+    map.insert("32862".to_string(), "Sony FE 50mm F1.2 GM");
+    map.insert("32863".to_string(), "Sony FE 14mm F1.8 GM");
+    map.insert("32864".to_string(), "Sony FE 28-60mm F4-5.6");
+    map.insert("32865".to_string(), "Sony FE 35mm F1.4 GM");
+    map.insert("32866".to_string(), "Sony FE 24mm F2.8 G");
+    map.insert("32867".to_string(), "Sony FE 40mm F2.5 G");
+    map.insert("32868".to_string(), "Sony FE 50mm F2.5 G");
+    map.insert("32871".to_string(), "Sony FE PZ 16-35mm F4 G");
+    map.insert("32873".to_string(), "Sony E PZ 10-20mm F4 G");
+    map.insert("32874".to_string(), "Sony FE 70-200mm F2.8 GM OSS II");
+    map.insert("32875".to_string(), "Sony FE 24-70mm F2.8 GM II");
+    map.insert("32876".to_string(), "Sony E 11mm F1.8");
+    map.insert("32877".to_string(), "Sony E 15mm F1.4 G");
+    map.insert("32878".to_string(), "Sony FE 20-70mm F4 G");
+    map.insert("32879".to_string(), "Sony FE 50mm F1.4 GM");
+    map.insert("32880".to_string(), "Sony FE 16mm F1.8 G");
+    map.insert("32881".to_string(), "Sony FE 24-50mm F2.8 G");
+    map.insert("32882".to_string(), "Sony FE 16-25mm F2.8 G");
+    map.insert("32884".to_string(), "Sony FE 70-200mm F4 Macro G OSS II");
+    map.insert("32885".to_string(), "Sony FE 16-35mm F2.8 GM II");
+    map.insert("32886".to_string(), "Sony FE 300mm F2.8 GM OSS");
+    map.insert("32887".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS II");
+    map.insert("32888".to_string(), "Sony FE 85mm F1.4 GM II");
+    map.insert("32889".to_string(), "Sony FE 28-70mm F2 GM");
+    map.insert("32890".to_string(), "Sony FE 400-800mm F6.3-8 G OSS");
+    map.insert("32891".to_string(), "Sony FE 50-150mm F2 GM");
+    map.insert(
+        "33072".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33073".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33076".to_string(),
+        "Sony FE 100mm F2.8 STF GM OSS (macro mode)",
+    );
+    map.insert(
+        "33077".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33078".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33079".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33080".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33081".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33082".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33083".to_string(),
+        "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33084".to_string(),
+        "Sony FE 600mm F4 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33085".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33086".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33087".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33088".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33089".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33090".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33091".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33092".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
+    );
+    map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
+    map.insert(
+        "49201".to_string(),
+        "Zeiss Touit 12mm F2.8 or other Touit lens",
+    );
+    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
+    map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
+    map.insert("49217".to_string(), "Zeiss Batis 85mm F1.8");
+    map.insert("49218".to_string(), "Zeiss Batis 18mm F2.8");
+    map.insert("49219".to_string(), "Zeiss Batis 135mm F2.8");
+    map.insert("49220".to_string(), "Zeiss Batis 40mm F2 CF");
+    map.insert("49232".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("49233".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("49234".to_string(), "Zeiss Loxia 21mm F2.8");
+    map.insert("49235".to_string(), "Zeiss Loxia 85mm F2.4");
+    map.insert("49236".to_string(), "Zeiss Loxia 25mm F2.4");
+    map.insert("49456".to_string(), "Tamron E 18-200mm F3.5-6.3 Di III VC");
+    map.insert("49457".to_string(), "Tamron 28-75mm F2.8 Di III RXD");
+    map.insert("49458".to_string(), "Tamron 17-28mm F2.8 Di III RXD");
+    map.insert("49459".to_string(), "Tamron 35mm F2.8 Di III OSD M1:2");
+    map.insert("49460".to_string(), "Tamron 24mm F2.8 Di III OSD M1:2");
+    map.insert("49461".to_string(), "Tamron 20mm F2.8 Di III OSD M1:2");
+    map.insert("49462".to_string(), "Tamron 70-180mm F2.8 Di III VXD");
+    map.insert("49463".to_string(), "Tamron 28-200mm F2.8-5.6 Di III RXD");
+    map.insert("49464".to_string(), "Tamron 70-300mm F4.5-6.3 Di III RXD");
+    map.insert("49465".to_string(), "Tamron 17-70mm F2.8 Di III-A VC RXD");
+    map.insert("49466".to_string(), "Tamron 150-500mm F5-6.7 Di III VC VXD");
+    map.insert("49467".to_string(), "Tamron 11-20mm F2.8 Di III-A RXD");
+    map.insert(
+        "49468".to_string(),
+        "Tamron 18-300mm F3.5-6.3 Di III-A VC VXD",
+    );
+    map.insert("49469".to_string(), "Tamron 35-150mm F2-F2.8 Di III VXD");
+    map.insert("49470".to_string(), "Tamron 28-75mm F2.8 Di III VXD G2");
+    map.insert(
+        "49471".to_string(),
+        "Tamron 50-400mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49472".to_string(), "Tamron 20-40mm F2.8 Di III VXD");
+    map.insert(
+        "49473".to_string(),
+        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
+    );
+    map.insert("49473.1".to_string(), "Tokina atx-m 85mm F1.8 FE");
+    map.insert("49473.2".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49473.3".to_string(), "Viltrox 56mm F1.4 E");
+    map.insert("49473.4".to_string(), "Viltrox 85mm F1.8 II FE");
+    map.insert(
+        "49474".to_string(),
+        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
+    );
+    map.insert("49474.1".to_string(), "Viltrox 13mm F1.4 E");
+    map.insert("49474.10".to_string(), "Viltrox 20mm F2.8 FE");
+    map.insert("49474.2".to_string(), "Viltrox 16mm F1.8 FE");
+    map.insert("49474.3".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49474.4".to_string(), "Viltrox 24mm F1.8 FE");
+    map.insert("49474.5".to_string(), "Viltrox 28mm F1.8 FE");
+    map.insert("49474.6".to_string(), "Viltrox 33mm F1.4 E");
+    map.insert("49474.7".to_string(), "Viltrox 35mm F1.8 FE");
+    map.insert("49474.8".to_string(), "Viltrox 50mm F1.8 FE");
+    map.insert("49474.9".to_string(), "Viltrox 75mm F1.2 E");
+    map.insert(
+        "49475".to_string(),
+        "Tamron 50-300mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49476".to_string(), "Tamron 28-300mm F4-7.1 Di III VC VXD");
+    map.insert("49477".to_string(), "Tamron 90mm F2.8 Di III Macro VXD");
+    map.insert("49712".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("49713".to_string(), "Tokina FiRIN 100mm F2.8 FE MACRO");
+    map.insert("49714".to_string(), "Tokina atx-m 11-18mm F2.8 E");
+    map.insert("50480".to_string(), "Sigma 30mm F1.4 DC DN | C");
+    map.insert("50481".to_string(), "Sigma 50mm F1.4 DG HSM | A");
+    map.insert(
+        "50482".to_string(),
+        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert("50483".to_string(), "Sigma 18-35mm F1.8 DC HSM | A + MC-11");
+    map.insert("50484".to_string(), "Sigma 24-35mm F2 DG HSM | A + MC-11");
+    map.insert("50485".to_string(), "Sigma 24mm F1.4 DG HSM | A + MC-11");
+    map.insert(
+        "50486".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50487".to_string(), "Sigma 20mm F1.4 DG HSM | A + MC-11");
+    map.insert("50488".to_string(), "Sigma 35mm F1.4 DG HSM | A");
+    map.insert(
+        "50489".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50490".to_string(),
+        "Sigma 120-300mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50492".to_string(),
+        "Sigma 24-105mm F4 DG OS HSM | A + MC-11",
+    );
+    map.insert(
+        "50493".to_string(),
+        "Sigma 17-70mm F2.8-4 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert(
+        "50495".to_string(),
+        "Sigma 50-100mm F1.8 DC HSM | A + MC-11",
+    );
+    map.insert("50499".to_string(), "Sigma 85mm F1.4 DG HSM | A");
+    map.insert(
+        "50501".to_string(),
+        "Sigma 100-400mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50503".to_string(), "Sigma 16mm F1.4 DC DN | C");
+    map.insert("50507".to_string(), "Sigma 105mm F1.4 DG HSM | A");
+    map.insert("50508".to_string(), "Sigma 56mm F1.4 DC DN | C");
+    map.insert(
+        "50512".to_string(),
+        "Sigma 70-200mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert("50513".to_string(), "Sigma 70mm F2.8 DG MACRO | A");
+    map.insert("50514".to_string(), "Sigma 45mm F2.8 DG DN | C");
+    map.insert("50515".to_string(), "Sigma 35mm F1.2 DG DN | A");
+    map.insert("50516".to_string(), "Sigma 14-24mm F2.8 DG DN | A");
+    map.insert("50517".to_string(), "Sigma 24-70mm F2.8 DG DN | A");
+    map.insert("50518".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C");
+    map.insert("50521".to_string(), "Sigma 85mm F1.4 DG DN | A");
+    map.insert("50522".to_string(), "Sigma 105mm F2.8 DG DN MACRO | A");
+    map.insert("50523".to_string(), "Sigma 65mm F2 DG DN | C");
+    map.insert("50524".to_string(), "Sigma 35mm F2 DG DN | C");
+    map.insert("50525".to_string(), "Sigma 24mm F3.5 DG DN | C");
+    map.insert("50526".to_string(), "Sigma 28-70mm F2.8 DG DN | C");
+    map.insert("50527".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S");
+    map.insert("50528".to_string(), "Sigma 35mm F1.4 DG DN | A");
+    map.insert("50529".to_string(), "Sigma 90mm F2.8 DG DN | C");
+    map.insert("50530".to_string(), "Sigma 24mm F2 DG DN | C");
+    map.insert("50531".to_string(), "Sigma 18-50mm F2.8 DC DN | C");
+    map.insert("50532".to_string(), "Sigma 20mm F2 DG DN | C");
+    map.insert("50533".to_string(), "Sigma 16-28mm F2.8 DG DN | C");
+    map.insert("50534".to_string(), "Sigma 20mm F1.4 DG DN | A");
+    map.insert("50535".to_string(), "Sigma 24mm F1.4 DG DN | A");
+    map.insert("50536".to_string(), "Sigma 60-600mm F4.5-6.3 DG DN OS | S");
+    map.insert("50537".to_string(), "Sigma 50mm F2 DG DN | C");
+    map.insert("50538".to_string(), "Sigma 17mm F4 DG DN | C");
+    map.insert("50539".to_string(), "Sigma 50mm F1.4 DG DN | A");
+    map.insert("50540".to_string(), "Sigma 14mm F1.4 DG DN | A");
+    map.insert("50543".to_string(), "Sigma 70-200mm F2.8 DG DN OS | S");
+    map.insert("50544".to_string(), "Sigma 23mm F1.4 DC DN | C");
+    map.insert("50545".to_string(), "Sigma 24-70mm F2.8 DG DN II | A");
+    map.insert("50546".to_string(), "Sigma 500mm F5.6 DG DN OS | S");
+    map.insert("50547".to_string(), "Sigma 10-18mm F2.8 DC DN | C");
+    map.insert(
+        "50548".to_string(),
+        "Sigma 15mm F1.4 DG DN DIAGONAL FISHEYE | A",
+    );
+    map.insert("50549".to_string(), "Sigma 50mm F1.2 DG DN | A");
+    map.insert("50550".to_string(), "Sigma 28-105mm F2.8 DG DN | A");
+    map.insert("50551".to_string(), "Sigma 28-45mm F1.8 DG DN | A");
+    map.insert("50553".to_string(), "Sigma 300-600mm F4 DG OS | S");
+    map.insert(
+        "50992".to_string(),
+        "Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III",
+    );
+    map.insert(
+        "50993".to_string(),
+        "Voigtlander HELIAR-HYPER WIDE 10mm F5.6",
+    );
+    map.insert(
+        "50994".to_string(),
+        "Voigtlander ULTRA WIDE-HELIAR 12mm F5.6 III",
+    );
+    map.insert(
+        "50995".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 65mm F2 Aspherical",
+    );
+    map.insert(
+        "50996".to_string(),
+        "Voigtlander NOKTON 40mm F1.2 Aspherical",
+    );
+    map.insert("50997".to_string(), "Voigtlander NOKTON classic 35mm F1.4");
+    map.insert(
+        "50998".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 110mm F2.5",
+    );
+    map.insert(
+        "50999".to_string(),
+        "Voigtlander COLOR-SKOPAR 21mm F3.5 Aspherical",
+    );
+    map.insert(
+        "51000".to_string(),
+        "Voigtlander NOKTON 50mm F1.2 Aspherical",
+    );
+    map.insert(
+        "51001".to_string(),
+        "Voigtlander NOKTON 21mm F1.4 Aspherical",
+    );
+    map.insert(
+        "51002".to_string(),
+        "Voigtlander APO-LANTHAR 50mm F2 Aspherical",
+    );
+    map.insert(
+        "51003".to_string(),
+        "Voigtlander NOKTON 35mm F1.2 Aspherical SE",
+    );
+    map.insert(
+        "51006".to_string(),
+        "Voigtlander APO-LANTHAR 35mm F2 Aspherical",
+    );
+    map.insert("51007".to_string(), "Voigtlander NOKTON 50mm F1 Aspherical");
+    map.insert(
+        "51008".to_string(),
+        "Voigtlander NOKTON 75mm F1.5 Aspherical",
+    );
+    map.insert(
+        "51009".to_string(),
+        "Voigtlander NOKTON 28mm F1.5 Aspherical",
+    );
+    map.insert("51072".to_string(), "ZEISS Otus ML 50mm F1.4");
+    map.insert("51073".to_string(), "ZEISS Otus ML 85mm F1.4");
+    map.insert("51504".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "51505".to_string(),
+        "Samyang AF 14mm F2.8 or Samyang AF 35mm F2.8",
+    );
+    map.insert("51505.1".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("51507".to_string(), "Samyang AF 35mm F1.4");
+    map.insert("51508".to_string(), "Samyang AF 45mm F1.8");
+    map.insert(
+        "51510".to_string(),
+        "Samyang AF 18mm F2.8 or Samyang AF 35mm F1.8",
+    );
+    map.insert("51510.1".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51512".to_string(), "Samyang AF 75mm F1.8");
+    map.insert("51513".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51514".to_string(), "Samyang AF 24mm F1.8");
+    map.insert("51515".to_string(), "Samyang AF 12mm F2.0");
+    map.insert("51516".to_string(), "Samyang AF 24-70mm F2.8");
+    map.insert("51517".to_string(), "Samyang AF 50mm F1.4 II");
+    map.insert("51518".to_string(), "Samyang AF 135mm F1.8");
+    map.insert("6".to_string(), "Sony LA-EA4 Adapter");
+    map.insert("61569".to_string(), "LAOWA FFII 10mm F2.8 C&D Dreamer");
+    map.insert("61761".to_string(), "Viltrox 28mm F4.5 FE");
+    map.insert("7".to_string(), "Sony LA-EA5 Adapter");
+    map.insert(
+        "78".to_string(),
+        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
+    );
+    map
+});
+
+static PRINT_CONV_367: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No");
+    map.insert("1".to_string(), "Yes");
+    map
+});
+
+static PRINT_CONV_368: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("11".to_string(), "11 (APS-C)");
+    map.insert("16".to_string(), "16 (Full-frame)");
+    map
+});
+
+static PRINT_CONV_369: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "16:9");
+    map.insert("1".to_string(), "4:3");
+    map.insert("2".to_string(), "3:2");
+    map.insert("3".to_string(), "1:1");
+    map.insert("5".to_string(), "Panorama");
+    map
+});
+
+static PRINT_CONV_370: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Auto");
+    map.insert("3".to_string(), "Lv1");
+    map.insert("4".to_string(), "Lv2");
+    map.insert("5".to_string(), "Lv3");
+    map.insert("6".to_string(), "Lv4");
+    map.insert("7".to_string(), "Lv5");
+    map.insert("8".to_string(), "n/a");
+    map
+});
+
+static PRINT_CONV_371: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("2".to_string(), "Bracketing");
+    map.insert("4".to_string(), "Continuous - Burst");
+    map.insert("5".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("6".to_string(), "Normal - Self-timer");
+    map.insert("9".to_string(), "Single Burst Shooting");
+    map
+});
+
+static PRINT_CONV_372: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Autoflash");
+    map.insert("1".to_string(), "Fill-flash");
+    map.insert("2".to_string(), "Flash Off");
+    map.insert("3".to_string(), "Slow Sync");
+    map.insert("4".to_string(), "Rear Sync");
+    map.insert("6".to_string(), "Wireless");
+    map
+});
+
+static PRINT_CONV_373: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Auto");
+    map.insert("3".to_string(), "Lv1");
+    map.insert("4".to_string(), "Lv2");
+    map.insert("5".to_string(), "Lv3");
+    map.insert("6".to_string(), "Lv4");
+    map.insert("7".to_string(), "Lv5");
+    map.insert("8".to_string(), "n/a");
+    map
+});
+
+static PRINT_CONV_374: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "HDR Auto");
+    map.insert("11".to_string(), "HDR 5 EV");
+    map.insert("13".to_string(), "HDR 6 EV");
+    map.insert("3".to_string(), "HDR 1 EV");
+    map.insert("5".to_string(), "HDR 2 EV");
+    map.insert("7".to_string(), "HDR 3 EV");
+    map.insert("9".to_string(), "HDR 4 EV");
+    map
+});
+
+static PRINT_CONV_375: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Toy Camera");
+    map.insert("10".to_string(), "Rich-tone Monochrome");
+    map.insert("11".to_string(), "Miniature");
+    map.insert("12".to_string(), "Water Color");
+    map.insert("13".to_string(), "Illustration");
+    map.insert("2".to_string(), "Pop Color");
+    map.insert("3".to_string(), "Posterization");
+    map.insert("4".to_string(), "Retro Photo");
+    map.insert("5".to_string(), "Soft High Key");
+    map.insert("6".to_string(), "Partial Color");
+    map.insert("7".to_string(), "High Contrast Monochrome");
+    map.insert("8".to_string(), "Soft Focus");
+    map.insert("9".to_string(), "HDR Painting");
+    map
+});
+
+static PRINT_CONV_376: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "JPEG");
+    map.insert("1".to_string(), "RAW");
+    map.insert("2".to_string(), "RAW + JPEG");
+    map
+});
+
+static PRINT_CONV_377: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Multi-segment");
+    map.insert("2".to_string(), "Center-weighted average");
+    map.insert("3".to_string(), "Spot");
+    map.insert("4".to_string(), "Average");
+    map.insert("5".to_string(), "Highlight");
+    map
+});
+
+static PRINT_CONV_378: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Program AE");
+    map.insert("1".to_string(), "Aperture-priority AE");
+    map.insert("10".to_string(), "Twilight");
+    map.insert("11".to_string(), "Twilight Portrait");
+    map.insert("12".to_string(), "Sunset");
+    map.insert("14".to_string(), "Action (High speed)");
+    map.insert("16".to_string(), "Sports");
+    map.insert("17".to_string(), "Handheld Night Shot");
+    map.insert("18".to_string(), "Anti Motion Blur");
+    map.insert("19".to_string(), "High Sensitivity");
+    map.insert("2".to_string(), "Shutter speed priority AE");
+    map.insert("21".to_string(), "Beach");
+    map.insert("22".to_string(), "Snow");
+    map.insert("23".to_string(), "Fireworks");
+    map.insert("26".to_string(), "Underwater");
+    map.insert("27".to_string(), "Gourmet");
+    map.insert("28".to_string(), "Pet");
+    map.insert("29".to_string(), "Macro");
+    map.insert("3".to_string(), "Manual");
+    map.insert("30".to_string(), "Backlight Correction HDR");
+    map.insert("33".to_string(), "Sweep Panorama");
+    map.insert("36".to_string(), "Background Defocus");
+    map.insert("37".to_string(), "Soft Skin");
+    map.insert("4".to_string(), "Auto");
+    map.insert("42".to_string(), "3D Image");
+    map.insert("43".to_string(), "Cont. Priority AE");
+    map.insert("45".to_string(), "Document");
+    map.insert("46".to_string(), "Party");
+    map.insert("5".to_string(), "iAuto");
+    map.insert("6".to_string(), "Superior Auto");
+    map.insert("7".to_string(), "iAuto+");
+    map.insert("8".to_string(), "Portrait");
+    map.insert("9".to_string(), "Landscape");
+    map
+});
+
+static PRINT_CONV_379: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "APS-C");
+    map.insert("2".to_string(), "Full-frame");
+    map
+});
+
+static PRINT_CONV_380: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "A-mount");
+    map.insert("2".to_string(), "E-mount");
+    map
+});
+
+static PRINT_CONV_381: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown E-mount lens or other lens");
+    map.insert("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN");
+    map.insert("0.10".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("0.11".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("0.12".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("0.13".to_string(), "Viltrox 85mm F1.8");
+    map.insert("0.2".to_string(), "Sigma 30mm F2.8 [EX] DN");
+    map.insert("0.3".to_string(), "Sigma 60mm F2.8 DN");
+    map.insert("0.4".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("0.5".to_string(), "Tamron 18-200mm F3.5-6.3 Di III VC");
+    map.insert("0.6".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("0.7".to_string(), "Tokina FiRIN 20mm F2 FE MF");
+    map.insert("0.8".to_string(), "Zeiss Touit 12mm F2.8");
+    map.insert("0.9".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("1".to_string(), "Sony LA-EA1 or Sigma MC-11 Adapter");
+    map.insert("13".to_string(), "Samyang AF 35-150mm F2-2.8");
+    map.insert("184".to_string(), "Metabones Canon EF Speed Booster Ultra");
+    map.insert("2".to_string(), "Sony LA-EA2 Adapter");
+    map.insert("20".to_string(), "Samyang AF 35mm F1.4 P FE");
+    map.insert("21".to_string(), "Samyang AF 14-24mm F2.8");
+    map.insert(
+        "234".to_string(),
+        "Metabones Canon EF Smart Adapter Mark IV",
+    );
+    map.insert("239".to_string(), "Metabones Canon EF Speed Booster");
+    map.insert("24593".to_string(), "LA-EA4r MonsterAdapter");
+    map.insert("3".to_string(), "Sony LA-EA3 Adapter");
+    map.insert("32784".to_string(), "Sony E 16mm F2.8");
+    map.insert("32785".to_string(), "Sony E 18-55mm F3.5-5.6 OSS");
+    map.insert("32786".to_string(), "Sony E 55-210mm F4.5-6.3 OSS");
+    map.insert("32787".to_string(), "Sony E 18-200mm F3.5-6.3 OSS");
+    map.insert("32788".to_string(), "Sony E 30mm F3.5 Macro");
+    map.insert(
+        "32789".to_string(),
+        "Sony E 24mm F1.8 ZA or Samyang AF 50mm F1.4",
+    );
+    map.insert("32789.1".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "32790".to_string(),
+        "Sony E 50mm F1.8 OSS or Samyang AF 14mm F2.8",
+    );
+    map.insert("32790.1".to_string(), "Samyang AF 14mm F2.8");
+    map.insert("32791".to_string(), "Sony E 16-70mm F4 ZA OSS");
+    map.insert("32792".to_string(), "Sony E 10-18mm F4 OSS");
+    map.insert("32793".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS");
+    map.insert("32794".to_string(), "Sony FE 35mm F2.8 ZA or Samyang Lens");
+    map.insert("32794.1".to_string(), "Samyang AF 24mm F2.8");
+    map.insert("32794.2".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("32795".to_string(), "Sony FE 24-70mm F4 ZA OSS");
+    map.insert(
+        "32796".to_string(),
+        "Sony FE 85mm F1.8 or Viltrox PFU RBMH 85mm F1.8",
+    );
+    map.insert("32796.1".to_string(), "Viltrox PFU RBMH 85mm F1.8");
+    map.insert("32797".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("32798".to_string(), "Sony E 20mm F2.8");
+    map.insert("32799".to_string(), "Sony E 35mm F1.8 OSS");
+    map.insert("32800".to_string(), "Sony E PZ 18-105mm F4 G OSS");
+    map.insert("32801".to_string(), "Sony FE 12-24mm F4 G");
+    map.insert("32802".to_string(), "Sony FE 90mm F2.8 Macro G OSS");
+    map.insert("32803".to_string(), "Sony E 18-50mm F4-5.6");
+    map.insert("32804".to_string(), "Sony FE 24mm F1.4 GM");
+    map.insert("32805".to_string(), "Sony FE 24-105mm F4 G OSS");
+    map.insert("32807".to_string(), "Sony E PZ 18-200mm F3.5-6.3 OSS");
+    map.insert("32808".to_string(), "Sony FE 55mm F1.8 ZA");
+    map.insert("32810".to_string(), "Sony FE 70-200mm F4 G OSS");
+    map.insert("32811".to_string(), "Sony FE 16-35mm F4 ZA OSS");
+    map.insert("32812".to_string(), "Sony FE 50mm F2.8 Macro");
+    map.insert("32813".to_string(), "Sony FE 28-70mm F3.5-5.6 OSS");
+    map.insert("32814".to_string(), "Sony FE 35mm F1.4 ZA");
+    map.insert("32815".to_string(), "Sony FE 24-240mm F3.5-6.3 OSS");
+    map.insert("32816".to_string(), "Sony FE 28mm F2");
+    map.insert("32817".to_string(), "Sony FE PZ 28-135mm F4 G OSS");
+    map.insert("32819".to_string(), "Sony FE 100mm F2.8 STF GM OSS");
+    map.insert("32820".to_string(), "Sony E PZ 18-110mm F4 G OSS");
+    map.insert("32821".to_string(), "Sony FE 24-70mm F2.8 GM");
+    map.insert("32822".to_string(), "Sony FE 50mm F1.4 ZA");
+    map.insert(
+        "32823".to_string(),
+        "Sony FE 85mm F1.4 GM or Samyang AF 85mm F1.4",
+    );
+    map.insert("32823.1".to_string(), "Samyang AF 85mm F1.4");
+    map.insert("32824".to_string(), "Sony FE 50mm F1.8");
+    map.insert(
+        "32826".to_string(),
+        "Sony FE 21mm F2.8 (SEL28F20 + SEL075UWC)",
+    );
+    map.insert(
+        "32827".to_string(),
+        "Sony FE 16mm F3.5 Fisheye (SEL28F20 + SEL057FEC)",
+    );
+    map.insert("32828".to_string(), "Sony FE 70-300mm F4.5-5.6 G OSS");
+    map.insert("32829".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS");
+    map.insert("32830".to_string(), "Sony FE 70-200mm F2.8 GM OSS");
+    map.insert("32831".to_string(), "Sony FE 16-35mm F2.8 GM");
+    map.insert("32848".to_string(), "Sony FE 400mm F2.8 GM OSS");
+    map.insert("32849".to_string(), "Sony E 18-135mm F3.5-5.6 OSS");
+    map.insert("32850".to_string(), "Sony FE 135mm F1.8 GM");
+    map.insert("32851".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS");
+    map.insert("32852".to_string(), "Sony FE 600mm F4 GM OSS");
+    map.insert("32853".to_string(), "Sony E 16-55mm F2.8 G");
+    map.insert("32854".to_string(), "Sony E 70-350mm F4.5-6.3 G OSS");
+    map.insert("32855".to_string(), "Sony FE C 16-35mm T3.1 G");
+    map.insert("32858".to_string(), "Sony FE 35mm F1.8");
+    map.insert("32859".to_string(), "Sony FE 20mm F1.8 G");
+    map.insert("32860".to_string(), "Sony FE 12-24mm F2.8 GM");
+    map.insert("32862".to_string(), "Sony FE 50mm F1.2 GM");
+    map.insert("32863".to_string(), "Sony FE 14mm F1.8 GM");
+    map.insert("32864".to_string(), "Sony FE 28-60mm F4-5.6");
+    map.insert("32865".to_string(), "Sony FE 35mm F1.4 GM");
+    map.insert("32866".to_string(), "Sony FE 24mm F2.8 G");
+    map.insert("32867".to_string(), "Sony FE 40mm F2.5 G");
+    map.insert("32868".to_string(), "Sony FE 50mm F2.5 G");
+    map.insert("32871".to_string(), "Sony FE PZ 16-35mm F4 G");
+    map.insert("32873".to_string(), "Sony E PZ 10-20mm F4 G");
+    map.insert("32874".to_string(), "Sony FE 70-200mm F2.8 GM OSS II");
+    map.insert("32875".to_string(), "Sony FE 24-70mm F2.8 GM II");
+    map.insert("32876".to_string(), "Sony E 11mm F1.8");
+    map.insert("32877".to_string(), "Sony E 15mm F1.4 G");
+    map.insert("32878".to_string(), "Sony FE 20-70mm F4 G");
+    map.insert("32879".to_string(), "Sony FE 50mm F1.4 GM");
+    map.insert("32880".to_string(), "Sony FE 16mm F1.8 G");
+    map.insert("32881".to_string(), "Sony FE 24-50mm F2.8 G");
+    map.insert("32882".to_string(), "Sony FE 16-25mm F2.8 G");
+    map.insert("32884".to_string(), "Sony FE 70-200mm F4 Macro G OSS II");
+    map.insert("32885".to_string(), "Sony FE 16-35mm F2.8 GM II");
+    map.insert("32886".to_string(), "Sony FE 300mm F2.8 GM OSS");
+    map.insert("32887".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS II");
+    map.insert("32888".to_string(), "Sony FE 85mm F1.4 GM II");
+    map.insert("32889".to_string(), "Sony FE 28-70mm F2 GM");
+    map.insert("32890".to_string(), "Sony FE 400-800mm F6.3-8 G OSS");
+    map.insert("32891".to_string(), "Sony FE 50-150mm F2 GM");
+    map.insert(
+        "33072".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33073".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33076".to_string(),
+        "Sony FE 100mm F2.8 STF GM OSS (macro mode)",
+    );
+    map.insert(
+        "33077".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33078".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33079".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33080".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33081".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33082".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33083".to_string(),
+        "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33084".to_string(),
+        "Sony FE 600mm F4 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33085".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33086".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33087".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33088".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33089".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33090".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33091".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33092".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
+    );
+    map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
+    map.insert(
+        "49201".to_string(),
+        "Zeiss Touit 12mm F2.8 or other Touit lens",
+    );
+    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
+    map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
+    map.insert("49217".to_string(), "Zeiss Batis 85mm F1.8");
+    map.insert("49218".to_string(), "Zeiss Batis 18mm F2.8");
+    map.insert("49219".to_string(), "Zeiss Batis 135mm F2.8");
+    map.insert("49220".to_string(), "Zeiss Batis 40mm F2 CF");
+    map.insert("49232".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("49233".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("49234".to_string(), "Zeiss Loxia 21mm F2.8");
+    map.insert("49235".to_string(), "Zeiss Loxia 85mm F2.4");
+    map.insert("49236".to_string(), "Zeiss Loxia 25mm F2.4");
+    map.insert("49456".to_string(), "Tamron E 18-200mm F3.5-6.3 Di III VC");
+    map.insert("49457".to_string(), "Tamron 28-75mm F2.8 Di III RXD");
+    map.insert("49458".to_string(), "Tamron 17-28mm F2.8 Di III RXD");
+    map.insert("49459".to_string(), "Tamron 35mm F2.8 Di III OSD M1:2");
+    map.insert("49460".to_string(), "Tamron 24mm F2.8 Di III OSD M1:2");
+    map.insert("49461".to_string(), "Tamron 20mm F2.8 Di III OSD M1:2");
+    map.insert("49462".to_string(), "Tamron 70-180mm F2.8 Di III VXD");
+    map.insert("49463".to_string(), "Tamron 28-200mm F2.8-5.6 Di III RXD");
+    map.insert("49464".to_string(), "Tamron 70-300mm F4.5-6.3 Di III RXD");
+    map.insert("49465".to_string(), "Tamron 17-70mm F2.8 Di III-A VC RXD");
+    map.insert("49466".to_string(), "Tamron 150-500mm F5-6.7 Di III VC VXD");
+    map.insert("49467".to_string(), "Tamron 11-20mm F2.8 Di III-A RXD");
+    map.insert(
+        "49468".to_string(),
+        "Tamron 18-300mm F3.5-6.3 Di III-A VC VXD",
+    );
+    map.insert("49469".to_string(), "Tamron 35-150mm F2-F2.8 Di III VXD");
+    map.insert("49470".to_string(), "Tamron 28-75mm F2.8 Di III VXD G2");
+    map.insert(
+        "49471".to_string(),
+        "Tamron 50-400mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49472".to_string(), "Tamron 20-40mm F2.8 Di III VXD");
+    map.insert(
+        "49473".to_string(),
+        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
+    );
+    map.insert("49473.1".to_string(), "Tokina atx-m 85mm F1.8 FE");
+    map.insert("49473.2".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49473.3".to_string(), "Viltrox 56mm F1.4 E");
+    map.insert("49473.4".to_string(), "Viltrox 85mm F1.8 II FE");
+    map.insert(
+        "49474".to_string(),
+        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
+    );
+    map.insert("49474.1".to_string(), "Viltrox 13mm F1.4 E");
+    map.insert("49474.10".to_string(), "Viltrox 20mm F2.8 FE");
+    map.insert("49474.2".to_string(), "Viltrox 16mm F1.8 FE");
+    map.insert("49474.3".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49474.4".to_string(), "Viltrox 24mm F1.8 FE");
+    map.insert("49474.5".to_string(), "Viltrox 28mm F1.8 FE");
+    map.insert("49474.6".to_string(), "Viltrox 33mm F1.4 E");
+    map.insert("49474.7".to_string(), "Viltrox 35mm F1.8 FE");
+    map.insert("49474.8".to_string(), "Viltrox 50mm F1.8 FE");
+    map.insert("49474.9".to_string(), "Viltrox 75mm F1.2 E");
+    map.insert(
+        "49475".to_string(),
+        "Tamron 50-300mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49476".to_string(), "Tamron 28-300mm F4-7.1 Di III VC VXD");
+    map.insert("49477".to_string(), "Tamron 90mm F2.8 Di III Macro VXD");
+    map.insert("49712".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("49713".to_string(), "Tokina FiRIN 100mm F2.8 FE MACRO");
+    map.insert("49714".to_string(), "Tokina atx-m 11-18mm F2.8 E");
+    map.insert("50480".to_string(), "Sigma 30mm F1.4 DC DN | C");
+    map.insert("50481".to_string(), "Sigma 50mm F1.4 DG HSM | A");
+    map.insert(
+        "50482".to_string(),
+        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert("50483".to_string(), "Sigma 18-35mm F1.8 DC HSM | A + MC-11");
+    map.insert("50484".to_string(), "Sigma 24-35mm F2 DG HSM | A + MC-11");
+    map.insert("50485".to_string(), "Sigma 24mm F1.4 DG HSM | A + MC-11");
+    map.insert(
+        "50486".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50487".to_string(), "Sigma 20mm F1.4 DG HSM | A + MC-11");
+    map.insert("50488".to_string(), "Sigma 35mm F1.4 DG HSM | A");
+    map.insert(
+        "50489".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50490".to_string(),
+        "Sigma 120-300mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50492".to_string(),
+        "Sigma 24-105mm F4 DG OS HSM | A + MC-11",
+    );
+    map.insert(
+        "50493".to_string(),
+        "Sigma 17-70mm F2.8-4 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert(
+        "50495".to_string(),
+        "Sigma 50-100mm F1.8 DC HSM | A + MC-11",
+    );
+    map.insert("50499".to_string(), "Sigma 85mm F1.4 DG HSM | A");
+    map.insert(
+        "50501".to_string(),
+        "Sigma 100-400mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50503".to_string(), "Sigma 16mm F1.4 DC DN | C");
+    map.insert("50507".to_string(), "Sigma 105mm F1.4 DG HSM | A");
+    map.insert("50508".to_string(), "Sigma 56mm F1.4 DC DN | C");
+    map.insert(
+        "50512".to_string(),
+        "Sigma 70-200mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert("50513".to_string(), "Sigma 70mm F2.8 DG MACRO | A");
+    map.insert("50514".to_string(), "Sigma 45mm F2.8 DG DN | C");
+    map.insert("50515".to_string(), "Sigma 35mm F1.2 DG DN | A");
+    map.insert("50516".to_string(), "Sigma 14-24mm F2.8 DG DN | A");
+    map.insert("50517".to_string(), "Sigma 24-70mm F2.8 DG DN | A");
+    map.insert("50518".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C");
+    map.insert("50521".to_string(), "Sigma 85mm F1.4 DG DN | A");
+    map.insert("50522".to_string(), "Sigma 105mm F2.8 DG DN MACRO | A");
+    map.insert("50523".to_string(), "Sigma 65mm F2 DG DN | C");
+    map.insert("50524".to_string(), "Sigma 35mm F2 DG DN | C");
+    map.insert("50525".to_string(), "Sigma 24mm F3.5 DG DN | C");
+    map.insert("50526".to_string(), "Sigma 28-70mm F2.8 DG DN | C");
+    map.insert("50527".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S");
+    map.insert("50528".to_string(), "Sigma 35mm F1.4 DG DN | A");
+    map.insert("50529".to_string(), "Sigma 90mm F2.8 DG DN | C");
+    map.insert("50530".to_string(), "Sigma 24mm F2 DG DN | C");
+    map.insert("50531".to_string(), "Sigma 18-50mm F2.8 DC DN | C");
+    map.insert("50532".to_string(), "Sigma 20mm F2 DG DN | C");
+    map.insert("50533".to_string(), "Sigma 16-28mm F2.8 DG DN | C");
+    map.insert("50534".to_string(), "Sigma 20mm F1.4 DG DN | A");
+    map.insert("50535".to_string(), "Sigma 24mm F1.4 DG DN | A");
+    map.insert("50536".to_string(), "Sigma 60-600mm F4.5-6.3 DG DN OS | S");
+    map.insert("50537".to_string(), "Sigma 50mm F2 DG DN | C");
+    map.insert("50538".to_string(), "Sigma 17mm F4 DG DN | C");
+    map.insert("50539".to_string(), "Sigma 50mm F1.4 DG DN | A");
+    map.insert("50540".to_string(), "Sigma 14mm F1.4 DG DN | A");
+    map.insert("50543".to_string(), "Sigma 70-200mm F2.8 DG DN OS | S");
+    map.insert("50544".to_string(), "Sigma 23mm F1.4 DC DN | C");
+    map.insert("50545".to_string(), "Sigma 24-70mm F2.8 DG DN II | A");
+    map.insert("50546".to_string(), "Sigma 500mm F5.6 DG DN OS | S");
+    map.insert("50547".to_string(), "Sigma 10-18mm F2.8 DC DN | C");
+    map.insert(
+        "50548".to_string(),
+        "Sigma 15mm F1.4 DG DN DIAGONAL FISHEYE | A",
+    );
+    map.insert("50549".to_string(), "Sigma 50mm F1.2 DG DN | A");
+    map.insert("50550".to_string(), "Sigma 28-105mm F2.8 DG DN | A");
+    map.insert("50551".to_string(), "Sigma 28-45mm F1.8 DG DN | A");
+    map.insert("50553".to_string(), "Sigma 300-600mm F4 DG OS | S");
+    map.insert(
+        "50992".to_string(),
+        "Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III",
+    );
+    map.insert(
+        "50993".to_string(),
+        "Voigtlander HELIAR-HYPER WIDE 10mm F5.6",
+    );
+    map.insert(
+        "50994".to_string(),
+        "Voigtlander ULTRA WIDE-HELIAR 12mm F5.6 III",
+    );
+    map.insert(
+        "50995".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 65mm F2 Aspherical",
+    );
+    map.insert(
+        "50996".to_string(),
+        "Voigtlander NOKTON 40mm F1.2 Aspherical",
+    );
+    map.insert("50997".to_string(), "Voigtlander NOKTON classic 35mm F1.4");
+    map.insert(
+        "50998".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 110mm F2.5",
+    );
+    map.insert(
+        "50999".to_string(),
+        "Voigtlander COLOR-SKOPAR 21mm F3.5 Aspherical",
+    );
+    map.insert(
+        "51000".to_string(),
+        "Voigtlander NOKTON 50mm F1.2 Aspherical",
+    );
+    map.insert(
+        "51001".to_string(),
+        "Voigtlander NOKTON 21mm F1.4 Aspherical",
+    );
+    map.insert(
+        "51002".to_string(),
+        "Voigtlander APO-LANTHAR 50mm F2 Aspherical",
+    );
+    map.insert(
+        "51003".to_string(),
+        "Voigtlander NOKTON 35mm F1.2 Aspherical SE",
+    );
+    map.insert(
+        "51006".to_string(),
+        "Voigtlander APO-LANTHAR 35mm F2 Aspherical",
+    );
+    map.insert("51007".to_string(), "Voigtlander NOKTON 50mm F1 Aspherical");
+    map.insert(
+        "51008".to_string(),
+        "Voigtlander NOKTON 75mm F1.5 Aspherical",
+    );
+    map.insert(
+        "51009".to_string(),
+        "Voigtlander NOKTON 28mm F1.5 Aspherical",
+    );
+    map.insert("51072".to_string(), "ZEISS Otus ML 50mm F1.4");
+    map.insert("51073".to_string(), "ZEISS Otus ML 85mm F1.4");
+    map.insert("51504".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "51505".to_string(),
+        "Samyang AF 14mm F2.8 or Samyang AF 35mm F2.8",
+    );
+    map.insert("51505.1".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("51507".to_string(), "Samyang AF 35mm F1.4");
+    map.insert("51508".to_string(), "Samyang AF 45mm F1.8");
+    map.insert(
+        "51510".to_string(),
+        "Samyang AF 18mm F2.8 or Samyang AF 35mm F1.8",
+    );
+    map.insert("51510.1".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51512".to_string(), "Samyang AF 75mm F1.8");
+    map.insert("51513".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51514".to_string(), "Samyang AF 24mm F1.8");
+    map.insert("51515".to_string(), "Samyang AF 12mm F2.0");
+    map.insert("51516".to_string(), "Samyang AF 24-70mm F2.8");
+    map.insert("51517".to_string(), "Samyang AF 50mm F1.4 II");
+    map.insert("51518".to_string(), "Samyang AF 135mm F1.8");
+    map.insert("6".to_string(), "Sony LA-EA4 Adapter");
+    map.insert("61569".to_string(), "LAOWA FFII 10mm F2.8 C&D Dreamer");
+    map.insert("61761".to_string(), "Viltrox 28mm F4.5 FE");
+    map.insert("7".to_string(), "Sony LA-EA5 Adapter");
+    map.insert(
+        "78".to_string(),
+        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
+    );
+    map
+});
+
+static PRINT_CONV_382: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No");
+    map.insert("1".to_string(), "Yes");
+    map
+});
+
+static PRINT_CONV_383: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("11".to_string(), "11 (APS-C)");
+    map.insert("16".to_string(), "16 (Full-frame)");
+    map
+});
+
+static PRINT_CONV_384: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "16:9");
+    map.insert("1".to_string(), "4:3");
+    map.insert("2".to_string(), "3:2");
+    map.insert("3".to_string(), "1:1");
+    map.insert("5".to_string(), "Panorama");
+    map
+});
+
+static PRINT_CONV_385: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Auto");
+    map.insert("3".to_string(), "Lv1");
+    map.insert("4".to_string(), "Lv2");
+    map.insert("5".to_string(), "Lv3");
+    map.insert("6".to_string(), "Lv4");
+    map.insert("7".to_string(), "Lv5");
+    map.insert("8".to_string(), "n/a");
+    map
+});
+
+static PRINT_CONV_386: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("2".to_string(), "Bracketing");
+    map.insert("4".to_string(), "Continuous - Burst");
+    map.insert("5".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("6".to_string(), "Normal - Self-timer");
+    map.insert("9".to_string(), "Single Burst Shooting");
+    map
+});
+
+static PRINT_CONV_387: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Normal");
     map.insert("1".to_string(), "Continuous");
@@ -4788,7 +5231,7 @@ static PRINT_CONV_345: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_346: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_388: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Auto");
@@ -4801,7 +5244,7 @@ static PRINT_CONV_346: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_347: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_389: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "HDR Auto");
@@ -4814,7 +5257,7 @@ static PRINT_CONV_347: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_348: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_390: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Toy Camera");
@@ -4833,7 +5276,7 @@ static PRINT_CONV_348: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_349: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_391: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "JPEG");
     map.insert("1".to_string(), "RAW");
@@ -4841,7 +5284,7 @@ static PRINT_CONV_349: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_350: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_392: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Multi-segment");
     map.insert("2".to_string(), "Center-weighted average");
@@ -4851,7 +5294,7 @@ static PRINT_CONV_350: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_351: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_393: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Program AE");
     map.insert("1".to_string(), "Aperture-priority AE");
@@ -4889,7 +5332,7 @@ static PRINT_CONV_351: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_352: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_394: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Unknown");
     map.insert("1".to_string(), "APS-C");
@@ -4897,7 +5340,7 @@ static PRINT_CONV_352: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_353: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_395: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Unknown");
     map.insert("1".to_string(), "A-mount");
@@ -4905,7 +5348,7 @@ static PRINT_CONV_353: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_354: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_396: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Unknown E-mount lens or other lens");
     map.insert("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN");
@@ -5365,21 +5808,21 @@ static PRINT_CONV_354: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_355: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_397: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No");
     map.insert("1".to_string(), "Yes");
     map
 });
 
-static PRINT_CONV_356: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_398: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("11".to_string(), "11 (APS-C)");
     map.insert("16".to_string(), "16 (Full-frame)");
     map
 });
 
-static PRINT_CONV_357: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_399: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "16:9");
     map.insert("1".to_string(), "4:3");
@@ -5389,7 +5832,7 @@ static PRINT_CONV_357: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
-static PRINT_CONV_358: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_400: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Auto");
@@ -5402,9 +5845,7102 @@ static PRINT_CONV_358: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|
     map
 });
 
+static PRINT_CONV_401: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("98".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_402: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("10".to_string(), "Continuous - Background defocus");
+    map.insert("13".to_string(), "Continuous - 3D Sweep Panorama");
+    map.insert("146".to_string(), "Single Frame - Movie Capture");
+    map.insert(
+        "15".to_string(),
+        "Continuous - High Resolution Sweep Panorama",
+    );
+    map.insert("16".to_string(), "Continuous - 3D Image");
+    map.insert("17".to_string(), "Continuous - Burst 2");
+    map.insert("18".to_string(), "Normal - iAuto+");
+    map.insert("19".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("2".to_string(), "Continuous - Exposure Bracketing");
+    map.insert("20".to_string(), "Continuous - Multi Frame NR");
+    map.insert("23".to_string(), "Single-frame - Exposure Bracketing");
+    map.insert("26".to_string(), "Continuous Low");
+    map.insert("27".to_string(), "Continuous - High Sensitivity");
+    map.insert("28".to_string(), "Smile Shutter");
+    map.insert("29".to_string(), "Continuous - Tele-zoom Advance Priority");
+    map.insert("3".to_string(), "DRO or White Balance Bracketing");
+    map.insert("5".to_string(), "Continuous - Burst");
+    map.insert("6".to_string(), "Single Frame - Capture During Movie");
+    map.insert("7".to_string(), "Continuous - Sweep Panorama");
+    map.insert(
+        "8".to_string(),
+        "Continuous - Anti-Motion Blur, Hand-held Twilight",
+    );
+    map.insert("9".to_string(), "Continuous - HDR");
+    map
+});
+
+static PRINT_CONV_403: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No Flash present");
+    map.insert("128".to_string(), "External Flash present");
+    map.insert("129".to_string(), "External Flash Fired");
+    map.insert("2".to_string(), "Flash Inhibited");
+    map.insert("64".to_string(), "Built-in Flash present");
+    map.insert("65".to_string(), "Built-in Flash Fired");
+    map.insert("66".to_string(), "Built-in Flash Inhibited");
+    map
+});
+
+static PRINT_CONV_404: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("10".to_string(), "Continuous - Background defocus");
+    map.insert("13".to_string(), "Continuous - 3D Sweep Panorama");
+    map.insert("146".to_string(), "Single Frame - Movie Capture");
+    map.insert(
+        "15".to_string(),
+        "Continuous - High Resolution Sweep Panorama",
+    );
+    map.insert("16".to_string(), "Continuous - 3D Image");
+    map.insert("17".to_string(), "Continuous - Burst 2");
+    map.insert("18".to_string(), "Normal - iAuto+");
+    map.insert("19".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("2".to_string(), "Continuous - Exposure Bracketing");
+    map.insert("20".to_string(), "Continuous - Multi Frame NR");
+    map.insert("23".to_string(), "Single-frame - Exposure Bracketing");
+    map.insert("26".to_string(), "Continuous Low");
+    map.insert("27".to_string(), "Continuous - High Sensitivity");
+    map.insert("28".to_string(), "Smile Shutter");
+    map.insert("29".to_string(), "Continuous - Tele-zoom Advance Priority");
+    map.insert("3".to_string(), "DRO or White Balance Bracketing");
+    map.insert("5".to_string(), "Continuous - Burst");
+    map.insert("6".to_string(), "Single Frame - Capture During Movie");
+    map.insert("7".to_string(), "Continuous - Sweep Panorama");
+    map.insert(
+        "8".to_string(),
+        "Continuous - Anti-Motion Blur, Hand-held Twilight",
+    );
+    map.insert("9".to_string(), "Continuous - HDR");
+    map
+});
+
+static PRINT_CONV_405: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("10".to_string(), "Continuous - Background defocus");
+    map.insert("13".to_string(), "Continuous - 3D Sweep Panorama");
+    map.insert("146".to_string(), "Single Frame - Movie Capture");
+    map.insert(
+        "15".to_string(),
+        "Continuous - High Resolution Sweep Panorama",
+    );
+    map.insert("16".to_string(), "Continuous - 3D Image");
+    map.insert("17".to_string(), "Continuous - Burst 2");
+    map.insert("18".to_string(), "Normal - iAuto+");
+    map.insert("19".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("2".to_string(), "Continuous - Exposure Bracketing");
+    map.insert("20".to_string(), "Continuous - Multi Frame NR");
+    map.insert("23".to_string(), "Single-frame - Exposure Bracketing");
+    map.insert("26".to_string(), "Continuous Low");
+    map.insert("27".to_string(), "Continuous - High Sensitivity");
+    map.insert("28".to_string(), "Smile Shutter");
+    map.insert("29".to_string(), "Continuous - Tele-zoom Advance Priority");
+    map.insert("3".to_string(), "DRO or White Balance Bracketing");
+    map.insert("5".to_string(), "Continuous - Burst");
+    map.insert("6".to_string(), "Single Frame - Capture During Movie");
+    map.insert("7".to_string(), "Continuous - Sweep Panorama");
+    map.insert(
+        "8".to_string(),
+        "Continuous - Anti-Motion Blur, Hand-held Twilight",
+    );
+    map.insert("9".to_string(), "Continuous - HDR");
+    map
+});
+
+static PRINT_CONV_406: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("10".to_string(), "Continuous - Background defocus");
+    map.insert("13".to_string(), "Continuous - 3D Sweep Panorama");
+    map.insert("146".to_string(), "Single Frame - Movie Capture");
+    map.insert(
+        "15".to_string(),
+        "Continuous - High Resolution Sweep Panorama",
+    );
+    map.insert("16".to_string(), "Continuous - 3D Image");
+    map.insert("17".to_string(), "Continuous - Burst 2");
+    map.insert("18".to_string(), "Normal - iAuto+");
+    map.insert("19".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("2".to_string(), "Continuous - Exposure Bracketing");
+    map.insert("20".to_string(), "Continuous - Multi Frame NR");
+    map.insert("23".to_string(), "Single-frame - Exposure Bracketing");
+    map.insert("26".to_string(), "Continuous Low");
+    map.insert("27".to_string(), "Continuous - High Sensitivity");
+    map.insert("28".to_string(), "Smile Shutter");
+    map.insert("29".to_string(), "Continuous - Tele-zoom Advance Priority");
+    map.insert("3".to_string(), "DRO or White Balance Bracketing");
+    map.insert("5".to_string(), "Continuous - Burst");
+    map.insert("6".to_string(), "Single Frame - Capture During Movie");
+    map.insert("7".to_string(), "Continuous - Sweep Panorama");
+    map.insert(
+        "8".to_string(),
+        "Continuous - Anti-Motion Blur, Hand-held Twilight",
+    );
+    map.insert("9".to_string(), "Continuous - HDR");
+    map
+});
+
+static PRINT_CONV_407: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("10".to_string(), "Continuous - Background defocus");
+    map.insert("13".to_string(), "Continuous - 3D Sweep Panorama");
+    map.insert("146".to_string(), "Single Frame - Movie Capture");
+    map.insert(
+        "15".to_string(),
+        "Continuous - High Resolution Sweep Panorama",
+    );
+    map.insert("16".to_string(), "Continuous - 3D Image");
+    map.insert("17".to_string(), "Continuous - Burst 2");
+    map.insert("18".to_string(), "Normal - iAuto+");
+    map.insert("19".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("2".to_string(), "Continuous - Exposure Bracketing");
+    map.insert("20".to_string(), "Continuous - Multi Frame NR");
+    map.insert("23".to_string(), "Single-frame - Exposure Bracketing");
+    map.insert("26".to_string(), "Continuous Low");
+    map.insert("27".to_string(), "Continuous - High Sensitivity");
+    map.insert("28".to_string(), "Smile Shutter");
+    map.insert("29".to_string(), "Continuous - Tele-zoom Advance Priority");
+    map.insert("3".to_string(), "DRO or White Balance Bracketing");
+    map.insert("5".to_string(), "Continuous - Burst");
+    map.insert("6".to_string(), "Single Frame - Capture During Movie");
+    map.insert("7".to_string(), "Continuous - Sweep Panorama");
+    map.insert(
+        "8".to_string(),
+        "Continuous - Anti-Motion Blur, Hand-held Twilight",
+    );
+    map.insert("9".to_string(), "Continuous - HDR");
+    map
+});
+
+static PRINT_CONV_408: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_409: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_410: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_411: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_412: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No Flash present");
+    map.insert("128".to_string(), "External Flash present");
+    map.insert("129".to_string(), "External Flash Fired");
+    map.insert("2".to_string(), "Flash Inhibited");
+    map.insert("64".to_string(), "Built-in Flash present");
+    map.insert("65".to_string(), "Built-in Flash Fired");
+    map.insert("66".to_string(), "Built-in Flash Inhibited");
+    map
+});
+
+static PRINT_CONV_413: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("10".to_string(), "Continuous - Background defocus");
+    map.insert("13".to_string(), "Continuous - 3D Sweep Panorama");
+    map.insert("146".to_string(), "Single Frame - Movie Capture");
+    map.insert(
+        "15".to_string(),
+        "Continuous - High Resolution Sweep Panorama",
+    );
+    map.insert("16".to_string(), "Continuous - 3D Image");
+    map.insert("17".to_string(), "Continuous - Burst 2");
+    map.insert("18".to_string(), "Normal - iAuto+");
+    map.insert("19".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("2".to_string(), "Continuous - Exposure Bracketing");
+    map.insert("20".to_string(), "Continuous - Multi Frame NR");
+    map.insert("23".to_string(), "Single-frame - Exposure Bracketing");
+    map.insert("26".to_string(), "Continuous Low");
+    map.insert("27".to_string(), "Continuous - High Sensitivity");
+    map.insert("28".to_string(), "Smile Shutter");
+    map.insert("29".to_string(), "Continuous - Tele-zoom Advance Priority");
+    map.insert("3".to_string(), "DRO or White Balance Bracketing");
+    map.insert("5".to_string(), "Continuous - Burst");
+    map.insert("6".to_string(), "Single Frame - Capture During Movie");
+    map.insert("7".to_string(), "Continuous - Sweep Panorama");
+    map.insert(
+        "8".to_string(),
+        "Continuous - Anti-Motion Blur, Hand-held Twilight",
+    );
+    map.insert("9".to_string(), "Continuous - HDR");
+    map
+});
+
+static PRINT_CONV_414: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("10".to_string(), "Continuous - Background defocus");
+    map.insert("13".to_string(), "Continuous - 3D Sweep Panorama");
+    map.insert("146".to_string(), "Single Frame - Movie Capture");
+    map.insert(
+        "15".to_string(),
+        "Continuous - High Resolution Sweep Panorama",
+    );
+    map.insert("16".to_string(), "Continuous - 3D Image");
+    map.insert("17".to_string(), "Continuous - Burst 2");
+    map.insert("18".to_string(), "Normal - iAuto+");
+    map.insert("19".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("2".to_string(), "Continuous - Exposure Bracketing");
+    map.insert("20".to_string(), "Continuous - Multi Frame NR");
+    map.insert("23".to_string(), "Single-frame - Exposure Bracketing");
+    map.insert("26".to_string(), "Continuous Low");
+    map.insert("27".to_string(), "Continuous - High Sensitivity");
+    map.insert("28".to_string(), "Smile Shutter");
+    map.insert("29".to_string(), "Continuous - Tele-zoom Advance Priority");
+    map.insert("3".to_string(), "DRO or White Balance Bracketing");
+    map.insert("5".to_string(), "Continuous - Burst");
+    map.insert("6".to_string(), "Single Frame - Capture During Movie");
+    map.insert("7".to_string(), "Continuous - Sweep Panorama");
+    map.insert(
+        "8".to_string(),
+        "Continuous - Anti-Motion Blur, Hand-held Twilight",
+    );
+    map.insert("9".to_string(), "Continuous - HDR");
+    map
+});
+
+static PRINT_CONV_415: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No Flash present");
+    map.insert("128".to_string(), "External Flash present");
+    map.insert("129".to_string(), "External Flash Fired");
+    map.insert("2".to_string(), "Flash Inhibited");
+    map.insert("64".to_string(), "Built-in Flash present");
+    map.insert("65".to_string(), "Built-in Flash Fired");
+    map.insert("66".to_string(), "Built-in Flash Inhibited");
+    map
+});
+
+static PRINT_CONV_416: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("10".to_string(), "Continuous - Background defocus");
+    map.insert("13".to_string(), "Continuous - 3D Sweep Panorama");
+    map.insert("146".to_string(), "Single Frame - Movie Capture");
+    map.insert(
+        "15".to_string(),
+        "Continuous - High Resolution Sweep Panorama",
+    );
+    map.insert("16".to_string(), "Continuous - 3D Image");
+    map.insert("17".to_string(), "Continuous - Burst 2");
+    map.insert("18".to_string(), "Normal - iAuto+");
+    map.insert("19".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("2".to_string(), "Continuous - Exposure Bracketing");
+    map.insert("20".to_string(), "Continuous - Multi Frame NR");
+    map.insert("23".to_string(), "Single-frame - Exposure Bracketing");
+    map.insert("26".to_string(), "Continuous Low");
+    map.insert("27".to_string(), "Continuous - High Sensitivity");
+    map.insert("28".to_string(), "Smile Shutter");
+    map.insert("29".to_string(), "Continuous - Tele-zoom Advance Priority");
+    map.insert("3".to_string(), "DRO or White Balance Bracketing");
+    map.insert("5".to_string(), "Continuous - Burst");
+    map.insert("6".to_string(), "Single Frame - Capture During Movie");
+    map.insert("7".to_string(), "Continuous - Sweep Panorama");
+    map.insert(
+        "8".to_string(),
+        "Continuous - Anti-Motion Blur, Hand-held Twilight",
+    );
+    map.insert("9".to_string(), "Continuous - HDR");
+    map
+});
+
+static PRINT_CONV_417: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("10".to_string(), "Continuous - Background defocus");
+    map.insert("13".to_string(), "Continuous - 3D Sweep Panorama");
+    map.insert("146".to_string(), "Single Frame - Movie Capture");
+    map.insert(
+        "15".to_string(),
+        "Continuous - High Resolution Sweep Panorama",
+    );
+    map.insert("16".to_string(), "Continuous - 3D Image");
+    map.insert("17".to_string(), "Continuous - Burst 2");
+    map.insert("18".to_string(), "Normal - iAuto+");
+    map.insert("19".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("2".to_string(), "Continuous - Exposure Bracketing");
+    map.insert("20".to_string(), "Continuous - Multi Frame NR");
+    map.insert("23".to_string(), "Single-frame - Exposure Bracketing");
+    map.insert("26".to_string(), "Continuous Low");
+    map.insert("27".to_string(), "Continuous - High Sensitivity");
+    map.insert("28".to_string(), "Smile Shutter");
+    map.insert("29".to_string(), "Continuous - Tele-zoom Advance Priority");
+    map.insert("3".to_string(), "DRO or White Balance Bracketing");
+    map.insert("5".to_string(), "Continuous - Burst");
+    map.insert("6".to_string(), "Single Frame - Capture During Movie");
+    map.insert("7".to_string(), "Continuous - Sweep Panorama");
+    map.insert(
+        "8".to_string(),
+        "Continuous - Anti-Motion Blur, Hand-held Twilight",
+    );
+    map.insert("9".to_string(), "Continuous - HDR");
+    map
+});
+
+static PRINT_CONV_418: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("10".to_string(), "Continuous - Background defocus");
+    map.insert("13".to_string(), "Continuous - 3D Sweep Panorama");
+    map.insert("146".to_string(), "Single Frame - Movie Capture");
+    map.insert(
+        "15".to_string(),
+        "Continuous - High Resolution Sweep Panorama",
+    );
+    map.insert("16".to_string(), "Continuous - 3D Image");
+    map.insert("17".to_string(), "Continuous - Burst 2");
+    map.insert("18".to_string(), "Normal - iAuto+");
+    map.insert("19".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("2".to_string(), "Continuous - Exposure Bracketing");
+    map.insert("20".to_string(), "Continuous - Multi Frame NR");
+    map.insert("23".to_string(), "Single-frame - Exposure Bracketing");
+    map.insert("26".to_string(), "Continuous Low");
+    map.insert("27".to_string(), "Continuous - High Sensitivity");
+    map.insert("28".to_string(), "Smile Shutter");
+    map.insert("29".to_string(), "Continuous - Tele-zoom Advance Priority");
+    map.insert("3".to_string(), "DRO or White Balance Bracketing");
+    map.insert("5".to_string(), "Continuous - Burst");
+    map.insert("6".to_string(), "Single Frame - Capture During Movie");
+    map.insert("7".to_string(), "Continuous - Sweep Panorama");
+    map.insert(
+        "8".to_string(),
+        "Continuous - Anti-Motion Blur, Hand-held Twilight",
+    );
+    map.insert("9".to_string(), "Continuous - HDR");
+    map
+});
+
+static PRINT_CONV_419: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No");
+    map.insert("1".to_string(), "Yes");
+    map
+});
+
+static PRINT_CONV_420: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Continuous");
+    map.insert("1".to_string(), "1 shot");
+    map.insert("10".to_string(), "10 shots");
+    map.insert("100".to_string(), "Continuous - iSweep Panorama");
+    map.insert("2".to_string(), "2 shots");
+    map.insert("200".to_string(), "Continuous - Sweep Panorama");
+    map.insert("3".to_string(), "3 shots");
+    map.insert("4".to_string(), "4 shots");
+    map.insert("5".to_string(), "5 shots");
+    map.insert("6".to_string(), "6 shots");
+    map
+});
+
+static PRINT_CONV_421: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Horizontal (normal)");
+    map.insert("3".to_string(), "Rotate 180");
+    map.insert("6".to_string(), "Rotate 90 CW");
+    map.insert("8".to_string(), "Rotate 270 CW");
+    map
+});
+
+static PRINT_CONV_422: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "JPEG");
+    map.insert("1".to_string(), "RAW");
+    map.insert("2".to_string(), "RAW + JPEG");
+    map.insert("3".to_string(), "JPEG + MPO");
+    map
+});
+
+static PRINT_CONV_423: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("10".to_string(), "Continuous - Background defocus");
+    map.insert("13".to_string(), "Continuous - 3D Sweep Panorama");
+    map.insert("146".to_string(), "Single Frame - Movie Capture");
+    map.insert(
+        "15".to_string(),
+        "Continuous - High Resolution Sweep Panorama",
+    );
+    map.insert("16".to_string(), "Continuous - 3D Image");
+    map.insert("17".to_string(), "Continuous - Burst 2");
+    map.insert("18".to_string(), "Normal - iAuto+");
+    map.insert("19".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("2".to_string(), "Continuous - Exposure Bracketing");
+    map.insert("20".to_string(), "Continuous - Multi Frame NR");
+    map.insert("23".to_string(), "Single-frame - Exposure Bracketing");
+    map.insert("26".to_string(), "Continuous Low");
+    map.insert("27".to_string(), "Continuous - High Sensitivity");
+    map.insert("28".to_string(), "Smile Shutter");
+    map.insert("29".to_string(), "Continuous - Tele-zoom Advance Priority");
+    map.insert("3".to_string(), "DRO or White Balance Bracketing");
+    map.insert("5".to_string(), "Continuous - Burst");
+    map.insert("6".to_string(), "Single Frame - Capture During Movie");
+    map.insert("7".to_string(), "Continuous - Sweep Panorama");
+    map.insert(
+        "8".to_string(),
+        "Continuous - Anti-Motion Blur, Hand-held Twilight",
+    );
+    map.insert("9".to_string(), "Continuous - HDR");
+    map
+});
+
+static PRINT_CONV_424: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No");
+    map.insert("1".to_string(), "Yes");
+    map
+});
+
+static PRINT_CONV_425: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Continuous");
+    map.insert("1".to_string(), "1 shot");
+    map.insert("10".to_string(), "10 shots");
+    map.insert("100".to_string(), "Continuous - iSweep Panorama");
+    map.insert("2".to_string(), "2 shots");
+    map.insert("200".to_string(), "Continuous - Sweep Panorama");
+    map.insert("3".to_string(), "3 shots");
+    map.insert("4".to_string(), "4 shots");
+    map.insert("5".to_string(), "5 shots");
+    map.insert("6".to_string(), "6 shots");
+    map
+});
+
+static PRINT_CONV_426: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Horizontal (normal)");
+    map.insert("3".to_string(), "Rotate 180");
+    map.insert("6".to_string(), "Rotate 90 CW");
+    map.insert("8".to_string(), "Rotate 270 CW");
+    map
+});
+
+static PRINT_CONV_427: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "JPEG");
+    map.insert("1".to_string(), "RAW");
+    map.insert("2".to_string(), "RAW + JPEG");
+    map.insert("3".to_string(), "JPEG + MPO");
+    map
+});
+
+static PRINT_CONV_428: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Continuous");
+    map.insert("1".to_string(), "1 shot");
+    map.insert("10".to_string(), "10 shots");
+    map.insert("100".to_string(), "Continuous - iSweep Panorama");
+    map.insert("12".to_string(), "12 shots");
+    map.insert("16".to_string(), "16 shots");
+    map.insert("2".to_string(), "2 shots");
+    map.insert("200".to_string(), "Continuous - Sweep Panorama");
+    map.insert("3".to_string(), "3 shots");
+    map.insert("4".to_string(), "4 shots");
+    map.insert("5".to_string(), "5 shots");
+    map.insert("6".to_string(), "6 shots");
+    map.insert("7".to_string(), "7 shots");
+    map.insert("9".to_string(), "9 shots");
+    map
+});
+
+static PRINT_CONV_429: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Continuous");
+    map.insert("1".to_string(), "1 file");
+    map.insert("10".to_string(), "10 files");
+    map.insert("2".to_string(), "2 files");
+    map.insert("3".to_string(), "3 files");
+    map.insert("5".to_string(), "5 files");
+    map.insert("7".to_string(), "7 files");
+    map.insert("9".to_string(), "9 files");
+    map
+});
+
+static PRINT_CONV_430: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("23".to_string(), "Mechanical");
+    map.insert("7".to_string(), "Electronic");
+    map
+});
+
+static PRINT_CONV_431: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("23".to_string(), "Mechanical");
+    map.insert("7".to_string(), "Electronic");
+    map
+});
+
+static PRINT_CONV_432: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Horizontal (normal)");
+    map.insert("3".to_string(), "Rotate 180");
+    map.insert("6".to_string(), "Rotate 90 CW");
+    map.insert("8".to_string(), "Rotate 270 CW");
+    map
+});
+
+static PRINT_CONV_433: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "JPEG");
+    map.insert("1".to_string(), "RAW");
+    map.insert("2".to_string(), "RAW + JPEG");
+    map.insert("3".to_string(), "JPEG + MPO");
+    map
+});
+
+static PRINT_CONV_434: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "JPEG");
+    map.insert("2".to_string(), "RAW");
+    map.insert("3".to_string(), "RAW + JPEG");
+    map.insert("4".to_string(), "HEIF");
+    map.insert("6".to_string(), "RAW + HEIF");
+    map
+});
+
+static PRINT_CONV_435: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Manual");
+    map.insert("2".to_string(), "AF-S");
+    map.insert("3".to_string(), "AF-C");
+    map.insert("4".to_string(), "AF-A");
+    map.insert("6".to_string(), "DMF");
+    map
+});
+
+static PRINT_CONV_436: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Multi");
+    map.insert("1".to_string(), "Center");
+    map.insert("10".to_string(), "Selective (for Miniature effect)");
+    map.insert("11".to_string(), "Zone");
+    map.insert("12".to_string(), "Expanded Flexible Spot");
+    map.insert("13".to_string(), "Custom AF Area");
+    map.insert("14".to_string(), "Tracking");
+    map.insert("15".to_string(), "Face Tracking");
+    map.insert("2".to_string(), "Spot");
+    map.insert("20".to_string(), "Animal Eye Tracking");
+    map.insert("21".to_string(), "Human Eye Tracking");
+    map.insert("255".to_string(), "Manual");
+    map.insert("3".to_string(), "Flexible Spot");
+    map
+});
+
+static PRINT_CONV_437: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Program AE");
+    map.insert("1".to_string(), "Aperture-priority AE");
+    map.insert("10".to_string(), "Twilight");
+    map.insert("11".to_string(), "Twilight Portrait");
+    map.insert("12".to_string(), "Sunset");
+    map.insert("14".to_string(), "Action (High speed)");
+    map.insert("16".to_string(), "Sports");
+    map.insert("17".to_string(), "Handheld Night Shot");
+    map.insert("18".to_string(), "Anti Motion Blur");
+    map.insert("19".to_string(), "High Sensitivity");
+    map.insert("2".to_string(), "Shutter speed priority AE");
+    map.insert("21".to_string(), "Beach");
+    map.insert("22".to_string(), "Snow");
+    map.insert("23".to_string(), "Fireworks");
+    map.insert("26".to_string(), "Underwater");
+    map.insert("27".to_string(), "Gourmet");
+    map.insert("28".to_string(), "Pet");
+    map.insert("29".to_string(), "Macro");
+    map.insert("3".to_string(), "Manual");
+    map.insert("30".to_string(), "Backlight Correction HDR");
+    map.insert("33".to_string(), "Sweep Panorama");
+    map.insert("36".to_string(), "Background Defocus");
+    map.insert("37".to_string(), "Soft Skin");
+    map.insert("4".to_string(), "Auto");
+    map.insert("42".to_string(), "3D Image");
+    map.insert("43".to_string(), "Cont. Priority AE");
+    map.insert("45".to_string(), "Document");
+    map.insert("46".to_string(), "Party");
+    map.insert("5".to_string(), "iAuto");
+    map.insert("6".to_string(), "Superior Auto");
+    map.insert("7".to_string(), "iAuto+");
+    map.insert("8".to_string(), "Portrait");
+    map.insert("9".to_string(), "Landscape");
+    map
+});
+
+static PRINT_CONV_438: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_439: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Program AE");
+    map.insert("1".to_string(), "Aperture-priority AE");
+    map.insert("10".to_string(), "Twilight");
+    map.insert("11".to_string(), "Twilight Portrait");
+    map.insert("12".to_string(), "Sunset");
+    map.insert("14".to_string(), "Action (High speed)");
+    map.insert("16".to_string(), "Sports");
+    map.insert("17".to_string(), "Handheld Night Shot");
+    map.insert("18".to_string(), "Anti Motion Blur");
+    map.insert("19".to_string(), "High Sensitivity");
+    map.insert("2".to_string(), "Shutter speed priority AE");
+    map.insert("21".to_string(), "Beach");
+    map.insert("22".to_string(), "Snow");
+    map.insert("23".to_string(), "Fireworks");
+    map.insert("26".to_string(), "Underwater");
+    map.insert("27".to_string(), "Gourmet");
+    map.insert("28".to_string(), "Pet");
+    map.insert("29".to_string(), "Macro");
+    map.insert("3".to_string(), "Manual");
+    map.insert("30".to_string(), "Backlight Correction HDR");
+    map.insert("33".to_string(), "Sweep Panorama");
+    map.insert("36".to_string(), "Background Defocus");
+    map.insert("37".to_string(), "Soft Skin");
+    map.insert("4".to_string(), "Auto");
+    map.insert("42".to_string(), "3D Image");
+    map.insert("43".to_string(), "Cont. Priority AE");
+    map.insert("45".to_string(), "Document");
+    map.insert("46".to_string(), "Party");
+    map.insert("5".to_string(), "iAuto");
+    map.insert("6".to_string(), "Superior Auto");
+    map.insert("7".to_string(), "iAuto+");
+    map.insert("8".to_string(), "Portrait");
+    map.insert("9".to_string(), "Landscape");
+    map
+});
+
+static PRINT_CONV_440: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_441: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Program AE");
+    map.insert("1".to_string(), "Aperture-priority AE");
+    map.insert("10".to_string(), "Twilight");
+    map.insert("11".to_string(), "Twilight Portrait");
+    map.insert("12".to_string(), "Sunset");
+    map.insert("14".to_string(), "Action (High speed)");
+    map.insert("16".to_string(), "Sports");
+    map.insert("17".to_string(), "Handheld Night Shot");
+    map.insert("18".to_string(), "Anti Motion Blur");
+    map.insert("19".to_string(), "High Sensitivity");
+    map.insert("2".to_string(), "Shutter speed priority AE");
+    map.insert("21".to_string(), "Beach");
+    map.insert("22".to_string(), "Snow");
+    map.insert("23".to_string(), "Fireworks");
+    map.insert("26".to_string(), "Underwater");
+    map.insert("27".to_string(), "Gourmet");
+    map.insert("28".to_string(), "Pet");
+    map.insert("29".to_string(), "Macro");
+    map.insert("3".to_string(), "Manual");
+    map.insert("30".to_string(), "Backlight Correction HDR");
+    map.insert("33".to_string(), "Sweep Panorama");
+    map.insert("36".to_string(), "Background Defocus");
+    map.insert("37".to_string(), "Soft Skin");
+    map.insert("4".to_string(), "Auto");
+    map.insert("42".to_string(), "3D Image");
+    map.insert("43".to_string(), "Cont. Priority AE");
+    map.insert("45".to_string(), "Document");
+    map.insert("46".to_string(), "Party");
+    map.insert("5".to_string(), "iAuto");
+    map.insert("6".to_string(), "Superior Auto");
+    map.insert("7".to_string(), "iAuto+");
+    map.insert("8".to_string(), "Portrait");
+    map.insert("9".to_string(), "Landscape");
+    map
+});
+
+static PRINT_CONV_442: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_443: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No");
+    map.insert("1".to_string(), "Yes");
+    map
+});
+
+static PRINT_CONV_444: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Applied");
+    map
+});
+
+static PRINT_CONV_445: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "APS-C");
+    map.insert("2".to_string(), "Full-frame");
+    map
+});
+
+static PRINT_CONV_446: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "A-mount");
+    map.insert("2".to_string(), "E-mount");
+    map
+});
+
+static PRINT_CONV_447: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown E-mount lens or other lens");
+    map.insert("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN");
+    map.insert("0.10".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("0.11".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("0.12".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("0.13".to_string(), "Viltrox 85mm F1.8");
+    map.insert("0.2".to_string(), "Sigma 30mm F2.8 [EX] DN");
+    map.insert("0.3".to_string(), "Sigma 60mm F2.8 DN");
+    map.insert("0.4".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("0.5".to_string(), "Tamron 18-200mm F3.5-6.3 Di III VC");
+    map.insert("0.6".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("0.7".to_string(), "Tokina FiRIN 20mm F2 FE MF");
+    map.insert("0.8".to_string(), "Zeiss Touit 12mm F2.8");
+    map.insert("0.9".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("1".to_string(), "Sony LA-EA1 or Sigma MC-11 Adapter");
+    map.insert("13".to_string(), "Samyang AF 35-150mm F2-2.8");
+    map.insert("184".to_string(), "Metabones Canon EF Speed Booster Ultra");
+    map.insert("2".to_string(), "Sony LA-EA2 Adapter");
+    map.insert("20".to_string(), "Samyang AF 35mm F1.4 P FE");
+    map.insert("21".to_string(), "Samyang AF 14-24mm F2.8");
+    map.insert(
+        "234".to_string(),
+        "Metabones Canon EF Smart Adapter Mark IV",
+    );
+    map.insert("239".to_string(), "Metabones Canon EF Speed Booster");
+    map.insert("24593".to_string(), "LA-EA4r MonsterAdapter");
+    map.insert("3".to_string(), "Sony LA-EA3 Adapter");
+    map.insert("32784".to_string(), "Sony E 16mm F2.8");
+    map.insert("32785".to_string(), "Sony E 18-55mm F3.5-5.6 OSS");
+    map.insert("32786".to_string(), "Sony E 55-210mm F4.5-6.3 OSS");
+    map.insert("32787".to_string(), "Sony E 18-200mm F3.5-6.3 OSS");
+    map.insert("32788".to_string(), "Sony E 30mm F3.5 Macro");
+    map.insert(
+        "32789".to_string(),
+        "Sony E 24mm F1.8 ZA or Samyang AF 50mm F1.4",
+    );
+    map.insert("32789.1".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "32790".to_string(),
+        "Sony E 50mm F1.8 OSS or Samyang AF 14mm F2.8",
+    );
+    map.insert("32790.1".to_string(), "Samyang AF 14mm F2.8");
+    map.insert("32791".to_string(), "Sony E 16-70mm F4 ZA OSS");
+    map.insert("32792".to_string(), "Sony E 10-18mm F4 OSS");
+    map.insert("32793".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS");
+    map.insert("32794".to_string(), "Sony FE 35mm F2.8 ZA or Samyang Lens");
+    map.insert("32794.1".to_string(), "Samyang AF 24mm F2.8");
+    map.insert("32794.2".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("32795".to_string(), "Sony FE 24-70mm F4 ZA OSS");
+    map.insert(
+        "32796".to_string(),
+        "Sony FE 85mm F1.8 or Viltrox PFU RBMH 85mm F1.8",
+    );
+    map.insert("32796.1".to_string(), "Viltrox PFU RBMH 85mm F1.8");
+    map.insert("32797".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("32798".to_string(), "Sony E 20mm F2.8");
+    map.insert("32799".to_string(), "Sony E 35mm F1.8 OSS");
+    map.insert("32800".to_string(), "Sony E PZ 18-105mm F4 G OSS");
+    map.insert("32801".to_string(), "Sony FE 12-24mm F4 G");
+    map.insert("32802".to_string(), "Sony FE 90mm F2.8 Macro G OSS");
+    map.insert("32803".to_string(), "Sony E 18-50mm F4-5.6");
+    map.insert("32804".to_string(), "Sony FE 24mm F1.4 GM");
+    map.insert("32805".to_string(), "Sony FE 24-105mm F4 G OSS");
+    map.insert("32807".to_string(), "Sony E PZ 18-200mm F3.5-6.3 OSS");
+    map.insert("32808".to_string(), "Sony FE 55mm F1.8 ZA");
+    map.insert("32810".to_string(), "Sony FE 70-200mm F4 G OSS");
+    map.insert("32811".to_string(), "Sony FE 16-35mm F4 ZA OSS");
+    map.insert("32812".to_string(), "Sony FE 50mm F2.8 Macro");
+    map.insert("32813".to_string(), "Sony FE 28-70mm F3.5-5.6 OSS");
+    map.insert("32814".to_string(), "Sony FE 35mm F1.4 ZA");
+    map.insert("32815".to_string(), "Sony FE 24-240mm F3.5-6.3 OSS");
+    map.insert("32816".to_string(), "Sony FE 28mm F2");
+    map.insert("32817".to_string(), "Sony FE PZ 28-135mm F4 G OSS");
+    map.insert("32819".to_string(), "Sony FE 100mm F2.8 STF GM OSS");
+    map.insert("32820".to_string(), "Sony E PZ 18-110mm F4 G OSS");
+    map.insert("32821".to_string(), "Sony FE 24-70mm F2.8 GM");
+    map.insert("32822".to_string(), "Sony FE 50mm F1.4 ZA");
+    map.insert(
+        "32823".to_string(),
+        "Sony FE 85mm F1.4 GM or Samyang AF 85mm F1.4",
+    );
+    map.insert("32823.1".to_string(), "Samyang AF 85mm F1.4");
+    map.insert("32824".to_string(), "Sony FE 50mm F1.8");
+    map.insert(
+        "32826".to_string(),
+        "Sony FE 21mm F2.8 (SEL28F20 + SEL075UWC)",
+    );
+    map.insert(
+        "32827".to_string(),
+        "Sony FE 16mm F3.5 Fisheye (SEL28F20 + SEL057FEC)",
+    );
+    map.insert("32828".to_string(), "Sony FE 70-300mm F4.5-5.6 G OSS");
+    map.insert("32829".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS");
+    map.insert("32830".to_string(), "Sony FE 70-200mm F2.8 GM OSS");
+    map.insert("32831".to_string(), "Sony FE 16-35mm F2.8 GM");
+    map.insert("32848".to_string(), "Sony FE 400mm F2.8 GM OSS");
+    map.insert("32849".to_string(), "Sony E 18-135mm F3.5-5.6 OSS");
+    map.insert("32850".to_string(), "Sony FE 135mm F1.8 GM");
+    map.insert("32851".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS");
+    map.insert("32852".to_string(), "Sony FE 600mm F4 GM OSS");
+    map.insert("32853".to_string(), "Sony E 16-55mm F2.8 G");
+    map.insert("32854".to_string(), "Sony E 70-350mm F4.5-6.3 G OSS");
+    map.insert("32855".to_string(), "Sony FE C 16-35mm T3.1 G");
+    map.insert("32858".to_string(), "Sony FE 35mm F1.8");
+    map.insert("32859".to_string(), "Sony FE 20mm F1.8 G");
+    map.insert("32860".to_string(), "Sony FE 12-24mm F2.8 GM");
+    map.insert("32862".to_string(), "Sony FE 50mm F1.2 GM");
+    map.insert("32863".to_string(), "Sony FE 14mm F1.8 GM");
+    map.insert("32864".to_string(), "Sony FE 28-60mm F4-5.6");
+    map.insert("32865".to_string(), "Sony FE 35mm F1.4 GM");
+    map.insert("32866".to_string(), "Sony FE 24mm F2.8 G");
+    map.insert("32867".to_string(), "Sony FE 40mm F2.5 G");
+    map.insert("32868".to_string(), "Sony FE 50mm F2.5 G");
+    map.insert("32871".to_string(), "Sony FE PZ 16-35mm F4 G");
+    map.insert("32873".to_string(), "Sony E PZ 10-20mm F4 G");
+    map.insert("32874".to_string(), "Sony FE 70-200mm F2.8 GM OSS II");
+    map.insert("32875".to_string(), "Sony FE 24-70mm F2.8 GM II");
+    map.insert("32876".to_string(), "Sony E 11mm F1.8");
+    map.insert("32877".to_string(), "Sony E 15mm F1.4 G");
+    map.insert("32878".to_string(), "Sony FE 20-70mm F4 G");
+    map.insert("32879".to_string(), "Sony FE 50mm F1.4 GM");
+    map.insert("32880".to_string(), "Sony FE 16mm F1.8 G");
+    map.insert("32881".to_string(), "Sony FE 24-50mm F2.8 G");
+    map.insert("32882".to_string(), "Sony FE 16-25mm F2.8 G");
+    map.insert("32884".to_string(), "Sony FE 70-200mm F4 Macro G OSS II");
+    map.insert("32885".to_string(), "Sony FE 16-35mm F2.8 GM II");
+    map.insert("32886".to_string(), "Sony FE 300mm F2.8 GM OSS");
+    map.insert("32887".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS II");
+    map.insert("32888".to_string(), "Sony FE 85mm F1.4 GM II");
+    map.insert("32889".to_string(), "Sony FE 28-70mm F2 GM");
+    map.insert("32890".to_string(), "Sony FE 400-800mm F6.3-8 G OSS");
+    map.insert("32891".to_string(), "Sony FE 50-150mm F2 GM");
+    map.insert(
+        "33072".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33073".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33076".to_string(),
+        "Sony FE 100mm F2.8 STF GM OSS (macro mode)",
+    );
+    map.insert(
+        "33077".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33078".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33079".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33080".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33081".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33082".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33083".to_string(),
+        "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33084".to_string(),
+        "Sony FE 600mm F4 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33085".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33086".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33087".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33088".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33089".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33090".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33091".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33092".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
+    );
+    map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
+    map.insert(
+        "49201".to_string(),
+        "Zeiss Touit 12mm F2.8 or other Touit lens",
+    );
+    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
+    map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
+    map.insert("49217".to_string(), "Zeiss Batis 85mm F1.8");
+    map.insert("49218".to_string(), "Zeiss Batis 18mm F2.8");
+    map.insert("49219".to_string(), "Zeiss Batis 135mm F2.8");
+    map.insert("49220".to_string(), "Zeiss Batis 40mm F2 CF");
+    map.insert("49232".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("49233".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("49234".to_string(), "Zeiss Loxia 21mm F2.8");
+    map.insert("49235".to_string(), "Zeiss Loxia 85mm F2.4");
+    map.insert("49236".to_string(), "Zeiss Loxia 25mm F2.4");
+    map.insert("49456".to_string(), "Tamron E 18-200mm F3.5-6.3 Di III VC");
+    map.insert("49457".to_string(), "Tamron 28-75mm F2.8 Di III RXD");
+    map.insert("49458".to_string(), "Tamron 17-28mm F2.8 Di III RXD");
+    map.insert("49459".to_string(), "Tamron 35mm F2.8 Di III OSD M1:2");
+    map.insert("49460".to_string(), "Tamron 24mm F2.8 Di III OSD M1:2");
+    map.insert("49461".to_string(), "Tamron 20mm F2.8 Di III OSD M1:2");
+    map.insert("49462".to_string(), "Tamron 70-180mm F2.8 Di III VXD");
+    map.insert("49463".to_string(), "Tamron 28-200mm F2.8-5.6 Di III RXD");
+    map.insert("49464".to_string(), "Tamron 70-300mm F4.5-6.3 Di III RXD");
+    map.insert("49465".to_string(), "Tamron 17-70mm F2.8 Di III-A VC RXD");
+    map.insert("49466".to_string(), "Tamron 150-500mm F5-6.7 Di III VC VXD");
+    map.insert("49467".to_string(), "Tamron 11-20mm F2.8 Di III-A RXD");
+    map.insert(
+        "49468".to_string(),
+        "Tamron 18-300mm F3.5-6.3 Di III-A VC VXD",
+    );
+    map.insert("49469".to_string(), "Tamron 35-150mm F2-F2.8 Di III VXD");
+    map.insert("49470".to_string(), "Tamron 28-75mm F2.8 Di III VXD G2");
+    map.insert(
+        "49471".to_string(),
+        "Tamron 50-400mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49472".to_string(), "Tamron 20-40mm F2.8 Di III VXD");
+    map.insert(
+        "49473".to_string(),
+        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
+    );
+    map.insert("49473.1".to_string(), "Tokina atx-m 85mm F1.8 FE");
+    map.insert("49473.2".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49473.3".to_string(), "Viltrox 56mm F1.4 E");
+    map.insert("49473.4".to_string(), "Viltrox 85mm F1.8 II FE");
+    map.insert(
+        "49474".to_string(),
+        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
+    );
+    map.insert("49474.1".to_string(), "Viltrox 13mm F1.4 E");
+    map.insert("49474.10".to_string(), "Viltrox 20mm F2.8 FE");
+    map.insert("49474.2".to_string(), "Viltrox 16mm F1.8 FE");
+    map.insert("49474.3".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49474.4".to_string(), "Viltrox 24mm F1.8 FE");
+    map.insert("49474.5".to_string(), "Viltrox 28mm F1.8 FE");
+    map.insert("49474.6".to_string(), "Viltrox 33mm F1.4 E");
+    map.insert("49474.7".to_string(), "Viltrox 35mm F1.8 FE");
+    map.insert("49474.8".to_string(), "Viltrox 50mm F1.8 FE");
+    map.insert("49474.9".to_string(), "Viltrox 75mm F1.2 E");
+    map.insert(
+        "49475".to_string(),
+        "Tamron 50-300mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49476".to_string(), "Tamron 28-300mm F4-7.1 Di III VC VXD");
+    map.insert("49477".to_string(), "Tamron 90mm F2.8 Di III Macro VXD");
+    map.insert("49712".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("49713".to_string(), "Tokina FiRIN 100mm F2.8 FE MACRO");
+    map.insert("49714".to_string(), "Tokina atx-m 11-18mm F2.8 E");
+    map.insert("50480".to_string(), "Sigma 30mm F1.4 DC DN | C");
+    map.insert("50481".to_string(), "Sigma 50mm F1.4 DG HSM | A");
+    map.insert(
+        "50482".to_string(),
+        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert("50483".to_string(), "Sigma 18-35mm F1.8 DC HSM | A + MC-11");
+    map.insert("50484".to_string(), "Sigma 24-35mm F2 DG HSM | A + MC-11");
+    map.insert("50485".to_string(), "Sigma 24mm F1.4 DG HSM | A + MC-11");
+    map.insert(
+        "50486".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50487".to_string(), "Sigma 20mm F1.4 DG HSM | A + MC-11");
+    map.insert("50488".to_string(), "Sigma 35mm F1.4 DG HSM | A");
+    map.insert(
+        "50489".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50490".to_string(),
+        "Sigma 120-300mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50492".to_string(),
+        "Sigma 24-105mm F4 DG OS HSM | A + MC-11",
+    );
+    map.insert(
+        "50493".to_string(),
+        "Sigma 17-70mm F2.8-4 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert(
+        "50495".to_string(),
+        "Sigma 50-100mm F1.8 DC HSM | A + MC-11",
+    );
+    map.insert("50499".to_string(), "Sigma 85mm F1.4 DG HSM | A");
+    map.insert(
+        "50501".to_string(),
+        "Sigma 100-400mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50503".to_string(), "Sigma 16mm F1.4 DC DN | C");
+    map.insert("50507".to_string(), "Sigma 105mm F1.4 DG HSM | A");
+    map.insert("50508".to_string(), "Sigma 56mm F1.4 DC DN | C");
+    map.insert(
+        "50512".to_string(),
+        "Sigma 70-200mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert("50513".to_string(), "Sigma 70mm F2.8 DG MACRO | A");
+    map.insert("50514".to_string(), "Sigma 45mm F2.8 DG DN | C");
+    map.insert("50515".to_string(), "Sigma 35mm F1.2 DG DN | A");
+    map.insert("50516".to_string(), "Sigma 14-24mm F2.8 DG DN | A");
+    map.insert("50517".to_string(), "Sigma 24-70mm F2.8 DG DN | A");
+    map.insert("50518".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C");
+    map.insert("50521".to_string(), "Sigma 85mm F1.4 DG DN | A");
+    map.insert("50522".to_string(), "Sigma 105mm F2.8 DG DN MACRO | A");
+    map.insert("50523".to_string(), "Sigma 65mm F2 DG DN | C");
+    map.insert("50524".to_string(), "Sigma 35mm F2 DG DN | C");
+    map.insert("50525".to_string(), "Sigma 24mm F3.5 DG DN | C");
+    map.insert("50526".to_string(), "Sigma 28-70mm F2.8 DG DN | C");
+    map.insert("50527".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S");
+    map.insert("50528".to_string(), "Sigma 35mm F1.4 DG DN | A");
+    map.insert("50529".to_string(), "Sigma 90mm F2.8 DG DN | C");
+    map.insert("50530".to_string(), "Sigma 24mm F2 DG DN | C");
+    map.insert("50531".to_string(), "Sigma 18-50mm F2.8 DC DN | C");
+    map.insert("50532".to_string(), "Sigma 20mm F2 DG DN | C");
+    map.insert("50533".to_string(), "Sigma 16-28mm F2.8 DG DN | C");
+    map.insert("50534".to_string(), "Sigma 20mm F1.4 DG DN | A");
+    map.insert("50535".to_string(), "Sigma 24mm F1.4 DG DN | A");
+    map.insert("50536".to_string(), "Sigma 60-600mm F4.5-6.3 DG DN OS | S");
+    map.insert("50537".to_string(), "Sigma 50mm F2 DG DN | C");
+    map.insert("50538".to_string(), "Sigma 17mm F4 DG DN | C");
+    map.insert("50539".to_string(), "Sigma 50mm F1.4 DG DN | A");
+    map.insert("50540".to_string(), "Sigma 14mm F1.4 DG DN | A");
+    map.insert("50543".to_string(), "Sigma 70-200mm F2.8 DG DN OS | S");
+    map.insert("50544".to_string(), "Sigma 23mm F1.4 DC DN | C");
+    map.insert("50545".to_string(), "Sigma 24-70mm F2.8 DG DN II | A");
+    map.insert("50546".to_string(), "Sigma 500mm F5.6 DG DN OS | S");
+    map.insert("50547".to_string(), "Sigma 10-18mm F2.8 DC DN | C");
+    map.insert(
+        "50548".to_string(),
+        "Sigma 15mm F1.4 DG DN DIAGONAL FISHEYE | A",
+    );
+    map.insert("50549".to_string(), "Sigma 50mm F1.2 DG DN | A");
+    map.insert("50550".to_string(), "Sigma 28-105mm F2.8 DG DN | A");
+    map.insert("50551".to_string(), "Sigma 28-45mm F1.8 DG DN | A");
+    map.insert("50553".to_string(), "Sigma 300-600mm F4 DG OS | S");
+    map.insert(
+        "50992".to_string(),
+        "Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III",
+    );
+    map.insert(
+        "50993".to_string(),
+        "Voigtlander HELIAR-HYPER WIDE 10mm F5.6",
+    );
+    map.insert(
+        "50994".to_string(),
+        "Voigtlander ULTRA WIDE-HELIAR 12mm F5.6 III",
+    );
+    map.insert(
+        "50995".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 65mm F2 Aspherical",
+    );
+    map.insert(
+        "50996".to_string(),
+        "Voigtlander NOKTON 40mm F1.2 Aspherical",
+    );
+    map.insert("50997".to_string(), "Voigtlander NOKTON classic 35mm F1.4");
+    map.insert(
+        "50998".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 110mm F2.5",
+    );
+    map.insert(
+        "50999".to_string(),
+        "Voigtlander COLOR-SKOPAR 21mm F3.5 Aspherical",
+    );
+    map.insert(
+        "51000".to_string(),
+        "Voigtlander NOKTON 50mm F1.2 Aspherical",
+    );
+    map.insert(
+        "51001".to_string(),
+        "Voigtlander NOKTON 21mm F1.4 Aspherical",
+    );
+    map.insert(
+        "51002".to_string(),
+        "Voigtlander APO-LANTHAR 50mm F2 Aspherical",
+    );
+    map.insert(
+        "51003".to_string(),
+        "Voigtlander NOKTON 35mm F1.2 Aspherical SE",
+    );
+    map.insert(
+        "51006".to_string(),
+        "Voigtlander APO-LANTHAR 35mm F2 Aspherical",
+    );
+    map.insert("51007".to_string(), "Voigtlander NOKTON 50mm F1 Aspherical");
+    map.insert(
+        "51008".to_string(),
+        "Voigtlander NOKTON 75mm F1.5 Aspherical",
+    );
+    map.insert(
+        "51009".to_string(),
+        "Voigtlander NOKTON 28mm F1.5 Aspherical",
+    );
+    map.insert("51072".to_string(), "ZEISS Otus ML 50mm F1.4");
+    map.insert("51073".to_string(), "ZEISS Otus ML 85mm F1.4");
+    map.insert("51504".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "51505".to_string(),
+        "Samyang AF 14mm F2.8 or Samyang AF 35mm F2.8",
+    );
+    map.insert("51505.1".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("51507".to_string(), "Samyang AF 35mm F1.4");
+    map.insert("51508".to_string(), "Samyang AF 45mm F1.8");
+    map.insert(
+        "51510".to_string(),
+        "Samyang AF 18mm F2.8 or Samyang AF 35mm F1.8",
+    );
+    map.insert("51510.1".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51512".to_string(), "Samyang AF 75mm F1.8");
+    map.insert("51513".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51514".to_string(), "Samyang AF 24mm F1.8");
+    map.insert("51515".to_string(), "Samyang AF 12mm F2.0");
+    map.insert("51516".to_string(), "Samyang AF 24-70mm F2.8");
+    map.insert("51517".to_string(), "Samyang AF 50mm F1.4 II");
+    map.insert("51518".to_string(), "Samyang AF 135mm F1.8");
+    map.insert("6".to_string(), "Sony LA-EA4 Adapter");
+    map.insert("61569".to_string(), "LAOWA FFII 10mm F2.8 C&D Dreamer");
+    map.insert("61761".to_string(), "Viltrox 28mm F4.5 FE");
+    map.insert("7".to_string(), "Sony LA-EA5 Adapter");
+    map.insert(
+        "78".to_string(),
+        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
+    );
+    map
+});
+
+static PRINT_CONV_448: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("10".to_string(), "Continuous - Background defocus");
+    map.insert("13".to_string(), "Continuous - 3D Sweep Panorama");
+    map.insert("146".to_string(), "Single Frame - Movie Capture");
+    map.insert(
+        "15".to_string(),
+        "Continuous - High Resolution Sweep Panorama",
+    );
+    map.insert("16".to_string(), "Continuous - 3D Image");
+    map.insert("17".to_string(), "Continuous - Burst 2");
+    map.insert("18".to_string(), "Normal - iAuto+");
+    map.insert("19".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("2".to_string(), "Continuous - Exposure Bracketing");
+    map.insert("20".to_string(), "Continuous - Multi Frame NR");
+    map.insert("23".to_string(), "Single-frame - Exposure Bracketing");
+    map.insert("26".to_string(), "Continuous Low");
+    map.insert("27".to_string(), "Continuous - High Sensitivity");
+    map.insert("28".to_string(), "Smile Shutter");
+    map.insert("29".to_string(), "Continuous - Tele-zoom Advance Priority");
+    map.insert("3".to_string(), "DRO or White Balance Bracketing");
+    map.insert("5".to_string(), "Continuous - Burst");
+    map.insert("6".to_string(), "Single Frame - Capture During Movie");
+    map.insert("7".to_string(), "Continuous - Sweep Panorama");
+    map.insert(
+        "8".to_string(),
+        "Continuous - Anti-Motion Blur, Hand-held Twilight",
+    );
+    map.insert("9".to_string(), "Continuous - HDR");
+    map
+});
+
+static PRINT_CONV_449: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Low");
+    map.insert("2".to_string(), "Normal");
+    map.insert("3".to_string(), "High");
+    map
+});
+
+static PRINT_CONV_450: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_451: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Toy Camera");
+    map.insert("10".to_string(), "Rich-tone Monochrome");
+    map.insert("11".to_string(), "Miniature");
+    map.insert("12".to_string(), "Water Color");
+    map.insert("13".to_string(), "Illustration");
+    map.insert("2".to_string(), "Pop Color");
+    map.insert("3".to_string(), "Posterization");
+    map.insert("4".to_string(), "Retro Photo");
+    map.insert("5".to_string(), "Soft High Key");
+    map.insert("6".to_string(), "Partial Color");
+    map.insert("7".to_string(), "High Contrast Monochrome");
+    map.insert("8".to_string(), "Soft Focus");
+    map.insert("9".to_string(), "HDR Painting");
+    map
+});
+
+static PRINT_CONV_452: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Program AE");
+    map.insert("1".to_string(), "Aperture-priority AE");
+    map.insert("10".to_string(), "Twilight");
+    map.insert("11".to_string(), "Twilight Portrait");
+    map.insert("12".to_string(), "Sunset");
+    map.insert("14".to_string(), "Action (High speed)");
+    map.insert("16".to_string(), "Sports");
+    map.insert("17".to_string(), "Handheld Night Shot");
+    map.insert("18".to_string(), "Anti Motion Blur");
+    map.insert("19".to_string(), "High Sensitivity");
+    map.insert("2".to_string(), "Shutter speed priority AE");
+    map.insert("21".to_string(), "Beach");
+    map.insert("22".to_string(), "Snow");
+    map.insert("23".to_string(), "Fireworks");
+    map.insert("26".to_string(), "Underwater");
+    map.insert("27".to_string(), "Gourmet");
+    map.insert("28".to_string(), "Pet");
+    map.insert("29".to_string(), "Macro");
+    map.insert("3".to_string(), "Manual");
+    map.insert("30".to_string(), "Backlight Correction HDR");
+    map.insert("33".to_string(), "Sweep Panorama");
+    map.insert("36".to_string(), "Background Defocus");
+    map.insert("37".to_string(), "Soft Skin");
+    map.insert("4".to_string(), "Auto");
+    map.insert("42".to_string(), "3D Image");
+    map.insert("43".to_string(), "Cont. Priority AE");
+    map.insert("45".to_string(), "Document");
+    map.insert("46".to_string(), "Party");
+    map.insert("5".to_string(), "iAuto");
+    map.insert("6".to_string(), "Superior Auto");
+    map.insert("7".to_string(), "iAuto+");
+    map.insert("8".to_string(), "Portrait");
+    map.insert("9".to_string(), "Landscape");
+    map
+});
+
+static PRINT_CONV_453: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Standard");
+    map.insert("1".to_string(), "Vivid");
+    map.insert("10".to_string(), "Night View/Portrait");
+    map.insert("11".to_string(), "Autumn Leaves");
+    map.insert("13".to_string(), "Sepia");
+    map.insert("15".to_string(), "FL");
+    map.insert("16".to_string(), "VV2");
+    map.insert("17".to_string(), "IN");
+    map.insert("18".to_string(), "SH");
+    map.insert("2".to_string(), "Neutral");
+    map.insert("255".to_string(), "Off");
+    map.insert("3".to_string(), "Portrait");
+    map.insert("4".to_string(), "Landscape");
+    map.insert("5".to_string(), "B&W");
+    map.insert("6".to_string(), "Clear");
+    map.insert("7".to_string(), "Deep");
+    map.insert("8".to_string(), "Light");
+    map.insert("9".to_string(), "Sunset");
+    map
+});
+
+static PRINT_CONV_454: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No");
+    map.insert("1".to_string(), "Yes");
+    map
+});
+
+static PRINT_CONV_455: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "None");
+    map.insert("1".to_string(), "Applied");
+    map
+});
+
+static PRINT_CONV_456: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "APS-C");
+    map.insert("2".to_string(), "Full-frame");
+    map
+});
+
+static PRINT_CONV_457: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "A-mount");
+    map.insert("2".to_string(), "E-mount");
+    map
+});
+
+static PRINT_CONV_458: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown E-mount lens or other lens");
+    map.insert("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN");
+    map.insert("0.10".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("0.11".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("0.12".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("0.13".to_string(), "Viltrox 85mm F1.8");
+    map.insert("0.2".to_string(), "Sigma 30mm F2.8 [EX] DN");
+    map.insert("0.3".to_string(), "Sigma 60mm F2.8 DN");
+    map.insert("0.4".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("0.5".to_string(), "Tamron 18-200mm F3.5-6.3 Di III VC");
+    map.insert("0.6".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("0.7".to_string(), "Tokina FiRIN 20mm F2 FE MF");
+    map.insert("0.8".to_string(), "Zeiss Touit 12mm F2.8");
+    map.insert("0.9".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("1".to_string(), "Sony LA-EA1 or Sigma MC-11 Adapter");
+    map.insert("13".to_string(), "Samyang AF 35-150mm F2-2.8");
+    map.insert("184".to_string(), "Metabones Canon EF Speed Booster Ultra");
+    map.insert("2".to_string(), "Sony LA-EA2 Adapter");
+    map.insert("20".to_string(), "Samyang AF 35mm F1.4 P FE");
+    map.insert("21".to_string(), "Samyang AF 14-24mm F2.8");
+    map.insert(
+        "234".to_string(),
+        "Metabones Canon EF Smart Adapter Mark IV",
+    );
+    map.insert("239".to_string(), "Metabones Canon EF Speed Booster");
+    map.insert("24593".to_string(), "LA-EA4r MonsterAdapter");
+    map.insert("3".to_string(), "Sony LA-EA3 Adapter");
+    map.insert("32784".to_string(), "Sony E 16mm F2.8");
+    map.insert("32785".to_string(), "Sony E 18-55mm F3.5-5.6 OSS");
+    map.insert("32786".to_string(), "Sony E 55-210mm F4.5-6.3 OSS");
+    map.insert("32787".to_string(), "Sony E 18-200mm F3.5-6.3 OSS");
+    map.insert("32788".to_string(), "Sony E 30mm F3.5 Macro");
+    map.insert(
+        "32789".to_string(),
+        "Sony E 24mm F1.8 ZA or Samyang AF 50mm F1.4",
+    );
+    map.insert("32789.1".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "32790".to_string(),
+        "Sony E 50mm F1.8 OSS or Samyang AF 14mm F2.8",
+    );
+    map.insert("32790.1".to_string(), "Samyang AF 14mm F2.8");
+    map.insert("32791".to_string(), "Sony E 16-70mm F4 ZA OSS");
+    map.insert("32792".to_string(), "Sony E 10-18mm F4 OSS");
+    map.insert("32793".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS");
+    map.insert("32794".to_string(), "Sony FE 35mm F2.8 ZA or Samyang Lens");
+    map.insert("32794.1".to_string(), "Samyang AF 24mm F2.8");
+    map.insert("32794.2".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("32795".to_string(), "Sony FE 24-70mm F4 ZA OSS");
+    map.insert(
+        "32796".to_string(),
+        "Sony FE 85mm F1.8 or Viltrox PFU RBMH 85mm F1.8",
+    );
+    map.insert("32796.1".to_string(), "Viltrox PFU RBMH 85mm F1.8");
+    map.insert("32797".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("32798".to_string(), "Sony E 20mm F2.8");
+    map.insert("32799".to_string(), "Sony E 35mm F1.8 OSS");
+    map.insert("32800".to_string(), "Sony E PZ 18-105mm F4 G OSS");
+    map.insert("32801".to_string(), "Sony FE 12-24mm F4 G");
+    map.insert("32802".to_string(), "Sony FE 90mm F2.8 Macro G OSS");
+    map.insert("32803".to_string(), "Sony E 18-50mm F4-5.6");
+    map.insert("32804".to_string(), "Sony FE 24mm F1.4 GM");
+    map.insert("32805".to_string(), "Sony FE 24-105mm F4 G OSS");
+    map.insert("32807".to_string(), "Sony E PZ 18-200mm F3.5-6.3 OSS");
+    map.insert("32808".to_string(), "Sony FE 55mm F1.8 ZA");
+    map.insert("32810".to_string(), "Sony FE 70-200mm F4 G OSS");
+    map.insert("32811".to_string(), "Sony FE 16-35mm F4 ZA OSS");
+    map.insert("32812".to_string(), "Sony FE 50mm F2.8 Macro");
+    map.insert("32813".to_string(), "Sony FE 28-70mm F3.5-5.6 OSS");
+    map.insert("32814".to_string(), "Sony FE 35mm F1.4 ZA");
+    map.insert("32815".to_string(), "Sony FE 24-240mm F3.5-6.3 OSS");
+    map.insert("32816".to_string(), "Sony FE 28mm F2");
+    map.insert("32817".to_string(), "Sony FE PZ 28-135mm F4 G OSS");
+    map.insert("32819".to_string(), "Sony FE 100mm F2.8 STF GM OSS");
+    map.insert("32820".to_string(), "Sony E PZ 18-110mm F4 G OSS");
+    map.insert("32821".to_string(), "Sony FE 24-70mm F2.8 GM");
+    map.insert("32822".to_string(), "Sony FE 50mm F1.4 ZA");
+    map.insert(
+        "32823".to_string(),
+        "Sony FE 85mm F1.4 GM or Samyang AF 85mm F1.4",
+    );
+    map.insert("32823.1".to_string(), "Samyang AF 85mm F1.4");
+    map.insert("32824".to_string(), "Sony FE 50mm F1.8");
+    map.insert(
+        "32826".to_string(),
+        "Sony FE 21mm F2.8 (SEL28F20 + SEL075UWC)",
+    );
+    map.insert(
+        "32827".to_string(),
+        "Sony FE 16mm F3.5 Fisheye (SEL28F20 + SEL057FEC)",
+    );
+    map.insert("32828".to_string(), "Sony FE 70-300mm F4.5-5.6 G OSS");
+    map.insert("32829".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS");
+    map.insert("32830".to_string(), "Sony FE 70-200mm F2.8 GM OSS");
+    map.insert("32831".to_string(), "Sony FE 16-35mm F2.8 GM");
+    map.insert("32848".to_string(), "Sony FE 400mm F2.8 GM OSS");
+    map.insert("32849".to_string(), "Sony E 18-135mm F3.5-5.6 OSS");
+    map.insert("32850".to_string(), "Sony FE 135mm F1.8 GM");
+    map.insert("32851".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS");
+    map.insert("32852".to_string(), "Sony FE 600mm F4 GM OSS");
+    map.insert("32853".to_string(), "Sony E 16-55mm F2.8 G");
+    map.insert("32854".to_string(), "Sony E 70-350mm F4.5-6.3 G OSS");
+    map.insert("32855".to_string(), "Sony FE C 16-35mm T3.1 G");
+    map.insert("32858".to_string(), "Sony FE 35mm F1.8");
+    map.insert("32859".to_string(), "Sony FE 20mm F1.8 G");
+    map.insert("32860".to_string(), "Sony FE 12-24mm F2.8 GM");
+    map.insert("32862".to_string(), "Sony FE 50mm F1.2 GM");
+    map.insert("32863".to_string(), "Sony FE 14mm F1.8 GM");
+    map.insert("32864".to_string(), "Sony FE 28-60mm F4-5.6");
+    map.insert("32865".to_string(), "Sony FE 35mm F1.4 GM");
+    map.insert("32866".to_string(), "Sony FE 24mm F2.8 G");
+    map.insert("32867".to_string(), "Sony FE 40mm F2.5 G");
+    map.insert("32868".to_string(), "Sony FE 50mm F2.5 G");
+    map.insert("32871".to_string(), "Sony FE PZ 16-35mm F4 G");
+    map.insert("32873".to_string(), "Sony E PZ 10-20mm F4 G");
+    map.insert("32874".to_string(), "Sony FE 70-200mm F2.8 GM OSS II");
+    map.insert("32875".to_string(), "Sony FE 24-70mm F2.8 GM II");
+    map.insert("32876".to_string(), "Sony E 11mm F1.8");
+    map.insert("32877".to_string(), "Sony E 15mm F1.4 G");
+    map.insert("32878".to_string(), "Sony FE 20-70mm F4 G");
+    map.insert("32879".to_string(), "Sony FE 50mm F1.4 GM");
+    map.insert("32880".to_string(), "Sony FE 16mm F1.8 G");
+    map.insert("32881".to_string(), "Sony FE 24-50mm F2.8 G");
+    map.insert("32882".to_string(), "Sony FE 16-25mm F2.8 G");
+    map.insert("32884".to_string(), "Sony FE 70-200mm F4 Macro G OSS II");
+    map.insert("32885".to_string(), "Sony FE 16-35mm F2.8 GM II");
+    map.insert("32886".to_string(), "Sony FE 300mm F2.8 GM OSS");
+    map.insert("32887".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS II");
+    map.insert("32888".to_string(), "Sony FE 85mm F1.4 GM II");
+    map.insert("32889".to_string(), "Sony FE 28-70mm F2 GM");
+    map.insert("32890".to_string(), "Sony FE 400-800mm F6.3-8 G OSS");
+    map.insert("32891".to_string(), "Sony FE 50-150mm F2 GM");
+    map.insert(
+        "33072".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33073".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33076".to_string(),
+        "Sony FE 100mm F2.8 STF GM OSS (macro mode)",
+    );
+    map.insert(
+        "33077".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33078".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33079".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33080".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33081".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33082".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33083".to_string(),
+        "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33084".to_string(),
+        "Sony FE 600mm F4 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33085".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33086".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33087".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33088".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33089".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33090".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33091".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33092".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
+    );
+    map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
+    map.insert(
+        "49201".to_string(),
+        "Zeiss Touit 12mm F2.8 or other Touit lens",
+    );
+    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
+    map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
+    map.insert("49217".to_string(), "Zeiss Batis 85mm F1.8");
+    map.insert("49218".to_string(), "Zeiss Batis 18mm F2.8");
+    map.insert("49219".to_string(), "Zeiss Batis 135mm F2.8");
+    map.insert("49220".to_string(), "Zeiss Batis 40mm F2 CF");
+    map.insert("49232".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("49233".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("49234".to_string(), "Zeiss Loxia 21mm F2.8");
+    map.insert("49235".to_string(), "Zeiss Loxia 85mm F2.4");
+    map.insert("49236".to_string(), "Zeiss Loxia 25mm F2.4");
+    map.insert("49456".to_string(), "Tamron E 18-200mm F3.5-6.3 Di III VC");
+    map.insert("49457".to_string(), "Tamron 28-75mm F2.8 Di III RXD");
+    map.insert("49458".to_string(), "Tamron 17-28mm F2.8 Di III RXD");
+    map.insert("49459".to_string(), "Tamron 35mm F2.8 Di III OSD M1:2");
+    map.insert("49460".to_string(), "Tamron 24mm F2.8 Di III OSD M1:2");
+    map.insert("49461".to_string(), "Tamron 20mm F2.8 Di III OSD M1:2");
+    map.insert("49462".to_string(), "Tamron 70-180mm F2.8 Di III VXD");
+    map.insert("49463".to_string(), "Tamron 28-200mm F2.8-5.6 Di III RXD");
+    map.insert("49464".to_string(), "Tamron 70-300mm F4.5-6.3 Di III RXD");
+    map.insert("49465".to_string(), "Tamron 17-70mm F2.8 Di III-A VC RXD");
+    map.insert("49466".to_string(), "Tamron 150-500mm F5-6.7 Di III VC VXD");
+    map.insert("49467".to_string(), "Tamron 11-20mm F2.8 Di III-A RXD");
+    map.insert(
+        "49468".to_string(),
+        "Tamron 18-300mm F3.5-6.3 Di III-A VC VXD",
+    );
+    map.insert("49469".to_string(), "Tamron 35-150mm F2-F2.8 Di III VXD");
+    map.insert("49470".to_string(), "Tamron 28-75mm F2.8 Di III VXD G2");
+    map.insert(
+        "49471".to_string(),
+        "Tamron 50-400mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49472".to_string(), "Tamron 20-40mm F2.8 Di III VXD");
+    map.insert(
+        "49473".to_string(),
+        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
+    );
+    map.insert("49473.1".to_string(), "Tokina atx-m 85mm F1.8 FE");
+    map.insert("49473.2".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49473.3".to_string(), "Viltrox 56mm F1.4 E");
+    map.insert("49473.4".to_string(), "Viltrox 85mm F1.8 II FE");
+    map.insert(
+        "49474".to_string(),
+        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
+    );
+    map.insert("49474.1".to_string(), "Viltrox 13mm F1.4 E");
+    map.insert("49474.10".to_string(), "Viltrox 20mm F2.8 FE");
+    map.insert("49474.2".to_string(), "Viltrox 16mm F1.8 FE");
+    map.insert("49474.3".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49474.4".to_string(), "Viltrox 24mm F1.8 FE");
+    map.insert("49474.5".to_string(), "Viltrox 28mm F1.8 FE");
+    map.insert("49474.6".to_string(), "Viltrox 33mm F1.4 E");
+    map.insert("49474.7".to_string(), "Viltrox 35mm F1.8 FE");
+    map.insert("49474.8".to_string(), "Viltrox 50mm F1.8 FE");
+    map.insert("49474.9".to_string(), "Viltrox 75mm F1.2 E");
+    map.insert(
+        "49475".to_string(),
+        "Tamron 50-300mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49476".to_string(), "Tamron 28-300mm F4-7.1 Di III VC VXD");
+    map.insert("49477".to_string(), "Tamron 90mm F2.8 Di III Macro VXD");
+    map.insert("49712".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("49713".to_string(), "Tokina FiRIN 100mm F2.8 FE MACRO");
+    map.insert("49714".to_string(), "Tokina atx-m 11-18mm F2.8 E");
+    map.insert("50480".to_string(), "Sigma 30mm F1.4 DC DN | C");
+    map.insert("50481".to_string(), "Sigma 50mm F1.4 DG HSM | A");
+    map.insert(
+        "50482".to_string(),
+        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert("50483".to_string(), "Sigma 18-35mm F1.8 DC HSM | A + MC-11");
+    map.insert("50484".to_string(), "Sigma 24-35mm F2 DG HSM | A + MC-11");
+    map.insert("50485".to_string(), "Sigma 24mm F1.4 DG HSM | A + MC-11");
+    map.insert(
+        "50486".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50487".to_string(), "Sigma 20mm F1.4 DG HSM | A + MC-11");
+    map.insert("50488".to_string(), "Sigma 35mm F1.4 DG HSM | A");
+    map.insert(
+        "50489".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50490".to_string(),
+        "Sigma 120-300mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50492".to_string(),
+        "Sigma 24-105mm F4 DG OS HSM | A + MC-11",
+    );
+    map.insert(
+        "50493".to_string(),
+        "Sigma 17-70mm F2.8-4 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert(
+        "50495".to_string(),
+        "Sigma 50-100mm F1.8 DC HSM | A + MC-11",
+    );
+    map.insert("50499".to_string(), "Sigma 85mm F1.4 DG HSM | A");
+    map.insert(
+        "50501".to_string(),
+        "Sigma 100-400mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50503".to_string(), "Sigma 16mm F1.4 DC DN | C");
+    map.insert("50507".to_string(), "Sigma 105mm F1.4 DG HSM | A");
+    map.insert("50508".to_string(), "Sigma 56mm F1.4 DC DN | C");
+    map.insert(
+        "50512".to_string(),
+        "Sigma 70-200mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert("50513".to_string(), "Sigma 70mm F2.8 DG MACRO | A");
+    map.insert("50514".to_string(), "Sigma 45mm F2.8 DG DN | C");
+    map.insert("50515".to_string(), "Sigma 35mm F1.2 DG DN | A");
+    map.insert("50516".to_string(), "Sigma 14-24mm F2.8 DG DN | A");
+    map.insert("50517".to_string(), "Sigma 24-70mm F2.8 DG DN | A");
+    map.insert("50518".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C");
+    map.insert("50521".to_string(), "Sigma 85mm F1.4 DG DN | A");
+    map.insert("50522".to_string(), "Sigma 105mm F2.8 DG DN MACRO | A");
+    map.insert("50523".to_string(), "Sigma 65mm F2 DG DN | C");
+    map.insert("50524".to_string(), "Sigma 35mm F2 DG DN | C");
+    map.insert("50525".to_string(), "Sigma 24mm F3.5 DG DN | C");
+    map.insert("50526".to_string(), "Sigma 28-70mm F2.8 DG DN | C");
+    map.insert("50527".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S");
+    map.insert("50528".to_string(), "Sigma 35mm F1.4 DG DN | A");
+    map.insert("50529".to_string(), "Sigma 90mm F2.8 DG DN | C");
+    map.insert("50530".to_string(), "Sigma 24mm F2 DG DN | C");
+    map.insert("50531".to_string(), "Sigma 18-50mm F2.8 DC DN | C");
+    map.insert("50532".to_string(), "Sigma 20mm F2 DG DN | C");
+    map.insert("50533".to_string(), "Sigma 16-28mm F2.8 DG DN | C");
+    map.insert("50534".to_string(), "Sigma 20mm F1.4 DG DN | A");
+    map.insert("50535".to_string(), "Sigma 24mm F1.4 DG DN | A");
+    map.insert("50536".to_string(), "Sigma 60-600mm F4.5-6.3 DG DN OS | S");
+    map.insert("50537".to_string(), "Sigma 50mm F2 DG DN | C");
+    map.insert("50538".to_string(), "Sigma 17mm F4 DG DN | C");
+    map.insert("50539".to_string(), "Sigma 50mm F1.4 DG DN | A");
+    map.insert("50540".to_string(), "Sigma 14mm F1.4 DG DN | A");
+    map.insert("50543".to_string(), "Sigma 70-200mm F2.8 DG DN OS | S");
+    map.insert("50544".to_string(), "Sigma 23mm F1.4 DC DN | C");
+    map.insert("50545".to_string(), "Sigma 24-70mm F2.8 DG DN II | A");
+    map.insert("50546".to_string(), "Sigma 500mm F5.6 DG DN OS | S");
+    map.insert("50547".to_string(), "Sigma 10-18mm F2.8 DC DN | C");
+    map.insert(
+        "50548".to_string(),
+        "Sigma 15mm F1.4 DG DN DIAGONAL FISHEYE | A",
+    );
+    map.insert("50549".to_string(), "Sigma 50mm F1.2 DG DN | A");
+    map.insert("50550".to_string(), "Sigma 28-105mm F2.8 DG DN | A");
+    map.insert("50551".to_string(), "Sigma 28-45mm F1.8 DG DN | A");
+    map.insert("50553".to_string(), "Sigma 300-600mm F4 DG OS | S");
+    map.insert(
+        "50992".to_string(),
+        "Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III",
+    );
+    map.insert(
+        "50993".to_string(),
+        "Voigtlander HELIAR-HYPER WIDE 10mm F5.6",
+    );
+    map.insert(
+        "50994".to_string(),
+        "Voigtlander ULTRA WIDE-HELIAR 12mm F5.6 III",
+    );
+    map.insert(
+        "50995".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 65mm F2 Aspherical",
+    );
+    map.insert(
+        "50996".to_string(),
+        "Voigtlander NOKTON 40mm F1.2 Aspherical",
+    );
+    map.insert("50997".to_string(), "Voigtlander NOKTON classic 35mm F1.4");
+    map.insert(
+        "50998".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 110mm F2.5",
+    );
+    map.insert(
+        "50999".to_string(),
+        "Voigtlander COLOR-SKOPAR 21mm F3.5 Aspherical",
+    );
+    map.insert(
+        "51000".to_string(),
+        "Voigtlander NOKTON 50mm F1.2 Aspherical",
+    );
+    map.insert(
+        "51001".to_string(),
+        "Voigtlander NOKTON 21mm F1.4 Aspherical",
+    );
+    map.insert(
+        "51002".to_string(),
+        "Voigtlander APO-LANTHAR 50mm F2 Aspherical",
+    );
+    map.insert(
+        "51003".to_string(),
+        "Voigtlander NOKTON 35mm F1.2 Aspherical SE",
+    );
+    map.insert(
+        "51006".to_string(),
+        "Voigtlander APO-LANTHAR 35mm F2 Aspherical",
+    );
+    map.insert("51007".to_string(), "Voigtlander NOKTON 50mm F1 Aspherical");
+    map.insert(
+        "51008".to_string(),
+        "Voigtlander NOKTON 75mm F1.5 Aspherical",
+    );
+    map.insert(
+        "51009".to_string(),
+        "Voigtlander NOKTON 28mm F1.5 Aspherical",
+    );
+    map.insert("51072".to_string(), "ZEISS Otus ML 50mm F1.4");
+    map.insert("51073".to_string(), "ZEISS Otus ML 85mm F1.4");
+    map.insert("51504".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "51505".to_string(),
+        "Samyang AF 14mm F2.8 or Samyang AF 35mm F2.8",
+    );
+    map.insert("51505.1".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("51507".to_string(), "Samyang AF 35mm F1.4");
+    map.insert("51508".to_string(), "Samyang AF 45mm F1.8");
+    map.insert(
+        "51510".to_string(),
+        "Samyang AF 18mm F2.8 or Samyang AF 35mm F1.8",
+    );
+    map.insert("51510.1".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51512".to_string(), "Samyang AF 75mm F1.8");
+    map.insert("51513".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51514".to_string(), "Samyang AF 24mm F1.8");
+    map.insert("51515".to_string(), "Samyang AF 12mm F2.0");
+    map.insert("51516".to_string(), "Samyang AF 24-70mm F2.8");
+    map.insert("51517".to_string(), "Samyang AF 50mm F1.4 II");
+    map.insert("51518".to_string(), "Samyang AF 135mm F1.8");
+    map.insert("6".to_string(), "Sony LA-EA4 Adapter");
+    map.insert("61569".to_string(), "LAOWA FFII 10mm F2.8 C&D Dreamer");
+    map.insert("61761".to_string(), "Viltrox 28mm F4.5 FE");
+    map.insert("7".to_string(), "Sony LA-EA5 Adapter");
+    map.insert(
+        "78".to_string(),
+        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
+    );
+    map
+});
+
+static PRINT_CONV_459: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_460: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_461: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_462: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Continuous");
+    map.insert("10".to_string(), "Continuous - Background defocus");
+    map.insert("13".to_string(), "Continuous - 3D Sweep Panorama");
+    map.insert("146".to_string(), "Single Frame - Movie Capture");
+    map.insert(
+        "15".to_string(),
+        "Continuous - High Resolution Sweep Panorama",
+    );
+    map.insert("16".to_string(), "Continuous - 3D Image");
+    map.insert("17".to_string(), "Continuous - Burst 2");
+    map.insert("18".to_string(), "Normal - iAuto+");
+    map.insert("19".to_string(), "Continuous - Speed/Advance Priority");
+    map.insert("2".to_string(), "Continuous - Exposure Bracketing");
+    map.insert("20".to_string(), "Continuous - Multi Frame NR");
+    map.insert("23".to_string(), "Single-frame - Exposure Bracketing");
+    map.insert("26".to_string(), "Continuous Low");
+    map.insert("27".to_string(), "Continuous - High Sensitivity");
+    map.insert("28".to_string(), "Smile Shutter");
+    map.insert("29".to_string(), "Continuous - Tele-zoom Advance Priority");
+    map.insert("3".to_string(), "DRO or White Balance Bracketing");
+    map.insert("5".to_string(), "Continuous - Burst");
+    map.insert("6".to_string(), "Single Frame - Capture During Movie");
+    map.insert("7".to_string(), "Continuous - Sweep Panorama");
+    map.insert(
+        "8".to_string(),
+        "Continuous - Anti-Motion Blur, Hand-held Twilight",
+    );
+    map.insert("9".to_string(), "Continuous - HDR");
+    map
+});
+
+static PRINT_CONV_463: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Program AE");
+    map.insert("1".to_string(), "Aperture-priority AE");
+    map.insert("10".to_string(), "Twilight");
+    map.insert("11".to_string(), "Twilight Portrait");
+    map.insert("12".to_string(), "Sunset");
+    map.insert("14".to_string(), "Action (High speed)");
+    map.insert("16".to_string(), "Sports");
+    map.insert("17".to_string(), "Handheld Night Shot");
+    map.insert("18".to_string(), "Anti Motion Blur");
+    map.insert("19".to_string(), "High Sensitivity");
+    map.insert("2".to_string(), "Shutter speed priority AE");
+    map.insert("21".to_string(), "Beach");
+    map.insert("22".to_string(), "Snow");
+    map.insert("23".to_string(), "Fireworks");
+    map.insert("26".to_string(), "Underwater");
+    map.insert("27".to_string(), "Gourmet");
+    map.insert("28".to_string(), "Pet");
+    map.insert("29".to_string(), "Macro");
+    map.insert("3".to_string(), "Manual");
+    map.insert("30".to_string(), "Backlight Correction HDR");
+    map.insert("33".to_string(), "Sweep Panorama");
+    map.insert("36".to_string(), "Background Defocus");
+    map.insert("37".to_string(), "Soft Skin");
+    map.insert("4".to_string(), "Auto");
+    map.insert("42".to_string(), "3D Image");
+    map.insert("43".to_string(), "Cont. Priority AE");
+    map.insert("45".to_string(), "Document");
+    map.insert("46".to_string(), "Party");
+    map.insert("5".to_string(), "iAuto");
+    map.insert("6".to_string(), "Superior Auto");
+    map.insert("7".to_string(), "iAuto+");
+    map.insert("8".to_string(), "Portrait");
+    map.insert("9".to_string(), "Landscape");
+    map
+});
+
+static PRINT_CONV_464: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Standard");
+    map.insert("1".to_string(), "Vivid");
+    map.insert("10".to_string(), "Night View/Portrait");
+    map.insert("11".to_string(), "Autumn Leaves");
+    map.insert("13".to_string(), "Sepia");
+    map.insert("15".to_string(), "FL");
+    map.insert("16".to_string(), "VV2");
+    map.insert("17".to_string(), "IN");
+    map.insert("18".to_string(), "SH");
+    map.insert("2".to_string(), "Neutral");
+    map.insert("255".to_string(), "Off");
+    map.insert("3".to_string(), "Portrait");
+    map.insert("4".to_string(), "Landscape");
+    map.insert("5".to_string(), "B&W");
+    map.insert("6".to_string(), "Clear");
+    map.insert("7".to_string(), "Deep");
+    map.insert("8".to_string(), "Light");
+    map.insert("9".to_string(), "Sunset");
+    map
+});
+
+static PRINT_CONV_465: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "A-mount");
+    map.insert("2".to_string(), "E-mount");
+    map.insert("3".to_string(), "A-mount (3)");
+    map
+});
+
+static PRINT_CONV_466: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "APS-C");
+    map.insert("2".to_string(), "Full-frame");
+    map
+});
+
+static PRINT_CONV_467: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "A-mount");
+    map.insert("2".to_string(), "E-mount");
+    map
+});
+
+static PRINT_CONV_468: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown E-mount lens or other lens");
+    map.insert("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN");
+    map.insert("0.10".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("0.11".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("0.12".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("0.13".to_string(), "Viltrox 85mm F1.8");
+    map.insert("0.2".to_string(), "Sigma 30mm F2.8 [EX] DN");
+    map.insert("0.3".to_string(), "Sigma 60mm F2.8 DN");
+    map.insert("0.4".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("0.5".to_string(), "Tamron 18-200mm F3.5-6.3 Di III VC");
+    map.insert("0.6".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("0.7".to_string(), "Tokina FiRIN 20mm F2 FE MF");
+    map.insert("0.8".to_string(), "Zeiss Touit 12mm F2.8");
+    map.insert("0.9".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("1".to_string(), "Sony LA-EA1 or Sigma MC-11 Adapter");
+    map.insert("13".to_string(), "Samyang AF 35-150mm F2-2.8");
+    map.insert("184".to_string(), "Metabones Canon EF Speed Booster Ultra");
+    map.insert("2".to_string(), "Sony LA-EA2 Adapter");
+    map.insert("20".to_string(), "Samyang AF 35mm F1.4 P FE");
+    map.insert("21".to_string(), "Samyang AF 14-24mm F2.8");
+    map.insert(
+        "234".to_string(),
+        "Metabones Canon EF Smart Adapter Mark IV",
+    );
+    map.insert("239".to_string(), "Metabones Canon EF Speed Booster");
+    map.insert("24593".to_string(), "LA-EA4r MonsterAdapter");
+    map.insert("3".to_string(), "Sony LA-EA3 Adapter");
+    map.insert("32784".to_string(), "Sony E 16mm F2.8");
+    map.insert("32785".to_string(), "Sony E 18-55mm F3.5-5.6 OSS");
+    map.insert("32786".to_string(), "Sony E 55-210mm F4.5-6.3 OSS");
+    map.insert("32787".to_string(), "Sony E 18-200mm F3.5-6.3 OSS");
+    map.insert("32788".to_string(), "Sony E 30mm F3.5 Macro");
+    map.insert(
+        "32789".to_string(),
+        "Sony E 24mm F1.8 ZA or Samyang AF 50mm F1.4",
+    );
+    map.insert("32789.1".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "32790".to_string(),
+        "Sony E 50mm F1.8 OSS or Samyang AF 14mm F2.8",
+    );
+    map.insert("32790.1".to_string(), "Samyang AF 14mm F2.8");
+    map.insert("32791".to_string(), "Sony E 16-70mm F4 ZA OSS");
+    map.insert("32792".to_string(), "Sony E 10-18mm F4 OSS");
+    map.insert("32793".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS");
+    map.insert("32794".to_string(), "Sony FE 35mm F2.8 ZA or Samyang Lens");
+    map.insert("32794.1".to_string(), "Samyang AF 24mm F2.8");
+    map.insert("32794.2".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("32795".to_string(), "Sony FE 24-70mm F4 ZA OSS");
+    map.insert(
+        "32796".to_string(),
+        "Sony FE 85mm F1.8 or Viltrox PFU RBMH 85mm F1.8",
+    );
+    map.insert("32796.1".to_string(), "Viltrox PFU RBMH 85mm F1.8");
+    map.insert("32797".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("32798".to_string(), "Sony E 20mm F2.8");
+    map.insert("32799".to_string(), "Sony E 35mm F1.8 OSS");
+    map.insert("32800".to_string(), "Sony E PZ 18-105mm F4 G OSS");
+    map.insert("32801".to_string(), "Sony FE 12-24mm F4 G");
+    map.insert("32802".to_string(), "Sony FE 90mm F2.8 Macro G OSS");
+    map.insert("32803".to_string(), "Sony E 18-50mm F4-5.6");
+    map.insert("32804".to_string(), "Sony FE 24mm F1.4 GM");
+    map.insert("32805".to_string(), "Sony FE 24-105mm F4 G OSS");
+    map.insert("32807".to_string(), "Sony E PZ 18-200mm F3.5-6.3 OSS");
+    map.insert("32808".to_string(), "Sony FE 55mm F1.8 ZA");
+    map.insert("32810".to_string(), "Sony FE 70-200mm F4 G OSS");
+    map.insert("32811".to_string(), "Sony FE 16-35mm F4 ZA OSS");
+    map.insert("32812".to_string(), "Sony FE 50mm F2.8 Macro");
+    map.insert("32813".to_string(), "Sony FE 28-70mm F3.5-5.6 OSS");
+    map.insert("32814".to_string(), "Sony FE 35mm F1.4 ZA");
+    map.insert("32815".to_string(), "Sony FE 24-240mm F3.5-6.3 OSS");
+    map.insert("32816".to_string(), "Sony FE 28mm F2");
+    map.insert("32817".to_string(), "Sony FE PZ 28-135mm F4 G OSS");
+    map.insert("32819".to_string(), "Sony FE 100mm F2.8 STF GM OSS");
+    map.insert("32820".to_string(), "Sony E PZ 18-110mm F4 G OSS");
+    map.insert("32821".to_string(), "Sony FE 24-70mm F2.8 GM");
+    map.insert("32822".to_string(), "Sony FE 50mm F1.4 ZA");
+    map.insert(
+        "32823".to_string(),
+        "Sony FE 85mm F1.4 GM or Samyang AF 85mm F1.4",
+    );
+    map.insert("32823.1".to_string(), "Samyang AF 85mm F1.4");
+    map.insert("32824".to_string(), "Sony FE 50mm F1.8");
+    map.insert(
+        "32826".to_string(),
+        "Sony FE 21mm F2.8 (SEL28F20 + SEL075UWC)",
+    );
+    map.insert(
+        "32827".to_string(),
+        "Sony FE 16mm F3.5 Fisheye (SEL28F20 + SEL057FEC)",
+    );
+    map.insert("32828".to_string(), "Sony FE 70-300mm F4.5-5.6 G OSS");
+    map.insert("32829".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS");
+    map.insert("32830".to_string(), "Sony FE 70-200mm F2.8 GM OSS");
+    map.insert("32831".to_string(), "Sony FE 16-35mm F2.8 GM");
+    map.insert("32848".to_string(), "Sony FE 400mm F2.8 GM OSS");
+    map.insert("32849".to_string(), "Sony E 18-135mm F3.5-5.6 OSS");
+    map.insert("32850".to_string(), "Sony FE 135mm F1.8 GM");
+    map.insert("32851".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS");
+    map.insert("32852".to_string(), "Sony FE 600mm F4 GM OSS");
+    map.insert("32853".to_string(), "Sony E 16-55mm F2.8 G");
+    map.insert("32854".to_string(), "Sony E 70-350mm F4.5-6.3 G OSS");
+    map.insert("32855".to_string(), "Sony FE C 16-35mm T3.1 G");
+    map.insert("32858".to_string(), "Sony FE 35mm F1.8");
+    map.insert("32859".to_string(), "Sony FE 20mm F1.8 G");
+    map.insert("32860".to_string(), "Sony FE 12-24mm F2.8 GM");
+    map.insert("32862".to_string(), "Sony FE 50mm F1.2 GM");
+    map.insert("32863".to_string(), "Sony FE 14mm F1.8 GM");
+    map.insert("32864".to_string(), "Sony FE 28-60mm F4-5.6");
+    map.insert("32865".to_string(), "Sony FE 35mm F1.4 GM");
+    map.insert("32866".to_string(), "Sony FE 24mm F2.8 G");
+    map.insert("32867".to_string(), "Sony FE 40mm F2.5 G");
+    map.insert("32868".to_string(), "Sony FE 50mm F2.5 G");
+    map.insert("32871".to_string(), "Sony FE PZ 16-35mm F4 G");
+    map.insert("32873".to_string(), "Sony E PZ 10-20mm F4 G");
+    map.insert("32874".to_string(), "Sony FE 70-200mm F2.8 GM OSS II");
+    map.insert("32875".to_string(), "Sony FE 24-70mm F2.8 GM II");
+    map.insert("32876".to_string(), "Sony E 11mm F1.8");
+    map.insert("32877".to_string(), "Sony E 15mm F1.4 G");
+    map.insert("32878".to_string(), "Sony FE 20-70mm F4 G");
+    map.insert("32879".to_string(), "Sony FE 50mm F1.4 GM");
+    map.insert("32880".to_string(), "Sony FE 16mm F1.8 G");
+    map.insert("32881".to_string(), "Sony FE 24-50mm F2.8 G");
+    map.insert("32882".to_string(), "Sony FE 16-25mm F2.8 G");
+    map.insert("32884".to_string(), "Sony FE 70-200mm F4 Macro G OSS II");
+    map.insert("32885".to_string(), "Sony FE 16-35mm F2.8 GM II");
+    map.insert("32886".to_string(), "Sony FE 300mm F2.8 GM OSS");
+    map.insert("32887".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS II");
+    map.insert("32888".to_string(), "Sony FE 85mm F1.4 GM II");
+    map.insert("32889".to_string(), "Sony FE 28-70mm F2 GM");
+    map.insert("32890".to_string(), "Sony FE 400-800mm F6.3-8 G OSS");
+    map.insert("32891".to_string(), "Sony FE 50-150mm F2 GM");
+    map.insert(
+        "33072".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33073".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33076".to_string(),
+        "Sony FE 100mm F2.8 STF GM OSS (macro mode)",
+    );
+    map.insert(
+        "33077".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33078".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33079".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33080".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33081".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33082".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33083".to_string(),
+        "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33084".to_string(),
+        "Sony FE 600mm F4 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33085".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33086".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33087".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33088".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33089".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33090".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33091".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33092".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
+    );
+    map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
+    map.insert(
+        "49201".to_string(),
+        "Zeiss Touit 12mm F2.8 or other Touit lens",
+    );
+    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
+    map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
+    map.insert("49217".to_string(), "Zeiss Batis 85mm F1.8");
+    map.insert("49218".to_string(), "Zeiss Batis 18mm F2.8");
+    map.insert("49219".to_string(), "Zeiss Batis 135mm F2.8");
+    map.insert("49220".to_string(), "Zeiss Batis 40mm F2 CF");
+    map.insert("49232".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("49233".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("49234".to_string(), "Zeiss Loxia 21mm F2.8");
+    map.insert("49235".to_string(), "Zeiss Loxia 85mm F2.4");
+    map.insert("49236".to_string(), "Zeiss Loxia 25mm F2.4");
+    map.insert("49456".to_string(), "Tamron E 18-200mm F3.5-6.3 Di III VC");
+    map.insert("49457".to_string(), "Tamron 28-75mm F2.8 Di III RXD");
+    map.insert("49458".to_string(), "Tamron 17-28mm F2.8 Di III RXD");
+    map.insert("49459".to_string(), "Tamron 35mm F2.8 Di III OSD M1:2");
+    map.insert("49460".to_string(), "Tamron 24mm F2.8 Di III OSD M1:2");
+    map.insert("49461".to_string(), "Tamron 20mm F2.8 Di III OSD M1:2");
+    map.insert("49462".to_string(), "Tamron 70-180mm F2.8 Di III VXD");
+    map.insert("49463".to_string(), "Tamron 28-200mm F2.8-5.6 Di III RXD");
+    map.insert("49464".to_string(), "Tamron 70-300mm F4.5-6.3 Di III RXD");
+    map.insert("49465".to_string(), "Tamron 17-70mm F2.8 Di III-A VC RXD");
+    map.insert("49466".to_string(), "Tamron 150-500mm F5-6.7 Di III VC VXD");
+    map.insert("49467".to_string(), "Tamron 11-20mm F2.8 Di III-A RXD");
+    map.insert(
+        "49468".to_string(),
+        "Tamron 18-300mm F3.5-6.3 Di III-A VC VXD",
+    );
+    map.insert("49469".to_string(), "Tamron 35-150mm F2-F2.8 Di III VXD");
+    map.insert("49470".to_string(), "Tamron 28-75mm F2.8 Di III VXD G2");
+    map.insert(
+        "49471".to_string(),
+        "Tamron 50-400mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49472".to_string(), "Tamron 20-40mm F2.8 Di III VXD");
+    map.insert(
+        "49473".to_string(),
+        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
+    );
+    map.insert("49473.1".to_string(), "Tokina atx-m 85mm F1.8 FE");
+    map.insert("49473.2".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49473.3".to_string(), "Viltrox 56mm F1.4 E");
+    map.insert("49473.4".to_string(), "Viltrox 85mm F1.8 II FE");
+    map.insert(
+        "49474".to_string(),
+        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
+    );
+    map.insert("49474.1".to_string(), "Viltrox 13mm F1.4 E");
+    map.insert("49474.10".to_string(), "Viltrox 20mm F2.8 FE");
+    map.insert("49474.2".to_string(), "Viltrox 16mm F1.8 FE");
+    map.insert("49474.3".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49474.4".to_string(), "Viltrox 24mm F1.8 FE");
+    map.insert("49474.5".to_string(), "Viltrox 28mm F1.8 FE");
+    map.insert("49474.6".to_string(), "Viltrox 33mm F1.4 E");
+    map.insert("49474.7".to_string(), "Viltrox 35mm F1.8 FE");
+    map.insert("49474.8".to_string(), "Viltrox 50mm F1.8 FE");
+    map.insert("49474.9".to_string(), "Viltrox 75mm F1.2 E");
+    map.insert(
+        "49475".to_string(),
+        "Tamron 50-300mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49476".to_string(), "Tamron 28-300mm F4-7.1 Di III VC VXD");
+    map.insert("49477".to_string(), "Tamron 90mm F2.8 Di III Macro VXD");
+    map.insert("49712".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("49713".to_string(), "Tokina FiRIN 100mm F2.8 FE MACRO");
+    map.insert("49714".to_string(), "Tokina atx-m 11-18mm F2.8 E");
+    map.insert("50480".to_string(), "Sigma 30mm F1.4 DC DN | C");
+    map.insert("50481".to_string(), "Sigma 50mm F1.4 DG HSM | A");
+    map.insert(
+        "50482".to_string(),
+        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert("50483".to_string(), "Sigma 18-35mm F1.8 DC HSM | A + MC-11");
+    map.insert("50484".to_string(), "Sigma 24-35mm F2 DG HSM | A + MC-11");
+    map.insert("50485".to_string(), "Sigma 24mm F1.4 DG HSM | A + MC-11");
+    map.insert(
+        "50486".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50487".to_string(), "Sigma 20mm F1.4 DG HSM | A + MC-11");
+    map.insert("50488".to_string(), "Sigma 35mm F1.4 DG HSM | A");
+    map.insert(
+        "50489".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50490".to_string(),
+        "Sigma 120-300mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50492".to_string(),
+        "Sigma 24-105mm F4 DG OS HSM | A + MC-11",
+    );
+    map.insert(
+        "50493".to_string(),
+        "Sigma 17-70mm F2.8-4 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert(
+        "50495".to_string(),
+        "Sigma 50-100mm F1.8 DC HSM | A + MC-11",
+    );
+    map.insert("50499".to_string(), "Sigma 85mm F1.4 DG HSM | A");
+    map.insert(
+        "50501".to_string(),
+        "Sigma 100-400mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50503".to_string(), "Sigma 16mm F1.4 DC DN | C");
+    map.insert("50507".to_string(), "Sigma 105mm F1.4 DG HSM | A");
+    map.insert("50508".to_string(), "Sigma 56mm F1.4 DC DN | C");
+    map.insert(
+        "50512".to_string(),
+        "Sigma 70-200mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert("50513".to_string(), "Sigma 70mm F2.8 DG MACRO | A");
+    map.insert("50514".to_string(), "Sigma 45mm F2.8 DG DN | C");
+    map.insert("50515".to_string(), "Sigma 35mm F1.2 DG DN | A");
+    map.insert("50516".to_string(), "Sigma 14-24mm F2.8 DG DN | A");
+    map.insert("50517".to_string(), "Sigma 24-70mm F2.8 DG DN | A");
+    map.insert("50518".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C");
+    map.insert("50521".to_string(), "Sigma 85mm F1.4 DG DN | A");
+    map.insert("50522".to_string(), "Sigma 105mm F2.8 DG DN MACRO | A");
+    map.insert("50523".to_string(), "Sigma 65mm F2 DG DN | C");
+    map.insert("50524".to_string(), "Sigma 35mm F2 DG DN | C");
+    map.insert("50525".to_string(), "Sigma 24mm F3.5 DG DN | C");
+    map.insert("50526".to_string(), "Sigma 28-70mm F2.8 DG DN | C");
+    map.insert("50527".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S");
+    map.insert("50528".to_string(), "Sigma 35mm F1.4 DG DN | A");
+    map.insert("50529".to_string(), "Sigma 90mm F2.8 DG DN | C");
+    map.insert("50530".to_string(), "Sigma 24mm F2 DG DN | C");
+    map.insert("50531".to_string(), "Sigma 18-50mm F2.8 DC DN | C");
+    map.insert("50532".to_string(), "Sigma 20mm F2 DG DN | C");
+    map.insert("50533".to_string(), "Sigma 16-28mm F2.8 DG DN | C");
+    map.insert("50534".to_string(), "Sigma 20mm F1.4 DG DN | A");
+    map.insert("50535".to_string(), "Sigma 24mm F1.4 DG DN | A");
+    map.insert("50536".to_string(), "Sigma 60-600mm F4.5-6.3 DG DN OS | S");
+    map.insert("50537".to_string(), "Sigma 50mm F2 DG DN | C");
+    map.insert("50538".to_string(), "Sigma 17mm F4 DG DN | C");
+    map.insert("50539".to_string(), "Sigma 50mm F1.4 DG DN | A");
+    map.insert("50540".to_string(), "Sigma 14mm F1.4 DG DN | A");
+    map.insert("50543".to_string(), "Sigma 70-200mm F2.8 DG DN OS | S");
+    map.insert("50544".to_string(), "Sigma 23mm F1.4 DC DN | C");
+    map.insert("50545".to_string(), "Sigma 24-70mm F2.8 DG DN II | A");
+    map.insert("50546".to_string(), "Sigma 500mm F5.6 DG DN OS | S");
+    map.insert("50547".to_string(), "Sigma 10-18mm F2.8 DC DN | C");
+    map.insert(
+        "50548".to_string(),
+        "Sigma 15mm F1.4 DG DN DIAGONAL FISHEYE | A",
+    );
+    map.insert("50549".to_string(), "Sigma 50mm F1.2 DG DN | A");
+    map.insert("50550".to_string(), "Sigma 28-105mm F2.8 DG DN | A");
+    map.insert("50551".to_string(), "Sigma 28-45mm F1.8 DG DN | A");
+    map.insert("50553".to_string(), "Sigma 300-600mm F4 DG OS | S");
+    map.insert(
+        "50992".to_string(),
+        "Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III",
+    );
+    map.insert(
+        "50993".to_string(),
+        "Voigtlander HELIAR-HYPER WIDE 10mm F5.6",
+    );
+    map.insert(
+        "50994".to_string(),
+        "Voigtlander ULTRA WIDE-HELIAR 12mm F5.6 III",
+    );
+    map.insert(
+        "50995".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 65mm F2 Aspherical",
+    );
+    map.insert(
+        "50996".to_string(),
+        "Voigtlander NOKTON 40mm F1.2 Aspherical",
+    );
+    map.insert("50997".to_string(), "Voigtlander NOKTON classic 35mm F1.4");
+    map.insert(
+        "50998".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 110mm F2.5",
+    );
+    map.insert(
+        "50999".to_string(),
+        "Voigtlander COLOR-SKOPAR 21mm F3.5 Aspherical",
+    );
+    map.insert(
+        "51000".to_string(),
+        "Voigtlander NOKTON 50mm F1.2 Aspherical",
+    );
+    map.insert(
+        "51001".to_string(),
+        "Voigtlander NOKTON 21mm F1.4 Aspherical",
+    );
+    map.insert(
+        "51002".to_string(),
+        "Voigtlander APO-LANTHAR 50mm F2 Aspherical",
+    );
+    map.insert(
+        "51003".to_string(),
+        "Voigtlander NOKTON 35mm F1.2 Aspherical SE",
+    );
+    map.insert(
+        "51006".to_string(),
+        "Voigtlander APO-LANTHAR 35mm F2 Aspherical",
+    );
+    map.insert("51007".to_string(), "Voigtlander NOKTON 50mm F1 Aspherical");
+    map.insert(
+        "51008".to_string(),
+        "Voigtlander NOKTON 75mm F1.5 Aspherical",
+    );
+    map.insert(
+        "51009".to_string(),
+        "Voigtlander NOKTON 28mm F1.5 Aspherical",
+    );
+    map.insert("51072".to_string(), "ZEISS Otus ML 50mm F1.4");
+    map.insert("51073".to_string(), "ZEISS Otus ML 85mm F1.4");
+    map.insert("51504".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "51505".to_string(),
+        "Samyang AF 14mm F2.8 or Samyang AF 35mm F2.8",
+    );
+    map.insert("51505.1".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("51507".to_string(), "Samyang AF 35mm F1.4");
+    map.insert("51508".to_string(), "Samyang AF 45mm F1.8");
+    map.insert(
+        "51510".to_string(),
+        "Samyang AF 18mm F2.8 or Samyang AF 35mm F1.8",
+    );
+    map.insert("51510.1".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51512".to_string(), "Samyang AF 75mm F1.8");
+    map.insert("51513".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51514".to_string(), "Samyang AF 24mm F1.8");
+    map.insert("51515".to_string(), "Samyang AF 12mm F2.0");
+    map.insert("51516".to_string(), "Samyang AF 24-70mm F2.8");
+    map.insert("51517".to_string(), "Samyang AF 50mm F1.4 II");
+    map.insert("51518".to_string(), "Samyang AF 135mm F1.8");
+    map.insert("6".to_string(), "Sony LA-EA4 Adapter");
+    map.insert("61569".to_string(), "LAOWA FFII 10mm F2.8 C&D Dreamer");
+    map.insert("61761".to_string(), "Viltrox 28mm F4.5 FE");
+    map.insert("7".to_string(), "Sony LA-EA5 Adapter");
+    map.insert(
+        "78".to_string(),
+        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
+    );
+    map
+});
+
+static PRINT_CONV_469: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Incandescent");
+    map.insert("2".to_string(), "Fluorescent");
+    map.insert("255".to_string(), "Preset");
+    map.insert("4".to_string(), "Daylight");
+    map.insert("5".to_string(), "Cloudy");
+    map.insert("6".to_string(), "Custom");
+    map
+});
+
 /// Get tag definitions for other category
 pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
     vec![
+        (11, TagKitDef {
+            id: 11,
+            name: "FocusMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_126),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (125, TagKitDef {
+            id: 125,
+            name: "AFStatus79",
+            format: "int16s[95]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x7d_subdirectory }),
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "AFPointsUsed",
+            format: "int8u[10]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_127),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (17, TagKitDef {
+            id: 17,
+            name: "AFStatus15",
+            format: "int16s[18]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x11_subdirectory }),
+        }),
+        (17, TagKitDef {
+            id: 17,
+            name: "AFStatus19",
+            format: "int16s[30]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x11_subdirectory }),
+        }),
+        (366, TagKitDef {
+            id: 366,
+            name: "AFPointsUsed",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("SLT models only"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_128),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (381, TagKitDef {
+            id: 381,
+            name: "AFMicroAdj",
+            format: "int8s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (382, TagKitDef {
+            id: 382,
+            name: "ExposureProgram",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_129),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (55, TagKitDef {
+            id: 55,
+            name: "AFPoint",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_130),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (56, TagKitDef {
+            id: 56,
+            name: "AFPointInFocus",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_131),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (57, TagKitDef {
+            id: 57,
+            name: "AFPointAtShutterRelease",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_132),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58, TagKitDef {
+            id: 58,
+            name: "AFAreaMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_133),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (59, TagKitDef {
+            id: 59,
+            name: "AFStatusActiveSensor",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (67, TagKitDef {
+            id: 67,
+            name: "ExposureProgram",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_134),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (80, TagKitDef {
+            id: 80,
+            name: "AFMicroAdj",
+            format: "int8s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AFStatusUpper-left",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "AFStatusCenterHorizontal",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (14, TagKitDef {
+            id: 14,
+            name: "AFStatusNearLeft",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "AFStatusBottomHorizontal",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (18, TagKitDef {
+            id: 18,
+            name: "AFStatusTopVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "AFStatusCenterVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (22, TagKitDef {
+            id: 22,
+            name: "AFStatusBottomVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "AFStatusFarRight",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (26, TagKitDef {
+            id: 26,
+            name: "AFStatusUpper-right",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (28, TagKitDef {
+            id: 28,
+            name: "AFStatusRight",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30, TagKitDef {
+            id: 30,
+            name: "AFStatusLower-right",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32, TagKitDef {
+            id: 32,
+            name: "AFStatusUpper-middle",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (34, TagKitDef {
+            id: 34,
+            name: "AFStatusLower-middle",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AFStatusUpperFarLeft",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "AFStatusUpper-leftVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (14, TagKitDef {
+            id: 14,
+            name: "AFStatusLeftVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "AFStatusLower-leftVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (18, TagKitDef {
+            id: 18,
+            name: "AFStatusFarLeftVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "AFStatusTopHorizontal",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (22, TagKitDef {
+            id: 22,
+            name: "AFStatusNearRight",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "AFStatusCenterHorizontal",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (26, TagKitDef {
+            id: 26,
+            name: "AFStatusNearLeft",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (28, TagKitDef {
+            id: 28,
+            name: "AFStatusBottomHorizontal",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30, TagKitDef {
+            id: 30,
+            name: "AFStatusTopVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32, TagKitDef {
+            id: 32,
+            name: "AFStatusUpper-middle",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (34, TagKitDef {
+            id: 34,
+            name: "AFStatusCenterVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (36, TagKitDef {
+            id: 36,
+            name: "AFStatusLower-middle",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (38, TagKitDef {
+            id: 38,
+            name: "AFStatusBottomVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (40, TagKitDef {
+            id: 40,
+            name: "AFStatusUpperFarRight",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (42, TagKitDef {
+            id: 42,
+            name: "AFStatusUpper-rightHorizontal",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (44, TagKitDef {
+            id: 44,
+            name: "AFStatusFarRightHorizontal",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (46, TagKitDef {
+            id: 46,
+            name: "AFStatusRightHorizontal",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (48, TagKitDef {
+            id: 48,
+            name: "AFStatusLowerFarRight",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (50, TagKitDef {
+            id: 50,
+            name: "AFStatusLower-rightHorizontal",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (52, TagKitDef {
+            id: 52,
+            name: "AFStatusFarRightVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (54, TagKitDef {
+            id: 54,
+            name: "AFStatusUpper-rightVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (56, TagKitDef {
+            id: 56,
+            name: "AFStatusRightVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58, TagKitDef {
+            id: 58,
+            name: "AFStatusLower-rightVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AFStatus_00_B4",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (100, TagKitDef {
+            id: 100,
+            name: "AFStatus_50_A6",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (102, TagKitDef {
+            id: 102,
+            name: "AFStatus_51_B6",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (104, TagKitDef {
+            id: 104,
+            name: "AFStatus_52_C6",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (106, TagKitDef {
+            id: 106,
+            name: "AFStatus_53_D6",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (108, TagKitDef {
+            id: 108,
+            name: "AFStatus_54_E6_Center",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (110, TagKitDef {
+            id: 110,
+            name: "AFStatus_55_F6",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (112, TagKitDef {
+            id: 112,
+            name: "AFStatus_56_G6",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (114, TagKitDef {
+            id: 114,
+            name: "AFStatus_57_H6",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (116, TagKitDef {
+            id: 116,
+            name: "AFStatus_58_I6",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (118, TagKitDef {
+            id: 118,
+            name: "AFStatus_59_A5",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "AFStatus_06_H4",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (120, TagKitDef {
+            id: 120,
+            name: "AFStatus_60_B5",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (122, TagKitDef {
+            id: 122,
+            name: "AFStatus_61_C5",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (124, TagKitDef {
+            id: 124,
+            name: "AFStatus_62_D5",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (126, TagKitDef {
+            id: 126,
+            name: "AFStatus_63_E5",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (128, TagKitDef {
+            id: 128,
+            name: "AFStatus_64_F5",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (130, TagKitDef {
+            id: 130,
+            name: "AFStatus_65_G5",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (132, TagKitDef {
+            id: 132,
+            name: "AFStatus_66_H5",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (134, TagKitDef {
+            id: 134,
+            name: "AFStatus_67_I5",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (136, TagKitDef {
+            id: 136,
+            name: "AFStatus_68_C11",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (138, TagKitDef {
+            id: 138,
+            name: "AFStatus_69_D11",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (14, TagKitDef {
+            id: 14,
+            name: "AFStatus_07_B3",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (140, TagKitDef {
+            id: 140,
+            name: "AFStatus_70_E11",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (142, TagKitDef {
+            id: 142,
+            name: "AFStatus_71_F11",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (144, TagKitDef {
+            id: 144,
+            name: "AFStatus_72_G11",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (146, TagKitDef {
+            id: 146,
+            name: "AFStatus_73_B10",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (148, TagKitDef {
+            id: 148,
+            name: "AFStatus_74_C10",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (150, TagKitDef {
+            id: 150,
+            name: "AFStatus_75_D10",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (152, TagKitDef {
+            id: 152,
+            name: "AFStatus_76_E10",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (154, TagKitDef {
+            id: 154,
+            name: "AFStatus_77_F10",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (156, TagKitDef {
+            id: 156,
+            name: "AFStatus_78_G10",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (158, TagKitDef {
+            id: 158,
+            name: "AFStatus_79_H10",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "AFStatus_08_C3",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (160, TagKitDef {
+            id: 160,
+            name: "AFStatus_80_B9",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (162, TagKitDef {
+            id: 162,
+            name: "AFStatus_81_C9",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (164, TagKitDef {
+            id: 164,
+            name: "AFStatus_82_D9",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (166, TagKitDef {
+            id: 166,
+            name: "AFStatus_83_E9",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (168, TagKitDef {
+            id: 168,
+            name: "AFStatus_84_F9",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (170, TagKitDef {
+            id: 170,
+            name: "AFStatus_85_G9",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (172, TagKitDef {
+            id: 172,
+            name: "AFStatus_86_H9",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (174, TagKitDef {
+            id: 174,
+            name: "AFStatus_87_B8",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (176, TagKitDef {
+            id: 176,
+            name: "AFStatus_88_C8",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (178, TagKitDef {
+            id: 178,
+            name: "AFStatus_89_D8",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (18, TagKitDef {
+            id: 18,
+            name: "AFStatus_09_D3",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (180, TagKitDef {
+            id: 180,
+            name: "AFStatus_90_E8",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (182, TagKitDef {
+            id: 182,
+            name: "AFStatus_91_F8",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (184, TagKitDef {
+            id: 184,
+            name: "AFStatus_92_G8",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (186, TagKitDef {
+            id: 186,
+            name: "AFStatus_93_H8",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (188, TagKitDef {
+            id: 188,
+            name: "AFStatus_94_E6_Center_F2-8",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "AFStatus_10_E3",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (22, TagKitDef {
+            id: 22,
+            name: "AFStatus_11_F3",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "AFStatus_12_G3",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (26, TagKitDef {
+            id: 26,
+            name: "AFStatus_13_H3",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (28, TagKitDef {
+            id: 28,
+            name: "AFStatus_14_B2",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30, TagKitDef {
+            id: 30,
+            name: "AFStatus_15_C2",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32, TagKitDef {
+            id: 32,
+            name: "AFStatus_16_D2",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (34, TagKitDef {
+            id: 34,
+            name: "AFStatus_17_E2",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (36, TagKitDef {
+            id: 36,
+            name: "AFStatus_18_F2",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (38, TagKitDef {
+            id: 38,
+            name: "AFStatus_19_G2",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (40, TagKitDef {
+            id: 40,
+            name: "AFStatus_20_H2",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (42, TagKitDef {
+            id: 42,
+            name: "AFStatus_21_C1",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (44, TagKitDef {
+            id: 44,
+            name: "AFStatus_22_D1",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (46, TagKitDef {
+            id: 46,
+            name: "AFStatus_23_E1",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (48, TagKitDef {
+            id: 48,
+            name: "AFStatus_24_F1",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (50, TagKitDef {
+            id: 50,
+            name: "AFStatus_25_G1",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (52, TagKitDef {
+            id: 52,
+            name: "AFStatus_26_A7_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (54, TagKitDef {
+            id: 54,
+            name: "AFStatus_27_A6_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (56, TagKitDef {
+            id: 56,
+            name: "AFStatus_28_A5_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58, TagKitDef {
+            id: 58,
+            name: "AFStatus_29_C7_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (60, TagKitDef {
+            id: 60,
+            name: "AFStatus_30_C6_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (62, TagKitDef {
+            id: 62,
+            name: "AFStatus_31_C5_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (64, TagKitDef {
+            id: 64,
+            name: "AFStatus_32_E7_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (66, TagKitDef {
+            id: 66,
+            name: "AFStatus_33_E6_Center_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (68, TagKitDef {
+            id: 68,
+            name: "AFStatus_34_E5_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (70, TagKitDef {
+            id: 70,
+            name: "AFStatus_35_G7_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (72, TagKitDef {
+            id: 72,
+            name: "AFStatus_36_G6_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (74, TagKitDef {
+            id: 74,
+            name: "AFStatus_37_G5_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (76, TagKitDef {
+            id: 76,
+            name: "AFStatus_38_I7_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (78, TagKitDef {
+            id: 78,
+            name: "AFStatus_39_I6_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (80, TagKitDef {
+            id: 80,
+            name: "AFStatus_40_I5_Vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (82, TagKitDef {
+            id: 82,
+            name: "AFStatus_41_A7",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (84, TagKitDef {
+            id: 84,
+            name: "AFStatus_42_B7",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (86, TagKitDef {
+            id: 86,
+            name: "AFStatus_43_C7",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (88, TagKitDef {
+            id: 88,
+            name: "AFStatus_44_D7",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (90, TagKitDef {
+            id: 90,
+            name: "AFStatus_45_E7",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (92, TagKitDef {
+            id: 92,
+            name: "AFStatus_46_F7",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (94, TagKitDef {
+            id: 94,
+            name: "AFStatus_47_G7",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (96, TagKitDef {
+            id: 96,
+            name: "AFStatus_48_H7",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (98, TagKitDef {
+            id: 98,
+            name: "AFStatus_49_I7",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "LensSpec",
+            format: "undef[8]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Manual("code_ref_printconv"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "FocusModeSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("FocusModeSetting for the A700, A850 and A900"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_135),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (21, TagKitDef {
+            id: 21,
+            name: "AFPointSelected",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_136),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (25, TagKitDef {
+            id: 25,
+            name: "AFPoint",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_137),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30, TagKitDef {
+            id: 30,
+            name: "AFStatusActiveSensor",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (304, TagKitDef {
+            id: 304,
+            name: "AFMicroAdjValue",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val - 20"),
+            subdirectory: None,
+        }),
+        (305, TagKitDef {
+            id: 305,
+            name: "AFMicroAdjRegisteredLenses",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("number of registered lenses with a non-zero AFMicroAdjValue"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32, TagKitDef {
+            id: 32,
+            name: "AFStatusUpper-left",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (34, TagKitDef {
+            id: 34,
+            name: "AFStatusLeft",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (36, TagKitDef {
+            id: 36,
+            name: "AFStatusLower-left",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (38, TagKitDef {
+            id: 38,
+            name: "AFStatusFarLeft",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (40, TagKitDef {
+            id: 40,
+            name: "AFStatusBottomAssist-left",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (42, TagKitDef {
+            id: 42,
+            name: "AFStatusBottom",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (44, TagKitDef {
+            id: 44,
+            name: "AFStatusBottomAssist-right",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (46, TagKitDef {
+            id: 46,
+            name: "AFStatusCenter-7",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (48, TagKitDef {
+            id: 48,
+            name: "AFStatusCenter-horizontal",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (50, TagKitDef {
+            id: 50,
+            name: "AFStatusCenter-9",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (52, TagKitDef {
+            id: 52,
+            name: "AFStatusCenter-10",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (54, TagKitDef {
+            id: 54,
+            name: "AFStatusCenter-11",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (56, TagKitDef {
+            id: 56,
+            name: "AFStatusCenter-12",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58, TagKitDef {
+            id: 58,
+            name: "AFStatusCenter-vertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (60, TagKitDef {
+            id: 60,
+            name: "AFStatusCenter-14",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (62, TagKitDef {
+            id: 62,
+            name: "AFStatusTopAssist-left",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (64, TagKitDef {
+            id: 64,
+            name: "AFStatusTop",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (66, TagKitDef {
+            id: 66,
+            name: "AFStatusTopAssist-right",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (68, TagKitDef {
+            id: 68,
+            name: "AFStatusFarRight",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (70, TagKitDef {
+            id: 70,
+            name: "AFStatusUpper-right",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (72, TagKitDef {
+            id: 72,
+            name: "AFStatusRight",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (74, TagKitDef {
+            id: 74,
+            name: "AFStatusLower-right",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (76, TagKitDef {
+            id: 76,
+            name: "AFStatusCenterF2-8",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "LensSpec",
+            format: "undef[8]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Manual("code_ref_printconv"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "AFPointSelected",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_138),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (21, TagKitDef {
+            id: 21,
+            name: "FocusModeSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("FocusModeSetting for other models"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_139),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "AFPoint",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_140),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (27, TagKitDef {
+            id: 27,
+            name: "AFStatusActiveSensor",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29, TagKitDef {
+            id: 29,
+            name: "AFStatusTop-right",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (31, TagKitDef {
+            id: 31,
+            name: "AFStatusBottom-right",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (33, TagKitDef {
+            id: 33,
+            name: "AFStatusBottom",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (35, TagKitDef {
+            id: 35,
+            name: "AFStatusMiddleHorizontal",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (37, TagKitDef {
+            id: 37,
+            name: "AFStatusCenterVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (39, TagKitDef {
+            id: 39,
+            name: "AFStatusTop",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (41, TagKitDef {
+            id: 41,
+            name: "AFStatusTop-left",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (43, TagKitDef {
+            id: 43,
+            name: "AFStatusBottom-left",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (45, TagKitDef {
+            id: 45,
+            name: "AFStatusLeft",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (47, TagKitDef {
+            id: 47,
+            name: "AFStatusCenterHorizontal",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (49, TagKitDef {
+            id: 49,
+            name: "AFStatusRight",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "LensSpec",
+            format: "undef[8]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Manual("code_ref_printconv"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (14, TagKitDef {
+            id: 14,
+            name: "FocalLength",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
+            value_conv: Some("$val / 10"),
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "FocalLengthTeleZoom",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
+            value_conv: Some("$val * 2 / 3"),
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "AFPointSelected",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_141),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (21, TagKitDef {
+            id: 21,
+            name: "FocusMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_142),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "AFPoint",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_143),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (25, TagKitDef {
+            id: 25,
+            name: "FocusStatus",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("not valid with Contrast AF or for NEX models"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_144),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (27, TagKitDef {
+            id: 27,
+            name: "AFStatusActiveSensor",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (28, TagKitDef {
+            id: 28,
+            name: "AFPointSelected",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("not valid for Contrast AF"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_145),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29, TagKitDef {
+            id: 29,
+            name: "FocusMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_146),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29, TagKitDef {
+            id: 29,
+            name: "AFStatusTop-right",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (31, TagKitDef {
+            id: 31,
+            name: "AFStatusBottom-right",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32, TagKitDef {
+            id: 32,
+            name: "AFPoint",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("the AF sensor used for focusing. Not valid for Contrast AF"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_147),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (33, TagKitDef {
+            id: 33,
+            name: "AFStatusActiveSensor",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (33, TagKitDef {
+            id: 33,
+            name: "AFStatusBottom",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (35, TagKitDef {
+            id: 35,
+            name: "AFStatus15",
+            format: "int16s[18]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x23_subdirectory }),
+        }),
+        (35, TagKitDef {
+            id: 35,
+            name: "AFStatusMiddleHorizontal",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (37, TagKitDef {
+            id: 37,
+            name: "AFStatusCenterVertical",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (39, TagKitDef {
+            id: 39,
+            name: "AFStatusTop",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (41, TagKitDef {
+            id: 41,
+            name: "AFStatusTop-left",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (43, TagKitDef {
+            id: 43,
+            name: "AFStatusBottom-left",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (45, TagKitDef {
+            id: 45,
+            name: "AFStatusLeft",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (47, TagKitDef {
+            id: 47,
+            name: "AFStatusCenterHorizontal",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (49, TagKitDef {
+            id: 49,
+            name: "AFStatusRight",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (106, TagKitDef {
+            id: 106,
+            name: "RedEyeReduction",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_148),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "ColorTemperatureCustom",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"$val K\""),
+            value_conv: Some("$val * 100"),
+            subdirectory: None,
+        }),
+        (13, TagKitDef {
+            id: 13,
+            name: "ColorCompensationFilterCustom",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("negative is green, positive is magenta"),
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: Some("$val > 128 ? $val - 256 : $val"),
+            subdirectory: None,
+        }),
+        (15, TagKitDef {
+            id: 15,
+            name: "WhiteBalance",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_149),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (154, TagKitDef {
+            id: 154,
+            name: "FolderNumber",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.3d\",$val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (155, TagKitDef {
+            id: 155,
+            name: "ImageNumber",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.4d\",$val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "FocusModeSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_150),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (17, TagKitDef {
+            id: 17,
+            name: "AFAreaMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_151),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (18, TagKitDef {
+            id: 18,
+            name: "AFPointSetting",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_152),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (19, TagKitDef {
+            id: 19,
+            name: "FlashMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_153),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "FlashExposureCompSet",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
+            value_conv: Some("($val - 128) / 24"),
+            subdirectory: None,
+        }),
+        (21, TagKitDef {
+            id: 21,
+            name: "MeteringMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_154),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (22, TagKitDef {
+            id: 22,
+            name: "ISOSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? sprintf(\"%.0f\",$val) : \"Auto\""),
+            value_conv: Some("$val ? exp(($val/8-6)*log(2))*100 : $val"),
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "DynamicRangeOptimizerMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_155),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (25, TagKitDef {
+            id: 25,
+            name: "DynamicRangeOptimizerLevel",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (26, TagKitDef {
+            id: 26,
+            name: "CreativeStyle",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_156),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (27, TagKitDef {
+            id: 27,
+            name: "ColorSpace",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_157),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (28, TagKitDef {
+            id: 28,
+            name: "Sharpness",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: Some("$val - 10"),
+            subdirectory: None,
+        }),
+        (29, TagKitDef {
+            id: 29,
+            name: "Contrast",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: Some("$val - 10"),
+            subdirectory: None,
+        }),
+        (30, TagKitDef {
+            id: 30,
+            name: "Saturation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: Some("$val - 10"),
+            subdirectory: None,
+        }),
+        (31, TagKitDef {
+            id: 31,
+            name: "ZoneMatchingValue",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: Some("$val - 10"),
+            subdirectory: None,
+        }),
+        (34, TagKitDef {
+            id: 34,
+            name: "Brightness",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: Some("$val - 10"),
+            subdirectory: None,
+        }),
+        (35, TagKitDef {
+            id: 35,
+            name: "FlashControl",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_158),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (40, TagKitDef {
+            id: 40,
+            name: "PrioritySetupShutterRelease",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_159),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (41, TagKitDef {
+            id: 41,
+            name: "AFIlluminator",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_160),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (42, TagKitDef {
+            id: 42,
+            name: "AFWithShutter",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_161),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (43, TagKitDef {
+            id: 43,
+            name: "LongExposureNoiseReduction",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_162),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (44, TagKitDef {
+            id: 44,
+            name: "HighISONoiseReduction",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_163),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (45, TagKitDef {
+            id: 45,
+            name: "ImageStyle",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_164),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (46, TagKitDef {
+            id: 46,
+            name: "FocusModeSwitch",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_165),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (47, TagKitDef {
+            id: 47,
+            name: "ShutterSpeedSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("used in M, S and Program Shift S modes"),
+            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
+            value_conv: Some("sony_exposure_time_value_conv"),
+            subdirectory: None,
+        }),
+        (48, TagKitDef {
+            id: 48,
+            name: "ApertureSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("used in M, A and Program Shift A modes"),
+            print_conv: PrintConvType::Expression("Image::ExifTool::Exif::PrintFNumber($val)"),
+            value_conv: Some("sony_fnumber_value_conv"),
+            subdirectory: None,
+        }),
+        (60, TagKitDef {
+            id: 60,
+            name: "ExposureProgram",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_166),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (61, TagKitDef {
+            id: 61,
+            name: "ImageStabilizationSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_167),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (62, TagKitDef {
+            id: 62,
+            name: "FlashAction",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_168),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (63, TagKitDef {
+            id: 63,
+            name: "Rotation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_169),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (64, TagKitDef {
+            id: 64,
+            name: "AELock",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_170),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (76, TagKitDef {
+            id: 76,
+            name: "FlashAction2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_171),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (77, TagKitDef {
+            id: 77,
+            name: "FocusMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_172),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (80, TagKitDef {
+            id: 80,
+            name: "BatteryState",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_173),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (81, TagKitDef {
+            id: 81,
+            name: "BatteryLevel",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"$val%\""),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (83, TagKitDef {
+            id: 83,
+            name: "FocusStatus",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_174),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (84, TagKitDef {
+            id: 84,
+            name: "SonyImageSize",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_175),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (85, TagKitDef {
+            id: 85,
+            name: "AspectRatio",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_176),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (86, TagKitDef {
+            id: 86,
+            name: "Quality",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_177),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (88, TagKitDef {
+            id: 88,
+            name: "ExposureLevelIncrements",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_178),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (11, TagKitDef {
+            id: 11,
+            name: "ColorTemperatureCustom",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"$val K\""),
+            value_conv: Some("$val * 100"),
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "ColorCompensationFilterCustom",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("negative is green, positive is magenta"),
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: Some("$val > 128 ? $val - 256 : $val"),
+            subdirectory: None,
+        }),
+        (126, TagKitDef {
+            id: 126,
+            name: "DriveMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_179),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (127, TagKitDef {
+            id: 127,
+            name: "FlashMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_180),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (131, TagKitDef {
+            id: 131,
+            name: "ColorSpace",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_181),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (14, TagKitDef {
+            id: 14,
+            name: "WhiteBalance",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_182),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (15, TagKitDef {
+            id: 15,
+            name: "FocusModeSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_183),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "AFAreaMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_184),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (17, TagKitDef {
+            id: 17,
+            name: "AFPointSetting",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_185),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (18, TagKitDef {
+            id: 18,
+            name: "FlashExposureCompSet",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
+            value_conv: Some("($val - 128) / 24"),
+            subdirectory: None,
+        }),
+        (19, TagKitDef {
+            id: 19,
+            name: "MeteringMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_186),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "ISOSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? sprintf(\"%.0f\",$val) : \"Auto\""),
+            value_conv: Some("$val ? exp(($val/8-6)*log(2))*100 : $val"),
+            subdirectory: None,
+        }),
+        (22, TagKitDef {
+            id: 22,
+            name: "DynamicRangeOptimizerMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_187),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "CreativeStyle",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_188),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (25, TagKitDef {
+            id: 25,
+            name: "Sharpness",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: Some("$val - 10"),
+            subdirectory: None,
+        }),
+        (26, TagKitDef {
+            id: 26,
+            name: "Contrast",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: Some("$val - 10"),
+            subdirectory: None,
+        }),
+        (27, TagKitDef {
+            id: 27,
+            name: "Saturation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: Some("$val - 10"),
+            subdirectory: None,
+        }),
+        (31, TagKitDef {
+            id: 31,
+            name: "FlashControl",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_189),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (37, TagKitDef {
+            id: 37,
+            name: "LongExposureNoiseReduction",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_190),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (38, TagKitDef {
+            id: 38,
+            name: "HighISONoiseReduction",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_191),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (39, TagKitDef {
+            id: 39,
+            name: "ImageStyle",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_192),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (40, TagKitDef {
+            id: 40,
+            name: "ShutterSpeedSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("used in M, S and Program Shift S modes"),
+            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
+            value_conv: Some("sony_exposure_time_value_conv"),
+            subdirectory: None,
+        }),
+        (41, TagKitDef {
+            id: 41,
+            name: "ApertureSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("used in M, A and Program Shift A modes"),
+            print_conv: PrintConvType::Expression("Image::ExifTool::Exif::PrintFNumber($val)"),
+            value_conv: Some("sony_fnumber_value_conv"),
+            subdirectory: None,
+        }),
+        (60, TagKitDef {
+            id: 60,
+            name: "ExposureProgram",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_193),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (61, TagKitDef {
+            id: 61,
+            name: "ImageStabilizationSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_194),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (62, TagKitDef {
+            id: 62,
+            name: "FlashAction",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_195),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (63, TagKitDef {
+            id: 63,
+            name: "Rotation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_196),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (64, TagKitDef {
+            id: 64,
+            name: "AELock",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_197),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (76, TagKitDef {
+            id: 76,
+            name: "FlashAction2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_198),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (77, TagKitDef {
+            id: 77,
+            name: "FocusMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_199),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (83, TagKitDef {
+            id: 83,
+            name: "FocusStatus",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_200),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (84, TagKitDef {
+            id: 84,
+            name: "SonyImageSize",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_201),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (85, TagKitDef {
+            id: 85,
+            name: "AspectRatio",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_202),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (86, TagKitDef {
+            id: 86,
+            name: "Quality",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_203),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (88, TagKitDef {
+            id: 88,
+            name: "ExposureLevelIncrements",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_204),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ShutterSpeedSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("used only in M and S exposure modes"),
+            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
+            value_conv: Some("sony_exposure_time_value_conv"),
+            subdirectory: None,
+        }),
+        (1008, TagKitDef {
+            id: 1008,
+            name: "LensE-mountVersion",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%x.%.2x\",$val>>8,$val&0xff)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1011, TagKitDef {
+            id: 1011,
+            name: "LensFirmwareVersion",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"Ver.%.2x.%.3d\",$val>>8,$val&0xff)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1015, TagKitDef {
+            id: 1015,
+            name: "LensType2",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_205),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1024, TagKitDef {
+            id: 1024,
+            name: "ImageNumber",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("A450, A500 and A550"),
+            print_conv: PrintConvType::Expression("sprintf(\"%.4d\",$val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1026, TagKitDef {
+            id: 1026,
+            name: "FolderNumber",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("A450, A500 and A550"),
+            print_conv: PrintConvType::Expression("sprintf(\"%.3d\",$val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (11, TagKitDef {
+            id: 11,
+            name: "Quality",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_206),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "DynamicRangeOptimizerSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_207),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (131, TagKitDef {
+            id: 131,
+            name: "AFButtonPressed",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_208),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (132, TagKitDef {
+            id: 132,
+            name: "LiveViewMetering",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_209),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (133, TagKitDef {
+            id: 133,
+            name: "ViewingMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_210),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (134, TagKitDef {
+            id: 134,
+            name: "AELock",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_211),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (135, TagKitDef {
+            id: 135,
+            name: "FlashStatusBuilt-in",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_212),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (136, TagKitDef {
+            id: 136,
+            name: "FlashStatusExternal",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_213),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (139, TagKitDef {
+            id: 139,
+            name: "LiveViewFocusMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_214),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (14, TagKitDef {
+            id: 14,
+            name: "ColorSpace",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_215),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (15, TagKitDef {
+            id: 15,
+            name: "CreativeStyleSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_216),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (153, TagKitDef {
+            id: 153,
+            name: "LensMount",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_217),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "ContrastSetting",
+            format: "int8s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (17, TagKitDef {
+            id: 17,
+            name: "SaturationSetting",
+            format: "int8s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (18, TagKitDef {
+            id: 18,
+            name: "SharpnessSetting",
+            format: "int8s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (22, TagKitDef {
+            id: 22,
+            name: "WhiteBalanceSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_218),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (23, TagKitDef {
+            id: 23,
+            name: "ColorTemperatureSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"$val K\""),
+            value_conv: Some("$val * 100"),
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "ColorCompensationFilterSet",
+            format: "int8s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("negative is green, positive is magenta"),
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (25, TagKitDef {
+            id: 25,
+            name: "CustomWB_RGBLevels",
+            format: "int16uRev[3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (268, TagKitDef {
+            id: 268,
+            name: "SequenceNumber",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (276, TagKitDef {
+            id: 276,
+            name: "ImageNumber",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.4d\",$val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32, TagKitDef {
+            id: 32,
+            name: "FlashMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_219),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (33, TagKitDef {
+            id: 33,
+            name: "FlashControl",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_220),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (35, TagKitDef {
+            id: 35,
+            name: "FlashExposureCompSet",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
+            value_conv: Some("($val - 128) / 24"),
+            subdirectory: None,
+        }),
+        (36, TagKitDef {
+            id: 36,
+            name: "AFAreaMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_221),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (37, TagKitDef {
+            id: 37,
+            name: "LongExposureNoiseReduction",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_222),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (38, TagKitDef {
+            id: 38,
+            name: "HighISONoiseReduction",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_223),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (39, TagKitDef {
+            id: 39,
+            name: "SmileShutterMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_224),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (40, TagKitDef {
+            id: 40,
+            name: "RedEyeReduction",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_225),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (45, TagKitDef {
+            id: 45,
+            name: "HDRSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_226),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (46, TagKitDef {
+            id: 46,
+            name: "HDRLevel",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_227),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (47, TagKitDef {
+            id: 47,
+            name: "ViewingMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_228),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (48, TagKitDef {
+            id: 48,
+            name: "FaceDetection",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_229),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (49, TagKitDef {
+            id: 49,
+            name: "SmileShutter",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_230),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (50, TagKitDef {
+            id: 50,
+            name: "SweepPanoramaSize",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_231),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (51, TagKitDef {
+            id: 51,
+            name: "SweepPanoramaDirection",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_232),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (512, TagKitDef {
+            id: 512,
+            name: "ShotNumberSincePowerUp2",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("same as ShotNumberSincePowerUp for single-shot images, but includes all\n            shots of the current image in multi-shot modes like HDR, panorama, and\n            multi-frame noise reduction"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (52, TagKitDef {
+            id: 52,
+            name: "DriveMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_233),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (53, TagKitDef {
+            id: 53,
+            name: "MultiFrameNoiseReduction",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_234),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (54, TagKitDef {
+            id: 54,
+            name: "LiveViewAFSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_235),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (56, TagKitDef {
+            id: 56,
+            name: "PanoramaSize3D",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_236),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (643, TagKitDef {
+            id: 643,
+            name: "AFButtonPressed",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_237),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (644, TagKitDef {
+            id: 644,
+            name: "LiveViewMetering",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_238),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (645, TagKitDef {
+            id: 645,
+            name: "ViewingMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_239),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (646, TagKitDef {
+            id: 646,
+            name: "AELock",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_240),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (647, TagKitDef {
+            id: 647,
+            name: "FlashStatusBuilt-in",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("A450, A500 and A550"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_241),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (648, TagKitDef {
+            id: 648,
+            name: "FlashStatusExternal",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("A450, A500 and A550"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_242),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (651, TagKitDef {
+            id: 651,
+            name: "LiveViewFocusMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_243),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (780, TagKitDef {
+            id: 780,
+            name: "SequenceNumber",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("A450, A500 and A550"),
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (788, TagKitDef {
+            id: 788,
+            name: "ImageNumber",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("A450, A500 and A550"),
+            print_conv: PrintConvType::Expression("sprintf(\"%.4d\",$val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (790, TagKitDef {
+            id: 790,
+            name: "FolderNumber",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("A450, A500 and A550"),
+            print_conv: PrintConvType::Expression("sprintf(\"%.3d\",$val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "FocusDistance",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("distance in metres = FocusPosition * FocalLength / 1000"),
+            print_conv: PrintConvType::Expression("$val eq \"inf\" ? $val : \"$val m\""),
+            value_conv: Some("$val >= 128 ? \"inf\" : $val * $val[1] / 1000"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "FocusDistance2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val eq \"inf\" ? $val : sprintf(\"%.4g m\", $val)"),
+            value_conv: Some("\n            return undef unless $val;\n            return 'inf' if $val >= 255;\n            return (2**($val/16-5) + 1) * $val[1] / 1000;\n        "),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "HiddenData",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("hidden data in some Sony JPG and ARW images, extracted only if specifically\n            requested"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (8192, TagKitDef {
+            id: 8192,
+            name: "MakerNoteVersion",
+            format: "undef",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "BatteryLevel",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"$val%\""),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (26, TagKitDef {
+            id: 26,
+            name: "ExtraInfoVersion",
+            format: "int8u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression(r"$val=~tr/ /./; $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (18, TagKitDef {
+            id: 18,
+            name: "ImageStabilization",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_244),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "BatteryUnknown",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (17, TagKitDef {
+            id: 17,
+            name: "ImageStabilization",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_245),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "BatteryState",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("BatteryState for SLT models"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_246),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "ExposureProgram",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("ExposureProgram for the A450, A500 and A550"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_247),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "ModeDialPosition",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("ModeDialPosition for other DSLR models"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_248),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (22, TagKitDef {
+            id: 22,
+            name: "MemoryCardConfiguration",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_249),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (22, TagKitDef {
+            id: 22,
+            name: "CameraOrientation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_250),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "CameraOrientation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_251),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "FacesDetected",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (11, TagKitDef {
+            id: 11,
+            name: "Face3Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "Face4Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (21, TagKitDef {
+            id: 21,
+            name: "Face5Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (26, TagKitDef {
+            id: 26,
+            name: "Face6Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (31, TagKitDef {
+            id: 31,
+            name: "Face7Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (36, TagKitDef {
+            id: 36,
+            name: "Face8Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Face1Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("top, left, height and width of detected face.  Coordinates are relative to\n            the full-sized unrotated image, with increasing Y downwards"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (128, TagKitDef {
+            id: 128,
+            name: "Face5Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (160, TagKitDef {
+            id: 160,
+            name: "Face6Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (192, TagKitDef {
+            id: 192,
+            name: "Face7Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (224, TagKitDef {
+            id: 224,
+            name: "Face8Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32, TagKitDef {
+            id: 32,
+            name: "Face2Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (64, TagKitDef {
+            id: 64,
+            name: "Face3Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (96, TagKitDef {
+            id: 96,
+            name: "Face4Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Face1Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("top, left, height and width of detected face.  Coordinates are relative to\n            the full-sized unrotated image, with increasing Y downwards"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (111, TagKitDef {
+            id: 111,
+            name: "Face4Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (148, TagKitDef {
+            id: 148,
+            name: "Face5Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (185, TagKitDef {
+            id: 185,
+            name: "Face6Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (222, TagKitDef {
+            id: 222,
+            name: "Face7Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (37, TagKitDef {
+            id: 37,
+            name: "Face2Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (74, TagKitDef {
+            id: 74,
+            name: "Face3Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (101, TagKitDef {
+            id: 101,
+            name: "Face2Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (11, TagKitDef {
+            id: 11,
+            name: "PotentialFace1Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (111, TagKitDef {
+            id: 111,
+            name: "Face3Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (121, TagKitDef {
+            id: 121,
+            name: "Face4Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (21, TagKitDef {
+            id: 21,
+            name: "PotentialFace2Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (31, TagKitDef {
+            id: 31,
+            name: "PotentialFace3Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (41, TagKitDef {
+            id: 41,
+            name: "PotentialFace4Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (51, TagKitDef {
+            id: 51,
+            name: "PotentialFace5Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (61, TagKitDef {
+            id: 61,
+            name: "PotentialFace6Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (71, TagKitDef {
+            id: 71,
+            name: "PotentialFace7Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (81, TagKitDef {
+            id: 81,
+            name: "PotentialFace8Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (91, TagKitDef {
+            id: 91,
+            name: "Face1Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\""),
+            subdirectory: None,
+        }),
+        (109, TagKitDef {
+            id: 109,
+            name: "ISOSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? sprintf(\"%.0f\",$val) : \"Auto\""),
+            value_conv: Some("$val ? exp(($val/8-6)*log(2))*100 : $val"),
+            subdirectory: None,
+        }),
+        (111, TagKitDef {
+            id: 111,
+            name: "ISO",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? sprintf(\"%.0f\",$val) : \"Auto\""),
+            value_conv: Some("$val ? exp(($val/8-6)*log(2))*100 : $val"),
+            subdirectory: None,
+        }),
+        (119, TagKitDef {
+            id: 119,
+            name: "DynamicRangeOptimizerMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_252),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (14, TagKitDef {
+            id: 14,
+            name: "DriveMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("A230, A290, A330, A380 and A390"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_253),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (14, TagKitDef {
+            id: 14,
+            name: "DriveMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("A200, A300, A350, A700, A850 and A900"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_254),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "Rotation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_255),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "ImageStabilizationSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_256),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (21, TagKitDef {
+            id: 21,
+            name: "DynamicRangeOptimizerMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_257),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2118, TagKitDef {
+            id: 2118,
+            name: "ShutterCount",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("only valid for some DSLR models"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2491, TagKitDef {
+            id: 2491,
+            name: "FocusPosition",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("only valid for some DSLR models"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (43, TagKitDef {
+            id: 43,
+            name: "BracketShotNumber",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("WB and DRO bracketing"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (44, TagKitDef {
+            id: 44,
+            name: "WhiteBalanceBracketing",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_258),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (45, TagKitDef {
+            id: 45,
+            name: "BracketShotNumber2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (46, TagKitDef {
+            id: 46,
+            name: "DynamicRangeOptimizerBracket",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_259),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (47, TagKitDef {
+            id: 47,
+            name: "ExposureBracketShotNumber",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (63, TagKitDef {
+            id: 63,
+            name: "ExposureProgram",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_260),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (65, TagKitDef {
+            id: 65,
+            name: "CreativeStyle",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_261),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "HiddenDataOffset",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ISOSetting",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
         (12288, TagKitDef {
             id: 12288,
             name: "ShotInfo",
@@ -5863,7 +13399,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_97),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_262),
             value_conv: None,
             subdirectory: None,
         }),
@@ -5874,7 +13410,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_98),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_263),
             value_conv: None,
             subdirectory: None,
         }),
@@ -5918,7 +13454,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_99),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_264),
             value_conv: None,
             subdirectory: None,
         }),
@@ -5929,7 +13465,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_100),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_265),
             value_conv: None,
             subdirectory: None,
         }),
@@ -5940,7 +13476,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_101),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_266),
             value_conv: None,
             subdirectory: None,
         }),
@@ -5951,7 +13487,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_102),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_267),
             value_conv: None,
             subdirectory: None,
         }),
@@ -5984,7 +13520,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_103),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_268),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6028,7 +13564,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_104),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_269),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6039,7 +13575,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_105),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_270),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6050,7 +13586,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("not valid for all models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_106),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_271),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6061,7 +13597,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("older models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_107),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_272),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6072,7 +13608,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("DSC-HX9V generation cameras"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_108),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_273),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6083,7 +13619,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_109),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_274),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6094,7 +13630,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_110),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_275),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6105,7 +13641,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_111),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_276),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6116,7 +13652,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_112),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_277),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6138,7 +13674,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_113),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_278),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6149,7 +13685,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("valid for DSC-HX9V generation and newer"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_114),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_279),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6160,7 +13696,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_115),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_280),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6171,7 +13707,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("DSC models only"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_116),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_281),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6182,7 +13718,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_117),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_282),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6193,7 +13729,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("decoding of the Fluorescent settings matches the EXIF standard, which is\n            different than the names used by Sony for some models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_118),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_283),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6270,7 +13806,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_119),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_284),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6281,7 +13817,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_120),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_285),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6303,7 +13839,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("may not be valid for RS100"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_121),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_286),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6314,7 +13850,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_122),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_287),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6325,7 +13861,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_123),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_288),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6446,7 +13982,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_124),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_289),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6457,7 +13993,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_125),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_290),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6468,7 +14004,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_126),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_291),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6490,7 +14026,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("\"Yes\" if this image was created by the Auto Portrait Framing feature"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_127),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_292),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6501,7 +14037,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_128),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_293),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6512,7 +14048,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_129),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_294),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6523,7 +14059,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_130),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_295),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6534,7 +14070,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("SLT models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_131),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_296),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6545,7 +14081,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("NEX, ILCE and some DSC models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_132),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_297),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6556,7 +14092,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("ILCA models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_133),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_298),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6578,7 +14114,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("SLT models or ILCE with LA-EA2/EA4"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_134),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_299),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6589,7 +14125,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("ILCA-68 and ILCA-77M2"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_135),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_300),
             value_conv: Some("$val - 1"),
             subdirectory: None,
         }),
@@ -6611,7 +14147,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("ILCA models when AFAreaModeSetting is set to Zone"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_136),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_301),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6622,7 +14158,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: Some("NEX and ILCE models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_137),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_302),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6633,7 +14169,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("SLT models, or NEX/ILCE with A-mount lenses"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_138),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_303),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6644,7 +14180,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("ILCA models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_139),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_304),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6655,7 +14191,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_140),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_305),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6666,7 +14202,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("On-sensor/focal-plane phase AF points for ILCE with hybrid AF"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_141),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_306),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6677,7 +14213,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_142),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_307),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6688,7 +14224,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_143),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_308),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6721,7 +14257,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_144),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_309),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6732,7 +14268,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_145),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_310),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6754,7 +14290,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_146),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_311),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6765,7 +14301,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_147),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_312),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6787,7 +14323,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_148),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_313),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6875,7 +14411,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("width and height of FocusFrame, centered on FocusLocation"),
-            print_conv: PrintConvType::Expression("\n            my @a = split ' ', $val;\n            return $a[2] ? sprintf('%3dx%3d', $a[0], $a[1]) : 'n/a';\n        "),
+            print_conv: PrintConvType::Expression("\n            our @a = split ' ', $val;\n            return $a[2] ? sprintf('%3dx%3d', $a[0], $a[1]) : 'n/a';\n        "),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6886,7 +14422,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_149),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_314),
             value_conv: None,
             subdirectory: None,
         }),
@@ -6914,2597 +14450,331 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
         }),
         (0, TagKitDef {
             id: 0,
-            name: "LensSpec",
-            format: "undef[8]",
+            name: "MeterInfo1Row1",
+            format: "int32u[27]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Manual("code_ref_printconv"),
+            print_conv: PrintConvType::Expression("sprintf(\"%19d %4d %6d\" . \" %3d %4d %6d\" x 8, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (20, TagKitDef {
-            id: 20,
-            name: "FocusModeSetting",
-            format: "unknown",
+        (1020, TagKitDef {
+            id: 1020,
+            name: "MeterInfo2Row3",
+            format: "int32u[33]",
             groups: HashMap::new(),
             writable: false,
-            notes: Some("FocusModeSetting for the A700, A850 and A900"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_150),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (21, TagKitDef {
-            id: 21,
-            name: "AFPointSelected",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_151),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (25, TagKitDef {
-            id: 25,
-            name: "AFPoint",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_152),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (30, TagKitDef {
-            id: 30,
-            name: "AFStatusActiveSensor",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (304, TagKitDef {
-            id: 304,
-            name: "AFMicroAdjValue",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: Some("$val - 20"),
-            subdirectory: None,
-        }),
-        (305, TagKitDef {
-            id: 305,
-            name: "AFMicroAdjRegisteredLenses",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("number of registered lenses with a non-zero AFMicroAdjValue"),
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (32, TagKitDef {
-            id: 32,
-            name: "AFStatusUpper-left",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (34, TagKitDef {
-            id: 34,
-            name: "AFStatusLeft",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (36, TagKitDef {
-            id: 36,
-            name: "AFStatusLower-left",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (38, TagKitDef {
-            id: 38,
-            name: "AFStatusFarLeft",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (40, TagKitDef {
-            id: 40,
-            name: "AFStatusBottomAssist-left",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (42, TagKitDef {
-            id: 42,
-            name: "AFStatusBottom",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (44, TagKitDef {
-            id: 44,
-            name: "AFStatusBottomAssist-right",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (46, TagKitDef {
-            id: 46,
-            name: "AFStatusCenter-7",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (48, TagKitDef {
-            id: 48,
-            name: "AFStatusCenter-horizontal",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (50, TagKitDef {
-            id: 50,
-            name: "AFStatusCenter-9",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (52, TagKitDef {
-            id: 52,
-            name: "AFStatusCenter-10",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (54, TagKitDef {
-            id: 54,
-            name: "AFStatusCenter-11",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (56, TagKitDef {
-            id: 56,
-            name: "AFStatusCenter-12",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (58, TagKitDef {
-            id: 58,
-            name: "AFStatusCenter-vertical",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (60, TagKitDef {
-            id: 60,
-            name: "AFStatusCenter-14",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (62, TagKitDef {
-            id: 62,
-            name: "AFStatusTopAssist-left",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (64, TagKitDef {
-            id: 64,
-            name: "AFStatusTop",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (66, TagKitDef {
-            id: 66,
-            name: "AFStatusTopAssist-right",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (68, TagKitDef {
-            id: 68,
-            name: "AFStatusFarRight",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (70, TagKitDef {
-            id: 70,
-            name: "AFStatusUpper-right",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (72, TagKitDef {
-            id: 72,
-            name: "AFStatusRight",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (74, TagKitDef {
-            id: 74,
-            name: "AFStatusLower-right",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (76, TagKitDef {
-            id: 76,
-            name: "AFStatusCenterF2-8",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "LensSpec",
-            format: "undef[8]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Manual("code_ref_printconv"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (20, TagKitDef {
-            id: 20,
-            name: "AFPointSelected",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_153),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (21, TagKitDef {
-            id: 21,
-            name: "FocusModeSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("FocusModeSetting for other models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_154),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (24, TagKitDef {
-            id: 24,
-            name: "AFPoint",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_155),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (27, TagKitDef {
-            id: 27,
-            name: "AFStatusActiveSensor",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (29, TagKitDef {
-            id: 29,
-            name: "AFStatusTop-right",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (31, TagKitDef {
-            id: 31,
-            name: "AFStatusBottom-right",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (33, TagKitDef {
-            id: 33,
-            name: "AFStatusBottom",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (35, TagKitDef {
-            id: 35,
-            name: "AFStatusMiddleHorizontal",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (37, TagKitDef {
-            id: 37,
-            name: "AFStatusCenterVertical",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (39, TagKitDef {
-            id: 39,
-            name: "AFStatusTop",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (41, TagKitDef {
-            id: 41,
-            name: "AFStatusTop-left",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (43, TagKitDef {
-            id: 43,
-            name: "AFStatusBottom-left",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (45, TagKitDef {
-            id: 45,
-            name: "AFStatusLeft",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (47, TagKitDef {
-            id: 47,
-            name: "AFStatusCenterHorizontal",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (49, TagKitDef {
-            id: 49,
-            name: "AFStatusRight",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "LensSpec",
-            format: "undef[8]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Manual("code_ref_printconv"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (14, TagKitDef {
-            id: 14,
-            name: "FocalLength",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
-            value_conv: Some("$val / 10"),
-            subdirectory: None,
-        }),
-        (16, TagKitDef {
-            id: 16,
-            name: "FocalLengthTeleZoom",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
-            value_conv: Some("$val * 2 / 3"),
-            subdirectory: None,
-        }),
-        (20, TagKitDef {
-            id: 20,
-            name: "AFPointSelected",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_156),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (21, TagKitDef {
-            id: 21,
-            name: "FocusMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_157),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (24, TagKitDef {
-            id: 24,
-            name: "AFPoint",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_158),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (25, TagKitDef {
-            id: 25,
-            name: "FocusStatus",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("not valid with Contrast AF or for NEX models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_159),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (27, TagKitDef {
-            id: 27,
-            name: "AFStatusActiveSensor",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (28, TagKitDef {
-            id: 28,
-            name: "AFPointSelected",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("not valid for Contrast AF"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_160),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (29, TagKitDef {
-            id: 29,
-            name: "FocusMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_161),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (29, TagKitDef {
-            id: 29,
-            name: "AFStatusTop-right",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (31, TagKitDef {
-            id: 31,
-            name: "AFStatusBottom-right",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (32, TagKitDef {
-            id: 32,
-            name: "AFPoint",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("the AF sensor used for focusing. Not valid for Contrast AF"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_162),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (33, TagKitDef {
-            id: 33,
-            name: "AFStatusActiveSensor",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (33, TagKitDef {
-            id: 33,
-            name: "AFStatusBottom",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (35, TagKitDef {
-            id: 35,
-            name: "AFStatus15",
-            format: "int16s[18]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x23_subdirectory }),
-        }),
-        (35, TagKitDef {
-            id: 35,
-            name: "AFStatusMiddleHorizontal",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (37, TagKitDef {
-            id: 37,
-            name: "AFStatusCenterVertical",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (39, TagKitDef {
-            id: 39,
-            name: "AFStatusTop",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (41, TagKitDef {
-            id: 41,
-            name: "AFStatusTop-left",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (43, TagKitDef {
-            id: 43,
-            name: "AFStatusBottom-left",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (45, TagKitDef {
-            id: 45,
-            name: "AFStatusLeft",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (47, TagKitDef {
-            id: 47,
-            name: "AFStatusCenterHorizontal",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (49, TagKitDef {
-            id: 49,
-            name: "AFStatusRight",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (106, TagKitDef {
-            id: 106,
-            name: "RedEyeReduction",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_163),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (12, TagKitDef {
-            id: 12,
-            name: "ColorTemperatureCustom",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("\"$val K\""),
-            value_conv: Some("$val * 100"),
-            subdirectory: None,
-        }),
-        (13, TagKitDef {
-            id: 13,
-            name: "ColorCompensationFilterCustom",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("negative is green, positive is magenta"),
-            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
-            value_conv: Some("$val > 128 ? $val - 256 : $val"),
-            subdirectory: None,
-        }),
-        (15, TagKitDef {
-            id: 15,
-            name: "WhiteBalance",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_164),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (154, TagKitDef {
-            id: 154,
-            name: "FolderNumber",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("sprintf(\"%.3d\",$val)"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (155, TagKitDef {
-            id: 155,
-            name: "ImageNumber",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("sprintf(\"%.4d\",$val)"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (16, TagKitDef {
-            id: 16,
-            name: "FocusModeSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_165),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (17, TagKitDef {
-            id: 17,
-            name: "AFAreaMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_166),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (18, TagKitDef {
-            id: 18,
-            name: "AFPointSetting",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_167),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (19, TagKitDef {
-            id: 19,
-            name: "FlashMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_168),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (20, TagKitDef {
-            id: 20,
-            name: "FlashExposureCompSet",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
-            value_conv: Some("($val - 128) / 24"),
-            subdirectory: None,
-        }),
-        (21, TagKitDef {
-            id: 21,
-            name: "MeteringMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_169),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (22, TagKitDef {
-            id: 22,
-            name: "ISOSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val ? sprintf(\"%.0f\",$val) : \"Auto\""),
-            value_conv: Some("sony_iso_value_conv"),
-            subdirectory: None,
-        }),
-        (24, TagKitDef {
-            id: 24,
-            name: "DynamicRangeOptimizerMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_170),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (25, TagKitDef {
-            id: 25,
-            name: "DynamicRangeOptimizerLevel",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (26, TagKitDef {
-            id: 26,
-            name: "CreativeStyle",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_171),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (27, TagKitDef {
-            id: 27,
-            name: "ColorSpace",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_172),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (28, TagKitDef {
-            id: 28,
-            name: "Sharpness",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
-            value_conv: Some("$val - 10"),
-            subdirectory: None,
-        }),
-        (29, TagKitDef {
-            id: 29,
-            name: "Contrast",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
-            value_conv: Some("$val - 10"),
-            subdirectory: None,
-        }),
-        (30, TagKitDef {
-            id: 30,
-            name: "Saturation",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
-            value_conv: Some("$val - 10"),
-            subdirectory: None,
-        }),
-        (31, TagKitDef {
-            id: 31,
-            name: "ZoneMatchingValue",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
-            value_conv: Some("$val - 10"),
-            subdirectory: None,
-        }),
-        (34, TagKitDef {
-            id: 34,
-            name: "Brightness",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
-            value_conv: Some("$val - 10"),
-            subdirectory: None,
-        }),
-        (35, TagKitDef {
-            id: 35,
-            name: "FlashControl",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_173),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (40, TagKitDef {
-            id: 40,
-            name: "PrioritySetupShutterRelease",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_174),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (41, TagKitDef {
-            id: 41,
-            name: "AFIlluminator",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_175),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (42, TagKitDef {
-            id: 42,
-            name: "AFWithShutter",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_176),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (43, TagKitDef {
-            id: 43,
-            name: "LongExposureNoiseReduction",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_177),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (44, TagKitDef {
-            id: 44,
-            name: "HighISONoiseReduction",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_178),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (45, TagKitDef {
-            id: 45,
-            name: "ImageStyle",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_179),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (46, TagKitDef {
-            id: 46,
-            name: "FocusModeSwitch",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_180),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (47, TagKitDef {
-            id: 47,
-            name: "ShutterSpeedSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("used in M, S and Program Shift S modes"),
-            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
-            value_conv: Some("sony_exposure_time_value_conv"),
-            subdirectory: None,
-        }),
-        (48, TagKitDef {
-            id: 48,
-            name: "ApertureSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("used in M, A and Program Shift A modes"),
-            print_conv: PrintConvType::Expression("Image::ExifTool::Exif::PrintFNumber($val)"),
-            value_conv: Some("sony_fnumber_value_conv"),
-            subdirectory: None,
-        }),
-        (60, TagKitDef {
-            id: 60,
-            name: "ExposureProgram",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_181),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (61, TagKitDef {
-            id: 61,
-            name: "ImageStabilizationSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_182),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (62, TagKitDef {
-            id: 62,
-            name: "FlashAction",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_183),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (63, TagKitDef {
-            id: 63,
-            name: "Rotation",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_184),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (64, TagKitDef {
-            id: 64,
-            name: "AELock",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_185),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (76, TagKitDef {
-            id: 76,
-            name: "FlashAction2",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_186),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (77, TagKitDef {
-            id: 77,
-            name: "FocusMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_187),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (80, TagKitDef {
-            id: 80,
-            name: "BatteryState",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_188),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (81, TagKitDef {
-            id: 81,
-            name: "BatteryLevel",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("\"$val%\""),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (83, TagKitDef {
-            id: 83,
-            name: "FocusStatus",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_189),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (84, TagKitDef {
-            id: 84,
-            name: "SonyImageSize",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_190),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (85, TagKitDef {
-            id: 85,
-            name: "AspectRatio",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_191),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (86, TagKitDef {
-            id: 86,
-            name: "Quality",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_192),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (88, TagKitDef {
-            id: 88,
-            name: "ExposureLevelIncrements",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_193),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (11, TagKitDef {
-            id: 11,
-            name: "ColorTemperatureCustom",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("\"$val K\""),
-            value_conv: Some("$val * 100"),
-            subdirectory: None,
-        }),
-        (12, TagKitDef {
-            id: 12,
-            name: "ColorCompensationFilterCustom",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("negative is green, positive is magenta"),
-            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
-            value_conv: Some("$val > 128 ? $val - 256 : $val"),
-            subdirectory: None,
-        }),
-        (126, TagKitDef {
-            id: 126,
-            name: "DriveMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_194),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (127, TagKitDef {
-            id: 127,
-            name: "FlashMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_195),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (131, TagKitDef {
-            id: 131,
-            name: "ColorSpace",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_196),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (14, TagKitDef {
-            id: 14,
-            name: "WhiteBalance",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_197),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (15, TagKitDef {
-            id: 15,
-            name: "FocusModeSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_198),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (16, TagKitDef {
-            id: 16,
-            name: "AFAreaMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_199),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (17, TagKitDef {
-            id: 17,
-            name: "AFPointSetting",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_200),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (18, TagKitDef {
-            id: 18,
-            name: "FlashExposureCompSet",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
-            value_conv: Some("($val - 128) / 24"),
-            subdirectory: None,
-        }),
-        (19, TagKitDef {
-            id: 19,
-            name: "MeteringMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_201),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (20, TagKitDef {
-            id: 20,
-            name: "ISOSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val ? sprintf(\"%.0f\",$val) : \"Auto\""),
-            value_conv: Some("sony_iso_value_conv"),
-            subdirectory: None,
-        }),
-        (22, TagKitDef {
-            id: 22,
-            name: "DynamicRangeOptimizerMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_202),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (24, TagKitDef {
-            id: 24,
-            name: "CreativeStyle",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_203),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (25, TagKitDef {
-            id: 25,
-            name: "Sharpness",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
-            value_conv: Some("$val - 10"),
-            subdirectory: None,
-        }),
-        (26, TagKitDef {
-            id: 26,
-            name: "Contrast",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
-            value_conv: Some("$val - 10"),
-            subdirectory: None,
-        }),
-        (27, TagKitDef {
-            id: 27,
-            name: "Saturation",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
-            value_conv: Some("$val - 10"),
-            subdirectory: None,
-        }),
-        (31, TagKitDef {
-            id: 31,
-            name: "FlashControl",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_204),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (37, TagKitDef {
-            id: 37,
-            name: "LongExposureNoiseReduction",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_205),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (38, TagKitDef {
-            id: 38,
-            name: "HighISONoiseReduction",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_206),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (39, TagKitDef {
-            id: 39,
-            name: "ImageStyle",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_207),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (40, TagKitDef {
-            id: 40,
-            name: "ShutterSpeedSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("used in M, S and Program Shift S modes"),
-            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
-            value_conv: Some("sony_exposure_time_value_conv"),
-            subdirectory: None,
-        }),
-        (41, TagKitDef {
-            id: 41,
-            name: "ApertureSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("used in M, A and Program Shift A modes"),
-            print_conv: PrintConvType::Expression("Image::ExifTool::Exif::PrintFNumber($val)"),
-            value_conv: Some("sony_fnumber_value_conv"),
-            subdirectory: None,
-        }),
-        (60, TagKitDef {
-            id: 60,
-            name: "ExposureProgram",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_208),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (61, TagKitDef {
-            id: 61,
-            name: "ImageStabilizationSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_209),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (62, TagKitDef {
-            id: 62,
-            name: "FlashAction",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_210),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (63, TagKitDef {
-            id: 63,
-            name: "Rotation",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_211),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (64, TagKitDef {
-            id: 64,
-            name: "AELock",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_212),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (76, TagKitDef {
-            id: 76,
-            name: "FlashAction2",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_213),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (77, TagKitDef {
-            id: 77,
-            name: "FocusMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_214),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (83, TagKitDef {
-            id: 83,
-            name: "FocusStatus",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_215),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (84, TagKitDef {
-            id: 84,
-            name: "SonyImageSize",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_216),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (85, TagKitDef {
-            id: 85,
-            name: "AspectRatio",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_217),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (86, TagKitDef {
-            id: 86,
-            name: "Quality",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_218),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (88, TagKitDef {
-            id: 88,
-            name: "ExposureLevelIncrements",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_219),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ShutterSpeedSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("used only in M and S exposure modes"),
-            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
-            value_conv: Some("sony_exposure_time_value_conv"),
-            subdirectory: None,
-        }),
-        (1008, TagKitDef {
-            id: 1008,
-            name: "LensE-mountVersion",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("sprintf(\"%x.%.2x\",$val>>8,$val&0xff)"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (1011, TagKitDef {
-            id: 1011,
-            name: "LensFirmwareVersion",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("sprintf(\"Ver.%.2x.%.3d\",$val>>8,$val&0xff)"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (1015, TagKitDef {
-            id: 1015,
-            name: "LensType2",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_220),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (1024, TagKitDef {
-            id: 1024,
-            name: "ImageNumber",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("A450, A500 and A550"),
-            print_conv: PrintConvType::Expression("sprintf(\"%.4d\",$val)"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (1026, TagKitDef {
-            id: 1026,
-            name: "FolderNumber",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("A450, A500 and A550"),
-            print_conv: PrintConvType::Expression("sprintf(\"%.3d\",$val)"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (11, TagKitDef {
-            id: 11,
-            name: "Quality",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_221),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (12, TagKitDef {
-            id: 12,
-            name: "DynamicRangeOptimizerSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_222),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (131, TagKitDef {
-            id: 131,
-            name: "AFButtonPressed",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_223),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (132, TagKitDef {
-            id: 132,
-            name: "LiveViewMetering",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_224),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (133, TagKitDef {
-            id: 133,
-            name: "ViewingMode2",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_225),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (134, TagKitDef {
-            id: 134,
-            name: "AELock",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_226),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (135, TagKitDef {
-            id: 135,
-            name: "FlashStatusBuilt-in",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_227),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (136, TagKitDef {
-            id: 136,
-            name: "FlashStatusExternal",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_228),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (139, TagKitDef {
-            id: 139,
-            name: "LiveViewFocusMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_229),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (14, TagKitDef {
-            id: 14,
-            name: "ColorSpace",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_230),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (15, TagKitDef {
-            id: 15,
-            name: "CreativeStyleSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_231),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (153, TagKitDef {
-            id: 153,
-            name: "LensMount",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_232),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (16, TagKitDef {
-            id: 16,
-            name: "ContrastSetting",
-            format: "int8s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (17, TagKitDef {
-            id: 17,
-            name: "SaturationSetting",
-            format: "int8s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (18, TagKitDef {
-            id: 18,
-            name: "SharpnessSetting",
-            format: "int8s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (22, TagKitDef {
-            id: 22,
-            name: "WhiteBalanceSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_233),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (23, TagKitDef {
-            id: 23,
-            name: "ColorTemperatureSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("\"$val K\""),
-            value_conv: Some("$val * 100"),
-            subdirectory: None,
-        }),
-        (24, TagKitDef {
-            id: 24,
-            name: "ColorCompensationFilterSet",
-            format: "int8s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("negative is green, positive is magenta"),
-            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (25, TagKitDef {
-            id: 25,
-            name: "CustomWB_RGBLevels",
-            format: "int16uRev[3]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (268, TagKitDef {
-            id: 268,
-            name: "SequenceNumber",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (276, TagKitDef {
-            id: 276,
-            name: "ImageNumber",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("sprintf(\"%.4d\",$val)"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (32, TagKitDef {
-            id: 32,
-            name: "FlashMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_234),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (33, TagKitDef {
-            id: 33,
-            name: "FlashControl",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_235),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (35, TagKitDef {
-            id: 35,
-            name: "FlashExposureCompSet",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("$val ? sprintf(\"%+.1f\",$val) : 0"),
-            value_conv: Some("($val - 128) / 24"),
-            subdirectory: None,
-        }),
-        (36, TagKitDef {
-            id: 36,
-            name: "AFAreaMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_236),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (37, TagKitDef {
-            id: 37,
-            name: "LongExposureNoiseReduction",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_237),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (38, TagKitDef {
-            id: 38,
-            name: "HighISONoiseReduction",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_238),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (39, TagKitDef {
-            id: 39,
-            name: "SmileShutterMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_239),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (40, TagKitDef {
-            id: 40,
-            name: "RedEyeReduction",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_240),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (45, TagKitDef {
-            id: 45,
-            name: "HDRSetting",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_241),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (46, TagKitDef {
-            id: 46,
-            name: "HDRLevel",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_242),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (47, TagKitDef {
-            id: 47,
-            name: "ViewingMode",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_243),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (48, TagKitDef {
-            id: 48,
-            name: "FaceDetection",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_244),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (49, TagKitDef {
-            id: 49,
-            name: "SmileShutter",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_245),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (50, TagKitDef {
-            id: 50,
-            name: "SweepPanoramaSize",
-            format: "unknown",
+        (108, TagKitDef {
+            id: 108,
+            name: "MeterInfo1Row2",
+            format: "int32u[27]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_246),
+            print_conv: PrintConvType::Expression("sprintf(\"%19d %4d %6d\" . \" %3d %4d %6d\" x 8, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (51, TagKitDef {
-            id: 51,
-            name: "SweepPanoramaDirection",
-            format: "unknown",
+        (1152, TagKitDef {
+            id: 1152,
+            name: "MeterInfo2Row4",
+            format: "int32u[33]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_247),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (512, TagKitDef {
-            id: 512,
-            name: "ShotNumberSincePowerUp2",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("same as ShotNumberSincePowerUp for single-shot images, but includes all\n            shots of the current image in multi-shot modes like HDR, panorama, and\n            multi-frame noise reduction"),
-            print_conv: PrintConvType::None,
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (52, TagKitDef {
-            id: 52,
-            name: "DriveMode",
-            format: "unknown",
+        (1284, TagKitDef {
+            id: 1284,
+            name: "MeterInfo2Row5",
+            format: "int32u[33]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_248),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (53, TagKitDef {
-            id: 53,
-            name: "MultiFrameNoiseReduction",
-            format: "unknown",
+        (1416, TagKitDef {
+            id: 1416,
+            name: "MeterInfo2Row6",
+            format: "int32u[33]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_249),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (54, TagKitDef {
-            id: 54,
-            name: "LiveViewAFSetting",
-            format: "unknown",
+        (1548, TagKitDef {
+            id: 1548,
+            name: "MeterInfo2Row7",
+            format: "int32u[33]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_250),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (56, TagKitDef {
-            id: 56,
-            name: "PanoramaSize3D",
-            format: "unknown",
+        (1680, TagKitDef {
+            id: 1680,
+            name: "MeterInfo2Row8",
+            format: "int32u[33]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_251),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (643, TagKitDef {
-            id: 643,
-            name: "AFButtonPressed",
-            format: "unknown",
+        (1812, TagKitDef {
+            id: 1812,
+            name: "MeterInfo2Row9",
+            format: "int32u[33]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_252),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (644, TagKitDef {
-            id: 644,
-            name: "LiveViewMetering",
-            format: "unknown",
+        (216, TagKitDef {
+            id: 216,
+            name: "MeterInfo1Row3",
+            format: "int32u[27]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_253),
+            print_conv: PrintConvType::Expression("sprintf(\"%19d %4d %6d\" . \" %3d %4d %6d\" x 8, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (645, TagKitDef {
-            id: 645,
-            name: "ViewingMode2",
-            format: "unknown",
+        (432, TagKitDef {
+            id: 432,
+            name: "MeterInfo1Row5",
+            format: "int32u[27]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_254),
+            print_conv: PrintConvType::Expression("sprintf(\"%19d %4d %6d\" . \" %3d %4d %6d\" x 8, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (646, TagKitDef {
-            id: 646,
-            name: "AELock",
-            format: "unknown",
+        (540, TagKitDef {
+            id: 540,
+            name: "MeterInfo1Row6",
+            format: "int32u[27]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_255),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (647, TagKitDef {
-            id: 647,
-            name: "FlashStatusBuilt-in",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("A450, A500 and A550"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_256),
+            print_conv: PrintConvType::Expression("sprintf(\"%19d %4d %6d\" . \" %3d %4d %6d\" x 8, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
         (648, TagKitDef {
             id: 648,
-            name: "FlashStatusExternal",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("A450, A500 and A550"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_257),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (651, TagKitDef {
-            id: 651,
-            name: "LiveViewFocusMode",
-            format: "unknown",
+            name: "MeterInfo1Row7",
+            format: "int32u[27]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_258),
+            print_conv: PrintConvType::Expression("sprintf(\"%19d %4d %6d\" . \" %3d %4d %6d\" x 8, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (780, TagKitDef {
-            id: 780,
-            name: "SequenceNumber",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("A450, A500 and A550"),
-            print_conv: PrintConvType::Expression("ComplexHash"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (788, TagKitDef {
-            id: 788,
-            name: "ImageNumber",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("A450, A500 and A550"),
-            print_conv: PrintConvType::Expression("sprintf(\"%.4d\",$val)"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (790, TagKitDef {
-            id: 790,
-            name: "FolderNumber",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("A450, A500 and A550"),
-            print_conv: PrintConvType::Expression("sprintf(\"%.3d\",$val)"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (12, TagKitDef {
-            id: 12,
-            name: "BatteryLevel",
-            format: "unknown",
+        (756, TagKitDef {
+            id: 756,
+            name: "MeterInfo2Row1",
+            format: "int32u[33]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Expression("\"$val%\""),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (26, TagKitDef {
-            id: 26,
-            name: "ExtraInfoVersion",
-            format: "int8u[4]",
+        (888, TagKitDef {
+            id: 888,
+            name: "MeterInfo2Row2",
+            format: "int32u[33]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Expression(r"$val=~tr/ /./; $val"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (18, TagKitDef {
-            id: 18,
-            name: "ImageStabilization",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_259),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
         (0, TagKitDef {
             id: 0,
-            name: "BatteryUnknown",
-            format: "int16u",
+            name: "MeterInfo1Row1",
+            format: "undef[90]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::None,
+            print_conv: PrintConvType::Expression("sprintf(\"%19d %4d %6d\" . \" %3d %4d %6d\" x 8, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (17, TagKitDef {
-            id: 17,
-            name: "ImageStabilization",
-            format: "unknown",
+        (1070, TagKitDef {
+            id: 1070,
+            name: "MeterInfo2Row5",
+            format: "undef[110]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_260),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (20, TagKitDef {
-            id: 20,
-            name: "BatteryState",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("BatteryState for SLT models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_261),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (20, TagKitDef {
-            id: 20,
-            name: "ExposureProgram",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("ExposureProgram for the A450, A500 and A550"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_262),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (20, TagKitDef {
-            id: 20,
-            name: "ModeDialPosition",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("ModeDialPosition for other DSLR models"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_263),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (22, TagKitDef {
-            id: 22,
-            name: "MemoryCardConfiguration",
-            format: "unknown",
+        (1180, TagKitDef {
+            id: 1180,
+            name: "MeterInfo2Row6",
+            format: "undef[110]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_264),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (22, TagKitDef {
-            id: 22,
-            name: "CameraOrientation",
-            format: "unknown",
+        (1290, TagKitDef {
+            id: 1290,
+            name: "MeterInfo2Row7",
+            format: "undef[110]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_265),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (24, TagKitDef {
-            id: 24,
-            name: "CameraOrientation",
-            format: "unknown",
+        (1400, TagKitDef {
+            id: 1400,
+            name: "MeterInfo2Row8",
+            format: "undef[110]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_266),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (109, TagKitDef {
-            id: 109,
-            name: "ISOSetting",
-            format: "unknown",
+        (1510, TagKitDef {
+            id: 1510,
+            name: "MeterInfo2Row9",
+            format: "undef[110]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Expression("$val ? sprintf(\"%.0f\",$val) : \"Auto\""),
-            value_conv: Some("sony_iso_value_conv"),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
+            value_conv: None,
             subdirectory: None,
         }),
-        (111, TagKitDef {
-            id: 111,
-            name: "ISO",
-            format: "unknown",
+        (180, TagKitDef {
+            id: 180,
+            name: "MeterInfo1Row3",
+            format: "undef[90]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Expression("$val ? sprintf(\"%.0f\",$val) : \"Auto\""),
-            value_conv: Some("sony_iso_value_conv"),
+            print_conv: PrintConvType::Expression("sprintf(\"%19d %4d %6d\" . \" %3d %4d %6d\" x 8, split(\" \",$val))"),
+            value_conv: None,
             subdirectory: None,
         }),
-        (119, TagKitDef {
-            id: 119,
-            name: "DynamicRangeOptimizerMode",
-            format: "unknown",
+        (360, TagKitDef {
+            id: 360,
+            name: "MeterInfo1Row5",
+            format: "undef[90]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_267),
+            print_conv: PrintConvType::Expression("sprintf(\"%19d %4d %6d\" . \" %3d %4d %6d\" x 8, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (14, TagKitDef {
-            id: 14,
-            name: "DriveMode2",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("A230, A290, A330, A380 and A390"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_268),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (14, TagKitDef {
-            id: 14,
-            name: "DriveMode2",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("A200, A300, A350, A700, A850 and A900"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_269),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (16, TagKitDef {
-            id: 16,
-            name: "Rotation",
-            format: "unknown",
+        (450, TagKitDef {
+            id: 450,
+            name: "MeterInfo1Row6",
+            format: "undef[90]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_270),
+            print_conv: PrintConvType::Expression("sprintf(\"%19d %4d %6d\" . \" %3d %4d %6d\" x 8, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (20, TagKitDef {
-            id: 20,
-            name: "ImageStabilizationSetting",
-            format: "unknown",
+        (540, TagKitDef {
+            id: 540,
+            name: "MeterInfo1Row7",
+            format: "undef[90]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_271),
+            print_conv: PrintConvType::Expression("sprintf(\"%19d %4d %6d\" . \" %3d %4d %6d\" x 8, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (21, TagKitDef {
-            id: 21,
-            name: "DynamicRangeOptimizerMode",
-            format: "unknown",
+        (630, TagKitDef {
+            id: 630,
+            name: "MeterInfo2Row1",
+            format: "undef[110]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_272),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (2118, TagKitDef {
-            id: 2118,
-            name: "ShutterCount",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("only valid for some DSLR models"),
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (2491, TagKitDef {
-            id: 2491,
-            name: "FocusPosition",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("only valid for some DSLR models"),
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (43, TagKitDef {
-            id: 43,
-            name: "BracketShotNumber",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("WB and DRO bracketing"),
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (44, TagKitDef {
-            id: 44,
-            name: "WhiteBalanceBracketing",
-            format: "unknown",
+        (740, TagKitDef {
+            id: 740,
+            name: "MeterInfo2Row2",
+            format: "undef[110]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_273),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (45, TagKitDef {
-            id: 45,
-            name: "BracketShotNumber2",
-            format: "unknown",
+        (850, TagKitDef {
+            id: 850,
+            name: "MeterInfo2Row3",
+            format: "undef[110]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::None,
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (46, TagKitDef {
-            id: 46,
-            name: "DynamicRangeOptimizerBracket",
-            format: "unknown",
+        (90, TagKitDef {
+            id: 90,
+            name: "MeterInfo1Row2",
+            format: "undef[90]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_274),
+            print_conv: PrintConvType::Expression("sprintf(\"%19d %4d %6d\" . \" %3d %4d %6d\" x 8, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
-        (47, TagKitDef {
-            id: 47,
-            name: "ExposureBracketShotNumber",
-            format: "unknown",
+        (960, TagKitDef {
+            id: 960,
+            name: "MeterInfo2Row4",
+            format: "undef[110]",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (63, TagKitDef {
-            id: 63,
-            name: "ExposureProgram",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_275),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (65, TagKitDef {
-            id: 65,
-            name: "CreativeStyle",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_276),
+            print_conv: PrintConvType::Expression("sprintf(\"%3d %4d %6d\" . \" %3d %4d %6d\" x 10, split(\" \",$val))"),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9519,6 +14789,17 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             value_conv: None,
             subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x401_subdirectory }),
         }),
+        (1102, TagKitDef {
+            id: 1102,
+            name: "ShotNumberSincePowerUp",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("Not valid for the NEX-3 or NEX-5"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
         (119, TagKitDef {
             id: 119,
             name: "FlashAction2",
@@ -9526,7 +14807,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_277),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_315),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9537,7 +14818,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_278),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_316),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9548,7 +14829,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_279),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_317),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9559,7 +14840,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_280),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_318),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9570,7 +14851,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_281),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_319),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9581,7 +14862,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_282),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_320),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9614,7 +14895,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_283),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_321),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9625,7 +14906,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_284),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_322),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9636,7 +14917,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_285),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_323),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9647,7 +14928,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_286),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_324),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9658,7 +14939,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_287),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_325),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9669,7 +14950,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_288),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_326),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9680,7 +14961,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_289),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_327),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9691,7 +14972,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_290),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_328),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9702,7 +14983,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_291),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_329),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9747,7 +15028,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("A450, A500 and A550"),
             print_conv: PrintConvType::Expression("$val ? sprintf(\"%.0f\",$val) : \"Auto\""),
-            value_conv: Some("sony_iso_value_conv"),
+            value_conv: Some("$val ? exp(($val/8-6)*log(2))*100 : $val"),
             subdirectory: None,
         }),
         (31, TagKitDef {
@@ -9779,7 +15060,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("other models except the NEX-3/5/5C"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_292),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_330),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9791,7 +15072,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("NEX-3/5/5C"),
             print_conv: PrintConvType::Expression("$val ? sprintf(\"%.0f\",$val) : \"Auto\""),
-            value_conv: Some("sony_iso_value_conv"),
+            value_conv: Some("$val ? exp(($val/8-6)*log(2))*100 : $val"),
             subdirectory: None,
         }),
         (34, TagKitDef {
@@ -9846,7 +15127,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("other models except the A450, A500 and A550"),
             print_conv: PrintConvType::Expression("$val ? sprintf(\"%.0f\",$val) : \"Auto\""),
-            value_conv: Some("sony_iso_value_conv"),
+            value_conv: Some("$val ? exp(($val/8-6)*log(2))*100 : $val"),
             subdirectory: None,
         }),
         (38, TagKitDef {
@@ -9889,7 +15170,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("A450, A500 and A550"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_293),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_331),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9922,7 +15203,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("A450, A500 and A550"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_294),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_332),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9955,7 +15236,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("A450, A500 and A550"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_295),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_333),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9966,7 +15247,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("NEX-3/5/5C FlashAction2"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_296),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_334),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9988,7 +15269,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("NEX-3/5/5C"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_297),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_335),
             value_conv: None,
             subdirectory: None,
         }),
@@ -9999,7 +15280,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("other models except the A450, A500 and A550"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_298),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_336),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10021,7 +15302,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("models other than the A450, A500, A550 and NEX-3/5/5C"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_299),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_337),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10032,7 +15313,645 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("models other than the A450, A500, A550 and NEX-3/5/5C"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_300),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_338),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Barcode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val=~s/IP1.*//; $val"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Barcode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("length($val) > 12 ? substr($val,0,12) : $val"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SensorTemperature",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"$val C\""),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "CameraTemperature",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"$val C\""),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "BoardTemperature",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"$val C\""),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagTextInfo1",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagTextInfo2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "VibrationReduction",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_339),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (106, TagKitDef {
+            id: 106,
+            name: "FNumber",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val / 100"),
+            subdirectory: None,
+        }),
+        (108, TagKitDef {
+            id: 108,
+            name: "ExposureCompensation",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val / 100"),
+            subdirectory: None,
+        }),
+        (112, TagKitDef {
+            id: 112,
+            name: "FocalLength",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
+            value_conv: Some("$val / 100"),
+            subdirectory: None,
+        }),
+        (118, TagKitDef {
+            id: 118,
+            name: "Flash",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_340),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "JpgFromRawLength",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (22, TagKitDef {
+            id: 22,
+            name: "SonyImageWidth",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "SonyImageHeight",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (27, TagKitDef {
+            id: 27,
+            name: "Orientation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_341),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29, TagKitDef {
+            id: 29,
+            name: "ImageQuality",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_342),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (52, TagKitDef {
+            id: 52,
+            name: "Comment",
+            format: "string[19]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30576, TagKitDef {
+            id: 30576,
+            name: "ColorMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29184, TagKitDef {
+            id: 29184,
+            name: "SR2SubIFDOffset",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29185, TagKitDef {
+            id: 29185,
+            name: "SR2SubIFDLength",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29217, TagKitDef {
+            id: 29217,
+            name: "SR2SubIFDKey",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("key to decrypt SR2SubIFD"),
+            print_conv: PrintConvType::Expression("sprintf(\"0x%.8x\", $val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29248, TagKitDef {
+            id: 29248,
+            name: "IDC_IFD",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x7240_subdirectory }),
+        }),
+        (29249, TagKitDef {
+            id: 29249,
+            name: "IDC2_IFD",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x7241_subdirectory }),
+        }),
+        (29264, TagKitDef {
+            id: 29264,
+            name: "MRWInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x7250_subdirectory }),
+        }),
+        (29440, TagKitDef {
+            id: 29440,
+            name: "BlackLevel",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29442, TagKitDef {
+            id: 29442,
+            name: "WB_GRBGLevelsAuto",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29443, TagKitDef {
+            id: 29443,
+            name: "WB_GRBGLevels",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29456, TagKitDef {
+            id: 29456,
+            name: "BlackLevel",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29458, TagKitDef {
+            id: 29458,
+            name: "WB_RGGBLevelsAuto",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29459, TagKitDef {
+            id: 29459,
+            name: "WB_RGGBLevels",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29824, TagKitDef {
+            id: 29824,
+            name: "WB_RGBLevelsDaylight",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29825, TagKitDef {
+            id: 29825,
+            name: "WB_RGBLevelsCloudy",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29826, TagKitDef {
+            id: 29826,
+            name: "WB_RGBLevelsTungsten",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29827, TagKitDef {
+            id: 29827,
+            name: "WB_RGBLevelsFlash",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29828, TagKitDef {
+            id: 29828,
+            name: "WB_RGBLevels4500K",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29830, TagKitDef {
+            id: 29830,
+            name: "WB_RGBLevelsFluorescent",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29858, TagKitDef {
+            id: 29858,
+            name: "MaxFocalLength",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"$val mm\""),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29859, TagKitDef {
+            id: 29859,
+            name: "MinFocalLength",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"$val mm\""),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29888, TagKitDef {
+            id: 29888,
+            name: "SR2DataIFD",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x74c0_subdirectory }),
+        }),
+        (30752, TagKitDef {
+            id: 30752,
+            name: "WB_RGBLevelsDaylight",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30753, TagKitDef {
+            id: 30753,
+            name: "WB_RGBLevelsCloudy",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30754, TagKitDef {
+            id: 30754,
+            name: "WB_RGBLevelsTungsten",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30755, TagKitDef {
+            id: 30755,
+            name: "WB_RGBLevelsFlash",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30756, TagKitDef {
+            id: 30756,
+            name: "WB_RGBLevels4500K",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30757, TagKitDef {
+            id: 30757,
+            name: "WB_RGBLevelsShade",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30758, TagKitDef {
+            id: 30758,
+            name: "WB_RGBLevelsFluorescent",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30759, TagKitDef {
+            id: 30759,
+            name: "WB_RGBLevelsFluorescentP1",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30760, TagKitDef {
+            id: 30760,
+            name: "WB_RGBLevelsFluorescentP2",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30761, TagKitDef {
+            id: 30761,
+            name: "WB_RGBLevelsFluorescentM1",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30762, TagKitDef {
+            id: 30762,
+            name: "WB_RGBLevels8500K",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30763, TagKitDef {
+            id: 30763,
+            name: "WB_RGBLevels6000K",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30764, TagKitDef {
+            id: 30764,
+            name: "WB_RGBLevels3200K",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30765, TagKitDef {
+            id: 30765,
+            name: "WB_RGBLevels2500K",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30847, TagKitDef {
+            id: 30847,
+            name: "WhiteLevel",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SRF2Key",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("key to decrypt maker notes from the start of SRF2"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (69, TagKitDef {
+            id: 69,
+            name: "MinFocalLength",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"$val mm\""),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (70, TagKitDef {
+            id: 70,
+            name: "MaxFocalLength",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"$val mm\""),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10113,17 +16032,6 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             value_conv: None,
             subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x5e_subdirectory }),
         }),
-        (0, TagKitDef {
-            id: 0,
-            name: "HiddenDataOffset",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
         (1200, TagKitDef {
             id: 1200,
             name: "MeterInfo",
@@ -10175,7 +16083,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_301),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_343),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10219,7 +16127,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_302),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_344),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10252,7 +16160,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_303),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_345),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10307,7 +16215,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_304),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_346),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10318,7 +16226,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_305),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_347),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10329,7 +16237,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_306),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_348),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10351,7 +16259,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_307),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_349),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10362,7 +16270,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_308),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_350),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10373,7 +16281,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_309),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_351),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10384,7 +16292,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_310),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_352),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10395,7 +16303,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_311),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_353),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10417,7 +16325,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_312),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_354),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10428,7 +16336,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_313),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_355),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10439,7 +16347,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_314),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_356),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10450,7 +16358,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_315),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_357),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10483,7 +16391,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_316),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_358),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10494,7 +16402,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_317),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_359),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10538,7 +16446,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_318),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_360),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10549,7 +16457,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_319),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_361),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10560,7 +16468,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_320),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_362),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10571,7 +16479,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_321),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_363),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10604,7 +16512,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_322),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_364),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10615,7 +16523,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_323),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_365),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10626,7 +16534,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_324),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_366),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10648,7 +16556,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_325),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_367),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10659,7 +16567,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_326),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_368),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10670,7 +16578,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_327),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_369),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10681,7 +16589,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_328),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_370),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10747,7 +16655,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_329),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_371),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10758,7 +16666,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_330),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_372),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10791,7 +16699,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_331),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_373),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10802,7 +16710,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_332),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_374),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10846,7 +16754,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_333),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_375),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10857,7 +16765,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_334),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_376),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10868,7 +16776,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_335),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_377),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10879,7 +16787,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_336),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_378),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10912,7 +16820,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_337),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_379),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10923,7 +16831,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_338),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_380),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10934,7 +16842,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_339),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_381),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10956,7 +16864,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_340),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_382),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10967,7 +16875,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_341),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_383),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10978,7 +16886,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_342),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_384),
             value_conv: None,
             subdirectory: None,
         }),
@@ -10989,7 +16897,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_343),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_385),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11066,7 +16974,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_344),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_386),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11077,7 +16985,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_345),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_387),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11099,7 +17007,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_346),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_388),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11110,7 +17018,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_347),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_389),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11154,7 +17062,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_348),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_390),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11165,7 +17073,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_349),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_391),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11176,7 +17084,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_350),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_392),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11187,7 +17095,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_351),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_393),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11220,7 +17128,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_352),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_394),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11231,7 +17139,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_353),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_395),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11242,7 +17150,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_354),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_396),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11264,7 +17172,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_355),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_397),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11275,7 +17183,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_356),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_398),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11286,7 +17194,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_357),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_399),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11308,7 +17216,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_358),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_400),
             value_conv: None,
             subdirectory: None,
         }),
@@ -11499,71 +17407,2337 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             value_conv: None,
             subdirectory: None,
         }),
-        (29184, TagKitDef {
-            id: 29184,
-            name: "SR2SubIFDOffset",
+        (189, TagKitDef {
+            id: 189,
+            name: "FaceDetection",
             format: "unknown",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_401),
             value_conv: None,
             subdirectory: None,
         }),
-        (29185, TagKitDef {
-            id: 29185,
-            name: "SR2SubIFDLength",
+        (0, TagKitDef {
+            id: 0,
+            name: "SonyMaxAperture",
             format: "unknown",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f\",$val)"),
+            value_conv: Some("2 ** (($val/8 - 1.06) / 2)"),
+            subdirectory: None,
+        }),
+        (103, TagKitDef {
+            id: 103,
+            name: "ReleaseMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_402),
             value_conv: None,
             subdirectory: None,
         }),
-        (29217, TagKitDef {
-            id: 29217,
-            name: "SR2SubIFDKey",
+        (124, TagKitDef {
+            id: 124,
+            name: "InternalSerialNumber",
+            format: "int8u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("unpack \"H*\", pack \"C*\", split \" \", $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (240, TagKitDef {
+            id: 240,
+            name: "InternalSerialNumber",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("unpack \"H*\", pack \"C*\", split \" \", $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32, TagKitDef {
+            id: 32,
+            name: "Shutter",
+            format: "int16u[3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (416, TagKitDef {
+            id: 416,
+            name: "ShutterCount3",
             format: "int32u",
             groups: HashMap::new(),
             writable: false,
-            notes: Some("key to decrypt SR2SubIFD"),
-            print_conv: PrintConvType::Expression("sprintf(\"0x%.8x\", $val)"),
+            notes: None,
+            print_conv: PrintConvType::None,
             value_conv: None,
             subdirectory: None,
         }),
-        (29248, TagKitDef {
-            id: 29248,
-            name: "IDC_IFD",
-            format: "unknown",
+        (426, TagKitDef {
+            id: 426,
+            name: "ShutterCount3",
+            format: "int32u",
             groups: HashMap::new(),
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x7240_subdirectory }),
+            subdirectory: None,
         }),
-        (29249, TagKitDef {
-            id: 29249,
-            name: "IDC2_IFD",
-            format: "unknown",
+        (445, TagKitDef {
+            id: 445,
+            name: "ShutterCount3",
+            format: "int32u",
             groups: HashMap::new(),
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x7241_subdirectory }),
+            subdirectory: None,
         }),
-        (29264, TagKitDef {
-            id: 29264,
-            name: "MRWInfo",
+        (49, TagKitDef {
+            id: 49,
+            name: "FlashStatus",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_403),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (50, TagKitDef {
+            id: 50,
+            name: "ShutterCount",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("total number of image exposures made by the camera, modulo 65536 for some\n            models"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (60, TagKitDef {
+            id: 60,
+            name: "SonyFNumber",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f\",$val)"),
+            value_conv: Some("2 ** (($val/256 - 16) / 2)"),
+            subdirectory: None,
+        }),
+        (63, TagKitDef {
+            id: 63,
+            name: "ReleaseMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_404),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (76, TagKitDef {
+            id: 76,
+            name: "ShutterCount2",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SonyMaxAperture",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f\",$val)"),
+            value_conv: Some("2 ** (($val/8 - 1.06) / 2)"),
+            subdirectory: None,
+        }),
+        (107, TagKitDef {
+            id: 107,
+            name: "ReleaseMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_405),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (109, TagKitDef {
+            id: 109,
+            name: "ReleaseMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_406),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (115, TagKitDef {
+            id: 115,
+            name: "ReleaseMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_407),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (136, TagKitDef {
+            id: 136,
+            name: "InternalSerialNumber",
+            format: "int8u[6]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("unpack \"H*\", pack \"C*\", split \" \", $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (38, TagKitDef {
+            id: 38,
+            name: "Shutter",
+            format: "int16u[3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (415, TagKitDef {
+            id: 415,
+            name: "ShutterCount3",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (459, TagKitDef {
+            id: 459,
+            name: "ShutterCount3",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (461, TagKitDef {
+            id: 461,
+            name: "ShutterCount3",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (491, TagKitDef {
+            id: 491,
+            name: "APS-CSizeCapture",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_408),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (493, TagKitDef {
+            id: 493,
+            name: "LensSpecFeatures",
+            format: "undef[2]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Manual("code_ref_printconv"),
+            value_conv: Some("join \" \", unpack \"H2H2\", $val"),
+            subdirectory: None,
+        }),
+        (494, TagKitDef {
+            id: 494,
+            name: "APS-CSizeCapture",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_409),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (496, TagKitDef {
+            id: 496,
+            name: "LensSpecFeatures",
+            format: "undef[2]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Manual("code_ref_printconv"),
+            value_conv: Some("join \" \", unpack \"H2H2\", $val"),
+            subdirectory: None,
+        }),
+        (538, TagKitDef {
+            id: 538,
+            name: "APS-CSizeCapture",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_410),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (540, TagKitDef {
+            id: 540,
+            name: "LensSpecFeatures",
+            format: "undef[2]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Manual("code_ref_printconv"),
+            value_conv: Some("join \" \", unpack \"H2H2\", $val"),
+            subdirectory: None,
+        }),
+        (540, TagKitDef {
+            id: 540,
+            name: "APS-CSizeCapture",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_411),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (542, TagKitDef {
+            id: 542,
+            name: "LensSpecFeatures",
+            format: "undef[2]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Manual("code_ref_printconv"),
+            value_conv: Some("join \" \", unpack \"H2H2\", $val"),
+            subdirectory: None,
+        }),
+        (57, TagKitDef {
+            id: 57,
+            name: "FlashStatus",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_412),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58, TagKitDef {
+            id: 58,
+            name: "ShutterCount",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("total number of image exposures made by the camera"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (72, TagKitDef {
+            id: 72,
+            name: "SonyFNumber",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f\",$val)"),
+            value_conv: Some("2 ** (($val/256 - 16) / 2)"),
+            subdirectory: None,
+        }),
+        (75, TagKitDef {
+            id: 75,
+            name: "ReleaseMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_413),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (80, TagKitDef {
+            id: 80,
+            name: "ShutterCount2",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (82, TagKitDef {
+            id: 82,
+            name: "ShutterCount2",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (88, TagKitDef {
+            id: 88,
+            name: "ShutterCount2",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (104, TagKitDef {
+            id: 104,
+            name: "SonyFNumber",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f\",$val)"),
+            value_conv: Some("2 ** (($val/256 - 16) / 2)"),
+            subdirectory: None,
+        }),
+        (107, TagKitDef {
+            id: 107,
+            name: "ReleaseMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_414),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (136, TagKitDef {
+            id: 136,
+            name: "InternalSerialNumber",
+            format: "int8u[6]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("unpack \"H*\", pack \"C*\", split \" \", $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (138, TagKitDef {
+            id: 138,
+            name: "InternalSerialNumber",
+            format: "int8u[6]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("unpack \"H*\", pack \"C*\", split \" \", $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (38, TagKitDef {
+            id: 38,
+            name: "Shutter",
+            format: "int16u[3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (57, TagKitDef {
+            id: 57,
+            name: "FlashStatus",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_415),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58, TagKitDef {
+            id: 58,
+            name: "ShutterCount",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("total number of image exposures made by the camera"),
+            print_conv: PrintConvType::Expression("sprintf(\"%6d\",$val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (72, TagKitDef {
+            id: 72,
+            name: "SonyFNumber",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f\",$val)"),
+            value_conv: Some("2 ** (($val/256 - 16) / 2)"),
+            subdirectory: None,
+        }),
+        (75, TagKitDef {
+            id: 75,
+            name: "ReleaseMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_416),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (80, TagKitDef {
+            id: 80,
+            name: "ShutterCount2",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (28, TagKitDef {
+            id: 28,
+            name: "SonyFNumber",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f\",$val)"),
+            value_conv: Some("2 ** (($val/256 - 16) / 2)"),
+            subdirectory: None,
+        }),
+        (31, TagKitDef {
+            id: 31,
+            name: "ReleaseMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_417),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (56, TagKitDef {
+            id: 56,
+            name: "InternalSerialNumber",
+            format: "int8u[6]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("unpack \"H*\", pack \"C*\", split \" \", $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "SequenceFileNumber",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("file number in burst sequence"),
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val + 1"),
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "ReleaseMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_418),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (18, TagKitDef {
+            id: 18,
+            name: "DigitalZoom",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_419),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (26, TagKitDef {
+            id: 26,
+            name: "ShotNumberSincePowerUp",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (34, TagKitDef {
+            id: 34,
+            name: "SequenceLength",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_420),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (40, TagKitDef {
+            id: 40,
+            name: "CameraOrientation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_421),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (41, TagKitDef {
+            id: 41,
+            name: "Quality2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_422),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (68, TagKitDef {
+            id: 68,
+            name: "SonyImageHeight",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val > 0 ? 8*$val : \"n.a.\""),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (82, TagKitDef {
+            id: 82,
+            name: "ModelReleaseYear",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"20%.2d\", $val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "SequenceFileNumber",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("file number in burst sequence"),
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val + 1"),
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "ReleaseMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_423),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (18, TagKitDef {
+            id: 18,
+            name: "DigitalZoom",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_424),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (22, TagKitDef {
+            id: 22,
+            name: "ShotNumberSincePowerUp",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30, TagKitDef {
+            id: 30,
+            name: "SequenceLength",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_425),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (36, TagKitDef {
+            id: 36,
+            name: "CameraOrientation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_426),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (37, TagKitDef {
+            id: 37,
+            name: "Quality2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_427),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (63, TagKitDef {
+            id: 63,
+            name: "SonyImageHeight",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val > 0 ? 8*$val : \"n.a.\""),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (70, TagKitDef {
+            id: 70,
+            name: "ModelReleaseYear",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"20%.2d\", $val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (18, TagKitDef {
+            id: 18,
+            name: "SequenceImageNumber",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("number of images captured in burst sequence"),
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val + 1"),
+            subdirectory: None,
+        }),
+        (22, TagKitDef {
+            id: 22,
+            name: "SequenceLength",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_428),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (26, TagKitDef {
+            id: 26,
+            name: "SequenceFileNumber",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("file number in burst sequence"),
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val + 1"),
+            subdirectory: None,
+        }),
+        (30, TagKitDef {
+            id: 30,
+            name: "SequenceLength",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_429),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (307, TagKitDef {
+            id: 307,
+            name: "ShutterType",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_430),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (313, TagKitDef {
+            id: 313,
+            name: "ShutterType",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_431),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (41, TagKitDef {
+            id: 41,
+            name: "CameraOrientation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_432),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (42, TagKitDef {
+            id: 42,
+            name: "Quality2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_433),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (42, TagKitDef {
+            id: 42,
+            name: "Quality2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_434),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (83, TagKitDef {
+            id: 83,
+            name: "ModelReleaseYear",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"20%.2d\", $val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Ver9401",
             format: "unknown",
             groups: HashMap::new(),
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x7250_subdirectory }),
+            subdirectory: None,
+        }),
+        (1012, TagKitDef {
+            id: 1012,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x3f4_subdirectory }),
+        }),
+        (1102, TagKitDef {
+            id: 1102,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x44e_subdirectory }),
+        }),
+        (1176, TagKitDef {
+            id: 1176,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x498_subdirectory }),
+        }),
+        (1181, TagKitDef {
+            id: 1181,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x49d_subdirectory }),
+        }),
+        (1182, TagKitDef {
+            id: 1182,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x49e_subdirectory }),
+        }),
+        (1185, TagKitDef {
+            id: 1185,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x4a1_subdirectory }),
+        }),
+        (1186, TagKitDef {
+            id: 1186,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x4a2_subdirectory }),
+        }),
+        (1210, TagKitDef {
+            id: 1210,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x4ba_subdirectory }),
+        }),
+        (1437, TagKitDef {
+            id: 1437,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x59d_subdirectory }),
+        }),
+        (1588, TagKitDef {
+            id: 1588,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x634_subdirectory }),
+        }),
+        (1590, TagKitDef {
+            id: 1590,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x636_subdirectory }),
+        }),
+        (1612, TagKitDef {
+            id: 1612,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x64c_subdirectory }),
+        }),
+        (1619, TagKitDef {
+            id: 1619,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x653_subdirectory }),
+        }),
+        (1656, TagKitDef {
+            id: 1656,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x678_subdirectory }),
+        }),
+        (1720, TagKitDef {
+            id: 1720,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x6b8_subdirectory }),
+        }),
+        (1758, TagKitDef {
+            id: 1758,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x6de_subdirectory }),
+        }),
+        (1767, TagKitDef {
+            id: 1767,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x6e7_subdirectory }),
+        }),
+        (994, TagKitDef {
+            id: 994,
+            name: "ISOInfo",
+            format: "int8u[5]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x3e2_subdirectory }),
+        }),
+        (22, TagKitDef {
+            id: 22,
+            name: "FocusMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_435),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (23, TagKitDef {
+            id: 23,
+            name: "AFAreaMode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_436),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (45, TagKitDef {
+            id: 45,
+            name: "FocusPosition2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (11, TagKitDef {
+            id: 11,
+            name: "ExposureProgram",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_437),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (13, TagKitDef {
+            id: 13,
+            name: "IntelligentAuto",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_438),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (25, TagKitDef {
+            id: 25,
+            name: "LensZoomPosition",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.0f%%\",$val/10.24)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "ExposureProgram",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_439),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (14, TagKitDef {
+            id: 14,
+            name: "IntelligentAuto",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_440),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30, TagKitDef {
+            id: 30,
+            name: "LensZoomPosition",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.0f%%\",$val/10.24)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32, TagKitDef {
+            id: 32,
+            name: "FocusPosition2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (11, TagKitDef {
+            id: 11,
+            name: "ExposureProgram",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_441),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (13, TagKitDef {
+            id: 13,
+            name: "IntelligentAuto",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_442),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1536, TagKitDef {
+            id: 1536,
+            name: "DistortionCorrParamsPresent",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_443),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1537, TagKitDef {
+            id: 1537,
+            name: "DistortionCorrection",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_444),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1539, TagKitDef {
+            id: 1539,
+            name: "LensFormat",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_445),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1540, TagKitDef {
+            id: 1540,
+            name: "LensMount",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_446),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1541, TagKitDef {
+            id: 1541,
+            name: "LensType2",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("E-mount lenses"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_447),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1544, TagKitDef {
+            id: 1544,
+            name: "LensType",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("A-mount lenses on SLT and NEX"),
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1610, TagKitDef {
+            id: 1610,
+            name: "VignettingCorrParams",
+            format: "int16s[16]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1642, TagKitDef {
+            id: 1642,
+            name: "ChromaticAberrationCorrParams",
+            format: "int16s[32]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1738, TagKitDef {
+            id: 1738,
+            name: "DistortionCorrParams",
+            format: "int16s[16]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (100, TagKitDef {
+            id: 100,
+            name: "DistortionCorrParams",
+            format: "int16s[16]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "SonyFNumber",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f\",$val)"),
+            value_conv: Some("2 ** (($val/256 - 16) / 2)"),
+            subdirectory: None,
+        }),
+        (22, TagKitDef {
+            id: 22,
+            name: "SonyMaxApertureValue",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f\",$val)"),
+            value_conv: Some("2 ** (($val/256 - 16) / 2)"),
+            subdirectory: None,
+        }),
+        (36, TagKitDef {
+            id: 36,
+            name: "SequenceImageNumber",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("number of images captured in burst sequence"),
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val + 1"),
+            subdirectory: None,
+        }),
+        (52, TagKitDef {
+            id: 52,
+            name: "ReleaseMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_448),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (62, TagKitDef {
+            id: 62,
+            name: "SonyImageWidthMax",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (64, TagKitDef {
+            id: 64,
+            name: "SonyImageHeightMax",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (66, TagKitDef {
+            id: 66,
+            name: "HighISONoiseReduction",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_449),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (68, TagKitDef {
+            id: 68,
+            name: "LongExposureNoiseReduction",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_450),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (70, TagKitDef {
+            id: 70,
+            name: "PictureEffect2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_451),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (72, TagKitDef {
+            id: 72,
+            name: "ExposureProgram",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_452),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (74, TagKitDef {
+            id: 74,
+            name: "CreativeStyle",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_453),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (82, TagKitDef {
+            id: 82,
+            name: "Sharpness",
+            format: "int8s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val > 0 ? \"+$val\" : $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (834, TagKitDef {
+            id: 834,
+            name: "LensZoomPosition",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.0f%%\",$val/10.24)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (842, TagKitDef {
+            id: 842,
+            name: "VignettingCorrParams",
+            format: "int16s[16]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (846, TagKitDef {
+            id: 846,
+            name: "LensZoomPosition",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.0f%%\",$val/10.24)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (848, TagKitDef {
+            id: 848,
+            name: "VignettingCorrParams",
+            format: "int16s[16]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (858, TagKitDef {
+            id: 858,
+            name: "LensZoomPosition",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.0f%%\",$val/10.24)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (860, TagKitDef {
+            id: 860,
+            name: "VignettingCorrParams",
+            format: "int16s[16]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (872, TagKitDef {
+            id: 872,
+            name: "VignettingCorrParams",
+            format: "int16s[16]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (892, TagKitDef {
+            id: 892,
+            name: "ChromaticAberrationCorrParams",
+            format: "int16s[32]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (90, TagKitDef {
+            id: 90,
+            name: "DistortionCorrParamsPresent",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_454),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (900, TagKitDef {
+            id: 900,
+            name: "ChromaticAberrationCorrParams",
+            format: "int16s[32]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (91, TagKitDef {
+            id: 91,
+            name: "DistortionCorrection",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_455),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (924, TagKitDef {
+            id: 924,
+            name: "ChromaticAberrationCorrParams",
+            format: "int16s[32]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (93, TagKitDef {
+            id: 93,
+            name: "LensFormat",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_456),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (94, TagKitDef {
+            id: 94,
+            name: "LensMount",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_457),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (944, TagKitDef {
+            id: 944,
+            name: "ChromaticAberrationCorrParams",
+            format: "int16s[32]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (952, TagKitDef {
+            id: 952,
+            name: "ChromaticAberrationCorrParams",
+            format: "int16s[32]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (96, TagKitDef {
+            id: 96,
+            name: "LensType2",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("E-mount lenses"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_458),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (98, TagKitDef {
+            id: 98,
+            name: "LensType",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("A-mount lenses on SLT and NEX"),
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (11, TagKitDef {
+            id: 11,
+            name: "CameraE-mountVersion",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%x.%.2x\",$val>>8,$val&0xff)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (13, TagKitDef {
+            id: 13,
+            name: "LensE-mountVersion",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%x.%.2x\",$val>>8,$val&0xff)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "LensFirmwareVersion",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"Ver.%.2x.%.3d\",$val>>8,$val&0xff)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (6662, TagKitDef {
+            id: 6662,
+            name: "TiffMeteringImageWidth",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (6663, TagKitDef {
+            id: 6663,
+            name: "TiffMeteringImageHeight",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (6664, TagKitDef {
+            id: 6664,
+            name: "TiffMeteringImage",
+            format: "undef[2640]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("13(?)-bit intensity data from 1320 (1200) metering segments, extracted as a\n            16-bit TIFF image"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tag9416_0000",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%3d\",$val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (112, TagKitDef {
+            id: 112,
+            name: "PictureProfile",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (113, TagKitDef {
+            id: 113,
+            name: "FocalLength",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
+            value_conv: Some("$val / 10"),
+            subdirectory: None,
+        }),
+        (115, TagKitDef {
+            id: 115,
+            name: "MinFocalLength",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
+            value_conv: Some("$val / 10"),
+            subdirectory: None,
+        }),
+        (117, TagKitDef {
+            id: 117,
+            name: "MaxFocalLength",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f mm\",$val)"),
+            value_conv: Some("$val / 10"),
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "SonyFNumber2",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f\",$val)"),
+            value_conv: Some("2 ** (($val/256 - 16) / 2)"),
+            subdirectory: None,
+        }),
+        (18, TagKitDef {
+            id: 18,
+            name: "SonyMaxApertureValue",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.1f\",$val)"),
+            value_conv: Some("2 ** (($val/256 - 16) / 2)"),
+            subdirectory: None,
+        }),
+        (2191, TagKitDef {
+            id: 2191,
+            name: "VignettingCorrParams",
+            format: "int16s[16]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2193, TagKitDef {
+            id: 2193,
+            name: "VignettingCorrParams",
+            format: "int16s[16]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2205, TagKitDef {
+            id: 2205,
+            name: "VignettingCorrParams",
+            format: "int16s[32]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2229, TagKitDef {
+            id: 2229,
+            name: "APS-CSizeCapture",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_459),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2231, TagKitDef {
+            id: 2231,
+            name: "APS-CSizeCapture",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_460),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2277, TagKitDef {
+            id: 2277,
+            name: "APS-CSizeCapture",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_461),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2324, TagKitDef {
+            id: 2324,
+            name: "ChromaticAberrationCorrParams",
+            format: "int16s[32]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2326, TagKitDef {
+            id: 2326,
+            name: "ChromaticAberrationCorrParams",
+            format: "int16s[32]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2373, TagKitDef {
+            id: 2373,
+            name: "ChromaticAberrationCorrParams",
+            format: "int16s[32]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (29, TagKitDef {
+            id: 29,
+            name: "SequenceImageNumber",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("number of images captured in burst sequence"),
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val + 1"),
+            subdirectory: None,
+        }),
+        (43, TagKitDef {
+            id: 43,
+            name: "ReleaseMode2",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_462),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (53, TagKitDef {
+            id: 53,
+            name: "ExposureProgram",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_463),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (55, TagKitDef {
+            id: 55,
+            name: "CreativeStyle",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_464),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (72, TagKitDef {
+            id: 72,
+            name: "LensMount",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_465),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (73, TagKitDef {
+            id: 73,
+            name: "LensFormat",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_466),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (74, TagKitDef {
+            id: 74,
+            name: "LensMount",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_467),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (75, TagKitDef {
+            id: 75,
+            name: "LensType2",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_468),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (77, TagKitDef {
+            id: 77,
+            name: "LensType",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (79, TagKitDef {
+            id: 79,
+            name: "DistortionCorrParams",
+            format: "int16s[16]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12816, TagKitDef {
+            id: 12816,
+            name: "Sony_rtmd_0x3210",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12825, TagKitDef {
+            id: 12825,
+            name: "Sony_rtmd_0x3219",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12826, TagKitDef {
+            id: 12826,
+            name: "Sony_rtmd_0x321a",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1550, TagKitDef {
+            id: 1550,
+            name: "Sony_rtmd_0x060e",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32768, TagKitDef {
+            id: 32768,
+            name: "FNumber",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("Image::ExifTool::Exif::PrintFNumber($val)"),
+            value_conv: Some("2 ** (8-$val/8192)"),
+            subdirectory: None,
+        }),
+        (32769, TagKitDef {
+            id: 32769,
+            name: "Sony_rtmd_0x8001",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32772, TagKitDef {
+            id: 32772,
+            name: "Sony_rtmd_0x8004",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32773, TagKitDef {
+            id: 32773,
+            name: "Sony_rtmd_0x8005",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32778, TagKitDef {
+            id: 32778,
+            name: "Sony_rtmd_0x800a",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32779, TagKitDef {
+            id: 32779,
+            name: "Sony_rtmd_0x800b",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (33024, TagKitDef {
+            id: 33024,
+            name: "Sony_rtmd_0x8100",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (33025, TagKitDef {
+            id: 33025,
+            name: "Sony_rtmd_0x8101",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (33028, TagKitDef {
+            id: 33028,
+            name: "Sony_rtmd_0x8104",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (33029, TagKitDef {
+            id: 33029,
+            name: "Sony_rtmd_0x8105",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (33030, TagKitDef {
+            id: 33030,
+            name: "Sony_rtmd_0x8106",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (33034, TagKitDef {
+            id: 33034,
+            name: "MasterGainAdjustment",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.2f dB\", $val)"),
+            value_conv: Some("$val / 100"),
+            subdirectory: None,
+        }),
+        (33035, TagKitDef {
+            id: 33035,
+            name: "ISO",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (33036, TagKitDef {
+            id: 33036,
+            name: "ElectricalExtenderMagnification",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (33037, TagKitDef {
+            id: 33037,
+            name: "Sony_rtmd_0x810d",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (33045, TagKitDef {
+            id: 33045,
+            name: "Sony_rtmd_0x8115",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (57344, TagKitDef {
+            id: 57344,
+            name: "Sony_rtmd_0xe000",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58112, TagKitDef {
+            id: 58112,
+            name: "Sony_rtmd_0xe300",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58113, TagKitDef {
+            id: 58113,
+            name: "Sony_rtmd_0xe301",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58114, TagKitDef {
+            id: 58114,
+            name: "Sony_rtmd_0xe302",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58115, TagKitDef {
+            id: 58115,
+            name: "WhiteBalance",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_469),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58421, TagKitDef {
+            id: 58421,
+            name: "Sony_rtmd_0xe435",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58423, TagKitDef {
+            id: 58423,
+            name: "Sony_rtmd_0xe437",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58427, TagKitDef {
+            id: 58427,
+            name: "PitchRollYaw",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58437, TagKitDef {
+            id: 58437,
+            name: "Sony_rtmd_0xe445",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58443, TagKitDef {
+            id: 58443,
+            name: "Accelerometer",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
         }),
     ]
 }

@@ -93,9 +93,46 @@ static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
+static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("23".to_string(), "Mechanical");
+    map.insert("7".to_string(), "Electronic");
+    map
+});
+
 /// Get tag definitions for color category
 pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
     vec![
+        (
+            324,
+            TagKitDef {
+                id: 324,
+                name: "MeterInfo1Row4",
+                format: "int32u[27]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Expression(
+                    "sprintf(\"%19d %4d %6d\" . \" %3d %4d %6d\" x 8, split(\" \",$val))",
+                ),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            330,
+            TagKitDef {
+                id: 330,
+                name: "ShutterCount",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("A450, A500 and A550 only"),
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
         (
             528,
             TagKitDef {
@@ -149,6 +186,20 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 notes: None,
                 print_conv: PrintConvType::Expression("$val ? sprintf(\"%.1f\",$val) : $val"),
                 value_conv: Some("16 - $val/256"),
+                subdirectory: None,
+            },
+        ),
+        (
+            319,
+            TagKitDef {
+                id: 319,
+                name: "ShutterType",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_4),
+                value_conv: None,
                 subdirectory: None,
             },
         ),

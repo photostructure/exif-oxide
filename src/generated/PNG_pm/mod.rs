@@ -6,8 +6,10 @@
 pub mod isdatchunk;
 pub mod istxtchunk;
 pub mod noleapfrog;
+pub mod tag_kit;
 
 // Re-export all lookup functions and constants
 pub use isdatchunk::*;
 pub use istxtchunk::*;
 pub use noleapfrog::*;
+pub use tag_kit::*;

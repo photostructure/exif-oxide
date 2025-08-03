@@ -43,7 +43,8 @@ pub enum PrintConvType {
 }
 
 /// Type alias for subdirectory processor function
-pub type SubDirectoryProcessor = fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>;
+pub type SubDirectoryProcessor =
+    fn(&[u8], ByteOrder, Option<&str>) -> Result<Vec<(String, TagValue)>>;
 
 #[derive(Debug, Clone)]
 pub enum SubDirectoryType {
@@ -192,6 +193,199 @@ fn read_int16s(data: &[u8], byte_order: ByteOrder) -> Result<i16> {
     })
 }
 
+// Subdirectory processing functions
+
+// Functions for tables not extracted by tag kit
+fn process_iptc_applicationrecord(
+    data: &[u8],
+    _byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_iptc_enveloperecord(
+    data: &[u8],
+    _byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_iptc_fotostation(
+    data: &[u8],
+    _byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_iptc_newsphoto(data: &[u8], _byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_iptc_objectdata(data: &[u8], _byte_order: ByteOrder) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_iptc_postobjectdata(
+    data: &[u8],
+    _byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+fn process_iptc_preobjectdata(
+    data: &[u8],
+    _byte_order: ByteOrder,
+) -> Result<Vec<(String, TagValue)>> {
+    // TODO: Implement when this table is extracted
+    tracing::debug!("Stub function called for {}", data.len());
+    Ok(vec![])
+}
+
+pub fn process_tag_0x1_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+    model: Option<&str>,
+) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x1_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_iptc_enveloperecord(data, byte_order)
+}
+
+pub fn process_tag_0x2_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+    model: Option<&str>,
+) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x2_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_iptc_applicationrecord(data, byte_order)
+}
+
+pub fn process_tag_0x3_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+    model: Option<&str>,
+) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x3_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_iptc_newsphoto(data, byte_order)
+}
+
+pub fn process_tag_0x7_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+    model: Option<&str>,
+) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x7_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_iptc_preobjectdata(data, byte_order)
+}
+
+pub fn process_tag_0x8_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+    model: Option<&str>,
+) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x8_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_iptc_objectdata(data, byte_order)
+}
+
+pub fn process_tag_0x9_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+    model: Option<&str>,
+) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0x9_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_iptc_postobjectdata(data, byte_order)
+}
+
+pub fn process_tag_0xf0_subdirectory(
+    data: &[u8],
+    byte_order: ByteOrder,
+    model: Option<&str>,
+) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
+    use tracing::debug;
+    let count = data.len() / 2;
+    debug!(
+        "process_tag_0xf0_subdirectory called with {} bytes, count={}",
+        data.len(),
+        count
+    );
+
+    // Single unconditional subdirectory
+    process_iptc_fotostation(data, byte_order)
+}
+
 /// Apply PrintConv for a tag from this module
 pub fn apply_print_conv(
     tag_id: u32,
@@ -220,97 +414,29 @@ pub fn apply_value_conv(
     _errors: &mut Vec<String>,
 ) -> Result<TagValue> {
     match tag_id {
+        0 => {
+            if let Some(tag_kit) = IPTC_PM_TAG_KITS.get(&tag_id) {
+                if let Some(expr) = tag_kit.value_conv {
+                    Ok(crate::implementations::missing::missing_value_conv(
+                        tag_id,
+                        &tag_kit.name,
+                        "IPTC",
+                        expr,
+                        value,
+                    ))
+                } else {
+                    Ok(value.clone())
+                }
+            } else {
+                Ok(value.clone())
+            }
+        }
         30 => crate::implementations::value_conv::exif_date_value_conv(value),
-        35 => {
-            if let Some(tag_kit) = IPTC_PM_TAG_KITS.get(&tag_id) {
-                if let Some(expr) = tag_kit.value_conv {
-                    Ok(crate::implementations::missing::missing_value_conv(
-                        tag_id,
-                        &tag_kit.name,
-                        "IPTC",
-                        expr,
-                        value,
-                    ))
-                } else {
-                    Ok(value.clone())
-                }
-            } else {
-                Ok(value.clone())
-            }
-        }
         37 => crate::implementations::value_conv::exif_date_value_conv(value),
-        38 => {
-            if let Some(tag_kit) = IPTC_PM_TAG_KITS.get(&tag_id) {
-                if let Some(expr) = tag_kit.value_conv {
-                    Ok(crate::implementations::missing::missing_value_conv(
-                        tag_id,
-                        &tag_kit.name,
-                        "IPTC",
-                        expr,
-                        value,
-                    ))
-                } else {
-                    Ok(value.clone())
-                }
-            } else {
-                Ok(value.clone())
-            }
-        }
         47 => crate::implementations::value_conv::exif_date_value_conv(value),
         55 => crate::implementations::value_conv::exif_date_value_conv(value),
-        60 => {
-            if let Some(tag_kit) = IPTC_PM_TAG_KITS.get(&tag_id) {
-                if let Some(expr) = tag_kit.value_conv {
-                    Ok(crate::implementations::missing::missing_value_conv(
-                        tag_id,
-                        &tag_kit.name,
-                        "IPTC",
-                        expr,
-                        value,
-                    ))
-                } else {
-                    Ok(value.clone())
-                }
-            } else {
-                Ok(value.clone())
-            }
-        }
         62 => crate::implementations::value_conv::exif_date_value_conv(value),
-        63 => {
-            if let Some(tag_kit) = IPTC_PM_TAG_KITS.get(&tag_id) {
-                if let Some(expr) = tag_kit.value_conv {
-                    Ok(crate::implementations::missing::missing_value_conv(
-                        tag_id,
-                        &tag_kit.name,
-                        "IPTC",
-                        expr,
-                        value,
-                    ))
-                } else {
-                    Ok(value.clone())
-                }
-            } else {
-                Ok(value.clone())
-            }
-        }
         70 => crate::implementations::value_conv::exif_date_value_conv(value),
-        80 => {
-            if let Some(tag_kit) = IPTC_PM_TAG_KITS.get(&tag_id) {
-                if let Some(expr) = tag_kit.value_conv {
-                    Ok(crate::implementations::missing::missing_value_conv(
-                        tag_id,
-                        &tag_kit.name,
-                        "IPTC",
-                        expr,
-                        value,
-                    ))
-                } else {
-                    Ok(value.clone())
-                }
-            } else {
-                Ok(value.clone())
-            }
-        }
         231 => {
             if let Some(tag_kit) = IPTC_PM_TAG_KITS.get(&tag_id) {
                 if let Some(expr) = tag_kit.value_conv {
@@ -326,6 +452,71 @@ pub fn apply_value_conv(
                 }
             } else {
                 Ok(value.clone())
+            }
+        }
+        35 => {
+            // Compiled arithmetic: Image::ExifTool::Exif::ExifTime($val)
+            match value.as_f64() {
+                Some(val) => Ok(crate::implementations::missing::missing_print_conv(
+                    0,
+                    "Image::ExifTool::Exif::ExifTime",
+                    "Expression",
+                    "Image::ExifTool::Exif::ExifTime($val)",
+                    &TagValue::F64(val),
+                )),
+                None => Ok(value.clone()),
+            }
+        }
+        38 => {
+            // Compiled arithmetic: Image::ExifTool::Exif::ExifTime($val)
+            match value.as_f64() {
+                Some(val) => Ok(crate::implementations::missing::missing_print_conv(
+                    0,
+                    "Image::ExifTool::Exif::ExifTime",
+                    "Expression",
+                    "Image::ExifTool::Exif::ExifTime($val)",
+                    &TagValue::F64(val),
+                )),
+                None => Ok(value.clone()),
+            }
+        }
+        60 => {
+            // Compiled arithmetic: Image::ExifTool::Exif::ExifTime($val)
+            match value.as_f64() {
+                Some(val) => Ok(crate::implementations::missing::missing_print_conv(
+                    0,
+                    "Image::ExifTool::Exif::ExifTime",
+                    "Expression",
+                    "Image::ExifTool::Exif::ExifTime($val)",
+                    &TagValue::F64(val),
+                )),
+                None => Ok(value.clone()),
+            }
+        }
+        63 => {
+            // Compiled arithmetic: Image::ExifTool::Exif::ExifTime($val)
+            match value.as_f64() {
+                Some(val) => Ok(crate::implementations::missing::missing_print_conv(
+                    0,
+                    "Image::ExifTool::Exif::ExifTime",
+                    "Expression",
+                    "Image::ExifTool::Exif::ExifTime($val)",
+                    &TagValue::F64(val),
+                )),
+                None => Ok(value.clone()),
+            }
+        }
+        80 => {
+            // Compiled arithmetic: Image::ExifTool::Exif::ExifTime($val)
+            match value.as_f64() {
+                Some(val) => Ok(crate::implementations::missing::missing_print_conv(
+                    0,
+                    "Image::ExifTool::Exif::ExifTime",
+                    "Expression",
+                    "Image::ExifTool::Exif::ExifTime($val)",
+                    &TagValue::F64(val),
+                )),
+                None => Ok(value.clone()),
             }
         }
         _ => {
@@ -363,6 +554,7 @@ pub fn process_subdirectory(
     tag_id: u32,
     value: &TagValue,
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<HashMap<String, TagValue>> {
     use tracing::debug;
     let mut result = HashMap::new();
@@ -391,7 +583,7 @@ pub fn process_subdirectory(
 
             debug!("Calling processor with {} bytes", bytes.len());
             // Process subdirectory and collect all extracted tags
-            match processor(&bytes, byte_order) {
+            match processor(&bytes, byte_order, model) {
                 Ok(extracted_tags) => {
                     debug!("Processor returned {} tags", extracted_tags.len());
                     for (name, value) in extracted_tags {

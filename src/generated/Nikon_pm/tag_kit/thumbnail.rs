@@ -16,18 +16,76 @@ use std::sync::LazyLock;
 
 /// Get tag definitions for thumbnail category
 pub fn get_thumbnail_tags() -> Vec<(u32, TagKitDef)> {
-    vec![(
-        0,
-        TagKitDef {
-            id: 0,
-            name: "ThumbnailImage",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        },
-    )]
+    vec![
+        (
+            0,
+            TagKitDef {
+                id: 0,
+                name: "ThumbnailImage",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            513,
+            TagKitDef {
+                id: 513,
+                name: "PreviewImageStart",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            514,
+            TagKitDef {
+                id: 514,
+                name: "PreviewImageLength",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            513,
+            TagKitDef {
+                id: 513,
+                name: "DigitalDEEThreshold",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            514,
+            TagKitDef {
+                id: 514,
+                name: "DigitalDEEHighlightAdj",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+    ]
 }
