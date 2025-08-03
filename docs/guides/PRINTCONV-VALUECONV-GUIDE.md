@@ -44,14 +44,27 @@ pub fn fnumber_print_conv(val: &TagValue) -> TagValue {
 
 ## Architecture Overview
 
-### Dual Registry System (`codegen/src/conv_registry.rs`)
+### Expression Compiler + Fallback Registry System
 
-**PrintConv Registry** - Maps expressions to display functions:
+**🎉 NEW (P17)**: Most expressions are now **compiled automatically** by the expression compiler, eliminating the need for manual registry entries.
+
+**Expression Compiler** - Handles most patterns automatically:
+```rust
+// These are now compiled automatically - no registry entries needed!
+"sprintf(\"%.1f mm\", $val)"           → format!("{:.1} mm", val)
+"Image::ExifTool::Exif::PrintFNumber($val)" → fnumber_print_conv(val) 
+"$val ? exp($val/8*log(2))*100 : $val" → if val != 0.0 { ... } else { val }
+"\"$val mm\""                          → format!("{} mm", val)
+"$val . \" suffix\""                   → format!("{}{}", val, " suffix")
+```
+
+**PrintConv Registry** - Only for **non-compilable** expressions:
 ```rust
 static PRINTCONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'static str)>> = LazyLock::new(|| {
     let mut m = HashMap::new();
-    m.insert("sprintf(\"%.1f mm\",$val)", ("crate::implementations::print_conv", "focallength_print_conv"));
-    m.insert("Image::ExifTool::Exif::PrintExposureTime($val)", ("crate::implementations::print_conv", "exposuretime_print_conv"));
+    // Only regex operations and power operations need manual registry entries
+    m.insert("$val =~ /^(inf|undef)$/ ? $val : \"$val m\"", ("crate::implementations::print_conv", "gpsaltitude_print_conv"));
+    m.insert("2 ** (-$val/3)", ("crate::implementations::value_conv", "power_neg_div_3_value_conv"));
     m
 });
 ```
@@ -77,19 +90,87 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
 });
 ```
 
-### Three-Tier Lookup System
+### Four-Tier Lookup System (Updated for P17)
 
 The code generator checks in priority order:
 
 1. **Tag-Specific Registry** (highest priority)
-   - `Module::Tag` for module-specific implementations
+   - `Module::Tag` for module-specific implementations  
    - `Tag` for universal implementations (e.g., Flash)
 
-2. **Expression Registry** (PrintConv/ValueConv registries above)
+2. **🎉 NEW: Expression Compiler** (automatic compilation)
+   - **Checks `is_compilable()`** - tests if expression can be compiled automatically
+   - **Generates inline code** - sprintf, ternary, math functions, string interpolation, ExifTool functions
+   - **Direct function calls** - ExifTool functions like `PrintFNumber($val)` → `fnumber_print_conv(val)`
+
+3. **Expression Registry Fallback** (PrintConv/ValueConv registries above)
+   - **Only for non-compilable expressions** - regex operations, power operations, complex manual functions
    - **Exact match first** - tries expressions as-is from ExifTool
    - **Normalized match** - uses `normalize_expression.pl` for consistent formatting
 
-3. **Raw Expression Fallback** (preserved for manual implementation)
+4. **Raw Expression Fallback** (missing_print_conv for --show-missing)
+
+## Expression Compiler Capabilities (P17)
+
+### ✅ Supported Patterns
+
+**sprintf Functions**:
+```rust
+"sprintf(\"%.1f mm\", $val)"    → format!("{:.1} mm", val)
+"sprintf(\"%.2f\", $val)"       → format!("{:.2}", val)  
+"sprintf(\"%+d\", $val)"        → format!("{:+}", val as i32)
+```
+
+**String Interpolation**:
+```rust
+"\"$val mm\""                   → format!("{} mm", val)
+"\"hello $val world\""          → format!("hello {} world", val)
+```
+
+**String Concatenation**:
+```rust
+"$val . \" mm\""                → format!("{}{}", val, " mm")
+"\"Error: \" . $val"            → format!("Error: {}", val)
+```
+
+**Ternary Expressions**:
+```rust
+"$val >= 0 ? $val : undef"                      → if val >= 0.0 { val } else { undef }
+"$val ? exp($val/8*log(2))*100 : $val"          → if val != 0.0 { exp(...) } else { val }
+"$val > 655.345 ? \"inf\" : \"$val m\""         → if val > 655.345 { "inf" } else { format!("{} m", val) }
+```
+
+**Math Functions**:
+```rust
+"int($val)"                     → val.trunc()
+"exp($val / 32 * log(2))"       → (val / 32.0 * 2.0.ln()).exp()
+"log($val)"                     → val.ln()
+```
+
+**ExifTool Function Calls**:
+```rust
+"Image::ExifTool::Exif::PrintFNumber($val)"     → fnumber_print_conv(val)
+"Image::ExifTool::Exif::PrintExposureTime($val)" → exposuretime_print_conv(val)
+```
+
+### ❌ Not Supported (Registry Required)
+
+**Power Operations**:
+```rust
+"2 ** (-$val/3)"                → Manual implementation needed
+"$val ? 2 ** (6 - $val/8) : 0"  → Manual implementation needed
+```
+
+**Regex Operations**:
+```rust
+"$val =~ /^(inf|undef)$/ ? $val : \"$val m\""   → Manual implementation needed
+"$val=~s/ +$//; $val"                            → Manual implementation needed
+```
+
+**Complex Multi-Argument Functions**:
+```rust
+"Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")" → Manual implementation needed
+```
 
 ### Perl Expression Normalization
 
@@ -323,9 +404,9 @@ cargo run -- test-images/canon/Canon_40D.jpg | grep FNumber
 - `$val=~s/ +$//; $val` → `trim_whitespace_value_conv`
 - `$val=~s/^.*: //;$val` → `remove_prefix_colon_value_conv`
 
-**PrintConv Formatting**:
-- `sprintf("%.1f mm",$val)` → `focallength_print_conv`
-- `sprintf("f/%.1f",$val)` → `fnumber_print_conv`
+**PrintConv Formatting** (🎉 Now compiled automatically by P17):
+- `sprintf("%.1f mm",$val)` → ~~`focallength_print_conv`~~ **Auto-compiled:** `format!("{:.1} mm", val)`
+- `sprintf("f/%.1f",$val)` → ~~`fnumber_print_conv`~~ **Auto-compiled:** `format!("f/{:.1}", val)`
 
 **APEX Conversions**:
 - `2**(-$val)` → `apex_shutter_speed_value_conv` (ValueConv)
