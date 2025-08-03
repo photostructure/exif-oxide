@@ -94,25 +94,27 @@ pub fn lookup_valueconv(expr: &str, module: &str) -> Option<(&'static str, &'sta
 /// Determines whether an expression can be compiled to inline arithmetic code
 /// or requires a custom function implementation.
 pub fn classify_valueconv_expression(expr: &str, module: &str) -> ValueConvType {
-    // First check if it's a compilable arithmetic expression
+    // CRITICAL: Check registry FIRST before trying compilation
+    // This fixes GPS ValueConv regression - registry lookups take precedence over compilation
+    if let Some((module_path, func_name)) = lookup_valueconv(expr, module) {
+        return ValueConvType::CustomFunction(module_path, func_name);
+    }
+    
+    // Only try compilation if no registry entry exists
     if CompiledExpression::is_compilable(expr) {
         match CompiledExpression::compile(expr) {
             Ok(compiled) => return ValueConvType::CompiledExpression(compiled),
             Err(_) => {
-                // Fall through to custom function lookup
+                // Fall through to unimplemented case
                 eprintln!("Warning: Expression '{}' looked compilable but failed compilation", expr);
             }
         }
     }
     
-    // Look up custom function in registry
-    if let Some((module_path, func_name)) = lookup_valueconv(expr, module) {
-        ValueConvType::CustomFunction(module_path, func_name)
-    } else {
-        // Fallback - treat as unregistered custom function
-        // This preserves existing behavior for unknown expressions
-        ValueConvType::CustomFunction("crate::implementations::missing", "missing_value_conv")
-    }
+    // No registry entry and not compilable - return unimplemented
+    // Fallback - treat as unregistered custom function
+    // This preserves existing behavior for unknown expressions
+    ValueConvType::CustomFunction("crate::implementations::missing", "missing_value_conv")
 }
 
 /// Get access to the VALUECONV_REGISTRY for testing
