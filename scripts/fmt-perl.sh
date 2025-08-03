@@ -28,7 +28,7 @@ format_perl_file() {
 
   # Set up local::lib environment and run perltidy
   local perltidy_path="${PERLTIDY_PATH:-$PERLTIDY_DEFAULT}"
-  eval $(perl -I "$HOME/perl5/lib/perl5/" -Mlocal::lib) && "$perltidy_path" "$file"
+  eval $(perl -I "$HOME/perl5/lib/perl5/" -Mlocal::lib) && "$perltidy_path" -st "$file" >"$file.tmp" && mv "$file.tmp" "$file"
 }
 
 # Export function and variables so xargs can use them
