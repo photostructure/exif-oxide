@@ -19,7 +19,6 @@ mod expression_compiler;
 mod extraction;
 mod extractors;
 mod file_operations;
-mod generated;
 mod generators;
 mod schemas;
 mod table_processor;
