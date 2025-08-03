@@ -54,13 +54,23 @@ pub fn ycbcrpositioning_print_conv(val: &TagValue) -> TagValue {
     }
 }
 
-/// GPS Altitude PrintConv
-/// ExifTool: lib/Image/ExifTool/GPS.pm:124 - '$val =~ /^(inf|undef)$/ ? $val : "$val m"'
+/// GPS Altitude PrintConv - formats altitude with Above/Below Sea Level based on sign
+/// ExifTool: lib/Image/ExifTool/GPS.pm:423-431 composite GPSAltitude PrintConv
+/// Format: "X.X m Above/Below Sea Level" based on positive/negative value
 pub fn gpsaltitude_print_conv(val: &TagValue) -> TagValue {
     match val.as_f64() {
         Some(v) if v.is_infinite() => "inf".into(),
         Some(v) if v.is_nan() => "undef".into(),
-        Some(v) => TagValue::string(format!("{v:.1} m")), // Round to 0.1m - GPS accuracy limit
+        Some(v) => {
+            let rounded = (v * 10.0).round() / 10.0; // Round to 1 decimal place
+            let abs_alt = rounded.abs();
+            let level_text = if v < 0.0 {
+                "Below Sea Level"
+            } else {
+                "Above Sea Level"
+            };
+            TagValue::string(format!("{abs_alt:.1} m {level_text}"))
+        }
         None => TagValue::string(format!("Unknown ({val})")),
     }
 }
@@ -95,20 +105,18 @@ pub fn gpslongituderef_print_conv(val: &TagValue) -> TagValue {
     }
 }
 
-/// GPS Latitude PrintConv - formats decimal degrees as degree/minute/second string
-/// ExifTool: lib/Image/ExifTool/GPS.pm lines 237-320 (ToDMS function)
-/// ExifTool: lib/Image/ExifTool/GPS.pm lines 17-21 (%coordConv PrintConv template)
-/// Format: "%d deg %d' %.2f\"" (default ExifTool coordinate format)
+/// GPS Latitude PrintConv - formats decimal degrees as degree/minute/second string WITHOUT direction
+/// ExifTool: lib/Image/ExifTool/GPS.pm:20 PrintConv: 'Image::ExifTool::GPS::ToDMS($self, $val, 1)'
+/// Format: "%d deg %d' %.2f\"" without direction suffix (raw EXIF tag)
 pub fn gpslatitude_print_conv(val: &TagValue) -> TagValue {
-    gps_coordinate_to_dms(val, false) // false = latitude (no cardinal direction)
+    gps_coordinate_to_dms(val, false) // false = no direction included
 }
 
-/// GPS Longitude PrintConv - formats decimal degrees as degree/minute/second string  
-/// ExifTool: lib/Image/ExifTool/GPS.pm lines 237-320 (ToDMS function)
-/// ExifTool: lib/Image/ExifTool/GPS.pm lines 17-21 (%coordConv PrintConv template)
-/// Format: "%d deg %d' %.2f\"" (default ExifTool coordinate format)
+/// GPS Longitude PrintConv - formats decimal degrees as degree/minute/second string WITHOUT direction
+/// ExifTool: lib/Image/ExifTool/GPS.pm:20 PrintConv: 'Image::ExifTool::GPS::ToDMS($self, $val, 1)'
+/// Format: "%d deg %d' %.2f\"" without direction suffix (raw EXIF tag)
 pub fn gpslongitude_print_conv(val: &TagValue) -> TagValue {
-    gps_coordinate_to_dms(val, false) // false = longitude (no cardinal direction)
+    gps_coordinate_to_dms(val, false) // false = no direction included
 }
 
 /// GPS DestLatitude PrintConv - formats decimal degrees as degree/minute/second string
@@ -159,6 +167,54 @@ fn gps_coordinate_to_dms(val: &TagValue, _include_cardinal: bool) -> TagValue {
             // Format using ExifTool's default format: "%d deg %d' %.2f\""
             // ExifTool: GPS.pm lines 40-42
             TagValue::string(format!("{degrees} deg {minutes}' {seconds:.2}\""))
+        }
+        None => TagValue::string(format!("Unknown ({val})")),
+    }
+}
+
+/// GPS coordinate to DMS with directional indicators (N/S/E/W)
+/// ExifTool: lib/Image/ExifTool/GPS.pm:495-574 ToDMS function with doPrintConv=1
+/// For composite GPS coordinates: includes direction based on coordinate sign
+/// Note: Currently unused - kept for potential future Composite GPS tag implementation
+#[allow(dead_code)]
+fn gps_coordinate_to_dms_with_direction(val: &TagValue, is_latitude: bool) -> TagValue {
+    match val.as_f64() {
+        Some(decimal_degrees) => {
+            let is_negative = decimal_degrees < 0.0;
+            let abs_degrees = decimal_degrees.abs();
+
+            // Extract degrees (integer part)
+            let degrees = abs_degrees.floor() as i32;
+            // Extract minutes
+            let minutes_float = (abs_degrees - degrees as f64) * 60.0;
+            let minutes = minutes_float.floor() as i32;
+            // Extract seconds with round-off error handling
+            let seconds_float = (minutes_float - minutes as f64) * 60.0;
+            let mut seconds = seconds_float;
+
+            // ExifTool round-off error handling: prevent seconds >= 60
+            if seconds >= 59.995 {
+                seconds = 0.0;
+                // Note: ExifTool also handles minute/degree rollover
+            }
+
+            // Determine direction indicator based on sign and coordinate type
+            let direction = if is_latitude {
+                if is_negative {
+                    "S"
+                } else {
+                    "N"
+                }
+            } else if is_negative {
+                "W"
+            } else {
+                "E"
+            };
+
+            // ExifTool format with direction: "%d deg %d' %.2f\" %s"
+            TagValue::string(format!(
+                "{degrees} deg {minutes}' {seconds:.2}\" {direction}"
+            ))
         }
         None => TagValue::string(format!("Unknown ({val})")),
     }
@@ -600,33 +656,6 @@ pub fn lensinfo_print_conv(val: &TagValue) -> TagValue {
 }
 
 /// Generic decimal formatting functions for sprintf patterns
-/// ExifTool: sprintf("%.1f",$val) - outputs numeric JSON when value looks like a number
-pub fn decimal_1_print_conv(val: &TagValue) -> TagValue {
-    let formatted = format!("{:.1}", val.as_f64().unwrap_or(0.0));
-    // Use ExifTool's numeric detection to match JSON output behavior
-    TagValue::string_with_numeric_detection(formatted)
-}
-
-pub fn decimal_2_print_conv(val: &TagValue) -> TagValue {
-    let formatted = format!("{:.2}", val.as_f64().unwrap_or(0.0));
-    // Use ExifTool's numeric detection to match JSON output behavior
-    TagValue::string_with_numeric_detection(formatted)
-}
-
-pub fn signed_int_print_conv(val: &TagValue) -> TagValue {
-    match val {
-        TagValue::U8(v) => TagValue::String(format!("{:+}", *v as i32)),
-        TagValue::U16(v) => TagValue::String(format!("{:+}", *v as i32)),
-        TagValue::U32(v) => TagValue::String(format!("{:+}", *v as i32)),
-        TagValue::SRational(num, den) if *den != 0 => TagValue::String(format!("{:+}", num / den)),
-        _ => TagValue::String(format!("{:+.0}", val.as_f64().unwrap_or(0.0))),
-    }
-}
-
-pub fn focal_length_3_decimals_print_conv(val: &TagValue) -> TagValue {
-    TagValue::String(format!("{:.3} mm", val.as_f64().unwrap_or(0.0)))
-}
-
 /// Complex expression placeholder - delegates to appropriate function
 /// This is used when tag_kit.pl can't determine the exact function
 pub fn complex_expression_print_conv(val: &TagValue) -> TagValue {
