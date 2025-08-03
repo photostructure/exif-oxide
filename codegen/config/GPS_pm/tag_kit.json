@@ -1,11 +1,15 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "source": "third-party/exiftool/lib/Image/ExifTool/GPS.pm",
-  "description": "Tag kits with embedded PrintConv for GPS tags",
-  "tables": [
-    {
-      "table_name": "Main",
-      "description": "Main GPS tag table with inline PrintConv"
-    }
-  ]
+   "description" : "GPS format tag definitions",
+   "source" : "third-party/exiftool/lib/Image/ExifTool/GPS.pm",
+   "tables" : [
+      {
+         "description" : "Composite tag definitions",
+         "table_name" : "Composite"
+      },
+      {
+         "table_name" : "Main",
+         "description" : "Main tag definitions"
+      }
+   ],
+   "$schema" : "../../schemas/tag_kit.json"
 }

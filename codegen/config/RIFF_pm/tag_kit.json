@@ -1,23 +1,139 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "source": "third-party/exiftool/lib/Image/ExifTool/RIFF.pm",
-  "description": "RIFF/AVI/WAV format tag definitions",
-  "tables": [
-    {
-      "table_name": "Main",
-      "description": "Main RIFF tag table with format-specific subdirectories"
-    },
-    {
-      "table_name": "Info",
-      "description": "RIFF INFO chunk metadata"
-    },
-    {
-      "table_name": "BroadcastExt",
-      "description": "Broadcast extension metadata for professional audio"
-    },
-    {
-      "table_name": "Exif",
-      "description": "RIFF EXIF metadata"
-    }
-  ]
+   "tables" : [
+      {
+         "table_name" : "ALPH",
+         "description" : "WebP alpha chunk."
+      },
+      {
+         "description" : "WebP animation chunk.",
+         "table_name" : "ANIM"
+      },
+      {
+         "table_name" : "ANMF",
+         "description" : "WebP animation frame chunk."
+      },
+      {
+         "description" : "AVIHeader tag definitions",
+         "table_name" : "AVIHeader"
+      },
+      {
+         "table_name" : "Acidizer",
+         "description" : "Acidizer tag definitions"
+      },
+      {
+         "description" : "AudioFormat tag definitions",
+         "table_name" : "AudioFormat"
+      },
+      {
+         "description" : "Information found in the Broadcast Audio Extension chunk (see L<http://tech.",
+         "table_name" : "BroadcastExt"
+      },
+      {
+         "description" : "CSET tag definitions",
+         "table_name" : "CSET"
+      },
+      {
+         "description" : "Composite tag definitions",
+         "table_name" : "Composite"
+      },
+      {
+         "table_name" : "DS64",
+         "description" : "64-bit data sizes for MBWF/RF64 files."
+      },
+      {
+         "table_name" : "Exif",
+         "description" : "These tags are part of the EXIF 2."
+      },
+      {
+         "table_name" : "ExtAVIHdr",
+         "description" : "ExtAVIHdr tag definitions"
+      },
+      {
+         "table_name" : "Hdrl",
+         "description" : "Hdrl tag definitions"
+      },
+      {
+         "description" : "RIFF INFO tags found in AVI video and WAV audio files.",
+         "table_name" : "Info"
+      },
+      {
+         "description" : "Instrument tag definitions",
+         "table_name" : "Instrument"
+      },
+      {
+         "description" : "Junk tag definitions",
+         "table_name" : "Junk"
+      },
+      {
+         "table_name" : "Main",
+         "description" : "The RIFF container format is used various types of fines including AVI, WAV, WEBP, LA, OFR, PAC and WV."
+      },
+      {
+         "description" : "OpenDML tag definitions",
+         "table_name" : "OpenDML"
+      },
+      {
+         "table_name" : "Sampler",
+         "description" : "Sampler tag definitions"
+      },
+      {
+         "description" : "Stream tag definitions",
+         "table_name" : "Stream"
+      },
+      {
+         "table_name" : "StreamData",
+         "description" : "This chunk is used to store proprietary information in AVI videos from some cameras."
+      },
+      {
+         "table_name" : "StreamHeader",
+         "description" : "StreamHeader tag definitions"
+      },
+      {
+         "table_name" : "Tdat",
+         "description" : "Tdat tag definitions"
+      },
+      {
+         "table_name" : "UserText",
+         "description" : "Tags decoded from the USER-format txts stream written by Momento M6 dashcam."
+      },
+      {
+         "table_name" : "VP8",
+         "description" : "This chunk is found in simple-format (lossy) WebP files."
+      },
+      {
+         "table_name" : "VP8L",
+         "description" : "This chunk is found in lossless WebP files."
+      },
+      {
+         "description" : "This chunk is found in extended WebP files.",
+         "table_name" : "VP8X"
+      },
+      {
+         "table_name" : "audioEncoding",
+         "description" : "audioEncoding tag definitions"
+      },
+      {
+         "table_name" : "code2charset",
+         "description" : "code2charset tag definitions"
+      },
+      {
+         "description" : "isImageData tag definitions",
+         "table_name" : "isImageData"
+      },
+      {
+         "description" : "monthNum tag definitions",
+         "table_name" : "monthNum"
+      },
+      {
+         "description" : "riffMimeType tag definitions",
+         "table_name" : "riffMimeType"
+      },
+      {
+         "description" : "riffType tag definitions",
+         "table_name" : "riffType"
+      }
+   ],
+   "source" : "third-party/exiftool/lib/Image/ExifTool/RIFF.pm",
+   "$schema" : "../../schemas/tag_kit.json",
+   "description" : "RIFF format tag definitions"
 }

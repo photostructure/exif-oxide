@@ -1,19 +1,19 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "source": "third-party/exiftool/lib/Image/ExifTool/Matroska.pm",
-  "description": "Matroska video container format tag definitions",
-  "tables": [
-    {
-      "table_name": "Main",
-      "description": "Main Matroska container tags for video metadata"
-    },
-    {
-      "table_name": "Projection",
-      "description": "Matroska video projection information for 360/VR content"
-    },
-    {
-      "table_name": "StdTag",
-      "description": "Matroska standard tag definitions"
-    }
-  ]
+   "tables" : [
+      {
+         "table_name" : "Main",
+         "description" : "The following tags are extracted from Matroska multimedia container files."
+      },
+      {
+         "description" : "Projection tags defined by the Spherical Video V2 specification.",
+         "table_name" : "Projection"
+      },
+      {
+         "description" : "Standardized Matroska tags, stored in a SimpleTag structure (see L<https://www.",
+         "table_name" : "StdTag"
+      }
+   ],
+   "source" : "third-party/exiftool/lib/Image/ExifTool/Matroska.pm",
+   "$schema" : "../../schemas/tag_kit.json",
+   "description" : "Matroska format tag definitions"
 }

@@ -1,11 +1,11 @@
 {
-  "$schema": "../../schemas/tag_kit.json",
-  "description": "Complete Kyocera RAW tag definitions with embedded PrintConvs",
-  "source": "third-party/exiftool/lib/Image/ExifTool/KyoceraRaw.pm",
-  "tables": [
-    {
-      "table_name": "Main",
-      "description": "Kyocera RAW main tag table"
-    }
-  ]
+   "$schema" : "../../schemas/tag_kit.json",
+   "tables" : [
+      {
+         "description" : "Tags for Kyocera Contax N Digital RAW images.",
+         "table_name" : "Main"
+      }
+   ],
+   "description" : "KyoceraRaw format tag definitions",
+   "source" : "third-party/exiftool/lib/Image/ExifTool/KyoceraRaw.pm"
 }

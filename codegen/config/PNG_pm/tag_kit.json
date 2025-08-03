@@ -1,0 +1,63 @@
+{
+   "description" : "PNG format tag definitions",
+   "$schema" : "../../schemas/tag_kit.json",
+   "source" : "third-party/exiftool/lib/Image/ExifTool/PNG.pm",
+   "tables" : [
+      {
+         "description" : "Tags found in the Animation Control chunk.",
+         "table_name" : "AnimationControl"
+      },
+      {
+         "table_name" : "CICodePoints",
+         "description" : "These tags are found in the PNG cICP chunk and belong to the PNG-cICP family 1 group."
+      },
+      {
+         "description" : "ImageHeader tag definitions",
+         "table_name" : "ImageHeader"
+      },
+      {
+         "description" : "Tags extracted from PNG images.",
+         "table_name" : "Main"
+      },
+      {
+         "description" : "These tags are found in the PNG pHYs chunk and belong to the PNG-pHYs family 1 group.",
+         "table_name" : "PhysicalPixel"
+      },
+      {
+         "table_name" : "PrimaryChromaticities",
+         "description" : "PrimaryChromaticities tag definitions"
+      },
+      {
+         "description" : "StereoImage tag definitions",
+         "table_name" : "StereoImage"
+      },
+      {
+         "table_name" : "SubjectScale",
+         "description" : "SubjectScale tag definitions"
+      },
+      {
+         "description" : "The PNG TextualData format allows arbitrary tag names to be used.",
+         "table_name" : "TextualData"
+      },
+      {
+         "description" : "VirtualPage tag definitions",
+         "table_name" : "VirtualPage"
+      },
+      {
+         "table_name" : "monthNum",
+         "description" : "monthNum tag definitions"
+      },
+      {
+         "table_name" : "noLeapFrog",
+         "description" : "noLeapFrog tag definitions"
+      },
+      {
+         "description" : "pngMap tag definitions",
+         "table_name" : "pngMap"
+      },
+      {
+         "table_name" : "tzConv",
+         "description" : "tzConv tag definitions"
+      }
+   ]
+}
