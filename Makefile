@@ -1,26 +1,36 @@
-.PHONY: all check fmt-check fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-extractors codegen sync subdirectory-coverage check-subdirectory-coverage perl-setup perl-deps update upgrade-gha upgrade audit checks tests precommit compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
+.PHONY: all check check-fmt check-json fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-deps check-perl codegen sync subdirectory-coverage check-subdirectory-coverage perl-setup perl-deps update upgrade-gha upgrade audit tests precommit compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
 
 # Default target: build the project
 all: build
 
+# Check for required external tools
+check-deps:
+	@./scripts/check-deps.sh
+
+# Check Perl files for syntax errors
+check-perl:
+	@./scripts/check-perl.sh
+
 # Run all checks without modifying (for CI)
-check: fmt-check lint yamllint test
+check: check-fmt lint yamllint check-json check-perl
 
 # Check formatting without modifying
-fmt-check:
+check-fmt:
 	cargo fmt --all -- --check
 
+check-json:
+	@./scripts/check-json.sh
+
 # Format code
-fmt:
-	cargo fmt --all
-	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && find . -name "*.pl" -not -path "./third-party/*" -exec ~/perl5/bin/perltidy -b {} \;
+fmt: check-deps
+	@./scripts/fmt.sh
 
 # Run clippy (Rust linter)
 lint:
 	cargo clippy --all-targets --all-features -- -D warnings
 
 # Run yamllint on YAML files
-yamllint:
+yamllint: check-deps
 	yamllint .github/ *.yml *.yaml 2>/dev/null || true
 
 # Run unit tests only (no integration tests)
@@ -57,22 +67,14 @@ doc:
 clean:
 	cargo clean
 	$(MAKE) -C codegen -f Makefile.modular clean
-	@echo "Note: Generated code was not cleaned. Use 'make clean-generated' to remove it."
-	@echo "      You'll need to run 'make codegen' to regenerate if you clean generated code."
 
 # Clean generated code (use with caution - requires regeneration)
 clean-generated:
-	@echo "Cleaning generated code..."
 	rm -rf src/generated/*
 	rm -rf codegen/generated/*
-	@echo "Generated code cleaned. Run 'make codegen' to regenerate."
 
 # Deep clean - removes all build artifacts and generated code
 clean-all: clean clean-generated
-
-# Check that all Perl extractors are working correctly
-check-extractors:
-	$(MAKE) -C codegen -f Makefile.modular check-extractors
 
 # Extract EXIF tags from ExifTool and regenerate Rust code
 codegen:
@@ -111,7 +113,6 @@ perl-setup:
 	fi
 	@echo "Setting up local::lib..."
 	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
-	@echo "Perl environment ready. Run 'make perl-deps' to install dependencies."
 
 # Install Perl dependencies using cpanminus
 perl-deps: perl-setup
@@ -126,22 +127,18 @@ upgrade-gha:
 	pinact run -u || { echo "pinact not found. Install with: go install github.com/suzuki-shunsuke/pinact/cmd/pinact@latest"; exit 1; }
 
 # Upgrade to latest versions (requires: cargo install cargo-edit)
-upgrade: upgrade-gha
-	@command -v cargo-upgrade >/dev/null 2>&1 || { echo "cargo-upgrade not found. Install with: cargo install cargo-edit"; exit 1; }
+upgrade: upgrade-gha check-deps
 	cargo upgrade --incompatible
 
 # Security audit for vulnerabilities in dependencies (requires: cargo install cargo-audit)
-audit:
-	@command -v cargo-audit >/dev/null 2>&1 || { echo "cargo-audit not found. Install with: cargo install cargo-audit --locked"; exit 1; }
+audit: check-deps
 	cargo audit
-
-checks: check fmt-check lint yamllint check-subdirectory-coverage check-extractors
 
 # All tests including unit, integration, codegen, and compatibility tests
 tests: test codegen-test compat-full
 
 # Pre-commit checks: do everything: update deps, codegen, fix code, lint, test, audit, and build
-precommit: update audit perl-deps codegen fix checks tests build
+precommit: update audit perl-deps codegen fix check tests build 
 	@echo "✅ precommit successful 🥳"
 
 # Generate ExifTool JSON reference data for compatibility testing (only missing files)
@@ -217,12 +214,15 @@ help:
 	@echo "  make               - Build the project (same as 'make all')"
 	@echo "  make all           - Build the project"
 	@echo ""
+	@echo "Setup:"
+	@echo "  make check-deps    - Check for required external tools (jq, yamllint, jsonschema, etc.)"
+	@echo ""
 	@echo "Development:"
 	@echo "  make check         - Run all checks without modifying (for CI)"
-	@echo "  make checks        - Run all checks (alias for various check targets)"
 	@echo "  make fmt           - Format code"
 	@echo "  make lint          - Run clippy linter"
 	@echo "  make yamllint      - Run yamllint on YAML files"
+	@echo "  make check-json    - Validate JSON config files against schemas"
 	@echo "  make unit-test     - Run unit tests only (fast)"
 	@echo "  make test          - Run all tests including integration tests"
 	@echo "  make t             - Alias for 'make test'"
@@ -235,7 +235,7 @@ help:
 	@echo "  make codegen       - Generate all code from ExifTool"
 	@echo "  make codegen-test  - Run codegen tests"
 	@echo "  make sync          - Extract all ExifTool algorithms and regenerate code"
-	@echo "  make check-extractors - Check that all Perl extractors are working"
+	@echo "  make check-perl    - Check Perl files for syntax errors"
 	@echo "  make subdirectory-coverage - Generate SubDirectory coverage report"
 	@echo "  make check-subdirectory-coverage - Check SubDirectory coverage and warn if low"
 	@echo ""
