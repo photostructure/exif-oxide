@@ -14,7 +14,7 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("L".to_string(), "Landscape");
     map.insert("P".to_string(), "Portrait");
@@ -22,7 +22,7 @@ static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0T".to_string(), "Text Only");
     map.insert("1A".to_string(), "Mono Actuality");
@@ -44,7 +44,7 @@ static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No ObjectData");
     map.insert(
@@ -118,7 +118,7 @@ static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("".to_string(), "");
     map.insert("01".to_string(), "Object Kill");
@@ -128,7 +128,7 @@ static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("a".to_string(), "Morning");
     map.insert("b".to_string(), "Both Morning and Evening");
@@ -136,7 +136,7 @@ static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No ObjectData");
     map.insert(
@@ -210,7 +210,7 @@ static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_9: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "0 (reserved)");
     map.insert("1".to_string(), "1 (most urgent)");
@@ -222,6 +222,109 @@ static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map.insert("7".to_string(), "7");
     map.insert("8".to_string(), "8 (least urgent)");
     map.insert("9".to_string(), "9 (user-defined priority)");
+    map
+});
+
+static PRINT_CONV_10: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "L-R, Top-Bottom");
+    map.insert("1".to_string(), "R-L, Top-Bottom");
+    map.insert("2".to_string(), "L-R, Bottom-Top");
+    map.insert("3".to_string(), "R-L, Bottom-Top");
+    map.insert("4".to_string(), "Top-Bottom, L-R");
+    map.insert("5".to_string(), "Bottom-Top, L-R");
+    map.insert("6".to_string(), "Top-Bottom, R-L");
+    map.insert("7".to_string(), "Bottom-Top, R-L");
+    map
+});
+
+static PRINT_CONV_11: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "0");
+    map.insert("1".to_string(), "90");
+    map.insert("2".to_string(), "180");
+    map.insert("3".to_string(), "270");
+    map
+});
+
+static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Linear Reflectance/Transmittance");
+    map.insert("1".to_string(), "Linear Density");
+    map.insert("2".to_string(), "IPTC Ref B");
+    map.insert("3".to_string(), "Linear Dot Percent");
+    map.insert("4".to_string(), "AP Domestic Analogue");
+    map.insert("5".to_string(), "Compression Method Specific");
+    map.insert("6".to_string(), "Color Space Specific");
+    map.insert("7".to_string(), "Gamma Compensated");
+    map
+});
+
+static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Not Allowed");
+    map.insert("1".to_string(), "Allowed");
+    map
+});
+
+static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Main Image");
+    map.insert("1".to_string(), "Reduced Resolution Image");
+    map.insert("2".to_string(), "Logo");
+    map.insert("3".to_string(), "Rasterized Caption");
+    map
+});
+
+static PRINT_CONV_15: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No Image, Single Frame");
+    map.insert("1024".to_string(), "4 Components, Single Frame");
+    map.insert(
+        "1025".to_string(),
+        "4 Components, Frame Sequential in Multiple Objects",
+    );
+    map.insert(
+        "1026".to_string(),
+        "4 Components, Frame Sequential in One Object",
+    );
+    map.insert("1027".to_string(), "4 Components, Line Sequential");
+    map.insert("1028".to_string(), "4 Components, Pixel Sequential");
+    map.insert("1029".to_string(), "4 Components, Special Interleaving");
+    map.insert("256".to_string(), "Monochrome, Single Frame");
+    map.insert("768".to_string(), "3 Components, Single Frame");
+    map.insert(
+        "769".to_string(),
+        "3 Components, Frame Sequential in Multiple Objects",
+    );
+    map.insert(
+        "770".to_string(),
+        "3 Components, Frame Sequential in One Object",
+    );
+    map.insert("771".to_string(), "3 Components, Line Sequential");
+    map.insert("772".to_string(), "3 Components, Pixel Sequential");
+    map.insert("773".to_string(), "3 Components, Special Interleaving");
+    map
+});
+
+static PRINT_CONV_16: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "X,Y,Z CIE");
+    map.insert("2".to_string(), "RGB SMPTE");
+    map.insert("3".to_string(), "Y,U,V (K) (D65)");
+    map.insert("4".to_string(), "RGB Device Dependent");
+    map.insert("5".to_string(), "CMY (K) Device Dependent");
+    map.insert("6".to_string(), "Lab (K) CIE");
+    map.insert("7".to_string(), "YCbCr");
+    map.insert("8".to_string(), "sRGB");
+    map
+});
+
+static PRINT_CONV_17: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "OrthogonalConstangSampling");
+    map.insert("1".to_string(), "Orthogonal4-2-2Sampling");
+    map.insert("2".to_string(), "CompressionDependent");
     map
 });
 
@@ -400,7 +503,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_2),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_3),
             value_conv: None,
             subdirectory: None,
         }),
@@ -433,7 +536,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_3),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_4),
             value_conv: None,
             subdirectory: None,
         }),
@@ -554,7 +657,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_4),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_5),
             value_conv: None,
             subdirectory: None,
         }),
@@ -712,7 +815,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_5),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_6),
             value_conv: None,
             subdirectory: None,
         }),
@@ -767,7 +870,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_6),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_7),
             value_conv: None,
             subdirectory: None,
         }),
@@ -877,7 +980,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_7),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_8),
             value_conv: None,
             subdirectory: None,
         }),
@@ -932,7 +1035,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_8),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_9),
             value_conv: None,
             subdirectory: None,
         }),
@@ -944,6 +1047,325 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: Some("values are entered in the form \"ESC X Y[, ...]\".  The escape sequence for\n            UTF-8 character coding is \"ESC % G\", but this is displayed as \"UTF8\" for\n            convenience.  Either string may be used when writing.  The value of this tag\n            affects the decoding of string values in the Application and NewsPhoto\n            records.  This tag is marked as \"unsafe\" to prevent it from being copied by\n            default in a group operation because existing tags in the destination image\n            may use a different encoding.  When creating a new IPTC record from scratch,\n            it is suggested that this be set to \"UTF8\" if special characters are a\n            possibility"),
             print_conv: PrintConvType::Manual("code_ref_printconv"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (240, TagKitDef {
+            id: 240,
+            name: "IPTCFotoStation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0xf0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "NewsPhotoVersion",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (100, TagKitDef {
+            id: 100,
+            name: "ScanningDirection",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_10),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (102, TagKitDef {
+            id: 102,
+            name: "IPTCImageRotation",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_11),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (110, TagKitDef {
+            id: 110,
+            name: "DataCompressionMethod",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (120, TagKitDef {
+            id: 120,
+            name: "QuantizationMethod",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_12),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (125, TagKitDef {
+            id: 125,
+            name: "EndPoints",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (130, TagKitDef {
+            id: 130,
+            name: "ExcursionTolerance",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_13),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (135, TagKitDef {
+            id: 135,
+            name: "BitsPerComponent",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (140, TagKitDef {
+            id: 140,
+            name: "MaximumDensityRange",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (145, TagKitDef {
+            id: 145,
+            name: "GammaCompensatedValue",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "IPTCImageWidth",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (30, TagKitDef {
+            id: 30,
+            name: "IPTCImageHeight",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (40, TagKitDef {
+            id: 40,
+            name: "IPTCPixelWidth",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (50, TagKitDef {
+            id: 50,
+            name: "IPTCPixelHeight",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (55, TagKitDef {
+            id: 55,
+            name: "SupplementalType",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_14),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (60, TagKitDef {
+            id: 60,
+            name: "ColorRepresentation",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_15),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (64, TagKitDef {
+            id: 64,
+            name: "InterchangeColorSpace",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_16),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (65, TagKitDef {
+            id: 65,
+            name: "ColorSequence",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (66, TagKitDef {
+            id: 66,
+            name: "ICC_Profile",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (70, TagKitDef {
+            id: 70,
+            name: "ColorCalibrationMatrix",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (80, TagKitDef {
+            id: 80,
+            name: "LookupTable",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (84, TagKitDef {
+            id: 84,
+            name: "NumIndexEntries",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (85, TagKitDef {
+            id: 85,
+            name: "ColorPalette",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (86, TagKitDef {
+            id: 86,
+            name: "IPTCBitsPerSample",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (90, TagKitDef {
+            id: 90,
+            name: "SampleStructure",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_17),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "MaxSubfileSize",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (90, TagKitDef {
+            id: 90,
+            name: "ObjectSizeAnnounced",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (95, TagKitDef {
+            id: 95,
+            name: "MaximumObjectSize",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
             value_conv: None,
             subdirectory: None,
         }),

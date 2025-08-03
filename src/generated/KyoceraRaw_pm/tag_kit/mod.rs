@@ -42,7 +42,8 @@ pub enum PrintConvType {
 }
 
 /// Type alias for subdirectory processor function
-pub type SubDirectoryProcessor = fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>;
+pub type SubDirectoryProcessor =
+    fn(&[u8], ByteOrder, Option<&str>) -> Result<Vec<(String, TagValue)>>;
 
 #[derive(Debug, Clone)]
 pub enum SubDirectoryType {
@@ -185,7 +186,6 @@ pub fn apply_print_conv(
 ) -> TagValue {
     match tag_id {
         56 => crate::implementations::print_conv::exposuretime_print_conv(value),
-        112 => crate::implementations::print_conv::focal_length_mm_print_conv(value),
         _ => {
             // Fall back to shared handling
             if let Some(tag_kit) = KYOCERARAW_PM_TAG_KITS.get(&tag_id) {
@@ -211,54 +211,24 @@ pub fn apply_value_conv(
 ) -> Result<TagValue> {
     match tag_id {
         56 => {
-            if let Some(tag_kit) = KYOCERARAW_PM_TAG_KITS.get(&tag_id) {
-                if let Some(expr) = tag_kit.value_conv {
-                    Ok(crate::implementations::missing::missing_value_conv(
-                        tag_id,
-                        &tag_kit.name,
-                        "KyoceraRaw",
-                        expr,
-                        value,
-                    ))
-                } else {
-                    Ok(value.clone())
-                }
-            } else {
-                Ok(value.clone())
+            // Compiled arithmetic: 2**($val / 8) / 16000
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(2.0_f64.powf(val / 8.0_f64) / 16000.0_f64)),
+                None => Ok(value.clone()),
             }
         }
         88 => {
-            if let Some(tag_kit) = KYOCERARAW_PM_TAG_KITS.get(&tag_id) {
-                if let Some(expr) = tag_kit.value_conv {
-                    Ok(crate::implementations::missing::missing_value_conv(
-                        tag_id,
-                        &tag_kit.name,
-                        "KyoceraRaw",
-                        expr,
-                        value,
-                    ))
-                } else {
-                    Ok(value.clone())
-                }
-            } else {
-                Ok(value.clone())
+            // Compiled arithmetic: 2**($val/16)
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(2.0_f64.powf(val / 16.0_f64))),
+                None => Ok(value.clone()),
             }
         }
         104 => {
-            if let Some(tag_kit) = KYOCERARAW_PM_TAG_KITS.get(&tag_id) {
-                if let Some(expr) = tag_kit.value_conv {
-                    Ok(crate::implementations::missing::missing_value_conv(
-                        tag_id,
-                        &tag_kit.name,
-                        "KyoceraRaw",
-                        expr,
-                        value,
-                    ))
-                } else {
-                    Ok(value.clone())
-                }
-            } else {
-                Ok(value.clone())
+            // Compiled arithmetic: 2**($val/16)
+            match value.as_f64() {
+                Some(val) => Ok(TagValue::F64(2.0_f64.powf(val / 16.0_f64))),
+                None => Ok(value.clone()),
             }
         }
         _ => {
@@ -296,6 +266,7 @@ pub fn process_subdirectory(
     tag_id: u32,
     value: &TagValue,
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<HashMap<String, TagValue>> {
     use tracing::debug;
     let mut result = HashMap::new();
@@ -324,7 +295,7 @@ pub fn process_subdirectory(
 
             debug!("Calling processor with {} bytes", bytes.len());
             // Process subdirectory and collect all extracted tags
-            match processor(&bytes, byte_order) {
+            match processor(&bytes, byte_order, model) {
                 Ok(extracted_tags) => {
                     debug!("Processor returned {} tags", extracted_tags.len());
                     for (name, value) in extracted_tags {

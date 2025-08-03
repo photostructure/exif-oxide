@@ -16,20 +16,50 @@ use std::sync::LazyLock;
 
 /// Get tag definitions for thumbnail category
 pub fn get_thumbnail_tags() -> Vec<(u32, TagKitDef)> {
-    vec![(
-        513,
-        TagKitDef {
-            id: 513,
-            name: "MoreInfo0201",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary {
-                processor: process_tag_0x201_subdirectory,
-            }),
-        },
-    )]
+    vec![
+        (
+            513,
+            TagKitDef {
+                id: 513,
+                name: "PreviewImageStart",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: Some("a small 320x200 preview image"),
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            514,
+            TagKitDef {
+                id: 514,
+                name: "PreviewImageLength",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            513,
+            TagKitDef {
+                id: 513,
+                name: "MoreInfo0201",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: Some(SubDirectoryType::Binary {
+                    processor: process_tag_0x201_subdirectory,
+                }),
+            },
+        ),
+    ]
 }

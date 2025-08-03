@@ -18,6 +18,62 @@ use std::sync::LazyLock;
 pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
     vec![
         (
+            318,
+            TagKitDef {
+                id: 318,
+                name: "Face6BEye2",
+                format: "int32u[4]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            330,
+            TagKitDef {
+                id: 330,
+                name: "Face7BArea",
+                format: "int32u[4]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            334,
+            TagKitDef {
+                id: 334,
+                name: "Face7BEye1",
+                format: "int32u[4]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            328,
+            TagKitDef {
+                id: 328,
+                name: "DigitalFilter20",
+                format: "undef[17]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Expression("ComplexHash"),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
             528,
             TagKitDef {
                 id: 528,

@@ -42,7 +42,8 @@ pub enum PrintConvType {
 }
 
 /// Type alias for subdirectory processor function
-pub type SubDirectoryProcessor = fn(&[u8], ByteOrder) -> Result<Vec<(String, TagValue)>>;
+pub type SubDirectoryProcessor =
+    fn(&[u8], ByteOrder, Option<&str>) -> Result<Vec<(String, TagValue)>>;
 
 #[derive(Debug, Clone)]
 pub enum SubDirectoryType {
@@ -196,9 +197,11 @@ fn process_matroska_projection(
 pub fn process_tag_0x0_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x0_subdirectory called with {} bytes, count={}",
@@ -212,9 +215,11 @@ pub fn process_tag_0x0_subdirectory(
 pub fn process_tag_0xe_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xe_subdirectory called with {} bytes, count={}",
@@ -229,9 +234,11 @@ pub fn process_tag_0xe_subdirectory(
 pub fn process_tag_0xf_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xf_subdirectory called with {} bytes, count={}",
@@ -246,9 +253,11 @@ pub fn process_tag_0xf_subdirectory(
 pub fn process_tag_0x20_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x20_subdirectory called with {} bytes, count={}",
@@ -263,9 +272,11 @@ pub fn process_tag_0x20_subdirectory(
 pub fn process_tag_0x26_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x26_subdirectory called with {} bytes, count={}",
@@ -280,9 +291,11 @@ pub fn process_tag_0x26_subdirectory(
 pub fn process_tag_0x2e_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2e_subdirectory called with {} bytes, count={}",
@@ -290,15 +303,19 @@ pub fn process_tag_0x2e_subdirectory(
         count
     );
 
+    // Runtime condition not yet supported: delete $$self{TrackType}; 1
+    // Would dispatch to: Image::ExifTool::Matroska::Main
     Ok(vec![])
 }
 
 pub fn process_tag_0x36_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x36_subdirectory called with {} bytes, count={}",
@@ -313,9 +330,11 @@ pub fn process_tag_0x36_subdirectory(
 pub fn process_tag_0x37_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x37_subdirectory called with {} bytes, count={}",
@@ -330,9 +349,11 @@ pub fn process_tag_0x37_subdirectory(
 pub fn process_tag_0x3b_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x3b_subdirectory called with {} bytes, count={}",
@@ -347,9 +368,11 @@ pub fn process_tag_0x3b_subdirectory(
 pub fn process_tag_0x5b_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x5b_subdirectory called with {} bytes, count={}",
@@ -364,9 +387,11 @@ pub fn process_tag_0x5b_subdirectory(
 pub fn process_tag_0x60_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x60_subdirectory called with {} bytes, count={}",
@@ -381,9 +406,11 @@ pub fn process_tag_0x60_subdirectory(
 pub fn process_tag_0x61_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x61_subdirectory called with {} bytes, count={}",
@@ -398,9 +425,11 @@ pub fn process_tag_0x61_subdirectory(
 pub fn process_tag_0x68_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x68_subdirectory called with {} bytes, count={}",
@@ -415,9 +444,11 @@ pub fn process_tag_0x68_subdirectory(
 pub fn process_tag_0x5b9_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x5b9_subdirectory called with {} bytes, count={}",
@@ -432,9 +463,11 @@ pub fn process_tag_0x5b9_subdirectory(
 pub fn process_tag_0xdbb_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xdbb_subdirectory called with {} bytes, count={}",
@@ -449,9 +482,11 @@ pub fn process_tag_0xdbb_subdirectory(
 pub fn process_tag_0x1034_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x1034_subdirectory called with {} bytes, count={}",
@@ -466,9 +501,11 @@ pub fn process_tag_0x1034_subdirectory(
 pub fn process_tag_0x1035_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x1035_subdirectory called with {} bytes, count={}",
@@ -483,9 +520,11 @@ pub fn process_tag_0x1035_subdirectory(
 pub fn process_tag_0x1854_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x1854_subdirectory called with {} bytes, count={}",
@@ -500,9 +539,11 @@ pub fn process_tag_0x1854_subdirectory(
 pub fn process_tag_0x21a7_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x21a7_subdirectory called with {} bytes, count={}",
@@ -517,9 +558,11 @@ pub fn process_tag_0x21a7_subdirectory(
 pub fn process_tag_0x2240_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2240_subdirectory called with {} bytes, count={}",
@@ -534,9 +577,11 @@ pub fn process_tag_0x2240_subdirectory(
 pub fn process_tag_0x23c0_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x23c0_subdirectory called with {} bytes, count={}",
@@ -551,9 +596,11 @@ pub fn process_tag_0x23c0_subdirectory(
 pub fn process_tag_0x2624_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2624_subdirectory called with {} bytes, count={}",
@@ -568,9 +615,11 @@ pub fn process_tag_0x2624_subdirectory(
 pub fn process_tag_0x27c8_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x27c8_subdirectory called with {} bytes, count={}",
@@ -585,9 +634,11 @@ pub fn process_tag_0x27c8_subdirectory(
 pub fn process_tag_0x2911_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2911_subdirectory called with {} bytes, count={}",
@@ -602,9 +653,11 @@ pub fn process_tag_0x2911_subdirectory(
 pub fn process_tag_0x2924_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2924_subdirectory called with {} bytes, count={}",
@@ -619,9 +672,11 @@ pub fn process_tag_0x2924_subdirectory(
 pub fn process_tag_0x2944_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2944_subdirectory called with {} bytes, count={}",
@@ -636,9 +691,11 @@ pub fn process_tag_0x2944_subdirectory(
 pub fn process_tag_0x2d80_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x2d80_subdirectory called with {} bytes, count={}",
@@ -653,9 +710,11 @@ pub fn process_tag_0x2d80_subdirectory(
 pub fn process_tag_0x3373_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x3373_subdirectory called with {} bytes, count={}",
@@ -670,9 +729,11 @@ pub fn process_tag_0x3373_subdirectory(
 pub fn process_tag_0x35a1_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x35a1_subdirectory called with {} bytes, count={}",
@@ -687,9 +748,11 @@ pub fn process_tag_0x35a1_subdirectory(
 pub fn process_tag_0x3e5b_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x3e5b_subdirectory called with {} bytes, count={}",
@@ -704,9 +767,11 @@ pub fn process_tag_0x3e5b_subdirectory(
 pub fn process_tag_0x3e7b_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x3e7b_subdirectory called with {} bytes, count={}",
@@ -721,9 +786,11 @@ pub fn process_tag_0x3e7b_subdirectory(
 pub fn process_tag_0x7670_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x7670_subdirectory called with {} bytes, count={}",
@@ -738,9 +805,11 @@ pub fn process_tag_0x7670_subdirectory(
 pub fn process_tag_0x7672_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x7672_subdirectory called with {} bytes, count={}",
@@ -748,15 +817,21 @@ pub fn process_tag_0x7672_subdirectory(
         count
     );
 
+    // Runtime condition not yet supported: $$self{ProjectionType} == 1
+    // Would dispatch to: Image::ExifTool::QuickTime::equi
+    // Runtime condition not yet supported: $$self{ProjectionType} == 2
+    // Would dispatch to: Image::ExifTool::QuickTime::cbmp
     Ok(vec![])
 }
 
 pub fn process_tag_0x43a770_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x43a770_subdirectory called with {} bytes, count={}",
@@ -771,9 +846,11 @@ pub fn process_tag_0x43a770_subdirectory(
 pub fn process_tag_0x14d9b74_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x14d9b74_subdirectory called with {} bytes, count={}",
@@ -788,9 +865,11 @@ pub fn process_tag_0x14d9b74_subdirectory(
 pub fn process_tag_0x254c367_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x254c367_subdirectory called with {} bytes, count={}",
@@ -805,9 +884,11 @@ pub fn process_tag_0x254c367_subdirectory(
 pub fn process_tag_0x549a966_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x549a966_subdirectory called with {} bytes, count={}",
@@ -822,9 +903,11 @@ pub fn process_tag_0x549a966_subdirectory(
 pub fn process_tag_0x654ae6b_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x654ae6b_subdirectory called with {} bytes, count={}",
@@ -839,9 +922,11 @@ pub fn process_tag_0x654ae6b_subdirectory(
 pub fn process_tag_0x8538067_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x8538067_subdirectory called with {} bytes, count={}",
@@ -856,9 +941,11 @@ pub fn process_tag_0x8538067_subdirectory(
 pub fn process_tag_0x941a469_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x941a469_subdirectory called with {} bytes, count={}",
@@ -873,9 +960,11 @@ pub fn process_tag_0x941a469_subdirectory(
 pub fn process_tag_0xa45dfa3_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xa45dfa3_subdirectory called with {} bytes, count={}",
@@ -890,9 +979,11 @@ pub fn process_tag_0xa45dfa3_subdirectory(
 pub fn process_tag_0xb538667_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xb538667_subdirectory called with {} bytes, count={}",
@@ -907,9 +998,11 @@ pub fn process_tag_0xb538667_subdirectory(
 pub fn process_tag_0xc53bb6b_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xc53bb6b_subdirectory called with {} bytes, count={}",
@@ -924,9 +1017,11 @@ pub fn process_tag_0xc53bb6b_subdirectory(
 pub fn process_tag_0xf43b675_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0xf43b675_subdirectory called with {} bytes, count={}",
@@ -941,9 +1036,11 @@ pub fn process_tag_0xf43b675_subdirectory(
 pub fn process_tag_0x5345414c_subdirectory(
     data: &[u8],
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<Vec<(String, TagValue)>> {
+    use crate::expressions::ExpressionEvaluator;
+    use crate::processor_registry::ProcessorContext;
     use tracing::debug;
-    // TODO: Accept model and format parameters when runtime integration supports it
     let count = data.len() / 2;
     debug!(
         "process_tag_0x5345414c_subdirectory called with {} bytes, count={}",
@@ -1461,6 +1558,7 @@ pub fn process_subdirectory(
     tag_id: u32,
     value: &TagValue,
     byte_order: ByteOrder,
+    model: Option<&str>,
 ) -> Result<HashMap<String, TagValue>> {
     use tracing::debug;
     let mut result = HashMap::new();
@@ -1489,7 +1587,7 @@ pub fn process_subdirectory(
 
             debug!("Calling processor with {} bytes", bytes.len());
             // Process subdirectory and collect all extracted tags
-            match processor(&bytes, byte_order) {
+            match processor(&bytes, byte_order, model) {
                 Ok(extracted_tags) => {
                     debug!("Processor returned {} tags", extracted_tags.len());
                     for (name, value) in extracted_tags {

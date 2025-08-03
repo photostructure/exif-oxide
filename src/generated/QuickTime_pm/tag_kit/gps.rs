@@ -14,9 +14,133 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Above Sea Level");
+    map.insert("1".to_string(), "Below Sea Level");
+    map
+});
+
+static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Above Sea Level");
+    map.insert("1".to_string(), "Below Sea Level");
+    map
+});
+
 /// Get tag definitions for gps category
 pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
     vec![
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSAltitude",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"$val m\""),
+            value_conv: Some("my @c = split \" \", $val; defined $c[2] ? abs($c[2]) : undef"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSAltitude",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"$val m\""),
+            value_conv: Some("$val =~ /Alt=([-+.\\d]+)/; abs($1)"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSAltitudeRef",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_0),
+            value_conv: Some("my @c = split \" \", $val; defined $c[2] ? ($c[2] < 0 ? 1 : 0) : undef"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSAltitudeRef",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_1),
+            value_conv: Some("$val =~ /Alt=([-+.\\d]+)/; $1 < 0 ? 1 : 0"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSLatitude",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")"),
+            value_conv: Some("my @c = split \" \", $val; $c[0]"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSLatitude",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")"),
+            value_conv: Some("$val =~ /Lat=([-+.\\d]+)/; $1"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSLongitude",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")"),
+            value_conv: Some("my @c = split \" \", $val; $c[1]"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSLongitude",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")"),
+            value_conv: Some("$val =~ /Lon=([-+.\\d]+)/; $1"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSCoordinates",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Manual("code_ref_printconv"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSCoordinates",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("Google Photos may ignore this if the coordinates have more than 5 digits\n            after the decimal"),
+            print_conv: PrintConvType::Manual("code_ref_printconv"),
+            value_conv: None,
+            subdirectory: None,
+        }),
         (0, TagKitDef {
             id: 0,
             name: "GPSDataList2",
@@ -74,12 +198,12 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
         }),
         (0, TagKitDef {
             id: 0,
-            name: "GPSCoordinates",
+            name: "GPSLog",
             format: "unknown",
             groups: HashMap::new(),
             writable: false,
-            notes: None,
-            print_conv: PrintConvType::Manual("code_ref_printconv"),
+            notes: Some("parsed to extract GPS separately when ExtractEmbedded is used"),
+            print_conv: PrintConvType::None,
             value_conv: None,
             subdirectory: None,
         }),
@@ -101,17 +225,6 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Manual("code_ref_printconv"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "GPSCoordinates",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("Google Photos may ignore this if the coordinates have more than 5 digits\n            after the decimal"),
             print_conv: PrintConvType::Manual("code_ref_printconv"),
             value_conv: None,
             subdirectory: None,

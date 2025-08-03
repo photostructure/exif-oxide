@@ -16,20 +16,96 @@ use std::sync::LazyLock;
 
 /// Get tag definitions for gps category
 pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
-    vec![(
-        0,
-        TagKitDef {
-            id: 0,
-            name: "GPSTrack",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary {
-                processor: process_tag_0x0_subdirectory,
-            }),
-        },
-    )]
+    vec![
+        (
+            0,
+            TagKitDef {
+                id: 0,
+                name: "GPSTrack",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: Some(SubDirectoryType::Binary {
+                    processor: process_tag_0x0_subdirectory,
+                }),
+            },
+        ),
+        (
+            28,
+            TagKitDef {
+                id: 28,
+                name: "GPSAltitude",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: Some("$val / 10"),
+                subdirectory: None,
+            },
+        ),
+        (
+            56,
+            TagKitDef {
+                id: 56,
+                name: "GPSSpeed",
+                format: "float",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            60,
+            TagKitDef {
+                id: 60,
+                name: "GPSLatitude",
+                format: "float",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Expression(
+                    "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")",
+                ),
+                value_conv: Some("my $deg = int($val / 100); $deg + ($val - $deg * 100) / 60"),
+                subdirectory: None,
+            },
+        ),
+        (
+            64,
+            TagKitDef {
+                id: 64,
+                name: "GPSLongitude",
+                format: "float",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Expression(
+                    "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")",
+                ),
+                value_conv: Some("my $deg = int($val / 100); -($deg + ($val - $deg * 100) / 60)"),
+                subdirectory: None,
+            },
+        ),
+        (
+            68,
+            TagKitDef {
+                id: 68,
+                name: "GPSDateTime",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
+                value_conv: Some("ConvertUnixTime($val)"),
+                subdirectory: None,
+            },
+        ),
+    ]
 }

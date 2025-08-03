@@ -42,25 +42,55 @@ static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
 
 static PRINT_CONV_15: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "(none)");
+    map.insert("0 0".to_string(), "Off");
+    map.insert("1 0".to_string(), "On");
     map
 });
 
 static PRINT_CONV_16: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
+    map.insert("0".to_string(), "Bounce or Off");
+    map.insert("1".to_string(), "Direct");
     map
 });
 
 static PRINT_CONV_17: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
+    map.insert("0 0".to_string(), "Off");
     map.insert("1".to_string(), "On");
+    map.insert("1 0".to_string(), "On");
     map
 });
 
 static PRINT_CONV_18: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_19: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "(none)");
+    map
+});
+
+static PRINT_CONV_20: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_21: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_22: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1 1".to_string(), "4:3");
     map.insert("1 4".to_string(), "1:1");
@@ -79,61 +109,14 @@ static PRINT_CONV_18: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_19: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0 0".to_string(), "Off");
-    map.insert("1 0".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_20: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Bounce or Off");
-    map.insert("1".to_string(), "Direct");
-    map
-});
-
-static PRINT_CONV_21: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("0 0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map.insert("1 0".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_22: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
 static PRINT_CONV_23: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Unknown");
-    map.insert("16".to_string(), "Shade");
-    map.insert("17".to_string(), "Cloudy");
-    map.insert("18".to_string(), "Fine Weather");
-    map.insert("20".to_string(), "Tungsten (Incandescent)");
-    map.insert("22".to_string(), "Evening Sunlight");
-    map.insert("256".to_string(), "One Touch White Balance");
-    map.insert("33".to_string(), "Daylight Fluorescent");
-    map.insert("34".to_string(), "Day White Fluorescent");
-    map.insert("35".to_string(), "Cool White Fluorescent");
-    map.insert("36".to_string(), "White Fluorescent");
-    map.insert("512".to_string(), "Custom 1-4");
-    map
-});
-
-static PRINT_CONV_24: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("2".to_string(), "On");
     map.insert("3".to_string(), "Off");
     map
 });
 
-static PRINT_CONV_25: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_24: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "None");
     map.insert("1".to_string(), "Internal");
@@ -142,21 +125,21 @@ static PRINT_CONV_25: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_26: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_25: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Normal");
     map.insert("1".to_string(), "Macro");
     map
 });
 
-static PRINT_CONV_27: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_26: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "Manual");
     map
 });
 
-static PRINT_CONV_28: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_27: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Normal");
     map.insert("1".to_string(), "Hard");
@@ -164,7 +147,7 @@ static PRINT_CONV_28: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_29: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_28: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Auto");
     map.insert("1 0".to_string(), "Auto");
@@ -181,14 +164,14 @@ static PRINT_CONV_29: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_30: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_29: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No");
     map.insert("1".to_string(), "Yes");
     map
 });
 
-static PRINT_CONV_31: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_30: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "High");
     map.insert("1".to_string(), "Normal");
@@ -196,30 +179,78 @@ static PRINT_CONV_31: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_32: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_31: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No");
     map.insert("1".to_string(), "Yes");
     map
 });
 
-static PRINT_CONV_33: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_32: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Interlaced");
     map.insert("1".to_string(), "Progressive");
     map
 });
 
-static PRINT_CONV_34: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_33: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
+static PRINT_CONV_34: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("16".to_string(), "Shade");
+    map.insert("17".to_string(), "Cloudy");
+    map.insert("18".to_string(), "Fine Weather");
+    map.insert("20".to_string(), "Tungsten (Incandescent)");
+    map.insert("22".to_string(), "Evening Sunlight");
+    map.insert("256".to_string(), "One Touch White Balance");
+    map.insert("33".to_string(), "Daylight Fluorescent");
+    map.insert("34".to_string(), "Day White Fluorescent");
+    map.insert("35".to_string(), "Cool White Fluorescent");
+    map.insert("36".to_string(), "White Fluorescent");
+    map.insert("512".to_string(), "Custom 1-4");
+    map
+});
+
+static PRINT_CONV_35: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("256".to_string(), "Level 2 Detail");
+    map.insert("257".to_string(), "Level 1 Detail");
+    map.insert("260".to_string(), "Subject Detected, No Detail");
+    map.insert("772".to_string(), "No Detection");
+    map
+});
+
 /// Get tag definitions for interop category
 pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
     vec![
+        (2, TagKitDef {
+            id: 2,
+            name: "AFFocusArea",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (6, TagKitDef {
+            id: 6,
+            name: "AFSelectedArea",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("X Y width height. Subject Detection OFF: User selected AF target area.\n            Subject Detection ON: Area related to subject"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
         (4096, TagKitDef {
             id: 4096,
             name: "FlashType",
@@ -264,6 +295,83 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             value_conv: None,
             subdirectory: None,
         }),
+        (4609, TagKitDef {
+            id: 4609,
+            name: "ExternalFlash",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_15),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4611, TagKitDef {
+            id: 4611,
+            name: "ExternalFlashGuideNumber",
+            format: "rational64s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4612, TagKitDef {
+            id: 4612,
+            name: "ExternalFlashBounce",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_16),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4613, TagKitDef {
+            id: 4613,
+            name: "ExternalFlashZoom",
+            format: "rational64u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4616, TagKitDef {
+            id: 4616,
+            name: "InternalFlash",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_17),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4617, TagKitDef {
+            id: 4617,
+            name: "ManualFlash",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("2 numbers: 1. 0=Off, 1=On, 2. Flash strength"),
+            print_conv: PrintConvType::Expression("\n            my ($a,$b) = split ' ',$val;\n            return 'Off' unless $a;\n            $b = ($b == 1) ? 'Full' : \"1/$b\";\n            return \"On ($b strength)\";\n        "),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4618, TagKitDef {
+            id: 4618,
+            name: "MacroLED",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_18),
+            value_conv: None,
+            subdirectory: None,
+        }),
         (4112, TagKitDef {
             id: 4112,
             name: "NoiseReduction2",
@@ -271,7 +379,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_15),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_19),
             value_conv: None,
             subdirectory: None,
         }),
@@ -282,7 +390,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_16),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_20),
             value_conv: None,
             subdirectory: None,
         }),
@@ -293,7 +401,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_17),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_21),
             value_conv: None,
             subdirectory: None,
         }),
@@ -337,7 +445,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_18),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_22),
             value_conv: None,
             subdirectory: None,
         }),
@@ -418,149 +526,6 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             value_conv: Some("$val ? $val : undef"),
             subdirectory: None,
         }),
-        (4609, TagKitDef {
-            id: 4609,
-            name: "ExternalFlash",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_19),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (4611, TagKitDef {
-            id: 4611,
-            name: "ExternalFlashGuideNumber",
-            format: "rational64s",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (4612, TagKitDef {
-            id: 4612,
-            name: "ExternalFlashBounce",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_20),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (4613, TagKitDef {
-            id: 4613,
-            name: "ExternalFlashZoom",
-            format: "rational64u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (4616, TagKitDef {
-            id: 4616,
-            name: "InternalFlash",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_21),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (4617, TagKitDef {
-            id: 4617,
-            name: "ManualFlash",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: Some("2 numbers: 1. 0=Off, 1=On, 2. Flash strength"),
-            print_conv: PrintConvType::Expression("\n            my ($a,$b) = split ' ',$val;\n            return 'Off' unless $a;\n            $b = ($b == 1) ? 'Full' : \"1/$b\";\n            return \"On ($b strength)\";\n        "),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (4618, TagKitDef {
-            id: 4618,
-            name: "MacroLED",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_22),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (4096, TagKitDef {
-            id: 4096,
-            name: "LightSource",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_23),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (4097, TagKitDef {
-            id: 4097,
-            name: "WhiteBalanceComp",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (4112, TagKitDef {
-            id: 4112,
-            name: "SaturationSetting",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (4113, TagKitDef {
-            id: 4113,
-            name: "HueSetting",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (4114, TagKitDef {
-            id: 4114,
-            name: "ContrastSetting",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (4115, TagKitDef {
-            id: 4115,
-            name: "SharpnessSetting",
-            format: "int16s",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
         (1, TagKitDef {
             id: 1,
             name: "MinoltaCameraSettingsOld",
@@ -634,7 +599,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_24),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_23),
             value_conv: None,
             subdirectory: None,
         }),
@@ -645,7 +610,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_25),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_24),
             value_conv: None,
             subdirectory: None,
         }),
@@ -700,7 +665,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_26),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_25),
             value_conv: None,
             subdirectory: None,
         }),
@@ -711,7 +676,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_27),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_26),
             value_conv: None,
             subdirectory: None,
         }),
@@ -755,7 +720,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_28),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_27),
             value_conv: None,
             subdirectory: None,
         }),
@@ -821,7 +786,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_29),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_28),
             value_conv: None,
             subdirectory: None,
         }),
@@ -997,7 +962,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_30),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_29),
             value_conv: None,
             subdirectory: None,
         }),
@@ -1030,7 +995,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_31),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_30),
             value_conv: None,
             subdirectory: None,
         }),
@@ -1151,7 +1116,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_32),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_31),
             value_conv: None,
             subdirectory: None,
         }),
@@ -1195,7 +1160,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_33),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_32),
             value_conv: None,
             subdirectory: None,
         }),
@@ -1206,7 +1171,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_34),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_33),
             value_conv: None,
             subdirectory: None,
         }),
@@ -1264,6 +1229,138 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             print_conv: PrintConvType::None,
             value_conv: None,
             subdirectory: None,
+        }),
+        (4, TagKitDef {
+            id: 4,
+            name: "ISO",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4096, TagKitDef {
+            id: 4096,
+            name: "LightSource",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_34),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4097, TagKitDef {
+            id: 4097,
+            name: "WhiteBalanceComp",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4112, TagKitDef {
+            id: 4112,
+            name: "SaturationSetting",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4113, TagKitDef {
+            id: 4113,
+            name: "HueSetting",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4114, TagKitDef {
+            id: 4114,
+            name: "ContrastSetting",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4115, TagKitDef {
+            id: 4115,
+            name: "SharpnessSetting",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (10, TagKitDef {
+            id: 10,
+            name: "SubjectDetectStatus",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_35),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2, TagKitDef {
+            id: 2,
+            name: "SubjectDetectArea",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("X Y width height"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (6, TagKitDef {
+            id: 6,
+            name: "SubjectDetectDetail",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4, TagKitDef {
+            id: 4,
+            name: "PreviewImage",
+            format: "undef[$val{0}]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("640x480 JPEG preview image"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2, TagKitDef {
+            id: 2,
+            name: "OlympusPreview",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x2_subdirectory }),
         }),
     ]
 }

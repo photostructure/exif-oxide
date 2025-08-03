@@ -24,18 +24,36 @@ static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
 
 /// Get tag definitions for camera category
 pub fn get_camera_tags() -> Vec<(u32, TagKitDef)> {
-    vec![(
-        316,
-        TagKitDef {
-            id: 316,
-            name: "SecondarySlotFunction",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_0),
-            value_conv: None,
-            subdirectory: None,
-        },
-    )]
+    vec![
+        (
+            272,
+            TagKitDef {
+                id: 272,
+                name: "ROCInfo",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: Some(SubDirectoryType::Binary {
+                    processor: process_tag_0x110_subdirectory,
+                }),
+            },
+        ),
+        (
+            316,
+            TagKitDef {
+                id: 316,
+                name: "SecondarySlotFunction",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_0),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+    ]
 }

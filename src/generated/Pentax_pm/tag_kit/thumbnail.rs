@@ -16,18 +16,76 @@ use std::sync::LazyLock;
 
 /// Get tag definitions for thumbnail category
 pub fn get_thumbnail_tags() -> Vec<(u32, TagKitDef)> {
-    vec![(
-        513,
-        TagKitDef {
-            id: 513,
-            name: "WhitePoint",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        },
-    )]
+    vec![
+        (
+            299,
+            TagKitDef {
+                id: 299,
+                name: "ThumbnailWidth",
+                format: "int16u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            301,
+            TagKitDef {
+                id: 301,
+                name: "ThumbnailHeight",
+                format: "int16u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            303,
+            TagKitDef {
+                id: 303,
+                name: "ThumbnailLength",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            307,
+            TagKitDef {
+                id: 307,
+                name: "ThumbnailImage",
+                format: "undef[$val{0x12f}]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("160x120 JPEG thumbnail image"),
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            513,
+            TagKitDef {
+                id: 513,
+                name: "WhitePoint",
+                format: "int16u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+    ]
 }

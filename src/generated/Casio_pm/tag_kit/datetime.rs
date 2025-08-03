@@ -16,17 +16,18 @@ use std::sync::LazyLock;
 
 /// Get tag definitions for datetime category
 pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
-    vec![(
-        21,
-        TagKitDef {
-            id: 21,
-            name: "FirmwareDate",
-            format: "undef",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Expression(
-                r#"
+    vec![
+        (
+            21,
+            TagKitDef {
+                id: 21,
+                name: "FirmwareDate",
+                format: "undef",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::Expression(
+                    r#"
             $_ = $val;
             if (/^(\d{2})(\d{2})\0\0(\d{2})(\d{2})\0\0(\d{2})(.{2})\0{2}$/) {
                 my $yr = $1 + ($1 < 70 ? 2000 : 1900);
@@ -38,9 +39,48 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             tr/\0/./;  s/\.+$//;
             return "Unknown ($_)";
         "#,
-            ),
-            value_conv: None,
-            subdirectory: None,
-        },
-    )]
+                ),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            77,
+            TagKitDef {
+                id: 77,
+                name: "DateTimeOriginal",
+                format: "string[20]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
+                value_conv: Some("$val=~tr/./:/; $val=~s/(\\d+:\\d+:\\d+):/$1 /; $val"),
+                subdirectory: None,
+            },
+        ),
+        (
+            8193,
+            TagKitDef {
+                id: 8193,
+                name: "FirmwareDate",
+                format: "undef",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::Expression(
+                    r#"
+            $_ = $val;
+            if (/^(\d{2})(\d{2})\0\0(\d{2})(\d{2})\0\0(\d{2})\0{4}$/) {
+                my $yr = $1 + ($1 < 70 ? 2000 : 1900);
+                return "$yr:$2:$3 $4:$5";
+            }
+            tr/\0/./;  s/\.+$//;
+            return "Unknown ($_)";
+        "#,
+                ),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+    ]
 }

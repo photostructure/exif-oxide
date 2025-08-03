@@ -16,9 +16,19 @@ use std::sync::LazyLock;
 
 /// Get tag definitions for gps category
 pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
-    vec![(
-        34853,
-        TagKitDef {
+    vec![
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSPosition",
+            format: "1",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("when written, writes GPSLatitude, GPSLatitudeRef, GPSLongitude and\n            GPSLongitudeRef.  This tag may be written using the same coordinate\n            format as provided by Google Maps when right-clicking on a location"),
+            print_conv: PrintConvType::Expression("\"$prt[0], $prt[1]\""),
+            value_conv: Some("(length($val[0]) or length($val[1])) ? \"$val[0] $val[1]\" : undef"),
+            subdirectory: None,
+        }),
+        (34853, TagKitDef {
             id: 34853,
             name: "GPSInfo",
             format: "unknown",
@@ -27,9 +37,7 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary {
-                processor: process_tag_0x8825_subdirectory,
-            }),
-        },
-    )]
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x8825_subdirectory }),
+        }),
+    ]
 }

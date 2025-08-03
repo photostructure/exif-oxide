@@ -16,10 +16,11 @@ use std::sync::LazyLock;
 
 static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "FX");
-    map.insert("1".to_string(), "DX");
-    map.insert("4".to_string(), "16:9");
-    map.insert("8".to_string(), "1:1");
+    map.insert("0".to_string(), "TTL");
+    map.insert("1".to_string(), "Auto External Flash");
+    map.insert("2".to_string(), "GN (distance priority)");
+    map.insert("3".to_string(), "Manual");
+    map.insert("4".to_string(), "Repeating Flash");
     map
 });
 
@@ -32,142 +33,12 @@ static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
 
 static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "ISO 64");
-    map.insert("1".to_string(), "ISO 80");
-    map.insert("10".to_string(), "ISO 640");
-    map.insert("11".to_string(), "ISO 800");
-    map.insert("12".to_string(), "ISO 1000");
-    map.insert("13".to_string(), "ISO 1250");
-    map.insert("14".to_string(), "ISO 1600");
-    map.insert("15".to_string(), "ISO 2000");
-    map.insert("16".to_string(), "ISO 2500");
-    map.insert("17".to_string(), "ISO 3200");
-    map.insert("18".to_string(), "ISO 4000");
-    map.insert("19".to_string(), "ISO 5000");
-    map.insert("2".to_string(), "ISO 100");
-    map.insert("20".to_string(), "ISO 6400");
-    map.insert("21".to_string(), "ISO 8000");
-    map.insert("22".to_string(), "ISO 10000");
-    map.insert("23".to_string(), "ISO 12800");
-    map.insert("24".to_string(), "ISO 16000");
-    map.insert("25".to_string(), "ISO 20000");
-    map.insert("26".to_string(), "ISO 25600");
-    map.insert("27".to_string(), "ISO Hi 0.3");
-    map.insert("28".to_string(), "ISO Hi 0.7");
-    map.insert("29".to_string(), "ISO Hi 1.0");
-    map.insert("3".to_string(), "ISO 125");
-    map.insert("32".to_string(), "ISO Hi 2.0");
-    map.insert("4".to_string(), "ISO 160");
-    map.insert("5".to_string(), "ISO 200");
-    map.insert("6".to_string(), "ISO 250");
-    map.insert("7".to_string(), "ISO 320");
-    map.insert("8".to_string(), "ISO 400");
-    map.insert("9".to_string(), "ISO 500");
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
     map
 });
 
 static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "ISO 64");
-    map.insert("1".to_string(), "ISO 80");
-    map.insert("10".to_string(), "ISO 640");
-    map.insert("11".to_string(), "ISO 800");
-    map.insert("12".to_string(), "ISO 1000");
-    map.insert("13".to_string(), "ISO 1250");
-    map.insert("14".to_string(), "ISO 1600");
-    map.insert("15".to_string(), "ISO 2000");
-    map.insert("16".to_string(), "ISO 2500");
-    map.insert("17".to_string(), "ISO 3200");
-    map.insert("18".to_string(), "ISO 4000");
-    map.insert("19".to_string(), "ISO 5000");
-    map.insert("2".to_string(), "ISO 100");
-    map.insert("20".to_string(), "ISO 6400");
-    map.insert("21".to_string(), "ISO 8000");
-    map.insert("22".to_string(), "ISO 10000");
-    map.insert("23".to_string(), "ISO 12800");
-    map.insert("24".to_string(), "ISO 16000");
-    map.insert("25".to_string(), "ISO 20000");
-    map.insert("26".to_string(), "ISO 25600");
-    map.insert("27".to_string(), "ISO Hi 0.3");
-    map.insert("28".to_string(), "ISO Hi 0.7");
-    map.insert("29".to_string(), "ISO Hi 1.0");
-    map.insert("3".to_string(), "ISO 125");
-    map.insert("32".to_string(), "ISO Hi 2.0");
-    map.insert("4".to_string(), "ISO 160");
-    map.insert("5".to_string(), "ISO 200");
-    map.insert("6".to_string(), "ISO 250");
-    map.insert("7".to_string(), "ISO 320");
-    map.insert("8".to_string(), "ISO 400");
-    map.insert("9".to_string(), "ISO 500");
-    map
-});
-
-static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Pinpoint");
-    map.insert("1".to_string(), "Single");
-    map.insert("11".to_string(), "Subject Tracking");
-    map.insert("12".to_string(), "Wide (C1)");
-    map.insert("13".to_string(), "Wide (C2)");
-    map.insert("2".to_string(), "Dynamic");
-    map.insert("3".to_string(), "Wide (S)");
-    map.insert("4".to_string(), "Wide (L)");
-    map.insert("5".to_string(), "3D");
-    map.insert("6".to_string(), "Auto");
-    map
-});
-
-static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "Normal");
-    map.insert("2".to_string(), "Sport");
-    map
-});
-
-static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "AE/Flash");
-    map.insert("1".to_string(), "AE");
-    map.insert("2".to_string(), "Flash");
-    map.insert("3".to_string(), "White Balance");
-    map.insert("4".to_string(), "Active-D Lighting");
-    map
-});
-
-static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "FX");
-    map.insert("1".to_string(), "DX");
-    map.insert("4".to_string(), "16:9");
-    map.insert("8".to_string(), "1:1");
-    map
-});
-
-static PRINT_CONV_9: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "FX");
-    map.insert("1".to_string(), "DX");
-    map.insert("4".to_string(), "16:9");
-    map.insert("8".to_string(), "1:1");
-    map
-});
-
-static PRINT_CONV_10: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_11: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Matrix");
     map.insert("1".to_string(), "Center");
@@ -176,7 +47,7 @@ static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "TTL");
     map.insert("1".to_string(), "Auto External Flash");
@@ -186,7 +57,7 @@ static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "0");
     map.insert("1".to_string(), "0.1 m");
@@ -229,14 +100,169 @@ static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
+static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "FX");
+    map.insert("1".to_string(), "DX");
+    map.insert("4".to_string(), "16:9");
+    map.insert("8".to_string(), "1:1");
+    map
+});
+
+static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_9: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "ISO 64");
+    map.insert("1".to_string(), "ISO 80");
+    map.insert("10".to_string(), "ISO 640");
+    map.insert("11".to_string(), "ISO 800");
+    map.insert("12".to_string(), "ISO 1000");
+    map.insert("13".to_string(), "ISO 1250");
+    map.insert("14".to_string(), "ISO 1600");
+    map.insert("15".to_string(), "ISO 2000");
+    map.insert("16".to_string(), "ISO 2500");
+    map.insert("17".to_string(), "ISO 3200");
+    map.insert("18".to_string(), "ISO 4000");
+    map.insert("19".to_string(), "ISO 5000");
+    map.insert("2".to_string(), "ISO 100");
+    map.insert("20".to_string(), "ISO 6400");
+    map.insert("21".to_string(), "ISO 8000");
+    map.insert("22".to_string(), "ISO 10000");
+    map.insert("23".to_string(), "ISO 12800");
+    map.insert("24".to_string(), "ISO 16000");
+    map.insert("25".to_string(), "ISO 20000");
+    map.insert("26".to_string(), "ISO 25600");
+    map.insert("27".to_string(), "ISO Hi 0.3");
+    map.insert("28".to_string(), "ISO Hi 0.7");
+    map.insert("29".to_string(), "ISO Hi 1.0");
+    map.insert("3".to_string(), "ISO 125");
+    map.insert("32".to_string(), "ISO Hi 2.0");
+    map.insert("4".to_string(), "ISO 160");
+    map.insert("5".to_string(), "ISO 200");
+    map.insert("6".to_string(), "ISO 250");
+    map.insert("7".to_string(), "ISO 320");
+    map.insert("8".to_string(), "ISO 400");
+    map.insert("9".to_string(), "ISO 500");
+    map
+});
+
+static PRINT_CONV_10: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "ISO 64");
+    map.insert("1".to_string(), "ISO 80");
+    map.insert("10".to_string(), "ISO 640");
+    map.insert("11".to_string(), "ISO 800");
+    map.insert("12".to_string(), "ISO 1000");
+    map.insert("13".to_string(), "ISO 1250");
+    map.insert("14".to_string(), "ISO 1600");
+    map.insert("15".to_string(), "ISO 2000");
+    map.insert("16".to_string(), "ISO 2500");
+    map.insert("17".to_string(), "ISO 3200");
+    map.insert("18".to_string(), "ISO 4000");
+    map.insert("19".to_string(), "ISO 5000");
+    map.insert("2".to_string(), "ISO 100");
+    map.insert("20".to_string(), "ISO 6400");
+    map.insert("21".to_string(), "ISO 8000");
+    map.insert("22".to_string(), "ISO 10000");
+    map.insert("23".to_string(), "ISO 12800");
+    map.insert("24".to_string(), "ISO 16000");
+    map.insert("25".to_string(), "ISO 20000");
+    map.insert("26".to_string(), "ISO 25600");
+    map.insert("27".to_string(), "ISO Hi 0.3");
+    map.insert("28".to_string(), "ISO Hi 0.7");
+    map.insert("29".to_string(), "ISO Hi 1.0");
+    map.insert("3".to_string(), "ISO 125");
+    map.insert("32".to_string(), "ISO Hi 2.0");
+    map.insert("4".to_string(), "ISO 160");
+    map.insert("5".to_string(), "ISO 200");
+    map.insert("6".to_string(), "ISO 250");
+    map.insert("7".to_string(), "ISO 320");
+    map.insert("8".to_string(), "ISO 400");
+    map.insert("9".to_string(), "ISO 500");
+    map
+});
+
+static PRINT_CONV_11: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Pinpoint");
+    map.insert("1".to_string(), "Single");
+    map.insert("11".to_string(), "Subject Tracking");
+    map.insert("12".to_string(), "Wide (C1)");
+    map.insert("13".to_string(), "Wide (C2)");
+    map.insert("2".to_string(), "Dynamic");
+    map.insert("3".to_string(), "Wide (S)");
+    map.insert("4".to_string(), "Wide (L)");
+    map.insert("5".to_string(), "3D");
+    map.insert("6".to_string(), "Auto");
+    map
+});
+
+static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "Normal");
+    map.insert("2".to_string(), "Sport");
+    map
+});
+
+static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "AE/Flash");
+    map.insert("1".to_string(), "AE");
+    map.insert("2".to_string(), "Flash");
+    map.insert("3".to_string(), "White Balance");
+    map.insert("4".to_string(), "Active-D Lighting");
+    map
+});
+
+static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "FX");
+    map.insert("1".to_string(), "DX");
+    map.insert("4".to_string(), "16:9");
+    map.insert("8".to_string(), "1:1");
+    map
+});
+
+static PRINT_CONV_15: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "FX");
+    map.insert("1".to_string(), "DX");
+    map.insert("4".to_string(), "16:9");
+    map.insert("8".to_string(), "1:1");
+    map
+});
+
+static PRINT_CONV_16: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Matrix");
+    map.insert("1".to_string(), "Center");
+    map.insert("2".to_string(), "Spot");
+    map.insert("3".to_string(), "Highlight");
+    map
+});
+
+static PRINT_CONV_17: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1".to_string(), "Centered");
+    map.insert("2".to_string(), "Co-sited");
+    map
+});
+
 /// Get tag definitions for color category
 pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
     vec![
         (
-            324,
+            532,
             TagKitDef {
-                id: 324,
-                name: "PhotoShootingMenuBankImageArea",
+                id: 532,
+                name: "FlashControlMode",
                 format: "unknown",
                 groups: HashMap::new(),
                 writable: false,
@@ -250,124 +276,12 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
             322,
             TagKitDef {
                 id: 322,
-                name: "AutoISO",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_2),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            324,
-            TagKitDef {
-                id: 324,
-                name: "ISOAutoHiLimit",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_3),
-                value_conv: Some("($val-104)/8"),
-                subdirectory: None,
-            },
-        ),
-        (
-            326,
-            TagKitDef {
-                id: 326,
-                name: "ISOAutoFlashLimit",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_4),
-                value_conv: Some("($val-104)/8"),
-                subdirectory: None,
-            },
-        ),
-        (
-            528,
-            TagKitDef {
-                id: 528,
-                name: "AFAreaMode",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_5),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            530,
-            TagKitDef {
-                id: 530,
-                name: "VRMode",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_6),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            534,
-            TagKitDef {
-                id: 534,
-                name: "BracketSet",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_7),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            328,
-            TagKitDef {
-                id: 328,
-                name: "PhotoShootingMenuBankImageArea",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_8),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            328,
-            TagKitDef {
-                id: 328,
-                name: "PhotoShootingMenuBankImageArea",
-                format: "unknown",
-                groups: HashMap::new(),
-                writable: false,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_9),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            322,
-            TagKitDef {
-                id: 322,
                 name: "DiffractionCompensation",
                 format: "int8u",
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_10),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_2),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -381,7 +295,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_11),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_3),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -395,7 +309,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_12),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_4),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -409,7 +323,7 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_13),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_5),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -423,8 +337,162 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: false,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_14),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_6),
                 value_conv: Some("$val + 3"),
+                subdirectory: None,
+            },
+        ),
+        (
+            324,
+            TagKitDef {
+                id: 324,
+                name: "PhotoShootingMenuBankImageArea",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_7),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            322,
+            TagKitDef {
+                id: 322,
+                name: "AutoISO",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_8),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            324,
+            TagKitDef {
+                id: 324,
+                name: "ISOAutoHiLimit",
+                format: "int16u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_9),
+                value_conv: Some("($val-104)/8"),
+                subdirectory: None,
+            },
+        ),
+        (
+            326,
+            TagKitDef {
+                id: 326,
+                name: "ISOAutoFlashLimit",
+                format: "int16u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_10),
+                value_conv: Some("($val-104)/8"),
+                subdirectory: None,
+            },
+        ),
+        (
+            528,
+            TagKitDef {
+                id: 528,
+                name: "AFAreaMode",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_11),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            530,
+            TagKitDef {
+                id: 530,
+                name: "VRMode",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_12),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            534,
+            TagKitDef {
+                id: 534,
+                name: "BracketSet",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_13),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            328,
+            TagKitDef {
+                id: 328,
+                name: "PhotoShootingMenuBankImageArea",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_14),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            328,
+            TagKitDef {
+                id: 328,
+                name: "PhotoShootingMenuBankImageArea",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_15),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            532,
+            TagKitDef {
+                id: 532,
+                name: "NikonMeteringMode",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("D500 only"),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_16),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            531,
+            TagKitDef {
+                id: 531,
+                name: "YCbCrPositioning",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_17),
+                value_conv: None,
                 subdirectory: None,
             },
         ),

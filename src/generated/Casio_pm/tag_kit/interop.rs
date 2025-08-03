@@ -16,6 +16,15 @@ use std::sync::LazyLock;
 
 static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    map.insert("0".to_string(), "Horizontal (normal)");
+    map.insert("1".to_string(), "Rotate 90 CW");
+    map.insert("2".to_string(), "Rotate 270 CW");
+    map.insert("3".to_string(), "Rotate 180");
+    map
+});
+
+static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
     map.insert("1".to_string(), "Single Shutter");
     map.insert("10".to_string(), "Night Scene");
     map.insert("15".to_string(), "Portrait");
@@ -28,7 +37,7 @@ static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("104857".to_string(), "1.6x");
     map.insert("131072".to_string(), "2x");
@@ -39,7 +48,7 @@ static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Economy");
     map.insert("2".to_string(), "Normal");
@@ -47,7 +56,7 @@ static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("2".to_string(), "Macro");
     map.insert("3".to_string(), "Auto");
@@ -57,7 +66,7 @@ static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Auto");
     map.insert("2".to_string(), "On");
@@ -67,7 +76,7 @@ static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Auto");
     map.insert("2".to_string(), "On");
@@ -76,7 +85,7 @@ static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("11".to_string(), "Weak");
     map.insert("12".to_string(), "Low");
@@ -86,7 +95,7 @@ static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Auto");
     map.insert("129".to_string(), "Manual");
@@ -97,9 +106,85 @@ static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
+static PRINT_CONV_9: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Economy");
+    map.insert("1".to_string(), "Normal");
+    map.insert("2".to_string(), "Fine");
+    map
+});
+
+static PRINT_CONV_10: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "640x480");
+    map.insert("20".to_string(), "2288x1712");
+    map.insert("21".to_string(), "2592x1944");
+    map.insert("22".to_string(), "2304x1728");
+    map.insert("36".to_string(), "3008x2008");
+    map.insert("4".to_string(), "1600x1200");
+    map.insert("5".to_string(), "2048x1536");
+    map
+});
+
 /// Get tag definitions for interop category
 pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
     vec![
+        (
+            1,
+            TagKitDef {
+                id: 1,
+                name: "FaceDetectFrameSize",
+                format: "int16u[2]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            2,
+            TagKitDef {
+                id: 2,
+                name: "FacesDetected",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            4,
+            TagKitDef {
+                id: 4,
+                name: "FaceDetectFrameSize",
+                format: "int16u[2]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            8,
+            TagKitDef {
+                id: 8,
+                name: "FaceOrientation",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("orientation of face relative to unrotated image"),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_0),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
         (
             1,
             TagKitDef {
@@ -109,7 +194,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_0),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_1),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -123,7 +208,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_1),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_2),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -137,7 +222,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_2),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_3),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -147,20 +232,6 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             TagKitDef {
                 id: 3,
                 name: "FocusMode",
-                format: "int16u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_3),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            4,
-            TagKitDef {
-                id: 4,
-                name: "FlashMode",
                 format: "int16u",
                 groups: HashMap::new(),
                 writable: true,
@@ -185,6 +256,20 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             },
         ),
         (
+            4,
+            TagKitDef {
+                id: 4,
+                name: "FlashMode",
+                format: "int16u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_6),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
             5,
             TagKitDef {
                 id: 5,
@@ -193,7 +278,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_6),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_7),
                 value_conv: None,
                 subdirectory: None,
             },
@@ -221,7 +306,77 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 groups: HashMap::new(),
                 writable: true,
                 notes: None,
-                print_conv: PrintConvType::Simple(&PRINT_CONV_7),
+                print_conv: PrintConvType::Simple(&PRINT_CONV_8),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            2,
+            TagKitDef {
+                id: 2,
+                name: "PreviewImageSize",
+                format: "int16u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::Expression(r"$val =~ tr/ /x/; $val"),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            3,
+            TagKitDef {
+                id: 3,
+                name: "PreviewImageLength",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            4,
+            TagKitDef {
+                id: 4,
+                name: "PreviewImageStart",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            8,
+            TagKitDef {
+                id: 8,
+                name: "QualityMode",
+                format: "int16u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_9),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            9,
+            TagKitDef {
+                id: 9,
+                name: "CasioImageSize",
+                format: "int16u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_10),
                 value_conv: None,
                 subdirectory: None,
             },
