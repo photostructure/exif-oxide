@@ -39,7 +39,12 @@ pub fn process_subdirectories_with_printconv<H, P, A, F>(
 ) -> Result<()>
 where
     H: Fn(u32) -> bool,
-    P: Fn(u32, &TagValue, ByteOrder) -> Result<std::collections::HashMap<String, TagValue>>,
+    P: Fn(
+        u32,
+        &TagValue,
+        ByteOrder,
+        Option<&str>,
+    ) -> Result<std::collections::HashMap<String, TagValue>>,
     A: Fn(
         u32,
         &TagValue,
@@ -96,7 +101,25 @@ where
             .map(|h| h.byte_order)
             .unwrap_or(ByteOrder::LittleEndian);
 
-        match process_subdirectory_fn(tag_id as u32, &tag_value, byte_order) {
+        // Extract model from exif reader tags for model-based subdirectory dispatch
+        let model =
+            exif_reader
+                .extracted_tags
+                .iter()
+                .find_map(|((tag_id, _namespace), tag_value)| {
+                    // Look for Model tag (tag ID 0x0110 in EXIF standard)
+                    if *tag_id == 0x0110 {
+                        if let crate::types::TagValue::String(model_str) = tag_value {
+                            Some(model_str.as_str())
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                });
+
+        match process_subdirectory_fn(tag_id as u32, &tag_value, byte_order, model) {
             Ok(extracted_tags) => {
                 debug!(
                     "Extracted {} tags from {} subdirectory 0x{:04x}",
