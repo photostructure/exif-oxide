@@ -4,7 +4,7 @@
 
 - **Goal**: Create a specialized codegen extractor for perl arrays
 - **Problem**: Manual transcription of 512-byte XLAT arrays creates high error risk ("4 engineering days chasing ghosts"), violates Trust ExifTool principle, and requires ongoing maintenance with monthly ExifTool releases
-- **Constraints**: Must integrate seamlessly with existing trait-based extractor system, support thread-safe patching, and maintain performance characteristics for cryptographic operations
+- **Constraints**: Must integrate seamlessly with existing trait-based extractor system, use universal patching approach, and maintain performance characteristics for cryptographic operations
 
 ---
 
@@ -32,8 +32,8 @@ Honest. RTFM.
 
 ### System Overview
 
-- **Codegen Architecture**: Trait-based extractor system with discovery → patching → extraction → generation pipeline. Each extractor implements `Extractor` trait defining script_name, patching requirements, and config handling. Uses parallel execution with rayon for performance across 13+ existing extractors.
-- **Patching System**: Thread-safe conversion of ExifTool `my`-scoped variables to `our`-scoped using per-file mutexes and atomic file operations. Required because perl arrays like `my @xlat` are private and cannot be accessed by external extraction scripts.
+- **Codegen Architecture**: Trait-based extractor system with universal patching → discovery → extraction → generation pipeline. Each extractor implements `Extractor` trait defining script_name and config handling. Uses parallel execution with rayon for performance across 13+ existing extractors.
+- **Universal Patching System**: Upfront conversion of ALL ExifTool `my`-scoped variables to `our`-scoped before any extraction begins. Applied once to all modules, eliminating per-extractor patching logic and ensuring consistent module state for all extractors.
 - **Perl extraction**: We use `perl` scripts to **actually interpret and run the ExifTool perl code** because the only thing that can reliably parse Perl is `perl`. 
 - **Generator Pipeline**: Configuration-driven code generation that reads extracted JSON data and produces modular Rust code. Uses `FileGenerator` struct for consistent file structure with proper imports, documentation, and module organization.
 - **ExifTool Integration**: Monthly ExifTool releases contain updated constants, algorithms, and data structures. Automated extraction eliminates manual maintenance burden and transcription errors across 15,000+ tags and hundreds of lookup tables.
@@ -50,10 +50,10 @@ Honest. RTFM.
 **CRITICAL**: Document non-intuitive aspects that aren't obvious from casual code inspection:
 
 - **Cryptographic Sensitivity**: Single byte errors in XLAT arrays completely break Nikon decryption for all encrypted sections (ShotInfo, LensData, ColorBalance). Historical issue: "4 engineering days chasing ghosts" from one incorrect byte in manual transcription. Arrays must be extracted with 100% accuracy.
-- **Patching Thread Safety**: Build system uses per-file mutexes (`PATCH_MUTEXES: LazyLock<Mutex<HashMap<String, Arc<Mutex<()>>>>>`) to prevent concurrent patching of same ExifTool module. Required because extraction runs in parallel with rayon, but patching modifies shared ExifTool source files.
+- **Universal Patching Benefits**: Build system applies all patches upfront before any extraction, eliminating the need for per-file synchronization. This simplifies the architecture and ensures consistent module state across all parallel extraction processes.
 - **Array vs HashMap Performance**: Arrays provide direct index access `XLAT_0[index]` vs HashMap lookup `XLAT_MAP.get(&key)`. For cryptographic operations processing thousands of bytes, this difference matters. Arrays also use less memory (256 bytes vs HashMap overhead).
 - **Build Pipeline Complexity**: Discovery phase scans config directories, extraction phase calls 13+ perl scripts in parallel, generation phase creates modular Rust code, integration phase updates module exports. Each phase has error handling, timing statistics, and atomic file operations.
-- **ExifTool Module Scoping**: Many critical arrays are `my`-scoped (private) requiring patching to `our`-scoped (public) for extraction. Patching is idempotent and reversible via `git checkout` but must be coordinated across parallel extraction processes.
+- **ExifTool Module Scoping**: Many critical arrays are `my`-scoped (private) requiring universal patching to `our`-scoped (public) for extraction. Universal patching applies all changes upfront, ensuring consistent access across all extractors.
 
 ### Foundation Documents
 
@@ -70,9 +70,9 @@ Honest. RTFM.
 
 ## Work Completed
 
-- ✅ **Codegen Architecture Research** → Analyzed trait-based extractor system, discovered 13 existing extractors follow consistent patterns with script_name, handles_config, requires_patching methods
-- ✅ **ExifTool Source Analysis** → Located XLAT arrays in Nikon.pm:13505-13538, confirmed usage patterns in Decrypt function, verified 512 bytes of cryptographic constants requiring exact extraction
-- ✅ **Patching System Study** → Understood thread-safe per-file mutex system, atomic file operations, regex-based `my` to `our` conversion, idempotent operation design
+- ✅ **Codegen Architecture Research** → Analyzed trait-based extractor system, discovered 13 existing extractors follow consistent patterns with script_name and handles_config methods
+- ✅ **ExifTool Source Analysis** → Located XLAT arrays in Nikon.pm:13505-13538, confirmed usage patterns in Decrypt function, verified 512 bytes of cryptographic constants requiring exact extraction  
+- ✅ **Universal Patching Migration** → Migrated from surgical patching to universal patching approach, simplifying extractor trait and eliminating per-file synchronization complexity
 - ✅ **Generator Pipeline Investigation** → Examined lookup_tables module architecture, FileGenerator patterns, configuration processing, module integration system
 - ✅ **Manual Array Risk Assessment** → Identified 512 hardcoded bytes in encryption.rs:23-66 as transcription error risk, confirmed single-byte errors break decryption completely
 
@@ -230,7 +230,7 @@ None - all required infrastructure exists in codegen system.
 
 - **Perl Array Access**: Use `no strict 'refs'; my $array_ref = \@{$module_name . "::" . $array_name};` for symbolic reference access
 - **Error Handling**: Validate array exists, has expected length, contains correct data types before extraction
-- **Thread Safety**: Leverage existing per-file patching mutexes, no additional synchronization needed
+- **Thread Safety**: No additional synchronization needed - universal patching ensures consistent module state
 - **Performance**: Generate direct array access functions for guaranteed bounds scenarios, Optional<T> functions for safety
 
 ### Tools to Leverage
