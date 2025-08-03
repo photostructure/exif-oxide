@@ -91,7 +91,7 @@ pub fn process_nikon_af_info(
     // ExifTool: AFInfo version from first 2 bytes
     let version = u16::from_be_bytes([data[0], data[1]]);
     // Store AF Info version tag with proper tag source
-    let tag_source = reader.create_tag_source_info("Nikon");
+    let tag_source = reader.create_tag_source_info("MakerNotes");
     reader.store_tag_with_precedence(0x0088, TagValue::U16(version), tag_source);
 
     debug!("AF Info version: 0x{:04x}", version);
@@ -114,7 +114,7 @@ pub fn process_nikon_af_info(
         0x0300 => process_af_info_v0300(reader, data, &af_system),
         _ => {
             debug!("Unknown AF Info version: 0x{:04x}", version);
-            let tag_source = reader.create_tag_source_info("Nikon");
+            let tag_source = reader.create_tag_source_info("MakerNotes");
             reader.store_tag_with_precedence(
                 0x0088,
                 TagValue::string(format!("Unknown version 0x{version:04x}")),
@@ -249,28 +249,28 @@ fn process_af_info_v0106(
     // Phase detection AF
     if data.len() >= 4 {
         let phase_detect_af = data[2];
-        let tag_source = reader.create_tag_source_info("Nikon");
+        let tag_source = reader.create_tag_source_info("MakerNotes");
         reader.store_tag_with_precedence(0x0092, TagValue::U8(phase_detect_af), tag_source);
     }
 
     // Contrast detect AF
     if data.len() >= 5 {
         let contrast_detect_af = data[3];
-        let tag_source = reader.create_tag_source_info("Nikon");
+        let tag_source = reader.create_tag_source_info("MakerNotes");
         reader.store_tag_with_precedence(0x0093, TagValue::U8(contrast_detect_af), tag_source);
     }
 
     // AF area mode
     if data.len() >= 8 {
         let af_area_mode = data[6];
-        let tag_source = reader.create_tag_source_info("Nikon");
+        let tag_source = reader.create_tag_source_info("MakerNotes");
         reader.store_tag_with_precedence(0x0094, TagValue::U8(af_area_mode), tag_source);
     }
 
     // AF point in focus
     if data.len() >= 9 {
         let af_point_in_focus = data[7];
-        let tag_source = reader.create_tag_source_info("Nikon");
+        let tag_source = reader.create_tag_source_info("MakerNotes");
         reader.store_tag_with_precedence(0x0095, TagValue::U8(af_point_in_focus), tag_source);
     }
 
@@ -297,14 +297,14 @@ fn process_af_info_v0107(
     // AF area mode (enhanced)
     if data.len() >= 4 {
         let af_area_mode = data[2];
-        let tag_source = reader.create_tag_source_info("Nikon");
+        let tag_source = reader.create_tag_source_info("MakerNotes");
         reader.store_tag_with_precedence(0x0094, TagValue::U8(af_area_mode), tag_source);
     }
 
     // Primary AF point
     if data.len() >= 5 {
         let primary_af_point = data[3];
-        let tag_source = reader.create_tag_source_info("Nikon");
+        let tag_source = reader.create_tag_source_info("MakerNotes");
         reader.store_tag_with_precedence(0x0096, TagValue::U8(primary_af_point), tag_source);
     }
 
@@ -317,7 +317,7 @@ fn process_af_info_v0107(
     {
         let af_points_bytes = &data[4..10];
         let af_points_readable = print_af_points_extended(af_points_bytes, af_system);
-        let tag_source = reader.create_tag_source_info("Nikon");
+        let tag_source = reader.create_tag_source_info("MakerNotes");
         reader.store_tag_with_precedence(0x0097, TagValue::String(af_points_readable), tag_source);
     }
 
@@ -344,7 +344,7 @@ fn process_af_info_v0300(
     // Subject detection mode
     if data.len() >= 6 {
         let subject_detection = data[4];
-        let tag_source = reader.create_tag_source_info("Nikon");
+        let tag_source = reader.create_tag_source_info("MakerNotes");
         reader.store_tag_with_precedence(
             0x0098,
             TagValue::U8(subject_detection),
@@ -369,7 +369,7 @@ fn process_af_info_v0300(
     // AF area mode for Z-series
     if data.len() >= 8 {
         let af_area_mode = data[6];
-        let tag_source = reader.create_tag_source_info("Nikon");
+        let tag_source = reader.create_tag_source_info("MakerNotes");
         reader.store_tag_with_precedence(0x0094, TagValue::U8(af_area_mode), tag_source);
     }
 
